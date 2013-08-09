@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>GITBert Server Management</title>
+ </head>
+ <body>
+    {% if error %}
+        {{ error }}
+    {% endif %}
+   <form name="add-server" action="/servers" method="post"> 
+    hostname: <input type="text" name="hostname"><br>
+    <input type="submit" value="add server"><br>
+   </form>
+   {% for server in servers %}
+        <a href='/servers/{{ server.ServerId}}/'>{{server.HostName}}</a><br/>
+   {% endfor %}
+ </body>
+</html>

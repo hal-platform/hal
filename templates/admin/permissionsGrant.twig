@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>GitBert Permissions</title>
+ </head>
+ <body>
+   <form name="step1" action="/permissionsGrant" method="post"> 
+    username: 
+    <select name="userId">
+    {% for user in users %}
+        <option value="{{user.CommonId}}">{{user.DisplayName}}</option>
+    {% endfor %}
+    </select> 
+    
+    Deployment: 
+    <select name="deploymentId">
+    {% for deployment in deployments %}
+        <option value="{{ deployment.DeploymentId}}">{{deployment.HostName}} / {{deployment.ShortName}}</option>
+    {% endfor %}
+    </select><br>
+
+    <input type="submit" value="Grant Permission"><br>
+   </form>
+  </div>
+ </body>
+</html>

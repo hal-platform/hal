@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>GIT Deployments Management</title>
+ </head>
+ <body>
+   <form name="add-deployment" action="/deployments" method="post"> 
+       Server:
+       <select name="serverId">
+       {% for server in servers %}
+            <option value="{{server.ServerId}}">{{server.HostName}}</option>
+       {% endfor %}
+       </select></br>
+       Repository:
+       <select name="repoId">
+       {% for repository in repositories %}
+            <option value="{{repository.RepoID}}">{{repository.ShortName}}</option>
+       {% endfor %}
+        </select></br>
+    path: <input type="text" name="path"><br>
+    owner email: <input type="text" name="email"><br>
+    <input type="submit" name="submit" value="add deployment"><br>
+   </form>
+<p>
+    Current Deployments:<br>
+    {% for deployment in deployments %}
+      Name:  {{deployment.ShortName}} <br> 
+      Description: {{deployment.Description}}
+      <p>
+    {% endfor %}
+
+ </body>
+</html>

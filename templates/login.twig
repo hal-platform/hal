@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>GitBert - login</title>
+ </head>
+ <body>
+{% if error %}
+<p>{{ error }}</p>
+{% endif %}
+   <form name="loginPage" action="/login" method="post"> 
+    username: <input type="text" name="username"><br>
+    password: <input type="password" name="password"><br>
+    <input type="submit" value="log in"><br>
+   </form>
+ </body>
+</html>

@@ -1,0 +1,22 @@
+{
+    "require": {
+        "slim/slim": "2.*",
+        "ql/mcp-corp-account": "*",
+        "twig/twig": "1.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "lib"
+        }
+    },
+    "repositories": [
+        {  
+            "type": "composer",
+            "url": "http://composer/"
+        }
+    ]
+
+}
