@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "0025cde9f39eb7e5e6c30931ffeb38b3",
+    "hash": "801c9fa2f1b57fc47c678a2ae2c83034",
     "packages": [
         {
             "name": "ql/mcp-corp-account",

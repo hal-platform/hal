@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-0": {
-            "QL\\Hal": "lib/QL/Hal"
+            "QL\\Hal": "lib"
         }
     },
     "repositories": [
