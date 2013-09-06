@@ -1,10 +1,10 @@
 <?php
-namespace QL\GitBert2;
+namespace QL\Hal;
 
 use Slim\Http\Response;
 use Twig_TemplateInterface;
 
-class GBAdminMain 
+class Login
 {
     /**
      * @param Response
@@ -31,6 +31,7 @@ class GBAdminMain
      */
     public function __invoke()
     {
+        session_destroy();
         $this->response->body($this->tpl->render([]));
     }
 }

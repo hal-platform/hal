@@ -1,9 +1,9 @@
 <?php
-namespace QL\GitBert2;
+namespace QL\Hal;
 
 use Slim\Middleware;
 
-class GBLoginRequired extends Middleware
+class LoginRequired extends Middleware
 {
     /**
      * @var string

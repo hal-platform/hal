@@ -1,13 +1,13 @@
 <?php
-namespace QL\GitBert2;
+namespace QL\Hal;
 
 use MCP\Corp\Account\LdapService;
-use QL\GitBert2\Services\UserService;
+use QL\Hal\Services\UserService;
 use Slim\Http\Response;
 use Slim\Http\Request;
 use Twig_Template;
 
-class GBLoginHandler
+class LoginHandler
 {
     /**
      * @var Response

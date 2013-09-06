@@ -5,29 +5,36 @@
  *    is strictly prohibited.
  */
 
+namespace QL\Hal;
 
-namespace QL\GitBert2;
-
+use MCP\Corp\Account\LdapService;
 use PDO;
-use QL\GitBert2\Services\DeploymentService;
-use QL\GitBert2\Services\RepositoryService;
-use QL\GitBert2\Services\ServerService;
-use QL\GitBert2\Services\UserService;
-use Slim;
+use QL\Hal\Admin\Dashboard;
+use QL\Hal\Arrangements;
+use QL\Hal\Admin\ManageDeploymentsHandler;
+use QL\Hal\Admin\ManageDeployments;
+use QL\Hal\Admin\ManageRepositories;
+use QL\Hal\Admin\ManageRepositoriesHandler;
+use QL\Hal\Admin\ManageServers;
+use QL\Hal\Admin\ManageServersHandler;
+use QL\Hal\LoginRequired;
+use QL\Hal\Services\DeploymentService;
+use QL\Hal\Services\RepositoryService;
+use QL\Hal\Services\ServerService;
+use QL\Hal\Services\UserService;
+use Slim\Slim;
 use Slim\Http\Response;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
-use MCP\Corp\Account\LdapService;
-use QL\GitBert2\GBLoginRequired;
 
 require '../vendor/autoload.php';
 
-$app = new Slim\Slim();
+$app = new Slim;
 session_start();
 
 $twigEnv = new Twig_Environment(new Twig_Loader_Filesystem(__DIR__ . '/../templates'));
 $ad = new LdapService;
-$db = new PDO('mysql:host=localhost;dbname=gitbertSlim;charset=utf8', 'root', '');
+$db = new PDO('mysql:unix_socket=/tmp/mysql.sock;dbname=gitbertSlim;charset=utf8', 'root', '');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $repos = new RepositoryService($db);
@@ -35,10 +42,10 @@ $servers = new ServerService($db);
 $deployments = new DeploymentService($db);
 $users = new UserService($db);
 
-$app->add(new GBLoginRequired('/login', $_SESSION));
+$app->add(new LoginRequired('/login', $_SESSION));
 
-$app->get('/login',  new GBLogin($app->response(), $twigEnv->loadTemplate('login.twig')));
-$app->post('/login', new GBLoginHandler(
+$app->get('/login',  new Login($app->response(), $twigEnv->loadTemplate('login.twig')));
+$app->post('/login', new LoginHandler(
     $app->response(),
     $app->request(),
     $_SESSION,
@@ -47,33 +54,33 @@ $app->post('/login', new GBLoginHandler(
     $users
 ));
 
-$app->get('/',  new GBHome($app->response(), $twigEnv->loadTemplate('home.twig'), $_SESSION));
-$app->get('/adminMain',  new GBAdminMain($app->response(), $twigEnv->loadTemplate('admin/adminIndex.twig')));
+$app->get('/',  new Arrangements($app->response(), $twigEnv->loadTemplate('home.twig'), $_SESSION));
+$app->get('/admin',  new Dashboard($app->response(), $twigEnv->loadTemplate('admin/dashboard.twig')));
 
-$app->get('/repositories', new GBRepositories($app->response(), $twigEnv->loadTemplate('admin/repositories.twig'), $repos));
-$app->post('/repositories', new GBRepositoriesHandler(
+$app->get('/admin/repositories', new ManageRepositories($app->response(), $twigEnv->loadTemplate('admin/repositories.twig'), $repos));
+$app->post('/admin/repositories', new ManageRepositoriesHandler(
     $app->response(),
     $app->request(),
     $twigEnv->loadTemplate('admin/repositories.twig'),
     $repos
 ));
 
-$app->get('/servers', new GBServers($app->response(), $twigEnv->loadTemplate('admin/servers.twig'), $servers));
-$app->post('/servers', new GBServersHandler(
+$app->get('/admin/servers', new ManageServers($app->response(), $twigEnv->loadTemplate('admin/servers.twig'), $servers));
+$app->post('/admin/servers', new ManageServersHandler(
     $app->response(),
     $app->request(),
     $twigEnv->loadTemplate('admin/servers.twig'),
     $servers
 ));
 
-$app->get('/deployments', new GBDeployments(
+$app->get('/admin/deployments', new ManageDeployments(
     $app->response(), 
     $twigEnv->loadTemplate('admin/deployments.twig'), 
-    $repos, 
+    $repos,
     $servers, 
     $deployments
 ));
-$app->post('/deployments', new GBDeploymentsHandler(
+$app->post('/admin/deployments', new ManageDeploymentsHandler(
     $app->response(),
     $app->request(),
     $twigEnv->loadTemplate('admin/deployments.twig'),
@@ -94,7 +101,7 @@ $app->get('/permissionsGrant', new GBPermissionsGrant(
 
 /*
 $app->get('/push', function() use ($app) {
-    $gitDeployments = new GBDeployments();
+    $gitDeployments = new Deployments();
     $listOfDeployments = $gitDeployments->listDeployments();
     $servers = array();
     $repositories = array();

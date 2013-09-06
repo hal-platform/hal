@@ -1,12 +1,12 @@
 <?php
-namespace QL\GitBert2;
+namespace QL\Hal;
 
 use Slim\Http\Response;
 use Slim\Http\Request;
 use Twig_Template;
-use QL\GitBert2\Services\Repositories;
-use QL\GitBert2\Services\Deployments;
-use QL\GitBert2\Services\Users;
+use QL\Hal\Services\Repositories;
+use QL\Hal\Services\Deployments;
+use QL\Hal\Services\Users;
 
 class GBPermissionsGrant
 {

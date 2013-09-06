@@ -5,13 +5,13 @@
  *    is strictly prohibited.
  */
 
-namespace QL\GitBert2;
+namespace QL\Hal\Admin;
 
-use QL\GitBert2\Services\ServerService;
+use QL\Hal\Services\RepositoryService;
 use Slim\Http\Response;
 use Twig_Template;
 
-class GBServers 
+class ManageRepositories
 {
     /**
      * @param Response
@@ -24,20 +24,20 @@ class GBServers
     private $tpl;
 
     /**
-     * @var ServerService
+     * @param RepositoryService
      */
-    private $servers;
+    private $repos;
 
     /**
      * @param Response $response
      * @param Twig_Template $tpl
-     * @param ServerService $servers
+     * @param RepositoryService $repos
      */
-    public function __construct(Response $response, Twig_Template $tpl, ServerService $servers)
+    public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repos)
     {
         $this->response = $response;
         $this->tpl = $tpl;
-        $this->servers = $servers;
+        $this->repos = $repos;
     }
 
     /**
@@ -45,7 +45,7 @@ class GBServers
      */
     public function __invoke()
     {
-        $serversList = $this->servers->listAll();
-        $this->response->body($this->tpl->render(['servers' => $serversList]));
+        $reposList = $this->repos->listAll();
+        $this->response->body($this->tpl->render(['repositories' => $reposList]));
     }
 }

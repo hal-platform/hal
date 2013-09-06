@@ -1,11 +1,11 @@
 <?php
-namespace QL\GitBert2;
+namespace QL\Hal;
 
-use QL\GitBert2\Services\RepositoryService;
 use Slim\Http\Response;
 use Twig_Template;
+use QL\Hal\Services\Repositories;
 
-class GBRepositories 
+class GBPermissions
 {
     /**
      * @param Response
@@ -13,21 +13,16 @@ class GBRepositories
     private $response;
 
     /**
-     * @param Twig_TemplateInterface
+     * @param Twig_Template
      */
     private $tpl;
-
-    /**
-     * @param RepositoryService
-     */
-    private $repos;
-
+    
     /**
      * @param Response $response
      * @param Twig_Template $tpl
-     * @param RepositoryService $repos
+     * @param Services $repos
      */
-    public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repos)
+    public function __construct(Response $response, Twig_Template $tpl, Repositories $repos)
     {
         $this->response = $response;
         $this->tpl = $tpl;
@@ -39,7 +34,7 @@ class GBRepositories
      */
     public function __invoke()
     {
-        $reposList = $this->repos->listAll();
+        $reposList = $this->repos->listRepos();
         $this->response->body($this->tpl->render(['repositories' => $reposList]));
     }
 }

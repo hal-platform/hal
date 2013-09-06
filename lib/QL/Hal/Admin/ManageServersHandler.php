@@ -5,9 +5,9 @@
  *    is strictly prohibited.
  */
 
-namespace QL\GitBert2;
+namespace QL\Hal\Admin;
 
-use QL\GitBert2\Services\RepositoryService;
+use QL\Hal\Services\ServerService;
 use Slim\Http\Response;
 use Slim\Http\Request;
 use Twig_Template;
@@ -15,7 +15,7 @@ use Twig_Template;
 /**
  * @api
  */
-class GBRepositoriesHandler
+class ManageServersHandler
 {
     /**
      * @var Response
@@ -33,38 +33,40 @@ class GBRepositoriesHandler
     private $tpl;
 
     /**
-     * @var RepositoryService
+     * @var ServerService
      */
-    private $repos;
+    private $servers;
 
+    /**
+     * @param Response $response
+     * @param Request $request
+     * @param Twig_Template $tpl
+     * @param ServerService $servers
+     */
     public function __construct(
         Response $response,
         Request $request,
         Twig_Template $tpl,
-        RepositoryService $repos
+        ServerService $servers
     ) {
         $this->response = $response;
         $this->request = $request;
         $this->tpl = $tpl;
-        $this->repos = $repos;
+        $this->servers = $servers;
     }
 
     public function __invoke()
     {
-        $githubuser = $this->request->post('githubuser');
-        $githubrepo = $this->request->post('githubrepo');
-        $email = $this->request->post('email');
-        $shortname = $this->request->post('shortname');
-        $description = $this->request->post('description');
-        
+        $hostname = $this->request->post('hostname');
+        $envId = $this->request->post('envId');
 
-        if (!$githubuser || !$githubrepo || !$email || !$shortname || !$description) {
+        if (!$hostname) {
             $this->response->body($this->tpl->render(['error' => "all fields are required"]));
             return;
         }
 
-        $this->repos->create($shortname, $githubuser, $githubrepo, $email, $description);
+        $this->servers->create($hostname, $envId);
         $this->response->status(302);
-        $this->response['Location'] = 'http://' . $this->request->getHost() . '/repositories';
+        $this->response['Location'] = 'http://' . $this->request->getHost() . '/servers';
     }
 }

@@ -1,11 +1,19 @@
 <?php
-namespace QL\GitBert2;
+/**
+ * @copyright ©2013 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
+
+namespace QL\Hal\Admin;
 
 use Slim\Http\Response;
 use Twig_Template;
-use QL\GitBert2\Services\Repositories;
 
-class GBPermissions
+/**
+ * @api
+ */
+class Dashboard
 {
     /**
      * @param Response
@@ -16,17 +24,15 @@ class GBPermissions
      * @param Twig_Template
      */
     private $tpl;
-    
+
     /**
      * @param Response $response
      * @param Twig_Template $tpl
-     * @param Services $repos
      */
-    public function __construct(Response $response, Twig_Template $tpl, Repositories $repos)
+    public function __construct(Response $response, Twig_Template $tpl)
     {
         $this->response = $response;
         $this->tpl = $tpl;
-        $this->repos = $repos;
     }
 
     /**
@@ -34,7 +40,6 @@ class GBPermissions
      */
     public function __invoke()
     {
-        $reposList = $this->repos->listRepos();
-        $this->response->body($this->tpl->render(['repositories' => $reposList]));
+        $this->response->body($this->tpl->render([]));
     }
 }

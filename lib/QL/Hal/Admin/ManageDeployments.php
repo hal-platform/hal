@@ -5,18 +5,18 @@
  *    is strictly prohibited.
  */
 
-namespace QL\GitBert2;
+namespace QL\Hal\Admin;
 
-use QL\GitBert2\Services\DeploymentService;
-use QL\GitBert2\Services\RepositoryService;
-use QL\GitBert2\Services\ServerService;
+use QL\Hal\Services\DeploymentService;
+use QL\Hal\Services\RepositoryService;
+use QL\Hal\Services\ServerService;
 use Slim\Http\Response;
 use Twig_Template;
 
 /**
  * @api
  */
-class GBDeployments 
+class ManageDeployments
 {
     /**
      * @param Response

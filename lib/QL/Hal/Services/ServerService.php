@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\GitBert2\Services;
+namespace QL\Hal\Services;
 
 use PDO;
 
