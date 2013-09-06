@@ -1,4 +1,7 @@
 {
+    "name": "ql/hal",
+    "description": "Web-based tool for managing code pushes to Linux/UNIX machines.",
+    "license": "proprietary",
     "require": {
         "slim/slim": "2.*",
         "ql/mcp-corp-account": "*",
@@ -9,7 +12,7 @@
     },
     "autoload": {
         "psr-0": {
-            "": "lib"
+            "QL\\Hal": "lib/QL/Hal"
         }
     },
     "repositories": [
