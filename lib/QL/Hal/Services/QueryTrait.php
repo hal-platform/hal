@@ -69,4 +69,17 @@ trait QueryTrait
         }
         return $result[0];
     }
+
+    /**
+     * @param PDO $db
+     * @param $query
+     * @return int
+     */
+    private function countStar(PDO $db, $query)
+    {
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_NUM);
+        return $result[0][0];
+    }
 }

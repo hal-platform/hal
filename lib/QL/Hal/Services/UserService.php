@@ -20,6 +20,7 @@ class UserService
     const Q_LIST = 'SELECT CommonId, UserName, Email, DisplayName, PictureUrl FROM Users';
     const Q_INSERT = 'INSERT INTO Users (CommonId, UserName, Email, DisplayName, PictureUrl) VALUES (:commonId, :userName, :email, :displayName, :pictureUrl)';
     const Q_UPDATE = 'UPDATE Users SET UserName = :userName, Email = :email, DisplayName = :displayName, PictureUrl = :pictureUrl WHERE CommonId = :commonId';
+    const Q_COUNT = 'SELECT COUNT(*) FROM Users';
 
     /**
      * @var PDO
@@ -92,5 +93,13 @@ class UserService
     public function getById($commonId)
     {
         return $this->selectOne($this->db, self::Q_LIST, self::PRIMARY_KEY, $commonId);
+    }
+
+    /**
+     * @return int
+     */
+    public function totalCount()
+    {
+        return $this->countStar($this->db, self::Q_COUNT);
     }
 }

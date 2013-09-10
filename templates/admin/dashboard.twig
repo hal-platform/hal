@@ -1,14 +1,9 @@
-<html>
-<head>
-<title>Admin center</title>
-</head>
-<body>
+{% include 'common/htmltop.twig' %}
+{% include 'common/header.twig' %}
 <ul>
-    <li><a href="/repositories">Manage Repos</a></li>
-    <li><a href="/servers">Manage ManageServers</a></li>
-    <li><a href="/deployments">Manage Deployments</a></li>
-    <li><a href="/permissionsMain">Manage User Permissions</a></li>
+ <li>Total Users: {{ total_users }}</li>
+ <li>Total Projects: (not live yet)</li>
+ <li>Total Pushes: (not live yet)</li>
+ <li>Production Pushes Today: (not live yet)</li>
 </ul>
-</body>
-</html>
-
+{% include 'common/htmlbottom.twig' %}

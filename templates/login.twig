@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html>
- <head>
- <title>GitBert - login</title>
- </head>
- <body>
+{% set page_title = "Login" %}
+{% include 'common/htmltop.twig' %}
+   <h1>HAL 9000 - Login</h1>
 {% if error %}
-<p>{{ error }}</p>
+   <p>{{ error }}</p>
 {% endif %}
-   <form name="loginPage" action="/login" method="post"> 
-    username: <input type="text" name="username"><br>
-    password: <input type="password" name="password"><br>
-    <input type="submit" value="log in"><br>
+   <form action="/login" method="post"> 
+    <fieldset>
+     <legend>login</legend>
+     <div><label for="username">username</label></div>
+     <div><input type="text" id="username" name="username"></div>
+     <div><label for="password">password</label></div>
+     <div><input type="password" id="password" name="password"></div>
+     <div><input type="submit" value="login"></div>
+    </fieldset>
    </form>
- </body>
-</html>
+{% include 'common/htmlbottom.twig' %}

@@ -1,0 +1,16 @@
+{% set page_title = "Environment Admin" %}
+{% include 'common/htmltop.twig' %}
+{% include 'common/header.twig' %}
+{% if envs %}
+{% else %}
+<p>It looks like you don't have any environments yet. Add one using the form below:</p>
+{% endif %}
+<form action="post">
+ <fieldset>
+  <legend>Add Environment</legend>
+  <div><label for="envname">Name</label></div>
+  <div><input type="text" name="envname" id="envname"></div>
+  <div><input type="submit" value="Add Environment" disabled="disabled"></div>
+ </fieldset>
+</form>
+{% include 'common/htmlbottom.twig' %}

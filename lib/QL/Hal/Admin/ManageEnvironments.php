@@ -7,14 +7,13 @@
 
 namespace QL\Hal\Admin;
 
-use QL\Hal\Services\UserService;
 use Slim\Http\Response;
 use Twig_Template;
 
 /**
  * @api
  */
-class Dashboard
+class ManageEnvironments
 {
     /**
      * @var Response
@@ -27,31 +26,19 @@ class Dashboard
     private $tpl;
 
     /**
-     * @var UserService
-     */
-    private $userService;
-
-    /**
      * @param Response $response
      * @param Twig_Template $tpl
-     * @param UserService $userService
      */
-    public function __construct(Response $response, Twig_Template $tpl, UserService $userService)
-    {
+    public function __construct(
+        Response $response,
+        Twig_Template $tpl
+    ) {
         $this->response = $response;
         $this->tpl = $tpl;
-        $this->userService = $userService;
     }
 
-    /**
-     * @return null
-     */
     public function __invoke()
     {
-        $this->response->body($this->tpl->render([
-            'total_users' => $this->userService->totalCount(),
-            'total_projects' => 0,
-            'total_pushes' => 0,
-        ]));
+        $this->response->body($this->tpl->render([]));
     }
 }

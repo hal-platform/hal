@@ -1,18 +1,29 @@
-<!DOCTYPE html>
-<html>
- <head>
- <title>GITBert Server Management</title>
- </head>
- <body>
-    {% if error %}
-        {{ error }}
-    {% endif %}
-   <form name="add-server" action="/servers" method="post"> 
-    hostname: <input type="text" name="hostname"><br>
-    <input type="submit" value="add server"><br>
+{% include 'common/htmltop.twig' %}
+{% include 'common/header.twig' %}
+{% if envs %}
+{% if error %}
+    {{ error }}
+{% endif %}
+   <form name="add-server" action="/servers" method="post">
+    <fieldset>
+     <legend>Add Server</legend>
+     <div><label for="hostname">hostname</label></div>
+     <div><input type="text" name="hostname" id="hostname"></div>
+     <div><label for="env">environment</label></div>
+     <div>
+      <select id="env" name="env">
+{% for env in envs %}
+       <option name="{{ env.EnvId }}">{{ env.Name }}</option>
+{% endfor %}
+      </select>
+     </div>
+     <div><input type="submit" value="add server"></div>
+    </fieldset>
    </form>
    {% for server in servers %}
-        <a href='/servers/{{ server.ServerId}}/'>{{server.HostName}}</a><br/>
+        <a href='/servers/{{server.ServerId}}'>{{server.HostName}}</a><br/>
    {% endfor %}
- </body>
-</html>
+{% else %}
+    <p>It looks like you have not <a href="/admin/envs" title="manage environments">setup environments</a> yet. You cannot add servers without having an environment bucket to assign them to.</p>
+{% endif %}
+{% include 'common/htmlbottom.twig' %}
