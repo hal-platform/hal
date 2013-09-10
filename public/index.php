@@ -11,6 +11,7 @@ use MCP\Corp\Account\LdapService;
 use PDO;
 use QL\Hal\Admin\Dashboard;
 use QL\Hal\Arrangements;
+use QL\Hal\Admin\ManageArrangements;
 use QL\Hal\Admin\ManageDeploymentsHandler;
 use QL\Hal\Admin\ManageDeployments;
 use QL\Hal\Admin\ManageRepositories;
@@ -18,6 +19,7 @@ use QL\Hal\Admin\ManageRepositoriesHandler;
 use QL\Hal\Admin\ManageServers;
 use QL\Hal\Admin\ManageServersHandler;
 use QL\Hal\LoginRequired;
+use QL\Hal\Services\ArrangementService;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ServerService;
@@ -34,13 +36,15 @@ session_start();
 
 $twigEnv = new Twig_Environment(new Twig_Loader_Filesystem(__DIR__ . '/../templates'));
 $ad = new LdapService;
-$db = new PDO('mysql:unix_socket=/tmp/mysql.sock;dbname=gitbertSlim;charset=utf8', 'root', '');
+$db = new PDO('mysql:host=localhost;dbname=hal;charset=utf8', 'root', '');
+#$db = new PDO('mysql:unix_socket=/tmp/mysql.sock;dbname=gitbertSlim;charset=utf8', 'root', '');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $repos = new RepositoryService($db);
 $servers = new ServerService($db);
 $deployments = new DeploymentService($db);
 $users = new UserService($db);
+$arr = new ArrangementService($db);
 
 $app->add(new LoginRequired('/login', $_SESSION));
 
@@ -56,6 +60,8 @@ $app->post('/login', new LoginHandler(
 
 $app->get('/',  new Arrangements($app->response(), $twigEnv->loadTemplate('home.twig'), $_SESSION));
 $app->get('/admin',  new Dashboard($app->response(), $twigEnv->loadTemplate('admin/dashboard.twig')));
+
+$app->get('/admin/arrangements', new ManageArrangements($app->response(), $twigEnv->loadTemplate('admin/arrangements.twig'), $arr));
 
 $app->get('/admin/repositories', new ManageRepositories($app->response(), $twigEnv->loadTemplate('admin/repositories.twig'), $repos));
 $app->post('/admin/repositories', new ManageRepositoriesHandler(

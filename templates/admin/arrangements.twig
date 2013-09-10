@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>Hal - Manage Arrangements</title>
+ </head>
+ <body>
+    {% if error %}
+        {{ error }}
+    {% endif %}
+   <form name="add-arrangement" action="/admin/arrangements" method="post"> 
+    Short Name: <input type="text" name="shortName"><br>
+    Full Name: <input type="text" name="fullName"><br>
+    <input type="submit" value="add arrangement"><br>
+   </form>
+   {% for arrangement in arrangements %}
+        <a href='/admin/arramgement{{ arrangement.ArrangementId}}/'>{{arrangement.Name}}</a><br/>
+   {% endfor %}
+ </body>
+</html>
