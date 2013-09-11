@@ -18,8 +18,9 @@ class EnvironmentService
 
     const PRIMARY_KEY = 'EnvId';
     const Q_LIST = 'SELECT EnvId, Name, DispOrder FROM Environments ORDER BY DispOrder ASC';
+    const Q_SELECT_ONE = 'SELECT EnvId, Name, DispOrder FROM Environments WHERE EnvId = :id';
     const Q_UPDATE_ORDER = 'UPDATE Environments SET DispOrder = :disp WHERE EnvId = :envid';
-    const Q_INSERT = 'INSERT INTO Environments (Name, DispOrder) VALUES (:name, MAX(DispOrder) + 1)';
+    const Q_INSERT = 'INSERT INTO Environments (Name, DispOrder) SELECT :name, 1 + COALESCE((SELECT IFNULL(MAX(DispOrder),0) FROM Environments))';
 
     /**
      * @var PDO
@@ -49,7 +50,7 @@ class EnvironmentService
     public function create($name)
     {
         return $this->insert($this->db, self::Q_INSERT, [
-            [':name', $name, PDO::PARAM_STR],
+            [':name', $name, PDO::PARAM_STR]
         ]);
     }
 
@@ -65,5 +66,21 @@ class EnvironmentService
             $stmt->bindValue(':disp', $dispOrder, PDO::PARAM_INT);
             $stmt->execute();
         }
+    }
+
+    /**
+     * @param int $envId
+     * @return array|null
+     */
+    public function getById($envId)
+    {
+        $stmt = $this->db->prepare(self::Q_SELECT_ONE);
+        $stmt->bindValue(':id', $envId, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result) < 1) {
+            return null;
+        }
+        return $result[0];
     }
 }

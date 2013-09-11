@@ -40,6 +40,6 @@ class ManageArrangements
     public function __invoke()
     {
         $arrList = $this->arr->listAll();
-        $this->arr->body($this->tpl->render(['arrangements' => $arrList]));
+        $this->response->body($this->tpl->render(['arrangements' => $arrList]));
     }
 }

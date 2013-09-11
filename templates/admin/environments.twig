@@ -2,15 +2,23 @@
 {% include 'common/htmltop.twig' %}
 {% include 'common/header.twig' %}
 {% if envs %}
+<form action="?reorder=1" method="post">
+  <ul>
+  {% for env in envs %}
+   <li><input type="text" size="1" name="env{{ env.EnvId }}" value="{{ env.DispOrder }}"> <a href="/envs/{{ env.Name }}">{{ env.Name }}</a></li>
+  {% endfor %}
+ </ul>
+ <div><button type="submit">Re-Order Environments</button></div>
+</form>
 {% else %}
 <p>It looks like you don't have any environments yet. Add one using the form below:</p>
 {% endif %}
-<form action="post">
+<form action="" method="post">
  <fieldset>
   <legend>Add Environment</legend>
   <div><label for="envname">Name</label></div>
   <div><input type="text" name="envname" id="envname"></div>
-  <div><input type="submit" value="Add Environment" disabled="disabled"></div>
+  <div><button type="submit">Add Environment</button></div>
  </fieldset>
 </form>
 {% include 'common/htmlbottom.twig' %}

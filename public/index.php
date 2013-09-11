@@ -7,18 +7,21 @@
 
 namespace QL\Hal;
 
+use Exception;
 use MCP\Corp\Account\LdapService;
 use PDO;
 use QL\Hal\Admin\Dashboard;
 use QL\Hal\Admin\ManageEnvironments;
+use QL\Hal\Admin\ManageEnvironmentsHandler;
 use QL\Hal\Arrangements;
-use QL\Hal\Admin\ManageArrangements;
 use QL\Hal\Admin\ManageDeploymentsHandler;
-use QL\Hal\Admin\ManageDeployments;
 use QL\Hal\Admin\ManageRepositories;
 use QL\Hal\Admin\ManageRepositoriesHandler;
 use QL\Hal\Admin\ManageServers;
 use QL\Hal\Admin\ManageServersHandler;
+use QL\Hal\Admin\ManageArrangements;
+use QL\Hal\Admin\ManageArrangementsHandler;
+use QL\Hal\Admin\ManageDeployments;
 use QL\Hal\LoginRequired;
 use QL\Hal\Services\ArrangementService;
 use QL\Hal\Services\DeploymentService;
@@ -34,7 +37,19 @@ use Twig_Loader_Filesystem;
 
 require '../vendor/autoload.php';
 
-$app = new Slim;
+$db_dsn = isset($_SERVER['DB_DSN']) ? $_SERVER['DB_DSN'] : null;
+$db_user = isset($_SERVER['DB_USER']) ? $_SERVER['DB_USER'] : null;
+$db_pass = isset($_SERVER['DB_PASS']) ? $_SERVER['DB_PASS'] : null;
+
+if (null === $db_dsn || null === $db_user || null === $db_pass) {
+    throw new Exception('Make sure DB_DSN, DB_USER and DB_PASS are all passed in via the environment.');
+}
+
+$app = new Slim([
+    'db_dsn' => $db_dsn,
+    'db_user' => $db_user,
+    'db_pass' => $db_pass,
+]);
 session_start();
 
 // setup twig
@@ -48,8 +63,12 @@ $app->container->singleton('ldapService', function () {
 });
 
 // database connection
-$app->container->singleton('db', function () {
-    $db = new PDO('mysql:unix_socket=/tmp/mysql.sock;dbname=gitbertSlim;charset=utf8', 'root', '');
+$app->container->singleton('db', function (Set $container) {
+    $db = new PDO(
+        $container['settings']['db_dsn'],
+        $container['settings']['db_user'],
+        $container['settings']['db_pass']
+    );
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     return $db;
 });
@@ -73,6 +92,10 @@ $app->container->singleton('userService', function (Set $container) {
 
 $app->container->singleton('envService', function (Set $container) {
     return new EnvironmentService($container['db']);
+});
+
+$app->container->singleton('arrService', function (Set $container) {
+    return new ArrangementService($container['db']);
 });
 
 // page definitions
@@ -114,7 +137,8 @@ $app->container->singleton('adminRepositoriesPage', function (Set $container) {
     return new ManageRepositories(
         $container['response'],
         $container['twigEnv']->loadTemplate('admin/repositories.twig'),
-        $container['repoService']
+        $container['repoService'],
+        $container['arrService']
     );
 });
 
@@ -141,7 +165,8 @@ $app->container->singleton('adminServersHandlerPage', function (Set $container) 
         $container['response'],
         $container['request'],
         $container['twigEnv']->loadTemplate('admin/servers.twig'),
-        $container['serverService']
+        $container['serverService'],
+        $container['envService']
     );
 });
 
@@ -164,15 +189,38 @@ $app->container->singleton('adminDeploymentsHandlerPage', function (Set $contain
     );
 });
 
+$app->container->singleton('adminArrangementsPage', function (Set $container) {
+    return new ManageArrangements(
+        $container['response'],
+        $container['twigEnv']->loadTemplate('admin/arrangements.twig'),
+        $container['arrService']
+    );
+});
+
+$app->container->singleton('adminArrangementsHandlerPage', function(Set $container) {
+    return new ManageArrangementsHandler(
+        $container['response'],
+        $container['request'],
+        $container['twigEnv']->loadTemplate('admin/arrangements.twig'),
+        $container['arrService']
+    );
+});
+
 $app->container->singleton('adminEnvironmentsPage', function (Set $container) {
     return new ManageEnvironments(
         $container['response'],
-        $container['twigEnv']->loadTemplate('admin/environments.twig')
+        $container['twigEnv']->loadTemplate('admin/environments.twig'),
+        $container['envService']
     );
 });
 
 $app->container->singleton('adminEnvironmentsHandlerPage', function (Set $container) {
-
+    return new ManageEnvironmentsHandler(
+        $container['response'],
+        $container['request'],
+        $container['twigEnv']->loadTemplate('admin/environments.twig'),
+        $container['envService']
+    );
 });
 
 // require login for all pages except /login
@@ -191,9 +239,11 @@ $app->post('/admin/envs',         function () use ($app) { call_user_func($app->
 $app->get ('/admin/repositories', function () use ($app) { call_user_func($app->adminRepositoriesPage);        });
 $app->post('/admin/repositories', function () use ($app) { call_user_func($app->adminRepositoriesHandlerPage); });
 $app->get ('/admin/servers',      function () use ($app) { call_user_func($app->adminServersPage);             });
-$app->post('/admin/servers',      function () use ($app) { call_user_func($app->adminServersHanlderPage);      });
+$app->post('/admin/servers',      function () use ($app) { call_user_func($app->adminServersHandlerPage);      });
 $app->get ('/admin/deployments',  function () use ($app) { call_user_func($app->adminDeploymentsPage);         });
 $app->post('/admin/deployments',  function () use ($app) { call_user_func($app->adminDeploymentsHandlerPage);  });
+$app->get ('/admin/arrangements', function () use ($app) { call_user_func($app->adminArrangementsPage);        });
+$app->post('/admin/arrangements', function () use ($app) { call_user_func($app->adminArrangementsHandlerPage); });
 
 // GO FORTH AND PROSPER
 $app->run();

@@ -17,7 +17,7 @@ class ServerService
     use QueryTrait;
 
     const PRIMARY_KEY = 'ServerId';
-    const Q_LIST = 'SELECT srv.ServerId, srv.HostName, env.Name AS Environment FROM Servers AS srv INNER JOIN Environments as env ON (srv.EnvId = env.EnvId)';
+    const Q_LIST = 'SELECT srv.ServerId, srv.HostName, env.Name AS Environment FROM Servers AS srv INNER JOIN Environments as env ON (srv.EnvId = env.EnvId) ORDER BY env.DispOrder ASC, srv.HostName';
     const Q_INSERT = 'INSERT INTO Servers (HostName, EnvId) VALUES (:hostname, :envid)';
 
     /**

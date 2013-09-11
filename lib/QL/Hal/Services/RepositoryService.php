@@ -18,7 +18,7 @@ class RepositoryService
 
     const PRIMARY_KEY = 'RepositoryId';
     const Q_LIST = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, OwnerEmail FROM Repositories';
-    const Q_INSERT = 'INSERT INTO Repositories (ShortName, GithubUser, GithubRepo, OwnerEmail, Description) VALUES (:name, :user, :repo, :email, :desc)';
+    const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :email, :desc)';
 
     /**
      * @var PDO
@@ -42,17 +42,18 @@ class RepositoryService
     }
 
     /**
+     * @param string $arrId
      * @param string $shortName
      * @param string $githubUser
      * @param string $githubRepo
      * @param string $ownerEmail
      * @param string $description
-     * @param $shortName
      * @return int
      */
-    public function create($shortName, $githubUser, $githubRepo, $ownerEmail, $description)
+    public function create($arrId, $shortName, $githubUser, $githubRepo, $ownerEmail, $description)
     {
         return $this->insert($this->db, self::Q_INSERT, [
+            [':arrId', $arrId, PDO::PARAM_STR],
             [':name', $shortName, PDO::PARAM_STR],
             [':user', $githubUser, PDO::PARAM_STR],
             [':repo', $githubRepo, PDO::PARAM_STR],
