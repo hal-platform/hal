@@ -17,7 +17,8 @@ class UserService
     use QueryTrait;
 
     const PRIMARY_KEY = 'CommonId';
-    const Q_LIST = 'SELECT CommonId, UserName, Email, DisplayName, PictureUrl FROM Users';
+    const Q_LIST = 'SELECT CommonId, UserName, Email, DisplayName, PictureUrl FROM Users ORDER BY DisplayName ASC';
+    const Q_ONE = 'SELECT CommonId, UserName, Email, DisplayName, PictureUrl FROM Users';
     const Q_INSERT = 'INSERT INTO Users (CommonId, UserName, Email, DisplayName, PictureUrl) VALUES (:commonId, :userName, :email, :displayName, :pictureUrl)';
     const Q_UPDATE = 'UPDATE Users SET UserName = :userName, Email = :email, DisplayName = :displayName, PictureUrl = :pictureUrl WHERE CommonId = :commonId';
     const Q_COUNT = 'SELECT COUNT(*) FROM Users';
@@ -92,7 +93,7 @@ class UserService
      */
     public function getById($commonId)
     {
-        return $this->selectOne($this->db, self::Q_LIST, self::PRIMARY_KEY, $commonId);
+        return $this->selectOne($this->db, self::Q_ONE, self::PRIMARY_KEY, $commonId);
     }
 
     /**

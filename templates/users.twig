@@ -1,0 +1,13 @@
+{% set page_title = user.DisplayName %}
+{% include 'common/htmltop.twig' %}
+{% include 'common/header.twig' %}
+<h2>{{ user.DisplayName }}</h2>
+<p><img src="{{ user.PictureUrl }}" width="150"></p>
+<h3>Stats</h3>
+<ul>
+ <li>Total Pushes: {{ total_pushes }}</li>
+ <li>Github Page: <a href="http://git/{{ user.UserName }}">http://git/{{ user.UserName }}</a></li>
+</ul>
+<h3>Permissions</h3>
+<p>This doesn't work yet.</p>
+{% include 'common/htmlbottom.twig' %}

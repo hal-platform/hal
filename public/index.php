@@ -13,7 +13,6 @@ use PDO;
 use QL\Hal\Admin\Dashboard;
 use QL\Hal\Admin\ManageEnvironments;
 use QL\Hal\Admin\ManageEnvironmentsHandler;
-use QL\Hal\Arrangements;
 use QL\Hal\Admin\ManageDeploymentsHandler;
 use QL\Hal\Admin\ManageRepositories;
 use QL\Hal\Admin\ManageRepositoriesHandler;
@@ -22,7 +21,7 @@ use QL\Hal\Admin\ManageServersHandler;
 use QL\Hal\Admin\ManageArrangements;
 use QL\Hal\Admin\ManageArrangementsHandler;
 use QL\Hal\Admin\ManageDeployments;
-use QL\Hal\LoginRequired;
+use QL\Hal\Admin\ManageUsers;
 use QL\Hal\Services\ArrangementService;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\EnvironmentService;
@@ -113,6 +112,14 @@ $app->container->singleton('loginHandlerPage', function (Set $container) {
         $_SESSION,
         $container['ldapService'],
         $container['twigEnv']->loadTemplate('login.twig'),
+        $container['userService']
+    );
+});
+
+$app->container->singleton('userPage', function (Set $container) {
+    return new Users(
+        $container['response'],
+        $container['twigEnv']->loadTemplate('users.twig'),
         $container['userService']
     );
 });
@@ -223,6 +230,14 @@ $app->container->singleton('adminEnvironmentsHandlerPage', function (Set $contai
     );
 });
 
+$app->container->singleton('adminUsersPage', function (Set $container) {
+    return new ManageUsers(
+        $container['response'],
+        $container['twigEnv']->loadTemplate('admin/users.twig'),
+        $container['userService']
+    );
+});
+
 // require login for all pages except /login
 $app->add(new LoginRequired('/login', $_SESSION));
 
@@ -233,6 +248,7 @@ $app->response()->header('Content-Type', 'text/html; charset=utf-8');
 $app->get ('/',                   function () use ($app) { call_user_func($app->arrangementsPage);             });
 $app->get ('/login',              function () use ($app) { call_user_func($app->loginPage);                    });
 $app->post('/login',              function () use ($app) { call_user_func($app->loginHandlerPage);             });
+$app->get ('/users/:id',          function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
 $app->get ('/admin',              function () use ($app) { call_user_func($app->adminDashboardPage);           });
 $app->get ('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsPage);        });
 $app->post('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsHandlerPage); });
@@ -244,6 +260,7 @@ $app->get ('/admin/deployments',  function () use ($app) { call_user_func($app->
 $app->post('/admin/deployments',  function () use ($app) { call_user_func($app->adminDeploymentsHandlerPage);  });
 $app->get ('/admin/arrangements', function () use ($app) { call_user_func($app->adminArrangementsPage);        });
 $app->post('/admin/arrangements', function () use ($app) { call_user_func($app->adminArrangementsHandlerPage); });
+$app->get ('/admin/users',        function () use ($app) { call_user_func($app->adminUsersPage);               });
 
 // GO FORTH AND PROSPER
 $app->run();
