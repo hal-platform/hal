@@ -85,7 +85,7 @@ class ManageServersHandler
             return;
         }
 
-        $this->servers->create($hostname, $envId);
+        $this->servers->create(strtolower($hostname), $envId);
         $this->response->status(303);
         $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/servers';
     }

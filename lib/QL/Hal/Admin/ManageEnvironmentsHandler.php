@@ -75,7 +75,7 @@ class ManageEnvironmentsHandler
         if ($errors) {
             $this->response->body($this->tpl->render(['errors' => $errors]));
         } else {
-            $this->envService->create($envname);
+            $this->envService->create(strtolower($envname));
             $this->response->status(303);
             $this->response->header('Location', 'http://' . $this->request->getHost() . '/admin/envs');
         }
