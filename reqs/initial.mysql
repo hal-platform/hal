@@ -1,19 +1,8 @@
 CREATE TABLE Environments (
-    EnvId       TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    Name        CHAR(16)         NOT NULL,
-    DispOrder   TINYINT UNSIGNED NOT NULL,
-    PRIMARY KEY (EnvId),
-    UNIQUE      (Name)
-)
-    ENGINE        MyISAM
-    CHARACTER SET ascii
-    COLLATE       ascii_general_ci;
-
-CREATE TABLE Arrangements (
-    ArrangementId TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    ShortName     CHAR(16)         NOT NULL,
-    Name          CHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-    PRIMARY KEY   (ArrangementId),
+    EnvironmentId TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    ShortName     CHAR(24)         NOT NULL,
+    DispOrder     TINYINT UNSIGNED NOT NULL,
+    PRIMARY KEY   (EnvironmentId),
     UNIQUE        (ShortName)
 )
     ENGINE        MyISAM
@@ -21,10 +10,21 @@ CREATE TABLE Arrangements (
     COLLATE       ascii_general_ci;
 
 CREATE TABLE Servers (
-    ServerId    INT UNSIGNED     NOT NULL AUTO_INCREMENT,
-    EnvId       TINYINT UNSIGNED NOT NULL,
-    HostName    CHAR(32)         NOT NULL,
-    PRIMARY KEY (ServerId)
+    ServerId      INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    EnvironmentId TINYINT UNSIGNED NOT NULL,
+    HostName      CHAR(24)         NOT NULL,
+    PRIMARY KEY   (ServerId)
+)
+    ENGINE        MyISAM
+    CHARACTER SET ascii
+    COLLATE       ascii_general_ci;
+
+CREATE TABLE Arrangements (
+    ArrangementId TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    ShortName     CHAR(24)         NOT NULL,
+    Name          CHAR(48) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+    PRIMARY KEY   (ArrangementId),
+    UNIQUE        (ShortName)
 )
     ENGINE        MyISAM
     CHARACTER SET ascii
@@ -33,9 +33,9 @@ CREATE TABLE Servers (
 CREATE TABLE Repositories (
     RepositoryId  INT UNSIGNED NOT NULL AUTO_INCREMENT,
     ArrangementId INT UNSIGNED NOT NULL,
-    ShortName     CHAR(16) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-    GithubUser    CHAR(32)     NOT NULL,
-    GithubRepo    CHAR(32)     NOT NULL,
+    ShortName     CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    GithubUser    CHAR(48)     NOT NULL,
+    GithubRepo    CHAR(48)     NOT NULL,
     OwnerEmail    CHAR(128)    NOT NULL,
     Description   CHAR(255)    NOT NULL,
     PRIMARY KEY   (RepositoryId),
@@ -47,7 +47,7 @@ CREATE TABLE Repositories (
 
 CREATE TABLE Deployments (
     DeploymentId INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    RepoId       INT UNSIGNED NOT NULL,
+    RepositoryId INT UNSIGNED NOT NULL,
     ServerId     INT UNSIGNED NOT NULL,
     CurStatus    ENUM('Deployed', 'Deploying', 'Error') NOT NULL DEFAULT 'Error',
     CurBranch    CHAR(64)     NOT NULL,
@@ -55,23 +55,24 @@ CREATE TABLE Deployments (
     LastPushed   DATETIME     NOT NULL,
     TargetPath   CHAR(255)    NOT NULL,
     PRIMARY KEY  (DeploymentId),
-    UNIQUE       (RepoId, ServerId)
+    UNIQUE       (RepositoryId, ServerId)
 )
     ENGINE        MyISAM
     CHARACTER SET utf8
     COLLATE       utf8_unicode_ci;
 
+-- probably needs to be indexed
 CREATE TABLE PushLogs (
     PushStart    DATETIME     NOT NULL,
     PushEnd      DATETIME     NOT NULL,
     PushStatus   ENUM('Deployed', 'Deploying', 'Error') NOT NULL DEFAULT 'Deploying',
     PushUser     CHAR(32)     NOT NULL,
     PushCommonId INT UNSIGNED NOT NULL,
-    PushRepo     CHAR(64) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    PushRepo     CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
     PushBranch   CHAR(64)     NOT NULL,
     CommitSha    BINARY(20)   NOT NULL,
-    Environment  CHAR(16) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-    TargetServer CHAR(32) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    Environment  CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    TargetServer CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
     TargetPath   CHAR(255)    NOT NULL
 )
     ENGINE        MyISAM
@@ -84,17 +85,9 @@ CREATE TABLE Users (
     Email       CHAR(128)    NOT NULL,
     DisplayName CHAR(128)    NOT NULL,
     PictureUrl  CHAR(128)    NOT NULL,
-    GodMode     BIT          NOT NULL DEFAULT 0,
     PRIMARY KEY (CommonId),
     UNIQUE      (UserName)
 )
     ENGINE        MyISAM
     CHARACTER SET utf8
     COLLATE       utf8_unicode_ci;
-
-CREATE TABLE Permissions (
-    CommonId     INT UNSIGNED NOT NULL,
-    DeploymentId INT UNSIGNED NOT NULL,
-    PRIMARY KEY  (CommonId, DeploymentId)
-)
-    ENGINE MyISAM;

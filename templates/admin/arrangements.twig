@@ -1,20 +1,6 @@
 {% set page_title = 'Arrangement Management' %}
 {% include 'common/htmltop.twig' %}
 {% include 'common/header.twig' %}
-{% if errors %}
-  <ul>
-  {% for error in errors %}
-    <li>{{ error }}</li>
-  {% endfor %}
-  </ul>
-{% endif %}
-  <form action="" method="post"> 
-    <div><label for="shortName">Short Name</label></div>
-    <div><input type="text" name="shortName" id="shortName"></div>
-    <div><label for="fullName">Full Name</label></div>
-    <div><input type="text" name="fullName"></div>
-    <div><button type="submit">Add Arrangement</button></div>
-  </form>
 
 {% if arrangements %}
   <ul>
@@ -25,4 +11,24 @@
 {% else %}
   <p>You don't seem to have any arrangements setup yet.</p>
 {% endif %}
+
+{% if errors %}
+ <ul>
+  {% for error in errors %}
+   <li>{{ error }}</li>
+  {% endfor %}
+ </ul>
+{% endif %}
+
+<form action="" method="post">
+ <fieldset>
+  <legend>Add Arrangement</legend>
+  <div><label for="shortName">Short Name</label></div>
+  <div><input type="text" name="shortName" id="shortName" maxlength="24" size="24" required value="{{ cur_sn }}"></div>
+  <div><label for="fullName">Full Name</label></div>
+  <div><input type="text" name="fullName" id="fullName" maxlength="48" size="48" required value="{{ cur_fn }}"></div>
+  <div><button type="submit">Add Arrangement</button></div>
+ </fieldset>
+</form>
+
 {% include 'common/htmlbottom.twig' %}

@@ -117,7 +117,7 @@ class ManageServersHandler
         if (!preg_match($regex, $hostname)) {
             $errors[] = 'Hostname must only use numbers, letters, hyphens and periods.';
         }
-        if (strlen($hostname) > 32) {
+        if (strlen($hostname) > 24) {
             $errors[] = "Hostname must be less than or equal to 32 characters";
         }
         if (strlen($hostname) === 0) {

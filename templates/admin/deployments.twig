@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html>
- <head>
- <title>GIT Deployments Management</title>
- </head>
- <body>
-   <form name="add-deployment" action="/deployments" method="post"> 
-       Server:
+{% set page_title = "Deployments Admin" %}
+{% include "common/htmltop.twig" %}
+{% include "common/header.twig" %}
+  <form action="" method="post">
+    <div><label for="server">Server</label></div>
+    <div>
+
+    </div>
        <select name="serverId">
        {% for server in servers %}
             <option value="{{server.ServerId}}">{{server.HostName}}</option>
@@ -28,6 +28,4 @@
       Description: {{deployment.Description}}
       <p>
     {% endfor %}
-
- </body>
-</html>
+{% include "common/htmlbottom.twig" %}

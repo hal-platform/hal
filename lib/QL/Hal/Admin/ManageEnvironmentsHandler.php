@@ -73,22 +73,28 @@ class ManageEnvironmentsHandler
         $this->validateEnvName($envname, $errors);
 
         if ($errors) {
-            $this->response->body($this->tpl->render(['errors' => $errors]));
-        } else {
-            $this->envService->create(strtolower($envname));
-            $this->response->status(303);
-            $this->response->header('Location', 'http://' . $this->request->getHost() . '/admin/envs');
+            $data = [
+                'errors' => $errors,
+                'cur_env' => $envname,
+                'envs' => $this->envService->listAll()
+            ];
+            $this->response->body($this->tpl->render($data));
+            return;
         }
+
+        $this->envService->create(strtolower($envname));
+        $this->response->status(303);
+        $this->response->header('Location', 'http://' . $this->request->getHost() . '/admin/envs');
     }
 
     private function validateEnvName($envname, array &$errors)
     {
-        if (!preg_match('@^[a-zA-Z_-]+$@', $envname)) {
+        if (!preg_match('@^[a-zA-Z_-]*$@', $envname)) {
             $errors[] = 'Environment name must consist of letters, underscores and/or hyphens.';
         }
 
-        if (strlen($envname) > 16 || strlen($envname) < 2) {
-            $errors[] = 'Environment name must be between 2 and 16 characters.';
+        if (strlen($envname) > 24 || strlen($envname) < 2) {
+            $errors[] = 'Environment name must be between 2 and 24 characters.';
         }
     }
 

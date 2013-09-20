@@ -16,11 +16,11 @@ class EnvironmentService
 {
     use QueryTrait;
 
-    const PRIMARY_KEY = 'EnvId';
-    const Q_LIST = 'SELECT EnvId, Name, DispOrder FROM Environments ORDER BY DispOrder ASC';
-    const Q_SELECT_ONE = 'SELECT EnvId, Name, DispOrder FROM Environments WHERE EnvId = :id';
-    const Q_UPDATE_ORDER = 'UPDATE Environments SET DispOrder = :disp WHERE EnvId = :envid';
-    const Q_INSERT = 'INSERT INTO Environments (Name, DispOrder) SELECT :name, 1 + COALESCE((SELECT IFNULL(MAX(DispOrder),0) FROM Environments))';
+    const PRIMARY_KEY = 'EnvironmentId';
+    const Q_LIST = 'SELECT EnvironmentId, ShortName, DispOrder FROM Environments ORDER BY DispOrder ASC';
+    const Q_SELECT_ONE = 'SELECT EnvironmentId, ShortName, DispOrder FROM Environments WHERE EnvironmentId = :id';
+    const Q_UPDATE_ORDER = 'UPDATE Environments SET DispOrder = :disp WHERE EnvironmentId = :envid';
+    const Q_INSERT = 'INSERT INTO Environments (ShortName, DispOrder) SELECT :name, 1 + COALESCE((SELECT IFNULL(MAX(DispOrder),0) FROM Environments))';
 
     /**
      * @var PDO

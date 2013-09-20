@@ -249,7 +249,7 @@ $app->response()->header('Content-Type', 'text/html; charset=utf-8');
 $app->get ('/',                   function () use ($app) { call_user_func($app->arrangementsPage);             });
 $app->get ('/login',              function () use ($app) { call_user_func($app->loginPage);                    });
 $app->post('/login',              function () use ($app) { call_user_func($app->loginHandlerPage);             });
-$app->get ('/users/:id',          function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
+$app->get ('/u/:id',              function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
 $app->get ('/admin',              function () use ($app) { call_user_func($app->adminDashboardPage);           });
 $app->get ('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsPage);        });
 $app->post('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsHandlerPage); });
