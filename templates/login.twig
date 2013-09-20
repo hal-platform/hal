@@ -1,6 +1,7 @@
 {% set page_title = "Login" %}
 {% include 'common/htmltop.twig' %}
    <h1>HAL 9000 - Login</h1>
+   <p>Please use your Active Directory credentials to login (ie your "windows password").</p>
 {% if error %}
    <p>{{ error }}</p>
 {% endif %}
@@ -11,7 +12,7 @@
      <div><input type="text" id="username" name="username"></div>
      <div><label for="password">Password</label></div>
      <div><input type="password" id="password" name="password"></div>
-     <div><input type="submit" value="login"></div>
+     <div><button type="submit">Login</button></div>
     </fieldset>
    </form>
 {% include 'common/htmlbottom.twig' %}
