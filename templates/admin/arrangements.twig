@@ -1,19 +1,28 @@
-<!DOCTYPE html>
-<html>
- <head>
- <title>Hal - Manage Arrangements</title>
- </head>
- <body>
-    {% if error %}
-        {{ error }}
-    {% endif %}
-   <form name="add-arrangement" action="/admin/arrangements" method="post"> 
-    Short Name: <input type="text" name="shortName"><br>
-    Full Name: <input type="text" name="fullName"><br>
-    <input type="submit" value="add arrangement"><br>
-   </form>
-   {% for arrangement in arrangements %}
-        <a href='/admin/arramgement{{ arrangement.ArrangementId}}/'>{{arrangement.Name}}</a><br/>
-   {% endfor %}
- </body>
-</html>
+{% set page_title = 'Arrangement Management' %}
+{% include 'common/htmltop.twig' %}
+{% include 'common/header.twig' %}
+{% if errors %}
+  <ul>
+  {% for error in errors %}
+    <li>{{ error }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+  <form action="" method="post"> 
+    <div><label for="shortName">Short Name</label></div>
+    <div><input type="text" name="shortName" id="shortName"></div>
+    <div><label for="fullName">Full Name</label></div>
+    <div><input type="text" name="fullName"></div>
+    <div><button type="submit">Add Arrangement</button></div>
+  </form>
+
+{% if arrangements %}
+  <ul>
+  {% for arrangement in arrangements %}
+    <li>{{ arrangement.Name }} (<a href="/a/{{arrangement.ShortName}}">/a/{{ arrangement.ShortName }}</a>)</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>You don't seem to have any arrangements setup yet.</p>
+{% endif %}
+{% include 'common/htmlbottom.twig' %}
