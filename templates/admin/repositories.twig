@@ -2,31 +2,45 @@
 {% include 'common/htmltop.twig' %}
 {% include 'common/header.twig' %}
 
-{% if errors %}
-        {% for error in errors %}
-        <p>{{ error }}
-        {% endfor %}
-{% endif %}
-   <form name="add-repo" action="/admin/repositories" method="post"> 
-    Arrangement: 
-        <select name="arrId">
-        {% for arr in arrangements %}
-            <option value="{{arr.ArrangementId}}">{{arr.ShortName}}
-        {% endfor %}
-        </select></br>
-
-    shortname: <input type="text" name="shortName"><br>
-    GitHub User Name: <input type="text" name="githubUser"><br>
-    GitHub Repository: <input type="text" name="githubRepo"><br>
-    email: <input type="text" name="ownerEmail"><br>
-    description: <input type="text" name="description"><br>
-    <input type="submit" name="submit" value="add repository"><br>
-   </form>
-
 {% if repositories %}
-   {% for repository in repositories %}
-        <a href='/repositories/{{ repository.RepoID}}/'>{{repository.ShortName}}</a><br/>
-   {% endfor %}
+  <ul>
+  {% for repository in repositories %}
+    <li><a href="/r/{{ repository.ShortName }}">/r/{{ repository.ShortName }}</a> (<a href="http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}">{{ repository.GithubUser }}/{{ repository.GithubRepo }}</a>)</li>
+  {% endfor %}
+  </ul>
 {% endif %}
- </body>
-</html>
+
+{% if errors %}
+  <ul>
+  {% for error in errors %}
+    <li>{{ error }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+  <form action="" method="post">
+    <fieldset>
+      <legend>Add Repository</legend>
+      <div><label for="arrId">Arrangement</label></div>
+      <div>
+        <select name="arrId" id="arrId">
+        {% for arr in arrangements %}
+          <option value="{{ arr.ArrangementId }}">{{ arr.ShortName }}</option>
+        {% endfor %}
+        </select>
+      </div>
+      <div><label for="shortName">Short Name</label></div>
+      <div><input type="text" name="shortName" id="shortName" size="24" maxlength="24" required value="{{ cur_shortname }}"></div>
+      <div><label for="githubUser">GitHub Enterprise User or Organization</label></div>
+      <div><input type="text" name="githubUser" id="githubUser" size="48" maxlength="48" required value="{{ cur_githubuser }}"></div>
+      <div><label for="githubRepo">GitHub Enterprise Repository</label></div>
+      <div><input type="text" name="githubRepo" id="githubRepo" size="48" maxlength="48" required value="{{ cur_githubrepo }}"></div>
+      <div><label for="ownerEmail">Email Address</label> (this is where push emails will be sent)</div>
+      <div><input type="email" name="ownerEmail" id="ownerEmail" size="30" maxlength="128" required value="{{ cur_email }}"></div>
+      <div><label for="description">Description</label></div>
+      <div><textarea name="description" id="description" maxlength="255" cols="48" rows="8">{{ cur_description }}</textarea></div>
+      <div><button type="submit">Add Repository</button></div>
+    </fieldset>
+  </form>
+
+{% include 'common/htmlbottom.twig' %}

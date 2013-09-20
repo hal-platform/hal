@@ -38,6 +38,7 @@ class ManageRepositories
      * @param Response $response
      * @param Twig_Template $tpl
      * @param RepositoryService $repos
+     * @param ArrangementService $arrs
      */
     public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repos, ArrangementService $arrs)
     {
@@ -55,8 +56,8 @@ class ManageRepositories
         $reposList = $this->repos->listAll();
         $arrsList = $this->arrs->listAll();
         $this->response->body($this->tpl->render([
-                    'repositories' => $reposList,
-                    'arrangements' => $arrsList,
-                ]));
+            'repositories' => $reposList,
+            'arrangements' => $arrsList,
+        ]));
     }
 }

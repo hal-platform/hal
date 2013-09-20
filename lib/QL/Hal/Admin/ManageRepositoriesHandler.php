@@ -36,12 +36,12 @@ class ManageRepositoriesHandler
     /**
      * @var RepositoryService
      */
-    private $repo;
+    private $repoService;
 
     /**
      * @var ArrangementService
      */
-    private $arr;
+    private $arrService;
 
     public function __construct(
         Response $response,
@@ -74,33 +74,40 @@ class ManageRepositoriesHandler
         $this->validateShortName($shortName, $errors);        
         $this->validateDescription($description, $errors);
 
-        if($errors) {
-            $this->response->body($this->tpl->render([
+        if ($errors) {
+            $data = [
                 'errors' => $errors,
-                'arrangements' => $this->arrService->listAll(), 
-                'repositories' => $this->repoService->listAll()]));
+                'arrangements' => $this->arrService->listAll(),
+                'repositories' => $this->repoService->listAll(),
+                'cur_shortname' => $shortName,
+                'cur_githubuser' => $githubUser,
+                'cur_githubrepo' => $githubRepo,
+                'cur_email' => $ownerEmail,
+                'cur_description' => $description,
+            ];
+            $this->response->body($this->tpl->render($data));
             return;
-        } else{
-            $this->repoService->create($arrId, $shortName, $githubUser, $githubRepo, $ownerEmail, $description);
-            $this->response->status(302);
-            $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/repositories';
         }
+
+        $this->repoService->create($arrId, $shortName, $githubUser, $githubRepo, $ownerEmail, $description);
+        $this->response->status(303);
+        $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/repositories';
     }
 
     private function validateShortName($shortName, array &$errors)
     {
-        if (!preg_match('@^[a-zA-Z0-9]+$@', $shortName)) {
-            $errors[] = "Short Name must be alphanumeric only";
+        if (!preg_match('@^[a-zA-Z0-9_-]+$@', $shortName)) {
+            $errors[] = "Short Name must consist of alphanumeric, underscore and/or hyphens only.";
         }
         
-        if (mb_strlen($shortName) < 2 || mb_strlen($shortName) > 16) {
+        if (strlen($shortName) < 2 || strlen($shortName) > 16) {
             $errors[] = "Short Name must be 2 to 16 characters.";
         }
     }
 
     private function validateDescription($description, array &$errors)
     {
-        if (mb_strlen($description) > 255 || mb_strlen($description) <  2) {
+        if (mb_strlen($description, 'UTF-8') > 255 || mb_strlen($description, 'UTF-8') <  2) {
             $errors[] = "Description must be less than 255 characters.";
         }
     }
