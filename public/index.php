@@ -154,7 +154,8 @@ $app->container->singleton('adminRepositoriesHandlerPage', function (Set $contai
         $container['response'],
         $container['request'],
         $container['twigEnv']->loadTemplate('admin/repositories.twig'),
-        $container['repoService']
+        $container['repoService'],
+        $container['arrService']
     );
 });
 

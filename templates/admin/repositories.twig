@@ -2,6 +2,11 @@
 {% include 'common/htmltop.twig' %}
 {% include 'common/header.twig' %}
 
+{% if errors %}
+        {% for error in errors %}
+        <p>{{ error }}
+        {% endfor %}
+{% endif %}
    <form name="add-repo" action="/admin/repositories" method="post"> 
     Arrangement: 
         <select name="arrId">
