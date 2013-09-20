@@ -100,8 +100,8 @@ class ManageRepositoriesHandler
             $errors[] = "Short Name must consist of alphanumeric, underscore and/or hyphens only.";
         }
         
-        if (strlen($shortName) < 2 || strlen($shortName) > 16) {
-            $errors[] = "Short Name must be 2 to 16 characters.";
+        if (strlen($shortName) < 2 || strlen($shortName) > 24) {
+            $errors[] = "Short Name must be 2 to 24 characters.";
         }
     }
 
