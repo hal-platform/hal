@@ -2,25 +2,28 @@
 {% include "common/htmltop.twig" %}
 {% include "common/header.twig" %}
   <form action="" method="post">
-    <div><label for="repositoryId">Repository</label></div>
-    <div>
-      <select id="repositoryId" name="repositoryId">
-      {% for repository in repositories %}
-        <option value="{{repository.RepositoryId}}">{{repository.ShortName}}</option>
-      {% endfor %}
-      </select>
-    </div>
-    <div><label for="serverId">Server</label></div>
-    <div>
-      <select id="serverId" name="serverId">
-      {% for server in servers %}
-        <option value="{{server.ServerId}}">{{server.HostName}}</option>
-      {% endfor %}
-      </select>
-    </div>
-    <div><label for="path">Target Path</label></div>
-    <div><input type="text" name="path" id="path" required maxlength="255" size="64"></div>
-    <div><button type="submit">Create Deployment</button></div>
+    <fieldset>
+      <legend>Add Deployment</legend>
+      <div><label for="repositoryId">Repository</label></div>
+      <div>
+        <select id="repositoryId" name="repositoryId">
+        {% for repository in repositories %}
+          <option value="{{repository.RepositoryId}}">{{repository.ShortName}}</option>
+        {% endfor %}
+        </select>
+      </div>
+      <div><label for="serverId">Server</label></div>
+      <div>
+        <select id="serverId" name="serverId">
+        {% for server in servers %}
+          <option value="{{server.ServerId}}">{{server.HostName}}</option>
+        {% endfor %}
+        </select>
+      </div>
+      <div><label for="path">Target Path</label></div>
+      <div><input type="text" name="path" id="path" required maxlength="255" size="64"></div>
+      <div><button type="submit">Create Deployment</button></div>
+    </fieldset>
   </form>
 {% if deployments %}
   <table>
