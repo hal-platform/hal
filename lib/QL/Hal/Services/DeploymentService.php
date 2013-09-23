@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Services;
 
+use DateTime;
+use DateTimeZone;
 use PDO;
 
 /**
@@ -20,23 +22,30 @@ class DeploymentService
     const Q_LIST = '
     SELECT
        dep.DeploymentId,
-       dep.RepoId,
-       env.EnvId,
-       env.Name      AS Environment,
-       rep.ShortName AS Repository,
+       dep.RepositoryId,
        dep.ServerId,
-       srv.HostName  AS ServerName,
+       env.EnvironmentId,
+       env.ShortName      AS Environment,
+       rep.ShortName      AS Repository,
+       rep.GithubUser,
+       rep.GithubRepo,
+       srv.HostName       AS HostName,
        dep.CurStatus,
        dep.CurBranch,
-       dep.CurCommit,
+       LOWER(HEX(dep.CurCommit)) AS CurCommit,
+       dep.LastPushed,
        dep.TargetPath
     FROM
-        Deployments  AS dep                                INNER JOIN
-        Servers      AS srv ON dep.ServerId = srv.ServerId INNER JOIN
-        Repositories AS rep ON dep.RepoId   = rep.RepoId   INNER JOIN
-        Environments AS env ON srv.EnvId    = env.EnvId
+        Deployments  AS dep                                          INNER JOIN
+        Servers      AS srv ON dep.ServerId      = srv.ServerId      INNER JOIN
+        Repositories AS rep ON dep.RepositoryId  = rep.RepositoryId  INNER JOIN
+        Environments AS env ON srv.EnvironmentId = env.EnvironmentId
+    ORDER BY
+        rep.ShortName ASC,
+        srv.HostName ASC,
+        env.DispOrder ASC
     ';
-    const Q_INSERT = 'INSERT INTO Deployments (RepoId, ServerId, CurStatus, CurBranch, CurCommit, TargetPath) VALUES (:repo, :server, :status, :branch, :commit, :path)';
+    const Q_INSERT = 'INSERT INTO Deployments (RepositoryId, ServerId, CurStatus, CurBranch, CurCommit, LastPushed, TargetPath) VALUES (:repo, :server, :status, :branch, UNHEX(:commit), :lastpushed, :path)';
 
     /**
      * @var PDO
@@ -56,7 +65,15 @@ class DeploymentService
      */
     public function listAll()
     {
-        return $this->selectAll($this->db, self::Q_LIST, self::PRIMARY_KEY);
+        $result = $this->selectAll($this->db, self::Q_LIST, self::PRIMARY_KEY);
+        foreach ($result as $item) {
+            if ($item['LastPushed'] === '0000-00-00 00:00:00') {
+                $item['LastPushed'] = null;
+            } else {
+                $item['LastPushed'] = new DateTime('LastPushed', new DateTimeZone('UTC'));
+            }
+        }
+        return $result;
     }
 
     /**
@@ -66,17 +83,25 @@ class DeploymentService
      * @param string $branch one of 'Deploying', 'Deployed' or 'Error'
      * @param string $commit
      * @param string $path
+     * @param DateTime|null $lastPushed
      * @return int
      */
-    public function create($repo, $server, $status, $branch, $commit, $path)
+    public function create($repo, $server, $status, $branch, $commit, $path, DateTime $lastPushed = null)
     {
+        if ($lastPushed === null) {
+            $lastPushed = '0000-00-00 00:00:00';
+        } else {
+            $lastPushed = $lastPushed->format('Y-m-d H:i:s');
+        }
+
         return $this->insert($this->db, self::Q_INSERT, [
             [':repo', $repo, PDO::PARAM_INT],
             [':server', $server, PDO::PARAM_INT],
-            [':status', $status, PDO::PARAM_INT],
-            [':branch', $branch, PDO::PARAM_INT],
-            [':commit', $commit, PDO::PARAM_INT],
-            [':path', $path, PDO::PARAM_INT],
+            [':status', $status, PDO::PARAM_STR],
+            [':branch', $branch, PDO::PARAM_STR],
+            [':commit', $commit, PDO::PARAM_STR],
+            [':lastpushed', $lastPushed, PDO::PARAM_STR],
+            [':path', $path, PDO::PARAM_STR],
         ]);
     }
 }

@@ -145,6 +145,7 @@ $app->container->singleton('adminDashboardPage', function (Set $container) {
     return new Dashboard(
         $container['response'],
         $container['twigEnv']->loadTemplate('admin/dashboard.twig'),
+        $container['repoService'],
         $container['userService']
     );
 });
@@ -202,6 +203,8 @@ $app->container->singleton('adminDeploymentsHandlerPage', function (Set $contain
         $container['response'],
         $container['request'],
         $container['twigEnv']->loadTemplate('admin/deployments.twig'),
+        $container['repoService'],
+        $container['serverService'],
         $container['deploymentService']
     );
 });
@@ -254,12 +257,14 @@ $app->add(new LoginRequired('/login', $_SESSION));
 // default to UTF-8 character set response
 $app->response()->header('Content-Type', 'text/html; charset=utf-8');
 
-// define routes -- this should be pulled out into some config file at some point
+// define user facing routes
 $app->get ('/',                   function () use ($app) { call_user_func($app->arrangementsPage);             });
 $app->get ('/login',              function () use ($app) { call_user_func($app->loginPage);                    });
 $app->post('/login',              function () use ($app) { call_user_func($app->loginHandlerPage);             });
 $app->get ('/u/:id',              function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
 $app->get ('/a/:shortName',       function ($id) use ($app) { call_user_func($app->arrRepositoryListPage, $id, $app);       });
+
+// admin page routes
 $app->get ('/admin',              function () use ($app) { call_user_func($app->adminDashboardPage);           });
 $app->get ('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsPage);        });
 $app->post('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsHandlerPage); });

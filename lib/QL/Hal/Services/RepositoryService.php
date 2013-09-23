@@ -19,6 +19,7 @@ class RepositoryService
     const PRIMARY_KEY = 'RepositoryId';
     const Q_LIST = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, OwnerEmail FROM Repositories';
     const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :email, :desc)';
+    const Q_COUNT = 'SELECT COUNT(*) FROM Repositories';
 
     /**
      * @var PDO
@@ -69,5 +70,13 @@ class RepositoryService
     public function getById($repoId)
     {
         return $this->selectOne($this->db, self::Q_LIST, self::PRIMARY_KEY, $repoId);
+    }
+
+    /**
+     * @return int
+     */
+    public function totalCount()
+    {
+        return $this->countStar($this->db, self::Q_COUNT);
     }
 }

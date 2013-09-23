@@ -2,30 +2,65 @@
 {% include "common/htmltop.twig" %}
 {% include "common/header.twig" %}
   <form action="" method="post">
-    <div><label for="server">Server</label></div>
+    <div><label for="repositoryId">Repository</label></div>
     <div>
-
+      <select id="repositoryId" name="repositoryId">
+      {% for repository in repositories %}
+        <option value="{{repository.RepositoryId}}">{{repository.ShortName}}</option>
+      {% endfor %}
+      </select>
     </div>
-       <select name="serverId">
-       {% for server in servers %}
-            <option value="{{server.ServerId}}">{{server.HostName}}</option>
-       {% endfor %}
-       </select></br>
-       Repository:
-       <select name="repoId">
-       {% for repository in repositories %}
-            <option value="{{repository.RepoID}}">{{repository.ShortName}}</option>
-       {% endfor %}
-        </select></br>
-    path: <input type="text" name="path"><br>
-    owner email: <input type="text" name="email"><br>
-    <input type="submit" name="submit" value="add deployment"><br>
-   </form>
-<p>
-    Current Deployments:<br>
+    <div><label for="serverId">Server</label></div>
+    <div>
+      <select id="serverId" name="serverId">
+      {% for server in servers %}
+        <option value="{{server.ServerId}}">{{server.HostName}}</option>
+      {% endfor %}
+      </select>
+    </div>
+    <div><label for="path">Target Path</label></div>
+    <div><input type="text" name="path" id="path" required maxlength="255" size="64"></div>
+    <div><button type="submit">Create Deployment</button></div>
+  </form>
+{% if deployments %}
+  <table>
+    <thead>
+      <tr>
+        <th>Repository</th>
+        <th>Server (Env)</th>
+        <th>Current Status</th>
+        <th>Current Branch</th>
+        <th>Current Commit</th>
+        <th>Last Push</th>
+        <th>Target Path</th>
+      </tr>
+    </thead>
+    <tbody>
     {% for deployment in deployments %}
-      Name:  {{deployment.ShortName}} <br> 
-      Description: {{deployment.Description}}
-      <p>
+      {% if deployment.LastPush %}
+        {% set lastPush = deployment.LastPush|date(timezone="America/Detroit") %}
+      {% else %}
+        {% set lastPush = "never" %}
+      {% endif %}
+      {% if deployment.CurCommit == '000000000000000000000000000000000000' %}
+        {% set curCommit = deployment.CurCommit %}
+      {% else %}
+        {% set curCommit = '<a href="http://git/' ~ deployment.GithubUser ~ '/' ~ deployment.GithubRepo ~ '/commit/' ~ deployment.CurCommit ~ '">' ~ deployment.CurCommit ~ '</a>' %}
+      {% endif %}
+      <tr>
+       <td>{{ deployment.Repository }}</td>
+       <td>{{ deployment.HostName }} ({{ deployment.Environment }})</td>
+       <td>{{ deployment.CurStatus }}</td>
+       <td>{{ deployment.CurBranch }}</td>
+       <td>{% autoescape false %}{{ curCommit }}{% endautoescape %}</td>
+       <td>{{ lastPush }}</td>
+       <td>{{ deployment.TargetPath }}</td>
+      </tr>
     {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No deployments have been setup yet.</p>
+{% endif %}
+
 {% include "common/htmlbottom.twig" %}

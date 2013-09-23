@@ -18,6 +18,7 @@ class ServerService
 
     const PRIMARY_KEY = 'ServerId';
     const Q_LIST = 'SELECT srv.ServerId, srv.HostName, env.ShortName AS Environment FROM Servers AS srv INNER JOIN Environments as env ON (srv.EnvironmentId = env.EnvironmentId) ORDER BY env.DispOrder ASC, srv.HostName';
+    const Q_SELECT_ONE = 'SELECT srv.ServerId, srv.HostName, env.ShortName AS Environment FROM Servers AS srv INNER JOIN Environments as env ON (srv.EnvironmentId = env.EnvironmentId) WHERE ServerId = :id';
     const Q_INSERT = 'INSERT INTO Servers (HostName, EnvironmentId) VALUES (:hostname, :envid)';
 
     /**
@@ -52,5 +53,20 @@ class ServerService
             [':hostname', $hostname, PDO::PARAM_STR],
             [':envid', $envId, PDO::PARAM_INT],
         ]);
+    }
+
+    /**
+     * @param int $id
+     * @return array|null
+     */
+    public function getById($id)
+    {
+        $stmt = $this->db->prepare(self::Q_SELECT_ONE);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        if ($stmt->rowCount() === 0) {
+            return null;
+        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
     }
 }

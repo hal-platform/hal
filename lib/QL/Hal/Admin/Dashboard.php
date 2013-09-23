@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Admin;
 
+use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\UserService;
 use Slim\Http\Response;
 use Twig_Template;
@@ -26,6 +27,8 @@ class Dashboard
      */
     private $tpl;
 
+    private $repoService;
+
     /**
      * @var UserService
      */
@@ -34,12 +37,14 @@ class Dashboard
     /**
      * @param Response $response
      * @param Twig_Template $tpl
+     * @param RepositoryService $repoService
      * @param UserService $userService
      */
-    public function __construct(Response $response, Twig_Template $tpl, UserService $userService)
+    public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repoService, UserService $userService)
     {
         $this->response = $response;
         $this->tpl = $tpl;
+        $this->repoService = $repoService;
         $this->userService = $userService;
     }
 
@@ -50,7 +55,7 @@ class Dashboard
     {
         $this->response->body($this->tpl->render([
             'total_users' => $this->userService->totalCount(),
-            'total_projects' => 0,
+            'total_projects' => $this->repoService->totalCount(),
             'total_pushes' => 0,
         ]));
     }
