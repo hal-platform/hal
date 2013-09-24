@@ -1,4 +1,14 @@
 {% set page_title = "Dashboard" %}
 {% include 'common/htmltop.twig' %}
 {% include 'common/header.twig' %}
+
+{% if arrangements %}
+Choose an arrangement
+    <ul>
+    {% for arrangement in arrangements %}
+        <li><a href="/a/{{arrangement.ShortName}}">{{ arrangement.Name }} </a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
 {% include 'common/htmlbottom.twig' %}

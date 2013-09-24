@@ -124,11 +124,20 @@ $app->container->singleton('userPage', function (Set $container) {
     );
 });
 
+$app->container->singleton('arrRepositoryListPage', function (Set $container) {
+    return new Users(
+        $container['response'],
+        $container['twigEnv']->loadTemplate('users.twig'),
+        $container['repoService']
+    );
+});
+
 $app->container->singleton('arrangementsPage', function (Set $container) {
     return new Arrangements(
         $container['response'],
         $container['twigEnv']->loadTemplate('home.twig'),
-        $_SESSION
+        $_SESSION,
+        $container['arrService']
     );
 });
 
@@ -250,6 +259,7 @@ $app->get ('/',                   function () use ($app) { call_user_func($app->
 $app->get ('/login',              function () use ($app) { call_user_func($app->loginPage);                    });
 $app->post('/login',              function () use ($app) { call_user_func($app->loginHandlerPage);             });
 $app->get ('/u/:id',              function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
+$app->get ('/a/:shortName',       function ($id) use ($app) { call_user_func($app->arrRepositoryListPage, $id, $app);       });
 $app->get ('/admin',              function () use ($app) { call_user_func($app->adminDashboardPage);           });
 $app->get ('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsPage);        });
 $app->post('/admin/envs',         function () use ($app) { call_user_func($app->adminEnvironmentsHandlerPage); });

@@ -9,6 +9,7 @@ namespace QL\Hal;
 
 use Slim\Http\Response;
 use Twig_Template;
+use QL\Hal\Services\ArrangementService;
 
 /**
  * @api
@@ -31,15 +32,22 @@ class Arrangements
     private $session;
 
     /**
+     * @var ArrangementService $arrService
+     */
+    private $arrService;
+
+    /**
      * @param Response $response
      * @param Twig_Template $tpl
      * @param array $session
+     * @param ArrangementService $arrService
      */
-    public function __construct(Response $response, Twig_Template $tpl, array &$session)
+    public function __construct(Response $response, Twig_Template $tpl, array &$session, ArrangementService $arrService)
     {
         $this->response = $response;
         $this->tpl = $tpl;
         $this->session = &$session;
+        $this->arrService = $arrService;
     }
 
     /**
@@ -47,6 +55,7 @@ class Arrangements
      */
     public function __invoke()
     {
-        $this->response->body($this->tpl->render(['account' => $this->session['account']]));
+        $arrangementsList = $this->arrService->listAll();
+        $this->response->body($this->tpl->render(['account' => $this->session['account'], 'arrangements' => $arrangementsList]));
     }
 }
