@@ -57,7 +57,7 @@ class ArrangementService
      * @param string $shortName
      * @return int
      */
-    public function getIdByShortName($shortName)
+    public function getByShortName($shortName)
     {
         return $this->selectOne($this->db, self::Q_GET_ID, self::UNIQUE_FIELD, $shortName);
     }

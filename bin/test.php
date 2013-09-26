@@ -11,5 +11,8 @@ $repoApi = $c->api('repo');
 /** @var \Github\Api\User $userApi */
 $userApi = $c->api('user');
 
-var_dump($userApi->find('bnagi'));
-var_dump($repoApi->branches('mnagi', 'mcp-core'));
+//var_dump($userApi->find('bnagi'));
+print_r($repoApi->tags('mnagi', 'mcp-core'));
+//print_r($repoApi->commits()->compare('mnagi', 'mcp-core', 'master', 'php5.5'));
+
+//echo $repoApi->contents()->archive('mnagi', 'mcp-core', 'tarball', 'master');

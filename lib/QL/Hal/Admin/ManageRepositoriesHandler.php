@@ -64,6 +64,7 @@ class ManageRepositoriesHandler
         $githubUser = $this->request->post('githubUser');
         $githubRepo = $this->request->post('githubRepo');
         $ownerEmail = $this->request->post('ownerEmail');
+        $buildCommand = $this->request->post('buildCommand');
         $description = $this->request->post('description');
         $errors = [];
 
@@ -79,9 +80,11 @@ class ManageRepositoriesHandler
                 'errors' => $errors,
                 'arrangements' => $this->arrService->listAll(),
                 'repositories' => $this->repoService->listAll(),
+                'cur_arrid' => $arrId,
                 'cur_shortname' => $shortName,
                 'cur_githubuser' => $githubUser,
                 'cur_githubrepo' => $githubRepo,
+                'cur_buildcommand' => $buildCommand,
                 'cur_email' => $ownerEmail,
                 'cur_description' => $description,
             ];
@@ -89,7 +92,15 @@ class ManageRepositoriesHandler
             return;
         }
 
-        $this->repoService->create($arrId, $shortName, $githubUser, $githubRepo, $ownerEmail, $description);
+        $this->repoService->create(
+            $arrId,
+            $shortName,
+            $githubUser,
+            $githubRepo,
+            $buildCommand,
+            $ownerEmail,
+            $description
+        );
         $this->response->status(303);
         $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/repositories';
     }

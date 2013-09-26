@@ -6,8 +6,7 @@ CREATE TABLE Environments (
     UNIQUE        (ShortName)
 )
     ENGINE        MyISAM
-    CHARACTER SET ascii
-    COLLATE       ascii_general_ci;
+    CHARACTER SET ascii;
 
 CREATE TABLE Servers (
     ServerId      INT UNSIGNED     NOT NULL AUTO_INCREMENT,
@@ -16,34 +15,32 @@ CREATE TABLE Servers (
     PRIMARY KEY   (ServerId)
 )
     ENGINE        MyISAM
-    CHARACTER SET ascii
-    COLLATE       ascii_general_ci;
+    CHARACTER SET ascii;
 
 CREATE TABLE Arrangements (
     ArrangementId TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    ShortName     CHAR(24)         NOT NULL,
-    Name          CHAR(48) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+    ShortName     CHAR(24) CHARACTER SET ascii NOT NULL,
+    Name          CHAR(48)         NOT NULL,
     PRIMARY KEY   (ArrangementId),
     UNIQUE        (ShortName)
 )
     ENGINE        MyISAM
-    CHARACTER SET ascii
-    COLLATE       ascii_general_ci;
+    CHARACTER SET utf8;
 
 CREATE TABLE Repositories (
     RepositoryId  INT UNSIGNED NOT NULL AUTO_INCREMENT,
     ArrangementId INT UNSIGNED NOT NULL,
-    ShortName     CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    ShortName     CHAR(24) CHARACTER SET ascii NOT NULL,
     GithubUser    CHAR(48)     NOT NULL,
     GithubRepo    CHAR(48)     NOT NULL,
     OwnerEmail    CHAR(128)    NOT NULL,
+    BuildCmd      CHAR(128)    NOT NULL,
     Description   CHAR(255)    NOT NULL,
     PRIMARY KEY   (RepositoryId),
     UNIQUE        (ShortName)
 )
     ENGINE        MyISAM
-    CHARACTER SET utf8
-    COLLATE       utf8_unicode_ci;
+    CHARACTER SET utf8;
 
 CREATE TABLE Deployments (
     DeploymentId INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -58,26 +55,25 @@ CREATE TABLE Deployments (
     UNIQUE       (RepositoryId, ServerId)
 )
     ENGINE        MyISAM
-    CHARACTER SET utf8
-    COLLATE       utf8_unicode_ci;
+    CHARACTER SET utf8;
 
--- probably needs to be indexed
 CREATE TABLE PushLogs (
+    PushLogId    BIGINT       NOT NULL AUTO_INCREMENT, -- keep this signed so PHP doesn't convert to float
     PushStart    DATETIME     NOT NULL,
     PushEnd      DATETIME     NOT NULL,
     PushStatus   ENUM('Deployed', 'Deploying', 'Error') NOT NULL DEFAULT 'Deploying',
-    PushUser     CHAR(32)     NOT NULL,
     PushCommonId INT UNSIGNED NOT NULL,
-    PushRepo     CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    PushUserName CHAR(32)     NOT NULL,
+    PushRepo     CHAR(24) CHARACTER SET ascii NOT NULL,
     PushBranch   CHAR(64)     NOT NULL,
     CommitSha    BINARY(20)   NOT NULL,
-    Environment  CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-    TargetServer CHAR(24) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-    TargetPath   CHAR(255)    NOT NULL
+    Environment  CHAR(24) CHARACTER SET ascii NOT NULL,
+    TargetServer CHAR(24) CHARACTER SET ascii NOT NULL,
+    TargetPath   CHAR(255)    NOT NULL,
+    PRIMARY KEY  (PushLogId)
 )
     ENGINE        MyISAM
-    CHARACTER SET utf8
-    COLLATE       utf8_unicode_ci;
+    CHARACTER SET utf8;
 
 CREATE TABLE Users (
     CommonId    INT UNSIGNED NOT NULL,
@@ -89,5 +85,4 @@ CREATE TABLE Users (
     UNIQUE      (UserName)
 )
     ENGINE        MyISAM
-    CHARACTER SET utf8
-    COLLATE       utf8_unicode_ci;
+    CHARACTER SET utf8;

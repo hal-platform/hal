@@ -1,0 +1,30 @@
+{% set page_title = "Sync Code" %}
+{% include 'common/htmltop.twig' %}
+{% include 'common/header.twig' %}
+{% if deps %}
+     <p>Push the following commitish: </p>
+  {% if toolong %}
+     <p class="holy-shit-call-this-out">WARNING!!! You have <em>way</em> too many branches. There's no reason to have over {{ toolong }} branches and you have {{ branches|length }}! A normal amount of branches is something like one to ten.</p>
+  {% endif %}
+     <form method="post" action="">
+       <ul>
+  {% for branch in branches %}
+         <li><label><input type="radio" name="commitish" value="{{ branch.name }}"> {{ branch.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/commit/{{ branch.commit.sha }}">{{ branch.commit.sha[:7] }}</a>)</label></li>
+  {% endfor %}
+  {% for tag in tags %}
+         <li><label><input type="radio" name="commitish" value="{{ tag.name }}">[tag] {{ tag.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/tag/{{ tag.commit.sha }}">{{ tag.commit.sha[:7] }}</a>)</label></li>
+  {% endfor %}
+         <li><label><input type="radio" name="commitish" value="(no branch)"> Push specific commit ID:</label> <input type="text" name="sha"></li>
+       </ul>
+       <p>To the following servers/paths:</p>
+       <ul>
+  {% for dep in deps %}
+         <li>{{ dep.HostName }}:{{ dep.TargetPath }}{% if dep.LastPushed %} on {{ dep.LastPushed|date(timezone="America/Detroit") }}{% endif %}</li>
+  {% endfor %}
+       </ul>
+       <button type="submit">Sync Code</button>
+     </form>
+{% else %}
+     <p>You must select some deployments to push code to. Please select some <a href="/r/{{ repo.ShortName }}">from the repository page</a>.</p>
+{% endif %}
+{% include 'common/htmlbottom.twig' %}

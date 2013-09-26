@@ -1,3 +1,4 @@
 /vendor/
+/conf.ini
 /phpunit.xml
 *.swp

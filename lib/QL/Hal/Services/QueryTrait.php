@@ -77,9 +77,9 @@ trait QueryTrait
      * @param string $name
      * @return null|array
      */
-    private function getIdByName(PDO $db, $listQuery, $uniqueField, $name)
+    private function getByName(PDO $db, $listQuery, $uniqueField, $name)
     {
-        $query = $getIdQuery . ' WHERE ' . $uniqueField . '= :name';
+        $query = $listQuery . ' WHERE ' . $uniqueField . '= :name';
         $stmt = $db->prepare($query);
         $stmt->bindValue(':name', $name, PDO::PARAM_STR);
         $stmt->execute();

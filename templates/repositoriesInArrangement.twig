@@ -2,11 +2,12 @@
 {% include 'common/htmltop.twig' %}
 {% include 'common/header.twig' %}
 
+<div><h2>Repositories in {{ arrangement }}:</h2></div>
 <ul>
     {% for repository in repositories %}
         <li>
-            <div><a href="/r/{{repository.ShortName}}">{{ repository.ShortName }} </a><div>
-            <div>{{repository.Description}}</div>
+            <div>Name: <a href="/r/{{repository.ShortName}}">{{ repository.ShortName }} </a><div>
+            <div>Description: {{repository.Description}}</div>
         </li>
     {% endfor %}
 </ul>

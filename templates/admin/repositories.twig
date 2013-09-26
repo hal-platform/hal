@@ -24,9 +24,14 @@
       <div><label for="arrId">Arrangement</label></div>
       <div>
         <select name="arrId" id="arrId">
-        {% for arr in arrangements %}
-          <option value="{{ arr.ArrangementId }}">{{ arr.ShortName }}</option>
-        {% endfor %}
+{% for arr in arrangements %}
+  {% if cur_arrid == arr.ArrangementId %}
+    {% set selected = " selected" %}
+  {% else %}
+    {% set selected = "" %}
+  {% endif %}
+          <option value="{{ arr.ArrangementId }}"{{ selected }}>{{ arr.ShortName }}</option>
+{% endfor %}
         </select>
       </div>
       <div><label for="shortName">Short Name</label></div>
@@ -37,6 +42,8 @@
       <div><input type="text" name="githubRepo" id="githubRepo" size="48" maxlength="48" required value="{{ cur_githubrepo }}"></div>
       <div><label for="ownerEmail">Email Address</label> (this is where push emails will be sent)</div>
       <div><input type="email" name="ownerEmail" id="ownerEmail" size="30" maxlength="128" required value="{{ cur_email }}"></div>
+      <div><label for="buildCommand">Build Command</label> (command to run on build... leave empty for no command)</div>
+      <div><input type="text" name="buildCommand" id="buildCommand" size="30" maxlength="128" value="{{ cur_buildcommand }}"></div>
       <div><label for="description">Description</label></div>
       <div><textarea name="description" id="description" maxlength="255" cols="48" rows="8">{{ cur_description }}</textarea></div>
       <div><button type="submit">Add Repository</button></div>

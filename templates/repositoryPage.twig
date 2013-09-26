@@ -1,0 +1,41 @@
+{% set page_title = "Dashboard" %}
+{% include 'common/htmltop.twig' %}
+{% include 'common/header.twig' %}
+
+
+<div>Repository:  {{ repo }} </div>
+<div>Deployments:</div>
+<form action="/r/{{ repo }}/sync" method="get">
+<table>
+    <tr>
+        <td>Servers</td>
+        <td>Environment</td>
+        <td>Status</td>
+        <td>Branch</td>
+        <td>Current Commit</td>
+        <td>Last Synced</td>
+        <td>Sync?</td>
+    </tr>
+    {% for deployment in deployments %}
+    <tr>
+        <td> {{deployment.HostName}} </td>
+        <td> {{deployment.Environment}} </td>
+        <td> {{deployment.CurStatus}} </td>
+        <td> {{deployment.CurBranch}} </td>
+        <td>{{deployment.CurCommit |slice(1,7)}}</td>
+        <td>
+            {% if deployment.LastPushed == '0000-00-00 00:00:00' %}
+                Never
+            {% else %}
+                {{deployment.LastPushed}}
+            {% endif %}
+        </td>
+        <td><input type="checkbox" name="deps[]" value="{{deployment.DeploymentId}}"</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td><button type="submit">Sync</button></td>
+    </tr>
+</table>
+</form>
+{% include 'common/htmlbottom.twig' %}

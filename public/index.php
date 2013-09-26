@@ -7,7 +7,7 @@
 
 namespace QL\Hal;
 
-use Exception;
+use Github\Client;
 use MCP\Corp\Account\LdapService;
 use PDO;
 use QL\Hal\Admin\Dashboard;
@@ -25,6 +25,7 @@ use QL\Hal\Admin\ManageUsers;
 use QL\Hal\Services\ArrangementService;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\EnvironmentService;
+use QL\Hal\Services\LogService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ServerService;
 use QL\Hal\Services\UserService;
@@ -36,19 +37,10 @@ use Twig_Loader_Filesystem;
 
 require '../vendor/autoload.php';
 
-$db_dsn = isset($_SERVER['DB_DSN']) ? $_SERVER['DB_DSN'] : null;
-$db_user = isset($_SERVER['DB_USER']) ? $_SERVER['DB_USER'] : null;
-$db_pass = isset($_SERVER['DB_PASS']) ? $_SERVER['DB_PASS'] : null;
+$configLoader = new ConfigReader;
+$config = $configLoader->load(__DIR__ . '/../conf.ini');
+$app = new Slim($config);
 
-if (null === $db_dsn || null === $db_user || null === $db_pass) {
-    throw new Exception('Make sure DB_DSN, DB_USER and DB_PASS are all passed in via the environment.');
-}
-
-$app = new Slim([
-    'db_dsn' => $db_dsn,
-    'db_user' => $db_user,
-    'db_pass' => $db_pass,
-]);
 session_start();
 
 // setup twig
@@ -77,6 +69,17 @@ $app->container->singleton('repoService', function (Set $container) {
     return new RepositoryService($container['db']);
 });
 
+$app->container->singleton('github', function (Set $container) {
+    $githubApiClient = new Client;
+    $githubApiClient->setOption('base_url', $container['settings']['github_baseurl']);
+    $githubApiClient->authenticate($container['settings']['github_token'], null, Client::AUTH_HTTP_TOKEN);
+    return $githubApiClient;
+});
+
+$app->container->singleton('githubRepoService', function (Set $container) {
+    return $container['github']->api('repo');
+});
+
 $app->container->singleton('serverService', function (Set $container) {
     return new ServerService($container['db']);
 });
@@ -95,6 +98,18 @@ $app->container->singleton('envService', function (Set $container) {
 
 $app->container->singleton('arrService', function (Set $container) {
     return new ArrangementService($container['db']);
+});
+
+$app->container->singleton('logService', function (Set $container) {
+    return new LogService($container['db']);
+});
+
+$app->container->singleton('syncOptions', function (Set $container) {
+    return new SyncOptions(
+        $container['repoService'],
+        $container['deploymentService'],
+        $container['githubRepoService']
+    );
 });
 
 // page definitions
@@ -124,15 +139,6 @@ $app->container->singleton('userPage', function (Set $container) {
     );
 });
 
-/*$app->container->singleton('arrRepositoryListPage', function (Set $container) {
-    return new Arrangements(
-        $container['response'],
-        $container['twigEnv']->loadTemplate('arrRepoList.twig'),
-        $container['arrService'],
-        $container['repoService']
-    );
-});*/
-
 $app->container->singleton('landingPage', function (Set $container) {
     return new Landing(
         $container['response'],
@@ -144,9 +150,19 @@ $app->container->singleton('landingPage', function (Set $container) {
 $app->container->singleton('arrangementsPage', function (Set $container) {
     return new Arrangements(
         $container['response'],
-        $container['twigEnv']->loadTemplate('arrRepos.twig'),
+        $container['twigEnv']->loadTemplate('repositoriesInArrangement.twig'),
         $container['arrService'],
         $container['repoService']
+    );
+});
+
+$app->container->singleton('repositoryPage', function (Set $container) {
+    return new Repository(
+        $container['response'],
+        $container['twigEnv']->loadTemplate('repositoryPage.twig'),
+        $container['repoService'],
+        $container['deploymentService'],
+        $container['serverService']
     );
 });
 
@@ -260,6 +276,28 @@ $app->container->singleton('adminUsersPage', function (Set $container) {
     );
 });
 
+$app->container->singleton('syncPage', function (Set $container) {
+    return new SyncPage(
+        $container['request'],
+        $container['response'],
+        $container['twigEnv']->loadTemplate('sync-code.twig'),
+        $container['syncOptions']
+    );
+});
+
+$app->container->singleton('syncHandler', function (Set $container) {
+    return new SyncHandler(
+        $container['request'],
+        $container['response'],
+        $container['twigEnv']->loadTemplate('sync-code.twig'),
+        $container['syncOptions'],
+        $container['logService'],
+        $container['deploymentService'],
+        $_SESSION,
+        '/Users/mnagi/code/hal/bin/pusher.php'
+    );
+});
+
 // require login for all pages except /login
 $app->add(new LoginRequired('/login', $_SESSION));
 
@@ -272,7 +310,10 @@ $app->get ('/login',              function () use ($app) { call_user_func($app->
 $app->post('/login',              function () use ($app) { call_user_func($app->loginHandlerPage);             });
 $app->get ('/u/:id',              function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
 $app->get ('/',                   function () use ($app) { call_user_func($app->landingPage);             });
-$app->get ('/a/:shortName',       function ($shortName) use ($app) { call_user_func($app->arrangementsPage, $shortName, $app);       });
+$app->get ('/a/:shortName',       function ($shortName) use ($app) { call_user_func($app->arrangementsPage, $shortName, $app); });
+$app->get ('/r/:shortName',       function ($shortName) use ($app) { call_user_func($app->repositoryPage, $shortName, $app);   });
+$app->get ('/r/:shortName/sync',  function ($shortName) use ($app) { call_user_func($app->syncPage, $shortName, [$app, 'notFound']); });
+$app->post('/r/:shortname/sync',  function ($shortName) use ($app) { call_user_func($app->syncHandler, $shortName, [$app, 'notFound']); });
 
 // admin page routes
 $app->get ('/admin',              function () use ($app) { call_user_func($app->adminDashboardPage);           });

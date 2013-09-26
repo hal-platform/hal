@@ -68,18 +68,19 @@ class Arrangements
             $id = $arrId['ArrangementId']; 
             $repoList = $this->getRepositoriesForArrangement($id);
         }
-        $this->response->body($this->tpl->render(['repositories' => $repoList]));
+        $this->response->body($this->tpl->render(['arrangement' => $shortName, 'repositories' => $repoList]));
     }
     
     private function getArrangementId($shortName) 
     {
-        $arrId = $this->arrService->getIdByShortName($shortName);
+        $arrId = $this->arrService->getByShortName($shortName);
         return $arrId;
     }
 
     private function getRepositoriesForArrangement($arrId)
     {
-        $repoList = $this->repoService->listByArrangement($arrId);
+        $field = "ArrangementId";
+        $repoList = $this->repoService->listByField($arrId, $field);
         return $repoList;
     }
 

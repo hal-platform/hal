@@ -18,6 +18,10 @@ class DeploymentService
 {
     use QueryTrait;
 
+    const STATUS_DEPLOYING = 'Deploying';
+    const STATUS_DEPLOYED = 'Deployed';
+    const STATUS_ERROR = 'Error';
+
     const PRIMARY_KEY = 'DeploymentId';
     const Q_LIST = '
     SELECT
@@ -40,12 +44,13 @@ class DeploymentService
         Servers      AS srv ON dep.ServerId      = srv.ServerId      INNER JOIN
         Repositories AS rep ON dep.RepositoryId  = rep.RepositoryId  INNER JOIN
         Environments AS env ON srv.EnvironmentId = env.EnvironmentId
-    ORDER BY
-        rep.ShortName ASC,
-        srv.HostName ASC,
-        env.DispOrder ASC
     ';
+    const Q_LIST_ORDER = 'ORDER BY rep.ShortName ASC, env.DispOrder, srv.HostName ASC';
     const Q_INSERT = 'INSERT INTO Deployments (RepositoryId, ServerId, CurStatus, CurBranch, CurCommit, LastPushed, TargetPath) VALUES (:repo, :server, :status, :branch, UNHEX(:commit), :lastpushed, :path)';
+
+    const Q_LIST_FOR_REPO_CLAUSE = ' dep.ServerId=srv.ServerId ';
+    const Q_REPO_ID = 'SELECT RepositoryId from Repositories WHERE ShortName = :shortName';
+    const Q_UPDATE = 'UPDATE Deployments SET CurStatus = :status, CurBranch = :branch, CurCommit = UNHEX(:commit), LastPushed = :pushed WHERE DeploymentId = :id';
 
     /**
      * @var PDO
@@ -60,17 +65,32 @@ class DeploymentService
         $this->db = $db;
     }
 
+    public function listForRepository($shortName)
+    {
+        $ret = [];
+        $query = self::Q_LIST . ' WHERE ' . self::Q_LIST_FOR_REPO_CLAUSE . self::Q_LIST_ORDER;
+        #$query = self::Q_LIST . ' WHERE ' . self::Q_LIST_FOR_REPO_CLAUSE . ' AND RepositoryId=( ' . self::Q_REPO_ID . ')';
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':shortName', $shortName, PDO::PARAM_STR);
+        $stmt->execute();
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $ret[$row['HostName']] = $row;
+        }
+
+       return $ret;
+    }
+
     /**
      * @return array
      */
     public function listAll()
     {
-        $result = $this->selectAll($this->db, self::Q_LIST, self::PRIMARY_KEY);
-        foreach ($result as $item) {
+        $result = $this->selectAll($this->db, self::Q_LIST . self::Q_LIST_ORDER, self::PRIMARY_KEY);
+        foreach ($result as &$item) {
             if ($item['LastPushed'] === '0000-00-00 00:00:00') {
                 $item['LastPushed'] = null;
             } else {
-                $item['LastPushed'] = new DateTime('LastPushed', new DateTimeZone('UTC'));
+                $item['LastPushed'] = new DateTime($item['LastPushed'], new DateTimeZone('UTC'));
             }
         }
         return $result;
@@ -103,5 +123,41 @@ class DeploymentService
             [':lastpushed', $lastPushed, PDO::PARAM_STR],
             [':path', $path, PDO::PARAM_STR],
         ]);
+    }
+
+    /**
+     * @param int $id
+     * @return array|null
+     */
+    public function getById($id)
+    {
+        $item = $this->selectOne($this->db, self::Q_LIST, self::PRIMARY_KEY, $id);
+        if (!$item) {
+            return $item;
+        }
+        if ($item['LastPushed'] === '0000-00-00 00:00:00') {
+            $item['LastPushed'] = null;
+        } else {
+            $item['LastPushed'] = new DateTime($item['LastPushed'], new DateTimeZone('UTC'));
+        }
+        return $item;
+    }
+
+    public function update($id, $status, $branch, $commit, DateTime $dateTime = null)
+    {
+        if (!$dateTime) {
+            $dateTime = '0000-00-00 00:00:00';
+        } else {
+            $dateTime = $dateTime->format('Y-m-d H:i:s');
+        }
+
+        $stmt = $this->db->prepare(self::Q_UPDATE);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':status', $status, PDO::PARAM_STR);
+        $stmt->bindValue(':branch', $branch, PDO::PARAM_STR);
+        $stmt->bindValue(':commit', $commit, PDO::PARAM_STR);
+        $stmt->bindValue(':pushed', $dateTime, PDO::PARAM_STR);
+
+        $stmt->execute();
     }
 }
