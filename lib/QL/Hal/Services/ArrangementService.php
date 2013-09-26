@@ -14,8 +14,10 @@ class ArrangementService
     use QueryTrait;
 
     const PRIMARY_KEY = 'ArrangementId';
+    const UNIQUE_FIELD = 'ShortName';
     const Q_LIST = 'SELECT ArrangementId, ShortName, Name FROM Arrangements';
     const Q_INSERT = 'INSERT INTO Arrangements (ShortName, Name) VALUES (:shortname, :name)';
+    const Q_GET_ID = 'SELECT ArrangementId from Arrangements';
 
     /**
      * @var PDO
@@ -49,5 +51,14 @@ class ArrangementService
             [':shortname', $shortName, PDO::PARAM_STR],
             [':name', $fullName, PDO::PARAM_STR],
         ]);
+    }
+
+    /**
+     * @param string $shortName
+     * @return int
+     */
+    public function getIdByShortName($shortName)
+    {
+        return $this->selectOne($this->db, self::Q_GET_ID, self::UNIQUE_FIELD, $shortName);
     }
 }

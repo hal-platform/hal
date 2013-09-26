@@ -72,6 +72,27 @@ trait QueryTrait
 
     /**
      * @param PDO $db
+     * @param string $listQuery
+     * @param string $uniqueField
+     * @param string $name
+     * @return null|array
+     */
+    private function getIdByName(PDO $db, $listQuery, $uniqueField, $name)
+    {
+        $query = $getIdQuery . ' WHERE ' . $uniqueField . '= :name';
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result) < 1) {
+            return null;
+        } else {
+            return $result[0];
+        }
+    }
+         
+    /**
+     * @param PDO $db
      * @param $query
      * @return int
      */

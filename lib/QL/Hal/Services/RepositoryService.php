@@ -17,10 +17,12 @@ class RepositoryService
     use QueryTrait;
 
     const PRIMARY_KEY = 'RepositoryId';
+    const UNIQUE_COL = 'ArrangementId';
     const Q_LIST = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, OwnerEmail FROM Repositories';
     const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :email, :desc)';
     const Q_COUNT = 'SELECT COUNT(*) FROM Repositories';
-
+    const Q_LIST_BY_ARRANGEMENT = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo FROM Repositories';
+    
     /**
      * @var PDO
      */
@@ -79,4 +81,22 @@ class RepositoryService
     {
         return $this->countStar($this->db, self::Q_COUNT);
     }
+
+    /**
+     * @return array
+     */
+    public function listByArrangement($arrId)
+    {
+        $ret = [];
+        $query = self::Q_LIST_BY_ARRANGEMENT . ' WHERE ArrangementId = :arrId ' ;
+        $stmt = $this->db->prepare($query);
+        $stmt ->bindValue(':arrId', $arrId, PDO::PARAM_INT);
+        $stmt->execute();
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $ret[$row['RepositoryId']] = $row;
+        }
+
+       return $ret;
+    }
+
 }

@@ -124,20 +124,29 @@ $app->container->singleton('userPage', function (Set $container) {
     );
 });
 
-$app->container->singleton('arrRepositoryListPage', function (Set $container) {
-    return new Users(
+/*$app->container->singleton('arrRepositoryListPage', function (Set $container) {
+    return new Arrangements(
         $container['response'],
-        $container['twigEnv']->loadTemplate('users.twig'),
+        $container['twigEnv']->loadTemplate('arrRepoList.twig'),
+        $container['arrService'],
         $container['repoService']
+    );
+});*/
+
+$app->container->singleton('landingPage', function (Set $container) {
+    return new Landing(
+        $container['response'],
+        $container['twigEnv']->loadTemplate('home.twig'),
+        $container['arrService']
     );
 });
 
 $app->container->singleton('arrangementsPage', function (Set $container) {
     return new Arrangements(
         $container['response'],
-        $container['twigEnv']->loadTemplate('home.twig'),
-        $_SESSION,
-        $container['arrService']
+        $container['twigEnv']->loadTemplate('arrRepos.twig'),
+        $container['arrService'],
+        $container['repoService']
     );
 });
 
@@ -258,11 +267,12 @@ $app->add(new LoginRequired('/login', $_SESSION));
 $app->response()->header('Content-Type', 'text/html; charset=utf-8');
 
 // define user facing routes
-$app->get ('/',                   function () use ($app) { call_user_func($app->arrangementsPage);             });
+#$app->get ('/',                   function () use ($app) { call_user_func($app->arrangementsPage);             });
 $app->get ('/login',              function () use ($app) { call_user_func($app->loginPage);                    });
 $app->post('/login',              function () use ($app) { call_user_func($app->loginHandlerPage);             });
 $app->get ('/u/:id',              function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
-$app->get ('/a/:shortName',       function ($id) use ($app) { call_user_func($app->arrRepositoryListPage, $id, $app);       });
+$app->get ('/',                   function () use ($app) { call_user_func($app->landingPage);             });
+$app->get ('/a/:shortName',       function ($shortName) use ($app) { call_user_func($app->arrangementsPage, $shortName, $app);       });
 
 // admin page routes
 $app->get ('/admin',              function () use ($app) { call_user_func($app->adminDashboardPage);           });
