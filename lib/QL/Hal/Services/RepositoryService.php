@@ -21,7 +21,7 @@ class RepositoryService
     const Q_LIST = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, OwnerEmail FROM Repositories';
     const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :email, :desc)';
     const Q_COUNT = 'SELECT COUNT(*) FROM Repositories';
-    const Q_LIST_BY_ARRANGEMENT = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo FROM Repositories';
+    const Q_LIST_BY_ARRANGEMENT = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, Description FROM Repositories';
     
     /**
      * @var PDO
@@ -88,7 +88,7 @@ class RepositoryService
     public function listByArrangement($arrId)
     {
         $ret = [];
-        $query = self::Q_LIST_BY_ARRANGEMENT . ' WHERE ArrangementId = :arrId ' ;
+        $query = self::Q_LIST_BY_ARRANGEMENT . ' WHERE ' . self::UNIQUE_COL . ' = :arrId ' ;
         $stmt = $this->db->prepare($query);
         $stmt ->bindValue(':arrId', $arrId, PDO::PARAM_INT);
         $stmt->execute();
