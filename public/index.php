@@ -150,7 +150,7 @@ $app->container->singleton('landingPage', function (Set $container) {
 $app->container->singleton('arrangementsPage', function (Set $container) {
     return new Arrangements(
         $container['response'],
-        $container['twigEnv']->loadTemplate('repositoriesInArrangement.twig'),
+        $container['twigEnv']->loadTemplate('arrangement.twig'),
         $container['arrService'],
         $container['repoService']
     );
@@ -159,7 +159,7 @@ $app->container->singleton('arrangementsPage', function (Set $container) {
 $app->container->singleton('repositoryPage', function (Set $container) {
     return new Repository(
         $container['response'],
-        $container['twigEnv']->loadTemplate('repositoryPage.twig'),
+        $container['twigEnv']->loadTemplate('repository.twig'),
         $container['repoService'],
         $container['deploymentService'],
         $container['serverService']
