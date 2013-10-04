@@ -48,8 +48,7 @@ class DeploymentService
     const Q_LIST_ORDER = 'ORDER BY rep.ShortName ASC, env.DispOrder, srv.HostName ASC';
     const Q_INSERT = 'INSERT INTO Deployments (RepositoryId, ServerId, CurStatus, CurBranch, CurCommit, LastPushed, TargetPath) VALUES (:repo, :server, :status, :branch, UNHEX(:commit), :lastpushed, :path)';
 
-    const Q_LIST_FOR_REPO_CLAUSE = ' dep.ServerId=srv.ServerId ';
-    const Q_REPO_ID = 'SELECT RepositoryId from Repositories WHERE ShortName = :shortName';
+    const Q_LIST_FOR_REPO_CLAUSE = ' dep.RepositoryId = :id ';
     const Q_UPDATE = 'UPDATE Deployments SET CurStatus = :status, CurBranch = :branch, CurCommit = UNHEX(:commit), LastPushed = :pushed WHERE DeploymentId = :id';
 
     /**
@@ -65,16 +64,21 @@ class DeploymentService
         $this->db = $db;
     }
 
-    public function listForRepository($shortName)
+    public function listAllByRepoId($repoId)
     {
         $ret = [];
         $query = self::Q_LIST . ' WHERE ' . self::Q_LIST_FOR_REPO_CLAUSE . self::Q_LIST_ORDER;
-        #$query = self::Q_LIST . ' WHERE ' . self::Q_LIST_FOR_REPO_CLAUSE . ' AND RepositoryId=( ' . self::Q_REPO_ID . ')';
         $stmt = $this->db->prepare($query);
-        $stmt->bindValue(':shortName', $shortName, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $repoId, PDO::PARAM_INT);
         $stmt->execute();
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $ret[$row['HostName']] = $row;
+            if ($row['LastPushed'] === '0000-00-00 00:00:00') {
+                $row['LastPushed'] = null;
+            } else {
+                $row['LastPushed'] = new DateTime($row['LastPushed'], new DateTimeZone('UTC'));
+            }
+
+            $ret[$row[self::PRIMARY_KEY]] = $row;
         }
 
        return $ret;

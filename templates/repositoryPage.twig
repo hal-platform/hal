@@ -1,12 +1,15 @@
-{% set page_title = "Dashboard" %}
+{% set page_title = "/r/" ~ repo.ShortName %}
 {% include 'common/htmltop.twig' %}
 {% include 'common/header.twig' %}
 
+<p><a href="/a/{{ repo.Arrangement }}">Repository List</a></p>
 
-<div>Repository:  {{ repo }} </div>
-<div>Deployments:</div>
-<form action="/r/{{ repo }}/sync" method="get">
-<table>
+<h2>/r/{{ repo.ShortName }}</h2>
+
+
+<form action="/r/{{ repo.ShortName }}/sync" method="get">
+  <table>
+    <caption>Deployments for {{repo.ShortName}}</caption>
     <tr>
         <td>Servers</td>
         <td>Environment</td>
@@ -18,16 +21,16 @@
     </tr>
     {% for deployment in deployments %}
     <tr>
-        <td> {{deployment.HostName}} </td>
-        <td> {{deployment.Environment}} </td>
-        <td> {{deployment.CurStatus}} </td>
-        <td> {{deployment.CurBranch}} </td>
-        <td>{{deployment.CurCommit |slice(1,7)}}</td>
+        <td>{{ deployment.HostName }}</td>
+        <td>{{ deployment.Environment }}</td>
+        <td>{{ deployment.CurStatus }}</td>
+        <td>{{ deployment.CurBranch }}</td>
+        <td>{{ deployment.CurCommit[:7] }}</td>
         <td>
             {% if deployment.LastPushed == '0000-00-00 00:00:00' %}
                 Never
             {% else %}
-                {{deployment.LastPushed}}
+                {{ deployment.LastPushed|date(timezone="America/Detroit") }}
             {% endif %}
         </td>
         <td><input type="checkbox" name="deps[]" value="{{deployment.DeploymentId}}"</td>

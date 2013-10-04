@@ -62,49 +62,23 @@ class Repository
     }
 
     /**
-     * @param int $commonId
-     * @param Slim $app
+     * @param string $shortName
+     * @param callable $notFound
      * @return null
      */
-    public function __invoke($shortName, Slim $app)
+    public function __invoke($shortName, callable $notFound)
     {
-       /* $repoId = $this->getRepoId($shortName);
-        if (is_null($repoId)) {
-            $app->notFound();
+        $repo = $this->repoService->getFromName($shortName);
+
+        if (!$repo) {
+            call_user_func($notFound);
             return;
         }
-    
-        if ($repoId) {
-            $id = $repoId['RepositoryId'];
-            $deployments = $this->getDeployments($id);
-        } */
         
-        $deployments = $this->getDeployments($shortName);
-        $servers = $this->getServers();
+        $deployments = $this->deploymentService->listAllByRepoId($repo['RepositoryId']);
         $this->response->body($this->tpl->render([
             'deployments' => $deployments,
-         #   'servers' => $servers,
-         #   'servers' => $servers,
-         #   'env' => $envs,
-            'repo' => $shortName
+            'repo' => $repo,
         ]));
-    }
-
-    private function getRepoId($shortName)
-    {
-        $repoId = $this->repoService->getFromName($shortName);
-        return $repoId;
-    }
-
-    private function getDeployments($shortName)
-    {
-        $deployments = $this->deploymentService->listForRepository($shortName);
-        return $deployments;
-    }
-
-    private function getServers()
-    {
-        $serverList = $this->serverService->listAll();
-        return $serverList;
     }
 }

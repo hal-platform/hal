@@ -311,7 +311,7 @@ $app->post('/login',              function () use ($app) { call_user_func($app->
 $app->get ('/u/:id',              function ($id) use ($app) { call_user_func($app->userPage, $id, $app);       });
 $app->get ('/',                   function () use ($app) { call_user_func($app->landingPage);             });
 $app->get ('/a/:shortName',       function ($shortName) use ($app) { call_user_func($app->arrangementsPage, $shortName, $app); });
-$app->get ('/r/:shortName',       function ($shortName) use ($app) { call_user_func($app->repositoryPage, $shortName, $app);   });
+$app->get ('/r/:shortName',       function ($shortName) use ($app) { call_user_func($app->repositoryPage, $shortName, [$app, 'notFound']);   });
 $app->get ('/r/:shortName/sync',  function ($shortName) use ($app) { call_user_func($app->syncPage, $shortName, [$app, 'notFound']); });
 $app->post('/r/:shortname/sync',  function ($shortName) use ($app) { call_user_func($app->syncHandler, $shortName, [$app, 'notFound']); });
 
