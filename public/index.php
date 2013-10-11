@@ -294,7 +294,9 @@ $app->container->singleton('syncHandler', function (Set $container) {
         $container['logService'],
         $container['deploymentService'],
         $_SESSION,
-        '/Users/bschiefer/skeletor_root/hal/bin/pusher.php'
+        __DIR__ . '/../bin/pusher.php',
+        $container['settings']['build_user'],
+        $container['settings']['ssh_user']
     );
 });
 

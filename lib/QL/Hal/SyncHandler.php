@@ -62,6 +62,16 @@ class SyncHandler
     private $pusherScriptLocation;
 
     /**
+     * @var string
+     */
+    private $buildUser;
+
+    /**
+     * @var string
+     */
+    private $sshUser;
+
+    /**
      * @param Request $request
      * @param Response $response
      * @param Twig_Template $tpl
@@ -70,6 +80,8 @@ class SyncHandler
      * @param DeploymentService $depService
      * @param array $session
      * @param string $pusherScriptLocation
+     * @param string $buildUser
+     * @param string $sshUser
      */
     public function __construct(
         Request $request,
@@ -79,7 +91,9 @@ class SyncHandler
         LogService $logService,
         DeploymentService $depService,
         array $session,
-        $pusherScriptLocation
+        $pusherScriptLocation,
+        $buildUser,
+        $sshUser
     ) {
         $this->request = $request;
         $this->response = $response;
@@ -89,6 +103,8 @@ class SyncHandler
         $this->depService = $depService;
         $this->session = $session;
         $this->pusherScriptLocation = $pusherScriptLocation;
+        $this->buildUser = $buildUser;
+        $this->sshUser = $sshUser;
     }
 
     /**
@@ -157,7 +173,7 @@ class SyncHandler
             );
 
             $cmd = $this->syncCmdCreate(
-                'mnagi',
+                $this->buildUser,
                 $this->pusherScriptLocation,
                 $dep['DeploymentId'],
                 $logid,
