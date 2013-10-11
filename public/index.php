@@ -294,7 +294,7 @@ $app->container->singleton('syncHandler', function (Set $container) {
         $container['logService'],
         $container['deploymentService'],
         $_SESSION,
-        '/Users/mnagi/code/hal/bin/pusher.php'
+        '/Users/bschiefer/skeletor_root/hal/bin/pusher.php'
     );
 });
 
