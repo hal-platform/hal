@@ -40,8 +40,8 @@
     </thead>
     <tbody>
     {% for deployment in deployments %}
-      {% if deployment.LastPush %}
-        {% set lastPush = deployment.LastPush|date(timezone="America/Detroit") %}
+      {% if deployment.LastPushed %}
+        {% set lastPush = deployment.LastPushed|date(timezone="America/Detroit") %}
       {% else %}
         {% set lastPush = "never" %}
       {% endif %}

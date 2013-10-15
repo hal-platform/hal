@@ -135,17 +135,7 @@ class SyncHandler
         $commitish = $this->request->post('commitish');
         $sha = $this->request->post('sha');
 
-        if ($commitish === '(no branch)') {
-            $branch = '(no branch)';
-            $commit = $sha;
-        } else if ($commit = $this->shaForBranchTag($commitish, $options['branches'])) {
-            $branch = $commitish;
-        } else if ($commit = $this->shaForBranchTag($commitish, $options['tags'])) {
-            $branch = $commitish;
-        } else {
-            $branch = null;
-            $commit = null;
-        }
+        list($branch, $commit) = $this->derefCommitish($commitish, $sha, $options);
 
         if ($commit === null) {
             $options['toolong'] = false;
@@ -158,45 +148,7 @@ class SyncHandler
         }
 
         foreach ($options['deps'] as $dep) {
-            $now = new DateTime('now', new DateTimeZone('UTC'));
-            $this->depService->update($dep['DeploymentId'], DeploymentService::STATUS_DEPLOYING, $dep['CurBranch'], $dep['CurCommit'], $dep['LastPushed']);
-            $logid = $this->logService->create(
-                $now,
-                $this->session['commonid'],
-                $this->session['account']['displayname'],
-                $options['repo']['ShortName'],
-                $branch,
-                $commit,
-                $dep['Environment'],
-                $dep['HostName'],
-                $dep['TargetPath']
-            );
-
-            $cmd = $this->syncCmdCreate(
-                $this->buildUser,
-                $this->pusherScriptLocation,
-                $dep['DeploymentId'],
-                $logid,
-                [
-                    'PATH' => '/usr/local/zend/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin',
-                    'HAL_COMMIT' => $commit,
-                    'HAL_GITREF' => $branch,
-                    'HAL_ENVIRONMENT' => $dep['Environment'],
-                    'HAL_HOSTNAME' => $dep['HostName'],
-                    'HAL_PATH' => $dep['TargetPath'],
-                    'HAL_USER' => $this->session['account']['samaccountname'],
-                    'HAL_USER_DISPLAY' => $this->session['account']['displayname'],
-                    'HAL_COMMONID' => $this->session['commonid'],
-                    'HAL_REPO' => $options['repo']['ShortName'],
-
-                ]
-            );
-
-            exec($cmd, $out, $ret);
-
-            if (0 !== $ret) {
-                throw new Exception('Tried (and failed) to run `' . $cmd . '`' . "\n\n" . implode("\n", $out));
-            }
+            $this->syncDeployment($dep, $options, $branch, $commit);
         }
 
         $this->response->status(303);
@@ -232,5 +184,84 @@ class SyncHandler
         $cmd .= sprintf($cmdCmd, escapeshellarg($pusherLocation), escapeshellarg($depId), escapeshellarg($logId));
 
         return $cmd;
+    }
+
+    /**
+     * @param $commitish
+     * @param $sha
+     * @param $options
+     * @return array
+     */
+    private function derefCommitish($commitish, $sha, $options)
+    {
+        if ($commitish === '(no branch)') {
+            $branch = '(no branch)';
+            $commit = $sha;
+
+            return array($branch, $commit);
+        } else if ($commit = $this->shaForBranchTag($commitish, $options['branches'])) {
+            $branch = $commitish;
+
+            return array($branch, $commit);
+        } else if ($commit = $this->shaForBranchTag($commitish, $options['tags'])) {
+            $branch = $commitish;
+
+            return array($branch, $commit);
+        } else {
+            $branch = null;
+            $commit = null;
+
+            return array($branch, $commit);
+        }
+    }
+
+    /**
+     * @param $dep
+     * @param $options
+     * @param $branch
+     * @param $commit
+     * @throws \Exception
+     */
+    private function syncDeployment($dep, $options, $branch, $commit)
+    {
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $this->depService->update($dep['DeploymentId'], DeploymentService::STATUS_DEPLOYING, $dep['CurBranch'], $dep['CurCommit'], $dep['LastPushed']);
+        $logid = $this->logService->create(
+            $now,
+            $this->session['commonid'],
+            $this->session['account']['displayname'],
+            $options['repo']['ShortName'],
+            $branch,
+            $commit,
+            $dep['Environment'],
+            $dep['HostName'],
+            $dep['TargetPath']
+        );
+
+        $cmd = $this->syncCmdCreate(
+            $this->buildUser,
+            $this->pusherScriptLocation,
+            $dep['DeploymentId'],
+            $logid,
+            [
+                'PATH' => '/usr/local/zend/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin',
+                'HAL_COMMIT' => $commit,
+                'HAL_GITREF' => $branch,
+                'HAL_ENVIRONMENT' => $dep['Environment'],
+                'HAL_HOSTNAME' => $dep['HostName'],
+                'HAL_PATH' => $dep['TargetPath'],
+                'HAL_USER' => $this->session['account']['samaccountname'],
+                'HAL_USER_DISPLAY' => $this->session['account']['displayname'],
+                'HAL_COMMONID' => $this->session['commonid'],
+                'HAL_REPO' => $options['repo']['ShortName'],
+
+            ]
+        );
+
+        exec($cmd, $out, $ret);
+
+        if (0 !== $ret) {
+            throw new Exception('Tried (and failed) to run `' . $cmd . '`' . "\n\n" . implode("\n", $out));
+        }
     }
 }
