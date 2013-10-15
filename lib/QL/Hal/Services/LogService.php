@@ -100,6 +100,31 @@ class LogService
     }
 
     /**
+     * @param string $shortName
+     * @return array|null
+     */
+    public function getByRepo($shortName)
+    {
+        $ret = [];
+        $q_field = 'PushRepo';
+        $query = self::Q_LIST . ' WHERE ' . $q_field . ' = :name ';
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':name', $shortName, PDO::PARAM_STR);
+        $stmt->execute();
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $ret[$row['PushLogId']] = $row;
+        }
+       # $logEntry['PushStart'] = new DateTime($logEntry['PushStart'], new DateTimeZone('UTC'));
+       # if ($logEntry['PushEnd'] !== '0000-00-00 00:00:00') {
+       #     $logEntry['PushEnd'] = new DateTime($logEntry['PushEnd'], new DateTimeZone('UTC'));
+       # } else {
+       #     $logEntry['PushEnd'] = null;
+       # }
+
+        return $ret;
+    }
+
+    /**
      * @param DateTime $startTime
      * @param int $commonId
      * @param string $userName

@@ -13,6 +13,7 @@ use Twig_Template;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\ServerService;
+use QL\Hal\Services\LogService;
 
 /**
  * @api
@@ -44,6 +45,11 @@ class Repository
      */
     private $serverService;
 
+    /**
+     * @var LogService
+     */
+    private $logService;
+
 
     /**
      * @param Response $response
@@ -51,14 +57,16 @@ class Repository
      * @param RepositoryService $repoService
      * @param DeploymentService $deploymentService
      * @param ServerService $serverService
+     * @param LogService $logService
      */
-    public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repoService, DeploymentService $deploymentService, ServerService $serverService)
+    public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repoService, DeploymentService $deploymentService, ServerService $serverService, LogService $logService)
     {
         $this->response = $response;
         $this->tpl = $tpl;
         $this->repoService = $repoService;
         $this->deploymentService = $deploymentService;
         $this->serverService = $serverService;
+        $this->logService = $logService;
     }
 
     /**
@@ -76,9 +84,11 @@ class Repository
         }
         
         $deployments = $this->deploymentService->listAllByRepoId($repo['RepositoryId']);
+        $logEntries = $this->logService->getByRepo($shortName);
         $this->response->body($this->tpl->render([
             'deployments' => $deployments,
             'repo' => $repo,
+            'logs' => $logEntries
         ]));
     }
 }

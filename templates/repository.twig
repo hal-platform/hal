@@ -41,4 +41,28 @@
     </tr>
 </table>
 </form>
+
+<h2>Log Entries for {{ repo.ShortName }}</h2>
+<table>
+    <tr>
+        <td>Push Start</td>
+        <td>Push End</td>
+        <td>Push Status</td>
+        <td>Branch</td>
+        <td>Environment</td>
+        <td>Server</td>
+        <td>Pusher</td>
+    </tr>
+{% for log in logs %}
+    <tr>
+        <td> {{ log.PushStart }} </td>
+        <td> {{ log.PushEnd }} </td>
+        <td> {{ log.PushStatus }} </td>
+        <td> {{ log.PushBranch }} </td>
+        <td> {{ log.Environment }} </td>
+        <td> {{ log.TargetServer }} </td>
+        <td> {{ log.PushUserName }} </td>
+    </tr>
+{% endfor %}
+</table>
 {% include 'common/htmlbottom.twig' %}

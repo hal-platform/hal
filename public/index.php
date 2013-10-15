@@ -162,7 +162,8 @@ $app->container->singleton('repositoryPage', function (Set $container) {
         $container['twigEnv']->loadTemplate('repository.twig'),
         $container['repoService'],
         $container['deploymentService'],
-        $container['serverService']
+        $container['serverService'],
+        $container['logService']
     );
 });
 
