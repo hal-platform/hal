@@ -114,12 +114,6 @@ class LogService
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $ret[$row['PushLogId']] = $row;
         }
-       # $logEntry['PushStart'] = new DateTime($logEntry['PushStart'], new DateTimeZone('UTC'));
-       # if ($logEntry['PushEnd'] !== '0000-00-00 00:00:00') {
-       #     $logEntry['PushEnd'] = new DateTime($logEntry['PushEnd'], new DateTimeZone('UTC'));
-       # } else {
-       #     $logEntry['PushEnd'] = null;
-       # }
 
         return $ret;
     }
