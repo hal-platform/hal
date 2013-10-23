@@ -18,16 +18,6 @@ use QL\Hal\Services\ArrangementService;
 class ManageArrangementsHandler
 {
     /**
-     * @var Response
-     */
-    private $response;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var Twig_Template
      */
     private $tpl;
@@ -38,27 +28,21 @@ class ManageArrangementsHandler
     private $arr;
 
     /**
-     * @param Response $response
-     * @param Request $request
      * @param Twig_Template $tpl
      * @param ArrangementService $arr
      */
     public function __construct(
-        Response $response,
-        Request $request,
         Twig_Template $tpl,
         ArrangementService $arr
     ) {
-        $this->response = $response;
-        $this->request = $request;
         $this->tpl  = $tpl;
         $this->arr = $arr;
     }
 
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
-        $shortName = $this->request->post('shortName');
-        $fullName = $this->request->post('fullName');
+        $shortName = $req->post('shortName');
+        $fullName = $req->post('fullName');
         $errors = [];
         $data = [];
 
@@ -70,13 +54,13 @@ class ManageArrangementsHandler
             $data['cur_sn'] = $shortName;
             $data['cur_fn'] = $fullName;
             $data['errors'] = $errors;
-            $this->response->body($this->tpl->render($data));
+            $res->body($this->tpl->render($data));
             return;
         }
 
         $this->arr->create(strtolower($shortName), $fullName);
-        $this->response->status(303);
-        $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/arrangements';
+        $res->status(303);
+        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/arrangements');
     }
 
     private function validateShortName($shortName, array &$errors)

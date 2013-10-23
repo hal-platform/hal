@@ -7,7 +7,7 @@
 
 namespace QL\Hal;
 
-use Slim\Slim;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 use QL\Hal\Services\ArrangementService;
@@ -16,7 +16,7 @@ use QL\Hal\Services\RepositoryService;
 /**
  * @api
  */
-class Arrangements
+class ArrangementPage
 {
     /**
      * @var Response
@@ -39,36 +39,37 @@ class Arrangements
     private $repoService;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param ArrangementService $arrService
      * @param RepositoryService $repoService
      */
-    public function __construct(Response $response, Twig_Template $tpl, ArrangementService $arrService, RepositoryService $repoService)
+    public function __construct(Twig_Template $tpl, ArrangementService $arrService, RepositoryService $repoService)
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->arrService = $arrService;
         $this->repoService = $repoService;
     }
 
     /**
-     * @param string $shortName
-     * @param Slim $app
-     * @return null
+     * @param Request $req
+     * @param Response $res
+     * @param array|null $params
+     * @param callable|null $notFound
      */
-    public function __invoke($shortName, Slim $app)
+    public function __invoke(Request $req, Response $res, array $params = null, callable $notFound = null)
     {
+        $shortName = $params['name'];
         $arrId = $this->getArrangementId($shortName);
         if (is_null($arrId)) {
-            $app->notFound();
+            call_user_func($notFound);
             return;
         }
+        $repoList = [];
         if ($arrId) {
             $id = $arrId['ArrangementId']; 
             $repoList = $this->getRepositoriesForArrangement($id);
         }
-        $this->response->body($this->tpl->render(['arrangement' => $shortName, 'repositories' => $repoList]));
+        $res->body($this->tpl->render(['arrangement' => $shortName, 'repositories' => $repoList]));
     }
     
     private function getArrangementId($shortName) 
@@ -83,5 +84,4 @@ class Arrangements
         $repoList = $this->repoService->listByField($arrId, $field);
         return $repoList;
     }
-
 }

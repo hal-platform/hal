@@ -7,18 +7,17 @@
 
 namespace QL\Hal\Admin;
 
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ArrangementService;
 
+/**
+ * @api
+ */
 class ManageRepositories
 {
-    /**
-     * @param Response
-     */
-    private $response;
-
     /**
      * @param Twig_Template
      */
@@ -35,27 +34,27 @@ class ManageRepositories
     private $arrs;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param RepositoryService $repos
      * @param ArrangementService $arrs
      */
-    public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repos, ArrangementService $arrs)
+    public function __construct(Twig_Template $tpl, RepositoryService $repos, ArrangementService $arrs)
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->repos = $repos;
         $this->arrs = $arrs;
     }
 
     /**
+     * @param Request $req
+     * @param Response $res
      * @return null
      */
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
         $reposList = $this->repos->listAll();
         $arrsList = $this->arrs->listAll();
-        $this->response->body($this->tpl->render([
+        $res->body($this->tpl->render([
             'repositories' => $reposList,
             'arrangements' => $arrsList,
         ]));

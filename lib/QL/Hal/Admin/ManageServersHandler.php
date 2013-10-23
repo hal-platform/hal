@@ -19,16 +19,6 @@ use Twig_Template;
 class ManageServersHandler
 {
     /**
-     * @var Response
-     */
-    private $response;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var Twig_Template
      */
     private $tpl;
@@ -44,30 +34,24 @@ class ManageServersHandler
     private $envService;
 
     /**
-     * @param Response $response
-     * @param Request $request
      * @param Twig_Template $tpl
      * @param ServerService $servers
      * @param EnvironmentService $envService
      */
     public function __construct(
-        Response $response,
-        Request $request,
         Twig_Template $tpl,
         ServerService $servers,
         EnvironmentService $envService
     ) {
-        $this->response = $response;
-        $this->request = $request;
         $this->tpl = $tpl;
         $this->servers = $servers;
         $this->envService = $envService;
     }
 
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
-        $hostname = $this->request->post('hostname');
-        $envId = $this->request->post('envId');
+        $hostname = $req->post('hostname');
+        $envId = $req->post('envId');
         $errors = [];
 
         $this->validateHostName($hostname, $errors);
@@ -81,13 +65,13 @@ class ManageServersHandler
                 'selectedEnv' => $envId,
                 'serverVal' => $hostname,
             ];
-            $this->response->body($this->tpl->render($data));
+            $res->body($this->tpl->render($data));
             return;
         }
 
         $this->servers->create(strtolower($hostname), $envId);
-        $this->response->status(303);
-        $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/servers';
+        $res->status(303);
+        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/servers');
     }
 
     /**

@@ -7,6 +7,7 @@
 
 namespace QL\Hal;
 
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 use QL\Hal\Services\ArrangementService;
@@ -14,13 +15,8 @@ use QL\Hal\Services\ArrangementService;
 /**
  * @api
  */
-class Landing
+class ArrangementListPage
 {
-    /**
-     * @var Response
-     */
-    private $response;
-
     /**
      * @var Twig_Template
      */
@@ -32,23 +28,23 @@ class Landing
     private $arrService;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param ArrangementService $arrService
      */
-    public function __construct(Response $response, Twig_Template $tpl, ArrangementService $arrService)
+    public function __construct(Twig_Template $tpl, ArrangementService $arrService)
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->arrService = $arrService;
     }
 
     /**
+     * @param Request $req
+     * @param Response $res
      * @return null
      */
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
-            $arrangementsList = $this->arrService->listAll();
-            $this->response->body($this->tpl->render(['arrangements' => $arrangementsList]));
+        $arrangementsList = $this->arrService->listAll();
+        $res->body($this->tpl->render(['arrangements' => $arrangementsList]));
     }
 }

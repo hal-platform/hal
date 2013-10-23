@@ -19,16 +19,6 @@ use QL\Hal\Services\ArrangementService;
 class ManageRepositoriesHandler
 {
     /**
-     * @var Response
-     */
-    private $response;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var Twig_Template
      */
     private $tpl;
@@ -44,28 +34,24 @@ class ManageRepositoriesHandler
     private $arrService;
 
     public function __construct(
-        Response $response,
-        Request $request,
         Twig_Template $tpl,
         RepositoryService $repo,
         ArrangementService $arr
     ) {
-        $this->response = $response;
-        $this->request = $request;
         $this->tpl = $tpl;
         $this->repoService = $repo;
         $this->arrService = $arr;
     }
 
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
-        $arrId = $this->request->post('arrId');
-        $shortName = $this->request->post('shortName');
-        $githubUser = $this->request->post('githubUser');
-        $githubRepo = $this->request->post('githubRepo');
-        $ownerEmail = $this->request->post('ownerEmail');
-        $buildCommand = $this->request->post('buildCommand');
-        $description = $this->request->post('description');
+        $arrId = $req->post('arrId');
+        $shortName = $req->post('shortName');
+        $githubUser = $req->post('githubUser');
+        $githubRepo = $req->post('githubRepo');
+        $ownerEmail = $req->post('ownerEmail');
+        $buildCommand = $req->post('buildCommand');
+        $description = $req->post('description');
         $errors = [];
 
         if (!$shortName || !$githubUser || !$githubRepo || !$ownerEmail || !$description) {
@@ -88,7 +74,7 @@ class ManageRepositoriesHandler
                 'cur_email' => $ownerEmail,
                 'cur_description' => $description,
             ];
-            $this->response->body($this->tpl->render($data));
+            $res->body($this->tpl->render($data));
             return;
         }
 
@@ -101,8 +87,8 @@ class ManageRepositoriesHandler
             $ownerEmail,
             $description
         );
-        $this->response->status(303);
-        $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/repositories';
+        $res->status(303);
+        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/repositories');
     }
 
     private function validateShortName($shortName, array &$errors)

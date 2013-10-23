@@ -5,11 +5,9 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal;
+namespace QL\Hal\Services;
 
 use Github\Api\Repo as GithubRepoClient;
-use QL\Hal\Services\DeploymentService;
-use QL\Hal\Services\RepositoryService;
 
 /**
  * @api

@@ -12,6 +12,7 @@ use DateTimeZone;
 use Exception;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\LogService;
+use QL\Hal\Services\SyncOptions;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -21,16 +22,6 @@ use Twig_Template;
  */
 class SyncHandler
 {
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var Response
-     */
-    private $response;
-
     /**
      * @var Twig_Template
      */
@@ -72,31 +63,32 @@ class SyncHandler
     private $sshUser;
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * @var bool
+     */
+    private $debugMode;
+
+    /**
      * @param Twig_Template $tpl
      * @param SyncOptions $syncOptions
      * @param LogService $logService
      * @param DeploymentService $depService
-     * @param array $session
+     * @param Session $session
      * @param string $pusherScriptLocation
      * @param string $buildUser
      * @param string $sshUser
+     * @param boolean $debugMode
      */
     public function __construct(
-        Request $request,
-        Response $response,
         Twig_Template $tpl,
         SyncOptions $syncOptions,
         LogService $logService,
         DeploymentService $depService,
-        array $session,
+        Session $session,
         $pusherScriptLocation,
         $buildUser,
-        $sshUser
+        $sshUser,
+        $debugMode
     ) {
-        $this->request = $request;
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->syncOptions = $syncOptions;
         $this->logService = $logService;
@@ -105,16 +97,19 @@ class SyncHandler
         $this->pusherScriptLocation = $pusherScriptLocation;
         $this->buildUser = $buildUser;
         $this->sshUser = $sshUser;
+        $this->debugMode = $debugMode;
     }
 
     /**
-     * @param $repoShortName
-     * @param callable $notFound
-     * @throws Exception
+     * @param Request $req
+     * @param Response $res
+     * @param array|null $params
+     * @param callable|null $notFound
      */
-    public function __invoke($repoShortName, callable $notFound)
+    public function __invoke(Request $req, Response $res, array $params = null, callable $notFound = null)
     {
-        $deps = $this->request->get('deps');
+        $repoShortName = $params['name'];
+        $deps = $req->get('deps');
 
         if (!is_array($deps)) {
             $deps = [];
@@ -128,12 +123,12 @@ class SyncHandler
         }
 
         if (!$options['deps']) {
-            $this->response->setBody($this->tpl->render($options));
+            $res->setBody($this->tpl->render($options));
             return;
         }
 
-        $commitish = $this->request->post('commitish');
-        $sha = $this->request->post('sha');
+        $commitish = $req->post('commitish');
+        $sha = $req->post('sha');
 
         list($branch, $commit) = $this->derefCommitish($commitish, $sha, $options);
 
@@ -143,16 +138,16 @@ class SyncHandler
                 $options['toolong'] = 100;
             }
 
-            $this->response->setBody($this->tpl->render($options));
+            $res->setBody($this->tpl->render($options));
             return;
         }
 
         foreach ($options['deps'] as $dep) {
-            $this->syncDeployment($dep, $options, $branch, $commit);
+            $this->syncDeployment($dep, $options, $branch, $commit, $this->debugMode);
         }
 
-        $this->response->status(303);
-        $this->response->header('Location', $this->request->getScheme() . '://' . $this->request->getHostWithPort() . '/r/' . $options['repo']['ShortName']);
+        $res->status(303);
+        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/r/' . $options['repo']['ShortName']);
     }
 
     /**
@@ -170,11 +165,14 @@ class SyncHandler
         return null;
     }
 
-    private function syncCmdCreate($sudoUser, $pusherLocation, $depId, $logId, array $envVars)
+    private function syncCmdCreate($sudoUser, $pusherLocation, $depId, $logId, $isDebug, array $envVars)
     {
         $cmdStart = 'sudo -n -H -u %s';
         $cmdEnvs = ' ';
-        $cmdCmd = '%s %s %s &>/dev/null';
+        $cmdCmd = '%s %s %s';
+        if (!$isDebug) {
+            $cmdCmd .= ' &>/dev/null';
+        }
         foreach ($envVars as $k => $v) {
             $cmdEnvs .= escapeshellarg($k) . '=' . escapeshellarg($v) . ' ';
         }
@@ -220,16 +218,17 @@ class SyncHandler
      * @param $options
      * @param $branch
      * @param $commit
+     * @param $isDebug
      * @throws \Exception
      */
-    private function syncDeployment($dep, $options, $branch, $commit)
+    private function syncDeployment($dep, $options, $branch, $commit, $isDebug)
     {
         $now = new DateTime('now', new DateTimeZone('UTC'));
         $this->depService->update($dep['DeploymentId'], DeploymentService::STATUS_DEPLOYING, $dep['CurBranch'], $dep['CurCommit'], $dep['LastPushed']);
         $logid = $this->logService->create(
             $now,
-            $this->session['commonid'],
-            $this->session['account']['displayname'],
+            $this->session->get('commonid'),
+            $this->session->get('account')['displayname'],
             $options['repo']['ShortName'],
             $branch,
             $commit,
@@ -243,6 +242,7 @@ class SyncHandler
             $this->pusherScriptLocation,
             $dep['DeploymentId'],
             $logid,
+            $isDebug,
             [
                 'PATH' => '/usr/local/zend/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin',
                 'HAL_COMMIT' => $commit,
@@ -250,11 +250,10 @@ class SyncHandler
                 'HAL_ENVIRONMENT' => $dep['Environment'],
                 'HAL_HOSTNAME' => $dep['HostName'],
                 'HAL_PATH' => $dep['TargetPath'],
-                'HAL_USER' => $this->session['account']['samaccountname'],
-                'HAL_USER_DISPLAY' => $this->session['account']['displayname'],
-                'HAL_COMMONID' => $this->session['commonid'],
+                'HAL_USER' => $this->session->get('account')['samaccountname'],
+                'HAL_USER_DISPLAY' => $this->session->get('account')['displayname'],
+                'HAL_COMMONID' => $this->session->get('commonid'),
                 'HAL_REPO' => $options['repo']['ShortName'],
-
             ]
         );
 

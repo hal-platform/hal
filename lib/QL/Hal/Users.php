@@ -8,6 +8,7 @@
 namespace QL\Hal;
 
 use QL\Hal\Services\UserService;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Slim;
 use Twig_Template;
@@ -17,11 +18,6 @@ use Twig_Template;
  */
 class Users
 {
-    /**
-     * @var Response
-     */
-    private $response;
-
     /**
      * @var Twig_Template
      */
@@ -33,30 +29,31 @@ class Users
     private $userService;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param UserService $userService
      */
-    public function __construct(Response $response, Twig_Template $tpl, UserService $userService)
+    public function __construct(Twig_Template $tpl, UserService $userService)
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->userService = $userService;
     }
 
     /**
-     * @param int $commonId
-     * @param Slim $app
+     * @param Request $req
+     * @param \Slim\Http\Response $res
+     * @param array $params
+     * @param callable $notFound
      * @return null
      */
-    public function __invoke($commonId, Slim $app)
+    public function __invoke(Request $req, Response $res, array $params = null, callable $notFound = null)
     {
+        $commonId = $params['id'];
         $user = $this->userService->getById($commonId);
         if (is_null($user)) {
-            $app->notFound();
+            call_user_func($notFound);
             return;
         }
-        $this->response->body($this->tpl->render([
+        $res->body($this->tpl->render([
             'user' => $user,
             'total_pushes' => 0,
         ]));

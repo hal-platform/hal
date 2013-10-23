@@ -18,16 +18,6 @@ use Twig_Template;
 class ManageEnvironmentsHandler
 {
     /**
-     * @var Response
-     */
-    private $response;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var Twig_Template
      */
     private $tpl;
@@ -38,36 +28,30 @@ class ManageEnvironmentsHandler
     private $envService;
 
     /**
-     * @param Response $response
-     * @param Request $request
      * @param Twig_Template $tpl
      * @param EnvironmentService $envService
      */
     public function __construct(
-        Response $response,
-        Request $request,
         Twig_Template $tpl,
         EnvironmentService $envService
     ) {
-        $this->response = $response;
-        $this->request = $request;
         $this->tpl = $tpl;
         $this->envService = $envService;
     }
 
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
-        $reorder = $this->request->get('reorder');
+        $reorder = $req->get('reorder');
         if ($reorder === '1') {
-            $this->handleReOrder();
+            $this->handleReOrder($req, $res);
         } else {
-            $this->handleCreateEnv();
+            $this->handleCreateEnv($req, $res);
         }
     }
 
-    private function handleCreateEnv()
+    private function handleCreateEnv(Request $req, Response $res)
     {
-        $envname = $this->request->post('envname');
+        $envname = $req->post('envname');
         $errors = [];
 
         $this->validateEnvName($envname, $errors);
@@ -78,13 +62,13 @@ class ManageEnvironmentsHandler
                 'cur_env' => $envname,
                 'envs' => $this->envService->listAll()
             ];
-            $this->response->body($this->tpl->render($data));
+            $res->body($this->tpl->render($data));
             return;
         }
 
         $this->envService->create(strtolower($envname));
-        $this->response->status(303);
-        $this->response->header('Location', 'http://' . $this->request->getHost() . '/admin/envs');
+        $res->status(303);
+        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/envs');
     }
 
     private function validateEnvName($envname, array &$errors)
@@ -98,10 +82,10 @@ class ManageEnvironmentsHandler
         }
     }
 
-    private function handleReOrder()
+    private function handleReOrder(Request $req, Response $res)
     {
         $data = [];
-        foreach ($this->request->post() as $k => $v) {
+        foreach ($req->post() as $k => $v) {
             if (substr($k, 0, 3) !== 'env') {
                 continue;
             }
@@ -116,7 +100,7 @@ class ManageEnvironmentsHandler
             $data[$id] = $v;
         }
         $this->envService->updateOrder($data);
-        $this->response->status(303);
-        $this->response->header('Location', 'http://' . $this->request->getHost() . '/admin/envs');
+        $res->status(303);
+        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/envs');
     }
 }

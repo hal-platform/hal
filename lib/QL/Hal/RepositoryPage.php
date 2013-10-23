@@ -7,6 +7,7 @@
 
 namespace QL\Hal;
 
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Slim;
 use Twig_Template;
@@ -18,13 +19,8 @@ use QL\Hal\Services\LogService;
 /**
  * @api
  */
-class Repository
+class RepositoryPage
 {
-    /**
-     * @var Response
-     */
-    private $response;
-
     /**
      * @var Twig_Template
      */
@@ -52,16 +48,14 @@ class Repository
 
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param RepositoryService $repoService
      * @param DeploymentService $deploymentService
      * @param ServerService $serverService
      * @param LogService $logService
      */
-    public function __construct(Response $response, Twig_Template $tpl, RepositoryService $repoService, DeploymentService $deploymentService, ServerService $serverService, LogService $logService)
+    public function __construct(Twig_Template $tpl, RepositoryService $repoService, DeploymentService $deploymentService, ServerService $serverService, LogService $logService)
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->repoService = $repoService;
         $this->deploymentService = $deploymentService;
@@ -70,23 +64,27 @@ class Repository
     }
 
     /**
-     * @param string $shortName
+     * @param Request $req
+     * @param Response $res
+     * @param array $params
      * @param callable $notFound
+     * @internal param string $shortName
      * @return null
      */
-    public function __invoke($shortName, callable $notFound)
+    public function __invoke(Request $req, Response $res, array $params = null, callable $notFound = null)
     {
+        $shortName = $params['name'];
         $repo = $this->repoService->getFromName($shortName);
 
         if (!$repo) {
             call_user_func($notFound);
             return;
         }
-        
+
         $deployments = $this->deploymentService->listAllByRepoId($repo['RepositoryId']);
         $logEntries = $this->logService->getByRepo($shortName);
         $totalLogEntries = count($logEntries);
-        $this->response->body($this->tpl->render([
+        $res->body($this->tpl->render([
             'deployments' => $deployments,
             'repo' => $repo,
             'logs' => $logEntries,

@@ -10,6 +10,7 @@ namespace QL\Hal\Admin;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ServerService;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
@@ -18,11 +19,6 @@ use Twig_Template;
  */
 class ManageDeployments
 {
-    /**
-     * @param Response
-     */
-    private $response;
-
     /**
      * @param Twig_Template
      */
@@ -44,21 +40,18 @@ class ManageDeployments
     private $deployments;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param RepositoryService $repos
      * @param ServerService $servers
      * @param DeploymentService $deployments
      */
     public function __construct(
-        Response $response, 
         Twig_Template $tpl,
         RepositoryService $repos,
         ServerService $servers,
         DeploymentService $deployments
     )
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->repos = $repos;
         $this->servers = $servers;
@@ -66,17 +59,19 @@ class ManageDeployments
     }
 
     /**
+     * @param Request $req
+     * @param Response $res
      * @return null
      */
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
         $reposList = $this->repos->listAll();
         $serversList = $this->servers->listAll();
         $deploymentsList = $this->deployments->listAll();
-        $this->response->body($this->tpl->render([
-                        'repositories' => $reposList, 
-                        'servers' => $serversList, 
-                        'deployments' => $deploymentsList
+        $res->body($this->tpl->render([
+            'repositories' => $reposList,
+            'servers' => $serversList,
+            'deployments' => $deploymentsList
         ]));
     }
 }

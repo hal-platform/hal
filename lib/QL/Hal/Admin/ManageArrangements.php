@@ -2,16 +2,12 @@
 namespace QL\Hal\Admin;
 
 use QL\Hal\Services\ArrangementService;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
 class ManageArrangements
 {
-    /**
-     * @param Response
-     */
-    private $response;
-
     /**
      * @param Twig_Template
      */
@@ -23,23 +19,23 @@ class ManageArrangements
     private $arr;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param ArrangementService $arr
      */
-    public function __construct(Response $response, Twig_Template $tpl, ArrangementService $arr)
+    public function __construct(Twig_Template $tpl, ArrangementService $arr)
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->arr = $arr;
     }
 
     /**
+     * @param Request $req
+     * @param Response $res
      * @return null
      */
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
         $arrList = $this->arr->listAll();
-        $this->response->body($this->tpl->render(['arrangements' => $arrList]));
+        $res->body($this->tpl->render(['arrangements' => $arrList]));
     }
 }

@@ -7,6 +7,7 @@
 
 namespace QL\Hal;
 
+use QL\Hal\Services\SyncOptions;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -16,16 +17,6 @@ use Twig_Template;
  */
 class SyncPage
 {
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var Response
-     */
-    private $response;
-
     /**
      * @var Twig_Template
      */
@@ -37,30 +28,27 @@ class SyncPage
     private $syncOptions;
 
     /**
-     * @param Request $request
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param SyncOptions $syncOptions
      */
     public function __construct(
-        Request $request,
-        Response $response,
         Twig_Template $tpl,
         SyncOptions $syncOptions
     ) {
-        $this->request = $request;
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->syncOptions = $syncOptions;
     }
 
     /**
-     * @param string $repoShortName
-     * @param callable $notFound
+     * @param Request $req
+     * @param Response $res
+     * @param array|null $params
+     * @param callable|null $notFound
      */
-    public function __invoke($repoShortName, callable $notFound)
+    public function __invoke(Request $req, Response $res, array $params = null, callable $notFound = null)
     {
-        $deps = $this->request->get('deps');
+        $repoShortName = $params['name'];
+        $deps = $req->get('deps');
 
         if (!is_array($deps)) {
             $deps = [];
@@ -74,7 +62,7 @@ class SyncPage
         }
 
         if (!$options['deps']) {
-            $this->response->setBody($this->tpl->render($options));
+            $res->setBody($this->tpl->render($options));
             return;
         }
 
@@ -83,6 +71,6 @@ class SyncPage
             $options['toolong'] = 100;
         }
 
-        $this->response->setBody($this->tpl->render($options));
+        $res->setBody($this->tpl->render($options));
     }
 }

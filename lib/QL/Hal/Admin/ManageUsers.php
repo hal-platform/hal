@@ -8,6 +8,7 @@
 namespace QL\Hal\Admin;
 
 use QL\Hal\Services\UserService;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
@@ -16,11 +17,6 @@ use Twig_Template;
  */
 class ManageUsers
 {
-    /**
-     * @var Response
-     */
-    private $response;
-
     /**
      * @var Twig_Template
      */
@@ -32,23 +28,20 @@ class ManageUsers
     private $userService;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param UserService $userService
      */
     public function __construct(
-        Response $response,
         Twig_Template $tpl,
         UserService $userService
     )
     {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->userService = $userService;
     }
 
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
-        $this->response->body($this->tpl->render(['users' => $this->userService->listAll()]));
+        $res->body($this->tpl->render(['users' => $this->userService->listAll()]));
     }
 }

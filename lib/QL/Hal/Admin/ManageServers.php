@@ -9,6 +9,7 @@ namespace QL\Hal\Admin;
 
 use QL\Hal\Services\EnvironmentService;
 use QL\Hal\Services\ServerService;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
@@ -17,11 +18,6 @@ use Twig_Template;
  */
 class ManageServers
 {
-    /**
-     * @param Response
-     */
-    private $response;
-
     /**
      * @param Twig_Template
      */
@@ -38,31 +34,30 @@ class ManageServers
     private $envService;
 
     /**
-     * @param Response $response
      * @param Twig_Template $tpl
      * @param ServerService $serverService
      * @param EnvironmentService $envService
      */
     public function __construct(
-        Response $response,
         Twig_Template $tpl,
         ServerService $serverService,
         EnvironmentService $envService
     ) {
-        $this->response = $response;
         $this->tpl = $tpl;
         $this->serverService = $serverService;
         $this->envService = $envService;
     }
 
     /**
+     * @param Request $req
+     * @param Response $res
      * @return null
      */
-    public function __invoke()
+    public function __invoke(Request $req, Response $res)
     {
         $serversList = $this->serverService->listAll();
         $envList = $this->envService->listAll();
-        $this->response->body($this->tpl->render([
+        $res->body($this->tpl->render([
             'servers' => $serversList,
             'envs' => $envList,
         ]));

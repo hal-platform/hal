@@ -3,10 +3,16 @@
     "description": "Web-based tool for managing code pushes to Linux/UNIX machines.",
     "license": "proprietary",
     "require": {
+        "php-64bit": ">=5.4.0",
         "slim/slim": "2.*",
         "ql/mcp-corp-account": "*",
         "twig/twig": "1.*",
-        "knplabs/github-api": "1.*"
+        "knplabs/github-api": "*",
+        "monolog/monolog": "*",
+        "swiftmailer/swiftmailer": "*",
+        "symfony/dependency-injection": "*",
+        "symfony/config": "*",
+        "symfony/yaml": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"

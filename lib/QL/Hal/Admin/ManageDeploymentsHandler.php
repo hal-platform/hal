@@ -20,16 +20,6 @@ use Twig_Template;
 class ManageDeploymentsHandler
 {
     /**
-     * @var Response
-     */
-    private $response;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var Twig_Template
      */
     private $tpl;
@@ -50,34 +40,32 @@ class ManageDeploymentsHandler
     private $deployments;
 
     /**
-     * @param Response $response
-     * @param Request $request
      * @param Twig_Template $tpl
      * @param RepositoryService $repoService
      * @param ServerService $serverService
      * @param DeploymentService $deployments
      */
     public function __construct(
-        Response $response,
-        Request $request,
         Twig_Template $tpl,
         RepositoryService $repoService,
         ServerService $serverService,
         DeploymentService $deployments
     ) {
-        $this->response = $response;
-        $this->request = $request;
         $this->tpl = $tpl;
         $this->repoService = $repoService;
         $this->serverService = $serverService;
         $this->deployments = $deployments;
     }
 
-    public function __invoke()
+    /**
+     * @param Request $req
+     * @param Response $res
+     */
+    public function __invoke(Request $req, Response $res)
     {
-        $serverId = $this->request->post('serverId');
-        $repoId = $this->request->post('repositoryId');
-        $path = $this->request->post('path');
+        $serverId = $req->post('serverId');
+        $repoId = $req->post('repositoryId');
+        $path = $req->post('path');
         $errors = [];
 
         $this->validateServer($serverId, $errors);
@@ -85,13 +73,20 @@ class ManageDeploymentsHandler
         $this->validatePath($path, $errors);
 
         if (!$serverId || !$repoId || !$path) {
-            $this->response->body($this->tpl->render(['error' => 'all fields are required']));
+            $res->body($this->tpl->render(['error' => 'all fields are required']));
             return;
         }
 
-        $this->deployments->create($repoId, $serverId, 'Error', '(no branch)', '0000000000000000000000000000000000000000', $path);
-        $this->response->status(303);
-        $this->response['Location'] = 'http://' . $this->request->getHost() . '/admin/deployments';
+        $this->deployments->create(
+            $repoId,
+            $serverId,
+            'Error',
+            '(no branch)',
+            '0000000000000000000000000000000000000000',
+            $path
+        );
+        $res->status(303);
+        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/deployments');
     }
 
     /**
