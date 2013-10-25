@@ -69,6 +69,8 @@ class LogService
         PushLogId = :id
     ';
 
+    const Q_COUNT = 'SELECT COUNT(PushLogId) FROM PushLog WHERE PushRepo = :repoName';    
+
     /**
      * @var PDO
      */
@@ -119,6 +121,19 @@ class LogService
     }
 
     /**
+     * @param string $repoName
+     * @return int
+     */
+    public function getCount($shortName)
+    {
+        $stmt = $this->db->prepare(self::Q_COUNT);
+        $stmt->bindValue(':repoName', $shortName, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_NUM);
+        return $result[0][0];
+    }
+
+    /**
      * @param DateTime $startTime
      * @param int $commonId
      * @param string $userName
@@ -166,5 +181,22 @@ class LogService
         $stmt->bindValue(':status', $status, PDO::PARAM_STR);
         $stmt->bindValue(':finished', $finished->format('Y-m-d H:i:s'));
         $stmt->execute();
+    }
+
+    /**
+     * @param array $logs
+     */
+    public function paginate($logs)
+    { 
+        $perPage = 5;
+        $logCount = count($logs);
+
+        if ($logCount < $perPage) {
+            return $logs;
+        } else {
+            $numberOfPages = $logCount/$perPage; 
+        }
+
+
     }
 }

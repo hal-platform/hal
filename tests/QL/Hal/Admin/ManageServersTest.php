@@ -1,10 +1,9 @@
 <?php
 namespace QL\Hal\Admin;
 
-use QL\Hal\Services\EnvironmentService;
-use QL\Hal\Services\ServerService;
 use Slim\Http\Response;
 use Twig_Template;
+use QL\Hal\Services\EnvironmentService;
 
 class ManageServersTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,13 +14,6 @@ class ManageServersTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderIsCalledWithServersAndEnvs()
     {
-        $responseMock = $this->getMockBuilder('Slim\\Http\\Response')
-                    ->disableOriginalConstructor()
-                    ->getMock();
-        $responseMock->expects($this->once())
-                    ->method('body')
-                    ->with('the template');
-
        /* $twigTemplateMock = $this->getMockBuilder('Twig_Template')
                     ->disableOriginalConstructor()
                     ->getMockForAbstractClass();
@@ -55,6 +47,13 @@ class ManageServersTest extends \PHPUnit_Framework_TestCase
         $envServiceMock->expects($this->once())
                     ->method('listAll')
                     ->will($this->returnValue('envList'));
+
+        $responseMock = $this->getMockBuilder('Slim\\Http\\Response')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+        $responseMock->expects($this->once())
+                    ->method('body')
+                    ->with($twigTemplateMock);
 
 
         $servers = new ManageServers($responseMock, $twigTemplateMock, $serverServiceMock, $envServiceMock);

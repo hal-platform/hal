@@ -85,10 +85,12 @@ class Repository
         
         $deployments = $this->deploymentService->listAllByRepoId($repo['RepositoryId']);
         $logEntries = $this->logService->getByRepo($shortName);
+        $totalLogEntries = count($logEntries);
         $this->response->body($this->tpl->render([
             'deployments' => $deployments,
             'repo' => $repo,
-            'logs' => $logEntries
+            'logs' => $logEntries,
+            'totalLogs' => $totalLogEntries
         ]));
     }
 }
