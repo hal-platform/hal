@@ -1,0 +1,25 @@
+//
+// Color variables
+///
+$primary-color: #78a8c0;
+$secondary-color: #486060;
+$tertiary-color: #01002b;
+$quaternary-color: #d8d8a8;
+$text-color: #333; //http://ianstormtaylor.com/design-tip-never-use-black/
+$warning-color: #ff7c00;
+$error-color: #c00000;
+$success-color: #00c92c;
+$highlight-color: #ffc440;
+$white: #FDFEF3;
+
+//
+// Link state colors.
+///
+$link-color: $primary-color;
+$link-interaction-color: tint($primary-color, 30%); // :hover, :active, :focus
+
+//
+// Highlight colors for when you select text on the page
+///
+$selection-bg-color: $primary-color;
+$selection-text-color: $white;

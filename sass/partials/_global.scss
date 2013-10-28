@@ -1,0 +1,23 @@
+body {
+    background-color: $quaternary-color;
+}
+
+[role="banner"] {
+    background-color: $tertiary-color;
+    color: $white;
+    @include padding-leader(.5);
+}
+
+.logo {
+    display: table;
+}
+
+.hal {
+    display: table-cell;
+}
+
+.logo h1 {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: msem(-3);
+}

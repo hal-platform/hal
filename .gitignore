@@ -1,4 +1,9 @@
 /vendor/
 /conf.ini
 /phpunit.xml
+/node_modules/
+/bower_components/
 *.swp
+.DS_Store
+.sublime-workspace
+.sass-cache/
