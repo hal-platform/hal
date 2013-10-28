@@ -22,7 +22,7 @@ module.exports = function(grunt) {
                     force: true,
                     outputStyle: 'compact',
                     relativeAssets: true,
-                    require: ['modular-scale'],
+                    require: ['modular-scale', 'singularitygs', 'breakpoint'],
                 },
             },
             dist: {

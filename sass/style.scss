@@ -13,6 +13,8 @@
 ///
 @import "compass";
 @import "modular-scale";
+@import "singularitygs";
+@import "breakpoint";
 
 
 //
@@ -42,3 +44,5 @@ html{@include debug-vertical-alignment();}
 @import "partials/global";
 @import "partials/hal";
 @import "partials/base/forms";
+@import "partials/patterns/nav";
+@import "partials/patterns/buttons";

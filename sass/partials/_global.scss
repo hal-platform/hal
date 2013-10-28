@@ -1,4 +1,4 @@
-body {
+html {
     background-color: $quaternary-color;
 }
 
@@ -20,4 +20,53 @@ body {
     display: table-cell;
     vertical-align: middle;
     padding-left: msem(-3);
+}
+
+.branding-container {
+    max-width: 60em;
+    margin: 0 auto;
+    padding: 0 ms(-2);
+
+    @include breakpoint(32em) {
+        padding: 0 ms(1);
+    }
+}
+
+[role="main"] {
+    max-width: 60em;
+    margin: 0 auto;
+    padding: 0 ms(-2);
+    @include rhythm(0,1,.5,0);
+    background-color: $white;
+    @extend %clearfix;
+    position: relative;
+
+    @include breakpoint(32em) {
+        padding: 0 ms(1);
+        @include rhythm(0,1,.5,0);
+    }
+}
+
+[role="contentinfo"] {
+    max-width: 60em;
+    margin: 0 auto;
+    padding: 0 ms(-2);
+    color: $white;
+    background-color: $tertiary-color;
+    @include rhythm(0,1,.05,0);
+
+    @include breakpoint(32em) {
+        padding: 0 ms(1);
+        @include rhythm(0,1,.05,0);
+    }
+}
+
+.form-wrapper {
+    @include breakpoint(37.125em) {
+        max-width: 28em;
+    }
+}
+
+.mbn {
+    margin-bottom: 0 !important;
 }

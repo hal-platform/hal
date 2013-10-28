@@ -1,0 +1,23 @@
+[class*="btn"] {
+    background-color: $primary-color;
+    border-radius: 4px;
+    color: $white;
+    @include transition(background-color .5s ease-in-out 0);
+
+    &:hover {
+        background-color: tint($primary-color, 15%);
+        color: $white;
+    }
+}
+
+.btn--action {
+    background-color: $warning-color;
+
+    &:hover {
+        background-color: tint($warning-color, 15%);
+    }
+
+    @include breakpoint(32em) {
+        @include isolation-span(5,3, both);
+    }
+}

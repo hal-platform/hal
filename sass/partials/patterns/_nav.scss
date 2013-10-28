@@ -1,0 +1,62 @@
+[role="navigation"] {
+    background-color: $grey;
+}
+
+.nav--main {
+    max-width: 60em;
+    margin: 0 auto;
+    background-color: $grey;
+    height: 100%;
+}
+
+.nav--main li a {
+    text-align: center;
+    border-bottom: 1px solid $white;
+    @include padding-leader(.5);
+    @include padding-trailer(.5);
+    color: $white;
+    background-color: $grey;
+
+    &:hover {
+        text-decoration: none;
+        background-color: $white;
+        color: $primary-color;
+    }
+}
+
+.nav--main li:first-child a {
+    @include padding-leader(.5);
+    border-top: 1px solid $white;
+}
+
+@include breakpoint(30.0625em) {
+    [class*="nav"] {
+        > li {
+
+            &,
+            > a {
+                display: inline-block;
+            }
+        }
+    }
+
+    .nav--main li a {
+        border: 0;
+        padding-left: msem(1);
+        padding-right: msem(1);
+
+        &:hover {
+            border-bottom: .4em solid $secondary-color;
+            @include padding-trailer(.25);
+        }
+    }
+
+    .nav--main li:first-child a {
+        border: 0;
+
+        &:hover {
+            border-bottom: .4em solid $secondary-color;
+            @include padding-trailer(.25);
+        }
+    }
+}
