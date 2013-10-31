@@ -22,7 +22,6 @@ class ArrangementPage
      * @var Response
      */
     private $response;
-
     /**
      * @var Twig_Template
      */
@@ -39,15 +38,26 @@ class ArrangementPage
     private $repoService;
 
     /**
+     * @var Layout
+     */
+    private $layout;
+
+    /**
      * @param Twig_Template $tpl
      * @param ArrangementService $arrService
      * @param RepositoryService $repoService
+     * @param Layout $layout
      */
-    public function __construct(Twig_Template $tpl, ArrangementService $arrService, RepositoryService $repoService)
-    {
+    public function __construct(
+        Twig_Template $tpl,
+        ArrangementService $arrService,
+        RepositoryService $repoService,
+        Layout $layout
+    ) {
         $this->tpl = $tpl;
         $this->arrService = $arrService;
         $this->repoService = $repoService;
+        $this->layout = $layout;
     }
 
     /**
@@ -69,7 +79,9 @@ class ArrangementPage
             $id = $arrId['ArrangementId']; 
             $repoList = $this->getRepositoriesForArrangement($id);
         }
-        $res->body($this->tpl->render(['arrangement' => $shortName, 'repositories' => $repoList]));
+
+        $data = ['arrangement' => $shortName, 'repositories' => $repoList];
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $data));
     }
     
     private function getArrangementId($shortName) 

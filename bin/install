@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+./bin/composer install --prefer-source --no-interaction

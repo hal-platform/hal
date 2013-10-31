@@ -1,0 +1,90 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% set page_title = "Deployments Admin" %}
+
+{% block content %}
+    <h2>Add Deployment</h2>
+    <div class="form-wrapper">
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="repositoryId">Repository</label>
+                    <select id="repositoryId" name="repositoryId">
+                        {% for repository in repositories %}
+                            <option value="{{repository.RepositoryId}}">{{repository.ShortName}}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    <label for="serverId">Server</label>
+                    <select id="serverId" name="serverId">
+                        {% for server in servers %}
+                            <option value="{{server.ServerId}}">{{server.HostName}}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    <label for="path">Target Path</label>
+                    <input class="text-input" type="text" name="path" id="path" required maxlength="255">
+                </li>
+                <li>
+                    <input class="btn" value="Create Deployment" type="submit">
+                </li>
+            </ul>
+        </form>
+    </div>
+
+    <h2>Current Deployments</h2>
+    {% if deployments %}
+        <table>
+            <colgroup>
+                <col class="">
+                <col class="">
+                <col class="">
+                <col class="">
+                <col class="">
+                <col class="">
+                <col>
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>Repo</th>
+                <th>Server (Env)</th>
+                <th>Status</th>
+                <th>Branch</th>
+                <th>Commit</th>
+                <th>Last Push</th>
+                <th>Target Path</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for deployment in deployments %}
+                {% if deployment.LastPushed %}
+                    {% set lastPush = deployment.LastPushed|date(timezone="America/Detroit") %}
+                {% else %}
+                    {% set lastPush = "never" %}
+                {% endif %}
+                {% if deployment.CurCommit == '0000000000000000000000000000000000000000' %}
+                    {% set curCommit = deployment.CurCommit[:7] %}
+                {% else %}
+                    {% set curCommit = '<a href="http://git/' ~ deployment.GithubUser ~ '/' ~ deployment.GithubRepo ~ '/commit/' ~ deployment.CurCommit ~ '">' ~ deployment.CurCommit[:7] ~ '</a>' %}
+                {% endif %}
+                <tr>
+                    <td>{{ deployment.Repository }}</td>
+                    <td>{{ deployment.HostName }} ({{ deployment.Environment }})</td>
+                    <td>{{ deployment.CurStatus }}</td>
+                    <td>{{ deployment.CurBranch }}</td>
+                    <td>{% autoescape false %}{{ curCommit }}{% endautoescape %}</td>
+                    <td>{{ lastPush }}</td>
+                    <td>{{ deployment.TargetPath }}</td>
+                    <td><a href="/admin/deployments/{{ deployment.DeploymentId }}/remove">Remove</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No deployments have been setup yet.</p>
+    {% endif %}
+{% endblock %}

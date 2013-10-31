@@ -7,11 +7,17 @@
 
 namespace QL\Hal\Admin;
 
+
 use Slim\Http\Response;
 use Slim\Http\Request;
 use Twig_Template;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ArrangementService;
+use Github\Api\Organization as GithubOrganizationApi;
+use Github\Api\User as GithubUserApi;
+use Github\Api\Repo as GithubRepoApi;
+use Github\Exception\RuntimeException;
+
 
 /**
  * @api
@@ -33,14 +39,37 @@ class ManageRepositoriesHandler
      */
     private $arrService;
 
+    /**
+* @var GithubOrganizationApi
+*/
+    private $githubOrgService;
+
+    /**
+* @var GithubUserApi
+*/
+    private $githubUserService;
+
+    /**
+* @var GithubRepoApi
+*/
+    private $githubRepoService;
+
+
+
     public function __construct(
         Twig_Template $tpl,
         RepositoryService $repo,
-        ArrangementService $arr
+        ArrangementService $arr,
+        GithubOrganizationApi $githubOrgService,
+        GithubUserApi $githubUserService,
+        GithubRepoApi $githubRepoService
     ) {
         $this->tpl = $tpl;
         $this->repoService = $repo;
         $this->arrService = $arr;
+        $this->githubOrgService = $githubOrgService;
+        $this->githubUserService = $githubUserService;
+        $this->githubRepoService = $githubRepoService;
     }
 
     public function __invoke(Request $req, Response $res)
@@ -58,8 +87,10 @@ class ManageRepositoriesHandler
             $errors[] = "All fields are required.";
         }
         
-        $this->validateShortName($shortName, $errors);        
+     #   $arrangement = $this->validateArrangement($arrId, $errors);
+        $this->validateShortName($shortName, $errors);
         $this->validateDescription($description, $errors);
+        $this->validateGithubRepo($githubUser, $githubRepo, $errors);
 
         if ($errors) {
             $data = [
@@ -106,6 +137,54 @@ class ManageRepositoriesHandler
     {
         if (mb_strlen($description, 'UTF-8') > 255 || mb_strlen($description, 'UTF-8') <  2) {
             $errors[] = "Description must be less than 255 characters.";
+        }
+    }
+
+    /**
+     * @param string $arrId
+     * @param string[] $errors
+     * @return Arrangement|null
+    */
+    private function validateArrangement($arrId, array &$errors)
+    {
+        $arr = $this->arr->find($arrId);
+        if (!$arr) {
+            $errors[] = 'Invalid arrangement id';
+        }
+        return $arr;
+    } 
+
+    /**
+     * @param string $githubUser
+     * @param string $githubRepo
+     * @param string[] $errors
+    */
+    private function validateGithubRepo($githubUser, $githubRepo, array &$errors)
+    {
+        try {
+            $user = $this->githubUserService->show($githubUser);
+        } catch (RuntimeException $e) {
+
+            try {
+                $user = $this->githubOrgService->show($githubUser);
+            } catch (RuntimeException $e) {
+                $user = null;
+            }
+        }
+
+        if (!$user) {
+            $errors[] = 'Invalid Github Enterprise user/organization';
+            return;
+        }
+
+        try {
+            $repo = $this->githubRepoService->show($githubUser, $githubRepo);
+        } catch (RuntimeException $e) {
+            $repo = null;
+        }
+
+        if (!$repo) {
+            $errors[] = 'Invalid Github Enterprise repository name';
         }
     }
 }

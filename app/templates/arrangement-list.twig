@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Repository Groups" %}
+
+{% block content %}
+    <h2>Repository Groups</h2>
+    {% if arrangements %}
+    <h3>Choose a group</h3>
+        <ul>
+        {% for arrangement in arrangements %}
+            <li><a href="/a/{{arrangement.ShortName}}">{{ arrangement.Name }} </a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You don't currently have any repository groups.</p>
+    {% endif %}
+{% endblock %}

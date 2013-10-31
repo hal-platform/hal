@@ -69,7 +69,7 @@ class LogService
         PushLogId = :id
     ';
 
-    const Q_COUNT = 'SELECT COUNT(PushLogId) FROM PushLog WHERE PushRepo = :repoName';    
+    const Q_COUNT = 'SELECT COUNT(PushLogId) FROM PushLogs WHERE PushRepo = :repoName';    
 
     /**
      * @var PDO
@@ -120,18 +120,6 @@ class LogService
         return $ret;
     }
 
-    /**
-     * @param string $repoName
-     * @return int
-     */
-    public function getCount($shortName)
-    {
-        $stmt = $this->db->prepare(self::Q_COUNT);
-        $stmt->bindValue(':repoName', $shortName, PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_NUM);
-        return $result[0][0];
-    }
 
     /**
      * @param DateTime $startTime
@@ -184,19 +172,52 @@ class LogService
     }
 
     /**
-     * @param array $logs
+     * @param string $repoName
+     * @return int
      */
-    public function paginate($logs)
+    public function getCount($shortName)
+    {
+        $stmt = $this->db->prepare(self::Q_COUNT);
+        $stmt->bindValue(':repoName', $shortName, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_NUM);
+        return $result[0][0];
+    }
+
+    /**
+     * @param array $logs
+     * @return array
+     */
+    public function paginate($shortName, $pageNumber = null)
     { 
-        $perPage = 5;
-        $logCount = count($logs);
+        $rowsPerPage = 5;
+        $logCount = $this->getCount($shortName);
+        $numberOfPages = ceil($logCount/$rowsPerPage);
 
-        if ($logCount < $perPage) {
-            return $logs;
+        if ($logCount < $rowsPerPage) {
+            $offset = 0;
+        } 
+        
+        if(isset($pageNumber)) {
+            $offset = ($pageNumber - 1) * $rowsPerPage;
         } else {
-            $numberOfPages = $logCount/$perPage; 
+            $pageNumber = 1;
+            $offset = 0;
         }
+        $pages = $this->getByOffset($shortName, $offset, $rowsPerPage); 
+        return [$pages, $numberOfPages];
+    }
 
-
+    public function getByOffset($shortName,$offset, $rowsPerPage)
+    {
+        $query = self::Q_LIST . ' WHERE PushRepo = :name LIMIT :offset, :rowsPerPage';
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':name', $shortName, PDO::PARAM_STR);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':rowsPerPage', $rowsPerPage, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+        
     }
 }

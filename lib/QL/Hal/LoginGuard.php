@@ -9,21 +9,42 @@ namespace QL\Hal;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * @api
+ */
 class LoginGuard
 {
+    /**
+     * @var Session
+     */
     private $session;
 
-    public function __construct(Session $session)
+    /**
+     * @var ContainerBuilder
+     */
+    private $dic;
+
+    /**
+     * @param Session $session
+     * @param ContainerBuilder $dic
+     */
+    public function __construct(Session $session, ContainerBuilder $dic)
     {
         $this->session = $session;
+        $this->dic = $dic;
     }
 
+    /**
+     * @param Request $req
+     * @param Response $res
+     */
     public function __invoke(Request $req, Response $res)
     {
-        if (!$this->session->get('commonid')) {
-            $res->status(302);
-            $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/');
+        if (!$this->session->get('account')) {
+            $res->redirect($req->getScheme() . '://' . $req->getHostWithPort() . '/', 302);
         }
+        $this->dic->set('currentUserContext', $this->session->get('account'));
     }
 }

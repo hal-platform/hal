@@ -22,6 +22,11 @@ html {
     padding-left: msem(-3);
 }
 
+.sub-heading {
+    margin-bottom: 0;
+    @include padding-trailer();
+}
+
 .branding-container {
     max-width: 60em;
     margin: 0 auto;
@@ -67,6 +72,17 @@ html {
     }
 }
 
+.deployment-form {
+    @extend %clearfix;
+}
+
 .mbn {
     margin-bottom: 0 !important;
+}
+
+[href^='http://git/']:after {
+    font-family: FontAwesome;
+    content: ' \f09b';
+    color: $tertiary-color;
+    text-decoration: none;
 }

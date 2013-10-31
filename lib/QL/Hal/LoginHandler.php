@@ -50,6 +50,10 @@ class LoginHandler
         $this->userService = $userService;
     }
 
+    /**
+     * @param Request $request
+     * @param Response $response
+     */
     public function __invoke(Request $request, Response $response)
     {
         $username = $request->post('username');
@@ -60,29 +64,39 @@ class LoginHandler
             return;
         }
 
-        $error = $this->ldap->authenticate('MI\\' . $username, $password);
-        if ($error !== '') {
-            $response->body($this->tpl->render(['error' => $error]));
+
+        $result = $this->ldap->authenticate($username, $password);
+
+        if (!$result) {
+            $response->body($this->tpl->render(['error' => 'Authentication failed']));
             return;
         }
 
-        $account = $this->ldap->searchByUsername($username);
+        $account = $result;
 
-        // there probably should be error checking here...
-
-        $commonId = $account['extensionattribute8'];
-        $picture = $account['extensionattribute6'];
-        $this->session->set('commonid', $commonId);
         $this->session->set('account', $account);
 
-        $userRecord = $this->userService->getById($commonId);
+        $userRecord = $this->userService->getById($account->commonId());
+
         if (empty($userRecord)) {
-            $this->userService->create($commonId, $account['samaccountname'], $account['mail'], $account['displayname'], $picture);
+            $this->userService->create(
+                $account->commonId(),
+                $account->windowsUsername(),
+                $account->email(),
+                $account->displayName(),
+                $account->badgePhotoUrl()
+            );
         } else {
-            $this->userService->update($commonId, $account['samaccountname'], $account['mail'], $account['displayname'], $picture);
+            $this->userService->update(
+                $account->commonId(),
+                $account->windowsUsername(),
+                $account->email(),
+                $account->displayName(),
+                $account->badgePhotoUrl()
+            );
         }
 
-        $response->status(302);
-        $response['Location'] = $request->getScheme() . '://' . $request->getHostWithPort() . '/a';
+        $response->status(303);
+        $response->header('Location', $request->getScheme() . '://' . $request->getHostWithPort() . '/a');
     }
 }

@@ -7,100 +7,118 @@
 
 namespace QL\Hal;
 
+use Exception;
 use Slim\Route;
 use Slim\Slim;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ *  YML Route Loader for Slim
+ *
+ *  @package QL\Hal
+ */
 class RouteLoader
 {
     /**
-     * @var FileLocatorInterface
+     *  @var FileLocatorInterface
      */
     private $locator;
 
     /**
-     * @var Slim
+     *  @var Slim
      */
     private $app;
 
     /**
-     * @var ContainerBuilder
+     *  @var ContainerBuilder
      */
-    private $dic;
+    private $container;
 
     /**
      * @param FileLocatorInterface $locator
      * @param Slim $app
-     * @param ContainerBuilder $dic
+     * @param ContainerBuilder $container
      */
-    public function __construct(FileLocatorInterface $locator, Slim $app, ContainerBuilder $dic)
+    public function __construct(FileLocatorInterface $locator, Slim $app, ContainerBuilder $container)
     {
         $this->locator = $locator;
         $this->app = $app;
-        $this->dic = $dic;
+        $this->container = $container;
     }
 
     /**
-     * @param string $definitionFile
+     *  Load routes into application
+     *
+     *  @param $definitionFile
+     *  @throws \Exception
      */
     public function load($definitionFile)
     {
         $definitionFile = $this->locator->locate($definitionFile);
-        $definitions = Yaml::parse($definitionFile);
+        $routes = Yaml::parse($definitionFile);
 
-        foreach ($definitions as $methodAndUrl => $middlewareKeys) {
-            list($method, $url) = $this->splitMethodAndUrl($methodAndUrl);
-            $callableStack = $this->convertMiddlewareKeysToCallables($middlewareKeys);
-            array_unshift($callableStack, $url);
-            call_user_func_array(array($this->app, $method), $callableStack);
+        foreach ($routes as $name => $details) {
+            $method     = $details['method'];
+            $route      = $details['route'];
+            $stack      = $this->convertMiddlewareKeysToCallables($details['stack']);
+
+            array_unshift($stack, $route);
+
+            // Create Controller
+            switch($method) {
+                case 'GET':
+                case 'POST':
+                case 'PUT':
+                case 'DELETE':
+                    $controller = call_user_func_array(array($this->app, $method), $stack);
+                    break;
+                default:
+                    throw new Exception("Unknown HTTP method $method.");
+            }
+
+            // Add Conditions
+            $conditions = (isset($details['conditions'])) ? $details['conditions'] : array();
+            $controller->conditions($conditions);
+
+            // Add Name
+            $controller->name($name);
         }
     }
 
     /**
-     * @param string $methodAndUrl
-     * @return string[]
+     *  Convert an array of keys to middleware callables
+     *
+     *  @param string[] $stack
+     *  @return callable[]
      */
-    private function splitMethodAndUrl($methodAndUrl)
+    private function convertMiddlewareKeysToCallables(array $stack)
     {
-        $methodAndUrl = explode(' ', $methodAndUrl);
-        $method = strtolower(array_shift($methodAndUrl));
-        $url = array_pop($methodAndUrl);
+        $container  = $this->container;
+        $request    = $this->app->request();
+        $response   = $this->app->response();
+        $router     = $this->app->router();
+        $notFound   = array($this->app, 'notFound');
+        $handler    = array_pop($stack);
 
-        return array($method, $url);
-    }
-
-    /**
-     * @param string[] $middlewareKeys
-     * @return callable[]
-     */
-    private function convertMiddlewareKeysToCallables(array $middlewareKeys)
-    {
-        $dic = $this->dic;
-        $req = $this->app->request();
-        $res = $this->app->response();
-        $rtr = $this->app->router();
-        $notFound = array($this->app, 'notFound');
-
-        $pageHandler = array_pop($middlewareKeys);
-
-        foreach ($middlewareKeys as &$key) {
-            $serviceName = $key;
-            $key = function (Route $route) use ($dic, $serviceName, $req, $res, $notFound) {
-                $middleware = $dic->get($serviceName);
-                call_user_func($middleware, $req, $res, $route->getParams(), $notFound);
+        foreach ($stack as &$service) {
+            $key = $service;
+            $service = function (Route $route) use ($container, $key, $request, $response, $notFound) {
+                $middleware = $container->get($key);
+                $params = $route->getParams();
+                call_user_func($middleware, $request, $response, $params, $notFound);
             };
         }
 
-        $pageBootstrap = function () use ($pageHandler, $req, $res, $rtr, $notFound, $dic) {
-            $params = $rtr->getCurrentRoute()->getParams();
-            $pageHandler = $dic->get($pageHandler);
-            call_user_func($pageHandler, $req, $res, $params, $notFound);
+        $page = function () use ($handler, $request, $response, $router, $notFound, $container) {
+            $params = $router->getCurrentRoute()->getParams();
+            $pageHandler = $container->get($handler);
+            call_user_func($pageHandler, $request, $response, $params, $notFound);
         };
 
-        $middlewareKeys[] = $pageBootstrap;
+        $stack[] = $page;
 
-        return $middlewareKeys;
+        return $stack;
     }
 }

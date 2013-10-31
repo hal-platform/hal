@@ -11,10 +11,6 @@
     }
 }
 
-.check-label, .check-list label, .check-list .label {
-    display: inline;
-}
-
 legend {
     @include adjust-font-size-to(ms(4));
 }

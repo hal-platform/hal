@@ -89,7 +89,7 @@ if ($debug && $debug == 'DEBUG') {
 
 // read in app config information
 
-$config = Yaml::parse(file_get_contents($root . '/config.yml'));
+$config = Yaml::parse(file_get_contents($root . '/app/config.yml'));
 
 // connect to the DB
 

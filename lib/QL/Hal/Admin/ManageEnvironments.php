@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Admin;
 
+use QL\Hal\Layout;
 use QL\Hal\Services\EnvironmentService;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -21,22 +22,29 @@ class ManageEnvironments
      * @var Twig_Template
      */
     private $tpl;
-
     /**
      * @var EnvironmentService
      */
     private $envService;
 
     /**
+     * @var Layout
+     */
+    private $layout;
+
+    /**
      * @param Twig_Template $tpl
      * @param EnvironmentService $envService
+     * @param Layout $layout
      */
     public function __construct(
         Twig_Template $tpl,
-        EnvironmentService $envService
+        EnvironmentService $envService,
+        Layout $layout
     ) {
         $this->tpl = $tpl;
         $this->envService = $envService;
+        $this->layout = $layout;
     }
 
     /**
@@ -45,8 +53,10 @@ class ManageEnvironments
      */
     public function __invoke(Request $req, Response $res)
     {
-        $res->body($this->tpl->render([
+        $data = [
             'envs' => $this->envService->listAll()
-        ]));
+        ];
+
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $data));
     }
 }

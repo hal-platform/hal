@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Services;
 
+use MCP\DataType\HttpUrl;
 use PDO;
 
 /**
@@ -22,6 +23,7 @@ class UserService
     const Q_INSERT = 'INSERT INTO Users (CommonId, UserName, Email, DisplayName, PictureUrl) VALUES (:commonId, :userName, :email, :displayName, :pictureUrl)';
     const Q_UPDATE = 'UPDATE Users SET UserName = :userName, Email = :email, DisplayName = :displayName, PictureUrl = :pictureUrl WHERE CommonId = :commonId';
     const Q_COUNT = 'SELECT COUNT(*) FROM Users';
+    const Q_PUSHES = 'SELECT COUNT(*) FROM PushLogs WHERE PushCommonId = :commonId';
 
     /**
      * @var PDO
@@ -34,6 +36,15 @@ class UserService
     public function __construct(PDO $db)
     {
         $this->db = $db;
+    }
+
+    public function getTotalPushesByCommonId($commonId)
+    {
+        $stmt = $this->db->prepare(self::Q_PUSHES);
+        $stmt->bindValue(':commonId', $commonId, PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt = $stmt->fetchAll(PDO::FETCH_NUM);
+        return $stmt[0][0];
     }
 
     /**
@@ -54,17 +65,17 @@ class UserService
      * @param string $userName
      * @param string $email
      * @param string $displayName
-     * @param string $pictureUrl
+     * @param HttpUrl $pictureUrl
      * @return null
      */
-    public function create($commonId, $userName, $email, $displayName, $pictureUrl)
+    public function create($commonId, $userName, $email, $displayName, HttpUrl $pictureUrl)
     {
         $stmt = $this->db->prepare(self::Q_INSERT);
         $stmt->bindValue(':commonId', $commonId, PDO::PARAM_INT);
         $stmt->bindValue(':userName', $userName, PDO::PARAM_STR);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
         $stmt->bindValue(':displayName', $displayName, PDO::PARAM_STR);
-        $stmt->bindValue(':pictureUrl', $pictureUrl, PDO::PARAM_STR);
+        $stmt->bindValue(':pictureUrl', $pictureUrl->asString(), PDO::PARAM_STR);
         $stmt->execute();
     }
 
@@ -73,17 +84,17 @@ class UserService
      * @param string $userName
      * @param string $email
      * @param string $displayName
-     * @param string $pictureUrl
+     * @param HttpUrl $pictureUrl
      * @return null
      */
-    public function update($commonId, $userName, $email, $displayName, $pictureUrl)
+    public function update($commonId, $userName, $email, $displayName, HttpUrl $pictureUrl)
     {
         $stmt = $this->db->prepare(self::Q_UPDATE);
         $stmt->bindValue(':commonId', $commonId, PDO::PARAM_INT);
         $stmt->bindValue(':userName', $userName, PDO::PARAM_STR);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
         $stmt->bindValue(':displayName', $displayName, PDO::PARAM_STR);
-        $stmt->bindValue(':pictureUrl', $pictureUrl, PDO::PARAM_STR);
+        $stmt->bindValue(':pictureUrl', $pictureUrl->asString(), PDO::PARAM_STR);
         $stmt->execute();
     }
 

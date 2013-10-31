@@ -22,7 +22,17 @@ class RepositoryService
     const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, BuildCmd, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :cmd, :email, :desc)';
     const Q_COUNT = 'SELECT COUNT(*) FROM Repositories';
     const Q_LIST_BY_UNIQUE = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, Description FROM Repositories';
-    
+    const Q_LIST_REPO_ENV_PAIRS = '
+    SELECT
+        rep.ShortName as RepShortName,
+        env.Shortname as EnvShortName
+    FROM
+                   Repositories AS rep
+        INNER JOIN Deployments  AS dep ON (rep.RepositoryId = dep.RepositoryId)
+        INNER JOIN Servers      AS srv ON (dep.ServerId = srv.ServerId)
+        INNER JOIN Environments AS env ON (srv.EnvironmentId = env.EnvironmentId)
+    ';
+
     /**
      * @var PDO
      */
@@ -34,6 +44,32 @@ class RepositoryService
     public function __construct(PDO $db)
     {
         $this->db = $db;
+    }
+
+    public function listRepoEnvPairs()
+    {
+        $stmt = $this->db->prepare(self::Q_LIST_REPO_ENV_PAIRS);
+        $stmt->execute();
+
+        $result = $stmt->fetchAll(PDO::FETCH_NAMED);
+
+        $result = array_map(function ($val) {
+            return $val['RepShortName'] . '/' . $val['EnvShortName'];
+        }, $result);
+
+        $result = array_values(array_unique($result));
+
+        $result = array_map(function ($val) {
+            $val = explode('/', $val);
+            $ret = [
+                'RepShortName' => $val[0],
+                'EnvShortName' => $val[1],
+            ];
+            return $ret;
+        }, $result);
+
+
+        return $result;
     }
 
     /**

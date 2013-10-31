@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "/r/" ~ repo.ShortName %}
+
+{% block content %}
+    <p><a class="btn--small btn--back" href="/a/{{ repo.Arrangement }}">Back to repository list</a></p>
+
+    <h2>/r/{{ repo.ShortName }}</h2>
+
+    <h3>Deployments for {{ repo.ShortName }}</h3>
+    <form class="deployment-form" action="/r/{{ repo.ShortName }}/sync" method="get">
+        <table>
+            <colgroup>
+                <col class="">
+                <col class="">
+                <col class="">
+                <col class="">
+                <col class="">
+                <col class="">
+                <col>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Servers</th>
+                    <th>Environment</th>
+                    <th>Status</th>
+                    <th>Branch</th>
+                    <th>Current Commit</th>
+                    <th>Last Synced</th>
+                    {% if hasAnyPermissions %}<th>Sync?</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for deployment in deployments %}
+                <tr>
+                    <td>{{ deployment.HostName }}</td>
+                    <td>{{ deployment.Environment }}</td>
+                    <td>{{ deployment.CurStatus }}</td>
+                    <td>{{ deployment.CurBranch }}</td>
+                    <td>{{ deployment.CurCommit[:7] }}</td>
+                    <td>
+                        {% if deployment.LastPushed == '0000-00-00 00:00:00' %}
+                            Never
+                        {% else %}
+                            {{ deployment.LastPushed|date(timezone="America/Detroit") }}
+                        {% endif %}
+                    </td>
+                    {%- if hasAnyPermissions %}
+
+                    <td>
+                      {%- if permissions[deployment.Repository ~ '-' ~ deployment.Environment] -%}
+                      <input type="checkbox" name="deps[]" value="{{deployment.DeploymentId}}">
+                      {%- else -%}
+                      <input type="checkbox" name="deps[]" value="{{deployment.DeploymentId}}" disabled>
+                      {%- endif -%}
+                    {%- endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+      {% if hasAnyPermissions %}
+        <input class="btn--alt" type="submit" value="Sync selected servers" name="submit">
+      {% else %}
+        <p>If you need permission to push to this repository, send an email to <a href="mailto:ITTeamKeymasters@quickenloans.com">IT Team Keymasters</a>.</p>
+      {% endif %}
+    </form>
+
+
+    {% if totalLogPages >= 1 %}
+    <h3>Log Entries for {{ repo.ShortName }}</h3>
+    Total Pages #: {{ totalLogPages }}
+    <div>
+        {% if totalLogPages > 1 %}
+            {% set prev = currentPage - 1 %}
+            {% if currentPage > 1 %}
+                <a href="/r/hal?page={{ prev }}"> prev </a>
+            {% endif %}
+
+            {% set maxshow = 5 %}
+
+            {% if currentPage %}
+                {% set startshow = currentPage %}
+            {% else %}
+                {% set startshow = 1 %}
+            {% endif %}
+
+            {% set endshow = startshow + maxshow - 1 %}
+            {% if endshow > totalLogPages %}
+                {% set endshow = totalLogPages %}
+            {% endif %}
+            {% for page in startshow..endshow %}
+                <a href="/r/hal?page={{ page }}">{{ page }}</a>
+            {% endfor %}
+            {% if currentPage <= totalLogPages - maxshow %}
+                ...  <a href="/r/hal?page={{ totalLogPages }}">{{ totalLogPages }}</a>
+            {% endif %}
+
+            {% set next = currentPage + 1 %}
+            {% if currentPage < totalLogPages %}
+                <a href="/r/hal?page={{ next }}"> next </a>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    </div>
+    <table>
+        <colgroup>
+            <col class="">
+            <col class="">
+            <col class="">
+            <col class="">
+            <col class="">
+            <col class="">
+            <col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Push Start</th>
+                <th>Push End</th>
+                <th>Push Status</th>
+                <th>Branch</th>
+                <th>Environment</th>
+                <th>Server</th>
+                <th>Pusher</th>
+            </tr>
+        </thead>
+    {% for log in logs %}
+        <tbody>
+            <tr>
+                <td> {{ log.PushStart }} </td>
+                <td> {{ log.PushEnd }} </td>
+                <td> {{ log.PushStatus }} </td>
+                <td> {{ log.PushBranch }} </td>
+                <td> {{ log.Environment }} </td>
+                <td> {{ log.TargetServer }} </td>
+                <td> {{ log.PushUserName }} </td>
+            </tr>
+        </tbody>
+    {% endfor %}
+    </table>
+{% endblock %}

@@ -11,23 +11,27 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
- * @api
+ *  Logout Page Controller
  */
 class LogoutPage
 {
-    public function __construct()
+    /**
+     *  Constructor
+     *
+     *  @param Session $session
+     */
+    public function __construct(Session $session)
     {
-        session_start();
+        $this->session = $session;
     }
 
     /**
-     * @param Request $req
-     * @param Response $res
+     *  @param Request $req
+     *  @param Response $res
      */
     public function __invoke(Request $req, Response $res)
     {
-        session_destroy();
-        $res->status(302);
-        $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/');
+        $this->session->end();
+        $res->redirect($req->getScheme() . '://' . $req->getHostWithPort() . '/', 302);
     }
 }

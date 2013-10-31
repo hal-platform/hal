@@ -32,8 +32,32 @@ module.exports = function(grunt) {
             },
         },
 
+        // Uglify Task
+        uglify: {
+            head: {
+                files: {
+                    'public/js/head.min.js': ['bower_components/modernizr/modernizr.js', 'bower_components/respond/respond.src.js']
+                },
+            },
+            main: {
+                files: {
+                    'public/js/main.min.js':
+                        [
+                        'public/js/plugins.js',
+                        'public/js/main.js'
+                        ],
+                },
+            },
+            jquery: {
+                files: {
+                    'public/js/vendor/jquery-2.0.3.min.js': ['bower_components/jquery/jquery.js']
+                },
+            },
+        },
+
     });
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-compass');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 };
 

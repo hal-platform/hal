@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Admin;
 
+use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -22,7 +23,6 @@ class ManageRepositories
      * @param Twig_Template
      */
     private $tpl;
-
     /**
      * @param RepositoryService
      */
@@ -34,15 +34,26 @@ class ManageRepositories
     private $arrs;
 
     /**
+     * @var Layout
+     */
+    private $layout;
+
+    /**
      * @param Twig_Template $tpl
      * @param RepositoryService $repos
      * @param ArrangementService $arrs
+     * @param Layout $layout
      */
-    public function __construct(Twig_Template $tpl, RepositoryService $repos, ArrangementService $arrs)
-    {
+    public function __construct(
+        Twig_Template $tpl,
+        RepositoryService $repos,
+        ArrangementService $arrs,
+        Layout $layout
+    ) {
         $this->tpl = $tpl;
         $this->repos = $repos;
         $this->arrs = $arrs;
+        $this->layout = $layout;
     }
 
     /**
@@ -54,9 +65,10 @@ class ManageRepositories
     {
         $reposList = $this->repos->listAll();
         $arrsList = $this->arrs->listAll();
-        $res->body($this->tpl->render([
+        $context = [
             'repositories' => $reposList,
             'arrangements' => $arrsList,
-        ]));
+        ];
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $context));
     }
 }

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+rm -rf vendor
+rm -rf phpunit
+rm -rf composer.lock

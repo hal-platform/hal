@@ -22,6 +22,7 @@
 ///
 @import "vars";
 @import "scales/scales";
+@import "partials/icons";
 
 
 //
@@ -29,8 +30,8 @@
 //
 // Comment out to hide before going to production.
 ///
-$grid-background-baseline-color: pink;
-html{@include debug-vertical-alignment();}
+// $grid-background-baseline-color: pink;
+// html{@include debug-vertical-alignment();}
 
 
 //
@@ -44,5 +45,6 @@ html{@include debug-vertical-alignment();}
 @import "partials/global";
 @import "partials/hal";
 @import "partials/base/forms";
+@import "partials/base/tables";
 @import "partials/patterns/nav";
 @import "partials/patterns/buttons";

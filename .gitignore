@@ -1,6 +1,9 @@
 /vendor/
-/conf.ini
+/app/config.yml
 /phpunit.xml
+/tests/phpunit.xml
+/phpunit
+/.idea
 /node_modules/
 /bower_components/
 *.swp

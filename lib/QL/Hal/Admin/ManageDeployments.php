@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Admin;
 
+use QL\Hal\Layout;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ServerService;
@@ -20,42 +21,50 @@ use Twig_Template;
 class ManageDeployments
 {
     /**
-     * @param Twig_Template
+     * @var Twig_Template
      */
     private $tpl;
 
     /**
-     * @param Service RepositoryService
+     * @var RepositoryService
      */
     private $repos;
 
     /**
-     * @param Service ServerService
+     * @var ServerService
      */
     private $servers;
 
     /**
-     * @param Service DeploymentService
+     * @var DeploymentService
      */
     private $deployments;
+
+    /**
+     * @var Layout
+     */
+    private $layout;
 
     /**
      * @param Twig_Template $tpl
      * @param RepositoryService $repos
      * @param ServerService $servers
      * @param DeploymentService $deployments
+     * @param Layout $layout
      */
     public function __construct(
         Twig_Template $tpl,
         RepositoryService $repos,
         ServerService $servers,
-        DeploymentService $deployments
+        DeploymentService $deployments,
+        Layout $layout
     )
     {
         $this->tpl = $tpl;
         $this->repos = $repos;
         $this->servers = $servers;
         $this->deployments = $deployments;
+        $this->layout = $layout;
     }
 
     /**
@@ -68,10 +77,13 @@ class ManageDeployments
         $reposList = $this->repos->listAll();
         $serversList = $this->servers->listAll();
         $deploymentsList = $this->deployments->listAll();
-        $res->body($this->tpl->render([
+
+        $data = [
             'repositories' => $reposList,
             'servers' => $serversList,
             'deployments' => $deploymentsList
-        ]));
+        ];
+
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $data));
     }
 }

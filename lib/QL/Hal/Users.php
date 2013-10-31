@@ -7,10 +7,10 @@
 
 namespace QL\Hal;
 
+use MCP\Corp\Account\LdapService;
 use QL\Hal\Services\UserService;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Slim;
 use Twig_Template;
 
 /**
@@ -22,20 +22,36 @@ class Users
      * @var Twig_Template
      */
     private $tpl;
-
     /**
      * @var UserService
      */
     private $userService;
+    /**
+     * @var PushPermissionService
+     */
+    private $pushPermissionService;
+
+    /**
+     * @var Layout
+     */
+    private $layout;
 
     /**
      * @param Twig_Template $tpl
      * @param UserService $userService
+     * @param PushPermissionService $pushPermissionService
+     * @param Layout $layout
      */
-    public function __construct(Twig_Template $tpl, UserService $userService)
-    {
+    public function __construct(
+        Twig_Template $tpl,
+        UserService $userService,
+        PushPermissionService $pushPermissionService,
+        Layout $layout
+    ) {
         $this->tpl = $tpl;
         $this->userService = $userService;
+        $this->pushPermissionService = $pushPermissionService;
+        $this->layout = $layout;
     }
 
     /**
@@ -53,9 +69,16 @@ class Users
             call_user_func($notFound);
             return;
         }
-        $res->body($this->tpl->render([
+
+        $permissions = $this->pushPermissionService->repoEnvsCommonIdCanPushTo($commonId);
+        $totalPushes = $this->userService->getTotalPushesByCommonId($commonId);
+
+        $data = [
             'user' => $user,
-            'total_pushes' => 0,
-        ]));
+            'total_pushes' => $totalPushes,
+            'permissions' => $permissions,
+        ];
+
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $data));
     }
 }

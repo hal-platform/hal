@@ -1,0 +1,105 @@
+{% extends 'layout.html.twig' %}
+
+{% block head %}
+    <title>
+        {% if page_title %}{{page_title}} - {% endif %}HAL 9000
+    </title>
+    {% block icon %}
+        <link type="image/x-icon" rel="shortcut icon" href="/hal.ico"> <!-- for ie -->
+        <link type="image/png" rel="apple-touch-icon-precomposed" sizes="57x57" href="/hal-57px.png"> <!-- for apple -->
+        <link type="image/png" rel="apple-touch-icon-precomposed" sizes="72x72" href="/hal-72px.png"> <!-- for apple -->
+        <link type="image/png" rel="apple-touch-icon-precomposed" sizes="114x114" href="/hal-114px.png"> <!-- for apple -->
+        <link type="image/png" rel="apple-touch-icon-precomposed" sizes="144x144" href="/hal-144px.png"> <!-- for apple -->
+        <link type="image/png" rel="icon" href="/hal.png"> <!-- for the rest of the world -->
+    {% endblock %}
+    {% block meta %}
+        <meta name="format-detection" content="telephone=no">
+        <meta name="author" content="Matthew Nagi &lt;mattnagi@quickenloans.com&gt;">
+        <meta name="author" content="Bridget Schiefer &lt;bridgetschiefer@quickenloans.com&gt;">
+        <meta name="author" content="Dave Gillhespy &lt;davegillhespy@quickenloans.com&gt;">
+        <meta name="description" content="A push tool for code being deployed on Linux/UNIX boxes.">
+    {% endblock %}
+    {% block style %}
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/matt.css">
+    {% endblock %}
+    {% block headScript %}
+        <script src="/js/head.min.js"></script>
+        <script type="text/javascript" src="//use.typekit.net/doy3lmv.js"></script>
+        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    {% endblock %}
+{% endblock %}
+
+{% block body %}
+
+    <!-- BEGIN HEADER -->
+    {% block header %}
+        <header role="banner">
+            <div class="branding-container">
+                <div class="logo">
+                    <a href="/" class="hal">
+                        <div class="metal active">
+                            <div class="light">
+                                <div class="glowing-red">
+                                    <div class="glowing-yellow"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <h1>HAL 9000</h1>
+                </div>
+
+                <h2 class="zeta sub-heading">Child of Codepushinator, QBERT and Github Enterprise</h2>
+            </div>
+            {% block navigation %}
+                {% if account %}
+                <nav role="navigation">
+                    <ul class="nav--main mbn">
+                        <li><a href="/a" title="project groups">Repository Groups</a></li>
+                        <li><a href="/u/{{ commonId }}">Profile Page</a></li>
+                        {% if isAdmin %}
+                            <li><a href="/admin" title="admin dashboard">Admin Dashboard</a></li>
+                        {% endif %}
+                        <li><a href="/logout" title="logout">Logout</a></li>
+                    </ul>
+                </nav>
+                {% endif %}
+            {% endblock %}
+        </header>
+    {% endblock %}
+    <!-- END HEADER -->
+
+    <main role="main">
+        {% block flash %}
+            {% if session.hasFlash() %}
+                <div class="flash">
+                    {% for message in session.getFlash() %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endblock %}
+        <!-- BEGIN SUBNAV -->
+        {% block subnav %}{% endblock %}
+        <!-- END SUBNAV -->
+        <!-- BEGIN CONTENT -->
+        {% block content %}{% endblock %}
+        <!-- END CONTENT -->
+    </main>
+
+    <!-- BEGIN FOOTER -->
+    {% block footer %}
+        <footer role="contentinfo">
+            <p>&copy; 2013 - Quicken Loans</p>
+        </footer>
+    {% endblock %}
+    <!-- END FOOTER -->
+
+{% endblock %}
+
+{% block script %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
+    <script src="/js/main.min.js"></script>
+    {% block pageScript %}{% endblock %}
+{% endblock %}

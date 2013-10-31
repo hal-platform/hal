@@ -7,9 +7,9 @@
 
 namespace QL\Hal;
 
+use MCP\Corp\Account\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Slim;
 use Twig_Template;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\DeploymentService;
@@ -25,12 +25,10 @@ class RepositoryPage
      * @var Twig_Template
      */
     private $tpl;
-
     /**
      * @var RepositoryService
      */
     private $repoService;
-
     /**
      * @var DeploymentService
      */
@@ -46,6 +44,20 @@ class RepositoryPage
      */
     private $logService;
 
+    /**
+     * @var PushPermissionService
+     */
+    private $pushPermissionsService;
+
+    /**
+     * @var User
+     */
+    private $currentUser;
+
+    /**
+     * @var Layout
+     */
+    private $layout;
 
     /**
      * @param Twig_Template $tpl
@@ -53,14 +65,28 @@ class RepositoryPage
      * @param DeploymentService $deploymentService
      * @param ServerService $serverService
      * @param LogService $logService
+     * @param PushPermissionService $pushPermissionsService
+     * @param User $currentUser
+     * @param Layout $layout
      */
-    public function __construct(Twig_Template $tpl, RepositoryService $repoService, DeploymentService $deploymentService, ServerService $serverService, LogService $logService)
-    {
+    public function __construct(
+        Twig_Template $tpl,
+        RepositoryService $repoService,
+        DeploymentService $deploymentService,
+        ServerService $serverService,
+        LogService $logService,
+        PushPermissionService $pushPermissionsService,
+        User $currentUser,
+        Layout $layout
+    ) {
         $this->tpl = $tpl;
         $this->repoService = $repoService;
         $this->deploymentService = $deploymentService;
         $this->serverService = $serverService;
         $this->logService = $logService;
+        $this->pushPermissionsService = $pushPermissionsService;
+        $this->currentUser = $currentUser;
+        $this->layout = $layout;
     }
 
     /**
@@ -68,27 +94,58 @@ class RepositoryPage
      * @param Response $res
      * @param array $params
      * @param callable $notFound
-     * @internal param string $shortName
      * @return null
      */
     public function __invoke(Request $req, Response $res, array $params = null, callable $notFound = null)
     {
         $shortName = $params['name'];
         $repo = $this->repoService->getFromName($shortName);
+        $renderData = [];
 
         if (!$repo) {
             call_user_func($notFound);
             return;
         }
 
+        if ($req->get('page')) {
+            $pageNumber = $req->get('page'); 
+            $renderData['currentPage'] = $pageNumber;
+            $pages = $this->logService->paginate($shortName, $pageNumber);
+        } else {
+            $pages = $this->logService->paginate($shortName);
+        }
+
         $deployments = $this->deploymentService->listAllByRepoId($repo['RepositoryId']);
-        $logEntries = $this->logService->getByRepo($shortName);
-        $totalLogEntries = count($logEntries);
-        $res->body($this->tpl->render([
-            'deployments' => $deployments,
-            'repo' => $repo,
-            'logs' => $logEntries,
-            'totalLogs' => $totalLogEntries
-        ]));
+
+        $permissions = array();
+        foreach ($deployments as $deployment) {
+            $permKey = $deployment['Repository'] . '-' . $deployment['Environment'];
+            if (isset($permissions[$permKey])) {
+                continue;
+            }
+            $hasPerm = $this->pushPermissionsService->canUserPushToEnvRepo($this->currentUser, $deployment['Repository'], $deployment['Environment']);
+            if ($hasPerm) {
+                $permissions[$permKey] = true;
+            } else {
+                $permissions[$permKey] = false;
+            }
+        }
+
+        $hasAnyPermissions = false;
+        foreach ($permissions as $perm) {
+            if ($perm) {
+                $hasAnyPermissions = true;
+                break;
+            }
+        }
+
+        $renderData['repo'] = $repo;
+        $renderData['deployments'] = $deployments;
+        $renderData['logs'] = $pages[0];
+        $renderData['totalLogEntries'] = $this->logService->getCount($shortName);
+        $renderData['totalLogPages'] = $pages[1];
+        $renderData['hasAnyPermissions'] = $hasAnyPermissions;
+        $renderData['permissions'] = $permissions;
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $renderData));
     }
 }

@@ -1,0 +1,8 @@
+thead {
+    border-bottom: 5px solid $secondary-color;
+}
+
+tbody tr {
+    border-bottom: 1px solid $primary-color;
+    @include adjust-font-size-to(ms(-1));
+}

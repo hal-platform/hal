@@ -1,0 +1,92 @@
+CREATE TABLE Environments (
+    EnvironmentId TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    ShortName     CHAR(24)         NOT NULL,
+    DispOrder     TINYINT UNSIGNED NOT NULL,
+    PRIMARY KEY   (EnvironmentId),
+    UNIQUE        (ShortName)
+)
+    ENGINE        InnoDB
+    CHARACTER SET ascii;
+
+CREATE TABLE Servers (
+    ServerId      INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    EnvironmentId TINYINT UNSIGNED NOT NULL,
+    HostName      CHAR(24)         NOT NULL,
+    PRIMARY KEY   (ServerId),
+    CONSTRAINT    FOREIGN KEY (EnvironmentId) REFERENCES Environments (EnvironmentId)
+)
+    ENGINE        InnoDB
+    CHARACTER SET ascii;
+
+CREATE TABLE Arrangements (
+    ArrangementId INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    ShortName     CHAR(24) CHARACTER SET ascii NOT NULL,
+    Name          CHAR(48)         NOT NULL,
+    PRIMARY KEY   (ArrangementId),
+    UNIQUE        (ShortName)
+)
+    ENGINE        InnoDB
+    CHARACTER SET utf8;
+
+CREATE TABLE Repositories (
+    RepositoryId  INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    ArrangementId INT UNSIGNED NOT NULL,
+    ShortName     CHAR(24) CHARACTER SET ascii NOT NULL,
+    GithubUser    CHAR(48)     NOT NULL,
+    GithubRepo    CHAR(48)     NOT NULL,
+    OwnerEmail    CHAR(128)    NOT NULL,
+    BuildCmd      CHAR(128)    NOT NULL,
+    Description   CHAR(255)    NOT NULL,
+    PRIMARY KEY   (RepositoryId),
+    UNIQUE        (ShortName),
+    CONSTRAINT    FOREIGN KEY (ArrangementId) REFERENCES Arrangements (ArrangementId)
+)
+    ENGINE        InnoDB
+    CHARACTER SET utf8;
+
+CREATE TABLE Deployments (
+    DeploymentId INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    RepositoryId INT UNSIGNED NOT NULL,
+    ServerId     INT UNSIGNED NOT NULL,
+    CurStatus    ENUM('Deployed', 'Deploying', 'Error') NOT NULL DEFAULT 'Error',
+    CurBranch    CHAR(64)     NOT NULL,
+    CurCommit    BINARY(20)   NOT NULL,
+    LastPushed   DATETIME     NOT NULL,
+    TargetPath   CHAR(255)    NOT NULL,
+    PRIMARY KEY  (DeploymentId),
+    UNIQUE       (RepositoryId, ServerId),
+    CONSTRAINT   FOREIGN KEY (RepositoryId) REFERENCES Repositories (RepositoryId),
+    CONSTRAINT   FOREIGN KEY (ServerId) REFERENCES Servers (ServerId)
+)
+    ENGINE        InnoDB
+    CHARACTER SET utf8;
+
+CREATE TABLE PushLogs (
+    PushLogId    BIGINT       NOT NULL AUTO_INCREMENT, -- keep this signed so PHP doesn't convert to float
+    PushStart    DATETIME     NOT NULL,
+    PushEnd      DATETIME     NOT NULL,
+    PushStatus   ENUM('Deployed', 'Deploying', 'Error') NOT NULL DEFAULT 'Deploying',
+    PushCommonId INT UNSIGNED NOT NULL,
+    PushUserName CHAR(32)     NOT NULL,
+    PushRepo     CHAR(24) CHARACTER SET ascii NOT NULL,
+    PushBranch   CHAR(64)     NOT NULL,
+    CommitSha    BINARY(20)   NOT NULL,
+    Environment  CHAR(24) CHARACTER SET ascii NOT NULL,
+    TargetServer CHAR(24) CHARACTER SET ascii NOT NULL,
+    TargetPath   CHAR(255)    NOT NULL,
+    PRIMARY KEY  (PushLogId)
+)
+    ENGINE        InnoDB
+    CHARACTER SET utf8;
+
+CREATE TABLE Users (
+    CommonId    INT UNSIGNED NOT NULL,
+    UserName    CHAR(32)     NOT NULL,
+    Email       CHAR(128)    NOT NULL,
+    DisplayName CHAR(128)    NOT NULL,
+    PictureUrl  CHAR(128)    NOT NULL,
+    PRIMARY KEY (CommonId),
+    UNIQUE      (UserName)
+)
+    ENGINE        InnoDB
+    CHARACTER SET utf8;

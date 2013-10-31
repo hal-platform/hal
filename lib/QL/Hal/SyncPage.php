@@ -21,22 +21,29 @@ class SyncPage
      * @var Twig_Template
      */
     private $tpl;
-
     /**
      * @var SyncOptions
      */
     private $syncOptions;
 
     /**
+     * @var Layout
+     */
+    private $layout;
+
+    /**
      * @param Twig_Template $tpl
      * @param SyncOptions $syncOptions
+     * @param Layout $layout
      */
     public function __construct(
         Twig_Template $tpl,
-        SyncOptions $syncOptions
+        SyncOptions $syncOptions,
+        Layout $layout
     ) {
         $this->tpl = $tpl;
         $this->syncOptions = $syncOptions;
+        $this->layout = $layout;
     }
 
     /**
@@ -71,6 +78,6 @@ class SyncPage
             $options['toolong'] = 100;
         }
 
-        $res->setBody($this->tpl->render($options));
+        $res->setBody($this->layout->renderTemplateWithLayoutData($this->tpl, $options));
     }
 }

@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+./vendor/bin/phpmd src text codesize,unusedcode,naming,design --exclude:ShortVariable,ShortMethodName

@@ -10,6 +10,7 @@ namespace QL\Hal;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use MCP\Corp\Account\User;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\LogService;
 use QL\Hal\Services\SyncOptions;
@@ -43,9 +44,9 @@ class SyncHandler
     private $depService;
 
     /**
-     * @var array
+     * @var User
      */
-    private $session;
+    private $currentUserContext;
 
     /**
      * @var string
@@ -72,7 +73,7 @@ class SyncHandler
      * @param SyncOptions $syncOptions
      * @param LogService $logService
      * @param DeploymentService $depService
-     * @param Session $session
+     * @param User $currentUserContext
      * @param string $pusherScriptLocation
      * @param string $buildUser
      * @param string $sshUser
@@ -83,7 +84,7 @@ class SyncHandler
         SyncOptions $syncOptions,
         LogService $logService,
         DeploymentService $depService,
-        Session $session,
+        User $currentUserContext,
         $pusherScriptLocation,
         $buildUser,
         $sshUser,
@@ -93,7 +94,7 @@ class SyncHandler
         $this->syncOptions = $syncOptions;
         $this->logService = $logService;
         $this->depService = $depService;
-        $this->session = $session;
+        $this->currentUserContext = $currentUserContext;
         $this->pusherScriptLocation = $pusherScriptLocation;
         $this->buildUser = $buildUser;
         $this->sshUser = $sshUser;
@@ -227,8 +228,8 @@ class SyncHandler
         $this->depService->update($dep['DeploymentId'], DeploymentService::STATUS_DEPLOYING, $dep['CurBranch'], $dep['CurCommit'], $dep['LastPushed']);
         $logid = $this->logService->create(
             $now,
-            $this->session->get('commonid'),
-            $this->session->get('account')['displayname'],
+            $this->currentUserContext->commonId(),
+            $this->currentUserContext->displayName(),
             $options['repo']['ShortName'],
             $branch,
             $commit,
@@ -250,9 +251,9 @@ class SyncHandler
                 'HAL_ENVIRONMENT' => $dep['Environment'],
                 'HAL_HOSTNAME' => $dep['HostName'],
                 'HAL_PATH' => $dep['TargetPath'],
-                'HAL_USER' => $this->session->get('account')['samaccountname'],
-                'HAL_USER_DISPLAY' => $this->session->get('account')['displayname'],
-                'HAL_COMMONID' => $this->session->get('commonid'),
+                'HAL_USER' => $this->currentUserContext->windowsUsername(),
+                'HAL_USER_DISPLAY' => $this->currentUserContext->displayName(),
+                'HAL_COMMONID' => $this->currentUserContext->commonId(),
                 'HAL_REPO' => $options['repo']['ShortName'],
             ]
         );

@@ -1,0 +1,51 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% set page_title = "Environment Admin" %}
+
+{% block content %}
+    <h2>Environments</h2>
+    <h3 class="mbn">Re-order environments</h3>
+    <p><small>This will change the order that environments are displayed across in the site.</small></p>
+    {% if envs %}
+        <div class="form-wrapper">
+            <form action="?reorder=1" method="post">
+                <ul class="form-fields">
+                    {% for env in envs %}
+                        <li class="t20">
+                            <label><a href="/e/{{ env.ShortName }}">{{ env.ShortName }}</a></label>
+                            <input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input">
+                        </li>
+                    {% endfor %}
+                    <li>
+                        <input class="btn" type="submit" value="Re-Order Environments">
+                    </li>
+                </ul>
+            </form>
+        </div>
+    {% else %}
+        <p>It looks like you don't have any environments yet. Add one using the form below:</p>
+    {% endif %}
+
+    <h3>Add a new environment</h3>
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="envname">Name</label>
+                    <input type="text" name="envname" id="envname" maxlength="24" required value="{{ cur_env }}" class="text-input">
+                </li>
+                <li>
+                    <input class="btn" type="submit" value="Add Environment">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}

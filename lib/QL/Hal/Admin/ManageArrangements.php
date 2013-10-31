@@ -1,6 +1,7 @@
 <?php
 namespace QL\Hal\Admin;
 
+use QL\Hal\Layout;
 use QL\Hal\Services\ArrangementService;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -12,20 +13,29 @@ class ManageArrangements
      * @param Twig_Template
      */
     private $tpl;
-
     /**
      * @param ArrangementService
      */
     private $arr;
 
     /**
+     * @var Layout
+     */
+    private $layout;
+
+    /**
      * @param Twig_Template $tpl
      * @param ArrangementService $arr
+     * @param Layout $layout
      */
-    public function __construct(Twig_Template $tpl, ArrangementService $arr)
-    {
+    public function __construct(
+        Twig_Template $tpl,
+        ArrangementService $arr,
+        Layout $layout
+    ) {
         $this->tpl = $tpl;
         $this->arr = $arr;
+        $this->layout = $layout;
     }
 
     /**
@@ -36,6 +46,7 @@ class ManageArrangements
     public function __invoke(Request $req, Response $res)
     {
         $arrList = $this->arr->listAll();
-        $res->body($this->tpl->render(['arrangements' => $arrList]));
+        $data = ['arrangements' => $arrList];
+        $res->setBody($this->layout->renderTemplateWithLayoutData($this->tpl, $data));
     }
 }

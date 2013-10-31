@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Sync Code" %}
+
+{% block content %}
+    <p><a class="btn--small btn--back" href="/r/{{ repo.ShortName }}">Back to repository</a></p>
+
+    {% if deps %}
+        <h2>Choose a commitish to push </h2>
+        {% if toolong %}
+            <p class="alert-bar--warning holy-shit-call-this-out">WARNING!!! You have <em>way</em> too many branches. There's no reason to have over {{ toolong }} branches and you have {{ branches|length }}! A normal amount of branches is something like one to ten.</p>
+        {% endif %}
+        <form method="post" action="">
+            <ul class="form-fields">
+                <li>
+                    <ul class="check-list">
+                    {% for branch in branches %}
+                        <li>
+                            <input type="radio" name="commitish" value="{{ branch.name }}">
+                            <label>{{ branch.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/commit/{{ branch.commit.sha }}">{{ branch.commit.sha[:7] }}</a>)</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </li>
+                <li>
+                    <ul class="check-list">
+                    {% for tag in tags %}
+                        <li>
+                            <input type="radio" name="commitish" value="{{ tag.name }}">
+                            <label>[tag] {{ tag.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/tag/{{ tag.commit.sha }}">{{ tag.commit.sha[:7] }}</a>)</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </li>
+                <li>
+                    <ul class="check-list form-wrapper">
+                        <li>
+                            <input type="radio" name="commitish" value="(no branch)">
+                            <label>Push specific commit ID:</label>
+                            <input class="text-input" type="text" name="sha">
+                        </li>
+                    </ul>
+                </li>
+
+                <h3>To the following servers/paths:</h3>
+                {% for dep in deps %}
+                <ul>
+                    <li>{{ dep.HostName }}:{{ dep.TargetPath }}{% if dep.LastPushed %} on {{ dep.LastPushed|date(timezone="America/Detroit") }}{% endif %}</li>
+                </ul>
+                {% endfor %}
+
+                <li>
+                    <input class="btn" type="submit" value="Sync Code" name="submit">
+                </li>
+            </ul>
+        </form>
+    {% else %}
+         <p>You must select some deployments to push code to. Please select some <a href="/r/{{ repo.ShortName }}">from the repository page</a>.</p>
+    {% endif %}
+{% endblock %}

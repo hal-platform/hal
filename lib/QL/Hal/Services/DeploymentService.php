@@ -49,7 +49,9 @@ class DeploymentService
     const Q_INSERT = 'INSERT INTO Deployments (RepositoryId, ServerId, CurStatus, CurBranch, CurCommit, LastPushed, TargetPath) VALUES (:repo, :server, :status, :branch, UNHEX(:commit), :lastpushed, :path)';
 
     const Q_LIST_FOR_REPO_CLAUSE = ' dep.RepositoryId = :id ';
+    const Q_DELETE = 'DELETE FROM Deployments WHERE DeploymentId = :id';
     const Q_UPDATE = 'UPDATE Deployments SET CurStatus = :status, CurBranch = :branch, CurCommit = UNHEX(:commit), LastPushed = :pushed WHERE DeploymentId = :id';
+    const Q_EXISTS = 'SELECT COUNT(*) FROM Deployments WHERE RepositoryId = :repo AND ServerId = :server';
 
     /**
      * @var PDO
@@ -81,7 +83,7 @@ class DeploymentService
             $ret[$row[self::PRIMARY_KEY]] = $row;
         }
 
-       return $ret;
+        return $ret;
     }
 
     /**
@@ -112,6 +114,10 @@ class DeploymentService
      */
     public function create($repo, $server, $status, $branch, $commit, $path, DateTime $lastPushed = null)
     {
+        if ($this->exists($repo, $server)) {
+            return 0;
+        }
+
         if ($lastPushed === null) {
             $lastPushed = '0000-00-00 00:00:00';
         } else {
@@ -147,6 +153,25 @@ class DeploymentService
         return $item;
     }
 
+    /**
+     *  Remove a deployment by ID
+     *
+     *  @param $id
+     */
+    public function remove($id)
+    {
+        $stmt = $this->db->prepare(self::Q_DELETE);
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+    }
+
+    /**
+     * @param $id
+     * @param $status
+     * @param $branch
+     * @param $commit
+     * @param DateTime $dateTime
+     */
     public function update($id, $status, $branch, $commit, DateTime $dateTime = null)
     {
         if (!$dateTime) {
@@ -163,5 +188,28 @@ class DeploymentService
         $stmt->bindValue(':pushed', $dateTime, PDO::PARAM_STR);
 
         $stmt->execute();
+    }
+
+    /**
+     *  Check if a repo:server pair already exists
+     *
+     *  @param $repo
+     *  @param $server
+     *  @return bool
+     */
+    protected function exists($repo, $server)
+    {
+        $stmt = $this->db->prepare(self::Q_EXISTS);
+        $stmt->bindValue(':repo', $repo);
+        $stmt->bindValue(':server', $server);
+        $stmt->execute();
+
+        $result = $stmt->fetch();
+
+        if ($result[0]) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

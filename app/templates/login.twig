@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Login" %}
+
+{% block content %}
+    <p>Please use your Active Directory credentials to login (ie your "windows password").</p>
+    {% if error %}
+        <ul class="error-list">
+            <li>{{ error }}</li>
+        </ul>
+    {% endif %}
+    <div class="form-wrapper">
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="username">Username</label>
+                    <input class="text-input" type="text" id="username" name="username">
+                </li>
+                <li>
+                    <label for="password">Password</label>
+                    <input class="text-input" type="password" id="password" name="password">
+                </li>
+                <li>
+                    <input class="btn" type="submit" value="Log In" name="submit">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}

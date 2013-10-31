@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Admin;
 
+use QL\Hal\Layout;
 use QL\Hal\Services\EnvironmentService;
 use QL\Hal\Services\ServerService;
 use Slim\Http\Request;
@@ -22,7 +23,6 @@ class ManageServers
      * @param Twig_Template
      */
     private $tpl;
-
     /**
      * @var ServerService
      */
@@ -34,18 +34,26 @@ class ManageServers
     private $envService;
 
     /**
+     * @var Layout
+     */
+    private $layout;
+
+    /**
      * @param Twig_Template $tpl
      * @param ServerService $serverService
      * @param EnvironmentService $envService
+     * @param Layout $layout
      */
     public function __construct(
         Twig_Template $tpl,
         ServerService $serverService,
-        EnvironmentService $envService
+        EnvironmentService $envService,
+        Layout $layout
     ) {
         $this->tpl = $tpl;
         $this->serverService = $serverService;
         $this->envService = $envService;
+        $this->layout = $layout;
     }
 
     /**
@@ -57,9 +65,10 @@ class ManageServers
     {
         $serversList = $this->serverService->listAll();
         $envList = $this->envService->listAll();
-        $res->body($this->tpl->render([
+        $context = [
             'servers' => $serversList,
             'envs' => $envList,
-        ]));
+        ];
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $context));
     }
 }

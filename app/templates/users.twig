@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = user.DisplayName %}
+
+{% block content %}
+    <h2>{{ user.DisplayName }}</h2>
+    <p><img src="{{ user.PictureUrl }}" width="150"></p>
+    <h3>Stats</h3>
+    <ul>
+        <li><b>Total Pushes:</b> {{ total_pushes }}</li>
+        <li><b>Github Page:</b> <a href="http://git/{{ user.UserName }}">http://git/{{ user.UserName }}</a></li>
+    </ul>
+
+    {% if permissions %}
+        <h3>Permissions</h3>
+        <ul>
+        {% for pair in permissions %}
+            <li>You have access to push <a href="/r/{{ pair.0 }}">{{ pair.0 }}</a> to <b>{{ pair.1 }}</b>.</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

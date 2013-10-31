@@ -1,0 +1,18 @@
+slim:
+  debug:        true
+  mode:         "development"
+db.dsn:         "mysql:host=prod.example.com;dbname=hal9000;charset=utf8"
+db.user:        "placeholder"
+db.pass:        "placeholder"
+build.user:     "bschiefer"
+rsync.user:     "bschiefer"
+github.token:   ""
+github.baseurl: "http://git/api/v3/"
+ldap.host:      "ldap.example.com"
+ldap.domain:    "MI"
+ldap.baseDn:    "DC=mi,DC=corp"
+
+# These help with development
+
+# godmode - set this to your common id and you will be an admin
+debug.godmode: 0

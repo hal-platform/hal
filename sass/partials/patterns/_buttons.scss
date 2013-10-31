@@ -21,3 +21,7 @@
         @include isolation-span(5,3, both);
     }
 }
+
+.btn--alt {
+    float: right;
+}

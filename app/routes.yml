@@ -1,0 +1,134 @@
+"login":
+  "method":     "GET"
+  "route":      "/"
+  "stack":      ["loginPage"]
+
+"login_handle":
+  "method":     "POST"
+  "route":      "/"
+  "stack":      ["loginHandler"]
+
+"logout":
+  "method":     "GET"
+  "route":      "/logout"
+  "stack":      ["loginGuard", "logoutPage"]
+
+"arrangements":
+  "method":     "GET"
+  "route":      "/a"
+  "stack":      ["loginGuard", "arrangementListPage"]
+
+"arrangement":
+  "method":     "GET"
+  "route":      "/a/:name"
+  "stack":      ["loginGuard", "arrangementPage"]
+  "conditions":
+    "name":     "[A-Za-z0-9_-]+"
+
+"repository":
+  "method":     "GET"
+  "route":      "/r/:name"
+  "stack":      ["loginGuard", "repositoryPage"]
+  "conditions":
+    "name":     "[A-Za-z0-9_-]+"
+
+"repository_sync":
+  "method":     "GET"
+  "route":      "/r/:name/sync"
+  "stack":      ["loginGuard", "syncPage"]
+  "conditions":
+    "name":     "[A-Za-z0-9_-]+"
+
+"repository_sync_handler":
+  "method":     "POST"
+  "route":      "/r/:name/sync"
+  "stack":      ["loginGuard", "syncHandler"]
+  "conditions":
+    "name":     "[A-Za-z0-9_-]+"
+
+"user":
+  "method":     "GET"
+  "route":      "/u/:id"
+  "stack":      ["loginGuard", "userPage"]
+  "conditions":
+    "id":       "[\d]+"
+
+"admin":
+  "method":     "GET"
+  "route":      "/admin"
+  "stack":      ["loginGuard", "adminDashboardPage"]
+
+"admin_arrangements":
+  "method":     "GET"
+  "route":      "/admin/arrangements"
+  "stack":      ["loginGuard", "adminArrangementsPage"]
+
+"admin_arrangements_handle":
+  "method":     "POST"
+  "route":      "/admin/arrangements"
+  "stack":      ["loginGuard", "adminArrangementsHandler"]
+
+"admin_repositories":
+  "method":     "GET"
+  "route":      "/admin/repositories"
+  "stack":      ["loginGuard", "adminRepositoriesPage"]
+
+"admin_repositories_handler":
+  "method":     "POST"
+  "route":      "/admin/repositories"
+  "stack":      ["loginGuard", "adminRepositoriesHandler"]
+
+"admin_environments":
+  "method":     "GET"
+  "route":      "/admin/envs"
+  "stack":      ["loginGuard", "adminEnvironmentsPage"]
+
+"admin_environments_handler":
+  "method":     "POST"
+  "route":      "/admin/envs"
+  "stack":      ["loginGuard", "adminEnvironmentsHandler"]
+
+"admin_servers":
+  "method":     "GET"
+  "route":      "/admin/servers"
+  "stack":      ["loginGuard", "adminServersPage"]
+
+"admin_servers_handler":
+  "method":     "POST"
+  "route":      "/admin/servers"
+  "stack":      ["loginGuard", "adminServersHandler"]
+
+"admin_deployments":
+  "method":     "GET"
+  "route":      "/admin/deployments"
+  "stack":      ["loginGuard", "adminDeploymentsPage"]
+
+"admin_deployments_handler":
+  "method":     "POST"
+  "route":      "/admin/deployments"
+  "stack":      ["loginGuard", "adminDeploymentsHandler"]
+
+"admin_deployments_remove":
+  "method":     "GET"
+  "route":      "/admin/deployments/:id/remove"
+  "stack":      ["loginGuard", "adminDeploymentsRemoveHandler"]
+  "conditions":
+    "id":       "[\d]+"
+
+"admin_users":
+  "method":     "GET"
+  "route":      "/admin/users"
+  "stack":      ["loginGuard", "adminUsersPage"]
+
+
+
+
+
+
+
+
+
+
+
+
+

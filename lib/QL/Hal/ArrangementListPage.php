@@ -21,20 +21,29 @@ class ArrangementListPage
      * @var Twig_Template
      */
     private $tpl;
-
     /**
      * @var ArrangementService $arrService
      */
     private $arrService;
 
     /**
+     * @var Layout
+     */
+    private $layout;
+
+    /**
      * @param Twig_Template $tpl
      * @param ArrangementService $arrService
+     * @param Layout $layout
      */
-    public function __construct(Twig_Template $tpl, ArrangementService $arrService)
-    {
+    public function __construct(
+        Twig_Template $tpl,
+        ArrangementService $arrService,
+        Layout $layout
+    ) {
         $this->tpl = $tpl;
         $this->arrService = $arrService;
+        $this->layout = $layout;
     }
 
     /**
@@ -45,6 +54,7 @@ class ArrangementListPage
     public function __invoke(Request $req, Response $res)
     {
         $arrangementsList = $this->arrService->listAll();
-        $res->body($this->tpl->render(['arrangements' => $arrangementsList]));
+        $data = ['arrangements' => $arrangementsList];
+        $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $data));
     }
 }

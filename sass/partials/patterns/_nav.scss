@@ -1,11 +1,7 @@
-[role="navigation"] {
-    background-color: $grey;
-}
-
 .nav--main {
     max-width: 60em;
     margin: 0 auto;
-    background-color: $grey;
+    background-color: $secondary-color;
     height: 100%;
 }
 
@@ -15,12 +11,13 @@
     @include padding-leader(.5);
     @include padding-trailer(.5);
     color: $white;
-    background-color: $grey;
+    background-color: $secondary-color;
 
     &:hover {
         text-decoration: none;
         background-color: $white;
         color: $primary-color;
+        border-bottom: 1px solid $secondary-color;
     }
 }
 
@@ -41,22 +38,26 @@
     }
 
     .nav--main li a {
-        border: 0;
+        border-bottom: .4em solid $secondary-color;
+        @include padding-trailer(.25);
         padding-left: msem(1);
         padding-right: msem(1);
 
         &:hover {
-            border-bottom: .4em solid $secondary-color;
+            border-bottom: .4em solid $white;
             @include padding-trailer(.25);
         }
     }
 
     .nav--main li:first-child a {
-        border: 0;
+        border-top: 0;
+    }
+}
 
-        &:hover {
-            border-bottom: .4em solid $secondary-color;
-            @include padding-trailer(.25);
+.nav--secondary {
+    li {
+        &, a {
+            display: block;
         }
     }
 }

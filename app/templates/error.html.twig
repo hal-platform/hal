@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Not Found" %}
+
+{% block content %}
+    <div class="error">
+        <h1>{{ message }}</h1>
+        <img src="/img/error/{{ random(['blink.gif', 'walk.gif']) }}" />
+    </div>
+{% endblock %}

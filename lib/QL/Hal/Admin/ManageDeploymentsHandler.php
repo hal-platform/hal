@@ -10,6 +10,7 @@ namespace QL\Hal\Admin;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ServerService;
+use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -40,21 +41,29 @@ class ManageDeploymentsHandler
     private $deployments;
 
     /**
-     * @param Twig_Template $tpl
-     * @param RepositoryService $repoService
-     * @param ServerService $serverService
-     * @param DeploymentService $deployments
+     *  @var Session
+     */
+    private $session;
+
+    /**
+     *  @param Twig_Template $tpl
+     *  @param RepositoryService $repoService
+     *  @param ServerService $serverService
+     *  @param DeploymentService $deployments
+     *  @param Session $session
      */
     public function __construct(
         Twig_Template $tpl,
         RepositoryService $repoService,
         ServerService $serverService,
-        DeploymentService $deployments
+        DeploymentService $deployments,
+        Session $session
     ) {
         $this->tpl = $tpl;
         $this->repoService = $repoService;
         $this->serverService = $serverService;
         $this->deployments = $deployments;
+        $this->session = $session;
     }
 
     /**
@@ -77,7 +86,7 @@ class ManageDeploymentsHandler
             return;
         }
 
-        $this->deployments->create(
+        $result = $this->deployments->create(
             $repoId,
             $serverId,
             'Error',
@@ -85,6 +94,11 @@ class ManageDeploymentsHandler
             '0000000000000000000000000000000000000000',
             $path
         );
+
+        if ($result == 0) {
+            $this->session->addFlash("Unable to add! A deployment with that repository and server combination already exists.");
+        }
+
         $res->status(303);
         $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/deployments');
     }

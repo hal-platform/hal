@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Dashboard" %}
+
+{% block content %}
+    <p><a href="/a" class="btn--small btn--back">Back to repository groups</a></p>
+    <h2>Repositories in {{ arrangement }}:</h2>
+    <ul class="block-list">
+        {% for repository in repositories %}
+        <li>
+            <ul>
+                <li><b>Name:</b> <a href="/r/{{repository.ShortName}}">{{ repository.ShortName }}</a></li>
+                <li><b>Description:</b> {{repository.Description}}</li>
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
