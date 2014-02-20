@@ -16,12 +16,16 @@ class TemporaryDirectoryService
     /**
      *
      */
-    public function __construct()
+    public function __construct($baseDir = null)
     {
+        if ($baseDir === null) {
+            $baseDir = sys_get_temp_dir();
+        }
+
         $max = strlen(base_convert(mt_getrandmax(), 10, 36));
         $randdir = str_pad(base_convert(mt_rand(), 10, 36), $max, "0", STR_PAD_LEFT);
         $randdir = sprintf('/hal9000-%s', $randdir);
-        $randdir = sys_get_temp_dir() . $randdir;
+        $randdir = $baseDir . $randdir;
         exec(sprintf('mkdir %s 2>&1', escapeshellarg($randdir)), $out, $ret);
         if ($ret !== 0) {
             $this->dir = null;

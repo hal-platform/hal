@@ -6,12 +6,28 @@
     <h2>Manage Repositories</h2>
 
     {% if repositories %}
-        <h3>Existing repositories</h3>
-        <ul>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Notification Email</th>
+                <th>Github Location</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
             {% for repository in repositories %}
-                <li><a href="/r/{{ repository.ShortName }}">/r/{{ repository.ShortName }}</a> (<a href="http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}">{{ repository.GithubUser }}/{{ repository.GithubRepo }}</a>)</li>
+                <tr>
+                    <td><a href="/r/{{ repository.ShortName }}">/r/{{ repository.ShortName }}</a></td>
+                    <td>{{ repository.OwnerEmail }}</td>
+                    <td><a href="http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}">{{ repository.GithubUser }}/{{ repository.GithubRepo }}</a></td>
+                    <td></td>
+                </tr>
             {% endfor %}
-        </ul>
+            </tbody>
+        </table>
+
     {% endif %}
 
     <div class="form-wrapper">
@@ -26,7 +42,7 @@
         <form action="" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="arrId">Arrangement</label>
+                    <label for="arrId">Repository Group</label>
                     <select name="arrId" id="arrId">
                         {% for arr in arrangements %}
                             {% if cur_arrid == arr.ArrangementId %}

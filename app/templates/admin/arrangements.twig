@@ -3,15 +3,30 @@
 {% set page_title = 'Arrangement Management' %}
 
 {% block content %}
-    <h2>Current Repository Groups</h2>
+    <h2>Manage Repository Groups</h2>
     {% if arrangements %}
-    <ul>
-      {% for arrangement in arrangements %}
-        <li>{{ arrangement.Name }} (<a href="/a/{{arrangement.ShortName}}">/a/{{ arrangement.ShortName }}</a>)</li>
-      {% endfor %}
-    </ul>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Repositories</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for arrangement in arrangements %}
+                <tr>
+                    <td>{{  arrangement.Name }}</td>
+                    <td><a href="/a/{{arrangement.ShortName}}">/a/{{arrangement.ShortName}}</a></td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
     {% else %}
-    <p>You don't seem to have any arrangements setup yet.</p>
+        <p>You don't seem to have any arrangements setup yet.</p>
     {% endif %}
 
     {% if errors %}

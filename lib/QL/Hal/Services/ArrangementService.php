@@ -59,6 +59,6 @@ class ArrangementService
      */
     public function getByShortName($shortName)
     {
-        return $this->selectOne($this->db, self::Q_GET_ID, self::UNIQUE_FIELD, $shortName);
+        return $this->selectOne($this->db, self::Q_LIST, self::UNIQUE_FIELD, $shortName);
     }
 }

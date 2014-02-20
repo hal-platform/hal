@@ -6,19 +6,32 @@
     <h2>Manage Servers</h2>
 
     {% if envs %}
-        <h3>Existing servers</h3>
+
         {% if servers %}
-            <ul>
+        <table>
+            <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Environment</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
             {% for server in servers %}
-                <li><a href="/s/{{server.HostName}}">{{server.HostName}}</a> (<a href="/e/{{ server.Environment }}">{{ server.Environment }}</a>)</li>
+                <tr>
+                    <td>{{ server.HostName }}</td>
+                    <td>{{ server.Environment }}</td>
+                    <td></td>
+                </tr>
             {% endfor %}
-            </ul>
+            </tbody>
+        </table>
         {% else %}
             <p>There are no servers setup yet.</p>
         {% endif %}
 
         <div class="form-wrapper">
-            <h3>Add server</h3>
+            <h3>Add New Server</h3>
             <form action="" method="post">
                 <ul class="form-fields">
                     <li>

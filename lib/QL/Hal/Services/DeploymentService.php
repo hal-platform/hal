@@ -30,6 +30,7 @@ class DeploymentService
        dep.ServerId,
        env.EnvironmentId,
        env.ShortName      AS Environment,
+       env.DispOrder,
        rep.ShortName      AS Repository,
        rep.GithubUser,
        rep.GithubRepo,

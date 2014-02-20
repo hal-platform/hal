@@ -157,7 +157,7 @@ $notifier = new NotificationService(
 // create temporary working space
 
 $logger->info("Creating temporary directory");
-$tmpDir = new TemporaryDirectoryService;
+$tmpDir = new TemporaryDirectoryService($config['build.dir']);
 if ($tmpDir->error()) {
     $logger->critical($tmpDir->error());
     $notifier->notifySyncFinish(false);

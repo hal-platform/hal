@@ -3,16 +3,26 @@
 {% set page_title = "Dashboard" %}
 
 {% block content %}
-    <p><a href="/a" class="btn--small btn--back">Back to repository groups</a></p>
-    <h2>Repositories in {{ arrangement }}:</h2>
-    <ul class="block-list">
+    <p><a href="/a" class="btn--small btn--back">Back to Repository Groups</a></p>
+    <h2>{{ arrangement.Name }} Repositories</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Github Location</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
         {% for repository in repositories %}
-        <li>
-            <ul>
-                <li><b>Name:</b> <a href="/r/{{repository.ShortName}}">{{ repository.ShortName }}</a></li>
-                <li><b>Description:</b> {{repository.Description}}</li>
-            </ul>
-        </li>
+            <tr>
+                <td>{{ repository.ShortName }}</a></td>
+                <td><a href="http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}">http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}</a></td>
+                <td><a href="/r/{{ repository.ShortName }}">View Deployments</a></td>
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
+
 {% endblock %}

@@ -78,6 +78,8 @@ class LoginHandler
 
         $userRecord = $this->userService->getById($account->commonId());
 
+        //var_dump($account, $userRecord); die();
+
         if (empty($userRecord)) {
             $this->userService->create(
                 $account->commonId(),

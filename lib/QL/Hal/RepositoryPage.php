@@ -108,7 +108,7 @@ class RepositoryPage
         }
 
         if ($req->get('page')) {
-            $pageNumber = $req->get('page'); 
+            $pageNumber = $req->get('page');
             $renderData['currentPage'] = $pageNumber;
             $pages = $this->logService->paginate($shortName, $pageNumber);
         } else {

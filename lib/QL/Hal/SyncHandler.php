@@ -17,6 +17,7 @@ use QL\Hal\Services\SyncOptions;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
+use QL\Hal\Session;
 
 /**
  * @api
@@ -73,7 +74,7 @@ class SyncHandler
      * @param SyncOptions $syncOptions
      * @param LogService $logService
      * @param DeploymentService $depService
-     * @param User $currentUserContext
+     * @param Session $session
      * @param string $pusherScriptLocation
      * @param string $buildUser
      * @param string $sshUser
@@ -84,7 +85,7 @@ class SyncHandler
         SyncOptions $syncOptions,
         LogService $logService,
         DeploymentService $depService,
-        User $currentUserContext,
+        Session $session,
         $pusherScriptLocation,
         $buildUser,
         $sshUser,
@@ -94,7 +95,7 @@ class SyncHandler
         $this->syncOptions = $syncOptions;
         $this->logService = $logService;
         $this->depService = $depService;
-        $this->currentUserContext = $currentUserContext;
+        $this->currentUserContext = $session->get('account');
         $this->pusherScriptLocation = $pusherScriptLocation;
         $this->buildUser = $buildUser;
         $this->sshUser = $sshUser;

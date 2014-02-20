@@ -65,6 +65,7 @@
                 </nav>
                 {% endif %}
             {% endblock %}
+            {% block adminmenu %}{% endblock %}
         </header>
     {% endblock %}
     <!-- END HEADER -->
@@ -90,7 +91,7 @@
     <!-- BEGIN FOOTER -->
     {% block footer %}
         <footer role="contentinfo">
-            <p>&copy; 2013 - Quicken Loans</p>
+            <p>&copy; {{ "now"|date('Y', 'America/New_York') }} - Quicken Loans</p>
         </footer>
     {% endblock %}
     <!-- END FOOTER -->

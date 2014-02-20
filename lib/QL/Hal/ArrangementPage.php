@@ -61,39 +61,40 @@ class ArrangementPage
     }
 
     /**
-     * @param Request $req
-     * @param Response $res
-     * @param array|null $params
-     * @param callable|null $notFound
+     *  @param Request $req
+     *  @param Response $res
+     *  @param array|null $params
+     *  @param callable|null $notFound
      */
     public function __invoke(Request $req, Response $res, array $params = null, callable $notFound = null)
     {
-        $shortName = $params['name'];
-        $arrId = $this->getArrangementId($shortName);
-        if (is_null($arrId)) {
+        $arr = $this->arrService->getByShortName($params['name']);
+
+        if (is_null($arr)) {
             call_user_func($notFound);
             return;
         }
-        $repoList = [];
-        if ($arrId) {
-            $id = $arrId['ArrangementId']; 
-            $repoList = $this->getRepositoriesForArrangement($id);
+
+        $repos = [];
+        if ($arr) {
+            $id = $arr['ArrangementId'];
+            $repos = $this->getRepositoriesForArrangement($id);
         }
 
-        $data = ['arrangement' => $shortName, 'repositories' => $repoList];
+        $data = ['arrangement' => $arr, 'repositories' => $repos];
         $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $data));
     }
-    
-    private function getArrangementId($shortName) 
-    {
-        $arrId = $this->arrService->getByShortName($shortName);
-        return $arrId;
-    }
 
-    private function getRepositoriesForArrangement($arrId)
+    /**
+     *  Get all repositories for a given arrangement short name
+     *
+     *  @param $short
+     *  @return array
+     */
+    private function getRepositoriesForArrangement($short)
     {
         $field = "ArrangementId";
-        $repoList = $this->repoService->listByField($arrId, $field);
+        $repoList = $this->repoService->listByField($short, $field);
         return $repoList;
     }
 }

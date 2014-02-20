@@ -21,7 +21,7 @@ class RepositoryService
     const Q_LIST = 'SELECT rep.RepositoryId, rep.ShortName, arr.ShortName AS Arrangement, rep.GithubUser, rep.GithubRepo, rep.BuildCmd, rep.OwnerEmail FROM Repositories AS rep INNER JOIN Arrangements AS arr ON (rep.ArrangementId = arr.ArrangementId)';
     const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, BuildCmd, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :cmd, :email, :desc)';
     const Q_COUNT = 'SELECT COUNT(*) FROM Repositories';
-    const Q_LIST_BY_UNIQUE = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, Description FROM Repositories';
+    const Q_LIST_BY_UNIQUE = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, OwnerEmail, Description FROM Repositories';
     const Q_LIST_REPO_ENV_PAIRS = '
     SELECT
         rep.ShortName as RepShortName,

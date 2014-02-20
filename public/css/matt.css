@@ -13,3 +13,21 @@
     padding: 5px;
     font-weight: bold;
 }
+
+.nav--admin { max-width: 60em; margin: 0 auto; background-color: #748e8e; height: 100%; }
+
+.nav--admin li a { text-align: center; border-bottom: 1px solid #fdfef3; padding-top: 0.75em; padding-bottom: 0.75em; color: #fdfef3; background-color: #748e8e; }
+
+.nav--admin li a:hover { text-decoration: none; background-color: #fdfef3; color: #78a8c0; border-bottom: 1px solid #748e8e; }
+
+.nav--admin li:first-child a { padding-top: 0.75em; border-top: 1px solid #fdfef3; }
+
+@media (min-width: 30.0625em) {
+    [class*="nav"] > li, [class*="nav"] > li > a { display: inline-block; }
+
+    .nav--admin li a { border-bottom: 0.4em solid #748e8e; padding-bottom: 0.375em; padding-left: 1.11111em; padding-right: 1.11111em; }
+
+    .nav--admin li a:hover { border-bottom: 0.4em solid #fdfef3; padding-bottom: 0.375em; }
+
+    .nav--admin li:first-child a { border-top: 0; }
+}

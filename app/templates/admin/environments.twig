@@ -3,25 +3,30 @@
 {% set page_title = "Environment Admin" %}
 
 {% block content %}
-    <h2>Environments</h2>
-    <h3 class="mbn">Re-order environments</h3>
-    <p><small>This will change the order that environments are displayed across in the site.</small></p>
+    <h2>Manage Environments</h2>
+
     {% if envs %}
-        <div class="form-wrapper">
-            <form action="?reorder=1" method="post">
-                <ul class="form-fields">
-                    {% for env in envs %}
-                        <li class="t20">
-                            <label><a href="/e/{{ env.ShortName }}">{{ env.ShortName }}</a></label>
-                            <input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input">
-                        </li>
-                    {% endfor %}
-                    <li>
-                        <input class="btn" type="submit" value="Re-Order Environments">
-                    </li>
-                </ul>
-            </form>
-        </div>
+        <form action="?reorder=1" method="post">
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Display Order</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for env in envs %}
+                <tr>
+                    <td>{{ env.ShortName }}</td>
+                    <td><input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input"></td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <input class="btn" type="submit" value="Re-Order Environments">
+        </form>
     {% else %}
         <p>It looks like you don't have any environments yet. Add one using the form below:</p>
     {% endif %}
