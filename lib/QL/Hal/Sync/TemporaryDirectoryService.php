@@ -46,7 +46,7 @@ class TemporaryDirectoryService
     /**
      * @return string|null
      */
-    public function dir()
+    public function path()
     {
         return $this->dir;
     }
