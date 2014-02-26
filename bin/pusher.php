@@ -21,6 +21,7 @@ use Swift_Mailer;
 use Swift_Message;
 use Swift_SmtpTransport;
 use Symfony\Component\Yaml\Yaml;
+use Github\Client as GithubApiClient;
 
 /*
 // fork and exit immediately
@@ -35,11 +36,130 @@ if ($pid !== 0) {
 }
 */
 
-// setup composer autoloader
+require_once __DIR__.'/../app/bootstrap.php';
 
-$root = __DIR__ . '/..';
-require_once $root . '/vendor/autoload.php';
+$command = new PushCommand(
+    $container->get('repoService'),
+    $container->get('deploymentService'),
+    $container->get('logService')
+);
+$command->run();
 
+class PushCommand
+{
+    private $depId;
+    private $logId;
+    private $debug;
+
+    private $repService;
+    private $depService;
+    private $logService;
+
+    public function __construct(RepositoryService $repService, DeploymentService $depService, LogService $logService)
+    {
+        $this->repService = $repService;
+        $this->depService = $depService;
+        $this->logService = $logService;
+    }
+
+    /**
+     *  Run the command
+     */
+    public function run()
+    {
+        $this->getArgs();
+
+        $deployment = $this->depService->getById($this->depId);
+        $logger     = $this->logService->getById($this->logId);
+        $repo       = $this->repService->getById($deployment['RepositoryId']);
+    }
+
+    /**
+     *  Get and check command line arguments
+     */
+    private function getArgs()
+    {
+        $this->depId = isset($argv[1]) ? $argv[1] : null;
+        $this->logId = isset($argv[2]) ? $argv[2] : null;
+        $this->debug = isset($argv[3]) ? $argv[3] : null;
+
+        if (is_null($this->depId) || is_null($this->logId)) {
+            $this->terminate("USAGE: pusher.php DEP_ID LOG_ID");
+        }
+    }
+
+    /**
+     *  Terminate application
+     */
+    private function terminate($out = "Application terminating abnormally.")
+    {
+        $this->out($out);
+        exit(1);
+    }
+
+    /**
+     *  Send a message to STDOUT
+     *
+     *  @param $out
+     */
+    private function out($out)
+    {
+        fwrite(STDOUT, "$out\n");
+    }
+
+    /**
+     *  RSync to a remote host
+     *
+     *  rsync --recursive --delete --links <srcdir> <user>@<targethost>:<targetpath>
+     *
+     *  @param array $fromdir
+     *  @param $touser
+     *  @param $tohost
+     *  @param $topath
+     *  @param $output
+     *  @param $command
+     *  @return mixed
+     */
+    private function rsyncRemote(array $fromdir, $touser, $tohost, $topath, &$output, &$command)
+    {
+        $target = '%s@%s:%s';
+        $target = sprintf($target, $touser, $tohost, $topath);
+        $exclude = array('config/database.ini', 'data/');
+        $ret = rsync($fromdir, $target, $exclude, $output, $command);
+        return $ret;
+    }
+
+    /**
+     *  RSync Files
+     *
+     * @param array $from
+     * @param $to
+     * @param array $exclude
+     * @param $output
+     * @param $command
+     * @return mixed
+     */
+    private function rsync(array $from, $to, array $exclude, &$output, &$command)
+    {
+        $from = array_map('escapeshellarg', $from);
+        $from = implode(' ', $from);
+        $excludeFlag = '';
+        if ($exclude) {
+            foreach ($exclude as $item) {
+                $excludeFlag .= ' --exclude=' . escapeshellarg($item);
+            }
+        }
+        $cmd = 'rsync -e "ssh -o BatchMode=yes" -r -l -p -g -o -D -c -v %s --delete-after %s %s 2>&1';
+        $cmd = sprintf($cmd, $excludeFlag, $from, escapeshellarg($to));
+        $command = $cmd;
+        exec($cmd, $output, $ret);
+        return $ret;
+    }
+
+
+}
+
+/*
 // rsync --recursive --delete --links <srcdir> <user>@<targethost>:<targetpath>
 function rsyncToServer(array $fromdir, $touser, $tohost, $topath, &$output, &$command)
 {
@@ -66,13 +186,15 @@ function rsync(array $from, $to, array $exclude, &$output, &$command)
     exec($cmd, $output, $ret);
     return $ret;
 }
+*/
 
 // error if the command line args don't make sense
-
+/*
 $depId = isset($argv[1]) ? $argv[1] : null;
 $logId = isset($argv[2]) ? $argv[2] : null;
 $debug = isset($argv[3]) ? $argv[3] : null;
-
+*/
+/*
 if (
     is_null($depId) ||
     is_null($logId)
@@ -84,30 +206,32 @@ if (
 if ($debug && $debug == 'DEBUG') {
     $debug = true;
 }
-
+*/
 
 
 // read in app config information
-
+/*
 $config = Yaml::parse(file_get_contents($root . '/app/config.yml'));
+*/
 
 // connect to the DB
-
+/*
 $db = new PDO(
     $config['db.dsn'],
     $config['db.user'],
     $config['db.pass'],
     [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ]
 );
-
+*/
+/*
 // lookup database entries
-
 $repService = new RepositoryService($db);
 $depService = new DeploymentService($db);
 $logService = new LogService($db);
 $depInfo = $depService->getById($depId);
 $logInfo = $logService->getById($logId);
 $repInfo = $repService->getById($depInfo['RepositoryId']);
+*/
 
 // Maybe check arrays and fork here instead of above to catch possible error
 // situations with passing the wrong id's on the command line
@@ -154,6 +278,32 @@ $notifier = new NotificationService(
     $logInfo['CommitSha']
 );
 
+// choose a temporary working space
+$logger->info("Creating temporary directory");
+$tmpDir = new TemporaryDirectoryService($config['build.dir']);
+if ($tmpDir->error()) {
+    $logger->critical($tmpDir->error());
+    $notifier->notifySyncFinish(false);
+    exit(1);
+}
+$logger->debug("Chose temporary directory: ".$tmpDir->dir());
+
+// prepare to clone
+$logger->info("Preparing to clone repository");
+$command = sprintf(
+    'git clone -v http://%s:%s@git/%s/%s.git %s && cd %s && git checkout -f %s',
+    'placeholder',
+    'placeholder',
+    $depInfo['GithubUser'],
+    $depInfo['GithubRepo'],
+    $tmpDir->dir(),
+    $tmpDir->dir(),
+    $logInfo['CommitSha']
+);
+die(var_dump($command));
+
+
+/*
 // create temporary working space
 
 $logger->info("Creating temporary directory");
@@ -193,6 +343,8 @@ if (!$extracted) {
 }
 $extracted = $extracted[0];
 $logger->debug("Decision on extracted dir", ["dir" => $extracted]);
+*/
+
 
 // build code
 
