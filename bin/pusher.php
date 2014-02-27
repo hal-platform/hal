@@ -372,7 +372,7 @@ class PushCommand
             $this->logger->info('Successfully ran build command');
         } else {
             $this->logger->critical(implode('\n', $out));
-            $this->terminate('Error when executing build command!');
+            //$this->terminate('Error when executing build command!');
         }
     }
 
@@ -389,6 +389,20 @@ class PushCommand
      */
     private function runPush(array $fromdir, $touser, $tohost, $topath, &$output = null, &$command = null)
     {
+        $this->logger->info('Preparing to sync code to remote server...');
+        $this->logger->info('Checking hostname...');
+
+        if (filter_var($tohost, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $this->logger->info("Hostname appears to be an IP, skipping check.");
+        } elseif ($tohost === gethostbyname($tohost)) {
+            $this->logger->info("Cannot resolve hostname $tohost trying $tohost.rockfin.com instead.");
+            $tohost = "$tohost.rockfin.com";
+            if ($tohost === gethostbyname($tohost)) {
+                $this->logger->crit("Cannot resolve hostname $tohost");
+                $this->terminate('Could not resolve hostname.');
+            }
+        }
+
         $this->logger->info('Rsyncing code to remote server');
 
         $target = sprintf(
