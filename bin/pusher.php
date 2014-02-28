@@ -18,6 +18,7 @@ use Swift_SmtpTransport;
 use Github\Api\Repo as GithubRepoService;
 use Github\Exception\RuntimeException;
 
+// CHANGE ME! Fork and exit for production
 /*
 // fork and exit immediately
 
@@ -115,7 +116,7 @@ class PushCommand
     {
         // cleanup the filesystem
         foreach ($this->cleanup as $path) {
-            exec(sprintf('rm -rf %s', escapeshellarg($path)));
+            //exec(sprintf('rm -rf %s*', escapeshellarg($path)));
         }
     }
 
@@ -159,7 +160,15 @@ class PushCommand
         $this->logger->debug('Selected temporary directory: '.$path);
 
         // clone code to the temp path
-        $this->cloneGithubRepo(
+        //$this->cloneGithubRepo(
+        //    $deployment['GithubUser'],
+        //    $deployment['GithubRepo'],
+        //    $logInfo['CommitSha'],
+        //    $path
+        //);
+
+        // download github repo
+        $this->downloadGithubRepo(
             $deployment['GithubUser'],
             $deployment['GithubRepo'],
             $logInfo['CommitSha'],
@@ -340,6 +349,44 @@ class PushCommand
             $this->logger->critical(implode('\n', $out));
             $this->terminate('Error when executing repository clone!');
         }
+    }
+
+    private function downloadGithubRepo($user, $repo, $commit, $path)
+    {
+        $this->logger->info('Downloading repository to temporary directory');
+
+        $file = "$path.tar.gz";
+
+        // -s -S
+        $command = sprintf(
+            'curl -u %s:%s -L http://%s/api/v3/repos/%s/%s/tarball/%s > %s && mkdir %s && tar -x -z --directory=%s -f %s',
+            self::GITHUB_USER,
+            self::GITHUB_PASSWORD,
+            self::GITHUB_HOSTNAME,
+            $user,
+            $repo,
+            $commit,
+            $file,
+            $path,
+            $path,
+            $file
+        );
+
+        $this->logger->debug('Executing command: '.$command);
+
+        // run the command
+        exec($command, $out, $code);
+
+        if ($code === 0) {
+            $this->logger->info('Repository successfully downloaded to '.$path);
+        } else {
+            $this->logger->critical(implode('\n', $out));
+            $this->terminate('Error when executing repository download');
+        }
+
+        // check downloaded files
+        $results = glob("$path*", GLOB_ONLYDIR | GLOB_MARK);
+        die(var_dump($results));
     }
 
     /**
