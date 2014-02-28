@@ -372,7 +372,7 @@ class PushCommand
             $this->logger->info('Successfully ran build command');
         } else {
             $this->logger->critical(implode('\n', $out));
-            //$this->terminate('Error when executing build command!');
+            $this->terminate('Error when executing build command!');
         }
     }
 
