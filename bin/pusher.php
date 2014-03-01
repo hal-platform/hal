@@ -114,10 +114,7 @@ class PushCommand
      */
     public function __destruct()
     {
-        // cleanup the filesystem
-        foreach ($this->cleanup as $path) {
-            //exec(sprintf('rm -rf %s*', escapeshellarg($path)));
-        }
+        $this->cleanupTempDirs();
     }
 
     /**
@@ -143,11 +140,15 @@ class PushCommand
             $logInfo['CommitSha']
         );
 
-        if (is_null($deployment) || is_null($repo)) {
-            $this->terminate('Unable to load deployment or repository from database. Wrong id?');
+        $this->logger->debug('Prepared push environment', $_SERVER);
+
+        if (is_null($logInfo) || is_null($deployment) || is_null($repo)) {
+            $this->terminate('Unable to load logInfo, deployment, or repository from database. Wrong id?');
         }
 
-        $path = $this->getTempDir();
+        $this->logger->debug('Found logInfo:', $logInfo);
+        $this->logger->debug('Found deployment:', $deployment);
+        $this->logger->debug('Found repository:', $repo);
 
         // verify repo name from github api
         // prevents conflicts because github clone urls are case sensitive, but not when called from the API...
@@ -156,23 +157,12 @@ class PushCommand
             $deployment['GithubRepo']
         );
 
-        $this->logger->debug('Prepared push environment', $_SERVER);
-        $this->logger->debug('Selected temporary directory: '.$path);
-
-        // clone code to the temp path
-        //$this->cloneGithubRepo(
-        //    $deployment['GithubUser'],
-        //    $deployment['GithubRepo'],
-        //    $logInfo['CommitSha'],
-        //    $path
-        //);
-
         // download github repo
-        $this->downloadGithubRepo(
+        $path = $this->downloadGithubRepo(
             $deployment['GithubUser'],
             $deployment['GithubRepo'],
             $logInfo['CommitSha'],
-            $path
+            $this->getTempDir()
         );
 
         // run build command
@@ -315,12 +305,88 @@ class PushCommand
     }
 
     /**
-     *  Clone a Github repository and checkout a specific commit
+     *  Download and extract a specific Github repository commit
      *
      *  @param $user    The Github user or organization (capitalization matters!)
      *  @param $repo    The Github repository name (capitalization matters)
-     *  @param $commit  The commit hash to checkout
+     *  @param $commit  The treeish to retrieve
+     *  @param $path    The filesystem path to extract to
+     *  @return string  Path where projects files can be found
+     */
+    private function downloadGithubRepo($user, $repo, $commit, $path)
+    {
+        $this->logger->info('Downloading repository to temporary directory');
+
+        $file = "$path.tar.gz";
+
+        // build archive download, extract, and cleanup command
+        $command = sprintf(
+            '%s && %s && %s && %s',
+            // download archive
+            sprintf(
+                'curl -s -S -u %s:%s -L http://%s/api/v3/repos/%s/%s/tarball/%s -o %s',
+                self::GITHUB_USER,
+                self::GITHUB_PASSWORD,
+                self::GITHUB_HOSTNAME,
+                $user,
+                $repo,
+                $commit,
+                $file
+            ),
+            // create temporary directory
+            sprintf(
+                'mkdir %s',
+                $path
+            ),
+            // extract archive
+            sprintf(
+                'tar -x -z --directory=%s -f %s',
+                $path,
+                $file
+            ),
+            // delete archive
+            sprintf(
+                'rm -f %s',
+                $file
+            )
+        );
+
+        $this->logger->debug('Executing command: '.$command);
+
+        // run the command
+        exec($command, $out, $code);
+
+        if ($code === 0) {
+            $this->logger->info('Repository successfully downloaded into '.$path);
+        } else {
+            $this->logger->critical(implode('\n', $out));
+            $this->terminate('Error when executing repository download');
+        }
+
+        // check downloaded files
+        $results = glob(sprintf('%s/%s-%s-*', $path, $user, $repo), GLOB_ONLYDIR | GLOB_MARK);
+
+        if (is_array($results) && count($results) == 1) {
+            $location = reset($results);
+            $this->logger->info('Repository successfully extracted to '.$location);
+            return $location;
+        } else {
+            $this->logger->critical('Unable to locate extracted repository in '.$path);
+            $this->terminate('Error when verifying extracted repository.');
+        }
+    }
+
+    /**
+     *  Clone a Github repository and checkout a specific commit
+     *
+     *  $this->downloadGithubRepo() should be used instead, wherever possible to minimize the size
+     *  of transferred files from Github.
+     *
+     *  @param $user    The Github user or organization (capitalization matters!)
+     *  @param $repo    The Github repository name (capitalization matters)
+     *  @param $commit  The treeish to checkout
      *  @param $path    The filesystem path to clone to
+     *  @return string  Path where projects files can be found
      */
     private function cloneGithubRepo($user, $repo, $commit, $path)
     {
@@ -345,48 +411,11 @@ class PushCommand
 
         if ($code === 0) {
             $this->logger->info('Repository successfully cloned to '.$path);
+            return $path;
         } else {
             $this->logger->critical(implode('\n', $out));
             $this->terminate('Error when executing repository clone!');
         }
-    }
-
-    private function downloadGithubRepo($user, $repo, $commit, $path)
-    {
-        $this->logger->info('Downloading repository to temporary directory');
-
-        $file = "$path.tar.gz";
-
-        // -s -S
-        $command = sprintf(
-            'curl -u %s:%s -L http://%s/api/v3/repos/%s/%s/tarball/%s > %s && mkdir %s && tar -x -z --directory=%s -f %s',
-            self::GITHUB_USER,
-            self::GITHUB_PASSWORD,
-            self::GITHUB_HOSTNAME,
-            $user,
-            $repo,
-            $commit,
-            $file,
-            $path,
-            $path,
-            $file
-        );
-
-        $this->logger->debug('Executing command: '.$command);
-
-        // run the command
-        exec($command, $out, $code);
-
-        if ($code === 0) {
-            $this->logger->info('Repository successfully downloaded to '.$path);
-        } else {
-            $this->logger->critical(implode('\n', $out));
-            $this->terminate('Error when executing repository download');
-        }
-
-        // check downloaded files
-        $results = glob("$path*", GLOB_ONLYDIR | GLOB_MARK);
-        die(var_dump($results));
     }
 
     /**
@@ -515,12 +544,22 @@ class PushCommand
             $random .= chr(rand(0, 1) ? rand(48, 57) : rand(97, 122));
         }
 
-        $path = $this->buildDir.'/'.$random;
+        $path = $this->buildDir.'/hal9000-build-'.$random;
 
         // add path to cleanup list on destruct
         $this->cleanup[] = $path;
 
         return $path;
+    }
+
+    /**
+     *  Cleanup the filesystem
+     */
+    private function cleanupTempDirs()
+    {
+        foreach ($this->cleanup as $path) {
+            exec(sprintf('rm -rf %s*', escapeshellarg($path)));
+        }
     }
 
     /**
