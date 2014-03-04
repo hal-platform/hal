@@ -18,10 +18,11 @@
                     <th>Branch</th>
                     <th>Current Commit</th>
                     <th>Last Synced</th>
-                    {% if hasAnyPermissions %}<th>Actions</th>{% endif %}
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+            {% set allowSubmit = false %}
             {% for deployment in deployments %}
                 <tr>
                     <td>{{ deployment.HostName }}</td>
@@ -36,23 +37,22 @@
                             {{ deployment.LastPushed|date("Y-n-d G:m:s","America/Detroit") }}
                         {% endif %}
                     </td>
-                    {% if hasAnyPermissions %}
                     <td>
-                      {% if permissions[deployment.Repository ~ '-' ~ deployment.Environment] %}
-                          Push Now <input type="checkbox" name="deps[]" value="{{deployment.DeploymentId}}">
-                      {% else %}
-                          No Access
-                      {% endif %}
-                    {% endif %}
+                        {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
+                            Push Now <input type="checkbox" name="deps[]" value="{{deployment.DeploymentId}}">
+                            {% set allowSubmit = true %}
+                        {% else %}
+                            No Access
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        {% if hasAnyPermissions %}
-          <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
+        {% if allowSubmit %}
+            <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
         {% else %}
-          <p>Looks like you don't have permission to push this repository. Request access by contacting <a href="mailto:ITTeamKeymasters@quickenloans.com">IT Team Keymasters</a>.</p>
+            <p>Looks like you don't have permission to push this repository. Request access by contacting <a href="mailto:ITTeamKeymasters@quickenloans.com">IT Team Keymasters</a>.</p>
         {% endif %}
     </form>
 

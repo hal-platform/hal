@@ -172,7 +172,9 @@ class SyncHandler
         $cmdStart = 'sudo -n -H -u %s';
         $cmdEnvs = ' ';
         $cmdCmd = '%s %s %s';
-        if (!$isDebug) {
+        if ($isDebug) {
+            $cmdCmd .= ' 2>&1';
+        } else {
             $cmdCmd .= ' &>/dev/null';
         }
         foreach ($envVars as $k => $v) {

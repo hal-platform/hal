@@ -117,35 +117,13 @@ class RepositoryPage
 
         $deployments = $this->deploymentService->listAllByRepoId($repo['RepositoryId']);
 
-        $permissions = array();
-        foreach ($deployments as $deployment) {
-            $permKey = $deployment['Repository'] . '-' . $deployment['Environment'];
-            if (isset($permissions[$permKey])) {
-                continue;
-            }
-            $hasPerm = $this->pushPermissionsService->canUserPushToEnvRepo($this->currentUser, $deployment['Repository'], $deployment['Environment']);
-            if ($hasPerm) {
-                $permissions[$permKey] = true;
-            } else {
-                $permissions[$permKey] = false;
-            }
-        }
-
-        $hasAnyPermissions = false;
-        foreach ($permissions as $perm) {
-            if ($perm) {
-                $hasAnyPermissions = true;
-                break;
-            }
-        }
-
         $renderData['repo'] = $repo;
         $renderData['deployments'] = $deployments;
         $renderData['logs'] = $pages[0];
         $renderData['totalLogEntries'] = $this->logService->getCount($shortName);
         $renderData['totalLogPages'] = $pages[1];
-        $renderData['hasAnyPermissions'] = $hasAnyPermissions;
-        $renderData['permissions'] = $permissions;
+        $renderData['user'] = $this->currentUser;
+
         $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $renderData));
     }
 }

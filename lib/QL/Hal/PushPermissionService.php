@@ -18,8 +18,10 @@ use Zend\Ldap\Dn;
  */
 class PushPermissionService
 {
-    const PERM_DN_TPL = 'CN=git-%s-%s,OU=GIT,DC=mi,DC=corp';
-    const PERM_DN_ADMIN = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
+    const PERM_DN_TPL       = 'CN=git-%s-%s,OU=GIT,DC=mi,DC=corp';
+    const PERM_DN_ADMIN     = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
+    const LDAP_USER         = 'placeholder';
+    const LDAP_PASSWORD     = 'placeholder';
 
     /**
      * @var LdapService
@@ -76,20 +78,26 @@ class PushPermissionService
     }
 
     /**
-     * @param User $user
-     * @param string $repoShortName
-     * @param string $envShortName
+     * @param User|string $user
+     * @param string $repo
+     * @param string $env
      * @return bool
      */
-    public function canUserPushToEnvRepo(User $user, $repoShortName, $envShortName)
+    public function canUserPushToEnvRepo($user, $repo, $env)
     {
         $this->checkAuthenticated();
 
-        if ($this->isUserAdmin($user)) {
+        // allow user passing as string
+        if (!($user instanceof User)) {
+            $user = $this->ldapService->getUserByWindowsUsername($user);
+        }
+
+        // admin push whitelist
+        if ($this->isUserAdmin($user) && in_array($env, array('test', 'beta'))) {
             return true;
         }
 
-        $group = self::getDnForPermGroup($repoShortName, $envShortName);
+        $group = self::getDnForPermGroup($repo, $env);
 
         return $this->ldapService->isUserInGroup($group, $user->dn());
     }
@@ -106,7 +114,12 @@ class PushPermissionService
         $pairs = $this->repoService->listRepoEnvPairs();
 
         if ($this->isUserAdmin($user)) {
-            return array_map(function ($v) { return array($v['RepShortName'], $v['EnvShortName']); }, $pairs);
+            return array_map(
+                function ($v) {
+                    return array($v['RepShortName'], $v['EnvShortName']);
+                },
+                $pairs
+            );
         }
 
         $return = array();
@@ -125,7 +138,7 @@ class PushPermissionService
         if ($this->authed) {
             return;
         }
-        $this->ldapService->authenticate('placeholder', 'placeholder', false);
+        $this->ldapService->authenticate(self::LDAP_USER, self::LDAP_PASSWORD, false);
     }
 
     public function isUserAdmin(User $user)

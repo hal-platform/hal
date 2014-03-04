@@ -5,6 +5,11 @@ services:
     class: 'MCP\Corp\Account\User'
     synthetic: true
 
+  # HAL Twig Extension
+  twigExtension:
+    class: 'QL\Hal\Twig\HalExtension'
+    arguments: ["@pushPermissionService"]
+
   # Twig stuff
   twigLoader:
     class: "Twig_Loader_Filesystem"
@@ -12,6 +17,8 @@ services:
   twigEnv:
     class: "Twig_Environment"
     arguments: ["@twigLoader"]
+    calls:
+      - [addExtension, ["@twigExtension"]]
 
   # Twig View for Slim
   twigView:
