@@ -12,6 +12,14 @@ github.baseurl: "http://git/api/v3/"
 ldap.host:      "ldap.example.com"
 ldap.domain:    "MI"
 ldap.baseDn:    "DC=mi,DC=corp"
+email.overide:  "matthewcolf@quickenloans.com"
+
+email.hostname:     mail.example.com
+email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"
+email.notify:       "matthewcolf@quickenloans.com"
+email.notify.error: false
+build.log.level:    100
+build.log.name:     hal9000
 
 # These help with development
 

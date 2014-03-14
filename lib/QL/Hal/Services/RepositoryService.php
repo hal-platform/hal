@@ -33,6 +33,8 @@ class RepositoryService
         INNER JOIN Environments AS env ON (srv.EnvironmentId = env.EnvironmentId)
     ';
 
+    const Q_DELETE = 'DELETE FROM Repositories WHERE RepositoryId = :id ';
+
     /**
      * @var PDO
      */
@@ -148,4 +150,14 @@ class RepositoryService
        return $ret;
     }
 
+    /**
+     *
+     *  @param $id
+     */
+    public function remove($id)
+    {  
+        $stmt = $this->db->prepare(self::Q_DELETE);
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+    }
 }

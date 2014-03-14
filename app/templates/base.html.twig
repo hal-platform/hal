@@ -90,8 +90,12 @@
 
     <!-- BEGIN FOOTER -->
     {% block footer %}
-        <footer role="contentinfo">
-            <p>&copy; {{ "now"|date('Y', 'America/New_York') }} - Quicken Loans</p>
+        <footer role="contentinfo" id="footer">
+            <p>&copy; {{ "now"|date('Y', 'America/New_York') }} Quicken Loans
+                {% if (version) %}
+                    , version {{ version }} updated {{ changed|date('Y-m-j g:i A') }}
+                {% endif %}
+            </p>
         </footer>
     {% endblock %}
     <!-- END FOOTER -->

@@ -22,7 +22,7 @@
                     <td><a href="/r/{{ repository.ShortName }}">/r/{{ repository.ShortName }}</a></td>
                     <td>{{ repository.OwnerEmail }}</td>
                     <td><a href="http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}">{{ repository.GithubUser }}/{{ repository.GithubRepo }}</a></td>
-                    <td></td>
+                    <td><a href="/admin/repositories/{{ repository.RepositoryId }}/remove">Remove</a> </td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -31,3 +31,11 @@
 
     .nav--admin li:first-child a { border-top: 0; }
 }
+#footer {
+    padding-top: 0.75em;
+}
+
+#footer p {
+    font-size: 65%;
+    margin-bottom: 0.75em;
+}

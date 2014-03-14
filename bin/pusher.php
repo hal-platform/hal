@@ -7,7 +7,6 @@ namespace QL\Hal;
 
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\SwiftMailerHandler;
-use Monolog\Logger;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\LogService;
 use QL\Hal\Services\RepositoryService;
@@ -17,6 +16,12 @@ use Swift_Message;
 use Swift_SmtpTransport;
 use Github\Api\Repo as GithubRepoService;
 use Github\Exception\RuntimeException;
+
+use Psr\Log\LoggerInterface as Logger;
+use QL\Hal\Mail\Message;
+
+use DateTime;
+use DateTimeZone;
 
 // CHANGE ME! Fork and exit for production
 /*
@@ -39,8 +44,11 @@ $command = new PushCommand(
     $container->get('deploymentService'),
     $container->get('logService'),
     $container->get('githubRepoService'),
+    $container->get('buildLogger'),
+    $container->get('buildMessage'),
     $config->get('build.dir'),
-    $config->get('rsync.user')
+    $config->get('rsync.user'),
+    $config->get('email.overide')
 );
 $command->run($argv);
 
@@ -53,26 +61,41 @@ class PushCommand
 {
     const DEBUG_DEFAULT     = true;
 
+    const FS_DIRECTORY_PREFIX   = 'hal9000-build-';
+
+    const OUT_SUCCESS           = 'Exiting with success state.';
+    const OUT_FAILURE           = 'Exiting with failure state.';
+
+    // WTB ORM
+    const KEY_INFO_REPO         = 'PushRepo';
+    const KEY_INFO_ENV          = 'Environment';
+    const KEY_INFO_SERVER       = 'TargetServer';
+    const KEY_INFO_SERVER_PATH  = 'TargetPath';
+    const KEY_INFO_PUSHER       = 'PushUserName';
+    const KEY_INFO_BRANCH       = 'PushBranch';
+    const KEY_INFO_COMMIT       = 'CommitSha';
+    const KEY_DEP_REPO_ID       = 'RepositoryId';
+    const KEY_DEP_GH_USER       = 'GithubUser';
+    const KEY_DEP_GH_REPO       = 'GithubRepo';
+    const KEY_REPO_OWNER        = 'OwnerEmail';
+    const KEY_REPO_CMD          = 'BuildCmd';
+
+
     const GITHUB_USER       = 'placeholder';
     const GITHUB_PASSWORD   = 'placeholder';
     const GITHUB_HOSTNAME   = 'git';
 
-    const EMAIL_HOSTNAME    = 'mail.example.com';
-    const EMAIL_FROM        = 'placeholder@quickenloans.com';
-    const EMAIL_FROM_NAME   = 'HAL 9000';
-    const EMAIL_REPLY_TO    = 'placeholder@quickenloans.com';
-
-    const LOGGER_NAME       = 'hal9000';
-
     private $depId;
     private $logId;
-    private $logLevel;
 
     private $buildDir;
     private $rsyncUser;
 
     private $logger;
-    private $notifier;
+    private $message;
+
+    private $branch;
+    private $commit;
 
     private $repService;
     private $depService;
@@ -88,16 +111,22 @@ class PushCommand
      *  @param DeploymentService $depService
      *  @param LogService $logService
      *  @param GithubRepoService $github
+     *  @param Logger $logger
+     *  @param Message $message
      *  @param $buildDir
      *  @param $rsyncUser
+     *  @param $emailOveride
      */
     public function __construct(
         RepositoryService $repService,
         DeploymentService $depService,
         LogService $logService,
         GithubRepoService $github,
+        Logger $logger,
+        Message $message,
         $buildDir,
-        $rsyncUser
+        $rsyncUser,
+        $emailOveride
     ) {
         $this->repService = $repService;
         $this->depService = $depService;
@@ -105,6 +134,10 @@ class PushCommand
         $this->github = $github;
         $this->buildDir = $buildDir;
         $this->rsyncUser = $rsyncUser;
+        $this->emailOveride = $emailOveride;
+
+        $this->logger = $logger;
+        $this->message = $message;
 
         $this->cleanup = array();
     }
@@ -124,56 +157,54 @@ class PushCommand
     {
         $this->prepareArgs($args);
 
-        // get database objects
-        $logInfo        = $this->logService->getById($this->logId);
-        $deployment     = $this->depService->getById($this->depId);
-        $repo           = $this->repService->getById($deployment['RepositoryId']);
-
-        // setup mailer, logging, and notifications
-        $this->prepareNotifications(
-            $logInfo['PushRepo'],
-            $logInfo['Environment'],
-            $logInfo['TargetServer'],
-            $logInfo['PushUserName'],
-            $repo['OwnerEmail'],
-            $logInfo['PushBranch'],
-            $logInfo['CommitSha']
-        );
-
         $this->logger->debug('Prepared push environment', $_SERVER);
 
-        if (is_null($logInfo) || is_null($deployment) || is_null($repo)) {
-            $this->terminate('Unable to load logInfo, deployment, or repository from database. Wrong id?');
+        $objInfo   = $this->logService->getById($this->logId);
+        $objDep    = $this->depService->getById($this->depId);
+
+        if (is_null($objInfo) || is_null($objDep)) {
+            $this->failure('Unable to lookup logInfo or deployment from database. Wrong ID?');
         }
 
-        $this->logger->debug('Found logInfo:', $logInfo);
-        $this->logger->debug('Found deployment:', $deployment);
-        $this->logger->debug('Found repository:', $repo);
+        $objRepo   = $this->repService->getById($objDep[self::KEY_DEP_REPO_ID]);
 
-        // verify repo name from github api
-        // prevents conflicts because github clone urls are case sensitive, but not when called from the API...
-        $this->validateGithubRepo(
-            $deployment['GithubUser'],
-            $deployment['GithubRepo']
-        );
+        if (is_null($objRepo)) {
+            $this->failure('Unable to lookup repository from database. Wrong ID?');
+        }
 
-        // download github repo
-        $path = $this->downloadGithubRepo(
-            $deployment['GithubUser'],
-            $deployment['GithubRepo'],
-            $logInfo['CommitSha'],
-            $this->getTempDir()
-        );
+        $this->logger->debug('Found logInfo:', $objInfo);
+        $this->logger->debug('Found deployment:', $objDep);
+        $this->logger->debug('Found repository:', $objRepo);
 
-        // run build command
-        $this->runBuildCommand($path, $repo['BuildCmd']);
+        // lookup build details
+        // WTB ORM
+        $repo       = $objInfo[self::KEY_INFO_REPO];
+        $env        = $objInfo[self::KEY_INFO_ENV];
+        $server     = $objInfo[self::KEY_INFO_SERVER];
+        $serverPath = $objInfo[self::KEY_INFO_SERVER_PATH];
+        $pusher     = $objInfo[self::KEY_INFO_PUSHER];
+        $ghUser     = $objDep[self::KEY_DEP_GH_USER];
+        $ghRepo     = $objDep[self::KEY_DEP_GH_REPO];
+        $owner      = $objRepo[self::KEY_REPO_OWNER];
+        $buildCmd   = $objRepo[self::KEY_REPO_CMD];
 
-        // rsync to server
+        $this->branch   = $objInfo[self::KEY_INFO_BRANCH];
+        $this->commit   = $objInfo[self::KEY_INFO_COMMIT];
+
+        // validate and prepare
+        $this->message->setBuildDetails($owner, $repo, $env, $server, $pusher);
+        $this->validateGithubRepo($ghUser, $ghRepo);
+
+        // download and build
+        $tmp = $this->downloadGithubRepo($ghUser, $ghRepo, $this->commit, $this->getTempDir());
+        $this->runBuildCommand($tmp, $buildCmd);
+
+        // push to server
         $this->runPush(
-            array($path.'/'),
+            array($tmp.'/'),
             $this->rsyncUser,
-            $logInfo['TargetServer'],
-            $logInfo['TargetPath'],
+            $server,
+            $serverPath,
             $output,
             $command
         );
@@ -181,9 +212,9 @@ class PushCommand
         // post push script on server?
         // ...
 
-        $this->logger->notice('Push successful');
-        $this->notifier->notifySyncFinish(true);
-        exit(0);
+        //$this->notifier->notifySyncFinish(true);
+
+        $this->success('Push successful.');
     }
 
     /**
@@ -195,68 +226,8 @@ class PushCommand
         $this->logId = isset($args[2]) ? $args[2] : null;
 
         if (is_null($this->depId) || is_null($this->logId)) {
-            $this->terminate("USAGE: pusher.php DEP_ID LOG_ID [DEBUG]");
+            $this->failure("USAGE: pusher.php DEP_ID LOG_ID [DEBUG]");
         }
-
-        $debug = isset($args[3]) ? $args[3] : null;
-
-        if ($debug) {
-            $this->logLevel = Logger::DEBUG;
-        } else {
-            $this->logLevel = (self::DEBUG_DEFAULT) ? Logger::DEBUG : Logger::INFO;
-        }
-    }
-
-    /**
-     *  Prepare the mailer, logger, and notification services
-     *
-     *  @param $repo        The repository name
-     *  @param $env         The deployment environment
-     *  @param $server      The remote server
-     *  @param $pusher      The push initiator
-     *  @param $ownerEmail  The repository owner email
-     *  @param $branch      The deployment repo branch
-     *  @param $commit      The deployment repo commit
-     */
-    private function prepareNotifications($repo, $env, $server, $pusher, $ownerEmail, $branch, $commit)
-    {
-        $subjectLine = sprintf(
-            '[%s][%s][%s][%s]',
-            $repo,
-            $env,
-            $server,
-            $pusher
-        );
-
-        $mailer = new Swift_Mailer(
-            new Swift_SmtpTransport(
-                self::EMAIL_HOSTNAME
-            )
-        );
-
-        $email = new Swift_Message;
-        $email->addTo($ownerEmail);
-        $email->setFrom(self::EMAIL_FROM, self::EMAIL_FROM_NAME);
-        $email->setSubject($subjectLine);
-        $email->setReplyTo(self::EMAIL_REPLY_TO);
-
-        $handler = new SwiftMailerHandler($mailer, $email, $this->logLevel);
-
-        // setup logging
-        $buffer = new BufferHandler($handler);
-        $this->logger = new Logger(self::LOGGER_NAME, array($buffer));
-
-        // setup notifications
-        $this->notifier = new NotificationService(
-            $this->logger,
-            $email,
-            $this->depService,
-            $this->logService,
-            $this->depId,
-            $this->logId,
-            $branch,
-            $commit
-        );
     }
 
     /**
@@ -277,7 +248,7 @@ class PushCommand
 
         if (!$githubRepo) {
             $this->logger->critical('Github user or repository appears to be invalid.');
-            $this->terminate('Unable to validate github user or repository');
+            $this->failure('Unable to validate github user or repository');
         } else {
             $this->logger->info('Github user and repository were validated successfully');
         }
@@ -307,11 +278,11 @@ class PushCommand
     /**
      *  Download and extract a specific Github repository commit
      *
-     *  @param $user    The Github user or organization (capitalization matters!)
-     *  @param $repo    The Github repository name (capitalization matters)
-     *  @param $commit  The treeish to retrieve
-     *  @param $path    The filesystem path to extract to
-     *  @return string  Path where projects files can be found
+     *  @param string $user     The Github user or organization (capitalization matters!)
+     *  @param string $repo     The Github repository name (capitalization matters)
+     *  @param string $commit   The commit to retrieve
+     *  @param string $path     The filesystem path to extract to
+     *  @return string          Path where projects files can be found
      */
     private function downloadGithubRepo($user, $repo, $commit, $path)
     {
@@ -360,7 +331,7 @@ class PushCommand
             $this->logger->info('Repository successfully downloaded into '.$path);
         } else {
             $this->logger->critical(implode('\n', $out));
-            $this->terminate('Error when executing repository download');
+            $this->failure('Error when executing repository download');
         }
 
         // check downloaded files
@@ -372,7 +343,7 @@ class PushCommand
             return $location;
         } else {
             $this->logger->critical('Unable to locate extracted repository in '.$path);
-            $this->terminate('Error when verifying extracted repository.');
+            $this->failure('Error when verifying extracted repository.');
         }
     }
 
@@ -414,7 +385,7 @@ class PushCommand
             return $path;
         } else {
             $this->logger->critical(implode('\n', $out));
-            $this->terminate('Error when executing repository clone!');
+            $this->failure('Error when executing repository clone!');
         }
     }
 
@@ -433,6 +404,11 @@ class PushCommand
             return;
         }
 
+        exec('env', $out, $code);
+        $this->logger->debug('Verifying environment variables...', $out);
+
+        //$this->logger->debug(implode(' ', $out));
+
         $command = sprintf(
             'cd %s && %s 2>&1',
             $path,
@@ -445,10 +421,14 @@ class PushCommand
         exec($command, $out, $code);
 
         if ($code === 0) {
+            if (is_array($out) && count($out) > 0) {
+                $this->logger->info('Build command generated output...', $out);
+                //$this->logger->info(implode('\n', $out));
+            }
             $this->logger->info('Successfully ran build command');
         } else {
             $this->logger->critical(implode('\n', $out));
-            $this->terminate('Error when executing build command!');
+            $this->failure('Error when executing build command!');
         }
     }
 
@@ -475,7 +455,7 @@ class PushCommand
             $tohost = "$tohost.rockfin.com";
             if ($tohost === gethostbyname($tohost)) {
                 $this->logger->crit("Cannot resolve hostname $tohost");
-                $this->terminate('Could not resolve hostname.');
+                $this->failure('Could not resolve hostname.');
             }
         }
 
@@ -496,9 +476,10 @@ class PushCommand
 
         if ($code === 0) {
             $this->logger->info('Successfully pushed code to remote server');
+            $this->success('Successfully pushed code to remote server');
         } else {
             $this->logger->critical(implode('\n', $out));
-            $this->terminate('Error when pushing code to remote server');
+            $this->failure('Error when pushing code to remote server');
         }
     }
 
@@ -544,7 +525,7 @@ class PushCommand
             $random .= chr(rand(0, 1) ? rand(48, 57) : rand(97, 122));
         }
 
-        $path = $this->buildDir.'/hal9000-build-'.$random;
+        $path = $this->buildDir.'/'.self::FS_DIRECTORY_PREFIX.$random;
 
         // add path to cleanup list on destruct
         $this->cleanup[] = $path;
@@ -563,18 +544,53 @@ class PushCommand
     }
 
     /**
-     *  Terminate application
+     *  Exit the process with a success state
+     *
+     *  @param null|string $out
      */
-    private function terminate($out = "Application terminating abnormally.")
+    private function success($out = '')
+    {
+        $this->terminate(true, $out);
+    }
+
+    /**
+     *  Exit the process with a failure state
+     *
+     *  @param null|string $out
+     */
+    private function failure($out = '')
+    {
+        $this->terminate(false, $out);
+    }
+
+    /**
+     *  Complete execution and exit the process
+     *
+     *  @param bool $status
+     *  @param string $out
+     */
+    private function terminate($status, $out)
     {
         $this->out($out);
+        $this->message->setBuildResult($status);
 
-        // notify the notifier, if it's available
-        if ($this->notifier) {
-            $this->notifier->notifySyncFinish(false);
+        if ($status) {
+            $this->logger->info($out);
+            $this->logger->info(self::OUT_SUCCESS);
+            $this->out(self::OUT_SUCCESS);
+            $message = DeploymentService::STATUS_DEPLOYED;
+        } else {
+            $this->logger->critical($out);
+            $this->logger->critical(self::OUT_FAILURE);
+            $this->out(self::OUT_FAILURE);
+            $message = DeploymentService::STATUS_ERROR;
         }
 
-        exit(1);
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $this->depService->update($this->depId, $message, $this->branch, $this->commit, $now);
+        $this->logService->update($this->logId, $message, $now);
+
+        exit(($status) ? 0 : 1);
     }
 
     /**

@@ -8,7 +8,7 @@
         "ql/mcp-corp-account":              "*@RC",
         "twig/twig":                        "1.*",
         "knplabs/github-api":               "*",
-        "monolog/monolog":                  "*",
+        "monolog/monolog":                  "~1.7@dev",
         "swiftmailer/swiftmailer":          "*",
         "symfony/dependency-injection":     "*",
         "symfony/config":                   "*",

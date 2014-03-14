@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# copy test or prod config file to config.yml based on HAL_ENVIRONMENT value
+if [ "$HAL_ENVIRONMENT" == "test" ]
+then
+    echo "HAL_ENV IS TEST"
+    rm -f app/config.yml
+    cp app/config.test.yml app/config.yml
+elif [ "$HAL_ENVIRONMENT" == "prod" ]
+then
+    echo "HAL_ENV IS PROD"
+    rm -f app/config.yml
+    cp app/config.prod.yml app/config.yml
+fi
+

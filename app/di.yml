@@ -138,6 +138,9 @@ services:
   adminRepositoriesHandler:
     class: 'QL\Hal\Admin\ManageRepositoriesHandler'
     arguments: ["@admin.repositories.twig", "@repoService", "@arrService", "@githubOrgService", "@githubUserService", "@githubRepoService"]
+  adminRepositoriesRemoveHandler:
+    class: "QL\Hal\Admin\ManageRepositoriesRemove"
+    arguments: ["@admin.repositories.twig", "@deploymentService", "@repoService"]
 
   admin.servers.twig: { arguments: ["admin/servers.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   adminServersPage:
@@ -197,5 +200,48 @@ services:
       - true
 
   layout:
-    class: 'QL\Hal\Layout'
-    arguments: ['@currentUserContext', '@pushPermissionService']
+      class: 'QL\Hal\Layout'
+      arguments: ['@currentUserContext', '@pushPermissionService']
+
+  ######################################################################################################################
+  # Build Notifications & Logging
+  ######################################################################################################################
+
+  # Mailer Transport
+  buildMailerTransport:
+    class:        'Swift_SmtpTransport'
+    arguments:    ["%email.hostname%"]
+
+  # Mailer
+  buildMailer:
+    class:        'Swift_Mailer'
+    arguments:    [@buildMailerTransport]
+
+  # Sample Message
+  buildMessage:
+    class:        "QL\\Hal\\Mail\\Message"
+    arguments:    ["%email.subject%", ["%email.notify%"], ["%email.notify.error%"]]
+
+  # Log Sub Handler
+  buildLogSubHandler:
+    class:        "Monolog\\Handler\\SwiftMailerHandler"
+    arguments:    [@buildMailer, @buildMessage, "%build.log.level%"]
+    calls:
+          - ["setFormatter", [@buildLogFormatter]]
+
+  # HTML Formatter
+  buildLogFormatter:
+    class:        "Monolog\\Formatter\\HtmlFormatter"
+    arguments:    ["%build.date.format%"]
+
+  # Log Handler
+  buildLogHandler:
+    class:        "Monolog\\Handler\\BufferHandler"
+    arguments:    [@buildLogSubHandler]
+
+
+  # Logger
+  buildLogger:
+    class:        "Monolog\\Logger"
+    arguments:    ["%build.log.name%", [@buildLogHandler]]
+

@@ -78,6 +78,13 @@
   "route":      "/admin/repositories"
   "stack":      ["loginGuard", "adminRepositoriesHandler"]
 
+"admin_repositories_remove":
+  "method":     "GET"
+  "route":      "/admin/repositories/:id/remove"
+  "stack":      ["loginGuard", "adminRepositoriesRemoveHandler"]
+  "conditions":
+    "id":       "[\d]+"
+
 "admin_environments":
   "method":     "GET"
   "route":      "/admin/envs"
