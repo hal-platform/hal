@@ -7,17 +7,17 @@
 
 namespace QL\Hal\Admin;
 
-use QL\Hal\Services\ServerService;
+use QL\Hal\Services\EnvironmentService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
 /**
- *  Remove an existing server
+ *  Remove an existing environment
  *
  *  @author Bridget Schiefer <BridgetSchiefer@quickenloans.com>
  */
-class ManageServersRemove
+class ManageEnvironmentsRemove
 {
     /**
      *  Twig Template
@@ -27,26 +27,27 @@ class ManageServersRemove
     private $tpl;
 
     /**
+     *  Environment Service
      *
-     *  @var ServerService
+     *  @var EnvironmentService
      */
-    private $servers;
+    private $environment;
 
     /**
-     *  Constructor
      *
      *  @param Twig_Template $tpl
-     *  @param ServerService $server
+     *  @param EnvironmentService $environment
      */
     public function __construct(
         Twig_Template $tpl,
-        ServerService $server
+        EnvironmentService $environment
     ) {
         $this->tpl = $tpl;
-        $this->server = $server;
+        $this->environment = $environment;
     }
 
     /**
+     *z
      *  @param Request $req
      *  @param Response $res
      *  @param array $params
@@ -57,22 +58,23 @@ class ManageServersRemove
     {
         $id = $params['id'];
 
-        if ($this->validateServer($id)) {
-            $this->server->remove($id);
+        if ($this->validateEnvironment($id)) {
+            $this->environment->remove($id);
         }
 
         $res->status(303);
-        $res->header('Location', '/admin/servers');
+        $res->header('Location', '/admin/envs');
     }
 
     /**
+     *  Check if an environment id exists
      *
      *  @param string $id
      *  @return bool
      */
-    protected function validateServer($id)
+    protected function validateEnvironment($id)
     {
-        if ($this->server->getById($id)) {
+        if ($this->environment->getById($id)) {
             return true;
         }
 

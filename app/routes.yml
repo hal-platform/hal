@@ -95,6 +95,13 @@
   "route":      "/admin/envs"
   "stack":      ["loginGuard", "adminEnvironmentsHandler"]
 
+"admin_enviroments_remove":
+  "method":     "GET"
+  "route":      "/admin/envs/:id/remove"
+  "stack":      ["loginGuard", "adminEnvironmentsRemoveHandler"]
+  "conditions":
+    "id":       "[\d]+"
+
 "admin_servers":
   "method":     "GET"
   "route":      "/admin/servers"

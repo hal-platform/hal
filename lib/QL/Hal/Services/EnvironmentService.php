@@ -21,6 +21,7 @@ class EnvironmentService
     const Q_SELECT_ONE = 'SELECT EnvironmentId, ShortName, DispOrder FROM Environments WHERE EnvironmentId = :id';
     const Q_UPDATE_ORDER = 'UPDATE Environments SET DispOrder = :disp WHERE EnvironmentId = :envid';
     const Q_INSERT = 'INSERT INTO Environments (ShortName, DispOrder) SELECT :name, 1 + COALESCE((SELECT IFNULL(MAX(DispOrder),0) FROM Environments))';
+    const Q_DELETE = 'DELETE FROM Environments WHERE EnvironmentId = :id';
 
     /**
      * @var PDO
@@ -83,4 +84,16 @@ class EnvironmentService
         }
         return $result[0];
     }
+
+    /**
+     *
+     *  @param $id
+     */
+    public function remove($id)
+    {
+        $stmt = $this->db->prepare(self::Q_DELETE);
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+    }
+
 }

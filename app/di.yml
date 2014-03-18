@@ -179,6 +179,9 @@ services:
   adminEnvironmentsHandler:
     class: 'QL\Hal\Admin\ManageEnvironmentsHandler'
     arguments: ["@admin.environments.twig", "@envService"]
+  adminEnvironmentsRemoveHandler:
+    class: "QL\Hal\Admin\ManageEnvironmentsRemove"
+    arguments: ["@admin.environments.twig", "@envService"]
 
   admin.users.twig: { arguments: ["admin/users.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   adminUsersPage:

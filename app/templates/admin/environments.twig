@@ -20,7 +20,7 @@
                 <tr>
                     <td>{{ env.ShortName }}</td>
                     <td><input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input"></td>
-                    <td></td>
+                    <td><a href="/admin/envs/{{ env.EnvironmentId }}/remove">Remove</a></td>
                 </tr>
             {% endfor %}
             </tbody>
