@@ -20,6 +20,7 @@ class ServerService
     const Q_LIST = 'SELECT srv.ServerId, srv.HostName, env.ShortName AS Environment FROM Servers AS srv INNER JOIN Environments as env ON (srv.EnvironmentId = env.EnvironmentId) ORDER BY env.DispOrder ASC, srv.HostName';
     const Q_SELECT_ONE = 'SELECT srv.ServerId, srv.HostName, env.ShortName AS Environment FROM Servers AS srv INNER JOIN Environments as env ON (srv.EnvironmentId = env.EnvironmentId) WHERE ServerId = :id';
     const Q_INSERT = 'INSERT INTO Servers (HostName, EnvironmentId) VALUES (:hostname, :envid)';
+    const Q_DELETE = 'DELETE FROM Servers WHERE ServerId = :id';
 
     /**
      * @var PDO
@@ -69,4 +70,15 @@ class ServerService
         }
         return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
     }
+    /**
+     *
+     *  @param $id
+     */
+    public function remove($id)
+    {
+        $stmt = $this->db->prepare(self::Q_DELETE);
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+    }
+
 }

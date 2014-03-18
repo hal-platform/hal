@@ -149,6 +149,9 @@ services:
   adminServersHandler:
     class: 'QL\Hal\Admin\ManageServersHandler'
     arguments: ["@admin.servers.twig", "@serverService", "@envService"]
+  adminServersRemoveHandler:
+    class: "QL\Hal\Admin\ManageServersRemove"
+    arguments: ["@admin.servers.twig", "@serverService"]
 
   admin.deployments.twig: { arguments: ["admin/deployments.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   adminDeploymentsPage:

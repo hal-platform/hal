@@ -105,6 +105,13 @@
   "route":      "/admin/servers"
   "stack":      ["loginGuard", "adminServersHandler"]
 
+"admin_servers_remove":
+  "method":     "GET"
+  "route":      "/admin/servers/:id/remove"
+  "stack":      ["loginGuard", "adminServersRemoveHandler"]
+  "conditions":
+    "id":       "[\d]+"
+
 "admin_deployments":
   "method":     "GET"
   "route":      "/admin/deployments"
