@@ -20,6 +20,7 @@ email.notify:       "matthewcolf@quickenloans.com"
 email.notify.error: false
 build.log.level:    100
 build.log.name:     hal9000
+build.date.format:  ""
 
 # These help with development
 

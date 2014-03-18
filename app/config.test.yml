@@ -20,6 +20,7 @@ email.notify:       "placeholder@quickenloans.com"
 email.notify.error: "placeholder@quickenloans.com"
 build.log.level:    100
 build.log.name:     hal9000
+build.date.format:  ""
 
 # These help with development
 
