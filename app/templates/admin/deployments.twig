@@ -26,14 +26,14 @@
                 <th>Branch</th>
                 <th>Commit</th>
                 <th>Last Push</th>
-                <th>Target Path</th>
+                <!--<th>Target Path</th>-->
                 <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             {% for deployment in deployments %}
                 {% if deployment.LastPushed %}
-                    {% set lastPush = deployment.LastPushed|date(timezone="America/Detroit") %}
+                    {% set lastPush = deployment.LastPushed|dateHal %}
                 {% else %}
                     {% set lastPush = "never" %}
                 {% endif %}
@@ -45,11 +45,20 @@
                 <tr>
                     <td>{{ deployment.Repository }}</td>
                     <td>{{ deployment.HostName }} ({{ deployment.Environment }})</td>
-                    <td>{{ deployment.CurStatus }}</td>
+                    <td>
+                        {% if deployment.CurStatus == 'Error' %}
+                            <div class="circle circle-red"></div>
+                        {% elseif deployment.CurStatus == 'Deployed' %}
+                            <div class="circle circle-green"></div>
+                        {% else %}
+                            <div class="circle circle-orange"></div>
+                        {% endif %}
+                        {{ deployment.CurStatus }}
+                    </td>
                     <td>{{ deployment.CurBranch }}</td>
                     <td>{% autoescape false %}{{ curCommit }}{% endautoescape %}</td>
                     <td>{{ lastPush }}</td>
-                    <td>{{ deployment.TargetPath }}</td>
+                    <!--<td>{{ deployment.TargetPath }}</td>-->
                     <td><a href="/admin/deployments/{{ deployment.DeploymentId }}/remove">Remove</a></td>
                 </tr>
             {% endfor %}

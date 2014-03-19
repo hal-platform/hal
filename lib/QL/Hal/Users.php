@@ -18,6 +18,9 @@ use Twig_Template;
  */
 class Users
 {
+    const LDAP_USER         = 'placeholder';
+    const LDAP_PASSWORD     = 'placeholder';
+
     /**
      * @var Twig_Template
      */
@@ -37,21 +40,29 @@ class Users
     private $layout;
 
     /**
+     * @var \MCP\Corp\Account\LdapService
+     */
+    private $ldapService;
+
+    /**
      * @param Twig_Template $tpl
      * @param UserService $userService
      * @param PushPermissionService $pushPermissionService
      * @param Layout $layout
+     * @param LdapService $ldapService
      */
     public function __construct(
         Twig_Template $tpl,
         UserService $userService,
         PushPermissionService $pushPermissionService,
-        Layout $layout
+        Layout $layout,
+        LdapService $ldapService
     ) {
         $this->tpl = $tpl;
         $this->userService = $userService;
         $this->pushPermissionService = $pushPermissionService;
         $this->layout = $layout;
+        $this->ldapService = $ldapService;
     }
 
     /**
@@ -65,6 +76,11 @@ class Users
     {
         $commonId = $params['id'];
         $user = $this->userService->getById($commonId);
+
+        // this is dump, refactor in the future @todo
+        $this->ldapService->authenticate(self::LDAP_USER, self::LDAP_PASSWORD, false);
+        $ldapUser = $this->ldapService->getUserByCommonId($commonId);
+
         if (is_null($user)) {
             call_user_func($notFound);
             return;
@@ -75,6 +91,7 @@ class Users
 
         $data = [
             'user' => $user,
+            'ldapUser' => $ldapUser,
             'total_pushes' => $totalPushes,
             'permissions' => $permissions,
         ];

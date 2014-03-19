@@ -7,6 +7,8 @@
 
 namespace QL\Hal;
 
+use QL\Hal\Services\Session\Handler;
+
 /**
  *  Session Handler
  */
@@ -14,11 +16,15 @@ class Session
 {
     const FLASH_KEY = 'flash';
 
+    private $handler;
+
     /**
      *  Constructor
      */
-    public function __construct()
+    public function __construct(Handler $handler = null)
     {
+        $this->handler = $handler;
+
         $this->start();
 
         if (false == $this->has(self::FLASH_KEY)) {
@@ -42,6 +48,18 @@ class Session
     public function start()
     {
         if (false == $this->started()) {
+
+            if ($this->handler instanceof Handler) {
+                session_set_save_handler(
+                    array($this->handler, 'open'),
+                    array($this->handler, 'close'),
+                    array($this->handler, 'read'),
+                    array($this->handler, 'write'),
+                    array($this->handler, 'destroy'),
+                    array($this->handler, 'gc')
+                );
+            }
+
             session_start();
         }
     }

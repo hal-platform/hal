@@ -27,14 +27,23 @@
                 <tr>
                     <td>{{ deployment.HostName }}</td>
                     <td>{{ deployment.Environment }}</td>
-                    <td>{{ deployment.CurStatus }}</td>
+                    <td>
+                        {% if deployment.CurStatus == 'Error' %}
+                            <div class="circle circle-red"></div>
+                        {% elseif deployment.CurStatus == 'Deployed' %}
+                            <div class="circle circle-green"></div>
+                        {% else %}
+                            <div class="circle circle-orange"></div>
+                        {% endif %}
+                        {{ deployment.CurStatus }}
+                    </td>
                     <td>{{ deployment.CurBranch }}</td>
                     <td>{{ deployment.CurCommit[:7] }}</td>
                     <td>
                         {% if deployment.LastPushed == '0000-00-00 00:00:00' %}
                             Never
                         {% else %}
-                            {{ deployment.LastPushed|date("Y-n-d G:m:s","America/Detroit") }}
+                            {{ deployment.LastPushed|dateHal }}
                         {% endif %}
                     </td>
                     <td>
@@ -56,44 +65,7 @@
         {% endif %}
     </form>
 
-    <h3>Deployment Log</h3>
-    <p>Deployment logs for {{ repo.ShortName }} are shown below.</p>
-
-    {% if totalLogPages > 1 %}
-    Total Pages #: {{ totalLogPages }}
-    <div>
-        {% if totalLogPages > 1 %}
-            {% set prev = currentPage - 1 %}
-            {% if currentPage > 1 %}
-                <a href="/r/hal?page={{ prev }}"> prev </a>
-            {% endif %}
-
-            {% set maxshow = 5 %}
-
-            {% if currentPage %}
-                {% set startshow = currentPage %}
-            {% else %}
-                {% set startshow = 1 %}
-            {% endif %}
-
-            {% set endshow = startshow + maxshow - 1 %}
-            {% if endshow > totalLogPages %}
-                {% set endshow = totalLogPages %}
-            {% endif %}
-            {% for page in startshow..endshow %}
-                <a href="/r/hal?page={{ page }}">{{ page }}</a>
-            {% endfor %}
-            {% if currentPage <= totalLogPages - maxshow %}
-                ...  <a href="/r/hal?page={{ totalLogPages }}">{{ totalLogPages }}</a>
-            {% endif %}
-
-            {% set next = currentPage + 1 %}
-            {% if currentPage < totalLogPages %}
-                <a href="/r/hal?page={{ next }}"> next </a>
-            {% endif %}
-        {% endif %}
-    </div>
-    {% endif %}
+    <h3>Deployment History</h3>
 
     <table>
         <thead>
@@ -110,9 +82,18 @@
         {% for log in logs %}
         <tbody>
             <tr>
-                <td> {{ log.PushStart }} </td>
-                <td> {{ log.PushEnd }} </td>
-                <td> {{ log.PushStatus }} </td>
+                <td> {{ log.PushStart|dateHal }} </td>
+                <td> {{ log.PushEnd|dateHal }} </td>
+                <td>
+                    {% if log.PushStatus == 'Error' %}
+                        <div class="circle circle-red"></div>
+                    {% elseif log.PushStatus == 'Deployed' %}
+                        <div class="circle circle-green"></div>
+                    {% else %}
+                        <div class="circle circle-orange"></div>
+                    {% endif %}
+                    {{ log.PushStatus }}
+                </td>
                 <td> {{ log.PushBranch }} </td>
                 <td> {{ log.Environment }} </td>
                 <td> {{ log.TargetServer }} </td>
@@ -121,5 +102,25 @@
         </tbody>
         {% endfor %}
     </table>
+
+    <div class="pages">
+        <p>
+            {% if page > 1 %}
+                <a href="/r/{{ repo.ShortName }}/page/{{ page-1 }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
+            {% else %}
+                <span class="disabled"><i class="fa fa-arrow-circle-left"></i> newer</span>
+            {% endif %}
+
+            {% if totalPages > 1 %}
+                <span class="spacing">page {{ page }} of {{ totalPages }}</span>
+            {% endif %}
+
+            {% if page < totalPages %}
+                <a href="/r/{{ repo.ShortName }}/page/{{ page+1 }}">older <i class="fa fa-arrow-circle-right"></i></a>
+            {% else %}
+                <span class="disabled">older <i class="fa fa-arrow-circle-right"></i></span>
+            {% endif %}
+        </p>
+    </div>
 
 {% endblock %}

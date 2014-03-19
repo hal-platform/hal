@@ -3,8 +3,11 @@
 
 namespace QL\Hal\Twig;
 
+use DateTime;
+use DateTimeZone;
 use Twig_Extension;
 use Twig_SimpleFunction;
+use Twig_SimpleFilter;
 use QL\Hal\PushPermissionService;
 
 /**
@@ -47,6 +50,19 @@ class HalExtension extends Twig_Extension
     {
         return array(
             new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush'))
+
+        );
+    }
+
+    /**
+     *  Get an array of Twig Filters
+     *
+     *  @return array
+     */
+    public function getFilters()
+    {
+        return array(
+            new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat'))
         );
     }
 
@@ -61,5 +77,33 @@ class HalExtension extends Twig_Extension
     public function canUserPush($user, $repo, $env)
     {
         return $this->permissions->canUserPushToEnvRepo($user, $repo, $env);
+    }
+
+    /**
+     *  Convert a UTC encoded MySQL DateTime string to a DateTime object... or just use the passed DateTime object
+     *  if it is one... because fuck PDO
+     *
+     *  @param string $value
+     *  @param string $format
+     *  @param string $timezone
+     *  @return false|DateTime
+     */
+    public function datetimeConvertAndFormat($value, $format = 'M j, Y g:i A', $timezone = 'America/Detroit')
+    {
+        if ($value instanceof DateTime) {
+            $datetime = $value;
+        } else {
+            $datetime = DateTime::createFromFormat('Y-m-d G:i:s', $value, new DateTimeZone('UTC'));
+
+            if ($datetime === false) {
+                $datetime = new DateTime($value, new DateTimeZone('UTC'));
+            }
+        }
+
+        if ($datetime instanceof DateTime) {
+            return $datetime->setTimezone(new DateTimeZone($timezone))->format($format);
+        } else {
+            return '';
+        }
     }
 }

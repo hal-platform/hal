@@ -18,14 +18,13 @@ services:
     class: "Twig_Environment"
     arguments: ["@twigLoader"]
     calls:
-      - [addExtension, ["@twigExtension"]]
+      - [addExtension, [@twigExtension]]
 
   # Twig View for Slim
   twigView:
     class: "QL\Hal\TwigView"
     arguments: ["@twigEnv"]
 
-  session: { class: 'QL\Hal\Session' }
   # DB related services
   db:
     class: "PDO"
@@ -56,6 +55,9 @@ services:
     class: "QL\\Hal\\Services\\SyncOptions"
     arguments: ["@repoService", "@deploymentService", "@githubRepoService"]
 
+
+
+
   # Non-db services
   ldapTransport:
     class: 'Zend\Ldap\Ldap'
@@ -66,7 +68,7 @@ services:
 
   pushPermissionService:
     class: 'QL\Hal\PushPermissionService'
-    arguments: ['@ldapService', '@repoService', '%debug.godmode%']
+    arguments: ['@ldapService', '@repoService', @userService, '%debug.godmode%']
 
   github:
     class: "Github\\Client"
@@ -109,7 +111,7 @@ services:
   users.twig: { arguments: ["users.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   userPage:
     class: "QL\Hal\Users"
-    arguments: ["@users.twig", "@userService", '@pushPermissionService', '@layout']
+    arguments: ["@users.twig", "@userService", '@pushPermissionService', '@layout', @ldapService]
 
   arrangement-list.twig: { arguments: ["arrangement-list.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   arrangementListPage:
@@ -149,9 +151,6 @@ services:
   adminServersHandler:
     class: 'QL\Hal\Admin\ManageServersHandler'
     arguments: ["@admin.servers.twig", "@serverService", "@envService"]
-  adminServersRemoveHandler:
-    class: "QL\Hal\Admin\ManageServersRemove"
-    arguments: ["@admin.servers.twig", "@serverService"]
 
   admin.deployments.twig: { arguments: ["admin/deployments.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   adminDeploymentsPage:
@@ -160,9 +159,6 @@ services:
   adminDeploymentsHandler:
     class: "QL\Hal\Admin\ManageDeploymentsHandler"
     arguments: ["@admin.deployments.twig", "@repoService", "@serverService", "@deploymentService", "@session"]
-  adminDeploymentsRemoveHandler:
-    class: "QL\Hal\Admin\ManageDeploymentsRemove"
-    arguments: ["@admin.deployments.twig", "@deploymentService"]
 
   admin.arrangements.twig: { arguments: ["admin/arrangements.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   adminArrangementsPage:
@@ -188,6 +184,16 @@ services:
     class: 'QL\Hal\Admin\ManageUsers'
     arguments: ["@admin.users.twig", "@userService", '@layout']
 
+  admin.permissions.twig:
+    class:            "Twig_Template"
+    arguments:        ["admin/permissions.html.twig"]
+    factory_service:  "twigEnv"
+    factory_method:   "loadTemplate"
+
+  adminPermissionsPage:
+    class:      'QL\Hal\Admin\ManagePermissions'
+    arguments:  [@admin.permissions.twig, @repoService, @pushPermissionService, @layout]
+
   sync-code.twig: { arguments: ["sync-code.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   syncPage:
     class: 'QL\Hal\SyncPage'
@@ -208,6 +214,18 @@ services:
   layout:
       class: 'QL\Hal\Layout'
       arguments: ['@currentUserContext', '@pushPermissionService']
+
+  ######################################################################################################################
+  # Session
+  ######################################################################################################################
+
+  sessionHandler:
+    class:        'QL\Hal\Services\Session\Handler\MySQLHandler'
+    arguments:    [@db]
+
+  session:
+      class:      'QL\Hal\Session'
+      arguments:  [@sessionHandler]
 
   ######################################################################################################################
   # Build Notifications & Logging
@@ -237,14 +255,13 @@ services:
 
   # HTML Formatter
   buildLogFormatter:
-    class:        "Monolog\\Formatter\\HtmlFormatter"
-    arguments:    ["%build.date.format%"]
+    class:        "QL\\Hal\\Mail\\Formatter\\HtmlFormatter" #"Monolog\\Formatter\\HtmlFormatter"
+    arguments:    [] #["%build.date.format%"]
 
   # Log Handler
   buildLogHandler:
     class:        "Monolog\\Handler\\BufferHandler"
     arguments:    [@buildLogSubHandler]
-
 
   # Logger
   buildLogger:

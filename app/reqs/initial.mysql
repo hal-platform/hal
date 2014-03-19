@@ -90,3 +90,12 @@ CREATE TABLE Users (
 )
     ENGINE        InnoDB
     CHARACTER SET utf8;
+
+CREATE TABLE Sessions (
+    SessionId     CHAR(255) NOT NULL,
+    SessionData   MEDIUMTEXT NOT NULL,
+    LastAccess    DATETIME NOT NULL,
+    PRIMARY KEY (SessionId)
+)
+    ENGINE        InnoDB
+    CHARACTER SET utf8;

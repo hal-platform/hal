@@ -190,7 +190,7 @@ class LogService
      */
     public function paginate($shortName, $pageNumber = null)
     { 
-        $rowsPerPage = 5;
+        $rowsPerPage = 10;
         $logCount = $this->getCount($shortName);
         $numberOfPages = ceil($logCount/$rowsPerPage);
 
@@ -210,7 +210,7 @@ class LogService
 
     public function getByOffset($shortName,$offset, $rowsPerPage)
     {
-        $query = self::Q_LIST . ' WHERE PushRepo = :name LIMIT :offset, :rowsPerPage';
+        $query = self::Q_LIST . ' WHERE PushRepo = :name ORDER BY PushStart DESC LIMIT :offset, :rowsPerPage';
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':name', $shortName, PDO::PARAM_STR);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);

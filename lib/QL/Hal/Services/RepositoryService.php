@@ -33,6 +33,32 @@ class RepositoryService
         INNER JOIN Environments AS env ON (srv.EnvironmentId = env.EnvironmentId)
     ';
 
+    // All unique repo:env pairs
+    const Q_REPO_ENV_PAIRS = '
+        SELECT
+            rep.ShortName as RepShortName,
+            env.Shortname as EnvShortName
+        FROM
+                       Repositories AS rep
+            INNER JOIN Deployments  AS dep ON (rep.RepositoryId = dep.RepositoryId)
+            INNER JOIN Servers      AS srv ON (dep.ServerId = srv.ServerId)
+            INNER JOIN Environments AS env ON (srv.EnvironmentId = env.EnvironmentId)
+        GROUP BY rep.ShortName, env.Shortname
+        ';
+
+    // All unique repo:env pairs where repo is a specific one
+    const Q_REPO_ENV_PAIRS_WHERE = '
+        SELECT
+            rep.ShortName as RepShortName,
+            env.Shortname as EnvShortName
+        FROM
+                       Repositories AS rep
+            INNER JOIN Deployments  AS dep ON (rep.RepositoryId = dep.RepositoryId)
+            INNER JOIN Servers      AS srv ON (dep.ServerId = srv.ServerId)
+            INNER JOIN Environments AS env ON (srv.EnvironmentId = env.EnvironmentId)
+        WHERE rep.ShortName = :repo
+        GROUP BY rep.ShortName, env.Shortname';
+
     const Q_DELETE = 'DELETE FROM Repositories WHERE RepositoryId = :id ';
 
     /**
@@ -47,7 +73,7 @@ class RepositoryService
     {
         $this->db = $db;
     }
-
+/*
     public function listRepoEnvPairs()
     {
         $stmt = $this->db->prepare(self::Q_LIST_REPO_ENV_PAIRS);
@@ -72,6 +98,27 @@ class RepositoryService
 
 
         return $result;
+    }
+*/
+    /**
+     *  Get an array of repo:env pairs, optionally filtered by a repo name
+     *
+     *  @param null string $repo
+     *  @return array
+     */
+    public function listRepoEnvPairs($repo = null)
+    {
+        if ($repo) {
+            $statement = $this->db->prepare(self::Q_REPO_ENV_PAIRS_WHERE);
+            $statement->bindValue('repo', $repo, PDO::PARAM_STR);
+            $statement->execute();
+        } else {
+            $statement = $this->db->prepare(self::Q_REPO_ENV_PAIRS);
+            $statement->execute();
+        }
+
+        return $statement->fetchAll(PDO::FETCH_NAMED);
+
     }
 
     /**

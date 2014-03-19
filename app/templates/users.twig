@@ -3,8 +3,19 @@
 {% set page_title = user.DisplayName %}
 
 {% block content %}
-    <h2>{{ user.DisplayName }}</h2>
+    <h2>{{ ldapUser.firstName }} {{ ldapUser.lastName }}</h2>
+    <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
+
     <p><img src="{{ user.PictureUrl }}" width="150"></p>
+
+    <h3>Contact</h3>
+    <ul>
+        <li>Email: <a href="mailto:{{ user.Email }}">{{ user.Email }}</a></li>
+        <li>Phone: {{ ldapUser.workPhone }} (x<strong>{{ ldapUser.workExt }}</strong>)</li>
+        <li>Mobile: {{ ldapUser.mobilePhone }}</li>
+        <li><a href="http://rockworldapps/roster/default.aspx?firstname={{ ldapUser.firstName }}&lastname={{ ldapUser.lastName }}">Rockword Link</a></li>
+    </ul>
+
     <h3>Stats</h3>
     <ul>
         <li><b>Total Pushes:</b> {{ total_pushes }}</li>
@@ -15,7 +26,7 @@
         <h3>Permissions</h3>
         <ul>
         {% for pair in permissions %}
-            <li>You have access to push <a href="/r/{{ pair.0 }}">{{ pair.0 }}</a> to <b>{{ pair.1 }}</b>.</li>
+            <li>Has access to push <a href="/r/{{ pair.0 }}">{{ pair.0 }}</a> to <b>{{ pair.1 }}</b>.</li>
         {% endfor %}
         </ul>
     {% endif %}

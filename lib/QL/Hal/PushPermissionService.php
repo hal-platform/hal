@@ -12,6 +12,7 @@ use MCP\Corp\Account\User;
 use QL\Hal\Services\EnvironmentService;
 use QL\Hal\Services\RepositoryService;
 use Zend\Ldap\Dn;
+use QL\Hal\Services\UserService;
 
 /**
  * @api
@@ -44,6 +45,13 @@ class PushPermissionService
     private $authed;
 
     /**
+     * @var Services\UserService
+     */
+    private $userService;
+
+    private $cache;
+
+    /**
      * @return Dn
      */
     public static function dnForAdminGroup()
@@ -62,26 +70,36 @@ class PushPermissionService
     }
 
     /**
-     * @param LdapService $ldapService
-     * @param RepositoryService $repoService
-     * @param int $godModeOverride
+     *  Constructor
+     *
+     *  @param LdapService $ldapService
+     *  @param RepositoryService $repoService
+     *  @param UserService $userService
+     *  @param int $godModeOverride
      */
     public function __construct(
         LdapService $ldapService,
         RepositoryService $repoService,
+        UserService $userService,
         $godModeOverride
     ) {
         $this->ldapService = $ldapService;
         $this->repoService = $repoService;
+        $this->userService = $userService;
         $this->godModeOverride = $godModeOverride;
         $this->authed = false;
+        $this->cache = array();
     }
 
     /**
-     * @param User|string $user
-     * @param string $repo
-     * @param string $env
-     * @return bool
+     *  Check to see if a user can push a repo to a given environment
+     *
+     *  CANONICAL SOURCE FOR USER REPO:ENV PERMISSIONS
+     *
+     *  @param User|string $user
+     *  @param string $repo
+     *  @param string $env
+     *  @return bool
      */
     public function canUserPushToEnvRepo($user, $repo, $env)
     {
@@ -93,44 +111,71 @@ class PushPermissionService
         }
 
         // admin push whitelist
-        if ($this->isUserAdmin($user) && in_array($env, array('test', 'beta'))) {
+        if ($this->isUserAdmin($user) && (in_array($env, array('test', 'beta')) || $repo == 'hal9000')) {
             return true;
         }
 
         $group = self::getDnForPermGroup($repo, $env);
 
-        return $this->ldapService->isUserInGroup($group, $user->dn());
+        //return $this->ldapService->isUserInGroup($group, $user->dn());
+        return $this->ldapUserInGroupCache($group, $user->dn());
     }
 
     /**
-     * @param string $commonId
-     * @return array
+     *  Get an array of all repo:env pairs a given user can push to
+     *
+     *  @param string $commonId
+     *  @return array
      */
     public function repoEnvsCommonIdCanPushTo($commonId)
     {
         $this->checkAuthenticated();
         $user = $this->ldapService->getUserByCommonId($commonId);
-
         $pairs = $this->repoService->listRepoEnvPairs();
 
-        if ($this->isUserAdmin($user)) {
-            return array_map(
-                function ($v) {
-                    return array($v['RepShortName'], $v['EnvShortName']);
-                },
-                $pairs
-            );
-        }
+        $permissions = array();
 
-        $return = array();
         foreach ($pairs as $pair) {
-            $permGroup = self::getDnForPermGroup($pair['RepShortName'], $pair['EnvShortName']);
-            if ($this->ldapService->isUserInGroup($permGroup, $user->dn())) {
-                $return[] = array($pair['RepShortName'], $pair['EnvShortName']);
+            if ($this->canUserPushToEnvRepo($user, $pair['RepShortName'], $pair['EnvShortName'])) {
+                $permissions[] = array($pair['RepShortName'], $pair['EnvShortName']);
             }
         }
 
-        return $return;
+        return $permissions;
+    }
+
+    /**
+     *  Get an array of all user:env access pairs for a given repo
+     *
+     *  @param $repo
+     *  @return array
+     */
+    public function allUsersWithAccess($repo)
+    {
+        $users = $this->userService->listAll();
+        $pairs = $this->repoService->listRepoEnvPairs($repo);
+
+        $permissions = array();
+
+        foreach ($users as $user) {
+            $username = $user['UserName'];
+
+            foreach ($pairs as $pair) {
+
+                $repo = $pair['RepShortName'];
+                $env = $pair['EnvShortName'];
+
+                if ($this->canUserPushToEnvRepo($username, $repo, $env)) {
+                    $permissions[] = array(
+                        'user' => $user,
+                        'repo' => $repo,
+                        'env' => $env
+                    );
+                }
+            }
+        }
+
+        return $permissions;
     }
 
     public function checkAuthenticated()
@@ -147,6 +192,31 @@ class PushPermissionService
         if ($user->commonId() == $this->godModeOverride) {
             return true;
         }
-        return $this->ldapService->isUserInGroup(self::dnForAdminGroup(), $user->dn());
+        //return $this->ldapService->isUserInGroup(self::dnForAdminGroup(), $user->dn());
+        return $this->ldapUserInGroupCache(self::dnForAdminGroup(), $user->dn());
+    }
+
+    /**
+     *  Provide quick and dirty memory cache for LDAP user in group queries
+     *
+     *  This is dump. Refactor later.
+     *
+     *  @param string $group
+     *  @param string $user
+     *  @return mixed
+     */
+    public function ldapUserInGroupCache($group, $user)
+    {
+        $key = md5($group.$user);
+
+        if (array_key_exists($key, $this->cache)) {
+            return $this->cache[$key];
+        }
+
+        $this->checkAuthenticated();
+        $result = $this->ldapService->isUserInGroup($group, $user);
+        $this->cache[$key] = $result;
+
+        return $result;
     }
 }

@@ -6,6 +6,7 @@ db.user:        "root"
 db.pass:        ""
 build.user:     "mcolf"
 build.dir:      "/tmp"
+build.async:    false
 rsync.user:     "mcolf"
 github.token:   ""
 github.baseurl: "http://git/api/v3/"

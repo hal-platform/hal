@@ -27,10 +27,11 @@
 
 "repository":
   "method":     "GET"
-  "route":      "/r/:name"
+  "route":      "/r/:name(/page/:page)"
   "stack":      ["loginGuard", "repositoryPage"]
   "conditions":
     "name":     "[A-Za-z0-9_-]+"
+    "page":     "[0-9]+"
 
 "repository_sync":
   "method":     "GET"
@@ -95,13 +96,6 @@
   "route":      "/admin/envs"
   "stack":      ["loginGuard", "adminEnvironmentsHandler"]
 
-"admin_enviroments_remove":
-  "method":     "GET"
-  "route":      "/admin/envs/:id/remove"
-  "stack":      ["loginGuard", "adminEnvironmentsRemoveHandler"]
-  "conditions":
-    "id":       "[\d]+"
-
 "admin_servers":
   "method":     "GET"
   "route":      "/admin/servers"
@@ -111,13 +105,6 @@
   "method":     "POST"
   "route":      "/admin/servers"
   "stack":      ["loginGuard", "adminServersHandler"]
-
-"admin_servers_remove":
-  "method":     "GET"
-  "route":      "/admin/servers/:id/remove"
-  "stack":      ["loginGuard", "adminServersRemoveHandler"]
-  "conditions":
-    "id":       "[\d]+"
 
 "admin_deployments":
   "method":     "GET"
@@ -141,15 +128,7 @@
   "route":      "/admin/users"
   "stack":      ["loginGuard", "adminUsersPage"]
 
-
-
-
-
-
-
-
-
-
-
-
-
+"admin_permissions":
+  "method":     "GET"
+  "route":      "/admin/permissions"
+  "stack":      ["loginGuard", "adminPermissionsPage"]

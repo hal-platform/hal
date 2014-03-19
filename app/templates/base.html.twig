@@ -22,6 +22,7 @@
     {% block style %}
         <link rel="stylesheet" href="/css/style.css">
         <link rel="stylesheet" href="/css/matt.css">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     {% endblock %}
     {% block headScript %}
         <script src="/js/head.min.js"></script>
@@ -58,7 +59,7 @@
                         <li><a href="/a" title="project groups">Repository Groups</a></li>
                         <li><a href="/u/{{ commonId }}">Profile Page</a></li>
                         {% if isAdmin %}
-                            <li><a href="/admin" title="admin dashboard">Admin Dashboard</a></li>
+                            <li><a href="/admin/repositories" title="admin dashboard">Admin Dashboard</a></li>
                         {% endif %}
                         <li><a href="/logout" title="logout">Logout</a></li>
                     </ul>

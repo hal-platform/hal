@@ -1,11 +1,12 @@
 slim:
-  debug:        true
+  debug:        false
   mode:         "development"
 db.dsn:         "mysql:host=test.example.com;dbname=hal9000_test;charset=utf8"
 db.user:        "placeholder"
 db.pass:        "placeholder"
 build.user:     "hal9000test"
 build.dir:      "/var/spool/hal9000test"
+build.async:    true
 rsync.user:     "placeholder"
 github.token:   ""
 github.baseurl: "http://git/api/v3/"

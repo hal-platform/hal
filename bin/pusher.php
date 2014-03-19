@@ -23,21 +23,18 @@ use QL\Hal\Mail\Message;
 use DateTime;
 use DateTimeZone;
 
-// CHANGE ME! Fork and exit for production
-/*
-// fork and exit immediately
-
-$pid = pcntl_fork();
-if ($pid === -1) {
-    fwrite(STDOUT, "could not fork");
-    exit(1);
-}
-if ($pid !== 0) {
-    exit(0);
-}
-*/
-
 require_once __DIR__.'/../app/bootstrap.php';
+
+if ($config->get('build.async')) {
+    // fork and exit immediately
+    $pid = pcntl_fork();
+    if ($pid === -1) {
+        fwrite(STDOUT, "could not fork");
+        exit(1);
+    } elseif ($pid !== 0) {
+        exit(0);
+    }
+}
 
 $command = new PushCommand(
     $container->get('repoService'),
@@ -79,7 +76,6 @@ class PushCommand
     const KEY_DEP_GH_REPO       = 'GithubRepo';
     const KEY_REPO_OWNER        = 'OwnerEmail';
     const KEY_REPO_CMD          = 'BuildCmd';
-
 
     const GITHUB_USER       = 'placeholder';
     const GITHUB_PASSWORD   = 'placeholder';
@@ -330,7 +326,7 @@ class PushCommand
         if ($code === 0) {
             $this->logger->info('Repository successfully downloaded into '.$path);
         } else {
-            $this->logger->critical(implode('\n', $out));
+            $this->logger->critical('Error when executing repository downlaod', $out);
             $this->failure('Error when executing repository download');
         }
 
@@ -384,7 +380,7 @@ class PushCommand
             $this->logger->info('Repository successfully cloned to '.$path);
             return $path;
         } else {
-            $this->logger->critical(implode('\n', $out));
+            $this->logger->critical('Error when executing repository clone!', $out);
             $this->failure('Error when executing repository clone!');
         }
     }
@@ -407,8 +403,6 @@ class PushCommand
         exec('env', $out, $code);
         $this->logger->debug('Verifying environment variables...', $out);
 
-        //$this->logger->debug(implode(' ', $out));
-
         $command = sprintf(
             'cd %s && %s 2>&1',
             $path,
@@ -420,14 +414,13 @@ class PushCommand
         // run the command
         exec($command, $out, $code);
 
+        if (is_array($out) && count($out) > 0) {
+            $this->logger->info('Build command generated output...', $out);
+        }
+
         if ($code === 0) {
-            if (is_array($out) && count($out) > 0) {
-                $this->logger->info('Build command generated output...', $out);
-                //$this->logger->info(implode('\n', $out));
-            }
             $this->logger->info('Successfully ran build command');
         } else {
-            $this->logger->critical(implode('\n', $out));
             $this->failure('Error when executing build command!');
         }
     }
@@ -478,7 +471,7 @@ class PushCommand
             $this->logger->info('Successfully pushed code to remote server');
             $this->success('Successfully pushed code to remote server');
         } else {
-            $this->logger->critical(implode('\n', $out));
+            $this->logger->critical('Error when pushing code to remote server', $out);
             $this->failure('Error when pushing code to remote server');
         }
     }

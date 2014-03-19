@@ -107,21 +107,30 @@ class RepositoryPage
             return;
         }
 
-        if ($req->get('page')) {
-            $pageNumber = $req->get('page');
-            $renderData['currentPage'] = $pageNumber;
-            $pages = $this->logService->paginate($shortName, $pageNumber);
+        if (isset($params['page'])) {
+            $page = $params['page'];
+            $renderData['currentPage'] = $page;
+            $pages = $this->logService->paginate($shortName, $page);
         } else {
+            $page = 1;
             $pages = $this->logService->paginate($shortName);
         }
 
+        //if ($req->get('page')) {
+        //    $pageNumber = $req->get('page');
+        //    $renderData['currentPage'] = $pageNumber;
+        //    $pages = $this->logService->paginate($shortName, $pageNumber);
+        //} else {
+        //    $pages = $this->logService->paginate($shortName);
+        //}
+
         $deployments = $this->deploymentService->listAllByRepoId($repo['RepositoryId']);
 
+        $renderData['page'] = $page;
+        $renderData['totalPages'] = $pages[1];
+        $renderData['logs'] = $pages[0];
         $renderData['repo'] = $repo;
         $renderData['deployments'] = $deployments;
-        $renderData['logs'] = $pages[0];
-        $renderData['totalLogEntries'] = $this->logService->getCount($shortName);
-        $renderData['totalLogPages'] = $pages[1];
         $renderData['user'] = $this->currentUser;
 
         $res->body($this->layout->renderTemplateWithLayoutData($this->tpl, $renderData));

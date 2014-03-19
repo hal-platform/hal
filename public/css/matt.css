@@ -39,3 +39,37 @@
     font-size: 65%;
     margin-bottom: 0.75em;
 }
+
+.pages {
+    text-align: center;
+}
+
+.pages .spacing {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.pages .disabled {
+    color: #808080;
+}
+
+.circle {
+    display: inline-block;
+    background: #808080;
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.3em;
+    border-radius: 50%;
+}
+
+.circle-red {
+    background: red;
+}
+
+.circle-orange {
+    background: orange;
+}
+
+.circle-green {
+    background: green;
+}

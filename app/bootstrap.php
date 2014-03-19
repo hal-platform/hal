@@ -39,6 +39,10 @@ check_file($locator->locate(CONFIG_FILE));
 check_file($locator->locate(DI_CONFIG_FILE));
 check_file($locator->locate(ROUTES_FILE));
 
+// Set Timezone to UTC
+ini_set('date.timezone', 'UTC');
+date_default_timezone_set('UTC');
+
 // Import Config
 $yml        = file_get_contents($locator->locate(CONFIG_FILE));
 $config     = new ParameterBag(Yaml::parse($yml));
