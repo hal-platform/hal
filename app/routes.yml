@@ -11,24 +11,24 @@
 "logout":
   "method":     "GET"
   "route":      "/logout"
-  "stack":      ["loginGuard", "logoutPage"]
+  "stack":      ["loginBouncer", "logoutPage"]
 
 "arrangements":
   "method":     "GET"
   "route":      "/a"
-  "stack":      ["loginGuard", "arrangementListPage"]
+  "stack":      ["loginBouncer", "arrangementListPage"]
 
 "arrangement":
   "method":     "GET"
   "route":      "/a/:name"
-  "stack":      ["loginGuard", "arrangementPage"]
+  "stack":      ["loginBouncer", "arrangementPage"]
   "conditions":
     "name":     "[A-Za-z0-9_-]+"
 
 "repository":
   "method":     "GET"
   "route":      "/r/:name(/page/:page)"
-  "stack":      ["loginGuard", "repositoryPage"]
+  "stack":      ["loginBouncer", "repositoryPage"]
   "conditions":
     "name":     "[A-Za-z0-9_-]+"
     "page":     "[0-9]+"
@@ -36,99 +36,99 @@
 "repository_sync":
   "method":     "GET"
   "route":      "/r/:name/sync"
-  "stack":      ["loginGuard", "syncPage"]
+  "stack":      ["loginBouncer", "syncPage"]
   "conditions":
     "name":     "[A-Za-z0-9_-]+"
 
 "repository_sync_handler":
   "method":     "POST"
   "route":      "/r/:name/sync"
-  "stack":      ["loginGuard", "syncHandler"]
+  "stack":      ["loginBouncer", "syncHandler"]
   "conditions":
     "name":     "[A-Za-z0-9_-]+"
 
 "user":
   "method":     "GET"
   "route":      "/u/:id"
-  "stack":      ["loginGuard", "userPage"]
+  "stack":      ["loginBouncer", "userPage"]
   "conditions":
     "id":       "[\d]+"
 
 "admin":
   "method":     "GET"
   "route":      "/admin"
-  "stack":      ["loginGuard", "adminDashboardPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminDashboardPage"]
 
 "admin_arrangements":
   "method":     "GET"
   "route":      "/admin/arrangements"
-  "stack":      ["loginGuard", "adminArrangementsPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminArrangementsPage"]
 
 "admin_arrangements_handle":
   "method":     "POST"
   "route":      "/admin/arrangements"
-  "stack":      ["loginGuard", "adminArrangementsHandler"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminArrangementsHandler"]
 
 "admin_repositories":
   "method":     "GET"
   "route":      "/admin/repositories"
-  "stack":      ["loginGuard", "adminRepositoriesPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminRepositoriesPage"]
 
 "admin_repositories_handler":
   "method":     "POST"
   "route":      "/admin/repositories"
-  "stack":      ["loginGuard", "adminRepositoriesHandler"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminRepositoriesHandler"]
 
 "admin_repositories_remove":
   "method":     "GET"
   "route":      "/admin/repositories/:id/remove"
-  "stack":      ["loginGuard", "adminRepositoriesRemoveHandler"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminRepositoriesRemoveHandler"]
   "conditions":
     "id":       "[\d]+"
 
 "admin_environments":
   "method":     "GET"
   "route":      "/admin/envs"
-  "stack":      ["loginGuard", "adminEnvironmentsPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminEnvironmentsPage"]
 
 "admin_environments_handler":
   "method":     "POST"
   "route":      "/admin/envs"
-  "stack":      ["loginGuard", "adminEnvironmentsHandler"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminEnvironmentsHandler"]
 
 "admin_servers":
   "method":     "GET"
   "route":      "/admin/servers"
-  "stack":      ["loginGuard", "adminServersPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminServersPage"]
 
 "admin_servers_handler":
   "method":     "POST"
   "route":      "/admin/servers"
-  "stack":      ["loginGuard", "adminServersHandler"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminServersHandler"]
 
 "admin_deployments":
   "method":     "GET"
   "route":      "/admin/deployments"
-  "stack":      ["loginGuard", "adminDeploymentsPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminDeploymentsPage"]
 
 "admin_deployments_handler":
   "method":     "POST"
   "route":      "/admin/deployments"
-  "stack":      ["loginGuard", "adminDeploymentsHandler"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminDeploymentsHandler"]
 
 "admin_deployments_remove":
   "method":     "GET"
   "route":      "/admin/deployments/:id/remove"
-  "stack":      ["loginGuard", "adminDeploymentsRemoveHandler"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminDeploymentsRemoveHandler"]
   "conditions":
     "id":       "[\d]+"
 
 "admin_users":
   "method":     "GET"
   "route":      "/admin/users"
-  "stack":      ["loginGuard", "adminUsersPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminUsersPage"]
 
 "admin_permissions":
   "method":     "GET"
   "route":      "/admin/permissions"
-  "stack":      ["loginGuard", "adminPermissionsPage"]
+  "stack":      ["loginBouncer", "adminBouncer", "adminPermissionsPage"]

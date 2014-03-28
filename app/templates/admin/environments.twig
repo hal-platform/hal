@@ -17,7 +17,7 @@
             </thead>
             <tbody>
             {% for env in envs %}
-                <tr>
+                <tr class="env-row-{{ env.ShortName }}">
                     <td>{{ env.ShortName }}</td>
                     <td><input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input"></td>
                     <td></td>

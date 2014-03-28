@@ -1,5 +1,5 @@
 slim:
-  debug:        false
+  debug:        true
   mode:         "development"
 db.dsn:         "mysql:host=test.example.com;dbname=hal9000_test;charset=utf8"
 db.user:        "placeholder"

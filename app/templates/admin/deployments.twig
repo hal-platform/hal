@@ -42,7 +42,7 @@
                 {% else %}
                     {% set curCommit = '<a href="http://git/' ~ deployment.GithubUser ~ '/' ~ deployment.GithubRepo ~ '/commit/' ~ deployment.CurCommit ~ '">' ~ deployment.CurCommit[:7] ~ '</a>' %}
                 {% endif %}
-                <tr>
+                <tr class="env-row-{{ deployment.Environment }}">
                     <td>{{ deployment.Repository }}</td>
                     <td>{{ deployment.HostName }} ({{ deployment.Environment }})</td>
                     <td>

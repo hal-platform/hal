@@ -3,17 +3,28 @@
 
 namespace QL\Hal\Mail\Formatter;
 
+use DateTime;
+use Exception;
+use Traversable;
 use Monolog\Logger;
-use Monolog\Formatter\NormalizerFormatter;
+use Monolog\Formatter\FormatterInterface;
 
 /**
  *  HAL Notification HTML Email Formatter
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class HtmlFormatter extends NormalizerFormatter
+class HtmlFormatter implements FormatterInterface
 {
-    const DATE_FORMAT = '';
+    /**
+     *  Date output format
+     */
+    const DATE_FORMAT = 'Y-m-d H:i:s';
+
+    /**
+     *  Maximum number of lines to normalize an array to
+     */
+    const LINE_LIMIT = 100000;
 
     /**
      *  Log level colors
@@ -32,12 +43,15 @@ class HtmlFormatter extends NormalizerFormatter
     );
 
     /**
-     *  Constructor
+     *  An array regex expressions to strip from output
+     *
+     *  Normally used to suppress terminal colors and other bullshit
+     *
+     *  @var array
      */
-    public function __construct()
-    {
-
-    }
+    private $strippers = array(
+        '/\\033\[[^\W]{2,3}/'
+    );
 
     /**
      *  Creates an HTML table row
@@ -49,11 +63,6 @@ class HtmlFormatter extends NormalizerFormatter
      */
     private function addRow($level, $th, $td = ' ')
     {
-        //$th = htmlspecialchars($th, ENT_NOQUOTES, 'UTF-8');
-        //$td = '<pre style="white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;">'.htmlspecialchars($td, ENT_NOQUOTES, 'UTF-8').'</pre>';
-        //$td = '<pre>'.htmlspecialchars($td, ENT_NOQUOTES, 'UTF-8').'</pre>';
-        //return "<tr style=\"padding: 4px;spacing: 0;text-align: left;\">\n<th style=\"background: #cccccc\" width=\"100px\">$th:</th>\n<td style=\"padding: 4px;spacing: 0;text-align: left;background: #eeeeee\">".$td."</td>\n</tr>";
-
         $row = '<tr style="padding: 4px; spacing: 0; text-align: left;">%s%s</tr>';
         $header = '<th style="background: %s; color: #ffffff;" width="100px">%s</th>';
         $content = '<td style="padding: 4px; spacing: 0; text-align: left; background: #eeeeee">%s</td>';
@@ -62,11 +71,9 @@ class HtmlFormatter extends NormalizerFormatter
         return sprintf(
             $row,
             sprintf(
-                sprintf(
-                    $header,
-                    $this->colors[$level],
-                    $th
-                )
+                $header,
+                $this->colors[$level],
+                htmlspecialchars($th, ENT_NOQUOTES, 'UTF-8')
             ),
             sprintf(
                 $content,
@@ -79,19 +86,6 @@ class HtmlFormatter extends NormalizerFormatter
     }
 
     /**
-     *  Create a HTML h1 tag
-     *
-     *  @param  string  $title Text to be in the h1
-     *  @param  integer $level Error level
-     *  @return string
-     */
-    private function addTitle($title, $level)
-    {
-        $title = htmlspecialchars($title, ENT_NOQUOTES, 'UTF-8');
-
-        return '<h1 style="background: '.$this->colors[$level].';color: #ffffff;padding: 5px;">'.$title.'</h1>';
-    }
-    /**
      * Formats a log record.
      *
      * @param  array $record A record to format
@@ -99,21 +93,13 @@ class HtmlFormatter extends NormalizerFormatter
      */
     public function format(array $record)
     {
-        $output = '';
-        //$output .= $this->addTitle($record['level_name'], $record['level']);
-        $output .= '<table cellspacing="1" width="100%">';
+        $level = $record['level'];
 
-        $output .= $this->addRow($record['level'], $record['level_name'], (string) $record['message']);
-        //$output .= $this->addRow('Time', $record['datetime']->format('Y-m-d\TH:i:s.uO'));
-        //$output .= $this->addRow('Channel', $record['channel']);
-        if ($record['context']) {
-            $output .= $this->addRow($record['level'], 'CONTEXT', $this->convertToString($record['context']));
-        }
-        if ($record['extra']) {
-            $output .= $this->addRow($record['level'], 'EXTRA', $this->convertToString($record['extra']));
-        }
+        $message = $this->addRow($level, $record['level_name'], (string) $record['message']);
+        $context = ($record['context']) ? $this->addRow($level, 'CONTEXT', $this->convertToString($record['context'])) : '';
+        $extra = ($record['extra']) ? $this->addRow($level, 'EXTRA', $this->convertToString($record['extra'])) : '';
 
-        return $output.'</table>';
+        return "<table cellspacing='1' width='100%'>".$message.$context.$extra."</table>";
     }
 
     /**
@@ -140,15 +126,128 @@ class HtmlFormatter extends NormalizerFormatter
      */
     protected function convertToString($data)
     {
+        if (is_string($data)) {
+            return $this->strip($data);
+        }
+
         if (null === $data || is_scalar($data)) {
             return (string) $data;
         }
 
-        $data = $this->normalize($data);
-        if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
-            return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        return json_encode(
+            $this->normalize($data),
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        );
+    }
+
+    /**
+     *  Normalize data of various types for easier string encoding
+     *
+     *  @param $data
+     *  @return array|string
+     */
+    protected function normalize($data)
+    {
+        if (is_string($data)) {
+            return $this->strip($data);
         }
 
-        return str_replace('\\/', '/', json_encode($data));
+        if (null === $data || is_scalar($data)) {
+            return $data;
+        }
+
+        if (is_array($data) || $data instanceof Traversable) {
+            $normalized = array();
+
+            $count = 1;
+            foreach ($data as $key => $value) {
+                if ($count++ >= self::LINE_LIMIT) {
+                    $normalized['...'] = sprintf('Over % lines, aborting normalization.', self::LINE_LIMIT);
+                    break;
+                }
+                $normalized[$key] = $this->normalize($value);
+            }
+
+            return $normalized;
+        }
+
+        if ($data instanceof DateTime) {
+            return $data->format(self::DATE_FORMAT);
+        }
+
+        if (is_object($data)) {
+            if ($data instanceof Exception) {
+                return $this->normalizeException($data);
+            }
+
+            return sprintf("[object] (%s: %s)", get_class($data), $this->toJson($data, true));
+        }
+
+        if (is_resource($data)) {
+            return '[resource]';
+        }
+
+        return '[unknown('.gettype($data).')]';
+    }
+
+    /**
+     *  Normalize exception objects
+     *
+     * @param Exception $e
+     * @return array
+     */
+    protected function normalizeException(Exception $e)
+    {
+        $data = array(
+            'class' => get_class($e),
+            'message' => $e->getMessage(),
+            'file' => $e->getFile().':'.$e->getLine(),
+        );
+
+        $trace = $e->getTrace();
+        foreach ($trace as $frame) {
+            if (isset($frame['file'])) {
+                $data['trace'][] = $frame['file'].':'.$frame['line'];
+            } else {
+                $data['trace'][] = json_encode($frame);
+            }
+        }
+
+        if ($previous = $e->getPrevious()) {
+            $data['previous'] = $this->normalizeException($previous);
+        }
+
+        return $data;
+    }
+
+    /**
+     *  Convert mixed data to JSON
+     *
+     * @param $data
+     * @param bool $ignoreErrors
+     * @return string
+     */
+    protected function toJson($data, $ignoreErrors = false)
+    {
+        if ($ignoreErrors) {
+            return @json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } else {
+            return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    /**
+     *  Strip terms from output
+     *
+     *  @param $data
+     *  @return mixed
+     */
+    protected function strip($data)
+    {
+        foreach ($this->strippers as $stripper) {
+            $data = preg_replace($stripper, '', $data);
+        }
+
+        return $data;
     }
 }

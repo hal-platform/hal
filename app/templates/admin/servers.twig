@@ -18,7 +18,7 @@
             </thead>
             <tbody>
             {% for server in servers %}
-                <tr>
+                <tr class="env-row-{{ server.Environment }}">
                     <td>{{ server.HostName }}</td>
                     <td>{{ server.Environment }}</td>
                     <td></td>

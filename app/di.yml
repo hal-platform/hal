@@ -93,8 +93,6 @@ services:
     factory_method: 'api'
     arguments: ['organization']
 
-  loginGuard: { class: 'QL\Hal\LoginGuard', arguments: ['@session', '@dic'] }
-
   # Pages
   login.twig: { arguments: ["login.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   loginPage:
@@ -214,6 +212,25 @@ services:
   layout:
       class: 'QL\Hal\Layout'
       arguments: ['@currentUserContext', '@pushPermissionService']
+
+  ######################################################################################################################
+  # Bouncers
+  ######################################################################################################################
+
+  # Bounce unauthenticated users
+  loginBouncer:
+    class: 'QL\Hal\Bouncers\LoginBouncer'
+    arguments:
+      - @session
+      - @dic
+
+  # Bounce non-admins
+  adminBouncer:
+    class: 'QL\Hal\Bouncers\AdminBouncer'
+    arguments:
+      - @session
+      - @pushPermissionService
+      - @twigEnv
 
   ######################################################################################################################
   # Session

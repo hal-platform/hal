@@ -73,3 +73,18 @@
 .circle-green {
     background: green;
 }
+
+.env-row-test {
+    /*background: #f5f5ff;*/
+    border-left: 5px solid #c200cd;
+}
+
+.env-row-beta {
+    /*background: #f5fff5;*/
+    border-left: 5px solid #008ecd;
+}
+
+.env-row-prod {
+    /*background: #fff5f5;*/
+    border-left: 5px solid #cd9c00;
+}

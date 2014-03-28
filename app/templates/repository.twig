@@ -2,11 +2,36 @@
 
 {% set page_title = "/r/" ~ repo.ShortName %}
 
+{% block pageScript %}
+<script type="text/javascript">
+    var clicker = function(env) {
+        $('input:checkbox[id^="sel-'+env+'"]').each(function(){
+            $(this).prop("checked", true);
+        });
+    }
+    $('#all-reset').click(function() {
+        $('input:checkbox').each(function(){
+            $(this).prop("checked", false);
+        });
+    });
+    $('#all-test').click(function() {clicker('test');});
+    $('#all-beta').click(function() {clicker('beta');});
+    $('#all-prod').click(function() {clicker('prod');});
+</script>
+{% endblock %}
+
 {% block content %}
     <p><a class="btn--small btn--back" href="/a/{{ repo.Arrangement }}">Back to Repositories</a></p>
 
     <h2>{{ repo.ShortName }} Deployments</h2>
     <p>The {{ repo.ShortName }} application can be deployed to any of the following servers.</p>
+
+    <div class="pull-right">
+        <a class="btn--small" id="all-reset">Reset</a>
+        <a class="btn--small" id="all-test">All Test</a>
+        <a class="btn--small" id="all-beta">All Beta</a>
+        <a class="btn--small" id="all-prod">All Prod</a>
+    </div>
 
     <form class="deployment-form" action="/r/{{ repo.ShortName }}/sync" method="get">
         <table>
@@ -24,7 +49,7 @@
             <tbody>
             {% set allowSubmit = false %}
             {% for deployment in deployments %}
-                <tr>
+                <tr class="env-row-{{ deployment.Environment }}">
                     <td>{{ deployment.HostName }}</td>
                     <td>{{ deployment.Environment }}</td>
                     <td>
@@ -48,7 +73,7 @@
                     </td>
                     <td>
                         {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
-                            Push Now <input type="checkbox" name="deps[]" value="{{deployment.DeploymentId}}">
+                            Push Now <input type="checkbox" name="deps[]" id="sel-{{ deployment.Environment }}-{{ deployment.DeploymentId }}" value="{{deployment.DeploymentId}}">
                             {% set allowSubmit = true %}
                         {% else %}
                             No Access
@@ -81,7 +106,7 @@
         </thead>
         {% for log in logs %}
         <tbody>
-            <tr>
+            <tr class="env-row-{{ log.Environment }}">
                 <td> {{ log.PushStart|dateHal }} </td>
                 <td> {{ log.PushEnd|dateHal }} </td>
                 <td>
