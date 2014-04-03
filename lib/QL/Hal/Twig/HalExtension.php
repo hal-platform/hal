@@ -49,8 +49,8 @@ class HalExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush'))
-
+            new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush')),
+            new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin'))
         );
     }
 
@@ -77,6 +77,17 @@ class HalExtension extends Twig_Extension
     public function canUserPush($user, $repo, $env)
     {
         return $this->permissions->canUserPushToEnvRepo($user, $repo, $env);
+    }
+
+    /**
+     *  Check if a user is an admin
+     *
+     *  @param $user
+     *  @return bool
+     */
+    public function isUserAdmin($user)
+    {
+        return $this->permissions->isUserAdmin($user);
     }
 
     /**

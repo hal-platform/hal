@@ -19,10 +19,11 @@ use QL\Hal\Services\UserService;
  */
 class PushPermissionService
 {
-    const PERM_DN_TPL       = 'CN=git-%s-%s,OU=GIT,DC=mi,DC=corp';
-    const PERM_DN_ADMIN     = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
-    const LDAP_USER         = 'placeholder';
-    const LDAP_PASSWORD     = 'placeholder';
+    const PERM_DN_TPL           = 'CN=git-%s-%s,OU=GIT,DC=mi,DC=corp';
+    const PERM_DN_ADMIN_PROD    = 'CN=git-admin-prod,OU=GIT,DC=mi,DC=corp';
+    const PERM_DN_ADMIN         = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
+    const LDAP_USER             = 'placeholder';
+    const LDAP_PASSWORD         = 'placeholder';
 
     /**
      * @var LdapService
@@ -70,6 +71,17 @@ class PushPermissionService
     }
 
     /**
+     *  Convert DN string to DN object
+     *
+     *  @param string $group
+     *  @return Dn
+     */
+    public static function getDn($group)
+    {
+        return Dn::fromString($group);
+    }
+
+    /**
      *  Constructor
      *
      *  @param LdapService $ldapService
@@ -112,6 +124,11 @@ class PushPermissionService
 
         // admin push whitelist
         if ($this->isUserAdmin($user) && (in_array($env, array('test', 'beta')) || $repo == 'hal9000')) {
+            return true;
+        }
+
+        // prod admin whitelist
+        if ($this->ldapUserInGroupCache(self::getDn(self::PERM_DN_ADMIN_PROD), $user->dn()) && in_array($env, array('prod'))) {
             return true;
         }
 

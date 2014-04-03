@@ -14,6 +14,7 @@ class ManageServersTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderIsCalledWithServersAndEnvs()
     {
+        $this->markTestSkipped('This test is broken');
        /* $twigTemplateMock = $this->getMockBuilder('Twig_Template')
                     ->disableOriginalConstructor()
                     ->getMockForAbstractClass();

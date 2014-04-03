@@ -82,16 +82,16 @@ services:
     arguments: ["repo"]
 
   githubUserService:
-    class: 'Github\Api\User'
-    factory_service: 'github'
-    factory_method: 'api'
-    arguments: ['user']
+    class: 'QL\Hal\GithubApi\HackUser'
+    arguments: ['@github']
 
   githubOrgService:
     class: 'Github\Api\Organization'
     factory_service: 'github'
     factory_method: 'api'
     arguments: ['organization']
+
+  loginGuard: { class: 'QL\Hal\LoginGuard', arguments: ['@session', '@dic'] }
 
   # Pages
   login.twig: { arguments: ["login.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
@@ -191,6 +191,14 @@ services:
   adminPermissionsPage:
     class:      'QL\Hal\Admin\ManagePermissions'
     arguments:  [@admin.permissions.twig, @repoService, @pushPermissionService, @layout]
+
+  adminGithubUsersApi:
+    class: 'QL\Hal\Admin\GithubApi\Users'
+    arguments: ['@githubUserService', '@session']
+
+  adminGithubReposApi:
+    class: 'QL\Hal\Admin\GithubApi\Repos'
+    arguments: ['@githubUserService', '@session']
 
   sync-code.twig: { arguments: ["sync-code.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   syncPage:
