@@ -22,4 +22,9 @@ class HackUser extends BaseUser
             'start_page' => $page
         ]);
     }
+
+    public function all()
+    {
+        return $this->get('users');
+    }
 }

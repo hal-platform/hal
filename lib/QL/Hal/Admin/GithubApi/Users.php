@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Admin\GithubApi;
 
+use Github\ResultPager;
 use QL\Hal\GithubApi\HackUser as GithubUsers;
-use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -23,18 +23,18 @@ class Users
     private $githubUserService;
 
     /**
-     * @var Session
+     * @var ResultPager
      */
-    private $session;
+    private $pager;
 
     /**
      * @param GithubUsers $githubUserService
-     * @param Session $session
+     * @param ResultPager $pager
      */
-    public function __construct(GithubUsers $githubUserService, Session $session)
+    public function __construct(GithubUsers $githubUserService, ResultPager $pager)
     {
         $this->githubUserService = $githubUserService;
-        $this->session = $session;
+        $this->pager = $pager;
     }
 
     /**
@@ -44,46 +44,40 @@ class Users
      */
     public function __invoke(Request $req, Response $res)
     {
-        $users = $this->getUsers();
-
-        $res->header('Content-Type', 'application/json; charset=utf-8');
-        $res->body($users);
-    }
-
-    /**
-     * Falls back to service if cache is unavailable.
-     *
-     * @return string
-     */
-    private function getUsers()
-    {
-        if ($this->session->has('github-users')) {
-            return $this->session->get('github-users');
-        }
-
         $users = $this->fetchUsersFromService();
 
-        $users = $this->formatUsers($users);
-        $this->session->set('github-users', $users);
-        return $users;
+        $res->header('Content-Type', 'application/json; charset=utf-8');
+        $res->body($this->formatUsersAndOrganizations($users));
     }
 
     /**
-     * Format an array of user arrays into a jsonified object
+     * Format the raw list of users into separate user and organization lists.
      *
      * @param array $data
      * @return string
      */
-    private function formatUsers(array $data)
+    private function formatUsersAndOrganizations(array $data)
     {
         $users = [];
-        array_walk($data, function($user) use (&$users) {
-            $id = strtolower($user['login']);
-            $display = sprintf('%s (%s)', $user['login'], $user['repos']);
-            $users[$id] = $display;
+        $organizations = [];
+
+        usort($data, function($a, $b) {
+            return strcasecmp($a['login'], $b['login']);
         });
 
-        return json_encode($users, JSON_PRETTY_PRINT);
+        array_walk($data, function($user) use (&$users, &$organizations) {
+            $id = strtolower($user['login']);
+            $display = $user['login'];
+
+            if ($user['type'] == 'Organization') {
+                $organizations[$id] = $display;
+            } else {
+                $users[$id] = $display;
+            }
+        });
+
+        $data = ['users' => $users, 'organizations' => $organizations];
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -91,21 +85,7 @@ class Users
      */
     private function fetchUsersFromService()
     {
-        $users = [];
-
-        // this is so stupid
-        // max out at 10 requests so we limit our spamming
-        for ($i = 1; $i < 10; $i++) {
-            $data = $this->githubUserService->find('repos:>0', $i);
-            $users = array_merge($users, $data['users']);
-            if (count($data['users']) < 100) {
-                break;
-            }
-        }
-
-        usort($users, function($a, $b) {
-            return strcasecmp($a['login'], $b['login']);
-        });
+        $users = $this->pager->fetchAll($this->githubUserService, 'all');
 
         return $users;
     }

@@ -72,9 +72,18 @@ services:
 
   github:
     class: "Github\\Client"
+    arguments: ['@github.httpClient']
+  github.httpClient:
+    class: 'Github\HttpClient\CachedHttpClient'
+    arguments:
+        - {base_url: "%github.baseurl%"}
     calls:
-      - ["setOption",    ["base_url", "%github.baseurl%"]]
-      - ["authenticate", ["%github.token%", null, "http_token"]] # Github\Client::AUTH_HTTP_TOKEN
+      - ['authenticate', ['%github.token%', null, 'http_token']] # Github\Client::AUTH_HTTP_TOKEN
+
+  github.pager:
+    class: 'Github\ResultPager'
+    arguments: ['@github']
+
   githubRepoService:
     class: "Github\\Api\\Repo"
     factory_service: "github"
@@ -90,6 +99,11 @@ services:
     factory_service: 'github'
     factory_method: 'api'
     arguments: ['organization']
+
+  github.collaboratorService:
+    class: 'Github\Api\Repository\Collaborators'
+    factory_service: 'githubRepoService'
+    factory_method: 'collaborator'
 
   # Pages
   login.twig: { arguments: ["login.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
@@ -192,11 +206,11 @@ services:
 
   adminGithubUsersApi:
     class: 'QL\Hal\Admin\GithubApi\Users'
-    arguments: ['@githubUserService', '@session']
+    arguments: ['@githubUserService', '@github.pager']
 
   adminGithubReposApi:
     class: 'QL\Hal\Admin\GithubApi\Repos'
-    arguments: ['@githubUserService', '@session']
+    arguments: ['@githubUserService']
 
   sync-code.twig: { arguments: ["sync-code.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   syncPage:

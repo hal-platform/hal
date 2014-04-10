@@ -9,7 +9,6 @@ namespace QL\Hal\Admin\GithubApi;
 
 use Github\Exception\RuntimeException as GithubException;
 use QL\Hal\GithubApi\HackUser as GithubUsers;
-use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -19,28 +18,16 @@ use Slim\Http\Response;
 class Repos
 {
     /**
-     * @var string
-     */
-    const CACHE_KEY_TEMPLATE = 'github-repos-%s';
-
-    /**
      * @var GithubUsers
      */
     private $githubUserService;
 
     /**
-     * @var Session
-     */
-    private $session;
-
-    /**
      * @param GithubUsers $githubUserService
-     * @param Session $session
      */
-    public function __construct(GithubUsers $githubUserService, Session $session)
+    public function __construct(GithubUsers $githubUserService)
     {
         $this->githubUserService = $githubUserService;
-        $this->session = $session;
     }
 
     /**
@@ -61,34 +48,15 @@ class Repos
             return;
         }
 
-        if (!$repos = $this->getRepos($params['username'])) {
+        if (!$repos = $this->fetchReposFromService($params['username'])) {
             $res->setStatus(404);
             return;
         }
 
+        $repos = $this->formatRepos($repos);
+
         $res->header('Content-Type', 'application/json; charset=utf-8');
         $res->body($repos);
-    }
-
-    /**
-     * Falls back to service if cache is unavailable.
-     *
-     * @param string $user
-     * @return string|null
-     */
-    private function getRepos($user)
-    {
-        $cacheKey = sprintf(self::CACHE_KEY_TEMPLATE, $user);
-
-        if ($this->session->has($cacheKey)) {
-            return $this->session->get($cacheKey);
-        }
-
-        $repos = $this->fetchReposFromService($user);
-
-        $repos = $this->formatRepos($repos);
-        $this->session->set($cacheKey, $repos);
-        return $repos;
     }
 
     /**
@@ -122,6 +90,7 @@ class Repos
     }
 
     /**
+     * @param string $user
      * @return array
      */
     private function fetchReposFromService($user)
