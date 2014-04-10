@@ -1,6 +1,6 @@
 services:
 
-  # This is set by LoginGuard
+  # This is set by LoginBouncer
   currentUserContext:
     class: 'MCP\Corp\Account\User'
     synthetic: true
@@ -90,8 +90,6 @@ services:
     factory_service: 'github'
     factory_method: 'api'
     arguments: ['organization']
-
-  loginGuard: { class: 'QL\Hal\LoginGuard', arguments: ['@session', '@dic'] }
 
   # Pages
   login.twig: { arguments: ["login.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
