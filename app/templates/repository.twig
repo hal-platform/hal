@@ -2,24 +2,6 @@
 
 {% set page_title = "/r/" ~ repo.ShortName %}
 
-{% block pageScript %}
-<script type="text/javascript">
-    var clicker = function(env) {
-        $('input:checkbox[id^="sel-'+env+'"]').each(function(){
-            $(this).prop("checked", true);
-        });
-    }
-    $('#all-reset').click(function() {
-        $('input:checkbox').each(function(){
-            $(this).prop("checked", false);
-        });
-    });
-    $('#all-test').click(function() {clicker('test');});
-    $('#all-beta').click(function() {clicker('beta');});
-    $('#all-prod').click(function() {clicker('prod');});
-</script>
-{% endblock %}
-
 {% block content %}
     <p><a class="btn--small btn--back" href="/a/{{ repo.Arrangement }}">Back to Repositories</a></p>
 
