@@ -1,2 +1,22 @@
 #!/usr/bin/env bash
-./vendor/bin/phpunit --configuration ./tests/phpunit.dist.xml tests
+
+BIN="./vendor/bin/phpunit"
+PARAMETERS=""
+NO_SUITE="--testsuite none"
+STOP_SUITE=false
+
+for var in "$@"
+do
+    PARAMETERS="$PARAMETERS $var"
+
+    if [[ "${var:0:2}" != "--" ]] ; then
+        STOP_SUITE=true
+    fi
+done
+
+# if we think the user is targeting a file, remove the testsuite
+if $STOP_SUITE; then
+    BIN="$BIN $NO_SUITE"
+fi
+
+$BIN$PARAMETERS
