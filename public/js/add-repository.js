@@ -2,6 +2,7 @@
 
     var users = {
         userTarget: '#githubUser',
+        dataStore: {},
         attach: function() {
             var _this = this;
 
@@ -19,10 +20,19 @@
             targetElem.after(toggle);
             $(toggle).on('click', function(event) {
                 event.preventDefault();
-                _this.replaceField(targetElem);
+
+                var flash = $('<p><blink>Loading...</blink></p>');
+                targetElem.after(flash);
 
                 toggle.remove();
-                targetElem.remove();
+                return $.get('/admin/github-users', function(data) {
+                    _this.dataStore = data;
+                })
+                .done(function() {
+                    _this.replaceField(targetElem);
+                    flash.remove();
+                    targetElem.remove();
+                });
             });
         },
         replaceField: function(targetElem) {
@@ -37,12 +47,20 @@
             this.attachOptions(select, targetElem.val());
         },
         attachOptions: function(select, currentSelection) {
-            $.get('/admin/github-users', function(data) {
-                for(var user in data) {
-                    $('<option>', {value: user, text: data[user]}).appendTo(select);
-                }
-                select.val(currentSelection);
-            });
+
+            var orgGroup = $('<optgroup label="Organizations">');
+            var userGroup = $('<optgroup label="Users">');
+
+            for(var org in this.dataStore.organizations) {
+                $('<option>', {value: org, text: this.dataStore.organizations[org]}).appendTo(orgGroup);
+            }
+            for(var user in this.dataStore.users) {
+                $('<option>', {value: user, text: this.dataStore.users[user]}).appendTo(userGroup);
+            }
+
+            select.append(orgGroup);
+            select.append(userGroup);
+            select.val(currentSelection);
         }
     };
 
@@ -78,6 +96,8 @@
                 if (selectedUser.length === 0) {
                     return _this.attachError('Please enter a valid GitHub User or Organization.');
                 }
+
+                _this.target.siblings('p').remove();
 
                 _this.getData(selectedUser)
                 .done(function() {
