@@ -8,6 +8,7 @@
 namespace QL\Hal\Services;
 
 use PDO;
+use PDOException;
 
 /**
  * @api
@@ -50,10 +51,14 @@ class ServerService
      */
     public function create($hostname, $envId)
     {
-        return $this->insert($this->db, self::Q_INSERT, [
-            [':hostname', $hostname, PDO::PARAM_STR],
-            [':envid', $envId, PDO::PARAM_INT],
-        ]);
+        try {
+            return $this->insert($this->db, self::Q_INSERT, [
+                    [':hostname', $hostname, PDO::PARAM_STR],
+                    [':envid', $envId, PDO::PARAM_INT],
+                ]);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     /**

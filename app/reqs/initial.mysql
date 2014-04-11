@@ -13,6 +13,7 @@ CREATE TABLE Servers (
     EnvironmentId TINYINT UNSIGNED NOT NULL,
     HostName      CHAR(24)         NOT NULL,
     PRIMARY KEY   (ServerId),
+    UNIQUE        (HostName),
     CONSTRAINT    FOREIGN KEY (EnvironmentId) REFERENCES Environments (EnvironmentId)
 )
     ENGINE        InnoDB

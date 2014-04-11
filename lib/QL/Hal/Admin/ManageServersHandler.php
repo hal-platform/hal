@@ -54,22 +54,29 @@ class ManageServersHandler
         $envId = $req->post('envId');
         $errors = [];
 
+        $data = [
+            'errors' => [],
+            'envs' => $this->envService->listAll(),
+            'servers' => $this->servers->listAll(),
+            'selectedEnv' => $envId,
+            'serverVal' => $hostname,
+        ];
+
         $this->validateHostName($hostname, $errors);
         $this->validateEnvId($envId, $errors);
 
         if ($errors) {
-            $data = [
-                'errors' => $errors,
-                'envs' => $this->envService->listAll(),
-                'servers' => $this->servers->listAll(),
-                'selectedEnv' => $envId,
-                'serverVal' => $hostname,
-            ];
+            $data['errors'] = $errors;
             $res->body($this->tpl->render($data));
             return;
         }
 
-        $this->servers->create(strtolower($hostname), $envId);
+        if (!$this->servers->create(strtolower($hostname), $envId)) {
+            $data['errors'][] = 'Server cannot be added. Duplicate hostname?';
+            $res->body($this->tpl->render($data));
+            return;
+        }
+
         $res->status(303);
         $res->header('Location', $req->getScheme() . '://' . $req->getHostWithPort() . '/admin/servers');
     }
