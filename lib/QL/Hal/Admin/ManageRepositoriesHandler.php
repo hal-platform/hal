@@ -7,17 +7,12 @@
 
 namespace QL\Hal\Admin;
 
-
 use Slim\Http\Response;
 use Slim\Http\Request;
 use Twig_Template;
+use QL\Hal\GithubApi\GithubApi;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ArrangementService;
-use Github\Api\Organization as GithubOrganizationApi;
-use Github\Api\User as GithubUserApi;
-use Github\Api\Repo as GithubRepoApi;
-use Github\Exception\RuntimeException;
-
 
 /**
  * @api
@@ -40,36 +35,22 @@ class ManageRepositoriesHandler
     private $arrService;
 
     /**
-* @var GithubOrganizationApi
-*/
-    private $githubOrgService;
+     * @var GithubApi
+     */
+    private $github;
 
     /**
-* @var GithubUserApi
-*/
-    private $githubUserService;
-
-    /**
-* @var GithubRepoApi
-*/
-    private $githubRepoService;
-
-
-
-    public function __construct(
-        Twig_Template $tpl,
-        RepositoryService $repo,
-        ArrangementService $arr,
-        GithubOrganizationApi $githubOrgService,
-        GithubUserApi $githubUserService,
-        GithubRepoApi $githubRepoService
-    ) {
+     * @param Twig_Template $tpl
+     * @param RepositoryService $repo
+     * @param ArrangementService $arr
+     * @param GithubApi $github
+     */
+    public function __construct(Twig_Template $tpl, RepositoryService $repo, ArrangementService $arr, GithubApi $github)
+    {
         $this->tpl = $tpl;
         $this->repoService = $repo;
         $this->arrService = $arr;
-        $this->githubOrgService = $githubOrgService;
-        $this->githubUserService = $githubUserService;
-        $this->githubRepoService = $githubRepoService;
+        $this->github = $github;
     }
 
     public function __invoke(Request $req, Response $res)
@@ -87,8 +68,8 @@ class ManageRepositoriesHandler
         if (!$shortName || !$githubUser || !$githubRepo || !$ownerEmail || !$description) {
             $errors[] = "All fields are required.";
         }
-        
-     #   $arrangement = $this->validateArrangement($arrId, $errors);
+
+        #   $arrangement = $this->validateArrangement($arrId, $errors);
         $this->validateShortName($shortName, $errors);
         $this->validateDescription($description, $errors);
         $this->validateGithubRepo($githubUser, $githubRepo, $errors);
@@ -130,7 +111,7 @@ class ManageRepositoriesHandler
         if (!preg_match('@^[a-zA-Z0-9_-]+$@', $shortName)) {
             $errors[] = "Short Name must consist of alphanumeric, underscore and/or hyphens only.";
         }
-        
+
         if (strlen($shortName) < 2 || strlen($shortName) > 24) {
             $errors[] = "Short Name must be 2 to 24 characters.";
         }
@@ -155,7 +136,7 @@ class ManageRepositoriesHandler
             $errors[] = 'Invalid arrangement id';
         }
         return $arr;
-    } 
+    }
 
     /**
      * @param string $githubUser
@@ -164,29 +145,12 @@ class ManageRepositoriesHandler
     */
     private function validateGithubRepo($githubUser, $githubRepo, array &$errors)
     {
-        try {
-            $user = $this->githubUserService->show($githubUser);
-        } catch (RuntimeException $e) {
-
-            try {
-                $user = $this->githubOrgService->show($githubUser);
-            } catch (RuntimeException $e) {
-                $user = null;
-            }
-        }
-
-        if (!$user) {
+        if (!$user = $this->github->getUser($githubUser)) {
             $errors[] = 'Invalid Github Enterprise user/organization';
             return;
         }
 
-        try {
-            $repo = $this->githubRepoService->show($githubUser, $githubRepo);
-        } catch (RuntimeException $e) {
-            $repo = null;
-        }
-
-        if (!$repo) {
+        if (!$user = $this->github->getRepository($githubUser, $githubRepo)) {
             $errors[] = 'Invalid Github Enterprise repository name';
         }
     }

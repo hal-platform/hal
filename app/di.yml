@@ -153,7 +153,7 @@ services:
     arguments: ["@admin.repositories.twig", "@repoService", "@arrService", '@layout']
   adminRepositoriesHandler:
     class: 'QL\Hal\Admin\ManageRepositoriesHandler'
-    arguments: ["@admin.repositories.twig", "@repoService", "@arrService", "@github.orgService", "@github.userService", "@github.repoService"]
+    arguments: ["@admin.repositories.twig", "@repoService", "@arrService", "@github"]
   adminRepositoriesRemoveHandler:
     class: "QL\Hal\Admin\ManageRepositoriesRemove"
     arguments: ["@admin.repositories.twig", "@deploymentService", "@repoService"]

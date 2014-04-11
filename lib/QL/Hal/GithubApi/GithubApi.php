@@ -125,6 +125,21 @@ class GithubApi
     }
 
     /**
+     * @param string $user
+     * @return array|null
+     */
+    public function getUser($user)
+    {
+        try {
+            $user = $this->userApi->show($user);
+        } catch (RuntimeException $e) {
+            $user = null;
+        }
+
+        return $user;
+    }
+
+    /**
      * @return array
      */
     public function getUsers()
