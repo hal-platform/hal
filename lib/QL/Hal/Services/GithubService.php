@@ -55,11 +55,13 @@ class GithubService
     }
 
     /**
+     * Get the reference data for branches for a repository.
+     *
      * @param string $user
      * @param string $repo
      * @return array
      */
-    public function getBranches($user, $repo)
+    public function branches($user, $repo)
     {
          try {
             $refs = $this->pager->fetchAll($this->refApi, 'branches', [$user, $repo]);
@@ -75,11 +77,13 @@ class GithubService
     }
 
     /**
+     * Get the extended metadata for a repository.
+     *
      * @param string $user
      * @param string $repo
      * @return array|null
      */
-    public function getRepository($user, $repo)
+    public function repository($user, $repo)
     {
          try {
             $repository = $this->repoApi->show($user, $repo);
@@ -91,10 +95,12 @@ class GithubService
     }
 
     /**
+     * Get all repositories for a user.
+     *
      * @param string $user
      * @return array
      */
-    public function getRepositoriesByUser($user)
+    public function repositories($user)
     {
          try {
             $repositories = $this->pager->fetchAll($this->userApi, 'repositories', [$user]);
@@ -106,11 +112,13 @@ class GithubService
     }
 
     /**
+     * Get the reference data for tags for a repository.
+     *
      * @param string $user
      * @param string $repo
      * @return array
      */
-    public function getTags($user, $repo)
+    public function tags($user, $repo)
     {
          try {
             $refs = $this->pager->fetchAll($this->refApi, 'tags', [$user, $repo]);
@@ -126,10 +134,12 @@ class GithubService
     }
 
     /**
+     * Get the extended metadata for a user.
+     *
      * @param string $user
      * @return array|null
      */
-    public function getUser($user)
+    public function user($user)
     {
         try {
             $user = $this->userApi->show($user);
@@ -141,9 +151,11 @@ class GithubService
     }
 
     /**
+     * Get the extended metadata for all github users.
+     *
      * @return array
      */
-    public function getUsers()
+    public function users()
     {
         try {
             $users = $this->pager->fetchAll($this->userApi, 'all');

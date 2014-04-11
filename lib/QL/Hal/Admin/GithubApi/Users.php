@@ -36,7 +36,7 @@ class Users
      */
     public function __invoke(Request $req, Response $res)
     {
-        $users = $this->github->getUsers();
+        $users = $this->github->users();
 
         $res->header('Content-Type', 'application/json; charset=utf-8');
         $res->body($this->formatUsersAndOrganizations($users));

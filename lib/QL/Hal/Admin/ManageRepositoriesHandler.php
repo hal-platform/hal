@@ -149,12 +149,12 @@ class ManageRepositoriesHandler
     */
     private function validateGithubRepo($githubUser, $githubRepo, array &$errors)
     {
-        if (!$user = $this->github->getUser($githubUser)) {
+        if (!$user = $this->github->user($githubUser)) {
             $errors[] = 'Invalid Github Enterprise user/organization';
             return;
         }
 
-        if (!$user = $this->github->getRepository($githubUser, $githubRepo)) {
+        if (!$user = $this->github->repository($githubUser, $githubRepo)) {
             $errors[] = 'Invalid Github Enterprise repository name';
         }
     }

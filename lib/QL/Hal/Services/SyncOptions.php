@@ -67,8 +67,8 @@ class SyncOptions
             return ['repo' => $repo, 'deps' => []];
         }
 
-        $branches = $this->github->getBranches($repo['GithubUser'], $repo['GithubRepo']);
-        $tags = $this->github->getTags($repo['GithubUser'], $repo['GithubRepo']);
+        $branches = $this->github->branches($repo['GithubUser'], $repo['GithubRepo']);
+        $tags = $this->github->tags($repo['GithubUser'], $repo['GithubRepo']);
 
         $data = [
             'deps' => $deps,

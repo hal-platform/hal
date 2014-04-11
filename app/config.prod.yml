@@ -1,19 +1,19 @@
 slim:
-  debug:        false
-  mode:         "development"
-db.dsn:         "mysql:host=prod.example.com;dbname=hal9000;charset=utf8"
-db.user:        "placeholder"
-db.pass:        "placeholder"
-build.user:     "hal9000"
-build.dir:      "/var/spool/hal9000"
-build.async:    true
-rsync.user:     "placeholder"
-github.token:   ""
-github.baseurl: "http://git/api/v3/"
-ldap.host:      "ldap.example.com"
-ldap.domain:    "MI"
-ldap.baseDn:    "DC=mi,DC=corp"
-email.overide:  false
+  debug:          false
+  mode:           "development"
+db.dsn:           "mysql:host=prod.example.com;dbname=hal9000;charset=utf8"
+db.user:          "placeholder"
+db.pass:          "placeholder"
+build.user:       "hal9000"
+build.dir:        "/var/spool/hal9000"
+build.async:      true
+rsync.user:       "placeholder"
+github.token:     ""
+github.baseurl:   "http://git/api/v3/"
+ldap.host:        "ldap.example.com"
+ldap.domain:      "MI"
+ldap.baseDn:      "DC=mi,DC=corp"
+email.overide:    false
 
 email.hostname:     mail.example.com
 email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"

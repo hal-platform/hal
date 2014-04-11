@@ -1,19 +1,19 @@
 slim:
-  debug:        true
-  mode:         "development"
-db.dsn:         "mysql:host=localhost;dbname=hal;charset=utf8"
-db.user:        "root"
-db.pass:        ""
-build.user:     "mcolf"
-build.dir:      "/tmp"
-build.async:    false
-rsync.user:     "mcolf"
-github.token:   ""
-github.baseurl: "http://git/api/v3/"
-ldap.host:      "ldap.example.com"
-ldap.domain:    "MI"
-ldap.baseDn:    "DC=mi,DC=corp"
-email.overide:  "matthewcolf@quickenloans.com"
+  debug:          true
+  mode:           "development"
+db.dsn:           "mysql:host=localhost;dbname=hal;charset=utf8"
+db.user:          "root"
+db.pass:          ""
+build.user:       "mcolf"
+build.dir:        "/tmp"
+build.async:      false
+rsync.user:       "mcolf"
+github.token:     ""
+github.baseurl:   "http://git/api/v3/"
+ldap.host:        "ldap.example.com"
+ldap.domain:      "MI"
+ldap.baseDn:      "DC=mi,DC=corp"
+email.overide:    "matthewcolf@quickenloans.com"
 
 email.hostname:     mail.example.com
 email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"

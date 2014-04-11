@@ -1,5 +1,35 @@
 # HAL 9000 #
 
+## Deploying Your Application with HAL 9000 ##
+
+So, you want to use HAL 9000 to deploy your application? There are a few things you need to do.
+
+1.  Get your application into out Github Enterprise server, if it's not already.
+2.  Learn how to use the HAL 9000 web interface - send an email to webcore@quickenloans.com and we can show you how.
+3.  Contact Keymasters and request that push permission groups be created. These groups will be used to determine who
+    can push your application to test and beta. Note that only keymasters can push to prod. Alternatively, you can
+    skip this step and HAL will give permission to any users who are listed as collaborators on your Github repository.
+4.  Collect the required information:
+    -   What environments and servers will your application be deployed to? (test1www1, test1beta1, etc.)
+    -   What directory on those machines will your application live in? (/var/www/application, etc.)
+    -   What command, if any, do you use to build your application? This is commonly a shell script that lives within
+        your repository and tells HAL what should be done prior to pushing your code. It must return 0 on success
+        or 1 on failure.
+        - This command has access to the following environment variables.
+            - `HAL_ENVIRONMENT`: The environment your application was built for (typically test, beta, or prod)
+    -   What command, if any, do you need to run after deploying your application? This is called a post-push command
+        and is commonly used to restart services, fix permissions, or finalize deployment. It must return o on success
+        and 1 on failure.
+        - This command has access to the following environment variables.
+            - `HAL_HOSTNAME`: The hostname of the remote server.
+            - `HAL_ENVIRONMENT`: The environment the application was built for.
+            - `HAL_PATH`: The path the application was pushed to.
+            - `HAL_COMMIT`: The Git commit that was built.
+            - `HAL_GITREF`: The Git branch or tag name that was built.
+            - `HAL_BUILDID`: The unique build ID.
+5.  Take the above required information and ask a HAL 9000 admin to add your repository. There are already HAL admins
+    on many teams that you can speak with. If you don't know any, then feel free to email webcore@quickenloans.com.
+
 ## Contributing ##
 
 HAL 9000 uses a MySQL database as a back-end. In order to develop HAL 9000 you will need to install MySQL (or MariaDB) on your system.

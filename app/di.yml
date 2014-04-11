@@ -86,12 +86,26 @@ services:
   github.client:
     class: "Github\\Client"
     arguments: ['@github.httpClient']
+
+  # Using the filesystem as a cache causes issues because of the different users involve here.
+  # - The web front end runs with a user that can RW to /tmp, but not /var/spool/hal9000[test]
+  # - The pusher script runs with a different user that can't RW to /tmp, but CAN RW to /var/spool/hal9000[test]
+  # So, switching to non-cached client for now at least.
+  #github.httpClient:
+  #  class: 'Github\HttpClient\CachedHttpClient'
+  #  arguments:
+  #    - {base_url: "%github.baseurl%", cache_dir: "%github.cachedir%"}
+  #  calls:
+  #    - ['authenticate', ['%github.token%', null, 'http_token']] # Github\Client::AUTH_HTTP_TOKEN
+  # Github\HttpClient
+
   github.httpClient:
-    class: 'Github\HttpClient\CachedHttpClient'
+    class: 'Github\HttpClient\HttpClient'
     arguments:
       - {base_url: "%github.baseurl%"}
     calls:
-      - ['authenticate', ['%github.token%', null, 'http_token']] # Github\Client::AUTH_HTTP_TOKEN
+      - ['authenticate', ['%github.token%', null, 'http_token']]
+
   github.pager:
     class: 'Github\ResultPager'
     arguments: ['@github.client']

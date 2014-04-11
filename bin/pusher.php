@@ -15,8 +15,10 @@ use QL\Hal\Services\RepositoryService;
 use QL\Hal\Sync\NotificationService;
 use QL\Hal\Mail\Message;
 
+use Exception;
 use DateTime;
 use DateTimeZone;
+use Symfony\Component\Yaml\Yaml;
 
 require_once __DIR__.'/../app/bootstrap.php';
 
@@ -132,6 +134,13 @@ class PushCommand
         $this->message = $message;
 
         $this->cleanup = array();
+
+        // debug, catch exceptions globally
+        set_exception_handler(function (Exception $e) use ($logger) {
+            $this->logger->critical("Unhandled exception encountered. This is a problem.");
+            $this->logger->critical($e->getMessage(), $e->getTrace());
+            $this->failure();
+        });
     }
 
     /**
@@ -188,18 +197,37 @@ class PushCommand
         $this->message->setBuildDetails($owner, $repo, $env, $server, $pusher);
         $this->validateGithubRepo($ghUser, $ghRepo);
 
+        // determine build id and path
+        $buildId = $this->getBuildId();
+        $buildPath = $this->getTempDir($buildId);
+
         // download and build
-        $tmp = $this->downloadGithubRepo($ghUser, $ghRepo, $this->commit, $this->getTempDir());
-        $this->runBuildCommand($tmp, $buildCmd);
+        $location = $this->downloadGithubRepo($ghUser, $ghRepo, $this->commit, $buildPath);
+        $this->runBuildCommand($location, $buildCmd);
 
         // validate remote hostname
         if (($hostname = $this->validateHostname($server)) === false) {
             $this->failure("Cannot resolve hostname $hostname.");
         }
 
+        // write build properties
+        $this->dumpBuildProps(
+            $location,
+            $buildId,
+            sprintf(
+                'http://git/%s/%s',
+                $ghUser,
+                $ghRepo
+            ),
+            $env,
+            $pusher,
+            $this->branch,
+            $this->commit
+        );
+
         // push to server
         $this->runPush(
-            array($tmp.'/'),
+            array($location.'/'),
             $this->rsyncUser,
             $hostname,
             $serverPath,
@@ -208,7 +236,20 @@ class PushCommand
         );
 
         // post push script
-        $this->runPostPush($hostname, $this->rsyncUser, $serverPath, $postPushCmd);
+        $this->runPostPush(
+            $hostname,
+            $this->rsyncUser,
+            $serverPath,
+            $postPushCmd,
+            [
+                'HAL_HOSTNAME'      => $hostname,
+                'HAL_ENVIRONMENT'   => $env,
+                'HAL_PATH'          => $serverPath,
+                'HAL_COMMIT'        => $this->commit,
+                'HAL_GITREF'        => $this->branch,
+                'HAL_BUILDID'       => $buildId
+            ]
+        );
 
         $this->success('Push successful.');
     }
@@ -236,7 +277,7 @@ class PushCommand
     {
         $this->logger->info('Validating Github user and repository');
 
-        if (!$githubRepo = $this->github->getRepository($user, $repo)) {
+        if (!$githubRepo = $this->github->repository($user, $repo)) {
             $this->logger->critical('Github user or repository appears to be invalid.');
             $this->failure('Unable to validate github user or repository');
         } else {
@@ -512,12 +553,13 @@ class PushCommand
     /**
      *  Run the post push command
      *
-     *  @param $hostname
-     *  @param $user
-     *  @param $path
-     *  @param $command
+     *  @param $hostname    The remote server hostname
+     *  @param $user        The user to authenticate as
+     *  @param $path        The remote path
+     *  @param $command     The command to execute
+     *  @param array $env   An array of environment variables
      */
-    private function runPostPush($hostname, $user, $path, $command)
+    private function runPostPush($hostname, $user, $path, $command, array $env = [])
     {
         $this->logger->info("Running post push command on remote server");
 
@@ -526,10 +568,17 @@ class PushCommand
             return;
         }
 
+        // pass environment variables
+        $envSetters = '';
+        foreach ($env as $key => $value) {
+            $envSetters .= sprintf('%s="%s" ', $key, $value);
+        }
+
         $command = sprintf(
-            "ssh %s@%s 'cd %s && %s 2>&1'",
+            "ssh %s@%s '%s && cd %s && %s 2>&1'",
             $user,
             $hostname,
+            $envSetters,
             $path,
             $command
         );
@@ -551,11 +600,54 @@ class PushCommand
     }
 
     /**
-     *  Generate, but don't create, a random directory for later use
+     *  Dump the build properties to a file in the build directory
+     *
+     *  @param string $dir      The build directory
+     *  @param string $id       The build ID
+     *  @param string $source   The source of the code being built
+     *  @param string $env      The environment being built for
+     *  @param string $user     The user building
+     *  @param string $branch   The branch name being built
+     *  @param string $commit   The commit hash being built
+     */
+    private function dumpBuildProps($dir, $id, $source, $env, $user, $branch, $commit)
+    {
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+
+        $props = [
+            'id'        => $id,
+            'source'    => $source,
+            'env'       => $env,
+            'user'      => $user,
+            'branch'    => $branch,
+            'commit'    => $commit,
+            'date'      => $now->format('c')
+        ];
+
+        $this->logger->info('Writing build properties...', $props);
+
+        $file = sprintf(
+            '%s%s%s',
+            $dir,
+            DIRECTORY_SEPARATOR,
+            'build.hal9000.yml'
+        );
+
+        $status = file_put_contents($file, Yaml::dump($props));
+
+        if ($status) {
+            $this->logger->info('Wrote build details to '.$file);
+        } else {
+            $this->failure('Unable to write build details to '.$file);
+        }
+    }
+
+    /**
+     *  Get a unique build id
      *
      *  @return string
      */
-    private function getTempDir()
+    private function getBuildId()
     {
         $random = '';
 
@@ -563,7 +655,18 @@ class PushCommand
             $random .= chr(rand(0, 1) ? rand(48, 57) : rand(97, 122));
         }
 
-        $path = $this->buildDir.'/'.self::FS_DIRECTORY_PREFIX.$random;
+        return $random;
+    }
+
+    /**
+     *  Generate, but don't create, a random directory for later use
+     *
+     *  @param string $id   The build id
+     *  @return string
+     */
+    private function getTempDir($id)
+    {
+        $path = $this->buildDir.'/'.self::FS_DIRECTORY_PREFIX.$id;
 
         // add path to cleanup list on destruct
         $this->cleanup[] = $path;

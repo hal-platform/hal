@@ -75,7 +75,7 @@ class ReposTest extends PHPUnit_Framework_TestCase
 JSON;
 
         $this->githubService
-            ->shouldReceive('getRepositoriesByUser')
+            ->shouldReceive('repositories')
             ->with('testuser')
             ->andReturn($apiData);
 

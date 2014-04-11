@@ -58,7 +58,7 @@ class UsersTest extends PHPUnit_Framework_TestCase
 JSON;
 
         $this->githubService
-            ->shouldReceive('getUsers')
+            ->shouldReceive('users')
             ->andReturn($apiData);
 
         $users = new Users($this->githubService);

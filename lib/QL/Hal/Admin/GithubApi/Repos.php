@@ -94,7 +94,7 @@ class Repos
      */
     private function fetchReposFromService($user)
     {
-        $repos = $this->github->getRepositoriesByUser($user);
+        $repos = $this->github->repositories($user);
         usort($repos, function($a, $b) {
             return strcasecmp($a['name'], $b['name']);
         });
