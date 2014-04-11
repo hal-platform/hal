@@ -7,6 +7,7 @@
 
 namespace QL\Hal;
 
+use QL\Hal\GithubApi\GithubApi;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User;
 use QL\Hal\Services\EnvironmentService;
@@ -49,6 +50,11 @@ class PushPermissionService
      * @var Services\UserService
      */
     private $userService;
+
+    /**
+     * @var GithubApi
+     */
+    private $github;
 
     /**
      * @var array
@@ -95,18 +101,22 @@ class PushPermissionService
      *  @param LdapService $ldapService
      *  @param RepositoryService $repoService
      *  @param UserService $userService
+     *  @param GithubApi $github
      *  @param int $godModeOverride
      */
     public function __construct(
         LdapService $ldapService,
         RepositoryService $repoService,
         UserService $userService,
+        GithubApi $github,
         $godModeOverride
     ) {
         $this->ldapService = $ldapService;
         $this->repoService = $repoService;
         $this->userService = $userService;
+        $this->github = $github;
         $this->godModeOverride = $godModeOverride;
+
         $this->authed = false;
         $this->cache = array();
 
@@ -141,7 +151,12 @@ class PushPermissionService
         }
 
         // prod admin whitelist
-        if ($this->ldapUserInGroupCache(self::getDn(self::PERM_DN_ADMIN_PROD), $user->dn()) && $inProd)) {
+        if ($inProd && $this->ldapUserInGroupCache(self::getDn(self::PERM_DN_ADMIN_PROD), $user->dn())) {
+            return true;
+        }
+
+        // repository collaborators in lower environments
+        if (!$inProd && $this->isUserCollaborator($user, $repo)) {
             return true;
         }
 
@@ -216,6 +231,10 @@ class PushPermissionService
         $this->ldapService->authenticate(self::LDAP_USER, self::LDAP_PASSWORD, false);
     }
 
+    /**
+     * @var User $user
+     * @return boolean
+     */
     public function isUserAdmin(User $user)
     {
         $this->checkAuthenticated();
@@ -224,6 +243,22 @@ class PushPermissionService
         }
         //return $this->ldapService->isUserInGroup(self::dnForAdminGroup(), $user->dn());
         return $this->ldapUserInGroupCache(self::dnForAdminGroup(), $user->dn());
+    }
+
+    /**
+     * @var User $user
+     * @var string $repo
+     * @return boolean
+     */
+    public function isUserCollaborator(User $user, $repo)
+    {
+        $repo = $this->repoService->getFromName($repo);
+
+        return $this->github->isUserCollaborator(
+            $repo['GithubUser'],
+            $repo['GithubRepo'],
+            $user->windowsUsername()
+        );
     }
 
     /**
