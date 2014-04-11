@@ -81,6 +81,7 @@ class ManageRepositoriesHandler
         $ownerEmail = $req->post('ownerEmail');
         $buildCommand = $req->post('buildCommand');
         $description = $req->post('description');
+        $postPushCmd = $req->post('postPushCommand');
         $errors = [];
 
         if (!$shortName || !$githubUser || !$githubRepo || !$ownerEmail || !$description) {
@@ -104,6 +105,7 @@ class ManageRepositoriesHandler
                 'cur_buildcommand' => $buildCommand,
                 'cur_email' => $ownerEmail,
                 'cur_description' => $description,
+                'curr_postPushCommand' => $postPushCmd
             ];
             $res->body($this->tpl->render($data));
             return;
@@ -115,6 +117,7 @@ class ManageRepositoriesHandler
             $githubUser,
             $githubRepo,
             $buildCommand,
+            $postPushCmd,
             $ownerEmail,
             $description
         );

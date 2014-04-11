@@ -71,8 +71,12 @@
                     <input type="email" name="ownerEmail" id="ownerEmail" size="30" maxlength="128" required value="{{ cur_email }}" class="text-input">
                 </li>
                 <li>
-                    <label for="buildCommand">Build Command <small class="additional">(command to run on build... leave empty for no command)</small></label>
+                    <label for="buildCommand">Build Command <small class="additional">Will be run to build application.</small></label>
                     <input type="text" name="buildCommand" id="buildCommand" size="30" maxlength="128" value="{{ cur_buildcommand }}" class="text-input">
+                </li>
+                <li>
+                    <label for="postPushCommand">Post Push Command <small class="additional">Will be run after pushing finished build to remote server.</small></label>
+                    <input type="text" name="postPushCommand" id="postPushCommand" size="30" maxlength="128" value="{{ cur_postPushCommand }}" class="text-input">
                 </li>
                 <li>
                     <label for="description">Description</label>

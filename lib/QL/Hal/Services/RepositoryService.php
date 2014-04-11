@@ -18,8 +18,8 @@ class RepositoryService
 
     const PRIMARY_KEY = 'RepositoryId';
     const UNIQUE_COL = 'rep.ShortName';
-    const Q_LIST = 'SELECT rep.RepositoryId, rep.ShortName, arr.ShortName AS Arrangement, rep.GithubUser, rep.GithubRepo, rep.BuildCmd, rep.OwnerEmail FROM Repositories AS rep INNER JOIN Arrangements AS arr ON (rep.ArrangementId = arr.ArrangementId)';
-    const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, BuildCmd, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :cmd, :email, :desc)';
+    const Q_LIST = 'SELECT rep.RepositoryId, rep.ShortName, arr.ShortName AS Arrangement, rep.GithubUser, rep.GithubRepo, rep.BuildCmd, rep.PostPushCmd, rep.OwnerEmail FROM Repositories AS rep INNER JOIN Arrangements AS arr ON (rep.ArrangementId = arr.ArrangementId)';
+    const Q_INSERT = 'INSERT INTO Repositories (ArrangementId, ShortName, GithubUser, GithubRepo, BuildCmd, PostPushCmd, OwnerEmail, Description) VALUES (:arrId, :name, :user, :repo, :cmd, :postPushCmd, :email, :desc)';
     const Q_COUNT = 'SELECT COUNT(*) FROM Repositories';
     const Q_LIST_BY_UNIQUE = 'SELECT RepositoryId, ShortName, GithubUser, GithubRepo, OwnerEmail, Description FROM Repositories';
     const Q_LIST_REPO_ENV_PAIRS = '
@@ -135,11 +135,12 @@ class RepositoryService
      * @param string $githubUser
      * @param string $githubRepo
      * @param string $buildCommand
+     * @param string $postPushCmd
      * @param string $ownerEmail
      * @param string $description
      * @return int
      */
-    public function create($arrId, $shortName, $githubUser, $githubRepo, $buildCommand, $ownerEmail, $description)
+    public function create($arrId, $shortName, $githubUser, $githubRepo, $buildCommand, $postPushCmd, $ownerEmail, $description)
     {
         return $this->insert($this->db, self::Q_INSERT, [
             [':arrId', $arrId, PDO::PARAM_STR],
@@ -147,6 +148,7 @@ class RepositoryService
             [':user', $githubUser, PDO::PARAM_STR],
             [':repo', $githubRepo, PDO::PARAM_STR],
             [':cmd', $buildCommand, PDO::PARAM_STR],
+            [':postPushCmd', $postPushCmd, PDO::PARAM_STR],
             [':email', $ownerEmail, PDO::PARAM_STR],
             [':desc', $description, PDO::PARAM_STR],
         ]);

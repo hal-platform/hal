@@ -76,6 +76,7 @@ class PushCommand
     const KEY_DEP_GH_REPO       = 'GithubRepo';
     const KEY_REPO_OWNER        = 'OwnerEmail';
     const KEY_REPO_CMD          = 'BuildCmd';
+    const KEY_REPO_PP_CMD       = 'PostPushCmd';
 
     const GITHUB_USER       = 'placeholder';
     const GITHUB_PASSWORD   = 'placeholder';
@@ -174,15 +175,16 @@ class PushCommand
 
         // lookup build details
         // WTB ORM
-        $repo       = $objInfo[self::KEY_INFO_REPO];
-        $env        = $objInfo[self::KEY_INFO_ENV];
-        $server     = $objInfo[self::KEY_INFO_SERVER];
-        $serverPath = $objInfo[self::KEY_INFO_SERVER_PATH];
-        $pusher     = $objInfo[self::KEY_INFO_PUSHER];
-        $ghUser     = $objDep[self::KEY_DEP_GH_USER];
-        $ghRepo     = $objDep[self::KEY_DEP_GH_REPO];
-        $owner      = $objRepo[self::KEY_REPO_OWNER];
-        $buildCmd   = $objRepo[self::KEY_REPO_CMD];
+        $repo           = $objInfo[self::KEY_INFO_REPO];
+        $env            = $objInfo[self::KEY_INFO_ENV];
+        $server         = $objInfo[self::KEY_INFO_SERVER];
+        $serverPath     = $objInfo[self::KEY_INFO_SERVER_PATH];
+        $pusher         = $objInfo[self::KEY_INFO_PUSHER];
+        $ghUser         = $objDep[self::KEY_DEP_GH_USER];
+        $ghRepo         = $objDep[self::KEY_DEP_GH_REPO];
+        $owner          = $objRepo[self::KEY_REPO_OWNER];
+        $buildCmd       = $objRepo[self::KEY_REPO_CMD];
+        $postPushCmd    = $objRepo[self::KEY_REPO_PP_CMD];
 
         $this->branch   = $objInfo[self::KEY_INFO_BRANCH];
         $this->commit   = $objInfo[self::KEY_INFO_COMMIT];
@@ -195,20 +197,23 @@ class PushCommand
         $tmp = $this->downloadGithubRepo($ghUser, $ghRepo, $this->commit, $this->getTempDir());
         $this->runBuildCommand($tmp, $buildCmd);
 
+        // validate remote hostname
+        if (($hostname = $this->validateHostname($server)) === false) {
+            $this->failure("Cannot resolve hostname $hostname.");
+        }
+
         // push to server
         $this->runPush(
             array($tmp.'/'),
             $this->rsyncUser,
-            $server,
+            $hostname,
             $serverPath,
             $output,
             $command
         );
 
-        // post push script on server?
-        // ...
-
-        //$this->notifier->notifySyncFinish(true);
+        // post push script
+        $this->runPostPush($hostname, $this->rsyncUser, $serverPath, $postPushCmd);
 
         $this->success('Push successful.');
     }
@@ -426,6 +431,30 @@ class PushCommand
     }
 
     /**
+     *  Validate a hostname
+     *
+     *  @param string $hostname
+     *  @return string|false
+     */
+    private function validateHostname($hostname)
+    {
+        $this->logger->info('Validating hostname...');
+
+        if (filter_var($hostname, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $this->logger->info("Hostname appears to be an IP, skipping check.");
+        } elseif ($hostname === gethostbyname($hostname)) {
+            $this->logger->info("Cannot resolve hostname $hostname trying $hostname.rockfin.com instead.");
+            $hostname = "$hostname.rockfin.com";
+            if ($hostname === gethostbyname($hostname)) {
+                $this->logger->crit("Cannot resolve hostname $hostname");
+                return false;
+            }
+        }
+
+        return $hostname;
+    }
+
+    /**
      *  Push code to remote host
      *
      *  @param array $fromdir
@@ -439,19 +468,6 @@ class PushCommand
     private function runPush(array $fromdir, $touser, $tohost, $topath, &$output = null, &$command = null)
     {
         $this->logger->info('Preparing to sync code to remote server...');
-        $this->logger->info('Checking hostname...');
-
-        if (filter_var($tohost, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $this->logger->info("Hostname appears to be an IP, skipping check.");
-        } elseif ($tohost === gethostbyname($tohost)) {
-            $this->logger->info("Cannot resolve hostname $tohost trying $tohost.rockfin.com instead.");
-            $tohost = "$tohost.rockfin.com";
-            if ($tohost === gethostbyname($tohost)) {
-                $this->logger->crit("Cannot resolve hostname $tohost");
-                $this->failure('Could not resolve hostname.');
-            }
-        }
-
         $this->logger->info('Rsyncing code to remote server');
 
         $target = sprintf(
@@ -469,7 +485,6 @@ class PushCommand
 
         if ($code === 0) {
             $this->logger->info('Successfully pushed code to remote server');
-            $this->success('Successfully pushed code to remote server');
         } else {
             $this->logger->critical('Error when pushing code to remote server', $out);
             $this->failure('Error when pushing code to remote server');
@@ -503,6 +518,47 @@ class PushCommand
         $command = $cmd;
         exec($cmd, $output, $ret);
         return $ret;
+    }
+
+    /**
+     *  Run the post push command
+     *
+     *  @param $hostname
+     *  @param $user
+     *  @param $path
+     *  @param $command
+     */
+    private function runPostPush($hostname, $user, $path, $command)
+    {
+        $this->logger->info("Running post push command on remote server");
+
+        if (!$command) {
+            $this->logger->info('No post push command specified, skipping.');
+            return;
+        }
+
+        $command = sprintf(
+            "ssh %s@%s 'cd %s && %s 2>&1'",
+            $user,
+            $hostname,
+            $path,
+            $command
+        );
+
+        $this->logger->debug('Executing '.$command);
+
+        // run the command
+        exec($command, $out, $code);
+
+        if (is_array($out) && count($out) > 0) {
+            $this->logger->info('Command generated output...', $out);
+        }
+
+        if ($code === 0) {
+            $this->logger->info('Successfully ran post push command');
+        } else {
+            $this->failure('Error when executing post push command!');
+        }
     }
 
     /**

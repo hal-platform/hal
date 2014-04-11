@@ -37,6 +37,7 @@ CREATE TABLE Repositories (
     GithubRepo    CHAR(48)     NOT NULL,
     OwnerEmail    CHAR(128)    NOT NULL,
     BuildCmd      CHAR(128)    NOT NULL,
+    PostPushCmd   CHAR(128)    NOT NULL,
     Description   CHAR(255)    NOT NULL,
     PRIMARY KEY   (RepositoryId),
     UNIQUE        (ShortName),
