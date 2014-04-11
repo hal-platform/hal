@@ -157,11 +157,11 @@ class SyncHandler
      * @param array $branches
      * @return string|null
      */
-    private function shaForBranchTag($name, $branches)
+    private function shaForRef($name, $branches)
     {
         foreach ($branches as $branch) {
-            if ($branch['name'] == $name) {
-                return $branch['commit']['sha'];
+            if ($branch['ref'] == $name) {
+                return $branch['object']['sha'];
             }
         }
         return null;
@@ -201,11 +201,11 @@ class SyncHandler
             $commit = $sha;
 
             return array($branch, $commit);
-        } else if ($commit = $this->shaForBranchTag($commitish, $options['branches'])) {
+        } else if ($commit = $this->shaForRef($commitish, $options['branches'])) {
             $branch = $commitish;
 
             return array($branch, $commit);
-        } else if ($commit = $this->shaForBranchTag($commitish, $options['tags'])) {
+        } else if ($commit = $this->shaForRef($commitish, $options['tags'])) {
             $branch = $commitish;
 
             return array($branch, $commit);

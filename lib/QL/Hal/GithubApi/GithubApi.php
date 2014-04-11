@@ -8,6 +8,7 @@
 namespace QL\Hal\GithubApi;
 
 use Github\Api\Repo;
+use Github\Api\GitData\References;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
 
@@ -26,7 +27,12 @@ class GithubApi
     /**
      * @var Repo
      */
-    private $repoApi;
+    public $repoApi;
+
+    /**
+     * @var References
+     */
+    private $refApi;
 
     /**
      * @var ResultPager
@@ -36,31 +42,35 @@ class GithubApi
     /**
      * @param HackUser $user
      * @param Repo $repo
+     * @param References $ref
      * @param ResultPager $pager
      */
-    public function __construct(HackUser $user, Repo $repo, ResultPager $pager)
+    public function __construct(HackUser $user, Repo $repo, References $ref, ResultPager $pager)
     {
         $this->userApi = $user;
         $this->repoApi = $repo;
+        $this->refApi = $ref;
         $this->pager = $pager;
     }
 
     /**
-     * @param string $owner
-     * @param string $repo
      * @param string $user
-     * @return boolean
+     * @param string $repo
+     * @return array
      */
-    public function isUserCollaborator($owner, $repo, $user)
+    public function getBranches($user, $repo)
     {
-        try {
-            // A successful response returns 'null'
-            $this->repoApi->collaborators()->check($owner, $repo, $user);
+         try {
+            $refs = $this->pager->fetchAll($this->refApi, 'branches', [$user, $repo]);
         } catch (RuntimeException $e) {
-            return false;
+            $refs = [];
         }
 
-        return true;
+        array_walk($refs, function(&$data) {
+            $data['name'] = str_replace('refs/heads/', '', $data['ref']);
+        });
+
+        return $refs;
     }
 
     /**
@@ -79,6 +89,26 @@ class GithubApi
     }
 
     /**
+     * @param string $user
+     * @param string $repo
+     * @return array
+     */
+    public function getTags($user, $repo)
+    {
+         try {
+            $refs = $this->pager->fetchAll($this->refApi, 'tags', [$user, $repo]);
+        } catch (RuntimeException $e) {
+            $refs = [];
+        }
+
+        array_walk($refs, function(&$data) {
+            $data['name'] = str_replace('refs/tags/', '', $data['ref']);
+        });
+
+        return $refs;
+    }
+
+    /**
      * @return array
      */
     public function getUsers()
@@ -90,5 +120,23 @@ class GithubApi
         }
 
         return $users;
+    }
+
+    /**
+     * @param string $owner
+     * @param string $repo
+     * @param string $user
+     * @return boolean
+     */
+    public function isUserCollaborator($owner, $repo, $user)
+    {
+        try {
+            // A successful response returns 'null'
+            $this->repoApi->collaborators()->check($owner, $repo, $user);
+        } catch (RuntimeException $e) {
+            return false;
+        }
+
+        return true;
     }
 }

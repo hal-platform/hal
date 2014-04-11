@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Services;
 
-use Github\Api\Repo as GithubRepoClient;
+use QL\Hal\GithubApi\GithubApi;
 
 /**
  * @api
@@ -25,18 +25,20 @@ class SyncOptions
     private $depService;
 
     /**
-     * @var GithubRepoClient
+     * @var GithubApi
      */
-    private $githubRepoClient;
+    private $github;
 
-    public function __construct(
-        RepositoryService $repoService,
-        DeploymentService $depService,
-        GithubRepoClient $githubRepoClient
-    ) {
+    /**
+     * @param RepositoryService $repoService
+     * @param DeploymentService $depService
+     * @param GithubApi $github
+     */
+    public function __construct(RepositoryService $repoService, DeploymentService $depService, GithubApi $github)
+    {
         $this->repoSerivce = $repoService;
         $this->depService = $depService;
-        $this->githubRepoClient = $githubRepoClient;
+        $this->github = $github;
     }
 
     /**
@@ -65,8 +67,8 @@ class SyncOptions
             return ['repo' => $repo, 'deps' => []];
         }
 
-        $branches = $this->githubRepoClient->branches($repo['GithubUser'], $repo['GithubRepo']);
-        $tags = $this->githubRepoClient->tags($repo['GithubUser'], $repo['GithubRepo']);
+        $branches = $this->github->getBranches($repo['GithubUser'], $repo['GithubRepo']);
+        $tags = $this->github->getTags($repo['GithubUser'], $repo['GithubRepo']);
 
         $data = [
             'deps' => $deps,

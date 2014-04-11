@@ -53,7 +53,7 @@ services:
     arguments: ["@db"]
   syncOptions:
     class: "QL\\Hal\\Services\\SyncOptions"
-    arguments: ["@repoService", "@deploymentService", "@github.repoService"]
+    arguments: ["@repoService", "@deploymentService", "@github"]
 
 
 
@@ -80,6 +80,7 @@ services:
     arguments:
       - '@github.userService'
       - '@github.repoService'
+      - '@github.refService'
       - '@github.pager'
 
   github.client:
@@ -95,12 +96,15 @@ services:
     class: 'Github\ResultPager'
     arguments: ['@github.client']
 
-  github.repoService:
-    class: 'Github\Api\Repo'
-    arguments: ["@github.client"]
   github.orgService:
     class: 'Github\Api\Organization'
     arguments: ['@github.client']
+  github.refService:
+    class: 'Github\Api\GitData\References'
+    arguments: ['@github.client']
+  github.repoService:
+    class: 'Github\Api\Repo'
+    arguments: ["@github.client"]
   github.userService:
     class: 'QL\Hal\GithubApi\HackUser'
     arguments: ['@github.client']

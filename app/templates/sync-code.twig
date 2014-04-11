@@ -16,8 +16,8 @@
                     <ul class="check-list">
                     {% for branch in branches %}
                         <li>
-                            <input type="radio" name="commitish" value="{{ branch.name }}">
-                            <label>{{ branch.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/commit/{{ branch.commit.sha }}">{{ branch.commit.sha[:7] }}</a>)</label>
+                            <input type="radio" name="commitish" value="{{ branch.ref }}">
+                            <label>{{ branch.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/tree/{{ branch.name }}">{{ branch.object.sha[:7] }}</a>)</label>
                         </li>
                     {% endfor %}
                     </ul>
@@ -26,8 +26,8 @@
                     <ul class="check-list">
                     {% for tag in tags %}
                         <li>
-                            <input type="radio" name="commitish" value="{{ tag.name }}">
-                            <label>[tag] {{ tag.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/tag/{{ tag.commit.sha }}">{{ tag.commit.sha[:7] }}</a>)</label>
+                            <input type="radio" name="commitish" value="{{ tag.ref }}">
+                            <label>[tag] {{ tag.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/tree/{{ tag.name }}">{{ tag.object.sha[:7] }}</a>)</label>
                         </li>
                     {% endfor %}
                     </ul>
