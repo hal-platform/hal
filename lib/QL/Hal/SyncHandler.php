@@ -154,14 +154,14 @@ class SyncHandler
 
     /**
      * @param string $name
-     * @param array $branches
-     * @return string|null
+     * @param array $refs
+     * @return array|null
      */
-    private function shaForRef($name, $branches)
+    private function resolveRef($name, $refs)
     {
-        foreach ($branches as $branch) {
-            if ($branch['ref'] == $name) {
-                return $branch['object']['sha'];
+        foreach ($refs as $ref) {
+            if ($ref['ref'] == $name) {
+                return $ref;
             }
         }
         return null;
@@ -200,21 +200,18 @@ class SyncHandler
             $branch = '(no branch)';
             $commit = $sha;
 
-            return array($branch, $commit);
-        } else if ($commit = $this->shaForRef($commitish, $options['branches'])) {
-            $branch = $commitish;
-
-            return array($branch, $commit);
-        } else if ($commit = $this->shaForRef($commitish, $options['tags'])) {
-            $branch = $commitish;
-
-            return array($branch, $commit);
-        } else {
-            $branch = null;
-            $commit = null;
-
-            return array($branch, $commit);
+            return [$branch, $commit];
         }
+
+        if ($ref = $this->resolveRef($commitish, $options['branches'])) {
+            return [$ref['name'], $ref['object']['sha']];
+        }
+
+        if ($ref = $this->resolveRef($commitish, $options['tags'])) {
+            return [$ref['name'], $ref['object']['sha']];
+        }
+
+        return [null, null];
     }
 
     /**
