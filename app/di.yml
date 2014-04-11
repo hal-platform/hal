@@ -76,7 +76,7 @@ services:
       - '%debug.godmode%'
 
   github:
-    class: 'QL\Hal\GithubApi\GithubApi'
+    class: 'QL\Hal\Services\GithubService'
     arguments:
       - '@github.userService'
       - '@github.repoService'

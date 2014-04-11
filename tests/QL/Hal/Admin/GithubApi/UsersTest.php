@@ -21,7 +21,7 @@ class UsersTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->githubService = Mockery::mock('QL\Hal\GithubApi\GithubApi');
+        $this->githubService = Mockery::mock('QL\Hal\Services\GithubService');
 
         $this->request = new Request(Environment::mock());
         $this->response = new Response;

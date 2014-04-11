@@ -7,13 +7,12 @@ namespace QL\Hal;
 
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\SwiftMailerHandler;
-use QL\Hal\GithubApi\GithubApi;
+use Psr\Log\LoggerInterface as Logger;
 use QL\Hal\Services\DeploymentService;
+use QL\Hal\Services\GithubService;
 use QL\Hal\Services\LogService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Sync\NotificationService;
-
-use Psr\Log\LoggerInterface as Logger;
 use QL\Hal\Mail\Message;
 
 use DateTime;
@@ -103,7 +102,7 @@ class PushCommand
      *  @param RepositoryService $repService
      *  @param DeploymentService $depService
      *  @param LogService $logService
-     *  @param GithubApi $github
+     *  @param GithubService $github
      *  @param Logger $logger
      *  @param Message $message
      *  @param $buildDir
@@ -114,7 +113,7 @@ class PushCommand
         RepositoryService $repService,
         DeploymentService $depService,
         LogService $logService,
-        GithubApi $github,
+        GithubService $github,
         Logger $logger,
         Message $message,
         $buildDir,

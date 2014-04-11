@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Services;
 
-use QL\Hal\GithubApi\GithubApi;
+use QL\Hal\Services\GithubService;
 
 /**
  * @api
@@ -25,16 +25,16 @@ class SyncOptions
     private $depService;
 
     /**
-     * @var GithubApi
+     * @var GithubService
      */
     private $github;
 
     /**
      * @param RepositoryService $repoService
      * @param DeploymentService $depService
-     * @param GithubApi $github
+     * @param GithubService $github
      */
-    public function __construct(RepositoryService $repoService, DeploymentService $depService, GithubApi $github)
+    public function __construct(RepositoryService $repoService, DeploymentService $depService, GithubService $github)
     {
         $this->repoSerivce = $repoService;
         $this->depService = $depService;

@@ -10,9 +10,9 @@ namespace QL\Hal\Admin;
 use Slim\Http\Response;
 use Slim\Http\Request;
 use Twig_Template;
-use QL\Hal\GithubApi\GithubApi;
-use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\ArrangementService;
+use QL\Hal\Services\GithubService;
+use QL\Hal\Services\RepositoryService;
 
 /**
  * @api
@@ -35,7 +35,7 @@ class ManageRepositoriesHandler
     private $arrService;
 
     /**
-     * @var GithubApi
+     * @var GithubService
      */
     private $github;
 
@@ -43,10 +43,14 @@ class ManageRepositoriesHandler
      * @param Twig_Template $tpl
      * @param RepositoryService $repo
      * @param ArrangementService $arr
-     * @param GithubApi $github
+     * @param GithubService $github
      */
-    public function __construct(Twig_Template $tpl, RepositoryService $repo, ArrangementService $arr, GithubApi $github)
-    {
+    public function __construct(
+        Twig_Template $tpl,
+        RepositoryService $repo,
+        ArrangementService $arr,
+        GithubService $github
+    ) {
         $this->tpl = $tpl;
         $this->repoService = $repo;
         $this->arrService = $arr;

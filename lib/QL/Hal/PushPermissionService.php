@@ -7,13 +7,13 @@
 
 namespace QL\Hal;
 
-use QL\Hal\GithubApi\GithubApi;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User;
 use QL\Hal\Services\EnvironmentService;
+use QL\Hal\Services\GithubService;
 use QL\Hal\Services\RepositoryService;
-use Zend\Ldap\Dn;
 use QL\Hal\Services\UserService;
+use Zend\Ldap\Dn;
 
 /**
  * @api
@@ -52,7 +52,7 @@ class PushPermissionService
     private $userService;
 
     /**
-     * @var GithubApi
+     * @var GithubService
      */
     private $github;
 
@@ -101,14 +101,14 @@ class PushPermissionService
      *  @param LdapService $ldapService
      *  @param RepositoryService $repoService
      *  @param UserService $userService
-     *  @param GithubApi $github
+     *  @param GithubService $github
      *  @param int $godModeOverride
      */
     public function __construct(
         LdapService $ldapService,
         RepositoryService $repoService,
         UserService $userService,
-        GithubApi $github,
+        GithubService $github,
         $godModeOverride
     ) {
         $this->ldapService = $ldapService;

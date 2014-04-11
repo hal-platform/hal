@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Admin\GithubApi;
 
-use QL\Hal\GithubApi\GithubApi;
+use QL\Hal\Services\GithubService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -17,14 +17,14 @@ use Slim\Http\Response;
 class Users
 {
     /**
-     * @var GithubApi
+     * @var GithubService
      */
     private $github;
 
     /**
-     * @param GithubApi $github
+     * @param GithubService $github
      */
-    public function __construct(GithubApi $github)
+    public function __construct(GithubService $github)
     {
         $this->github = $github;
     }

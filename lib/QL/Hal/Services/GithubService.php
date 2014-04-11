@@ -5,19 +5,20 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\GithubApi;
+namespace QL\Hal\Services;
 
-use Github\Api\Repo;
 use Github\Api\GitData\References;
+use Github\Api\Repo;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
+use QL\Hal\GithubApi\HackUser;
 
 /**
  * You know whats really annoying? Wrapping every api request in a try/catch.
  *
  * This helps abstract the awfulness of the github api library from the rest of Hal.
  */
-class GithubApi
+class GithubService
 {
     /**
      * @var HackUser
