@@ -75,6 +75,22 @@ class GithubApi
 
     /**
      * @param string $user
+     * @param string $repo
+     * @return array|null
+     */
+    public function getRepository($user, $repo)
+    {
+         try {
+            $repository = $this->repoApi->show($user, $repo);
+        } catch (RuntimeException $e) {
+            $repository = null;
+        }
+
+        return $repository;
+    }
+
+    /**
+     * @param string $user
      * @return array
      */
     public function getRepositoriesByUser($user)

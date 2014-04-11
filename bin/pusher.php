@@ -7,15 +7,11 @@ namespace QL\Hal;
 
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\SwiftMailerHandler;
+use QL\Hal\GithubApi\GithubApi;
 use QL\Hal\Services\DeploymentService;
 use QL\Hal\Services\LogService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Sync\NotificationService;
-use Swift_Mailer;
-use Swift_Message;
-use Swift_SmtpTransport;
-use Github\Api\Repo as GithubRepoService;
-use Github\Exception\RuntimeException;
 
 use Psr\Log\LoggerInterface as Logger;
 use QL\Hal\Mail\Message;
@@ -40,7 +36,7 @@ $command = new PushCommand(
     $container->get('repoService'),
     $container->get('deploymentService'),
     $container->get('logService'),
-    $container->get('githubRepoService'),
+    $container->get('github'),
     $container->get('buildLogger'),
     $container->get('buildMessage'),
     $config->get('build.dir'),
@@ -107,7 +103,7 @@ class PushCommand
      *  @param RepositoryService $repService
      *  @param DeploymentService $depService
      *  @param LogService $logService
-     *  @param GithubRepoService $github
+     *  @param GithubApi $github
      *  @param Logger $logger
      *  @param Message $message
      *  @param $buildDir
@@ -118,7 +114,7 @@ class PushCommand
         RepositoryService $repService,
         DeploymentService $depService,
         LogService $logService,
-        GithubRepoService $github,
+        GithubApi $github,
         Logger $logger,
         Message $message,
         $buildDir,
@@ -241,13 +237,7 @@ class PushCommand
     {
         $this->logger->info('Validating Github user and repository');
 
-        try {
-            $githubRepo = $this->github->show($user, $repo);
-        } catch (RuntimeException $e) {
-            $githubRepo = null;
-        }
-
-        if (!$githubRepo) {
+        if (!$githubRepo = $this->github->getRepository($user, $repo)) {
             $this->logger->critical('Github user or repository appears to be invalid.');
             $this->failure('Unable to validate github user or repository');
         } else {
