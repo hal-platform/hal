@@ -50,7 +50,15 @@ class PushPermissionService
      */
     private $userService;
 
+    /**
+     * @var array
+     */
     private $cache;
+
+    /**
+     * @var string[]
+     */
+    private $productionEnvironments;
 
     /**
      * @return Dn
@@ -101,6 +109,9 @@ class PushPermissionService
         $this->godModeOverride = $godModeOverride;
         $this->authed = false;
         $this->cache = array();
+
+        // @todo make this an environment specific flag such as env type
+        $this->productionEnvironments = ['prod'];
     }
 
     /**
@@ -122,13 +133,15 @@ class PushPermissionService
             $user = $this->ldapService->getUserByWindowsUsername($user);
         }
 
+        $inProd = in_array($env, $this->productionEnvironments);
+
         // admin push whitelist
-        if ($this->isUserAdmin($user) && (in_array($env, array('test', 'beta')) || $repo == 'hal9000')) {
+        if ($this->isUserAdmin($user) && (!$inProd || $repo == 'hal9000')) {
             return true;
         }
 
         // prod admin whitelist
-        if ($this->ldapUserInGroupCache(self::getDn(self::PERM_DN_ADMIN_PROD), $user->dn()) && in_array($env, array('prod'))) {
+        if ($this->ldapUserInGroupCache(self::getDn(self::PERM_DN_ADMIN_PROD), $user->dn()) && $inProd)) {
             return true;
         }
 
