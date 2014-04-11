@@ -7,8 +7,7 @@
 
 namespace QL\Hal\Admin\GithubApi;
 
-use Github\Exception\RuntimeException as GithubException;
-use QL\Hal\GithubApi\HackUser as GithubUsers;
+use QL\Hal\GithubApi\GithubApi;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -18,16 +17,16 @@ use Slim\Http\Response;
 class Repos
 {
     /**
-     * @var GithubUsers
+     * @var GithubApi
      */
-    private $githubUserService;
+    private $github;
 
     /**
-     * @param GithubUsers $githubUserService
+     * @param GithubApi $github
      */
-    public function __construct(GithubUsers $githubUserService)
+    public function __construct(GithubApi $github)
     {
-        $this->githubUserService = $githubUserService;
+        $this->github = $github;
     }
 
     /**
@@ -95,13 +94,7 @@ class Repos
      */
     private function fetchReposFromService($user)
     {
-        try {
-            // I'm going to ASSume we dont need to worry about pagination here
-            $repos = $this->githubUserService->repositories($user);
-        } catch (GithubException $e) {
-            return [];
-        }
-
+        $repos = $this->github->getRepositoriesByUser($user);
         usort($repos, function($a, $b) {
             return strcasecmp($a['name'], $b['name']);
         });

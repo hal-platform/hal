@@ -7,8 +7,7 @@
 
 namespace QL\Hal\Admin\GithubApi;
 
-use Github\ResultPager;
-use QL\Hal\GithubApi\HackUser as GithubUsers;
+use QL\Hal\GithubApi\GithubApi;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -18,23 +17,16 @@ use Slim\Http\Response;
 class Users
 {
     /**
-     * @var GithubUsers
+     * @var GithubApi
      */
-    private $githubUserService;
+    private $github;
 
     /**
-     * @var ResultPager
+     * @param GithubApi $github
      */
-    private $pager;
-
-    /**
-     * @param GithubUsers $githubUserService
-     * @param ResultPager $pager
-     */
-    public function __construct(GithubUsers $githubUserService, ResultPager $pager)
+    public function __construct(GithubApi $github)
     {
-        $this->githubUserService = $githubUserService;
-        $this->pager = $pager;
+        $this->github = $github;
     }
 
     /**
@@ -44,7 +36,7 @@ class Users
      */
     public function __invoke(Request $req, Response $res)
     {
-        $users = $this->fetchUsersFromService();
+        $users = $this->github->getUsers();
 
         $res->header('Content-Type', 'application/json; charset=utf-8');
         $res->body($this->formatUsersAndOrganizations($users));
@@ -78,15 +70,5 @@ class Users
 
         $data = ['users' => $users, 'organizations' => $organizations];
         return json_encode($data, JSON_PRETTY_PRINT);
-    }
-
-    /**
-     * @return array
-     */
-    private function fetchUsersFromService()
-    {
-        $users = $this->pager->fetchAll($this->githubUserService, 'all');
-
-        return $users;
     }
 }

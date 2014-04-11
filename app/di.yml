@@ -53,7 +53,7 @@ services:
     arguments: ["@db"]
   syncOptions:
     class: "QL\\Hal\\Services\\SyncOptions"
-    arguments: ["@repoService", "@deploymentService", "@githubRepoService"]
+    arguments: ["@repoService", "@deploymentService", "@github.repoService"]
 
 
 
@@ -68,42 +68,41 @@ services:
 
   pushPermissionService:
     class: 'QL\Hal\PushPermissionService'
-    arguments: ['@ldapService', '@repoService', @userService, '%debug.godmode%']
+    arguments:
+      - '@ldapService'
+      - '@repoService'
+      - '@userService'
+      - '%debug.godmode%'
 
   github:
+    class: 'QL\Hal\GithubApi\GithubApi'
+    arguments:
+      - '@github.userService'
+      - '@github.repoService'
+      - '@github.pager'
+
+  github.client:
     class: "Github\\Client"
     arguments: ['@github.httpClient']
   github.httpClient:
     class: 'Github\HttpClient\CachedHttpClient'
     arguments:
-        - {base_url: "%github.baseurl%"}
+      - {base_url: "%github.baseurl%"}
     calls:
       - ['authenticate', ['%github.token%', null, 'http_token']] # Github\Client::AUTH_HTTP_TOKEN
-
   github.pager:
     class: 'Github\ResultPager'
-    arguments: ['@github']
+    arguments: ['@github.client']
 
-  githubRepoService:
-    class: "Github\\Api\\Repo"
-    factory_service: "github"
-    factory_method: "api"
-    arguments: ["repo"]
-
-  githubUserService:
-    class: 'QL\Hal\GithubApi\HackUser'
-    arguments: ['@github']
-
-  githubOrgService:
+  github.repoService:
+    class: 'Github\Api\Repo'
+    arguments: ["@github.client"]
+  github.orgService:
     class: 'Github\Api\Organization'
-    factory_service: 'github'
-    factory_method: 'api'
-    arguments: ['organization']
-
-  github.collaboratorService:
-    class: 'Github\Api\Repository\Collaborators'
-    factory_service: 'githubRepoService'
-    factory_method: 'collaborator'
+    arguments: ['@github.client']
+  github.userService:
+    class: 'QL\Hal\GithubApi\HackUser'
+    arguments: ['@github.client']
 
   # Pages
   login.twig: { arguments: ["login.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
@@ -149,7 +148,7 @@ services:
     arguments: ["@admin.repositories.twig", "@repoService", "@arrService", '@layout']
   adminRepositoriesHandler:
     class: 'QL\Hal\Admin\ManageRepositoriesHandler'
-    arguments: ["@admin.repositories.twig", "@repoService", "@arrService", "@githubOrgService", "@githubUserService", "@githubRepoService"]
+    arguments: ["@admin.repositories.twig", "@repoService", "@arrService", "@github.orgService", "@github.userService", "@github.repoService"]
   adminRepositoriesRemoveHandler:
     class: "QL\Hal\Admin\ManageRepositoriesRemove"
     arguments: ["@admin.repositories.twig", "@deploymentService", "@repoService"]
@@ -206,11 +205,11 @@ services:
 
   adminGithubUsersApi:
     class: 'QL\Hal\Admin\GithubApi\Users'
-    arguments: ['@githubUserService', '@github.pager']
+    arguments: ['@github']
 
   adminGithubReposApi:
     class: 'QL\Hal\Admin\GithubApi\Repos'
-    arguments: ['@githubUserService']
+    arguments: ['@github']
 
   sync-code.twig: { arguments: ["sync-code.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
   syncPage:

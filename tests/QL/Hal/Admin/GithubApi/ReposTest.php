@@ -21,7 +21,7 @@ class ReposTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->githubService = Mockery::mock('QL\Hal\GithubApi\HackUser');
+        $this->githubService = Mockery::mock('QL\Hal\GithubApi\GithubApi');
 
         $this->request = new Request(Environment::mock());
         $this->response = new Response;
@@ -75,7 +75,7 @@ class ReposTest extends PHPUnit_Framework_TestCase
 JSON;
 
         $this->githubService
-            ->shouldReceive('repositories')
+            ->shouldReceive('getRepositoriesByUser')
             ->with('testuser')
             ->andReturn($apiData);
 

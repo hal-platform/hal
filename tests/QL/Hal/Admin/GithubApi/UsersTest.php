@@ -16,14 +16,12 @@ use Slim\Http\Response;
 class UsersTest extends PHPUnit_Framework_TestCase
 {
     public $githubService;
-    public $githubPager;
     public $request;
     public $response;
 
     public function setUp()
     {
-        $this->githubService = Mockery::mock('QL\Hal\GithubApi\HackUser');
-        $this->githubPager = Mockery::mock('Github\ResultPager');
+        $this->githubService = Mockery::mock('QL\Hal\GithubApi\GithubApi');
 
         $this->request = new Request(Environment::mock());
         $this->response = new Response;
@@ -59,12 +57,11 @@ class UsersTest extends PHPUnit_Framework_TestCase
 }
 JSON;
 
-        $this->githubPager
-            ->shouldReceive('fetchAll')
-            ->with($this->githubService, 'all')
+        $this->githubService
+            ->shouldReceive('getUsers')
             ->andReturn($apiData);
 
-        $users = new Users($this->githubService, $this->githubPager);
+        $users = new Users($this->githubService);
         $users($this->request, $this->response);
 
         $this->assertSame($expectedJson, $this->response->getBody());
