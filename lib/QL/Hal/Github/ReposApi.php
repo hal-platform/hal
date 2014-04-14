@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Admin\GithubApi;
+namespace QL\Hal\Github;
 
 use QL\Hal\Services\GithubService;
 use Slim\Http\Request;
@@ -14,7 +14,7 @@ use Slim\Http\Response;
 /**
  * @api
  */
-class Repos
+class ReposApi
 {
     /**
      * @var GithubService

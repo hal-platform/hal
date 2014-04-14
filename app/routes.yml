@@ -133,15 +133,15 @@
   "route":      "/admin/permissions"
   "stack":      ["loginBouncer", "adminBouncer", "adminPermissionsPage"]
 
-"admin_github_users":
+"github_users":
   "method":     "GET"
-  "route":      "/admin/github-users"
-  "stack":      ["loginBouncer", "adminBouncer", "adminGithubUsersApi"]
-"admin_github_repos":
+  "route":      "/github/users"
+  "stack":      ["loginBouncer", "githubUsersApi"]
+"github_repos":
   "method":     "GET"
-  "route":      "/admin/github-repos/:username"
-  "stack":      ["loginBouncer", "adminBouncer", "adminGithubReposApi"]
-"admin_github_pulls":
+  "route":      "/github/repos/:username"
+  "stack":      ["loginBouncer", "githubReposApi"]
+"github_pulls":
   "method":     "GET"
   "route":      "/github/pulls/:username/:repository"
   "stack":      ["loginBouncer", "githubPullsApi"]

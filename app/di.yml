@@ -226,12 +226,12 @@ services:
     class:      'QL\Hal\Admin\ManagePermissions'
     arguments:  [@admin.permissions.twig, @repoService, @pushPermissionService, @layout]
 
-  adminGithubUsersApi:
-    class: 'QL\Hal\Admin\GithubApi\Users'
+  githubUsersApi:
+    class: 'QL\Hal\Github\UsersApi'
     arguments: ['@github']
 
-  adminGithubReposApi:
-    class: 'QL\Hal\Admin\GithubApi\Repos'
+  githubReposApi:
+    class: 'QL\Hal\Github\ReposApi'
     arguments: ['@github']
 
   githubPullsApi:

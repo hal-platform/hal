@@ -25,7 +25,7 @@ define(['jquery'], function($) {
                     targetElem.after(flash);
 
                     toggle.remove();
-                    return $.get('/admin/github-users', function(data) {
+                    return $.get('/github/users', function(data) {
                         _this.dataStore = data;
                     })
                     .done(function() {
@@ -153,7 +153,7 @@ define(['jquery'], function($) {
                 var _this = this;
                 this.dataStore = {};
 
-                return $.get('/admin/github-repos/' + user, function(data) {
+                return $.get('/github/repos/' + user, function(data) {
                     _this.dataStore = data;
                 });
             }

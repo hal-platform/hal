@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Admin\GithubApi;
+namespace QL\Hal\Github;
 
 use Mockery;
 use PHPUnit_Framework_TestCase;
@@ -13,7 +13,7 @@ use Slim\Environment;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class UsersTest extends PHPUnit_Framework_TestCase
+class UsersApiTest extends PHPUnit_Framework_TestCase
 {
     public $githubService;
     public $request;
@@ -61,7 +61,7 @@ JSON;
             ->shouldReceive('users')
             ->andReturn($apiData);
 
-        $users = new Users($this->githubService);
+        $users = new UsersApi($this->githubService);
         $users($this->request, $this->response);
 
         $this->assertSame($expectedJson, $this->response->getBody());
