@@ -10,19 +10,12 @@ namespace QL\Hal\GithubApi;
 use Github\Api\User as BaseUser;
 
 /**
- * This replacement is necessary because our enterprise github does not support v3 search or proper pagination.
+ * Extending the knplabs api to provide additional functionality.
  *
  * @internal
  */
 class HackUser extends BaseUser
 {
-    public function find($keyword, $page = 1)
-    {
-        return $this->get('legacy/user/search/'.rawurlencode($keyword), [
-            'start_page' => $page
-        ]);
-    }
-
     public function all()
     {
         return $this->get('users');
