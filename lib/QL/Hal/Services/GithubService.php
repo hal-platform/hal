@@ -8,6 +8,7 @@
 namespace QL\Hal\Services;
 
 use Github\Api\GitData\References;
+use Github\Api\PullRequest;
 use Github\Api\Repo;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
@@ -36,6 +37,11 @@ class GithubService
     private $refApi;
 
     /**
+     * @var PullRequest
+     */
+    private $pullApi;
+
+    /**
      * @var ResultPager
      */
     private $pager;
@@ -44,13 +50,15 @@ class GithubService
      * @param HackUser $user
      * @param Repo $repo
      * @param References $ref
+     * @param PullRequest $pullApi
      * @param ResultPager $pager
      */
-    public function __construct(HackUser $user, Repo $repo, References $ref, ResultPager $pager)
+    public function __construct(HackUser $user, Repo $repo, References $ref, PullRequest $pull, ResultPager $pager)
     {
         $this->userApi = $user;
         $this->repoApi = $repo;
         $this->refApi = $ref;
+        $this->pullApi = $pull;
         $this->pager = $pager;
     }
 
@@ -63,7 +71,7 @@ class GithubService
      */
     public function branches($user, $repo)
     {
-         try {
+        try {
             $refs = $this->pager->fetchAll($this->refApi, 'branches', [$user, $repo]);
         } catch (RuntimeException $e) {
             $refs = [];
@@ -77,6 +85,55 @@ class GithubService
     }
 
     /**
+     * Get most recent closed pull requests for a repository.
+     *
+     * This only gets the most recent 30. If you need more than that, get all of them.
+     *
+     * It does not appear possible to get both open and closed pull requests from the same api call,
+     * even though the api documentation specifies it is.
+     *
+     * @param string $user
+     * @param string $repo
+     * @param boolean $getAll
+     * @return array
+     */
+    public function closedPullRequests($user, $repo, $getAll = false)
+    {
+        try {
+            if ($getAll) {
+                $pulls = $this->pager->fetchAll($this->pullApi, 'all', [$user, $repo, 'closed']);
+            } else {
+                $pulls = $this->pullApi->all($user, $repo, 'closed');
+            }
+        } catch (RuntimeException $e) {
+            $pulls = [];
+        }
+
+        return $pulls;
+    }
+
+    /**
+     * Get all open pull requests for a repository.
+     *
+     * It does not appear possible to get both open and closed pull requests from the same api call,
+     * even though the api documentation specifies it is.
+     *
+     * @param string $user
+     * @param string $repo
+     * @return array
+     */
+    public function openPullRequests($user, $repo)
+    {
+        try {
+            $pulls = $this->pager->fetchAll($this->pullApi, 'all', [$user, $repo]);
+        } catch (RuntimeException $e) {
+            $pulls = [];
+        }
+
+        return $pulls;
+    }
+
+    /**
      * Get the extended metadata for a repository.
      *
      * @param string $user
@@ -85,7 +142,7 @@ class GithubService
      */
     public function repository($user, $repo)
     {
-         try {
+        try {
             $repository = $this->repoApi->show($user, $repo);
         } catch (RuntimeException $e) {
             $repository = null;
@@ -102,7 +159,7 @@ class GithubService
      */
     public function repositories($user)
     {
-         try {
+        try {
             $repositories = $this->pager->fetchAll($this->userApi, 'repositories', [$user]);
         } catch (RuntimeException $e) {
             $repositories = [];
@@ -120,7 +177,7 @@ class GithubService
      */
     public function tags($user, $repo)
     {
-         try {
+        try {
             $refs = $this->pager->fetchAll($this->refApi, 'tags', [$user, $repo]);
         } catch (RuntimeException $e) {
             $refs = [];

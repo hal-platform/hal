@@ -141,3 +141,7 @@
   "method":     "GET"
   "route":      "/admin/github-repos/:username"
   "stack":      ["loginBouncer", "adminBouncer", "adminGithubReposApi"]
+"admin_github_pulls":
+  "method":     "GET"
+  "route":      "/github/pulls/:username/:repository"
+  "stack":      ["loginBouncer", "githubPullsApi"]

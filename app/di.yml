@@ -81,6 +81,7 @@ services:
       - '@github.userService'
       - '@github.repoService'
       - '@github.refService'
+      - '@github.pullService'
       - '@github.pager'
 
   github.client:
@@ -113,6 +114,9 @@ services:
   github.orgService:
     class: 'Github\Api\Organization'
     arguments: ['@github.client']
+  github.pullService:
+    class: 'Github\Api\PullRequest'
+    arguments: ["@github.client"]
   github.refService:
     class: 'Github\Api\GitData\References'
     arguments: ['@github.client']
@@ -228,6 +232,10 @@ services:
 
   adminGithubReposApi:
     class: 'QL\Hal\Admin\GithubApi\Repos'
+    arguments: ['@github']
+
+  githubPullsApi:
+    class: 'QL\Hal\Github\PullRequestsApi'
     arguments: ['@github']
 
   sync-code.twig: { arguments: ["sync-code.twig"], class: "Twig_Template", factory_service: "twigEnv", factory_method: "loadTemplate" }
