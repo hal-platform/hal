@@ -244,6 +244,7 @@ services:
       - "@syncOptions"
       - "@logService"
       - "@deploymentService"
+      - "@github"
       - "@session"
       - "%root%/bin/pusher.php"
       - "%build.user%"

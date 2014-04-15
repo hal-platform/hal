@@ -12,6 +12,7 @@ use DateTimeZone;
 use Exception;
 use MCP\Corp\Account\User;
 use QL\Hal\Services\DeploymentService;
+use QL\Hal\Services\GithubService;
 use QL\Hal\Services\LogService;
 use QL\Hal\Services\SyncOptions;
 use Slim\Http\Request;
@@ -45,6 +46,11 @@ class SyncHandler
     private $depService;
 
     /**
+     * @var GithubService
+     */
+    private $github;
+
+    /**
      * @var User
      */
     private $currentUserContext;
@@ -74,6 +80,7 @@ class SyncHandler
      * @param SyncOptions $syncOptions
      * @param LogService $logService
      * @param DeploymentService $depService
+     * @param GithubService $github
      * @param Session $session
      * @param string $pusherScriptLocation
      * @param string $buildUser
@@ -85,6 +92,7 @@ class SyncHandler
         SyncOptions $syncOptions,
         LogService $logService,
         DeploymentService $depService,
+        GithubService $github,
         Session $session,
         $pusherScriptLocation,
         $buildUser,
@@ -95,7 +103,10 @@ class SyncHandler
         $this->syncOptions = $syncOptions;
         $this->logService = $logService;
         $this->depService = $depService;
+        $this->github = $github;
+
         $this->currentUserContext = $session->get('account');
+
         $this->pusherScriptLocation = $pusherScriptLocation;
         $this->buildUser = $buildUser;
         $this->sshUser = $sshUser;
@@ -153,6 +164,25 @@ class SyncHandler
     }
 
     /**
+     * @param string $commitish
+     * @param array $repoInfo
+     * @return array|null
+     */
+    private function resolvePull($commitish, $repoInfo)
+    {
+        if (preg_match('/pull([\d]+)/', $commitish, $match) !== 1) {
+            return null;
+        }
+
+        if (!$pr = $this->github->pullRequest($repoInfo['GithubUser'], $repoInfo['GithubRepo'], $match[1])) {
+            return null;
+        }
+
+        $humanReadable = sprintf('(pull request #%s)', $pr['number']);
+        return [$humanReadable, $pr['head']['sha']];
+    }
+
+    /**
      * @param string $name
      * @param array $refs
      * @return array|null
@@ -189,9 +219,15 @@ class SyncHandler
     }
 
     /**
-     * @param $commitish
-     * @param $sha
-     * @param $options
+     * This method matches the full ref so we do not confuse branches with tags.
+     *
+     * - Branches must conform to "/refs/heads/{branch_name}"
+     * - Tag must conform to "/refs/tags/{tag_name}"
+     * - Pull Requests must conform to "pull{pull_request_number}"
+     *
+     * @param string $commitish
+     * @param string $sha
+     * @param array $options
      * @return array
      */
     private function derefCommitish($commitish, $sha, $options)
@@ -203,12 +239,19 @@ class SyncHandler
             return [$branch, $commit];
         }
 
+        // Check for a matching branch name
         if ($ref = $this->resolveRef($commitish, $options['branches'])) {
             return [$ref['name'], $ref['object']['sha']];
         }
 
+        // Check for a matching tag name
         if ($ref = $this->resolveRef($commitish, $options['tags'])) {
             return [$ref['name'], $ref['object']['sha']];
+        }
+
+        // As a last resort, check for a matching pull request
+        if ($ref = $this->resolvePull($commitish, $options['repo'])) {
+            return $ref;
         }
 
         return [null, null];

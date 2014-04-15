@@ -134,6 +134,24 @@ class GithubService
     }
 
     /**
+     * Get metadata for a specific pull request.
+     *
+     * @param string $user
+     * @param string $repo
+     * @return array|null
+     */
+    public function pullRequest($user, $repo, $number)
+    {
+        try {
+            $pull = $this->pullApi->show($user, $repo, $number);
+        } catch (RuntimeException $e) {
+            $pull = null;
+        }
+
+        return $pull;
+    }
+
+    /**
      * Get the extended metadata for a repository.
      *
      * @param string $user
