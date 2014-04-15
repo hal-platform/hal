@@ -85,28 +85,23 @@ services:
       - '@github.pager'
 
   github.client:
-    class: "Github\\Client"
+    class: 'Github\Client'
     arguments: ['@github.httpClient']
+
+  github.httpClient:
+    class: 'QL\Hal\GithubApi\HackCachedHttpClient'
+    arguments:
+      - {base_url: '%github.baseurl%'}
+    calls:
+      - ['authenticate', ['%github.token%', null, 'http_token']]
 
   # Using the filesystem as a cache causes issues because of the different users involve here.
   # - The web front end runs with a user that can RW to /tmp, but not /var/spool/hal9000[test]
   # - The pusher script runs with a different user that can't RW to /tmp, but CAN RW to /var/spool/hal9000[test]
-  # So, switching to non-cached client for now at least.
-  #github.httpClient:
-  #  class: 'Github\HttpClient\CachedHttpClient'
-  #  arguments:
-  #    - {base_url: "%github.baseurl%", cache_dir: "%github.cachedir%"}
-  #  calls:
-  #    - ['authenticate', ['%github.token%', null, 'http_token']] # Github\Client::AUTH_HTTP_TOKEN
-  # Github\HttpClient
-
-  github.httpClient:
-    class: 'Github\HttpClient\HttpClient'
-    arguments:
-      - {base_url: "%github.baseurl%"}
-    calls:
-      - ['authenticate', ['%github.token%', null, 'http_token']]
-
+  # In instances where the filesystem is unavailable, set the memory cache on the http client.
+  # Perhaps redis/apcu would be a better long term solution.
+  github.memory-cache:
+    class: 'QL\Hal\GithubApi\InMemoryCache'
   github.pager:
     class: 'Github\ResultPager'
     arguments: ['@github.client']
@@ -116,13 +111,13 @@ services:
     arguments: ['@github.client']
   github.pullService:
     class: 'Github\Api\PullRequest'
-    arguments: ["@github.client"]
+    arguments: ['@github.client']
   github.refService:
     class: 'Github\Api\GitData\References'
     arguments: ['@github.client']
   github.repoService:
     class: 'Github\Api\Repo'
-    arguments: ["@github.client"]
+    arguments: ['@github.client']
   github.userService:
     class: 'QL\Hal\GithubApi\HackUser'
     arguments: ['@github.client']

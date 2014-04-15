@@ -33,6 +33,7 @@ if ($config->get('build.async')) {
     }
 }
 
+$container->get('github.httpClient')->setCache($container->get('github.memory-cache'));
 $command = new PushCommand(
     $container->get('repoService'),
     $container->get('deploymentService'),
