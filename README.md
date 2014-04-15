@@ -77,9 +77,9 @@ The user your web server runs as needs to be able to sudo the push command. You 
 
 #### Repository push permissions
 
-`QL\Hal\PushPermissionService` controls whether a specific user has push permissions for repositories. At this time,
-these permissions cannot be changed from Hal itself. To whitelist for development, change the method
-`canUserPushToEnvRepo` to always return true.
+`QL\Hal\PushPermissionService` controls whether a specific user has push permissions for repositories. GitHub
+collaborators and hal admins can push any repository in non-prod environments. For production, an AD group must
+be setup with the correct permissions.
 
 #### Sync command variables
 
