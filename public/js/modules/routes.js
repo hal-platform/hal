@@ -13,6 +13,9 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/admin/repositories', function() {
                 return _this.addRepository();
             });
+            router.addRoute('/r/{repository}/sync', function() {
+                return _this.syncRepository();
+            });
             router.addRoute('/r/{repository}/:throwaway:/:page:', function() {
                 return _this.deployRepository();
             });
@@ -27,6 +30,11 @@ define(['crossroads'], function(crossroads) {
         },
         deployRepository: function() {
             return require(['modules/deploy-repository'], function(module) {
+                module.init();
+            });
+        },
+        syncRepository: function() {
+            return require(['modules/sync-repository'], function(module) {
                 module.init();
             });
         }
