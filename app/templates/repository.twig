@@ -55,7 +55,8 @@
                     </td>
                     <td>
                         {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
-                            Push Now <input type="checkbox" name="deps[]" id="sel-{{ deployment.Environment }}-{{ deployment.DeploymentId }}" value="{{deployment.DeploymentId}}">
+                            {% set inputId = 'sel-' ~ deployment.Environment ~ '-' ~ deployment.DeploymentId %}
+                            <label for="{{ inputId }}">Push Now <input type="checkbox" name="deps[]" id="{{ inputId }}" value="{{deployment.DeploymentId}}">
                             {% set allowSubmit = true %}
                         {% else %}
                             No Access
