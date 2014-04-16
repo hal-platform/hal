@@ -717,12 +717,16 @@ class PushCommand
         $this->message->setBuildResult($status);
 
         if ($status) {
-            $this->logger->info($out);
+            if ($out) {
+                $this->logger->info($out);
+            }
             $this->logger->info(self::OUT_SUCCESS);
             $this->out(self::OUT_SUCCESS);
             $message = DeploymentService::STATUS_DEPLOYED;
         } else {
-            $this->logger->critical($out);
+            if ($out) {
+                $this->logger->critical($out);
+            }
             $this->logger->critical(self::OUT_FAILURE);
             $this->out(self::OUT_FAILURE);
             $message = DeploymentService::STATUS_ERROR;
