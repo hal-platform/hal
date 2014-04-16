@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "decaece687b9a3882e3658ac173b335e",
+    "hash": "8aff2d9c1a2994165fc09db77404f81b",
     "packages": [
         {
             "name": "guzzle/guzzle",
@@ -369,6 +369,85 @@
             "description": "Handles authenticating a username/password to Quicken Loans' corporate set of usernames and passwords. Note that this will NOT work for any public facing websites (yet). This will only work for internal QL applications.",
             "homepage": "http://git/mnagi/mcp-corp-account",
             "time": "2013-11-07 19:22:46"
+        },
+        {
+            "name": "ql/mcp-logger",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "git@git:MNagi/mcp-logger.git",
+                "reference": "1.1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer//dist/ql-mcp-logger-1.1.1-bd9525.zip",
+                "reference": "1.1.1",
+                "shasum": "5f462ea0b2dbe68646eafe3f8e5e314305660c29"
+            },
+            "archive": {
+                "exclude": [
+                    "/bin",
+                    "/fixtures",
+                    "/phpunit.xml.dist",
+                    "src/MCP/Testing",
+                    "/tests"
+                ]
+            },
+            "require": {
+                "ext-date": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.4.0",
+                "ql/mcp-core": "1.*"
+            },
+            "conflict": {
+                "ql/mcp": "*"
+            },
+            "require-dev": {
+                "guzzle/http": "*",
+                "mockery/mockery": ">=0.8",
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "*",
+                "psr/log": "*"
+            },
+            "suggest": {
+                "ext-http": "Required for HttpRequest-based service",
+                "guzzle/http": "Required for Guzzle-based service",
+                "psr/log": "Required to use the included PSR-3 logger"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MCP\\Service\\Logger\\": "src/Logger",
+                    "MCP\\Testing\\": "src/Testing"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Nagi",
+                    "email": "mattnagi@quickenloans.com",
+                    "role": "Tech Lead"
+                },
+                {
+                    "name": "Steven Snider",
+                    "email": "stevensnider@quickenloans.com",
+                    "role": "Contributor"
+                },
+                {
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "Library for handling Core Logger within Quicken Loans.",
+            "support": {
+                "email": "stevekluck@quickenloans.com",
+                "issues": "http://git/mnagi/mcp-logger/issues",
+                "source": "http://git/mnagi/mcp-logger"
+            },
+            "time": "2014-03-31 14:12:58"
         },
         {
             "name": "slim/slim",
@@ -1458,8 +1537,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/mcp-corp-account": 5,
-        "monolog/monolog": 20
+        "monolog/monolog": 20,
+        "ql/mcp-corp-account": 5
     },
     "platform": {
         "php-64bit": ">=5.4.0"
