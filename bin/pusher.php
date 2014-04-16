@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
 
 require_once __DIR__.'/../app/bootstrap.php';
 
-if ($config->get('build.async')) {
+if ($container->getParameter('build.async')) {
     // fork and exit immediately
     $pid = pcntl_fork();
     if ($pid === -1) {
@@ -34,18 +34,7 @@ if ($config->get('build.async')) {
 }
 
 $container->get('github.httpClient')->setCache($container->get('github.memory-cache'));
-$command = new PushCommand(
-    $container->get('repoService'),
-    $container->get('deploymentService'),
-    $container->get('logService'),
-    $container->get('github'),
-    $container->get('buildLogger'),
-    $container->get('buildMessage'),
-    $config->get('build.dir'),
-    $config->get('rsync.user'),
-    $config->get('email.overide')
-);
-$command->run($argv);
+$container->get('pushCommand')->run($argv);
 
 /**
  *  Push Command Class
