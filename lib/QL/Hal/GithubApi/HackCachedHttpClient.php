@@ -7,15 +7,42 @@
 
 namespace QL\Hal\GithubApi;
 
-use Github\HttpClient\CachedHttpClient;
+use Github\HttpClient\Cache\CacheInterface;
+use Github\HttpClient\Cache\FilesystemCache;
+use Github\HttpClient\HttpClient;
 
 /**
  * Extending the knplabs api to not be completely horrible and stupid.
  *
  * @internal
  */
-class HackCachedHttpClient extends CachedHttpClient
+class HackCachedHttpClient extends HttpClient
 {
+    /**
+     * @var CacheInterface
+     */
+    protected $cache;
+
+    /**
+     * @return CacheInterface
+     */
+    public function getCache()
+    {
+        if (null === $this->cache) {
+            $this->cache = new FilesystemCache($this->options['cache_dir'] ?: sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-github-api-cache');
+        }
+
+        return $this->cache;
+    }
+
+    /**
+     * @param $cache CacheInterface
+     */
+    public function setCache(CacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -25,7 +52,6 @@ class HackCachedHttpClient extends CachedHttpClient
         if (isset($options['query'])) {
             $cacheKey .= serialize($options['query']);
         }
-
         $response = parent::request($path, $body, $httpMethod, $headers, $options);
 
         if (304 == $response->getStatusCode()) {
@@ -33,7 +59,6 @@ class HackCachedHttpClient extends CachedHttpClient
         }
 
         $this->getCache()->set($cacheKey, $response);
-
         return $response;
     }
 
@@ -48,18 +73,8 @@ class HackCachedHttpClient extends CachedHttpClient
         if (isset($options['query'])) {
             $cacheKey .= serialize($options['query']);
         }
-
         $request = parent::createRequest($httpMethod, $path, $body, $headers = array(), $options);
 
-        if ($modifiedAt = $this->getCache()->getModifiedSince($cacheKey)) {
-            $modifiedAt = new \DateTime('@'.$modifiedAt);
-            $modifiedAt->setTimezone(new \DateTimeZone('GMT'));
-
-            $request->addHeader(
-                'If-Modified-Since',
-                sprintf('%s GMT', $modifiedAt->format('l, d-M-y H:i:s'))
-            );
-        }
         if ($etag = $this->getCache()->getETag($cacheKey)) {
             $request->addHeader(
                 'If-None-Match',
