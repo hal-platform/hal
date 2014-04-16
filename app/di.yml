@@ -1,5 +1,18 @@
 services:
 
+  # Application services
+  slim:
+    class: 'Slim\Slim'
+    arguments:
+      -
+        debug: '%debug%'
+        log.writer: '@slim.mcpLogWriter'
+
+  slim.environment:
+    class: 'Slim\Environment'
+    factory_service: 'slim'
+    factory_method: 'environment'
+
   # This is set by LoginBouncer
   currentUserContext:
     class: 'MCP\Corp\Account\User'
@@ -24,6 +37,20 @@ services:
   twigView:
     class: "QL\Hal\TwigView"
     arguments: ["@twigEnv"]
+
+  # Pusher
+  pushCommand:
+    class: 'QL\Hal\PushCommand'
+    arguments:
+      - '@repoService'
+      - '@deploymentService'
+      - '@logService'
+      - '@github'
+      - '@buildLogger'
+      - '@buildMessage'
+      - '%build.dir%'
+      - '%rsync.user%'
+      - '%email.overide%'
 
   # DB related services
   db:
@@ -54,9 +81,6 @@ services:
   syncOptions:
     class: "QL\\Hal\\Services\\SyncOptions"
     arguments: ["@repoService", "@deploymentService", "@github"]
-
-
-
 
   # Non-db services
   ldapTransport:
@@ -327,3 +351,38 @@ services:
     class:        "Monolog\\Logger"
     arguments:    ["%build.log.name%", [@buildLogHandler]]
 
+  # MCP Logger
+  slim.mcpLogWriter:
+    class: 'QL\Hal\Logger\McpLogWriter'
+    arguments: ['@mcpLogger']
+  mcpLogger:
+    class: 'MCP\Service\Logger\Logger'
+    arguments: ['@mcpLogger.service', '@mcpLogger.factory']
+  mcpLogger.service:
+    class: 'MCP\Service\Logger\Service\GuzzleService'
+    arguments: ['@mcpLogger.guzzle', '@mcpLogger.renderer', true]
+  mcpLogger.guzzle:
+    class: 'Guzzle\Http\Client'
+    arguments: ['http://%mcpLogger.host%:2581/web/core/logentries']
+
+  mcpLogger.renderer:
+    class: 'MCP\Service\Logger\Renderer\XmlRenderer'
+    arguments: ['@mcpLogger.renderer.writer']
+  mcpLogger.renderer.writer:
+    class: 'XMLWriter'
+
+  mcpLogger.factory:
+    class: 'MCP\Service\Logger\Adapter\Psr\MessageFactory'
+    arguments: ['@mcpLogger.factory.clock']
+    calls:
+      - ['setDefaultProperty', ['applicationId', '%mcpLogger.applicationId%']]
+      - ['setDefaultProperty', ['machineIPAddress', '@mcpLogger.factory.serverIp']]
+      - ['setDefaultProperty', ['machineName', 'localhost']]
+  mcpLogger.factory.clock:
+    class: 'MCP\DataType\Time\Clock'
+    arguments: ['now', 'UTC']
+  mcpLogger.factory.serverIp:
+    class: 'MCP\DataType\IPv4Address'
+    factory_class: 'MCP\DataType\IPv4Address'
+    factory_method: 'create'
+    arguments: ['0.0.0.0']

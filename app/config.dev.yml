@@ -1,29 +1,36 @@
-slim:
-  debug:          true
-  mode:           "development"
-db.dsn:           "mysql:host=localhost;dbname=hal;charset=utf8"
-db.user:          "root"
-db.pass:          ""
-build.user:       "mcolf"
-build.dir:        "/tmp"
-build.async:      false
-rsync.user:       "mcolf"
-github.token:     ""
-github.baseurl:   "http://git/api/v3/"
-ldap.host:        "ldap.example.com"
-ldap.domain:      "MI"
-ldap.baseDn:      "DC=mi,DC=corp"
-email.overide:    "matthewcolf@quickenloans.com"
+imports:
+  -
+    resource: di.yml
 
-email.hostname:     mail.example.com
-email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"
-email.notify:       "matthewcolf@quickenloans.com"
-email.notify.error: false
-build.log.level:    100
-build.log.name:     hal9000
-build.date.format:  ""
+parameters:
+  debug:            true
 
-# These help with development
+  db.dsn:           "mysql:host=localhost;dbname=hal;charset=utf8"
+  db.user:          "root"
+  db.pass:          ""
+  build.user:       "mcolf"
+  build.dir:        "/tmp"
+  build.async:      false
+  rsync.user:       "mcolf"
+  github.token:     ""
+  github.baseurl:   "http://git/api/v3/"
+  ldap.host:        "ldap.example.com"
+  ldap.domain:      "MI"
+  ldap.baseDn:      "DC=mi,DC=corp"
+  email.overide:    "matthewcolf@quickenloans.com"
 
-# godmode - set this to your common id and you will be an admin
-debug.godmode: 0
+  email.hostname:     mail.example.com
+  email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"
+  email.notify:       "matthewcolf@quickenloans.com"
+  email.notify.error: false
+  build.log.level:    100
+  build.log.name:     hal9000
+  build.date.format:  ""
+
+  mcpLogger.applicationId: '200947'
+  mcpLogger.host: 'qlsonictest'
+
+  # These help with development
+
+  # godmode - set this to your common id and you will be an admin
+  debug.godmode: 0
