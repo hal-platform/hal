@@ -6,7 +6,9 @@ services:
     arguments:
       -
         debug: '%debug%'
-        log.writer: '@slim.mcpLogWriter'
+        log.writer: '@mcpLogger.slimLogWriter'
+    calls:
+     - ['hook', ['slim.before', '@mcpLogger.factory.setup', 0]]
 
   slim.environment:
     class: 'Slim\Environment'
@@ -351,7 +353,7 @@ services:
     arguments:    ["%build.log.name%", [@buildLogHandler]]
 
   # MCP Logger
-  slim.mcpLogWriter:
+  mcpLogger.slimLogWriter:
     class: 'QL\Hal\Logger\McpLogWriter'
     arguments: ['@mcpLogger']
   mcpLogger:
@@ -380,6 +382,9 @@ services:
   mcpLogger.factory.clock:
     class: 'MCP\DataType\Time\Clock'
     arguments: ['now', 'UTC']
+  mcpLogger.factory.setup:
+    class: 'QL\Hal\Logger\McpSetupHook'
+    arguments: ['@mcpLogger.factory', '@dic']
   mcpLogger.factory.serverIp:
     class: 'MCP\DataType\IPv4Address'
     factory_class: 'MCP\DataType\IPv4Address'

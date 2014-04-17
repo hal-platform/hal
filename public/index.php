@@ -16,12 +16,6 @@ require_once __DIR__.'/../app/bootstrap.php';
 $app = $container->get('slim');
 $app->view($container->get('twigView'));
 
-// Set required logging properties from the environment
-if ($serverIp = IPv4Address::create($app->environment()['SERVER_ADDR'])) {;
-    $container->get('mcpLogger.factory')->setDefaultProperty('machineIPAddress', $serverIp);
-}
-$container->get('mcpLogger.factory')->setDefaultProperty('machineName', $app->environment()['SERVER_NAME']);
-
 // 404 Error Handler
 $app->notFound(function () use ($app) {
     $app->status(404);
