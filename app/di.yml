@@ -6,7 +6,8 @@ services:
     arguments:
       -
         debug: '%debug%'
-        log.writer: '@slim.mcpLogWriter'
+        # Currently the push server cannot connect to sonic. Disabling this until that is worked out
+        # log.writer: '@slim.mcpLogWriter'
 
   slim.environment:
     class: 'Slim\Environment'
