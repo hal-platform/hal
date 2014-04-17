@@ -99,7 +99,6 @@ class PushCommand
      *  @param Message $message
      *  @param $buildDir
      *  @param $rsyncUser
-     *  @param $emailOveride
      */
     public function __construct(
         RepositoryService $repService,
@@ -109,8 +108,7 @@ class PushCommand
         Logger $logger,
         Message $message,
         $buildDir,
-        $rsyncUser,
-        $emailOveride
+        $rsyncUser
     ) {
         $this->repService = $repService;
         $this->depService = $depService;
@@ -118,7 +116,6 @@ class PushCommand
         $this->github = $github;
         $this->buildDir = $buildDir;
         $this->rsyncUser = $rsyncUser;
-        $this->emailOveride = $emailOveride;
 
         $this->logger = $logger;
         $this->message = $message;

@@ -50,7 +50,6 @@ services:
       - '@buildMessage'
       - '%build.dir%'
       - '%rsync.user%'
-      - '%email.overide%'
 
   # DB related services
   db:

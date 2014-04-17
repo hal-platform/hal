@@ -17,7 +17,6 @@ parameters:
   ldap.host:        "ldap.example.com"
   ldap.domain:      "MI"
   ldap.baseDn:      "DC=mi,DC=corp"
-  email.overide:    "matthewcolf@quickenloans.com"
 
   email.hostname:     mail.example.com
   email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"
