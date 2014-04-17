@@ -17,11 +17,10 @@ $app = $container->get('slim');
 $app->view($container->get('twigView'));
 
 // Set required logging properties from the environment
-// Disabled until sonic connection issues are worked out.
-// if ($serverIp = IPv4Address::create($app->environment()['SERVER_ADDR'])) {;
-//     $container->get('mcpLogger.factory')->setDefaultProperty('machineIPAddress', $serverIp);
-// }
-// $container->get('mcpLogger.factory')->setDefaultProperty('machineName', $app->environment()['SERVER_NAME']);
+if ($serverIp = IPv4Address::create($app->environment()['SERVER_ADDR'])) {;
+    $container->get('mcpLogger.factory')->setDefaultProperty('machineIPAddress', $serverIp);
+}
+$container->get('mcpLogger.factory')->setDefaultProperty('machineName', $app->environment()['SERVER_NAME']);
 
 // 404 Error Handler
 $app->notFound(function () use ($app) {

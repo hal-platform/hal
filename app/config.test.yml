@@ -27,7 +27,7 @@ parameters:
   build.date.format:  ""
 
   mcpLogger.applicationId: '200947'
-  mcpLogger.host: 'testsonic'
+  mcpLogger.host: 'qlsonictest'
 
   # These help with development
 
