@@ -7,63 +7,55 @@
     <h2>Manage Deployment Relationships</h2>
 
     {% if deployments %}
-        <table>
-            <colgroup>
-                <col class="">
-                <col class="">
-                <col class="">
-                <col class="">
-                <col class="">
-                <col class="">
-                <col>
-                <col>
-            </colgroup>
-            <thead>
-            <tr>
-                <th>Repo</th>
-                <th>Server (Env)</th>
-                <th>Status</th>
-                <th>Branch</th>
-                <th>Commit</th>
-                <th>Last Push</th>
-                <!--<th>Target Path</th>-->
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for deployment in deployments %}
-                {% if deployment.LastPushed %}
-                    {% set lastPush = deployment.LastPushed|dateHal %}
-                {% else %}
-                    {% set lastPush = "never" %}
-                {% endif %}
-                {% if deployment.CurCommit == '0000000000000000000000000000000000000000' %}
-                    {% set curCommit = deployment.CurCommit[:7] %}
-                {% else %}
-                    {% set curCommit = '<a href="http://git/' ~ deployment.GithubUser ~ '/' ~ deployment.GithubRepo ~ '/commit/' ~ deployment.CurCommit ~ '">' ~ deployment.CurCommit[:7] ~ '</a>' %}
-                {% endif %}
-                <tr class="env-row-{{ deployment.Environment }}">
-                    <td>{{ deployment.Repository }}</td>
-                    <td>{{ deployment.HostName }} ({{ deployment.Environment }})</td>
-                    <td>
-                        {% if deployment.CurStatus == 'Error' %}
-                            <div class="circle circle-red"></div>
-                        {% elseif deployment.CurStatus == 'Deployed' %}
-                            <div class="circle circle-green"></div>
-                        {% else %}
-                            <div class="circle circle-orange"></div>
-                        {% endif %}
-                        {{ deployment.CurStatus }}
-                    </td>
-                    <td>{{ deployment.CurBranch }}</td>
-                    <td>{% autoescape false %}{{ curCommit }}{% endautoescape %}</td>
-                    <td>{{ lastPush }}</td>
-                    <!--<td>{{ deployment.TargetPath }}</td>-->
-                    <td><a href="/admin/deployments/{{ deployment.DeploymentId }}/remove">Remove</a></td>
+        <div class="overflow-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Repo</th>
+                    <th>Server (Env)</th>
+                    <th>Status</th>
+                    <th>Branch</th>
+                    <th>Commit</th>
+                    <th>Last Push</th>
+                    <!--<th>Target Path</th>-->
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for deployment in deployments %}
+                    {% if deployment.LastPushed %}
+                        {% set lastPush = deployment.LastPushed|dateHal %}
+                    {% else %}
+                        {% set lastPush = "never" %}
+                    {% endif %}
+                    {% if deployment.CurCommit == '0000000000000000000000000000000000000000' %}
+                        {% set curCommit = deployment.CurCommit[:7] %}
+                    {% else %}
+                        {% set curCommit = '<a href="http://git/' ~ deployment.GithubUser ~ '/' ~ deployment.GithubRepo ~ '/commit/' ~ deployment.CurCommit ~ '">' ~ deployment.CurCommit[:7] ~ '</a>' %}
+                    {% endif %}
+                    <tr class="env-row-{{ deployment.Environment }}">
+                        <td>{{ deployment.Repository }}</td>
+                        <td>{{ deployment.HostName }} ({{ deployment.Environment }})</td>
+                        <td>
+                            {% if deployment.CurStatus == 'Error' %}
+                                <div class="circle circle-red"></div>
+                            {% elseif deployment.CurStatus == 'Deployed' %}
+                                <div class="circle circle-green"></div>
+                            {% else %}
+                                <div class="circle circle-orange"></div>
+                            {% endif %}
+                            {{ deployment.CurStatus }}
+                        </td>
+                        <td>{{ deployment.CurBranch }}</td>
+                        <td>{% autoescape false %}{{ curCommit }}{% endautoescape %}</td>
+                        <td>{{ lastPush }}</td>
+                        <!--<td>{{ deployment.TargetPath }}</td>-->
+                        <td><a href="/admin/deployments/{{ deployment.DeploymentId }}/remove">Remove</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <p>No deployments have been setup yet.</p>
     {% endif %}

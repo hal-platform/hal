@@ -21,7 +21,6 @@
     {% endblock %}
     {% block style %}
         <link rel="stylesheet" href="/css/style.css">
-        <link rel="stylesheet" href="/css/matt.css">
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     {% endblock %}
     {% block headScript %}
@@ -37,25 +36,10 @@
     {% block header %}
         <header role="banner">
             <div class="branding-container">
-                <div class="logo">
-                    <a href="/" class="hal">
-                        <img src="/img/eye.png" style="width: 4.5em;" alt="haleye">
-                    </a>
-                    <!--
-                        // bad cpu hogging hardware accelorated styles!
-                        <div class="metal active">
-                            <div class="light">
-                                <div class="glowing-red">
-                                    <div class="glowing-yellow"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                    -->
+                <a class="logo" href="/">
+                    <img src="/img/logo.svg" alt="Hal9000">
                     <h1>HAL 9000</h1>
-
-                </div>
-
+                </a>
                 <h2 class="zeta sub-heading">Child of Codepushinator, QBERT and Github Enterprise</h2>
             </div>
             {% block navigation %}
@@ -72,7 +56,7 @@
                 </nav>
                 {% endif %}
             {% endblock %}
-            {% block adminmenu %}{% endblock %}
+            {% block subnav %}{% endblock %}
         </header>
     {% endblock %}
     <!-- END HEADER -->
@@ -80,16 +64,13 @@
     <main role="main">
         {% block flash %}
             {% if session.hasFlash() %}
-                <div class="flash">
+                <div class="alert-bar">
                     {% for message in session.getFlash() %}
-                        <div class="flash-message">{{ message }}</div>
+                        <p>{{ message }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
         {% endblock %}
-        <!-- BEGIN SUBNAV -->
-        {% block subnav %}{% endblock %}
-        <!-- END SUBNAV -->
         <!-- BEGIN CONTENT -->
         {% block content %}{% endblock %}
         <!-- END CONTENT -->
@@ -97,7 +78,7 @@
 
     <!-- BEGIN FOOTER -->
     {% block footer %}
-        <footer role="contentinfo" id="footer">
+        <footer role="contentinfo">
             <p>&copy; {{ "now"|date('Y', 'America/New_York') }} Quicken Loans
                 {% if (version) %}
                     , version {{ version }} updated {{ changed|date('Y-m-j g:i A') }}

@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block adminmenu %}
+{% block subnav %}
 <nav role="navigation">
-    <ul class="nav--admin mbn">
+    <ul class="nav--admin">
         <li><a href="/admin/repositories" title="Manage Repositories">Repositories</a></li>
         <li><a href="/admin/arrangements" title="Manage Repository Groups">Repository Groups</a></li>
         <li><a href="/admin/envs" title="Manage Environments">Environments</a></li>
@@ -11,20 +11,4 @@
         <li><a href="/admin/users" title="Manage Users">Users</a></li>
     </ul>
 </nav>
-{% endblock %}
-
-{% block subnav %}
-    <!--
-    <a href="" class="btn toggle-nav"><i class="icon-gear"></i>Admin Management <i class="icon-chevron-down"></i></a>
-    <nav class="toggled-nav">
-        <ul class="nav--secondary">
-            <li><a href="/admin/arrangements" title="add/edit repository groups">Manage Repository Groups</a></li>
-            <li><a href="/admin/repositories" title="add/edit repositories">Manage Repositories</a></li>
-            <li><a href="/admin/envs" title="environment admin">Manage Environments</a></li>
-            <li><a href="/admin/servers" title="add/edit servers">Manage Servers</a></li>
-            <li><a href="/admin/deployments" title="add/edit deployments">Manage Deployments</a></li>
-            <li><a href="/admin/users" title="manage users">Manage Users</a></li>
-        </ul>
-    </nav>
-    -->
 {% endblock %}

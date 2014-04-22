@@ -1,0 +1,32 @@
+[class*="alert-bar"] {
+    background-color: $bright-blue;
+    padding: 0 msem(-9);
+    text-align: center;
+    @include rhythm(0,.5,.5,1);
+    @extend %clearfix;
+
+    b {
+        color: $text-color;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.alert-bar--error {
+    background-color: $error-color;
+    color: $white;
+}
+
+.alert-bar--highlight {
+    background-color: $highlight-color;
+}
+
+.alert-bar--warning {
+    background-color: $warning-color;
+}
+
+.alert-bar--success {
+    background-color: $success-color;
+}

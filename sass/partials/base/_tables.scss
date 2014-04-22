@@ -1,8 +1,28 @@
+table {
+    min-width: 32em;
+}
+
 thead {
-    border-bottom: 5px solid $secondary-color;
+    border-bottom: 5px solid $dark-blue;
 }
 
 tbody tr {
-    border-bottom: 1px solid $primary-color;
+    border-bottom: 1px solid $blue;
     @include adjust-font-size-to(ms(-1));
+}
+
+.overflow-container {
+    overflow-y: scroll;
+}
+
+.env-row-test {
+    border-left: 5px solid #c200cd;
+}
+
+.env-row-beta {
+    border-left: 5px solid #008ecd;
+}
+
+.env-row-prod {
+    border-left: 5px solid #cd9c00;
 }

@@ -1,28 +1,30 @@
-.nav--main {
+.nav--main, .nav--admin {
     max-width: 60em;
     margin: 0 auto;
-    background-color: $secondary-color;
+    background-color: $text-color;
     height: 100%;
 }
 
-.nav--main li a {
-    text-align: center;
-    border-bottom: 1px solid $white;
-    @include padding-leader(.5);
-    @include padding-trailer(.5);
+.nav--main li a, .nav--admin li a {
+    text-align: right;
+    border-bottom: 1px solid $text-color;
+    @include padding-leader(.25);
+    @include padding-trailer(.25);
+    padding-right: msem(1);
     color: $white;
-    background-color: $secondary-color;
+    background-color: $text-color;
 
     &:hover {
         text-decoration: none;
-        background-color: $white;
-        color: $primary-color;
-        border-bottom: 1px solid $secondary-color;
+        background-color: $yellow;
+        color: $text-color;
+        border-bottom: 1px solid $yellow;
+        padding-right: msem(5);
     }
 }
 
-.nav--main li:first-child a {
-    @include padding-leader(.5);
+.nav--main li:first-child a, .nav--admin li:first-child a {
+    @include padding-leader(.25);
     border-top: 1px solid $white;
 }
 
@@ -37,27 +39,37 @@
         }
     }
 
-    .nav--main li a {
-        border-bottom: .4em solid $secondary-color;
+    .nav--main li a, .nav--admin li a {
+        text-align: center;
         @include padding-trailer(.25);
-        padding-left: msem(1);
-        padding-right: msem(1);
+        padding-left: msem(-1);
+        padding-right: msem(-1);
 
         &:hover {
-            border-bottom: .4em solid $white;
             @include padding-trailer(.25);
+            padding-right: msem(-1);
         }
     }
 
-    .nav--main li:first-child a {
+    .nav--main li:first-child a, .nav--admin li:first-child a {
         border-top: 0;
     }
 }
 
-.nav--secondary {
-    li {
-        &, a {
-            display: block;
-        }
-    }
+.nav--admin {
+    background-color: $dark-blue;
+}
+
+.nav--admin li a {
+    background-color: $dark-blue;
+    border-bottom: 1px solid $dark-blue;
+}
+
+.disabled {
+    color: $light-grey;
+}
+
+.pages {
+    padding-right: msem(-1);
+    padding-left: msem(-1);
 }

@@ -5,26 +5,28 @@
 {% block content %}
     <h2>Users</h2>
     <p><small>Please note the information below is simply copied from our Active Directory server every time that user logs into HAL 9000. If you see an error in this information the only solution is to get the corresponding Active Directory field updated.</small></p>
-    <table>
-        <thead>
-            <tr>
-                <th>Page</th>
-                <th>Common ID</th>
-                <th>Display Name</th>
-                <th>Username</th>
-                <th>Email Address</th>
-            </tr>
-        </thead>
-        <tbody>
-    {% for user in users %}
-            <tr>
-                <td><a href="/u/{{ user.CommonId }}">/u/{{ user.CommonId }}</a></td>
-                <td>{{ user.CommonId }}</td>
-                <td>{{ user.DisplayName }}</td>
-                <td>{{ user.UserName }}</td>
-                <td>{{ user.Email }}</td>
-            </tr>
-    {% endfor %}
-        </tbody>
-    </table>
+    <div class="overflow-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Page</th>
+                    <th>Common ID</th>
+                    <th>Display Name</th>
+                    <th>Username</th>
+                    <th>Email Address</th>
+                </tr>
+            </thead>
+            <tbody>
+        {% for user in users %}
+                <tr>
+                    <td><a href="/u/{{ user.CommonId }}">/u/{{ user.CommonId }}</a></td>
+                    <td>{{ user.CommonId }}</td>
+                    <td>{{ user.DisplayName }}</td>
+                    <td>{{ user.UserName }}</td>
+                    <td>{{ user.Email }}</td>
+                </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

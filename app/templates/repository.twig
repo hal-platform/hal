@@ -8,64 +8,64 @@
     <h2>{{ repo.ShortName }} Deployments</h2>
     <p>The {{ repo.ShortName }} application can be deployed to any of the following servers.</p>
 
-    <div class="pull-right">
-        <a class="btn--small" id="all-reset">Reset</a>
-        <a class="btn--small" id="all-test">All Test</a>
-        <a class="btn--small" id="all-beta">All Beta</a>
-        <a class="btn--small" id="all-prod">All Prod</a>
+    <div class="toggles">
+        <a class="btn--small btn--toggles" id="all-reset">Reset</a>
+        <a class="btn--small btn--toggles" id="all-test">All Test</a>
+        <a class="btn--small btn--toggles" id="all-beta">All Beta</a>
+        <a class="btn--small btn--toggles" id="all-prod">All Prod</a>
     </div>
 
     <form class="deployment-form" action="/r/{{ repo.ShortName }}/sync" method="get">
-        <table>
-            <thead>
-                <tr>
-                    <th>Server</th>
-                    <th>Environment</th>
-                    <th>Status</th>
-                    <th>Branch</th>
-                    <th>Current Commit</th>
-                    <th>Last Synced</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% set allowSubmit = false %}
-            {% for deployment in deployments %}
-                <tr class="env-row-{{ deployment.Environment }}">
-                    <td>{{ deployment.HostName }}</td>
-                    <td>{{ deployment.Environment }}</td>
-                    <td>
-                        {% if deployment.CurStatus == 'Error' %}
-                            <div class="circle circle-red"></div>
-                        {% elseif deployment.CurStatus == 'Deployed' %}
-                            <div class="circle circle-green"></div>
-                        {% else %}
-                            <div class="circle circle-orange"></div>
-                        {% endif %}
-                        {{ deployment.CurStatus }}
-                    </td>
-                    <td>{{ deployment.CurBranch }}</td>
-                    <td>{{ deployment.CurCommit[:7] }}</td>
-                    <td>
-                        {% if deployment.LastPushed == '0000-00-00 00:00:00' %}
-                            Never
-                        {% else %}
-                            {{ deployment.LastPushed|dateHal }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
-                            {% set inputId = 'sel-' ~ deployment.Environment ~ '-' ~ deployment.DeploymentId %}
-                            <label for="{{ inputId }}">Push Now <input type="checkbox" name="deps[]" id="{{ inputId }}" value="{{deployment.DeploymentId}}">
-                            {% set allowSubmit = true %}
-                        {% else %}
-                            No Access
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <div class="overflow-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Server</th>
+                        <th>Environment</th>
+                        <th>Status</th>
+                        <th>Branch</th>
+                        <th>Current Commit</th>
+                        <th>Last Synced</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% set allowSubmit = false %}
+                {% for deployment in deployments %}
+                    <tr class="env-row-{{ deployment.Environment }}">
+                        <td>{{ deployment.HostName }}</td>
+                        <td>{{ deployment.Environment }}</td>
+                        <td>
+                            {% if deployment.CurStatus == 'Error' %}
+                                <span class="circle-red">{{ deployment.CurStatus }}</span>
+                            {% elseif deployment.CurStatus == 'Deployed' %}
+                                <span class="circle-green">{{ deployment.CurStatus }}</span>
+                            {% else %}
+                                <span class="circle-orange">{{ deployment.CurStatus }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ deployment.CurBranch }}</td>
+                        <td>{{ deployment.CurCommit[:7] }}</td>
+                        <td>
+                            {% if deployment.LastPushed == '0000-00-00 00:00:00' %}
+                                Never
+                            {% else %}
+                                {{ deployment.LastPushed|dateHal }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
+                                Push Now <input type="checkbox" name="deps[]" id="sel-{{ deployment.Environment }}-{{ deployment.DeploymentId }}" value="{{deployment.DeploymentId}}">
+                                {% set allowSubmit = true %}
+                            {% else %}
+                                No Access
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% if allowSubmit %}
             <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
         {% else %}
@@ -75,60 +75,67 @@
 
     <h3>Deployment History</h3>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Start</th>
-                <th>End</th>
-                <th>Status</th>
-                <th>Branch</th>
-                <th>Environment</th>
-                <th>Server</th>
-                <th>Person</th>
-            </tr>
-        </thead>
-        {% for log in logs %}
-        <tbody>
-            <tr class="env-row-{{ log.Environment }}">
-                <td> {{ log.PushStart|dateHal }} </td>
-                <td> {{ log.PushEnd|dateHal }} </td>
-                <td>
-                    {% if log.PushStatus == 'Error' %}
-                        <div class="circle circle-red"></div>
-                    {% elseif log.PushStatus == 'Deployed' %}
-                        <div class="circle circle-green"></div>
-                    {% else %}
-                        <div class="circle circle-orange"></div>
-                    {% endif %}
-                    {{ log.PushStatus }}
-                </td>
-                <td> {{ log.PushBranch }} </td>
-                <td> {{ log.Environment }} </td>
-                <td> {{ log.TargetServer }} </td>
-                <td> {{ log.PushUserName }} </td>
-            </tr>
-        </tbody>
-        {% endfor %}
-    </table>
+    <div class="overflow-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Status</th>
+                    <th>Branch</th>
+                    <th>Environment</th>
+                    <th>Server</th>
+                    <th>Person</th>
+                </tr>
+            </thead>
+            {% for log in logs %}
+            <tbody>
+                <tr class="env-row-{{ log.Environment }}">
+                    <td> {{ log.PushStart|dateHal }} </td>
+                    <td> {{ log.PushEnd|dateHal }} </td>
+                    <td>
+                        {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
+                            {% set inputId = 'sel-' ~ deployment.Environment ~ '-' ~ deployment.DeploymentId %}
+                            <label for="{{ inputId }}">Push Now <input type="checkbox" name="deps[]" id="{{ inputId }}" value="{{deployment.DeploymentId}}">
+                            {% set allowSubmit = true %}
+                        {% if log.PushStatus == 'Error' %}
+                            <span class="circle-red">{{ log.PushStatus }}</span>
+                        {% elseif log.PushStatus == 'Deployed' %}
+                            <span class="circle-green">{{ log.PushStatus }}</span>
+                        {% else %}
+                            <span class="circle-orange">{{ log.PushStatus }}</span>
+                        {% endif %}
+                    </td>
+                    <td> {{ log.PushBranch }} </td>
+                    <td> {{ log.Environment }} </td>
+                    <td> {{ log.TargetServer }} </td>
+                    <td> {{ log.PushUserName }} </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
 
-    <div class="pages">
-        <p>
+    <ol class="nav--pagination">
+        <li class="nav--pagination__prev">
             {% if page > 1 %}
                 <a href="/r/{{ repo.ShortName }}/page/{{ page-1 }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
             {% else %}
                 <span class="disabled"><i class="fa fa-arrow-circle-left"></i> newer</span>
             {% endif %}
-
+        </li>
+        <li>
             {% if totalPages > 1 %}
-                <span class="spacing">page {{ page }} of {{ totalPages }}</span>
+                <span class="pages">page {{ page }} of {{ totalPages }}</span>
             {% endif %}
-
+        </li>
+        <li class="nav--pagination__next">
             {% if page < totalPages %}
                 <a href="/r/{{ repo.ShortName }}/page/{{ page+1 }}">older <i class="fa fa-arrow-circle-right"></i></a>
             {% else %}
                 <span class="disabled">older <i class="fa fa-arrow-circle-right"></i></span>
             {% endif %}
-        </p>
-    </div>
+        </li>
+    </ol>
 
 {% endblock %}

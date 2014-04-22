@@ -1,17 +1,35 @@
 [class*="btn"] {
-    background-color: $primary-color;
-    border-radius: 4px;
+    position: relative;
     color: $white;
-    @include transition(background-color .5s ease-in-out 0);
+    background: $blue;
+    border: 1px solid shade($blue,20%);
+    border-radius: 0px;
 
-    &:hover {
-        background-color: tint($primary-color, 15%);
-        color: $white;
-    }
+    -webkit-box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($blue,20%), 0 4px 2px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($blue,20%), 0 4px 2px rgba(0, 0, 0, .5);
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($blue,20%), 0 4px 2px rgba(0, 0, 0, .5);
+}
+
+[class*="btn"]:active {
+    top: 5px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+[class*="btn"]:hover {
+    color: $white;
+    background: tint($blue, 10%);
 }
 
 .btn--action {
     background-color: $warning-color;
+    border: 1px solid shade($warning-color, 20%);
+    text-align: center;
+
+    -webkit-box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($warning-color,20%), 0 4px 2px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($warning-color,20%), 0 4px 2px rgba(0, 0, 0, .5);
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($warning-color,20%), 0 4px 2px rgba(0, 0, 0, .5);
 
     &:hover {
         background-color: tint($warning-color, 15%);
@@ -23,5 +41,14 @@
 }
 
 .btn--alt {
+    float: right;
+}
+
+.btn--toggles {
+    padding-right: msem(-1);
+    padding-left: msem(-1);
+}
+
+.toggles {
     float: right;
 }

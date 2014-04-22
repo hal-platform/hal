@@ -1,25 +1,39 @@
 html {
-    background-color: $quaternary-color;
+    background-color: $white;
 }
 
 [role="banner"] {
-    background-color: $tertiary-color;
+    background:
+radial-gradient(black 15%, transparent 16%) 0 0,
+radial-gradient(black 15%, transparent 16%) 8px 8px,
+radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+background-color:#282828;
+background-size:16px 16px;
     color: $white;
     @include padding-leader(.5);
 }
 
 .logo {
-    display: table;
+    color: $white;
+    display: block;
+
+    &:hover {
+        color: $white;
+        text-decoration: none;
+    }
 }
 
-.hal {
-    display: table-cell;
+.logo img {
+    width: 100px;
+    margin-right: msem(1);
+    display: inline-block;
 }
 
 .logo h1 {
-    display: table-cell;
+    display: inline-block;
+    margin-bottom: 0;
     vertical-align: middle;
-    padding-left: msem(-3);
 }
 
 .sub-heading {
@@ -53,11 +67,12 @@ html {
 }
 
 [role="contentinfo"] {
-    max-width: 60em;
+    @include adjust-font-size-to(ms(-1));
+    max-width: 77.2em;
     margin: 0 auto;
     padding: 0 ms(-2);
     color: $white;
-    background-color: $tertiary-color;
+    background-color: $text-color;
     @include rhythm(0,1,.05,0);
 
     @include breakpoint(32em) {
@@ -73,7 +88,7 @@ html {
 }
 
 .deployment-form {
-    @extend %clearfix;
+    clear: right;
 }
 
 .mbn {
@@ -83,6 +98,45 @@ html {
 [href^='http://git/']:after {
     font-family: FontAwesome;
     content: ' \f09b';
-    color: $tertiary-color;
+    color: $text-color;
     text-decoration: none;
+}
+
+%circle {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.3em;
+    border-radius: 50%;
+}
+
+.circle-red::before {
+    @extend %circle;
+    content: '';
+    background: red;
+}
+
+.circle-orange::before {
+    @extend %circle;
+    content: '';
+    background: orange;
+}
+
+.circle-green::before {
+    @extend %circle;
+    content: '';
+    background: green;
+}
+
+.error-page {
+    text-align: center;
+}
+
+.js-form-toggle {
+    display: block;
+}
+
+.js-form-error {
+    color: red;
+    margin-bottom: 0;
 }

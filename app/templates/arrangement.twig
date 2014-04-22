@@ -6,23 +6,25 @@
     <p><a href="/a" class="btn--small btn--back">Back to Repository Groups</a></p>
     <h2>{{ arrangement.Name }} Repositories</h2>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Github Location</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for repository in repositories %}
+    <div class="overflow-container">
+        <table>
+            <thead>
             <tr>
-                <td>{{ repository.ShortName }}</a></td>
-                <td><a href="http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}">http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}</a></td>
-                <td><a href="/r/{{ repository.ShortName }}">View Deployments</a></td>
+                <th>Name</th>
+                <th>Github Location</th>
+                <th>Actions</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for repository in repositories %}
+                <tr>
+                    <td>{{ repository.ShortName }}</a></td>
+                    <td><a href="http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}">http://git/{{ repository.GithubUser }}/{{ repository.GithubRepo }}</a></td>
+                    <td><a href="/r/{{ repository.ShortName }}">View Deployments</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}

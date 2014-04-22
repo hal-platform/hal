@@ -37,7 +37,6 @@ define(['jquery'], function($) {
             },
             replaceField: function(targetElem) {
                 var select = $('<select>');
-                select.addClass('select-input');
                 select.attr('id', targetElem.attr('id'));
                 select.attr('name', targetElem.attr('name'));
 
@@ -130,7 +129,6 @@ define(['jquery'], function($) {
                 var selectedRepo = this.target.val();
                 if (this.target.prop('tagName') === 'INPUT') {
                     var select = $('<select>');
-                    select.addClass('select-input');
                     select.attr('id', this.target.attr('id'));
                     select.attr('name', this.target.attr('name'));
 

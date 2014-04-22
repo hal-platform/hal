@@ -8,7 +8,9 @@
     {% if deps %}
         <h2>Choose a commitish to push </h2>
         {% if toolong %}
-            <p class="alert-bar--warning holy-shit-call-this-out">WARNING!!! You have <em>way</em> too many branches. There's no reason to have over {{ toolong }} branches and you have {{ branches|length }}! A normal amount of branches is something like one to ten.</p>
+            <div class="alert-bar--warning holy-shit-call-this-out">
+                <p>WARNING!!! You have <em>way</em> too many branches. There's no reason to have over {{ toolong }} branches and you have {{ branches|length }}! A normal amount of branches is something like one to ten.</p>
+            </div>
         {% endif %}
         <form method="post" action="">
             <ul class="form-fields">

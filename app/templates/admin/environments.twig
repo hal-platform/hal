@@ -7,24 +7,26 @@
 
     {% if envs %}
         <form action="?reorder=1" method="post">
-        <table>
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Display Order</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for env in envs %}
-                <tr class="env-row-{{ env.ShortName }}">
-                    <td>{{ env.ShortName }}</td>
-                    <td><input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input"></td>
-                    <td></td>
+        <div class="overflow-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Display Order</th>
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for env in envs %}
+                    <tr class="env-row-{{ env.ShortName }}">
+                        <td>{{ env.ShortName }}</td>
+                        <td><input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input"></td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <input class="btn" type="submit" value="Re-Order Environments">
         </form>
     {% else %}
