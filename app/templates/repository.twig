@@ -55,7 +55,7 @@
                         </td>
                         <td>
                             {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
-                                Push Now <input type="checkbox" name="deps[]" id="sel-{{ deployment.Environment }}-{{ deployment.DeploymentId }}" value="{{deployment.DeploymentId}}">
+                                <label>Push Now <input type="checkbox" name="deps[]" id="sel-{{ deployment.Environment }}-{{ deployment.DeploymentId }}" value="{{deployment.DeploymentId}}"></label>
                                 {% set allowSubmit = true %}
                             {% else %}
                                 No Access
@@ -89,30 +89,27 @@
                 </tr>
             </thead>
             {% for log in logs %}
-            <tbody>
-                <tr class="env-row-{{ log.Environment }}">
-                    <td> {{ log.PushStart|dateHal }} </td>
-                    <td> {{ log.PushEnd|dateHal }} </td>
-                    <td>
-                        {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
-                            {% set inputId = 'sel-' ~ deployment.Environment ~ '-' ~ deployment.DeploymentId %}
-                            <label for="{{ inputId }}">Push Now <input type="checkbox" name="deps[]" id="{{ inputId }}" value="{{deployment.DeploymentId}}">
-                            {% set allowSubmit = true %}
-                        {% if log.PushStatus == 'Error' %}
-                            <span class="circle-red">{{ log.PushStatus }}</span>
-                        {% elseif log.PushStatus == 'Deployed' %}
-                            <span class="circle-green">{{ log.PushStatus }}</span>
-                        {% else %}
-                            <span class="circle-orange">{{ log.PushStatus }}</span>
-                        {% endif %}
-                    </td>
-                    <td> {{ log.PushBranch }} </td>
-                    <td> {{ log.Environment }} </td>
-                    <td> {{ log.TargetServer }} </td>
-                    <td> {{ log.PushUserName }} </td>
-                </tr>
-            </tbody>
-            {% endfor %}
+        <tbody>
+            <tr class="env-row-{{ log.Environment }}">
+                <td> {{ log.PushStart|dateHal }} </td>
+                <td> {{ log.PushEnd|dateHal }} </td>
+                <td>
+                    {% if log.PushStatus == 'Error' %}
+                        <span class="circle-red"></span>
+                    {% elseif log.PushStatus == 'Deployed' %}
+                        <span class="circle-green"></span>
+                    {% else %}
+                        <span class="circle-orange"></span>
+                    {% endif %}
+                    {{ log.PushStatus }}
+                </td>
+                <td> {{ log.PushBranch }} </td>
+                <td> {{ log.Environment }} </td>
+                <td> {{ log.TargetServer }} </td>
+                <td> {{ log.PushUserName }} </td>
+            </tr>
+        </tbody>
+        {% endfor %}
         </table>
     </div>
 

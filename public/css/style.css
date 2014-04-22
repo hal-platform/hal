@@ -1857,45 +1857,29 @@ html { background-color: white; }
 /* line 131, ../../sass/partials/_global.scss */
 .error-page { text-align: center; }
 
-/* line 135, ../../sass/partials/_global.scss */
+/* line 1, ../../sass/partials/_js.scss */
 .js-form-toggle { display: block; }
 
-/* line 139, ../../sass/partials/_global.scss */
+/* line 5, ../../sass/partials/_js.scss */
 .js-form-error { color: red; margin-bottom: 0; }
 
-/* line 1, ../../sass/partials/_hal.scss */
-.metal { display: inline-block; width: 70px; height: 70px; border-radius: 50px; -moz-border-radius: 50px; -webkit-border-radius: 50px; box-sizing: border-box; background: #417d9f; background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#43637c), to(#2c3c4b)); background-image: -webkit-linear-gradient(#43637c, #2c3c4b); background-image: -moz-linear-gradient(#43637c, #2c3c4b); background-image: -o-linear-gradient(#43637c, #2c3c4b); background-image: linear-gradient(#43637c, #2c3c4b); border-top: 2px solid #b8ccd7; padding: 5px; box-shadow: 0 2px 0 #21262c, 0 4px 0 #232429, 0 6px 0 #040003, 0 0 20px #000, 0 5px 20px #000, 0 -2px 0 #6d93a6; -moz-box-shadow: 0 2px 0 #21262c, 0 4px 0 #232429, 0 6px 0 #040003, 0 0 20px #000, 0 5px 20px #000, 0 -2px 0 #6d93a6; -webkit-box-shadow: 0 2px 0 #21262c, 0 4px 0 #232429, 0 6px 0 #040003, 0 0 20px #000, 0 5px 20px #000, 0 -2px 0 #6d93a6; }
+/* line 10, ../../sass/partials/_js.scss */
+.pr-selection { background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); padding: .5em; }
 
-/* line 21, ../../sass/partials/_hal.scss */
-.light { position: relative; border-radius: 50px; -moz-border-radius: 50px; -webkit-border-radius: 50px; width: 100%; height: 100%; box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; -moz-box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; -webkit-box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; background: #ffe913; background: #920000; /* Old browsers */ background: -moz-radial-gradient(center, ellipse cover, #920000 39%, #2d0408 67%, black 71%); /* FF3.6+ */ background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(39%, #920000), color-stop(67%, #2d0408), color-stop(71%, black)); /* Chrome,Safari4+ */ background: -webkit-radial-gradient(center, ellipse cover, #920000 39%, #2d0408 67%, black 71%); /* Chrome10+,Safari5.1+ */ background: -o-radial-gradient(center, ellipse cover, #920000 39%, #2d0408 67%, black 71%); /* Opera 12+ */ background: -ms-radial-gradient(center, ellipse cover, #920000 39%, #2d0408 67%, black 71%); /* IE10+ */ background: radial-gradient(ellipse at center, #920000 39%, #2d0408 67%, #000000 71%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#920000', endColorstr='#000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */ }
+/* line 18, ../../sass/partials/_js.scss */
+.pr-selection code { font-size: 75%; }
 
-/* line 43, ../../sass/partials/_hal.scss */
-.glowing-red { position: absolute; background: #F11A08; width: 45%; height: 45%; margin: 28%; border-radius: 50px; -moz-border-radius: 50px; -webkit-border-radius: 50px; box-shadow: 0 0 15px #F11A08; -moz-box-shadow: 0 0 15px #F11A08; -webkit-box-shadow: 0 0 15px #F11A08; }
+/* line 22, ../../sass/partials/_js.scss */
+.pr-selection p { margin-bottom: auto; }
 
-/* line 57, ../../sass/partials/_hal.scss */
-.glowing-yellow { background: #FFE913; width: 20%; height: 20%; margin: 40%; border-radius: 50px; -moz-border-radius: 50px; -webkit-border-radius: 50px; box-shadow: 0 0 5px #FFE913; -moz-box-shadow: 0 0 5px #FFE913; -webkit-box-shadow: 0 0 5px #FFE913; }
+/* line 26, ../../sass/partials/_js.scss */
+.pr-selection span { font-style: bold; text-transform: uppercase; }
 
-/* Defining Button Active State */
-/* line 71, ../../sass/partials/_hal.scss */
-.metal.active .light { /* Adding animation to Hal9000 */ animation: blink-red-shadow 2s infinite ease-in-out; -moz-animation: blink-red-shadow  2s infinite ease-in-out; -o-animation: blink-red-shadow  2s infinite ease-in-out; -webkit-animation: blink-red-shadow  2s infinite ease-in-out; }
+/* line 31, ../../sass/partials/_js.scss */
+.pr-selection span.closed { color: #c00000; }
 
-/* line 78, ../../sass/partials/_hal.scss */
-.metal.active .light .glowing-red { /* Adding animation to Hal9000 */ animation: blink-red 2s infinite ease-in-out; -moz-animation: blink-red  2s infinite ease-in-out; -o-animation: blink-red  2s infinite ease-in-out; -webkit-animation: blink-red  2s infinite ease-in-out; }
-
-/* Defining Hal9000 blinking animation  */
-@-webkit-keyframes blink-red { /* line 88, ../../sass/partials/_hal.scss */
-  from { box-shadow: 0 0 5px #F11A08; -moz-box-shadow: 0 0 5px #F11A08; -webkit-box-shadow: 0 0 5px #F11A08; width: 45%; height: 45%; }
-  /* line 95, ../../sass/partials/_hal.scss */
-  50% { box-shadow: 0 0 25px #ff6b5f; -moz-box-shadow: 0 0 25px #ff6b5f; -webkit-box-shadow: 0 0 25px #ff6b5f; width: 70%; height: 70%; margin: 17%; }
-  /* line 103, ../../sass/partials/_hal.scss */
-  to { box-shadow: 0 0 5px #F11A08; -moz-box-shadow: 0 0 5px #F11A08; -webkit-box-shadow: 0 0 5px #F11A08; width: 45%; height: 45%; } }
-
-@-webkit-keyframes blink-red-shadow { /* line 113, ../../sass/partials/_hal.scss */
-  from { box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; -moz-box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; -webkit-box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; }
-  /* line 118, ../../sass/partials/_hal.scss */
-  50% { box-shadow: inset 0 3px 0px #52352E, inset 0 5px 0 #312A25; -moz-box-shadow: inset 0 3px 0px #52352E, inset 0 5px 0 #312A25; -webkit-box-shadow: inset 0 3px 0px #52352E, inset 0 5px 0 #312A25; }
-  /* line 123, ../../sass/partials/_hal.scss */
-  to { box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; -moz-box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; -webkit-box-shadow: inset 0 3px 0px #2e4452, inset 0 5px 0 #392c33; } }
+/* line 35, ../../sass/partials/_js.scss */
+.pr-selection span.open { color: #00c92c; }
 
 /* line 1, ../../sass/partials/base/_forms.scss */
 .text-input, textarea { width: 100%; font-size: 1.11111em; line-height: 1.35em; padding: 0.675em; background: #fff; box-shadow: inset 0 2px 0 #5d4c5d, inset 2px 0px 0 #5d4c5d, inset -2px 0px 0 #5d4c5d, inset 0px -2px 0 #5d4c5d; }
