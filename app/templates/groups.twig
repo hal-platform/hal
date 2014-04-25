@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Groups" %}
+
+{% block content %}
+    <h2>Groups</h2>
+
+    <p>
+        Repositories are organized into repository groups, commonly a team name or business unit. Select a group below
+        to view the member repositories and to push code if you have permission.
+    </p>
+
+    {% if groups %}
+        <ul>
+        {% for group in groups %}
+            <li><a href="/groups/{{ group.key }}">{{ group.name }} </a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no repository groups.</p>
+    {% endif %}
+
+{% endblock %}

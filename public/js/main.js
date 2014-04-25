@@ -6,6 +6,7 @@ require.config({
     },
     paths: {
         jquery: "vendor/jquery-2.0.3.min",
+        jquerySortable: "vendor/jquery.sortable.min",
         underscore: "vendor/underscore.min",
         crossroads: "vendor/crossroads.min",
         signals: "vendor/signals.min"

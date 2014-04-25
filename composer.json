@@ -1,19 +1,41 @@
 {
-    "name": "ql/hal",
-    "description": "Web-based tool for managing code pushes to Linux/UNIX machines.",
-    "license": "proprietary",
+    "name":             "ql/hal",
+    "description":      "Web-based tool for managing code pushes to Linux/UNIX machines.",
+    "license":          "proprietary",
+    "authors": [
+        {
+            "name":     "Matt Colf",
+            "email":    "matthewcolf@quickenloans.com",
+            "role":     "Developer"
+        },
+        {
+            "name":     "Steve Kluck",
+            "email":    "stevekluck@quickenloans.com",
+            "role":     "Developer"
+        },
+        {
+            "name":     "Bridget Schiefer",
+            "email":    "bridgetschiefer@quickenloans.com",
+            "role":     "Developer"
+        },
+        {
+            "name":     "Matt Nagi",
+            "email":    "mattnagi@quickenloans.com",
+            "role":     "Developer"
+        }
+    ],
     "require": {
-        "knplabs/github-api":               "*",
+        "knplabs/github-api":               "~1.2",
         "monolog/monolog":                  "~1.7@dev",
-        "php-64bit":                        ">=5.4.0",
-        "ql/mcp-corp-account":              "*@RC",
-        "ql/mcp-logger":                    "1.1.1",
-        "slim/slim":                        "2.*",
-        "swiftmailer/swiftmailer":          "*",
-        "symfony/dependency-injection":     "*",
-        "symfony/config":                   "*",
-        "symfony/yaml":                     "*",
-        "twig/twig":                        "1.*",
+        "php-64bit":                        "~5.4",
+        "ql/mcp-corp-account":              "~0.2@rc",
+        "ql/mcp-logger":                    "~1.1",
+        "slim/slim":                        "~2.4",
+        "swiftmailer/swiftmailer":          "~5.1",
+        "symfony/dependency-injection":     "~2.4",
+        "symfony/config":                   "~2.4",
+        "symfony/yaml":                     "~2.4",
+        "twig/twig":                        "~1.15",
         "ql/hal-core":                      "~2.0@dev"
     },
     "require-dev": {
@@ -24,9 +46,11 @@
     },
     "autoload": {
         "psr-0": {
-            "QL\\Hal": "lib"
+            "QL\\Hal":                      ["src", "tests"]
         }
     },
+    "minimum-stability":                    "dev",
+    "prefer-stable":                        true,
     "repositories": [
         {
             "type": "composer",

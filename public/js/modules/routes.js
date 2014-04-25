@@ -19,6 +19,9 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/r/{repository}/:throwaway:/:page:', function() {
                 return _this.deployRepository();
             });
+            router.addRoute('/admin/envs', function() {
+                return _this.orderEnvironments();
+            });
         },
 
         // route module endpoints
@@ -35,6 +38,11 @@ define(['crossroads'], function(crossroads) {
         },
         syncRepository: function() {
             return require(['modules/sync-repository'], function(module) {
+                module.init();
+            });
+        },
+        orderEnvironments: function() {
+            return require(['modules/order-environments'], function(module) {
                 module.init();
             });
         }

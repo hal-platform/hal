@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = group.name %}
+
+{% block content %}
+    <p><a href="/groups" class="btn--small btn--back">Back to Groups</a></p>
+    <h2>{{ group.name }} Repositories</h2>
+
+    <div class="overflow-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Github Location</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for repo in repos %}
+                <tr>
+                    <td>{{ repo.key }}</a></td>
+                    <td><a href="http://git/{{ repo.githubUser }}/{{ repo.githubRepo }}">http://git/{{ repo.githubUser }}/{{ repo.githubRepo }}</a></td>
+                    <td><a href="/r/{{ repo.key }}">View Deployments</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

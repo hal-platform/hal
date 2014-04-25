@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+bundle install && \
+npm install && \
+node_modules/.bin/grunt compass:dev

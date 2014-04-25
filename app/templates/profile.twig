@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = user.DisplayName %}
+{% set page_title = ldapUser.firstName~' '~ldapUser.lastName %}
 
 {% block content %}
     <h2>{{ ldapUser.firstName }} {{ ldapUser.lastName }}</h2>
     <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
 
-    <p><img src="{{ user.PictureUrl }}" width="150"></p>
+    <p><img src="{{ user.pictureUrl.asString() }}" width="150"></p>
 
     <h3>Contact</h3>
     <ul>
@@ -18,8 +18,8 @@
 
     <h3>Stats</h3>
     <ul>
-        <li><b>Total Pushes:</b> {{ total_pushes }}</li>
-        <li><b>Github Page:</b> <a href="http://git/{{ user.UserName }}">http://git/{{ user.UserName }}</a></li>
+        <li><b>Total Pushes:</b> {{ pushes }}</li>
+        <li><b>Github Page:</b> <a href="http://git/{{ user.handle }}">http://git/{{ user.handle }}</a></li>
     </ul>
 
     {% if permissions %}

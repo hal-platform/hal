@@ -7,8 +7,9 @@
 
     {% if envs %}
         <form action="?reorder=1" method="post">
+        <p>Drag the rows to change the order in which they are displayed.</p>
         <div class="overflow-container">
-            <table>
+            <table id="env-reorder">
                 <thead>
                 <tr>
                     <th>Name</th>
@@ -19,7 +20,7 @@
                 <tbody>
                 {% for env in envs %}
                     <tr class="env-row-{{ env.ShortName }}">
-                        <td>{{ env.ShortName }}</td>
+                        <td><span class="icon-sort"></span> {{ env.ShortName }}</td>
                         <td><input type="text" maxlength="3" required name="env{{ env.EnvironmentId }}" value="{{ env.DispOrder }}" class="text-input"></td>
                         <td></td>
                     </tr>

@@ -2,3 +2,4 @@
 rm -rf vendor
 rm -rf phpunit
 rm -rf composer.lock
+rm -rf node_modules

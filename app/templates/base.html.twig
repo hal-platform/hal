@@ -46,10 +46,10 @@
                 {% if account %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
-                        <li><a href="/a" title="project groups">Repository Groups</a></li>
-                        <li><a href="/u/{{ account.commonId }}">Profile Page</a></li>
+                        <li><a href="/groups" title="groups">Groups</a></li>
+                        <li><a href="/profile">Profile</a></li>
                         {% if isUserAdmin(account) %}
-                            <li><a href="/admin/repositories" title="admin dashboard">Admin Dashboard</a></li>
+                            <li><a href="/admin/repositories" title="admin dashboard">Admin</a></li>
                         {% endif %}
                         <li><a href="/logout" title="logout">Logout</a></li>
                     </ul>

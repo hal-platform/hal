@@ -1,11 +1,11 @@
 @charset "UTF-8";
-/* line 65, ../../../../../../Library/Ruby/Gems/1.8/gems/singularitygs-1.1.2/stylesheets/singularitygs/helpers/_clearfix.scss */
+/* line 65, ../../../../.rvm/gems/ruby-1.9.3-p448/gems/singularitygs-1.1.2/stylesheets/singularitygs/helpers/_clearfix.scss */
 [class*="nav"]:after, .media:after, [class*="island"]:after, [class*="islet"]:after, [class*="multi-list"]:after, .stat-group:after, [role="main"]:after, [class*="alert-bar"]:after { content: ""; display: table; clear: both; }
 
-/* line 61, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/typography/_vertical_rhythm.scss */
+/* line 61, ../../../../.rvm/gems/ruby-1.9.3-p448/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/typography/_vertical_rhythm.scss */
 * html { font-size: 112.5%; }
 
-/* line 64, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/typography/_vertical_rhythm.scss */
+/* line 64, ../../../../.rvm/gems/ruby-1.9.3-p448/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/typography/_vertical_rhythm.scss */
 html { font-size: 18px; line-height: 1.5em; }
 
 /*! normalize.css v2.0.1 | MIT License | git.io/normalize */
@@ -1880,6 +1880,9 @@ html { background-color: white; }
 
 /* line 35, ../../sass/partials/_js.scss */
 .pr-selection span.open { color: #00c92c; }
+
+/* line 39, ../../sass/partials/_js.scss */
+.js-sortable-hidden { visibility: hidden; position: absolute; }
 
 /* line 1, ../../sass/partials/base/_forms.scss */
 .text-input, textarea { width: 100%; font-size: 1.11111em; line-height: 1.35em; padding: 0.675em; background: #fff; box-shadow: inset 0 2px 0 #5d4c5d, inset 2px 0px 0 #5d4c5d, inset -2px 0px 0 #5d4c5d, inset 0px -2px 0 #5d4c5d; }

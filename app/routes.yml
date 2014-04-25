@@ -13,15 +13,17 @@
   "route":      "/logout"
   "stack":      ["loginBouncer", "logoutPage"]
 
-"arrangements":
+###
+"groups":
   "method":     "GET"
-  "route":      "/a"
-  "stack":      ["loginBouncer", "arrangementListPage"]
+  "route":      "/groups"
+  "stack":      ["loginBouncer", "groups.page"]
 
-"arrangement":
+###
+"group":
   "method":     "GET"
-  "route":      "/a/:name"
-  "stack":      ["loginBouncer", "arrangementPage"]
+  "route":      "/groups/:key"
+  "stack":      ["loginBouncer", "group.page"]
   "conditions":
     "name":     "[A-Za-z0-9_-]+"
 
@@ -47,10 +49,11 @@
   "conditions":
     "name":     "[A-Za-z0-9_-]+"
 
-"user":
+###
+"profile":
   "method":     "GET"
-  "route":      "/u/:id"
-  "stack":      ["loginBouncer", "userPage"]
+  "route":      "/profile(/:id)"
+  "stack":      ["loginBouncer", "profile.page"]
   "conditions":
     "id":       "[\d]+"
 

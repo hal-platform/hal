@@ -1,6 +1,6 @@
 imports:
-  -
-    resource: di.yml
+  - resource: di.yml
+  - resource: ../vendor/ql/hal-core/config/di.yml
 
 parameters:
   debug:            false

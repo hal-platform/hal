@@ -35,17 +35,34 @@ class Layout
     }
 
     /**
+     * @deprecated Use ::render() instead!
+     *
      * @param Twig_Template $tpl
      * @param array $renderData
      * @return string
      */
     public function renderTemplateWithLayoutData(Twig_Template $tpl, array $renderData)
     {
-        $layoutData = array(
-            'commonId' => $this->currentUserContext->commonId(),
-            'isAdmin' => $this->pushPermissionsService->isUserAdmin($this->currentUserContext),
+        return $this->render($tpl, $renderData);
+    }
+
+    /**
+     *  Render a template with data
+     *
+     *  @param Twig_Template $template
+     *  @param array $data
+     *  @return string
+     */
+    public function render(Twig_Template $template, array $data = [])
+    {
+        $data = array_merge(
+            $data,
+            [
+                'commonId' => $this->currentUserContext->commonId(),
+                'isAdmin'  => $this->pushPermissionsService->isUserAdmin($this->currentUserContext)
+            ]
         );
-        $renderData = array_merge($renderData, $layoutData);
-        return $tpl->render($renderData);
+
+        return $template->render($data);
     }
 }
