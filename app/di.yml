@@ -17,10 +17,36 @@ services:
     factory_service: 'slim'
     factory_method: 'environment'
 
+  slim.request:
+    class: 'Slim\Http\Request'
+    factory_service: 'slim'
+    factory_method: 'request'
+
+  slim.response:
+    class: 'Slim\Http\Response'
+    factory_service: 'slim'
+    factory_method: 'response'
+
+  slim.router:
+    class: 'Slim\Router'
+    factory_service: 'slim'
+    factory_method: 'router'
+
   # This is set by LoginBouncer
-  currentUserContext:
+  user:
     class: 'MCP\Corp\Account\User'
     synthetic: true
+
+  ######################################################################################################################
+  # HELPERS
+  ######################################################################################################################
+
+  url.helper:
+    class: 'QL\Hal\Helpers\UrlHelper'
+    arguments:
+      - @slim.request
+      - @slim.response
+      - @slim.router
 
   ######################################################################################################################
   # TWIG STUFF
@@ -31,6 +57,7 @@ services:
     class: 'QL\Hal\Twig\HalExtension'
     arguments:
       - @pushPermissionService
+      - @url.helper
 
   # Twig Loader
   twigLoader:
@@ -49,13 +76,34 @@ services:
   # Twig View for Slim
   twigView:
     class: 'QL\Hal\TwigView'
-    arguments: ["@twigEnv"]
+    arguments:
+      - @twigEnv
 
   layout:
     class: 'QL\Hal\Layout'
     arguments:
-      - @currentUserContext
+      - @user
       - @pushPermissionService
+
+  ######################################################################################################################
+  # BOUNCERS
+  ######################################################################################################################
+
+  # Bounce unauthenticated users
+  login.bouncer:
+    class: 'QL\Hal\Bouncers\LoginBouncer'
+    arguments:
+      - @session
+      - @dic
+      - @url.helper
+
+  # Bounce non-admins
+  admin.bouncer:
+    class: 'QL\Hal\Bouncers\AdminBouncer'
+    arguments:
+      - @session
+      - @pushPermissionService
+      - @twigEnv
 
   ######################################################################################################################
   # DATABASE SERVICES
@@ -127,6 +175,8 @@ services:
     class: 'MCP\Corp\Account\QLAdService'
     arguments:
       - @ldapTransport
+    calls:
+      - ['authenticate', ['%ldap.username%', '%ldap.password%', false]]
 
   pushPermissionService:
     class: 'QL\Hal\PushPermissionService'
@@ -204,32 +254,48 @@ services:
   # PAGE LAYOUTS & CONTROLLERS
   ######################################################################################################################
 
-  login.twig:
+  ## TEMP
+  nyi.twig:
     class: "Twig_Template"
     arguments:
-      - "login.twig"
+      - 'nyi.twig'
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
-  loginPage:
-    class: "QL\\Hal\\LoginPage"
+  ## TEMP
+  nyi.page:
+    class: "QL\\Hal\\Controllers\\NyiController"
+    arguments:
+      - @nyi.twig
+
+  login.twig:
+    class: "Twig_Template"
+    arguments:
+      - 'login.twig'
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  login.page:
+    class: "QL\\Hal\\Controllers\\LoginController"
     arguments:
       - @login.twig
 
-  loginHandler:
-    class: "QL\\Hal\\LoginHandler"
+  login.handle:
+    class: "QL\\Hal\\Controllers\\LoginHandleController"
     arguments:
-      - @session
+      - @login.twig
       - @ldapService
-      - @login.twig
-      - @userService
+      - @user.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
 
-  logoutPage:
-    class: "QL\\Hal\\LogoutPage"
+  logout.handle:
+    class: "QL\\Hal\\Controllers\\LogoutController"
     arguments:
       - @session
+      - @url.helper
 
-  ###
   profile.twig:
     class: "Twig_Template"
     arguments:
@@ -237,7 +303,6 @@ services:
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
-  ###
   profile.page:
     class: "QL\\Hal\\Controllers\\ProfileController"
     arguments:
@@ -246,10 +311,9 @@ services:
       - @pushPermissionService
       - @ldapService
       - @user.repo
-      - @currentUserContext
+      - @user
       - @doctrine.em
 
-  ###
   groups.twig:
     class: "Twig_Template"
     arguments:
@@ -257,7 +321,6 @@ services:
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
-  ###
   groups.page:
     class: "QL\\Hal\\Controllers\\GroupsController"
     arguments:
@@ -265,7 +328,6 @@ services:
       - @layout
       - @group.repo
 
-  ###
   group.twig:
     class: "Twig_Template"
     arguments:
@@ -273,30 +335,13 @@ services:
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
-  ###
   group.page:
-    class: "QL\\Hal\\Controllers\\GroupController"
+    class: "QL\\Hal\\Controllers\\Groups\\GroupController"
     arguments:
       - @group.twig
       - @layout
       - @group.repo
       - @repository.repo
-
-
-  arrangement.twig:
-    class: "Twig_Template"
-    arguments:
-      - "arrangement.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  arrangementPage:
-    class: 'QL\Hal\ArrangementPage'
-    arguments:
-      - @arrangement.twig
-      - @arrService
-      - @repoService
-      - @layout
 
   repository.twig:
     class: "Twig_Template"
@@ -305,17 +350,37 @@ services:
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
-  repositoryPage:
-    class: 'QL\Hal\RepositoryPage'
+  repository.page:
+    class: "QL\\Hal\\Controllers\\Repository\\RepositoryController"
     arguments:
       - @repository.twig
-      - @repoService
-      - @deploymentService
-      - @serverService
-      - @logService
-      - @pushPermissionService
-      - @currentUserContext
       - @layout
+      - @pushPermissionService
+      - @doctrine.em
+      - @repository.repo
+      - @build.repo
+      - @push.repo
+      - @user
+
+  repository.push.history.twig:
+    class: "Twig_Template"
+    arguments:
+      - "repository.push.history.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  repository.push.history.page:
+    class: "QL\\Hal\\Controllers\\Repository\\RepositoryPushHistoryController"
+    arguments:
+      - @repository.push.history.twig
+      - @layout
+      - @doctrine.em
+      - @repository.repo
+      - @push.repo
+
+  ######################################################################################################################
+  # ADMIN PAGE LAYOUTS & CONTROLLERS
+  ######################################################################################################################
 
   admin.dashboard.twig:
     class: "Twig_Template"
@@ -531,24 +596,7 @@ services:
   # API CONTROLLERS
   ######################################################################################################################
 
-  ######################################################################################################################
-  # BOUNCERS
-  ######################################################################################################################
 
-  # Bounce unauthenticated users
-  loginBouncer:
-    class: 'QL\Hal\Bouncers\LoginBouncer'
-    arguments:
-      - @session
-      - @dic
-
-  # Bounce non-admins
-  adminBouncer:
-    class: 'QL\Hal\Bouncers\AdminBouncer'
-    arguments:
-      - @session
-      - @pushPermissionService
-      - @twigEnv
 
   ######################################################################################################################
   # SESSION

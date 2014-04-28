@@ -14,6 +14,7 @@
     {% endblock %}
     {% block meta %}
         <meta name="format-detection" content="telephone=no">
+        <meta name="author" content="Matt Colf &lt;matthewcolf@quickenloans.com&gt;">
         <meta name="author" content="Matthew Nagi &lt;mattnagi@quickenloans.com&gt;">
         <meta name="author" content="Bridget Schiefer &lt;bridgetschiefer@quickenloans.com&gt;">
         <meta name="author" content="Dave Gillhespy &lt;davegillhespy@quickenloans.com&gt;">
@@ -21,11 +22,11 @@
     {% endblock %}
     {% block style %}
         <link rel="stylesheet" href="/css/style.css">
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
     {% endblock %}
     {% block headScript %}
         <script src="/js/head.min.js"></script>
-        <script type="text/javascript" src="//use.typekit.net/doy3lmv.js"></script>
+        <script type="text/javascript" src="/js/doy3lmv.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     {% endblock %}
 {% endblock %}
@@ -46,12 +47,12 @@
                 {% if account %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
-                        <li><a href="/groups" title="groups">Groups</a></li>
-                        <li><a href="/profile">Profile</a></li>
+                        <li><a href="{{ urlFor('groups') }}" title="groups">Groups</a></li>
+                        <li><a href="{{ urlFor('profile') }}">Profile</a></li>
                         {% if isUserAdmin(account) %}
-                            <li><a href="/admin/repositories" title="admin dashboard">Admin</a></li>
+                            <li><a href="{{ urlFor('admin_repositories') }}" title="admin dashboard">Admin</a></li>
                         {% endif %}
-                        <li><a href="/logout" title="logout">Logout</a></li>
+                        <li><a href="{{ urlFor('logout') }}" title="logout">Logout</a></li>
                     </ul>
                 </nav>
                 {% endif %}
@@ -79,11 +80,7 @@
     <!-- BEGIN FOOTER -->
     {% block footer %}
         <footer role="contentinfo">
-            <p>&copy; {{ "now"|date('Y', 'America/New_York') }} Quicken Loans
-                {% if (version) %}
-                    , version {{ version }} updated {{ changed|date('Y-m-j g:i A') }}
-                {% endif %}
-            </p>
+            <p>&copy; {{ "now"|date('Y', 'America/New_York') }} Quicken Loans</p>
         </footer>
     {% endblock %}
     <!-- END FOOTER -->

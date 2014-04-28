@@ -1,150 +1,394 @@
-"login":
-  "method":     "GET"
-  "route":      "/"
-  "stack":      ["loginPage"]
+login:
+  method:     "GET"
+  route:      "/"
+  stack:
+    - login.page
 
-"login_handle":
-  "method":     "POST"
-  "route":      "/"
-  "stack":      ["loginHandler"]
+login.handle:
+  method:     "POST"
+  route:      "/"
+  stack:
+    - login.handle
 
-"logout":
-  "method":     "GET"
-  "route":      "/logout"
-  "stack":      ["loginBouncer", "logoutPage"]
+logout:
+  method:     "GET"
+  route:      "/logout"
+  stack:
+    - login.bouncer
+    - logout.handle
 
-###
-"groups":
-  "method":     "GET"
-  "route":      "/groups"
-  "stack":      ["loginBouncer", "groups.page"]
+profile:
+  method:     "GET"
+  route:      "/profile(/:id)"
+  stack:
+    - login.bouncer
+    - profile.page
+  conditions:
+    id:       "[\d]+"
 
-###
-"group":
-  "method":     "GET"
-  "route":      "/groups/:key"
-  "stack":      ["loginBouncer", "group.page"]
-  "conditions":
-    "name":     "[A-Za-z0-9_-]+"
+groups:
+  method:     "GET"
+  route:      "/groups"
+  stack:
+    - login.bouncer
+    - groups.page
 
-"repository":
-  "method":     "GET"
-  "route":      "/r/:name(/page/:page)"
-  "stack":      ["loginBouncer", "repositoryPage"]
-  "conditions":
-    "name":     "[A-Za-z0-9_-]+"
-    "page":     "[0-9]+"
+group:
+  method:     "GET"
+  route:      "/groups/:group"
+  stack:
+    - login.bouncer
+    - group.page
+  conditions:
+    name:     "[A-Za-z0-9_-]+"
 
-"repository_sync":
-  "method":     "GET"
-  "route":      "/r/:name/sync"
-  "stack":      ["loginBouncer", "syncPage"]
-  "conditions":
-    "name":     "[A-Za-z0-9_-]+"
+repo:
+  method:     "GET"
+  route:      "/repos/:repo"
+  stack:
+    - login.bouncer
+    - repository.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
 
-"repository_sync_handler":
-  "method":     "POST"
-  "route":      "/r/:name/sync"
-  "stack":      ["loginBouncer", "syncHandler"]
-  "conditions":
-    "name":     "[A-Za-z0-9_-]+"
+########################################################################################################################
+# BUILD ROUTES
+########################################################################################################################
 
-###
-"profile":
-  "method":     "GET"
-  "route":      "/profile(/:id)"
-  "stack":      ["loginBouncer", "profile.page"]
-  "conditions":
-    "id":       "[\d]+"
+### STUB - FIX ME
+build.history:
+  method:     "GET"
+  route:      "/repos/:repo/build/history(/page/:page)"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    page:     "[0-9]+"
+
+### STUB - FIX ME
+build.start:
+  method:     "GET"
+  route:      "/repos/:repo/build"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+build.handle:
+  method:     "POST"
+  route:      "/repos/:repo/build"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+build:
+  method:     "GET"
+  route:      "/repos/:repo/build/:build"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    build:    "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+build.push:
+  method:     "GET"
+  route:      "/repos/:repo/build/:build/push"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    build:    "[A-Za-z0-9_-]+"
+
+########################################################################################################################
+# PUSH ROUTES
+########################################################################################################################
+
+# STUB - FIX ME
+push.history:
+  method:     "GET"
+  route:      "/repos/:repo/push/history(/page/:page)"
+  stack:
+    - login.bouncer
+    - repository.push.history.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    page:     "[0-9]+"
+
+### STUB - FIX ME
+push.start:
+  method:     "GET"
+  route:      "/repos/:repo/push/:build"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    build:    "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+rollback:
+  method:     "GET"
+  route:      "/repos/:repo/rollback/:server"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    server:   "[0-9]+"
+
+### STUB - FIX ME
+# Push Handle
+push.handle:
+  method:     "POST"
+  route:      "/repos/:repo/push/:build"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    build:    "[A-Za-z0-9_-]+"
+
+########################################################################################################################
+# SERVER ROUTES
+########################################################################################################################
+
+### STUB - FIX ME
+# Server Page
+server:
+  method:     "GET"
+  route:      "/servers/:server"
+  stack:
+    - login.bouncer
+    - nyi.page
+  conditions:
+    server:   "[0-9]+"
+
+########################################################################################################################
+# ADMIN REPO ROUTES
+########################################################################################################################
+
+admin.repos:
+  method:     "GET"
+  route:      "/admin/repos"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+admin.repo.create:
+  method:     "GET"
+  route:      "/admin/repos/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+admin.repo.create.handle:
+  method:     "POST"
+  route:      "/admin/repos/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+admin.repo.edit:
+  method:     "GET"
+  route:      "/admin/repos/:repo/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+
+admin.repo.edit.handle:
+  method:     "POST"
+  route:      "/admin/repos/:repo/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+
+########################################################################################################################
+# ADMIN GROUP ROUTES
+########################################################################################################################
+
+admin.groups:
+  method:     "GET"
+  route:      "/admin/groups"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+admin.group.create:
+  method:     "GET"
+  route:      "/admin/groups/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+admin.group.create.handle:
+  method:     "POST"
+  route:      "/admin/groups/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+admin.group.edit:
+  method:     "GET"
+  route:      "/admin/groups/:group/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    group:   "[A-Za-z0-9_-]+"
+
+admin.group.edit.handle:
+  method:     "POST"
+  route:      "/admin/groups/:group/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    group:    "[A-Za-z0-9_-]+"
+
+########################################################################################################################
+# ADMIN ENVIRONMENT ROUTES
+########################################################################################################################
+
+########################################################################################################################
+# ADMIN SERVER ROUTES
+########################################################################################################################
+
+########################################################################################################################
+# ADMIN REPO ROUTES
+########################################################################################################################
+
+
+
+
+
+
+
+########################################################################################################################
+# API ROUTES
+########################################################################################################################
+
+
+
+
+
+
+
+
+########################################################################################################################
+# ~~~~~~~ OLD ROUTES ~~~~~~~~
+########################################################################################################################
 
 "admin":
-  "method":     "GET"
-  "route":      "/admin"
-  "stack":      ["loginBouncer", "adminBouncer", "adminDashboardPage"]
+  method:     "GET"
+  route:      "/admin"
+  stack:      ["login.bouncer", "admin.bouncer", "adminDashboardPage"]
 
 "admin_arrangements":
-  "method":     "GET"
-  "route":      "/admin/arrangements"
-  "stack":      ["loginBouncer", "adminBouncer", "adminArrangementsPage"]
+  method:     "GET"
+  route:      "/admin/arrangements"
+  stack:      ["login.bouncer", "admin.bouncer", "adminArrangementsPage"]
 
 "admin_arrangements_handle":
-  "method":     "POST"
-  "route":      "/admin/arrangements"
-  "stack":      ["loginBouncer", "adminBouncer", "adminArrangementsHandler"]
+  method:     "POST"
+  route:      "/admin/arrangements"
+  stack:      ["login.bouncer", "admin.bouncer", "adminArrangementsHandler"]
 
 "admin_repositories":
-  "method":     "GET"
-  "route":      "/admin/repositories"
-  "stack":      ["loginBouncer", "adminBouncer", "adminRepositoriesPage"]
+  method:     "GET"
+  route:      "/admin/repositories"
+  stack:      ["login.bouncer", "admin.bouncer", "adminRepositoriesPage"]
 
 "admin_repositories_handler":
-  "method":     "POST"
-  "route":      "/admin/repositories"
-  "stack":      ["loginBouncer", "adminBouncer", "adminRepositoriesHandler"]
+  method:     "POST"
+  route:      "/admin/repositories"
+  stack:      ["login.bouncer", "admin.bouncer", "adminRepositoriesHandler"]
 
 "admin_repositories_remove":
-  "method":     "GET"
-  "route":      "/admin/repositories/:id/remove"
-  "stack":      ["loginBouncer", "adminBouncer", "adminRepositoriesRemoveHandler"]
-  "conditions":
+  method:     "GET"
+  route:      "/admin/repositories/:id/remove"
+  stack:      ["login.bouncer", "admin.bouncer", "adminRepositoriesRemoveHandler"]
+  conditions:
     "id":       "[\d]+"
 
 "admin_environments":
-  "method":     "GET"
-  "route":      "/admin/envs"
-  "stack":      ["loginBouncer", "adminBouncer", "adminEnvironmentsPage"]
+  method:     "GET"
+  route:      "/admin/envs"
+  stack:      ["login.bouncer", "admin.bouncer", "adminEnvironmentsPage"]
 
 "admin_environments_handler":
-  "method":     "POST"
-  "route":      "/admin/envs"
-  "stack":      ["loginBouncer", "adminBouncer", "adminEnvironmentsHandler"]
+  method:     "POST"
+  route:      "/admin/envs"
+  stack:      ["login.bouncer", "admin.bouncer", "adminEnvironmentsHandler"]
 
 "admin_servers":
-  "method":     "GET"
-  "route":      "/admin/servers"
-  "stack":      ["loginBouncer", "adminBouncer", "adminServersPage"]
+  method:     "GET"
+  route:      "/admin/servers"
+  stack:      ["login.bouncer", "admin.bouncer", "adminServersPage"]
 
 "admin_servers_handler":
-  "method":     "POST"
-  "route":      "/admin/servers"
-  "stack":      ["loginBouncer", "adminBouncer", "adminServersHandler"]
+  method:     "POST"
+  route:      "/admin/servers"
+  stack:      ["login.bouncer", "admin.bouncer", "adminServersHandler"]
 
 "admin_deployments":
-  "method":     "GET"
-  "route":      "/admin/deployments"
-  "stack":      ["loginBouncer", "adminBouncer", "adminDeploymentsPage"]
+  method:     "GET"
+  route:      "/admin/deployments"
+  stack:      ["login.bouncer", "admin.bouncer", "adminDeploymentsPage"]
 
 "admin_deployments_handler":
-  "method":     "POST"
-  "route":      "/admin/deployments"
-  "stack":      ["loginBouncer", "adminBouncer", "adminDeploymentsHandler"]
+  method:     "POST"
+  route:      "/admin/deployments"
+  stack:      ["login.bouncer", "admin.bouncer", "adminDeploymentsHandler"]
 
 "admin_deployments_remove":
-  "method":     "GET"
-  "route":      "/admin/deployments/:id/remove"
-  "stack":      ["loginBouncer", "adminBouncer", "adminDeploymentsRemoveHandler"]
-  "conditions":
+  method:     "GET"
+  route:      "/admin/deployments/:id/remove"
+  stack:      ["login.bouncer", "admin.bouncer", "adminDeploymentsRemoveHandler"]
+  conditions:
     "id":       "[\d]+"
 
 "admin_users":
-  "method":     "GET"
-  "route":      "/admin/users"
-  "stack":      ["loginBouncer", "adminBouncer", "adminUsersPage"]
+  method:     "GET"
+  route:      "/admin/users"
+  stack:      ["login.bouncer", "admin.bouncer", "adminUsersPage"]
 
 "admin_permissions":
-  "method":     "GET"
-  "route":      "/admin/permissions"
-  "stack":      ["loginBouncer", "adminBouncer", "adminPermissionsPage"]
+  method:     "GET"
+  route:      "/admin/permissions"
+  stack:      ["login.bouncer", "admin.bouncer", "adminPermissionsPage"]
 
 "github_users":
-  "method":     "GET"
-  "route":      "/github/users"
-  "stack":      ["loginBouncer", "githubUsersApi"]
+  method:     "GET"
+  route:      "/github/users"
+  stack:      ["login.bouncer", "githubUsersApi"]
 "github_repos":
-  "method":     "GET"
-  "route":      "/github/repos/:username"
-  "stack":      ["loginBouncer", "githubReposApi"]
+  method:     "GET"
+  route:      "/github/repos/:username"
+  stack:      ["login.bouncer", "githubReposApi"]
 "github_pulls":
-  "method":     "GET"
-  "route":      "/github/pulls/:username/:repository"
-  "stack":      ["loginBouncer", "githubPullsApi"]
+  method:     "GET"
+  route:      "/github/pulls/:username/:repository"
+  stack:      ["login.bouncer", "githubPullsApi"]

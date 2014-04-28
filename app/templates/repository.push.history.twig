@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = repo.key~" Push History" %}
+
+{% block content %}
+    <p><a class="btn--small btn--back" href="{{ urlFor('repo', {'repo': repo.key}) }}">Back to Repository</a></p>
+
+    <h2>{{ repo.key }} Push History</h2>
+
+    {% include 'partials/push-table.twig' with {'pushes': pushes} %}
+
+
+{% endblock %}

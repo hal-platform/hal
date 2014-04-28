@@ -5,9 +5,22 @@ imports:
 parameters:
   debug:            false
 
+  # OLD DB (need both for now)
   db.dsn:           "mysql:host=prod.example.com;dbname=hal9000_test;charset=utf8"
   db.user:          "placeholder"
   db.pass:          "placeholder"
+
+  # NEW DB (need both for now)
+  doctrine.mappings:
+    - "%root%/src/QL/Hal/Core/Entity"
+  doctrine.devmode:   true
+  doctrine.connection:
+    driver:         pdo_mysql
+    host:           localhost
+    user:           root
+    password:
+    dbname:         hal
+
   build.user:       "hal9000"
   build.dir:        "/var/spool/hal9000"
   build.async:      true
@@ -17,6 +30,8 @@ parameters:
   ldap.host:        "ldap.example.com"
   ldap.domain:      "MI"
   ldap.baseDn:      "DC=mi,DC=corp"
+  ldap.username:    "placeholder"
+  ldap.password:    "placeholder"
 
   email.hostname:     mail.example.com
   email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"

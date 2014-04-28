@@ -7,6 +7,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use QL\Hal\Session;
+use QL\Hal\Helpers\UrlHelper;
 
 /**
  *  A bouncer that checks to see if the current user is logged in
@@ -27,13 +28,20 @@ class LoginBouncer
     private $container;
 
     /**
+     *  @var UrlHelper
+     */
+    private $url;
+
+    /**
      *  @param Session $session
      *  @param ContainerBuilder $container
+     *  @param UrlHelper $url
      */
-    public function __construct(Session $session, ContainerBuilder $container)
+    public function __construct(Session $session, ContainerBuilder $container, UrlHelper $url)
     {
         $this->session = $session;
         $this->container = $container;
+        $this->url = $url;
     }
 
     /**
@@ -43,8 +51,9 @@ class LoginBouncer
     public function __invoke(Request $request, Response $response)
     {
         if (!$this->session->get('account')) {
-            $response->redirect($request->getScheme() . '://' . $request->getHostWithPort() . '/', 302);
+            $this->url->redirectFor('login');
         }
-        $this->container->set('currentUserContext', $this->session->get('account'));
+
+        $this->container->set('user', $this->session->get('account'));
     }
 }

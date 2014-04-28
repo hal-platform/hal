@@ -9,6 +9,9 @@ use Twig_Extension;
 use Twig_SimpleFunction;
 use Twig_SimpleFilter;
 use QL\Hal\PushPermissionService;
+use MCP\DataType\Time\TimePoint;
+use Slim\Slim;
+use QL\Hal\Helpers\UrlHelper;
 
 /**
  *  Twig Extension for HAL9000
@@ -21,14 +24,20 @@ class HalExtension extends Twig_Extension
 
     private $permissions;
 
+    private $slim;
+
+    private $url;
+
     /**
      *  Constructor
      *
      *  @param PushPermissionService $permissions
+     *  @param UrlHelper $url
      */
-    public function __construct(PushPermissionService $permissions)
+    public function __construct(PushPermissionService $permissions, UrlHelper $url)
     {
         $this->permissions = $permissions;
+        $this->url = $url;
     }
 
     /**
@@ -50,7 +59,10 @@ class HalExtension extends Twig_Extension
     {
         return array(
             new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush')),
-            new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin'))
+            new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin')),
+            new Twig_SimpleFunction('urlFor', array($this, 'urlFor')),
+            new Twig_SimpleFunction('githubRepo', array($this, 'githubRepo')),
+            new Twig_SimpleFunction('githubCommit', array($this, 'githubCommit'))
         );
     }
 
@@ -62,7 +74,8 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat'))
+            new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat')),
+            new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat'))
         );
     }
 
@@ -101,6 +114,10 @@ class HalExtension extends Twig_Extension
      */
     public function datetimeConvertAndFormat($value, $format = 'M j, Y g:i A', $timezone = 'America/Detroit')
     {
+        if ($value instanceof TimePoint) {
+            return $value->format($format, $timezone);
+        }
+
         if ($value instanceof DateTime) {
             $datetime = $value;
         } else {
@@ -116,5 +133,42 @@ class HalExtension extends Twig_Extension
         } else {
             return '';
         }
+    }
+
+    /**
+     *  Generate a URL by route name and parameters
+     *
+     *  @param string $route
+     *  @param array $params
+     *  @return string
+     */
+    public function urlFor($route, array $params = [])
+    {
+        return $this->url->urlFor($route, $params);
+    }
+
+    /**
+     *  Get the url for a Github repository
+     *
+     *  @param string $user
+     *  @param string $repo
+     *  @return string
+     */
+    public function githubRepo($user, $repo)
+    {
+        return $this->url->githubRepoUrl($user, $repo);
+    }
+
+    /**
+     *  Get the url for a Github repository commit
+     *
+     *  @param $user
+     *  @param $repo
+     *  @param $commit
+     *  @return mixed
+     */
+    public function githubCommit($user, $repo, $commit)
+    {
+        return $this->url->githubCommitUrl($user, $repo, $commit);
     }
 }

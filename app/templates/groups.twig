@@ -13,7 +13,7 @@
     {% if groups %}
         <ul>
         {% for group in groups %}
-            <li><a href="/groups/{{ group.key }}">{{ group.name }} </a></li>
+            <li><a href="{{ urlFor('group', {'group': group.key}) }}">{{ group.name }}</a></li>
         {% endfor %}
         </ul>
     {% else %}

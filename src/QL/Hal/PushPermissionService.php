@@ -9,7 +9,6 @@ namespace QL\Hal;
 
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User;
-use QL\Hal\Services\EnvironmentService;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Services\RepositoryService;
 use QL\Hal\Services\UserService;
@@ -21,10 +20,8 @@ use Zend\Ldap\Dn;
 class PushPermissionService
 {
     const PERM_DN_TPL           = 'CN=git-%s-%s,OU=GIT,DC=mi,DC=corp';
-    const PERM_DN_ADMIN_PROD    = 'CN=git-admin-prod,OU=GIT,DC=mi,DC=corp';
+    const PERM_DN_KEYMASTERS    = 'CN=git-admin-prod,OU=GIT,DC=mi,DC=corp';
     const PERM_DN_ADMIN         = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
-    const LDAP_USER             = 'placeholder';
-    const LDAP_PASSWORD         = 'placeholder';
 
     /**
      * @var LdapService
@@ -136,8 +133,6 @@ class PushPermissionService
      */
     public function canUserPushToEnvRepo($user, $repo, $env)
     {
-        $this->checkAuthenticated();
-
         // allow user passing as string
         if (!($user instanceof User)) {
             $user = $this->ldapService->getUserByWindowsUsername($user);
@@ -145,13 +140,13 @@ class PushPermissionService
 
         $inProd = in_array($env, $this->productionEnvironments);
 
-        // admin push whitelist
+        // hal-admin push whitelist
         if ($this->isUserAdmin($user) && (!$inProd || $repo == 'hal9000')) {
             return true;
         }
 
-        // prod admin whitelist
-        if ($inProd && $this->ldapUserInGroupCache(self::getDn(self::PERM_DN_ADMIN_PROD), $user->dn())) {
+        // keymasters whitelist for any environment
+        if ($this->ldapUserInGroupCache(self::getDn(self::PERM_DN_KEYMASTERS), $user->dn())) {
             return true;
         }
 
@@ -174,7 +169,6 @@ class PushPermissionService
      */
     public function repoEnvsCommonIdCanPushTo($commonId)
     {
-        $this->checkAuthenticated();
         $user = $this->ldapService->getUserByCommonId($commonId);
         $pairs = $this->repoService->listRepoEnvPairs();
 
@@ -223,21 +217,12 @@ class PushPermissionService
         return $permissions;
     }
 
-    public function checkAuthenticated()
-    {
-        if ($this->authed) {
-            return;
-        }
-        $this->ldapService->authenticate(self::LDAP_USER, self::LDAP_PASSWORD, false);
-    }
-
     /**
      * @var User $user
      * @return boolean
      */
     public function isUserAdmin(User $user)
     {
-        $this->checkAuthenticated();
         if ($user->commonId() == $this->godModeOverride) {
             return true;
         }
@@ -278,7 +263,6 @@ class PushPermissionService
             return $this->cache[$key];
         }
 
-        $this->checkAuthenticated();
         $result = $this->ldapService->isUserInGroup($group, $user);
         $this->cache[$key] = $result;
 

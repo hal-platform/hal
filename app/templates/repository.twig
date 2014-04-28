@@ -1,61 +1,153 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "/r/" ~ repo.ShortName %}
+{% set page_title = repo.key %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="/a/{{ repo.Arrangement }}">Back to Repositories</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('group', {'group': repo.group.key}) }}">Back to Repositories</a></p>
 
-    <h2>{{ repo.ShortName }} Deployments</h2>
-    <p>The {{ repo.ShortName }} application can be deployed to any of the following servers.</p>
+    <h2>{{ repo.key }} Dashboard</h2>
 
+    <h3>Server Status</h3>
+    <p>This table shows the current status of all servers with deployment relationships to this repository.</p>
+    <div class="overflow-container">
+        <table>
+            <thead>
+                <th></th>
+                <th>Last Push</th>
+                <th>Build</th>
+                <th>Branch</th>
+                <th>Commit</th>
+                <th>Pushed</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for status in statuses %}
+                    <tr>
+                        <td><a href="{{ urlFor('server', {'server': status.deploy.server.id}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</td>
+                        {% if status.latest %}
+                            <td>
+                                {% if status.latest.status == 'Success' %}
+                                    <span class="circle-green">{{ status.latest.status }}</span>
+                                {% elseif status.latest.status == 'Error' %}
+                                    <span class="circle-error">{{ status.latest.status }}</span>
+                                {% else %}
+                                    <span class="circle-orange">{{ status.latest.status }}</span>
+                                {% endif %}
+                                (<a href="{{ urlFor('build', {'repo': repo.id, 'build': status.latest.build.id}) }}">{{ status.latest.build.id[:10] }}</a>)
+                            </td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+                        {% if status.success %}
+                            <td><a href="{{ urlFor('build', {'repo': repo.id, 'build': status.success.build.id}) }}">{{ status.success.build.id[:10] }}</a></td>
+                            <td>{{ status.success.build.branch[:20] }}</td>
+                            <td><a href="{{ githubCommit(repo.githubUser, repo.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit[:7] }}</a></td>
+                            <td>{{ status.success.end|date }}</td>
+                            <td><a href="{{ urlFor('rollback', {'repo': repo.key, 'server': status.success.deployment.server.id}) }}">Rollback</a></td>
+                        {% else %}
+                            <td colspan="5">Unknown</td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">
+                            No deployments found.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Available Builds</h3>
+    <p>This table shows all recent available builds.</p>
+    {% include 'partials/build-table.twig' with {'builds': builds} %}
+    <p>
+        <a class="btn--small btn--toggles" href="{{ urlFor('build.start', {'repo': repo.key}) }}">Start New Build</a>
+        <a class="btn--small btn--toggles" href="{{ urlFor('build.history', {'repo': repo.key, 'page': 1}) }}">All Builds</a>
+        <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'repo': repo.key, 'page': 1}) }}">All Pushes</a>
+    </p>
+
+    <h3>Push History</h3>
+    {% include 'partials/push-table.twig' with {'pushes': pushes} %}
+    <p><a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'repo': repo.key, 'page': 1}) }}">View All Pushes</a></p>
+
+    <h3>Repository Details</h3>
+    <p>These values can only be changed by an administrator.</p>
+    <div class="overflow-container">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Github Location</td>
+                    <td><a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a></td>
+                </tr>
+                <tr>
+                    <td>Contact Email</td>
+                    <td>{{ repo.email }}</td>
+                </tr>
+                <tr>
+                    <td>Build Command</td>
+                    <td>{{ repo.buildCmd }}</td>
+                </tr>
+                <tr>
+                    <td>Pre-Push Command</td>
+                    <td>{{ repo.prePushCmd }}</td>
+                </tr>
+                <tr>
+                    <td>Post-Push Command</td>
+                    <td>{{ repo.postPushCmd }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!--
     <div class="toggles">
         <a class="btn--small btn--toggles" id="all-reset">Reset</a>
         <a class="btn--small btn--toggles" id="all-test">All Test</a>
         <a class="btn--small btn--toggles" id="all-beta">All Beta</a>
         <a class="btn--small btn--toggles" id="all-prod">All Prod</a>
     </div>
-
-    <form class="deployment-form" action="/r/{{ repo.ShortName }}/sync" method="get">
+    <form class="deployment-form" action="/repo/{{ repo.key }}/sync" method="get">
         <div class="overflow-container">
             <table>
                 <thead>
-                    <tr>
-                        <th>Server</th>
-                        <th>Environment</th>
-                        <th>Status</th>
-                        <th>Branch</th>
-                        <th>Current Commit</th>
-                        <th>Last Synced</th>
-                        <th>Actions</th>
-                    </tr>
+                <tr>
+                    <th>Server</th>
+                    <th>Status</th>
+                    <th>Branch</th>
+                    <th>Current Commit</th>
+                    <th>Last Push</th>
+                    <th>Actions</th>
+                </tr>
                 </thead>
                 <tbody>
                 {% set allowSubmit = false %}
-                {% for deployment in deployments %}
-                    <tr class="env-row-{{ deployment.Environment }}">
-                        <td>{{ deployment.HostName }}</td>
-                        <td>{{ deployment.Environment }}</td>
+                {% for deploy in deploys %}
+                    <tr class="env-row-{{ deploy.deploy.server.environment.key }}">
+                        <td>{{ deploy.deploy.server.name }} ({{ deploy.deploy.server.environment.key }})</td>
                         <td>
-                            {% if deployment.CurStatus == 'Error' %}
-                                <span class="circle-red">{{ deployment.CurStatus }}</span>
-                            {% elseif deployment.CurStatus == 'Deployed' %}
-                                <span class="circle-green">{{ deployment.CurStatus }}</span>
+                            {% if deploy.push.status == 'Success' %}
+                                <span class="circle-green">{{ deploy.push.status }}</span>
+                            {% elseif deploy.push.status == 'Error' %}
+                                <span class="circle-red">{{ deploy.push.status }}</span>
                             {% else %}
-                                <span class="circle-orange">{{ deployment.CurStatus }}</span>
+                                <span class="circle-orange">{{ deploy.push.status }}</span>
                             {% endif %}
                         </td>
-                        <td>{{ deployment.CurBranch }}</td>
-                        <td>{{ deployment.CurCommit[:7] }}</td>
+                        <td>{{ deploy.push.build.branch }}</td>
+                        <td><a href="http://git/{{ deploy.push.build.repository.githubUser }}/{{ deploy.push.build.repository.githubRepo }}/commit/{{ deploy.push.build.commit }}">{{ deploy.push.build.commit[:7] }}</a></td>
                         <td>
-                            {% if deployment.LastPushed == '0000-00-00 00:00:00' %}
+                            {% if deploy.push.end %}
+                                {{ deploy.push.end|date }}
+                            {% else %}
                                 Never
-                            {% else %}
-                                {{ deployment.LastPushed|dateHal }}
                             {% endif %}
                         </td>
                         <td>
-                            {% if canUserPush(user, deployment.Repository, deployment.Environment) %}
-                                <label>Push Now <input type="checkbox" name="deps[]" id="sel-{{ deployment.Environment }}-{{ deployment.DeploymentId }}" value="{{deployment.DeploymentId}}"></label>
+                            {% if canUserPush(user, deploy.deploy.repository.key, deploy.deploy.server.environment.key) %}
+                                <label>Push Now <input type="checkbox" name="deps[]" id="sel-{{ deploy.deploy.server.environment.key }}-{{ deploy.deploy.repository.key }}" value="{{ deploy.deploy.id }}"></label>
                                 {% set allowSubmit = true %}
                             {% else %}
                                 No Access
@@ -72,67 +164,8 @@
             <p>Looks like you don't have permission to push this repository. Request access by contacting <a href="mailto:ITTeamKeymasters@quickenloans.com">IT Team Keymasters</a>.</p>
         {% endif %}
     </form>
+    -->
 
-    <h3>Deployment History</h3>
 
-    <div class="overflow-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Status</th>
-                    <th>Branch</th>
-                    <th>Environment</th>
-                    <th>Server</th>
-                    <th>Person</th>
-                </tr>
-            </thead>
-            {% for log in logs %}
-        <tbody>
-            <tr class="env-row-{{ log.Environment }}">
-                <td> {{ log.PushStart|dateHal }} </td>
-                <td> {{ log.PushEnd|dateHal }} </td>
-                <td>
-                    {% if log.PushStatus == 'Error' %}
-                        <span class="circle-red"></span>
-                    {% elseif log.PushStatus == 'Deployed' %}
-                        <span class="circle-green"></span>
-                    {% else %}
-                        <span class="circle-orange"></span>
-                    {% endif %}
-                    {{ log.PushStatus }}
-                </td>
-                <td> {{ log.PushBranch }} </td>
-                <td> {{ log.Environment }} </td>
-                <td> {{ log.TargetServer }} </td>
-                <td> {{ log.PushUserName }} </td>
-            </tr>
-        </tbody>
-        {% endfor %}
-        </table>
-    </div>
-
-    <ol class="nav--pagination">
-        <li class="nav--pagination__prev">
-            {% if page > 1 %}
-                <a href="/r/{{ repo.ShortName }}/page/{{ page-1 }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
-            {% else %}
-                <span class="disabled"><i class="fa fa-arrow-circle-left"></i> newer</span>
-            {% endif %}
-        </li>
-        <li>
-            {% if totalPages > 1 %}
-                <span class="pages">page {{ page }} of {{ totalPages }}</span>
-            {% endif %}
-        </li>
-        <li class="nav--pagination__next">
-            {% if page < totalPages %}
-                <a href="/r/{{ repo.ShortName }}/page/{{ page+1 }}">older <i class="fa fa-arrow-circle-right"></i></a>
-            {% else %}
-                <span class="disabled">older <i class="fa fa-arrow-circle-right"></i></span>
-            {% endif %}
-        </li>
-    </ol>
 
 {% endblock %}

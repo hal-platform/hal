@@ -19,10 +19,6 @@ use Doctrine\ORM\EntityManager;
  */
 class ProfileController
 {
-    const LDAP_USER = 'placeholder';
-
-    const LDAP_PASSWORD = 'placeholder';
-
     /**
      *  @var Twig_Template
      */
@@ -101,9 +97,6 @@ class ProfileController
             call_user_func($notFound);
             return;
         }
-
-        // refactor ldap authentication... @todo
-        $this->ldap->authenticate(self::LDAP_USER, self::LDAP_PASSWORD, false);
 
         $response->body(
             $this->layout->render(

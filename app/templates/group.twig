@@ -3,24 +3,24 @@
 {% set page_title = group.name %}
 
 {% block content %}
-    <p><a href="/groups" class="btn--small btn--back">Back to Groups</a></p>
+
     <h2>{{ group.name }} Repositories</h2>
 
     <div class="overflow-container">
         <table>
             <thead>
             <tr>
-                <th>Name</th>
+                <th></th>
                 <th>Github Location</th>
-                <th>Actions</th>
+                <th>Contact Email</th>
             </tr>
             </thead>
             <tbody>
             {% for repo in repos %}
                 <tr>
-                    <td>{{ repo.key }}</a></td>
-                    <td><a href="http://git/{{ repo.githubUser }}/{{ repo.githubRepo }}">http://git/{{ repo.githubUser }}/{{ repo.githubRepo }}</a></td>
-                    <td><a href="/r/{{ repo.key }}">View Deployments</a></td>
+                    <td><a href="{{ urlFor('repo', {'repo': repo.key}) }}">{{ repo.key }}</a></td>
+                    <td><a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a></td>
+                    <td>{{ repo.email }}</td>
                 </tr>
             {% endfor %}
             </tbody>

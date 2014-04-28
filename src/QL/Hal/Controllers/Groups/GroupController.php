@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers;
+namespace QL\Hal\Controllers\Groups;
 
 use Twig_Template;
 use Slim\Http\Request;
@@ -63,7 +63,7 @@ class GroupController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $group = $this->groupRepo->findOneBy(['key' => $params['key']]);
+        $group = $this->groupRepo->findOneBy(['key' => $params['group']]);
         $repos = $this->repoRepo->findBy(['group' => $group]);
 
         $response->body(
