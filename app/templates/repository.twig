@@ -68,10 +68,6 @@
         <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'repo': repo.key, 'page': 1}) }}">All Pushes</a>
     </p>
 
-    <h3>Push History</h3>
-    {% include 'partials/push-table.twig' with {'pushes': pushes} %}
-    <p><a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'repo': repo.key, 'page': 1}) }}">View All Pushes</a></p>
-
     <h3>Repository Details</h3>
     <p>These values can only be changed by an administrator.</p>
     <div class="overflow-container">

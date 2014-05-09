@@ -4,19 +4,20 @@ namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Layout;
+use MCP\Corp\Account\User;
 
 /**
- *  Repository Push History Controller
+ *  Repository Build History Controller
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class RepositoryPushHistoryController
+class RepositoryBuildHistoryController
 {
     const MAX_PER_PAGE = 25;
 
@@ -41,29 +42,37 @@ class RepositoryPushHistoryController
     private $repoRepo;
 
     /**
-     *  @var PushRepository
+     *  @var BuildRepository
      */
-    private $pushRepo;
+    private $buildRepo;
+
+    /**
+     *  @var User
+     */
+    private $user;
 
     /**
      *  @param Twig_Template $template
      *  @param Layout $layout
      *  @param EntityManager $em
      *  @param RepositoryRepository $repoRepo
-     *  @param PushRepository $pushRepo
+     *  @param BuildRepository $buildRepo
+     *  @param User $user
      */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
         EntityManager $em,
         RepositoryRepository $repoRepo,
-        PushRepository $pushRepo
+        BuildRepository $buildRepo,
+        User $user
     ) {
         $this->template = $template;
         $this->layout = $layout;
         $this->em = $em;
-        $this->pushRepo = $pushRepo;
+        $this->buildRepo = $buildRepo;
         $this->repoRepo = $repoRepo;
+        $this->user = $user;
     }
 
     /**
@@ -88,14 +97,14 @@ class RepositoryPushHistoryController
             return;
         }
 
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p JOIN p.deployment d WHERE d.repository = :repo ORDER BY p.end DESC';
+        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.end DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(self::MAX_PER_PAGE)
             ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
             ->setParameter('repo', $repo);
-        $pushes = $query->getResult();
+        $builds = $query->getResult();
 
-        if (count($pushes) < 1) {
+        if (count($builds) < 1) {
             call_user_func($notFound);
             return;
         }
@@ -109,9 +118,10 @@ class RepositoryPushHistoryController
                 $this->template,
                 [
                     'repo' => $repo,
-                    'pushes' => $pushes,
+                    'builds' => $builds,
                     'page' => $page,
-                    'last' => $last
+                    'last' => $last,
+                    'user' => $this->user
                 ]
             )
         );
