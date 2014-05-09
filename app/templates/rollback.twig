@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = repo.key %}
+
+{% block content %}
+    <p><a class="btn--small btn--back" href="{{ urlFor('repo', {'repo': repo.key}) }}">Back to Repository</a></p>
+
+    <h2>Available {{ repo.key }} Rollbacks for {{ server.name }}</h2>
+
+    <div class="overflow-container">
+        <table>
+            <thead>
+                <th>Build</th>
+                <th>Branch</th>
+                <th>Commit</th>
+                <th>Pushed</th>
+                <th>Initiator</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for push in pushes %}
+                <tr>
+                    <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
+                    <td>{{ push.build.branch }}</td>
+                    <td><a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit[:7] }}</a></td>
+                    <td>{{ push.end|date }}</td>
+                    <td>
+                        {% if push.user %}
+                            <a href="{{ urlFor('profile', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
+                        {% elseif push.consumer %}
+                            {{ push.consumer.name[:20] }}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if push.build.status == 'Success' %}
+                            {% if canUserPush(user, repo.key, push.build.server.environment.key) %}
+                                <a href="{{ urlFor('build.push', {'repo': repo.key, 'build': push.build.id}) }}">Rollback</a>
+                            {% endif %}
+                        {% elseif push.build.status == 'Removed' %}
+                            Removed
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

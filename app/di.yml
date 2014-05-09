@@ -395,6 +395,23 @@ services:
       - @build.repo
       - @user
 
+  rollback.twig:
+    class: "Twig_Template"
+    arguments:
+      - "rollback.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  rollback.page:
+    class: "QL\\Hal\\Controllers\\Repository\\RollbackController"
+    arguments:
+      - @rollback.twig
+      - @layout
+      - @repository.repo
+      - @server.repo
+      - @doctrine.em
+      - @user
+
   ######################################################################################################################
   # ADMIN PAGE LAYOUTS & CONTROLLERS
   ######################################################################################################################

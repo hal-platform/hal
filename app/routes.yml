@@ -111,7 +111,6 @@ build.push:
 # PUSH ROUTES
 ########################################################################################################################
 
-# STUB - FIX ME
 push.history:
   method:     "GET"
   route:      "/repos/:repo/push/history(/page/:page)"
@@ -133,13 +132,12 @@ push.start:
     repo:     "[A-Za-z0-9_-]+"
     build:    "[A-Za-z0-9_-]+"
 
-### STUB - FIX ME
 rollback:
   method:     "GET"
   route:      "/repos/:repo/rollback/:server"
   stack:
     - login.bouncer
-    - nyi.page
+    - rollback.page
   conditions:
     repo:     "[A-Za-z0-9_-]+"
     server:   "[0-9]+"
