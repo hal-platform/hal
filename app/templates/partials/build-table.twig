@@ -36,7 +36,7 @@
                 <td>
                     {% if build.status == 'Removed' %}
                         {% if canUserPush(user, repo.key, build.server.environment.key) %}
-                            <a href="{{ urlFor('build.push', {'repo': build.repository.key, 'build': build.id}) }}">Push</a>
+                            <a href="{{ urlFor('push.start', {'repo': build.repository.key, 'build': build.id}) }}">Push</a>
                         {% endif %}
                     {% endif %}
                 </td>
