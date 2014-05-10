@@ -4,6 +4,7 @@
 /tests/phpunit.xml
 /phpunit
 /.idea
+/.vagrant
 /node_modules/
 /bower_components/
 *.swp
