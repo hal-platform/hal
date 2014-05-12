@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Build Details" %}
+
+{% block content %}
+
+    <p><a class="btn--small btn--back" href="{{ urlFor('repo', {'repo': build.repository.key}) }}">Back to Repository</a></p>
+
+    <h2>Build Details</h2>
+
+    <div class="overflow-container">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Id</td>
+                    <td>{{ build.id }}</td>
+                </tr>
+                <tr>
+                    <td>Repository</td>
+                    <td><a href="{{ urlFor('repo', {'repo': build.repository.key}) }}">{{ build.repository.key }}</a></td>
+                </tr>
+                <tr>
+                    <td>Environment</td>
+                    <td>{{ build.environment.key }}</td>
+                </tr>
+                <tr>
+                    <td>Branch</td>
+                    <td>{{ build.branch }}</td>
+                </tr>
+                <tr>
+                    <td>Commit</td>
+                    <td><a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit[:7] }}</a></td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td>
+                        {% if build.status == 'Success' %}
+                            <span class="circle-green">{{ build.status }}</span>
+                        {% elseif build.status in ['Error', 'Removed'] %}
+                            <span class="circle-red">{{ build.status }}</span>
+                        {% else %}
+                            <span class="circle-orange">{{ build.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Start</td>
+                    <td>{{ build.start|date }}</td>
+                </tr>
+                <tr>
+                    <td>End</td>
+                    <td>{{ build.end|date }}</td>
+                </tr>
+                <tr>
+                    <td>Initiator</td>
+                    <td>
+                        {% if build.user %}
+                            <a href="{{ urlFor('profile', {'id': build.user.id}) }}">{{ build.user.name }}</a>
+                        {% elseif build.consumer %}
+                            {{ build.consumer.name[:20] }}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Build Log</h3>
+    <p>Build log is not available.</p>
+
+{% endblock %}

@@ -2,6 +2,7 @@
     <table>
         <thead>
         <th></th>
+        <th>Server</th>
         <th>Status</th>
         <th>Build</th>
         <th>Initiator</th>
@@ -10,6 +11,7 @@
         <tbody>
         {% for push in pushes %}
             <tr>
+                <td><a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id }}</a></td>
                 <td><a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})</td>
                 <td>
                     {% if push.status == 'Success' %}

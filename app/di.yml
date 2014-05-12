@@ -370,7 +370,7 @@ services:
     factory_method: "loadTemplate"
 
   repository.push.history.page:
-    class: "QL\\Hal\\Controllers\\Repository\\RepositoryPushHistoryController"
+    class: "QL\\Hal\\Controllers\\Repository\\Push\\HistoryController"
     arguments:
       - @repository.push.history.twig
       - @layout
@@ -386,7 +386,7 @@ services:
     factory_method: "loadTemplate"
 
   repository.build.history.page:
-    class: "QL\\Hal\\Controllers\\Repository\\RepositoryBuildHistoryController"
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\HistoryController"
     arguments:
       - @repository.build.history.twig
       - @layout
@@ -411,6 +411,35 @@ services:
       - @server.repo
       - @doctrine.em
       - @user
+
+  build.twig:
+    class: "Twig_Template"
+    arguments:
+      - "build.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  build.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildController"
+    arguments:
+      - @build.twig
+      - @layout
+      - @build.repo
+
+  push.twig:
+    class: "Twig_Template"
+    arguments:
+      - "push.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  push.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Push\\PushController"
+    arguments:
+      - @push.twig
+      - @layout
+      - @push.repo
+
 
   ######################################################################################################################
   # ADMIN PAGE LAYOUTS & CONTROLLERS

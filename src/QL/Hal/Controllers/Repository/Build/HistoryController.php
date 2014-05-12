@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Repository;
+namespace QL\Hal\Controllers\Repository\Build;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -17,7 +17,7 @@ use MCP\Corp\Account\User;
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class RepositoryBuildHistoryController
+class HistoryController
 {
     const MAX_PER_PAGE = 25;
 

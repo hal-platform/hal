@@ -88,10 +88,10 @@ build.handle:
 ### STUB - FIX ME
 build:
   method:     "GET"
-  route:      "/repos/:repo/build/:build"
+  route:      "/build/:build"
   stack:
     - login.bouncer
-    - nyi.page
+    - build.page
   conditions:
     repo:     "[A-Za-z0-9_-]+"
     build:    "[A-Za-z0-9_-]+"
@@ -142,6 +142,15 @@ push.handle:
   conditions:
     repo:     "[A-Za-z0-9_-]+"
     build:    "[A-Za-z0-9_-]+"
+
+push:
+  method:     "GET"
+  route:      "/push/:push"
+  stack:
+    - login.bouncer
+    - push.page
+  conditions:
+    push:     "[0-9]+"
 
 ########################################################################################################################
 # SERVER ROUTES
