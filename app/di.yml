@@ -395,6 +395,21 @@ services:
       - @build.repo
       - @user
 
+  repository.build.start.twig:
+    class: "Twig_Template"
+    arguments:
+      - "repository.build.start.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  repository.build.start.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartController"
+    arguments:
+      - @repository.build.start.twig
+      - @layout
+      - @repository.repo
+      - @github
+
   rollback.twig:
     class: "Twig_Template"
     arguments:

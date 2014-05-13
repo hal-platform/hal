@@ -17,16 +17,38 @@ use MCP\Corp\Account\User;
  */
 class BuildPushController
 {
+    /**
+     *  @var Twig_Template
+     */
     private $template;
 
+    /**
+     *  @var Layout
+     */
     private $layout;
 
+    /**
+     *  @var EntityManager
+     */
     private $em;
 
+    /**
+     *  @var BuildRepository
+     */
     private $buildRepo;
 
+    /**
+     *  @var User
+     */
     private $user;
 
+    /**
+     *  @param Twig_Template $template
+     *  @param Layout $layout
+     *  @param EntityManager $em
+     *  @param BuildRepository $buildRepo
+     *  @param User $user
+     */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
@@ -41,6 +63,12 @@ class BuildPushController
         $this->user = $user;
     }
 
+    /**
+     *  @param Request $request
+     *  @param Response $response
+     *  @param array $params
+     *  @param callable $notFound
+     */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $build = $this->buildRepo->findOneBy(['id' => $params['build']]);

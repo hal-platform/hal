@@ -75,13 +75,12 @@ build:
     repo:     "[A-Za-z0-9_-]+"
     build:    "[A-Za-z0-9_-]+"
 
-### STUB - FIX ME
 build.start:
   method:     "GET"
   route:      "/repos/:repo/build"
   stack:
     - login.bouncer
-    - nyi.page
+    - repository.build.start.page
   conditions:
     repo:     "[A-Za-z0-9_-]+"
 
