@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Push Build "~build.id %}
+
+{% block content %}
+
+    <h2>Push Build {{ build.id }}</h2>
+
+    <p>This build of {{ build.repository.key }} can be pushed to the following servers.</p>
+
+    <form action="{{ urlFor('push.handle', {'repo': build.repository.key, 'build': build.id}) }}" method="post">
+    <div class="overflow-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Server</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set allowSubmit = false %}
+            {% for deployment in deployments %}
+                <tr>
+                    <td><a href="{{ urlFor('server', {'server': deployment.server.name}) }}">{{ deployment.server.name }} ({{ deployment.server.environment.key }})</a></td>
+                    <td>
+                        {% if canUserPush(user, deployment.repository.key, deployment.server.environment.key) %}
+                            <label>Push Now <input type="checkbox" name="servers[]" id="sel-{{ deployment.environment.key }}-{{ deployment.id }}" value="{{ deployment.server.id }}"></label>
+                            {% set allowSubmit = true %}
+                        {% else %}
+                            No Access
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if allowSubmit %}
+        <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
+    {% endif %}
+    </form>
+
+{% endblock %}

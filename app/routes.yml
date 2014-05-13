@@ -65,6 +65,16 @@ build.history:
     repo:     "[A-Za-z0-9_-]+"
     page:     "[0-9]+"
 
+build:
+  method:     "GET"
+  route:      "/build/:build"
+  stack:
+    - login.bouncer
+    - build.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    build:    "[A-Za-z0-9_-]+"
+
 ### STUB - FIX ME
 build.start:
   method:     "GET"
@@ -85,15 +95,7 @@ build.handle:
   conditions:
     repo:     "[A-Za-z0-9_-]+"
 
-build:
-  method:     "GET"
-  route:      "/build/:build"
-  stack:
-    - login.bouncer
-    - build.page
-  conditions:
-    repo:     "[A-Za-z0-9_-]+"
-    build:    "[A-Za-z0-9_-]+"
+
 
 ########################################################################################################################
 # PUSH ROUTES
@@ -109,17 +111,6 @@ push.history:
     repo:     "[A-Za-z0-9_-]+"
     page:     "[0-9]+"
 
-### STUB - FIX ME
-push.start:
-  method:     "GET"
-  route:      "/repos/:repo/build/:build/push"
-  stack:
-    - login.bouncer
-    - nyi.page
-  conditions:
-    repo:     "[A-Za-z0-9_-]+"
-    build:    "[A-Za-z0-9_-]+"
-
 rollback:
   method:     "GET"
   route:      "/repos/:repo/rollback/:server"
@@ -130,11 +121,21 @@ rollback:
     repo:     "[A-Za-z0-9_-]+"
     server:   "[0-9]+"
 
+push.start:
+  method:     "GET"
+  route:      "/repos/:repo/build/:build/push"
+  stack:
+    - login.bouncer
+    - build.push.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+    build:    "[A-Za-z0-9_-]+"
+
 ### STUB - FIX ME
 # Push Handle
 push.handle:
   method:     "POST"
-  route:      "/repos/:repo/push/:build"
+  route:      "/repos/:repo/build/:build/push"
   stack:
     - login.bouncer
     - nyi.page

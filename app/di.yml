@@ -469,6 +469,21 @@ services:
       - @layout
       - @server.repo
 
+  build.push.twig:
+    class: "Twig_Template"
+    arguments:
+      - "build.push.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  build.push.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Push\\BuildPushController"
+    arguments:
+      - @build.push.twig
+      - @layout
+      - @doctrine.em
+      - @build.repo
+      - @user
 
   ######################################################################################################################
   # ADMIN PAGE LAYOUTS & CONTROLLERS
