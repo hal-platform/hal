@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = server.name~" Server Deployments" %}
+
+{% block content %}
+
+    <h2>{{ server.name }} ({{ server.environment.key }}) Server Deployments</h2>
+
+    <div class="overflow-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Repository</th>
+                <th>Contact</th>
+                <th>Path</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for deployment in deployments %}
+                <tr>
+                    <td><a href="{{ urlFor('repo', {'repo': deployment.repository.key}) }}">{{ deployment.repository.key }}</a></td>
+                    <td>{{ deployment.repository.email }}</td>
+                    <td>{{ deployment.path }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

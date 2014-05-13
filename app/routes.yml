@@ -85,7 +85,6 @@ build.handle:
   conditions:
     repo:     "[A-Za-z0-9_-]+"
 
-### STUB - FIX ME
 build:
   method:     "GET"
   route:      "/build/:build"
@@ -156,16 +155,14 @@ push:
 # SERVER ROUTES
 ########################################################################################################################
 
-### STUB - FIX ME
-# Server Page
 server:
   method:     "GET"
-  route:      "/servers/:server"
+  route:      "/server/:server"
   stack:
     - login.bouncer
-    - nyi.page
+    - server.page
   conditions:
-    server:   "[0-9]+"
+    server:   "[A-Za-z0-9_-]+"
 
 ########################################################################################################################
 # ADMIN REPO ROUTES

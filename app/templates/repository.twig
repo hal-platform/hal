@@ -23,7 +23,7 @@
             <tbody>
                 {% for status in statuses %}
                     <tr>
-                        <td><a href="{{ urlFor('server', {'server': status.deploy.server.id}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</td>
+                        <td><a href="{{ urlFor('server', {'server': status.deploy.server.name}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</td>
                         {% if status.latest %}
                             <td>
                                 {% if status.latest.status == 'Success' %}
@@ -33,7 +33,7 @@
                                 {% else %}
                                     <span class="circle-orange">{{ status.latest.status }}</span>
                                 {% endif %}
-                                (<a href="{{ urlFor('build', {'repo': repo.id, 'build': status.latest.build.id}) }}">{{ status.latest.build.id[:10] }}</a>)
+                                (<a href="{{ urlFor('push', {'push': status.latest.id}) }}">{{ status.latest.id }}</a>)
                             </td>
                         {% else %}
                             <td>None</td>

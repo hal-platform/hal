@@ -47,7 +47,7 @@
                 {% if account %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
-                        <li><a href="{{ urlFor('groups') }}" title="groups">Groups</a></li>
+                        <li><a href="{{ urlFor('groups') }}" title="groups">Repository Groups</a></li>
                         <li><a href="{{ urlFor('profile') }}">Profile</a></li>
                         {% if isUserAdmin(account) %}
                             <li><a href="{{ urlFor('admin_repositories') }}" title="admin dashboard">Admin</a></li>
