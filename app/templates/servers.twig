@@ -11,12 +11,14 @@
             <thead>
             <tr>
                 <th>Hostname</th>
+                <th>Environment</th>
             </tr>
             </thead>
             <tbody>
             {% for server in servers %}
                 <tr>
-                    <td>{{ server.name }}</td>
+                    <td><a href="{{ urlFor('server', {'server': server.name}) }}">{{ server.name }}</a></td>
+                    <td>{{ server.environment.key }}</td>
                 </tr>
             {% endfor %}
             </tbody>
