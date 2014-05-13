@@ -455,6 +455,20 @@ services:
       - @server.repo
       - @deployment.repo
 
+  servers.twig:
+    class: "Twig_Template"
+    arguments:
+      - "servers.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  servers.page:
+    class: "QL\\Hal\\Controllers\\Server\\ServersController"
+    arguments:
+      - @servers.twig
+      - @layout
+      - @server.repo
+
 
   ######################################################################################################################
   # ADMIN PAGE LAYOUTS & CONTROLLERS
