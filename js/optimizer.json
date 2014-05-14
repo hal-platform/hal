@@ -1,0 +1,28 @@
+{
+  "appDir"              : "./",
+  "baseUrl"             : "./",
+  "dir"                 : "../public/js",
+  "fileExclusionRegExp" : (/optimizer\.json|head/),
+  "optimize"            : "uglify2",
+  "removeCombined"      : true,
+  "skipDirOptimize"     : true,
+  "modules"             : [
+    {
+      "name": "main",
+      "include": [
+        "vendor/jquery-2.min"
+      ]
+    }
+  ],
+  "shim": {
+    "underscore": {
+      "exports": '_'
+    }
+  },
+  "paths": {
+    "jquery": "vendor/jquery-2.min",
+    "underscore": "vendor/underscore.min",
+    "crossroads": "vendor/crossroads.min",
+    "signals": "vendor/signals.min"
+  }
+}

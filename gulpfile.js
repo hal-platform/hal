@@ -2,12 +2,9 @@ var gulp = require('gulp'),
     open = require('open'),
     plugins = require('gulp-load-plugins')(),
     lr = require('tiny-lr'),
-    server = lr();
-
-var onError = function (err) {
-    gutil.beep();
-    console.log(err);
-};
+    server = lr(),
+    isDeploy = process.argv.indexOf('--deploy') > -1,
+    exec = require('child_process').exec;
 
 gulp.task('styles', function() {
     return gulp.src('sass/**/*.scss')
@@ -16,8 +13,7 @@ gulp.task('styles', function() {
         .pipe(plugins.compass({
             css: 'public/css',
             sass: 'sass',
-            image: 'public/img',
-            javascript: 'public/js',
+            style: isDeploy ? 'compressed' : 'compact',
             require: ['modular-scale', 'breakpoint']
         }))
         .pipe(plugins.autoprefixer('last 2 versions', '> 1%'))
@@ -26,7 +22,7 @@ gulp.task('styles', function() {
 });
 
 gulp.task('scripts', function() {
-    return gulp.src(['public/js/**/*.js', '!./public/js/vendor/**/*.js'])
+    return gulp.src(['js/**/*.js', '!./js/vendor/**/*.js'])
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('default'))
         .pipe(plugins.livereload(server));
@@ -37,6 +33,16 @@ gulp.task('html', function() {
         .pipe(plugins.livereload(server));
 });
 
+gulp.task('images', function() {
+    return gulp.src('img/**/*')
+        .pipe(plugins.imagemin({
+            optimizationLevel: 3,
+            progressive: true,
+            interlaced: true
+        }))
+        .pipe(gulp.dest('public/img'));
+});
+
 gulp.task('watch', function() {
     server.listen(35729, function (err) {
         if (err) {
@@ -45,10 +51,28 @@ gulp.task('watch', function() {
 
         gulp.watch('sass/**/*.scss', ['styles']);
         gulp.watch('app/templates/**/*.twig', ['html']);
-        gulp.watch('public/js/**/*.js', ['scripts']);
+        gulp.watch('js/**/*.js', ['scripts']);
+        gulp.watch('img/**/*', ['images']);
     });
 });
 
 gulp.task('serve', ['watch'], function() {
     open("http://hal9000.local");
+});
+
+gulp.task('build', ['styles', 'scripts', 'images'], function(cb) {
+    exec('node node_modules/.bin/r.js -o js/optimizer.json', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
+});
+
+gulp.task('clean', function () {
+    return gulp.src(['public/js', 'public/img', 'public/css'], { read: false })
+        .pipe(plugins.clean());
+});
+
+gulp.task('default', ['clean'], function() {
+    gulp.start('build');
 });
