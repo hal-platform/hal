@@ -14,7 +14,7 @@ define(['jquery'], function($) {
             createToggle: function(targetElem) {
                 var _this = this;
 
-                var toggle = $('<a class="js-form-toggle">')
+                var toggle = $('<a class="js-form-toggle">');
                 toggle.text('Load list from GitHub');
 
                 targetElem.after(toggle);
@@ -116,7 +116,7 @@ define(['jquery'], function($) {
                 // the original input is stored in originalTarget, so we have something to fall
                 // back to in case github blows up or something. In those cases we want to allow
                 // the user to enter a repository manually.
-                if (this.originalTarget != null) {
+                if (this.originalTarget !== null) {
                     this.target.after(this.originalTarget);
                     this.target.remove();
 

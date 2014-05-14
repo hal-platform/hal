@@ -1,6 +1,5 @@
 define(['crossroads'], function(crossroads) {
-    var routes;
-    return routes = {
+    return {
         init: function() {
             this.router = crossroads.create();
             this.addRoutes(this.router);

@@ -4,12 +4,12 @@ html {
 
 [role="banner"] {
     background:
-radial-gradient(black 15%, transparent 16%) 0 0,
-radial-gradient(black 15%, transparent 16%) 8px 8px,
-radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
-radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
-background-color:#282828;
-background-size:16px 16px;
+        radial-gradient(black 15%, transparent 16%) 0 0,
+        radial-gradient(black 15%, transparent 16%) 8px 8px,
+        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+    background-color: #282828;
+    background-size: 16px 16px;
     color: $white;
     @include padding-leader(.5);
 }
@@ -64,6 +64,10 @@ background-size:16px 16px;
         padding: 0 ms(1);
         @include rhythm(0,1,.5,0);
     }
+}
+
+p {
+    max-width: 40em;
 }
 
 [role="contentinfo"] {

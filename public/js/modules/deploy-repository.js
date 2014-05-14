@@ -1,6 +1,5 @@
 define(['jquery'], function($) {
-    var deploy;
-    return deploy = {
+    return {
         init: function() {
             var _this = this;
             $('#all-test').click(function() {

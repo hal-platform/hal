@@ -1,14 +1,23 @@
 {
   "name": "hal9000",
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-compass": "~0.5.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-uglify": "~0.2.7",
-    "grunt-autoprefixer": "^0.7.2",
-    "grunt-cli": "~0.1.13"
+  "repository": {
+    "type": "git",
+    "url": "http://git/web-core/hal.git"
   },
-  "peerDependencies": {
-    "grunt-cli": "~0.1.13"
+  "dependencies": {},
+  "devDependencies": {
+    "bower": "0.10.0",
+    "gulp": "^3.6.0",
+    "gulp-compass": "^1.1.8",
+    "gulp-autoprefixer": "0.0.6",
+    "gulp-load-plugins": "^0.4.0",
+    "open": "0.0.4",
+    "tiny-lr": "0.0.5",
+    "gulp-livereload": "^1.2.0",
+    "gulp-jshint": "^1.5.3",
+    "gulp-concat": "^2.2.0",
+    "gulp-uglify": "^0.3.0",
+    "gulp-if": "^1.2.0",
+    "gulp-plumber": "^0.6.1"
   }
 }
