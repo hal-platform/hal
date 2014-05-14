@@ -5,21 +5,15 @@ imports:
 parameters:
   debug:            true
 
-  # OLD DB (need both for now)
-  db.dsn:           "mysql:host=test.example.com;dbname=hal9000_test;charset=utf8"
-  db.user:          "placeholder"
-  db.pass:          "placeholder"
-
-  # NEW DB (need both for now)
   doctrine.mappings:
     - "%root%/src/QL/Hal/Core/Entity"
   doctrine.devmode:   true
   doctrine.connection:
     driver:         pdo_mysql
-    host:           localhost
-    user:           root
-    password:
-    dbname:         hal
+    host:           test.example.com
+    user:           placeholder
+    password:       placeholder
+    dbname:         hal9000_test
 
   build.user:       "hal9000test"
   build.dir:        "/var/spool/hal9000test"

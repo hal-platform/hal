@@ -5,12 +5,6 @@ imports:
 parameters:
   debug:            true
 
-  # OLD DB (need both for now)
-  db.dsn:           "mysql:host=localhost;dbname=hal;charset=utf8"
-  db.user:          "root"
-  db.pass:          ""
-
-  # NEW DB (need both for now)
   doctrine.mappings:
     - "%root%/src/QL/Hal/Core/Entity"
   doctrine.devmode:   true
