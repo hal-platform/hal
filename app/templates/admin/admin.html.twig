@@ -3,12 +3,11 @@
 {% block subnav %}
 <nav role="navigation">
     <ul class="nav--admin">
-        <li><a href="/admin/repositories" title="Manage Repositories">Repositories</a></li>
-        <li><a href="/admin/arrangements" title="Manage Repository Groups">Repository Groups</a></li>
-        <li><a href="/admin/envs" title="Manage Environments">Environments</a></li>
-        <li><a href="/admin/servers" title="Manage Servers">Servers</a></li>
-        <li><a href="/admin/deployments" title="Manage Deployments">Deployments</a></li>
-        <li><a href="/admin/users" title="Manage Users">Users</a></li>
+        <li><a href="{{ urlFor('admin.repos') }}" title="Manage Repositories">Repositories</a></li>
+        <li><a href="{{ urlFor('admin.groups') }}" title="Manage Repository Groups">Repository Groups</a></li>
+        <li><a href="{{ urlFor('admin.servers') }}" title="Manage Servers">Servers</a></li>
+        <li><a href="{{ urlFor('admin.envs') }}" title="Manage Environments">Environments</a></li>
+        <li><a href="{{ urlFor('admin.users') }}" title="Manage Users">Users</a></li>
     </ul>
 </nav>
 {% endblock %}

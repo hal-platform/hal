@@ -1,3 +1,7 @@
+imports:
+  -
+    resource: pages.yml
+
 services:
 
   ######################################################################################################################
@@ -106,61 +110,6 @@ services:
       - @twigEnv
 
   ######################################################################################################################
-  # DATABASE SERVICES
-  ######################################################################################################################
-
-  db:
-    class: "PDO"
-    arguments:
-      - "%db.dsn%"
-      - "%db.user%"
-      - "%db.pass%"
-    calls:
-      - ["setAttribute", [3, 2]] # PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION
-
-  repoService:
-    class: "QL\\Hal\\Services\\RepositoryService"
-    arguments:
-      - @db
-
-  serverService:
-    class: "QL\\Hal\\Services\\ServerService"
-    arguments:
-      - @db
-
-  deploymentService:
-    class: "QL\\Hal\\Services\\DeploymentService"
-    arguments:
-      - @db
-
-  userService:
-    class: "QL\\Hal\\Services\\UserService"
-    arguments:
-      - @db
-
-  envService:
-    class: "QL\\Hal\\Services\\EnvironmentService"
-    arguments:
-      - @db
-
-  arrService:
-    class: "QL\\Hal\\Services\\ArrangementService"
-    arguments:
-      - @db
-
-  logService:
-    class: "QL\\Hal\\Services\\LogService"
-    arguments:
-      - @db
-
-  syncOptions:
-    class: "QL\\Hal\\Services\\SyncOptions"
-    arguments:
-      - @repoService
-      - @deploymentService
-      - @github
-
-  ######################################################################################################################
   # NON-DATABASE SERVICES
   ######################################################################################################################
 
@@ -182,8 +131,9 @@ services:
     class: 'QL\Hal\PushPermissionService'
     arguments:
       - '@ldapService'
-      - '@repoService'
-      - '@userService'
+      - @deployment.repo
+      - @repository.repo
+      - @user.repo
       - '@github'
       - '%debug.godmode%'
 
@@ -268,6 +218,20 @@ services:
     arguments:
       - @nyi.twig
 
+  hello.twig:
+    class: "Twig_Template"
+    arguments:
+      - 'hello.twig'
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  hello.page:
+    class: "QL\\Hal\\Controllers\\HelloController"
+    arguments:
+      - @hello.twig
+      - @layout
+      - @user
+
   login.twig:
     class: "Twig_Template"
     arguments:
@@ -296,24 +260,6 @@ services:
       - @session
       - @url.helper
 
-  profile.twig:
-    class: "Twig_Template"
-    arguments:
-      - 'profile.twig'
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  profile.page:
-    class: "QL\\Hal\\Controllers\\ProfileController"
-    arguments:
-      - @profile.twig
-      - @layout
-      - @pushPermissionService
-      - @ldapService
-      - @user.repo
-      - @user
-      - @doctrine.em
-
   groups.twig:
     class: "Twig_Template"
     arguments:
@@ -336,7 +282,7 @@ services:
     factory_method: "loadTemplate"
 
   group.page:
-    class: "QL\\Hal\\Controllers\\Groups\\GroupController"
+    class: "QL\\Hal\\Controllers\\Group\\GroupController"
     arguments:
       - @group.twig
       - @layout
@@ -411,6 +357,14 @@ services:
       - @environment.repo
       - @github
 
+  repository.build.start.handle.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartHandleController"
+    arguments:
+      - @repository.repo
+      - @user.repo
+      - @url.helper
+      - @user
+
   rollback.twig:
     class: "Twig_Template"
     arguments:
@@ -456,35 +410,6 @@ services:
       - @layout
       - @push.repo
 
-  server.twig:
-    class: "Twig_Template"
-    arguments:
-      - "server.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  server.page:
-    class: "QL\\Hal\\Controllers\\Server\\ServerController"
-    arguments:
-      - @server.twig
-      - @layout
-      - @server.repo
-      - @deployment.repo
-
-  servers.twig:
-    class: "Twig_Template"
-    arguments:
-      - "servers.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  servers.page:
-    class: "QL\\Hal\\Controllers\\Server\\ServersController"
-    arguments:
-      - @servers.twig
-      - @layout
-      - @server.repo
-
   build.push.twig:
     class: "Twig_Template"
     arguments:
@@ -505,215 +430,33 @@ services:
   # ADMIN PAGE LAYOUTS & CONTROLLERS
   ######################################################################################################################
 
-  admin.dashboard.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/dashboard.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  adminDashboardPage:
-    class: 'QL\Hal\Admin\Dashboard'
-    arguments:
-      - @admin.dashboard.twig
-      - @repoService
-      - @userService
-      - @layout
-
-  admin.repositories.twig:
+  admin.repos.twig:
     class: "Twig_Template"
     arguments:
       - "admin/repositories.twig"
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
-  adminRepositoriesPage:
-    class: 'QL\Hal\Admin\ManageRepositories'
+  admin.repos.page:
+    class: "QL\\Hal\\Controllers\\Admin\\RepositoriesController"
     arguments:
-      - @admin.repositories.twig
-      - @repoService
-      - @arrService
+      - @admin.repos.twig
       - @layout
+      - @repository.repo
 
-  adminRepositoriesHandler:
-    class: 'QL\Hal\Admin\ManageRepositoriesHandler'
-    arguments:
-      - @admin.repositories.twig
-      - @repoService
-      - @arrService
-      - @github
-
-  adminRepositoriesRemoveHandler:
-    class: "QL\Hal\Admin\ManageRepositoriesRemove"
-    arguments:
-      - @admin.repositories.twig
-      - @deploymentService
-      - @repoService
-
-  admin.servers.twig:
+  admin.groups.twig:
     class: "Twig_Template"
     arguments:
-      - "admin/servers.twig"
-    factory_service: @twigEnv
-    factory_method: "loadTemplate"
-
-  adminServersPage:
-    class: 'QL\Hal\Admin\ManageServers'
-    arguments:
-      - @admin.servers.twig
-      - @serverService
-      - @envService
-      - @layout
-
-  adminServersHandler:
-    class: 'QL\Hal\Admin\ManageServersHandler'
-    arguments:
-      - @admin.servers.twig
-      - @serverService
-      - @envService
-
-  admin.deployments.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/deployments.twig"
-    factory_service: @twigEnv
-    factory_method: "loadTemplate"
-
-  adminDeploymentsPage:
-    class: 'QL\Hal\Admin\ManageDeployments'
-    arguments:
-      - @admin.deployments.twig
-      - @repoService
-      - @serverService
-      - @deploymentService
-      - @layout
-
-  adminDeploymentsHandler:
-    class: "QL\Hal\Admin\ManageDeploymentsHandler"
-    arguments:
-      - @admin.deployments.twig
-      - @repoService
-      - @serverService
-      - @deploymentService
-      - @session
-
-  admin.arrangements.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/arrangements.twig"
+      - "admin/groups.twig"
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
-  adminArrangementsPage:
-    class: 'QL\Hal\Admin\ManageArrangements'
+  admin.groups.page:
+    class: "QL\\Hal\\Controllers\\Admin\\GroupsController"
     arguments:
-      - @admin.arrangements.twig
-      - @arrService
+      - @admin.groups.twig
       - @layout
-
-  adminArrangementsHandler:
-    class: 'QL\Hal\Admin\ManageArrangementsHandler'
-    arguments:
-      - @admin.arrangements.twig
-      - @arrService
-
-  admin.environments.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/environments.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  adminEnvironmentsPage:
-    class: 'QL\Hal\Admin\ManageEnvironments'
-    arguments:
-      - @admin.environments.twig
-      - @envService
-      - @layout
-
-  adminEnvironmentsHandler:
-    class: 'QL\Hal\Admin\ManageEnvironmentsHandler'
-    arguments:
-      - @admin.environments.twig
-      - @envService
-
-  adminEnvironmentsRemoveHandler:
-    class: "QL\Hal\Admin\ManageEnvironmentsRemove"
-    arguments:
-      - @admin.environments.twig
-      - @envService
-
-  admin.users.twig:
-    arguments:
-      - "admin/users.twig"
-    class: "Twig_Template"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  adminUsersPage:
-    class: 'QL\Hal\Admin\ManageUsers'
-    arguments:
-      - @admin.users.twig
-      - @userService
-      - @layout
-
-  admin.permissions.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/permissions.html.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  adminPermissionsPage:
-    class:      'QL\Hal\Admin\ManagePermissions'
-    arguments:
-      - @admin.permissions.twig
-      - @repoService
-      - @pushPermissionService
-      - @layout
-
-  githubUsersApi:
-    class: 'QL\Hal\Github\UsersApi'
-    arguments:
-      - @github
-
-  githubReposApi:
-    class: 'QL\Hal\Github\ReposApi'
-    arguments:
-      - @github
-
-  githubPullsApi:
-    class: 'QL\Hal\Github\PullRequestsApi'
-    arguments:
-      - @github
-
-  sync-code.twig:
-    class: "Twig_Template"
-    arguments:
-      - "sync-code.twig"
-    factory_service:  "twigEnv"
-    factory_method:   "loadTemplate"
-
-  syncPage:
-    class: 'QL\Hal\SyncPage'
-    arguments:
-      - @sync-code.twig
-      - @syncOptions
-      - @layout
-
-  syncHandler:
-    class: 'QL\Hal\SyncHandler'
-    arguments:
-      - "@sync-code.twig"
-      - "@syncOptions"
-      - "@logService"
-      - "@deploymentService"
-      - "@github"
-      - "@session"
-      - "%root%/bin/pusher.php"
-      - "%build.user%"
-      - "%rsync.user%"
-      - true
+      - @group.repo
 
   ######################################################################################################################
   # API CONTROLLERS
@@ -726,9 +469,10 @@ services:
   ######################################################################################################################
 
   sessionHandler:
-    class: 'QL\Hal\Services\Session\Handler\MySQLHandler'
+    class: 'QL\Hal\Services\Session\Handler\DoctrineHandler'
     arguments:
-      - @db
+      - @session.repo
+      - @doctrine.em
 
   session:
     class: 'QL\Hal\Session'
@@ -739,18 +483,6 @@ services:
   # PUSHER COMMAND
   ######################################################################################################################
 
-  # Pusher
-  pushCommand:
-    class: 'QL\Hal\PushCommand'
-    arguments:
-      - '@repoService'
-      - '@deploymentService'
-      - '@logService'
-      - '@github'
-      - '@buildLogger'
-      - '@buildMessage'
-      - '%build.dir%'
-      - '%rsync.user%'
 
   ######################################################################################################################
   # Build Notifications & Logging

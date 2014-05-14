@@ -9,13 +9,17 @@ namespace QL\Hal;
 
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User;
+use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Services\GithubService;
-use QL\Hal\Services\RepositoryService;
-use QL\Hal\Services\UserService;
 use Zend\Ldap\Dn;
 
 /**
  * @api
+ *
+ * @todo REFACTOR THIS CLASS, lots of bad
  */
 class PushPermissionService
 {
@@ -28,10 +32,7 @@ class PushPermissionService
      */
     private $ldapService;
 
-    /**
-     * @var RepositoryService
-     */
-    private $repoService;
+
 
     /**
      * @var int
@@ -43,10 +44,11 @@ class PushPermissionService
      */
     private $authed;
 
-    /**
-     * @var Services\UserService
-     */
-    private $userService;
+    private $repoRepo;
+
+    private $userRepo;
+
+    private $deployRepo;
 
     /**
      * @var GithubService
@@ -93,24 +95,25 @@ class PushPermissionService
     }
 
     /**
-     *  Constructor
-     *
      *  @param LdapService $ldapService
-     *  @param RepositoryService $repoService
-     *  @param UserService $userService
+     *  @param DeploymentRepository $deployRepo
+     *  @param RepositoryRepository $repoRepo
+     *  @param UserRepository $userRepo
      *  @param GithubService $github
-     *  @param int $godModeOverride
+     *  @param $godModeOverride
      */
     public function __construct(
         LdapService $ldapService,
-        RepositoryService $repoService,
-        UserService $userService,
+        DeploymentRepository $deployRepo,
+        RepositoryRepository $repoRepo,
+        UserRepository $userRepo,
         GithubService $github,
         $godModeOverride
     ) {
         $this->ldapService = $ldapService;
-        $this->repoService = $repoService;
-        $this->userService = $userService;
+        $this->deployRepo = $deployRepo;
+        $this->userRepo = $userRepo;
+        $this->repoRepo = $repoRepo;
         $this->github = $github;
         $this->godModeOverride = $godModeOverride;
 
@@ -170,13 +173,14 @@ class PushPermissionService
     public function repoEnvsCommonIdCanPushTo($commonId)
     {
         $user = $this->ldapService->getUserByCommonId($commonId);
-        $pairs = $this->repoService->listRepoEnvPairs();
 
         $permissions = array();
 
-        foreach ($pairs as $pair) {
-            if ($this->canUserPushToEnvRepo($user, $pair['RepShortName'], $pair['EnvShortName'])) {
-                $permissions[] = array($pair['RepShortName'], $pair['EnvShortName']);
+        foreach ($this->listEnvRepoPairs() as $repo => $envs) {
+            foreach ($envs as $env) {
+                if ($this->canUserPushToEnvRepo($user, $repo, $env)) {
+                    $permissions[] = array($repo, $env);
+                }
             }
         }
 
@@ -191,20 +195,17 @@ class PushPermissionService
      */
     public function allUsersWithAccess($repo)
     {
-        $users = $this->userService->listAll();
-        $pairs = $this->repoService->listRepoEnvPairs($repo);
+        $users = $this->userRepo->findAll();
+        $repo = $this->repoRepo->findOneBy(['key' => $repo]);
+        $pairs = $this->listEnvRepoPairs($repo);
 
         $permissions = array();
 
         foreach ($users as $user) {
-            $username = $user['UserName'];
 
-            foreach ($pairs as $pair) {
+            foreach ($pairs as $env) {
 
-                $repo = $pair['RepShortName'];
-                $env = $pair['EnvShortName'];
-
-                if ($this->canUserPushToEnvRepo($username, $repo, $env)) {
+                if ($this->canUserPushToEnvRepo($user->getHandle(), $repo, $env)) {
                     $permissions[] = array(
                         'user' => $user,
                         'repo' => $repo,
@@ -226,7 +227,7 @@ class PushPermissionService
         if ($user->commonId() == $this->godModeOverride) {
             return true;
         }
-        //return $this->ldapService->isUserInGroup(self::dnForAdminGroup(), $user->dn());
+
         return $this->ldapUserInGroupCache(self::dnForAdminGroup(), $user->dn());
     }
 
@@ -237,11 +238,11 @@ class PushPermissionService
      */
     public function isUserCollaborator(User $user, $repo)
     {
-        $repo = $this->repoService->getFromName($repo);
+        $repo = $this->repoRepo->findOneBy(['key' => $repo]);
 
         return $this->github->isUserCollaborator(
-            $repo['GithubUser'],
-            $repo['GithubRepo'],
+            $repo->getGithubUser(),
+            $repo->getGithubRepo(),
             $user->windowsUsername()
         );
     }
@@ -267,5 +268,38 @@ class PushPermissionService
         $this->cache[$key] = $result;
 
         return $result;
+    }
+
+    /**
+     *  Get an array of all repo:env pairs
+     *
+     *  Implementation is really bad. Let's refactor this at some point.
+     *
+     *  @param Repository $repo
+     *  @return array
+     */
+    private function listEnvRepoPairs(Repository $repo = null)
+    {
+        // revise this later to not pull in all the entities, use partials
+        if ($repo) {
+            $deploys = $this->deployRepo->findBy(['repository' => $repo]);
+        } else {
+            $deploys = $this->deployRepo->findAll();
+        }
+
+        $pairs = [];
+
+        foreach ($deploys as $deploy) {
+            $repo = $deploy->getRepository()->getKey();
+            $env = $deploy->getServer()->getEnvironment()->getKey();
+
+            if (isset($pairs[$repo])) {
+                $pairs[$repo][$env] = $env;
+            } else {
+                $pairs[$repo] = [];
+            }
+        }
+
+        return $pairs;
     }
 }
