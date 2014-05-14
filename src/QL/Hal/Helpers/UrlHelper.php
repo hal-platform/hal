@@ -114,4 +114,38 @@ class UrlHelper
             $commit
         );
     }
+
+    /**
+     *  Get the URL of a Github repository treeish
+     *
+     *  @param $user
+     *  @param $repo
+     *  @param $treeish
+     *  @return string
+     */
+    public function githubTreeUrl($user, $repo, $treeish)
+    {
+        return sprintf(
+            '%s/tree/%s',
+            $this->githubRepoUrl($user, $repo),
+            $treeish
+        );
+    }
+
+    /**
+     *  Get the URL of a Github pull request
+     *
+     *  @param $user
+     *  @param $repo
+     *  @param $number
+     *  @return string
+     */
+    public function githubPullRequestUrl($user, $repo, $number)
+    {
+        return sprintf(
+            '%s/pull/%s',
+            $this->githubRepoUrl($user, $repo),
+            $number
+        );
+    }
 }

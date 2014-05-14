@@ -408,6 +408,7 @@ services:
       - @repository.build.start.twig
       - @layout
       - @repository.repo
+      - @environment.repo
       - @github
 
   rollback.twig:

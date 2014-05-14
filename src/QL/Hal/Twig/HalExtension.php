@@ -62,7 +62,9 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin')),
             new Twig_SimpleFunction('urlFor', array($this, 'urlFor')),
             new Twig_SimpleFunction('githubRepo', array($this, 'githubRepo')),
-            new Twig_SimpleFunction('githubCommit', array($this, 'githubCommit'))
+            new Twig_SimpleFunction('githubCommit', array($this, 'githubCommit')),
+            new Twig_SimpleFunction('githubTreeish', array($this, 'githubTreeish')),
+            new Twig_SimpleFunction('githubPullRequest', array($this, 'githubPullRequest'))
         );
     }
 
@@ -170,5 +172,31 @@ class HalExtension extends Twig_Extension
     public function githubCommit($user, $repo, $commit)
     {
         return $this->url->githubCommitUrl($user, $repo, $commit);
+    }
+
+    /**
+     *  Get the url for a Github repository treeish
+     *
+     *  @param $user
+     *  @param $repo
+     *  @param $treeish
+     *  @return string
+     */
+    public function githubTreeish($user, $repo, $treeish)
+    {
+        return $this->url->githubTreeUrl($user, $repo, $treeish);
+    }
+
+    /**
+     *  Get the url for a Github pull request
+     *
+     *  @param $user
+     *  @param $repo
+     *  @param $number
+     *  @return string
+     */
+    public function githubPullRequest($user, $repo, $number)
+    {
+        return $this->url->githubPullRequestUrl($user, $repo, $number);
     }
 }
