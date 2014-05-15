@@ -102,3 +102,20 @@ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
 GitHub collaborators and hal admins can push any repository in non-prod environments. For production,
 an AD group must be setup with the correct permissions.
+
+### Making Front-End Changes
+
+#### Install Dependencies
+
+* Install node modules: `npm install`
+* Install gems `gem install bundler` then `bundle install`
+
+Only make changes in /js, /img, and /sass directories. Don't make changes in the public directory.
+
+#### Watch for changes
+
+To launch Hal in your browser and watch for file changes run `gulp serve`. This will watch for template, javascript, html, and sass changes and automatically reload the browser on save.
+
+#### Build the front-end so it is ready to deploy.
+
+Run `gulp --deploy` to delete public/js, public/img, public/css and rebuild them all with production-ready settings.
