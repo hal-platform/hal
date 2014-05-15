@@ -1,7 +1,3 @@
-imports:
-  -
-    resource: pages.yml
-
 services:
 
   ######################################################################################################################
@@ -218,20 +214,6 @@ services:
     arguments:
       - @nyi.twig
 
-  hello.twig:
-    class: "Twig_Template"
-    arguments:
-      - 'hello.twig'
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  hello.page:
-    class: "QL\\Hal\\Controllers\\HelloController"
-    arguments:
-      - @hello.twig
-      - @layout
-      - @user
-
   login.twig:
     class: "Twig_Template"
     arguments:
@@ -259,6 +241,24 @@ services:
     arguments:
       - @session
       - @url.helper
+
+  profile.twig:
+    class: "Twig_Template"
+    arguments:
+      - 'profile.twig'
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  profile.page:
+    class: "QL\\Hal\\Controllers\\ProfileController"
+    arguments:
+      - @profile.twig
+      - @layout
+      - @pushPermissionService
+      - @ldapService
+      - @user.repo
+      - @user
+      - @doctrine.em
 
   groups.twig:
     class: "Twig_Template"
@@ -357,14 +357,6 @@ services:
       - @environment.repo
       - @github
 
-  repository.build.start.handle.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartHandleController"
-    arguments:
-      - @repository.repo
-      - @user.repo
-      - @url.helper
-      - @user
-
   rollback.twig:
     class: "Twig_Template"
     arguments:
@@ -409,6 +401,35 @@ services:
       - @push.twig
       - @layout
       - @push.repo
+
+  server.twig:
+    class: "Twig_Template"
+    arguments:
+      - "server.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  server.page:
+    class: "QL\\Hal\\Controllers\\Server\\ServerController"
+    arguments:
+      - @server.twig
+      - @layout
+      - @server.repo
+      - @deployment.repo
+
+  servers.twig:
+    class: "Twig_Template"
+    arguments:
+      - "servers.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  servers.page:
+    class: "QL\\Hal\\Controllers\\Server\\ServersController"
+    arguments:
+      - @servers.twig
+      - @layout
+      - @server.repo
 
   build.push.twig:
     class: "Twig_Template"
@@ -457,6 +478,48 @@ services:
       - @admin.groups.twig
       - @layout
       - @group.repo
+
+  admin.servers.twig:
+    class: "Twig_Template"
+    arguments:
+      - "admin/servers.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  admin.servers.page:
+    class: "QL\\Hal\\Controllers\\Admin\\ServersController"
+    arguments:
+      - @admin.servers.twig
+      - @layout
+      - @server.repo
+
+  admin.envs.twig:
+    class: "Twig_Template"
+    arguments:
+      - "admin/environments.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  admin.envs.page:
+    class: "QL\\Hal\\Controllers\\Admin\\EnvironmentsController"
+    arguments:
+      - @admin.envs.twig
+      - @layout
+      - @environment.repo
+
+  admin.users.twig:
+    class: "Twig_Template"
+    arguments:
+      - "admin/users.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  admin.users.page:
+    class: "QL\\Hal\\Controllers\\Admin\\UsersController"
+    arguments:
+      - @admin.users.twig
+      - @layout
+      - @user.repo
 
   ######################################################################################################################
   # API CONTROLLERS

@@ -173,14 +173,13 @@ server:
 # ADMIN REPO ROUTES
 ########################################################################################################################
 
-### STUB - FIX ME
 admin.repos:
   method:     "GET"
   route:      "/admin/repositories"
   stack:
     - login.bouncer
     - admin.bouncer
-    - nyi.page
+    - admin.repos.page
 
 ### STUB - FIX ME
 admin.repo.create:
@@ -201,9 +200,9 @@ admin.repo.create.handle:
     - nyi.page
 
 ### STUB - FIX ME
-admin.repo:
+admin.repo.edit:
   method:     "GET"
-  route:      "/admin/repository/:repo"
+  route:      "/admin/repository/:repo/edit"
   stack:
     - login.bouncer
     - admin.bouncer
@@ -234,6 +233,17 @@ admin.repo.delete.handle:
     repo:     "[A-Za-z0-9_-]+"
 
 ### STUB - FIX ME
+admin.repo.deployments:
+  method:     "GET"
+  route:      "/admin/repository/:repo/deployments"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
 admin.repo.deployment.create:
   method:     "GET"
   route:      "/admin/repository/:repo/deployment/create"
@@ -256,9 +266,9 @@ admin.repo.deployment.create.handle:
     repo:     "[A-Za-z0-9_-]+"
 
 ### STUB - FIX ME
-admin.repo.deployment:
+admin.repo.deployment.edit:
   method:     "GET"
-  route:      "/admin/repository/:repo/deployment/:deploy"
+  route:      "/admin/repository/:repo/deployment/:deploy/edit"
   stack:
     - login.bouncer
     - admin.bouncer
@@ -268,9 +278,9 @@ admin.repo.deployment:
     deploy:   "[0-9]+"
 
 ### STUB - FIX ME
-admin.repo.deployment.handle:
+admin.repo.deployment.edit.handle:
   method:     "POST"
-  route:      "/admin/repository/:repo/deployment/:deploy"
+  route:      "/admin/repository/:repo/deployment/:deploy/edit"
   stack:
     - login.bouncer
     - admin.bouncer
@@ -283,14 +293,13 @@ admin.repo.deployment.handle:
 # ADMIN GROUP ROUTES
 ########################################################################################################################
 
-### STUB - FIX ME
 admin.groups:
   method:     "GET"
   route:      "/admin/groups"
   stack:
     - login.bouncer
     - admin.bouncer
-    - nyi.page
+    - admin.groups.page
 
 ### STUB - FIX ME
 admin.group.create:
@@ -311,7 +320,7 @@ admin.group.create.handle:
     - nyi.page
 
 ### STUB - FIX ME
-admin.group:
+admin.group.edit:
   method:     "GET"
   route:      "/admin/group/:group/edit"
   stack:
@@ -347,14 +356,13 @@ admin.group.delete.handle:
 # ADMIN ENVIRONMENT ROUTES
 ########################################################################################################################
 
-### STUB - FIX ME
 admin.envs:
   method:     "GET"
   route:      "/admin/environments"
   stack:
     - login.bouncer
     - admin.bouncer
-    - nyi.page
+    - admin.envs.page
 
 ### STUB - FIX ME
 admin.env.create:
@@ -373,28 +381,6 @@ admin.env.create.handle:
     - login.bouncer
     - admin.bouncer
     - nyi.page
-
-### STUB - FIX ME
-admin.env:
-  method:     "GET"
-  route:      "/admin/environment/:env"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    env:      "[A-Za-z0-9_-]+"
-
-### STUB - FIX ME
-admin.env.edit.handle:
-  method:     "POST"
-  route:      "/admin/environment/:env/edit"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    env:      "[A-Za-z0-9_-]+"
 
 ### STUB - FIX ME
 admin.env.delete.handle:
@@ -418,7 +404,7 @@ admin.servers:
   stack:
     - login.bouncer
     - admin.bouncer
-    - nyi.page
+    - admin.servers.page
 
 ### STUB - FIX ME
 admin.server.create:
@@ -439,9 +425,9 @@ admin.server.create:
     - nyi.page
 
 ### STUB - FIX ME
-admin.server:
+admin.server.edit:
   method:     "GET"
-  route:      "/admin/server/:server"
+  route:      "/admin/server/:server/edit"
   stack:
     - login.bouncer
     - admin.bouncer
@@ -475,14 +461,13 @@ admin.server.delete.handle:
 # ADMIN USER ROUTES
 ########################################################################################################################
 
-### STUB - FIX ME
 admin.users:
   method:     "GET"
   route:      "/admin/users"
   stack:
     - login.bouncer
     - admin.bouncer
-    - nyi.page
+    - admin.users.page
 
 ########################################################################################################################
 # API ROUTES

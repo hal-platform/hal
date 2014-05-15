@@ -1,0 +1,37 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% set page_title = "Users" %}
+
+{% block content %}
+    <h2>Users</h2>
+
+    <div class="overflow-container">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Username</th>
+                <th>Display Name</th>
+                <th>EMail</th>
+                <th>Permissions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td><a href="{{ urlFor('profile', {'id': user.id}) }}">{{ user.id }}</a></td>
+                    <td>{{ user.handle }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{% if isUserAdmin(user.handle) %}Admin{% endif %}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">There are no users.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

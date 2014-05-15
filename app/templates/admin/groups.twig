@@ -1,0 +1,40 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% set page_title = "Repository Groups" %}
+
+{% block content %}
+    <h2>Repository Groups</h2>
+
+    <p>
+        <a class="btn--small btn--toggles" href="{{ urlFor('admin.group.create') }}">New Repository Group</a>
+    </p>
+
+    <div class="overflow-container">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for group in groups %}
+                <tr>
+                    <td><a href="{{ urlFor('group', {'group': group.key}) }}">{{ group.key }}</a></td>
+                    <td>{{ group.name }}</td>
+                    <td>
+                        <a href="{{ urlFor('admin.group.edit', {'group': group.key}) }}">Edit</a> |
+                        <a href="{{ urlFor('admin.group.delete.handle', {'group': group.key}) }}">Delete</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">There are no repository groups.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% set page_title = "Repositories" %}
+
+{% block content %}
+    <h2>Repositories</h2>
+
+    <p>
+        <a class="btn--small btn--toggles" href="{{ urlFor('admin.repo.create') }}">New Repository</a>
+    </p>
+
+    <div class="overflow-container">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Github Location</th>
+                <th>Contact Email</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for repo in repos %}
+                <tr>
+                    <td><a href="{{ urlFor('repo', {'repo': repo.key}) }}">{{ repo.key }}</a>
+                    <td><a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a></td>
+                    <td>{{ repo.email }}</td>
+                    <td>
+                        <a href="{{ urlFor('admin.repo.deployments', {'repo': repo.key}) }}">Deployments</a> |
+                        <a href="{{ urlFor('admin.repo.edit', {'repo': repo.key}) }}">Edit</a> |
+                        <a href="{{ urlFor('admin.repo.delete.handle', {'repo': repo.key}) }}">Delete</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">There are no repositories.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

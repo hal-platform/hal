@@ -219,11 +219,16 @@ class PushPermissionService
     }
 
     /**
-     * @var User $user
+     * @var $user
      * @return boolean
      */
-    public function isUserAdmin(User $user)
+    public function isUserAdmin($user)
     {
+        // allow user passing as string
+        if (!($user instanceof User)) {
+            $user = $this->ldapService->getUserByWindowsUsername($user);
+        }
+
         if ($user->commonId() == $this->godModeOverride) {
             return true;
         }

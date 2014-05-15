@@ -1,20 +1,19 @@
 <?php
 
-namespace QL\Hal\Controllers\Groups;
+namespace QL\Hal\Controllers\Admin;
 
+use QL\Hal\Core\Entity\Repository\UserRepository;
 use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Layout;
-use QL\Hal\Core\Entity\Repository\GroupRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 
 /**
- *  Group Controller
+ *  Users Controller
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class GroupController
+class UsersController
 {
     /**
      *  @var Twig_Template
@@ -27,31 +26,23 @@ class GroupController
     private $layout;
 
     /**
-     *  @var GroupRepository
+     *  @var UserRepository
      */
-    private $groupRepo;
-
-    /**
-     *  @var RepositoryRepository
-     */
-    private $repoRepo;
+    private $userRepo;
 
     /**
      *  @param Twig_Template $template
      *  @param Layout $layout
-     *  @param GroupRepository $groupRepo
-     *  @param RepositoryRepository $repoRepo
+     *  @param UserRepository $userRepo
      */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
-        GroupRepository $groupRepo,
-        RepositoryRepository $repoRepo
+        UserRepository $userRepo
     ) {
         $this->template = $template;
         $this->layout = $layout;
-        $this->groupRepo = $groupRepo;
-        $this->repoRepo = $repoRepo;
+        $this->userRepo = $userRepo;
     }
 
     /**
@@ -63,15 +54,12 @@ class GroupController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $group = $this->groupRepo->findOneBy(['key' => $params['group']]);
-        $repos = $this->repoRepo->findBy(['group' => $group]);
 
         $response->body(
             $this->layout->render(
                 $this->template,
                 [
-                    'group' => $group,
-                    'repos' => $repos
+                    'users' => $this->userRepo->findAll()
                 ]
             )
         );
