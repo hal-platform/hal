@@ -209,224 +209,23 @@ admin.repo:
     - admin.bouncer
     - nyi.page
   conditions:
-    repo:     "[A-Za-z0-9_-]+"
-
-### STUB - FIX ME
-admin.repo.handle:
-  method:     "POST"
-  route:      "/admin/repository/:repo"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    repo:     "[A-Za-z0-9_-]+"
-
-########################################################################################################################
-# ADMIN GROUP ROUTES
-########################################################################################################################
-
-### STUB - FIX ME
-admin.groups:
-  method:     "GET"
-  route:      "/admin/groups"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.group.create:
-  method:     "GET"
-  route:      "/admin/group/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.group.create.handle:
-  method:     "POST"
-  route:      "/admin/group/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.group:
-  method:     "GET"
-  route:      "/admin/group/:group/edit"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    group:   "[A-Za-z0-9_-]+"
-
-### STUB - FIX ME
-admin.group.handle:
-  method:     "POST"
-  route:      "/admin/group/:group/edit"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    group:    "[A-Za-z0-9_-]+"
-
-########################################################################################################################
-# ADMIN ENVIRONMENT ROUTES
-########################################################################################################################
-
-### STUB - FIX ME
-admin.envs:
-  method:     "GET"
-  route:      "/admin/environments"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.env.create:
-  method:     "GET"
-  route:      "/admin/environment/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.env.create.handle:
-  method:     "POST"
-  route:      "/admin/environment/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.env:
-  method:     "GET"
-  route:      "/admin/environment/:env"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    env:      "[A-Za-z0-9_-]+"
-
-### STUB - FIX ME
-admin.env.handle:
-  method:     "POST"
-  route:      "/admin/environment/:env"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    env:      "[A-Za-z0-9_-]+"
-
-########################################################################################################################
-# ADMIN SERVER ROUTES
-########################################################################################################################
-
-### STUB - FIX ME
-admin.servers:
-  method:     "GET"
-  route:      "/admin/servers"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.server.create:
-  method:     "GET"
-  route:      "/admin/server/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.server.create:
-  method:     "POST"
-  route:      "/admin/server/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.server:
-  method:     "GET"
-  route:      "/admin/server/:server"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    server:   "[A-Za-z0-9_-]+"
-
-### STUB - FIX ME
-admin.server.handle:
-  method:     "POST"
-  route:      "/admin/server/:server"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    server:   "[A-Za-z0-9_-]+"
-
-########################################################################################################################
-# ADMIN REPO ROUTES
-########################################################################################################################
-
-### STUB - FIX ME
-admin.repos:
-  method:     "GET"
-  route:      "/admin/repositories"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.repo.create:
-  method:     "GET"
-  route:      "/admin/repository/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.repo.create.handle:
-  method:     "POST"
-  route:      "/admin/repository/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.repo:
-  method:     "GET"
-  route:      "/admin/repository/:repo"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
     repo:     "[A-Za-z0-0_-]+"
 
 ### STUB - FIX ME
-admin.repo.handle:
+admin.repo.edit.handle:
   method:     "POST"
-  route:      "/admin/repository/:repo"
+  route:      "/admin/repository/:repo/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    repo:     "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+admin.repo.delete.handle:
+  method:     "GET"
+  route:      "/admin/repository/:repo/delete"
   stack:
     - login.bouncer
     - admin.bouncer
@@ -479,6 +278,198 @@ admin.repo.deployment.handle:
   conditions:
     repo:     "[A-Za-z0-9_-]+"
     deploy:   "[0-9]+"
+
+########################################################################################################################
+# ADMIN GROUP ROUTES
+########################################################################################################################
+
+### STUB - FIX ME
+admin.groups:
+  method:     "GET"
+  route:      "/admin/groups"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.group.create:
+  method:     "GET"
+  route:      "/admin/group/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.group.create.handle:
+  method:     "POST"
+  route:      "/admin/group/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.group:
+  method:     "GET"
+  route:      "/admin/group/:group/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    group:   "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+admin.group.edit.handle:
+  method:     "POST"
+  route:      "/admin/group/:group/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    group:    "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+admin.group.delete.handle:
+  method:     "GET"
+  route:      "/admin/group/:group/delete"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    group:    "[A-Za-z0-9_-]+"
+
+########################################################################################################################
+# ADMIN ENVIRONMENT ROUTES
+########################################################################################################################
+
+### STUB - FIX ME
+admin.envs:
+  method:     "GET"
+  route:      "/admin/environments"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.env.create:
+  method:     "GET"
+  route:      "/admin/environment/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.env.create.handle:
+  method:     "POST"
+  route:      "/admin/environment/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.env:
+  method:     "GET"
+  route:      "/admin/environment/:env"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    env:      "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+admin.env.edit.handle:
+  method:     "POST"
+  route:      "/admin/environment/:env/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    env:      "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+admin.env.delete.handle:
+  method:     "GET"
+  route:      "/admin/environment/:env/delete"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    env:      "[A-Za-z0-9_-]+"
+
+########################################################################################################################
+# ADMIN SERVER ROUTES
+########################################################################################################################
+
+### STUB - FIX ME
+admin.servers:
+  method:     "GET"
+  route:      "/admin/servers"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.server.create:
+  method:     "GET"
+  route:      "/admin/server/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.server.create:
+  method:     "POST"
+  route:      "/admin/server/create"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+
+### STUB - FIX ME
+admin.server:
+  method:     "GET"
+  route:      "/admin/server/:server"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    server:   "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+admin.server.edit.handle:
+  method:     "POST"
+  route:      "/admin/server/:server/edit"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    server:   "[A-Za-z0-9_-]+"
+
+### STUB - FIX ME
+admin.server.delete.handle:
+  method:     "GET"
+  route:      "/admin/server/:server/delete"
+  stack:
+    - login.bouncer
+    - admin.bouncer
+    - nyi.page
+  conditions:
+    server:   "[A-Za-z0-9_-]+"
 
 ########################################################################################################################
 # ADMIN USER ROUTES
