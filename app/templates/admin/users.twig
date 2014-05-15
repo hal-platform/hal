@@ -23,7 +23,10 @@
                     <td>{{ user.handle }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{% if isUserAdmin(user.handle) %}Admin{% endif %}</td>
+                    <td>
+                        {% if isUserAdmin(user.handle) %}HAL Admin{% endif %}
+                        {% if isUserKeymaster(user.handle) %}Keymasters{% endif %}
+                    </td>
                 </tr>
             {% else %}
                 <tr>

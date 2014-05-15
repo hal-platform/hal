@@ -59,7 +59,7 @@ class UsersController
             $this->layout->render(
                 $this->template,
                 [
-                    'users' => $this->userRepo->findAll()
+                    'users' => $this->userRepo->findBy([], ['name' => 'ASC'])
                 ]
             )
         );

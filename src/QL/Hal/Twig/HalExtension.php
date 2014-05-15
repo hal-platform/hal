@@ -60,6 +60,7 @@ class HalExtension extends Twig_Extension
         return array(
             new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush')),
             new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin')),
+            new Twig_SimpleFunction('isUserKeymaster', array($this, 'isUserKeymaster')),
             new Twig_SimpleFunction('urlFor', array($this, 'urlFor')),
             new Twig_SimpleFunction('githubRepo', array($this, 'githubRepo')),
             new Twig_SimpleFunction('githubCommit', array($this, 'githubCommit')),
@@ -103,6 +104,17 @@ class HalExtension extends Twig_Extension
     public function isUserAdmin($user)
     {
         return $this->permissions->isUserAdmin($user);
+    }
+
+    /**
+     *  Check if a user is a keymaster
+     *
+     *  @param $user
+     *  @return bool
+     */
+    public function isUserKeymaster($user)
+    {
+        return $this->permissions->isUserKeymaster($user);
     }
 
     /**

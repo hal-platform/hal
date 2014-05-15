@@ -149,7 +149,7 @@ class PushPermissionService
         }
 
         // keymasters whitelist for any environment
-        if ($this->ldapUserInGroupCache(self::getDn(self::PERM_DN_KEYMASTERS), $user->dn())) {
+        if ($this->isUserKeymaster($user)) {
             return true;
         }
 
@@ -216,6 +216,26 @@ class PushPermissionService
         }
 
         return $permissions;
+    }
+
+    /**
+     *  Check if the user is in the keymasters group
+     *
+     *  @param $user
+     *  @return bool
+     */
+    public function isUserKeymaster($user)
+    {
+        // allow user passing as string
+        if (!($user instanceof User)) {
+            $user = $this->ldapService->getUserByWindowsUsername($user);
+        }
+
+        if ($this->ldapUserInGroupCache(self::getDn(self::PERM_DN_KEYMASTERS), $user->dn())) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
