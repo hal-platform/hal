@@ -10,7 +10,8 @@
     {
       "name": "main",
       "include": [
-        "vendor/jquery-2.min"
+        "vendor/jquery-2.min",
+        "vendor/jquery.sortable.min"
       ]
     }
   ],
@@ -21,6 +22,7 @@
   },
   "paths": {
     "jquery": "vendor/jquery-2.min",
+    "jquerySortable": "vendor/jquery.sortable.min",
     "underscore": "vendor/underscore.min",
     "crossroads": "vendor/crossroads.min",
     "signals": "vendor/signals.min"

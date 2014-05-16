@@ -40,3 +40,7 @@
     visibility: hidden;
     position:absolute;
 }
+
+#env-reorder tbody tr {
+    cursor: move;
+}

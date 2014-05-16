@@ -21,7 +21,11 @@ gulp.task('styles', function() {
         .pipe(plugins.livereload(server));
 });
 
-gulp.task('scripts', function() {
+gulp.task('scripts', ['cleanJS', 'optimizeJS'], function() {
+    gulp.start('jshint');
+});
+
+gulp.task('jshint', function() {
     return gulp.src(['js/**/*.js', '!./js/vendor/**/*.js'])
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('default'))
@@ -43,6 +47,14 @@ gulp.task('images', function() {
         .pipe(gulp.dest('public/img'));
 });
 
+gulp.task('optimizeJS', function(cb) {
+    exec('node node_modules/.bin/r.js -o js/optimizer.json', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
+});
+
 gulp.task('watch', function() {
     server.listen(35729, function (err) {
         if (err) {
@@ -61,15 +73,22 @@ gulp.task('serve', ['watch'], function() {
 });
 
 gulp.task('build', ['styles', 'scripts', 'images'], function(cb) {
-    exec('node node_modules/.bin/r.js -o js/optimizer.json', function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        cb(err);
-    });
+    if(isDeploy == false) {
+        exec('node node_modules/.bin/r.js -o js/optimizer.json', function (err, stdout, stderr) {
+            console.log(stdout);
+            console.log(stderr);
+            cb(err);
+        });
+    }
 });
 
-gulp.task('clean', function () {
+gulp.task('clean', function() {
     return gulp.src(['public/js', 'public/img', 'public/css'], { read: false })
+        .pipe(plugins.clean());
+});
+
+gulp.task('cleanJS', function() {
+    return gulp.src(['public/js'], { read: false })
         .pipe(plugins.clean());
 });
 
