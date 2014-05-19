@@ -357,6 +357,14 @@ services:
       - @environment.repo
       - @github
 
+  repository.build.start.handle.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartHandleController"
+    arguments:
+      - @repository.repo
+      - @user.repo
+      - @url.helper
+      - @user
+
   rollback.twig:
     class: "Twig_Template"
     arguments:

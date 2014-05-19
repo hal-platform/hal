@@ -9,8 +9,9 @@
         <a class="btn--small btn--toggles" href="{{ urlFor('admin.env.create') }}">New Environment</a>
     </p>
 
+    <form action="{{ urlFor('admin.envs.reorder.handle') }}" method="post">
     <div class="overflow-container">
-        <table>
+        <table id="env-reorder">
             <thead>
             <tr>
                 <th></th>
@@ -20,9 +21,9 @@
             </thead>
             <tbody>
             {% for env in envs %}
-                <tr>
-                    <td>{{ env.key }}</td>
-                    <td>{{ env.order }}</td>
+                <tr class="env-row-{{ env.key }}">
+                    <td><span class="icon-sort"></span>{{ env.key }}</td>
+                    <td><input type="text" maxlength="3" required name="env{{ env.key }}" value="{{ env.order }}" class="text-input"></td>
                     <td>
                         <a href="{{ urlFor('admin.env.delete.handle', {'env': env.id}) }}">Delete</a>
                     </td>
@@ -35,5 +36,7 @@
             </tbody>
         </table>
     </div>
+    <input class="btn" type="submit" value="Re-Order Environments">
+    </form>
 
 {% endblock %}

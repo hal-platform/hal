@@ -13,7 +13,6 @@
                 <th>Username</th>
                 <th>Display Name</th>
                 <th>EMail</th>
-                <th>Permissions</th>
             </tr>
             </thead>
             <tbody>
@@ -23,10 +22,6 @@
                     <td>{{ user.handle }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>
-                    <td>
-                        {% if isUserAdmin(user.handle) %}HAL Admin{% endif %}
-                        {% if isUserKeymaster(user.handle) %}Keymasters{% endif %}
-                    </td>
                 </tr>
             {% else %}
                 <tr>
