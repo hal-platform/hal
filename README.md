@@ -116,6 +116,8 @@ Only make changes in /js, /img, and /sass directories. Don't make changes in the
 
 To launch Hal in your browser and watch for file changes run `gulp serve`. This will watch for template, javascript, html, and sass changes and automatically reload the browser on save.
 
+For live reload to actually work you either need to install a livereload browser plugin or put this in app/templates/base.html.twig: `<script src="http://localhost:35729/livereload.js"></script>`. Just don't commit with that script still on the page.
+
 #### Build the front-end so it is ready to deploy.
 
 Run `gulp --deploy` to delete public/js, public/img, public/css and rebuild them all with production-ready settings.
