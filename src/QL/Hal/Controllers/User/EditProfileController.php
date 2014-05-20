@@ -1,23 +1,19 @@
 <?php
 
-namespace QL\Hal\Controllers;
+namespace QL\Hal\Controllers\User;
 
 use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Doctrine\ORM\EntityManager;
+use MCP\Corp\Account\LdapService;
+use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Layout;
 use QL\Hal\PushPermissionService;
-use MCP\Corp\Account\LdapService;
-use MCP\Corp\Account\User;
-use QL\Hal\Core\Entity\Repository\UserRepository;
-use Doctrine\ORM\EntityManager;
 
-/**
- *  Profile Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
-class ProfileController
+class EditProfileController
 {
     /**
      *  @var Twig_Template
@@ -45,14 +41,14 @@ class ProfileController
     private $userRepo;
 
     /**
-     *  @var User
-     */
-    private $user;
-
-    /**
      *  @var EntityManager
      */
     private $em;
+
+    /**
+     *  @var UrlHelper
+     */
+    private $url;
 
     /**
      *  @param Twig_Template $template
@@ -60,8 +56,8 @@ class ProfileController
      *  @param PushPermissionService $permissions
      *  @param LdapService $ldap
      *  @param UserRepository $userRepo
-     *  @param User $user
      *  @param EntityManager $em
+     *  @param UrlHelper $url
      */
     public function __construct(
         Twig_Template $template,
@@ -69,16 +65,16 @@ class ProfileController
         PushPermissionService $permissions,
         LdapService $ldap,
         UserRepository $userRepo,
-        User $user,
-        EntityManager $em
+        EntityManager $em,
+        UrlHelper $url
     ) {
         $this->template = $template;
         $this->layout = $layout;
         $this->permissions = $permissions;
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
-        $this->user = $user;
         $this->em = $em;
+        $this->url = $url;
     }
 
     /**
@@ -89,35 +85,32 @@ class ProfileController
      */
     public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
     {
-        // default to current user
-        $id = (isset($params['id'])) ? $params['id'] : $this->user->commonId();
-        $user = $this->userRepo->findOneBy(['id' => $id]);
-
-        if (!$user) {
-            call_user_func($notFound);
-            return;
+        $id = $params['id'];
+        if (!$user = $this->userRepo->findOneBy(['id' => $id])) {
+            return call_user_func($notFound);
         }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'user' => $user,
-                    'ldapUser' => $this->ldap->getUserByCommonId($id),
-                    'permissions' => $this->permissions->repoEnvsCommonIdCanPushTo($id),
-                    'pushes' => $this->getPushCount($user)
-                ]
-            )
-        );
+        if ($request->isPost()) {
+            return $response->redirect($this->url->urlFor('denied'), 303);
+        }
+
+        $rendered = $this->layout->render($this->template, [
+            'profileUser' => $user,
+            'ldapUser' => $this->ldap->getUserByCommonId($id),
+            'permissions' => $this->permissions->repoEnvsCommonIdCanPushTo($id),
+            'pushes' => $this->getPushCount($user)
+        ]);
+
+        $response->body($rendered);
     }
 
     /**
      *  Get the number of pushes for a given user entity
      *
-     *  @param $user
+     *  @param User $user
      *  @return mixed
      */
-    private function getPushCount($user)
+    private function getPushCount(User $user)
     {
         $qb = $this->em->createQueryBuilder();
         $qb->select('count(p.id)');

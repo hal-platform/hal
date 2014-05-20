@@ -8,10 +8,13 @@ use DateTimeZone;
 use Twig_Extension;
 use Twig_SimpleFunction;
 use Twig_SimpleFilter;
-use QL\Hal\PushPermissionService;
+use MCP\Corp\Account\User as LdapUser;
 use MCP\DataType\Time\TimePoint;
-use Slim\Slim;
+use QL\Hal\Core\Entity\User as DomainUser;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\PushPermissionService;
+use Slim\Slim;
+
 
 /**
  *  Twig Extension for HAL9000
@@ -65,7 +68,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('githubRepo', array($this, 'githubRepo')),
             new Twig_SimpleFunction('githubCommit', array($this, 'githubCommit')),
             new Twig_SimpleFunction('githubTreeish', array($this, 'githubTreeish')),
-            new Twig_SimpleFunction('githubPullRequest', array($this, 'githubPullRequest'))
+            new Twig_SimpleFunction('githubPullRequest', array($this, 'githubPullRequest')),
+            new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName'))
         );
     }
 
@@ -210,5 +214,28 @@ class HalExtension extends Twig_Extension
     public function githubPullRequest($user, $repo, $number)
     {
         return $this->url->githubPullRequestUrl($user, $repo, $number);
+    }
+
+    /**
+     *  Get the users actual name
+     *
+     *  @param $user
+     *  @return string
+     */
+    public function getUsersActualName($user)
+    {
+        $name = '';
+        if ($user instanceof LdapUser) {
+            $name = $user->firstName();
+
+        } elseif ($user instanceof DomainUser) {
+            $name = $user->getName();
+        }
+
+        if (preg_match('/(Dave|David)/', $name) === 1) {
+            return 'Frank';
+        }
+
+        return 'Dave';
     }
 }

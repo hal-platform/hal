@@ -249,8 +249,15 @@ services:
     factory_service: "twigEnv"
     factory_method: "loadTemplate"
 
+  profile.edit.twig:
+    class: 'Twig_Template'
+    arguments:
+      - 'profile.edit.twig'
+    factory_service: 'twigEnv'
+    factory_method: 'loadTemplate'
+
   profile.page:
-    class: "QL\\Hal\\Controllers\\ProfileController"
+    class: 'QL\Hal\Controllers\User\ProfileController'
     arguments:
       - @profile.twig
       - @layout
@@ -259,6 +266,16 @@ services:
       - @user.repo
       - @user
       - @doctrine.em
+  profile.edit.page:
+    class: 'QL\Hal\Controllers\User\EditProfileController'
+    arguments:
+      - @profile.edit.twig
+      - @layout
+      - @pushPermissionService
+      - @ldapService
+      - @user.repo
+      - @doctrine.em
+      - @url.helper
 
   groups.twig:
     class: "Twig_Template"
@@ -528,6 +545,19 @@ services:
       - @admin.users.twig
       - @layout
       - @user.repo
+
+  static.controller:
+    class: 'QL\Hal\Controllers\StaticController'
+
+  denied.page:
+    parent: 'static.controller'
+    arguments: ['@denied.twig']
+  denied.twig:
+    class: 'Twig_Template'
+    arguments:
+      - 'denied.html.twig'
+    factory_service: 'twigEnv'
+    factory_method: 'loadTemplate'
 
   ######################################################################################################################
   # API CONTROLLERS

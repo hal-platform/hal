@@ -1,16 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = ldapUser.firstName~' '~ldapUser.lastName %}
+{% if page_title is not defined %}
+    {% set page_title = ldapUser.firstName~' '~ldapUser.lastName %}
+{% endif %}
 
 {% block content %}
-    <h2>{{ ldapUser.firstName }} {{ ldapUser.lastName }}</h2>
+    <h2>
+        {% block name %}
+            {{ getUsersActualName(profileUser) }}
+        {% endblock %}
+    </h2>
     <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
 
-    <p><img src="{{ user.pictureUrl.asString() }}" width="150"></p>
+    <p><img src="{{ profileUser.pictureUrl.asString() }}" width="150"></p>
 
     <h3>Contact</h3>
     <ul>
-        <li>Email: <a href="mailto:{{ user.Email }}">{{ user.Email }}</a></li>
+        <li>Email: <a href="mailto:{{ profileUser.Email }}">{{ profileUser.Email }}</a></li>
         <li>Phone: {{ ldapUser.workPhone }} (x<strong>{{ ldapUser.workExt }}</strong>)</li>
         <li>Mobile: {{ ldapUser.mobilePhone }}</li>
         <li><a href="http://rockworldapps/roster/default.aspx?firstname={{ ldapUser.firstName }}&lastname={{ ldapUser.lastName }}">Rockword Link</a></li>
@@ -19,7 +25,7 @@
     <h3>Stats</h3>
     <ul>
         <li><b>Total Pushes:</b> {{ pushes }}</li>
-        <li><b>Github Page:</b> <a href="http://git/{{ user.handle }}">http://git/{{ user.handle }}</a></li>
+        <li><b>Github Page:</b> <a href="http://git/{{ profileUser.handle }}">http://git/{{ profileUser.handle }}</a></li>
     </ul>
 
     {% if permissions %}
@@ -30,4 +36,10 @@
         {% endfor %}
         </ul>
     {% endif %}
+
+    {% block actions %}
+        {% if isAdmin or user.getCommonId == profileUser.getId %}
+            <a href="{{ urlFor('profile.edit', {'id': profileUser.id}) }}">Edit Profile</a>
+        {% endif %}
+    {% endblock %}
 {% endblock %}

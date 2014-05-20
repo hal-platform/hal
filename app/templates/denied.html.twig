@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="error-page">
-        <h1>I'm sorry Dave, I'm afraid I can't do that.</h1>
+        <h1>I'm sorry {{ getUsersActualName(user) }}, I'm afraid I can't do that.</h1>
         <img width="600px" src="/img/error/eye_large.jpg" />
     </div>
 {% endblock %}
