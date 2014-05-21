@@ -1,3 +1,7 @@
+imports:
+  -
+    resource: application.yml
+
 services:
 
   ######################################################################################################################
@@ -532,20 +536,6 @@ services:
       - @layout
       - @server.repo
 
-  admin.envs.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/environments.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  admin.envs.page:
-    class: "QL\\Hal\\Controllers\\Admin\\EnvironmentsController"
-    arguments:
-      - @admin.envs.twig
-      - @layout
-      - @environment.repo
-
   admin.users.twig:
     class: "Twig_Template"
     arguments:
@@ -559,19 +549,6 @@ services:
       - @admin.users.twig
       - @layout
       - @user.repo
-
-  static.controller:
-    class: 'QL\Hal\Controllers\StaticController'
-
-  denied.page:
-    parent: 'static.controller'
-    arguments: ['@denied.twig']
-  denied.twig:
-    class: 'Twig_Template'
-    arguments:
-      - 'denied.html.twig'
-    factory_service: 'twigEnv'
-    factory_method: 'loadTemplate'
 
   ######################################################################################################################
   # API CONTROLLERS

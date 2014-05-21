@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = env.key~" environment" %}
+
+{% block content %}
+    <h2>{{ env.key }} environment</h2>
+
+    <h3>Servers</h3>
+    <ul>
+        {% for server in servers %}
+            <li><a href="{{ urlFor('server', {server: server.name}) }}">{{ server.name }}</a></li>
+        {% else %}
+            <li>There are no servers associated with this environment.</li>
+        {% endfor %}
+    </ul>
+
+    {% if servers %}
+        <p><strong>Note:</strong> All associated servers must be removed or transferred to another environment to remove this environment.</p>
+    {% endif %}
+
+    {# primary action #}
+    <p><a class="btn" href="{{ urlFor('environments') }}">View all environments</a></p>
+
+    {% if isAdmin %}
+        {# secondary actions #}
+        <p>
+            <a class="btn" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a></p>
+            {% if isAdmin and not servers %}
+                <a class="btn" href="{{ urlFor('environment.admin.delete', {id: env.id}) }}">Remove</a>
+            {% endif %}
+        </p>
+    {% endif %}
+{% endblock %}

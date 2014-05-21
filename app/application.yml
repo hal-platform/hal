@@ -1,0 +1,78 @@
+# Application specific endpoints and controllers go here
+services:
+
+
+  ######################################################################################################################
+  # ENVIRONMENT CONTROLLERS
+  ######################################################################################################################
+
+  environment.admin.reorder.page:
+    class: 'QL\Hal\Controllers\Environment\AdminReorderController'
+    arguments:
+      - @environment.admin.reorder.twig
+      - @layout
+      - @environment.repo
+  environment.admin.reorder.twig:
+    parent: 'twig.template'
+    arguments: ['environment/admin.reorder.twig']
+  environment.admin.reorder.handle:
+    class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
+    arguments:
+      - @environment.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+
+  environment.admin.add.page:
+    class: 'QL\Hal\Controllers\Environment\AdminReorderController'
+    arguments:
+      - @environment.admin.add.twig
+      - @layout
+      - @environment.repo
+  environment.admin.add.twig:
+    parent: 'twig.template'
+    arguments: ['environment/admin.add.twig']
+
+  environments.page:
+    class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
+    arguments:
+      - @environments.twig
+      - @layout
+      - @environment.repo
+  environments.twig:
+    parent: 'twig.template'
+    arguments: ['environment/environments.twig']
+
+  environment.page:
+    class: 'QL\Hal\Controllers\Environment\EnvironmentController'
+    arguments:
+      - @environment.twig
+      - @layout
+      - @environment.repo
+      - @server.repo
+  environment.twig:
+    parent: 'twig.template'
+    arguments: ['environment/environment.twig']
+
+  ######################################################################################################################
+  # GENERAL USE CONTROLLERS
+  ######################################################################################################################
+
+  static.controller:
+    class: 'QL\Hal\Controllers\StaticController'
+
+  denied.page:
+    parent: 'static.controller'
+    arguments: ['@denied.twig', 403]
+  denied.twig:
+    parent: 'twig.template'
+    arguments: ['denied.html.twig']
+
+  ######################################################################################################################
+  # UTILITIES
+  ######################################################################################################################
+
+  twig.template:
+    class: 'Twig_Template'
+    factory_service: 'twigEnv'
+    factory_method: 'loadTemplate'

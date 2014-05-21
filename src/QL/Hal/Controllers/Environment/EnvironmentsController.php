@@ -1,18 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
-namespace QL\Hal\Controllers\Admin;
+namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use Twig_Template;
+use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use Twig_Template;
 
-/**
- *  Environments Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class EnvironmentsController
 {
     /**
@@ -54,14 +54,10 @@ class EnvironmentsController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
+        $rendered = $this->layout->render($this->template, [
+            'envs' => $this->envRepo->findBy([], ['order' => 'ASC'])
+        ]);
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'envs' => $this->envRepo->findBy([], ['order' => 'ASC'])
-                ]
-            )
-        );
+        $response->body($rendered);
     }
 }

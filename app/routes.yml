@@ -386,53 +386,76 @@ admin.group.delete.handle:
     group:    "[A-Za-z0-9_-]+"
 
 ########################################################################################################################
-# ADMIN ENVIRONMENT ROUTES
+# ENVIRONMENT ROUTES
 ########################################################################################################################
 
-admin.envs:
-  method:     "GET"
-  route:      "/admin/environments"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - admin.envs.page
 
-admin.envs.reorder.handle:
-  method:     "POST"
-  route:      "/admin/environments/reorder"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.env.create:
-  method:     "GET"
-  route:      "/admin/environment/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.env.create.handle:
-  method:     "POST"
-  route:      "/admin/environment/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.env.delete.handle:
-  method:     "GET"
-  route:      "/admin/environment/:env/delete"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
+environments:
+  method: 'GET'
+  route: '/environments'
+  stack: ['login.bouncer', 'environments.page']
   conditions:
-    env:      "[A-Za-z0-9_-]+"
+    id: '[0-9]+'
+
+environment:
+  method: 'GET'
+  route: '/environments/:id'
+  stack: ['login.bouncer', 'environment.page']
+  conditions:
+    id: '[0-9]+'
+
+environment.admin.reorder:
+  method: 'GET'
+  route: '/environments/reorder'
+  stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.page']
+
+environment.admin.reorder.handle:
+  method: 'POST'
+  route: '/environments/reorder'
+  stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.handle']
+
+environment.admin.add:
+  method: 'GET'
+  route: '/environments/add'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+
+environment.admin.handle:
+  method: 'POST'
+  route: '/environments/add'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+
+
+
+
+### STUB - FIX ME
+environment.admin.edit:
+  method: 'GET'
+  route: '/admin/environment/:id/edit'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  conditions:
+    id: '[0-9]+'
+
+### STUB - FIX ME
+environment.admin.edit.handle:
+  method: 'POST'
+  route: '/admin/environment/:id/edit'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  conditions:
+    id: '[0-9]+'
+
+### STUB - FIX ME
+environment.admin.delete:
+  method: 'GET'
+  route: '/admin/environment/:id/delete'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  conditions:
+    id: '[0-9]+'
+environment.admin.delete.handle:
+  method: 'POST'
+  route: '/admin/environment/:id/delete'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  conditions:
+    id: '[0-9]+'
 
 ########################################################################################################################
 # ADMIN SERVER ROUTES

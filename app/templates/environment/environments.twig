@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Environments" %}
+
+{% block content %}
+    <h2>Environments</h2>
+
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for env in envs %}
+                <tr class="env-row-{{ env.key }}">
+                    <td>
+                        <a href="{{ urlFor('environment', {'id': env.id}) }}">{{ env.key }}</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>There are no environments.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# primary action #}
+    {% if isAdmin %}
+        <p><a class="btn" href="{{ urlFor('environment.admin.add') }}">Add Environment</a></p>
+    {% endif %}
+    {% if envs %}
+        {# secondary actions #}
+        <p>
+            <a href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
+        </p>
+    {% endif %}
+{% endblock %}
