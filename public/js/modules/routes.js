@@ -19,7 +19,7 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/r/{repository}/:throwaway:/:page:', function() {
                 return _this.deployRepository();
             });
-            router.addRoute('/admin/envs', function() {
+            router.addRoute('/admin/environments', function() {
                 return _this.orderEnvironments();
             });
         },
