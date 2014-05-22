@@ -122,12 +122,16 @@ services:
       - @user.repo
       - @doctrine.em
       - @url.helper
+      - @user
   user.edit.twig:
     parent: 'twig.template'
     arguments:
       - 'user/user.edit.twig'
   user.edit.handle:
-    parent: 'user.edit.page'
+    class: 'QL\Hal\Controllers\User\EditHandle'
+    arguments:
+      - @user.repo
+      - @url.helper
 
   ######################################################################################################################
   # GENERAL USE CONTROLLERS

@@ -41,7 +41,7 @@
         {# primary action #}
         <p><a class="btn" href="{{ urlFor('users') }}">View all users</a></p>
 
-        {% if isAdmin or user.getCommonId == profileUser.getId %}
+        {% if isAdmin or commonId == profileUser.getId %}
             {# secondary actions #}
             <p>
                 <a href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>

@@ -9,6 +9,7 @@ namespace QL\Hal\Controllers\User;
 
 use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
+use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
@@ -56,6 +57,11 @@ class EditController
     private $url;
 
     /**
+     *  @var LdapUser
+     */
+    private $currentUser;
+
+    /**
      *  @param Twig_Template $template
      *  @param Layout $layout
      *  @param PushPermissionService $permissions
@@ -63,6 +69,7 @@ class EditController
      *  @param UserRepository $userRepo
      *  @param EntityManager $em
      *  @param UrlHelper $url
+     *  @param LdapUser $currentUser
      */
     public function __construct(
         Twig_Template $template,
@@ -71,7 +78,8 @@ class EditController
         LdapService $ldap,
         UserRepository $userRepo,
         EntityManager $em,
-        UrlHelper $url
+        UrlHelper $url,
+        LdapUser $currentUser
     ) {
         $this->template = $template;
         $this->layout = $layout;
@@ -80,6 +88,7 @@ class EditController
         $this->userRepo = $userRepo;
         $this->em = $em;
         $this->url = $url;
+        $this->currentUser = $currentUser;
     }
 
     /**
@@ -95,8 +104,9 @@ class EditController
             return call_user_func($notFound);
         }
 
-        if ($request->isPost()) {
-            return $response->redirect($this->url->urlFor('denied'), 303);
+        if (!$this->isUserAllowed($user)) {
+            // the answer is no
+            return $this->url->redirectFor('denied');
         }
 
         $rendered = $this->layout->render($this->template, [
@@ -124,5 +134,20 @@ class EditController
         $qb->setParameter('user', $user);
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Does the user have the correct permissions to access this page?
+     *
+     * @param User $user
+     * @return boolean
+     */
+    private function isUserAllowed(User $user)
+    {
+        if ($this->permissions->isUserAdmin($this->currentUser)) {
+            return true;
+        }
+
+        return ($this->currentUser->commonId() == $user->getId());
     }
 }
