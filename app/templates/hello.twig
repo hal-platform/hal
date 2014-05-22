@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Hello '~getUsersActualName(user) %}
+
+{% block content %}
+
+    <h2>Hello {{ getUsersActualName(user) }}</h2>
+
+    <p>I'm Hal... introductions and salutations.</p>
+
+{% endblock %}

@@ -214,6 +214,20 @@ services:
     arguments:
       - @nyi.twig
 
+  hello.twig:
+    class: "Twig_Template"
+    arguments:
+      - 'hello.twig'
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  hello.page:
+    class: "QL\\Hal\\Controllers\\HelloController"
+    arguments:
+      - @hello.twig
+      - @layout
+      - @user
+
   login.twig:
     class: "Twig_Template"
     arguments:

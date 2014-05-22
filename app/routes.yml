@@ -1,14 +1,21 @@
 login:
   method:     "GET"
-  route:      "/"
+  route:      "/login"
   stack:
     - login.page
 
 login.handle:
   method:     "POST"
-  route:      "/"
+  route:      "/login"
   stack:
     - login.handle
+
+hello:
+  method:     "GET"
+  route:      "/"
+  stack:
+    - login.bouncer
+    - hello.page
 
 logout:
   method:     "GET"
