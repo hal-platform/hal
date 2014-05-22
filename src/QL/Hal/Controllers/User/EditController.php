@@ -1,10 +1,12 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\User;
 
-use Twig_Template;
-use Slim\Http\Request;
-use Slim\Http\Response;
 use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Entity\Repository\UserRepository;
@@ -12,8 +14,11 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Layout;
 use QL\Hal\PushPermissionService;
+use Slim\Http\Request;
+use Slim\Http\Response;
+use Twig_Template;
 
-class EditProfileController
+class EditController
 {
     /**
      *  @var Twig_Template

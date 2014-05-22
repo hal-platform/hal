@@ -1,24 +1,24 @@
-{% extends 'admin/admin.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% set page_title = "Users" %}
 
 {% block content %}
     <h2>Users</h2>
 
-    <div class="overflow-container">
+    <div>
         <table>
             <thead>
             <tr>
                 <th></th>
                 <th>Username</th>
                 <th>Display Name</th>
-                <th>EMail</th>
+                <th>E-mail</th>
             </tr>
             </thead>
             <tbody>
             {% for user in users %}
                 <tr>
-                    <td><a href="{{ urlFor('profile', {'id': user.id}) }}">{{ user.id }}</a></td>
+                    <td><a href="{{ urlFor('user', {'id': user.id}) }}">{{ user.id }}</a></td>
                     <td>{{ user.handle }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>

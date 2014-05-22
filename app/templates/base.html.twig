@@ -49,7 +49,7 @@
                     <ul class="nav--main mbn">
                         <li><a href="{{ urlFor('groups') }}" title="groups">Repository Groups</a></li>
                         <li><a href="{{ urlFor('servers') }}" title="servers">Servers</a></li>
-                        <li><a href="{{ urlFor('profile') }}" title="profile">Profile</a></li>
+                        <li><a href="{{ urlFor('user.current') }}" title="profile">My Profile</a></li>
                         {% if isUserAdmin(account) %}
                             <li><a href="{{ urlFor('admin.repos') }}" title="admin dashboard">Admin</a></li>
                         {% endif %}

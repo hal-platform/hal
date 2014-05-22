@@ -260,41 +260,6 @@ services:
       - @session
       - @url.helper
 
-  profile.twig:
-    class: "Twig_Template"
-    arguments:
-      - 'profile.twig'
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  profile.edit.twig:
-    class: 'Twig_Template'
-    arguments:
-      - 'profile.edit.twig'
-    factory_service: 'twigEnv'
-    factory_method: 'loadTemplate'
-
-  profile.page:
-    class: 'QL\Hal\Controllers\User\ProfileController'
-    arguments:
-      - @profile.twig
-      - @layout
-      - @pushPermissionService
-      - @ldapService
-      - @user.repo
-      - @user
-      - @doctrine.em
-  profile.edit.page:
-    class: 'QL\Hal\Controllers\User\EditProfileController'
-    arguments:
-      - @profile.edit.twig
-      - @layout
-      - @pushPermissionService
-      - @ldapService
-      - @user.repo
-      - @doctrine.em
-      - @url.helper
-
   groups.twig:
     class: "Twig_Template"
     arguments:
@@ -535,20 +500,6 @@ services:
       - @admin.servers.twig
       - @layout
       - @server.repo
-
-  admin.users.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/users.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  admin.users.page:
-    class: "QL\\Hal\\Controllers\\Admin\\UsersController"
-    arguments:
-      - @admin.users.twig
-      - @layout
-      - @user.repo
 
   ######################################################################################################################
   # API CONTROLLERS

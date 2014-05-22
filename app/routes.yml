@@ -24,15 +24,6 @@ logout:
     - login.bouncer
     - logout.handle
 
-profile:
-  method:     "GET"
-  route:      "/profile(/:id)"
-  stack:
-    - login.bouncer
-    - profile.page
-  conditions:
-    id:       "[\d]+"
-
 groups:
   method:     "GET"
   route:      "/groups"
@@ -185,22 +176,34 @@ server:
 # USER ROUTES
 ########################################################################################################################
 
-profile.edit:
-  method:     "GET"
-  route:      "/profile/:id/edit"
-  stack:
-    - login.bouncer
-    - profile.edit.page
+user:
+  method: 'GET'
+  route: '/users/:id'
+  stack: ['login.bouncer', 'user.page']
   conditions:
-    id:       "[\d]+"
-profile.edit.handle:
-  method:     "POST"
-  route:      "/profile/:id/edit"
-  stack:
-    - login.bouncer
-    - profile.edit.page
+    id: '[\d]+'
+user.current:
+  method: 'GET'
+  route: '/users/current'
+  stack: ['login.bouncer', 'user.page']
+
+users:
+  method: 'GET'
+  route: '/users'
+  stack: ['login.bouncer', 'users.page']
+
+user.edit:
+  method: 'GET'
+  route: '/users/:id/edit'
+  stack: ['login.bouncer', 'user.edit.page']
   conditions:
-    id:       "[\d]+"
+    id: '[\d]+'
+user.edit.handle:
+  method: 'POST'
+  route: '/users/:id/edit'
+  stack: ['login.bouncer', 'user.edit.handle']
+  conditions:
+    id: '[\d]+'
 
 ########################################################################################################################
 # ADMIN REPO ROUTES
@@ -504,18 +507,6 @@ admin.server.delete.handle:
     - nyi.page
   conditions:
     server:   "[A-Za-z0-9_-]+"
-
-########################################################################################################################
-# ADMIN USER ROUTES
-########################################################################################################################
-
-admin.users:
-  method:     "GET"
-  route:      "/admin/users"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - admin.users.page
 
 ########################################################################################################################
 # API ROUTES

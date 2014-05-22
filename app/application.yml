@@ -1,7 +1,6 @@
 # Application specific endpoints and controllers go here
 services:
 
-
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
   ######################################################################################################################
@@ -82,6 +81,53 @@ services:
       - @doctrine.em
       - @session
       - @url.helper
+
+  ######################################################################################################################
+  # USER CONTROLLERS
+  ######################################################################################################################
+
+  user.page:
+    class: 'QL\Hal\Controllers\User\UserController'
+    arguments:
+      - @user.twig
+      - @layout
+      - @pushPermissionService
+      - @ldapService
+      - @user.repo
+      - @user
+      - @doctrine.em
+  user.twig:
+    parent: 'twig.template'
+    arguments:
+      - 'user/user.twig'
+
+  users.page:
+    class: 'QL\Hal\Controllers\User\UsersController'
+    arguments:
+      - @users.twig
+      - @layout
+      - @user.repo
+  users.twig:
+    parent: 'twig.template'
+    arguments:
+      - 'user/users.twig'
+
+  user.edit.page:
+    class: 'QL\Hal\Controllers\User\EditController'
+    arguments:
+      - @user.edit.twig
+      - @layout
+      - @pushPermissionService
+      - @ldapService
+      - @user.repo
+      - @doctrine.em
+      - @url.helper
+  user.edit.twig:
+    parent: 'twig.template'
+    arguments:
+      - 'user/user.edit.twig'
+  user.edit.handle:
+    parent: 'user.edit.page'
 
   ######################################################################################################################
   # GENERAL USE CONTROLLERS
