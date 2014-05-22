@@ -25,8 +25,16 @@ class HelloController
      */
     private $layout;
 
+    /**
+     *  @var LdapUser
+     */
     private $user;
 
+    /**
+     *  @param Twig_Template $template
+     *  @param Layout $layout
+     *  @param LdapUser $user
+     */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
