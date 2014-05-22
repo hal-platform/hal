@@ -14,7 +14,7 @@
         {% endfor %}
     </ul>
 
-    {% if servers %}
+    {% if isAdmin and servers %}
         <p><strong>Note:</strong> All associated servers must be removed or transferred to another environment to remove this environment.</p>
     {% endif %}
 
