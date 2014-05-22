@@ -25,8 +25,10 @@
         {# secondary actions #}
         <p>
             <a class="btn" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a></p>
-            {% if isAdmin and not servers %}
-                <a class="btn" href="{{ urlFor('environment.admin.delete', {id: env.id}) }}">Remove</a>
+            {% if not servers %}
+                <form action="{{ urlFor('environment.admin.remove.handle', {id: env.id}) }}" method="post">
+                    <input class="btn" type="submit" value="Remove">
+                </form>
             {% endif %}
         </p>
     {% endif %}

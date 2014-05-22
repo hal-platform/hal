@@ -1,9 +1,10 @@
-{% extends 'admin/admin.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% set page_title = 'Add Environment' %}
+{% set page_title = 'Edit '~env.key~' environment' %}
 
 {% block content %}
-    <h3>Add a new environment</h3>
+    <h2>{{ env.key }} environment</h2>
+
     <div class="form-wrapper">
         {% if errors %}
             <ul class="error-list">
@@ -13,7 +14,7 @@
             </ul>
         {% endif %}
 
-        <form action="" method="post">
+        <form action="{{ urlFor('environment.admin.edit.handle') }}" method="post">
             <ul class="form-fields">
                 <li>
                     <label for="name">Name</label>
@@ -22,11 +23,11 @@
             </ul>
 
             {# primary action #}
-            <input class="btn" type="submit" value="Add Environment">
+            <input class="btn" type="submit" value="Save">
 
             {# secondary actions #}
             <p>
-                <a href="{{ urlFor('environments') }}">Cancel</a>
+                <a href="{{ urlFor('environment', {id: env.id}) }}">Cancel</a>
             </p>
         </form>
     </div>

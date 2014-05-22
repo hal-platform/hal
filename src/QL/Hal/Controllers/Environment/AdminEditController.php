@@ -17,7 +17,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-class AdminAddController
+class AdminEditController
 {
     /**
      * @var Twig_Template
@@ -81,17 +81,22 @@ class AdminAddController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
+        if (!$environment = $this->envRepo->find($params['id'])) {
+            return $notFound();
+        }
+
         $renderContext = [
             'form' => [
-                'name' => $request->post('name')
+                'name' => ($request->isPost()) ? $request->post('name') : $environment->getKey()
             ],
+            'env' => $environment,
             'errors' => $this->checkFormErrors($request)
         ];
 
-        if ($this->handleFormSubmission($request, $renderContext['errors'])) {
-            $message = sprintf('Environment "%s" added.', $request->post('name'));
-            $this->session->addFlash($message, 'environment-add');
-            return $this->url->redirectFor('environments');
+        if ($this->handleFormSubmission($request, $environment, $renderContext['errors'])) {
+            $message = sprintf('Environment updated successfully.', $request->post('name'));
+            $this->session->addFlash($message, 'environment-edit');
+            return $this->url->redirectFor('environment', ['id' => $params['id']]);
         }
 
         $rendered = $this->layout->render($this->template, $renderContext);
@@ -102,26 +107,18 @@ class AdminAddController
      * Returns true if the form was submitted successfully.
      *
      * @param Request $request
+     * @param Environment $environment
      * @param array $errors
      * @return null
      */
-    private function handleFormSubmission(Request $request, array $errors)
+    private function handleFormSubmission(Request $request, Environment $environment, array $errors)
     {
         if (!$request->isPost() || $errors) {
             return false;
         }
 
-        $nextOrder = 1;
-        if ($maxEnvironment = $this->envRepo->findBy([], ['order' => 'DESC'], 1)) {
-            $maxEnvironment = array_pop($maxEnvironment);
-            $nextOrder = $maxEnvironment->getOrder() + 1;
-        }
-
-        $environment = new Environment;
         $environment->setKey($request->post('name'));
-        $environment->setOrder($nextOrder);
-
-        $this->entityManager->persist($environment);
+        $this->entityManager->merge($environment);
         $this->entityManager->flush();
 
         return true;

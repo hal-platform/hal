@@ -6,33 +6,6 @@ services:
   # ENVIRONMENT CONTROLLERS
   ######################################################################################################################
 
-  environment.admin.reorder.page:
-    class: 'QL\Hal\Controllers\Environment\AdminReorderController'
-    arguments:
-      - @environment.admin.reorder.twig
-      - @layout
-      - @environment.repo
-  environment.admin.reorder.twig:
-    parent: 'twig.template'
-    arguments: ['environment/admin.reorder.twig']
-  environment.admin.reorder.handle:
-    class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
-    arguments:
-      - @environment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  environment.admin.add.page:
-    class: 'QL\Hal\Controllers\Environment\AdminReorderController'
-    arguments:
-      - @environment.admin.add.twig
-      - @layout
-      - @environment.repo
-  environment.admin.add.twig:
-    parent: 'twig.template'
-    arguments: ['environment/admin.add.twig']
-
   environments.page:
     class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
     arguments:
@@ -53,6 +26,62 @@ services:
   environment.twig:
     parent: 'twig.template'
     arguments: ['environment/environment.twig']
+
+  environment.admin.reorder.page:
+    class: 'QL\Hal\Controllers\Environment\AdminReorderController'
+    arguments:
+      - @environment.admin.reorder.twig
+      - @layout
+      - @environment.repo
+  environment.admin.reorder.twig:
+    parent: 'twig.template'
+    arguments: ['environment/admin.reorder.twig']
+  environment.admin.reorder.handle:
+    class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
+    arguments:
+      - @environment.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+
+  environment.admin.add.page:
+    class: 'QL\Hal\Controllers\Environment\AdminAddController'
+    arguments:
+      - @environment.admin.add.twig
+      - @layout
+      - @environment.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+  environment.admin.add.twig:
+    parent: 'twig.template'
+    arguments: ['environment/admin.add.twig']
+  environment.admin.add.handle:
+    parent: environment.admin.add.page
+
+  environment.admin.edit.page:
+    class: 'QL\Hal\Controllers\Environment\AdminEditController'
+    arguments:
+      - @environment.admin.edit.twig
+      - @layout
+      - @environment.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+  environment.admin.edit.twig:
+    parent: 'twig.template'
+    arguments: ['environment/admin.edit.twig']
+  environment.admin.edit.handle:
+    parent: environment.admin.edit.page
+
+  environment.admin.remove.handle:
+    class: 'QL\Hal\Controllers\Environment\AdminRemoveHandle'
+    arguments:
+      - @environment.repo
+      - @server.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
 
   ######################################################################################################################
   # GENERAL USE CONTROLLERS

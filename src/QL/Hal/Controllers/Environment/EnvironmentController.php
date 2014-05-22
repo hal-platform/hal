@@ -64,7 +64,7 @@ class EnvironmentController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        if (!$environment = $this->envRepo->findOneBy(['id' => $params['id']])) {
+        if (!$environment = $this->envRepo->find($params['id'])) {
             return $notFound();
         }
 

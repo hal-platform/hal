@@ -389,7 +389,6 @@ admin.group.delete.handle:
 # ENVIRONMENT ROUTES
 ########################################################################################################################
 
-
 environments:
   method: 'GET'
   route: '/environments'
@@ -408,7 +407,6 @@ environment.admin.reorder:
   method: 'GET'
   route: '/environments/reorder'
   stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.page']
-
 environment.admin.reorder.handle:
   method: 'POST'
   route: '/environments/reorder'
@@ -417,43 +415,29 @@ environment.admin.reorder.handle:
 environment.admin.add:
   method: 'GET'
   route: '/environments/add'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
-
-environment.admin.handle:
+  stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.add.page']
+environment.admin.add.handle:
   method: 'POST'
   route: '/environments/add'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.add.handle']
 
+environment.admin.remove.handle:
+  method: 'POST'
+  route: '/environments/:id/delete'
+  stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.remove.handle']
+  conditions:
+    id: '[0-9]+'
 
-
-
-### STUB - FIX ME
 environment.admin.edit:
   method: 'GET'
-  route: '/admin/environment/:id/edit'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  route: '/environments/:id/edit'
+  stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.page']
   conditions:
     id: '[0-9]+'
-
-### STUB - FIX ME
 environment.admin.edit.handle:
   method: 'POST'
-  route: '/admin/environment/:id/edit'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
-  conditions:
-    id: '[0-9]+'
-
-### STUB - FIX ME
-environment.admin.delete:
-  method: 'GET'
-  route: '/admin/environment/:id/delete'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
-  conditions:
-    id: '[0-9]+'
-environment.admin.delete.handle:
-  method: 'POST'
-  route: '/admin/environment/:id/delete'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  route: '/environments/:id/edit'
+  stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.handle']
   conditions:
     id: '[0-9]+'
 

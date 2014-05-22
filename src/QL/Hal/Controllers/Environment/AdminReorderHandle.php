@@ -91,7 +91,7 @@ class AdminReorderHandle
             $id = $environment->getId();
             if (!isset($ordered[$id])) {
                 $this->session->addFlash('An environment is missing from the new ordering.', 'reorder-error');
-                $this->url->redirectFor('environment.admin.reorder');
+                return $this->url->redirectFor('environment.admin.reorder');
             }
 
             $environment->setOrder($ordered[$id]);
