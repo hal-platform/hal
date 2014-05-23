@@ -123,6 +123,22 @@ services:
   server.admin.add.handle:
     parent: 'server.admin.add.page'
 
+  server.admin.edit.page:
+    class: 'QL\Hal\Controllers\Server\AdminEditController'
+    arguments:
+      - @server.admin.edit.twig
+      - @layout
+      - @server.repo
+      - @environment.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+  server.admin.edit.twig:
+    parent: 'twig.template'
+    arguments: ['server/admin.edit.twig']
+  server.admin.edit.handle:
+    parent: 'server.admin.edit.page'
+
   server.admin.remove.handle:
     class: 'QL\Hal\Controllers\Server\AdminRemoveHandle'
     arguments:

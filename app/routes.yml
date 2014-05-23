@@ -177,21 +177,19 @@ server.admin.add.handle:
   route: '/servers/add'
   stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.handle']
 
-### STUB - FIX ME
 server.admin.edit:
   method: 'GET'
   route: '/servers/:id/edit'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.page']
   conditions:
     id: '[\d]+'
 server.admin.edit.handle:
   method: 'POST'
   route: '/servers/:id/edit'
-  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.handle']
   conditions:
     id: '[\d]+'
 
-### STUB - FIX ME
 server.admin.remove.handle:
   method: 'POST'
   route: '/servers/:id/remove'
