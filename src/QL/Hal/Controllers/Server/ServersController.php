@@ -1,12 +1,17 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use Twig_Template;
+use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use Twig_Template;
 
 /**
  *  Servers Controller

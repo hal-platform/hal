@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Server: '~server.name %}
+
+{% block content %}
+
+    <h2>{{ server.name }}</h2>
+
+    <h3>Environment</h3>
+    <p>{{ server.environment.key }}</p>
+
+    <h3>Repository deployments:</h3>
+    <ul>
+        {% for deployment in deployments %}
+            <li><a href="{{ urlFor('repo', {repo: deployment.repository.key}) }}">{{ deployment.repository.key }}</a> ({{ deployment.path }})</li>
+        {% else %}
+            <li>There are no deployments associated with this server.</li>
+        {% endfor %}
+    </ul>
+
+    {% if isAdmin and deployments %}
+        <p><strong>Note:</strong> All associated deployments must be removed or transferred to another server to remove this server.</p>
+    {% endif %}
+
+    {# primary action #}
+    <p><a class="btn" href="{{ urlFor('servers') }}">View all servers</a></p>
+
+    {% if isAdmin %}
+        {# secondary actions #}
+        <p>
+            <a class="btn" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a></p>
+            {% if not deployments %}
+                <form action="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}" method="post">
+                    <input class="btn" type="submit" value="Remove">
+                </form>
+            {% endif %}
+        </p>
+    {% endif %}
+{% endblock %}

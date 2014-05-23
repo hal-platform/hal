@@ -157,20 +157,47 @@ push:
 ########################################################################################################################
 
 servers:
-  method:     "GET"
-  route:      "/servers"
-  stack:
-    - login.bouncer
-    - servers.page
+  method: 'GET'
+  route: '/servers'
+  stack: ['login.bouncer', 'servers.page']
 
 server:
-  method:     "GET"
-  route:      "/server/:server"
-  stack:
-    - login.bouncer
-    - server.page
+  method: 'GET'
+  route: '/servers/:id'
+  stack: ['login.bouncer', 'server.page']
   conditions:
-    server:   "[A-Za-z0-9_-]+"
+    id: '[\d]+'
+
+server.admin.add:
+  method: 'GET'
+  route: '/servers/add'
+  stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.page']
+server.admin.add.handle:
+  method: 'POST'
+  route: '/servers/add'
+  stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.handle']
+
+### STUB - FIX ME
+server.admin.edit:
+  method: 'GET'
+  route: '/servers/:id/edit'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  conditions:
+    id: '[\d]+'
+server.admin.edit.handle:
+  method: 'POST'
+  route: '/servers/:id/edit'
+  stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+  conditions:
+    id: '[\d]+'
+
+### STUB - FIX ME
+server.admin.remove.handle:
+  method: 'POST'
+  route: '/servers/:id/remove'
+  stack: ['login.bouncer', 'admin.bouncer', 'server.admin.remove.handle']
+  conditions:
+    id: '[\d]+'
 
 ########################################################################################################################
 # USER ROUTES
@@ -443,70 +470,6 @@ environment.admin.edit.handle:
   stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.handle']
   conditions:
     id: '[0-9]+'
-
-########################################################################################################################
-# ADMIN SERVER ROUTES
-########################################################################################################################
-
-### STUB - FIX ME
-admin.servers:
-  method:     "GET"
-  route:      "/admin/servers"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - admin.servers.page
-
-### STUB - FIX ME
-admin.server.create:
-  method:     "GET"
-  route:      "/admin/server/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.server.create:
-  method:     "POST"
-  route:      "/admin/server/create"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-
-### STUB - FIX ME
-admin.server.edit:
-  method:     "GET"
-  route:      "/admin/server/:server/edit"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    server:   "[A-Za-z0-9_-]+"
-
-### STUB - FIX ME
-admin.server.edit.handle:
-  method:     "POST"
-  route:      "/admin/server/:server/edit"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    server:   "[A-Za-z0-9_-]+"
-
-### STUB - FIX ME
-admin.server.delete.handle:
-  method:     "GET"
-  route:      "/admin/server/:server/delete"
-  stack:
-    - login.bouncer
-    - admin.bouncer
-    - nyi.page
-  conditions:
-    server:   "[A-Za-z0-9_-]+"
 
 ########################################################################################################################
 # API ROUTES

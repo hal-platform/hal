@@ -1,0 +1,49 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% set page_title = 'Add Server' %}
+
+{% block content %}
+    <h3>Add a new server</h3>
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="{{ urlFor('server.admin.add.handle') }}" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="hostname">Hostname</label>
+                    <input type="text" name="hostname" id="hostname" maxlength="24" required value="{{ form.hostname }}" class="text-input">
+                </li>
+                <li>
+                    <p>Environment</p>
+                    <ul>
+                    {% for environment in environments %}
+                        {% set checked = '' %}
+                        {% if form.environment == environment.id %}
+                            {% set checked = ' checked="checked"' %}
+                        {% endif %}
+
+                        <li>
+                            <input type="radio" name="environment" id="environment-{{ environment.id }}" value="{{ environment.id }}"{{ checked }}>
+                            <label for="environment-{{ environment.id }}">{{ environment.key }}</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+
+            {# primary action #}
+            <input class="btn" type="submit" value="Add Server">
+
+            {# secondary actions #}
+            <p>
+                <a href="{{ urlFor('servers') }}">Cancel</a>
+            </p>
+        </form>
+    </div>
+{% endblock %}

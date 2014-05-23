@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Servers" %}
+
+{% block content %}
+    <h2>Servers</h2>
+
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>Hostname</th>
+                <th>Environment</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for server in servers %}
+                <tr class="env-row-{{ server.environment.key }}">
+                    <td><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a></td>
+                    <td>{{ server.environment.key }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">There are no servers.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# primary action #}
+    {% if isAdmin %}
+        <p><a class="btn" href="{{ urlFor('server.admin.add') }}">Add Server</a></p>
+    {% endif %}
+{% endblock %}

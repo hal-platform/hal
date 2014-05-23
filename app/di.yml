@@ -410,35 +410,6 @@ services:
       - @layout
       - @push.repo
 
-  server.twig:
-    class: "Twig_Template"
-    arguments:
-      - "server.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  server.page:
-    class: "QL\\Hal\\Controllers\\Server\\ServerController"
-    arguments:
-      - @server.twig
-      - @layout
-      - @server.repo
-      - @deployment.repo
-
-  servers.twig:
-    class: "Twig_Template"
-    arguments:
-      - "servers.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  servers.page:
-    class: "QL\\Hal\\Controllers\\Server\\ServersController"
-    arguments:
-      - @servers.twig
-      - @layout
-      - @server.repo
-
   build.push.twig:
     class: "Twig_Template"
     arguments:
@@ -486,20 +457,6 @@ services:
       - @admin.groups.twig
       - @layout
       - @group.repo
-
-  admin.servers.twig:
-    class: "Twig_Template"
-    arguments:
-      - "admin/servers.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  admin.servers.page:
-    class: "QL\\Hal\\Controllers\\Admin\\ServersController"
-    arguments:
-      - @admin.servers.twig
-      - @layout
-      - @server.repo
 
   ######################################################################################################################
   # API CONTROLLERS

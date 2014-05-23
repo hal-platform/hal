@@ -1,13 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use Twig_Template;
+use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use Twig_Template;
 
 /**
  *  Server Controller
@@ -62,22 +67,15 @@ class ServerController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $server = $this->serverRepo->findOneBy(['name' => $params['server']]);
-
-        if (!$server) {
-            call_user_func($notFound);
-            return;
+        if (!$server = $this->serverRepo->find($params['id'])) {
+            return $notFound();
         }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'server' => $server,
-                    'deployments' => $this->deployRepo->findBy(['server' => $server])
-                ]
-            )
-        );
+        $rendered = $this->layout->render($this->template,[
+            'server' => $server,
+            'deployments' => $this->deployRepo->findBy(['server' => $server])
+        ]);
+        $response->body($rendered);
     }
 }
 
