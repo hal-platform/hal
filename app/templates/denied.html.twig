@@ -4,7 +4,11 @@
 
 {% block content %}
     <div class="error-page">
-        <h1>I'm sorry {{ getUsersActualName(user) }}, I'm afraid I can't do that.</h1>
+        {% set name = getUsersActualName(user) %}
+        {% set msg = ["I'm sorry "~name~", I'm afraid I can't do that.", "Just what do you think you're doing, "~name~"?"] %}
+
+        <h1>{{ random(msg) }}</h1>
         <img width="600px" src="/img/error/eye_large.jpg" />
+
     </div>
 {% endblock %}
