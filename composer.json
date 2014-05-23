@@ -36,6 +36,7 @@
         "symfony/config":                   "~2.4",
         "symfony/yaml":                     "~2.4",
         "twig/twig":                        "~1.15",
+        "ql/hal-agent":                     "~1.0@alpha",
         "ql/hal-core":                      "~2.0@dev"
     },
     "require-dev": {
