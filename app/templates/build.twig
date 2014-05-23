@@ -55,7 +55,7 @@
                     <td>Initiator</td>
                     <td>
                         {% if build.user %}
-                            <a href="{{ urlFor('profile', {'id': build.user.id}) }}">{{ build.user.name }}</a>
+                            <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
                         {% elseif build.consumer %}
                             {{ build.consumer.name[:20] }}
                         {% else %}

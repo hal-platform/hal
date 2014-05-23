@@ -207,6 +207,7 @@ user:
   stack: ['login.bouncer', 'user.page']
   conditions:
     id: '[\d]+'
+
 user.current:
   method: 'GET'
   route: '/users/current'
@@ -223,6 +224,7 @@ user.edit:
   stack: ['login.bouncer', 'user.edit.page']
   conditions:
     id: '[\d]+'
+
 user.edit.handle:
   method: 'POST'
   route: '/users/:id/edit'

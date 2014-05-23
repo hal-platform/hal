@@ -26,7 +26,7 @@
                     <td>{{ push.end|date }}</td>
                     <td>
                         {% if push.user %}
-                            <a href="{{ urlFor('profile', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
+                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
                         {% elseif push.consumer %}
                             {{ push.consumer.name[:20] }}
                         {% else %}

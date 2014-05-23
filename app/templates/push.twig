@@ -68,7 +68,7 @@
                     <td>Initiator</td>
                     <td>
                         {% if push.user %}
-                            <a href="{{ urlFor('profile', {'id': push.user.id}) }}">{{ push.user.name }}</a>
+                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name }}</a>
                         {% elseif push.consumer %}
                             {{ push.consumer.name[:20] }}
                         {% else %}

@@ -16,7 +16,7 @@
     <ul class="check-list">
     {% for branch in branches %}
         <li>
-            <input id="{{ branch.object.sha }}-{{ branch.name }}" type="radio" name="commitish" value="{{ branch.ref }}">
+            <input id="{{ branch.object.sha }}-{{ branch.name }}" type="radio" name="commitish" value="{{ branch.name }}">
             <label for="{{ branch.object.sha }}-{{ branch.name }}">
                 {{ branch.name }} (<a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, branch.name) }}">{{ branch.object.sha[:7] }}</a>)
             </label>
@@ -30,7 +30,7 @@
     <ul class="check-list">
     {% for tag in tags %}
         <li>
-            <input id="{{ tag.object.sha }}-{{ tag.name }}" type="radio" name="commitish" value="{{ tag.ref }}">
+            <input id="{{ tag.object.sha }}-{{ tag.name }}" type="radio" name="commitish" value="tag/{{ tag.name }}">
             <label for="{{ tag.object.sha }}-{{ tag.name }}">
                 {{ tag.name }} (<a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha[:7] }}</a>)
             </label>
@@ -44,7 +44,7 @@
     <ul class="check-list">
         {% for pull in pulls %}
             <li class="pr-selection">
-                <input id="pr{{ pull.number }}" type="radio" name="commitish" value="pull{{ pull.number }}">
+                <input id="pr{{ pull.number }}" type="radio" name="commitish" value="pull/{{ pull.number }}">
                 <label for="pr{{ pull.number }}">{{ pull.title }} (<a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>)</label>
                 <p>
                     <span class="{{ pull.state }}">[{{ pull.state }}]</span>

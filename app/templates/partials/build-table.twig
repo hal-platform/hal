@@ -26,7 +26,7 @@
                 <td>{{ build.branch[:20] }}</td>
                 <td><a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit[:7] }}</a></td>
                 {% if build.user %}
-                    <td><a href="{{ urlFor('profile', {'id': build.user.id}) }}">{{ build.user.name[:20] }}</a></td>
+                    <td><a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name[:20] }}</a></td>
                 {% elseif build.consumer %}
                     <td>{{ build.consumer.name[:20] }}</td>
                 {% else %}

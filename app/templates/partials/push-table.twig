@@ -24,7 +24,7 @@
                 </td>
                 <td><a href="{{ urlFor('build', {'repo': push.build.repository.key, 'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
                 {% if push.user %}
-                    <td><a href="{{ urlFor('profile', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a></td>
+                    <td><a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a></td>
                 {% elseif push.consumer %}
                     <td>{{ push.consumer.name[:20] }}</td>
                 {% else %}
