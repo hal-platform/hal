@@ -1,6 +1,6 @@
 imports:
   -
-    resource: application.yml
+    resource: pages.yml
 
 services:
 
