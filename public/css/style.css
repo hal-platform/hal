@@ -212,7 +212,7 @@ textarea { resize: vertical; }
 .chromeframe { margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0; }
 
 /* line 7, ../../sass/scales/base/_headings.scss */
-h1, h2, h3, h4, h5, h6, .alpha, .beta, .gamma, .delta, .epsilon, .zeta { font-family: "futura-pt", sans-serif; font-weight: normal; }
+h1, h2, h3, h4, h5, h6, .alpha, .beta, .gamma, .delta, .epsilon, .zeta { font-family: sans-serif; font-weight: normal; }
 
 /* line 12, ../../sass/scales/base/_headings.scss */
 h1, .alpha { font-size: 2em; line-height: 1.125em; margin-bottom: 0.75em; }
@@ -622,22 +622,25 @@ p { max-width: 40em; }
 .mbn { margin-bottom: 0 !important; }
 
 /* line 102, ../../sass/partials/_global.scss */
-[href^='http://git/']:after { font-family: FontAwesome; content: ' \f09b'; color: #070103; text-decoration: none; }
-
-/* line 109, ../../sass/partials/_global.scss */
 .circle-red::before, .circle-orange::before, .circle-green::before { display: inline-block; width: 1em; height: 1em; margin-right: 0.3em; border-radius: 50%; }
 
-/* line 117, ../../sass/partials/_global.scss */
+/* line 110, ../../sass/partials/_global.scss */
 .circle-red::before { content: ''; background: red; }
 
-/* line 123, ../../sass/partials/_global.scss */
+/* line 116, ../../sass/partials/_global.scss */
 .circle-orange::before { content: ''; background: orange; }
 
-/* line 129, ../../sass/partials/_global.scss */
+/* line 122, ../../sass/partials/_global.scss */
 .circle-green::before { content: ''; background: green; }
 
-/* line 135, ../../sass/partials/_global.scss */
+/* line 128, ../../sass/partials/_global.scss */
 .error-page { text-align: center; }
+
+/* line 1, ../../sass/partials/_icons.scss */
+.icon { position: relative; width: 18px; height: 18px; fill: #070103; display: inline-block; }
+
+/* line 9, ../../sass/partials/_icons.scss */
+.icon:after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
 /* line 1, ../../sass/partials/_js.scss */
 .js-form-toggle { display: block; }

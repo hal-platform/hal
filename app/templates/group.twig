@@ -10,7 +10,7 @@
         <table>
             <thead>
             <tr>
-                <th></th>
+                <th>Name</th>
                 <th>Github Location</th>
                 <th>Contact Email</th>
             </tr>
@@ -19,7 +19,14 @@
             {% for repo in repos %}
                 <tr>
                     <td><a href="{{ urlFor('repo', {'repo': repo.key}) }}">{{ repo.key }}</a></td>
-                    <td><a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a></td>
+                    <td>
+                        <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                        <span class="icon">
+                            <svg viewBox="0 0 32 32">
+                                <use xlink:href="#github"></use>
+                            </svg>
+                        </span>
+                    </td>
                     <td>{{ repo.email }}</td>
                 </tr>
             {% endfor %}

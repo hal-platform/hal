@@ -21,7 +21,12 @@
                         <li>
                             <input id="{{ branch.object.sha }}-{{ branch.name }}" type="radio" name="commitish" value="{{ branch.ref }}">
                             <label for="{{ branch.object.sha }}-{{ branch.name }}">
-                                {{ branch.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/tree/{{ branch.name }}">{{ branch.object.sha[:7] }}</a>)
+                                {{ branch.name }} (<a href="http://git/{{ repo.GithubUser }}/{{ repo.GithubRepo }}/tree/{{ branch.name }}">{{ branch.object.sha[:7] }}</a>
+                                <span class="icon">
+                                    <svg viewBox="0 0 32 32">
+                                        <use xlink:href="#github"></use>
+                                    </svg>
+                                </span>)
                             </label>
                         </li>
                     {% endfor %}

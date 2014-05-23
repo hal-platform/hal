@@ -24,7 +24,14 @@
                     {% endif %}
                 </td>
                 <td>{{ build.branch[:20] }}</td>
-                <td><a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit[:7] }}</a></td>
+                <td>
+                    <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit[:7] }}</a>
+                    <span class="icon">
+                        <svg viewBox="0 0 32 32">
+                            <use xlink:href="#github"></use>
+                        </svg>
+                    </span>
+                </td>
                 {% if build.user %}
                     <td><a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name[:20] }}</a></td>
                 {% elseif build.consumer %}

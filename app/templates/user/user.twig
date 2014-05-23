@@ -25,7 +25,14 @@
     <h3>Stats</h3>
     <ul>
         <li><b>Total Pushes:</b> {{ pushes }}</li>
-        <li><b>Github Page:</b> <a href="http://git/{{ profileUser.handle }}">http://git/{{ profileUser.handle }}</a></li>
+        <li>
+            <b>Github Page:</b> <a href="http://git/{{ profileUser.handle }}">http://git/{{ profileUser.handle }}</a>
+            <span class="icon">
+                <svg viewBox="0 0 32 32">
+                    <use xlink:href="#github"></use>
+                </svg>
+            </span>
+        </li>
     </ul>
 
     {% if permissions %}

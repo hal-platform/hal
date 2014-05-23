@@ -99,13 +99,6 @@ p {
     margin-bottom: 0 !important;
 }
 
-[href^='http://git/']:after {
-    font-family: FontAwesome;
-    content: ' \f09b';
-    color: $text-color;
-    text-decoration: none;
-}
-
 %circle {
     display: inline-block;
     width: 1em;

@@ -22,7 +22,14 @@
                 <tr>
                     <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
                     <td>{{ push.build.branch }}</td>
-                    <td><a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit[:7] }}</a></td>
+                    <td>
+                        <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit[:7] }}</a>
+                        <span class="icon">
+                            <svg viewBox="0 0 32 32">
+                                <use xlink:href="#github"></use>
+                            </svg>
+                        </span>
+                    </td>
                     <td>{{ push.end|date }}</td>
                     <td>
                         {% if push.user %}

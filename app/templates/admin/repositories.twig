@@ -23,7 +23,14 @@
             {% for repo in repos %}
                 <tr>
                     <td><a href="{{ urlFor('repo', {'repo': repo.key}) }}">{{ repo.key }}</a>
-                    <td><a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a></td>
+                    <td>
+                        <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                        <span class="icon">
+                            <svg viewBox="0 0 32 32">
+                                <use xlink:href="#github"></use>
+                            </svg>
+                        </span>
+                    </td>
                     <td>{{ repo.email }}</td>
                     <td>
                         <a href="{{ urlFor('admin.repo.deployments', {'repo': repo.key}) }}">Deployments</a> |

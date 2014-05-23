@@ -22,16 +22,12 @@
     {% endblock %}
     {% block style %}
         <link rel="stylesheet" href="/css/style.css">
-        <link href="/css/font-awesome.min.css" rel="stylesheet">
-    {% endblock %}
-    {% block headScript %}
-        <script src="/js/head.min.js"></script>
-        <script type="text/javascript" src="/js/doy3lmv.js"></script>
-        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     {% endblock %}
 {% endblock %}
 
 {% block body %}
+
+    {% include 'partials/icons.twig' %}
 
     <!-- BEGIN HEADER -->
     {% block header %}
