@@ -360,8 +360,10 @@ services:
   repository.build.start.handle.page:
     class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartHandleController"
     arguments:
+      - @session
       - @repository.repo
       - @user.repo
+      - @environment.repo
       - @url.helper
       - @user
 

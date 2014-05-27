@@ -73,6 +73,20 @@
                 </div>
             {% endif %}
         {% endblock %}
+        {% block messages %}
+            {# GLOBAL NOTICE #}
+            {% if notice %}
+                <div class="alert-bar">
+                    <p>{{ notice }}</p>
+                </div>
+            {% endif %}
+            {# GLOBAL ERROR #}
+            {% if error %}
+                <div class="alert-bar">
+                    <p>{{ error }}</p>
+                </div>
+            {% endif %}
+        {% endblock %}
         <!-- BEGIN CONTENT -->
         {% block content %}{% endblock %}
         <!-- END CONTENT -->
