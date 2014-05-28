@@ -1,5 +1,25 @@
 #!/usr/bin/env bash
 
-./install
-./config
-./refresh-frontend
+DIR=$( cd "$( dirname "$0" )" && pwd )
+"$DIR"/install
+EXITCODE=$?
+if [ $EXITCODE -ne 0 ]; then
+    exit $EXITCODE;
+fi
+
+"$DIR"/config
+EXITCODE=$?
+if [ $EXITCODE -ne 0 ]; then
+    exit $EXITCODE;
+fi
+
+"$DIR"/refresh-frontend
+EXITCODE=$?
+if [ $EXITCODE -ne 0 ]; then
+    exit $EXITCODE;
+fi
+
+# Remove artifacts from deployment - keep your builds tidy!
+rm -r "$DIR/../.sass-cache"
+rm -r "$DIR/../node_modules"
+rm -r "$DIR/composer"

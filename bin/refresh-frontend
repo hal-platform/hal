@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
+DIR=$( cd "$( dirname "$0" )" && pwd )
+BUNDLER="bundle install"
+GULP="$DIR/../node_modules/.bin/gulp --deploy"
 
-bundle install && \
-npm install && \
-node_modules/.bin/grunt compass:dev
+$BUNDLER
+$GULP
+exit $?
