@@ -1,2 +1,16 @@
 #!/usr/bin/env bash
-./bin/composer install --prefer-dist --no-interaction --no-dev
+DIR=$( cd "$( dirname "$0" )" && pwd )
+COMPOSER="$DIR/composer install --prefer-dist --no-interaction --no-dev"
+NPM="npm install --production"
+
+$COMPOSER
+EXITCODE=$?
+if [ $EXITCODE -ne 0 ]; then
+    exit $EXITCODE;
+fi
+
+$NPM
+EXITCODE=$?
+if [ $EXITCODE -ne 0 ]; then
+    exit $EXITCODE;
+fi
