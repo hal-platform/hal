@@ -4,7 +4,7 @@ imports:
   - resource: ../vendor/ql/hal-core/config/di.yml
 
 parameters:
-  debug:            true
+  debug:            false
 
   doctrine.mappings:
     - "%root%/src/QL/Hal/Core/Entity"
