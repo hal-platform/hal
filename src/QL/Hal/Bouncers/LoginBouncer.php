@@ -1,11 +1,15 @@
 <?php
-# lib/QL/Hal/Bouncers/LoginBouncer.php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Bouncers;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use QL\Hal\Session;
 use QL\Hal\Helpers\UrlHelper;
 
@@ -23,7 +27,7 @@ class LoginBouncer
     private $session;
 
     /**
-     *  @var ContainerBuilder
+     *  @var ContainerInterface
      */
     private $container;
 
@@ -34,10 +38,10 @@ class LoginBouncer
 
     /**
      *  @param Session $session
-     *  @param ContainerBuilder $container
+     *  @param ContainerInterface $container
      *  @param UrlHelper $url
      */
-    public function __construct(Session $session, ContainerBuilder $container, UrlHelper $url)
+    public function __construct(Session $session, ContainerInterface $container, UrlHelper $url)
     {
         $this->session = $session;
         $this->container = $container;
