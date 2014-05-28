@@ -1,14 +1,22 @@
-/vendor/
-/app/config.yml
-/phpunit.xml
-/tests/phpunit.xml
-/phpunit
+# ide artifacts
 /.idea
-/.vagrant
-/node_modules/
-/bower_components/
 *.swp
 .DS_Store
 .sublime-workspace
-.sass-cache/
+
+# testing
+/phpunit/
+/tests/phpunit.xml
+
+# compiled assets / package installation
+/.sass-cache/
+/bower_components/
+/node_modules/
 /public/js/build.txt
+/vendor/
+
+# compiled configuration
+/app/config.yml
+/src/QL/Hal/CachedContainer.php
+
+/.vagrant
