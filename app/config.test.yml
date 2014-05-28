@@ -4,11 +4,11 @@ imports:
   - resource: ../vendor/ql/hal-core/config/di.yml
 
 parameters:
-  debug:            false
+  debug: false
 
   doctrine.mappings:
-    - "%root%/src/QL/Hal/Core/Entity"
-  doctrine.devmode:   true
+    - '%root%/src/QL/Hal/Core/Entity'
+  doctrine.devmode: true
   doctrine.connection:
     driver:         pdo_mysql
     host:           test.example.com
@@ -16,28 +16,23 @@ parameters:
     password:       placeholder
     dbname:         hal9000_test
 
-  build.user:       "hal9000test"
-  build.dir:        "/var/spool/hal9000test"
-  build.async:      true
-  rsync.user:       "placeholder"
-  github.token:     ""
-  github.baseurl:   "http://git/api/v3/"
-  ldap.host:        "ldap.example.com"
-  ldap.domain:      "MI"
-  ldap.baseDn:      "DC=mi,DC=corp"
-  ldap.username:    "placeholder"
-  ldap.password:    "placeholder"
+  github.token: ''
+  github.com.token: ''
+  github.baseurl: 'http://git/api/v3/'
 
-  email.hostname:     mail.example.com
-  email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"
-  email.notify:       "placeholder@quickenloans.com"
-  email.notify.error: "placeholder@quickenloans.com"
-  build.log.level:    100
-  build.log.name:     hal9000
-  build.date.format:  ""
+  ldap.host: 'ldap.example.com'
+  ldap.domain: 'MI'
+  ldap.baseDn: 'DC=mi,DC=corp'
+  ldap.username: 'placeholder'
+  ldap.password: 'placeholder'
 
-  mcpLogger.applicationId: '200947'
-  mcpLogger.host: 'qlsonictest'
+  logger.mcp.host: 'http://qlsonictest:2581/web/core/logentries'
+
+  agent.environment.path: '/usr/local/zend/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin'
+  agent.environment.home: '/var/spool/hal9000test/home'
+  agent.environment.temp: '/var/spool/hal9000test'
+  agent.environment.archive: ''
+  agent.ssh-user: 'placeholder'
 
   # These help with development
 

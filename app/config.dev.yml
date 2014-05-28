@@ -4,11 +4,11 @@ imports:
   - resource: ../vendor/ql/hal-core/config/di.yml
 
 parameters:
-  debug:            true
+  debug: true
 
   doctrine.mappings:
-    - "%root%/src/QL/Hal/Core/Entity"
-  doctrine.devmode:   true
+    - '%root%/src/QL/Hal/Core/Entity'
+  doctrine.devmode: true
   doctrine.connection:
     driver:         pdo_mysql
     host:           localhost
@@ -16,28 +16,23 @@ parameters:
     password:
     dbname:         hal
 
-  build.user:       "mcolf"
-  build.dir:        "/tmp"
-  build.async:      false
-  rsync.user:       "mcolf"
-  github.token:     ""
-  github.baseurl:   "http://git/api/v3/"
-  ldap.host:        "ldap.example.com"
-  ldap.domain:      "MI"
-  ldap.baseDn:      "DC=mi,DC=corp"
-  ldap.username:    "placeholder"
-  ldap.password:    "placeholder"
+  github.token: ''
+  github.com.token: ''
+  github.baseurl: 'http://git/api/v3/'
 
-  email.hostname:     mail.example.com
-  email.subject:      "HAL9000 - {repo} [{status}][{env}][{server}]"
-  email.notify:       "matthewcolf@quickenloans.com"
-  email.notify.error: false
-  build.log.level:    100
-  build.log.name:     hal9000
-  build.date.format:  ""
+  ldap.host: 'ldap.example.com'
+  ldap.domain: 'MI'
+  ldap.baseDn: 'DC=mi,DC=corp'
+  ldap.username: 'placeholder'
+  ldap.password: 'placeholder'
 
-  mcpLogger.applicationId: '200947'
-  mcpLogger.host: 'qlsonictest'
+  logger.mcp.host: 'http://qlsonictest:2581/web/core/logentries'
+
+  agent.environment.path: ''
+  agent.environment.home: ''
+  agent.environment.temp: ''
+  agent.environment.archive: ''
+  agent.ssh-user: 'placeholder'
 
   # These help with development
 
