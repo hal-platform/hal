@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "b5a7f2cf541007dd27f19bd25c9c2698",
+    "hash": "cfc45507e19865023eae0ca4975c5265",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -43,7 +43,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
+                    "name": "Jonathan H. Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -709,74 +709,6 @@
             "time": "2014-01-05 04:09:12"
         },
         {
-            "name": "monolog/monolog",
-            "version": "1.9.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "65026b610f8c19e61d7242f600530677b0466aac"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/65026b610f8c19e61d7242f600530677b0466aac",
-                "reference": "65026b610f8c19e61d7242f600530677b0466aac",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "psr/log": "~1.0"
-            },
-            "require-dev": {
-                "aws/aws-sdk-php": "~2.4, >2.4.8",
-                "doctrine/couchdb": "~1.0@dev",
-                "graylog2/gelf-php": "~1.0",
-                "phpunit/phpunit": "~3.7.0",
-                "raven/raven": "~0.5",
-                "ruflin/elastica": "0.90.*"
-            },
-            "suggest": {
-                "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
-                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
-                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
-                "ext-mongo": "Allow sending log messages to a MongoDB server",
-                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
-                "raven/raven": "Allow sending log messages to a Sentry server",
-                "rollbar/rollbar": "Allow sending log messages to Rollbar",
-                "ruflin/elastica": "Allow sending log messages to an Elastic Search server"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.9.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Monolog\\": "src/Monolog"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
-            "homepage": "http://github.com/Seldaek/monolog",
-            "keywords": [
-                "log",
-                "logging",
-                "psr-3"
-            ],
-            "time": "2014-04-24 13:29:03"
-        },
-        {
             "name": "psr/log",
             "version": "1.0.0",
             "source": {
@@ -816,23 +748,27 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "dev-master",
+            "version": "2.0.0-alpha1",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "0e6a2597c87d8fc33676d7dbfdfe0a13cd59c8e0"
+                "reference": "2.0.0-alpha1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer//dist/ql-hal-core-2.0.0-alpha1-d67850.zip",
+                "reference": "2.0.0-alpha1",
+                "shasum": "e9cc20efb83e3b504a66affab64a0316cab921be"
             },
             "require": {
                 "doctrine/orm": "~2.4",
-                "knplabs/github-api": "*",
-                "monolog/monolog": "~1.7@dev",
                 "php-64bit": ">=5.4.0",
+                "ql/mcp-core": "*",
                 "ql/mcp-corp-account": "*@RC",
-                "swiftmailer/swiftmailer": "*",
                 "symfony/yaml": "*"
             },
             "require-dev": {
-                "phpmd/phpmd": "*",
+                "phpmd/phpmd": "1.5.*",
                 "phpunit/phpunit": "*",
                 "squizlabs/php_codesniffer": "*",
                 "symfony/config": "*",
@@ -876,7 +812,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2014-05-21 19:45:54"
+            "time": "2014-05-29 13:40:08"
         },
         {
             "name": "ql/mcp-core",
@@ -1110,62 +1046,8 @@
             "time": "2014-04-05 18:33:59"
         },
         {
-            "name": "swiftmailer/swiftmailer",
-            "version": "v5.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "043e336b871f17a117f76ef8e190eddfc04c8d48"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/043e336b871f17a117f76ef8e190eddfc04c8d48",
-                "reference": "043e336b871f17a117f76ef8e190eddfc04c8d48",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.4"
-            },
-            "require-dev": {
-                "mockery/mockery": "~0.9.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.2-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "lib/swift_required.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Chris Corbyn"
-                }
-            ],
-            "description": "Swiftmailer, free feature-rich PHP mailer",
-            "homepage": "http://swiftmailer.org",
-            "keywords": [
-                "mail",
-                "mailer"
-            ],
-            "time": "2014-05-08 08:11:19"
-        },
-        {
             "name": "symfony/config",
-            "version": "v2.4.4",
+            "version": "v2.4.6",
             "target-dir": "Symfony/Component/Config",
             "source": {
                 "type": "git",
@@ -1215,32 +1097,34 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.4.4",
+            "version": "v2.5.0",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "2e452005b1e1d003d23702d227e23614679eb5ca"
+                "reference": "ef4ca73b0b3a10cbac653d3ca482d0cdd4502b2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/2e452005b1e1d003d23702d227e23614679eb5ca",
-                "reference": "2e452005b1e1d003d23702d227e23614679eb5ca",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/ef4ca73b0b3a10cbac653d3ca482d0cdd4502b2c",
+                "reference": "ef4ca73b0b3a10cbac653d3ca482d0cdd4502b2c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
+                "psr/log": "~1.0",
                 "symfony/event-dispatcher": "~2.1"
             },
             "suggest": {
+                "psr/log": "For using the console logger",
                 "symfony/event-dispatcher": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -1266,21 +1150,21 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-27 13:34:57"
+            "time": "2014-05-22 08:54:24"
         },
         {
             "name": "symfony/dependency-injection",
-            "version": "v2.4.4",
+            "version": "v2.4.6",
             "target-dir": "Symfony/Component/DependencyInjection",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/DependencyInjection.git",
-                "reference": "f4f947f83aa2f1706ec8cf4f4ead6c85ea935156"
+                "reference": "42fdd797519b04077225bf8de04742e67a1f0e6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/f4f947f83aa2f1706ec8cf4f4ead6c85ea935156",
-                "reference": "f4f947f83aa2f1706ec8cf4f4ead6c85ea935156",
+                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/42fdd797519b04077225bf8de04742e67a1f0e6c",
+                "reference": "42fdd797519b04077225bf8de04742e67a1f0e6c",
                 "shasum": ""
             },
             "require": {
@@ -1325,28 +1209,31 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-18 20:38:54"
+            "time": "2014-05-12 09:27:48"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.4.4",
+            "version": "v2.5.0",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "e539602e5455aa086c0e81e604745af7789e4d8a"
+                "reference": "cb62ec8dd05893fc8e4f0e6e21e326e1fc731fe8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/e539602e5455aa086c0e81e604745af7789e4d8a",
-                "reference": "e539602e5455aa086c0e81e604745af7789e4d8a",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/cb62ec8dd05893fc8e4f0e6e21e326e1fc731fe8",
+                "reference": "cb62ec8dd05893fc8e4f0e6e21e326e1fc731fe8",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/dependency-injection": "~2.0"
+                "psr/log": "~1.0",
+                "symfony/config": "~2.0",
+                "symfony/dependency-injection": "~2.0",
+                "symfony/stopwatch": "~2.2"
             },
             "suggest": {
                 "symfony/dependency-injection": "",
@@ -1355,7 +1242,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -1381,21 +1268,21 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-16 10:34:31"
+            "time": "2014-04-29 10:13:57"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.4.4",
+            "version": "v2.5.0",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "a3af8294bcce4a7c1b2892363b0c9d8109affad4"
+                "reference": "98e831eac836a0a5911626ce82684155f21d0e4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/a3af8294bcce4a7c1b2892363b0c9d8109affad4",
-                "reference": "a3af8294bcce4a7c1b2892363b0c9d8109affad4",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/98e831eac836a0a5911626ce82684155f21d0e4d",
+                "reference": "98e831eac836a0a5911626ce82684155f21d0e4d",
                 "shasum": ""
             },
             "require": {
@@ -1404,7 +1291,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -1430,21 +1317,21 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-16 10:34:31"
+            "time": "2014-04-16 10:36:21"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.4.4",
+            "version": "v2.4.6",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "65539ecde838f9c0d18b006b2101e3deb4b5c9ff"
+                "reference": "fd22bb88c3a6f73c898b39bec185a9e211b06265"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/65539ecde838f9c0d18b006b2101e3deb4b5c9ff",
-                "reference": "65539ecde838f9c0d18b006b2101e3deb4b5c9ff",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/fd22bb88c3a6f73c898b39bec185a9e211b06265",
+                "reference": "fd22bb88c3a6f73c898b39bec185a9e211b06265",
                 "shasum": ""
             },
             "require": {
@@ -1479,7 +1366,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-18 20:37:09"
+            "time": "2014-05-12 09:27:48"
         },
         {
             "name": "twig/twig",
@@ -2227,19 +2114,14 @@
             "time": "2014-05-01 03:07:07"
         }
     ],
-    "aliases": [
-
-    ],
-    "minimum-stability": "dev",
+    "aliases": [],
+    "minimum-stability": "stable",
     "stability-flags": {
-        "monolog/monolog": 20,
         "ql/mcp-corp-account": 5,
         "ql/hal-core": 20
     },
     "platform": {
         "php-64bit": "~5.4"
     },
-    "platform-dev": [
-
-    ]
+    "platform-dev": []
 }
