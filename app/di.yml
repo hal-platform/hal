@@ -3,6 +3,7 @@ imports:
     resource: pages.yml
 
 parameters:
+    # environment independent parameters
     slim.hooks:
         slim.before:
             - 'slim.hook.logger'
@@ -10,6 +11,7 @@ parameters:
             - 'slim.hook.twig'
         slim.before.router:
             - 'slim.hook.routes'
+    applicationId: '200947'
 
 services:
 
@@ -34,24 +36,21 @@ services:
     class: 'Slim\Slim'
     arguments:
       - debug: '%debug%'
-      - log.writer: '@mcpLogger.slimLogWriter'
+      - log.writer: '@slim.logger'
     configurator: ['@slim.configurator', 'configure']
 
   slim.environment:
     class: 'Slim\Environment'
     factory_service: 'slim'
     factory_method: 'environment'
-
   slim.request:
     class: 'Slim\Http\Request'
     factory_service: 'slim'
     factory_method: 'request'
-
   slim.response:
     class: 'Slim\Http\Response'
     factory_service: 'slim'
     factory_method: 'response'
-
   slim.router:
     class: 'Slim\Router'
     factory_service: 'slim'
@@ -66,13 +65,17 @@ services:
     arguments: ['@service_container', '%routes%']
   slim.hook.logger:
     class: 'QL\Hal\Slim\McpLoggerHook'
-    arguments: ['@mcpLogger.factory', '@slim.environment']
+    arguments: ['@logger.mcp.factory', '@slim.environment']
   slim.hook.errors:
     class: 'QL\Hal\Slim\ErrorPagesHook'
     arguments: ['@error.pages.twig']
   slim.hook.twig:
     class: 'QL\Hal\Slim\TwigEnvironmentHook'
     arguments: ['@twigEnv', '@session']
+
+  slim.logger:
+    class: 'QL\Hal\Logger\McpLogWriter'
+    arguments: ['@logger']
 
   ######################################################################################################################
   # HELPERS
@@ -84,6 +87,10 @@ services:
       - @slim.request
       - @slim.response
       - @slim.router
+
+  clock:
+    class: 'MCP\DataType\Time\Clock'
+    arguments: ['now', 'UTC']
 
   ######################################################################################################################
   # TWIG STUFF
@@ -184,8 +191,7 @@ services:
 
   github.client:
     class: 'Github\Client'
-    arguments:
-      - @github.httpClient
+    arguments: ['@github.httpClient']
 
   github.httpClient:
     class: 'QL\Hal\GithubApi\HackCachedHttpClient'
@@ -193,14 +199,6 @@ services:
       - {base_url: '%github.baseurl%'}
     calls:
       - ['authenticate', ['%github.token%', null, 'http_token']]
-
-  # Using the filesystem as a cache causes issues because of the different users involve here.
-  # - The web front end runs with a user that can RW to /tmp, but not /var/spool/hal9000[test]
-  # - The pusher script runs with a different user that can't RW to /tmp, but CAN RW to /var/spool/hal9000[test]
-  # In instances where the filesystem is unavailable, set the memory cache on the http client.
-  # Perhaps redis/apcu would be a better long term solution.
-  github.memoryCache:
-    class: 'QL\Hal\GithubApi\InMemoryCache'
 
   github.pager:
     class: 'Github\ResultPager'
@@ -497,7 +495,6 @@ services:
   ######################################################################################################################
 
 
-
   ######################################################################################################################
   # SESSION
   ######################################################################################################################
@@ -514,111 +511,36 @@ services:
       - @sessionHandler
 
   ######################################################################################################################
-  # PUSHER COMMAND
+  # Logging
   ######################################################################################################################
 
-
-  ######################################################################################################################
-  # Build Notifications & Logging
-  ######################################################################################################################
-
-  # Mailer Transport
-  buildMailerTransport:
-    class: 'Swift_SmtpTransport'
-    arguments:
-      - "%email.hostname%"
-
-  # Mailer
-  buildMailer:
-    class: 'Swift_Mailer'
-    arguments:
-      - @buildMailerTransport
-
-  # Sample Message
-  buildMessage:
-    class: "QL\\Hal\\Mail\\Message"
-    arguments:
-      - "%email.subject%"
-      - ["%email.notify%"]
-      - ["%email.notify.error%"]
-
-  # Log Sub Handler
-  buildLogSubHandler:
-    class: "Monolog\\Handler\\SwiftMailerHandler"
-    arguments:
-      - @buildMailer
-      - @buildMessage
-      - "%build.log.level%"
-    calls:
-      - ["setFormatter", [@buildLogFormatter]]
-
-  # HTML Formatter
-  buildLogFormatter:
-    class: "QL\\Hal\\Mail\\Formatter\\HtmlFormatter"
-
-  # Log Handler
-  buildLogHandler:
-    class: "Monolog\\Handler\\BufferHandler"
-    arguments:
-      - @buildLogSubHandler
-
-  # Logger
-  buildLogger:
-    class: "Monolog\\Logger"
-    arguments:
-      - "%build.log.name%"
-      - [@buildLogHandler]
-
-  # MCP Logger
-  mcpLogger.slimLogWriter:
-    class: 'QL\Hal\Logger\McpLogWriter'
-    arguments:
-      - @mcpLogger
-
-  mcpLogger:
+  logger:
     class: 'MCP\Service\Logger\Logger'
-    arguments:
-      - @mcpLogger.service
-      - @mcpLogger.factory
+    arguments: ['@logger.mcp.service', '@logger.mcp.factory']
 
-  mcpLogger.service:
+  logger.mcp.service:
     class: 'MCP\Service\Logger\Service\GuzzleService'
-    arguments:
-      - @mcpLogger.guzzle
-      - @mcpLogger.renderer
-      - true
-
-  mcpLogger.guzzle:
+    arguments: ['@logger.mcp.guzzle', '@logger.mcp.renderer', true]
+  logger.mcp.guzzle:
     class: 'Guzzle\Http\Client'
-    arguments:
-      - 'http://%mcpLogger.host%:2581/web/core/logentries'
-
-  mcpLogger.renderer:
+    arguments: ['%logger.mcp.host%']
+  logger.mcp.renderer:
     class: 'MCP\Service\Logger\Renderer\XmlRenderer'
-    arguments:
-      - @mcpLogger.renderer.writer
-
-  mcpLogger.renderer.writer:
+    arguments: ['@logger.mcp.writer']
+  logger.mcp.writer:
     class: 'XMLWriter'
 
-  mcpLogger.factory:
+  logger.mcp.factory:
     class: 'MCP\Service\Logger\Adapter\Psr\MessageFactory'
-    arguments:
-      - @mcpLogger.factory.clock
+    arguments: ['@clock']
     calls:
-      - ['setDefaultProperty', ['applicationId', '%mcpLogger.applicationId%']]
-      - ['setDefaultProperty', ['machineIPAddress', '@mcpLogger.factory.serverIp']]
+      - ['setDefaultProperty', ['applicationId', '%applicationId%']]
+      # replaced at runtime, maybe
+      - ['setDefaultProperty', ['machineIPAddress', '@logger.mcp.serverIp']]
+      # replaced at runtime
       - ['setDefaultProperty', ['machineName', 'localhost']]
-
-  mcpLogger.factory.clock:
-    class: 'MCP\DataType\Time\Clock'
-    arguments:
-      - 'now'
-      - 'UTC'
-
-  mcpLogger.factory.serverIp:
+  logger.mcp.serverIp:
     class: 'MCP\DataType\IPv4Address'
     factory_class: 'MCP\DataType\IPv4Address'
     factory_method: 'create'
-    arguments:
-      - '0.0.0.0'
+    arguments: ['0.0.0.0']
