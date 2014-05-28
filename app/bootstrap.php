@@ -20,17 +20,16 @@ ini_set('date.timezone', 'UTC');
 date_default_timezone_set('UTC');
 
 // DI Container
-$isCli = php_sapi_name() === 'cli';
-if (!class_exists('QL\Hal\CachedContainer') || $isCli) {
+if (!class_exists('QL\Hal\CachedContainer') || (php_sapi_name() === 'cli')) {
     $container = buildDi($root);
 
 } else {
     $container = new CachedContainer;
 
-    // This is WEIRD, but its the only way to force a refresh container in a specific mode
-    // if ($container->getParameter('debug')) {
-    //     $container = buildDi($root);
-    // }
+    // This is WEIRD, but its the only way to force a fresh container in a specific mode
+    if ($container->getParameter('debug')) {
+        $container = buildDi($root);
+    }
 }
 
 return $container;
@@ -42,8 +41,6 @@ function buildDi($root)
     $builder->load('app/config.yml');
 
     $container->setParameter('root', $root);
-    $container->set('dic', $container);
-
     $container->compile();
 
     return $container;

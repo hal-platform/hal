@@ -15,5 +15,5 @@ if (!$container = @include $root . '/app/bootstrap.php') {
 
 // Application
 $app = $container->get('slim');
-$app->response()->header('Content-Type', 'text/html; charset=utf-8');
+$headers = $app->response()->headers['Content-Type'] = 'text/html; charset=utf-8';
 $app->run();

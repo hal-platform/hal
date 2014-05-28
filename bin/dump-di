@@ -23,7 +23,7 @@ $class = 'QL\Hal\CachedContainer';
 
 if (!$container = @include $root . '/app/bootstrap.php') {
     echo "An error occured while attempting to dump the DI Container.\n";
-    return 1;
+    exit(1);
 };
 
 file_put_contents($file, dumpDi($container, $class));
