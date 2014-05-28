@@ -22,7 +22,7 @@ services:
     class: 'MCP\Corp\Account\User'
     synthetic: true
 
-  dic:
+  service_container:
     class: 'Symfony\Component\DependencyInjection\ContainerInterface'
     synthetic: true
 
@@ -59,11 +59,11 @@ services:
 
   slim.configurator:
     class: 'QL\Hal\Slim\SlimConfigurator'
-    arguments: ['@dic', '%slim.hooks%']
+    arguments: ['@service_container', '%slim.hooks%']
 
   slim.hook.routes:
     class: 'QL\Hal\Slim\RouteLoaderHook'
-    arguments: ['@dic', '%routes%']
+    arguments: ['@service_container', '%routes%']
   slim.hook.logger:
     class: 'QL\Hal\Slim\McpLoggerHook'
     arguments: ['@mcpLogger.factory', '@slim.environment']
@@ -130,7 +130,7 @@ services:
     class: 'QL\Hal\Bouncers\LoginBouncer'
     arguments:
       - @session
-      - @dic
+      - @service_container
       - @url.helper
 
   # Bounce non-admins

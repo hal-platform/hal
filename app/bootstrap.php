@@ -33,9 +33,6 @@ if (!class_exists('QL\Hal\CachedContainer') || $isCli) {
     // }
 }
 
-// runtime config
-$container->set('dic', $container);
-
 return $container;
 
 function buildDi($root)
@@ -45,6 +42,7 @@ function buildDi($root)
     $builder->load('app/config.yml');
 
     $container->setParameter('root', $root);
+    $container->set('dic', $container);
 
     $container->compile();
 
