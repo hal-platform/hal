@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
+
+namespace QL\Hal\Deadzone;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Dumper\GraphvizDumper;
+use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+
+$root = __DIR__ . '/../';
+$file = $root . 'src/QL/Hal/CachedContainer.php';
+$class = 'QL\Hal\CachedContainer';
+
+if (!$container = @include $root . '/app/bootstrap.php') {
+    echo "An error occured while attempting to dump the DI Container.\n";
+    return 1;
+};
+
+file_put_contents($file, dumpDi($container, $class));
+
+echo <<<OUTPUT
+Dumping DI Container cache:
+File: $file
+Class: $class
+
+OUTPUT;
+
+function dumpDi(ContainerInterface $container, $class) {
+    $exploded = explode('\\', $class);
+    $config = [
+        'class' => array_pop($exploded),
+        'namespace' => implode('\\', $exploded)
+    ];
+
+    return (new PhpDumper($container))->dump($config);
+}

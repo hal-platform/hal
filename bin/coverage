@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-./vendor/bin/phpunit --coverage-html ./phpunit/coverage tests
