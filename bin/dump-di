@@ -4,12 +4,17 @@
  * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
+ *
+ * IMPORTANT:
+ *
+ * This must ONLY be dumped from the TARGET WEB SERVER.
+ *
+ * Do not dump the container on the build server, it will freeze the wrong values!
  */
 
 namespace QL\Hal\Deadzone;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Dumper\GraphvizDumper;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 
 $root = __DIR__ . '/../';
