@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 
-BIN="./vendor/bin/phpunit"
+DIR=$( cd "$( dirname "$0" )" && pwd )
+BIN="$DIR/../vendor/bin/phpunit"
+
 PARAMETERS=""
 NO_SUITE="--testsuite none"
 STOP_SUITE=false
 
 for var in "$@"
 do
-    PARAMETERS="$PARAMETERS $var"
-
     if [[ "${var:0:2}" != "--" ]] ; then
         STOP_SUITE=true
+        var=$(cd "$(dirname "$1")"; pwd)/$(basename "$1")
     fi
+
+    PARAMETERS="$PARAMETERS $var"
+
 done
 
 # if we think the user is targeting a file, remove the testsuite
@@ -19,4 +23,5 @@ if $STOP_SUITE; then
     BIN="$BIN $NO_SUITE"
 fi
 
+cd "$DIR/../tests"
 $BIN$PARAMETERS
