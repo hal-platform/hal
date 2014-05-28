@@ -2,7 +2,29 @@ imports:
   -
     resource: pages.yml
 
+parameters:
+    slim.hooks:
+        slim.before:
+            - 'slim.hook.logger'
+            - 'slim.hook.errors'
+            - 'slim.hook.twig'
+        slim.before.router:
+            - 'slim.hook.routes'
+
 services:
+
+  ######################################################################################################################
+  # RUN TIME INJECTED (SYNTHETIC) SERVICES
+  ######################################################################################################################
+
+  # This is set by LoginBouncer
+  user:
+    class: 'MCP\Corp\Account\User'
+    synthetic: true
+
+  dic:
+    class: 'Symfony\Component\DependencyInjection\ContainerInterface'
+    synthetic: true
 
   ######################################################################################################################
   # APPLICATION
@@ -13,8 +35,7 @@ services:
     arguments:
       - debug: '%debug%'
       - log.writer: '@mcpLogger.slimLogWriter'
-    calls:
-      - ['hook', ['slim.before', '@mcpLogger.factory.setup', 0]]
+    configurator: ['@slim.configurator', 'configure']
 
   slim.environment:
     class: 'Slim\Environment'
@@ -36,10 +57,22 @@ services:
     factory_service: 'slim'
     factory_method: 'router'
 
-  # This is set by LoginBouncer
-  user:
-    class: 'MCP\Corp\Account\User'
-    synthetic: true
+  slim.configurator:
+    class: 'QL\Hal\Slim\SlimConfigurator'
+    arguments: ['@dic', '%slim.hooks%']
+
+  slim.hook.routes:
+    class: 'QL\Hal\Slim\RouteLoaderHook'
+    arguments: ['@dic', '%routes%']
+  slim.hook.logger:
+    class: 'QL\Hal\Slim\McpLoggerHook'
+    arguments: ['@mcpLogger.factory', '@slim.environment']
+  slim.hook.errors:
+    class: 'QL\Hal\Slim\ErrorPagesHook'
+    arguments: ['@error.pages.twig']
+  slim.hook.twig:
+    class: 'QL\Hal\Slim\TwigEnvironmentHook'
+    arguments: ['@twigEnv', '@session']
 
   ######################################################################################################################
   # HELPERS
@@ -67,27 +100,26 @@ services:
   twigLoader:
     class: 'Twig_Loader_Filesystem'
     arguments:
-      - "%root%/app/templates"
+      - '%root%/app/templates'
 
   # Twig Environment
   twigEnv:
     class: 'Twig_Environment'
-    arguments:
-      - @twigLoader
+    arguments: ['@twigLoader']
     calls:
-      - [addExtension, [@twigExtension]]
-
-  # Twig View for Slim
-  twigView:
-    class: 'QL\Hal\TwigView'
-    arguments:
-      - @twigEnv
+      - ['addExtension', ['@twigExtension']]
 
   layout:
     class: 'QL\Hal\Layout'
     arguments:
       - @user
       - @pushPermissionService
+
+  # The primary twig template. All other twig services should use this service as a parent
+  twig.template:
+    class: 'Twig_Template'
+    factory_service: 'twigEnv'
+    factory_method: 'loadTemplate'
 
   ######################################################################################################################
   # BOUNCERS
@@ -167,7 +199,7 @@ services:
   # - The pusher script runs with a different user that can't RW to /tmp, but CAN RW to /var/spool/hal9000[test]
   # In instances where the filesystem is unavailable, set the memory cache on the http client.
   # Perhaps redis/apcu would be a better long term solution.
-  github.memory-cache:
+  github.memoryCache:
     class: 'QL\Hal\GithubApi\InMemoryCache'
 
   github.pager:
@@ -583,12 +615,6 @@ services:
     arguments:
       - 'now'
       - 'UTC'
-
-  mcpLogger.factory.setup:
-    class: 'QL\Hal\Logger\McpSetupHook'
-    arguments:
-      - @mcpLogger.factory
-      - @dic
 
   mcpLogger.factory.serverIp:
     class: 'MCP\DataType\IPv4Address'

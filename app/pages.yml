@@ -212,11 +212,7 @@ services:
     parent: 'twig.template'
     arguments: ['denied.html.twig']
 
-  ######################################################################################################################
-  # UTILITIES
-  ######################################################################################################################
-
-  twig.template:
-    class: 'Twig_Template'
-    factory_service: 'twigEnv'
-    factory_method: 'loadTemplate'
+  # The twig template for slim errors (404, 500)
+  error.pages.twig:
+    parent: 'twig.template'
+    arguments: ['error.html.twig']
