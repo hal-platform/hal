@@ -1,5 +1,35 @@
 #!/usr/bin/env bash
-rm -rf vendor
-rm -rf phpunit
-rm -rf composer.lock
-rm -rf node_modules
+DIR=$( cd "$( dirname "$0" )" && pwd )
+DELFILES=(
+    "src/QL/Hal/CachedContainer.php"
+)
+
+DELFOLDERS=(
+    ".sass-cache"
+    "node_modules"
+    "phpunit"
+    "vendor"
+)
+
+# Remove files
+for i in ${DELFILES[@]}
+do
+    FILE="$DIR/../$i"
+    EXISTS=$(test -e $FILE && echo 1 || echo 0)
+    if [[ $EXISTS -eq "1" ]]; then
+        echo "Removing $FILE"
+        rm -f "$FILE"
+    fi
+
+done
+
+# Remove directories
+for i in ${DELFOLDERS[@]}
+do
+    FILE="$DIR/../$i"
+    EXISTS=$(test -e $FILE && echo 1 || echo 0)
+    if [[ $EXISTS -eq "1" ]]; then
+        echo "Removing $FILE"
+        rm -r "$FILE"
+    fi
+done
