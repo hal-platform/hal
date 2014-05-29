@@ -6,8 +6,6 @@ imports:
 parameters:
   debug: true
 
-  doctrine.mappings:
-    - '%root%/src/QL/Hal/Core/Entity'
   doctrine.devmode: true
   doctrine.connection:
     driver:         pdo_mysql
