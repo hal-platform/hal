@@ -26,18 +26,19 @@
     ],
     "require": {
         "knplabs/github-api":               "~1.2",
-        "monolog/monolog":                  "~1.7@dev",
         "php-64bit":                        "~5.4",
+        "ql/mcp-core":                      "1.*",
         "ql/mcp-corp-account":              "~0.2@rc",
-        "ql/mcp-logger":                    "~1.1",
-        "slim/slim":                        "~2.4",
-        "swiftmailer/swiftmailer":          "~5.1",
-        "symfony/dependency-injection":     "~2.4",
-        "symfony/config":                   "~2.4",
-        "symfony/yaml":                     "~2.4",
+        "ql/mcp-logger":                    "1.2.*",
+        "slim/slim":                        "2.4.*",
+        "symfony/debug":                    "2.5.*@rc",
+        "symfony/dependency-injection":     "2.4.*",
+        "symfony/config":                   "2.4.*",
+        "symfony/yaml":                     "2.4.*",
         "twig/twig":                        "~1.15",
-        "ql/hal-agent":                     "~1.0@alpha",
-        "ql/hal-core":                      "~2.0@dev"
+
+        "ql/hal-core":                      "~2.0@dev",
+        "ql/hal-agent":                     "1.0.*@beta"
     },
     "require-dev": {
         "mockery/mockery":                  "*",
@@ -50,7 +51,6 @@
             "QL\\Hal":                      ["src", "tests"]
         }
     },
-    "minimum-stability":                    "dev",
     "prefer-stable":                        true,
     "repositories": [
         {
