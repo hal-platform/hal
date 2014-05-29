@@ -71,10 +71,11 @@ class ServerController
             return $notFound();
         }
 
-        $rendered = $this->layout->render($this->template,[
+        $rendered = $this->layout->render($this->template, [
             'server' => $server,
             'deployments' => $this->deployRepo->findBy(['server' => $server])
         ]);
+
         $response->body($rendered);
     }
 }

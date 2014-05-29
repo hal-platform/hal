@@ -58,15 +58,10 @@ class ServersController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $servers = $this->serverRepo->findAll();
+        $rendered = $this->layout->render($this->template, [
+            'servers' => $this->serverRepo->findAll()
+        ]);
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'servers' => $servers
-                ]
-            )
-        );
+        $response->body($rendered);
     }
 }
