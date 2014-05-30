@@ -9,7 +9,7 @@ define(['crossroads'], function(crossroads) {
             var _this = this;
 
             // route definitions
-            router.addRoute('/admin/repositories', function() {
+            router.addRoute('/repositories/add', function() {
                 return _this.addRepository();
             });
             router.addRoute('/r/{repository}/sync', function() {

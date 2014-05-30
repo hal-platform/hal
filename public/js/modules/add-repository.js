@@ -1,7 +1,7 @@
 define(['jquery'], function($) {
     return {
         users: {
-            userTarget: '#githubUser',
+            userTarget: '#github_user',
             dataStore: {},
             attach: function() {
                 var _this = this;
@@ -63,8 +63,8 @@ define(['jquery'], function($) {
             }
         },
         repos: {
-            userTarget: '#githubUser',
-            repoTarget: '#githubRepo',
+            userTarget: '#github_user',
+            repoTarget: '#github_repo',
             target: null,
             originalTarget: null,
             dataStore: {},
