@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Add Repository' %}
+
+{% block content %}
+    <h3>Add a new repository</h3>
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="{{ urlFor('repository.admin.add.handle') }}" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="nickname">Nickname</label>
+                    <input type="text" name="nickname" id="nickname" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                </li>
+                <li>
+                    <p>Group</p>
+                    <ul>
+                    {% for group in groups %}
+                        {% set checked = '' %}
+                        {% if form.group == group.id %}
+                            {% set checked = ' checked="checked"' %}
+                        {% endif %}
+
+                        <li>
+                            <input type="radio" name="group" id="group-{{ group.id }}" value="{{ group.id }}"{{ checked }}>
+                            <label for="group-{{ group.id }}">{{ group.key }}</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </li>
+
+                <li>
+                    <label for="github_user">GitHub Enterprise User or Organization</label>
+                    <input type="text" name="github_user" id="github_user" size="48" maxlength="48" required value="{{ form.github_user }}" class="text-input">
+                </li>
+                <li>
+                    <label for="github_repo">GitHub Enterprise Repository</label>
+                    <input type="text" name="github_repo" id="github_repo" size="48" maxlength="48" required value="{{ form.github_repo }}" class="text-input">
+                </li>
+                <li>
+                    <label for="notification_email">Notification E-mail Address <small class="additional">Notifications are sent on push or build completion.</small></label>
+                    <input type="email" name="notification_email" id="notification_email" size="30" maxlength="128" required value="{{ form.notification_email }}" class="text-input">
+                </li>
+                <li>
+                    <label for="build_command">Build Command <small class="additional">Will be run on build server to build application.</small></label>
+                    <input type="text" name="build_command" id="build_command" size="30" maxlength="128" value="{{ form.build_command }}" class="text-input">
+                </li>
+                <li>
+                    <label for="post_command">Post Push Command <small class="additional">Will be run on remote server after code is pushed.</small></label>
+                    <input type="text" name="post_command" id="post_command" size="30" maxlength="128" value="{{ form.post_command }}" class="text-input">
+                </li>
+                <li>
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" maxlength="255" rows="6" class="text-input">{{ form.description }}</textarea>
+                </li>
+            </ul>
+
+            {# primary action #}
+            <input class="btn" type="submit" value="Add Repository">
+
+            {# secondary actions #}
+            <p>
+                <a href="{{ urlFor('repositories') }}">Cancel</a>
+            </p>
+        </form>
+    </div>
+{% endblock %}

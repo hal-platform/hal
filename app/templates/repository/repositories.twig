@@ -11,7 +11,7 @@
             <tr>
                 <th></th>
                 <th>Github Location</th>
-                <th>Contact Email</th>
+                <th>Notification E-mail</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -29,9 +29,7 @@
                     </td>
                     <td>{{ repo.email }}</td>
                     <td>
-                        <a href="{{ urlFor('admin.repo.deployments', {'id': repo.id}) }}">Deployments</a> |
-                        <a href="{{ urlFor('repository.admin.edit', {'id': repo.id}) }}">Edit</a> |
-                        <a href="{{ urlFor('repository.admin.remove.handle', {'id': repo.id}) }}">Delete</a>
+                        <a href="{{ urlFor('admin.repo.deployments', {'id': repo.id}) }}">Deployments</a>
                     </td>
                 </tr>
             {% else %}

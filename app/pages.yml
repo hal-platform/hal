@@ -126,7 +126,18 @@ services:
 
   repository.admin.add.page:
     class: 'QL\Hal\Controllers\Repository\AdminAddController'
-    arguments: []
+    arguments:
+      - @repository.admin.add.twig
+      - @layout
+      - @group.repo
+      - @repository.repo
+      - @doctrine.em
+      - @github
+      - @session
+      - @url.helper
+  repository.admin.add.twig:
+    parent: 'twig.template'
+    arguments: ['repository/admin.add.twig']
   repository.admin.add.handle:
     parent: 'repository.admin.add.page'
 
