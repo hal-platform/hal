@@ -40,6 +40,10 @@ parameters:
       route: '/denied'
       stack: ['denied.page']
 
+    admin.dashboard:
+      method: 'GET'
+      route: '/admin'
+      stack: ['login.bouncer', 'admin.bouncer', 'admin.dashboard.page']
 
     ########################################################################################################################
     # BUILD ROUTES
