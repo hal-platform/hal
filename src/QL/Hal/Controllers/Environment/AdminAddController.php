@@ -144,7 +144,7 @@ class AdminAddController
             $errors[] = 'Environment name must consist of letters, underscores and/or hyphens.';
         }
 
-        if (strlen($name) > 24 || strlen($name) < 2) {
+        if (mb_strlen($name, 'UTF-8') > 24 || mb_strlen($name, 'UTF-8') < 2) {
             $errors[] = 'Environment name must be between 2 and 24 characters.';
         }
 
