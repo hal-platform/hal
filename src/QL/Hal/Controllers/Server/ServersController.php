@@ -59,7 +59,7 @@ class ServersController
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $rendered = $this->layout->render($this->template, [
-            'servers' => $this->serverRepo->findAll()
+            'servers' => $this->serverRepo->findBy([], ['environment' => 'ASC', 'name' => 'ASC'])
         ]);
 
         $response->body($rendered);
