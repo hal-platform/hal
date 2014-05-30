@@ -26,15 +26,6 @@ parameters:
         - login.bouncer
         - logout.handle
 
-    repo:
-      method:     "GET"
-      route:      "/repository/:repo"
-      stack:
-        - login.bouncer
-        - repository.page
-      conditions:
-        repo:     "[A-Za-z0-9_-]+"
-
     denied:
       method: 'GET'
       route: '/denied'
@@ -223,56 +214,49 @@ parameters:
         id: '[\d]+'
 
     ########################################################################################################################
-    # ADMIN REPO ROUTES
+    # REPOSITORY ROUTES
     ########################################################################################################################
 
-    admin.repos:
-      method:     "GET"
-      route:      "/admin/repositories"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - admin.repos.page
+    repositories:
+      method: 'GET'
+      route: '/repositories'
+      stack: ['login.bouncer', 'repositories.page']
 
-    ### STUB - FIX ME
-    admin.repo.create:
-      method:     "GET"
-      route:      "/admin/repository/create"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
-
-    ### STUB - FIX ME
-    admin.repo.create.handle:
-      method:     "POST"
-      route:      "/admin/repository/create"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
-
-    ### STUB - FIX ME
-    admin.repo.edit:
-      method:     "GET"
-      route:      "/admin/repository/:repo/edit"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+    repo:
+      method: 'GET'
+      route: '/repository/:repo'
+      stack: ['login.bouncer', 'repository.page']
       conditions:
-        repo:     "[A-Za-z0-0_-]+"
+        repo: '[A-Za-z0-9_-]+'
 
-    ### STUB - FIX ME
-    admin.repo.edit.handle:
-      method:     "POST"
-      route:      "/admin/repository/:repo/edit"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+    repository.admin.add:
+      method: 'GET'
+      route: '/repositories/add'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.add.page']
+    repository.admin.add.handle:
+      method: 'POST'
+      route: '/repositories/add'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.add.handle']
+
+    repository.admin.edit:
+      method: 'GET'
+      route: '/repositories/:id/edit'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.page']
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
+        repo: '[\d]+'
+    repository.admin.edit.handle:
+      method: 'POST'
+      route: '/repositories/:id/edit'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.handle']
+      conditions:
+        repo: '[\d]+'
+
+    repository.admin.remove.handle:
+      method: 'POST'
+      route: '/repositories/:id/remove'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.remove.handle']
+      conditions:
+        id: '[\d]+'
 
     ### STUB - FIX ME
     admin.repo.delete.handle:
@@ -361,7 +345,7 @@ parameters:
     group.admin.add:
       method: 'GET'
       route: '/groups/add'
-      stack: ['login.bouncer', 'group.admin.add.page']
+      stack: ['login.bouncer', 'admin.bouncer', 'group.admin.add.page']
     group.admin.add.handle:
       method: 'POST'
       route: '/groups/add'
@@ -370,7 +354,7 @@ parameters:
     group.admin.edit:
       method: 'GET'
       route: '/groups/:id/edit'
-      stack: ['login.bouncer', 'group.admin.edit.page']
+      stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.page']
       conditions:
         id: '[\d]+'
     group.admin.edit.handle:

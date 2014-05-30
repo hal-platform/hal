@@ -5,11 +5,7 @@
 {% block content %}
     <h2>Repositories</h2>
 
-    <p>
-        <a class="btn--small btn--toggles" href="{{ urlFor('admin.repo.create') }}">New Repository</a>
-    </p>
-
-    <div class="overflow-container">
+    <div>
         <table>
             <thead>
             <tr>
@@ -33,9 +29,9 @@
                     </td>
                     <td>{{ repo.email }}</td>
                     <td>
-                        <a href="{{ urlFor('admin.repo.deployments', {'repo': repo.key}) }}">Deployments</a> |
-                        <a href="{{ urlFor('admin.repo.edit', {'repo': repo.key}) }}">Edit</a> |
-                        <a href="{{ urlFor('admin.repo.delete.handle', {'repo': repo.key}) }}">Delete</a>
+                        <a href="{{ urlFor('admin.repo.deployments', {'id': repo.id}) }}">Deployments</a> |
+                        <a href="{{ urlFor('repository.admin.edit', {'id': repo.id}) }}">Edit</a> |
+                        <a href="{{ urlFor('repository.admin.remove.handle', {'id': repo.id}) }}">Delete</a>
                     </td>
                 </tr>
             {% else %}
@@ -47,4 +43,8 @@
         </table>
     </div>
 
+    {# primary action #}
+    {% if isAdmin %}
+        <p><a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a></p>
+    {% endif %}
 {% endblock %}

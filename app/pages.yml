@@ -99,7 +99,7 @@ services:
   # REPOSITORY CONTROLLERS
   ######################################################################################################################
 
-  admin.repos.page:
+  repositories.page:
     class: 'QL\Hal\Controllers\Repository\RepositoriesController'
     arguments:
       - @repositories.twig
@@ -123,6 +123,22 @@ services:
   repository.twig:
     parent: 'twig.template'
     arguments: ['repository/repository.twig']
+
+  repository.admin.add.page:
+    class: 'QL\Hal\Controllers\Repository\AdminAddController'
+    arguments: []
+  repository.admin.add.handle:
+    parent: 'repository.admin.add.page'
+
+  repository.admin.edit.page:
+    class: 'QL\Hal\Controllers\Repository\AdminEditController'
+    arguments: []
+  repository.admin.edit.handle:
+    parent: 'repository.admin.edit.page'
+
+  repository.admin.remove.handle:
+    class: 'QL\Hal\Controllers\Repository\AdminRemoveHandle'
+    arguments: []
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
