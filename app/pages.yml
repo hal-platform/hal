@@ -46,8 +46,12 @@ services:
   group.admin.edit.handle:
     parent: 'nyi.page'
   group.admin.remove.handle:
-    parent: 'nyi.page'
-
+    class: 'QL\Hal\Controllers\Group\AdminRemoveHandle'
+    arguments:
+      - @group.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
