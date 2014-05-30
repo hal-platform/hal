@@ -1,6 +1,37 @@
 # Application specific endpoints and controllers go here
 services:
 
+
+  hello.page:
+    class: 'QL\Hal\Controllers\HelloController'
+    arguments:
+      - @hello.twig
+      - @layout
+      - @user
+  hello.twig:
+    parent: 'twig.template'
+    arguments: ['hello.twig']
+
+  login.page:
+    class: 'QL\Hal\Controllers\LoginController'
+    arguments: ['@login.twig']
+  login.twig:
+    parent: 'twig.template'
+    arguments: ['login.twig']
+  login.handle:
+    class: 'QL\Hal\Controllers\LoginHandleController'
+    arguments:
+      - @login.twig
+      - @ldapService
+      - @user.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+
+  logout.handle:
+    class: 'QL\Hal\Controllers\LogoutController'
+    arguments: ['@session', '@url.helper']
+
   ######################################################################################################################
   # GROUP CONTROLLERS
   ######################################################################################################################
@@ -62,6 +93,36 @@ services:
       - @doctrine.em
       - @session
       - @url.helper
+
+
+  ######################################################################################################################
+  # REPOSITORY CONTROLLERS
+  ######################################################################################################################
+
+  admin.repos.page:
+    class: 'QL\Hal\Controllers\Repository\RepositoriesController'
+    arguments:
+      - @repositories.twig
+      - @layout
+      - @repository.repo
+  repositories.twig:
+    parent: 'twig.template'
+    arguments: ['repository/repositories.twig']
+
+  repository.page:
+    class: 'QL\Hal\Controllers\Repository\RepositoryController'
+    arguments:
+      - @repository.twig
+      - @layout
+      - @pushPermissionService
+      - @doctrine.em
+      - @repository.repo
+      - @build.repo
+      - @push.repo
+      - @user
+  repository.twig:
+    parent: 'twig.template'
+    arguments: ['repository/repository.twig']
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
@@ -265,13 +326,16 @@ services:
   # ADMIN CONTROLLERS
   ######################################################################################################################
 
-
   admin.dashboard.page:
     parent: 'static.controller'
     arguments: ['@admin.dashboard.twig']
   admin.dashboard.twig:
     parent: 'twig.template'
     arguments: ['admin/dashboard.twig']
+
+  ######################################################################################################################
+  # API CONTROLLERS
+  ######################################################################################################################
 
   ######################################################################################################################
   # GENERAL USE CONTROLLERS
@@ -286,6 +350,14 @@ services:
   denied.twig:
     parent: 'twig.template'
     arguments: ['denied.html.twig']
+
+  # TEMP
+  nyi.page:
+    class: 'QL\Hal\Controllers\NyiController'
+    arguments: ['@nyi.twig']
+  nyi.twig:
+    parent: 'twig.template'
+    arguments: ['nyi.twig']
 
   # The twig template for slim errors (404, 500)
   error.pages.twig:

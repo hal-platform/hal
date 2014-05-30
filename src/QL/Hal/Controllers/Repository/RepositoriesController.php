@@ -1,12 +1,17 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
-namespace QL\Hal\Controllers\Admin;
+namespace QL\Hal\Controllers\Repository;
 
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use Twig_Template;
+use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use Twig_Template;
 
 /**
  *  Repositories Controller
@@ -35,11 +40,8 @@ class RepositoriesController
      *  @param Layout $layout
      *  @param RepositoryRepository $repoRepo
      */
-    public function __construct(
-        Twig_Template $template,
-        Layout $layout,
-        RepositoryRepository $repoRepo
-    ) {
+    public function __construct(Twig_Template $template, Layout $layout, RepositoryRepository $repoRepo)
+    {
         $this->template = $template;
         $this->layout = $layout;
         $this->repoRepo = $repoRepo;
@@ -54,13 +56,10 @@ class RepositoriesController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'repos' => $this->repoRepo->findAll()
-                ]
-            )
-        );
+        $rendered = $this->layout->render($this->template, [
+            'repos' => $this->repoRepo->findAll()
+        ]);
+
+        $response->body($rendered);
     }
 }
