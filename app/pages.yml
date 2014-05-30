@@ -42,9 +42,19 @@ services:
     parent: 'group.admin.add.page'
 
   group.admin.edit.page:
-    parent: 'nyi.page'
+    class: 'QL\Hal\Controllers\Group\AdminEditController'
+    arguments:
+      - @group.admin.edit.twig
+      - @layout
+      - @group.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+  group.admin.edit.twig:
+    parent: 'twig.template'
+    arguments:  ['group/admin.edit.twig']
   group.admin.edit.handle:
-    parent: 'nyi.page'
+    parent: 'group.admin.edit.page'
   group.admin.remove.handle:
     class: 'QL\Hal\Controllers\Group\AdminRemoveHandle'
     arguments:
