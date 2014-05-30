@@ -431,3 +431,22 @@ parameters:
     # API ROUTES
     ########################################################################################################################
 
+    api.github.users:
+      method: 'GET'
+      route: '/api/github/users'
+      stack: ['login.bouncer', 'api.github.users']
+
+    api.github.user.repositories:
+      method: 'GET'
+      route: '/api/github/users/:username/repositories'
+      stack: ['login.bouncer', 'api.github.user.repositories']
+      conditions:
+        username: '[A-Za-z0-9_-]+'
+
+    api.github.user.repository.pullrequests:
+      method: 'GET'
+      route: '/api/github/users/:username/repositories/:repository/pullrequests'
+      stack: ['login.bouncer', 'api.github.user.repository.pullrequests']
+      conditions:
+        username: '[A-Za-z0-9_-]+'
+        repository: '[A-Za-z0-9_-]+'

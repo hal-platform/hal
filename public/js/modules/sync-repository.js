@@ -21,7 +21,7 @@ define(['jquery'], function($) {
                 var repo = targetElem.data('repo');
 
                 targetElem.remove();
-                return $.get('/github/pulls/' + user + '/' + repo, function(data) {
+                return $.get('/api/github/users/' + user + '/repositories/' + repo + '/pullrequests', function(data) {
                     _this.dataStore = data;
                 })
                 .done(function() {

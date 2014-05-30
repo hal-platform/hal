@@ -364,6 +364,18 @@ services:
   # API CONTROLLERS
   ######################################################################################################################
 
+  api.github.users:
+    class: 'QL\Hal\Github\UsersApi'
+    arguments: ['@github']
+
+  api.github.user.repositories:
+    class: 'QL\Hal\Github\ReposApi'
+    arguments: ['@github']
+
+  api.github.user.repository.pullrequests:
+    class: 'QL\Hal\Github\PullRequestsApi'
+    arguments: ['@github']
+
   ######################################################################################################################
   # GENERAL USE CONTROLLERS
   ######################################################################################################################
