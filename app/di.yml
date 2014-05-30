@@ -290,35 +290,6 @@ services:
       - @session
       - @url.helper
 
-  groups.twig:
-    class: "Twig_Template"
-    arguments:
-      - 'groups.twig'
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  groups.page:
-    class: "QL\\Hal\\Controllers\\GroupsController"
-    arguments:
-      - @groups.twig
-      - @layout
-      - @group.repo
-
-  group.twig:
-    class: "Twig_Template"
-    arguments:
-      - 'group.twig'
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  group.page:
-    class: "QL\\Hal\\Controllers\\Group\\GroupController"
-    arguments:
-      - @group.twig
-      - @layout
-      - @group.repo
-      - @repository.repo
-
   repository.twig:
     class: "Twig_Template"
     arguments:

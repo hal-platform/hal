@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Group: '~group.name %}
+
+{% block content %}
+
+    <h2><strong>{{ group.name }}</strong> group</h2>
+
+
+    <h3>Nickname</h3>
+    <p>{{ group.key }}</p>
+
+    <h3>Repositories</h3>
+    <ul>
+        {% if repos %}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Github Source</th>
+                        <th>Notification E-mail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for repo in repos %}
+                    <tr>
+                        <td><a href="{{ urlFor('repo', {'repo': repo.key}) }}">{{ repo.key }}</a></td>
+                        <td>
+                            <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                            <span class="icon">
+                                <svg viewBox="0 0 32 32">
+                                    <use xlink:href="#github"></use>
+                                </svg>
+                            </span>
+                        </td>
+                        <td>{{ repo.email }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>
+                There are no repositories associated with this group.
+                {% if isAdmin %}
+                    <br><a href="{{ urlFor('admin.repo.create') }}">Add a repository</a>
+                {% endif %}
+            </p>
+        {% endif %}
+    </ul>
+
+    {% if isAdmin and repos %}
+        <p><strong>Note:</strong> All associated repositories must be removed or transferred to another group to remove this group.</p>
+    {% endif %}
+
+    {# primary action #}
+    <p><a class="btn" href="{{ urlFor('groups') }}">View all groups</a></p>
+
+    {% if isAdmin %}
+        {# secondary actions #}
+        <p>
+            <a class="btn" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
+            {% if not repos %}
+                <form action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
+                    <input class="btn" type="submit" value="Remove">
+                </form>
+            {% endif %}
+        </p>
+    {% endif %}
+
+{% endblock %}

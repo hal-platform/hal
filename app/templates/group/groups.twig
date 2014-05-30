@@ -6,18 +6,23 @@
     <h2>Repository Groups</h2>
 
     <p>
-        Repositories are organized into repository groups, commonly a team name or business unit. Select a group below
+        Repositories are organized into groups, commonly a team name or business unit. Select a group below
         to view the member repositories and to push code if you have permission.
     </p>
 
     {% if groups %}
         <ul>
         {% for group in groups %}
-            <li><a href="{{ urlFor('group', {'group': group.key}) }}">{{ group.name }}</a></li>
+            <li><a href="{{ urlFor('group', {'id': group.id}) }}">{{ group.name }}</a></li>
         {% endfor %}
         </ul>
     {% else %}
         <p>There are no repository groups.</p>
+    {% endif %}
+
+    {# primary action #}
+    {% if isAdmin %}
+        <p><a class="btn" href="{{ urlFor('group.admin.add') }}">Add Group</a></p>
     {% endif %}
 
 {% endblock %}

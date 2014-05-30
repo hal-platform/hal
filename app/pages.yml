@@ -2,6 +2,54 @@
 services:
 
   ######################################################################################################################
+  # GROUP CONTROLLERS
+  ######################################################################################################################
+
+  groups.page:
+    class: 'QL\Hal\Controllers\Group\GroupsController'
+    arguments:
+      - @groups.twig
+      - @layout
+      - @group.repo
+  groups.twig:
+    parent: 'twig.template'
+    arguments: ['group/groups.twig']
+
+  group.page:
+    class: 'QL\Hal\Controllers\Group\GroupController'
+    arguments:
+      - @group.twig
+      - @layout
+      - @group.repo
+      - @repository.repo
+  group.twig:
+    parent: 'twig.template'
+    arguments: ['group/group.twig']
+
+  group.admin.add.page:
+    class: 'QL\Hal\Controllers\Group\AdminAddController'
+    arguments:
+      - @group.admin.add.twig
+      - @layout
+      - @group.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
+  group.admin.add.twig:
+    parent: 'twig.template'
+    arguments:  ['group/admin.add.twig']
+  group.admin.add.handle:
+    parent: 'group.admin.add.page'
+
+  group.admin.edit.page:
+    parent: 'nyi.page'
+  group.admin.edit.handle:
+    parent: 'nyi.page'
+  group.admin.remove.handle:
+    parent: 'nyi.page'
+
+
+  ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
   ######################################################################################################################
 
@@ -147,6 +195,7 @@ services:
       - @doctrine.em
       - @session
       - @url.helper
+
   ######################################################################################################################
   # USER CONTROLLERS
   ######################################################################################################################

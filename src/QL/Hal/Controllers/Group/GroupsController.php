@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers;
+namespace QL\Hal\Controllers\Group;
 
 use Twig_Template;
 use Slim\Http\Request;
@@ -53,13 +53,10 @@ class GroupsController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'groups' => $this->groupRepo->findAll()
-                ]
-            )
-        );
+        $rendered = $this->layout->render($this->template, [
+            'groups' => $this->groupRepo->findAll()
+        ]);
+
+        $response->body($rendered);
     }
 }

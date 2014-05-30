@@ -26,22 +26,6 @@ parameters:
         - login.bouncer
         - logout.handle
 
-    groups:
-      method:     "GET"
-      route:      "/groups"
-      stack:
-        - login.bouncer
-        - groups.page
-
-    group:
-      method:     "GET"
-      route:      "/group/:group"
-      stack:
-        - login.bouncer
-        - group.page
-      conditions:
-        name:     "[A-Za-z0-9_-]+"
-
     repo:
       method:     "GET"
       route:      "/repository/:repo"
@@ -355,67 +339,49 @@ parameters:
         deploy:   "[0-9]+"
 
     ########################################################################################################################
-    # ADMIN GROUP ROUTES
+    # GROUP ROUTES
     ########################################################################################################################
 
-    admin.groups:
-      method:     "GET"
-      route:      "/admin/groups"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - admin.groups.page
+    groups:
+      method: 'GET'
+      route: '/groups'
+      stack: ['login.bouncer', 'groups.page']
 
-    ### STUB - FIX ME
-    admin.group.create:
-      method:     "GET"
-      route:      "/admin/group/create"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
-
-    ### STUB - FIX ME
-    admin.group.create.handle:
-      method:     "POST"
-      route:      "/admin/group/create"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
-
-    ### STUB - FIX ME
-    admin.group.edit:
-      method:     "GET"
-      route:      "/admin/group/:group/edit"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+    group:
+      method: 'GET'
+      route: '/groups/:id'
+      stack: ['login.bouncer', 'group.page']
       conditions:
-        group:   "[A-Za-z0-9_-]+"
+        id: '[\d]+'
 
-    ### STUB - FIX ME
-    admin.group.edit.handle:
-      method:     "POST"
-      route:      "/admin/group/:group/edit"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
-      conditions:
-        group:    "[A-Za-z0-9_-]+"
+    group.admin.add:
+      method: 'GET'
+      route: '/groups/add'
+      stack: ['login.bouncer', 'group.admin.add.page']
+    group.admin.add.handle:
+      method: 'POST'
+      route: '/groups/add'
+      stack: ['login.bouncer', 'admin.bouncer', 'group.admin.add.handle']
 
-    ### STUB - FIX ME
-    admin.group.delete.handle:
-      method:     "GET"
-      route:      "/admin/group/:group/delete"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+    group.admin.edit:
+      method: 'GET'
+      route: '/groups/:id/edit'
+      stack: ['login.bouncer', 'group.admin.edit.page']
       conditions:
-        group:    "[A-Za-z0-9_-]+"
+        id: '[\d]+'
+    group.admin.edit.handle:
+      method: 'POST'
+      route: '/groups/:id/edit'
+      stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.handle']
+      conditions:
+        id: '[\d]+'
+
+    group.admin.remove.handle:
+      method: 'POST'
+      route: '/groups/:id/remove'
+      stack: ['login.bouncer', 'admin.bouncer', 'group.admin.remove.handle']
+      conditions:
+        id: '[\d]+'
 
     ########################################################################################################################
     # ENVIRONMENT ROUTES

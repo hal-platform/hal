@@ -55,25 +55,22 @@ class GroupController
     }
 
     /**
-     *  Run the controller
-     *
      *  @param Request $request
      *  @param Response $response
      *  @param array $params
+     *  @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $group = $this->groupRepo->findOneBy(['key' => $params['group']]);
-        $repos = $this->repoRepo->findBy(['group' => $group]);
+        if (!$group = $this->groupRepo->find($params['id'])) {
+            return $notFound();
+        }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'group' => $group,
-                    'repos' => $repos
-                ]
-            )
-        );
+        $rendered = $this->layout->render($this->template, [
+            'group' => $group,
+            'repos' => $this->repoRepo->findBy(['group' => $group])
+        ]);
+
+        $response->body($rendered);
     }
 }
