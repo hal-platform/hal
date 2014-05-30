@@ -95,7 +95,7 @@ class AdminEditController
 
         if ($this->handleFormSubmission($request, $environment, $renderContext['errors'])) {
             $this->session->addFlash('Environment updated successfully.', 'environment-edit');
-            return $this->url->redirectFor('environment', ['id' => $params['id']]);
+            return $this->url->redirectFor('environment', ['id' => $environment->getId()]);
         }
 
         $rendered = $this->layout->render($this->template, $renderContext);

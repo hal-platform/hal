@@ -115,7 +115,7 @@ class AdminEditController
                 $this->handleFormSubmission($request, $server, $environment);
 
                 $this->session->addFlash('Server updated successfully.', 'server-edit');
-                return $this->url->redirectFor('server', ['id' => $params['id']]);
+                return $this->url->redirectFor('server', ['id' => $server->getId()]);
             }
         }
 
@@ -165,6 +165,7 @@ class AdminEditController
             $errors[] = 'Please select an environment.';
         }
 
+        // Only check duplicate hostname if it is being changed
         if (!$errors && $hostname != $server->getName()) {
             if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
                 $errors[] = 'A server with this hostname already exists.';
