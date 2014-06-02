@@ -169,6 +169,8 @@ class PushPermissionService
      *
      *  @param string $commonId
      *  @return array
+     *
+     * @todo this appears to be broken, fix
      */
     public function repoEnvsCommonIdCanPushTo($commonId)
     {
@@ -245,6 +247,8 @@ class PushPermissionService
      */
     public function isUserAdmin($user)
     {
+        return false;
+
         // allow user passing as string
         if (!($user instanceof User)) {
             $user = $this->ldapService->getUserByWindowsUsername($user);
@@ -303,6 +307,8 @@ class PushPermissionService
      *
      *  @param Repository $repo
      *  @return array
+     *
+     * @todo refactor this ugliness
      */
     private function listEnvRepoPairs(Repository $repo = null)
     {
@@ -319,11 +325,11 @@ class PushPermissionService
             $repo = $deploy->getRepository();
             $env = $deploy->getServer()->getEnvironment();
 
-            if (isset($pairs[$repo->getId()])) {
-                $pairs[$repo->getId()][$env->getId()] = [$repo, $env];
-            } else {
+            if (!isset($pairs[$repo->getId()])) {
                 $pairs[$repo->getId()] = [];
             }
+
+            $pairs[$repo->getId()][$env->getId()] = [$repo, $env];
         }
 
         return $pairs;
