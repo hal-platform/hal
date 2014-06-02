@@ -297,6 +297,8 @@ parameters:
       conditions:
         repoId: '[\d]+'
         id: '[\d]+'
+
+    # NOT IMPLEMENTED YET!
     repository.deployment.admin.edit.handle:
       method: 'POST'
       route: '/repositories/:repoId/deployments/:id'

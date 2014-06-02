@@ -18,13 +18,21 @@
                 <tr>
                     <th>Hostname</th>
                     <th>Path</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                     {% for deployment in deployments if deployment.server.environment == environment %}
                         <tr>
                             <td>{{ deployment.server.name }}</td>
-                            <td>{{ deployment.path }}</td>
+                            <td>
+                                {{ deployment.path }}
+                            </td>
+                            <td>
+                                {% if isAdmin %}
+                                    <a href="{{ urlFor('repository.deployment.admin.edit', {repoId: repository.id, id: deployment.id}) }}">Edit</a>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
 
@@ -39,7 +47,7 @@
                                     {% endfor %}
                                 </select>
                             </td>
-                            <td><input type="text" name="path[]" maxlength="255" class="text-input"></td>
+                            <td colspan="2"><input type="text" name="path[]" maxlength="255" class="text-input"></td>
                         </tr>
                     {% endif %}
                 </tbody>

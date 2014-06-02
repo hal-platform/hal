@@ -204,10 +204,23 @@ services:
       - @url.helper
 
   repository.deployment.admin.remove.handle:
-    parent: nyi.page
+    class: 'QL\Hal\Controllers\Repository\Deployment\AdminRemoveHandle'
+    arguments:
+      - @deployment.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
 
   repository.deployment.admin.edit.page:
-    parent: nyi.page
+    class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentController'
+    arguments:
+      - @repository.deployment.admin.edit.twig
+      - @layout
+      - @deployment.repo
+  repository.deployment.admin.edit.twig:
+    parent: 'twig.template'
+    arguments: ['repository/deployment.twig']
+
   repository.deployment.admin.edit.handle:
     parent: repository.deployment.admin.edit.page
 
