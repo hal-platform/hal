@@ -463,6 +463,13 @@ services:
     parent: 'twig.template'
     arguments: ['denied.html.twig']
 
+  help.page:
+    parent: 'static.controller'
+    arguments: ['@help.twig']
+  help.twig:
+    parent: 'twig.template'
+    arguments: ['help.twig']
+
   # TEMP
   nyi.page:
     class: 'QL\Hal\Controllers\NyiController'

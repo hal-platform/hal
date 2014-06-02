@@ -31,6 +31,11 @@ parameters:
       route: '/denied'
       stack: ['denied.page']
 
+    help:
+      method: 'GET'
+      route: '/help'
+      stack: ['help.page']
+
     admin.dashboard:
       method: 'GET'
       route: '/admin'
