@@ -86,6 +86,36 @@ parameters:
     # PUSH ROUTES
     ########################################################################################################################
 
+    push:
+      method:     "GET"
+      route:      "/push/:push"
+      stack:
+        - login.bouncer
+        - push.page
+      conditions:
+        push:     "[0-9]+"
+
+    push.start:
+      method:     "GET"
+      route:      "/build/:build/push"
+      stack:
+        - login.bouncer
+        - build.push.page
+      conditions:
+        build:    "[A-Za-z0-9_-]+"
+
+    ### STUB - FIX ME
+    # Push Handle
+    push.handle:
+      method:     "POST"
+      route:      "/build/:build/push"
+      stack:
+        - login.bouncer
+        - nyi.page
+      conditions:
+        repo:     "[A-Za-z0-9_-]+"
+        build:    "[A-Za-z0-9_-]+"
+
     push.history:
       method:     "GET"
       route:      "/repository/:repo/push/history(/page/:page)"
@@ -106,36 +136,9 @@ parameters:
         repo:     "[A-Za-z0-9_-]+"
         server:   "[0-9]+"
 
-    push.start:
-      method:     "GET"
-      route:      "/repository/:repo/build/:build/push"
-      stack:
-        - login.bouncer
-        - build.push.page
-      conditions:
-        repo:     "[A-Za-z0-9_-]+"
-        build:    "[A-Za-z0-9_-]+"
 
-    ### STUB - FIX ME
-    # Push Handle
-    push.handle:
-      method:     "POST"
-      route:      "/repository/:repo/build/:build/push"
-      stack:
-        - login.bouncer
-        - nyi.page
-      conditions:
-        repo:     "[A-Za-z0-9_-]+"
-        build:    "[A-Za-z0-9_-]+"
 
-    push:
-      method:     "GET"
-      route:      "/push/:push"
-      stack:
-        - login.bouncer
-        - push.page
-      conditions:
-        push:     "[0-9]+"
+
 
     ########################################################################################################################
     # SERVER ROUTES
