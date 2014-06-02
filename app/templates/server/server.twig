@@ -11,7 +11,7 @@
     <h3>Repository deployments:</h3>
     <ul>
         {% for deployment in deployments %}
-            <li><a href="{{ urlFor('repo', {repo: deployment.repository.key}) }}">{{ deployment.repository.key }}</a> ({{ deployment.path }})</li>
+            <li><a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.key }}</a> ({{ deployment.path }})</li>
         {% else %}
             <li>There are no deployments associated with this server.</li>
         {% endfor %}

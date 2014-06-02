@@ -222,12 +222,19 @@ parameters:
       route: '/repositories'
       stack: ['login.bouncer', 'repositories.page']
 
-    repo:
+    repository:
       method: 'GET'
-      route: '/repository/:repo'
+      route: '/repository/:id'
       stack: ['login.bouncer', 'repository.page']
       conditions:
-        repo: '[A-Za-z0-9_-]+'
+        id: '[\d]+'
+
+    repository.status:
+      method: 'GET'
+      route: '/repository/:id/status'
+      stack: ['login.bouncer', 'repository.status.page']
+      conditions:
+        id: '[\d]+'
 
     repository.admin.add:
       method: 'GET'
@@ -269,16 +276,12 @@ parameters:
       conditions:
         repo:     "[A-Za-z0-9_-]+"
 
-    ### STUB - FIX ME
-    admin.repo.deployments:
+    repository.deployments:
       method:     "GET"
-      route:      "/admin/repository/:repo/deployments"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+      route:      "/admin/repository/:id/deployments"
+      stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
+        id: '[\d]+'
 
     ### STUB - FIX ME
     admin.repo.deployment.create:

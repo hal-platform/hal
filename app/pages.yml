@@ -114,15 +114,26 @@ services:
     arguments:
       - @repository.twig
       - @layout
+      - @repository.repo
+      - @deployment.repo
+  repository.twig:
+    parent: 'twig.template'
+    arguments: ['repository/repository.twig']
+
+  repository.status.page:
+    class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
+    arguments:
+      - @repository.status.twig
+      - @layout
       - @pushPermissionService
       - @doctrine.em
       - @repository.repo
       - @build.repo
       - @push.repo
       - @user
-  repository.twig:
+  repository.status.twig:
     parent: 'twig.template'
-    arguments: ['repository/repository.twig']
+    arguments: ['repository/status.twig']
 
   repository.admin.add.page:
     class: 'QL\Hal\Controllers\Repository\AdminAddController'
@@ -149,7 +160,12 @@ services:
 
   repository.admin.remove.handle:
     class: 'QL\Hal\Controllers\Repository\AdminRemoveHandle'
-    arguments: []
+    arguments:
+        - @repository.repo
+        - @deployment.repo
+        - @doctrine.em
+        - @session
+        - @url.helper
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS

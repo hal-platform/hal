@@ -23,7 +23,7 @@
                 <tbody>
                 {% for repo in repos %}
                     <tr>
-                        <td><a href="{{ urlFor('repo', {'repo': repo.key}) }}">{{ repo.key }}</a></td>
+                        <td><a href="{{ urlFor('repository', {'id': repo.id}) }}">{{ repo.key }}</a></td>
                         <td>
                             <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
                             <span class="icon">

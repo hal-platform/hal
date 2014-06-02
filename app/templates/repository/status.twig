@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = repo.key %}
+
+{% block content %}
+    <h2>{{ repo.key }} Dashboard</h2>
+
+    <h3>Server Status</h3>
+    <p>This table shows the current status of all servers with deployment relationships to this repository.</p>
+    <div>
+        <table>
+            <thead>
+                <th></th>
+                <th>Last Push</th>
+                <th>Build</th>
+                <th>Branch</th>
+                <th>Commit</th>
+                <th>Pushed</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for status in statuses %}
+                    <tr>
+                        <td><a href="{{ urlFor('server', {'server': status.deploy.server.name}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</td>
+                        {% if status.latest %}
+                            <td>
+                                {% if status.latest.status == 'Success' %}
+                                    <span class="circle-green">{{ status.latest.status }}</span>
+                                {% elseif status.latest.status == 'Error' %}
+                                    <span class="circle-error">{{ status.latest.status }}</span>
+                                {% else %}
+                                    <span class="circle-orange">{{ status.latest.status }}</span>
+                                {% endif %}
+                                (<a href="{{ urlFor('push', {'push': status.latest.id}) }}">{{ status.latest.id }}</a>)
+                            </td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+                        {% if status.success %}
+                            <td><a href="{{ urlFor('build', {'repo': repo.id, 'build': status.success.build.id}) }}">{{ status.success.build.id[:10] }}</a></td>
+                            <td>{{ status.success.build.branch[:20] }}</td>
+                            <td>
+                                <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit[:7] }}</a>
+                                <span class="icon">
+                                    <svg viewBox="0 0 32 32">
+                                        <use xlink:href="#github"></use>
+                                    </svg>
+                                </span>
+                            </td>
+                            <td>{{ status.success.end|date }}</td>
+                            <td><a href="{{ urlFor('rollback', {'repo': repo.key, 'server': status.success.deployment.server.id}) }}">Rollback</a></td>
+                        {% else %}
+                            <td colspan="5">Unknown</td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">
+                            No deployments found.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Available Builds</h3>
+    <p>This table shows all recent available builds.</p>
+    {% include 'partials/build-table.twig' with {'builds': builds} %}
+    <p>
+        <a class="btn--small btn--toggles" href="{{ urlFor('build.start', {'repo': repo.key}) }}">Start New Build</a>
+        <a class="btn--small btn--toggles" href="{{ urlFor('build.history', {'repo': repo.key, 'page': 1}) }}">All Builds</a>
+        <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'repo': repo.key, 'page': 1}) }}">All Pushes</a>
+    </p>
+
+    {# primary action #}
+    <p><a class="btn" href="{{ urlFor('repositories') }}">View all repositories</a></p>
+
+    {# secondary actions #}
+    <p><a href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a></p>
+
+{% endblock %}
