@@ -27,18 +27,17 @@
     "require": {
         "knplabs/github-api":               "~1.2",
         "php-64bit":                        "~5.4",
+        "psr/log":                          "*",
         "ql/mcp-core":                      "1.*",
         "ql/mcp-corp-account":              "~0.2@rc",
         "ql/mcp-logger":                    "1.2.*",
         "slim/slim":                        "2.4.*",
-        "symfony/debug":                    "2.5.*@rc",
         "symfony/dependency-injection":     "2.4.*",
         "symfony/config":                   "2.4.*",
         "symfony/yaml":                     "2.4.*",
         "twig/twig":                        "~1.15",
 
-        "ql/hal-core":                      "~2.0@dev",
-        "ql/hal-agent":                     "1.0.*@beta"
+        "ql/hal-core":                      "~2.0@dev"
     },
     "require-dev": {
         "mockery/mockery":                  "*",
