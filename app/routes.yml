@@ -264,6 +264,10 @@ parameters:
       conditions:
         id: '[\d]+'
 
+    ########################################################################################################################
+    # REPOSITORY DEPLOYMENT ROUTES
+    ########################################################################################################################
+
     repository.deployments:
       method: 'GET'
       route: '/repositories/:id/deployments'
@@ -271,51 +275,35 @@ parameters:
       conditions:
         id: '[\d]+'
 
-    ### STUB - FIX ME
-    admin.repo.deployment.create:
-      method:     "GET"
-      route:      "/admin/repository/:repo/deployment/create"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+    repository.deployment.admin.add.handle:
+      method: 'GET'
+      route: '/repositories/:id/deployments/add'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.add.handle']
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
+        id: '[\d]+'
 
-    ### STUB - FIX ME
-    admin.repo.deployment.create.handle:
-      method:     "POST"
-      route:      "/admin/repository/:repo/deployment/create"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+    repository.deployment.admin.remove.handle:
+      method: 'POST'
+      route: '/repositories/:repoId/deployments/:id/remove'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.remove.handle']
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
+        repoId: '[\d]+'
+        id: '[\d]+'
 
-    ### STUB - FIX ME
-    admin.repo.deployment.edit:
-      method:     "GET"
-      route:      "/admin/repository/:repo/deployment/:deploy/edit"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+    repository.deployment.admin.edit:
+      method: 'GET'
+      route: '/repositories/:repoId/deployments/:id'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.edit.page']
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
-        deploy:   "[0-9]+"
-
-    ### STUB - FIX ME
-    admin.repo.deployment.edit.handle:
-      method:     "POST"
-      route:      "/admin/repository/:repo/deployment/:deploy/edit"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
+        repoId: '[\d]+'
+        id: '[\d]+'
+    repository.deployment.admin.edit.handle:
+      method: 'GET'
+      route: '/repositories/:repoId/deployments/:id'
+      stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.edit.handle']
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
-        deploy:   "[0-9]+"
+        repoId: '[\d]+'
+        id: '[\d]+'
 
     ########################################################################################################################
     # GROUP ROUTES

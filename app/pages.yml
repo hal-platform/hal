@@ -192,6 +192,17 @@ services:
     parent: 'twig.template'
     arguments: ['repository/deployments.twig']
 
+  repository.deployment.admin.add.handle:
+    parent: nyi.page
+
+  repository.deployment.admin.remove.handle:
+    parent: nyi.page
+
+  repository.deployment.admin.edit.page:
+    parent: nyi.page
+  repository.deployment.admin.edit.handle:
+    parent: repository.deployment.admin.edit.page
+
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
   ######################################################################################################################

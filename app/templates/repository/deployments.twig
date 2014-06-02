@@ -8,6 +8,16 @@
     {% if environments %}
         {% for environment in environments %}
             <h3>{{ environment.key }}</h3>
+            <ul>
+            {% for deployment in deployments if deployment.server.environment == environment %}
+                <li>
+                    {{ deployment.server.name }}
+                    {{ deployment.path }}
+                </li>
+            {% endfor %}
+            </ul>
+
+
         {% endfor %}
     {% else %}
         <p>
