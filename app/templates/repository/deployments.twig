@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = repository.key~' deployments' %}
+
+{% block content %}
+    <h2><strong>{{ repository.key }}</strong> deployments</h2>
+
+    {% if environments %}
+        {% for environment in environments %}
+            <h3>{{ environment.key }}</h3>
+        {% endfor %}
+    {% else %}
+        <p>
+            There are no environments.
+            {% if isAdmin %}
+                <br><a href="{{ urlFor('environment.admin.add') }}">Add an environment</a>
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {# primary action #}
+    <p><a class="btn" href="{{ urlFor('repository', {id: repository.id}) }}">View repository</a></p>
+{% endblock %}

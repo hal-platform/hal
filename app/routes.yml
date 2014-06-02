@@ -224,14 +224,14 @@ parameters:
 
     repository:
       method: 'GET'
-      route: '/repository/:id'
+      route: '/repositories/:id'
       stack: ['login.bouncer', 'repository.page']
       conditions:
         id: '[\d]+'
 
     repository.status:
       method: 'GET'
-      route: '/repository/:id/status'
+      route: '/repositories/:id/status'
       stack: ['login.bouncer', 'repository.status.page']
       conditions:
         id: '[\d]+'
@@ -266,9 +266,9 @@ parameters:
         id: '[\d]+'
 
     repository.deployments:
-      method:     "GET"
-      route:      "/admin/repository/:id/deployments"
-      stack: ['login.bouncer', 'admin.bouncer', 'nyi.page']
+      method: 'GET'
+      route: '/repositories/:id/deployments'
+      stack: ['login.bouncer', 'repository.deployments.page']
       conditions:
         id: '[\d]+'
 

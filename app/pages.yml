@@ -94,7 +94,6 @@ services:
       - @session
       - @url.helper
 
-
   ######################################################################################################################
   # REPOSITORY CONTROLLERS
   ######################################################################################################################
@@ -176,6 +175,22 @@ services:
         - @doctrine.em
         - @session
         - @url.helper
+
+  ######################################################################################################################
+  # REPOSITORY DEPLOYMENT CONTROLLERS
+  ######################################################################################################################
+
+  repository.deployments.page:
+    class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentsController'
+    arguments:
+      - @repository.deployments.twig
+      - @layout
+      - @environment.repo
+      - @repository.repo
+      - @deployment.repo
+  repository.deployments.twig:
+    parent: 'twig.template'
+    arguments: ['repository/deployments.twig']
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
