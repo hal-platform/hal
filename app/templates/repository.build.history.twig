@@ -3,7 +3,7 @@
 {% set page_title = repo.key~" Build History" %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repo', {'repo': repo.key}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'repo': repo.key}) }}">Back to Repository</a></p>
 
     <h2>{{ repo.key }} Build History</h2>
 
@@ -12,7 +12,7 @@
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
             {% if page > 1 %}
-                <a href="{{ urlFor('build.history', {'repo': repo.key, 'page': page-1}) }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
+                <a href="{{ urlFor('build.history', {'repository': repo.key, 'page': page-1}) }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
             {% else %}
                 <span class="disabled"><i class="fa fa-arrow-circle-left"></i> newer</span>
             {% endif %}
@@ -24,7 +24,7 @@
         </li>
         <li class="nav--pagination__next">
             {% if page < last %}
-                <a href="{{ urlFor('build.history', {'repo': repo.key, 'page': page+1}) }}">older <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="{{ urlFor('build.history', {'repository': repo.key, 'page': page+1}) }}">older <i class="fa fa-arrow-circle-right"></i></a>
             {% else %}
                 <span class="disabled">older <i class="fa fa-arrow-circle-right"></i></span>
             {% endif %}

@@ -39,7 +39,7 @@
         <h3>Permissions</h3>
         <ul>
         {% for pair in permissions %}
-            <li>Has access to push <a href="{{ urlFor('repo', {'repo': pair.0}) }}">{{ pair.0 }}</a> to <b>{{ pair.1 }}</b>.</li>
+            <li>Has access to push <a href="{{ urlFor('repository', {'repo': pair.0}) }}">{{ pair.0 }}</a> to <b>{{ pair.1 }}</b>.</li>
         {% endfor %}
         </ul>
     {% endif %}

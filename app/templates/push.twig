@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repo', {'repo': push.deployment.repository.key}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'repo': push.deployment.repository.key}) }}">Back to Repository</a></p>
 
     <h2>Push Details</h2>
 
@@ -25,7 +25,7 @@
                 </tr>
                 <tr>
                     <td>Repository</td>
-                    <td><a href="{{ urlFor('repo', {'repo': push.deployment.repository.key}) }}">{{ push.deployment.repository.key }}</a></td>
+                    <td><a href="{{ urlFor('repository', {'repo': push.deployment.repository.key}) }}">{{ push.deployment.repository.key }}</a></td>
                 </tr>
                 <tr>
                     <td>Build</td>
