@@ -228,6 +228,70 @@ services:
   # BUILD CONTROLLERS
   #####################################################################################################################
 
+  build.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildController"
+    arguments:
+      - @build.twig
+      - @layout
+      - @build.repo
+  build.twig:
+    parent: 'twig.template'
+    arguments:
+      - "build.twig"
+
+  build.start.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartController"
+    arguments:
+      - @build.start.twig
+      - @layout
+      - @repository.repo
+      - @environment.repo
+      - @github
+  build.start.twig:
+    parent: 'twig.template'
+    arguments:
+      - "repository.build.start.twig"
+
+  build.start.handle.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartHandleController"
+    arguments:
+      - @session
+      - @repository.repo
+      - @user.repo
+      - @environment.repo
+      - @doctrine.em
+      - @url.helper
+      - @user
+      - @pushPermissionService
+      - @github
+
+  build.push.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Push\\BuildPushController"
+    arguments:
+      - @build.push.twig
+      - @layout
+      - @doctrine.em
+      - @build.repo
+      - @user
+  build.push.twig:
+    parent: 'twig.template'
+    arguments:
+      - "build.push.twig"
+
+  rollback.page:
+    class: "QL\\Hal\\Controllers\\Repository\\RollbackController"
+    arguments:
+      - @rollback.twig
+      - @layout
+      - @repository.repo
+      - @server.repo
+      - @doctrine.em
+      - @user
+  rollback.twig:
+    parent: 'twig.template'
+    arguments:
+      - "rollback.twig"
+
   build.push.handle:
     class: 'QL\Hal\Controllers\Build\BuildPushHandleController'
     arguments:
@@ -239,6 +303,51 @@ services:
       - @url.helper
       - @user
       - @pushPermissionService
+
+  build.history.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Build\\HistoryController"
+    arguments:
+      - @build.history.twig
+      - @layout
+      - @doctrine.em
+      - @repository.repo
+      - @build.repo
+      - @user
+  build.history.twig:
+    parent: 'twig.template'
+    arguments:
+      - "repository.build.history.twig"
+
+  ######################################################################################################################
+  # PUSH CONTROLLERS
+  ######################################################################################################################
+
+  push.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Push\\PushController"
+    arguments:
+      - @push.twig
+      - @layout
+      - @push.repo
+  push.twig:
+    parent: 'twig.template'
+    arguments:
+      - "push.twig"
+
+  push.history.twig:
+    class: "Twig_Template"
+    arguments:
+      - "repository.push.history.twig"
+    factory_service: "twigEnv"
+    factory_method: "loadTemplate"
+
+  push.history.page:
+    class: "QL\\Hal\\Controllers\\Repository\\Push\\HistoryController"
+    arguments:
+      - @push.history.twig
+      - @layout
+      - @doctrine.em
+      - @repository.repo
+      - @push.repo
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS

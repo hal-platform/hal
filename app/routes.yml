@@ -50,7 +50,7 @@ parameters:
       route:      "/repository/:repo/build/history(/page/:page)"
       stack:
         - login.bouncer
-        - repository.build.history.page
+        - build.history.page
       conditions:
         repo:     "[A-Za-z0-9_-]+"
         page:     "[0-9]+"
@@ -69,7 +69,7 @@ parameters:
       route:      "/repository/:repo/build"
       stack:
         - login.bouncer
-        - repository.build.start.page
+        - build.start.page
       conditions:
         repo:     "[A-Za-z0-9_-]+"
 
@@ -78,7 +78,7 @@ parameters:
       route:      "/repository/:repo/build"
       stack:
         - login.bouncer
-        - repository.build.start.handle.page
+        - build.start.handle.page
       conditions:
         repo:     "[A-Za-z0-9_-]+"
 
@@ -118,7 +118,7 @@ parameters:
       route:      "/repository/:repo/push/history(/page/:page)"
       stack:
         - login.bouncer
-        - repository.push.history.page
+        - push.history.page
       conditions:
         repo:     "[A-Za-z0-9_-]+"
         page:     "[0-9]+"
