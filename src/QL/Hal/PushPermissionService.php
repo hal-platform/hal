@@ -247,8 +247,6 @@ class PushPermissionService
      */
     public function isUserAdmin($user)
     {
-        return false;
-
         // allow user passing as string
         if (!($user instanceof User)) {
             $user = $this->ldapService->getUserByWindowsUsername($user);
