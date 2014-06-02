@@ -168,6 +168,7 @@ class RepositoryStatusController
             $qb->select('p');
             $qb->from('QL\Hal\Core\Entity\Push', 'p');
             $qb->where('p.deployment = :deploy');
+            $qb->orderBy('p.status', 'ASC');
             $qb->addOrderBy('p.end', 'DESC');
             $qb->setParameter('deploy', $deploy);
             $qb->setMaxResults(1);

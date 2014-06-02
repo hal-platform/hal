@@ -24,7 +24,7 @@ class BuildPushHandleController
     const ERR_NO_DEPS = 'You must select at least one deployment.';
     const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';
     const ERR_NO_PERM = "You attempted to push to %s but don't have permission.";
-    const NOT_DONE = "The requested pushes have been queued.";
+    const NOTICE_DONE = "The build has been queued to be pushed to the requested servers.";
 
     private $session;
 
@@ -120,7 +120,7 @@ class BuildPushHandleController
             $this->em->persist($push);
         }
 
-        $this->session->addFlash(self::NOT_DONE);
+        $this->session->addFlash(self::NOTICE_DONE);
         $response->redirect($this->url->urlFor('repository.status', ['id' => $build->getRepository()->getId()]), 303);
     }
 }
