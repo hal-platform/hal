@@ -20,3 +20,6 @@
 /src/QL/Hal/CachedContainer.php
 
 /.vagrant
+
+# dumb atlassian sourcetree file that keeps re-creating itself
+atlassian-ide-plugin.xml
