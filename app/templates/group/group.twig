@@ -42,7 +42,7 @@
             <p>
                 There are no repositories associated with this group.
                 {% if isAdmin %}
-                    <br><a href="{{ urlFor('admin.repo.create') }}">Add a repository</a>
+                    <br><a href="{{ urlFor('repository.admin.add') }}">Add a repository</a>
                 {% endif %}
             </p>
         {% endif %}

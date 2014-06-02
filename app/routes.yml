@@ -265,17 +265,6 @@ parameters:
       conditions:
         id: '[\d]+'
 
-    ### STUB - FIX ME
-    admin.repo.delete.handle:
-      method:     "GET"
-      route:      "/admin/repository/:repo/delete"
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - nyi.page
-      conditions:
-        repo:     "[A-Za-z0-9_-]+"
-
     repository.deployments:
       method:     "GET"
       route:      "/admin/repository/:id/deployments"

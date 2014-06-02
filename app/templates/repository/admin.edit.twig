@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = repository.key %}
+
+{% set page_title = 'Edit Repository: '~repository.key %}
+
+{% block content %}
+    <h2>Edit <strong>{{ repository.key }}</strong> repository</h2>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="{{ urlFor('repository.admin.edit.handle', {id: repository.id}) }}" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="nickname">Nickname</label>
+                    <input type="text" name="nickname" id="nickname" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                </li>
+                <li>
+                    <p>Group</p>
+                    <ul>
+                    {% for group in groups %}
+                        {% set checked = '' %}
+                        {% if form.group == group.id %}
+                            {% set checked = ' checked="checked"' %}
+                        {% endif %}
+
+                        <li>
+                            <input type="radio" name="group" id="group-{{ group.id }}" value="{{ group.id }}"{{ checked }}>
+                            <label for="group-{{ group.id }}">{{ group.key }}</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </li>
+
+                <li>
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" maxlength="255" rows="6" class="text-input">{{ form.description }}</textarea>
+                </li>
+
+                <li>
+                    <label>Github Source</label>
+                    {{ repository.githubUser }}/{{ repository.githubRepo }}
+                    <span class="icon">
+                        <svg viewBox="0 0 32 32">
+                            <use xlink:href="#github"></use>
+                        </svg>
+                    </span>
+                </li>
+
+                <li>
+                    <label for="notification_email">Notification E-mail Address <small class="additional">Notifications are sent on push or build completion.</small></label>
+                    <input type="email" name="notification_email" id="notification_email" size="30" maxlength="128" required value="{{ form.notification_email }}" class="text-input">
+                </li>
+                <li>
+                    <label for="build_command">Build Command <small class="additional">Will be run on build server to build application.</small></label>
+                    <input type="text" name="build_command" id="build_command" size="30" maxlength="128" value="{{ form.build_command }}" class="text-input">
+                </li>
+                <li>
+                    <label for="post_command">Pre Push Command <small class="additional">Will be run on remote server before code is pushed.</small></label>
+                    <input type="text" name="post_command" id="post_command" size="30" maxlength="128" value="{{ form.pre_command }}" class="text-input">
+                </li>
+                <li>
+                    <label for="post_command">Post Push Command <small class="additional">Will be run on remote server after code is pushed.</small></label>
+                    <input type="text" name="post_command" id="post_command" size="30" maxlength="128" value="{{ form.post_command }}" class="text-input">
+                </li>
+            </ul>
+
+            {# primary action #}
+            <input class="btn" type="submit" value="Save">
+
+            {# secondary actions #}
+            <p>
+                <a href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
+            </p>
+        </form>
+    </div>
+{% endblock %}

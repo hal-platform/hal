@@ -154,7 +154,17 @@ services:
 
   repository.admin.edit.page:
     class: 'QL\Hal\Controllers\Repository\AdminEditController'
-    arguments: []
+    arguments:
+        - @repository.admin.edit.twig
+        - @layout
+        - @group.repo
+        - @repository.repo
+        - @doctrine.em
+        - @session
+        - @url.helper
+  repository.admin.edit.twig:
+    parent: 'twig.template'
+    arguments: ['repository/admin.edit.twig']
   repository.admin.edit.handle:
     parent: 'repository.admin.edit.page'
 

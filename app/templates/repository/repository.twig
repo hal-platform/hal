@@ -59,17 +59,17 @@
     {# primary action #}
     {% if isAdmin %}
         <p>
-            <a class="btn" href="{{ urlFor('repository.admin.edit') }}">Edit</a>
+            <a class="btn" href="{{ urlFor('repository.admin.edit', {id: repository.id}) }}">Edit</a>
         </p>
     {% endif %}
 
     {# secondary actions #}
     <p>
-        <a href="{{ urlFor('repository.status', {id: repo.id}) }}">Repository status</a>
+        <a href="{{ urlFor('repository.status', {id: repository.id}) }}">Repository status</a>
         <a href="{{ urlFor('repositories') }}">View all repositories</a>
 
         {% if isAdmin %}
-            <a href="{{ urlFor('repository.deployments', {'id': repository.id}) }}">Manage deployments</a>
+            <a href="{{ urlFor('repository.deployments', {id: repository.id}) }}">Manage deployments</a>
         {% endif %}
 
         {% if isAdmin and not deployments %}
