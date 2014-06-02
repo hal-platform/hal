@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'repo': build.repository.key}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': build.repository.id}) }}">Back to Repository</a></p>
 
     <h2>Build Details</h2>
 
@@ -17,7 +17,7 @@
                 </tr>
                 <tr>
                     <td>Repository</td>
-                    <td><a href="{{ urlFor('repository', {'repo': build.repository.key}) }}">{{ build.repository.key }}</a></td>
+                    <td><a href="{{ urlFor('repository', {'id': build.repository.id}) }}">{{ build.repository.key }}</a></td>
                 </tr>
                 <tr>
                     <td>Environment</td>

@@ -3,7 +3,7 @@
 {% set page_title = repo.key %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'repo': repo.key}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repo.id}) }}">Back to Repository</a></p>
 
     <h2>Available {{ repo.key }} Rollbacks for {{ server.name }}</h2>
 

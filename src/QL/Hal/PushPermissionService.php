@@ -176,9 +176,10 @@ class PushPermissionService
 
         $permissions = array();
 
-        foreach ($this->listEnvRepoPairs() as $repo => $envs) {
-            foreach ($envs as $env) {
-                if ($this->canUserPushToEnvRepo($user, $repo, $env)) {
+        foreach ($this->listEnvRepoPairs() as $repoId => $envs) {
+            foreach ($envs as $envId => $pair) {
+                list($repo, $env) = $pair;
+                if ($this->canUserPushToEnvRepo($user, $repo->getKey(), $env->getKey())) {
                     $permissions[] = array($repo, $env);
                 }
             }
@@ -315,13 +316,13 @@ class PushPermissionService
         $pairs = [];
 
         foreach ($deploys as $deploy) {
-            $repo = $deploy->getRepository()->getKey();
-            $env = $deploy->getServer()->getEnvironment()->getKey();
+            $repo = $deploy->getRepository();
+            $env = $deploy->getServer()->getEnvironment();
 
-            if (isset($pairs[$repo])) {
-                $pairs[$repo][$env] = $env;
+            if (isset($pairs[$repo->getId()])) {
+                $pairs[$repo->getId()][$env->getId()] = [$repo, $env];
             } else {
-                $pairs[$repo] = [];
+                $pairs[$repo->getId()] = [];
             }
         }
 

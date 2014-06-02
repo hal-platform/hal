@@ -88,10 +88,11 @@ class UserController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
+     * @return mixed
      */
     public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
     {
