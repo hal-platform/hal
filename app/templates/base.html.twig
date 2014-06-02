@@ -74,7 +74,7 @@
             {% if session.hasFlash() %}
                 <div class="alert-bar">
                     {% for message in session.getFlash() %}
-                        <p>{{ message }}</p>
+                        <p>{{ message|raw }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -83,13 +83,13 @@
             {# GLOBAL NOTICE #}
             {% if notice %}
                 <div class="alert-bar">
-                    <p>{{ notice }}</p>
+                    <p>{{ notice|raw }}</p>
                 </div>
             {% endif %}
             {# GLOBAL ERROR #}
             {% if error %}
                 <div class="alert-bar">
-                    <p>{{ error }}</p>
+                    <p>{{ error|raw }}</p>
                 </div>
             {% endif %}
         {% endblock %}

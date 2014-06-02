@@ -16,7 +16,7 @@
     <ul class="check-list">
     {% for branch in branches %}
         <li>
-            <input id="{{ branch.object.sha }}-{{ branch.name }}" type="radio" name="commitish" value="{{ branch.ref }}">
+            <input id="{{ branch.object.sha }}-{{ branch.name }}" type="radio" name="reference" value="{{ branch.name }}">
             <label for="{{ branch.object.sha }}-{{ branch.name }}">
                 {{ branch.name }} (<a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, branch.name) }}">{{ branch.object.sha[:7] }}</a>
                     <span class="icon">
@@ -35,7 +35,7 @@
     <ul class="check-list">
     {% for tag in tags %}
         <li>
-            <input id="{{ tag.object.sha }}-{{ tag.name }}" type="radio" name="commitish" value="{{ tag.ref }}">
+            <input id="{{ tag.object.sha }}-{{ tag.name }}" type="radio" name="reference" value="tag/{{ tag.name }}">
             <label for="{{ tag.object.sha }}-{{ tag.name }}">
                 {{ tag.name }} (<a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha[:7] }}</a>
                     <span class="icon">
@@ -54,8 +54,9 @@
     <ul class="check-list">
         {% for pull in pulls %}
             <li class="pr-selection">
-                <input id="pr{{ pull.number }}" type="radio" name="commitish" value="pull{{ pull.number }}">
-                <label for="pr{{ pull.number }}">{{ pull.title }} (<a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                <input id="pr{{ pull.number }}" type="radio" name="reference" value="pull/{{ pull.number }}">
+                <label for="pr{{ pull.number }}">{{ pull.title }}
+                    (<a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
                     <span class="icon">
                         <svg viewBox="0 0 32 32">
                             <use xlink:href="#github"></use>
@@ -75,9 +76,9 @@
     <h4>Commit</h4>
     <ul class="check-list form-wrapper">
         <li>
-            <input id="push-commit" type="radio" name="commitish" value="commit">
+            <input id="push-commit" type="radio" name="reference" value="commit">
             <label for="push-commit">Specific Commit ID:</label>
-            <input class="text-input" type="text" name="hash">
+            <input class="text-input" type="text" name="commit">
         </li>
     </ul>
 

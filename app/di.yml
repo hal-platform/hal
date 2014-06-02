@@ -187,6 +187,7 @@ services:
       - '@github.repoService'
       - '@github.refService'
       - '@github.pullService'
+      - '@github.commitService'
       - '@github.pager'
 
   github.client:
@@ -219,6 +220,11 @@ services:
     class: 'Github\Api\GitData\References'
     arguments:
       - @github.client
+
+  github.commitService:
+      class: 'Github\Api\GitData\Commits'
+      arguments:
+        - @github.client
 
   github.repoService:
     class: 'Github\Api\Repo'
@@ -290,8 +296,11 @@ services:
       - @repository.repo
       - @user.repo
       - @environment.repo
+      - @doctrine.em
       - @url.helper
       - @user
+      - @pushPermissionService
+      - @github
 
   rollback.twig:
     class: "Twig_Template"

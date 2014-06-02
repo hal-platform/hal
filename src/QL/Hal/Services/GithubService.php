@@ -7,8 +7,10 @@
 
 namespace QL\Hal\Services;
 
-use Github\Api\GitData\References;
-use Github\Api\PullRequest;
+use Github\Api\GitData\Commits as CommitApi;
+use Github\Api\GitData\References as ReferenceApi;
+use Github\Api\PullRequest as PullRequestApi;
+
 use Github\Api\Repo;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
@@ -22,6 +24,13 @@ use QL\Hal\GithubApi\HackUser;
 class GithubService
 {
     /**
+     * Git Reference Patterns
+     */
+    const REGEX_TAG = '#^tag/([[:print:]]+)$#';
+    const REGEX_PULL = '#^pull/([\d]+)$#';
+    const REGEX_COMMIT = '#^[0-9a-f]{40}$#';
+
+    /**
      * @var HackUser
      */
     private $userApi;
@@ -32,14 +41,19 @@ class GithubService
     public $repoApi;
 
     /**
-     * @var References
+     * @var ReferenceApi
      */
     private $refApi;
 
     /**
-     * @var PullRequest
+     * @var PullRequestApi
      */
     private $pullApi;
+
+    /**
+     * @var CommitApi
+     */
+    private $commitApi;
 
     /**
      * @var ResultPager
@@ -49,16 +63,18 @@ class GithubService
     /**
      * @param HackUser $user
      * @param Repo $repo
-     * @param References $ref
-     * @param PullRequest $pullApi
+     * @param ReferenceApi $ref
+     * @param PullRequestApi $pull
+     * @param CommitApi $commit
      * @param ResultPager $pager
      */
-    public function __construct(HackUser $user, Repo $repo, References $ref, PullRequest $pull, ResultPager $pager)
+    public function __construct(HackUser $user, Repo $repo, ReferenceApi $ref, PullRequestApi $pull, CommitApi $commit, ResultPager $pager)
     {
         $this->userApi = $user;
         $this->repoApi = $repo;
         $this->refApi = $ref;
         $this->pullApi = $pull;
+        $this->commitApi = $commit;
         $this->pager = $pager;
     }
 
@@ -138,6 +154,7 @@ class GithubService
      *
      * @param string $user
      * @param string $repo
+     * @param string $number
      * @return array|null
      */
     public function pullRequest($user, $repo, $number)
@@ -257,5 +274,131 @@ class GithubService
         }
 
         return true;
+    }
+
+    /**
+     * Resolve a git reference in the following format.
+     *
+     * Tag: tag/(tag name)
+     * Pull: pull/(pull request number)
+     * Commit: (commit hash){40}
+     * Branch: (branch name)
+     *
+     * Will return an array of [reference, commit] or null on failure
+     *
+     * @param string $user
+     * @param string $repo
+     * @param string $reference
+     * @return null|array
+     */
+    public function resolve($user, $repo, $reference)
+    {
+        //die(var_dump($user, $repo, $reference));
+
+        if ($sha = $this->resolveTag($user, $repo, $reference)) {
+            return [$reference, $sha];
+        }
+
+        if ($sha = $this->resolvePull($user, $repo, $reference)) {
+            return [$reference, $sha];
+        }
+
+        if ($sha = $this->resolveCommit($user, $repo, $reference)) {
+            return ['commit', $sha];
+        }
+
+        if ($sha = $this->resolveBranch($user, $repo, $reference)) {
+            return [$reference, $sha];
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve a tag reference. Returns the commit sha or null on failure.
+     *
+     * @param string $user
+     * @param string $repo
+     * @param string $tag
+     * @return null|string
+     */
+    private function resolveTag($user, $repo, $tag)
+    {
+        if (preg_match(self::REGEX_TAG, $tag, $matches) !== 1) {
+            return null;
+        }
+
+        try {
+            $result = $this->refApi->show($user, $repo, sprintf('tags/%s', $matches[1]));
+        } catch (RuntimeException $e) {
+            return null;
+        }
+
+        return $result['object']['sha'];
+    }
+
+    /**
+     * Resolve a pull request reference. Returns the commit sha or null on failure.
+     *
+     * @param string $user
+     * @param string $repo
+     * @param string $pull
+     * @return null|string
+     */
+    private function resolvePull($user, $repo, $pull)
+    {
+        if (preg_match(self::REGEX_PULL, $pull, $matches) !== 1) {
+            return null;
+        }
+
+        try {
+            $result = $this->pullApi->show($user, $repo, $matches[1]);
+        } catch (RuntimeException $e) {
+            return null;
+        }
+
+        return $result['head']['sha'];
+    }
+
+    /**
+     * Resolve a commit reference. Returns the commit sha or null on failure.
+     *
+     * @param string $user
+     * @param string $repo
+     * @param string $commit
+     * @return null|string
+     */
+    private function resolveCommit($user, $repo, $commit)
+    {
+        if (preg_match(self::REGEX_COMMIT, $commit, $matches) !== 1) {
+            return null;
+        }
+
+        try {
+            $result = $this->commitApi->show($user, $repo, $matches[0]);
+        } catch (RuntimeException $e) {
+            return null;
+        }
+
+        return $result['sha'];
+    }
+
+    /**
+     * Resolve a branch reference. Returns the head commit sha or null on failure.
+     *
+     * @param string $user
+     * @param string $repo
+     * @param string $branch
+     * @return null|string
+     */
+    private function resolveBranch($user, $repo, $branch)
+    {
+        try {
+            $result = $this->refApi->show($user, $repo, sprintf('heads/%s', $branch));
+        } catch (RuntimeException $e) {
+            return null;
+        }
+
+        return $result['object']['sha'];
     }
 }

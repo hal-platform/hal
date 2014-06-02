@@ -2,16 +2,18 @@
 
 namespace QL\Hal\Controllers\Repository\Build;
 
+use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\User;
+use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\PushPermissionService;
 use QL\Hal\Session;
-use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use QL\Hal\Services\GithubService;
 
 /**
  *  Build Start Handle Controller
@@ -20,17 +22,11 @@ use QL\Hal\Layout;
  */
 class BuildStartHandleController
 {
-    const VAL_PULL = '#^pull/[0-9]+$#';
+    const ERR_NO_ENV = "You must select an environment to build for.";
 
-    const VAL_COMMIT = '#^none$#';
+    const ERR_NO_PERM = "You don't have permission to build for the %s environment.";
 
-    const VAL_TAG = '#^tag/(?!/|.*([/.]\.|//|@\{|\\\\))[^\040\177 ~^:?*\[]+(?<!\.lock|[/.])$#';
-
-    const VAL_BRANCH = '#^(?!/|.*([/.]\.|//|@\{|\\\\))[^\040\177 ~^:?*\[]+(?<!\.lock|[/.])$#';
-
-    const VAL_SHA = '#^[0-9a-f]{40}$#';
-
-    const VAL_ENV = '#^[A-Za-z0-9]+$#';
+    const NOT_FINISH = 'Build %s has been queued for creation.';
 
     private $session;
 
@@ -40,24 +36,36 @@ class BuildStartHandleController
 
     private $envRepo;
 
+    private $em;
+
     private $url;
 
     private $user;
+
+    private $permissions;
+
+    private $github;
 
     public function __construct(
         Session $session,
         RepositoryRepository $repoRepo,
         UserRepository $userRepository,
         EnvironmentRepository $envRepo,
+        EntityManager $em,
         UrlHelper $url,
-        User $user
+        User $user,
+        PushPermissionService $permissions,
+        GithubService $github
     ) {
         $this->session = $session;
         $this->repoRepo = $repoRepo;
         $this->userRepo = $userRepository;
         $this->envRepo = $envRepo;
+        $this->em = $em;
         $this->url = $url;
         $this->user = $user;
+        $this->permissions = $permissions;
+        $this->github = $github;
     }
 
     /**
@@ -69,55 +77,57 @@ class BuildStartHandleController
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $repo = $this->repoRepo->findOneBy(['key' => $params['repo']]);
+        $env = $this->envRepo->findOneBy(['key' => $request->post('environment', null)]);
 
         if (!$repo) {
             call_user_func($notFound);
             return;
         }
 
-        $ref = $request->post('commitish', null);
-        $sha = $request->post('hash', null);
-
-        $env = $this->envRepo->findOneBy(['key' => $request->post('environment', null)]);
-
         if (!$env) {
-            $this->session->addFlash('You must select an environment to build for.');
+            $this->session->addFlash(self::ERR_NO_ENV);
             $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
             return;
         }
 
-        if (preg_match(self::VAL_TAG, $ref)) {
-            // tag
-
-        } elseif (preg_match(self::VAL_PULL, $ref)) {
-            // pull request
-
-        } elseif (preg_match(self::VAL_COMMIT, $ref)) {
-            // commit
-
-        } elseif (preg_match(self::VAL_BRANCH, $ref)) {
-            // branch
-
-        } else {
-            $this->session->addFlash('You must select a valid git ref.');
+        if (!$this->permissions->canUserPushToEnvRepo($this->user, $repo->getKey(), $env->getKey())) {
+            $this->session->addFlash(sprintf(self::ERR_NO_PERM, $env->getKey()));
             $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
             return;
         }
 
-//        var_dump($ref, $sha, $env);
-//
-//        var_dump([
-//            'push' => preg_match(self::VAL_PULL, $ref),
-//            'tag' => preg_match(self::VAL_TAG, $ref),
-//            'branch' => preg_match(self::VAL_BRANCH, $ref),
-//            'commit' => preg_match(self::VAL_COMMIT, $ref),
-//            'sha' => preg_match(self::VAL_SHA, $sha),
-//            'env' => preg_match(self::VAL_ENV, $env)
-//        ]);
-//
-//        die();
+        $reference = ($request->post('reference', null) == 'commit')
+            ? $request->post('commit', null)
+            : $request->post('reference', null);
 
+        if (!$result = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
+            $this->session->addFlash('You must select a valid git reference.');
+            $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
+            return;
+        }
 
-        $response->redirect($this->url->urlFor('repo', ['repo' => $repo->getKey()]), 303);
+        list($reference, $commit) = $result;
+
+        $build = new Build();
+        $build->setId(hash('sha1', uniqid()));
+        $build->setStatus('Waiting');
+        $build->setBranch($reference);
+        $build->setCommit($commit);
+        $build->setUser($this->userRepo->findOneBy(['id' => $this->user->commonId()]));
+        $build->setRepository($repo);
+        $build->setEnvironment($env);
+        $this->em->persist($build);
+
+        $this->session->addFlash(
+            sprintf(
+                self::NOT_FINISH,
+                sprintf(
+                    '<a href="%s">%s</a>',
+                    $this->url->urlFor('build', ['build' => $build->getId()]),
+                    $build->getId()
+                )
+            )
+        );
+        $response->redirect($this->url->urlFor('repository', ['id' => $repo->getId()]), 303);
     }
 }
