@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Repository\Push;
+namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -16,7 +16,7 @@ use QL\Hal\Layout;
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class HistoryController
+class PushesController
 {
     const MAX_PER_PAGE = 25;
 

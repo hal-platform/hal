@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Repository\Build;
+namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\User;

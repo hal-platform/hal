@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Repository\Build;
+namespace QL\Hal\Controllers\Build;
 
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use Twig_Template;

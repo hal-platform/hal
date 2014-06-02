@@ -1,11 +1,9 @@
 <?php
 
-namespace QL\Hal\Controllers\Repository\Build;
+namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -13,14 +11,12 @@ use QL\Hal\Layout;
 use MCP\Corp\Account\User;
 
 /**
- *  Repository Build History Controller
+ *  Build Push Controller
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class HistoryController
+class BuildPushController
 {
-    const MAX_PER_PAGE = 25;
-
     /**
      *  @var Twig_Template
      */
@@ -37,11 +33,6 @@ class HistoryController
     private $em;
 
     /**
-     *  @var RepositoryRepository
-     */
-    private $repoRepo;
-
-    /**
      *  @var BuildRepository
      */
     private $buildRepo;
@@ -55,7 +46,6 @@ class HistoryController
      *  @param Twig_Template $template
      *  @param Layout $layout
      *  @param EntityManager $em
-     *  @param RepositoryRepository $repoRepo
      *  @param BuildRepository $buildRepo
      *  @param User $user
      */
@@ -63,7 +53,6 @@ class HistoryController
         Twig_Template $template,
         Layout $layout,
         EntityManager $em,
-        RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
         User $user
     ) {
@@ -71,7 +60,6 @@ class HistoryController
         $this->layout = $layout;
         $this->em = $em;
         $this->buildRepo = $buildRepo;
-        $this->repoRepo = $repoRepo;
         $this->user = $user;
     }
 
@@ -83,44 +71,25 @@ class HistoryController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $repo = $this->repoRepo->findOneBy(['key' => $params['repo']]);
+        $build = $this->buildRepo->findOneBy(['id' => $params['build']]);
 
-        if (!$repo) {
+        if (!$build) {
             call_user_func($notFound);
             return;
         }
 
-        $page = (isset($params['page'])) ? $params['page'] : 1;
-
-        if ($page < 1) {
-            call_user_func($notFound);
-            return;
-        }
-
-        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.end DESC';
+        $dql = "SELECT d FROM QL\Hal\Core\Entity\Deployment d JOIN d.server s WHERE d.repository = :repo AND s.environment = :env";
         $query = $this->em->createQuery($dql)
-            ->setMaxResults(self::MAX_PER_PAGE)
-            ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
-            ->setParameter('repo', $repo);
-        $builds = $query->getResult();
-
-        if (count($builds) < 1) {
-            call_user_func($notFound);
-            return;
-        }
-
-        $paginator = new Paginator($query);
-        $total = count($paginator);
-        $last = ceil($total / self::MAX_PER_PAGE);
+            ->setParameter('repo', $build->getRepository())
+            ->setParameter('env', $build->getEnvironment());
+        $deployments = $query->getResult();
 
         $response->body(
             $this->layout->render(
                 $this->template,
                 [
-                    'repo' => $repo,
-                    'builds' => $builds,
-                    'page' => $page,
-                    'last' => $last,
+                    'build' => $build,
+                    'deployments' => $deployments,
                     'user' => $this->user
                 ]
             )

@@ -229,7 +229,7 @@ services:
   #####################################################################################################################
 
   build.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildController"
+    class: "QL\\Hal\\Controllers\\Build\\BuildController"
     arguments:
       - @build.twig
       - @layout
@@ -240,7 +240,7 @@ services:
       - "build.twig"
 
   build.start.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartController"
+    class: "QL\\Hal\\Controllers\\Build\\BuildStartController"
     arguments:
       - @build.start.twig
       - @layout
@@ -253,7 +253,7 @@ services:
       - "repository.build.start.twig"
 
   build.start.handle.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Build\\BuildStartHandleController"
+    class: "QL\\Hal\\Controllers\\Build\\BuildStartHandleController"
     arguments:
       - @session
       - @repository.repo
@@ -266,7 +266,7 @@ services:
       - @github
 
   build.push.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Push\\BuildPushController"
+    class: "QL\\Hal\\Controllers\\Build\\BuildPushController"
     arguments:
       - @build.push.twig
       - @layout
@@ -304,16 +304,16 @@ services:
       - @user
       - @pushPermissionService
 
-  build.history.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Build\\HistoryController"
+  builds.page:
+    class: "QL\\Hal\\Controllers\\Build\\BuildsController"
     arguments:
-      - @build.history.twig
+      - @builds.twig
       - @layout
       - @doctrine.em
       - @repository.repo
       - @build.repo
       - @user
-  build.history.twig:
+  builds.twig:
     parent: 'twig.template'
     arguments:
       - "repository.build.history.twig"
@@ -323,7 +323,7 @@ services:
   ######################################################################################################################
 
   push.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Push\\PushController"
+    class: "QL\\Hal\\Controllers\\Push\\PushController"
     arguments:
       - @push.twig
       - @layout
@@ -333,21 +333,18 @@ services:
     arguments:
       - "push.twig"
 
-  push.history.twig:
-    class: "Twig_Template"
+  pushes.page:
+    class: "QL\\Hal\\Controllers\\Push\\PushesController"
     arguments:
-      - "repository.push.history.twig"
-    factory_service: "twigEnv"
-    factory_method: "loadTemplate"
-
-  push.history.page:
-    class: "QL\\Hal\\Controllers\\Repository\\Push\\HistoryController"
-    arguments:
-      - @push.history.twig
+      - @pushes.twig
       - @layout
       - @doctrine.em
       - @repository.repo
       - @push.repo
+  pushes.twig:
+    parent: 'twig.template'
+    arguments:
+      - "repository.push.history.twig"
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS

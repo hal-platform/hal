@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Repository\Push;
+namespace QL\Hal\Controllers\Push;
 
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use Twig_Template;
