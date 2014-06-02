@@ -21,6 +21,9 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/environments/reorder', function() {
                 return _this.orderEnvironments();
             });
+            router.addRoute('/repositories/:throwaway:/deployments', function() {
+                return _this.addDeployments();
+            });
         },
 
         // route module endpoints
@@ -42,6 +45,11 @@ define(['crossroads'], function(crossroads) {
         },
         orderEnvironments: function() {
             return require(['modules/order-environments'], function(module) {
+                module.init();
+            });
+        },
+        addDeployments: function() {
+            return require(['modules/add-deployments'], function(module) {
                 module.init();
             });
         }
