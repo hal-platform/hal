@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -33,6 +34,11 @@ class DeploymentsController
     private $environmentRepo;
 
     /**
+     *  @var ServerRepository
+     */
+    private $serverRepo;
+
+    /**
      *  @var RepositoryRepository
      */
     private $repoRepo;
@@ -46,6 +52,7 @@ class DeploymentsController
      *  @param Twig_Template $template
      *  @param Layout $layout
      *  @param EnvironmentRepository $environmentRepo
+     *  @param ServerRepository $serverRepo
      *  @param RepositoryRepository $repoRepo
      *  @param DeploymentRepository $deploymentRepo
      */
@@ -53,12 +60,14 @@ class DeploymentsController
         Twig_Template $template,
         Layout $layout,
         EnvironmentRepository $environmentRepo,
+        ServerRepository $serverRepo,
         RepositoryRepository $repoRepo,
         DeploymentRepository $deploymentRepo
     ) {
         $this->template = $template;
         $this->layout = $layout;
         $this->environmentRepo = $environmentRepo;
+        $this->serverRepo = $serverRepo;
         $this->repoRepo = $repoRepo;
         $this->deploymentRepo = $deploymentRepo;
     }
@@ -77,6 +86,7 @@ class DeploymentsController
 
         $rendered = $this->layout->render($this->template, [
             'environments' => $this->environmentRepo->findBy([], ['order' => 'ASC']),
+            'servers' => $this->serverRepo->findBy([], ['name' => 'ASC']),
             'repository' => $repo,
             'deployments' => $this->deploymentRepo->findBy(['repository' => $repo], ['server' => 'ASC'])
         ]);

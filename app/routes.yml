@@ -276,7 +276,7 @@ parameters:
         id: '[\d]+'
 
     repository.deployment.admin.add.handle:
-      method: 'GET'
+      method: 'POST'
       route: '/repositories/:id/deployments/add'
       stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.add.handle']
       conditions:
@@ -298,7 +298,7 @@ parameters:
         repoId: '[\d]+'
         id: '[\d]+'
     repository.deployment.admin.edit.handle:
-      method: 'GET'
+      method: 'POST'
       route: '/repositories/:repoId/deployments/:id'
       stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.edit.handle']
       conditions:

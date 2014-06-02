@@ -8,15 +8,42 @@
     {% if environments %}
         {% for environment in environments %}
             <h3>{{ environment.key }}</h3>
-            <ul>
-            {% for deployment in deployments if deployment.server.environment == environment %}
-                <li>
-                    {{ deployment.server.name }}
-                    {{ deployment.path }}
-                </li>
-            {% endfor %}
-            </ul>
 
+            {% if isAdmin %}
+                <form action="{{ urlFor('repository.deployment.admin.add.handle', {id: repository.id}) }}" method="post">
+            {% endif %}
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Hostname</th>
+                    <th>Path</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for deployment in deployments if deployment.server.environment == environment %}
+                        <tr>
+                            <td>{{ deployment.server.name }}</td>
+                            <td>{{ deployment.path }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    {% if isAdmin %}
+                        <tr>
+                            <td>
+                                {# @todo: need to solve for no servers for environment #}
+                                <select class="js-newdeployment" name="server[]">
+                                    <option></option>
+                                    {% for server in servers if server.environment == environment %}
+                                        <option value="{{ server.id }}">{{ server.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td><input type="text" name="path[]" maxlength="255" class="text-input"></td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
 
         {% endfor %}
     {% else %}
@@ -29,5 +56,12 @@
     {% endif %}
 
     {# primary action #}
-    <p><a class="btn" href="{{ urlFor('repository', {id: repository.id}) }}">View repository</a></p>
+    {% if environments and isAdmin %}
+        {# primary action #}
+        <input class="btn" type="submit" value="Save">
+        </form>
+    {% endif %}
+
+    {# secondary actions #}
+    <p><a href="{{ urlFor('repository', {id: repository.id}) }}">View repository</a></p>
 {% endblock %}

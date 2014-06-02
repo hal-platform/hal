@@ -186,6 +186,7 @@ services:
       - @repository.deployments.twig
       - @layout
       - @environment.repo
+      - @server.repo
       - @repository.repo
       - @deployment.repo
   repository.deployments.twig:
@@ -193,7 +194,14 @@ services:
     arguments: ['repository/deployments.twig']
 
   repository.deployment.admin.add.handle:
-    parent: nyi.page
+    class: 'QL\Hal\Controllers\Repository\Deployment\AdminAddHandle'
+    arguments:
+      - @server.repo
+      - @repository.repo
+      - @deployment.repo
+      - @doctrine.em
+      - @session
+      - @url.helper
 
   repository.deployment.admin.remove.handle:
     parent: nyi.page
