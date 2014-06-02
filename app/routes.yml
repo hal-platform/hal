@@ -104,16 +104,13 @@ parameters:
       conditions:
         build:    "[A-Za-z0-9_-]+"
 
-    ### STUB - FIX ME
-    # Push Handle
     push.handle:
       method:     "POST"
       route:      "/build/:build/push"
       stack:
         - login.bouncer
-        - nyi.page
+        - build.push.handle
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
         build:    "[A-Za-z0-9_-]+"
 
     push.history:
@@ -135,10 +132,6 @@ parameters:
       conditions:
         repo:     "[A-Za-z0-9_-]+"
         server:   "[0-9]+"
-
-
-
-
 
     ########################################################################################################################
     # SERVER ROUTES

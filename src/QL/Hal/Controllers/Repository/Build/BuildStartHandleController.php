@@ -22,30 +22,70 @@ use QL\Hal\Services\GithubService;
  */
 class BuildStartHandleController
 {
+    /**
+     *  Flash Messages
+     */
     const ERR_NO_ENV = "You must select an environment to build for.";
-
     const ERR_NO_PERM = "You don't have permission to build for the %s environment.";
-
+    const ERR_BAD_REF = "You must select a valid git reference.";
     const NOT_FINISH = 'Build %s has been queued for creation.';
 
+    /**
+     * @var Session
+     */
     private $session;
 
+    /**
+     * @var RepositoryRepository
+     */
     private $repoRepo;
 
+    /**
+     * @var UserRepository
+     */
     private $userRepo;
 
+    /**
+     * @var EnvironmentRepository
+     */
     private $envRepo;
 
+    /**
+     * @var EntityManager
+     */
     private $em;
 
+    /**
+     * @var rlHelper
+     */
     private $url;
 
+    /**
+     * @var User
+     */
     private $user;
 
+    /**
+     * @var PushPermissionService
+     */
     private $permissions;
 
+    /**
+     * @var GithubService
+     */
     private $github;
 
+    /**
+     * @param Session $session
+     * @param RepositoryRepository $repoRepo
+     * @param UserRepository $userRepository
+     * @param EnvironmentRepository $envRepo
+     * @param EntityManager $em
+     * @param UrlHelper $url
+     * @param User $user
+     * @param PushPermissionService $permissions
+     * @param GithubService $github
+     */
     public function __construct(
         Session $session,
         RepositoryRepository $repoRepo,
@@ -101,7 +141,7 @@ class BuildStartHandleController
             : $request->post('reference', null);
 
         if (!$result = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
-            $this->session->addFlash('You must select a valid git reference.');
+            $this->session->addFlash(self::ERR_BAD_REF);
             $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
             return;
         }

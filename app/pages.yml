@@ -225,6 +225,22 @@ services:
     parent: repository.deployment.admin.edit.page
 
   ######################################################################################################################
+  # BUILD CONTROLLERS
+  #####################################################################################################################
+
+  build.push.handle:
+    class: 'QL\Hal\Controllers\Build\BuildPushHandleController'
+    arguments:
+      - @session
+      - @build.repo
+      - @deployment.repo
+      - @user.repo
+      - @doctrine.em
+      - @url.helper
+      - @user
+      - @pushPermissionService
+
+  ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
   ######################################################################################################################
 
