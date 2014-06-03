@@ -1,8 +1,10 @@
-define(['modules/routes', 'underscore'], function(routes, _) {
+define(['modules/routes', 'modules/terminal', 'underscore'], function(routes, terminal, _) {
     var app = {
         init: function() {
             var router = routes.init();
             router.parse(this.getPath());
+
+            terminal.init();
         },
         getPath: function() {
             var a, path;
