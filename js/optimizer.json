@@ -10,8 +10,8 @@
     {
       "name": "main",
       "include": [
-        "vendor/jquery-2.min",
-        "vendor/jquery.sortable.min"
+        "jquery",
+        "jquerySortable"
       ]
     }
   ],
