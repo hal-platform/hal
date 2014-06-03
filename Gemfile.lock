@@ -17,16 +17,12 @@ GEM
     sass (3.2.19)
     sassy-math (1.5)
       compass (~> 0.11)
-    singularitygs (1.1.2)
-      breakpoint (>= 2.0.1)
-      compass (>= 0.12.2)
-      sass (>= 3.2.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  breakpoint (~> 2.0.0)
   compass (~> 0.12.2)
   modular-scale (~> 1.0.0)
   sass (~> 3.2.12)
-  singularitygs (~> 1.1.2)
