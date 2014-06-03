@@ -603,4 +603,4 @@ services:
   # The twig template for slim errors (404, 500)
   error.pages.twig:
     parent: 'twig.template'
-    arguments: ['error.html.twig']
+    arguments: ['error.twig']
