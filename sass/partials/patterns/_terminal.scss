@@ -1,0 +1,65 @@
+.terminal {
+    -webkit-filter:blur(0.75px);
+    background-color:#2e0b0b;
+    padding: 0;
+    position:relative;
+}
+
+$scanSize: 1px;
+.terminal pre:before {
+    background: repeating-linear-gradient(
+        top,
+        transparent 0px,
+        transparent $scanSize,
+        rgba(0,0,0,0.25) $scanSize,
+        rgba(0,0,0,0.25) $scanSize*2
+    );
+    background: -webkit-repeating-linear-gradient(
+        top,
+        transparent 0px,
+        transparent $scanSize,
+        rgba(0,0,0,0.25) $scanSize,
+        rgba(0,0,0,0.25) $scanSize*2
+    );
+    background-size: 100% $scanSize*2;
+    -webkit-background-size: 100% $scanSize*2;
+
+    content:"";
+    height:100%;
+    left:0;
+    position:absolute;
+    top:0;
+    width:100%;
+}
+
+.terminal pre {
+    background:transparent;
+    border: 2px solid #491b1b;
+    color:#fc7c7c;
+    outline: 3px ridge #7a2323;
+    padding: 1em;
+    text-shadow:#fd8989 0 -1px 35px;
+    text-transform: uppercase;
+}
+
+.terminal pre span {
+    visibility: hidden;
+}
+
+.terminal pre span.typed {
+    visibility: visible;
+}
+
+.terminal pre .cursor:after {
+    // -webkit-animation:blink 2s 120;
+    // animation:blink 2s 120;
+    content:"\220E";
+    font-size:120%;
+}
+
+@-webkit-keyframes blink{
+  to {opacity: .0;}
+}
+@keyframes blink{
+  to {opacity: .0;}
+}
