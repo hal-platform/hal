@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "cfc45507e19865023eae0ca4975c5265",
+    "hash": "0b3f0273340b499d8614462709127111",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -813,6 +813,63 @@
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
             "time": "2014-05-29 13:40:08"
+        },
+        {
+            "name": "ql/mcp-cache",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@git:mcp/mcp-cache.git",
+                "reference": "2.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer//dist/ql-mcp-cache-2.1.0-d1325b.zip",
+                "reference": "2.1.0",
+                "shasum": "78acea62f10073b4f70c1c74ae9c1b95061298d3"
+            },
+            "archive": {
+                "exclude": [
+                    "/bin",
+                    "/phpunit.xml.dist",
+                    "/tests"
+                ]
+            },
+            "require": {
+                "ql/mcp-core": ">=1"
+            },
+            "conflict": {
+                "ql/mcp": "*"
+            },
+            "require-dev": {
+                "mockery/mockery": "*",
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "3.7.*",
+                "predis/predis": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MCP\\Cache\\": "src"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com"
+                }
+            ],
+            "description": "Caching standard for mcp services",
+            "homepage": "http://git/mcp/mcp-cache",
+            "time": "2014-05-12 13:35:13"
         },
         {
             "name": "ql/mcp-core",
@@ -2114,7 +2171,9 @@
             "time": "2014-05-01 03:07:07"
         }
     ],
-    "aliases": [],
+    "aliases": [
+
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
         "ql/mcp-corp-account": 5,
@@ -2123,5 +2182,7 @@
     "platform": {
         "php-64bit": "~5.4"
     },
-    "platform-dev": []
+    "platform-dev": [
+
+    ]
 }

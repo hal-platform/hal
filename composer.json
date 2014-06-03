@@ -37,7 +37,8 @@
         "symfony/yaml":                     "2.4.*",
         "twig/twig":                        "~1.15",
 
-        "ql/hal-core":                      "~2.0@dev"
+        "ql/hal-core":                      "~2.0@dev",
+        "ql/mcp-cache":                     "~2.1"
     },
     "require-dev": {
         "mockery/mockery":                  "*",
