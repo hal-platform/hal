@@ -83,7 +83,7 @@ class BuildsController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $repo = $this->repoRepo->findOneBy(['key' => $params['repo']]);
+        $repo = $this->repoRepo->findOneBy(['id' => $params['id']]);
 
         if (!$repo) {
             call_user_func($notFound);

@@ -47,12 +47,12 @@ parameters:
 
     build.history:
       method:     "GET"
-      route:      "/repository/:repo/build/history(/page/:page)"
+      route:      "/repository/:id/builds(/page/:page)"
       stack:
         - login.bouncer
         - builds.page
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
+        repo:     "[0-9]+"
         page:     "[0-9]+"
 
     build:
@@ -115,12 +115,12 @@ parameters:
 
     push.history:
       method:     "GET"
-      route:      "/repository/:repo/push/history(/page/:page)"
+      route:      "/repository/:id/pushes(/page/:page)"
       stack:
         - login.bouncer
         - pushes.page
       conditions:
-        repo:     "[A-Za-z0-9_-]+"
+        repo:     "[0-9]+"
         page:     "[0-9]+"
 
     rollback:

@@ -12,7 +12,7 @@
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
             {% if page > 1 %}
-                <a href="{{ urlFor('push.history', {'repository': repo.key, 'page': page-1}) }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
+                <a href="{{ urlFor('push.history', {'id': repo.id, 'page': page-1}) }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
             {% else %}
                 <span class="disabled"><i class="fa fa-arrow-circle-left"></i> newer</span>
             {% endif %}
@@ -24,7 +24,7 @@
         </li>
         <li class="nav--pagination__next">
             {% if page < last %}
-                <a href="{{ urlFor('push.history', {'repository': repo.key, 'page': page+1}) }}">older <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="{{ urlFor('push.history', {'id': repo.id, 'page': page+1}) }}">older <i class="fa fa-arrow-circle-right"></i></a>
             {% else %}
                 <span class="disabled">older <i class="fa fa-arrow-circle-right"></i></span>
             {% endif %}

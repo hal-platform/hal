@@ -69,8 +69,8 @@
     {% include 'partials/build-table.twig' with {'builds': builds} %}
     <p>
         <a class="btn--small btn--toggles" href="{{ urlFor('build.start', {'repo': repo.key}) }}">Start New Build</a>
-        <a class="btn--small btn--toggles" href="{{ urlFor('build.history', {'repo': repo.key, 'page': 1}) }}">All Builds</a>
-        <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'repo': repo.key, 'page': 1}) }}">All Pushes</a>
+        <a class="btn--small btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
+        <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
     </p>
 
     {# primary action #}
