@@ -3,15 +3,124 @@
 {% set page_title = 'Help' %}
 
 {% block content %}
-    <h2>Help</h2>
+    <h2>Help & FAQ</h2>
 
-    <h3>Permissions and support</h3>
-    <p>For questions and permission requests.</p>
-    <p><a href="mailto:ITTeamKeyMastersSupp@quickenloans.com">E-mail IT Team Keymasters Support</a></p>
+    <ul>
+        <li><a href="#support">Who should I contact for support or permission changes?</a></li>
+        <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
+        <li><a href="#add-application">I would like to deploy my application with HAL 9000. What do I need to do?</a></li>
+        <li><a href="#training">Are there any training sessions available?</a></li>
+    </ul>
 
-    <h3>HAL 9000 bugs and feature requests</h3>
+    <a name="support"></a>
+    <h3>Who should I contact for support or permission changes?</h3>
+    <p>You should email <a href="mailto:ITTeamKeyMastersSupp@quickenloans.com">IT Team Keymasters Support</a>.</p>
+
+
+    <a name="bugs"></a>
+    <h3>Who should I contact regarding bugs or feature requests?</h3>
     <p>
-        HAL 9000 is maintained by the Web Core team. All HAL 9000 work is tracked through the Github repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
+        HAL 9000 is developed and maintained by the Web Core team. To report bugs or request a new features, please
+        submit an issue in the Github repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
+        For general questions, you can also email <a href="mailto:WebCore@quickenloans.com">Web Core</a>.
     </p>
-    <p><a href="mailto:WebCore@quickenloans.com">E-mail Web Core</a></p>
+
+    <a name="add-application"></a>
+    <h3>I would like to deploy my application with HAL 9000. What do I need to do?</h3>
+    <p>Minimum requirements.</p>
+    <ul>
+        <li>The project files must be on the <a href="http://git">Github Enterprise</a> server.</li>
+    </ul>
+    <p>After making sure that your project meets the minimum requirements above, gather the information below.</p>
+    <ol>
+        <li>
+            Determine what group your application should exist in within HAL 9000. This is commonly a team or business
+            area name. You can see the ones that already exist by looking at the <a href="{{ urlFor('groups') }}">Groups Page</a>.
+            If you need to create a new group, you'll need the following information.
+            <ul>
+                <li>
+                    A short name with no spaces or special characters. Examples include 'venture', 'servicing', and
+                    'webcore'.
+                </li>
+                <li>
+                    A fill name that described your group. Examples include 'Team Venture', 'Servicing', and 'Web
+                    Core'.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Determine the name of your application. You will need both a short name (lowercase, no spaces) and full name.
+        </li>
+        <li>
+            Determine where your application exists within Github. Please provide the Github username or group and the
+            repository name.
+        </li>
+        <li>
+            Determine who should be able to build and push your application. By default, HAL 9000 will grant build
+            & push permissions for non-production environments to all users who are collaborators on the Github
+            repository. If additional people need to be able to build and push, you will need to request that
+            LDAP permissions be created.
+        </li>
+        <li>
+            Determine what environments and servers your application will be deployed to. (Example: test1www1, test1beta1, etc)
+        </li>
+        <li>
+            Determine what directory on those servers your application will live in. (Example: /var/www/application)
+        </li>
+        <li>
+            Determine what, if any, command should be used to build your application. This is commonly a shell script
+            that lives withing your repository and tells HAL 9000 what should be done prior to pushing your code. It
+            must return 0 to indicate success or 1 to indicate failure. When this script is run, it will have access
+            to the following environment variables.
+            <ul>
+                <li>
+                    <code>HAL_ENVIRONMENT</code>: The environment that your application is being build for, commonly
+                    test, beta, or prod.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Determine what, if any, command should be run after deploying your application. This is called a post-push
+            command and is commonly used to restart services or finalize a deployment. It must return 0 to indicate
+            success and 1 to indicate failure. This command will have access to the following environment variables.
+            <ul>
+                <li>
+                    <code>HAL_HOSTNAME</code>: The hostname of the sever your application was pushed to.
+                </li>
+                <li>
+                    <code>HAL_ENVIRONMENT</code>: The environment that your application was built for, commonly test,
+                    beta, or prod.
+                </li>
+                <li>
+                    <code>HAL_PATH</code>: The path on the server where your application was pushed to.
+                </li>
+                <li>
+                    <code>HAL_COMMIT</code>: The Git commit hash that was built.
+                </li>
+                <li>
+                    <code>HAL_GITREF</code>: The Git branch, tag, or pull request name that was built.
+                </li>
+                <li>
+                    <code>HAL_BUILDID</code>: The unique build ID.
+                </li>
+            </ul>
+            Please note that, when this command is run, your code has already been pushed to the final server. For this
+            reason, returning an error state will not stop the push process. If an error occurs, you will need to start
+            a new push and overwrite the failed one.
+        </li>
+    </ol>
+    <p>
+        Once your have gathered all of the required information, speak with your team leader and request that the
+        application be added to HAL 9000. If your team leader does not have permission to do this, then contact the
+        <a href="mailto:WebCore@quickenloans.com">Web Core</a> team and we'll assist you with the process.
+    </p>
+
+    <a name="training"></a>
+    <h3>Are there any training sessions available?</h3>
+    <p>
+        If you would like to train your team on how to use HAL 9000, then contact the <a href="mailto:WebCore@quickenloans.com">Web Core</a>
+        team and we'll set up a time to show you how.
+    </p>
+
+
 {% endblock %}
