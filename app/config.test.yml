@@ -15,7 +15,6 @@ parameters:
     dbname:         hal9000_test
 
   github.token: ''
-  github.com.token: ''
   github.baseurl: 'http://git/api/v3/'
 
   ldap.host: 'ldap.example.com'
@@ -25,12 +24,6 @@ parameters:
   ldap.password: 'placeholder'
 
   logger.mcp.host: 'http://qlsonictest:2581/web/core/logentries'
-
-  agent.environment.path: '/usr/local/zend/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin'
-  agent.environment.home: '/var/spool/hal9000test/home'
-  agent.environment.temp: '/var/spool/hal9000test'
-  agent.environment.archive: ''
-  agent.ssh-user: 'placeholder'
 
   # These help with development
 

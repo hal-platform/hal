@@ -15,7 +15,6 @@ parameters:
     dbname:         hal
 
   github.token: ''
-  github.com.token: ''
   github.baseurl: 'http://git/api/v3/'
 
   ldap.host: 'ldap.example.com'
@@ -25,12 +24,6 @@ parameters:
   ldap.password: 'placeholder'
 
   logger.mcp.host: 'http://qlsonictest:2581/web/core/logentries'
-
-  agent.environment.path: ''
-  agent.environment.home: ''
-  agent.environment.temp: ''
-  agent.environment.archive: ''
-  agent.ssh-user: 'placeholder'
 
   # These help with development
 
