@@ -18,6 +18,7 @@
                         <th>Name</th>
                         <th>Github Source</th>
                         <th>Notification E-mail</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +34,9 @@
                             </span>
                         </td>
                         <td>{{ repo.email }}</td>
+                        <td>
+                            <a href="{{ urlFor('repository.status', {'id': repo.id}) }}">Status</a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
