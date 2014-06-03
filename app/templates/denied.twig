@@ -2,13 +2,24 @@
 
 {% set page_title = "Access Denied" %}
 
+{% set name = getUsersActualName(user) %}
+
+
 {% block content %}
-    <div class="error-page">
-        {% set name = getUsersActualName(user) %}
-        {% set msg = ["I'm sorry "~name~", I'm afraid I can't do that.", "Just what do you think you're doing, "~name~"?"] %}
+<div class="error-page">
+    <div class="eye"></div>
 
-        <h1>{{ random(msg) }}</h1>
-        <img width="600px" src="/img/error/eye_large.jpg" />
+    <div class="terminal">
+        <div class="terminal__bg"><pre class="terminal__entry">
+Greetings, {{ name }}.
 
+It seems you have arrived in a section not intended for your usage.  I think you know what the problem is just as well as I do.
+
+{{ name }}? Are you there?
+
+Just what do you think you're doing, {{ name }}?
+        </pre></div>
     </div>
+</div>
+
 {% endblock %}
