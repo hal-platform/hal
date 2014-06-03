@@ -90,7 +90,8 @@ class BuildPushController
                 [
                     'build' => $build,
                     'deployments' => $deployments,
-                    'user' => $this->user
+                    'user' => $this->user,
+                    'selected' => $request->get('deployments', [])
                 ]
             )
         );

@@ -24,7 +24,11 @@
                     <td><a href="{{ urlFor('server', {'server': deployment.server.name}) }}">{{ deployment.server.name }} ({{ deployment.server.environment.key }})</a></td>
                     <td>
                         {% if canUserPush(user, deployment.repository.key, deployment.server.environment.key) %}
-                            <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ deployment.id }}" value="{{ deployment.id }}"></label>
+                            {% if deployment.id in selected %}
+                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ deployment.id }}" value="{{ deployment.id }}" checked></label>
+                            {% else %}
+                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ deployment.id }}" value="{{ deployment.id }}"></label>
+                            {% endif %}
                             {% set allowSubmit = true %}
                         {% else %}
                             No Access
