@@ -41,7 +41,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if push.build.status == 'Success' or true %}
+                        {% if push.build.status == 'Success'%}
                             {% if canUserPush(user, repo.key, push.build.server.environment.key) %}
                                 <a href="{{ urlFor('push.start', {'repo': repo.key, 'build': push.build.id}) }}?deployments[]={{ push.deployment.id }}">Rollback</a>
                             {% endif %}
