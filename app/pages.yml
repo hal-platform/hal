@@ -583,7 +583,7 @@ services:
     arguments: ['@denied.twig', 403]
   denied.twig:
     parent: 'twig.template'
-    arguments: ['denied.html.twig']
+    arguments: ['denied.twig']
 
   help.page:
     parent: 'static.controller'
