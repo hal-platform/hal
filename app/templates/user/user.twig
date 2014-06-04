@@ -38,6 +38,9 @@
     {% if permissions %}
         <h3>Permissions</h3>
         <ul>
+        {% if isUserAdmin(ldapUser) %}
+            <li>HAL 9000 Admin</li>
+        {% endif %}
         {% for pair in permissions %}
             <li>Has access to push <a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a> to <b>{{ pair.environment.key }}</b>.</li>
         {% endfor %}
