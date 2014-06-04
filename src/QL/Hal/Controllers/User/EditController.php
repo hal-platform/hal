@@ -14,11 +14,16 @@ use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Layout;
-use QL\Hal\PushPermissionService;
+use QL\Hal\Services\PermissionsService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
+/**
+ * User Edit Controller
+ *
+ * @package QL\Hal\Controllers\User
+ */
 class EditController
 {
     /**
@@ -32,7 +37,7 @@ class EditController
     private $layout;
 
     /**
-     *  @var PushPermissionService
+     *  @var PermissionsService
      */
     private $permissions;
 
@@ -64,7 +69,7 @@ class EditController
     /**
      *  @param Twig_Template $template
      *  @param Layout $layout
-     *  @param PushPermissionService $permissions
+     *  @param PermissionsService $permissions
      *  @param LdapService $ldap
      *  @param UserRepository $userRepo
      *  @param EntityManager $em
@@ -74,7 +79,7 @@ class EditController
     public function __construct(
         Twig_Template $template,
         Layout $layout,
-        PushPermissionService $permissions,
+        PermissionsService $permissions,
         LdapService $ldap,
         UserRepository $userRepo,
         EntityManager $em,
@@ -92,10 +97,11 @@ class EditController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
+     * @return mixed|void
      */
     public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
     {
@@ -112,7 +118,7 @@ class EditController
         $rendered = $this->layout->render($this->template, [
             'profileUser' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
-            'permissions' => $this->permissions->repoEnvsCommonIdCanPushTo($id),
+            'permissions' => $this->permissions->userPermissionPairs($user->getHandle()),
             'pushes' => $this->getPushCount($user)
         ]);
 
@@ -144,7 +150,7 @@ class EditController
      */
     private function isUserAllowed(User $user)
     {
-        if ($this->permissions->isUserAdmin($this->currentUser)) {
+        if ($this->permissions->allowAdmin($this->currentUser)) {
             return true;
         }
 

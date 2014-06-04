@@ -11,7 +11,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Exception\Stop;
 use QL\Hal\Session;
-use QL\Hal\PushPermissionService;
+use QL\Hal\Services\PermissionsService;
 use Twig_Environment;
 use MCP\Corp\Account\User;
 
@@ -28,9 +28,9 @@ class AdminBouncer
     private $session;
 
     /**
-     *  @var \QL\Hal\PushPermissionService
+     * @var PermissionsService
      */
-    private $permissionService;
+    private $permissions;
 
     /**
      *  @var \Twig_Environment
@@ -41,13 +41,13 @@ class AdminBouncer
      *  Constructor
      *
      *  @param Session $session
-     *  @param PushPermissionService $permissionService
+     *  @param PermissionsService $permissions
      *  @param Twig_Environment $twig
      */
-    public function __construct(Session $session, PushPermissionService $permissionService, Twig_Environment $twig)
+    public function __construct(Session $session, PermissionsService $permissions, Twig_Environment $twig)
     {
         $this->session = $session;
-        $this->permissionService = $permissionService;
+        $this->permissions = $permissions;
         $this->twig = $twig;
     }
 
@@ -62,7 +62,7 @@ class AdminBouncer
     {
         $account = $this->session->get('account');
 
-        if (!($account instanceof User) || !$this->permissionService->isUserAdmin($account)) {
+        if (!($account instanceof User) || !$this->permissions->allowAdmin($account)) {
             $response->status(403);
             $response->body($this->twig->loadTemplate('denied.html.twig')->render(array()));
             throw new Stop();

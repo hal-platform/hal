@@ -124,7 +124,6 @@ services:
     arguments:
       - @repository.status.twig
       - @layout
-      - @pushPermissionService
       - @doctrine.em
       - @repository.repo
       - @build.repo
@@ -262,7 +261,7 @@ services:
       - @doctrine.em
       - @url.helper
       - @user
-      - @pushPermissionService
+      - @permissions
       - @github
 
   build.push.page:
@@ -302,7 +301,7 @@ services:
       - @doctrine.em
       - @url.helper
       - @user
-      - @pushPermissionService
+      - @permissions
 
   builds.page:
     class: "QL\\Hal\\Controllers\\Build\\BuildsController"
@@ -528,7 +527,7 @@ services:
     arguments:
       - @user.edit.twig
       - @layout
-      - @pushPermissionService
+      - @permissions
       - @ldapService
       - @user.repo
       - @doctrine.em

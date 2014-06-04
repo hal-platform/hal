@@ -8,7 +8,7 @@ use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\UserRepository;
-use QL\Hal\PushPermissionService;
+use QL\Hal\Services\PermissionsService;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use Slim\Http\Request;
@@ -26,22 +26,56 @@ class BuildPushHandleController
     const ERR_NO_PERM = "You attempted to push to %s but don't have permission.";
     const NOTICE_DONE = "The build has been queued to be pushed to the requested servers.";
 
+    /**
+     * @var Session
+     */
     private $session;
 
+    /**
+     * @var BuildRepository
+     */
     private $buildRepo;
 
+    /**
+     * @var DeploymentRepository
+     */
     private $deployRepo;
 
+    /**
+     * @var UserRepository
+     */
     private $userRepo;
 
+    /**
+     * @var EntityManager
+     */
     private $em;
 
+    /**
+     * @var UrlHelper
+     */
     private $url;
 
+    /**
+     * @var User
+     */
     private $user;
 
+    /**
+     * @var PermissionsService
+     */
     private $permissions;
 
+    /**
+     * @param Session $session
+     * @param BuildRepository $buildRepo
+     * @param DeploymentRepository $deployRepo
+     * @param UserRepository $userRepo
+     * @param EntityManager $em
+     * @param UrlHelper $url
+     * @param User $user
+     * @param PermissionsService $permissions
+     */
     public function __construct(
         Session $session,
         BuildRepository $buildRepo,
@@ -50,7 +84,7 @@ class BuildPushHandleController
         EntityManager $em,
         UrlHelper $url,
         User $user,
-        PushPermissionService $permissions
+        PermissionsService $permissions
     ) {
         $this->session = $session;
         $this->buildRepo = $buildRepo;
@@ -96,7 +130,7 @@ class BuildPushHandleController
                 return;
             }
 
-            if (!$this->permissions->canUserPushToEnvRepo($this->user, $build->getRepository()->getKey(), $deployment->getServer()->getEnvironment()->getKey())) {
+            if (!$this->permissions->allowPush($this->user, $build->getRepository()->getKey(), $deployment->getServer()->getEnvironment()->getKey())) {
                 $this->session->addFlash(
                     sprintf(
                         self::ERR_NO_PERM,

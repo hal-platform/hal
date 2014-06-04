@@ -145,7 +145,7 @@ services:
     class: 'QL\Hal\Bouncers\AdminBouncer'
     arguments:
       - @session
-      - @pushPermissionService
+      - @permissions
       - @twigEnv
 
   ######################################################################################################################
@@ -165,16 +165,6 @@ services:
       - @ldapTransport
     calls:
       - ['authenticate', ['%ldap.username%', '%ldap.password%', false]]
-
-  pushPermissionService:
-    class: 'QL\Hal\PushPermissionService'
-    arguments:
-      - '@ldapService'
-      - @deployment.repo
-      - @repository.repo
-      - @user.repo
-      - '@github'
-      - '%debug.godmode%'
 
   cache:
     class: 'MCP\Cache\MemoryCache'

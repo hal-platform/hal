@@ -9,7 +9,7 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\PushPermissionService;
+use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -56,7 +56,7 @@ class BuildStartHandleController
     private $em;
 
     /**
-     * @var rlHelper
+     * @var UrlHelper
      */
     private $url;
 
@@ -66,7 +66,7 @@ class BuildStartHandleController
     private $user;
 
     /**
-     * @var PushPermissionService
+     * @var PermissionsService
      */
     private $permissions;
 
@@ -83,7 +83,7 @@ class BuildStartHandleController
      * @param EntityManager $em
      * @param UrlHelper $url
      * @param User $user
-     * @param PushPermissionService $permissions
+     * @param PermissionsService $permissions
      * @param GithubService $github
      */
     public function __construct(
@@ -94,7 +94,7 @@ class BuildStartHandleController
         EntityManager $em,
         UrlHelper $url,
         User $user,
-        PushPermissionService $permissions,
+        PermissionsService $permissions,
         GithubService $github
     ) {
         $this->session = $session;
@@ -130,7 +130,7 @@ class BuildStartHandleController
             return;
         }
 
-        if (!$this->permissions->canUserPushToEnvRepo($this->user, $repo->getKey(), $env->getKey())) {
+        if (!$this->permissions->allowPush($this->user, $repo->getKey(), $env->getKey())) {
             $this->session->addFlash(sprintf(self::ERR_NO_PERM, $env->getKey()));
             $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
             return;

@@ -15,7 +15,6 @@ use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Layout;
-use QL\Hal\PushPermissionService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -36,11 +35,6 @@ class RepositoryStatusController
      *  @var Layout
      */
     private $layout;
-
-    /**
-     *  @var PushPermissionService
-     */
-    private $permissions;
 
     /**
      *  @var EntityManager
@@ -70,7 +64,6 @@ class RepositoryStatusController
     /**
      *  @param Twig_Template $template
      *  @param Layout $layout
-     *  @param PushPermissionService $permissions
      *  @param EntityManager $em
      *  @param RepositoryRepository $repoRepo
      *  @param BuildRepository $buildRepo
@@ -80,7 +73,6 @@ class RepositoryStatusController
     public function __construct(
         Twig_Template $template,
         Layout $layout,
-        PushPermissionService $permissions,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
@@ -89,7 +81,6 @@ class RepositoryStatusController
     ) {
         $this->template = $template;
         $this->layout = $layout;
-        $this->permissions = $permissions;
         $this->em = $em;
         $this->repoRepo = $repoRepo;
         $this->buildRepo = $buildRepo;

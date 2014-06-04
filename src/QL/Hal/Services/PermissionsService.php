@@ -23,7 +23,7 @@ use Zend\Ldap\Dn;
 class PermissionsService
 {
     /**
-     * Super Admin Group (keymasters)
+     * Super Admin Group
      *
      * Can read, write, update, and delete all entities. Can build and push all repositories in all environments. Can
      * see the full HAL 9000 UI.
@@ -31,12 +31,12 @@ class PermissionsService
     const DN_ADMIN_SUPER    = 'CN=git-admin-prod,OU=GIT,DC=mi,DC=corp';
 
     /**
-     * HAL Admin Group (web core)
+     * HAL Admin Group
      *
      * Can read, write, update, and delete all entities. Can build and push all repositories in all non-production
      * environments. Can build and push the HAL 9000 repository in all environments. Can see the full HAL 9000 UI.
      */
-    const DN_ADMIN_HAL      = 'CN=Web Core,OU=GIT,DC=mi,DC=corp';
+    const DN_ADMIN_HAL      = 'CN=git-hal,OU=GIT,DC=mi,DC=corp';
 
     /**
      * Project Admins Group
@@ -414,8 +414,8 @@ class PermissionsService
     {
         $key = 'ldap.group.'.md5($group);
 
-        if ($results = $this->cache->get($key)) {
-            return $results;
+        if ($result = $this->cache->get($key)) {
+            return $result;
         }
 
         $users = $this->ldap->usersInGroup($group);
