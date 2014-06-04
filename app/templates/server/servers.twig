@@ -28,8 +28,10 @@
         </table>
     </div>
 
-    {# primary action #}
-    {% if isAdmin %}
-        <p><a class="btn" href="{{ urlFor('server.admin.add') }}">Add Server</a></p>
-    {% endif %}
+    <div>
+        {# primary action #}
+        {% if isAdmin %}
+            <a class="btn--action" href="{{ urlFor('server.admin.add') }}">Add Server</a>
+        {% endif %}
+    </div>
 {% endblock %}

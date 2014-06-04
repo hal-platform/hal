@@ -72,13 +72,13 @@
                 </li>
             </ul>
 
-            {# primary action #}
-            <input class="btn" type="submit" value="Save">
+            <div>
+                {# primary action #}
+                <input class="btn--action" type="submit" value="Save">
 
-            {# secondary actions #}
-            <p>
-                <a href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
-            </p>
+                {# secondary actions #}
+                <a class="btn secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
+            </div>
         </form>
     </div>
 {% endblock %}

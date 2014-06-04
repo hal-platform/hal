@@ -68,15 +68,16 @@
     <p>This table shows all recent available builds.</p>
     {% include 'partials/build-table.twig' with {'builds': builds} %}
     <p>
-        <a class="btn--small btn--toggles" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
+        <a class="btn--small btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
         <a class="btn--small btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
         <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
     </p>
 
-    {# primary action #}
-    <p><a class="btn" href="{{ urlFor('repositories') }}">View all repositories</a></p>
+    <div>
+        {# primary action #}
+        <a class="btn--action" href="{{ urlFor('repositories') }}">View all repositories</a>
 
-    {# secondary actions #}
-    <p><a href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a></p>
-
+        {# secondary actions #}
+        <a class="btn secondary-action" href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a>
+    </div>
 {% endblock %}

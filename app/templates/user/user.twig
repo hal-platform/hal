@@ -47,15 +47,15 @@
         </ul>
     {% endif %}
 
+    <div>
     {% block actions %}
         {# primary action #}
-        <p><a class="btn" href="{{ urlFor('users') }}">View all users</a></p>
+        <a class="btn--action" href="{{ urlFor('users') }}">View all users</a>
 
         {% if isAdmin or commonId == profileUser.getId %}
             {# secondary actions #}
-            <p>
-                <a href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
-            </p>
+            <a class="btn secondary-action" href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
         {% endif %}
     {% endblock %}
+    <div>
 {% endblock %}

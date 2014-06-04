@@ -25,13 +25,13 @@
                 </li>
             </ul>
 
-            {# primary action #}
-            <input class="btn" type="submit" value="Add Group">
+            <div>
+                {# primary action #}
+                <input class="btn--action" type="submit" value="Add Group">
 
-            {# secondary actions #}
-            <p>
-                <a href="{{ urlFor('groups') }}">Cancel</a>
-            </p>
+                {# secondary actions #}
+                <a class="btn secondary-action" href="{{ urlFor('groups') }}">Cancel</a>
+            </div>
         </form>
     </div>
 {% endblock %}

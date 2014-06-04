@@ -20,9 +20,10 @@
         <p>There are no repository groups.</p>
     {% endif %}
 
-    {# primary action #}
-    {% if isAdmin %}
-        <p><a class="btn" href="{{ urlFor('group.admin.add') }}">Add Group</a></p>
-    {% endif %}
-
+    <div>
+        {# primary action #}
+        {% if isAdmin %}
+            <a class="btn--action" href="{{ urlFor('group.admin.add') }}">Add Group</a>
+        {% endif %}
+    </div>
 {% endblock %}

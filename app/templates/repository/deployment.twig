@@ -11,25 +11,25 @@
     <h3>Path</h3>
     <p>{{ deployment.path }}</p>
 
-    {# primary action #}
-    {% if isAdmin %}
-        {# <p>
-            <a class="btn" href="{{ urlFor('repository.admin.edit', {id: deployment.repository.id}) }}">Edit</a>
-        </p>
-        #}
-    {% endif %}
+    <div>
+        {# primary action #}
+        {% if isAdmin %}
+            {# <p>
+                <a class="btn" href="{{ urlFor('repository.admin.edit', {id: deployment.repository.id}) }}">Edit</a>
+            </p>
+            #}
+        {% endif %}
 
-    {# secondary actions #}
-    <p>
-        <a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">View repository</a>
+        {# secondary actions #}
+        <a class="btn secondary-action" href="{{ urlFor('repository', {id: deployment.repository.id}) }}">View repository</a>
 
         {% if isAdmin %}
-            <a href="{{ urlFor('repository.deployments', {id: deployment.repository.id}) }}">Manage all deployments</a>
+            <a class="btn secondary-action" href="{{ urlFor('repository.deployments', {id: deployment.repository.id}) }}">Manage all deployments</a>
 
-            <form action="{{ urlFor('repository.deployment.admin.remove.handle', {repoId: deployment.repository.id, id: deployment.id}) }}" method="post">
+            <form class="secondary-action" action="{{ urlFor('repository.deployment.admin.remove.handle', {repoId: deployment.repository.id, id: deployment.id}) }}" method="post">
                 <input class="btn" type="submit" value="Remove">
             </form>
         {% endif %}
-    </p>
+    </div>
 
 {% endblock %}

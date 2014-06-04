@@ -29,10 +29,12 @@
             </table>
         </div>
 
-        {# primary action #}
-        <p><input class="btn" type="submit" value="Save Order"></p>
+        <div>
+            {# primary action #}
+            <input class="btn--action" type="submit" value="Save Order">
 
-        {# secondary actions #}
-        <p><a href="{{ urlFor('environments') }}">View all environments</a></p>
+            {# secondary actions #}
+            <a class="btn secondary-action" href="{{ urlFor('environments') }}">View all environments</a>
+        </div>
     </form>
 {% endblock %}

@@ -63,13 +63,15 @@
         </p>
     {% endif %}
 
-    {# primary action #}
-    {% if environments and isAdmin %}
+    <div>
         {# primary action #}
-        <input class="btn" type="submit" value="Save">
-        </form>
-    {% endif %}
+        {% if environments and isAdmin %}
+            {# primary action #}
+            <input class="btn--action" type="submit" value="Save">
+            </form>
+        {% endif %}
 
-    {# secondary actions #}
-    <p><a href="{{ urlFor('repository', {id: repository.id}) }}">View repository</a></p>
+        {# secondary actions #}
+        <a class="btn secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">View repository</a>
+    </div>
 {% endblock %}

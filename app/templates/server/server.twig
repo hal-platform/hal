@@ -21,18 +21,18 @@
         <p><strong>Note:</strong> All associated deployments must be removed or transferred to remove this server.</p>
     {% endif %}
 
-    {# primary action #}
-    <p><a class="btn" href="{{ urlFor('servers') }}">View all servers</a></p>
+    <div>
+        {# primary action #}
+        <a class="btn--action" href="{{ urlFor('servers') }}">View all servers</a>
 
-    {% if isAdmin %}
-        {# secondary actions #}
-        <p>
-            <a class="btn" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a></p>
+        {% if isAdmin %}
+            {# secondary actions #}
+            <a class="btn secondary-action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a></p>
             {% if not deployments %}
-                <form action="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}" method="post">
+                <form class="secondary-action" action="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}" method="post">
                     <input class="btn" type="submit" value="Remove">
                 </form>
             {% endif %}
-        </p>
-    {% endif %}
+        {% endif %}
+    </div>
 {% endblock %}

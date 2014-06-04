@@ -56,19 +56,18 @@
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    {# primary action #}
-    <p><a class="btn" href="{{ urlFor('groups') }}">View all groups</a></p>
+    <div>
+        {# primary action #}
+        <a class="btn--action" href="{{ urlFor('groups') }}">View all groups</a>
 
-    {% if isAdmin %}
-        {# secondary actions #}
-        <p>
-            <a class="btn" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
+        {% if isAdmin %}
+            {# secondary actions #}
+            <a class="btn secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
             {% if not repos %}
-                <form action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
+                <form class="secondary-action" action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
                     <input class="btn" type="submit" value="Remove">
                 </form>
             {% endif %}
-        </p>
-    {% endif %}
-
+        {% endif %}
+    </div>
 {% endblock %}

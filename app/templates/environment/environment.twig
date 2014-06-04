@@ -18,18 +18,18 @@
         <p><strong>Note:</strong> All associated servers must be removed or transferred to remove this environment.</p>
     {% endif %}
 
-    {# primary action #}
-    <p><a class="btn" href="{{ urlFor('environments') }}">View all environments</a></p>
+    <div>
+        {# primary action #}
+        <a class="btn--action" href="{{ urlFor('environments') }}">View all environments</a>
 
-    {% if isAdmin %}
-        {# secondary actions #}
-        <p>
-            <a class="btn" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a></p>
+        {% if isAdmin %}
+            {# secondary actions #}
+            <a class="btn secondary-action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a>
             {% if not servers %}
-                <form action="{{ urlFor('environment.admin.remove.handle', {id: env.id}) }}" method="post">
+                <form class="secondary-action" action="{{ urlFor('environment.admin.remove.handle', {id: env.id}) }}" method="post">
                     <input class="btn" type="submit" value="Remove">
                 </form>
             {% endif %}
-        </p>
-    {% endif %}
+        {% endif %}
+    </div>
 {% endblock %}

@@ -28,14 +28,14 @@
         </table>
     </div>
 
-    {# primary action #}
-    {% if isAdmin %}
-        <p><a class="btn" href="{{ urlFor('environment.admin.add') }}">Add Environment</a></p>
-    {% endif %}
-    {% if envs %}
-        {# secondary actions #}
-        <p>
-            <a href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
-        </p>
-    {% endif %}
+    <div>
+        {# primary action #}
+        {% if isAdmin %}
+            <a class="btn--action" href="{{ urlFor('environment.admin.add') }}">Add Environment</a>
+        {% endif %}
+        {% if envs %}
+            {# secondary actions #}
+            <a class="btn secondary-action" href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
+        {% endif %}
+    </div>
 {% endblock %}

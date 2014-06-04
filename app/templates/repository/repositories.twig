@@ -41,8 +41,10 @@
         </table>
     </div>
 
-    {# primary action #}
-    {% if isAdmin %}
-        <p><a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a></p>
-    {% endif %}
+    <div>
+        {# primary action #}
+        {% if isAdmin %}
+            <a class="btn--action" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
+        {% endif %}
+    </div>
 {% endblock %}
