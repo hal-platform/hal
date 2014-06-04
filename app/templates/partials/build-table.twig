@@ -41,7 +41,7 @@
                 {% endif %}
                 <td>{{ build.end|date }}</td>
                 <td>
-                    {% if build.status == 'Removed' %}
+                    {% if build.status == 'Success' %}
                         {% if canUserPush(user, repo.key, build.server.environment.key) %}
                             <a href="{{ urlFor('push.start', {'repo': build.repository.key, 'build': build.id}) }}">Push</a>
                         {% endif %}
