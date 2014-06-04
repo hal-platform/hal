@@ -13,7 +13,7 @@ use Twig_Environment;
 /**
  * Add runtime services to the twig environment.
  *
- * This hook should be attached the "slim.before.dispatch" event.
+ * This hook should be attached to the "slim.before.dispatch" event.
  */
 class TwigEnvironmentHook
 {

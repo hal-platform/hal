@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Convert a flat array into slim routes and attaches them to the slim application.
  *
- * This hook should be attached the "slim.before.router" event.
+ * This hook should be attached to the "slim.before.router" event.
  */
 class RouteLoaderHook
 {

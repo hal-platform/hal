@@ -15,7 +15,7 @@ use PDOException;
 /**
  * Define error page handlers.
  *
- * This hook should be attached the "slim.before" event.
+ * This hook should be attached to the "slim.before" event.
  */
 class ErrorPagesHook
 {
