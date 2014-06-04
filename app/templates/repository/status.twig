@@ -48,7 +48,7 @@
                                 </span>
                             </td>
                             <td>{{ status.success.end|date }}</td>
-                            <td><a href="{{ urlFor('rollback', {'repo': repo.key, 'server': status.success.deployment.server.id}) }}">Rollback</a></td>
+                            <td><a href="{{ urlFor('rollback', {'id': repo.id, 'server': status.success.deployment.server.id}) }}">Rollback</a></td>
                         {% else %}
                             <td colspan="5">Unknown</td>
                         {% endif %}
