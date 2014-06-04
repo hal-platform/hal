@@ -88,7 +88,7 @@ class PushesController
             return;
         }
 
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p JOIN p.deployment d WHERE d.repository = :repo ORDER BY p.end DESC';
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p JOIN p.deployment d WHERE d.repository = :repo ORDER BY p.id DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(self::MAX_PER_PAGE)
             ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
