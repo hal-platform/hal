@@ -125,17 +125,12 @@ class RepositoryStatusController
      */
     private function getAvailableBuilds(Repository $repo)
     {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('b');
-        $qb->from('QL\Hal\Core\Entity\Build', 'b');
-        //$qb->where('b.status != :status');
-        //$qb->setParameter('status', 'Removed');
-        $qb->where('b.repository = :repo');
-        $qb->setParameter('repo', $repo);
-        $qb->orderBy('b.start', 'DESC');
-        $qb->setMaxResults(10);
+        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.status ASC, b.end DESC';
+        $query = $this->em->createQuery($dql)
+            ->setMaxResults(10)
+            ->setParameter('repo', $repo);
 
-        return $qb->getQuery()->getResult();
+        return $query->getResult();
     }
 
     /**
