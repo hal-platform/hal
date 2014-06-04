@@ -27,7 +27,7 @@
                                 {% if status.latest.status == 'Success' %}
                                     <span class="circle-green">{{ status.latest.status }}</span>
                                 {% elseif status.latest.status == 'Error' %}
-                                    <span class="circle-error">{{ status.latest.status }}</span>
+                                    <span class="circle-red">{{ status.latest.status }}</span>
                                 {% else %}
                                     <span class="circle-orange">{{ status.latest.status }}</span>
                                 {% endif %}

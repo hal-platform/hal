@@ -110,7 +110,6 @@ class RepositoryStatusController
                     'repo' => $repo,
                     'builds' => $this->getAvailableBuilds($repo),
                     'statuses' => $this->getDeploymentsWithStatus($repo),
-                    'pushes' => $this->getPushesForRepository($repo),
                     'user' => $this->user
                 ]
             )
@@ -141,36 +140,27 @@ class RepositoryStatusController
      */
     private function getDeploymentsWithStatus(Repository $repo)
     {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('d');
-        $qb->from('QL\Hal\Core\Entity\Deployment', 'd');
-        $qb->where('d.repository = :repo');
-        $qb->setParameter('repo', $repo);
+        $dql = 'SELECT d FROM QL\Hal\Core\Entity\Deployment d WHERE d.repository = :repo';
+        $query = $this->em->createQuery($dql)
+            ->setParameter('repo', $repo);
+        $deployments = $query->getResult();
 
         $statuses = [];
-        foreach ($qb->getQuery()->getResult() as $deploy) {
+        foreach ($deployments as $deploy) {
             // get last attempted push
-            $qb = $this->em->createQueryBuilder();
-            $qb->select('p');
-            $qb->from('QL\Hal\Core\Entity\Push', 'p');
-            $qb->where('p.deployment = :deploy');
-            $qb->orderBy('p.status', 'ASC');
-            $qb->addOrderBy('p.end', 'DESC');
-            $qb->setParameter('deploy', $deploy);
-            $qb->setMaxResults(1);
-            $latest = $qb->getQuery()->getOneOrNullResult();
+            $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.status ASC, p.end DESC';
+            $query = $this->em->createQuery($dql)
+                ->setMaxResults(1)
+                ->setParameter('deploy', $deploy);
+            $latest = $query->getOneOrNullResult();
 
             // get last successful push
-            $qb = $this->em->createQueryBuilder();
-            $qb->select('p');
-            $qb->from('QL\Hal\Core\Entity\Push', 'p');
-            $qb->where('p.deployment = :deploy');
-            $qb->setParameter('deploy', $deploy);
-            $qb->andWhere('p.status = :status');
-            $qb->setParameter('status', 'Success');
-            $qb->addOrderBy('p.end', 'DESC');
-            $qb->setMaxResults(1);
-            $success = $qb->getQuery()->getOneOrNullResult();
+            $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.end DESC';
+            $query = $this->em->createQuery($dql)
+                ->setMaxResults(1)
+                ->setParameter('deploy', $deploy)
+                ->setParameter('status', 'Success');
+            $success = $query->getOneOrNullResult();
 
             $statuses[] = [
                 'deploy' => $deploy,
@@ -181,28 +171,4 @@ class RepositoryStatusController
 
         return $statuses;
     }
-
-    /**
-     *  Get an array of pushes for a given repository
-     *
-     *  @param Repository $repo
-     *  @return array
-     */
-    private function getPushesForRepository(Repository $repo)
-    {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('p');
-        $qb->from('QL\Hal\Core\Entity\Push', 'p');
-        $qb->from('QL\Hal\Core\Entity\Build', 'b');
-        $qb->from('QL\Hal\Core\Entity\Repository', 'r');
-        $qb->where('p.build = b');
-        $qb->andWhere('b.repository = r');
-        $qb->andWhere('r = :repo');
-        $qb->setParameter('repo', $repo);
-        $qb->orderBy('p.end', 'DESC');
-        $qb->setMaxResults(10);
-
-        return $qb->getQuery()->getResult();
-    }
-
 }
