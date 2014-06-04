@@ -5,6 +5,8 @@
 {% block content %}
     <h2><strong>{{ repository.key }}</strong> deployments</h2>
 
+    <p>Deployments define what servers your application can be deployed to and where on that server the code will be placed.</p>
+
     {% if environments %}
         {% for environment in environments %}
             <h3>{{ environment.key }}</h3>
