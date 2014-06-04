@@ -21,7 +21,7 @@
             {% set allowSubmit = false %}
             {% for deployment in deployments %}
                 <tr>
-                    <td><a href="{{ urlFor('server', {'server': deployment.server.name}) }}">{{ deployment.server.name }} ({{ deployment.server.environment.key }})</a></td>
+                    <td><a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ deployment.server.name }} ({{ deployment.server.environment.key }})</a></td>
                     <td>
                         {% if canUserPush(user, deployment.repository.key, deployment.server.environment.key) %}
                             {% if deployment.id in selected %}
