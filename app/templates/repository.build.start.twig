@@ -8,7 +8,7 @@
 
     <h2>Create New {{ repo.key }} Build</h2>
 
-    <form method="post" action="{{ urlFor('build.handle', {'repo': repo.key}) }}">
+    <form method="post" action="{{ urlFor('build.handle', {'id': repo.id}) }}">
 
     <h3>Choose what to build:</h3>
 

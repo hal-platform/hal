@@ -68,7 +68,7 @@ class RollbackController
 
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $repo = $this->repoRepo->findOneBy(['key' => $params['repo']]);
+        $repo = $this->repoRepo->findOneBy(['id' => $params['id']]);
         $server = $this->serverRepo->findOneBy(['id' => $params['server']]);
 
         if (!$repo || !$server) {
