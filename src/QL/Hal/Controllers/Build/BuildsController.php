@@ -97,7 +97,7 @@ class BuildsController
             return;
         }
 
-        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.end DESC';
+        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.status ASC, b.end DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(self::MAX_PER_PAGE)
             ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
