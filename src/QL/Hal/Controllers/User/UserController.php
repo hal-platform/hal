@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Layout;
 use QL\Hal\PushPermissionService;
+use QL\Hal\Services\PermissionsService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -36,7 +37,7 @@ class UserController
     private $layout;
 
     /**
-     *  @var PushPermissionService
+     * @var PermissionsService
      */
     private $permissions;
 
@@ -61,22 +62,22 @@ class UserController
     private $em;
 
     /**
-     *  @param Twig_Template $template
-     *  @param Layout $layout
-     *  @param PushPermissionService $permissions
-     *  @param LdapService $ldap
-     *  @param UserRepository $userRepo
-     *  @param LdapUser $user
-     *  @param EntityManager $em
+     * @param Twig_Template $template
+     * @param Layout $layout
+     * @param LdapService $ldap
+     * @param UserRepository $userRepo
+     * @param LdapUser $user
+     * @param EntityManager $em
+     * @param PermissionsService $permissions
      */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
-        PushPermissionService $permissions,
         LdapService $ldap,
         UserRepository $userRepo,
         LdapUser $user,
-        EntityManager $em
+        EntityManager $em,
+        PermissionsService $permissions
     ) {
         $this->template = $template;
         $this->layout = $layout;
@@ -105,7 +106,7 @@ class UserController
         $rendered = $this->layout->render($this->template, [
             'profileUser' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
-            'permissions' => $this->permissions->repoEnvsCommonIdCanPushTo($id),
+            'permissions' => $this->permissions->userPermissionPairs($user->getHandle()),
             'pushes' => $this->getPushCount($user)
         ]);
 

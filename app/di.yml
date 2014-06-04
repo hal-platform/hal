@@ -176,6 +176,20 @@ services:
       - '@github'
       - '%debug.godmode%'
 
+  cache:
+    class: 'MCP\Cache\MemoryCache'
+
+  permissions:
+    class: 'QL\Hal\Services\PermissionsService'
+    arguments:
+      - @ldapService
+      - @deployment.repo
+      - @repository.repo
+      - @user.repo
+      - @github
+      - @cache
+      - '%debug.godmode%'
+
   ######################################################################################################################
   # Github API
   ######################################################################################################################

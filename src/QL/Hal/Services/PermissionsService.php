@@ -1,16 +1,16 @@
 <?php
 
-namespace QL\Hal\Service;
+namespace QL\Hal\Services;
 
 use MCP\Corp\Account\LdapService;
-use MCP\Corp\Account\User;
 use MCP\Cache\CacheInterface;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Services\GithubService;
+use MCP\Corp\Account\User as LdapUser;
+use QL\Hal\Core\Entity\User as EntityUser;
 use Zend\Ldap\Dn;
 
 /**
@@ -20,7 +20,7 @@ use Zend\Ldap\Dn;
  *
  * @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class PermissionService
+class PermissionsService
 {
     /**
      * Super Admin Group (keymasters)
@@ -89,8 +89,20 @@ class PermissionService
      */
     private $god;
 
+    /**
+     * @var array
+     */
     private $productionEnvironments;
 
+    /**
+     * @param LdapService $ldap
+     * @param DeploymentRepository $deployments
+     * @param RepositoryRepository $repositories
+     * @param UserRepository $users
+     * @param GithubService $github
+     * @param CacheInterface $cache
+     * @param string $god
+     */
     public function __construct(
         LdapService $ldap,
         DeploymentRepository $deployments,
@@ -123,12 +135,12 @@ class PermissionService
      *
      * Super Admins, HAL Admins, and Project Admins are allowed to view these pages.
      *
-     * @param User|string $user
+     * @param LdapUser|string $user
      * @return bool
      */
     public function allowAdmin($user)
     {
-        if (!($user instanceof User)) {
+        if (!($user instanceof LdapUser)) {
             $user = $this->getUser($user);
         }
 
@@ -160,12 +172,12 @@ class PermissionService
      *
      * Super Admins and HAL Admins are allowed to do this.
      *
-     * @param User|string $user
+     * @param LdapUser|string $user
      * @return bool
      */
     public function allowDelete($user)
     {
-        if (!($user instanceof User)) {
+        if (!($user instanceof LdapUser)) {
             $user = $this->getUser($user);
         }
 
@@ -190,14 +202,14 @@ class PermissionService
     /**
      * Check if a user is allowed to push to a given repository:environment pair
      *
-     * @param User|string $user
+     * @param LdapUser|string $user
      * @param string $repository
      * @param string $environment
      * @return bool
      */
     public function allowPush($user, $repository, $environment)
     {
-        if (!($user instanceof User)) {
+        if (!($user instanceof LdapUser)) {
             $user = $this->getUser($user);
         }
 
@@ -206,11 +218,16 @@ class PermissionService
             return true;
         }
 
+        // HAL Admin (HAL 9000 Push Permission)
+        if ($repository == 'hal9000' && $this->isUserInGroup($user, $this->generateHalAdminDn())) {
+            return true;
+        }
+
         // Non-Production Rules
         if (!$this->isEnvironmentProduction($environment)) {
 
             // HAL Admin
-            if ($repository == 'hal9000' && $this->isUserInGroup($user, $this->generateHalAdminDn())) {
+            if ($this->isUserInGroup($user, $this->generateHalAdminDn())) {
                 return true;
             }
 
@@ -240,15 +257,19 @@ class PermissionService
     /**
      * Get all permission pairs for a user
      *
-     * @param User $user
+     * @param LdapUser|string $user
      * @return array
      */
-    public function userPermissionPairs(User $user)
+    public function userPermissionPairs($user)
     {
+        if (!($user instanceof LdapUser)) {
+            $user = $this->getUser($user);
+        }
+
         $permissions = [];
 
         foreach ($this->getPermissionPairs() as $pair) {
-            if ($this->allowPush($user, $pair['repository'], $pair['environment'])) {
+            if ($this->allowPush($user, $pair['repository']->getKey(), $pair['environment']->getKey())) {
                 $permissions[] = $pair;
             }
         }
@@ -270,7 +291,7 @@ class PermissionService
 
         foreach ($this->getPermissionPairs($repository) as $pair) {
             foreach ($this->users->findAll() as $user) {
-                if ($this->allowPush($user, $pair['repository'], $pair['environment'])) {
+                if ($this->allowPush($user, $pair['repository']->getKey(), $pair['environment']->getKey())) {
                     $permissions[] = [
                         'user' => $user,
                         'environment' => $pair['environment']
@@ -293,7 +314,7 @@ class PermissionService
     private function getPermissionPairs(Repository $repository = null)
     {
         if ($repository) {
-            $deployments = $this->deployments->findBy(['key' => $repository]);
+            $deployments = $this->deployments->findBy(['repository' => $repository]);
         } else {
             $deployments = $this->deployments->findAll();
         }
@@ -335,11 +356,11 @@ class PermissionService
     /**
      * Check if a user is a collaborator on a Github repository
      *
-     * @param User $user
+     * @param LdapUser $user
      * @param $repository
      * @return bool
      */
-    private function isUserCollaborator(User $user, $repository)
+    private function isUserCollaborator(LdapUser $user, $repository)
     {
         $key = 'github.collaborator.'.md5($user->commonId().$repository);
 
@@ -366,11 +387,11 @@ class PermissionService
     /**
      * Check if a user is in an LDAP group
      *
-     * @param User $user
+     * @param LdapUser $user
      * @param Dn $group
      * @return bool
      */
-    private function isUserInGroup(User $user, Dn $group)
+    private function isUserInGroup(LdapUser $user, Dn $group)
     {
         $users = $this->usersInGroup($group);
 
@@ -387,14 +408,14 @@ class PermissionService
      * Get an array of all users in an LDAP group
      *
      * @param Dn $group
-     * @return User[]
+     * @return LdapUser[]
      */
     private function usersInGroup(Dn $group)
     {
         $key = 'ldap.group.'.md5($group);
 
-        if ($users = $this->cache->get($key)) {
-            return $users;
+        if ($results = $this->cache->get($key)) {
+            return $results;
         }
 
         $users = $this->ldap->usersInGroup($group);
@@ -406,18 +427,25 @@ class PermissionService
     /**
      * Get an LDAP user by Windows Username
      *
-     * @param $username
-     * @return User|null
+     * @param $user
+     * @return LdapUser|null
      */
-    private function getUser($username)
+    private function getUser($user)
     {
-        $key = 'ldap.user.'.md5($username);
-
-        if ($user = $this->cache->get($key)) {
+        if ($user instanceof LdapUser) {
             return $user;
         }
+        if ($user instanceof EntityUser) {
+            $user = $user->getHandle();
+        }
 
-        $user = $this->ldap->getUserByWindowsUsername($username);
+        $key = 'ldap.user.'.md5($user);
+
+        if ($result = $this->cache->get($key)) {
+            return $result;
+        }
+
+        $user = $this->ldap->getUserByWindowsUsername($user);
         $this->cache->set($key, $user);
 
         return $user;

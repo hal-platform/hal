@@ -502,11 +502,11 @@ services:
     arguments:
       - @user.twig
       - @layout
-      - @pushPermissionService
       - @ldapService
       - @user.repo
       - @user
       - @doctrine.em
+      - @permissions
   user.twig:
     parent: 'twig.template'
     arguments:
