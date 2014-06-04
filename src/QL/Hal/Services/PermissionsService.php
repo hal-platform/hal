@@ -286,11 +286,12 @@ class PermissionsService
     public function repositoryPermissionPairs($repository)
     {
         $repository = $this->repositories->findOneBy(['key' => $repository]);
+        $users = $this->users->findAll();
 
         $permissions = [];
 
         foreach ($this->getPermissionPairs($repository) as $pair) {
-            foreach ($this->users->findAll() as $user) {
+            foreach ($users as $user) {
                 if ($this->allowPush($user, $pair['repository']->getKey(), $pair['environment']->getKey())) {
                     $permissions[] = [
                         'user' => $user,
