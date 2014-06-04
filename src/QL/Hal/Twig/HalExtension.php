@@ -12,8 +12,8 @@ use MCP\Corp\Account\User as LdapUser;
 use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\User as DomainUser;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\PushPermissionService;
 use Slim\Slim;
+use QL\Hal\Services\PermissionsService;
 
 
 /**
@@ -34,10 +34,10 @@ class HalExtension extends Twig_Extension
     /**
      *  Constructor
      *
-     *  @param PushPermissionService $permissions
+     *  @param PermissionsService $permissions
      *  @param UrlHelper $url
      */
-    public function __construct(PushPermissionService $permissions, UrlHelper $url)
+    public function __construct(PermissionsService $permissions, UrlHelper $url)
     {
         $this->permissions = $permissions;
         $this->url = $url;
@@ -63,7 +63,6 @@ class HalExtension extends Twig_Extension
         return array(
             new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush')),
             new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin')),
-            new Twig_SimpleFunction('isUserKeymaster', array($this, 'isUserKeymaster')),
             new Twig_SimpleFunction('urlFor', array($this, 'urlFor')),
             new Twig_SimpleFunction('githubRepo', array($this, 'githubRepo')),
             new Twig_SimpleFunction('githubCommit', array($this, 'githubCommit')),
@@ -96,7 +95,7 @@ class HalExtension extends Twig_Extension
      */
     public function canUserPush($user, $repo, $env)
     {
-        return $this->permissions->canUserPushToEnvRepo($user, $repo, $env);
+        return $this->permissions->allowPush($user, $repo, $env);
     }
 
     /**
@@ -107,18 +106,7 @@ class HalExtension extends Twig_Extension
      */
     public function isUserAdmin($user)
     {
-        return $this->permissions->isUserAdmin($user);
-    }
-
-    /**
-     *  Check if a user is a keymaster
-     *
-     *  @param $user
-     *  @return bool
-     */
-    public function isUserKeymaster($user)
-    {
-        return $this->permissions->isUserKeymaster($user);
+        return $this->permissions->allowAdmin($user);
     }
 
     /**

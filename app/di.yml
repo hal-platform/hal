@@ -100,7 +100,7 @@ services:
   twigExtension:
     class: 'QL\Hal\Twig\HalExtension'
     arguments:
-      - @pushPermissionService
+      - @permissions
       - @url.helper
 
   # Twig Loader
@@ -120,7 +120,7 @@ services:
     class: 'QL\Hal\Layout'
     arguments:
       - @user
-      - @pushPermissionService
+      - @permissions
 
   # The primary twig template. All other twig services should use this service as a parent
   twig.template:

@@ -9,6 +9,7 @@ namespace QL\Hal;
 
 use MCP\Corp\Account\User;
 use Twig_Template;
+use QL\Hal\Services\PermissionsService;
 
 class Layout
 {
@@ -18,20 +19,20 @@ class Layout
     private $currentUserContext;
 
     /**
-     * @var PushPermissionService
+     * @var PermissionsService
      */
-    private $pushPermissionsService;
+    private $permissions;
 
     /**
      * @param User $currentUserContext
-     * @param PushPermissionService $pushPermissionsService
+     * @param PermissionsService $permissions
      */
     public function __construct(
         User $currentUserContext,
-        PushPermissionService $pushPermissionsService
+        PermissionsService $permissions
     ) {
         $this->currentUserContext = $currentUserContext;
-        $this->pushPermissionsService = $pushPermissionsService;
+        $this->permissions = $permissions;
     }
 
     /**
@@ -59,7 +60,8 @@ class Layout
             $data,
             [
                 'commonId' => $this->currentUserContext->commonId(),
-                'isAdmin'  => $this->pushPermissionsService->isUserAdmin($this->currentUserContext)
+                'isAdmin' => $this->permissions->allowAdmin($this->currentUserContext),
+                'allowDelete' => $this->permissions->allowDelete($this->currentUserContext)
             ]
         );
 
