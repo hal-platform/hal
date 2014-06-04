@@ -121,12 +121,10 @@ class UserController
      */
     private function getPushCount(User $user)
     {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('count(p.id)');
-        $qb->from('QL\Hal\Core\Entity\Push', 'p');
-        $qb->where('p.user = :user');
-        $qb->setParameter('user', $user);
+        $dql = 'SELECT count(p.id) FROM QL\Hal\Core\Entity\Push p WHERE p.user = :user';
+        $query = $this->em->createQuery($dql)
+            ->setParameter('user', $user);
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return $query->getSingleScalarResult();
     }
 }
