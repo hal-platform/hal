@@ -166,7 +166,7 @@ class AdminAddController
             $errors[] = 'Nickname must be be composed of alphanumeric, underscore and/or hyphen characters';
         }
 
-        if ((mb_strlen($nickname, 'UTF-8')  > 24) {
+        if (mb_strlen($nickname, 'UTF-8')  > 24) {
             $errors[] = 'Nickname must be under 24 characters';
         }
 
