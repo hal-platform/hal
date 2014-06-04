@@ -10,6 +10,7 @@ namespace QL\Hal\Slim;
 use Exception;
 use Slim\Slim;
 use Twig_Template;
+use PDOException;
 
 /**
  * Define error page handlers.
@@ -24,7 +25,6 @@ class ErrorPagesHook
     private $twig;
 
     /**
-     * @param Layout $layout
      * @param Twig_Template $twig
      */
     public function __construct(Twig_Template $twig)
@@ -49,7 +49,13 @@ class ErrorPagesHook
 
         // 500 Error Handler
         $app->error(function (Exception $e) use ($app) {
-            $output = $this->twig->render(['message' => 'Oh, snap! You broke it.']);
+            $message = $e->getMessage();
+
+            if ($e instanceof PDOException) {
+                $message = "There's a problem with the database. Wait a bit and try again.\r\n".$message;
+            }
+
+            $output = $this->twig->render(['message' => $message]);
 
             $app->status(500);
             $app->response()->write($output);
