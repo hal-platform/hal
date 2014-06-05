@@ -61,7 +61,8 @@ class Layout
             [
                 'commonId' => $this->currentUserContext->commonId(),
                 'isAdmin' => $this->permissions->allowAdmin($this->currentUserContext),
-                'allowDelete' => $this->permissions->allowDelete($this->currentUserContext)
+                'allowDelete' => $this->permissions->allowDelete($this->currentUserContext),
+                'currentUser' => $this->currentUserContext
             ]
         );
 

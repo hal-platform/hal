@@ -62,6 +62,7 @@ class HalExtension extends Twig_Extension
     {
         return array(
             new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush')),
+            new Twig_SimpleFunction('canUserDelete', array($this, 'canUserDelete')),
             new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin')),
             new Twig_SimpleFunction('urlFor', array($this, 'urlFor')),
             new Twig_SimpleFunction('githubRepo', array($this, 'githubRepo')),
@@ -96,6 +97,17 @@ class HalExtension extends Twig_Extension
     public function canUserPush($user, $repo, $env)
     {
         return $this->permissions->allowPush($user, $repo, $env);
+    }
+
+    /**
+     * Check if a user can delete entities
+     *
+     * @param $user
+     * @return bool
+     */
+    public function canUserDelete($user)
+    {
+        return $this->permissions->allowDelete($user);
     }
 
     /**

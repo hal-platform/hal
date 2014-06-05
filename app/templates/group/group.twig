@@ -64,10 +64,10 @@
             {# secondary actions #}
             <a class="btn--action secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
         </li>
-        {% if not repos %}
+        {% if not repos and canUserDelete(currentUser) %}
         <li class="choice-list__choice">
-            <form action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
-                <input class="btn--destructive secondary-action" type="submit" value="Remove Group">
+            <form class="secondary-action" action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
+                <input class="btn--destructive" type="submit" value="Remove">
             </form>
         </li>
         {% endif %}
