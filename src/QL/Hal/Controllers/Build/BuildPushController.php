@@ -73,7 +73,7 @@ class BuildPushController
     {
         $build = $this->buildRepo->findOneBy(['id' => $params['build']]);
 
-        if (!$build) {
+        if (!$build || $build->getStatus() != 'Success') {
             call_user_func($notFound);
             return;
         }
