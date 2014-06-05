@@ -23,14 +23,13 @@
                     <label for="name">Name</label>
                     <input class="text-input" type="text" name="name" id="name" maxlength="48" size="48" required value="{{ form.name }}">
                 </li>
-            </ul>
 
             <div>
                 {# primary action #}
-                <input class="btn--action" type="submit" value="Add Group">
+                <input class="btn" type="submit" value="Add Group">
 
                 {# secondary actions #}
-                <a class="btn secondary-action" href="{{ urlFor('groups') }}">Cancel</a>
+                <a class="secondary-action" href="{{ urlFor('groups') }}">Cancel</a>
             </div>
         </form>
     </div>

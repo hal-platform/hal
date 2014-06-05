@@ -5,28 +5,26 @@
 {% block content %}
     <h2>Servers</h2>
 
-    <div>
-        <table>
-            <thead>
+    <table class="t50">
+        <thead>
+        <tr>
+            <th>Hostname</th>
+            <th>Environment</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for server in servers %}
             <tr>
-                <th>Hostname</th>
-                <th>Environment</th>
+                <td><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a></td>
+                <td>{{ server.environment.key }}</td>
             </tr>
-            </thead>
-            <tbody>
-            {% for server in servers %}
-                <tr class="env-row-{{ server.environment.key }}">
-                    <td><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a></td>
-                    <td>{{ server.environment.key }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="2">There are no servers.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        {% else %}
+            <tr>
+                <td colspan="2">There are no servers.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     <div>
         {# primary action #}

@@ -3,10 +3,9 @@
 {% set page_title = 'Group: '~group.name %}
 
 {% block content %}
-    <h2><strong>{{ group.name }}</strong> group</h2>
+    <h2><b>{{ group.name }}</b> group</h2>
 
-    <h3>Nickname</h3>
-    <p>{{ group.key }}</p>
+    <p><b>Nickname:</b> {{ group.key }}</p>
 
     <h3>Repositories</h3>
 
@@ -15,10 +14,10 @@
         <table>
             <thead>
                 <tr>
-                    <th></th>
+                    <th>Name</th>
                     <th>Github Source</th>
                     <th>Notification E-mail</th>
-                    <th></th>
+                    <th>Repo Details</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,23 +50,27 @@
         </p>
     {% endif %}
 
-
     {% if isAdmin and repos %}
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    <div>
-        {# primary action #}
-        <a class="btn--action" href="{{ urlFor('groups') }}">View all groups</a>
-
+    <ul class="choice-list--flush">
+        <li class="choice-list__choice">
+            {# primary action #}
+            <a class="btn" href="{{ urlFor('groups') }}">View all groups</a>
+        </li>
         {% if isAdmin %}
+        <li class="choice-list__choice">
             {# secondary actions #}
-            <a class="btn secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
-            {% if not repos %}
-                <form class="secondary-action" action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
-                    <input class="btn" type="submit" value="Remove">
-                </form>
-            {% endif %}
+            <a class="btn--action secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
+        </li>
+        {% if not repos %}
+        <li class="choice-list__choice">
+            <form action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
+                <input class="btn--destructive secondary-action" type="submit" value="Remove">
+            </form>
+        </li>
         {% endif %}
-    </div>
+        {% endif %}
+    </ul>
 {% endblock %}

@@ -11,7 +11,7 @@
     </p>
 
     {% if groups %}
-        <ul>
+        <ul class="block-list block-list--limit">
         {% for group in groups %}
             <li><a href="{{ urlFor('group', {'id': group.id}) }}">{{ group.name }}</a></li>
         {% endfor %}
@@ -23,7 +23,7 @@
     <div>
         {# primary action #}
         {% if isAdmin %}
-            <a class="btn--action" href="{{ urlFor('group.admin.add') }}">Add Group</a>
+            <a class="btn" href="{{ urlFor('group.admin.add') }}">Add Group</a>
         {% endif %}
     </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% set page_title = 'Edit Group: '~group.name %}
 
 {% block content %}
-    <h2>Edit <strong>{{ group.name }}</strong> group</h2>
+    <h2>Edit <b>{{ group.name }}</b> group</h2>
     <div class="form-wrapper">
         {% if errors %}
             <ul class="error-list">
@@ -23,15 +23,15 @@
                     <label for="name">Name</label>
                     <input class="text-input" type="text" name="name" id="name" maxlength="48" size="48" required value="{{ form.name }}">
                 </li>
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Save">
+
+                    {# secondary actions #}
+                    <a class="secondary-action" href="{{ urlFor('group', {id: group.id}) }}">Cancel</a>
+                </li>
             </ul>
 
-            <div>
-                {# primary action #}
-                <input class="btn--action" type="submit" value="Save">
-
-                {# secondary actions #}
-                <a class="btn secondary-action" href="{{ urlFor('group', {id: group.id}) }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}

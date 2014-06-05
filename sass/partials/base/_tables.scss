@@ -7,7 +7,7 @@ thead {
 }
 
 tbody tr {
-    border-bottom: 1px solid $blue;
+    border-bottom: 1px dotted $light-grey;
     @include adjust-font-size-to(ms(-1));
 }
 
@@ -15,14 +15,12 @@ tbody tr {
     overflow-y: scroll;
 }
 
-.env-row-test {
-    border-left: 5px solid #c200cd;
+.form-wrapper {
+    @include breakpoint(37.125em) {
+        max-width: 28em;
+    }
 }
 
-.env-row-beta {
-    border-left: 5px solid #008ecd;
-}
-
-.env-row-prod {
-    border-left: 5px solid #cd9c00;
+.deployment-form {
+    clear: right;
 }
