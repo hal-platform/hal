@@ -115,6 +115,7 @@ services:
       - @layout
       - @repository.repo
       - @deployment.repo
+      - @permissions
   repository.twig:
     parent: 'twig.template'
     arguments: ['repository/repository.twig']

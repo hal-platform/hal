@@ -74,6 +74,15 @@
         {% endfor %}
     </ul>
 
+    <h3>Permissions</h3>
+    <ul>
+        {% for pair in permissions %}
+            <li><a href="{{ urlFor('user', {'id': pair.user.id}) }}">{{ pair.user.name }}</a> has permission to build and push to <b>{{ pair.environment.key }}</b>.</li>
+        {% else %}
+            <li>No permissions found for this repository.</li>
+        {% endfor %}
+    </ul>
+
     <h3>Server deployments:</h3>
     {% if deployments %}
         <table class="t75">
