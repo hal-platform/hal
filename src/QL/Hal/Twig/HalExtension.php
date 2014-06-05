@@ -61,14 +61,14 @@ class HalExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            new Twig_SimpleFunction('canUserPush', array($this, 'canUserPush')),
-            new Twig_SimpleFunction('canUserDelete', array($this, 'canUserDelete')),
-            new Twig_SimpleFunction('isUserAdmin', array($this, 'isUserAdmin')),
-            new Twig_SimpleFunction('urlFor', array($this, 'urlFor')),
-            new Twig_SimpleFunction('githubRepo', array($this, 'githubRepo')),
-            new Twig_SimpleFunction('githubCommit', array($this, 'githubCommit')),
-            new Twig_SimpleFunction('githubTreeish', array($this, 'githubTreeish')),
-            new Twig_SimpleFunction('githubPullRequest', array($this, 'githubPullRequest')),
+            new Twig_SimpleFunction('canUserPush', array($this->permissions, 'allowPush')),
+            new Twig_SimpleFunction('canUserDelete', array($this->permissions, 'allowDelete')),
+            new Twig_SimpleFunction('isUserAdmin', array($this->permissions, 'allowAdmin')),
+            new Twig_SimpleFunction('urlFor', array($this->url, 'urlFor')),
+            new Twig_SimpleFunction('githubRepo', array($this->url, 'githubRepoUrl')),
+            new Twig_SimpleFunction('githubCommit', array($this->url, 'githubCommitUrl')),
+            new Twig_SimpleFunction('githubTreeish', array($this->url, 'githubTreeUrl')),
+            new Twig_SimpleFunction('githubPullRequest', array($this->url, 'githubPullRequestUrl')),
             new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName'))
         );
     }
@@ -84,41 +84,6 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat')),
             new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat'))
         );
-    }
-
-    /**
-     *  Check if a user can push to a repo to a given env
-     *
-     *  @param string $user
-     *  @param string $repo
-     *  @param string $env
-     *  @return bool
-     */
-    public function canUserPush($user, $repo, $env)
-    {
-        return $this->permissions->allowPush($user, $repo, $env);
-    }
-
-    /**
-     * Check if a user can delete entities
-     *
-     * @param $user
-     * @return bool
-     */
-    public function canUserDelete($user)
-    {
-        return $this->permissions->allowDelete($user);
-    }
-
-    /**
-     *  Check if a user is an admin
-     *
-     *  @param $user
-     *  @return bool
-     */
-    public function isUserAdmin($user)
-    {
-        return $this->permissions->allowAdmin($user);
     }
 
     /**
@@ -151,69 +116,6 @@ class HalExtension extends Twig_Extension
         } else {
             return '';
         }
-    }
-
-    /**
-     *  Generate a URL by route name and parameters
-     *
-     *  @param string $route
-     *  @param array $params
-     *  @return string
-     */
-    public function urlFor($route, array $params = [])
-    {
-        return $this->url->urlFor($route, $params);
-    }
-
-    /**
-     *  Get the url for a Github repository
-     *
-     *  @param string $user
-     *  @param string $repo
-     *  @return string
-     */
-    public function githubRepo($user, $repo)
-    {
-        return $this->url->githubRepoUrl($user, $repo);
-    }
-
-    /**
-     *  Get the url for a Github repository commit
-     *
-     *  @param $user
-     *  @param $repo
-     *  @param $commit
-     *  @return mixed
-     */
-    public function githubCommit($user, $repo, $commit)
-    {
-        return $this->url->githubCommitUrl($user, $repo, $commit);
-    }
-
-    /**
-     *  Get the url for a Github repository treeish
-     *
-     *  @param $user
-     *  @param $repo
-     *  @param $treeish
-     *  @return string
-     */
-    public function githubTreeish($user, $repo, $treeish)
-    {
-        return $this->url->githubTreeUrl($user, $repo, $treeish);
-    }
-
-    /**
-     *  Get the url for a Github pull request
-     *
-     *  @param $user
-     *  @param $repo
-     *  @param $number
-     *  @return string
-     */
-    public function githubPullRequest($user, $repo, $number)
-    {
-        return $this->url->githubPullRequestUrl($user, $repo, $number);
     }
 
     /**
