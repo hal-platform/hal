@@ -24,14 +24,25 @@
 //  </ul>​
 //
 ///
-.split {
+[class*="split"] {
     text-align: right;
     list-style: none;
     margin-left: 0;
+    @extend %clearfix;
 }
 
 .split__title {
     text-align: left;
     float: left;
     clear: left;
+}
+
+.split--left__title {
+    float: left;
+    clear: left;
+    text-align: left;
+}
+
+.split--left__value {
+    float: left;
 }

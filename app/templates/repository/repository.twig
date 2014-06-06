@@ -3,78 +3,94 @@
 {% set page_title = repository.key %}
 
 {% block content %}
-    <h2><strong>{{ repository.key }}</strong> repository</h2>
+    <h2 class="mbn"><b>{{ repository.key }}</b> repository details</h2>
 
-    <h3>Description</h3>
-    <p>{{ repository.description }}</p>
+    <div class="details-box">
+        <dl class="split--left">
+            <dt class="split--left__title">
+                Description
+            </dt>
+            <dd class="split--left__value">
+                {{ repository.description }}
+            </dd>
+            <dt class="split--left__title">
+                Github Source
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
+                <span class="icon">
+                    <svg viewBox="0 0 32 32">
+                        <use xlink:href="#github"></use>
+                    </svg>
+                </span>
+            </dd>
+            <dt class="split--left__title">
+                Notification E-mail
+            </dt>
+            <dd class="split--left__value">
+                {{ repository.email }}
+            </dd>
+            <dt class="split--left__title">
+                Build Command
+            </dt>
+            <dd class="split--left__value">
+                {{ repository.buildCmd ?: 'No command entered.' }}
+            </dd>
+            <dt class="split--left__title">
+                Pre-Push Command
+            </dt>
+            <dd class="split--left__value">
+                {{ repository.prePushCmd ?: 'No command entered.' }}
+            </dd>
+            <dt class="split--left__title">
+                Post-Push Command
+            </dt>
+            <dd class="split--left__value">
+                {{ repository.postPushCmd ?: 'No command entered.' }}
+            </dd>
+        </dl>
 
-    <h3>Github Source</h3>
-    <p>
-        <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
-        <span class="icon">
-            <svg viewBox="0 0 32 32">
-                <use xlink:href="#github"></use>
-            </svg>
-        </span>
-    </p>
+        {# primary action #}
+        {% if isAdmin %}
+        <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
+        {% endif %}
 
-    <h3>Notification E-mail</h3>
-    <p>{{ repository.email }}</p>
+        {# secondary actions #}
+        <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {id: repository.id}) }}">Edit details</a>
 
-    <h3>Build Command</h3>
-    <p>{{ repository.buildCmd ?: 'No command entered.' }}</p>
+        {% if isAdmin and not deployments %}
+            <form class="secondary-action" action="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}" method="post">
+                <input class="btn--destructive" type="submit" value="Remove repository">
+            </form>
+        {% endif %}
+    </div>
 
-    <h3>Pre-Push Command</h3>
-    <p>{{ repository.prePushCmd ?: 'No command entered.' }}</p>
-
-    <h3>Post-Push Command</h3>
-    <p>{{ repository.postPushCmd ?: 'No command entered.' }}</p>
-
-    <h3>Server deployments:</h3>
+    <h3>Server deployments</h3>
     {% if deployments %}
-        <div>
-            <table>
-                <thead>
+        <table class="t75">
+            <thead>
                 <tr>
                     <th>Hostname</th>
                     <th>Environment</th>
                     <th>Path</th>
                 </tr>
-                </thead>
-                <tbody>
-                {% for deployment in deployments %}
-                    <tr class="env-row-{{ deployment.server.environment.key }}">
-                        <td>{{ deployment.server.name }}</td>
-                        <td>{{ deployment.server.environment.key }}</td>
-                        <td>{{ deployment.path }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+            </thead>
+            <tbody>
+            {% for deployment in deployments %}
+                <tr class="env-row-{{ deployment.server.environment.key }}">
+                    <td>{{ deployment.server.name }}</td>
+                    <td>{{ deployment.server.environment.key }}</td>
+                    <td>{{ deployment.path }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <p>There are no deployments associated with this repository.</p>
     {% endif %}
 
-    <div>
-        {# primary action #}
-        {% if isAdmin %}
-            <a class="btn--action" href="{{ urlFor('repository.admin.edit', {id: repository.id}) }}">Edit</a>
-        {% endif %}
-
-        {# secondary actions #}
-        <a class="btn secondary-action" href="{{ urlFor('repository.status', {id: repository.id}) }}">Repository status</a>
-        <a class="btn secondary-action" href="{{ urlFor('repositories') }}">View all repositories</a>
-
-        {% if isAdmin %}
-            <a class="btn secondary-action" href="{{ urlFor('repository.deployments', {id: repository.id}) }}">Manage deployments</a>
-        {% endif %}
-
-        {% if isAdmin and not deployments %}
-            <form class="secondary-action" action="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}" method="post">
-                <input class="btn" type="submit" value="Remove">
-            </form>
-        {% endif %}
-    </div>
+    {% if isAdmin %}
+        <a class="btn" href="{{ urlFor('repository.deployments', {id: repository.id}) }}">Manage deployments</a>
+    {% endif %}
 
 {% endblock %}

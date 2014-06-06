@@ -5,37 +5,22 @@
 {% block content %}
     <h2>Environments</h2>
 
-    <div>
-        <table>
-            <thead>
-            <tr>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for env in envs %}
-                <tr class="env-row-{{ env.key }}">
-                    <td>
-                        <a href="{{ urlFor('environment', {'id': env.id}) }}">{{ env.key }}</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td>There are no environments.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <ul class="block-list block-list--limit">
+        {% for env in envs %}
+        <li><a href="{{ urlFor('environment', {'id': env.id}) }}">{{ env.key }}</a></li>
+        {% else %}
+        <li>There are no environments.</li>
+        {% endfor %}
+    </ul>
 
     <div>
         {# primary action #}
         {% if isAdmin %}
-            <a class="btn--action" href="{{ urlFor('environment.admin.add') }}">Add Environment</a>
+            <a class="btn" href="{{ urlFor('environment.admin.add') }}">Add Environment</a>
         {% endif %}
         {% if envs %}
             {# secondary actions #}
-            <a class="btn secondary-action" href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
+            <a class="btn--action secondary-action" href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
         {% endif %}
     </div>
 {% endblock %}

@@ -14,13 +14,3 @@ tbody tr {
 .overflow-container {
     overflow-y: scroll;
 }
-
-.form-wrapper {
-    @include breakpoint(37.125em) {
-        max-width: 28em;
-    }
-}
-
-.deployment-form {
-    clear: right;
-}

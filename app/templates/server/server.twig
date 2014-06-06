@@ -23,14 +23,14 @@
 
     <div>
         {# primary action #}
-        <a class="btn--action" href="{{ urlFor('servers') }}">View all servers</a>
+        <a class="btn" href="{{ urlFor('servers') }}">View all servers</a>
 
         {% if isAdmin %}
             {# secondary actions #}
-            <a class="btn secondary-action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a></p>
+            <a class="btn--action secondary-action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
             {% if not deployments %}
                 <form class="secondary-action" action="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}" method="post">
-                    <input class="btn" type="submit" value="Remove">
+                    <input class="btn--destructive" type="submit" value="Remove">
                 </form>
             {% endif %}
         {% endif %}

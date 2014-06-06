@@ -20,15 +20,14 @@
                     <label for="name">Name</label>
                     <input type="text" name="name" id="envname" maxlength="24" required value="{{ form.name }}" class="text-input">
                 </li>
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Save">
+
+                    {# secondary actions #}
+                    <a class="secondary-action" href="{{ urlFor('environment', {id: env.id}) }}">Cancel</a>
+                </li>
             </ul>
-
-            <div>
-                {# primary action #}
-                <input class="btn--action" type="submit" value="Save">
-
-                {# secondary actions #}
-                <a class="btn secondary-action" href="{{ urlFor('environment', {id: env.id}) }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}

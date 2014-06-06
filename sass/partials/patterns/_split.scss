@@ -1,0 +1,24 @@
+.details-box {
+    border: 8px solid $light-grey;
+    padding: msem(1);
+    @include trailer;
+
+    .split--left__title {
+        font-weight: bold;
+        width: 15em;
+        @include adjust-font-size-to(ms(2));
+
+        @include breakpoint(41.125em) {
+            font-weight: normal;
+
+            &::after {
+                content: ':';
+                display: inline;
+            }
+        }
+    }
+
+    .split--left__value {
+        line-height: 2.2;
+    }
+}

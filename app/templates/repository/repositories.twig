@@ -5,46 +5,42 @@
 {% block content %}
     <h2>Repositories</h2>
 
-    <div>
-        <table>
-            <thead>
+    <table>
+        <thead>
             <tr>
-                <th></th>
+                <th>Name</th>
                 <th>Github Source</th>
                 <th>Notification E-mail</th>
-                <th>Actions</th>
+                <th>Repo Details</th>
             </tr>
-            </thead>
-            <tbody>
-            {% for repo in repos %}
-                <tr>
-                    <td><a href="{{ urlFor('repository', {'id': repo.id}) }}">{{ repo.key }}</a>
-                    <td>
-                        <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
-                        <span class="icon">
-                            <svg viewBox="0 0 32 32">
-                                <use xlink:href="#github"></use>
-                            </svg>
-                        </span>
-                    </td>
-                    <td>{{ repo.email }}</td>
-                    <td>
-                        <a href="{{ urlFor('repository.status', {'id': repo.id}) }}">Status</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4">There are no repositories.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        </thead>
+        <tbody>
+        {% for repo in repos %}
+            <tr>
+                <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.key }}</a></td>
+                <td>
+                    <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                    <span class="icon">
+                        <svg viewBox="0 0 32 32">
+                            <use xlink:href="#github"></use>
+                        </svg>
+                    </span>
+                </td>
+                <td>{{ repo.email }}</td>
+                <td>
+                    <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">There are no repositories.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
-    <div>
-        {# primary action #}
-        {% if isAdmin %}
-            <a class="btn--action" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
-        {% endif %}
-    </div>
+    {# primary action #}
+    {% if isAdmin %}
+        <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
+    {% endif %}
 {% endblock %}

@@ -63,6 +63,7 @@
             </tbody>
         </table>
     </div>
+    <p><a class="btn" href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a></p>
 
     <h3>Available Builds</h3>
     <p>This table shows all recent available builds.</p>
@@ -72,12 +73,4 @@
         <a class="btn--small btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
         <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
     </p>
-
-    <div>
-        {# primary action #}
-        <a class="btn--action" href="{{ urlFor('repositories') }}">View all repositories</a>
-
-        {# secondary actions #}
-        <a class="btn secondary-action" href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a>
-    </div>
 {% endblock %}

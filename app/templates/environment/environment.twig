@@ -20,14 +20,14 @@
 
     <div>
         {# primary action #}
-        <a class="btn--action" href="{{ urlFor('environments') }}">View all environments</a>
+        <a class="btn" href="{{ urlFor('environments') }}">View all environments</a>
 
         {% if isAdmin %}
             {# secondary actions #}
-            <a class="btn secondary-action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a>
+            <a class="btn--action secondary-action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a>
             {% if not servers %}
                 <form class="secondary-action" action="{{ urlFor('environment.admin.remove.handle', {id: env.id}) }}" method="post">
-                    <input class="btn" type="submit" value="Remove">
+                    <input class="btn--destructive" type="submit" value="Remove">
                 </form>
             {% endif %}
         {% endif %}

@@ -3,7 +3,7 @@
 {% set page_title = repository.key~' deployments' %}
 
 {% block content %}
-    <h2><strong>{{ repository.key }}</strong> deployments</h2>
+    <h2><b>{{ repository.key }}</b> deployments</h2>
 
     <p>Deployments define what servers your application can be deployed to and where on that server the code will be placed.</p>
 
@@ -15,7 +15,7 @@
                 <form action="{{ urlFor('repository.deployment.admin.add.handle', {id: repository.id}) }}" method="post">
             {% endif %}
 
-            <table>
+            <table class="t75">
                 <thead>
                 <tr>
                     <th>Hostname</th>
@@ -49,7 +49,8 @@
                                     {% endfor %}
                                 </select>
                             </td>
-                            <td colspan="2"><input type="text" name="path[]" maxlength="255" class="text-input"></td>
+                            <td><input type="text" name="path[]" maxlength="255" class="text-input t75"></td>
+                            <td></td>
                         </tr>
                     {% endif %}
                 </tbody>
@@ -68,12 +69,11 @@
     <div>
         {# primary action #}
         {% if environments and isAdmin %}
-            {# primary action #}
-            <input class="btn--action" type="submit" value="Save">
+            <input class="btn" type="submit" value="Save Deployments">
             </form>
         {% endif %}
 
         {# secondary actions #}
-        <a class="btn secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">View repository</a>
+        <a class="secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
     </div>
 {% endblock %}

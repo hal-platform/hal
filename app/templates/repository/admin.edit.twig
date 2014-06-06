@@ -45,7 +45,7 @@
                 </li>
 
                 <li>
-                    <label>Github Source</label>
+                    <h3 class="zeta label">Github Source</h3>
                     {{ repository.githubUser }}/{{ repository.githubRepo }}
                     <span class="icon">
                         <svg viewBox="0 0 32 32">
@@ -70,15 +70,14 @@
                     <label for="post_command">Post Push Command <small class="additional">Will be run on remote server after code is pushed.</small></label>
                     <input type="text" name="post_command" id="post_command" size="30" maxlength="128" value="{{ form.post_command }}" class="text-input">
                 </li>
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Save">
+
+                    {# secondary actions #}
+                    <a class="secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
+                </li>
             </ul>
-
-            <div>
-                {# primary action #}
-                <input class="btn--action" type="submit" value="Save">
-
-                {# secondary actions #}
-                <a class="btn secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}

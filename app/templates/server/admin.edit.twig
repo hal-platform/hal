@@ -36,15 +36,14 @@
                     {% endfor %}
                     </ul>
                 </li>
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Save">
+
+                    {# secondary actions #}
+                    <a class="secondary-action" href="{{ urlFor('server', {id: server.id}) }}">Cancel</a>
+                </li>
             </ul>
-
-            <div>
-                {# primary action #}
-                <input class="btn--action" type="submit" value="Save">
-
-                {# secondary actions #}
-                <a class="btn secondary-action" href="{{ urlFor('server', {id: server.id}) }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}

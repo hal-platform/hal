@@ -35,15 +35,14 @@
                     {% endfor %}
                     </ul>
                 </li>
+                <li>
+                    {# primary action #}
+                    <input class="btn-" type="submit" value="Add Server">
+
+                    {# secondary actions #}
+                    <a class="secondary-action" href="{{ urlFor('servers') }}">Cancel</a>
+                </li>
             </ul>
-
-            <div>
-                {# primary action #}
-                <input class="btn--action" type="submit" value="Add Server">
-
-                {# secondary actions #}
-                <a class="btn secondary-action" href="{{ urlFor('servers') }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}

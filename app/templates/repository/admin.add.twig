@@ -60,15 +60,14 @@
                     <label for="description">Description</label>
                     <textarea name="description" id="description" maxlength="255" rows="6" class="text-input">{{ form.description }}</textarea>
                 </li>
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Add Repository">
+
+                    {# secondary actions #}
+                    <a class="secondary-action" href="{{ urlFor('repositories') }}">Cancel</a>
+                </li>
             </ul>
-
-            <div>
-                {# primary action #}
-                <input class="btn--action" type="submit" value="Add Repository">
-
-                {# secondary actions #}
-                <a class="btn secondary-action" href="{{ urlFor('repositories') }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}
