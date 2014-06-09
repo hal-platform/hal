@@ -31,9 +31,14 @@
                                 {{ deployment.path }}
                             </td>
                             <td>
+                                {% if canUserDelete(currentUser) %}
+                                <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repoId: deployment.repository.id, id: deployment.id}) }}">Remove</a>
+                                {% endif %}
+                                {# @todo add edit functionality
                                 {% if isAdmin %}
                                     <a href="{{ urlFor('repository.deployment.admin.edit', {repoId: repository.id, id: deployment.id}) }}">Edit</a>
                                 {% endif %}
+                                #}
                             </td>
                         </tr>
                     {% endfor %}
