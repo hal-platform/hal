@@ -1,7 +1,8 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
     "hash": "0b3f0273340b499d8614462709127111",
     "packages": [
@@ -118,7 +119,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
+                    "name": "Jonathan H. Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -816,17 +817,17 @@
         },
         {
             "name": "ql/mcp-cache",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-cache.git",
-                "reference": "2.1.0"
+                "reference": "2.1.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-cache-2.1.0-d1325b.zip",
-                "reference": "2.1.0",
-                "shasum": "78acea62f10073b4f70c1c74ae9c1b95061298d3"
+                "url": "http://composer//dist/ql-mcp-cache-2.1.1-d24fa4.zip",
+                "reference": "2.1.1",
+                "shasum": "139b64fd3fc7012c24fcb2ef63b23d8450dc493c"
             },
             "archive": {
                 "exclude": [
@@ -869,7 +870,7 @@
             ],
             "description": "Caching standard for mcp services",
             "homepage": "http://git/mcp/mcp-cache",
-            "time": "2014-05-12 13:35:13"
+            "time": "2014-06-06 14:38:40"
         },
         {
             "name": "ql/mcp-core",
