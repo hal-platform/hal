@@ -592,6 +592,13 @@ services:
     parent: 'twig.template'
     arguments: ['help.twig']
 
+  help.deployment.page:
+    parent: 'static.controller'
+    arguments: ['@help.deployment.twig']
+  help.deployment.twig:
+    parent: 'twig.template'
+    arguments: ['help.deployment.twig']
+
   # TEMP
   nyi.page:
     class: 'QL\Hal\Controllers\NyiController'

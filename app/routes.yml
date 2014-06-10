@@ -36,6 +36,11 @@ parameters:
       route: '/help'
       stack: ['help.page']
 
+    help.deployment:
+      method: 'GET'
+      route: '/help/deployment'
+      stack: ['help.deployment.page']
+
     admin.dashboard:
       method: 'GET'
       route: '/admin'
