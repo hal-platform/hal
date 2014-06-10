@@ -168,6 +168,6 @@ class BuildStartHandleController
                 )
             )
         );
-        $response->redirect($this->url->urlFor('repository', ['id' => $repo->getId()]), 303);
+        $response->redirect($this->url->urlFor('repository.status', ['id' => $repo->getId()]), 303);
     }
 }
