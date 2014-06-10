@@ -126,13 +126,13 @@ class BuildStartHandleController
 
         if (!$env) {
             $this->session->addFlash(self::ERR_NO_ENV);
-            $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
+            $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
             return;
         }
 
         if (!$this->permissions->allowPush($this->user, $repo->getKey(), $env->getKey())) {
             $this->session->addFlash(sprintf(self::ERR_NO_PERM, $env->getKey()));
-            $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
+            $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
             return;
         }
 
@@ -142,7 +142,7 @@ class BuildStartHandleController
 
         if (!$result = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
             $this->session->addFlash(self::ERR_BAD_REF);
-            $response->redirect($this->url->urlFor('build.start', ['repo' => $repo->getKey()]), 303);
+            $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
             return;
         }
 
