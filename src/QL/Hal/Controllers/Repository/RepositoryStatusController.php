@@ -148,7 +148,7 @@ class RepositoryStatusController
         $statuses = [];
         foreach ($deployments as $deploy) {
             // get last attempted push
-            $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.status ASC, p.end DESC';
+            $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.id DESC';
             $query = $this->em->createQuery($dql)
                 ->setMaxResults(1)
                 ->setParameter('deploy', $deploy);
