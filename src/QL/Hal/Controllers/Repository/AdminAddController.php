@@ -63,6 +63,13 @@ class AdminAddController
     private $url;
 
     /**
+     * A list of illegal parameters to search for in system commands provided by the user.
+     *
+     * @var string[]
+     */
+    private $invalidCommandParameters;
+
+    /**
      * @param Twig_Template $template
      * @param Layout $layout
      * @param GroupRepository $groupRepo
@@ -90,6 +97,16 @@ class AdminAddController
         $this->github = $github;
         $this->session = $session;
         $this->url = $url;
+
+        $this->invalidCommandParameters = [
+            '&&', // operator
+            '||', // operator
+            '|',  // pipe
+            '>',  // redirect
+            '>>', // redirect
+            '<',  // redirect
+            '<<'  // redirect
+        ];
     }
 
     /**
@@ -204,9 +221,9 @@ class AdminAddController
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128),
             $this->validateText($request->post('description'), $human['description'], 255),
 
-            $this->validateText($request->post('build_command'), $human['build_command'], 255, false),
-            $this->validateText($request->post('pre_command'), $human['post_command'], 128, false),
-            $this->validateText($request->post('post_command'), $human['post_command'], 128, false),
+            $this->validateCommand($request->post('build_command'), $human['build_command']),
+            $this->validateCommand($request->post('pre_command'), $human['post_command']),
+            $this->validateCommand($request->post('post_command'), $human['post_command']),
 
             $this->validateGithubRepo($request->post('github_user'), $request->post('github_repo'))
         );
@@ -214,6 +231,35 @@ class AdminAddController
         // check for duplicate nickname
         if (!$errors && $this->repoRepo->findOneBy(['key' => $request->post('nickname')])) {
             $errors[] = 'A repository with this nickname already exists.';
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @param string $nickname
+     * @return array
+     */
+    private function validateCommand($value, $friendlyName)
+    {
+        $errors = $this->validateText($value, $friendlyName, 128, false);
+
+        // Split the command into unique parameters
+        $command = explode(' ', $value);
+        $parameters = array_fill_keys($command, true);
+
+        // We could easily just prevent spaces and shell escape EVERYTHING, but to add at least some flexibility
+        // hal-agent will explode on spaces and shell escape individual arguments so users can pass parameters
+        // to their scripts
+
+        // Search for operators, pipes, and redirects to prevent users from doing complex bash logic directly on the HAL command.
+        foreach ($this->invalidCommandParameters as $param) {
+            if (isset($parameters[$param])) {
+                $errors[] = 'Compound commands are not allowed. If you need complex logic, create a script within the application codebase and call that instead.';
+
+                // If one illegal parameter is found, just return immediately.
+                return $errors;
+            }
         }
 
         return $errors;
