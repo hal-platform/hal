@@ -1,23 +1,12 @@
 #!/usr/bin/env bash
 
+set -e
+
 DIR=$( cd "$( dirname "$0" )" && pwd )
+
+# install and configure
 "$DIR"/install
-EXITCODE=$?
-if [ $EXITCODE -ne 0 ]; then
-    exit $EXITCODE;
-fi
-
 "$DIR"/config
-EXITCODE=$?
-if [ $EXITCODE -ne 0 ]; then
-    exit $EXITCODE;
-fi
-
-"$DIR"/refresh-frontend
-EXITCODE=$?
-if [ $EXITCODE -ne 0 ]; then
-    exit $EXITCODE;
-fi
 
 # Remove artifacts from deployment - keep your builds tidy!
 rm -r "$DIR/../.sass-cache"
