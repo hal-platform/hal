@@ -95,6 +95,11 @@ class PermissionsService
     private $productionEnvironments;
 
     /**
+     * @var array
+     */
+    private $halRepos;
+
+    /**
      * @param LdapService $ldap
      * @param DeploymentRepository $deployments
      * @param RepositoryRepository $repositories
@@ -123,6 +128,11 @@ class PermissionsService
         $this->productionEnvironments = [
             'prod',
             'production'
+        ];
+
+        $this->halRepos = [
+            'hal9000',
+            'hal9000-agent'
         ];
     }
 
@@ -219,7 +229,7 @@ class PermissionsService
         }
 
         // HAL Admin (HAL 9000 Push Permission)
-        if ($repository == 'hal9000' && $this->isUserInGroup($user, $this->generateHalAdminDn())) {
+        if (in_array($repository, $this->halRepos) && $this->isUserInGroup($user, $this->generateHalAdminDn())) {
             return true;
         }
 
