@@ -68,7 +68,7 @@ class GroupController
 
         $rendered = $this->layout->render($this->template, [
             'group' => $group,
-            'repos' => $this->repoRepo->findBy(['group' => $group])
+            'repos' => $this->repoRepo->findBy(['group' => $group], ['key' => 'ASC'])
         ]);
 
         $response->body($rendered);

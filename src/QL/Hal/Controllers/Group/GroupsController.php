@@ -54,7 +54,7 @@ class GroupsController
     public function __invoke(Request $request, Response $response)
     {
         $rendered = $this->layout->render($this->template, [
-            'groups' => $this->groupRepo->findAll()
+            'groups' => $this->groupRepo->findBy([], ['name' => 'ASC'])
         ]);
 
         $response->body($rendered);

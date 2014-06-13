@@ -57,7 +57,7 @@ class RepositoriesController
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $rendered = $this->layout->render($this->template, [
-            'repos' => $this->repoRepo->findAll()
+            'repos' => $this->repoRepo->findBy([], ['key' => 'ASC'])
         ]);
 
         $response->body($rendered);
