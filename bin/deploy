@@ -9,6 +9,6 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 "$DIR"/config
 
 # Remove artifacts from deployment - keep your builds tidy!
-rm -r "$DIR/../.sass-cache"
-rm -r "$DIR/../node_modules"
+# rm -r "$DIR/../.sass-cache"
+# rm -r "$DIR/../node_modules"
 rm -r "$DIR/composer"
