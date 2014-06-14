@@ -22,12 +22,8 @@
     {% endif %}
 
     <div>
-        {# primary action #}
-        <a class="btn" href="{{ urlFor('servers') }}">View all servers</a>
-
         {% if isAdmin %}
-            {# secondary actions #}
-            <a class="btn--action secondary-action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
+            <a class="btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
             {% if not deployments and canUserDelete(currentUser) %}
                 <form class="secondary-action" action="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}" method="post">
                     <input class="btn--destructive" type="submit" value="Remove">
