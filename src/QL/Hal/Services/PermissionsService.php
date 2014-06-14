@@ -355,7 +355,7 @@ class PermissionsService
     public function repositoryPermissionPairs($repository)
     {
         $repository = $this->repositories->findOneBy(['key' => $repository]);
-        $users = $this->users->findAll();
+        $users = $this->users->findBy([], ['name' => 'ASC']);
 
         $permissions = [];
 
@@ -366,11 +366,6 @@ class PermissionsService
                         'user' => $user,
                         'environment' => $pair['environment']
                     ];
-
-                    //$permissions[] = [
-                    //    'user' => $user,
-                    //    'environment' => $pair['environment']
-                    //];
                 }
             }
         }
