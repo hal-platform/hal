@@ -62,6 +62,7 @@ class HalExtension extends Twig_Extension
     {
         return array(
             new Twig_SimpleFunction('canUserPush', array($this->permissions, 'allowPush')),
+            new Twig_SimpleFunction('canUserBuild', array($this->permissions, 'allowBuild')),
             new Twig_SimpleFunction('canUserDelete', array($this->permissions, 'allowDelete')),
             new Twig_SimpleFunction('isUserAdmin', array($this->permissions, 'allowAdmin')),
             new Twig_SimpleFunction('urlFor', array($this->url, 'urlFor')),

@@ -7,6 +7,7 @@ use MCP\Cache\CacheInterface;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Deployment;
 use MCP\Corp\Account\User as LdapUser;
@@ -73,6 +74,11 @@ class PermissionsService
     private $users;
 
     /**
+     * @var EnvironmentRepository
+     */
+    private $environments;
+
+    /**
      * @var GithubService
      */
     private $github;
@@ -104,6 +110,7 @@ class PermissionsService
      * @param DeploymentRepository $deployments
      * @param RepositoryRepository $repositories
      * @param UserRepository $users
+     * @param EnvironmentRepository $environments
      * @param GithubService $github
      * @param CacheInterface $cache
      * @param string $god
@@ -113,6 +120,7 @@ class PermissionsService
         DeploymentRepository $deployments,
         RepositoryRepository $repositories,
         UserRepository $users,
+        EnvironmentRepository $environments,
         GithubService $github,
         CacheInterface $cache,
         $god
@@ -121,6 +129,7 @@ class PermissionsService
         $this->deployments = $deployments;
         $this->repositories = $repositories;
         $this->users = $users;
+        $this->environments = $environments;
         $this->github = $github;
         $this->cache = $cache;
         $this->god = $god;
@@ -248,6 +257,56 @@ class PermissionsService
 
             // LDAP Repository Permissions
             if ($this->isUserInGroup($user, $this->generateRepositoryDn($repository, $environment))) {
+                return true;
+            }
+        }
+
+        // God Override
+        if ($user->commonId() == $this->god) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a user is allowed to build a given repository
+     *
+     * You can build if you're an admin or have any connection to the repository (collaborator or any LDAP permission)
+     *
+     * @param $user
+     * @param $repository
+     * @return bool
+     */
+    public function allowBuild($user, $repository)
+    {
+        if (!($user instanceof LdapUser)) {
+            $user = $this->getUser($user);
+        }
+
+        // Super Admin
+        if ($this->isUserInGroup($user, $this->generateSuperAdminDn())) {
+            return true;
+        }
+
+        // HAL Admin
+        if ($this->isUserInGroup($user, $this->generateHalAdminDn())) {
+            return true;
+        }
+
+        // Project Admin
+        if ($this->isUserInGroup($user, $this->generateProjectAdminDn())) {
+            return true;
+        }
+
+        // Github Collaborators
+        if ($this->isUserCollaborator($user, $repository)) {
+            return true;
+        }
+
+        // LDAP Repository Permissions (any environment)
+        foreach ($this->environments->findAll() as $environment) {
+            if ($this->isUserInGroup($user, $this->generateRepositoryDn($repository, $environment->getKey()))) {
                 return true;
             }
         }

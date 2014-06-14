@@ -176,6 +176,7 @@ services:
       - @deployment.repo
       - @repository.repo
       - @user.repo
+      - @environment.repo
       - @github
       - @cache
       - '%debug.godmode%'

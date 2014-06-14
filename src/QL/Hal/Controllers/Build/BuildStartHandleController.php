@@ -130,7 +130,7 @@ class BuildStartHandleController
             return;
         }
 
-        if (!$this->permissions->allowPush($this->user, $repo->getKey(), $env->getKey())) {
+        if (!$this->permissions->allowBuild($this->user, $repo->getKey())) {
             $this->session->addFlash(sprintf(self::ERR_NO_PERM, $env->getKey()));
             $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
             return;
