@@ -83,8 +83,24 @@ class HalExtension extends Twig_Extension
     {
         return array(
             new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat')),
-            new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat'))
+            new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat')),
+            new Twig_SimpleFilter('chunk', array($this, 'arrayChunk'))
         );
+    }
+
+    /**
+     * Chunk an array into $split roughly equal parts
+     *
+     * @param array $input
+     * @param int $split
+     * @return array
+     */
+    public function arrayChunk(array $input, $split)
+    {
+        $count = ceil((count($input) / (int)$split));
+        $chunks = array_chunk($input, $count);
+
+        return array_pad($chunks, $split, []);
     }
 
     /**

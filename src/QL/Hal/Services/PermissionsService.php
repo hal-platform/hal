@@ -362,10 +362,15 @@ class PermissionsService
         foreach ($this->getPermissionPairs($repository) as $pair) {
             foreach ($users as $user) {
                 if ($this->allowPush($user, $pair['repository']->getKey(), $pair['environment']->getKey())) {
-                    $permissions[] = [
+                    $permissions[$pair['environment']->getKey()][] = [
                         'user' => $user,
                         'environment' => $pair['environment']
                     ];
+
+                    //$permissions[] = [
+                    //    'user' => $user,
+                    //    'environment' => $pair['environment']
+                    //];
                 }
             }
         }

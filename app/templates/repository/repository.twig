@@ -66,13 +66,33 @@
     </div>
 
     <h3>Permissions</h3>
-    <ul>
-        {% for pair in permissions %}
-            <li><a href="{{ urlFor('user', {'id': pair.user.id}) }}">{{ pair.user.name }}</a> has permission to build and push to <b>{{ pair.environment.key }}</b>.</li>
-        {% else %}
-            <li>No permissions found for this repository.</li>
+
+    <p>The following users have permission to push <strong>{{ repository.key }}</strong> to the specified environment.</p>
+
+    <table class="t75">
+        <thead>
+        <tr>
+            <th>Environment</th>
+            <th colspan="3">Users</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pairs in permissions %}
+            <tr>
+                <td>{{ pairs|first.environment.key|title }}</td>
+                {% for chunk in pairs|chunk(3) %}
+                <td>
+                    <ul>
+                        {% for pair in chunk %}
+                            <li><a href="{{ urlFor('user', {'id': pair.user.id}) }}">{{ pair.user.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                {% endfor %}
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
 
     <h3>Permissions</h3>
     <ul>
