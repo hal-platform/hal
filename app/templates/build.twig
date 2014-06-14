@@ -25,7 +25,17 @@
                 </tr>
                 <tr>
                     <td>Branch</td>
-                    <td>{{ build.branch }}</td>
+                    <td>
+                        {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
+                            <span class="circle-green">
+                                {{ build.branch }} (latest)
+                            </span>
+                        {% else %}
+                            <span class="circle-orange">
+                                {{ build.branch }} (behind or unresolved)
+                            </span>
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <td>Commit</td>

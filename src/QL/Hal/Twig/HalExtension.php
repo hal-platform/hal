@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\User as DomainUser;
 use QL\Hal\Helpers\UrlHelper;
 use Slim\Slim;
 use QL\Hal\Services\PermissionsService;
+use QL\Hal\Services\GithubService;
 
 
 /**
@@ -27,20 +28,25 @@ class HalExtension extends Twig_Extension
 
     private $permissions;
 
-    private $slim;
-
     private $url;
 
+    private $github;
+
     /**
-     *  Constructor
+     * Constructor
      *
-     *  @param PermissionsService $permissions
-     *  @param UrlHelper $url
+     * @param PermissionsService $permissions
+     * @param UrlHelper $url
+     * @param GithubService $github
      */
-    public function __construct(PermissionsService $permissions, UrlHelper $url)
-    {
+    public function __construct(
+        PermissionsService $permissions,
+        UrlHelper $url,
+        GithubService $github
+    ) {
         $this->permissions = $permissions;
         $this->url = $url;
+        $this->github = $github;
     }
 
     /**
@@ -70,7 +76,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('githubCommit', array($this->url, 'githubCommitUrl')),
             new Twig_SimpleFunction('githubTreeish', array($this->url, 'githubTreeUrl')),
             new Twig_SimpleFunction('githubPullRequest', array($this->url, 'githubPullRequestUrl')),
-            new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName'))
+            new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName')),
+            new Twig_SimpleFunction('githubCommitIsCurrent', array($this, 'commitIsCurrent'))
         );
     }
 
@@ -86,6 +93,23 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat')),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk'))
         );
+    }
+
+    /**
+     * Check if a commit hash is the most recent for a given Github user, repo, and reference
+     *
+     * @param $user
+     * @param $repo
+     * @param $reference
+     * @param $commit
+     * @return bool
+     */
+    public function commitIsCurrent($user, $repo, $reference, $commit)
+    {
+        $resolve = $this->github->resolve($user, $repo, $reference);
+        $current = (is_array($resolve)) ? $resolve[1] : null;
+
+        return ($current == $commit) ? true : false;
     }
 
     /**

@@ -93,7 +93,7 @@ class GithubService
             $refs = [];
         }
 
-        array_walk($refs, function(&$data) {
+        array_walk($refs, function (&$data) {
             $data['name'] = str_replace('refs/heads/', '', $data['ref']);
         });
 
@@ -218,7 +218,7 @@ class GithubService
             $refs = [];
         }
 
-        array_walk($refs, function(&$data) {
+        array_walk($refs, function (&$data) {
             $data['name'] = str_replace('refs/tags/', '', $data['ref']);
         });
 
@@ -293,8 +293,6 @@ class GithubService
      */
     public function resolve($user, $repo, $reference)
     {
-        //die(var_dump($user, $repo, $reference));
-
         if ($sha = $this->resolveTag($user, $repo, $reference)) {
             return [$reference, $sha];
         }

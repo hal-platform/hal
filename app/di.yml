@@ -102,6 +102,7 @@ services:
     arguments:
       - @permissions
       - @url.helper
+      - @github
 
   # Twig Loader
   twigLoader:
