@@ -1,7 +1,7 @@
 imports:
+  - resource: ../vendor/ql/hal-core/config/di.yml
   - resource: di.yml
   - resource: routes.yml
-  - resource: ../vendor/ql/hal-core/config/di.yml
 
 parameters:
   debug: true
