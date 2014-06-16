@@ -51,12 +51,12 @@
         </dl>
 
         {# primary action #}
-        {% if isAdmin %}
         <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
-        {% endif %}
 
         {# secondary actions #}
-        <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {id: repository.id}) }}">Edit details</a>
+        {% if isAdmin %}
+            <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {id: repository.id}) }}">Edit details</a>
+        {% endif %}
 
         {% if isAdmin and not deployments and canUserDelete(currentUser) %}
             <form class="secondary-action" action="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}" method="post">
