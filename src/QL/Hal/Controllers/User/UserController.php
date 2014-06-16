@@ -107,7 +107,8 @@ class UserController
             'profileUser' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
             'permissions' => $this->permissions->userPermissionPairs($user->getHandle()),
-            'pushes' => $this->getPushCount($user)
+            'pushes' => $this->getPushCount($user),
+            'builds' => $this->getBuildCount($user)
         ]);
 
         $response->body($rendered);
@@ -122,6 +123,21 @@ class UserController
     private function getPushCount(User $user)
     {
         $dql = 'SELECT count(p.id) FROM QL\Hal\Core\Entity\Push p WHERE p.user = :user';
+        $query = $this->em->createQuery($dql)
+            ->setParameter('user', $user);
+
+        return $query->getSingleScalarResult();
+    }
+
+    /**
+     * Get the number of builds for a given user entity
+     *
+     * @param User $user
+     * @return mixed
+     */
+    private function getBuildCount(User $user)
+    {
+        $dql = 'SELECT count(b.id) FROM QL\Hal\Core\Entity\Build b WHERE b.user = :user';
         $query = $this->em->createQuery($dql)
             ->setParameter('user', $user);
 
