@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Deadzone;
+namespace QL\Hal\Bootstrap;
 
 use QL\Hal\CachedContainer;
 use Symfony\Component\Config\FileLocator;

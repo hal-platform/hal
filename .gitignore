@@ -19,6 +19,9 @@
 /app/config.yml
 /src/QL/Hal/CachedContainer.php
 
+# doctrine cache
+/app/cache/*
+
 /.vagrant
 
 # dumb atlassian sourcetree file that keeps re-creating itself

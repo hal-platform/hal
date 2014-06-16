@@ -29,6 +29,26 @@ services:
     synthetic: true
 
   ######################################################################################################################
+  # DOCTRINE CONFIGURATION
+  ######################################################################################################################
+
+  doctrine.config:
+    class: 'Doctrine\ORM\Configuration'
+    factory_class: 'Doctrine\ORM\Tools\Setup'
+    factory_method: 'createAnnotationMetadataConfiguration'
+    arguments:
+      - ['@doctrine.mapping']
+      - %doctrine.devmode%
+      - @doctrine.proxy.dir
+
+  doctrine.proxy.dir:
+    class: 'NOTHING_TO_SEE_HERE'
+    factory_service: 'directory.helper'
+    factory_method: 'fullPath'
+    arguments:
+      - 'app/cache/doctrine/proxy'
+
+  ######################################################################################################################
   # APPLICATION
   ######################################################################################################################
 
@@ -87,6 +107,11 @@ services:
       - @slim.request
       - @slim.response
       - @slim.router
+
+  directory.helper:
+    class: 'QL\Hal\Helpers\DirectoryHelper'
+    arguments:
+      - %root%
 
   clock:
     class: 'MCP\DataType\Time\Clock'

@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+namespace QL\Hal\Bootstrap;
+
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+
+$root = __DIR__ . '/..';
+require_once $root . '/app/bootstrap.php';
+
+$container = buildDi($root);
+$helperSet = ConsoleRunner::createHelperSet($container->get('doctrine.em'));
+ConsoleRunner::run($helperSet, []);
