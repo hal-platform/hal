@@ -38,14 +38,36 @@
 
     {% if permissions %}
         <h3>Permissions</h3>
-        <ul>
-        {% if isUserAdmin(ldapUser) %}
-            <li>HAL 9000 Admin</li>
-        {% endif %}
-        {% for pair in permissions %}
-            <li>Has access to push <a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a> to <b>{{ pair.environment.key }}</b>.</li>
-        {% endfor %}
-        </ul>
+
+        <p><strong>{{ ldapUser.firstName }} {{ ldapUser.lastName }}</strong> can push the following repositories to the specified environments.</p>
+
+        <table class="t75">
+            <thead>
+            <tr>
+                <th>Environment</th>
+                <th colspan="3">Repositories</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for pairs in permissions %}
+                <tr>
+                    <td>{{ pairs|first.environment.key|title }}</td>
+                    {% for chunk in pairs|chunk(3) %}
+                        <td>
+                            <ul>
+                                {% for pair in chunk %}
+                                    <li><a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+
     {% endif %}
 
     <div>
