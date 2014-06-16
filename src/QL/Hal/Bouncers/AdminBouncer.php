@@ -64,7 +64,7 @@ class AdminBouncer
 
         if (!($account instanceof User) || !$this->permissions->allowAdmin($account)) {
             $response->status(403);
-            $response->body($this->twig->loadTemplate('denied.html.twig')->render(array()));
+            $response->body($this->twig->loadTemplate('denied.twig')->render([]));
             throw new Stop();
         }
     }
