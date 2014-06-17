@@ -1,10 +1,9 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
-        "This file is @generated automatically"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "0b3f0273340b499d8614462709127111",
+    "hash": "73e0dcd18e59729264113cbf98eed762",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -749,17 +748,11 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.0.0-alpha1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "2.0.0-alpha1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer//dist/ql-hal-core-2.0.0-alpha1-d67850.zip",
-                "reference": "2.0.0-alpha1",
-                "shasum": "e9cc20efb83e3b504a66affab64a0316cab921be"
+                "reference": "e24439dac0b3cb14ce7a188b5f4c324bdd487e30"
             },
             "require": {
                 "doctrine/orm": "~2.4",
@@ -813,7 +806,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2014-05-29 13:40:08"
+            "time": "2014-06-17 21:01:45"
         },
         {
             "name": "ql/mcp-cache",

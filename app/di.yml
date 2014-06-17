@@ -48,6 +48,16 @@ services:
     arguments:
       - 'app/cache/doctrine/proxy'
 
+  doctrine.events:
+    class: 'Doctrine\Common\EventManager'
+    calls:
+      - ['addEventListener', [['onFlush'], @doctrine.logger]]
+
+  doctrine.logger:
+    class: 'QL\Hal\Logger\DoctrineEntityLogger'
+    arguments:
+      - @user.helper
+
   ######################################################################################################################
   # APPLICATION
   ######################################################################################################################
@@ -112,6 +122,11 @@ services:
     class: 'QL\Hal\Helpers\DirectoryHelper'
     arguments:
       - %root%
+
+  user.helper:
+    class: 'QL\Hal\Helpers\LazyUserHelper'
+    arguments:
+      - @service_container
 
   clock:
     class: 'MCP\DataType\Time\Clock'

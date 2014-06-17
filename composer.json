@@ -36,7 +36,7 @@
         "symfony/config":                   "2.4.*",
         "symfony/yaml":                     "2.4.*",
         "twig/twig":                        "~1.15",
-        "ql/hal-core":                      "~2.0@dev",
+        "ql/hal-core":                      "dev-master@dev",
         "ql/mcp-cache":                     "~2.1"
     },
     "require-dev": {
@@ -52,6 +52,10 @@
     },
     "prefer-stable":                        true,
     "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@git:web-core/hal-core.git"
+        },
         {
             "type": "composer",
             "url": "http://composer/"
