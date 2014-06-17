@@ -598,6 +598,13 @@ services:
     arguments:
       - @api.helper
 
+  api.queue:
+    class: 'QL\Hal\Controllers\Api\QueueController'
+    arguments:
+        - @build.repo
+        - @push.repo
+        - @doctrine.em
+
   api.build:
     class: 'QL\Hal\Controllers\Api\Build\BuildController'
     arguments:

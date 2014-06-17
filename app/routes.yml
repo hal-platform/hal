@@ -643,6 +643,7 @@ parameters:
       conditions:
         id:         '[0-9]+'
 
-
-
-
+    api.queue:
+      method: 'GET'
+      route: '/api/queue'
+      stack: ['login.bouncer', 'api.queue']
