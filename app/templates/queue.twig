@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Queue" %}
+
+{% block content %}
+    <h2>Push and Build Queue</h2>
+
+    <table id="js-queue">
+        <thead>
+        <tr>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Server/Environment</th>
+            <th>Repository</th>
+            <th>Start Time</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr id="js-emptyQueue">
+                <td colspan="5">There are no jobs queued.</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

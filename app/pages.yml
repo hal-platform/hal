@@ -42,6 +42,17 @@ services:
     class: 'QL\Hal\Controllers\LogoutController'
     arguments: ['@session', '@url.helper']
 
+  queue.page:
+    class: 'QL\Hal\Controllers\QueueController'
+    arguments:
+        - @queue.twig
+        - @layout
+        - @build.repo
+        - @push.repo
+        - @doctrine.em
+  queue.twig:
+    parent: 'twig.template'
+    arguments: ['queue.twig']
 
   ######################################################################################################################
   # GROUP CONTROLLERS
