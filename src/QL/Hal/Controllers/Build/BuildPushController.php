@@ -3,6 +3,8 @@
 namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use Twig_Template;
 use Slim\Http\Request;
@@ -84,6 +86,14 @@ class BuildPushController
             ->setParameter('env', $build->getEnvironment());
         $deployments = $query->getResult();
 
+        $statuses = [];
+        foreach ($deployments as $deployment) {
+            $statuses[] = [
+                'deployment' => $deployment,
+                'success' => $this->getDeploymentStatus($deployment)
+            ];
+        }
+
         $response->body(
             $this->layout->render(
                 $this->template,
@@ -91,9 +101,29 @@ class BuildPushController
                     'build' => $build,
                     'deployments' => $deployments,
                     'user' => $this->user,
-                    'selected' => $request->get('deployments', [])
+                    'selected' => $request->get('deployments', []),
+                    'statuses' => $statuses
                 ]
             )
         );
+    }
+
+    /**
+     * Get the last successful push for a given deployment
+     *
+     * @todo Move to repository
+     *
+     * @param Deployment $deployment
+     * @return null|Push
+     */
+    private function getDeploymentStatus(Deployment $deployment)
+    {
+        // get last successful push
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.end DESC';
+        $query = $this->em->createQuery($dql)
+                          ->setMaxResults(1)
+                          ->setParameter('deploy', $deployment)
+                          ->setParameter('status', 'Success');
+        return $query->getOneOrNullResult();
     }
 }
