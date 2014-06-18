@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Audit Log History" %}
+
+{% block content %}
+
+    <h2>Audit Log History</h2>
+
+    <p>Changes to database entities will be logged on this page.</p>
+
+    <div>
+        <table>
+            <thead>
+                <th>Date</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Object</th>
+                <th>Changeset</th>
+            </thead>
+            <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.recorded|date }}</td>
+                    <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.name }}</a></td>
+                    <td><strong>{{ log.action }}</strong></td>
+                    <td>{{ log.entity }}</td>
+                    <td><code>{{ log.data|jsonPretty|raw }}</code></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="1">
+                        No logs found.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <ol class="nav--pagination">
+        <li class="nav--pagination__prev">
+            {% if page > 1 %}
+                <a href="{{ urlFor('logs', {'page': page-1}) }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
+            {% else %}
+                <span class="disabled"><i class="fa fa-arrow-circle-left"></i> newer</span>
+            {% endif %}
+        </li>
+        <li>
+            {% if last > 1 %}
+                <span class="pages">page {{ page }} of {{ last }}</span>
+            {% endif %}
+        </li>
+        <li class="nav--pagination__next">
+            {% if page < last %}
+                <a href="{{ urlFor('logs', {'page': page+1}) }}">older <i class="fa fa-arrow-circle-right"></i></a>
+            {% else %}
+                <span class="disabled">older <i class="fa fa-arrow-circle-right"></i></span>
+            {% endif %}
+        </li>
+    </ol>
+
+{% endblock %}

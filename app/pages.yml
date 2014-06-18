@@ -599,6 +599,17 @@ services:
     parent: 'twig.template'
     arguments: ['help.deployment.twig']
 
+  logs.page:
+    class: 'QL\Hal\Controllers\LogsController'
+    arguments:
+      - @logs.twig
+      - @layout
+      - @doctrine.em
+  logs.twig:
+    parent: 'twig.template'
+    arguments:
+      - 'logs.twig'
+
   # TEMP
   nyi.page:
     class: 'QL\Hal\Controllers\NyiController'

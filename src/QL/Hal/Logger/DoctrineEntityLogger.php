@@ -23,6 +23,10 @@ use Zend\Ldap\Ldap;
  */
 class DoctrineEntityLogger
 {
+    const ACTION_CREATE = 'CREATE';
+    const ACTION_UPDATE = 'UPDATE';
+    const ACTION_DELETE = 'DELETE';
+
     /**
      * @var EntityManager
      */
@@ -56,17 +60,17 @@ class DoctrineEntityLogger
 
         // Entity Insertions
         foreach ($uow->getScheduledEntityInsertions() as $entity) {
-            $this->log($entity, 'CREATE', $uow);
+            $this->log($entity, self::ACTION_CREATE, $uow);
         }
 
         // Entity Updates
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
-            $this->log($entity, 'UPDATE', $uow);
+            $this->log($entity, self::ACTION_UPDATE, $uow);
         }
 
         // Entity Deletions
         foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            $this->log($entity, 'DELETE', $uow);
+            $this->log($entity, self::ACTION_DELETE, $uow);
         }
     }
 
@@ -80,30 +84,43 @@ class DoctrineEntityLogger
     private function log($entity, $action, UnitOfWork $uow)
     {
         // prevent logging loop
-        if ($entity instanceof Log || $entity instanceof Session) {
+        if ($entity instanceof Log || $entity instanceof Session || $entity instanceof User) {
             return;
         }
 
-        // figure out short class name
         $reflect = new ReflectionClass($entity);
-        $class = $reflect->getShortName();
 
         // figure out the entity primary id
-        $id = (array)$uow->getEntityIdentifier($entity);
-        $id = reset($id);
+        if ($action == self::ACTION_CREATE) {
+            $id = '?';
+        } else {
+            $id = (array)$uow->getEntityIdentifier($entity);
+            $id = reset($id);
+        }
+
+        // figure out what data to show
+        if ($action == self::ACTION_DELETE) {
+            // deleted data (show state before delete)
+            $data = [];
+            foreach ($reflect->getProperties() as $property) {
+                $property->setAccessible(true);
+                $data[$property->getName()] = $property->getValue($entity);
+            }
+        } else {
+            // updated data (show changes only)
+            $data = $uow->getEntityChangeSet($entity);
+        }
 
         $log = new Log();
         $log->setUser($this->getUser($this->userHelper->getUser()));
         $log->setRecorded($this->getTimepoint());
         $log->setEntity(sprintf(
             '%s:%s',
-            $class,
+            $reflect->getShortName(),
             $id
         ));
         $log->setAction($action);
-        $log->setData(json_encode(
-            $uow->getEntityChangeSet($entity)
-        ));
+        $log->setData(json_encode($data));
 
         $this->em->persist($log);
         $uow->computeChangeSet($this->em->getClassMetadata('QL\\Hal\\Core\\Entity\\Log'), $log);

@@ -46,6 +46,16 @@ parameters:
       route: '/admin'
       stack: ['login.bouncer', 'admin.bouncer', 'admin.dashboard.page']
 
+    logs:
+      method: 'GET'
+      route: '/logs(/page/:page)'
+      stack:
+        - login.bouncer
+        - admin.bouncer
+        - logs.page
+      conditions:
+        page: "[0-9]+"
+
     ########################################################################################################################
     # BUILD ROUTES
     ########################################################################################################################

@@ -91,7 +91,8 @@ class HalExtension extends Twig_Extension
         return array(
             new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat')),
             new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat')),
-            new Twig_SimpleFilter('chunk', array($this, 'arrayChunk'))
+            new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
+            new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty'))
         );
     }
 
@@ -180,5 +181,23 @@ class HalExtension extends Twig_Extension
         }
 
         return 'Dave';
+    }
+
+    /**
+     * Attempt to pretty print JSON string
+     *
+     * @param $json
+     * @return string
+     */
+    public function jsonPretty($json)
+    {
+        $raw = json_decode($json, true);
+
+        // bail on badly formatted json
+        if ($raw === null) {
+            return $json;
+        }
+
+        return json_encode($raw, JSON_PRETTY_PRINT);
     }
 }
