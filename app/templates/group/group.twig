@@ -54,23 +54,19 @@
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    <ul class="choice-list--flush">
-        <li class="choice-list__choice">
-            {# primary action #}
-            <a class="btn" href="{{ urlFor('groups') }}">View all groups</a>
-        </li>
-        {% if isAdmin %}
-        <li class="choice-list__choice">
-            {# secondary actions #}
-            <a class="btn--action secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
-        </li>
-        {% if not repos and canUserDelete(currentUser) %}
-        <li class="choice-list__choice">
-            <form class="secondary-action" action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
-                <input class="btn--destructive" type="submit" value="Remove">
-            </form>
-        </li>
-        {% endif %}
-        {% endif %}
-    </ul>
+    {% if isAdmin %}
+        <ul class="choice-list--flush">
+            <li class="choice-list__choice">
+                <a class="btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
+            </li>
+            {% if not repos and canUserDelete(currentUser) %}
+            <li class="choice-list__choice">
+                <form class="secondary-action" action="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}" method="post">
+                    <input class="btn--destructive" type="submit" value="Remove">
+                </form>
+            </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
 {% endblock %}
