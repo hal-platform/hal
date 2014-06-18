@@ -198,6 +198,6 @@ class HalExtension extends Twig_Extension
             return $json;
         }
 
-        return json_encode($raw, JSON_PRETTY_PRINT);
+        return json_encode($raw, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 }
