@@ -14,7 +14,7 @@ gulp.task('styles', function() {
             css: 'public/css',
             sass: 'sass',
             style: isDeploy ? 'compressed' : 'compact',
-            require: ['modular-scale', 'breakpoint'],
+            require: ['modular-scale', 'breakpoint', 'singularitygs'],
             bundle_exec: true
         }))
         .pipe(plugins.autoprefixer('last 2 versions', '> 1%'))

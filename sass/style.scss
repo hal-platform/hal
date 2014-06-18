@@ -14,6 +14,7 @@
 @import "compass";
 @import "modular-scale";
 @import "breakpoint";
+@import "singularitygs";
 
 
 //
@@ -40,14 +41,17 @@
 //
 // Example: use @import "partials/nav" if you are adding style to the nav object.
 ///
+@import "partials/grid";
 @import "partials/global";
 @import "partials/icons";
+@import "partials/cards";
 @import "partials/js";
 @import "partials/base/forms";
 @import "partials/base/tables";
 @import "partials/base/error";
 @import "partials/patterns/nav";
 @import "partials/patterns/buttons";
+@import "partials/base/lists";
 @import "partials/patterns/block-list";
 @import "partials/patterns/alert-bar";
 @import "partials/patterns/choice-list";

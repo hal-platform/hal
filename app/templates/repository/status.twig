@@ -6,76 +6,93 @@
     <h2>{{ repo.key }} Dashboard</h2>
 
     <h3>Server Status</h3>
-    <p>This table shows the current status of all servers with deployment relationships to this repository.</p>
-    <div>
-        <table>
-            <thead>
-                <th></th>
-                <th>Last Push</th>
-                <th>Build</th>
-                <th>Branch</th>
-                <th>Commit</th>
-                <th>Pushed</th>
-                <th></th>
-            </thead>
-            <tbody>
-                {% for status in statuses %}
-                    <tr>
-                        <td><a href="{{ urlFor('server', {'id': status.deploy.server.id}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</td>
-                        {% if status.latest %}
-                            <td>
+    <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
+
+    <p><a class="btn" href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a></p>
+
+    <ul class="list--bare cards">
+        {% for status in statuses %}
+        <li>
+            <article class="card">
+                <header class="card__header">
+                    <h4 class="mbn"><a href="{{ urlFor('server', {'server': status.deploy.server.name}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</h4>
+                    <!-- <time datetime="2014-03-20 1:00">{{ status.success.end|date }}</time> -->
+                    <p class="mbn">{{ status.success.end|date }}</p>
+                </header>
+
+                <section class="card__details">
+                    <ul class="split">
+                        <li>
+                            <span class="split__title">Last push:</span>
+                            {% if status.latest %}
                                 {% if status.latest.status == 'Success' %}
-                                    <span class="circle-green">{{ status.latest.status }}</span>
+                                    <span class="status-before--success">
+                                        {{ status.latest.status }}
+                                    </span>
                                 {% elseif status.latest.status == 'Error' %}
-                                    <span class="circle-red">{{ status.latest.status }}</span>
+                                    <span class="status-before--error">
+                                        {{ status.latest.status }}
+                                    </span>
                                 {% else %}
-                                    <span class="circle-orange">{{ status.latest.status }}</span>
+                                    <span class="status-before--other">
+                                        {{ status.latest.status }}
+                                    </span>
                                 {% endif %}
                                 (<a href="{{ urlFor('push', {'push': status.latest.id}) }}">{{ status.latest.id }}</a>)
-                            </td>
-                        {% else %}
-                            <td>None</td>
-                        {% endif %}
-                        {% if status.success %}
-                            <td>
+                            {% else %}
+                                None
+                            {% endif %}
+                        </li>
+                        <li>
+                            <span class="split__title">Build:</span>
+                            {% if status.success %}
                                 <a href="{{ urlFor('build', {'repo': repo.id, 'build': status.success.build.id}) }}">{{ status.success.build.id[:10] }}</a>
-                            </td>
-                            <td>
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </li>
+                        <li>
+                            <span class="split__title">Branch:</span>
+                            {% if status.success %}
                                 {% if githubCommitIsCurrent(repo.githubUser, repo.githubRepo, status.success.build.branch, status.success.build.commit) %}
-                                    <span class="circle-green">
-                                        {{ status.success.build.branch[:20] }}
-                                    </span>
-                                {% else %}
-                                    <span class="circle-orange">
-                                        {{ status.success.build.branch[:20] }}
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit[:7] }}</a>
-                                <span class="icon">
-                                    <svg viewBox="0 0 32 32">
-                                        <use xlink:href="#github"></use>
-                                    </svg>
+                                <span class="status-before--success">
+                                    {{ status.success.build.branch[:20] }}
                                 </span>
-                            </td>
-                            <td>{{ status.success.end|date }}</td>
-                            <td><a href="{{ urlFor('rollback', {'id': repo.id, 'server': status.success.deployment.server.id}) }}">Rollback</a></td>
-                        {% else %}
-                            <td colspan="5">Unknown</td>
-                        {% endif %}
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="7">
-                            No deployments found.
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <p><a class="btn" href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a></p>
+                                {% else %}
+                                <span class="status-before--warning">
+                                    {{ status.success.build.branch[:20] }}
+                                </span>
+                                {% endif %}
+                                <svg viewBox="0 0 32 32" class="icon">
+                                    <use xlink:href="#fork"></use>
+                                </svg>
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </li>
+                        <li>
+                            <span class="split__title">Commit:</span>
+                            {% if status.success %}
+                                <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit[:7] }}</a>
+                                <svg viewBox="0 0 32 32" class="icon">
+                                    <use xlink:href="#github"></use>
+                                </svg>
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </li>
+                    </ul>
+                    <a class="btn--full rollback" href="{{ urlFor('rollback', {'repo': repo.key, 'server': status.success.deployment.server.id}) }}">
+                        <svg viewBox="0 0 32 32" class="icon">
+                            <use xlink:href="#revert"></use>
+                        </svg>
+                        Rollback
+                    </a>
+                </section>
+            </article>
+        </li>
+        {% endfor %}
+    </ul>
 
     <h3>Available Builds</h3>
     <p>This table shows all recent available builds.</p>

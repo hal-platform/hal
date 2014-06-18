@@ -10,3 +10,13 @@
     text-overflow: ellipsis;
     display: block;
 }
+
+@mixin padding-x($left: 0, $right: $left) {
+    padding-left: $left;
+    padding-right: $right;
+}
+
+@mixin margin-x($left: 0, $right: $left) {
+    margin-left: $left;
+    margin-right: $right;
+}
