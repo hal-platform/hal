@@ -15,7 +15,7 @@
         <li>
             <article class="card">
                 <header class="card__header">
-                    <h4 class="mbn"><a href="{{ urlFor('server', {'server': status.deploy.server.name}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</h4>
+                    <h4 class="mbn"><a href="{{ urlFor('server', {'id': status.deploy.server.id}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</h4>
                     <!-- <time datetime="2014-03-20 1:00">{{ status.success.end|date }}</time> -->
                     <p class="mbn">{{ status.success.end|date }}</p>
                 </header>
@@ -82,7 +82,7 @@
                             {% endif %}
                         </li>
                     </ul>
-                    <a class="btn--full rollback" href="{{ urlFor('rollback', {'repo': repo.key, 'server': status.success.deployment.server.id}) }}">
+                    <a class="btn--full rollback" href="{{ urlFor('rollback', {'id': repo.id, 'server': status.deploy.server.id}) }}">
                         <svg viewBox="0 0 32 32" class="icon">
                             <use xlink:href="#revert"></use>
                         </svg>
