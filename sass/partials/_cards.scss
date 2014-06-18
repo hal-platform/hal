@@ -49,47 +49,6 @@
     @include rhythm(.5,0,0,0);
 }
 
-[class*="status--"] {
-    &:after {
-        content: '';
-        border-radius: 50%;
-        position: absolute;
-        right: .5em;
-        top: .9em;
-        width: 30px;
-        height: 30px;
-        display: block;
-    }
-}
-
-.status--success {
-    &:after {
-        background-color: $success-color;
-    }
-}
-
-.status--error {
-    &:after {
-        background-color: $error-color;
-    }
-}
-
-.status--other {
-    &:after {
-        background-color: $warning-color;
-    }
-}
-
-.expand {
-    position: absolute !important;
-    right: .5em;
-    bottom: .5em;
-    background: transparent;
-    border: 0;
-    fill: $white;
-    padding: 0;
-}
-
 .rollback .icon {
     transition: all .9s ease;
 }

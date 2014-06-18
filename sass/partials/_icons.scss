@@ -17,3 +17,51 @@
 svg.icon {
     fill: currentColor;
 }
+
+@mixin status {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    margin-right: .25em;
+}
+
+[class*="status-before--"] {
+    &:before {
+        @include status;
+    }
+}
+
+[class*="status-after--"] {
+    &:after {
+        @include status;
+    }
+}
+
+.status-before--success, .status-after--success {
+    &:before {
+        background-color: $success-color;
+    }
+    &:after {
+        background-color: $success-color;
+    }
+}
+
+.status-before--error, .status-after--error {
+    &:before {
+        background-color: $error-color;
+    }
+    &:after {
+        background-color: $error-color;
+    }
+}
+
+.status-before--warning, .status-after--warning, .status-before--other, .status-after--other {
+    &:before {
+        background-color: $warning-color;
+    }
+    &:after {
+        background-color: $warning-color;
+    }
+}
