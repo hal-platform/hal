@@ -4,6 +4,7 @@ namespace QL\Hal\Logger;
 
 use DateTime;
 use DateTimeZone;
+use ReflectionClass;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
@@ -12,7 +13,6 @@ use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\Log;
 use QL\Hal\Core\Entity\Session;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\LazyUserHelper;
 use Zend\Ldap\Ldap;
 
@@ -84,6 +84,10 @@ class DoctrineEntityLogger
             return;
         }
 
+        // figure out short class name
+        $reflect = new ReflectionClass($entity);
+        $class = $reflect->getShortName();
+
         // figure out the entity primary id
         $id = (array)$uow->getEntityIdentifier($entity);
         $id = reset($id);
@@ -93,7 +97,7 @@ class DoctrineEntityLogger
         $log->setRecorded($this->getTimepoint());
         $log->setEntity(sprintf(
             '%s:%s',
-            get_class($entity),
+            $class,
             $id
         ));
         $log->setAction($action);
