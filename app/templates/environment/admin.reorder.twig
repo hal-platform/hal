@@ -6,28 +6,26 @@
     <h2>Reorder Environments</h2>
 
     <form action="{{ urlFor('environment.admin.reorder.handle') }}" method="post">
-        <div>
-            <table id="env-reorder">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Display Order</th>
+        <table class="t50" id="env-reorder">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Display Order</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for env in envs %}
+                <tr class="env-row-{{ env.key }}">
+                    <td><span class="icon-sort"></span> {{ env.key }}</td>
+                    <td><input type="text" maxlength="3" required name="env{{ env.id }}" value="{{ env.order }}" class="text-input"></td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for env in envs %}
-                    <tr class="env-row-{{ env.key }}">
-                        <td><span class="icon-sort"></span> {{ env.key }}</td>
-                        <td><input type="text" maxlength="3" required name="env{{ env.id }}" value="{{ env.order }}" class="text-input"></td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="2">There are no environments.</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+            {% else %}
+                <tr>
+                    <td colspan="2">There are no environments.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
         <div>
             {# primary action #}

@@ -69,7 +69,7 @@
 
     <p>The following users have permission to push <strong>{{ repository.key }}</strong> to the specified environment.</p>
 
-    <table class="t75">
+    <table class="tablesaw tablesaw-stack" data-mode="stack">
         <thead>
         <tr>
             <th>Environment</th>
@@ -105,7 +105,7 @@
 
     <h3>Server deployments:</h3>
     {% if deployments %}
-        <table class="t75">
+        <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>
                 <tr>
                     <th>Hostname</th>

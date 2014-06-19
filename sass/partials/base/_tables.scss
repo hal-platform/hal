@@ -1,5 +1,5 @@
 table {
-    min-width: 32em;
+    min-width: 17em;
 }
 
 thead {
@@ -9,8 +9,4 @@ thead {
 tbody tr {
     border-bottom: 1px dotted $light-grey;
     @include adjust-font-size-to(ms(-1));
-}
-
-.overflow-container {
-    overflow-y: scroll;
 }

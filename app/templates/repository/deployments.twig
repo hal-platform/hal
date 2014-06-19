@@ -15,12 +15,12 @@
                 <form action="{{ urlFor('repository.deployment.admin.add.handle', {id: repository.id}) }}" method="post">
             {% endif %}
 
-            <table class="t75">
+            <table class="tablesaw tablesaw-stack" data-mode="stack">
                 <thead>
                 <tr>
                     <th>Hostname</th>
                     <th>Path</th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>

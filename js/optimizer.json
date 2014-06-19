@@ -11,7 +11,8 @@
       "name": "main",
       "include": [
         "jquery",
-        "jquerySortable"
+        "jquerySortable",
+        "tablesaw"
       ]
     }
   ],
@@ -25,6 +26,7 @@
     "jquerySortable": "vendor/jquery.sortable.min",
     "underscore": "vendor/underscore.min",
     "crossroads": "vendor/crossroads.min",
-    "signals": "vendor/signals.min"
+    "signals": "vendor/signals.min",
+    "tablesaw": "vendor/tablesaw.min"
   }
 }

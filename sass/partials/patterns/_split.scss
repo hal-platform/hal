@@ -5,11 +5,12 @@
 
     .split--left__title {
         font-weight: bold;
-        width: 15em;
+        width: 100%;
         @include adjust-font-size-to(ms(2));
 
         @include breakpoint(41.125em) {
             font-weight: normal;
+            width: 15em;
 
             &::after {
                 content: ':';

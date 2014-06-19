@@ -5,31 +5,29 @@
 {% block content %}
     <h2>Users</h2>
 
-    <div>
-        <table>
-            <thead>
+    <table class="tablesaw tablesaw-stack" data-mode="stack">
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Display Name</th>
+            <th>E-mail</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
             <tr>
-                <th></th>
-                <th>Username</th>
-                <th>Display Name</th>
-                <th>E-mail</th>
+                <td><a href="{{ urlFor('user', {'id': user.id}) }}">{{ user.id }}</a></td>
+                <td>{{ user.handle }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
             </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
-                <tr>
-                    <td><a href="{{ urlFor('user', {'id': user.id}) }}">{{ user.id }}</a></td>
-                    <td>{{ user.handle }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4">There are no users.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        {% else %}
+            <tr>
+                <td colspan="4">There are no users.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}
