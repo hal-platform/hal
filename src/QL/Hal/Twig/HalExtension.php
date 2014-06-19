@@ -94,7 +94,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat')),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
             new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
-            new Twig_SimpleFilter('gitref', array($this, 'formatGitReference'))
+            new Twig_SimpleFilter('gitref', array($this, 'formatGitReference')),
+            new Twig_SimpleFilter('commit', array($this, 'formatGitCommit'))
         );
     }
 
@@ -220,9 +221,20 @@ class HalExtension extends Twig_Extension
         }
 
         if ($commit = $this->github->parseRefAsCommit($reference)) {
-            return "Commit ".substr($commit, 0, 10);
+            return "Commit ".$this->formatGitCommit($commit);
         }
 
         return ucfirst(strtolower($reference))." Branch";
+    }
+
+    /**
+     * Format a git commit hash for output
+     *
+     * @param $reference
+     * @return string
+     */
+    public function formatGitCommit($reference)
+    {
+        return substr($reference, 0, 7);
     }
 }

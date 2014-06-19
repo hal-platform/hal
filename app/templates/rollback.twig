@@ -11,7 +11,7 @@
         <table>
             <thead>
                 <th>Build</th>
-                <th>Branch</th>
+                <th>Reference</th>
                 <th>Commit</th>
                 <th>Pushed</th>
                 <th>Initiator</th>
@@ -21,9 +21,14 @@
                 {% for push in pushes %}
                 <tr>
                     <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
-                    <td>{{ push.build.branch }}</td>
                     <td>
-                        <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit[:7] }}</a>
+                        <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a>
+                        <svg viewBox="0 0 32 32" class="icon">
+                            <use xlink:href="#fork"></use>
+                        </svg>
+                    </td>
+                    <td>
+                        <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
                         <span class="icon">
                             <svg viewBox="0 0 32 32">
                                 <use xlink:href="#github"></use>

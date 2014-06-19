@@ -15,7 +15,7 @@
             <tr>
                 <th>Server</th>
                 <th>Build</th>
-                <th>Branch</th>
+                <th>Reference</th>
                 <th>Commit</th>
                 <th>Pushed</th>
                 <th>Actions</th>
@@ -34,11 +34,14 @@
                             {% else %}
                                 class="circle-orange"
                             {% endif %}>
-                                {{ status.success.build.branch[:20] }}
+                                <a href="{{ githubReference(status.success.build.repository.githubUser, status.success.build.repository.githubRepo, status.success.build.branch) }}">{{ status.success.build.branch|gitref }}</a>
+                                <svg viewBox="0 0 32 32" class="icon">
+                                    <use xlink:href="#fork"></use>
+                                </svg>
                             </span>
                         </td>
                         <td>
-                            <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit[:7] }}</a>
+                            <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit|commit }}</a>
                             <span class="icon">
                                 <svg viewBox="0 0 32 32">
                                     <use xlink:href="#github"></use>

@@ -71,7 +71,7 @@
                         <li>
                             <span class="split__title">Commit:</span>
                             {% if status.success %}
-                                <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit[:7] }}</a>
+                                <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit|commit }}</a>
                                 <svg viewBox="0 0 32 32" class="icon">
                                     <use xlink:href="#github"></use>
                                 </svg>

@@ -24,23 +24,26 @@
                     <td>{{ build.environment.key }}</td>
                 </tr>
                 <tr>
-                    <td>Branch</td>
+                    <td>Reference</td>
                     <td>
                         {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
                             <span class="circle-green">
-                                {{ build.branch }} (latest)
+                                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a> (latest)
                             </span>
                         {% else %}
                             <span class="circle-orange">
-                                {{ build.branch }} (behind or unresolved)
+                                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a> (behind or unresolved)
                             </span>
                         {% endif %}
+                        <svg viewBox="0 0 32 32" class="icon">
+                            <use xlink:href="#fork"></use>
+                        </svg>
                     </td>
                 </tr>
                 <tr>
                     <td>Commit</td>
                     <td>
-                        <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit[:7] }}</a>
+                        <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
                         <span class="icon">
                             <svg viewBox="0 0 32 32">
                                 <use xlink:href="#github"></use>

@@ -2,7 +2,7 @@
     <thead>
         <th>Build</th>
         <th>Status</th>
-        <th>Branch</th>
+        <th>Reference</th>
         <th>Commit</th>
         <th>Initiator</th>
         <th>Created</th>
@@ -22,9 +22,14 @@
                     <span class="circle-orange">{{ build.status }}</span>
                 {% endif %}
             </td>
-            <td>{{ build.branch[:20] }}</td>
             <td>
-                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit[:7] }}</a>
+                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
+                <svg viewBox="0 0 32 32" class="icon">
+                    <use xlink:href="#fork"></use>
+                </svg>
+            </td>
+            <td>
+                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
                 <span class="icon">
                     <svg viewBox="0 0 32 32">
                         <use xlink:href="#github"></use>
