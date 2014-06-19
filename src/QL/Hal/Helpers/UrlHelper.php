@@ -6,6 +6,7 @@ namespace QL\Hal\Helpers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Router;
+use QL\Hal\Services\GithubService;
 
 /**
  *  Url Helper
@@ -30,15 +31,26 @@ class UrlHelper
     private $router;
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param Router $router
+     * @var GithubService
      */
-    public function __construct(Request $request, Response $response, Router $router)
-    {
+    private $github;
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param Router $router
+     * @param GithubService $github
+     */
+    public function __construct(
+        Request $request,
+        Response $response,
+        Router $router,
+        GithubService $github
+    ) {
         $this->request = $request;
         $this->response = $response;
         $this->router = $router;
+        $this->github = $github;
     }
 
     /**
@@ -98,6 +110,11 @@ class UrlHelper
         );
     }
 
+    // http://git/web-core/hal/tree/2.0.1
+    // http://git/web-core/hal/pull/77
+    // http://git/web-core/hal/commit/c938c1804a6e6950abb33461b9a2dd98ff08bfcf
+    // http://git/web-core/hal/tree/maintenance
+
     /**
      *  Get the URL for a Github repository commit
      *
@@ -147,5 +164,31 @@ class UrlHelper
             $this->githubRepoUrl($user, $repo),
             $number
         );
+    }
+
+    /**
+     * Get the URL for an arbitrary Github reference
+     *
+     * @param $user
+     * @param $repo
+     * @param $reference
+     * @return string
+     */
+    public function githubReferenceUrl($user, $repo, $reference)
+    {
+        if ($tag = $this->github->parseRefAsTag($reference)) {
+            return $this->githubTreeUrl($user, $repo, $tag);
+        }
+
+        if ($pull = $this->github->parseRefAsPull($reference)) {
+            return $this->githubPullRequestUrl($user, $repo, $pull);
+        }
+
+        if ($commit = $this->github->parseRefAsCommit($reference)) {
+            return $this->githubCommitUrl($user, $repo, $commit);
+        }
+
+        // default to branch
+        return $this->githubTreeUrl($user, $repo, $reference);
     }
 }

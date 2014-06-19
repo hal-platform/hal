@@ -68,8 +68,14 @@ class GithubService
      * @param CommitApi $commit
      * @param ResultPager $pager
      */
-    public function __construct(HackUser $user, Repo $repo, ReferenceApi $ref, PullRequestApi $pull, CommitApi $commit, ResultPager $pager)
-    {
+    public function __construct(
+        HackUser $user,
+        Repo $repo,
+        ReferenceApi $ref,
+        PullRequestApi $pull,
+        CommitApi $commit,
+        ResultPager $pager
+    ) {
         $this->userApi = $user;
         $this->repoApi = $repo;
         $this->refApi = $ref;
@@ -313,21 +319,67 @@ class GithubService
     }
 
     /**
+     * Parse a git reference as a tag, return null on failure.
+     *
+     * @param $reference
+     * @return string|null
+     */
+    public function parseRefAsTag($reference)
+    {
+        if (preg_match(self::REGEX_TAG, $reference, $matches) !== 1) {
+            return null;
+        }
+
+        return $matches[1];
+    }
+
+    /**
+     * Parse a git reference as a pull request, return null on failure.
+     *
+     * @param $reference
+     * @return string|null
+     */
+    public function parseRefAsPull($reference)
+    {
+
+        if (preg_match(self::REGEX_PULL, $reference, $matches) !== 1) {
+            return null;
+        }
+
+        return $matches[1];
+    }
+
+    /**
+     * Parse a git reference as a commit, return null on failure.
+     *
+     * @param $reference
+     * @return string|null
+     */
+    public function parseRefAsCommit($reference)
+    {
+        if (preg_match(self::REGEX_COMMIT, $reference, $matches) !== 1) {
+            return null;
+        }
+
+        return $matches[0];
+    }
+
+    /**
      * Resolve a tag reference. Returns the commit sha or null on failure.
      *
      * @param string $user
      * @param string $repo
-     * @param string $tag
+     * @param string $reference
      * @return null|string
      */
-    private function resolveTag($user, $repo, $tag)
+    private function resolveTag($user, $repo, $reference)
     {
-        if (preg_match(self::REGEX_TAG, $tag, $matches) !== 1) {
+        if (!$tag = $this->parseRefAsTag($reference)) {
             return null;
         }
 
         try {
-            $result = $this->refApi->show($user, $repo, sprintf('tags/%s', $matches[1]));
+            $result = $this->refApi->show($user, $repo, sprintf('tags/%s', $tag));
         } catch (RuntimeException $e) {
             return null;
         }
@@ -340,17 +392,17 @@ class GithubService
      *
      * @param string $user
      * @param string $repo
-     * @param string $pull
+     * @param string $reference
      * @return null|string
      */
-    private function resolvePull($user, $repo, $pull)
+    private function resolvePull($user, $repo, $reference)
     {
-        if (preg_match(self::REGEX_PULL, $pull, $matches) !== 1) {
+        if (!$pull = $this->parseRefAsPull($reference)) {
             return null;
         }
 
         try {
-            $result = $this->pullApi->show($user, $repo, $matches[1]);
+            $result = $this->pullApi->show($user, $repo, $pull);
         } catch (RuntimeException $e) {
             return null;
         }
@@ -363,17 +415,17 @@ class GithubService
      *
      * @param string $user
      * @param string $repo
-     * @param string $commit
+     * @param string $reference
      * @return null|string
      */
-    private function resolveCommit($user, $repo, $commit)
+    private function resolveCommit($user, $repo, $reference)
     {
-        if (preg_match(self::REGEX_COMMIT, $commit, $matches) !== 1) {
+        if (!$commit = $this->parseRefAsCommit($reference)) {
             return null;
         }
 
         try {
-            $result = $this->commitApi->show($user, $repo, $matches[0]);
+            $result = $this->commitApi->show($user, $repo, $commit);
         } catch (RuntimeException $e) {
             return null;
         }

@@ -50,15 +50,15 @@
                             {% endif %}
                         </li>
                         <li>
-                            <span class="split__title">Branch:</span>
+                            <span class="split__title">Reference:</span>
                             {% if status.success %}
                                 {% if githubCommitIsCurrent(repo.githubUser, repo.githubRepo, status.success.build.branch, status.success.build.commit) %}
                                 <span class="status-before--success">
-                                    {{ status.success.build.branch[:20] }}
+                                    <a href="{{ githubReference(repo.githubUser, repo.githubRepo, status.success.build.branch) }}">{{ status.success.build.branch|gitref }}</a>
                                 </span>
                                 {% else %}
                                 <span class="status-before--warning">
-                                    {{ status.success.build.branch[:20] }}
+                                    <a href="{{ githubReference(repo.githubUser, repo.githubRepo, status.success.build.branch) }}">{{ status.success.build.branch|gitref }}</a>
                                 </span>
                                 {% endif %}
                                 <svg viewBox="0 0 32 32" class="icon">

@@ -76,6 +76,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('githubCommit', array($this->url, 'githubCommitUrl')),
             new Twig_SimpleFunction('githubTreeish', array($this->url, 'githubTreeUrl')),
             new Twig_SimpleFunction('githubPullRequest', array($this->url, 'githubPullRequestUrl')),
+            new Twig_SimpleFunction('githubReference', array($this->url, 'githubReferenceUrl')),
             new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName')),
             new Twig_SimpleFunction('githubCommitIsCurrent', array($this, 'commitIsCurrent'))
         );
@@ -92,7 +93,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat')),
             new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat')),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
-            new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty'))
+            new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
+            new Twig_SimpleFilter('gitref', array($this, 'formatGitReference'))
         );
     }
 
@@ -199,5 +201,28 @@ class HalExtension extends Twig_Extension
         }
 
         return json_encode($raw, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Format an arbitrary git reference for display
+     *
+     * @param $reference
+     * @return string
+     */
+    public function formatGitReference($reference)
+    {
+        if ($tag = $this->github->parseRefAsTag($reference)) {
+            return "Tag ".$tag;
+        }
+
+        if ($pull = $this->github->parseRefAsPull($reference)) {
+            return "Pull Request ".$pull;
+        }
+
+        if ($commit = $this->github->parseRefAsCommit($reference)) {
+            return "Commit ".substr($commit, 0, 10);
+        }
+
+        return ucfirst(strtolower($reference))." Branch";
     }
 }

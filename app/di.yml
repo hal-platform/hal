@@ -117,6 +117,7 @@ services:
       - @slim.request
       - @slim.response
       - @slim.router
+      - @github
 
   directory.helper:
     class: 'QL\Hal\Helpers\DirectoryHelper'
