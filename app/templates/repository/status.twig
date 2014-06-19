@@ -8,8 +8,6 @@
     <h3>Server Status</h3>
     <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
 
-    <p><a class="btn" href="{{ urlFor('repository', {id: repo.id}) }}">Repository details</a></p>
-
     <ul class="list--bare cards">
         {% for status in statuses %}
         <li>
@@ -94,14 +92,15 @@
         {% endfor %}
     </ul>
 
-    <h3>Available Builds</h3>
-    <p>This table shows all recent available builds.</p>
+    <h3>Recent Builds</h3>
+
     {% include 'partials/build-table.twig' with {'builds': builds} %}
     <p>
         {% if canUserBuild(currentUser, repo.key) %}
-            <a class="btn--small btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
+            <a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
         {% endif %}
-        <a class="btn--small btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
-        <a class="btn--small btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
+        <a class="btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
+        <a class="btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
+        <a class="btn--toggles" href="{{ urlFor('repository', {id: repo.id}) }}">Repository Details</a>
     </p>
 {% endblock %}
