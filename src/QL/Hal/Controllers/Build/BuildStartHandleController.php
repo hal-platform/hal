@@ -123,7 +123,7 @@ class BuildStartHandleController
             call_user_func($notFound);
             return;
         }
-z
+
         if (!$env) {
             $this->session->addFlash(self::ERR_NO_ENV);
             $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
