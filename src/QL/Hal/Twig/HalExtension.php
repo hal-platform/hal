@@ -5,6 +5,7 @@ namespace QL\Hal\Twig;
 
 use DateTime;
 use DateTimeZone;
+use MCP\DataType\Time\TimeInterval;
 use Twig_Extension;
 use Twig_SimpleFunction;
 use Twig_SimpleFilter;
@@ -15,6 +16,7 @@ use QL\Hal\Helpers\UrlHelper;
 use Slim\Slim;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Services\GithubService;
+use QL\Hal\Helpers\TimeHelper;
 
 
 /**
@@ -32,21 +34,26 @@ class HalExtension extends Twig_Extension
 
     private $github;
 
+    private $time;
+
     /**
      * Constructor
      *
      * @param PermissionsService $permissions
      * @param UrlHelper $url
      * @param GithubService $github
+     * @param TimeHelper $time
      */
     public function __construct(
         PermissionsService $permissions,
         UrlHelper $url,
-        GithubService $github
+        GithubService $github,
+        TimeHelper $time
     ) {
         $this->permissions = $permissions;
         $this->url = $url;
         $this->github = $github;
+        $this->time = $time;
     }
 
     /**
@@ -90,8 +97,9 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new Twig_SimpleFilter('dateHal', array($this, 'datetimeConvertAndFormat')),
-            new Twig_SimpleFilter('date', array($this, 'datetimeConvertAndFormat')),
+            new Twig_SimpleFilter('dateHal', array($this->time, 'format')),
+            new Twig_SimpleFilter('date', array($this->time, 'format')),
+            new Twig_SimpleFilter('reldate', array($this->time, 'relative')),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
             new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
             new Twig_SimpleFilter('gitref', array($this, 'formatGitReference')),
@@ -129,38 +137,6 @@ class HalExtension extends Twig_Extension
         $chunks = array_chunk($input, $count);
 
         return array_pad($chunks, $split, []);
-    }
-
-    /**
-     *  Convert a UTC encoded MySQL DateTime string to a DateTime object... or just use the passed DateTime object
-     *  if it is one... because fuck PDO
-     *
-     *  @param string $value
-     *  @param string $format
-     *  @param string $timezone
-     *  @return false|DateTime
-     */
-    public function datetimeConvertAndFormat($value, $format = 'M j, Y g:i A', $timezone = 'America/Detroit')
-    {
-        if ($value instanceof TimePoint) {
-            return $value->format($format, $timezone);
-        }
-
-        if ($value instanceof DateTime) {
-            $datetime = $value;
-        } else {
-            $datetime = DateTime::createFromFormat('Y-m-d G:i:s', $value, new DateTimeZone('UTC'));
-
-            if ($datetime === false) {
-                $datetime = new DateTime($value, new DateTimeZone('UTC'));
-            }
-        }
-
-        if ($datetime instanceof DateTime) {
-            return $datetime->setTimezone(new DateTimeZone($timezone))->format($format);
-        } else {
-            return '';
-        }
     }
 
     /**

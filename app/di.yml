@@ -129,6 +129,9 @@ services:
     arguments:
       - @service_container
 
+  time.helper:
+    class: 'QL\Hal\Helpers\TimeHelper'
+
   clock:
     class: 'MCP\DataType\Time\Clock'
     arguments: ['now', 'UTC']
@@ -144,6 +147,7 @@ services:
       - @permissions
       - @url.helper
       - @github
+      - @time.helper
 
   # Twig Loader
   twigLoader:

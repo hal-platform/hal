@@ -14,8 +14,7 @@
             <article class="card">
                 <header class="card__header">
                     <h4 class="mbn"><a href="{{ urlFor('server', {'id': status.deploy.server.id}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</h4>
-                    <!-- <time datetime="2014-03-20 1:00">{{ status.success.end|date }}</time> -->
-                    <p class="mbn">{{ status.success.end|date }}</p>
+                    <p class="mbn">{{ status.latest.end|reldate }}</p>
                 </header>
 
                 <section class="card__details">
