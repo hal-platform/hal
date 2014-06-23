@@ -28,7 +28,7 @@ class BuildStartHandleController
     const ERR_NO_ENV = "You must select an environment to build for.";
     const ERR_NO_PERM = "You don't have permission to build for the %s environment.";
     const ERR_BAD_REF = "You must select a valid git reference.";
-    const NOT_FINISH = 'Build %s has been queued for creation.';
+    const NOT_FINISH = 'Build has been queued for creation.';
 
     /**
      * @var Session
@@ -123,7 +123,7 @@ class BuildStartHandleController
             call_user_func($notFound);
             return;
         }
-
+z
         if (!$env) {
             $this->session->addFlash(self::ERR_NO_ENV);
             $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
@@ -149,7 +149,8 @@ class BuildStartHandleController
         list($reference, $commit) = $result;
 
         $build = new Build();
-        $build->setId(hash('sha1', uniqid()));
+        $id = hash('sha1', uniqid());
+        $build->setId($id);
         $build->setStatus('Waiting');
         $build->setBranch($reference);
         $build->setCommit($commit);
@@ -158,16 +159,7 @@ class BuildStartHandleController
         $build->setEnvironment($env);
         $this->em->persist($build);
 
-        $this->session->addFlash(
-            sprintf(
-                self::NOT_FINISH,
-                sprintf(
-                    '<a href="%s">%s</a>',
-                    $this->url->urlFor('build', ['build' => $build->getId()]),
-                    $build->getId()
-                )
-            )
-        );
-        $response->redirect($this->url->urlFor('repository.status', ['id' => $repo->getId()]), 303);
+        $this->session->addFlash(self::NOT_FINISH);
+        $response->redirect($this->url->urlFor('build', ['build' => $id]), 303);
     }
 }
