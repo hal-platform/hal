@@ -8,85 +8,95 @@
 
     <h2>Build Details</h2>
 
-    <div class="overflow-container">
-        <table>
-            <tbody>
-                <tr>
-                    <td>Id</td>
-                    <td>{{ build.id }}</td>
-                </tr>
-                <tr>
-                    <td>Repository</td>
-                    <td><a href="{{ urlFor('repository', {'id': build.repository.id}) }}">{{ build.repository.key }}</a></td>
-                </tr>
-                <tr>
-                    <td>Environment</td>
-                    <td>{{ build.environment.key }}</td>
-                </tr>
-                <tr>
-                    <td>Reference</td>
-                    <td>
-                        {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
-                            <span class="circle-green">
-                                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a> (latest)
-                            </span>
-                        {% else %}
-                            <span class="circle-orange">
-                                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a> (behind or unresolved)
-                            </span>
-                        {% endif %}
-                        <svg viewBox="0 0 32 32" class="icon">
-                            <use xlink:href="#fork"></use>
-                        </svg>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Commit</td>
-                    <td>
-                        <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
-                        <span class="icon">
-                            <svg viewBox="0 0 32 32">
-                                <use xlink:href="#github"></use>
-                            </svg>
+    <table>
+        <tbody>
+            <tr>
+                <td>Id</td>
+                <td>{{ build.id }}</td>
+            </tr>
+            <tr>
+                <td>Repository</td>
+                <td><a href="{{ urlFor('repository', {'id': build.repository.id}) }}">{{ build.repository.key }}</a></td>
+            </tr>
+            <tr>
+                <td>Environment</td>
+                <td>{{ build.environment.key }}</td>
+            </tr>
+            <tr>
+                <td>Reference</td>
+                <td>
+                    {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
+                        <span class="circle-green">
+                            <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a> (latest)
                         </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Status</td>
-                    <td>
-                        {% if build.status == 'Success' %}
-                            <span class="circle-green">{{ build.status }}</span>
-                        {% elseif build.status in ['Error', 'Removed'] %}
-                            <span class="circle-red">{{ build.status }}</span>
-                        {% else %}
-                            <span class="circle-orange">{{ build.status }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Start</td>
-                    <td>{{ build.start|date }}</td>
-                </tr>
-                <tr>
-                    <td>End</td>
-                    <td>{{ build.end|date }}</td>
-                </tr>
-                <tr>
-                    <td>Initiator</td>
-                    <td>
-                        {% if build.user %}
-                            <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
-                        {% elseif build.consumer %}
-                            {{ build.consumer.name[:20] }}
-                        {% else %}
-                            Unknown
-                        {% endif %}
-                    </td>
-                </tr>
+                    {% else %}
+                        <span class="circle-orange">
+                            <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a> (behind or unresolved)
+                        </span>
+                    {% endif %}
+                    <svg viewBox="0 0 32 32" class="icon">
+                        <use xlink:href="#fork"></use>
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td>Commit</td>
+                <td>
+                    <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
+                    <span class="icon">
+                        <svg viewBox="0 0 32 32">
+                            <use xlink:href="#github"></use>
+                        </svg>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td>
+                    {% if build.status == 'Success' %}
+                        <span class="circle-green">{{ build.status }}</span>
+                    {% elseif build.status in ['Error', 'Removed'] %}
+                        <span class="circle-red">{{ build.status }}</span>
+                    {% else %}
+                        <span class="circle-orange">{{ build.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Start</td>
+                <td>{{ build.start|date }}</td>
+            </tr>
+            <tr>
+                <td>End</td>
+                <td>{{ build.end|date }}</td>
+            </tr>
+            <tr>
+                <td>Initiator</td>
+                <td>
+                    {% if build.user %}
+                        <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
+                    {% elseif build.consumer %}
+                        {{ build.consumer.name[:20] }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </td>
+            </tr>
 
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
+
+    {% if canUserBuild(currentUser, build.repository.key) %}
+        <p>
+        {% if build.status == 'Success' %}
+            <a class="btn--toggles btn--action" href="{{ urlFor('push.start', {'build': build.id}) }}">Push Build</a>
+        {% elseif build.status == 'Waiting' or build.status == 'Building' %}
+            <a class="btn--toggles btn--action btn--disabled" href="#" title="Please wait while the build completes.">Push Build</a>
+        {% else %}
+            <a class="btn--toggles btn--action btn--disabled" href="#" title="This build cannot be pushed.">Push Build</a>
+        {% endif %}
+        </p>
+    {% endif %}
 
     <h3>Build Log</h3>
     <p>Build log is not available.</p>
