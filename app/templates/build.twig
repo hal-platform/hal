@@ -87,15 +87,16 @@
     </table>
 
     {% if canUserBuild(currentUser, build.repository.key) %}
-        <p>
         {% if build.status == 'Success' %}
-            <a class="btn--toggles btn--action" href="{{ urlFor('push.start', {'build': build.id}) }}">Push Build</a>
+            <h3>The build was successful, go ahead and push it!</h3>
+            <p><a class="btn--action" href="{{ urlFor('push.start', {'build': build.id}) }}">Push Build</a></p>
         {% elseif build.status == 'Waiting' or build.status == 'Building' %}
-            <a class="btn--toggles btn--action btn--disabled" href="#" title="Please wait while the build completes.">Push Build</a>
+            <h3>Your build is still pending. Please wait to push it.</h3>
+            <p><span class="btn--disabled">Push Build</span></p>
         {% else %}
-            <a class="btn--toggles btn--action btn--disabled" href="#" title="This build cannot be pushed.">Push Build</a>
+            <h3>Your build cannot be pushed.</h3>
+            <p><span class="btn--disabled">Push Build</span></p>
         {% endif %}
-        </p>
     {% endif %}
 
     <h3>Build Log</h3>
