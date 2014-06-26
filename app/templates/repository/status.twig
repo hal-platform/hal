@@ -91,15 +91,15 @@
         {% endfor %}
     </ul>
 
-    <h3>Recent Builds</h3>
+    <p><a class="btn--toggles" href="{{ urlFor('repository', {id: repo.id}) }}">View Repository Details</a></p>
 
-    {% include 'partials/build-table.twig' with {'builds': builds} %}
+    <h3>Recent Builds</h3>
     <p>
         {% if canUserBuild(currentUser, repo.key) %}
             <a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
         {% endif %}
         <a class="btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
         <a class="btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
-        <a class="btn--toggles" href="{{ urlFor('repository', {id: repo.id}) }}">Repository Details</a>
     </p>
+    {% include 'partials/build-table.twig' with {'builds': builds} %}
 {% endblock %}

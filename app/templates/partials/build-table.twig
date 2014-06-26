@@ -15,11 +15,11 @@
             <td><a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">{{ build.id[:10] }}</a> ({{ build.environment.key }})</td>
             <td>
                 {% if build.status == 'Success' %}
-                    <span class="circle-green">{{ build.status }}</span>
+                    <span class="status-before--success">{{ build.status }}</span>
                 {% elseif build.status in ['Error', 'Removed'] %}
-                    <span class="circle-red">{{ build.status }}</span>
+                    <span class="status-before--error">{{ build.status }}</span>
                 {% else %}
-                    <span class="circle-orange">{{ build.status }}</span>
+                    <span class="status-before--other">{{ build.status }}</span>
                 {% endif %}
             </td>
             <td>

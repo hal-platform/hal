@@ -10,7 +10,7 @@
 
     <form action="{{ urlFor('push.handle', {'repo': build.repository.key, 'build': build.id}) }}" method="post">
     <div class="overflow-container">
-        <table>
+        <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>
             <tr>
                 <th>Server</th>
@@ -30,9 +30,9 @@
                         <td><a href="{{ urlFor('build', {'repo': status.deployment.repository.id, 'build': status.success.build.id}) }}">{{ status.success.build.id[:10] }}</a></td>
                         <td>
                             <span {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, status.success.build.branch, status.success.build.commit) %}
-                                class="circle-green"
+                                class="status-before--success"
                             {% else %}
-                                class="circle-orange"
+                                class="status-before--other"
                             {% endif %}>
                                 <a href="{{ githubReference(status.success.build.repository.githubUser, status.success.build.repository.githubRepo, status.success.build.branch) }}">{{ status.success.build.branch|gitref }}</a>
                                 <svg viewBox="0 0 32 32" class="icon">

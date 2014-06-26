@@ -8,42 +8,54 @@
 
     <p>Changes to database entities will be logged on this page.</p>
 
-    <div>
-        <table>
-            <thead>
-                <th>Date</th>
-                <th>User</th>
-                <th>Action</th>
-                <th>Object</th>
-                <th>Changeset</th>
-            </thead>
-            <tbody>
-            {% for log in logs %}
-                <tr>
-                    <td>{{ log.recorded|date }}</td>
-                    <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.name }}</a></td>
-                    <td><strong>{{ log.action }}</strong></td>
-                    <td>{{ log.entity }}</td>
-                    <td><code>{{ log.data|jsonPretty|raw }}</code></td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="1">
-                        No logs found.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
+    <table class="tablesaw tablesaw-stack" data-mode="stack">
+        <colgroup>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col class="t50">
+        </colgroup>
+        <thead>
+            <th>Date</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Object</th>
+            <th>Changeset</th>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.recorded|date }}</td>
+                <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.name }}</a></td>
+                <td><b>{{ log.action }}</b></td>
+                <td>{{ log.entity }}</td>
+                <td><code>{{ log.data|jsonPretty|raw }}</code></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="1">
+                    No logs found.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
             {% if page > 1 %}
-                <a href="{{ urlFor('logs', {'page': page-1}) }}"><i class="fa fa-arrow-circle-left"></i> newer</a>
+                <a href="{{ urlFor('logs', {'page': page-1}) }}">
+                    <svg viewBox="0 0 32 32" class="icon">
+                        <use xlink:href="#caret-left"></use>
+                    </svg>newer
+                </a>
             {% else %}
-                <span class="disabled"><i class="fa fa-arrow-circle-left"></i> newer</span>
+                <span class="disabled">
+                    <svg viewBox="0 0 32 32" class="icon">
+                        <use xlink:href="#caret-left"></use>
+                    </svg>newer
+                </span>
             {% endif %}
         </li>
         <li>
@@ -53,9 +65,17 @@
         </li>
         <li class="nav--pagination__next">
             {% if page < last %}
-                <a href="{{ urlFor('logs', {'page': page+1}) }}">older <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="{{ urlFor('logs', {'page': page+1}) }}">
+                    older <svg viewBox="0 0 32 32" class="icon mls">
+                        <use xlink:href="#caret-right"></use>
+                    </svg>
+                </a>
             {% else %}
-                <span class="disabled">older <i class="fa fa-arrow-circle-right"></i></span>
+                <span class="disabled">
+                    older <svg viewBox="0 0 32 32" class="icon mls">
+                        <use xlink:href="#caret-right"></use>
+                    </svg>
+                </span>
             {% endif %}
         </li>
     </ol>

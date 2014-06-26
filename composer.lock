@@ -1,7 +1,8 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
     "hash": "73e0dcd18e59729264113cbf98eed762",
     "packages": [
@@ -810,17 +811,17 @@
         },
         {
             "name": "ql/mcp-cache",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-cache.git",
-                "reference": "2.1.1"
+                "reference": "2fcd84f8b8d79c8febd7a7898ac561dd29edd0b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-cache-2.1.1-d24fa4.zip",
-                "reference": "2.1.1",
-                "shasum": "139b64fd3fc7012c24fcb2ef63b23d8450dc493c"
+                "url": "http://composer//dist/ql-mcp-cache-2.1.2-f95763.zip",
+                "reference": "2fcd84f8b8d79c8febd7a7898ac561dd29edd0b8",
+                "shasum": "f940fc21a1ad5b5a640ef71926c31a11738b1251"
             },
             "archive": {
                 "exclude": [
@@ -863,7 +864,7 @@
             ],
             "description": "Caching standard for mcp services",
             "homepage": "http://git/mcp/mcp-cache",
-            "time": "2014-06-06 14:38:40"
+            "time": "2014-06-23 17:07:51"
         },
         {
             "name": "ql/mcp-core",

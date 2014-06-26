@@ -14,11 +14,11 @@
             <td><a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})</td>
             <td>
                 {% if push.status == 'Success' %}
-                    <span class="circle-green">{{ push.status }}</span>
+                    <span class="status-before--success">{{ push.status }}</span>
                 {% elseif push.status == 'Error' %}
-                    <span class="circle-red">{{ push.status }}</span>
+                    <span class="status-before--error">{{ push.status }}</span>
                 {% else %}
-                    <span class="circle-orange">{{ push.status }}</span>
+                    <span class="status-before--other">{{ push.status }}</span>
                 {% endif %}
             </td>
             <td><a href="{{ urlFor('build', {'repo': push.build.repository.key, 'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
