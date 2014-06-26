@@ -61,30 +61,38 @@ class TimeHelper
     ) {
         if ($time = $this->timepointConvert($value)) {
 
-            // doesn't work right now
-            // @todo make this work, use seconds instead since timepoint/timeinterval comparisons are dumb
-            // fall back to normal for now
-            return $time->format($format, $timezone);
-
-            // from clock?
             $now = $this->timepointConvert(new DateTime('now', new DateTimeZone('UTC')));
-
-            $interval = $time->diff($now);
-
-            //var_dump($interval);
-
-            // within seconds
-            if ($time < ($now->sub(new TimeInterval('P1M')))) {
-                return sprintf('%s seconds ago', $interval->format('%s'));
-            }
-
-            // within minutes
-
-            // within hours, but still today
+            $diff = (int)$now->format('U', self::OUTPUT_TIMEZONE) - (int)$time->format('U', self::OUTPUT_TIMEZONE);
 
             // yesterday
+            // @todo
 
+            // last week??
+            // @todo
 
+            // last month????
+            // @todo
+
+            // 10 seconds
+            if ($diff < 10) {
+                return 'just a moment ago';
+            }
+            // 90 seconds
+            if ($diff < 90) {
+                return sprintf('%s seconds ago', $diff);
+            }
+            // 60 minutes
+            if ($diff < (60 * 60)) {
+                return sprintf('%s minutes ago', ceil($diff/60));
+            }
+            // 24 hours
+            if ($diff < (60 * 60 * 24)) {
+                return sprintf('%s hours ago', ceil($diff/60/60));
+            }
+            // 5 days
+            if ($diff > (60 * 60 * 24 * 5)) {
+                return sprintf('%s days ago', ceil($diff/60/60/24));
+            }
 
             // fall back to normal output
             return $time->format($format, $timezone);
