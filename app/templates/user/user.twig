@@ -72,12 +72,9 @@
 
     <div>
     {% block actions %}
-        {# primary action #}
-        <a class="btn" href="{{ urlFor('users') }}">View all users</a>
-
         {% if isAdmin or commonId == profileUser.getId %}
             {# secondary actions #}
-            <a class="btn--action secondary-action" href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
+            <a class="btn--action" href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
         {% endif %}
     {% endblock %}
     <div>
