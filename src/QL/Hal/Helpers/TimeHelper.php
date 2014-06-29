@@ -37,7 +37,7 @@ class TimeHelper
         $timezone = self::OUTPUT_TIMEZONE
     ) {
         if ($time = $this->timepointConvert($value)) {
-            return $time->format($format, $timezone);
+            return $this->html5time($time, $time->format($format, $timezone), $timezone);
         }
 
         return '';
@@ -75,23 +75,23 @@ class TimeHelper
 
             // 10 seconds
             if ($diff < 10) {
-                return 'just a moment ago';
+                return $this->html5time($time, 'just a moment ago', $timezone);
             }
             // 90 seconds
             if ($diff < 90) {
-                return sprintf('%s seconds ago', $diff);
+                return $this->html5time($time, sprintf('%s seconds ago', $diff), $timezone);
             }
             // 60 minutes
             if ($diff < (60 * 60)) {
-                return sprintf('%s minutes ago', ceil($diff/60));
+                return $this->html5time($time, sprintf('%s minutes ago', ceil($diff/60)), $timezone);
             }
             // 24 hours
             if ($diff < (60 * 60 * 24)) {
-                return sprintf('%s hours ago', ceil($diff/60/60));
+                return $this->html5time($time, sprintf('%s hours ago', ceil($diff/60/60)), $timezone);
             }
             // 5 days
             if ($diff > (60 * 60 * 24 * 5)) {
-                return sprintf('%s days ago', ceil($diff/60/60/24));
+                return $this->html5time($time, sprintf('%s days ago', ceil($diff/60/60/24)), $timezone);
             }
 
             // fall back to normal output
@@ -159,5 +159,22 @@ class TimeHelper
 
 
         return null;
+    }
+
+    /**
+     * Return an HTML5 time element for a given Timepoint and output text
+     *
+     * @param TimePoint $time
+     * @param string $output
+     * @param string $timezone
+     * @return string
+     */
+    private function html5time(TimePoint $time, $output = '', $timezone = self::OUTPUT_TIMEZONE)
+    {
+        return sprintf(
+            '<time datetime="%s">%s</time>',
+            $time->format('Y-m-dTH:i:s', $timezone),
+            $output
+        );
     }
 }

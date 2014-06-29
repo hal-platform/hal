@@ -97,9 +97,9 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new Twig_SimpleFilter('dateHal', array($this->time, 'format')),
-            new Twig_SimpleFilter('date', array($this->time, 'format')),
-            new Twig_SimpleFilter('reldate', array($this->time, 'relative')),
+            new Twig_SimpleFilter('dateHal', array($this->time, 'format'), array('is_safe' => array('html'))),
+            new Twig_SimpleFilter('date', array($this->time, 'format'), array('is_safe' => array('html'))),
+            new Twig_SimpleFilter('reldate', array($this->time, 'relative'), array('is_safe' => array('html'))),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
             new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
             new Twig_SimpleFilter('gitref', array($this, 'formatGitReference')),

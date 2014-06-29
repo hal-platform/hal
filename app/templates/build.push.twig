@@ -48,9 +48,9 @@
                                 </svg>
                             </span>
                         </td>
-                        <td>{{ status.success.end|date }}</td>
+                        <td>{{ status.success.end|reldate }}</td>
                     {% else %}
-                        <td colspan="4">Unknown</td>
+                        <td colspan="4"></td>
                     {% endif %}
                     <td>
                         {% if canUserPush(user, status.deployment.repository.key, status.deployment.server.environment.key) %}
