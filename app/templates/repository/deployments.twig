@@ -3,9 +3,9 @@
 {% set page_title = repository.key~' deployments' %}
 
 {% block content %}
-    <h2><b>{{ repository.key }}</b> deployments</h2>
+    <h2><b>{{ repository.key }}</b> Deployment Relationships</h2>
 
-    <p>Deployments define what servers your application can be deployed to and where on that server the code will be placed.</p>
+    <p>Deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.</p>
 
     {% if environments %}
         {% for environment in environments %}
@@ -74,7 +74,7 @@
     <div>
         {# primary action #}
         {% if environments and isAdmin %}
-            <input class="btn" type="submit" value="Save Deployments">
+            <input class="btn" type="submit" value="Save Deployment Relationships">
             </form>
         {% endif %}
 
