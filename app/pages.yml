@@ -9,6 +9,7 @@ services:
       - @layout
       - @user
       - @permissions
+      - @doctrine.em
   hello.twig:
     parent: 'twig.template'
     arguments: ['hello.twig']

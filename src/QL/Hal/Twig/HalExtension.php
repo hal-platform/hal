@@ -9,6 +9,7 @@ use MCP\DataType\Time\TimeInterval;
 use Twig_Extension;
 use Twig_SimpleFunction;
 use Twig_SimpleFilter;
+use Twig_SimpleTest;
 use MCP\Corp\Account\User as LdapUser;
 use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\User as DomainUser;
@@ -17,6 +18,7 @@ use Slim\Slim;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Helpers\TimeHelper;
+use QL\Hal\Core\Entity;
 
 
 /**
@@ -105,6 +107,19 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('gitref', array($this, 'formatGitReference')),
             new Twig_SimpleFilter('commit', array($this, 'formatGitCommit'))
         );
+    }
+
+    /**
+     * Get an array of Twig Tests
+     *
+     * @return array
+     */
+    public function getTests()
+    {
+        return [
+            new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Entity\Build; }),
+            new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Entity\Push; })
+        ];
     }
 
     /**

@@ -17,6 +17,20 @@
 
     <p>I look forward to working with you.</p>
 
+    {% if pending %}
+        <h3>Pending Work</h3>
+        <ul>
+            {% for item in pending %}
+                {% if item is build %}
+                    <li>Build</li>
+                {% endif %}
+                {% if item is push %}
+                    <li>Push</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% if repos %}
         <h3>Your Repositories</h3>
         <ul class="list--bare cards">
