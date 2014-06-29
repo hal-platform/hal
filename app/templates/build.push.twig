@@ -48,7 +48,7 @@
                                 </svg>
                             </span>
                         </td>
-                        <td>{{ status.success.end|reldate }}</td>
+                        <td>{{ status.success.end|reldate }} (Push <a href="{{ urlFor('push', {'push': status.success.id}) }}">{{ status.success.id }}</a>)</td>
                     {% else %}
                         <td colspan="4"></td>
                     {% endif %}

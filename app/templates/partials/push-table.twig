@@ -5,7 +5,7 @@
         <th>Status</th>
         <th>Build</th>
         <th>Initiator</th>
-        <th>Completed</th>
+        <th>Date</th>
     </thead>
     <tbody>
     {% for push in pushes %}
@@ -29,7 +29,7 @@
             {% else %}
                 <td>Unknown</td>
             {% endif %}
-            <td>{{ push.end|date }}</td>
+            <td>{{ push.start|reldate }}</td>
         </tr>
     {% else %}
         <tr>

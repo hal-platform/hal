@@ -89,9 +89,13 @@ class TimeHelper
             if ($diff < (60 * 60 * 24)) {
                 return $this->html5time($time, sprintf('%s hours ago', ceil($diff/60/60)), $timezone);
             }
-            // 5 days
-            if ($diff > (60 * 60 * 24 * 5)) {
+            // 28 days
+            if ($diff < (60 * 60 * 24 * 28)) {
                 return $this->html5time($time, sprintf('%s days ago', ceil($diff/60/60/24)), $timezone);
+            }
+            // 16 weeks
+            if ($diff < (60 * 60 * 24 * 7 * 16)) {
+                return $this->html5time($time, sprintf('%s weeks ago', ceil($diff/60/60/24/7)), $timezone);
             }
 
             // fall back to normal output

@@ -43,7 +43,7 @@
             {% else %}
                 <td>Unknown</td>
             {% endif %}
-            <td>{{ build.end|date }}</td>
+            <td>{{ build.end|reldate }}</td>
             <td>
                 {% if build.status == 'Success' %}
                     {% if canUserPush(user, build.repository.key, build.server.environment.key) %}

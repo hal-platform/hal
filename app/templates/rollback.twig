@@ -3,7 +3,7 @@
 {% set page_title = repo.key %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repo.id}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
     <h2>Available {{ repo.key }} Rollbacks for {{ server.name }}</h2>
 
@@ -41,7 +41,7 @@
                             </svg>
                         </span>
                     </td>
-                    <td>{{ push.end|date }}</td>
+                    <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id }}</a>)</td>
                     <td>
                         {% if push.user %}
                             <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
