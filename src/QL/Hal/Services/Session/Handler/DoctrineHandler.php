@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManager;
 use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\Repository\SessionRepository;
 use QL\Hal\Core\Entity\Session;
-use QL\Hal\Services\QueryTrait;
 use QL\Hal\Services\Session\Handler;
 
 /**
@@ -93,9 +92,12 @@ class DoctrineHandler implements Handler
             'UTC'
         );
 
+        // weird, this shouldn't be necessary - it should be handled by the hal9000-core timepoint type
+        $formatted = $limit->format('Y-m-d H:i:s', 'UTC');
+
         $dql = 'DELETE QL\Hal\Core\Entity\Session s WHERE s.lastAccess < :limit';
-        $query = $this->em->createQuery($dql)
-            ->setParameter('limit', $limit)
+        $this->em->createQuery($dql)
+            ->setParameter('limit', $formatted)
             ->execute();
     }
 
