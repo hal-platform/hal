@@ -8,6 +8,7 @@ services:
       - @hello.twig
       - @layout
       - @user
+      - @permissions
   hello.twig:
     parent: 'twig.template'
     arguments: ['hello.twig']

@@ -17,6 +17,40 @@
 
     <p>I look forward to working with you.</p>
 
+    {% if repos %}
+        <h3>Your Repositories</h3>
+        <ul class="list--bare cards">
+        {% for repo in repos %}
+            <li>
+                <article class="card">
+                    <header class="card__header">
+                        <h4 class="mbn"><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.key }}</a></h4>
+                        <p class="mbn">
+                            <a href="{{ urlFor('group', {'id': repo.group.id}) }}">{{ repo.group.name }}</a>
+                        </p>
+                    </header>
+
+                    <section class="card__details">
+                        <ul class="split">
+                            <li>
+                                <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                            <span class="icon">
+                                <svg viewBox="0 0 32 32">
+                                    <use xlink:href="#github"></use>
+                                </svg>
+                            </span>
+                            </li>
+                        </ul>
+                        <a class="btn--full btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">
+                            Start New Build
+                        </a>
+                    </section>
+                </article>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
     <h3>Instructions</h3>
     <p>
         Applications are assigned to <strong>groups</strong> or <strong>organizations</strong>. To push code for an application, follow these steps:

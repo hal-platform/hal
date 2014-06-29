@@ -324,6 +324,29 @@ class PermissionsService
     ####################################################################################################################
 
     /**
+     * Get a list of repositories a user has access to (can build for)
+     *
+     * @param $user
+     * @return array
+     */
+    public function userRepositories($user)
+    {
+        if (!($user instanceof LdapUser)) {
+            $user = $this->getUser($user);
+        }
+
+        $repositories = [];
+
+        foreach ($this->repositories->findBy([], ['key' => 'ASC']) as $repo) {
+            if ($this->allowBuild($user, $repo->getKey())) {
+                $repositories[] = $repo;
+            }
+        }
+
+        return $repositories;
+    }
+
+    /**
      * Get all permission pairs for a user
      *
      * @param LdapUser|string $user
