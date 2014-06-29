@@ -14,20 +14,19 @@
             <thead>
             <tr>
                 <th>Server</th>
-                <th>Build</th>
                 <th>Reference</th>
                 <th>Commit</th>
                 <th>Pushed</th>
-                <th>Actions</th>
+                <th>Initiator</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             {% set allowSubmit = false %}
             {% for status in statuses %}
                 <tr>
-                    <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }} ({{ status.deployment.server.environment.key }})</a></td>
+                    <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }}</a> ({{ status.deployment.server.environment.key }})</td>
                     {% if status.success %}
-                        <td><a href="{{ urlFor('build', {'repo': status.deployment.repository.id, 'build': status.success.build.id}) }}">{{ status.success.build.id[:10] }}</a></td>
                         <td>
                             <span {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, status.success.build.branch, status.success.build.commit) %}
                                 class="status-before--success"
@@ -49,6 +48,15 @@
                             </span>
                         </td>
                         <td>{{ status.success.end|reldate }} (Push <a href="{{ urlFor('push', {'push': status.success.id}) }}">{{ status.success.id }}</a>)</td>
+                        <td>
+                            {% if status.success.user %}
+                                <a href="{{ urlFor('user', {'id': status.success.user.id}) }}">{{ status.success.user.name }}</a>
+                            {% elseif status.success.consumer %}
+                                {{ status.success.consumer.name[:20] }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </td>
                     {% else %}
                         <td colspan="4"></td>
                     {% endif %}
