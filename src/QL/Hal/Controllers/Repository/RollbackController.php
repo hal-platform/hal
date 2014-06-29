@@ -76,12 +76,14 @@ class RollbackController
             return;
         }
 
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p JOIN p.deployment d WHERE d.server = :server AND d.repository = :repo AND p.status = :status ORDER BY p.end DESC';
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p
+            JOIN p.deployment d JOIN p.build b WHERE d.server = :server AND d.repository = :repo AND p.status = :status AND b.status = :buildstatus ORDER BY p.end DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(25)
             ->setParameter('repo', $repo)
             ->setParameter('server', $server)
-            ->setParameter('status', 'Success');
+            ->setParameter('status', 'Success')
+            ->setParameter('buildstatus', 'Success');
         $pushes = $query->getResult();
 
         $response->body(

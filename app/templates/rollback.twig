@@ -7,6 +7,12 @@
 
     <h2>Available {{ repo.key }} Rollbacks for {{ server.name }}</h2>
 
+    <p>
+        This table shows all builds that have been successfully pushed to this server and that are still available for rollback to.
+        To rollback, simply choose a build, click 'rollback', and a new push will be started that will replace what is currently on
+        the server with the contents of the build you selected.
+    </p>
+
     <div class="overflow-container">
         <table>
             <thead>
@@ -54,7 +60,12 @@
                             Removed
                         {% endif %}
                     </td>
-
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        There are no available builds with successful pushes to roll back to for this server.
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

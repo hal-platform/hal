@@ -53,11 +53,11 @@
                         <td colspan="4">Unknown</td>
                     {% endif %}
                     <td>
-                        {% if canUserPush(user, deployment.repository.key, deployment.server.environment.key) %}
-                            {% if deployment.id in selected %}
-                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ deployment.id }}" value="{{ deployment.id }}" checked></label>
+                        {% if canUserPush(user, status.deployment.repository.key, status.deployment.server.environment.key) %}
+                            {% if status.deployment.id in selected %}
+                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}" checked></label>
                             {% else %}
-                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ deployment.id }}" value="{{ deployment.id }}"></label>
+                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"></label>
                             {% endif %}
                             {% set allowSubmit = true %}
                         {% else %}
