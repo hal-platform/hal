@@ -71,8 +71,8 @@ class HelloController
     {
         $dql = 'SELECT b, p FROM QL\Hal\Core\Entity\Build b, QL\Hal\Core\Entity\Push p WHERE b.status in (:buildstatus) AND p.status in (:pushstatus)';
         $query = $this->em->createQuery($dql)
-            ->setParameter('buildstatus', ['Waiting', 'Building', 'Error'])
-            ->setParameter('pushstatus', ['Waiting', 'Pushing', 'Error'])
+            ->setParameter('buildstatus', ['Waiting', 'Building'])
+            ->setParameter('pushstatus', ['Waiting', 'Pushing'])
             ->setMaxResults(25);
 
         $response->body(
