@@ -59,9 +59,7 @@
         {% endif %}
 
         {% if isAdmin and not deployments and canUserDelete(currentUser) %}
-            <form class="secondary-action" action="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}" method="post">
-                <input class="btn--destructive" type="submit" value="Remove repository">
-            </form>
+            <a class="btn--destructive secondary-action" href="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}">Remove Repository</a>
         {% endif %}
     </div>
 

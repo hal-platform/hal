@@ -25,9 +25,7 @@
         {% if isAdmin %}
             <a class="btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
             {% if not deployments and canUserDelete(currentUser) %}
-                <form class="secondary-action" action="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}" method="post">
-                    <input class="btn--destructive" type="submit" value="Remove">
-                </form>
+                <a class="btn--destructive secondary-action" href="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}">Remove Server</a>
             {% endif %}
         {% endif %}
     </div>

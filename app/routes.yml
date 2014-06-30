@@ -186,6 +186,12 @@ parameters:
       conditions:
         id:       '[\d]+'
 
+    server.admin.remove.confirm:
+      method:     'GET'
+      route:      '/servers/:id/remove'
+      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+      conditions:
+          id:     '[\d]+'
     server.admin.remove.handle:
       method:     'POST'
       route:      '/servers/:id/remove'
@@ -273,6 +279,12 @@ parameters:
       conditions:
         repo:     '[\d]+'
 
+    repository.admin.remove.confirm:
+      method:     'GET'
+      route:      '/repositories/:id/remove'
+      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+      conditions:
+        id:       '[\d]+'
     repository.admin.remove.handle:
       method:     'POST'
       route:      '/repositories/:id/remove'
@@ -361,6 +373,12 @@ parameters:
       conditions:
         id:       '[\d]+'
 
+    group.admin.remove.confirm:
+      method:     'GET'
+      route:      '/groups/:id/remove'
+      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+      conditions:
+        id:       '[\d]+'
     group.admin.remove.handle:
       method:     'POST'
       route:      '/groups/:id/remove'
@@ -404,6 +422,12 @@ parameters:
       route:      '/environments/add'
       stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.add.handle']
 
+    environment.admin.remove.confirm:
+      method:     'GET'
+      route:      '/environments/:id/delete'
+      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+      conditions:
+        id:       '[0-9]+'
     environment.admin.remove.handle:
       method:     'POST'
       route:      '/environments/:id/delete'
@@ -417,6 +441,7 @@ parameters:
       stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.page']
       conditions:
         id:       '[0-9]+'
+
     environment.admin.edit.handle:
       method:     'POST'
       route:      '/environments/:id/edit'

@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Confirm Delete' %}
+
+{% block content %}
+
+    <div class="details-box">
+        <h1>Are you sure?</h1>
+
+        <p>You're about to permanently remove this entity. Do you want to continue?</p>
+
+        <form class="secondary-action"  method="post">
+            <input class="btn--destructive" type="submit" value="Delete">
+        </form>
+        <a class="secondary-action" href="{{ urlFor('hello') }}">Cancel</a>
+    </div>
+
+{% endblock %}

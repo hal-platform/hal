@@ -1,6 +1,14 @@
 # Application specific endpoints and controllers go here
 services:
 
+  delete.confirm.page:
+    class: 'QL\Hal\Controllers\StaticController'
+    arguments:
+      - @delete.confirm.twig
+  delete.confirm.twig:
+    parent: 'twig.template'
+    arguments:
+      - 'delete.confirm.twig'
 
   hello.page:
     class: 'QL\Hal\Controllers\HelloController'
@@ -33,6 +41,7 @@ services:
   logout.handle:
     class: 'QL\Hal\Controllers\LogoutController'
     arguments: ['@session', '@url.helper']
+
 
   ######################################################################################################################
   # GROUP CONTROLLERS
