@@ -69,11 +69,34 @@ class HelloController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $dql = 'SELECT b, p FROM QL\Hal\Core\Entity\Build b, QL\Hal\Core\Entity\Push p WHERE b.status in (:buildstatus) AND p.status in (:pushstatus)';
+        // pending work
+        $dql = 'SELECT b, p FROM QL\Hal\Core\Entity\Build b, QL\Hal\Core\Entity\Push p WHERE b.status in (:buildstatus) AND p.status IN (:pushstatus)';
         $query = $this->em->createQuery($dql)
             ->setParameter('buildstatus', ['Waiting', 'Building'])
-            ->setParameter('pushstatus', ['Waiting', 'Pushing'])
-            ->setMaxResults(25);
+            ->setParameter('pushstatus', ['Waiting', 'Pushing']);
+        $pending = $query->getResult();
+
+        // user
+        $dql = 'SELECT u FROM QL\Hal\Core\Entity\User u WHERE u.id = :id';
+        $query = $this->em->createQuery($dql)
+            ->setParameter('id', $this->user->commonId());
+        $user = $query->getOneOrNullResult();
+
+        // builds
+        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.user = :user AND b.status IN (:status) ORDER BY b.start DESC';
+        $query = $this->em->createQuery($dql)
+            ->setParameter('user', $user)
+            ->setParameter('status', ['Success', 'Error'])
+            ->setMaxResults(5);
+        $builds = $query->getResult();
+
+        // pushes
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.user = :user AND p.status IN (:status) ORDER BY p.start DESC';
+        $query = $this->em->createQuery($dql)
+            ->setParameter('user', $user)
+            ->setParameter('status', ['Success', 'Error'])
+            ->setMaxResults(5);
+        $pushes = $query->getResult();
 
         $response->body(
             $this->layout->render(
@@ -81,7 +104,9 @@ class HelloController
                 [
                     'user' => $this->user,
                     'repos' => $this->permissions->userRepositories($this->user),
-                    'pending' => $query->getResult()
+                    'pending' => $pending,
+                    'builds' => $builds,
+                    'pushes' => $pushes
                 ]
             )
         );

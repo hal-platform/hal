@@ -1,17 +1,20 @@
+{% if initiator is not defined %}
+    {% set initiator = true %}
+{% endif %}
+
 <table class="tablesaw tablesaw-stack" data-mode="stack">
     <thead>
         <th>Push</th>
-        <th>Server</th>
         <th>Status</th>
         <th>Build</th>
-        <th>Initiator</th>
+        <th>Server</th>
+        {% if initiator %}<th>Initiator</th>{% endif %}
         <th>Date</th>
     </thead>
     <tbody>
     {% for push in pushes %}
         <tr>
             <td><a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id }}</a></td>
-            <td><a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})</td>
             <td>
                 {% if push.status == 'Success' %}
                     <span class="status-before--success">{{ push.status }}</span>
@@ -22,12 +25,17 @@
                 {% endif %}
             </td>
             <td><a href="{{ urlFor('build', {'repo': push.build.repository.key, 'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
-            {% if push.user %}
-                <td><a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a></td>
-            {% elseif push.consumer %}
-                <td>{{ push.consumer.name[:20] }}</td>
-            {% else %}
-                <td>Unknown</td>
+            <td><a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})</td>
+            {% if initiator %}
+            <td>
+                {% if push.user %}
+                    <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
+                {% elseif push.consumer %}
+                    {{ push.consumer.name[:20] }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </td>
             {% endif %}
             <td>{{ push.start|reldate }}</td>
         </tr>

@@ -1,12 +1,19 @@
+{% if initiator is not defined %}
+    {% set initiator = true %}
+{% endif %}
+{% if actions is not defined %}
+    {% set actions = true %}
+{% endif %}
+
 <table class="tablesaw tablesaw-stack" data-mode="stack">
     <thead>
         <th>Build</th>
         <th>Status</th>
         <th>Reference</th>
         <th>Commit</th>
-        <th>Initiator</th>
-        <th>Created</th>
-        <th>Actions</th>
+        {% if initiator %}<th>Initiator</th>{% endif %}
+        <th>Date</th>
+        {% if actions %}<th></th>{% endif %}
     </thead>
     <tbody>
     {% for build in builds %}
@@ -36,14 +43,19 @@
                     </svg>
                 </span>
             </td>
-            {% if build.user %}
-                <td><a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name[:20] }}</a></td>
-            {% elseif build.consumer %}
-                <td>{{ build.consumer.name[:20] }}</td>
-            {% else %}
-                <td>Unknown</td>
+            {% if initiator %}
+            <td>
+                {% if build.user %}
+                    <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name[:20] }}</a>
+                {% elseif build.consumer %}
+                    {{ build.consumer.name[:20] }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </td>
             {% endif %}
             <td>{{ build.end|reldate }}</td>
+            {% if actions %}
             <td>
                 {% if build.status == 'Success' %}
                     {% if canUserPush(user, build.repository.key, build.server.environment.key) %}
@@ -51,6 +63,7 @@
                     {% endif %}
                 {% endif %}
             </td>
+            {% endif %}
         </tr>
     {% else %}
         <tr>
