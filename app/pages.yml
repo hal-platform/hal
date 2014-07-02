@@ -248,7 +248,7 @@ services:
   build.twig:
     parent: 'twig.template'
     arguments:
-      - "build.twig"
+      - "build/build.twig"
 
   build.start.page:
     class: "QL\\Hal\\Controllers\\Build\\BuildStartController"
@@ -261,7 +261,7 @@ services:
   build.start.twig:
     parent: 'twig.template'
     arguments:
-      - "repository.build.start.twig"
+      - "build/start.twig"
 
   build.start.handle.page:
     class: "QL\\Hal\\Controllers\\Build\\BuildStartHandleController"
@@ -287,7 +287,7 @@ services:
   build.push.twig:
     parent: 'twig.template'
     arguments:
-      - "build.push.twig"
+      - "build/push.twig"
 
   rollback.page:
     class: "QL\\Hal\\Controllers\\Repository\\RollbackController"
@@ -301,7 +301,7 @@ services:
   rollback.twig:
     parent: 'twig.template'
     arguments:
-      - "rollback.twig"
+      - "repository/rollback.twig"
 
   build.push.handle:
     class: 'QL\Hal\Controllers\Build\BuildPushHandleController'
@@ -327,7 +327,7 @@ services:
   builds.twig:
     parent: 'twig.template'
     arguments:
-      - "repository.build.history.twig"
+      - "build/builds.twig"
 
   ######################################################################################################################
   # PUSH CONTROLLERS
@@ -342,7 +342,7 @@ services:
   push.twig:
     parent: 'twig.template'
     arguments:
-      - "push.twig"
+      - "push/push.twig"
 
   pushes.page:
     class: "QL\\Hal\\Controllers\\Push\\PushesController"
@@ -355,7 +355,7 @@ services:
   pushes.twig:
     parent: 'twig.template'
     arguments:
-      - "repository.push.history.twig"
+      - "push/pushes.twig"
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
@@ -601,14 +601,14 @@ services:
     arguments: ['@help.twig']
   help.twig:
     parent: 'twig.template'
-    arguments: ['help.twig']
+    arguments: ['help/help.twig']
 
   help.deployment.page:
     parent: 'static.controller'
     arguments: ['@help.deployment.twig']
   help.deployment.twig:
     parent: 'twig.template'
-    arguments: ['help.deployment.twig']
+    arguments: ['help/deployment.twig']
 
   logs.page:
     class: 'QL\Hal\Controllers\LogsController'
@@ -620,14 +620,6 @@ services:
     parent: 'twig.template'
     arguments:
       - 'logs.twig'
-
-  # TEMP
-  nyi.page:
-    class: 'QL\Hal\Controllers\NyiController'
-    arguments: ['@nyi.twig']
-  nyi.twig:
-    parent: 'twig.template'
-    arguments: ['nyi.twig']
 
   # The twig template for slim errors (404, 500)
   error.pages.twig:
