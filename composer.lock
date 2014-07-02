@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7aea093984fe43373bcb6586c406d197",
+    "hash": "54dc5f86544133cb5f5c5cb6ca4a9567",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -529,7 +529,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan H. Wage",
+                    "name": "Jonathan Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -749,17 +749,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.2",
+            "version": "2.1",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "dd2a7102d65608e0002ef3d23f67fe5c73f23d0b"
+                "reference": "e24439dac0b3cb14ce7a188b5f4c324bdd487e30"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-hal-core-2.2-d4b140.zip",
-                "reference": "dd2a7102d65608e0002ef3d23f67fe5c73f23d0b",
-                "shasum": "5f1a28f09cb33abc584711e362ea61b043212377"
+                "url": "http://composer//dist/ql-hal-core-2.1-4fca68.zip",
+                "reference": "e24439dac0b3cb14ce7a188b5f4c324bdd487e30",
+                "shasum": "c06a14dbe8fee0c570436a6042e24a0550d06f1e"
             },
             "require": {
                 "doctrine/orm": "~2.4",
