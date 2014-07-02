@@ -582,6 +582,81 @@ services:
     class: 'QL\Hal\Github\PullRequestsApi'
     arguments: ['@github']
 
+  api.build:
+    class: 'QL\Hal\Controllers\Api\BuildController'
+    arguments:
+      - @api.helper
+
+  api.builds:
+    class: 'QL\Hal\Controllers\Api\BuildsController'
+    arguments:
+      - @api.helper
+
+  api.deployment:
+    class: 'QL\Hal\Controllers\Api\DeploymentController'
+    arguments:
+      - @api.helper
+
+  api.deployments:
+    class: 'QL\Hal\Controllers\Api\DeploymentsController'
+    arguments:
+      - @api.helper
+
+  api.environment:
+    class: 'QL\Hal\Controllers\Api\EnvironmentController'
+    arguments:
+      - @api.helper
+
+  api.environments:
+    class: 'QL\Hal\Controllers\Api\EnvironmentsController'
+    arguments:
+      - @api.helper
+
+  api.group:
+    class: 'QL\Hal\Controllers\Api\GroupController'
+    arguments:
+      - @api.helper
+
+  api.groups:
+    class: 'QL\Hal\Controllers\Api\GroupsController'
+    arguments:
+      - @api.helper
+
+  api.logs:
+    class: 'QL\Hal\Controllers\Api\LogsController'
+    arguments:
+      - @api.helper
+
+  api.push:
+    class: 'QL\Hal\Controllers\Api\PushController'
+    arguments:
+      - @api.helper
+
+  api.pushes:
+    class: 'QL\Hal\Controllers\Api\PushesController'
+    arguments:
+      - @api.helper
+
+  api.repository:
+    class: 'QL\Hal\Controllers\Api\RepositoryController'
+    arguments:
+      - @api.helper
+
+  api.repositories:
+    class: 'QL\Hal\Controllers\Api\RepositoriesController'
+    arguments:
+      - @api.helper
+
+  api.user:
+    class: 'QL\Hal\Controllers\Api\UserController'
+    arguments:
+      - @api.helper
+
+  api.users:
+    class: 'QL\Hal\Controllers\Api\UsersController'
+    arguments:
+      - @api.helper
+
   ######################################################################################################################
   # HELP CONTROLLERS
   ######################################################################################################################
@@ -622,8 +697,6 @@ services:
   denied.twig:
     parent: 'twig.template'
     arguments: ['denied.twig']
-
-
 
   logs.page:
     class: 'QL\Hal\Controllers\LogsController'

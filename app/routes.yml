@@ -455,7 +455,7 @@ parameters:
         id:       '[0-9]+'
 
     ########################################################################################################################
-    # API ROUTES
+    # GITHUB API ROUTES
     ########################################################################################################################
 
     api.github.users:
@@ -477,3 +477,106 @@ parameters:
       conditions:
         username: '[A-Za-z0-9_-]+'
         repository: '[A-Za-z0-9_-]+'
+
+    ########################################################################################################################
+    # PUBLIC API ROUTES
+    ########################################################################################################################
+
+    api.logs:
+      method:       'GET'
+      route:        '/api/logs'
+      stack:        ['api.logs']
+
+    api.environments:
+      method:       'GET'
+      route:        '/api/environments'
+      stack:        ['api.environments']
+
+    api.environment:
+      method:       'GET'
+      route:        '/api/environments/:id'
+      stack:        ['api.environment']
+      conditions:
+        id:         '[0-9]+'
+
+    api.groups:
+      method:       'GET'
+      route:        '/api/groups'
+      stack:        ['api.groups']
+
+    api.group:
+      method:       'GET'
+      route:        '/api/groups/:id'
+      stack:        ['api.build']
+      conditions:
+        id:         '[0-9]+'
+
+    api.users:
+      method:       'GET'
+      route:        '/api/users'
+      stack:        ['api.users']
+
+    api.user:
+      method:       'GET'
+      route:        '/api/users/:id'
+      stack:        ['api.user']
+      conditions:
+        id:         '[0-9]+'
+
+    api.deployment:
+      method:       'GET'
+      route:        '/api/deployment/:id'
+      stack:        ['api.deployment']
+      conditions:
+        id:         '[0-9]+'
+
+    api.build:
+      method:       'GET'
+      route:        '/api/build/:id'
+      stack:        ['api.build']
+      conditions:
+        id:         '[A-Za-z0-9]+'
+
+    api.push:
+      method:       'GET'
+      route:        '/api/push/:id'
+      stack:        ['api.push']
+      conditions:
+        id:         '[0-9]+'
+
+    api.repositories:
+      method:       'GET'
+      route:        '/api/repositories'
+      stack:        ['api.repositories']
+
+    api.repository:
+      method:       'GET'
+      route:        '/api/repositories/:id'
+      stack:        ['api.repository']
+      conditions:
+        id:         '[0-9]+'
+
+    api.deployments:
+      method:       'GET'
+      route:        '/api/repositories/:id/deployments'
+      stack:        ['api.deployments']
+      conditions:
+        id:         '[0-9]+'
+
+    api.builds:
+      method:       'GET'
+      route:        '/api/repositories/:id/builds'
+      stack:        ['api.builds']
+      conditions:
+        id:         '[0-9]+'
+
+    api.pushes:
+      method:       'GET'
+      route:        '/api/repositories/:id/pushes'
+      stack:        ['api.pushes']
+      conditions:
+        id:         '[0-9]+'
+
+
+
+

@@ -62,7 +62,7 @@ class UrlHelper
      */
     public function urlFor($route, array $params = [])
     {
-        return $this->request->getRootUri() . $this->router->urlFor($route, $params);
+        return $this->request->getUrl() . $this->router->urlFor($route, $params);
     }
 
     /**

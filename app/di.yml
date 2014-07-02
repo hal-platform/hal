@@ -129,12 +129,19 @@ services:
     arguments:
       - @service_container
 
+  api.helper:
+    class: 'QL\Hal\Helpers\ApiHelper'
+    arguments:
+      - @url.helper
+
   time.helper:
     class: 'QL\Hal\Helpers\TimeHelper'
 
   clock:
     class: 'MCP\DataType\Time\Clock'
     arguments: ['now', 'UTC']
+
+
 
   ######################################################################################################################
   # TWIG STUFF
