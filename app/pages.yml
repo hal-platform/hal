@@ -583,18 +583,8 @@ services:
     arguments: ['@github']
 
   ######################################################################################################################
-  # GENERAL USE CONTROLLERS
+  # HELP CONTROLLERS
   ######################################################################################################################
-
-  static.controller:
-    class: 'QL\Hal\Controllers\StaticController'
-
-  denied.page:
-    parent: 'static.controller'
-    arguments: ['@denied.twig', 403]
-  denied.twig:
-    parent: 'twig.template'
-    arguments: ['denied.twig']
 
   help.page:
     parent: 'static.controller'
@@ -609,6 +599,31 @@ services:
   help.deployment.twig:
     parent: 'twig.template'
     arguments: ['help/deployment.twig']
+
+  help.api.page:
+    parent: 'static.controller'
+    arguments:
+      - @help.api.twig
+  help.api.twig:
+    parent: 'twig.template'
+    arguments:
+      - 'help/api.twig'
+
+  ######################################################################################################################
+  # GENERAL USE CONTROLLERS
+  ######################################################################################################################
+
+  static.controller:
+    class: 'QL\Hal\Controllers\StaticController'
+
+  denied.page:
+    parent: 'static.controller'
+    arguments: ['@denied.twig', 403]
+  denied.twig:
+    parent: 'twig.template'
+    arguments: ['denied.twig']
+
+
 
   logs.page:
     class: 'QL\Hal\Controllers\LogsController'

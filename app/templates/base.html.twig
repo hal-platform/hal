@@ -40,31 +40,33 @@
                 <h2 class="zeta sub-heading">Child of Codepushinator, QBERT and Github Enterprise</h2>
             </div>
             {% block navigation %}
-                {% if account %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
-                        <li>
-                            <a href="{{ urlFor('hello') }}" title="Home">
+                        {% if account %}
+                            <li>
+                                <a href="{{ urlFor('hello') }}" title="Home">
                                 <span class="icon" style="fill:white"><svg viewBox="0 0 32 32">
-                                    <use xlink:href="#home"></use>
-                                </svg></span>
-                            </a>
-                        </li>
-                        <li><a href="{{ urlFor('groups') }}" title="groups">Groups</a></li>
-                        <li><a href="{{ urlFor('servers') }}" title="servers">Servers</a></li>
-                        {% if isUserAdmin(account) %}
-                            <li><a href="{{ urlFor('repositories') }}" title="repositories">Repositories</a></li>
-                            <li><a href="{{ urlFor('environments') }}" title="environments">Environments</a></li>
-                            <li><a href="{{ urlFor('users') }}" title="users">Users</a></li>
-                            <li><a href="{{ urlFor('logs', {'page': '1'}) }}">Logs</a></li>
-                            {# Hiding because not needed for now. <li><a href="{{ urlFor('admin.dashboard') }}" title="admin dashboard">Admin</a></li> #}
+                                        <use xlink:href="#home"></use>
+                                    </svg></span>
+                                </a>
+                            </li>
+                            <li><a href="{{ urlFor('groups') }}" title="groups">Groups</a></li>
+                            <li><a href="{{ urlFor('servers') }}" title="servers">Servers</a></li>
+                            {% if isUserAdmin(account) %}
+                                <li><a href="{{ urlFor('repositories') }}" title="repositories">Repositories</a></li>
+                                <li><a href="{{ urlFor('environments') }}" title="environments">Environments</a></li>
+                                <li><a href="{{ urlFor('users') }}" title="users">Users</a></li>
+                                <li><a href="{{ urlFor('logs', {'page': '1'}) }}">Logs</a></li>
+                            {% endif %}
+                            <li><a href="{{ urlFor('user.current') }}" title="profile">Profile</a></li>
+                            <li><a href="{{ urlFor('help') }}" title="help">Help</a></li>
+                            <li><a href="{{ urlFor('logout') }}" title="logout">Logout</a></li>
+                        {% else %}
+                            <li><a href="{{ urlFor('login') }}" title="login">Login</a></li>
+                            <li><a href="{{ urlFor('help') }}" title="help">Help</a></li>
                         {% endif %}
-                        <li><a href="{{ urlFor('user.current') }}" title="profile">Profile</a></li>
-                        <li><a href="{{ urlFor('help') }}" title="help">Help</a></li>
-                        <li><a href="{{ urlFor('logout') }}" title="logout">Logout</a></li>
                     </ul>
                 </nav>
-                {% endif %}
             {% endblock %}
             {% block subnav %}{% endblock %}
         </header>
