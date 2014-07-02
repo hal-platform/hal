@@ -220,6 +220,6 @@ class HalExtension extends Twig_Extension
      */
     public function formatGitCommit($reference)
     {
-        return substr($reference, 0, 8);
+        return substr($reference, 0, 7);
     }
 }
