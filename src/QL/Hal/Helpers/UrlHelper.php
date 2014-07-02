@@ -66,6 +66,18 @@ class UrlHelper
     }
 
     /**
+     * Get the relative URI for a given route name
+     *
+     * @param string $route
+     * @param array $params
+     * @return string
+     */
+    public function uriFor($route, array $params = [])
+    {
+        return $this->router->urlFor($route, $params);
+    }
+
+    /**
      *  Generate a redirect response for a given route name
      *
      *  @param string $route

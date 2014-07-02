@@ -75,6 +75,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('canUserDelete', array($this->permissions, 'allowDelete')),
             new Twig_SimpleFunction('isUserAdmin', array($this->permissions, 'allowAdmin')),
             new Twig_SimpleFunction('urlFor', array($this->url, 'urlFor')),
+            new Twig_SimpleFunction('uriFor', array($this->url, 'uriFor')),
             new Twig_SimpleFunction('githubRepo', array($this->url, 'githubRepoUrl')),
             new Twig_SimpleFunction('githubCommit', array($this->url, 'githubCommitUrl')),
             new Twig_SimpleFunction('githubTreeish', array($this->url, 'githubTreeUrl')),

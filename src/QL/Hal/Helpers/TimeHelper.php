@@ -27,17 +27,23 @@ class TimeHelper
      * Format a date/time for display
      *
      * @param mixed $value
+     * @param bool $html5
      * @param string $format
      * @param string $timezone
      * @return string
      */
     public function format(
         $value,
+        $html5 = true,
         $format = self::OUTPUT_FORMAT_DATE,
         $timezone = self::OUTPUT_TIMEZONE
     ) {
         if ($time = $this->timepointConvert($value)) {
-            return $this->html5time($time, $time->format($format, $timezone), $timezone);
+            if ($html5) {
+                return $this->html5time($time, $time->format($format, $timezone), $timezone);
+            } else {
+                return $time->format($format, $timezone);
+            }
         }
 
         return '';
@@ -48,14 +54,14 @@ class TimeHelper
      * be formatted by the $this->format() instead.
      *
      * @param mixed $value
-     * @param string $cutoff
+     * @param bool $html5
      * @param string $format
      * @param string $timezone
      * @return string
      */
     public function relative(
         $value,
-        $cutoff = self::OUTPUT_REL_CUTOFF,
+        $html5 = true,
         $format = self::OUTPUT_FORMAT_DATE,
         $timezone = self::OUTPUT_TIMEZONE
     ) {
@@ -64,38 +70,35 @@ class TimeHelper
             $now = $this->timepointConvert(new DateTime('now', new DateTimeZone('UTC')));
             $diff = (int)$now->format('U', self::OUTPUT_TIMEZONE) - (int)$time->format('U', self::OUTPUT_TIMEZONE);
 
-            // yesterday
-            // @todo
-
-            // last week??
-            // @todo
-
-            // last month????
-            // @todo
-
             // 10 seconds
             if ($diff < 10) {
-                return $this->html5time($time, 'just a moment ago', $timezone);
+                $out = 'just a moment ago';
+                return ($html5) ? $this->html5time($time, $out, $timezone): $out;
             }
             // 90 seconds
             if ($diff < 90) {
-                return $this->html5time($time, sprintf('%s seconds ago', $diff), $timezone);
+                $out = sprintf('%s seconds ago', $diff);
+                return ($html5) ? $this->html5time($time, $out, $timezone): $out;
             }
             // 60 minutes
             if ($diff < (60 * 60)) {
-                return $this->html5time($time, sprintf('%s minutes ago', ceil($diff/60)), $timezone);
+                $out = sprintf('%s minutes ago', ceil($diff/60));
+                return ($html5) ? $this->html5time($time, $out, $timezone): $out;
             }
             // 24 hours
             if ($diff < (60 * 60 * 24)) {
-                return $this->html5time($time, sprintf('%s hours ago', ceil($diff/60/60)), $timezone);
+                $out = sprintf('%s hours ago', ceil($diff/60/60));
+                return ($html5) ? $this->html5time($time, $out, $timezone): $out;
             }
             // 28 days
             if ($diff < (60 * 60 * 24 * 28)) {
-                return $this->html5time($time, sprintf('%s days ago', ceil($diff/60/60/24)), $timezone);
+                $out = sprintf('%s days ago', ceil($diff/60/60/24));
+                return ($html5) ? $this->html5time($time, $out, $timezone): $out;
             }
             // 16 weeks
             if ($diff < (60 * 60 * 24 * 7 * 16)) {
-                return $this->html5time($time, sprintf('%s weeks ago', ceil($diff/60/60/24/7)), $timezone);
+                $out = sprintf('%s weeks ago', ceil($diff/60/60/24/7));
+                return ($html5) ? $this->html5time($time, $out, $timezone): $out;
             }
 
             // fall back to normal output

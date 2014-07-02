@@ -626,6 +626,9 @@ services:
     class: 'QL\Hal\Controllers\Api\LogsController'
     arguments:
       - @api.helper
+      - @time.helper
+      - @url.helper
+      - @log.repo
 
   api.push:
     class: 'QL\Hal\Controllers\Api\PushController'

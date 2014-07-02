@@ -38,7 +38,7 @@ class ApiHelper
         $response->body(json_encode([
             '_links' => $this->parseLinks($links),
             'content' => $content
-        ]));
+        ], JSON_UNESCAPED_SLASHES));
     }
 
     /**
@@ -68,26 +68,5 @@ class ApiHelper
         }
 
         return $parsed;
-
-
-
-
-        // take into account other types @todo
-        // http://tools.ietf.org/html/draft-kelly-json-hal-03#section-4.1.2
-
-        foreach ($links as $type => &$properties) {
-
-            if (is_array($properties) && count($properties) == 2) {
-                $url = $this->url->urlFor($properties[0], $properties[1]);
-            } else {
-                $url = $this->url->urlFor($properties);
-            }
-
-            $properties = [
-                'href' => $url
-            ];
-        }
-
-        return $links;
     }
 }
