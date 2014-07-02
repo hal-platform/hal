@@ -3,23 +3,17 @@
 
 namespace QL\Hal\Twig;
 
-use DateTime;
-use DateTimeZone;
-use MCP\DataType\Time\TimeInterval;
 use Twig_Extension;
 use Twig_SimpleFunction;
 use Twig_SimpleFilter;
 use Twig_SimpleTest;
 use MCP\Corp\Account\User as LdapUser;
-use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\User as DomainUser;
 use QL\Hal\Helpers\UrlHelper;
-use Slim\Slim;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Core\Entity;
-
 
 /**
  *  Twig Extension for HAL9000
@@ -226,6 +220,6 @@ class HalExtension extends Twig_Extension
      */
     public function formatGitCommit($reference)
     {
-        return substr($reference, 0, 7);
+        return substr($reference, 0, 8);
     }
 }

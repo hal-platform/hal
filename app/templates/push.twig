@@ -43,7 +43,7 @@
                 <tr>
                     <td>Commit</td>
                     <td>
-                        <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit[:7] }}</a>
+                        <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
                         <span class="icon">
                             <svg viewBox="0 0 32 32">
                                 <use xlink:href="#github"></use>
