@@ -47,7 +47,7 @@ class ApiHelper
      * @param array $links
      * @return array
      */
-    private function parseLinks(array $links)
+    public function parseLinks(array $links)
     {
         $parsed = [];
 

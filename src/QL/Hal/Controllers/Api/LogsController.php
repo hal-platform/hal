@@ -65,9 +65,11 @@ class LogsController
 
         foreach ($this->logs->findBy([], ['recorded' => 'DESC']) as $log) {
             $content[] = [
+                '_links' => $this->api->parseLinks([
+                    'user' => ['href' => ['api.user', ['id' => $log->getUser()->getId()]], 'type' => 'User']
+                ]),
                 'id' => $log->getId(),
                 'date' => $this->time->format($log->getRecorded(), false, 'c'),
-                'user' => $this->url->urlFor('api.user', ['id' => $log->getUser()->getId()]),
                 'entity' => $log->getEntity(),
                 'action' => $log->getAction(),
                 'changeset' => $log->getData()
