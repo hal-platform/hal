@@ -2,10 +2,14 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use QL\Hal\Core\Entity\Repository\UserRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Helpers\ApiHelper;
 
+/**
+ * API Users Controller
+ */
 class UsersController
 {
     /**
@@ -14,12 +18,20 @@ class UsersController
     private $api;
 
     /**
+     * @var UserRepository
+     */
+    private $users;
+
+    /**
      * @param ApiHelper $api
+     * @param UserRepository $users
      */
     public function __construct(
-        ApiHelper $api
+        ApiHelper $api,
+        UserRepository $users
     ) {
         $this->api = $api;
+        $this->users = $users;
     }
 
     /**
@@ -30,13 +42,27 @@ class UsersController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $content = [];
+        $links = [
+            'self' => ['href' => 'api.users', 'type' => 'Users'],
+            'index' => ['href' => 'api.index']
+        ];
 
-        if (false) {
-            call_user_func($notFound);
-            return;
+        $users = $this->users->findBy([], ['id' => 'ASC']);
+
+        $content = [
+            'count' => count($users),
+            'users' => []
+        ];
+
+        foreach ($users as $user) {
+            $content['users'][] = [
+                'id' => $user->getId(),
+                '_links' => $this->api->parseLinks([
+                    'self' => ['href' => ['api.user', ['id' => $user->getId()]], 'type' => 'User']
+                ])
+            ];
         }
 
-        $this->api->prepareResponse($response, [], $content);
+        $this->api->prepareResponse($response, $links, $content);
     }
 }

@@ -482,6 +482,11 @@ parameters:
     # PUBLIC API ROUTES
     ########################################################################################################################
 
+    api.index:
+      method:       'GET'
+      route:        '/api'
+      stack:        ['api.index']
+
     api.logs:
       method:       'GET'
       route:        '/api/logs'
@@ -499,6 +504,18 @@ parameters:
       conditions:
         id:         '[0-9]+'
 
+    api.servers:
+      method:       'GET'
+      route:        '/api/servers'
+      stack:        ['FIX_ME']
+
+    api.server:
+      method:       'GET'
+      route:        '/api/servers/:id'
+      stack:        ['FIX_ME']
+      conditions:
+        id:         '[0-9]+'
+
     api.groups:
       method:       'GET'
       route:        '/api/groups'
@@ -507,7 +524,7 @@ parameters:
     api.group:
       method:       'GET'
       route:        '/api/groups/:id'
-      stack:        ['api.build']
+      stack:        ['api.group']
       conditions:
         id:         '[0-9]+'
 
@@ -527,6 +544,13 @@ parameters:
       method:       'GET'
       route:        '/api/deployment/:id'
       stack:        ['api.deployment']
+      conditions:
+        id:         '[0-9]+'
+
+    api.deployment.status:
+      method:       'GET'
+      route:        '/api/deployment/:id/status'
+      stack:        ['api.deployment.status']
       conditions:
         id:         '[0-9]+'
 

@@ -2,10 +2,14 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Helpers\ApiHelper;
 
+/**
+ * API Repositories Controller
+ */
 class RepositoriesController
 {
     /**
@@ -14,12 +18,20 @@ class RepositoriesController
     private $api;
 
     /**
+     * @var RepositoryRepository
+     */
+    private $repositories;
+
+    /**
      * @param ApiHelper $api
+     * @param RepositoryRepository $repositories
      */
     public function __construct(
-        ApiHelper $api
+        ApiHelper $api,
+        RepositoryRepository $repositories
     ) {
         $this->api = $api;
+        $this->repositories = $repositories;
     }
 
     /**
@@ -30,13 +42,27 @@ class RepositoriesController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $content = [];
+        $links = [
+            'self' => ['href' => 'api.repositories'],
+            'index' => ['href' => 'api.index']
+        ];
 
-        if (false) {
-            call_user_func($notFound);
-            return;
+        $repositories = $this->repositories->findBy([], ['id' => 'ASC']);
+
+        $content = [
+            'count' => count($repositories),
+            'repositories' => []
+        ];
+
+        foreach ($repositories as $repository) {
+            $content['repositories'][] = [
+                'id' => $repository->getId(),
+                '_links' => $this->api->parseLinks([
+                    'self' => ['href' => ['api.repository', ['id' => $repository->getId()]]]
+                ])
+            ];
         }
 
-        $this->api->prepareResponse($response, [], $content);
+        $this->api->prepareResponse($response, $links, $content);
     }
 }

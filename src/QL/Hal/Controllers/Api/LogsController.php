@@ -4,11 +4,13 @@ namespace QL\Hal\Controllers\Api;
 
 use QL\Hal\Core\Entity\Repository\LogRepository;
 use QL\Hal\Helpers\TimeHelper;
-use QL\Hal\Helpers\UrlHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Helpers\ApiHelper;
 
+/**
+ * API Logs Controller
+ */
 class LogsController
 {
     /**
@@ -22,11 +24,6 @@ class LogsController
     private $time;
 
     /**
-     * @var UrlHelper
-     */
-    private $url;
-
-    /**
      * @var LogRepository
      */
     private $logs;
@@ -34,18 +31,15 @@ class LogsController
     /**
      * @param ApiHelper $api
      * @param TimeHelper $time
-     * @param UrlHelper $url
      * @param LogRepository $logs
      */
     public function __construct(
         ApiHelper $api,
         TimeHelper $time,
-        UrlHelper $url,
         LogRepository $logs
     ) {
         $this->api = $api;
         $this->time = $time;
-        $this->url = $url;
         $this->logs = $logs;
     }
 
@@ -58,27 +52,34 @@ class LogsController
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $links = [
-            'self' => ['href' => 'api.logs']
+            'self' => ['href' => 'api.logs', 'type' => 'Logs'],
+            'index' => ['href' => 'api.index']
         ];
 
-        $content = [];
+        $logs = $this->logs->findBy([], ['recorded' => 'DESC']);
 
-        foreach ($this->logs->findBy([], ['recorded' => 'DESC']) as $log) {
-            $content[] = [
-                '_links' => $this->api->parseLinks([
-                    'user' => ['href' => ['api.user', ['id' => $log->getUser()->getId()]], 'type' => 'User']
-                ]),
+        $content = [
+            'count' => count($logs),
+            'logs' => []
+        ];
+
+        foreach ($logs as $log) {
+            $content['logs'][] = [
                 'id' => $log->getId(),
-                'date' => $this->time->format($log->getRecorded(), false, 'c'),
+                'date' => [
+                    'text' => $this->time->relative($log->getRecorded(), false),
+                    'datetime' => $this->time->format($log->getRecorded(), false, 'c')
+                ],
                 'entity' => $log->getEntity(),
                 'action' => $log->getAction(),
-                'changeset' => $log->getData()
+                'changeset' => $log->getData(),
+                'user' => [
+                    'id' => $log->getUser()->getId(),
+                    '_links' => $this->api->parseLinks([
+                        'self' => ['href' => ['api.user', ['id' => $log->getUser()->getId()]], 'type' => 'User']
+                    ])
+                ]
             ];
-        }
-
-        if (false) {
-            call_user_func($notFound);
-            return;
         }
 
         $this->api->prepareResponse($response, $links, $content);

@@ -122,11 +122,6 @@ class UrlHelper
         );
     }
 
-    // http://git/web-core/hal/tree/2.0.1
-    // http://git/web-core/hal/pull/77
-    // http://git/web-core/hal/commit/c938c1804a6e6950abb33461b9a2dd98ff08bfcf
-    // http://git/web-core/hal/tree/maintenance
-
     /**
      *  Get the URL for a Github repository commit
      *

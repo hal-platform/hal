@@ -582,52 +582,68 @@ services:
     class: 'QL\Hal\Github\PullRequestsApi'
     arguments: ['@github']
 
+  api.index:
+    class: 'QL\Hal\Controllers\Api\IndexController'
+    arguments:
+      - @api.helper
+
   api.build:
     class: 'QL\Hal\Controllers\Api\BuildController'
     arguments:
       - @api.helper
+      - @time.helper
+      - @url.helper
+      - @build.repo
 
   api.builds:
     class: 'QL\Hal\Controllers\Api\BuildsController'
     arguments:
       - @api.helper
+      - @build.repo
 
   api.deployment:
     class: 'QL\Hal\Controllers\Api\DeploymentController'
     arguments:
       - @api.helper
+      - @deployment.repo
 
   api.deployments:
     class: 'QL\Hal\Controllers\Api\DeploymentsController'
     arguments:
       - @api.helper
+      - @deployment.repo
 
   api.environment:
     class: 'QL\Hal\Controllers\Api\EnvironmentController'
     arguments:
       - @api.helper
+      - @url.helper
+      - @environment.repo
 
   api.environments:
     class: 'QL\Hal\Controllers\Api\EnvironmentsController'
     arguments:
       - @api.helper
+      - @environment.repo
 
   api.group:
     class: 'QL\Hal\Controllers\Api\GroupController'
     arguments:
       - @api.helper
+      - @url.helper
+      - @group.repo
 
   api.groups:
     class: 'QL\Hal\Controllers\Api\GroupsController'
     arguments:
       - @api.helper
+      - @group.repo
 
   api.logs:
     class: 'QL\Hal\Controllers\Api\LogsController'
     arguments:
       - @api.helper
       - @time.helper
-      - @url.helper
       - @log.repo
 
   api.push:
@@ -644,21 +660,27 @@ services:
     class: 'QL\Hal\Controllers\Api\RepositoryController'
     arguments:
       - @api.helper
+      - @url.helper
+      - @repository.repo
 
   api.repositories:
     class: 'QL\Hal\Controllers\Api\RepositoriesController'
     arguments:
       - @api.helper
+      - @repository.repo
 
   api.user:
     class: 'QL\Hal\Controllers\Api\UserController'
     arguments:
       - @api.helper
+      - @url.helper
+      - @user.repo
 
   api.users:
     class: 'QL\Hal\Controllers\Api\UsersController'
     arguments:
       - @api.helper
+      - @user.repo
 
   ######################################################################################################################
   # HELP CONTROLLERS

@@ -17,6 +17,12 @@
 
     <p>Public endpoints offer you insight into the build and push process without being able to add, remove, or change anything.</p>
 
+    <h4>Index</h4>
+
+    <ul>
+        <li><a href="{{ urlFor('api.index') }}">{{ uriFor('api.index') }}</a></li>
+    </ul>
+
     <h4>Logs</h4>
 
     <ul>
@@ -26,43 +32,50 @@
     <h4>Environments</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.environments') }}">{{ uriFor('api.environments') }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.environment', {id: 'id'}) }}">{{ uriFor('api.environment', {id: ':id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.environments') }}">{{ uriFor('api.environments') }}</a></li>
+        <li><a href="{{ urlFor('api.environment', {id: 'id'}) }}">{{ uriFor('api.environment', {id: ':id'}) }}</a></li>
+    </ul>
+
+    <h4>Servers</h4>
+
+    <ul>
+        <li><a href="{{ urlFor('api.servers') }}">{{ uriFor('api.servers') }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.server', {id: ':id'}) }}">{{ uriFor('api.server', {id: ':id'}) }}</a> [NYI]</li>
     </ul>
 
     <h4>Groups</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.groups') }}">{{ uriFor('api.groups') }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.group', {id: ':id'}) }}">{{ uriFor('api.group', {id: ':id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.groups') }}">{{ uriFor('api.groups') }}</a></li>
+        <li><a href="{{ urlFor('api.group', {id: ':id'}) }}">{{ uriFor('api.group', {id: ':id'}) }}</a></li>
     </ul>
 
     <h4>Users</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.users') }}">{{ uriFor('api.users') }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.user', {id: ':id'}) }}">{{ uriFor('api.user', {id: ':id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.users') }}">{{ uriFor('api.users') }}</a></li>
+        <li><a href="{{ urlFor('api.user', {id: ':id'}) }}">{{ uriFor('api.user', {id: ':id'}) }}</a></li>
     </ul>
 
     <h4>Repositories</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.repositories') }}">{{ uriFor('api.repositories') }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.repository', {id: ':id'}) }}">{{ uriFor('api.repository', {id: ':id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.repositories') }}">{{ uriFor('api.repositories') }}</a></li>
+        <li><a href="{{ urlFor('api.repository', {id: ':id'}) }}">{{ uriFor('api.repository', {id: ':id'}) }}</a></li>
     </ul>
 
     <h4>Deployments</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.deployments', {id: ':id'}) }}">{{ uriFor('api.deployments', {id: ':id'}) }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.deployment', {id: ':id'}) }}">{{ uriFor('api.deployment', {id: ':id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.deployments', {id: ':id'}) }}">{{ uriFor('api.deployments', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.deployment', {id: ':id'}) }}">{{ uriFor('api.deployment', {id: ':id'}) }}</a></li>
     </ul>
 
     <h4>Builds</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.builds', {id: ':id'}) }}">{{ uriFor('api.builds', {id: ':id'}) }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.build', {id: ':id'}) }}">{{ uriFor('api.build', {id: ':id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.builds', {id: ':id'}) }}">{{ uriFor('api.builds', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.build', {id: ':id'}) }}">{{ uriFor('api.build', {id: ':id'}) }}</a></li>
     </ul>
 
     <h4>Pushes</h4>

@@ -2,10 +2,14 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Helpers\ApiHelper;
 
+/**
+ * API Environments Controller
+ */
 class EnvironmentsController
 {
     /**
@@ -14,12 +18,20 @@ class EnvironmentsController
     private $api;
 
     /**
+     * @var EnvironmentRepository
+     */
+    private $environments;
+
+    /**
      * @param ApiHelper $api
+     * @param EnvironmentRepository $environments
      */
     public function __construct(
-        ApiHelper $api
+        ApiHelper $api,
+        EnvironmentRepository $environments
     ) {
         $this->api = $api;
+        $this->environments = $environments;
     }
 
     /**
@@ -30,13 +42,27 @@ class EnvironmentsController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $content = [];
+        $links = [
+            'self' => ['href' => 'api.environments'],
+            'index' => ['href' => 'api.index']
+        ];
 
-        if (false) {
-            call_user_func($notFound);
-            return;
+        $environments = $this->environments->findBy([], ['id' => 'ASC']);
+
+        $content = [
+            'count' => count($environments),
+            'environments' => []
+        ];
+
+        foreach ($environments as $environment) {
+            $content['environments'][] = [
+                'id' => $environment->getId(),
+                '_links' => $this->api->parseLinks([
+                    'self' => ['href' => ['api.environment', ['id' => $environment->getId()]], 'type' => 'Environment']
+                ])
+            ];
         }
 
-        $this->api->prepareResponse($response, [], $content);
+        $this->api->prepareResponse($response, $links, $content);
     }
 }

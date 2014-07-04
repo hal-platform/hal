@@ -2,10 +2,14 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use QL\Hal\Core\Entity\Repository\GroupRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Helpers\ApiHelper;
 
+/**
+ * API Groups Controller
+ */
 class GroupsController
 {
     /**
@@ -14,12 +18,20 @@ class GroupsController
     private $api;
 
     /**
+     * @var GroupRepository
+     */
+    private $groups;
+
+    /**
      * @param ApiHelper $api
+     * @param GroupRepository $groups
      */
     public function __construct(
-        ApiHelper $api
+        ApiHelper $api,
+        GroupRepository $groups
     ) {
         $this->api = $api;
+        $this->groups = $groups;
     }
 
     /**
@@ -30,13 +42,27 @@ class GroupsController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $content = [];
+        $links = [
+            'self' => ['href' => 'api.groups', 'type' => 'Groups'],
+            'index' => ['href' => 'api.index']
+        ];
 
-        if (false) {
-            call_user_func($notFound);
-            return;
+        $groups = $this->groups->findBy([], ['id' => 'ASC']);
+
+        $content = [
+            'count' => count($groups),
+            'groups' => []
+        ];
+
+        foreach ($groups as $group) {
+            $content['groups'][] = [
+                'id' => $group->getId(),
+                '_links' => $this->api->parseLinks([
+                    'self' => ['href' => ['api.group', ['id' => $group->getId()]], 'type' => 'Group']
+                ])
+            ];
         }
 
-        $this->api->prepareResponse($response, [], $content);
+        $this->api->prepareResponse($response, $links, $content);
     }
 }
