@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Api;
+namespace QL\Hal\Controllers\Api\Group;
 
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use Slim\Http\Request;

@@ -1,16 +1,16 @@
 <?php
 
-namespace QL\Hal\Controllers\Api;
+namespace QL\Hal\Controllers\Api\Repository;
 
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Helpers\ApiHelper;
 
 /**
- * API Users Controller
+ * API Repositories Controller
  */
-class UsersController
+class RepositoriesController
 {
     /**
      * @var ApiHelper
@@ -18,20 +18,20 @@ class UsersController
     private $api;
 
     /**
-     * @var UserRepository
+     * @var RepositoryRepository
      */
-    private $users;
+    private $repositories;
 
     /**
      * @param ApiHelper $api
-     * @param UserRepository $users
+     * @param RepositoryRepository $repositories
      */
     public function __construct(
         ApiHelper $api,
-        UserRepository $users
+        RepositoryRepository $repositories
     ) {
         $this->api = $api;
-        $this->users = $users;
+        $this->repositories = $repositories;
     }
 
     /**
@@ -43,22 +43,22 @@ class UsersController
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $links = [
-            'self' => ['href' => 'api.users', 'type' => 'Users'],
+            'self' => ['href' => 'api.repositories'],
             'index' => ['href' => 'api.index']
         ];
 
-        $users = $this->users->findBy([], ['id' => 'ASC']);
+        $repositories = $this->repositories->findBy([], ['id' => 'ASC']);
 
         $content = [
-            'count' => count($users),
-            'users' => []
+            'count' => count($repositories),
+            'repositories' => []
         ];
 
-        foreach ($users as $user) {
-            $content['users'][] = [
-                'id' => $user->getId(),
+        foreach ($repositories as $repository) {
+            $content['repositories'][] = [
+                'id' => $repository->getId(),
                 '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.user', ['id' => $user->getId()]], 'type' => 'User']
+                    'self' => ['href' => ['api.repository', ['id' => $repository->getId()]]]
                 ])
             ];
         }

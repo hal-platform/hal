@@ -1,12 +1,12 @@
 <?php
 
-namespace QL\Hal\Controllers\Api;
+namespace QL\Hal\Controllers\Api\Push;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Helpers\ApiHelper;
 
-class PushesController
+class PushController
 {
     /**
      * @var ApiHelper

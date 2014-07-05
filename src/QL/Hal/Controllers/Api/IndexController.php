@@ -37,6 +37,7 @@ class IndexController
             'self' => ['href' => 'api.index'],
             'logs' => ['href' => 'api.logs', 'type' => 'Logs'],
             'environments' => ['href' => 'api.environments', 'type' => 'Environments'],
+            'servers' => ['href' => 'api.servers', 'type' => 'Servers'],
             'groups' => ['href' => 'api.groups', 'type' => 'Groups'],
             'users' => ['href' => 'api.users', 'type' => 'Users'],
             'repositories' => ['href' => 'api.repositories', 'type' => 'Repositories']

@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Api;
+namespace QL\Hal\Controllers\Api\Deployment;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use Slim\Http\Request;

@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Api;
+namespace QL\Hal\Controllers\Api\Log;
 
 use QL\Hal\Core\Entity\Repository\LogRepository;
 use QL\Hal\Helpers\TimeHelper;

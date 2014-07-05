@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Controllers\Api;
+namespace QL\Hal\Controllers\Api\Environment;
 
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;

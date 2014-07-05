@@ -588,7 +588,7 @@ services:
       - @api.helper
 
   api.build:
-    class: 'QL\Hal\Controllers\Api\BuildController'
+    class: 'QL\Hal\Controllers\Api\Build\BuildController'
     arguments:
       - @api.helper
       - @time.helper
@@ -596,88 +596,88 @@ services:
       - @build.repo
 
   api.builds:
-    class: 'QL\Hal\Controllers\Api\BuildsController'
+    class: 'QL\Hal\Controllers\Api\Build\BuildsController'
     arguments:
       - @api.helper
       - @build.repo
 
   api.deployment:
-    class: 'QL\Hal\Controllers\Api\DeploymentController'
+    class: 'QL\Hal\Controllers\Api\Deployment\DeploymentController'
     arguments:
       - @api.helper
       - @deployment.repo
 
   api.deployments:
-    class: 'QL\Hal\Controllers\Api\DeploymentsController'
+    class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
     arguments:
       - @api.helper
       - @deployment.repo
 
   api.environment:
-    class: 'QL\Hal\Controllers\Api\EnvironmentController'
+    class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
     arguments:
       - @api.helper
       - @url.helper
       - @environment.repo
 
   api.environments:
-    class: 'QL\Hal\Controllers\Api\EnvironmentsController'
+    class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
     arguments:
       - @api.helper
       - @environment.repo
 
   api.group:
-    class: 'QL\Hal\Controllers\Api\GroupController'
+    class: 'QL\Hal\Controllers\Api\Group\GroupController'
     arguments:
       - @api.helper
       - @url.helper
       - @group.repo
 
   api.groups:
-    class: 'QL\Hal\Controllers\Api\GroupsController'
+    class: 'QL\Hal\Controllers\Api\Group\GroupsController'
     arguments:
       - @api.helper
       - @group.repo
 
   api.logs:
-    class: 'QL\Hal\Controllers\Api\LogsController'
+    class: 'QL\Hal\Controllers\Api\Log\LogsController'
     arguments:
       - @api.helper
       - @time.helper
       - @log.repo
 
   api.push:
-    class: 'QL\Hal\Controllers\Api\PushController'
+    class: 'QL\Hal\Controllers\Api\Push\PushController'
     arguments:
       - @api.helper
 
   api.pushes:
-    class: 'QL\Hal\Controllers\Api\PushesController'
+    class: 'QL\Hal\Controllers\Api\Push\PushesController'
     arguments:
       - @api.helper
 
   api.repository:
-    class: 'QL\Hal\Controllers\Api\RepositoryController'
+    class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
     arguments:
       - @api.helper
       - @url.helper
       - @repository.repo
 
   api.repositories:
-    class: 'QL\Hal\Controllers\Api\RepositoriesController'
+    class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
     arguments:
       - @api.helper
       - @repository.repo
 
   api.user:
-    class: 'QL\Hal\Controllers\Api\UserController'
+    class: 'QL\Hal\Controllers\Api\User\UserController'
     arguments:
       - @api.helper
       - @url.helper
       - @user.repo
 
   api.users:
-    class: 'QL\Hal\Controllers\Api\UsersController'
+    class: 'QL\Hal\Controllers\Api\User\UsersController'
     arguments:
       - @api.helper
       - @user.repo
