@@ -507,12 +507,12 @@ parameters:
     api.servers:
       method:       'GET'
       route:        '/api/servers'
-      stack:        ['FIX_ME']
+      stack:        ['api.servers']
 
     api.server:
       method:       'GET'
       route:        '/api/servers/:id'
-      stack:        ['FIX_ME']
+      stack:        ['api.server']
       conditions:
         id:         '[0-9]+'
 
@@ -547,13 +547,6 @@ parameters:
       conditions:
         id:         '[0-9]+'
 
-    api.deployment.status:
-      method:       'GET'
-      route:        '/api/deployment/:id/status'
-      stack:        ['api.deployment.status']
-      conditions:
-        id:         '[0-9]+'
-
     api.build:
       method:       'GET'
       route:        '/api/build/:id'
@@ -561,10 +554,24 @@ parameters:
       conditions:
         id:         '[A-Za-z0-9]+'
 
+    api.build.log:
+      method:       'GET'
+      route:        '/api/build/:id/log'
+      stack:        ['api.build.log']
+      conditions:
+        id:         '[A-Za-z0-9]+'
+
     api.push:
       method:       'GET'
       route:        '/api/push/:id'
       stack:        ['api.push']
+      conditions:
+        id:         '[0-9]+'
+
+    api.push.log:
+      method:       'GET'
+      route:        '/api/push/:id/log'
+      stack:        ['api.push.log']
       conditions:
         id:         '[0-9]+'
 
@@ -579,6 +586,36 @@ parameters:
       stack:        ['api.repository']
       conditions:
         id:         '[0-9]+'
+
+    api.repository.tags:
+      method:       'GET'
+      route:        '/api/repositories/:id/tags'
+      stack:        ['api.repository.tags']
+      conditions:
+        id:         '[0-9]+'
+
+    api.repository.branches:
+      method:       'GET'
+      route:        '/api/repositories/:id/branches'
+      stack:        ['api.repository.branches']
+      conditions:
+        id:         '[0-9]+'
+
+    api.repository.pullrequests:
+      method:       'GET'
+      route:        '/api/repositories/:id/pullrequests'
+      stack:        ['api.repository.pullrequests']
+      conditions:
+        id:         '[0-9]+'
+
+    api.repository.diff:
+      method:       'GET'
+      route:        '/api/repositories/:id/diff/:base/:head'
+      stack:        ['api.repository.diff']
+      conditions:
+        id:         '[0-9]+'
+        base:       '[A-Za-z0-9]{40,40}'
+        head:       '[A-Za-z0-9]{40,40}'
 
     api.deployments:
       method:       'GET'

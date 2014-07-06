@@ -247,6 +247,7 @@ services:
       - '@github.pullService'
       - '@github.commitService'
       - '@github.pager'
+      - @github.commitRepo
 
   github.client:
     class: 'Github\Client'
@@ -291,6 +292,11 @@ services:
 
   github.userService:
     class: 'QL\Hal\GithubApi\HackUser'
+    arguments:
+      - @github.client
+
+  github.commitRepo:
+    class: 'Github\Api\Repository\Commits'
     arguments:
       - @github.client
 

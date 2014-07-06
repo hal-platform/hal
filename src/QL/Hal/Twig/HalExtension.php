@@ -99,8 +99,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('reldate', array($this->time, 'relative'), array('is_safe' => array('html'))),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
             new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
-            new Twig_SimpleFilter('gitref', array($this, 'formatGitReference')),
-            new Twig_SimpleFilter('commit', array($this, 'formatGitCommit'))
+            new Twig_SimpleFilter('gitref', array($this->url, 'formatGitReference')),
+            new Twig_SimpleFilter('commit', array($this->url, 'formatGitCommit'))
         );
     }
 
@@ -188,39 +188,5 @@ class HalExtension extends Twig_Extension
         }
 
         return json_encode($raw, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    }
-
-    /**
-     * Format an arbitrary git reference for display
-     *
-     * @param $reference
-     * @return string
-     */
-    public function formatGitReference($reference)
-    {
-        if ($tag = $this->github->parseRefAsTag($reference)) {
-            return "Tag ".$tag;
-        }
-
-        if ($pull = $this->github->parseRefAsPull($reference)) {
-            return "Pull Request ".$pull;
-        }
-
-        if ($commit = $this->github->parseRefAsCommit($reference)) {
-            return "Commit ".$this->formatGitCommit($commit);
-        }
-
-        return ucfirst(strtolower($reference))." Branch";
-    }
-
-    /**
-     * Format a git commit hash for output
-     *
-     * @param $reference
-     * @return string
-     */
-    public function formatGitCommit($reference)
-    {
-        return substr($reference, 0, 7);
     }
 }

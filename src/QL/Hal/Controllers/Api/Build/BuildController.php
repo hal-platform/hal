@@ -72,6 +72,7 @@ class BuildController
 
         $links = [
             'self' => ['href' => ['api.build', ['id' => $build->getId()]], 'type' => 'Build'],
+            'log' => ['href' => ['api.build.log', ['id' => $build->getId()]], 'type' => 'Build Log'],
             'index' => ['href' => 'api.index']
         ];
 

@@ -10,6 +10,7 @@ namespace QL\Hal\Services;
 use Github\Api\GitData\Commits as CommitApi;
 use Github\Api\GitData\References as ReferenceApi;
 use Github\Api\PullRequest as PullRequestApi;
+use Github\Api\Repository\Commits as CommitRepo;
 
 use Github\Api\Repo;
 use Github\Exception\RuntimeException;
@@ -61,12 +62,18 @@ class GithubService
     private $pager;
 
     /**
+     * @var CommitRepo
+     */
+    private $commitRepo;
+
+    /**
      * @param HackUser $user
      * @param Repo $repo
      * @param ReferenceApi $ref
      * @param PullRequestApi $pull
      * @param CommitApi $commit
      * @param ResultPager $pager
+     * @param CommitRepo $commitRepo
      */
     public function __construct(
         HackUser $user,
@@ -74,7 +81,8 @@ class GithubService
         ReferenceApi $ref,
         PullRequestApi $pull,
         CommitApi $commit,
-        ResultPager $pager
+        ResultPager $pager,
+        CommitRepo $commitRepo
     ) {
         $this->userApi = $user;
         $this->repoApi = $repo;
@@ -82,6 +90,7 @@ class GithubService
         $this->pullApi = $pull;
         $this->commitApi = $commit;
         $this->pager = $pager;
+        $this->commitRepo = $commitRepo;
     }
 
     /**
@@ -280,6 +289,20 @@ class GithubService
         }
 
         return true;
+    }
+
+    /**
+     * Compare two git commits
+     *
+     * @param $user
+     * @param $repo
+     * @param $base
+     * @param $head
+     * @return \Guzzle\Http\EntityBodyInterface|mixed|string
+     */
+    public function diff($user, $repo, $base, $head)
+    {
+        return $this->commitRepo->compare($user, $repo, $base, $head);
     }
 
     /**

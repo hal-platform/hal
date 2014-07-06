@@ -70,12 +70,28 @@ class DeploymentController
                     'self' => ['href' => ['api.server', ['id' => $deployment->getServer()->getId()]], 'type' => 'Server']
                 ])
             ],
-            'status' => [
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.deployment.status', ['id' => $deployment->getId()]], 'type' => 'Deployment Status']
-                ])
-            ]
+            'status' => []
         ];
+
+        if ($last = $this->deployments->getLastPush($deployment)) {
+            $content['status']['last'] = [
+                'id' => $last->getId(),
+                '_links' => $this->api->parseLinks([
+                    'self' => ['href' => ['api.push', ['id' => $last->getId()]], 'type' => 'Push']
+                ])
+            ];
+        } else {
+            $content['status']['last'] = null;
+        }
+        if ($success = $this->deployments->getLastSuccessfulPush($deployment)) {
+            $content['status']['success'] = [
+                '_links' => $this->api->parseLinks([
+                    'self' => ['href' => ['api.push', ['id' => $success->getId()]], 'type' => 'Push']
+                ])
+            ];
+        } else {
+            $content['status']['success'] = null;
+        }
 
         $this->api->prepareResponse($response, $links, $content);
     }

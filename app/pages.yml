@@ -595,10 +595,16 @@ services:
       - @url.helper
       - @build.repo
 
+  api.build.log:
+    class: 'QL\Hal\Controllers\Api\Build\LogController'
+    arguments:
+      - @api.helper
+
   api.builds:
     class: 'QL\Hal\Controllers\Api\Build\BuildsController'
     arguments:
       - @api.helper
+      - @repository.repo
       - @build.repo
 
   api.deployment:
@@ -626,6 +632,19 @@ services:
       - @api.helper
       - @environment.repo
 
+  api.server:
+    class: 'QL\Hal\Controllers\Api\Server\ServerController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @server.repo
+
+  api.servers:
+    class: 'QL\Hal\Controllers\Api\Server\ServersController'
+    arguments:
+      - @api.helper
+      - @server.repo
+
   api.group:
     class: 'QL\Hal\Controllers\Api\Group\GroupController'
     arguments:
@@ -650,17 +669,59 @@ services:
     class: 'QL\Hal\Controllers\Api\Push\PushController'
     arguments:
       - @api.helper
+      - @url.helper
+      - @time.helper
+      - @push.repo
+
+  api.push.log:
+    class: 'QL\Hal\Controllers\Api\Push\LogController'
+    arguments:
+      - @api.helper
 
   api.pushes:
     class: 'QL\Hal\Controllers\Api\Push\PushesController'
     arguments:
       - @api.helper
+      - @repository.repo
+      - @push.repo
 
   api.repository:
     class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
     arguments:
       - @api.helper
       - @url.helper
+      - @repository.repo
+
+  api.repository.tags:
+    class: 'QL\Hal\Controllers\Api\Repository\TagsController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
+      - @repository.repo
+
+  api.repository.branches:
+    class: 'QL\Hal\Controllers\Api\Repository\BranchesController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
+      - @repository.repo
+
+  api.repository.pullrequests:
+    class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
+      - @repository.repo
+
+  api.repository.diff:
+    class: 'QL\Hal\Controllers\Api\Repository\DiffController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
       - @repository.repo
 
   api.repositories:

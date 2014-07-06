@@ -61,6 +61,9 @@ class RepositoryController
 
         $links = [
             'self' => ['href' => ['api.repository', ['id' => $repository->getId()]], 'type' => 'Repository'],
+            'tags' => ['href' => ['api.repository.tags', ['id' => $repository->getId()]], 'type' => 'Tags'],
+            'branches' => ['href' => ['api.repository.branches', ['id' => $repository->getId()]], 'type' => 'Branches'],
+            'pullrequests' => ['href' => ['api.repository.pullrequests', ['id' => $repository->getId()]], 'type' => 'Pull Requests'],
             'repositories' => ['href' => 'api.repositories', 'type' => 'Repositories'],
             'index' => ['href' => 'api.index']
         ];

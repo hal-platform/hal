@@ -179,7 +179,7 @@ class AdminAddController
             $repository->setBuildCmd($buildCommand);
         }
         if ($preCommand = $request->post('pre_command')) {
-            $repository->setPrePushCmd($postCommand);
+            $repository->setPrePushCmd($preCommand);
         }
         if ($postCommand = $request->post('post_command')) {
             $repository->setPostPushCmd($postCommand);

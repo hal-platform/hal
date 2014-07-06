@@ -39,8 +39,8 @@
     <h4>Servers</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.servers') }}">{{ uriFor('api.servers') }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.server', {id: ':id'}) }}">{{ uriFor('api.server', {id: ':id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.servers') }}">{{ uriFor('api.servers') }}</a></li>
+        <li><a href="{{ urlFor('api.server', {id: ':id'}) }}">{{ uriFor('api.server', {id: ':id'}) }}</a></li>
     </ul>
 
     <h4>Groups</h4>
@@ -62,6 +62,10 @@
     <ul>
         <li><a href="{{ urlFor('api.repositories') }}">{{ uriFor('api.repositories') }}</a></li>
         <li><a href="{{ urlFor('api.repository', {id: ':id'}) }}">{{ uriFor('api.repository', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.repository.tags', {id: ':id'}) }}">{{ uriFor('api.repository.tags', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.repository.branches', {id: ':id'}) }}">{{ uriFor('api.repository.branches', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.repository.pullrequests', {id: ':id'}) }}">{{ uriFor('api.repository.pullrequests', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.repository.diff', {id: ':id', base: ':base', head: ':head'}) }}">{{ uriFor('api.repository.diff', {id: ':id', base: ':base', head: ':head'}) }}</a></li>
     </ul>
 
     <h4>Deployments</h4>
@@ -76,13 +80,15 @@
     <ul>
         <li><a href="{{ urlFor('api.builds', {id: ':id'}) }}">{{ uriFor('api.builds', {id: ':id'}) }}</a></li>
         <li><a href="{{ urlFor('api.build', {id: ':id'}) }}">{{ uriFor('api.build', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.build.log', {id: ':id'}) }}">{{ uriFor('api.build.log', {id: ':id'}) }}</a> [NYI]</li>
     </ul>
 
     <h4>Pushes</h4>
 
     <ul>
-        <li><a href="{{ urlFor('api.pushes', {id: ':id'}) }}">{{ uriFor('api.pushes', {id: ':id'}) }}</a> [NYI]</li>
-        <li><a href="{{ urlFor('api.push', {id: 'id'}) }}">{{ uriFor('api.push', {id: 'id'}) }}</a> [NYI]</li>
+        <li><a href="{{ urlFor('api.pushes', {id: ':id'}) }}">{{ uriFor('api.pushes', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.push', {id: 'id'}) }}">{{ uriFor('api.push', {id: ':id'}) }}</a></li>
+        <li><a href="{{ urlFor('api.push.log', {id: ':id'}) }}">{{ uriFor('api.push.log', {id: ':id'}) }}</a> [NYI]</li>
     </ul>
 
     <h3>Protected Endpoints</h3>
