@@ -9,7 +9,6 @@ use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Entity\Deployment;
 use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\User as EntityUser;
 use Zend\Ldap\Dn;
