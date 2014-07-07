@@ -34,6 +34,7 @@ class SlimConfigurator
     private $hooks;
 
     /**
+     * @param ContainerInterface $di
      * @param array $hooks
      */
     public function __construct(ContainerInterface $di, array $hooks)
@@ -64,7 +65,7 @@ class SlimConfigurator
      */
     private function hookClosure(Slim $slim, $key)
     {
-        return function() use ($slim, $key) {
+        return function () use ($slim, $key) {
             $service = $this->di->get($key);
             call_user_func($service, $slim);
         };

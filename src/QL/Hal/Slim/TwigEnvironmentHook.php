@@ -18,7 +18,7 @@ use Twig_Environment;
 class TwigEnvironmentHook
 {
     /**
-     * @var Environment
+     * @var Twig_Environment
      */
     private $environment;
 

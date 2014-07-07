@@ -41,7 +41,6 @@ class RouteLoaderHook
     private $routes;
 
     /**
-     * @param Slim $app
      * @param ContainerInterface $container
      * @param array $routes
      */

@@ -7,7 +7,7 @@
 
 namespace QL\Hal;
 
-use QL\Hal\Services\Session\Handler;
+use SessionHandlerInterface;
 
 /**
  *  Session Handler
@@ -21,7 +21,7 @@ class Session
     /**
      *  Constructor
      */
-    public function __construct(Handler $handler = null)
+    public function __construct(SessionHandlerInterface $handler = null)
     {
         $this->handler = $handler;
 
@@ -49,7 +49,7 @@ class Session
     {
         if (false == $this->started()) {
 
-            if ($this->handler instanceof Handler) {
+            if ($this->handler instanceof SessionHandlerInterface) {
                 session_set_save_handler(
                     array($this->handler, 'open'),
                     array($this->handler, 'close'),

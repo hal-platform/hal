@@ -5,18 +5,18 @@ namespace QL\Hal\Services\Session\Handler;
 
 use DateTime;
 use DateTimeZone;
+use SessionHandlerInterface;
 use Doctrine\ORM\EntityManager;
 use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\Repository\SessionRepository;
 use QL\Hal\Core\Entity\Session;
-use QL\Hal\Services\Session\Handler;
 
 /**
  *  Doctrine Session Handler
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class DoctrineHandler implements Handler
+class DoctrineHandler implements SessionHandlerInterface
 {
     /**
      *  @var SessionRepository
