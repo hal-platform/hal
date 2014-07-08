@@ -9,6 +9,7 @@ DELFOLDERS=(
     "node_modules"
     "phpunit"
     "vendor"
+    "app/cache/*"
 )
 
 # Remove files
