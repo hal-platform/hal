@@ -12,7 +12,9 @@
 /.sass-cache/
 /bower_components/
 /node_modules/
-/public/js/build.txt
+/public/css/
+/public/img/
+/public/js/
 /vendor/
 
 # compiled configuration
