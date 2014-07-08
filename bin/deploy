@@ -8,8 +8,24 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 "$DIR"/install
 "$DIR"/config
 "$DIR"/doctrine orm:generate:proxies
+"$DIR"/node_modules/.bin/gulp --deploy
 
 # Remove artifacts from deployment - keep your builds tidy!
-# rm -r "$DIR/../.sass-cache"
-# rm -r "$DIR/../node_modules"
-rm -r "$DIR/composer"
+
+DELFILES=(
+    ".sass-cache"
+    "node_modules"
+    "composer"
+)
+
+# Remove files
+for i in ${DELFILES[@]}
+do
+    FILE="$DIR/../$i"
+    EXISTS=$(test -e $FILE && echo 1 || echo 0)
+    if [[ $EXISTS -eq "1" ]]; then
+        echo "Removing $FILE"
+        rm -rf "$FILE"
+    fi
+
+done
