@@ -7,6 +7,102 @@
     <h2>Hello, {{ getUsersActualName(user) }}.</h2>
 
     <p>
+        This page is ugly. Mostly on purpose. I've dumped out the information we should need to build the dashboard
+        page. It just needs to be styled nicely.
+    </p>
+
+    {# QUICK BUILD #}
+
+    <h3>Quick Build</h3>
+    <ul>
+        {% for repository in repositories %}
+            <li><a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repository.id}) }}">Start New Build for {{ repository.key }}</a></li>
+        {% else %}
+            <li>Looks like you don't have access to anything.</li>
+        {% endfor %}
+    </ul>
+
+    {# PENDING WORK #}
+
+    {% if pending or true %}
+        <h3>Pending Agent Work</h3>
+        <ul>
+            {% for item in pending %}
+                <li>
+                    {% if item is build %}
+                        <a href="{{ urlFor('repository.status', {'id': item.repository.id}) }}">{{ item.repository.key }}</a>
+                    {% endif %}
+                    {% if item is push %}
+                        <a href="{{ urlFor('repository.status', {'id': item.build.repository.id}) }}">{{ item.build.repository.key }}</a>
+                    {% endif %},
+
+                    {% if item is build %}
+                        <a href="{{ urlFor('build', {'build': item.id}) }}">Build</a>
+                    {% endif %}
+                    {% if item is push %}
+                        <a href="{{ urlFor('push', {'push': item.id}) }}">Push</a>
+                    {% endif %},
+
+                    {% if item.status == 'Success' %}
+                        <span class="status-before--success">{{ item.status }}</span>
+                    {% elseif item.status in ['Error', 'Removed'] %}
+                        <span class="status-before--error">{{ item.status }}</span>
+                    {% else %}
+                        <span class="status-before--other">{{ item.status }}</span>
+                    {% endif %},
+
+                    {% if item is build %}
+                        Commit <a href="{{ githubCommit(item.repository.githubUser, item.repository.githubRepo, item.commit) }}">{{ item.commit|commit }}</a>
+                        <span class="icon">
+                                    <svg viewBox="0 0 32 32">
+                                        <use xlink:href="#github"></use>
+                                    </svg>
+                                </span>
+                    {% endif %}
+                    {% if item is push %}
+                        Build <a href="{{ urlFor('build', {'build': item.build.id}) }}">{{ item.build.id[:10] }}</a>
+                    {% endif %} -->
+
+                    {% if item is build %}
+                        Build <a href="{{ urlFor('build', {'build': item.id}) }}">{{ item.id[:10] }}</a>
+                    {% endif %}
+                    {% if item is push %}
+                        <a href="{{ urlFor('server', {'id': item.deployment.server.id }) }}">{{ item.deployment.server.name }}</a> ({{ item.deployment.server.environment.key }})
+                    {% endif %},
+
+                    {% if item.user %}
+                        <a href="{{ urlFor('user', {'id': item.user.id}) }}">{{ item.user.name[:20] }}</a>
+                    {% elseif item.consumer %}
+                        {{ item.consumer.name[:20] }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {# RECENT USER BUILD ACTIVITY #}
+
+    <h3>Your Recent Builds</h3>
+    {% include 'partials/build-table.twig' with {'builds': builds, 'initiator': false} %}
+
+
+    {# RECENT USER PUSH ACTIVITY #}
+
+    <h3>Your Recent Pushes</h3>
+    {% include 'partials/push-table.twig' with {'builds': builds, 'initiator': false} %}
+
+
+
+
+
+    {#
+    Not sure what to do with this stuff... Integrated here? Another page? Login? Not sure.
+
+    <h2>Hello, {{ getUsersActualName(user) }}.</h2>
+
+    <p>
         You have reached the latest version of the code building and pushing tool for unix-based applications.
     <p>
     <p>
@@ -31,6 +127,8 @@
 
         <small><strong>Note</strong>: Push permissions are strictly regulated. If you feel your permissions are incorrect due to a mistake made by another human, open an inquiry by <a href="{{ urlFor('help') }}">contacting support</a>.</small>
     </p>
+    #}
+
 {% endblock %}
 
 {# ideas for this page:
