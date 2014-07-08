@@ -55,7 +55,7 @@ class LoginBouncer
     public function __invoke(Request $request, Response $response)
     {
         if (!$this->session->get('account')) {
-            $this->url->redirectFor('login');
+            $this->url->redirectFor('login', [], ['redirect' => $request->getResourceUri()]);
         }
 
         $this->container->set('user', $this->session->get('account'));

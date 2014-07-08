@@ -78,18 +78,22 @@ class UrlHelper
     }
 
     /**
-     *  Generate a redirect response for a given route name
+     * Generate a redirect response for a given route name
      *
-     *  @param string $route
-     *  @param array $params
-     *  @param int $code
+     * @param string $route
+     * @param array $params
+     * @param array $vars
+     * @param int $code
      */
-    public function redirectFor($route, array $params = [], $code = 302)
+    public function redirectFor($route, array $params = [], $vars = [], $code = 302)
     {
-        $this->response->redirect(
-            $this->urlFor($route, $params),
-            $code
-        );
+        $url = $this->urlFor($route, $params);
+
+        if (count($vars)) {
+            $url = sprintf('%s?%s', $url, http_build_query($vars));
+        }
+
+        $this->response->redirect($url, $code);
     }
 
     /**

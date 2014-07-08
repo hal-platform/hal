@@ -83,6 +83,7 @@ class LoginHandleController
     {
         $username = $request->post('username');
         $password = $request->post('password');
+        $redirect = $request->get('redirect', null);
 
         if (!$username || !$password) {
             $response->body(
@@ -123,6 +124,10 @@ class LoginHandleController
         $this->em->persist($user);
         $this->em->flush();
 
-        $this->url->redirectFor('dashboard');
+        if ($redirect) {
+            $response->redirect($redirect);
+        } else {
+            $this->url->redirectFor('dashboard');
+        }
     }
 }
