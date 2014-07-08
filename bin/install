@@ -3,8 +3,11 @@
 set -e
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
+
 COMPOSER="$DIR/composer install --prefer-dist --no-interaction --no-dev"
 NPM="npm install --production"
+BUNDLER="bundle install" # use flags: --deployment --binstubs for isolated gems
 
 $COMPOSER
 $NPM
+$BUNDLER
