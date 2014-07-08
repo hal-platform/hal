@@ -10,17 +10,17 @@ services:
     arguments:
       - 'delete.confirm.twig'
 
-  hello.page:
-    class: 'QL\Hal\Controllers\HelloController'
+  dashboard.page:
+    class: 'QL\Hal\Controllers\DashboardController'
     arguments:
-      - @hello.twig
+      - @dashboard.twig
       - @layout
       - @user
       - @permissions
       - @doctrine.em
-  hello.twig:
+  dashboard.twig:
     parent: 'twig.template'
-    arguments: ['hello.twig']
+    arguments: ['dashboard.twig']
 
   login.page:
     class: 'QL\Hal\Controllers\LoginController'

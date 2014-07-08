@@ -123,6 +123,6 @@ class LoginHandleController
         $this->em->persist($user);
         $this->em->flush();
 
-        $this->url->redirectFor('hello');
+        $this->url->redirectFor('dashboard');
     }
 }

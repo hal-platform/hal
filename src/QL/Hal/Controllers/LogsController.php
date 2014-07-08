@@ -73,6 +73,7 @@ class LogsController
         $total = count($paginator);
         $last = ceil($total / self::MAX_PER_PAGE);
 
+        $response->setStatus(440);
         $response->body(
             $this->layout->render(
                 $this->template,

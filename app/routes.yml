@@ -12,12 +12,12 @@ parameters:
       stack:
         - login.handle
 
-    hello:
+    dashboard:
       method:     "GET"
       route:      "/"
       stack:
         - login.bouncer
-        - hello.page
+        - dashboard.page
 
     logout:
       method:     "GET"

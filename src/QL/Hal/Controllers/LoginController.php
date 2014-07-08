@@ -5,7 +5,6 @@ namespace QL\Hal\Controllers;
 use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
 
 /**
  *  Login Page Controller

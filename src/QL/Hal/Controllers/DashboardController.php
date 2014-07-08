@@ -15,7 +15,7 @@ use MCP\Corp\Account\User as LdapUser;
  *
  *  @author Matt Colf <matthewcolf@quickenloans.com>
  */
-class HelloController
+class DashboardController
 {
     /**
      *  @var Twig_Template
