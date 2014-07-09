@@ -12,20 +12,21 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/repositories/add', function() {
                 return _this.addRepository();
             });
-            router.addRoute('/r/{repository}/sync', function() {
-                return _this.syncRepository();
-            });
             router.addRoute('/environments/reorder', function() {
                 return _this.orderEnvironments();
             });
             router.addRoute('/repositories/:throwaway:/deployments', function() {
                 return _this.addDeployments();
             });
+
             router.addRoute('/repositories/:id:/status', function() {
-                return _this.updateBuilds();
+                return _this.updateRepositoryStatus();
             });
             router.addRoute('/build/:id:', function() {
                 return _this.updateBuild();
+            });
+            router.addRoute('/push/:id:', function() {
+                return _this.updatePush();
             });
         },
 
@@ -36,11 +37,7 @@ define(['crossroads'], function(crossroads) {
                 module.repos.attach();
             });
         },
-        syncRepository: function() {
-            return require(['modules/sync-repository'], function(module) {
-                module.init();
-            });
-        },
+
         orderEnvironments: function() {
             return require(['modules/order-environments'], function(module) {
                 module.init();
@@ -51,14 +48,25 @@ define(['crossroads'], function(crossroads) {
                 module.init();
             });
         },
-        updateBuilds: function() {
-            return require(['modules/update-builds'], function(module) {
+
+        updateRepositoryStatus: function() {
+            return require(['modules/update-builds', 'modules/update-pushes'], function(module, module2) {
                 module.init();
+
+                module2.mode = 'grid';
+                module2.init();
             });
         },
         updateBuild: function() {
             return require(['modules/update-builds'], function(module) {
                 module.mode = 'build';
+                module.init();
+            });
+        },
+
+        updatePush: function() {
+            return require(['modules/update-pushes'], function(module) {
+                module.mode = 'push';
                 module.init();
             });
         }

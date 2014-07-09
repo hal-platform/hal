@@ -31,7 +31,7 @@
                                         {{ status.latest.status }}
                                     </span>
                                 {% else %}
-                                    <span class="status-before--other">
+                                    <span class="status-before--other" data-push="{{ status.latest.id }}">
                                         {{ status.latest.status }}
                                     </span>
                                 {% endif %}

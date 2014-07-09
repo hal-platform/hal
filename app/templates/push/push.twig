@@ -80,21 +80,21 @@
                 {% elseif push.status == 'Error' %}
                     <span class="status-before--error">{{ push.status }}</span>
                 {% else %}
-                    <span class="status-before--other">{{ push.status }}</span>
+                    <span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
                 {% endif %}
             </dd>
 
             <dt class="split--left__title">
                 Start
             </dt>
-            <dd class="split--left__value">
+            <dd class="split--left__value js-push-start">
                 {{ push.start|date }}
             </dd>
 
             <dt class="split--left__title">
                 End
             </dt>
-            <dd class="split--left__value">
+            <dd class="split--left__value js-push-end">
                 {{ push.end|date }}
             </dd>
 

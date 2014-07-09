@@ -1,7 +1,7 @@
 define(['jquery'], function($) {
     return {
         interval: 5000,
-        mode: 'table', // "table" for global build table, "build" for individual build status page
+        mode: 'table', // "table" for global push table, "grid" for global push grid, "push" for individual push status page
         pendingClass: 'status-before--other',
         thinkingClass: 'status-before--thinking',
         successClass: 'status-before--success',
@@ -9,11 +9,11 @@ define(['jquery'], function($) {
         init: function() {
             var _this = this;
 
-            $('[data-build]').each(function(index, item) {
+            $('[data-push]').each(function(index, item) {
                 var $item = $(item);
                 var status = $item.text().trim();
 
-                if (status == 'Waiting' || status == 'Building') {
+                if (status == 'Waiting' || status == 'Pushing') {
                     $item
                         .removeClass(_this.pendingClass)
                         .addClass(_this.thinkingClass);
@@ -24,15 +24,15 @@ define(['jquery'], function($) {
         },
         checkStatus: function($elem) {
             var _this = this;
-            var id = $elem.data('build');
+            var id = $elem.data('push');
 
-            $.getJSON('/api/build/' + id, function(data) {
+            $.getJSON('/api/push/' + id, function(data) {
                 var currentStatus = data.content.status;
                 $elem.text(currentStatus);
 
-                // console.log('Build ' + id + ' status: ' + currentStatus);
+                // console.log('Push ' + id + ' status: ' + currentStatus);
 
-                if (currentStatus == 'Waiting' || currentStatus == 'Building') {
+                if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
                     // If still pending, fire up a countdown for the next callback in the chain.
                     _this.startUpdateTimer($elem);
 
@@ -47,10 +47,10 @@ define(['jquery'], function($) {
                         .addClass(_this.failureClass);
                 }
 
-                if (_this.mode == 'table') {
+                if (_this.mode == 'push') {
+                    _this.updatePush(data.content, $elem);
+                } else if (_this.mode == 'table') {
                     _this.updateTable(data.content, $elem);
-                } else {
-                    _this.updateBuild(data.content, $elem);
                 }
             });
         },
@@ -61,49 +61,22 @@ define(['jquery'], function($) {
                 _this.checkStatus($elem);
             }, _this.interval);
         },
-        updateBuild: function(data, $elem) {
+        updatePush: function(data, $elem) {
             var $container = $elem.closest('dl');
-            var $hdr;
-
-            if (data.status == 'Success') {
-                // Add push link if present
-                $('.js-build-push')
-                    .html('<a class="btn--action" href="/build/' + data.id + '/push">Push Build</a>');
-
-                // Replace success messaging
-                $hdr = $('[data-success]');
-                if ($hdr.length == 1) {
-                    $hdr.text($hdr.data('success'));
-                }
-
-            } else if (data.status == 'Error') {
-                // Replace success messaging
-                $hdr = $('[data-failure]');
-                if ($hdr.length == 1) {
-                    $hdr.text($hdr.data('failure'));
-                }
-            }
 
             $container
-                .children('.js-build-start')
+                .children('.js-push-start')
                 .text(data.start.text);
             $container
-                .children('.js-build-end')
+                .children('.js-push-end')
                 .text(data.end.text);
         },
         updateTable: function(data, $elem) {
             var $container = $elem.closest('tr');
 
-            if (data.status == 'Success') {
-                // Add push link if present
-                $container
-                    .children('.js-build-push')
-                    .html('<a href="/build/' + data.id + '/push">Push</a>');
-            }
-
             // Add end time if present
             $container
-                .children('.js-build-date')
+                .children('.js-push-date')
                 .text(data.end.text);
         }
     };

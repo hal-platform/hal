@@ -21,7 +21,7 @@
                 {% elseif push.status == 'Error' %}
                     <span class="status-before--error">{{ push.status }}</span>
                 {% else %}
-                    <span class="status-before--other">{{ push.status }}</span>
+                    <span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
                 {% endif %}
             </td>
             <td><a href="{{ urlFor('build', {'repo': push.build.repository.key, 'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
@@ -37,7 +37,7 @@
                 {% endif %}
             </td>
             {% endif %}
-            <td>{{ push.start|reldate }}</td>
+            <td class="js-push-date">{{ push.start|reldate }}</td>
         </tr>
     {% else %}
         <tr>
