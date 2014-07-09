@@ -66,3 +66,21 @@ svg.icon {
         background-color: $warning-color;
     }
 }
+
+.status-before--thinking, .status-after--thinking {
+    &:before {
+        background: linear-gradient(90deg, $success-color 50%, $error-color 50%);
+        animation:spin 2s infinite;
+
+    }
+    &:after {
+        background: linear-gradient(90deg, $success-color 50%, $error-color 50%);
+        animation:spin 2s infinite;
+    }
+}
+
+
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}

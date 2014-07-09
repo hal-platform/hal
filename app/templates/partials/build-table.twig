@@ -26,7 +26,7 @@
                 {% elseif build.status in ['Error', 'Removed'] %}
                     <span class="status-before--error">{{ build.status }}</span>
                 {% else %}
-                    <span class="status-before--other">{{ build.status }}</span>
+                    <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
                 {% endif %}
             </td>
             <td>
@@ -54,9 +54,16 @@
                 {% endif %}
             </td>
             {% endif %}
-            <td>{{ build.end|reldate }}</td>
+            <td class="js-build-date">{{ build.end|reldate }}</td>
             {% if actions %}
-            <td>
+
+                {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
+                {% set canPush = false %}
+                {% if build.status in ['Waiting', 'Building'] and canUserPush(user, build.repository.key, build.server.environment.key) %}
+                    {% set canPush = true %}
+                {% endif %}
+
+            <td{{ canPush ? ' class="js-build-push"' }}>
                 {% if build.status == 'Success' %}
                     {% if canUserPush(user, build.repository.key, build.server.environment.key) %}
                         <a href="{{ urlFor('push.start', {'repo': build.repository.key, 'build': build.id}) }}">Push</a>

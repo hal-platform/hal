@@ -24,6 +24,9 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/repositories/:throwaway:/deployments', function() {
                 return _this.addDeployments();
             });
+            router.addRoute('/repositories/:id:/status', function() {
+                return _this.updateBuilds();
+            });
         },
 
         // route module endpoints
@@ -50,6 +53,11 @@ define(['crossroads'], function(crossroads) {
         },
         addDeployments: function() {
             return require(['modules/add-deployments'], function(module) {
+                module.init();
+            });
+        },
+        updateBuilds: function() {
+            return require(['modules/update-builds'], function(module) {
                 module.init();
             });
         }
