@@ -12,6 +12,7 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/repositories/add', function() {
                 return _this.addRepository();
             });
+
             router.addRoute('/environments/reorder', function() {
                 return _this.orderEnvironments();
             });
@@ -27,6 +28,9 @@ define(['crossroads'], function(crossroads) {
             });
             router.addRoute('/push/:id:', function() {
                 return _this.updatePush();
+            });
+            router.addRoute('/queue', function() {
+                return _this.queue();
             });
         },
 
@@ -67,6 +71,11 @@ define(['crossroads'], function(crossroads) {
         updatePush: function() {
             return require(['modules/update-pushes'], function(module) {
                 module.mode = 'push';
+                module.init();
+            });
+        },
+        queue: function() {
+            return require(['modules/queue'], function(module) {
                 module.init();
             });
         }

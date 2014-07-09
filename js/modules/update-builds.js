@@ -9,7 +9,8 @@ define(['jquery'], function($) {
         init: function() {
             var _this = this;
 
-            $('[data-build]').each(function(index, item) {
+            var $builds = $('[data-build]');
+            $builds.each(function(index, item) {
                 var $item = $(item);
                 var status = $item.text().trim();
 
@@ -21,6 +22,8 @@ define(['jquery'], function($) {
                     _this.startUpdateTimer($item);
                 }
             });
+
+            return $builds;
         },
         checkStatus: function($elem) {
             var _this = this;
