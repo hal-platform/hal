@@ -4,87 +4,113 @@
 
 {% block content %}
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': push.deployment.repository.id}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.deployment.repository.id}) }}">Back to Repository Status</a></p>
 
-    <h2>Push Details</h2>
+    <h2 class="mbn">Push Details</h2>
 
-    <div class="overflow-container">
-        <table>
-            <tbody>
-                <tr>
-                    <td>Id</td>
-                    <td>{{ push.id }}</td>
-                </tr>
-                <tr>
-                    <td>Server</td>
-                    <td><a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})</td>
-                </tr>
-                <tr>
-                    <td>Directory</td>
-                    <td>{{ push.deployment.path }}</td>
-                </tr>
-                <tr>
-                    <td>Repository</td>
-                    <td><a href="{{ urlFor('repository', {'id': push.deployment.repository.id}) }}">{{ push.deployment.repository.key }}</a></td>
-                </tr>
-                <tr>
-                    <td>Build</td>
-                    <td>
-                        <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id }}</a>
-                        {% if (push.build.status == 'Removed') %}
-                            (Removed)
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Branch</td>
-                    <td>{{ push.build.branch }}</td>
-                </tr>
-                <tr>
-                    <td>Commit</td>
-                    <td>
-                        <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
-                        <span class="icon">
-                            <svg viewBox="0 0 32 32">
-                                <use xlink:href="#github"></use>
-                            </svg>
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Status</td>
-                    <td>
-                        {% if push.status == 'Success' %}
-                            <span class="status-before--success">{{ push.status }}</span>
-                        {% elseif push.status == 'Error' %}
-                            <span class="status-before--error">{{ push.status }}</span>
-                        {% else %}
-                            <span class="status-before--other">{{ push.status }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Start</td>
-                    <td>{{ push.start|date }}</td>
-                </tr>
-                <tr>
-                    <td>End</td>
-                    <td>{{ push.end|date }}</td>
-                </tr>
-                <tr>
-                    <td>Initiator</td>
-                    <td>
-                        {% if push.user %}
-                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name }}</a>
-                        {% elseif push.consumer %}
-                            {{ push.consumer.name[:20] }}
-                        {% else %}
-                            Unknown
-                        {% endif %}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="details-box">
+        <dl class="split--left mbn">
+            <dt class="split--left__title">
+                Id
+            </dt>
+            <dd class="split--left__value">
+                {{ push.id }}
+            </dd>
+
+            <dt class="split--left__title">
+                Server
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})
+            </dd>
+
+            <dt class="split--left__title">
+                Directory
+            </dt>
+            <dd class="split--left__value">
+                {{ push.deployment.path }}
+            </dd>
+
+            <dt class="split--left__title">
+                Build
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id }}</a>
+                {% if (push.build.status == 'Removed') %}
+                    (Removed)
+                {% endif %}
+            </dd>
+
+            <dt class="split--left__title">
+                Reference
+            </dt>
+            <dd class="split--left__value">
+                {% if githubCommitIsCurrent(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch, push.build.commit) %}
+                    <span class="status-before--success">
+                        <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (latest)
+                    </span>
+                {% else %}
+                    <span class="status-before--other">
+                        <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (behind or unresolved)
+                    </span>
+                {% endif %}
+                <svg viewBox="0 0 32 32" class="icon">
+                    <use xlink:href="#fork"></use>
+                </svg>
+            </dd>
+
+            <dt class="split--left__title">
+                Commit
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
+                <span class="icon">
+                    <svg viewBox="0 0 32 32">
+                        <use xlink:href="#github"></use>
+                    </svg>
+                </span>
+            </dd>
+
+            <dt class="split--left__title">
+                Status
+            </dt>
+            <dd class="split--left__value">
+                {% if push.status == 'Success' %}
+                    <span class="status-before--success">{{ push.status }}</span>
+                {% elseif push.status == 'Error' %}
+                    <span class="status-before--error">{{ push.status }}</span>
+                {% else %}
+                    <span class="status-before--other">{{ push.status }}</span>
+                {% endif %}
+            </dd>
+
+            <dt class="split--left__title">
+                Start
+            </dt>
+            <dd class="split--left__value">
+                {{ push.start|date }}
+            </dd>
+
+            <dt class="split--left__title">
+                End
+            </dt>
+            <dd class="split--left__value">
+                {{ push.end|date }}
+            </dd>
+
+            <dt class="split--left__title">
+                Initiator
+            </dt>
+            <dd class="split--left__value">
+                {% if push.user %}
+                    <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name }}</a>
+                {% elseif push.consumer %}
+                    {{ push.consumer.name[:20] }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </dd>
+        </dl>
     </div>
 
     <h3>Push Log</h3>
