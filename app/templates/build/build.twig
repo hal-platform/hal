@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': build.repository.id}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
 
     <h2 class="mbn">Build Details</h2>
 
@@ -65,19 +65,19 @@
                 {% elseif build.status in ['Error', 'Removed'] %}
                     <span class="status-before--error">{{ build.status }}</span>
                 {% else %}
-                    <span class="status-before--other">{{ build.status }}</span>
+                    <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
                 {% endif %}
             </dd>
             <dt class="split--left__title">
                 Start
             </dt>
-            <dd class="split--left__value">
+            <dd class="split--left__value js-build-start">
                 {{ build.start|date }}
             </dd>
             <dt class="split--left__title">
                 End
             </dt>
-            <dd class="split--left__value">
+            <dd class="split--left__value js-build-end">
                 {{ build.end|date }}
             </dd>
             <dt class="split--left__title">
@@ -97,14 +97,19 @@
     </div>
 
     {% if canUserBuild(currentUser, build.repository.key) %}
+        {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
+        {% set unpushableMessage = 'Your build cannot be pushed.' %}
+
         {% if build.status == 'Success' %}
-            <h3>The build was successful, go ahead and push it!</h3>
+            <h3>{{ pushableMessage }}</h3>
             <p><a class="btn--action" href="{{ urlFor('push.start', {'build': build.id}) }}">Push Build</a></p>
-        {% elseif build.status == 'Waiting' or build.status == 'Building' %}
-            <h3>Your build is still pending. Please wait to push it.</h3>
-            <p><span class="btn--disabled">Push Build</span></p>
+        {% elseif build.status in ['Waiting', 'Building'] %}
+            <h3 data-success="{{ pushableMessage }}" data-failure="{{ unpushableMessage }}">
+                Your build is still pending. Please wait to push it.
+            </h3>
+            <p class="js-build-push"><span class="btn--disabled js-build-push">Push Build</span></p>
         {% else %}
-            <h3>Your build cannot be pushed.</h3>
+            <h3>{{ unpushableMessage }}</h3>
             <p><span class="btn--disabled">Push Build</span></p>
         {% endif %}
     {% endif %}

@@ -1,6 +1,7 @@
 define(['jquery'], function($) {
     return {
         interval: 5000,
+        mode: 'table', // "table" for global build table, "build" for individual build status page
         pendingClass: 'status-before--other',
         thinkingClass: 'status-before--thinking',
         successClass: 'status-before--success',
@@ -43,24 +44,17 @@ define(['jquery'], function($) {
                         .removeClass(_this.thinkingClass)
                         .addClass(_this.successClass);
 
-                    // Add push link if present
-                    $elem
-                        .closest('tr')
-                        .children('.js-build-push')
-                        .html('<a href="/build/' + id + '/push">Push</a>');
-
                 } else {
                     $elem
                         .removeClass(_this.thinkingClass)
                         .addClass(_this.failureClass);
                 }
 
-                // Add end time if present
-                $elem
-                    .closest('tr')
-                    .children('.js-build-date')
-                    .text(data.content.end.text);
-
+                if (_this.mode == 'table') {
+                    _this.updateTable(data.content, $elem);
+                } else {
+                    _this.updateBuild(data.content, $elem);
+                }
             });
         },
         startUpdateTimer: function($elem) {
@@ -69,6 +63,51 @@ define(['jquery'], function($) {
             var timer = window.setTimeout(function() {
                 _this.checkStatus($elem);
             }, _this.interval);
+        },
+        updateBuild: function(data, $elem) {
+            var $container = $elem.closest('dl');
+            var $hdr;
+
+            if (data.status == 'Success') {
+                // Add push link if present
+                $('.js-build-push')
+                    .html('<a class="btn--action" href="/build/' + data.id + '/push">Push Build</a>');
+
+                // Replace success messaging
+                $hdr = $('[data-success]');
+                if ($hdr.length == 1) {
+                    $hdr.text($hdr.data('success'));
+                }
+
+            } else if (data.status == 'Error') {
+                // Replace success messaging
+                $hdr = $('[data-failure]');
+                if ($hdr.length == 1) {
+                    $hdr.text($hdr.data('failure'));
+                }
+            }
+
+            $container
+                .children('.js-build-start')
+                .text(data.start.text);
+            $container
+                .children('.js-build-end')
+                .text(data.end.text);
+        },
+        updateTable: function(data, $elem) {
+            var $container = $elem.closest('tr');
+
+            if (data.status == 'Success') {
+                // Add push link if present
+                $container
+                    .children('.js-build-push')
+                    .html('<a href="/build/' + data.id + '/push">Push</a>');
+            }
+
+            // Add end time if present
+            $container
+                .children('.js-build-date')
+                .text(data.end.text);
         }
     };
 });
