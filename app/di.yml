@@ -52,11 +52,17 @@ services:
     class: 'Doctrine\Common\EventManager'
     calls:
       - ['addEventListener', [['onFlush'], @doctrine.logger]]
+      - ['addEventListener', [['prePersist'], @doctrine.persist.listener]]
 
   doctrine.logger:
     class: 'QL\Hal\Logger\DoctrineEntityLogger'
     arguments:
       - @user.helper
+
+  doctrine.persist.listener:
+    class: 'QL\Hal\Core\Entity\Listener\EntityPersistListener'
+    arguments:
+      - @clock
 
   ######################################################################################################################
   # APPLICATION
