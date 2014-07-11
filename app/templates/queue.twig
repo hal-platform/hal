@@ -10,15 +10,88 @@
         <tr>
             <th>Type</th>
             <th>Status</th>
-            <th>Server/Environment</th>
+            <th>Environment/Server</th>
             <th>Repository</th>
             <th>Start Time</th>
         </tr>
         </thead>
         <tbody>
-            <tr id="js-emptyQueue">
-                <td colspan="5">There are no jobs queued.</td>
-            </tr>
+            {% if jobs %}
+                {% for job in jobs %}
+                    {# hacky way to determine if build or push #}
+                    {% if job.build %}
+                        <tr id="build-{{ job.id }}">
+                            <td>Push (<a href="{{ urlFor('push', {push: job.id}) }}">{{ job.id }}</a>)</td>
+                            <td>
+                                {% if job.status == 'Success' %}
+                                    <span class="status-before--success">{{ job.status }}</span>
+                                {% elseif job.status in ['Error', 'Removed'] %}
+                                    <span class="status-before--error">{{ job.status }}</span>
+                                {% else %}
+                                    <span class="status-before--other" data-push="{{ job.id }}">{{ job.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ job.build.environment.key }} → {{ job.deployment.server.name }}</td>
+                            <td><a href="{{ urlFor('repository', {id: job.build.repository.id}) }}">{{ job.build.repository.key }}</a></td>
+                            <td>{{ job.start|date }}</td>
+                        </tr>
+                    {% else %}
+                        <tr id="build-{{ job.id }}">
+                            <td>Build (<a href="{{ urlFor('build', {build: job.id}) }}">{{ job.id[:10] }}</a>)</td>
+                            <td>
+                                {% if job.status == 'Success' %}
+                                    <span class="status-before--success">{{ job.status }}</span>
+                                {% elseif job.status in ['Error', 'Removed'] %}
+                                    <span class="status-before--error">{{ job.status }}</span>
+                                {% else %}
+                                    <span class="status-before--other" data-build="{{ job.id }}">{{ job.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ job.environment.key }}</td>
+                            <td><a href="{{ urlFor('repository', {id: job.repository.id}) }}">{{ job.repository.key }}</a></td>
+                            <td>{{ job.start|date }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <tr id="js-emptyQueue">
+                    <td colspan="5">There are no jobs queued.</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
+
+{% verbatim %}
+<script id="build-template" type="text/x-handlebars-template">
+<tr id="{{ uniqueId }}">
+    <td>
+        Build (<a href="/build/{{ buildId }}">{{ buildIdShort }}</a>)
+    </td>
+    <td>
+        <span class="status-before--{{ buildStatusStyle }}" data-build="{{ buildId }}">{{  buildStatus }}</span>
+    </td>
+    <td>{{ environmentName }}</td>
+    <td>
+        <a href="/repositories/{{ repoId }}">{{ repoName }}</a>
+    </td>
+    <td>{{ buildTime }}</td>
+</tr>
+</script>
+<script id="push-template" type="text/x-handlebars-template">
+<tr id="{{ uniqueId }}">
+    <td>
+        Push (<a href="/push/{{ pushId }}">{{ pushIdShort }}</a>)
+    </td>
+    <td>
+        <span class="status-before--{{ pushStatusStyle }}" data-push="{{ pushId }}">{{  pushStatus }}</span>
+    </td>
+    <td>{{ environmentName }} → {{ serverName }}</td>
+    <td>
+        <a href="/repositories/{{ repoId }}">{{ repoName }}</a>
+    </td>
+    <td>{{ pushTime }}</td>
+</tr>
+</script>
+{% endverbatim %}
+
 {% endblock %}

@@ -1,15 +1,16 @@
 define(['jquery'], function($) {
     return {
-        interval: 5000,
+        interval: 5,
         mode: 'table', // "table" for global push table, "grid" for global push grid, "push" for individual push status page
         pendingClass: 'status-before--other',
         thinkingClass: 'status-before--thinking',
         successClass: 'status-before--success',
         failureClass: 'status-before--error',
+        pushTarget: '[data-push]',
         init: function() {
             var _this = this;
 
-            var $pushes = $('[data-push]');
+            var $pushes = $(this.pushTarget);
             $pushes.each(function(index, item) {
                 var $item = $(item);
                 var status = $item.text().trim();
@@ -28,8 +29,10 @@ define(['jquery'], function($) {
         checkStatus: function($elem) {
             var _this = this;
             var id = $elem.data('push');
+            var endpoint ='/api/push/' + id;
+            console.log(endpoint);
 
-            $.getJSON('/api/push/' + id, function(data) {
+            $.getJSON(endpoint, function(data) {
                 var currentStatus = data.content.status;
                 $elem.text(currentStatus);
 
@@ -62,7 +65,7 @@ define(['jquery'], function($) {
 
             var timer = window.setTimeout(function() {
                 _this.checkStatus($elem);
-            }, _this.interval);
+            }, _this.interval * 1000);
         },
         updatePush: function(data, $elem) {
             var $container = $elem.closest('dl');

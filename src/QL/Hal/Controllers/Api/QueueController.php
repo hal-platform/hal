@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Api;
 
 use DateTime;
 use DateTimeZone;
-use MCP\DataType\Time\TimePoint;
+use MCP\DataType\Time\Clock;
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
@@ -41,26 +41,33 @@ class QueueController
     private $entityManager;
 
     /**
-     * @var string
+     * @var Clock
      */
-    private $timezone;
+    private $clock;
 
     /**
-     * @param Twig_Template $template
-     * @param Layout $layout
+     * @var string
+     */
+    private $outputTimezone;
+
+    /**
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      * @param EntityManager $entityManager
+     * @param Clock $clock
      */
     public function __construct(
         BuildRepository $buildRepo,
         PushRepository $pushRepo,
-        EntityManager $entityManager
+        EntityManager $entityManager,
+        Clock $clock
     ) {
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
         $this->entityManager = $entityManager;
-        $this->timezone = 'America/Detroit';
+        $this->clock = $clock;
+
+        $this->outputTimezone = 'America/Detroit';
     }
 
     /**
@@ -70,45 +77,16 @@ class QueueController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        $query = $queryBuilder
-            ->add('select', 'b')
-            ->add('from', 'QL\Hal\Core\Entity\Build b')
-            ->add('where', 'b.status = ?1 OR b.status = ?2')
-            ->setParameters([1 => 'Waiting', 2 => 'Building']);
-        $builds = $query->getQuery()->getResult();
-
-        $query = $queryBuilder
-            ->add('select', 'p')
-            ->add('from', 'QL\Hal\Core\Entity\Push p')
-            ->add('where', 'p.status = ?1 OR p.status = ?2')
-            ->setParameters([1 => 'Waiting', 2 => 'Pushing']);
-        $pushes = $query->getQuery()->getResult();
-
-        $jobs = array_merge($builds, $pushes);
-
-        // if a "since" parameter is specified, grab all finished (error AND success) jobs finished since that time.
-        if ($finishedAfter = $this->parseValidSinceTime($request)) {
-            $finishedStatus = [1 => 'Error', 2 => 'Success', 3 => $finishedAfter];
-
-            $query = $queryBuilder
-                ->add('select', 'b')
-                ->add('from', 'QL\Hal\Core\Entity\Build b')
-                ->add('where', '(b.status = ?1 OR b.status = ?2) AND b.end > ?3')
-                ->setParameters($finishedStatus);
-            $builds = $query->getQuery()->getResult();
-
-            $query = $queryBuilder
-                ->add('select', 'p')
-               ->add('from', 'QL\Hal\Core\Entity\Push p')
-               ->add('where', '(p.status = ?1 OR p.status = ?2) AND p.end > ?3')
-               ->setParameters($finishedStatus);
-            $pushes = $query->getQuery()->getResult();
-
-            $jobs = array_merge($jobs, $builds, $pushes);
+        $since = $request->get('since');
+        $createdAfter = null;
+        if ($since && !$createdAfter = $this->parseValidSinceTime($since)) {
+            // Need some kind of error messaging
+            return $response->setStatus(400);
         }
 
-        if (!$jobs) {
+        $createdAfter = $createdAfter ?: $this->getDefaultSinceTime();
+
+        if (!$jobs = $this->retrieveJobs($createdAfter)) {
             return $response->setStatus(404);
         }
 
@@ -130,11 +108,11 @@ class QueueController
 
         foreach ($queue as $job) {
             if ($startTime = $job->getStart()) {
-                $startTime = $startTime->format('M j, Y g:i A', $this->timezone);
+                $startTime = $startTime->format('M j, Y g:i A', $this->outputTimezone);
             }
 
             if ($endTime = $job->getEnd()) {
-                $endTime = $endTime->format('M j, Y g:i A', $this->timezone);
+                $endTime = $endTime->format('M j, Y g:i A', $this->outputTimezone);
             }
 
             if ($job instanceof Push) {
@@ -142,6 +120,7 @@ class QueueController
                 // retrieves: build, repository, environment, deployment, server
                 $formattedQueue[] = [
                     'type' => 'Push',
+                    'uniqueId' => 'push-' . $job->getId(),
                     'id' => $job->getId(),
                     'status' => $job->getStatus(),
                     'startTime' => $startTime,
@@ -162,6 +141,7 @@ class QueueController
                 // retrieves: repository, environment
                 $formattedQueue[] = [
                     'type' => 'Build',
+                    'uniqueId' => 'build-' . $job->getId(),
                     'id' => $job->getId(),
                     'status' => $job->getStatus(),
                     'startTime' => $startTime,
@@ -181,6 +161,18 @@ class QueueController
     }
 
     /**
+     * If no filter is specified, only get builds created in the last 20 minutes.
+     *
+     * @return string
+     */
+    private function getDefaultSinceTime()
+    {
+        $time = $this->clock->read();
+        $time = $time->modify('-20 minutes');
+        return $time->format('Y-m-d H:i:s', 'UTC');
+    }
+
+    /**
      * Warning! We must format the time manually for the DQL builder. It is not smart enough to serialize the TimePoint
      * type even though it has been declared as a custom type in hal-core.
      *
@@ -188,16 +180,12 @@ class QueueController
      *
      * TimePoint am cry :(
      *
-     * @param Request $request
+     * @param string $since
      * @return string|null
      */
-    private function parseValidSinceTime(Request $request)
+    private function parseValidSinceTime($since)
     {
-        if (!$utcSince = $request->get('since')) {
-            return null;
-        }
-
-        if (!$date = DateTime::createFromFormat(DateTime::W3C, $utcSince, new DateTimeZone('UTC'))) {
+        if (!$date = DateTime::createFromFormat(DateTime::W3C, $since, new DateTimeZone('UTC'))) {
             return null;
         }
 
@@ -227,5 +215,29 @@ class QueueController
 
             return -1;
         };
+    }
+
+    /**
+     * @param string $since
+     * @return array
+     */
+    private function retrieveJobs($since)
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $query = $queryBuilder
+            ->select('b')
+            ->from('QL\Hal\Core\Entity\Build', 'b')
+            ->where('b.created >= ?1')
+            ->setParameters([1 => $since]);
+        $builds = $query->getQuery()->getResult();
+
+        $query = $queryBuilder
+            ->select('p')
+            ->from('QL\Hal\Core\Entity\Push', 'p')
+            ->where('p.created >= ?1')
+            ->setParameters([1 => $since]);
+        $pushes = $query->getQuery()->getResult();
+
+        return array_merge($builds, $pushes);
     }
 }

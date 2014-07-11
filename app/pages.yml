@@ -604,6 +604,7 @@ services:
         - @build.repo
         - @push.repo
         - @doctrine.em
+        - @clock
 
   api.build:
     class: 'QL\Hal\Controllers\Api\Build\BuildController'

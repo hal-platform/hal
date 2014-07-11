@@ -1,15 +1,16 @@
 define(['jquery'], function($) {
     return {
-        interval: 5000,
+        interval: 5,
         mode: 'table', // "table" for global build table, "build" for individual build status page
         pendingClass: 'status-before--other',
         thinkingClass: 'status-before--thinking',
         successClass: 'status-before--success',
         failureClass: 'status-before--error',
+        buildTarget: '[data-build]',
         init: function() {
             var _this = this;
 
-            var $builds = $('[data-build]');
+            var $builds = $(this.buildTarget);
             $builds.each(function(index, item) {
                 var $item = $(item);
                 var status = $item.text().trim();
@@ -28,8 +29,10 @@ define(['jquery'], function($) {
         checkStatus: function($elem) {
             var _this = this;
             var id = $elem.data('build');
+            var endpoint ='/api/build/' + id;
+            console.log(endpoint);
 
-            $.getJSON('/api/build/' + id, function(data) {
+            $.getJSON(endpoint, function(data) {
                 var currentStatus = data.content.status;
                 $elem.text(currentStatus);
 
@@ -62,7 +65,7 @@ define(['jquery'], function($) {
 
             var timer = window.setTimeout(function() {
                 _this.checkStatus($elem);
-            }, _this.interval);
+            }, _this.interval * 1000);
         },
         updateBuild: function(data, $elem) {
             var $container = $elem.closest('dl');
