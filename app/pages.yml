@@ -49,7 +49,6 @@ services:
         - @layout
         - @build.repo
         - @push.repo
-        - @doctrine.em
   queue.twig:
     parent: 'twig.template'
     arguments: ['queue.twig']

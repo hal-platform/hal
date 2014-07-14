@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Collections\Criteria;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
@@ -40,29 +40,21 @@ class QueueController
     private $pushRepo;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @param Twig_Template $template
      * @param Layout $layout
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
-     * @param EntityManager $entityManager
      */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
         BuildRepository $buildRepo,
-        PushRepository $pushRepo,
-        EntityManager $entityManager
+        PushRepository $pushRepo
     ) {
         $this->template = $template;
         $this->layout = $layout;
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -72,11 +64,8 @@ class QueueController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $jobs = $this->getPendingJobs();
-        usort($jobs, $this->queueSort());
-
         $rendered = $this->layout->render($this->template, [
-            'jobs' => $jobs
+            'jobs' => $this->getPendingJobs()
         ]);
 
         $response->body($rendered);
@@ -87,46 +76,19 @@ class QueueController
      */
     private function getPendingJobs()
     {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        $query = $queryBuilder
-            ->select('b')
-            ->from('QL\Hal\Core\Entity\Build', 'b')
-            ->where('b.status = ?1 OR b.status = ?2')
-            ->setParameters([1 => 'Waiting', 2 => 'Building']);
-        $builds = $query->getQuery()->getResult();
+        $buildCriteria = (new Criteria)
+            ->where(Criteria::expr()->eq('status', 'Waiting'))
+            ->orWhere(Criteria::expr()->eq('status', 'Building'))
+            ->orderBy(['created' => 'DESC']);
 
-        $query = $queryBuilder
-            ->select('p')
-            ->from('QL\Hal\Core\Entity\Push', 'p')
-            ->where('p.status = ?1 OR p.status = ?2')
-            ->setParameters([1 => 'Waiting', 2 => 'Pushing']);
-        $pushes = $query->getQuery()->getResult();
+        $pushCriteria = (new Criteria)
+            ->where(Criteria::expr()->eq('status', 'Waiting'))
+            ->orWhere(Criteria::expr()->eq('status', 'Pushing'))
+            ->orderBy(['created' => 'DESC']);
 
-        return array_merge($builds, $pushes);
-    }
+        $builds = $this->buildRepo->matching($buildCriteria);
+        $pushes = $this->pushRepo->matching($pushCriteria);
 
-    /**
-     * @return Closure
-     */
-    private function queueSort()
-    {
-        return function($aEntity, $bEntity) {
-            $a = $aEntity->getCreated();
-            $b = $bEntity->getCreated();
-
-            if ($a === $b) {
-                return 0;
-            }
-
-            if ($a === null xor $b === null) {
-                return ($a === null) ? 0 : 1;
-            }
-
-            if ($a < $b) {
-                return 1;
-            }
-
-            return -1;
-        };
+        return array_merge($builds->toArray(), $pushes->toArray());
     }
 }
