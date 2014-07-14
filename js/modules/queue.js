@@ -1,16 +1,24 @@
-define(['jquery', 'handlebars', 'modules/update-builds', 'modules/update-pushes'], function($, handlebars, buildUpdater, pushUpdater) {
+define(['jquery', 'handlebars'], function($, handlebars) {
     return {
         pollingTimer: null,
-        interval: 20,
+        interval: 10,
 
         // a list of the jobs we need to update
         jobs: {},
         lastRead: null,
 
         queueTarget: '#js-queue tbody',
+        jobTarget: '[data-push], [data-build]',
+
         $queue: null,
         buildTemplate: null,
         pushTemplate: null,
+
+        pendingClass: 'status-before--other',
+        thinkingClass: 'status-before--thinking',
+        successClass: 'status-before--success',
+        failureClass: 'status-before--error',
+
         init: function() {
             this.lastRead = this.getUTCTime();
             this.$queue = $(this.queueTarget);
@@ -23,13 +31,8 @@ define(['jquery', 'handlebars', 'modules/update-builds', 'modules/update-pushes'
             var pushSource = $("#push-template").html();
             this.pushTemplate = handlebars.compile(pushSource);
 
-            // Decrease the interval on build updates.
-            buildUpdater.interval = 10;
-            pushUpdater.interval = 10;
-
-            // Initialize pending builds when the page loads.
-            // buildUpdater.init();
-            // pushUpdater.init();
+            // Need to load initial jobs list
+            this.storeInitialJobs();
         },
         attachPollingToggle: function() {
             var _this = this;
@@ -43,7 +46,10 @@ define(['jquery', 'handlebars', 'modules/update-builds', 'modules/update-pushes'
             this.$queue.closest('table').before($pollingButton);
         },
         togglePolling: function($pollingButton) {
+            var _this = this;
+
             if (this.pollingTimer === null) {
+                this.refresh();
                 this.pollingTimer = this.startRefreshTimer();
                 $pollingButton
                     .text('Polling is enabled')
@@ -54,23 +60,26 @@ define(['jquery', 'handlebars', 'modules/update-builds', 'modules/update-pushes'
                 $pollingButton
                     .text('Polling is disabled')
                     .addClass('btn--destructive');
+
+                $(this.jobTarget).each(function(index, item) {
+                    var $elem = $(item);
+                    if ($elem.hasClass(_this.thinkingClass)) {
+                        $elem
+                            .removeClass(_this.thinkingClass)
+                            .addClass(_this.pendingClass);
+                    }
+                });
             }
 
             // return the current id of the timer
             return this.pollingTimer;
         },
         refresh: function() {
-            var _this = this;
-            var endpoint ='/api/queue?since=' + this.lastRead;
-            console.log(endpoint);
-            this.lastRead = this.getUTCTime();
+            // get new jobs
+            this.retrieveNewJobs();
 
-            $.getJSON(endpoint, function(data) {
-                if (data.length > 0) {
-                    $('#js-emptyQueue').remove();
-                    _this.addJobs(data.reverse());
-                }
-            });
+            // update jobs loaded on the page
+            this.retrieveJobUpdates();
         },
         startRefreshTimer: function() {
             var _this = this;
@@ -91,12 +100,6 @@ define(['jquery', 'handlebars', 'modules/update-builds', 'modules/update-pushes'
 
                         this.$queue.prepend(row);
                         this.jobs[job.uniqueId] = job.status;
-
-                        // start updater
-                        if (job.status == 'Waiting' || job.status == 'Building') {
-                            buildUpdater.buildTarget = '[data-build="' + job.id + '"]';
-                            buildUpdater.init();
-                        }
                     }
                 } else if (job.type == 'Push') {
                     // only load jobs not already loaded
@@ -105,16 +108,9 @@ define(['jquery', 'handlebars', 'modules/update-builds', 'modules/update-pushes'
 
                         this.$queue.prepend(row);
                         this.jobs[job.uniqueId] = job.status;
-
-                        // start updater
-                        if (job.status == 'Waiting' || job.status == 'Pushing') {
-                            pushUpdater.buildTarget = '[data-push="' + job.id + '"]';
-                            pushUpdater.init();
-                        }
                     }
                 }
             }
-            console.log(this.jobs);
         },
         createBuildRow: function(build) {
             var buildId = String(build.id);
@@ -180,6 +176,123 @@ define(['jquery', 'handlebars', 'modules/update-builds', 'modules/update-pushes'
                 ('0' + (now.getUTCMinutes()+1)).slice(-2) + ':' +
                 ('0' + (now.getUTCSeconds()+1)).slice(-2) +
                 '-00:00';
+        },
+        retrieveNewJobs: function() {
+            var endpoint ='/api/queue?since=' + this.lastRead;
+            this.lastRead = this.getUTCTime();
+
+            // retrieve jobs created since last read
+            $.getJSON(endpoint, function(data) {
+                if (data.length > 0) {
+                    $('#js-emptyQueue').remove();
+                    _this.addJobs(data.reverse());
+                }
+            });
+        },
+        retrieveJobUpdates: function() {
+            var _this = this;
+
+            // a list of uniqueIds to update
+            var jobsToUpdate = [];
+
+            // build the list of jobs to update
+            for (var uniqueId in this.jobs) {
+                var currentStatus = this.jobs[uniqueId];
+                if (currentStatus == 'Waiting' || currentStatus == 'Building' || currentStatus == 'Pushing') {
+                    jobsToUpdate.push(uniqueId);
+                }
+            }
+
+            var endpoint ='/api/queue-refresh/' + jobsToUpdate.join('+');
+
+            // call api and update job rows
+            $.getJSON(endpoint, function(data) {
+                for (var entry in data) {
+                    if (data[entry].type == 'Build') {
+                        _this.updateBuildJob(data[entry]);
+                    } else {
+                        _this.updatePushJob(data[entry]);
+                    }
+                }
+            });
+        },
+        updatePushJob: function(job) {
+            var $elem = $('[data-push="' + job.id+ '"]');
+            var currentStatus = job.status;
+            $elem.text(currentStatus);
+
+            if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
+                // shrug
+                $elem
+                    .removeClass(this.pendingClass)
+                    .addClass(this.thinkingClass);
+
+            } else if (currentStatus == 'Success') {
+                $elem
+                    .removeClass(this.thinkingClass)
+                    .addClass(this.successClass);
+
+            } else {
+                $elem
+                    .removeClass(this.thinkingClass)
+                    .addClass(this.failureClass);
+            }
+
+            var $container = $elem.closest('tr');
+
+            // Add start time if present
+            $container
+                .children('.js-start-date')
+                .text(job.startTime);
+        },
+        updateBuildJob: function(job) {
+            var $elem = $('[data-build="' + job.id+ '"]');
+
+            var currentStatus = job.status;
+            $elem.text(currentStatus);
+
+            if (currentStatus == 'Waiting' || currentStatus == 'Building') {
+                // shrug
+                $elem
+                    .removeClass(this.pendingClass)
+                    .addClass(this.thinkingClass);
+
+            } else if (currentStatus == 'Success') {
+                $elem
+                    .removeClass(this.thinkingClass)
+                    .addClass(this.successClass);
+
+            } else {
+                $elem
+                    .removeClass(this.thinkingClass)
+                    .addClass(this.failureClass);
+            }
+
+            var $container = $elem.closest('tr');
+
+            // Add start time if present
+            $container
+                .children('.js-start-date')
+                .text(job.startTime);
+        },
+        storeInitialJobs: function() {
+            var _this = this;
+
+            $(this.jobTarget).each(function(index, item) {
+                var $item = $(item);
+                var status = $item.text().trim();
+
+                var uniqueId = $item.data('push');
+                if (typeof uniqueId !== 'undefined') {
+                    uniqueId = 'push-' + uniqueId;
+
+                } else {
+                    uniqueId = $item.data('build');
+                    uniqueId = 'build-' + uniqueId;
+                }
+
+                _this.jobs[uniqueId] = status;
+            });
         }
     };
 });

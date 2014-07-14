@@ -606,6 +606,14 @@ services:
         - @doctrine.em
         - @clock
 
+  api.queue.refresh:
+    class: 'QL\Hal\Controllers\Api\QueueRefreshController'
+    arguments:
+        - @build.repo
+        - @push.repo
+        - @doctrine.em
+        - @clock
+
   api.build:
     class: 'QL\Hal\Controllers\Api\Build\BuildController'
     arguments:

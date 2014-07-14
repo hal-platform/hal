@@ -647,3 +647,11 @@ parameters:
       method: 'GET'
       route: '/api/queue'
       stack: ['login.bouncer', 'api.queue']
+
+    api.queue.refresh:
+      method: 'GET'
+      route: '/api/queue-refresh/:uniqueId'
+      stack: ['login.bouncer', 'api.queue.refresh']
+      conditions:
+        uniqueId: '[0-9a-z\+\-]+'
+

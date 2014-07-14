@@ -19,6 +19,10 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
+ * Get all pushes and builds created after the specified time.
+ *
+ * If no time is provided (Get param = "since"), all jobs in the past 20 minutes will be retrieved.
+ *
  * This will be replaced. I just kind of want it here as a prototype.
  *
  * @deprecated

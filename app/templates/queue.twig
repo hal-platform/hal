@@ -33,7 +33,7 @@
                             </td>
                             <td>{{ job.build.environment.key }} → {{ job.deployment.server.name }}</td>
                             <td><a href="{{ urlFor('repository', {id: job.build.repository.id}) }}">{{ job.build.repository.key }}</a></td>
-                            <td>{{ job.start|date }}</td>
+                            <td class="js-start-date">{{ job.start|date }}</td>
                         </tr>
                     {% else %}
                         <tr id="build-{{ job.id }}">
@@ -49,7 +49,7 @@
                             </td>
                             <td>{{ job.environment.key }}</td>
                             <td><a href="{{ urlFor('repository', {id: job.repository.id}) }}">{{ job.repository.key }}</a></td>
-                            <td>{{ job.start|date }}</td>
+                            <td class="js-start-date">{{ job.start|date }}</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
@@ -74,7 +74,7 @@
     <td>
         <a href="/repositories/{{ repoId }}">{{ repoName }}</a>
     </td>
-    <td>{{ buildTime }}</td>
+    <td class="js-start-date">{{ buildTime }}</td>
 </tr>
 </script>
 <script id="push-template" type="text/x-handlebars-template">
@@ -89,7 +89,7 @@
     <td>
         <a href="/repositories/{{ repoId }}">{{ repoName }}</a>
     </td>
-    <td>{{ pushTime }}</td>
+    <td class="js-start-date">{{ pushTime }}</td>
 </tr>
 </script>
 {% endverbatim %}
