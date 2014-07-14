@@ -75,7 +75,7 @@ define(['crossroads'], function(crossroads) {
             });
         },
         queue: function() {
-            return require(['modules/queue'], function(module) {
+            return require(['modules/queue/queue'], function(module) {
                 module.init();
             });
         }
