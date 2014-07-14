@@ -17,16 +17,20 @@
     }
   ],
   "shim": {
+    "handlebars": {
+      "exports": "Handlebars"
+    },
     "underscore": {
-      "exports": '_'
+      "exports": "_"
     }
   },
   "paths": {
+    "crossroads": "vendor/crossroads.min",
+    "handlebars": "vendor/handlebars.min",
     "jquery": "vendor/jquery-2.min",
     "jquerySortable": "vendor/jquery.sortable.min",
-    "underscore": "vendor/underscore.min",
-    "crossroads": "vendor/crossroads.min",
     "signals": "vendor/signals.min",
-    "tablesaw": "vendor/tablesaw.min"
+    "tablesaw": "vendor/tablesaw.min",
+    "underscore": "vendor/underscore.min"
   }
 }

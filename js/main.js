@@ -21,5 +21,25 @@ define(['modules/routes', 'modules/terminal', 'underscore'], function(routes, te
         }
     };
 
+    require.config({
+        shim: {
+            handlebars: {
+                exports: 'Handlebars'
+            },
+            underscore: {
+                exports: '_'
+            }
+          },
+        paths: {
+            crossroads: 'vendor/crossroads.min',
+            handlebars: 'vendor/handlebars.min',
+            jquery: 'vendor/jquery-2.min',
+            jquerySortable: 'vendor/jquery.sortable.min',
+            signals: 'vendor/signals.min',
+            tablesaw: 'vendor/tablesaw.min',
+            underscore: 'vendor/underscore.min'
+        }
+    });
+
     app.init();
 });
