@@ -87,9 +87,11 @@ define(['jquery', 'handlebars'], function($, handlebars) {
             var $container = $elem.closest('tr');
 
             // Add start time if present
-            $container
-                .children('.js-start-date')
-                .text(job.startTime);
+            if (job.startTime !== null) {
+                $container
+                    .children('.js-start-date')
+                    .text(job.startTime);
+            }
         },
         updateBuildJob: function(job) {
             var $elem = $('[data-build="' + job.id+ '"]');
@@ -116,9 +118,11 @@ define(['jquery', 'handlebars'], function($, handlebars) {
             var $container = $elem.closest('tr');
 
             // Add start time if present
-            $container
-                .children('.js-start-date')
-                .text(job.startTime);
+            if (job.startTime !== null) {
+                $container
+                    .children('.js-start-date')
+                    .text(job.startTime);
+            }
         },
 
         stopThinking: function(jobTarget) {
