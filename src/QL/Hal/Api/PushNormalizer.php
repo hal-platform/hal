@@ -106,6 +106,10 @@ class PushNormalizer
             'id' => $push->getId(),
             'url' => $this->url->urlFor('push', ['id' => $push->getId()]),
             'status' => $push->getStatus(),
+            'created' => [
+                'text' => $this->time->relative($push->getCreated(), false),
+                'datetime' => $this->time->format($push->getCreated(), false, 'c')
+            ],
             'start' => [
                 'text' => $this->time->relative($push->getStart(), false),
                 'datetime' => $this->time->format($push->getStart(), false, 'c')

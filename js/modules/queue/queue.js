@@ -71,11 +71,12 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
         },
 
         addJobs: function(data) {
+            // required properties: uniqueId, type, status
             for(var entry in data) {
                 var job = data[entry];
                 var row;
 
-                if (job.type == 'Build') {
+                if (job.type == 'build') {
                     // only load jobs not already loaded
                     if (typeof this.jobs[job.uniqueId] == 'undefined') {
                         row = jobUpdater.addBuildJob(job);
@@ -83,7 +84,7 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
                         this.$queue.prepend(row);
                         this.jobs[job.uniqueId] = job.status;
                     }
-                } else if (job.type == 'Push') {
+                } else if (job.type == 'push') {
                     // only load jobs not already loaded
                     if (typeof this.jobs[job.uniqueId] == 'undefined') {
                         row = jobUpdater.addPushJob(job);
@@ -103,9 +104,10 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
 
             // retrieve jobs created since last read
             $.getJSON(endpoint, function(data) {
-                if (data.length > 0) {
+                var jobs = data.content;
+                if (jobs.length > 0) {
                     $('#js-emptyQueue').remove();
-                    _this.addJobs(data.reverse());
+                    _this.addJobs(jobs.reverse());
                 }
             });
         },

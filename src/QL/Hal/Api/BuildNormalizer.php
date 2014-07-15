@@ -106,6 +106,10 @@ class BuildNormalizer
             'id' => $build->getId(),
             'url' => $this->url->urlFor('build', ['build' => $build->getId()]),
             'status' => $build->getStatus(),
+            'created' => [
+                'text' => $this->time->relative($build->getCreated(), false),
+                'datetime' => $this->time->format($build->getCreated(), false, 'c')
+            ],
             'start' => [
                 'text' => $this->time->relative($build->getStart(), false),
                 'datetime' => $this->time->format($build->getStart(), false, 'c')

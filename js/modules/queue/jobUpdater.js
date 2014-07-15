@@ -19,52 +19,40 @@ define(['jquery', 'handlebars'], function($, handlebars) {
 
         addBuildJob: function(build) {
             var buildId = String(build.id);
-
-            var buildTime = '';
-            if (build.startTime !== null) {
-                buildTime = build.startTime;
-            }
-
             var context = {
                 buildId: buildId,
                 uniqueId: build.uniqueId,
                 buildIdShort: buildId.slice(0, 10),
                 buildStatusStyle: this.determineStatusStyle(build.status),
                 buildStatus: build.status,
-                environmentName: build.environment.name,
+                environmentName: build.environment.key,
                 repoId:  build.repository.id,
-                repoName: build.repository.name,
-                buildTime: buildTime
+                repoName: build.repository.key,
+                buildTime: build.created.text
             };
 
             return this.buildTemplate(context);
         },
         addPushJob: function(push) {
             var pushId = String(push.id);
-
-            var pushTime = '';
-            if (push.startTime !== null) {
-                pushTime = push.startTime;
-            }
-
             var context = {
                 pushId: pushId,
                 uniqueId: push.uniqueId,
                 pushIdShort: pushId.slice(0, 10),
                 pushStatusStyle: this.determineStatusStyle(push.status),
                 pushStatus: push.status,
-                environmentName: push.environment.name,
-                serverName: push.server.name,
+                environmentName: push.build.environment.key,
+                serverName: push.deployment.server.name,
                 repoId:  push.repository.id,
                 repoName: push.repository.name,
-                pushTime: pushTime
+                pushTime: push.created.text
             };
 
             return this.pushTemplate(context);
         },
 
         updatePushJob: function(job) {
-            var $elem = $('[data-push="' + job.id+ '"]');
+            var $elem = $('[data-push="' + job.id + '"]');
             var currentStatus = job.status;
             $elem.text(currentStatus);
 
@@ -94,8 +82,7 @@ define(['jquery', 'handlebars'], function($, handlebars) {
             }
         },
         updateBuildJob: function(job) {
-            var $elem = $('[data-build="' + job.id+ '"]');
-
+            var $elem = $('[data-build="' + job.id + '"]');
             var currentStatus = job.status;
             $elem.text(currentStatus);
 

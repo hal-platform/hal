@@ -9,12 +9,16 @@ namespace QL\Hal\Controllers\Api;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\Common\Collections\Criteria;
 use MCP\DataType\Time\Clock;
-use Doctrine\ORM\EntityManager;
+use MCP\DataType\Time\TimePoint;
+use QL\Hal\Api\BuildNormalizer;
+use QL\Hal\Api\PushNormalizer;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -30,6 +34,21 @@ use Slim\Http\Response;
 class QueueController
 {
     /**
+     * @var ApiHelper
+     */
+    private $api;
+
+    /**
+     * @var BuildNormalizer
+     */
+    private $buildNormalizer;
+
+    /**
+     * @var PushNormalizer
+     */
+    private $pushNormalizer;
+
+    /**
      * @var BuildRepository
      */
     private $buildRepo;
@@ -38,11 +57,6 @@ class QueueController
      * @var PushRepository
      */
     private $pushRepo;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
 
     /**
      * @var Clock
@@ -55,20 +69,27 @@ class QueueController
     private $outputTimezone;
 
     /**
+     * @param ApiHelper $api
+     * @param BuildNormalizer $buildNormalizer
+     * @param PushNormalizer $pushNormalizer
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      * @param EntityManager $entityManager
      * @param Clock $clock
      */
     public function __construct(
+        ApiHelper $api,
+        BuildNormalizer $buildNormalizer,
+        PushNormalizer $pushNormalizer,
         BuildRepository $buildRepo,
         PushRepository $pushRepo,
-        EntityManager $entityManager,
         Clock $clock
     ) {
+        $this->api = $api;
+        $this->buildNormalizer = $buildNormalizer;
+        $this->pushNormalizer = $pushNormalizer;
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
-        $this->entityManager = $entityManager;
         $this->clock = $clock;
 
         $this->outputTimezone = 'America/Detroit';
@@ -77,9 +98,11 @@ class QueueController
     /**
      * @param Request $request
      * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      * @return null
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $since = $request->get('since');
         $createdAfter = null;
@@ -91,101 +114,74 @@ class QueueController
         $createdAfter = $createdAfter ?: $this->getDefaultSinceTime();
 
         if (!$jobs = $this->retrieveJobs($createdAfter)) {
-            return $response->setStatus(404);
+            return call_user_func($notFound);
         }
-
-        usort($jobs, $this->queueSort());
 
         $jobs = $this->formatQueue($jobs);
 
-        $response->header('Content-Type', 'application/json; charset=utf-8');
-        $response->body(json_encode($jobs));
+        $this->api->prepareResponse(
+            $response,
+            [
+                'self' => ['href' => ['api.queue', []], 'type' => 'Queue'],
+            ],
+            $jobs
+        );
     }
 
     /**
-     * @param Build|Push $queue
+     * @param Build[]|Push[] $queue
      * @return array
      */
     private function formatQueue(array $queue)
     {
-        $formattedQueue = [];
+        $normalizedQueue = [];
+
+        $criteria = [
+            'build' => [
+                'environment' => [],
+                'repository' => []
+            ],
+            'deployment' => ['server' => []]
+        ];
 
         foreach ($queue as $job) {
-            if ($startTime = $job->getStart()) {
-                $startTime = $startTime->format('M j, Y g:i A', $this->outputTimezone);
-            }
-
-            if ($endTime = $job->getEnd()) {
-                $endTime = $endTime->format('M j, Y g:i A', $this->outputTimezone);
-            }
-
             if ($job instanceof Push) {
-                // push
-                // retrieves: build, repository, environment, deployment, server
-                $formattedQueue[] = [
-                    'type' => 'Push',
-                    'uniqueId' => 'push-' . $job->getId(),
-                    'id' => $job->getId(),
-                    'status' => $job->getStatus(),
-                    'startTime' => $startTime,
-                    'endTime' => $endTime,
-                    'repository' => [
-                        'id' => $job->getBuild()->getRepository()->getId(),
-                        'name' => $job->getBuild()->getRepository()->getKey()
-                    ],
-                    'environment' => [
-                        'name' => $job->getBuild()->getEnvironment()->getKey()
-                    ],
-                    'server' => [
-                        'name' => $job->getDeployment()->getServer()->getName()
-                    ]
-                ];
+                $normalized = $this->pushNormalizer->normalize($job, $criteria);
+                $normalized = array_merge([
+                    // i need dis
+                    'uniqueId' => 'push-' . $normalized['id'],
+                    'type' => 'push'
+                ], $normalized);
+
             } else {
-                // build
-                // retrieves: repository, environment
-                $formattedQueue[] = [
-                    'type' => 'Build',
-                    'uniqueId' => 'build-' . $job->getId(),
-                    'id' => $job->getId(),
-                    'status' => $job->getStatus(),
-                    'startTime' => $startTime,
-                    'endTime' => $endTime,
-                    'repository' => [
-                        'id' => $job->getRepository()->getId(),
-                        'name' => $job->getRepository()->getKey()
-                    ],
-                    'environment' => [
-                        'name' => $job->getEnvironment()->getKey()
-                    ]
-                ];
+                $normalized = $this->buildNormalizer->normalize($job, $criteria['build']);
+                $normalized = array_merge([
+                    // i need dis
+                    'uniqueId' => 'build-' . $normalized['id'],
+                    'type' => 'build'
+                ], $normalized);
             }
+
+            $normalizedQueue[] = $normalized;
         }
 
-        return $formattedQueue;
+        return $normalizedQueue;
     }
 
     /**
      * If no filter is specified, only get builds created in the last 20 minutes.
      *
-     * @return string
+     * @return TimePoint
      */
     private function getDefaultSinceTime()
     {
         $time = $this->clock->read();
-        $time = $time->modify('-20 minutes');
-        return $time->format('Y-m-d H:i:s', 'UTC');
+        return $time->modify('-20 minutes');
     }
 
     /**
-     * Warning! We must format the time manually for the DQL builder. It is not smart enough to serialize the TimePoint
-     * type even though it has been declared as a custom type in hal-core.
-     *
-     * Doing so is NOT DB platform agnostic. If the DB is switched from MySQL this format will need to change.
-     *
-     * TimePoint am cry :(
-     *
      * @param string $since
-     * @return string|null
+     * @return TimePoint
      */
     private function parseValidSinceTime($since)
     {
@@ -193,32 +189,15 @@ class QueueController
             return null;
         }
 
-        return $date->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * @return Closure
-     */
-    private function queueSort()
-    {
-        return function($aEntity, $bEntity) {
-            $a = $aEntity->getStart();
-            $b = $bEntity->getStart();
-
-            if ($a === $b) {
-                return 0;
-            }
-
-            if ($a === null xor $b === null) {
-                return ($a === null) ? 0 : 1;
-            }
-
-            if ($a < $b) {
-                return 1;
-            }
-
-            return -1;
-        };
+        return new TimePoint(
+            $date->format('Y'),
+            $date->format('m'),
+            $date->format('d'),
+            $date->format('H'),
+            $date->format('i'),
+            $date->format('s'),
+            'UTC'
+        );
     }
 
     /**
@@ -227,21 +206,17 @@ class QueueController
      */
     private function retrieveJobs($since)
     {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        $query = $queryBuilder
-            ->select('b')
-            ->from('QL\Hal\Core\Entity\Build', 'b')
-            ->where('b.created >= ?1')
-            ->setParameters([1 => $since]);
-        $builds = $query->getQuery()->getResult();
+        $buildCriteria = (new Criteria)
+            ->where(Criteria::expr()->gte('created', $since))
+            ->orderBy(['created' => 'DESC']);
 
-        $query = $queryBuilder
-            ->select('p')
-            ->from('QL\Hal\Core\Entity\Push', 'p')
-            ->where('p.created >= ?1')
-            ->setParameters([1 => $since]);
-        $pushes = $query->getQuery()->getResult();
+        $pushCriteria = (new Criteria)
+            ->where(Criteria::expr()->gte('created', $since))
+            ->orderBy(['created' => 'DESC']);
 
-        return array_merge($builds, $pushes);
+        $builds = $this->buildRepo->matching($buildCriteria);
+        $pushes = $this->pushRepo->matching($pushCriteria);
+
+        return array_merge($builds->toArray(), $pushes->toArray());
     }
 }
