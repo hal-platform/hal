@@ -600,9 +600,9 @@ services:
   api.queue:
     class: 'QL\Hal\Controllers\Api\QueueController'
     arguments:
+        - @api.helper
         - @build.repo
         - @push.repo
-        - @doctrine.em
         - @clock
 
   api.queue.refresh:

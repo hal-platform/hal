@@ -1,0 +1,242 @@
+# Application specific endpoints and controllers go here
+services:
+
+  ######################################################################################################################
+  # API CONTROLLERS
+  ######################################################################################################################
+
+  api.index:
+    class: 'QL\Hal\Controllers\Api\IndexController'
+    arguments:
+      - @api.helper
+
+  ######################################################################################################################
+  # GITHUB CONTROLLERS
+  ######################################################################################################################
+
+  api.github.users:
+    class: 'QL\Hal\Github\UsersApi'
+    arguments: ['@github']
+
+  api.github.user.repositories:
+    class: 'QL\Hal\Github\ReposApi'
+    arguments: ['@github']
+
+  api.github.user.repository.pullrequests:
+    class: 'QL\Hal\Github\PullRequestsApi'
+    arguments: ['@github']
+
+  ######################################################################################################################
+  # QUEUE CONTROLLERS
+  ######################################################################################################################
+
+  api.queue:
+    class: 'QL\Hal\Controllers\Api\QueueController'
+    arguments:
+        - @api.helper
+        - @api.build.normalizer
+        - @api.push.normalizer
+        - @build.repo
+        - @push.repo
+        - @clock
+
+  api.queue.refresh:
+    class: 'QL\Hal\Controllers\Api\QueueRefreshController'
+    arguments:
+        - @build.repo
+        - @push.repo
+        - @doctrine.em
+        - @clock
+
+  ######################################################################################################################
+  # BUILD CONTROLLERS
+  ######################################################################################################################
+
+  api.build:
+    class: 'QL\Hal\Controllers\Api\Build\BuildController'
+    arguments:
+      - @api.helper
+      - @time.helper
+      - @url.helper
+      - @build.repo
+
+  api.build.log:
+    class: 'QL\Hal\Controllers\Api\Build\LogController'
+    arguments:
+      - @api.helper
+
+  api.builds:
+    class: 'QL\Hal\Controllers\Api\Build\BuildsController'
+    arguments:
+      - @api.helper
+      - @repository.repo
+      - @build.repo
+
+
+  ######################################################################################################################
+  # DEPLOYMENT CONTROLLERS
+  ######################################################################################################################
+
+  api.deployment:
+    class: 'QL\Hal\Controllers\Api\Deployment\DeploymentController'
+    arguments:
+      - @api.helper
+      - @deployment.repo
+
+  api.deployments:
+    class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
+    arguments:
+      - @api.helper
+      - @deployment.repo
+
+  ######################################################################################################################
+  # ENVIRONMENT CONTROLLERS
+  ######################################################################################################################
+
+  api.environment:
+    class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @environment.repo
+
+  api.environments:
+    class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
+    arguments:
+      - @api.helper
+      - @environment.repo
+
+  ######################################################################################################################
+  # BUILD CONTROLLERS
+  ######################################################################################################################
+
+  api.server:
+    class: 'QL\Hal\Controllers\Api\Server\ServerController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @server.repo
+
+  api.servers:
+    class: 'QL\Hal\Controllers\Api\Server\ServersController'
+    arguments:
+      - @api.helper
+      - @server.repo
+
+  ######################################################################################################################
+  # BUILD CONTROLLERS
+  ######################################################################################################################
+
+  api.group:
+    class: 'QL\Hal\Controllers\Api\Group\GroupController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @group.repo
+
+  api.groups:
+    class: 'QL\Hal\Controllers\Api\Group\GroupsController'
+    arguments:
+      - @api.helper
+      - @group.repo
+
+  ######################################################################################################################
+  # LOGS CONTROLLERS
+  ######################################################################################################################
+
+  api.logs:
+    class: 'QL\Hal\Controllers\Api\Log\LogsController'
+    arguments:
+      - @api.helper
+      - @time.helper
+      - @log.repo
+
+  ######################################################################################################################
+  # PUSH CONTROLLERS
+  ######################################################################################################################
+
+  api.push:
+    class: 'QL\Hal\Controllers\Api\Push\PushController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @time.helper
+      - @push.repo
+
+  api.push.log:
+    class: 'QL\Hal\Controllers\Api\Push\LogController'
+    arguments:
+      - @api.helper
+
+  api.pushes:
+    class: 'QL\Hal\Controllers\Api\Push\PushesController'
+    arguments:
+      - @api.helper
+      - @repository.repo
+      - @push.repo
+
+  ######################################################################################################################
+  # REPOSITORY CONTROLLERS
+  ######################################################################################################################
+
+  api.repository:
+    class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @repository.repo
+
+  api.repository.tags:
+    class: 'QL\Hal\Controllers\Api\Repository\TagsController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
+      - @repository.repo
+
+  api.repository.branches:
+    class: 'QL\Hal\Controllers\Api\Repository\BranchesController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
+      - @repository.repo
+
+  api.repository.pullrequests:
+    class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
+      - @repository.repo
+
+  api.repository.diff:
+    class: 'QL\Hal\Controllers\Api\Repository\DiffController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @github
+      - @repository.repo
+
+  api.repositories:
+    class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
+    arguments:
+      - @api.helper
+      - @repository.repo
+
+  ######################################################################################################################
+  # USER CONTROLLERS
+  ######################################################################################################################
+
+  api.user:
+    class: 'QL\Hal\Controllers\Api\User\UserController'
+    arguments:
+      - @api.helper
+      - @url.helper
+      - @user.repo
+
+  api.users:
+    class: 'QL\Hal\Controllers\Api\User\UsersController'
+    arguments:
+      - @api.helper
+      - @user.repo

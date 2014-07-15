@@ -1,6 +1,6 @@
 imports:
-  -
-    resource: pages.yml
+  - resource: pages.yml
+  - resource: api.yml
 
 parameters:
     # environment independent parameters
@@ -147,8 +147,6 @@ services:
     class: 'MCP\DataType\Time\Clock'
     arguments: ['now', 'UTC']
 
-
-
   ######################################################################################################################
   # TWIG STUFF
   ######################################################################################################################
@@ -239,6 +237,59 @@ services:
       - @github
       - @cache
       - '%debug.godmode%'
+
+  ######################################################################################################################
+  # API Helpers
+  ######################################################################################################################
+
+  api.build.normalizer:
+    class: 'QL\Hal\Api\BuildNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+        - @time.helper
+        - @api.environment.normalizer
+        - @api.repository.normalizer
+
+  api.push.normalizer:
+    class: 'QL\Hal\Api\PushNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+        - @time.helper
+        - @api.build.normalizer
+        - @api.deployment.normalizer
+
+  api.repository.normalizer:
+    class: 'QL\Hal\Api\RepositoryNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+        - @time.helper
+
+  api.deployment.normalizer:
+    class: 'QL\Hal\Api\DeploymentNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+        - @time.helper
+        - @api.repository.normalizer
+        - @api.server.normalizer
+
+  api.environment.normalizer:
+    class: 'QL\Hal\Api\EnvironmentNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+        - @time.helper
+
+  api.server.normalizer:
+    class: 'QL\Hal\Api\ServerNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+        - @time.helper
+        - @api.environment.normalizer
 
   ######################################################################################################################
   # Github API
