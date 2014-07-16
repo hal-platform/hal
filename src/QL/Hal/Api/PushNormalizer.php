@@ -81,7 +81,7 @@ class PushNormalizer
     public function normalizeLinked(Push $push)
     {
         $content = [
-            'id' => $build->getId()
+            'id' => $push->getId()
         ];
 
         $content = array_merge($content, $this->links($push));

@@ -11,7 +11,6 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
 
 class DeploymentNormalizer
@@ -25,11 +24,6 @@ class DeploymentNormalizer
      * @type UrlHelper
      */
     private $url;
-
-    /**
-     * @type TimeHelper
-     */
-    private $time;
 
     /**
      * @type RepositoryNormalizer
@@ -49,20 +43,17 @@ class DeploymentNormalizer
     /**
      * @param ApiHelper $api
      * @param UrlHelper $url
-     * @param TimeHelper $time
      * @param RepositoryNormalizer $repoNormalizer
      * @param ServerNormalizer $serverNormalizer
      */
     public function __construct(
         ApiHelper $api,
         UrlHelper $url,
-        TimeHelper $time,
         RepositoryNormalizer $repoNormalizer,
         ServerNormalizer $serverNormalizer
     ) {
         $this->api = $api;
         $this->url = $url;
-        $this->time = $time;
         $this->repoNormalizer = $repoNormalizer;
         $this->serverNormalizer = $serverNormalizer;
 

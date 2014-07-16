@@ -265,14 +265,12 @@ services:
     arguments:
         - @api.helper
         - @url.helper
-        - @time.helper
 
   api.deployment.normalizer:
     class: 'QL\Hal\Api\DeploymentNormalizer'
     arguments:
         - @api.helper
         - @url.helper
-        - @time.helper
         - @api.repository.normalizer
         - @api.server.normalizer
 
@@ -281,14 +279,12 @@ services:
     arguments:
         - @api.helper
         - @url.helper
-        - @time.helper
 
   api.server.normalizer:
     class: 'QL\Hal\Api\ServerNormalizer'
     arguments:
         - @api.helper
         - @url.helper
-        - @time.helper
         - @api.environment.normalizer
 
   ######################################################################################################################

@@ -10,7 +10,6 @@ namespace QL\Hal\Api;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
 
 class ServerNormalizer
@@ -26,11 +25,6 @@ class ServerNormalizer
     private $url;
 
     /**
-     * @type TimeHelper
-     */
-    private $time;
-
-    /**
      * @type EnvironmentNormalizer
      */
     private $envNormalizer;
@@ -43,14 +37,12 @@ class ServerNormalizer
     /**
      * @param ApiHelper $api
      * @param UrlHelper $url
-     * @param TimeHelper $time
      * @param EnvironmentNormalizer $envNormalizer
      */
-    public function __construct(ApiHelper $api, UrlHelper $url, TimeHelper $time, EnvironmentNormalizer $envNormalizer)
+    public function __construct(ApiHelper $api, UrlHelper $url, EnvironmentNormalizer $envNormalizer)
     {
         $this->api = $api;
         $this->url = $url;
-        $this->time = $time;
         $this->envNormalizer = $envNormalizer;
 
         $this->standardCriteria = [
