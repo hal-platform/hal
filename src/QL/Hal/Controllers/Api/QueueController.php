@@ -223,12 +223,13 @@ class QueueController
             $a = $aEntity->getCreated();
             $b = $bEntity->getCreated();
 
-            if ($a === $b) {
+            if ($a == $b) {
                 return 0;
             }
 
+            // If missing created time, move to bottom
             if ($a === null xor $b === null) {
-                return ($a === null) ? 0 : 1;
+                return ($a === null) ? 1 : 0;
             }
 
             if ($a < $b) {

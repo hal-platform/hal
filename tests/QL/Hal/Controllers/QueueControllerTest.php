@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use MCP\DataType\Time\TimePoint;
 use Mockery;
 use PHPUnit_Framework_TestCase;
 use QL\Hal\Core\Entity\Build;
@@ -73,6 +74,8 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
     public function testWithJobs()
     {
         $builds = [
+            new Build,
+            new Build,
             new Build
         ];
 
@@ -81,10 +84,18 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             new Push
         ];
 
+        $builds[0]->setCreated(new TimePoint(2014, 3, 15, 12, 0, 0, 'America/Detroit'));
+        $builds[1]->setCreated(new TimePoint(2014, 3, 18, 12, 0, 0, 'UTC'));
+        $pushes[0]->setCreated(new TimePoint(2014, 3, 15, 12, 0, 0, 'UTC'));
+        $pushes[1]->setCreated(new TimePoint(2014, 3, 20, 12, 0, 0, 'UTC'));
+
+        // Expect the jobs are sorted in descending order
         $expectedContext = ['jobs' => [
+            $pushes[1],
+            $builds[1],
             $builds[0],
             $pushes[0],
-            $pushes[1]
+            $builds[2]
         ]];
 
         $this->buildRepo
