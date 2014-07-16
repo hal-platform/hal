@@ -113,7 +113,7 @@ class QueueController
         $this->api->prepareResponse(
             $response,
             [
-                'self' => ['href' => ['api.queue', []], 'type' => 'Queue'],
+                'self' => ['href' => 'api.queue', 'type' => 'Queue'],
             ],
             $jobs
         );
