@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+
+namespace QL\Hal\Bin;
+
+use Zend\Ldap\Dn;
+
+$root = __DIR__ . '/../';
+if (!$container = @include $root . '/app/bootstrap.php') {
+    echo "Boom goes the dynamite.\n";
+    return;
+};
+
+// validate args
+$cmd = array_shift($argv);
+if (count($argv) < 1) {
+    echo <<<HELP
+Usage: $cmd {LDAP_GROUP_NAME}
+Protip: Use quotes if the group has spaces.
+
+HELP;
+    exit(1);
+}
+
+$group = array_shift($argv);
+
+$ldap = $container->get('ldapService');
+$dn = Dn::fromString(sprintf('CN=%s,DC=mi,DC=corp', $group));
+$users = $ldap->usersInGroup($dn);
+
+if (count($users) == 0) {
+    echo sprintf('No users found in "%s"', $group);
+    echo PHP_EOL;
+}
+
+foreach ($users as $user) {
+    $pad = str_pad($user->windowsUsername(), 15);
+    echo  $pad . $user->displayName();
+    echo PHP_EOL;
+}
