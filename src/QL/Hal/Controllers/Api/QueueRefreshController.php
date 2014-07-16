@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api;
 
-use DateTime;
-use DateTimeZone;
-use MCP\DataType\Time\Clock;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Collections\Criteria;
+use QL\Hal\Helpers\ApiHelper;
+use QL\Hal\Api\BuildNormalizer;
+use QL\Hal\Api\PushNormalizer;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
@@ -20,11 +20,24 @@ use Slim\Http\Response;
 
 /**
  * Get the current status of one or more jobs.
- *
- * @deprecated
  */
 class QueueRefreshController
 {
+    /**
+     * @var ApiHelper
+     */
+    private $api;
+
+    /**
+     * @var BuildNormalizer
+     */
+    private $buildNormalizer;
+
+    /**
+     * @var PushNormalizer
+     */
+    private $pushNormalizer;
+
     /**
      * @var BuildRepository
      */
@@ -36,38 +49,24 @@ class QueueRefreshController
     private $pushRepo;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var Clock
-     */
-    private $clock;
-
-    /**
-     * @var string
-     */
-    private $outputTimezone;
-
-    /**
+     * @param ApiHelper $api
+     * @param BuildNormalizer $buildNormalizer
+     * @param PushNormalizer $pushNormalizer
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
-     * @param EntityManager $entityManager
-     * @param Clock $clock
      */
     public function __construct(
+        ApiHelper $api,
+        BuildNormalizer $buildNormalizer,
+        PushNormalizer $pushNormalizer,
         BuildRepository $buildRepo,
-        PushRepository $pushRepo,
-        EntityManager $entityManager,
-        Clock $clock
+        PushRepository $pushRepo
     ) {
+        $this->api = $api;
+        $this->buildNormalizer = $buildNormalizer;
+        $this->pushNormalizer = $pushNormalizer;
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
-        $this->entityManager = $entityManager;
-        $this->clock = $clock;
-
-        $this->outputTimezone = 'America/Detroit';
     }
 
     /**
@@ -80,6 +79,7 @@ class QueueRefreshController
     {
         if (!isset($params['uniqueId'])) {
             // Need some kind of error messaging
+            $response->setBody('This should never have happened.');
             return $response->setStatus(400);
         }
 
@@ -91,75 +91,13 @@ class QueueRefreshController
 
         $jobs = $this->formatQueue($jobs);
 
-        $response->header('Content-Type', 'application/json; charset=utf-8');
-        $response->body(json_encode($jobs));
-    }
-
-    /**
-     * @param Build|Push $queue
-     * @return array
-     */
-    private function formatQueue(array $queue)
-    {
-        $formattedQueue = [];
-
-        foreach ($queue as $job) {
-            if ($startTime = $job->getStart()) {
-                $startTime = $startTime->format('M j, Y g:i A', $this->outputTimezone);
-            }
-
-            if ($endTime = $job->getEnd()) {
-                $endTime = $endTime->format('M j, Y g:i A', $this->outputTimezone);
-            }
-
-            $formatted = [
-                'id' => $job->getId(),
-                'status' => $job->getStatus(),
-                'startTime' => $startTime,
-                'endTime' => $endTime
-            ];
-
-            if ($job instanceof Push) {
-                $formatted = ['type' => 'Push', 'uniqueId' => 'push-' . $job->getId()] + $formatted;
-
-            } else {
-                $formatted = ['type' => 'Build', 'uniqueId' => 'build-' . $job->getId()] + $formatted;
-            }
-
-            $formattedQueue[] = $formatted;
-        }
-
-        return $formattedQueue;
-    }
-
-    /**
-     * @param array $identifiers
-     * @return array
-     */
-    private function retrieveJobs($identifiers)
-    {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        $builds = $pushes = [];
-
-        if ($buildIds = $this->filterIdentifiers($identifiers, 'build-')) {
-            $query = $queryBuilder
-                ->select('b')
-                ->from('QL\Hal\Core\Entity\Build', 'b')
-                ->where($queryBuilder->expr()->in('b.id', '?1'))
-                ->setParameters([1 => $buildIds]);
-            $builds = $query->getQuery()->getResult();
-        }
-
-        if ($pushIds = $this->filterIdentifiers($identifiers, 'push-')) {
-            $query = $queryBuilder
-                ->select('p')
-                ->from('QL\Hal\Core\Entity\Push', 'p')
-                ->where($queryBuilder->expr()->in('p.id', '?1'))
-                ->setParameters([1 => $pushIds]);
-            $pushes = $query->getQuery()->getResult();
-        }
-
-        return array_merge($builds, $pushes);
+        $this->api->prepareResponse(
+            $response,
+            [
+                'self' => ['href' => ['api.queue.refresh', ['uniqueId' => implode('+', $identifiers)]]],
+            ],
+            $jobs
+        );
     }
 
     /**
@@ -180,5 +118,61 @@ class QueueRefreshController
         });
 
         return $filtered;
+    }
+
+    /**
+     * @param Build[]|Push[] $queue
+     * @return array
+     */
+    private function formatQueue(array $queue)
+    {
+        $normalizedQueue = [];
+
+        foreach ($queue as $job) {
+
+            if ($job instanceof Push) {
+                $normalized = $this->pushNormalizer->normalize($job);
+                $normalized = array_merge([
+                    'uniqueId' => 'push-' . $normalized['id'],
+                    'type' => 'push'
+                ], $normalized);
+
+            } else {
+                $normalized = $this->buildNormalizer->normalize($job);
+                $normalized = array_merge([
+                    'uniqueId' => 'build-' . $normalized['id'],
+                    'type' => 'build'
+                ], $normalized);
+            }
+
+            $normalizedQueue[] = $normalized;
+        }
+
+        return $normalizedQueue;
+    }
+
+    /**
+     * @param array $identifiers
+     * @return array
+     */
+    private function retrieveJobs($identifiers)
+    {
+        $builds = $pushes = [];
+
+        if ($buildIds = $this->filterIdentifiers($identifiers, 'build-')) {
+            $buildCriteria = (new Criteria)
+                ->where(Criteria::expr()->in('id', $buildIds));
+            $builds = $this->buildRepo->matching($buildCriteria);
+            $builds = $builds->toArray();
+        }
+
+        if ($pushIds = $this->filterIdentifiers($identifiers, 'push-')) {
+            $pushCriteria = (new Criteria)
+                ->where(Criteria::expr()->in('id', $pushIds));
+            $pushes = $this->pushRepo->matching($pushCriteria);
+            $pushes = $pushes->toArray();
+        }
+
+        return array_merge($builds, $pushes);
     }
 }

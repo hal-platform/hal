@@ -43,10 +43,11 @@ services:
   api.queue.refresh:
     class: 'QL\Hal\Controllers\Api\QueueRefreshController'
     arguments:
+        - @api.helper
+        - @api.build.normalizer
+        - @api.push.normalizer
         - @build.repo
         - @push.repo
-        - @doctrine.em
-        - @clock
 
   ######################################################################################################################
   # BUILD CONTROLLERS

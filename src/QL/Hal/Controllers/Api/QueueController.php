@@ -26,10 +26,7 @@ use Slim\Http\Response;
  * Get all pushes and builds created after the specified time.
  *
  * If no time is provided (Get param = "since"), all jobs in the past 20 minutes will be retrieved.
- *
- * This will be replaced. I just kind of want it here as a prototype.
- *
- * @deprecated
+ * @todo change "since" to use some kind of better query filtering.
  */
 class QueueController
 {
@@ -64,11 +61,6 @@ class QueueController
     private $clock;
 
     /**
-     * @var string
-     */
-    private $outputTimezone;
-
-    /**
      * @param ApiHelper $api
      * @param BuildNormalizer $buildNormalizer
      * @param PushNormalizer $pushNormalizer
@@ -91,8 +83,6 @@ class QueueController
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
         $this->clock = $clock;
-
-        $this->outputTimezone = 'America/Detroit';
     }
 
     /**
@@ -102,19 +92,20 @@ class QueueController
      * @param callable $notFound
      * @return null
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
         $since = $request->get('since');
         $createdAfter = null;
         if ($since && !$createdAfter = $this->parseValidSinceTime($since)) {
-            // Need some kind of error messaging
+            // @todo need to use problem+json
+            $response->setBody('Malformed Datetime! Dates must be ISO8601 UTC.');
             return $response->setStatus(400);
         }
 
         $createdAfter = $createdAfter ?: $this->getDefaultSinceTime();
 
         if (!$jobs = $this->retrieveJobs($createdAfter)) {
-            return call_user_func($notFound);
+            return $response->setStatus(404);
         }
 
         $jobs = $this->formatQueue($jobs);
@@ -185,7 +176,7 @@ class QueueController
      */
     private function parseValidSinceTime($since)
     {
-        if (!$date = DateTime::createFromFormat(DateTime::W3C, $since, new DateTimeZone('UTC'))) {
+        if (!$date = DateTime::createFromFormat(DateTime::ISO8601, $since, new DateTimeZone('UTC'))) {
             return null;
         }
 
@@ -217,6 +208,34 @@ class QueueController
         $builds = $this->buildRepo->matching($buildCriteria);
         $pushes = $this->pushRepo->matching($pushCriteria);
 
-        return array_merge($builds->toArray(), $pushes->toArray());
+        $jobs = array_merge($builds->toArray(), $pushes->toArray());
+        usort($jobs, $this->queueSort());
+
+        return $jobs;
+    }
+
+    /**
+     * @return Closure
+     */
+    private function queueSort()
+    {
+        return function($aEntity, $bEntity) {
+            $a = $aEntity->getCreated();
+            $b = $bEntity->getCreated();
+
+            if ($a === $b) {
+                return 0;
+            }
+
+            if ($a === null xor $b === null) {
+                return ($a === null) ? 0 : 1;
+            }
+
+            if ($a < $b) {
+                return 1;
+            }
+
+            return -1;
+        };
     }
 }

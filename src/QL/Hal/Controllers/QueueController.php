@@ -89,6 +89,34 @@ class QueueController
         $builds = $this->buildRepo->matching($buildCriteria);
         $pushes = $this->pushRepo->matching($pushCriteria);
 
-        return array_merge($builds->toArray(), $pushes->toArray());
+        $jobs = array_merge($builds->toArray(), $pushes->toArray());
+        usort($jobs, $this->queueSort());
+
+        return $jobs;
+    }
+
+    /**
+     * @return Closure
+     */
+    private function queueSort()
+    {
+        return function($aEntity, $bEntity) {
+            $a = $aEntity->getCreated();
+            $b = $bEntity->getCreated();
+
+            if ($a === $b) {
+                return 0;
+            }
+
+            if ($a === null xor $b === null) {
+                return ($a === null) ? 0 : 1;
+            }
+
+            if ($a < $b) {
+                return 1;
+            }
+
+            return -1;
+        };
     }
 }

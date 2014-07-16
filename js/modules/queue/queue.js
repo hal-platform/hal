@@ -128,11 +128,12 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
             // call api and update job rows
             var endpoint ='/api/queue-refresh/' + jobsToUpdate.join('+');
             $.getJSON(endpoint, function(data) {
-                for (var entry in data) {
-                    if (data[entry].type == 'Build') {
-                        jobUpdater.updateBuildJob(data[entry]);
+                var jobs = data.content;
+                for (var entry in jobs) {
+                    if (jobs[entry].type == 'build') {
+                        jobUpdater.updateBuildJob(jobs[entry]);
                     } else {
-                        jobUpdater.updatePushJob(data[entry]);
+                        jobUpdater.updatePushJob(jobs[entry]);
                     }
                 }
             });
@@ -166,7 +167,7 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
                 ('0' + (now.getUTCHours()+1)).slice(-2) + ':' +
                 ('0' + (now.getUTCMinutes()+1)).slice(-2) + ':' +
                 ('0' + (now.getUTCSeconds()+1)).slice(-2) +
-                '-00:00';
+                '-0000';
         }
     };
 });
