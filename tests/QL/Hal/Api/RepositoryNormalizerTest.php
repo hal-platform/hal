@@ -34,6 +34,8 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
 
     public function testNormalizationOfLinkedResource()
     {
+        $groupNormalizer = Mockery::mock('QL\Hal\Api\GroupNormalizer');
+
         $repo = new Repository;
         $repo->setId('1234');
 
@@ -41,7 +43,7 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('parseLinks')
             ->andReturn('links');
 
-        $normalizer = new RepositoryNormalizer($this->api, $this->url);
+        $normalizer = new RepositoryNormalizer($this->api, $this->url, $groupNormalizer);
         $actual = $normalizer->normalizeLinked($repo);
 
         $expected = [
@@ -54,6 +56,8 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
 
     public function testNormalizationWithoutCriteria()
     {
+        $groupNormalizer = Mockery::mock('QL\Hal\Api\GroupNormalizer');
+
         $group = new Group;
         $group->setId('5678');
 
@@ -67,11 +71,11 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
         $this->api
             ->shouldReceive('parseLinks')
             ->andReturn('links');
-        // $this->groupNormalizer
-        //     ->shouldReceive('normalizeLinked')
-        //     ->andReturn('normalized-group');
+        $groupNormalizer
+            ->shouldReceive('normalizeLinked')
+            ->andReturn('normalized-group');
 
-        $normalizer = new RepositoryNormalizer($this->api, $this->url);
+        $normalizer = new RepositoryNormalizer($this->api, $this->url, $groupNormalizer);
         $actual = $normalizer->normalize($repo);
 
         $expected = [
@@ -91,10 +95,7 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
             'buildCmd' => null,
             'prePushCmd' => null,
             'postPushCmd' => null,
-            'group' => [
-                'id' => '5678',
-                '_links' => 'links'
-            ],
+            'group' => 'normalized-group',
             '_links' => 'links'
         ];
 
@@ -103,6 +104,8 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
 
     public function testNormalizationCriteriaCascadesToChildEntity()
     {
+        $groupNormalizer = Mockery::mock('QL\Hal\Api\GroupNormalizer');
+
         $group = new Group;
         $group->setId('5678');
 
@@ -113,11 +116,12 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
         $this->api
             ->shouldReceive('parseLinks')
             ->andReturn('links');
-        // $this->groupNormalizer
-        //     ->shouldReceive('normalize')
-        //     ->with($group, ['test1'])
-        //     ->andReturn('normalized-group');
-        $normalizer = new RepositoryNormalizer($this->api, $this->url);
+        $groupNormalizer
+            ->shouldReceive('normalize')
+            ->with($group, ['test1'])
+            ->andReturn('normalized-group');
+
+        $normalizer = new RepositoryNormalizer($this->api, $this->url, $groupNormalizer);
         $actual = $normalizer->normalize($repo, ['group' => ['test1']]);
 
         $expected = [
@@ -137,10 +141,7 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
             'buildCmd' => null,
             'prePushCmd' => null,
             'postPushCmd' => null,
-            'group' => [
-                'id' => '5678',
-                '_links' => 'links'
-            ],
+            'group' => 'normalized-group',
             '_links' => 'links'
         ];
 
