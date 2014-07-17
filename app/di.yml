@@ -261,12 +261,6 @@ services:
         - @api.build.normalizer
         - @api.deployment.normalizer
 
-  api.repository.normalizer:
-    class: 'QL\Hal\Api\RepositoryNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
-
   api.deployment.normalizer:
     class: 'QL\Hal\Api\DeploymentNormalizer'
     arguments:
@@ -277,6 +271,18 @@ services:
 
   api.environment.normalizer:
     class: 'QL\Hal\Api\EnvironmentNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+
+  api.group.normalizer:
+    class: 'QL\Hal\Api\GroupNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
+
+  api.repository.normalizer:
+    class: 'QL\Hal\Api\RepositoryNormalizer'
     arguments:
         - @api.helper
         - @url.helper

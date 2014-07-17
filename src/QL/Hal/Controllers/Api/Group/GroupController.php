@@ -1,13 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Group;
 
+use QL\Hal\Api\GroupNormalizer;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Group Controller
@@ -15,73 +20,47 @@ use QL\Hal\Helpers\ApiHelper;
 class GroupController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type GroupRepository
      */
-    private $url;
+    private $groupRepo;
 
     /**
-     * @var GroupRepository
+     * @type GroupNormalizer
      */
-    private $groups;
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param UrlHelper $url
-     * @param GroupRepository $groups
+     * @param GroupRepository $groupRepo
+     * @param GroupNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        UrlHelper $url,
-        GroupRepository $groups
+        GroupRepository $groupRepo,
+        GroupNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->url = $url;
-        $this->groups = $groups;
+        $this->groupRepo = $groupRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $group = $this->groups->findOneBy(['id' => $params['id']]);
-
-        if (!($group instanceof Group)) {
-            call_user_func($notFound);
-            return;
+        $group = $this->groupRepo->findOneBy(['id' => $params['id']]);
+        if (!$group instanceof Group) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.group', ['id' => $group->getId()]], 'type' => 'Group'],
-            'groups' => ['href' => 'api.groups', 'type' => 'Groups'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $content = [
-            'id' => $group->getId(),
-            'url' => $this->url->urlFor('group', ['id' => $group->getId()]),
-            'key' => $group->getKey(),
-            'name' => $group->getName(),
-            'repositories' => []
-        ];
-
-        foreach ($group->getRepositories() as $repository) {
-            $content['repositories'][] = [
-                'id' => $repository->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.repository', ['id' => $repository->getId()]], 'type' => 'Repository']
-                ])
-            ];
-        }
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($group));
     }
 }

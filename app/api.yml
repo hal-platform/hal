@@ -142,14 +142,15 @@ services:
     class: 'QL\Hal\Controllers\Api\Group\GroupController'
     arguments:
       - @api.helper
-      - @url.helper
       - @group.repo
+      - @api.group.normalizer
 
   api.groups:
     class: 'QL\Hal\Controllers\Api\Group\GroupsController'
     arguments:
       - @api.helper
       - @group.repo
+      - @api.group.normalizer
 
   ######################################################################################################################
   # LOGS CONTROLLERS

@@ -1,11 +1,17 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Group;
 
+use QL\Hal\Api\GroupNormalizer;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Groups Controller
@@ -13,56 +19,51 @@ use QL\Hal\Helpers\ApiHelper;
 class GroupsController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var GroupRepository
+     * @type GroupRepository
      */
-    private $groups;
+    private $groupRepo;
+
+    /**
+     * @type GroupNormalizer
+     */
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param GroupRepository $groups
+     * @param GroupRepository $groupRepo
+     * @param GroupNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        GroupRepository $groups
+        GroupRepository $groupRepo,
+        GroupNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->groups = $groups;
+        $this->groupRepo = $groupRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
-     * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response)
     {
-        $links = [
-            'self' => ['href' => 'api.groups', 'type' => 'Groups'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $groups = $this->groups->findBy([], ['id' => 'ASC']);
-
-        $content = [
-            'count' => count($groups),
-            'groups' => []
-        ];
-
-        foreach ($groups as $group) {
-            $content['groups'][] = [
-                'id' => $group->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.group', ['id' => $group->getId()]], 'type' => 'Group']
-                ])
-            ];
+        $groups = $this->groupRepo->findBy([], ['id' => 'ASC']);
+        if (!$groups) {
+            return $response->setStatus(404);
         }
 
-        $this->api->prepareResponse($response, $links, $content);
+        // Normalize all the builds
+        $normalized = array_map(function($group) {
+            return $this->normalizer->normalize($group);
+        }, $groups);
+
+        $this->api->prepareResponse($response, $normalized);
     }
 }
