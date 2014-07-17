@@ -21,17 +21,17 @@ use Slim\Http\Response;
 class LastPushController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @var PushNormalizer
+     * @type PushNormalizer
      */
     private $normalizer;
 

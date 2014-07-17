@@ -1,13 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Environment;
 
+use QL\Hal\Api\EnvironmentNormalizer;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Environment Controller
@@ -15,63 +20,47 @@ use QL\Hal\Helpers\ApiHelper;
 class EnvironmentController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type EnvironmentRepository
      */
-    private $url;
+    private $envRepo;
 
     /**
-     * @var EnvironmentRepository
+     * @type EnvironmentNormalizer
      */
-    private $environments;
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param UrlHelper $url
-     * @param EnvironmentRepository $environments
+     * @param EnvironmentRepository $envRepo
+     * @param EnvironmentNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        UrlHelper $url,
-        EnvironmentRepository $environments
+        EnvironmentRepository $envRepo,
+        EnvironmentNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->url = $url;
-        $this->environments = $environments;
+        $this->envRepo = $envRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $environment = $this->environments->findOneBy(['id' => $params['id']]);
-
-        if (!($environment instanceof Environment)) {
-            call_user_func($notFound);
-            return;
+        $environment = $this->envRepo->findOneBy(['id' => $params['id']]);
+        if (!$environment instanceof Environment) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.environment', ['id' => $environment->getId()]], 'type' => 'Environment'],
-            'environments' => ['href' => 'api.environments', 'type' => 'Environments'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $content = [
-            'id' => $environment->getId(),
-            'url' => $this->url->urlFor('environment', ['id' => $environment->getId()]),
-            'key' => $environment->getKey(),
-            'order' => $environment->getOrder()
-        ];
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($environment));
     }
 }

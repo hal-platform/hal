@@ -107,14 +107,15 @@ services:
     class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
     arguments:
       - @api.helper
-      - @url.helper
       - @environment.repo
+      - @api.environment.normalizer
 
   api.environments:
     class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
     arguments:
       - @api.helper
       - @environment.repo
+      - @api.environment.normalizer
 
   ######################################################################################################################
   # BUILD CONTROLLERS

@@ -20,17 +20,17 @@ use Slim\Http\Response;
 class DeploymentController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @var DeploymentNormalizer
+     * @type DeploymentNormalizer
      */
     private $normalizer;
 
