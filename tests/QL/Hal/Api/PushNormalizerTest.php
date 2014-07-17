@@ -20,6 +20,7 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
     public $time;
     public $buildNormalizer;
     public $deploymentNormalizer;
+    public $userNormalizer;
 
     public function setUp()
     {
@@ -28,6 +29,7 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
         $this->time = Mockery::mock('QL\Hal\Helpers\TimeHelper');
         $this->buildNormalizer = Mockery::mock('QL\Hal\Api\BuildNormalizer');
         $this->deploymentNormalizer = Mockery::mock('QL\Hal\Api\DeploymentNormalizer');
+        $this->userNormalizer = Mockery::mock('QL\Hal\Api\UserNormalizer');
     }
 
     public function testNormalizationOfLinkedResource()
@@ -39,7 +41,14 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('parseLinks')
             ->andReturn('links');
 
-        $normalizer = new PushNormalizer($this->api, $this->url, $this->time, $this->buildNormalizer, $this->deploymentNormalizer);
+        $normalizer = new PushNormalizer(
+            $this->api,
+            $this->url,
+            $this->time,
+            $this->buildNormalizer,
+            $this->deploymentNormalizer,
+            $this->userNormalizer
+        );
         $actual = $normalizer->normalizeLinked($push);
 
         $expected = [
@@ -80,7 +89,14 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('normalizeLinked')
             ->andReturn('normalized-deployment');
 
-        $normalizer = new PushNormalizer($this->api, $this->url, $this->time, $this->buildNormalizer, $this->deploymentNormalizer);
+        $normalizer = new PushNormalizer(
+            $this->api,
+            $this->url,
+            $this->time,
+            $this->buildNormalizer,
+            $this->deploymentNormalizer,
+            $this->userNormalizer
+        );
         $actual = $normalizer->normalize($push);
 
         $expected = [
@@ -143,7 +159,14 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
             ->with($deployment, ['test2'])
             ->andReturn('normalized-deployment');
 
-        $normalizer = new PushNormalizer($this->api, $this->url, $this->time, $this->buildNormalizer, $this->deploymentNormalizer);
+        $normalizer = new PushNormalizer(
+            $this->api,
+            $this->url,
+            $this->time,
+            $this->buildNormalizer,
+            $this->deploymentNormalizer,
+            $this->userNormalizer
+        );
         $actual = $normalizer->normalize($push, [
             'build' => ['test1'],
             'deployment' => ['test2']

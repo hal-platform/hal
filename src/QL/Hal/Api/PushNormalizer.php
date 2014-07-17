@@ -10,6 +10,7 @@ namespace QL\Hal\Api;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
@@ -42,6 +43,11 @@ class PushNormalizer
     private $deploymentNormalizer;
 
     /**
+     * @type UserNormalizer
+     */
+    private $userNormalizer;
+
+    /**
      * @type array
      */
     private $standardCriteria;
@@ -52,23 +58,27 @@ class PushNormalizer
      * @param TimeHelper $time
      * @param BuildNormalizer $buildNormalizer
      * @param DeploymentNormalizer $deploymentNormalizer
+     * @param UserNormalizer $userNormalizer
      */
     public function __construct(
         ApiHelper $api,
         UrlHelper $url,
         TimeHelper $time,
         BuildNormalizer $buildNormalizer,
-        DeploymentNormalizer $deploymentNormalizer
+        DeploymentNormalizer $deploymentNormalizer,
+        UserNormalizer $userNormalizer
     ) {
         $this->api = $api;
         $this->url = $url;
         $this->time = $time;
         $this->buildNormalizer = $buildNormalizer;
         $this->deploymentNormalizer = $deploymentNormalizer;
+        $this->userNormalizer = $userNormalizer;
 
         $this->standardCriteria = [
             'build' => null,
-            'deployment' => null
+            'deployment' => null,
+            'user' => null
         ];
     }
 
@@ -121,7 +131,7 @@ class PushNormalizer
             'build' => $this->normalizeBuild($push->getBuild(), $criteria['build']),
             'deployment' => $this->normalizeDeployment($push->getDeployment(), $criteria['deployment']),
             'initiator' => [
-                'user' => null,
+                'user' => $this->normalizeUser($push->getUser(), $criteria['user']),
                 'consumer' => null
             ]
         ];
@@ -171,5 +181,25 @@ class PushNormalizer
         }
 
         return $this->deploymentNormalizer->normalize($deployment, $criteria);
+    }
+
+    /**
+     * The signature of this method is weird because we need User to be nullable.
+     *
+     * @param User|null $user
+     * @param array|null $criteria
+     * @return array
+     */
+    private function normalizeUser(User $user = null, $criteria)
+    {
+        if ($user === null) {
+            return null;
+        }
+
+        if ($criteria === null) {
+            return $this->userNormalizer->normalizeLinked($user);
+        }
+
+        return $this->userNormalizer->normalize($user, $criteria);
     }
 }

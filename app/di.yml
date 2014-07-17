@@ -260,6 +260,7 @@ services:
         - @time.helper
         - @api.build.normalizer
         - @api.deployment.normalizer
+        - @api.user.normalizer
 
   api.deployment.normalizer:
     class: 'QL\Hal\Api\DeploymentNormalizer'
