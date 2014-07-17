@@ -1,16 +1,19 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Build;
 
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Helpers\TimeHelper;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\Helpers\ApiHelper;
+use QL\Hal\Api\BuildNormalizer;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\Consumer;
 
 /**
  * API Build Controller
@@ -18,125 +21,48 @@ use QL\Hal\Core\Entity\Consumer;
 class BuildController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var TimeHelper
+     * @type BuildRepository
      */
-    private $time;
+    private $buildRepo;
 
     /**
-     * @var UrlHelper
+     * @type BuildNormalizer
      */
-    private $url;
-
-    /**
-     * @var BuildRepository
-     */
-    private $builds;
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param TimeHelper $time
-     * @param UrlHelper $url
-     * @param BuildRepository $builds
+     * @param BuildRepository $buildRepo
+     * @param BuildNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        TimeHelper $time,
-        UrlHelper $url,
-        BuildRepository $builds
+        BuildRepository $buildRepo,
+        BuildNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->time = $time;
-        $this->url = $url;
-        $this->builds = $builds;
+        $this->buildRepo = $buildRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $build = $this->builds->findOneBy(['id' => $params['id']]);
+        $build = $this->buildRepo->findOneBy(['id' => $params['id']]);
 
-        if (!($build instanceof Build)) {
-            call_user_func($notFound);
-            return;
+        if (!$build instanceof Build) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.build', ['id' => $build->getId()]], 'type' => 'Build'],
-            'log' => ['href' => ['api.build.log', ['id' => $build->getId()]], 'type' => 'Build Log'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $content = [
-            'id' => $build->getId(),
-            'url' => $this->url->urlFor('build', ['build' => $build->getId()]),
-            'status' => $build->getStatus(),
-            'start' => [
-                'text' => $this->time->relative($build->getStart(), false),
-                'datetime' => $this->time->format($build->getStart(), false, 'c')
-            ],
-            'end' => [
-                'text' => $this->time->relative($build->getEnd(), false),
-                'datetime' => $this->time->format($build->getEnd(), false, 'c')
-            ],
-            'reference' => [
-                'text' => $build->getBranch(),
-                'url' => $this->url->githubReferenceUrl(
-                    $build->getRepository()->getGithubUser(),
-                    $build->getRepository()->getGithubRepo(),
-                    $build->getBranch()
-                )
-            ],
-            'commit' => [
-                'text' => $build->getCommit(),
-                'url' => $this->url->githubCommitUrl(
-                    $build->getRepository()->getGithubUser(),
-                    $build->getRepository()->getGithubRepo(),
-                    $build->getCommit()
-                )
-            ],
-            'environment' => [
-                'id' => $build->getEnvironment()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.environment', ['id' => $build->getEnvironment()->getId()]], 'type' => 'Environment']
-                ])
-            ],
-            'repository' => [
-                'id' => $build->getRepository()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.repository', ['id' => $build->getRepository()->getId()]]]
-                ])
-            ],
-            'initiator' => []
-        ];
-
-        if ($build->getUser() instanceof User) {
-            $content['initiator']['user'] = [
-                'id' => $build->getUser()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.user', ['id' => $build->getUser()->getId()]], 'type' => 'User']
-                ])
-            ];
-        } else {
-            $content['initiator']['user'] = null;
-        }
-        if ($build->getConsumer() instanceof Consumer) {
-            $content['initiator']['consumer'] = [
-                'id' => $build->getConsumer()->getId()
-            ];
-        } else {
-            $content['initiator']['consumer'] = null;
-        }
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($build));
     }
 }

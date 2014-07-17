@@ -1,13 +1,19 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Build;
 
+use QL\Hal\Api\BuildNormalizer;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Builds Controller
@@ -15,72 +21,65 @@ use QL\Hal\Helpers\ApiHelper;
 class BuildsController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
-    private $repositories;
+    private $repositoryRepo;
 
     /**
-     * @var BuildRepository
+     * @type BuildRepository
      */
-    private $builds;
+    private $buildRepo;
+
+    /**
+     * @type BuildNormalizer
+     */
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param RepositoryRepository $repositories
-     * @param BuildRepository $builds
+     * @param RepositoryRepository $repositoryRepo
+     * @param BuildRepository $buildRepo
+     * @param BuildNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        RepositoryRepository $repositories,
-        BuildRepository $builds
+        RepositoryRepository $repositoryRepo,
+        BuildRepository $buildRepo,
+        BuildNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->repositories = $repositories;
-        $this->builds = $builds;
+        $this->repositoryRepo = $repositoryRepo;
+        $this->buildRepo = $buildRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $repository = $this->repositories->findOneBy(['id' => $params['id']]);
-
-        if (!($repository instanceof Repository)) {
-            call_user_func($notFound);
-            return;
+        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        if (!$repository instanceof Repository) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.builds', ['id' => $repository->getId()]], 'type' => 'Builds'],
-            'repository' => ['href' => ['api.repository', ['id' => $repository->getId()]], 'type' => 'Repository'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $builds = $this->builds->findBy(['repository' => $repository->getId()], ['status' => 'ASC', 'start' => 'DESC']);
-
-        $content = [
-            'count' => count($builds),
-            'builds' => []
-        ];
-
-        foreach ($builds as $build) {
-            $content['builds'][] = [
-                'id' => $build->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.build', ['id' => $build->getId()]]]
-                ])
-            ];
+        $builds = $this->buildRepo->findBy(['repository' => $repository], ['status' => 'ASC', 'start' => 'DESC']);
+        if (!$builds) {
+            return $response->setStatus(404);
         }
 
-        $this->api->prepareResponse($response, $links, $content);
+        // Normalize all the builds
+        $normalized = array_map(function($build) {
+            return $this->normalizer->normalize($build);
+        }, $builds);
+
+        $this->api->prepareResponse($response, $normalized);
     }
 }

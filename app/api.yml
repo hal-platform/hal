@@ -57,9 +57,8 @@ services:
     class: 'QL\Hal\Controllers\Api\Build\BuildController'
     arguments:
       - @api.helper
-      - @time.helper
-      - @url.helper
       - @build.repo
+      - @api.build.normalizer
 
   api.build.log:
     class: 'QL\Hal\Controllers\Api\Build\LogController'
@@ -72,7 +71,7 @@ services:
       - @api.helper
       - @repository.repo
       - @build.repo
-
+      - @api.build.normalizer
 
   ######################################################################################################################
   # DEPLOYMENT CONTROLLERS
