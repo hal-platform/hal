@@ -150,7 +150,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
 
         $this->api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, $this->storeExpectation($links), $this->storeExpectation($content));
+            ->with($this->response, $this->storeExpectation($content));
 
         $controller = new QueueController(
             $this->api,
@@ -176,7 +176,6 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             ]
         ];
 
-        $this->assertArrayHasKey('self', $links);
         $this->assertSame($expectedContent, $content);
     }
 

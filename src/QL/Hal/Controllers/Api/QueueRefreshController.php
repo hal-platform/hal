@@ -89,15 +89,7 @@ class QueueRefreshController
             return $response->setStatus(404);
         }
 
-        $jobs = $this->formatQueue($jobs);
-
-        $this->api->prepareResponse(
-            $response,
-            [
-                'self' => ['href' => ['api.queue.refresh', ['uniqueId' => implode('+', $identifiers)]]],
-            ],
-            $jobs
-        );
+        $this->api->prepareResponse($response, $this->formatQueue($jobs));
     }
 
     /**

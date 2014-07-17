@@ -104,10 +104,9 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
 
             // retrieve jobs created since last read
             $.getJSON(endpoint, function(data) {
-                var jobs = data.content;
-                if (jobs.length > 0) {
+                if (data.length > 0) {
                     $('#js-emptyQueue').remove();
-                    _this.addJobs(jobs.reverse());
+                    _this.addJobs(data.reverse());
                 }
             });
         },
@@ -128,12 +127,11 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
             // call api and update job rows
             var endpoint ='/api/queue-refresh/' + jobsToUpdate.join('+');
             $.getJSON(endpoint, function(data) {
-                var jobs = data.content;
-                for (var entry in jobs) {
-                    if (jobs[entry].type == 'build') {
-                        jobUpdater.updateBuildJob(jobs[entry]);
+                for (var entry in data) {
+                    if (data[entry].type == 'build') {
+                        jobUpdater.updateBuildJob(data[entry]);
                     } else {
-                        jobUpdater.updatePushJob(jobs[entry]);
+                        jobUpdater.updatePushJob(data[entry]);
                     }
                 }
             });

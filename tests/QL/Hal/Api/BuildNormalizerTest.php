@@ -12,6 +12,7 @@ use PHPUnit_Framework_TestCase;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\User;
 
 class BuildNormalizerTest extends PHPUnit_Framework_TestCase
 {
@@ -20,6 +21,7 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
     public $time;
     public $envNormalizer;
     public $repoNormalizer;
+    public $userNormalizer;
 
     public function setUp()
     {
@@ -28,6 +30,7 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
         $this->time = Mockery::mock('QL\Hal\Helpers\TimeHelper');
         $this->envNormalizer = Mockery::mock('QL\Hal\Api\EnvironmentNormalizer');
         $this->repoNormalizer = Mockery::mock('QL\Hal\Api\RepositoryNormalizer');
+        $this->userNormalizer = Mockery::mock('QL\Hal\Api\UserNormalizer');
 
         $this->url
             ->shouldReceive('urlFor')
@@ -49,7 +52,14 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('parseLinks')
             ->andReturn('links');
 
-        $normalizer = new BuildNormalizer($this->api, $this->url, $this->time, $this->envNormalizer, $this->repoNormalizer);
+        $normalizer = new BuildNormalizer(
+            $this->api,
+            $this->url,
+            $this->time,
+            $this->envNormalizer,
+            $this->repoNormalizer,
+            $this->userNormalizer
+        );
         $actual = $normalizer->normalizeLinked($build);
 
         $expected = [
@@ -64,11 +74,13 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
     {
         $env = new Environment;
         $repo = new Repository;
+        $user = new User;
 
         $build = new Build;
         $build->setId('1234');
         $build->setEnvironment($env);
         $build->setRepository($repo);
+        $build->setUser($user);
 
         $this->api
             ->shouldReceive('parseLinks')
@@ -86,8 +98,18 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
         $this->repoNormalizer
             ->shouldReceive('normalizeLinked')
             ->andReturn('normalized-repo');
+        $this->userNormalizer
+            ->shouldReceive('normalizeLinked')
+            ->andReturn('normalized-user');
 
-        $normalizer = new BuildNormalizer($this->api, $this->url, $this->time, $this->envNormalizer, $this->repoNormalizer);
+        $normalizer = new BuildNormalizer(
+            $this->api,
+            $this->url,
+            $this->time,
+            $this->envNormalizer,
+            $this->repoNormalizer,
+            $this->userNormalizer
+        );
         $actual = $normalizer->normalize($build);
 
         $expected = [
@@ -117,7 +139,7 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
             'environment' => 'normalized-env',
             'repository' => 'normalized-repo',
             'initiator' => [
-                'user' => null,
+                'user' => 'normalized-user',
                 'consumer' => null
             ],
             '_links' => 'links'
@@ -155,7 +177,14 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
             ->with($repo, ['test2'])
             ->andReturn('normalized-repo');
 
-        $normalizer = new BuildNormalizer($this->api, $this->url, $this->time, $this->envNormalizer, $this->repoNormalizer);
+        $normalizer = new BuildNormalizer(
+            $this->api,
+            $this->url,
+            $this->time,
+            $this->envNormalizer,
+            $this->repoNormalizer,
+            $this->userNormalizer
+        );
         $actual = $normalizer->normalize($build, [
             'environment' => ['test1'],
             'repository' => ['test2']

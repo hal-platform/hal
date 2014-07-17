@@ -250,6 +250,7 @@ services:
         - @time.helper
         - @api.environment.normalizer
         - @api.repository.normalizer
+        - @api.user.normalizer
 
   api.push.normalizer:
     class: 'QL\Hal\Api\PushNormalizer'
@@ -286,6 +287,12 @@ services:
         - @api.helper
         - @url.helper
         - @api.environment.normalizer
+
+  api.user.normalizer:
+    class: 'QL\Hal\Api\UserNormalizer'
+    arguments:
+        - @api.helper
+        - @url.helper
 
   ######################################################################################################################
   # Github API

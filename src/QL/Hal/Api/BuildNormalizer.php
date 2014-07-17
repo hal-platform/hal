@@ -10,6 +10,7 @@ namespace QL\Hal\Api;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
@@ -42,6 +43,11 @@ class BuildNormalizer
     private $repoNormalizer;
 
     /**
+     * @type UserNormalizer
+     */
+    private $userNormalizer;
+
+    /**
      * @type array
      */
     private $standardCriteria;
@@ -52,23 +58,27 @@ class BuildNormalizer
      * @param TimeHelper $time
      * @param EnvironmentNormalizer $envNormalizer
      * @param RepositoryNormalizer $repoNormalizer
+     * @param UserNormalizer $userNormalizer
      */
     public function __construct(
         ApiHelper $api,
         UrlHelper $url,
         TimeHelper $time,
         EnvironmentNormalizer $envNormalizer,
-        RepositoryNormalizer $repoNormalizer
+        RepositoryNormalizer $repoNormalizer,
+        UserNormalizer $userNormalizer
     ) {
         $this->api = $api;
         $this->url = $url;
         $this->time = $time;
         $this->envNormalizer = $envNormalizer;
         $this->repoNormalizer = $repoNormalizer;
+        $this->userNormalizer = $userNormalizer;
 
         $this->standardCriteria = [
             'environment' => null,
-            'repository' => null
+            'repository' => null,
+            'user' => null
         ];
     }
 
@@ -137,20 +147,10 @@ class BuildNormalizer
             'environment' => $this->normalizeEnvironment($build->getEnvironment(), $criteria['environment']),
             'repository' => $this->normalizeRepository($build->getRepository(), $criteria['repository']),
             'initiator' => [
-                'user' => null,
+                'user' => $this->normalizeUser($build->getUser(), $criteria['user']),
                 'consumer' => null
             ]
         ];
-
-        // add initiators
-        if ($build->getUser() instanceof User) {
-            $content['initiator']['user'] = [
-                'id' => $build->getUser()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.user', ['id' => $build->getUser()->getId()]], 'type' => 'User']
-                ])
-            ];
-        }
 
         if ($build->getConsumer() instanceof Consumer) {
             $content['initiator']['consumer'] = [
@@ -204,5 +204,25 @@ class BuildNormalizer
         }
 
         return $this->repoNormalizer->normalize($repository, $criteria);
+    }
+
+    /**
+     * The signature of this method is weird because we need User to be nullable.
+     *
+     * @param User|null $user
+     * @param array|null $criteria
+     * @return array
+     */
+    private function normalizeUser(User $user = null, $criteria)
+    {
+        if ($user === null) {
+            return null;
+        }
+
+        if ($criteria === null) {
+            return $this->userNormalizer->normalizeLinked($user);
+        }
+
+        return $this->userNormalizer->normalize($user, $criteria);
     }
 }

@@ -26,19 +26,17 @@ class ApiHelper
     }
 
     /**
-     * Format links and content and prepare response object
+     * Format content and prepare response object
      *
      * @param Response $response
-     * @param array $links
      * @param $content
      */
-    public function prepareResponse(Response &$response, array $links, $content)
+    public function prepareResponse(Response &$response, $content)
     {
         $response->header('Content-Type', 'application/json; charset=utf-8');
-        $response->body(json_encode([
-            '_links' => $this->parseLinks($links),
-            'content' => $content
-        ], JSON_UNESCAPED_SLASHES));
+        $response->body(json_encode(
+            $content
+        , JSON_UNESCAPED_SLASHES));
     }
 
     /**
