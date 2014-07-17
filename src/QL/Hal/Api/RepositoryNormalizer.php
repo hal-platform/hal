@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Api;
 
+use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Helpers\UrlHelper;
@@ -24,13 +25,29 @@ class RepositoryNormalizer
     private $url;
 
     /**
+     * @type GroupNormalizer
+     */
+    private $groupNormalizer;
+
+    /**
+     * @type array
+     */
+    private $standardCriteria;
+
+    /**
      * @param ApiHelper $api
      * @param UrlHelper $url
+     * @param GroupNormalizer $groupNormalizer
      */
-    public function __construct(ApiHelper $api, UrlHelper $url)
+    public function __construct(ApiHelper $api, UrlHelper $url, GroupNormalizer $groupNormalizer)
     {
         $this->api = $api;
         $this->url = $url;
+        $this->groupNormalizer = $groupNormalizer;
+
+        $this->standardCriteria = [
+            'group' => null
+        ];
     }
 
     /**
@@ -60,6 +77,8 @@ class RepositoryNormalizer
      */
     public function normalize(Repository $repository, array $criteria = [])
     {
+        $criteria = array_merge($this->standardCriteria, $criteria);
+
         $content = [
             'id' => $repository->getId(),
             'url' => $this->url->urlFor('repository', ['id' => $repository->getId()]),
@@ -77,14 +96,7 @@ class RepositoryNormalizer
             'buildCmd' => $repository->getBuildCmd(),
             'prePushCmd' => $repository->getPrePushCmd(),
             'postPushCmd' => $repository->getPostPushCmd(),
-
-            // @todo make a normalizer for groups!
-            'group' => [
-                'id' => $repository->getGroup()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.group', ['id' => $repository->getGroup()->getId()]], 'type' => 'Group']
-                ])
-            ]
+            'group' => $this->normalizeGroup($repository->getGroup(), $criteria['group'])
         ];
 
         $content = array_merge($content, $this->links($repository));
@@ -106,5 +118,19 @@ class RepositoryNormalizer
                 'pushes' => ['href' => ['api.pushes', ['id' => $repository->getId()]], 'type' => 'Pushes']
             ])
         ];
+    }
+
+    /**
+     * @param Group $group
+     * @param array|null $criteria
+     * @return array
+     */
+    private function normalizeGroup(Group $group, $criteria)
+    {
+        if ($criteria === null) {
+            return $this->groupNormalizer->normalizeLinked($group);
+        }
+
+        return $this->groupNormalizer->normalize($group, $criteria);
     }
 }

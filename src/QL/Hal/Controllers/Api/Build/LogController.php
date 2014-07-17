@@ -14,6 +14,9 @@ use QL\Hal\Core\Entity\Repository\BuildRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+/**
+ * NOT CURRENTLY IMPLEMENTED
+ */
 class LogController
 {
     /**

@@ -286,6 +286,7 @@ services:
     arguments:
         - @api.helper
         - @url.helper
+        - @api.group.normalizer
 
   api.server.normalizer:
     class: 'QL\Hal\Api\ServerNormalizer'
