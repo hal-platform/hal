@@ -1,12 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
+use QL\Hal\Api\DeploymentNormalizer;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Deployment Controller
@@ -21,78 +27,40 @@ class DeploymentController
     /**
      * @var DeploymentRepository
      */
-    private $deployments;
+    private $deploymentRepo;
+
+    /**
+     * @var DeploymentNormalizer
+     */
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param DeploymentRepository $deployments
+     * @param DeploymentRepository $deploymentRepo
+     * @param DeploymentNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        DeploymentRepository $deployments
+        DeploymentRepository $deploymentRepo,
+        DeploymentNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->deployments = $deployments;
+        $this->deploymentRepo = $deploymentRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $deployment = $this->deployments->findOneBy(['id' => $params['id']]);
-
-        if (!($deployment instanceof Deployment)) {
-            call_user_func($notFound);
-            return;
+        $deployment = $this->deploymentRepo->findOneBy(['id' => $params['id']]);
+        if (!$deployment instanceof Deployment) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.deployment', ['id' => $deployment->getId()]], 'type' => 'Deployment'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $content = [
-            'id' => $deployment->getId(),
-            'path' => $deployment->getPath(),
-            'repository' => [
-                'id' => $deployment->getRepository()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.repository', ['id' => $deployment->getRepository()->getId()]], 'type' => 'Repository']
-                ])
-            ],
-            'server' => [
-                'id' => $deployment->getServer()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.server', ['id' => $deployment->getServer()->getId()]], 'type' => 'Server']
-                ])
-            ],
-            'status' => []
-        ];
-
-        if ($last = $this->deployments->getLastPush($deployment)) {
-            $content['status']['last'] = [
-                'id' => $last->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.push', ['id' => $last->getId()]], 'type' => 'Push']
-                ])
-            ];
-        } else {
-            $content['status']['last'] = null;
-        }
-        if ($success = $this->deployments->getLastSuccessfulPush($deployment)) {
-            $content['status']['success'] = [
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.push', ['id' => $success->getId()]], 'type' => 'Push']
-                ])
-            ];
-        } else {
-            $content['status']['success'] = null;
-        }
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($deployment));
     }
 }

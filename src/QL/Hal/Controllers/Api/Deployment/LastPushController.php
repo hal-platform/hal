@@ -7,19 +7,18 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
-use QL\Hal\Api\DeploymentNormalizer;
+use QL\Hal\Api\PushNormalizer;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
- * API Deployments Controller
+ * API Last Dush of Deployment Controller
  */
-class DeploymentsController
+class LastPushController
 {
     /**
      * @var ApiHelper
@@ -27,34 +26,26 @@ class DeploymentsController
     private $api;
 
     /**
-     * @type RepositoryRepository
-     */
-    private $repositoryRepo;
-
-    /**
      * @var DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @var DeploymentNormalizer
+     * @var PushNormalizer
      */
     private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param RepositoryRepository $repositoryRepo
      * @param DeploymentRepository $deploymentRepo
-     * @param DeploymentNormalizer $normalizer
+     * @param PushNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        RepositoryRepository $repositoryRepo,
         DeploymentRepository $deploymentRepo,
-        DeploymentNormalizer $normalizer
+        PushNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->repositoryRepo = $repositoryRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->normalizer = $normalizer;
     }
@@ -66,21 +57,26 @@ class DeploymentsController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
-        if (!$repository instanceof Repository) {
+        $deployment = $this->deploymentRepo->findOneBy(['id' => $params['id']]);
+        if (!$deployment instanceof Deployment) {
             return $response->setStatus(404);
         }
 
-        $deployments = $this->deploymentRepo->findBy(['repository' => $repository], ['id' => 'ASC']);
-        if (!$deployments) {
+        $status = $request->get('status');
+        if ($status && !in_array($status, ['Waiting', 'Pushing', 'Error', 'Success'])) {
+            return $response->setStatus(400);
+        }
+
+        if ($status === 'Success') {
+            $push = $this->deploymentRepo->getLastSuccessfulPush($deployment);
+        } else {
+            $push = $this->deploymentRepo->getLastPush($deployment);
+        }
+
+        if (!$push) {
             return $response->setStatus(404);
         }
 
-        // Normalize all the deployments
-        $normalized = array_map(function($deployment) {
-            return $this->normalizer->normalize($deployment);
-        }, $deployments);
-
-        $this->api->prepareResponse($response, $normalized);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($push));
     }
 }

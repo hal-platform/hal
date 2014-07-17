@@ -552,6 +552,14 @@ parameters:
       conditions:
         id:         '[0-9]+'
 
+    # @todo change this url because it is terrible
+    api.deployment.lastpush:
+      method:       'GET'
+      route:        '/api/deployment/:id/lastPush'
+      stack:        ['api.deployment.lastpush']
+      conditions:
+        id:         '[0-9]+'
+
     api.build:
       method:       'GET'
       route:        '/api/build/:id'

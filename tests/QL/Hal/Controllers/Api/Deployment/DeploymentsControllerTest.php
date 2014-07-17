@@ -5,17 +5,17 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Api\Build;
+namespace QL\Hal\Controllers\Api\Deployment;
 
 use Mockery;
 use PHPUnit_Framework_TestCase;
-use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use Slim\Environment;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class BuildsControllerTest extends PHPUnit_Framework_TestCase
+class DeploymentsControllerTest extends PHPUnit_Framework_TestCase
 {
     public $request;
     public $response;
@@ -29,104 +29,103 @@ class BuildsControllerTest extends PHPUnit_Framework_TestCase
     public function testNoRepoFound()
     {
         $api = Mockery::mock('QL\Hal\Helpers\ApiHelper');
-        $buildRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\BuildRepository');
         $repoRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\RepositoryRepository');
-        $normalizer = Mockery::mock('QL\Hal\Api\BuildNormalizer');
+        $deploymentRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\DeploymentRepository');
+        $normalizer = Mockery::mock('QL\Hal\Api\DeploymentNormalizer');
 
         $repoRepo
             ->shouldReceive('findOneBy')
-            ->with(['id' => 'repo-id'])
+            ->with(['id' => 'test'])
             ->andReturnNull();
 
-        $controller = new BuildsController(
+        $controller = new DeploymentsController(
             $api,
             $repoRepo,
-            $buildRepo,
+            $deploymentRepo,
             $normalizer
         );
 
-        $controller($this->request, $this->response, ['id' => 'repo-id']);
+        $controller($this->request, $this->response, ['id' => 'test']);
 
         $this->assertSame(404, $this->response->getStatus());
     }
 
-    public function testNoBuildsFound()
+    public function testNoDeploymentsFound()
     {
         $api = Mockery::mock('QL\Hal\Helpers\ApiHelper');
-        $buildRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\BuildRepository');
         $repoRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\RepositoryRepository');
-        $normalizer = Mockery::mock('QL\Hal\Api\BuildNormalizer');
+        $deploymentRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\DeploymentRepository');
+        $normalizer = Mockery::mock('QL\Hal\Api\DeploymentNormalizer');
 
         $repo = new Repository;
-
         $repoRepo
             ->shouldReceive('findOneBy')
-            ->with(['id' => 'repo-id'])
+            ->with(['id' => 'test'])
             ->andReturn($repo);
 
-        $buildRepo
+        $deploymentRepo
             ->shouldReceive('findBy')
             ->with(['repository' => $repo], Mockery::type('array'))
             ->andReturn([]);
 
-        $controller = new BuildsController(
+        $controller = new DeploymentsController(
             $api,
             $repoRepo,
-            $buildRepo,
+            $deploymentRepo,
             $normalizer
         );
 
-        $controller($this->request, $this->response, ['id' => 'repo-id']);
+        $controller($this->request, $this->response, ['id' => 'test']);
 
         $this->assertSame(404, $this->response->getStatus());
     }
 
-    public function testBuildsFoundAndNormalized()
+    public function testDeploymentsFoundAndNormalized()
     {
         $api = Mockery::mock('QL\Hal\Helpers\ApiHelper');
-        $buildRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\BuildRepository');
         $repoRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\RepositoryRepository');
-        $normalizer = Mockery::mock('QL\Hal\Api\BuildNormalizer');
+        $deploymentRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\DeploymentRepository');
+        $normalizer = Mockery::mock('QL\Hal\Api\DeploymentNormalizer');
 
         $repo = new Repository;
-        $builds = [
-            new Build,
-            new Build
+        $deployments = [
+            new Deployment,
+            new Deployment
         ];
 
         $repoRepo
             ->shouldReceive('findOneBy')
-            ->with(['id' => 'repo-id'])
+            ->with(['id' => 'test'])
             ->andReturn($repo);
 
-        $buildRepo
+        $deploymentRepo
             ->shouldReceive('findBy')
             ->with(['repository' => $repo], Mockery::type('array'))
-            ->andReturn($builds);
+            ->andReturn($deployments);
 
         $normalizer
             ->shouldReceive('normalize')
-            ->with($builds[0])
-            ->andReturn('normalized-build1');
+            ->with($deployments[0])
+            ->andReturn('normalized-deployment1');
 
         $normalizer
             ->shouldReceive('normalize')
-            ->with($builds[1])
-            ->andReturn('normalized-build2');
+            ->with($deployments[1])
+            ->andReturn('normalized-deployment2');
 
         $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-build1', 'normalized-build2'])
+            ->with($this->response, ['normalized-deployment1', 'normalized-deployment2'])
             ->once();
 
-        $controller = new BuildsController(
+        $controller = new DeploymentsController(
             $api,
             $repoRepo,
-            $buildRepo,
+            $deploymentRepo,
             $normalizer
         );
 
-        $controller($this->request, $this->response, ['id' => 'repo-id']);
+        $controller($this->request, $this->response, ['id' => 'test']);
 
         $this->assertSame(200, $this->response->getStatus());
     }

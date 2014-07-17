@@ -82,12 +82,22 @@ services:
     arguments:
       - @api.helper
       - @deployment.repo
+      - @api.deployment.normalizer
 
   api.deployments:
     class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
     arguments:
       - @api.helper
+      - @repository.repo
       - @deployment.repo
+      - @api.deployment.normalizer
+
+  api.deployment.lastpush:
+    class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
+    arguments:
+      - @api.helper
+      - @deployment.repo
+      - @api.push.normalizer
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS

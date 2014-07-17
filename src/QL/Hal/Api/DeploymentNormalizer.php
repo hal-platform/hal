@@ -97,11 +97,7 @@ class DeploymentNormalizer
             'id' => $deployment->getId(),
             'path' => $deployment->getPath(),
             'repository' => $this->normalizeRepository($deployment->getRepository(), $criteria['repository']),
-            'server' => $this->normalizeServer($deployment->getServer(), $criteria['server']),
-            'status' => [
-                'last' => null,
-                'success' => null
-            ]
+            'server' => $this->normalizeServer($deployment->getServer(), $criteria['server'])
         ];
 
         $content = array_merge($content, $this->links($deployment));
@@ -115,11 +111,16 @@ class DeploymentNormalizer
      */
     private function links(Deployment $deployment)
     {
-        return [
+        $links = [
             '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.deployment', ['id' => $deployment->getId()]]]
+                'self' => ['href' => ['api.deployment', ['id' => $deployment->getId()]]],
+                'lastPush' => ['href' => ['api.deployment.lastpush', ['id' => $deployment->getId()]], 'type' => 'Last Push'],
+                'lastSuccessfulPush' => ['href' => ['api.deployment.lastpush', ['id' => $deployment->getId()]], 'type' => 'Last Successful Push'],
             ])
         ];
+
+        $links['_links']['lastSuccessfulPush']['href'] .= '?status=Success';
+        return $links;
     }
 
     /**

@@ -35,14 +35,22 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
 
         $this->api
             ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->andReturn([
+                'self' => 'url',
+                'lastPush' => 'url',
+                'lastSuccessfulPush' => ['href' => 'url']
+            ]);
 
         $normalizer = new DeploymentNormalizer($this->api, $this->url, $this->repoNormalizer, $this->serverNormalizer);
         $actual = $normalizer->normalizeLinked($deployment);
 
         $expected = [
             'id' => '1234',
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'url',
+                'lastPush' => 'url',
+                'lastSuccessfulPush' => ['href' => 'url?status=Success']
+            ]
         ];
 
         $this->assertSame($expected, $actual);
@@ -61,7 +69,11 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
 
         $this->api
             ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->andReturn([
+                'self' => 'url',
+                'lastPush' => 'url',
+                'lastSuccessfulPush' => ['href' => 'url']
+            ]);
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
@@ -81,11 +93,11 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
             'path' => '/server/path',
             'repository' => 'normalized-repo',
             'server' => 'normalized-server',
-            'status' => [
-                'last' => null,
-                'success' => null
-            ],
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'url',
+                'lastPush' => 'url',
+                'lastSuccessfulPush' => ['href' => 'url?status=Success']
+            ]
         ];
 
         $this->assertSame($expected, $actual);
@@ -104,7 +116,11 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
 
         $this->api
             ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->andReturn([
+                'self' => 'url',
+                'lastPush' => 'url',
+                'lastSuccessfulPush' => ['href' => 'url']
+            ]);
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
@@ -129,11 +145,11 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
             'path' => '/server/path',
             'repository' => 'normalized-repo',
             'server' => 'normalized-server',
-            'status' => [
-                'last' => null,
-                'success' => null
-            ],
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'url',
+                'lastPush' => 'url',
+                'lastSuccessfulPush' => ['href' => 'url?status=Success']
+            ]
         ];
 
         $this->assertSame($expected, $actual);
