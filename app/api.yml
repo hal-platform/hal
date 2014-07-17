@@ -64,6 +64,7 @@ services:
     class: 'QL\Hal\Controllers\Api\Build\LogController'
     arguments:
       - @api.helper
+      - @build.repo
 
   api.builds:
     class: 'QL\Hal\Controllers\Api\Build\BuildsController'
@@ -160,14 +161,14 @@ services:
     class: 'QL\Hal\Controllers\Api\Push\PushController'
     arguments:
       - @api.helper
-      - @url.helper
-      - @time.helper
       - @push.repo
+      - @api.push.normalizer
 
   api.push.log:
     class: 'QL\Hal\Controllers\Api\Push\LogController'
     arguments:
       - @api.helper
+      - @push.repo
 
   api.pushes:
     class: 'QL\Hal\Controllers\Api\Push\PushesController'
@@ -175,6 +176,7 @@ services:
       - @api.helper
       - @repository.repo
       - @push.repo
+      - @api.push.normalizer
 
   ######################################################################################################################
   # REPOSITORY CONTROLLERS

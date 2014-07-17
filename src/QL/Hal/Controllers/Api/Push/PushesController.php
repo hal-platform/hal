@@ -1,13 +1,20 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Push;
 
+use QL\Hal\Api\PushNormalizer;
+use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Pushes Controller
@@ -15,72 +22,65 @@ use QL\Hal\Helpers\ApiHelper;
 class PushesController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
-    private $repositories;
+    private $repositoryRepo;
 
     /**
-     * @var PushRepository
+     * @type PushRepository
      */
-    private $pushes;
+    private $pushRepo;
+
+    /**
+     * @type PushNormalizer
+     */
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param RepositoryRepository $repositories
-     * @param PushRepository $pushes
+     * @param RepositoryRepository $repositoryRepo
+     * @param PushRepository $pushRepo
+     * @param PushNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        RepositoryRepository $repositories,
-        PushRepository $pushes
+        RepositoryRepository $repositoryRepo,
+        PushRepository $pushRepo,
+        PushNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->repositories = $repositories;
-        $this->pushes = $pushes;
+        $this->repositoryRepo = $repositoryRepo;
+        $this->pushRepo = $pushRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $repository = $this->repositories->findOneBy(['id' => $params['id']]);
-
-        if (!($repository instanceof Repository)) {
-            call_user_func($notFound);
-            return;
+        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        if (!$repository instanceof Repository) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.pushes', ['id' => $repository->getId()]], 'type' => 'Pushes'],
-            'repository' => ['href' => ['api.repository', ['id' => $repository->getId()]], 'type' => 'Repository'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $pushes = $this->pushes->getForRepository($repository);
-
-        $content = [
-            'count' => count($pushes),
-            'pushes' => []
-        ];
-
-        foreach ($pushes as $push) {
-            $content['pushes'][] = [
-                'id' => $push->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.push', ['id' => $push->getId()]], 'type' => 'Push']
-                ])
-            ];
+        $pushes = $this->pushRepo->getForRepository($repository);
+        if (!$pushes) {
+            return $response->setStatus(404);
         }
 
-        $this->api->prepareResponse($response, $links, $content);
+        // Normalize all the builds
+        $normalized = array_map(function($push) {
+            return $this->normalizer->normalizeLinked($push);
+        }, $pushes);
+
+        $this->api->prepareResponse($response, $normalized);
     }
 }

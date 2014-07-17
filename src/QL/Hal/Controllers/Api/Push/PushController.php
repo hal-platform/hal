@@ -1,16 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Push;
 
+use QL\Hal\Api\PushNormalizer;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\PushRepository;
-use QL\Hal\Helpers\TimeHelper;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\Consumer;
 
 /**
  * API Push Controller
@@ -18,109 +20,48 @@ use QL\Hal\Core\Entity\Consumer;
 class PushController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type PushRepository
      */
-    private $url;
+    private $pushRepo;
 
     /**
-     * @var TimeHelper
+     * @type PushNormalizer
      */
-    private $time;
-
-    /**
-     * @var PushRepository
-     */
-    private $pushes;
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param UrlHelper $url
-     * @param TimeHelper $time
-     * @param PushRepository $pushes
+     * @param PushRepository $pushRepo
+     * @param PushNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        UrlHelper $url,
-        TimeHelper $time,
-        PushRepository $pushes
+        PushRepository $pushRepo,
+        PushNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->url = $url;
-        $this->time = $time;
-        $this->pushes = $pushes;
+        $this->pushRepo = $pushRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $push = $this->pushes->findOneBy(['id' => $params['id']]);
+        $push = $this->pushRepo->findOneBy(['id' => $params['id']]);
 
-        if (!($push instanceof Push)) {
-            call_user_func($notFound);
-            return;
+        if (!$push instanceof Push) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.push', ['id' => $push->getId()]], 'type' => 'Push'],
-            'log' => ['href' => ['api.push.log', ['id' => $push->getId()]], 'type' => 'Push Log'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $content = [
-            'id' => $push->getId(),
-            'url' => $this->url->urlFor('push', ['id' => $push->getId()]),
-            'status' => $push->getStatus(),
-            'start' => [
-                'text' => $this->time->relative($push->getStart(), false),
-                'datetime' => $this->time->format($push->getStart(), false, 'c')
-            ],
-            'end' => [
-                'text' => $this->time->relative($push->getEnd(), false),
-                'datetime' => $this->time->format($push->getEnd(), false, 'c')
-            ],
-            'build' => [
-                'id' => $push->getBuild()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.build', ['id' => $push->getBuild()->getId()]], 'type' => 'Build']
-                ])
-            ],
-            'deployment' => [
-                'id' => $push->getDeployment()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.deployment', ['id' => $push->getDeployment()->getId()]], 'type' => 'Deployment']
-                ])
-            ],
-            'initiator' => []
-        ];
-
-        if ($push->getUser() instanceof User) {
-            $content['initiator']['user'] = [
-                'id' => $push->getUser()->getId(),
-                '_links' => $this->api->parseLinks([
-                            'self' => ['href' => ['api.user', ['id' => $push->getUser()->getId()]], 'type' => 'User']
-                        ])
-            ];
-        } else {
-            $content['initiator']['user'] = null;
-        }
-        if ($push->getConsumer() instanceof Consumer) {
-            $content['initiator']['consumer'] = [
-                'id' => $push->getConsumer()->getId()
-            ];
-        } else {
-            $content['initiator']['consumer'] = null;
-        }
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($push));
     }
 }

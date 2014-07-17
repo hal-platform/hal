@@ -9,7 +9,6 @@ namespace QL\Hal\Controllers\Api\Build;
 
 use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Log;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
