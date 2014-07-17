@@ -492,11 +492,6 @@ parameters:
       route:        '/api'
       stack:        ['api.index']
 
-    api.logs:
-      method:       'GET'
-      route:        '/api/logs'
-      stack:        ['api.logs']
-
     api.environments:
       method:       'GET'
       route:        '/api/environments'
