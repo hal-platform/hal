@@ -4,15 +4,13 @@
     "type": "git",
     "url": "http://git/web-core/hal.git"
   },
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "gulp": "^3.6.0",
     "gulp-compass": "^1.1.8",
     "gulp-autoprefixer": "0.0.6",
     "gulp-load-plugins": "^0.4.0",
     "open": "0.0.4",
     "tiny-lr": "0.0.5",
-    "gulp-livereload": "^1.2.0",
     "gulp-jshint": "^1.5.3",
     "gulp-concat": "^2.2.0",
     "gulp-uglify": "^0.3.0",
@@ -21,5 +19,9 @@
     "requirejs": "^2.1.11",
     "gulp-imagemin": "^0.5.0",
     "gulp-clean": "^0.2.4"
+  },
+  "devDependencies": {
+    "tiny-lr": "0.0.5",
+    "gulp-livereload": "^1.2.0"
   }
 }
