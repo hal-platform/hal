@@ -149,6 +149,9 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn(new ArrayCollection($pushes));
 
         $this->api
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
+        $this->api
             ->shouldReceive('prepareResponse')
             ->with($this->response, $this->storeExpectation($content));
 
@@ -164,15 +167,23 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response);
 
         $expectedContent = [
-            [
-                'uniqueId' => 'push-1',
-                'type' => 'push',
-                'id' => '1'
+            'count' => 2,
+            '_links' => [
+                'self' => 'link'
             ],
-            [
-                'uniqueId' => 'build-1',
-                'type' => 'build',
-                'id' => '1'
+            '_embedded' => [
+                'jobs' => [
+                    [
+                        'uniqueId' => 'push-1',
+                        'type' => 'push',
+                        'id' => '1'
+                    ],
+                    [
+                        'uniqueId' => 'build-1',
+                        'type' => 'build',
+                        'id' => '1'
+                    ]
+                ]
             ]
         ];
 

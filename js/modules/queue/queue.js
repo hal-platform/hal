@@ -104,9 +104,9 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
 
             // retrieve jobs created since last read
             $.getJSON(endpoint, function(data) {
-                if (data.length > 0) {
+                if (data.count > 0) {
                     $('#js-emptyQueue').remove();
-                    _this.addJobs(data.reverse());
+                    _this.addJobs(data._embedded.jobs.reverse());
                 }
             });
         },
@@ -127,11 +127,11 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
             // call api and update job rows
             var endpoint ='/api/queue-refresh/' + jobsToUpdate.join('+');
             $.getJSON(endpoint, function(data) {
-                for (var entry in data) {
-                    if (data[entry].type == 'build') {
-                        jobUpdater.updateBuildJob(data[entry]);
+                for (var entry in data._embedded.jobs) {
+                    if (data._embedded.jobs[entry].type == 'build') {
+                        jobUpdater.updateBuildJob(data._embedded.jobs[entry]);
                     } else {
-                        jobUpdater.updatePushJob(data[entry]);
+                        jobUpdater.updatePushJob(data._embedded.jobs[entry]);
                     }
                 }
             });

@@ -25,9 +25,9 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                 buildIdShort: buildId.slice(0, 10),
                 buildStatusStyle: this.determineStatusStyle(build.status),
                 buildStatus: build.status,
-                environmentName: build.environment.key,
-                repoId:  build.repository.id,
-                repoName: build.repository.key,
+                environmentName: build._links.environment.title,
+                repoId:  build._embedded.repository.id,
+                repoName: build._embedded.repository.key,
                 buildTime: build.created.text
             };
 
@@ -41,10 +41,10 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                 pushIdShort: pushId.slice(0, 10),
                 pushStatusStyle: this.determineStatusStyle(push.status),
                 pushStatus: push.status,
-                environmentName: push.build.environment.key,
-                serverName: push.deployment.server.name,
-                repoId:  push.repository.id,
-                repoName: push.repository.name,
+                environmentName: push._embedded.build._links.environment.title,
+                serverName: push._embedded.deployment._links.server.title,
+                repoId:  push._embedded.build._embedded.repository.id,
+                repoName: push._embedded.build._embedded.repository.key,
                 pushTime: push.created.text
             };
 

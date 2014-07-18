@@ -83,6 +83,9 @@ class QueueRefreshControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn(['id' => '5']);
 
         $this->api
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
+        $this->api
             ->shouldReceive('prepareResponse')
             ->with($this->response, $this->storeExpectation($content));
 
@@ -97,10 +100,18 @@ class QueueRefreshControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response, ['uniqueId' => 'push-5']);
 
         $expectedContent = [
-            [
-                'uniqueId' => 'push-5',
-                'type' => 'push',
-                'id' => '5'
+            'count' => 1,
+            '_links' => [
+                'self' => 'link'
+            ],
+            '_embedded' => [
+                'jobs' => [
+                    [
+                        'uniqueId' => 'push-5',
+                        'type' => 'push',
+                        'id' => '5'
+                    ]
+                ]
             ]
         ];
 
@@ -131,6 +142,9 @@ class QueueRefreshControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn(['id' => '5']);
 
         $this->api
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
+        $this->api
             ->shouldReceive('prepareResponse')
             ->with($this->response, $this->storeExpectation($content));
 
@@ -145,15 +159,23 @@ class QueueRefreshControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response, ['uniqueId' => 'push-5 build-abc']);
 
         $expectedContent = [
-            [
-                'uniqueId' => 'build-abc',
-                'type' => 'build',
-                'id' => 'abc'
+            'count' => 2,
+            '_links' => [
+                'self' => 'link'
             ],
-            [
-                'uniqueId' => 'push-5',
-                'type' => 'push',
-                'id' => '5'
+            '_embedded' => [
+                'jobs' => [
+                    [
+                        'uniqueId' => 'build-abc',
+                        'type' => 'build',
+                        'id' => 'abc'
+                    ],
+                    [
+                        'uniqueId' => 'push-5',
+                        'type' => 'push',
+                        'id' => '5'
+                    ]
+                ]
             ]
         ];
 

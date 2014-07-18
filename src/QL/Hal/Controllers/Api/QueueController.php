@@ -108,7 +108,17 @@ class QueueController
             return $response->setStatus(404);
         }
 
-        $this->api->prepareResponse($response, $this->formatQueue($jobs));
+        $content = [
+            'count' => count($jobs),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => 'api.queue'])
+            ],
+            '_embedded' => [
+                'jobs' => $this->formatQueue($jobs)
+            ]
+        ];
+
+        $this->api->prepareResponse($response, $content);
     }
 
     /**
@@ -121,10 +131,9 @@ class QueueController
 
         $criteria = [
             'build' => [
-                'environment' => [],
                 'repository' => []
             ],
-            'deployment' => ['server' => []]
+            'deployment' => []
         ];
 
         foreach ($queue as $job) {
