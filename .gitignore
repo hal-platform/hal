@@ -9,6 +9,7 @@
 /tests/phpunit.xml
 
 # compiled assets / package installation
+/.bundle/
 /.sass-cache/
 /bower_components/
 /node_modules/
