@@ -11,6 +11,9 @@
 # compiled assets / package installation
 /.bundle/
 /.sass-cache/
+/bin/sass
+/bin/sass-convert
+/bin/scss
 /bower_components/
 /node_modules/
 /public/css/

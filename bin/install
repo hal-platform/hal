@@ -6,11 +6,13 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 
 COMPOSER="$DIR/composer install --prefer-dist --no-interaction --no-dev"
 NPM="npm install --production"
-#BUNDLER="bundle install" # use flags: --deployment --binstubs for isolated gems
-BUNDLER="bundle install --deployment"
+BUNDLER="bundle install"
+
+# Use isolated gem installation if deploying from HAL
+if [ -n "$HAL_ENVIRONMENT" ]; then
+    BUNDLER="bundle install --deployment  --binstubs"
+fi
 
 $COMPOSER
 $NPM
-
-gem list
 $BUNDLER
