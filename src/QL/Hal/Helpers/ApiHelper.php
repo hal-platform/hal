@@ -40,7 +40,12 @@ class ApiHelper
     }
 
     /**
-     * Formats a link
+     * Formats a link from properties.
+     *
+     * "href" can be in the following formats:
+     *   - 'route.key'
+     *   - ['route.key', [route.parameters]]
+     *   - ['route.key', [route.parameters], [get.parameters]]
      *
      * @param array $properties
      * @return array
@@ -49,8 +54,14 @@ class ApiHelper
     {
         foreach ($properties as $property => &$value) {
             if ($property == 'href') {
-                if (is_array($value) && count($value) == 2) {
-                    $value = $this->url->urlFor($value[0], $value[1]);
+                if (is_array($value) && count($value) >= 2) {
+                    $suffix = '';
+                    if (isset($value[2])) {
+                        $suffix .= '?' . http_build_query($value[2]);
+                    }
+
+                    $value = $this->url->urlFor($value[0], $value[1]) . $suffix;
+
                 } else {
                     $value = $this->url->urlFor($value);
                 }

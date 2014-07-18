@@ -64,17 +64,20 @@ class RepositoriesControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn($repos);
 
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($repos[0])
-            ->andReturn('normalized-repo1');
+            ->andReturn('linked-repo1');
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($repos[1])
-            ->andReturn('normalized-repo2');
+            ->andReturn('linked-repo2');
 
         $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
+        $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-repo1', 'normalized-repo2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
         $controller = new RepositoriesController(
@@ -86,5 +89,16 @@ class RepositoriesControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['repositories']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

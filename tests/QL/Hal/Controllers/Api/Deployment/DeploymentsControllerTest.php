@@ -104,18 +104,21 @@ class DeploymentsControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn($deployments);
 
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($deployments[0])
-            ->andReturn('normalized-deployment1');
+            ->andReturn('linked-deployment1');
 
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($deployments[1])
-            ->andReturn('normalized-deployment2');
+            ->andReturn('linked-deployment2');
 
         $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
+        $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-deployment1', 'normalized-deployment2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
         $controller = new DeploymentsController(
@@ -128,5 +131,16 @@ class DeploymentsControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response, ['id' => 'test']);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['deployments']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

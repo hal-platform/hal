@@ -11,7 +11,6 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Helpers\UrlHelper;
 
 class DeploymentNormalizer
 {
@@ -19,11 +18,6 @@ class DeploymentNormalizer
      * @type ApiHelper
      */
     private $api;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
 
     /**
      * @type RepositoryNormalizer
@@ -42,18 +36,15 @@ class DeploymentNormalizer
 
     /**
      * @param ApiHelper $api
-     * @param UrlHelper $url
      * @param RepositoryNormalizer $repoNormalizer
      * @param ServerNormalizer $serverNormalizer
      */
     public function __construct(
         ApiHelper $api,
-        UrlHelper $url,
         RepositoryNormalizer $repoNormalizer,
         ServerNormalizer $serverNormalizer
     ) {
         $this->api = $api;
-        $this->url = $url;
         $this->repoNormalizer = $repoNormalizer;
         $this->serverNormalizer = $serverNormalizer;
 
@@ -69,15 +60,11 @@ class DeploymentNormalizer
      * @param Deployment $deployment
      * @return array
      */
-    public function normalizeLinked(Deployment $deployment)
+    public function linked(Deployment $deployment)
     {
-        $content = [
-            'id' => $deployment->getId()
-        ];
-
-        $content = array_merge($content, $this->links($deployment));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.deployment', ['id' => $deployment->getId()]]
+        ]);
     }
 
     /**
@@ -95,14 +82,15 @@ class DeploymentNormalizer
 
         $content = [
             'id' => $deployment->getId(),
-            'path' => $deployment->getPath(),
-            'repository' => $this->normalizeRepository($deployment->getRepository(), $criteria['repository']),
-            'server' => $this->normalizeServer($deployment->getServer(), $criteria['server'])
+            'path' => $deployment->getPath()
         ];
 
-        $content = array_merge($content, $this->links($deployment));
-
-        return $content;
+        return array_merge_recursive(
+            $content,
+            $this->links($deployment),
+            $this->normalizeRepository($deployment->getRepository(), $criteria['repository']),
+            $this->normalizeServer($deployment->getServer(), $criteria['server'])
+        );
     }
 
     /**
@@ -111,15 +99,27 @@ class DeploymentNormalizer
      */
     private function links(Deployment $deployment)
     {
-        $links = [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.deployment', ['id' => $deployment->getId()]]],
-                'lastPush' => ['href' => ['api.deployment.lastpush', ['id' => $deployment->getId()]], 'type' => 'Last Push'],
-                'lastSuccessfulPush' => ['href' => ['api.deployment.lastpush', ['id' => $deployment->getId()]], 'type' => 'Last Successful Push'],
-            ])
+        $links =  [
+            '_links' => [
+                'self' => $this->linked($deployment),
+                'lastPush' => $this->api->parseLink([
+                    'href' => [
+                        'api.deployment.lastpush', ['id' => $deployment->getId()]
+                    ]
+                ]),
+                'lastSuccessfulPush' => $this->api->parseLink([
+                    'href' => [
+                        'api.deployment.lastpush', ['id' => $deployment->getId()], ['status' => 'Success']
+                    ]
+                ]),
+                'index' => $this->api->parseLink([
+                    'href' => [
+                        'api.deployments', ['id' => $deployment->getRepository()->getId()]
+                    ]
+                ])
+            ]
         ];
 
-        $links['_links']['lastSuccessfulPush']['href'] .= '?status=Success';
         return $links;
     }
 
@@ -131,10 +131,19 @@ class DeploymentNormalizer
     private function normalizeRepository(Repository $repository, $criteria)
     {
         if ($criteria === null) {
-            return $this->repoNormalizer->normalizeLinked($repository);
+            $normalized = $this->repoNormalizer->linked($repository);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->repoNormalizer->normalize($repository, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->repoNormalizer->normalize($repository, $criteria);
+        return [
+            $type => [
+                'repository' => $normalized
+            ]
+        ];
     }
 
     /**
@@ -145,9 +154,18 @@ class DeploymentNormalizer
     private function normalizeServer(Server $server, $criteria)
     {
         if ($criteria === null) {
-            return $this->serverNormalizer->normalizeLinked($server);
+            $normalized = $this->serverNormalizer->linked($server);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->serverNormalizer->normalize($server, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->serverNormalizer->normalize($server, $criteria);
+        return [
+            $type => [
+                'server' => $normalized
+            ]
+        ];
     }
 }

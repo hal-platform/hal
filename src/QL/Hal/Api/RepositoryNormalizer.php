@@ -56,15 +56,12 @@ class RepositoryNormalizer
      * @param Repository $repository
      * @return array
      */
-    public function normalizeLinked(Repository $repository)
+    public function linked(Repository $repository)
     {
-        $content = [
-            'id' => $repository->getId()
-        ];
-
-        $content = array_merge($content, $this->links($repository));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.repository', ['id' => $repository->getId()]],
+            'title' => $repository->getKey()
+        ]);
     }
 
     /**
@@ -95,13 +92,14 @@ class RepositoryNormalizer
             ],
             'buildCmd' => $repository->getBuildCmd(),
             'prePushCmd' => $repository->getPrePushCmd(),
-            'postPushCmd' => $repository->getPostPushCmd(),
-            'group' => $this->normalizeGroup($repository->getGroup(), $criteria['group'])
+            'postPushCmd' => $repository->getPostPushCmd()
         ];
 
-        $content = array_merge($content, $this->links($repository));
-
-        return $content;
+        return array_merge_recursive(
+            $content,
+            $this->links($repository),
+            $this->normalizeGroup($repository->getGroup(), $criteria['group'])
+        );
     }
 
     /**
@@ -111,12 +109,13 @@ class RepositoryNormalizer
     private function links(Repository $repository)
     {
         return [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.repository', ['id' => $repository->getId()]]],
-                'deployments' => ['href' => ['api.deployments', ['id' => $repository->getId()]], 'type' => 'Deployments'],
-                'builds' => ['href' => ['api.builds', ['id' => $repository->getId()]], 'type' => 'Builds'],
-                'pushes' => ['href' => ['api.pushes', ['id' => $repository->getId()]], 'type' => 'Pushes']
-            ])
+            '_links' => [
+                'self' => $this->linked($repository),
+                'deployments' => $this->api->parseLink(['href' => ['api.deployments', ['id' => $repository->getId()]]]),
+                'builds' => $this->api->parseLink(['href' => ['api.builds', ['id' => $repository->getId()]]]),
+                'pushes' => $this->api->parseLink(['href' => ['api.pushes', ['id' => $repository->getId()]]]),
+                'index' => $this->api->parseLink(['href' => 'api.repositories'])
+            ]
         ];
     }
 
@@ -128,9 +127,18 @@ class RepositoryNormalizer
     private function normalizeGroup(Group $group, $criteria)
     {
         if ($criteria === null) {
-            return $this->groupNormalizer->normalizeLinked($group);
+            $normalized = $this->groupNormalizer->linked($group);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->groupNormalizer->normalize($group, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->groupNormalizer->normalize($group, $criteria);
+        return [
+            $type => [
+                'group' => $normalized
+            ]
+        ];
     }
 }

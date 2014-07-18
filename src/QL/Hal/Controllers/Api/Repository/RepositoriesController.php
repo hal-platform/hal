@@ -59,11 +59,43 @@ class RepositoriesController
             return $response->setStatus(404);
         }
 
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($repos),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => 'api.repositories'])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizeRepositories($repos, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $repos
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizeRepositories(array $repos, $isResolved)
+    {
         // Normalize all the builds
-        $normalized = array_map(function($repo) {
-            return $this->normalizer->normalize($repo);
+        $normalized = array_map(function($repo) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($repo);
+            }
+
+            return $this->normalizer->linked($repo);
         }, $repos);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'repositories' => $normalized
+            ]
+        ];
     }
 }

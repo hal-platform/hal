@@ -80,7 +80,6 @@ class EnvironmentsController
      */
     private function normalizeEnvironments(array $environments, $isResolved)
     {
-        // Normalize all the builds
         $normalized = array_map(function($environment) use ($isResolved) {
             if ($isResolved) {
                 return $this->normalizer->normalize($environment);

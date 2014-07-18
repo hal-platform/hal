@@ -105,18 +105,21 @@ class BuildsControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn($builds);
 
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($builds[0])
-            ->andReturn('normalized-build1');
+            ->andReturn('linked-build1');
 
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($builds[1])
-            ->andReturn('normalized-build2');
+            ->andReturn('linked-build2');
 
         $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
+        $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-build1', 'normalized-build2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
         $controller = new BuildsController(
@@ -129,5 +132,16 @@ class BuildsControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response, ['id' => 'repo-id']);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['builds']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

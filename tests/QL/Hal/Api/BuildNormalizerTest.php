@@ -49,8 +49,8 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
         $build->setId('1234');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $normalizer = new BuildNormalizer(
             $this->api,
@@ -60,14 +60,9 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
             $this->repoNormalizer,
             $this->userNormalizer
         );
-        $actual = $normalizer->normalizeLinked($build);
+        $actual = $normalizer->linked($build);
 
-        $expected = [
-            'id' => '1234',
-            '_links' => 'links'
-        ];
-
-        $this->assertSame($expected, $actual);
+        $this->assertSame('link', $actual);
     }
 
     public function testNormalizationWithoutCriteria()
@@ -83,8 +78,8 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
         $build->setUser($user);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->time
             ->shouldReceive('relative')
             ->andReturn('right now');
@@ -93,14 +88,14 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
             ->andReturn('');
 
         $this->envNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-env');
+            ->shouldReceive('linked')
+            ->andReturn('linked-env');
         $this->repoNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-repo');
+            ->shouldReceive('linked')
+            ->andReturn('linked-repo');
         $this->userNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-user');
+            ->shouldReceive('linked')
+            ->andReturn('linked-user');
 
         $normalizer = new BuildNormalizer(
             $this->api,
@@ -136,13 +131,14 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
                 'text' => null,
                 'url' => 'http://git/commit'
             ],
-            'environment' => 'normalized-env',
-            'repository' => 'normalized-repo',
-            'initiator' => [
-                'user' => 'normalized-user',
-                'consumer' => null
-            ],
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'log' => 'link',
+                'index' => 'link',
+                'repository' => 'linked-repo',
+                'environment' => 'linked-env',
+                'user' => 'linked-user'
+            ]
         ];
 
         $this->assertSame($expected, $actual);
@@ -159,8 +155,8 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
         $build->setRepository($repo);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->time
             ->shouldReceive('relative')
             ->andReturn('right now');
@@ -214,13 +210,15 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
                 'text' => null,
                 'url' => 'http://git/commit'
             ],
-            'environment' => 'normalized-env',
-            'repository' => 'normalized-repo',
-            'initiator' => [
-                'user' => null,
-                'consumer' => null
+            '_links' => [
+                'self' => 'link',
+                'log' => 'link',
+                'index' => 'link'
             ],
-            '_links' => 'links'
+            '_embedded' => [
+                'repository' => 'normalized-repo',
+                'environment' => 'normalized-env'
+            ]
         ];
 
         $this->assertSame($expected, $actual);

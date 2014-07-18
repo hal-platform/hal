@@ -32,7 +32,7 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
             ->andReturn('http://git/user/repo');
     }
 
-    public function testNormalizationOfLinkedResource()
+    public function testNormalizationOfLink()
     {
         $groupNormalizer = Mockery::mock('QL\Hal\Api\GroupNormalizer');
 
@@ -40,18 +40,13 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
         $repo->setId('1234');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $normalizer = new RepositoryNormalizer($this->api, $this->url, $groupNormalizer);
-        $actual = $normalizer->normalizeLinked($repo);
+        $actual = $normalizer->linked($repo);
 
-        $expected = [
-            'id' => '1234',
-            '_links' => 'links'
-        ];
-
-        $this->assertSame($expected, $actual);
+        $this->assertSame('link', $actual);
     }
 
     public function testNormalizationWithoutCriteria()
@@ -69,11 +64,11 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
         $repo->setGroup($group);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $groupNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-group');
+            ->shouldReceive('linked')
+            ->andReturn('linked-group');
 
         $normalizer = new RepositoryNormalizer($this->api, $this->url, $groupNormalizer);
         $actual = $normalizer->normalize($repo);
@@ -95,8 +90,14 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
             'buildCmd' => null,
             'prePushCmd' => null,
             'postPushCmd' => null,
-            'group' => 'normalized-group',
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'deployments' => 'link',
+                'builds' => 'link',
+                'pushes' => 'link',
+                'index' => 'link',
+                'group' => 'linked-group'
+            ]
         ];
 
         $this->assertSame($expected, $actual);
@@ -114,12 +115,12 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
         $repo->setGroup($group);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $groupNormalizer
             ->shouldReceive('normalize')
             ->with($group, ['test1'])
-            ->andReturn('normalized-group');
+            ->andReturn('embedded-group');
 
         $normalizer = new RepositoryNormalizer($this->api, $this->url, $groupNormalizer);
         $actual = $normalizer->normalize($repo, ['group' => ['test1']]);
@@ -141,8 +142,16 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
             'buildCmd' => null,
             'prePushCmd' => null,
             'postPushCmd' => null,
-            'group' => 'normalized-group',
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'deployments' => 'link',
+                'builds' => 'link',
+                'pushes' => 'link',
+                'index' => 'link'
+            ],
+            '_embedded' => [
+                'group' => 'embedded-group'
+            ]
         ];
 
         $this->assertSame($expected, $actual);

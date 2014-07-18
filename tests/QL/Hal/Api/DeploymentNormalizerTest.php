@@ -16,44 +16,29 @@ use QL\Hal\Core\Entity\Server;
 class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
 {
     public $api;
-    public $url;
     public $repoNormalizer;
     public $serverNormalizer;
 
     public function setUp()
     {
         $this->api = Mockery::mock('QL\Hal\Helpers\ApiHelper');
-        $this->url = Mockery::mock('QL\Hal\Helpers\UrlHelper');
         $this->repoNormalizer = Mockery::mock('QL\Hal\Api\RepositoryNormalizer');
         $this->serverNormalizer = Mockery::mock('QL\Hal\Api\ServerNormalizer');
     }
 
-    public function testNormalizationOfLinkedResource()
+    public function testNormalizationOfLink()
     {
         $deployment = new Deployment;
         $deployment->setId('1234');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn([
-                'self' => 'url',
-                'lastPush' => 'url',
-                'lastSuccessfulPush' => ['href' => 'url']
-            ]);
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
-        $normalizer = new DeploymentNormalizer($this->api, $this->url, $this->repoNormalizer, $this->serverNormalizer);
-        $actual = $normalizer->normalizeLinked($deployment);
+        $normalizer = new DeploymentNormalizer($this->api, $this->repoNormalizer, $this->serverNormalizer);
+        $actual = $normalizer->linked($deployment);
 
-        $expected = [
-            'id' => '1234',
-            '_links' => [
-                'self' => 'url',
-                'lastPush' => 'url',
-                'lastSuccessfulPush' => ['href' => 'url?status=Success']
-            ]
-        ];
-
-        $this->assertSame($expected, $actual);
+        $this->assertSame('link', $actual);
     }
 
     public function testNormalizationWithoutCriteria()
@@ -68,35 +53,29 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
         $deployment->setServer($server);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn([
-                'self' => 'url',
-                'lastPush' => 'url',
-                'lastSuccessfulPush' => ['href' => 'url']
-            ]);
-        $this->url
-            ->shouldReceive('urlFor')
-            ->andReturn('http://hal/page');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $this->repoNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-repo');
+            ->shouldReceive('linked')
+            ->andReturn('linked-repo');
         $this->serverNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-server');
+            ->shouldReceive('linked')
+            ->andReturn('linked-server');
 
-        $normalizer = new DeploymentNormalizer($this->api, $this->url, $this->repoNormalizer, $this->serverNormalizer);
+        $normalizer = new DeploymentNormalizer($this->api, $this->repoNormalizer, $this->serverNormalizer);
         $actual = $normalizer->normalize($deployment);
 
         $expected = [
             'id' => '1234',
             'path' => '/server/path',
-            'repository' => 'normalized-repo',
-            'server' => 'normalized-server',
             '_links' => [
-                'self' => 'url',
-                'lastPush' => 'url',
-                'lastSuccessfulPush' => ['href' => 'url?status=Success']
+                'self' => 'link',
+                'lastPush' => 'link',
+                'lastSuccessfulPush' => 'link',
+                'index' => 'link',
+                'repository' => 'linked-repo',
+                'server' => 'linked-server'
             ]
         ];
 
@@ -115,15 +94,8 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
         $deployment->setServer($server);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn([
-                'self' => 'url',
-                'lastPush' => 'url',
-                'lastSuccessfulPush' => ['href' => 'url']
-            ]);
-        $this->url
-            ->shouldReceive('urlFor')
-            ->andReturn('http://hal/page');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $this->repoNormalizer
             ->shouldReceive('normalize')
@@ -134,7 +106,7 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
             ->with($server, ['test2'])
             ->andReturn('normalized-server');
 
-        $normalizer = new DeploymentNormalizer($this->api, $this->url, $this->repoNormalizer, $this->serverNormalizer);
+        $normalizer = new DeploymentNormalizer($this->api, $this->repoNormalizer, $this->serverNormalizer);
         $actual = $normalizer->normalize($deployment, [
             'repository' => ['test1'],
             'server' => ['test2']
@@ -143,12 +115,15 @@ class DeploymentNormalizerTest extends PHPUnit_Framework_TestCase
         $expected = [
             'id' => '1234',
             'path' => '/server/path',
-            'repository' => 'normalized-repo',
-            'server' => 'normalized-server',
             '_links' => [
-                'self' => 'url',
-                'lastPush' => 'url',
-                'lastSuccessfulPush' => ['href' => 'url?status=Success']
+                'self' => 'link',
+                'lastPush' => 'link',
+                'lastSuccessfulPush' => 'link',
+                'index' => 'link'
+            ],
+            '_embedded' => [
+                'repository' => 'normalized-repo',
+                'server' => 'normalized-server'
             ]
         ];
 

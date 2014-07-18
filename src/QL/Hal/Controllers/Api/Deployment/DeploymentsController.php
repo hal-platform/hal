@@ -76,11 +76,42 @@ class DeploymentsController
             return $response->setStatus(404);
         }
 
-        // Normalize all the deployments
-        $normalized = array_map(function($deployment) {
-            return $this->normalizer->normalize($deployment);
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($deployments),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => ['api.deployments', ['id' => $repository->getId()]]])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizeDeployments($deployments, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $deployments
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizeDeployments(array $deployments, $isResolved)
+    {
+        $normalized = array_map(function($deployment) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($deployment);
+            }
+
+            return $this->normalizer->linked($deployment);
         }, $deployments);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'deployments' => $normalized
+            ]
+        ];
     }
 }

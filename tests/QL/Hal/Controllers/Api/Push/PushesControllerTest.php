@@ -105,17 +105,20 @@ class PushesControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn($pushes);
 
         $normalizer
-            ->shouldReceive('normalizeLinked')
+            ->shouldReceive('linked')
             ->with($pushes[0])
-            ->andReturn('normalized-push1');
+            ->andReturn('linked-push1');
         $normalizer
-            ->shouldReceive('normalizeLinked')
+            ->shouldReceive('linked')
             ->with($pushes[1])
-            ->andReturn('normalized-push2');
+            ->andReturn('linked-push2');
 
         $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
+        $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-push1', 'normalized-push2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
         $controller = new PushesController(
@@ -128,5 +131,16 @@ class PushesControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response, ['id' => 'test']);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['pushes']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

@@ -81,7 +81,6 @@ class GroupsController
      */
     private function normalizeGroups(array $groups, $isResolved)
     {
-        // Normalize all the builds
         $normalized = array_map(function($group) use ($isResolved) {
             if ($isResolved) {
                 return $this->normalizer->normalize($group);

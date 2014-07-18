@@ -76,11 +76,42 @@ class PushesController
             return $response->setStatus(404);
         }
 
-        // Normalize all the builds
-        $normalized = array_map(function($push) {
-            return $this->normalizer->normalizeLinked($push);
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($pushes),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => ['api.pushes', ['id' => $repository->getId()]]])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizePushes($pushes, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $pushes
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizePushes(array $pushes, $isResolved)
+    {
+        $normalized = array_map(function($push) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($push);
+            }
+
+            return $this->normalizer->linked($push);
         }, $pushes);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'pushes' => $normalized
+            ]
+        ];
     }
 }

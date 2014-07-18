@@ -38,8 +38,8 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
         $push->setId('1234');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $normalizer = new PushNormalizer(
             $this->api,
@@ -49,14 +49,9 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
             $this->deploymentNormalizer,
             $this->userNormalizer
         );
-        $actual = $normalizer->normalizeLinked($push);
+        $actual = $normalizer->linked($push);
 
-        $expected = [
-            'id' => '1234',
-            '_links' => 'links'
-        ];
-
-        $this->assertSame($expected, $actual);
+        $this->assertSame('link', $actual);
     }
 
     public function testNormalizationWithoutCriteria()
@@ -70,8 +65,8 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
         $push->setDeployment($deployment);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
@@ -83,11 +78,11 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
             ->andReturn('');
 
         $this->buildNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-build');
+            ->shouldReceive('linked')
+            ->andReturn('linked-build');
         $this->deploymentNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-deployment');
+            ->shouldReceive('linked')
+            ->andReturn('linked-deployment');
 
         $normalizer = new PushNormalizer(
             $this->api,
@@ -115,13 +110,12 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
                 'text' => 'right now',
                 'datetime' => ''
             ],
-            'build' => 'normalized-build',
-            'deployment' => 'normalized-deployment',
-            'initiator' => [
-                'user' => null,
-                'consumer' => null
-            ],
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'log' => 'link',
+                'build' => 'linked-build',
+                'deployment' => 'linked-deployment'
+            ]
         ];
 
         $this->assertSame($expected, $actual);
@@ -138,8 +132,8 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
         $push->setDeployment($deployment);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
@@ -188,13 +182,15 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
                 'text' => 'right now',
                 'datetime' => ''
             ],
-            'build' => 'normalized-build',
-            'deployment' => 'normalized-deployment',
-            'initiator' => [
-                'user' => null,
-                'consumer' => null
+
+            '_links' => [
+                'self' => 'link',
+                'log' => 'link'
             ],
-            '_links' => 'links'
+            '_embedded' => [
+                'build' => 'normalized-build',
+                'deployment' => 'normalized-deployment'
+            ]
         ];
 
         $this->assertSame($expected, $actual);

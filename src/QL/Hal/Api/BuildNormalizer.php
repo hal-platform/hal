@@ -88,15 +88,11 @@ class BuildNormalizer
      * @param Build $build
      * @return array
      */
-    public function normalizeLinked(Build $build)
+    public function linked(Build $build)
     {
-        $content = [
-            'id' => $build->getId()
-        ];
-
-        $content = array_merge($content, $this->links($build));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.build', ['id' => $build->getId()]]
+        ]);
     }
 
     /**
@@ -143,25 +139,16 @@ class BuildNormalizer
                     $build->getRepository()->getGithubRepo(),
                     $build->getCommit()
                 )
-            ],
-            'environment' => $this->normalizeEnvironment($build->getEnvironment(), $criteria['environment']),
-            'repository' => $this->normalizeRepository($build->getRepository(), $criteria['repository']),
-            'initiator' => [
-                'user' => $this->normalizeUser($build->getUser(), $criteria['user']),
-                'consumer' => null
             ]
         ];
 
-        if ($build->getConsumer() instanceof Consumer) {
-            $content['initiator']['consumer'] = [
-                'id' => $build->getConsumer()->getId()
-            ];
-        }
-
-
-        $content = array_merge($content, $this->links($build));
-
-        return $content;
+        return array_merge_recursive(
+            $content,
+            $this->links($build),
+            $this->normalizeRepository($build->getRepository(), $criteria['repository']),
+            $this->normalizeEnvironment($build->getEnvironment(), $criteria['environment']),
+            $this->normalizeUser($build->getUser(), $criteria['user'])
+        );
     }
 
     /**
@@ -171,10 +158,11 @@ class BuildNormalizer
     private function links(Build $build)
     {
         return [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.build', ['id' => $build->getId()]]],
-                'log' => ['href' => ['api.build.log', ['id' => $build->getId()]], 'type' => 'Build Log']
-            ])
+            '_links' => [
+                'self' => $this->linked($build),
+                'log' => $this->api->parseLink(['href' => ['api.build.log', ['id' => $build->getId()]]]),
+                'index' => $this->api->parseLink(['href' => ['api.builds', ['id' => $build->getRepository()->getId()]]]),
+            ]
         ];
     }
 
@@ -186,10 +174,19 @@ class BuildNormalizer
     private function normalizeEnvironment(Environment $environment, $criteria)
     {
         if ($criteria === null) {
-            return $this->envNormalizer->normalizeLinked($environment);
+            $normalized = $this->envNormalizer->linked($environment);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->envNormalizer->normalize($environment, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->envNormalizer->normalize($environment, $criteria);
+        return [
+            $type => [
+                'environment' => $normalized
+            ]
+        ];
     }
 
     /**
@@ -200,10 +197,19 @@ class BuildNormalizer
     private function normalizeRepository(Repository $repository, $criteria)
     {
         if ($criteria === null) {
-            return $this->repoNormalizer->normalizeLinked($repository);
+            $normalized = $this->repoNormalizer->linked($repository);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->repoNormalizer->normalize($repository, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->repoNormalizer->normalize($repository, $criteria);
+        return [
+            $type => [
+                'repository' => $normalized
+            ]
+        ];
     }
 
     /**
@@ -216,13 +222,22 @@ class BuildNormalizer
     private function normalizeUser(User $user = null, $criteria)
     {
         if ($user === null) {
-            return null;
+            return [];
         }
 
         if ($criteria === null) {
-            return $this->userNormalizer->normalizeLinked($user);
+            $normalized = $this->userNormalizer->linked($user);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->userNormalizer->normalize($user, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->userNormalizer->normalize($user, $criteria);
+        return [
+            $type => [
+                'user' => $normalized
+            ]
+        ];
     }
 }

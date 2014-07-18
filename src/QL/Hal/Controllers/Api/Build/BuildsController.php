@@ -75,11 +75,42 @@ class BuildsController
             return $response->setStatus(404);
         }
 
-        // Normalize all the builds
-        $normalized = array_map(function($build) {
-            return $this->normalizer->normalize($build);
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($builds),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => ['api.builds', ['id' => $repository->getId()]]])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizeBuilds($builds, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $builds
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizeBuilds(array $builds, $isResolved)
+    {
+        $normalized = array_map(function($build) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($build);
+            }
+
+            return $this->normalizer->linked($build);
         }, $builds);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'builds' => $normalized
+            ]
+        ];
     }
 }

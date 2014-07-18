@@ -266,7 +266,6 @@ services:
     class: 'QL\Hal\Api\DeploymentNormalizer'
     arguments:
         - @api.helper
-        - @url.helper
         - @api.repository.normalizer
         - @api.server.normalizer
 

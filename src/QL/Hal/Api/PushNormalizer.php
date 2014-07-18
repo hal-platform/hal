@@ -88,15 +88,11 @@ class PushNormalizer
      * @param Push $push
      * @return array
      */
-    public function normalizeLinked(Push $push)
+    public function linked(Push $push)
     {
-        $content = [
-            'id' => $push->getId()
-        ];
-
-        $content = array_merge($content, $this->links($push));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.push', ['id' => $push->getId()]]
+        ]);
     }
 
     /**
@@ -127,18 +123,16 @@ class PushNormalizer
             'end' => [
                 'text' => $this->time->relative($push->getEnd(), false),
                 'datetime' => $this->time->format($push->getEnd(), false, 'c')
-            ],
-            'build' => $this->normalizeBuild($push->getBuild(), $criteria['build']),
-            'deployment' => $this->normalizeDeployment($push->getDeployment(), $criteria['deployment']),
-            'initiator' => [
-                'user' => $this->normalizeUser($push->getUser(), $criteria['user']),
-                'consumer' => null
             ]
         ];
 
-        $content = array_merge($content, $this->links($push));
-
-        return $content;
+        return array_merge_recursive(
+            $content,
+            $this->links($push),
+            $this->normalizeBuild($push->getBuild(), $criteria['build']),
+            $this->normalizeDeployment($push->getDeployment(), $criteria['deployment']),
+            $this->normalizeUser($push->getUser(), $criteria['user'])
+        );
     }
 
     /**
@@ -148,10 +142,11 @@ class PushNormalizer
     private function links(Push $push)
     {
         return [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.push', ['id' => $push->getId()]]],
-                'log' => ['href' => ['api.push.log', ['id' => $push->getId()]], 'type' => 'Push Log'],
-            ])
+            '_links' => [
+                'self' => $this->linked($push),
+                'log' => $this->api->parseLink(['href' => ['api.push.log', ['id' => $push->getId()]]]),
+                // 'index' => $this->api->parseLink(['href' => ['api.pushes', ['id' => $push->getRepository()->getId()]]]),
+            ]
         ];
     }
 
@@ -163,10 +158,19 @@ class PushNormalizer
     private function normalizeBuild(Build $build, $criteria)
     {
         if ($criteria === null) {
-            return $this->buildNormalizer->normalizeLinked($build);
+            $normalized = $this->buildNormalizer->linked($build);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->buildNormalizer->normalize($build, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->buildNormalizer->normalize($build, $criteria);
+        return [
+            $type => [
+                'build' => $normalized
+            ]
+        ];
     }
 
     /**
@@ -177,10 +181,19 @@ class PushNormalizer
     private function normalizeDeployment(Deployment $deployment, $criteria)
     {
         if ($criteria === null) {
-            return $this->deploymentNormalizer->normalizeLinked($deployment);
+            $normalized = $this->deploymentNormalizer->linked($deployment);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->deploymentNormalizer->normalize($deployment, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->deploymentNormalizer->normalize($deployment, $criteria);
+        return [
+            $type => [
+                'deployment' => $normalized
+            ]
+        ];
     }
 
     /**
@@ -193,13 +206,22 @@ class PushNormalizer
     private function normalizeUser(User $user = null, $criteria)
     {
         if ($user === null) {
-            return null;
+            return [];
         }
 
         if ($criteria === null) {
-            return $this->userNormalizer->normalizeLinked($user);
+            $normalized = $this->userNormalizer->linked($user);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->userNormalizer->normalize($user, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->userNormalizer->normalize($user, $criteria);
+        return [
+            $type => [
+                'user' => $normalized
+            ]
+        ];
     }
 }
