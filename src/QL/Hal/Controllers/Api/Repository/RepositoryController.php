@@ -1,13 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Repository;
 
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Api\RepositoryNormalizer;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Repository Controller
@@ -15,89 +20,47 @@ use QL\Hal\Helpers\ApiHelper;
 class RepositoryController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type RepositoryRepository
      */
-    private $url;
+    private $repositoryRepo;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryNormalizer
      */
-    private $repositories;
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param UrlHelper $url
-     * @param RepositoryRepository $repositories
+     * @param RepositoryRepository $repositoryRepo
+     * @param RepositoryNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        UrlHelper $url,
-        RepositoryRepository $repositories
+        RepositoryRepository $repositoryRepo,
+        RepositoryNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->url = $url;
-        $this->repositories = $repositories;
+        $this->repositoryRepo = $repositoryRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $repository = $this->repositories->findOneBy(['id' => $params['id']]);
-
-        if (!($repository instanceof Repository)) {
-            call_user_func($notFound);
-            return;
+        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        if (!$repository instanceof Repository) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.repository', ['id' => $repository->getId()]], 'type' => 'Repository'],
-            'tags' => ['href' => ['api.repository.tags', ['id' => $repository->getId()]], 'type' => 'Tags'],
-            'branches' => ['href' => ['api.repository.branches', ['id' => $repository->getId()]], 'type' => 'Branches'],
-            'pullrequests' => ['href' => ['api.repository.pullrequests', ['id' => $repository->getId()]], 'type' => 'Pull Requests'],
-            'repositories' => ['href' => 'api.repositories', 'type' => 'Repositories'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $content = [
-            'id' => $repository->getId(),
-            'url' => $this->url->urlFor('repository', ['id' => $repository->getId()]),
-            'key' => $repository->getKey(),
-            'description' => $repository->getDescription(),
-            'email' => $repository->getEmail(),
-            'githubUser' => [
-                'text' => $repository->getGithubUser(),
-                'url' => $this->url->githubUserUrl($repository->getGithubUser())
-            ],
-            'githubRepo' => [
-                'text' => $repository->getGithubRepo(),
-                'url' => $this->url->githubRepoUrl($repository->getGithubUser(), $repository->getGithubRepo())
-            ],
-            'buildCmd' => $repository->getBuildCmd(),
-            'prePushCmd' => $repository->getPrePushCmd(),
-            'postPushCmd' => $repository->getPostPushCmd(),
-            'group' => [
-                'id' => $repository->getGroup()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.group', ['id' => $repository->getGroup()->getId()]], 'type' => 'Group']
-                ])
-            ],
-            '_links' => $this->api->parseLinks([
-                'deployments' => ['href' => ['api.deployments', ['id' => $repository->getId()]], 'type' => 'Deployments'],
-                'builds' => ['href' => ['api.builds', ['id' => $repository->getId()]], 'type' => 'Builds'],
-                'pushes' => ['href' => ['api.pushes', ['id' => $repository->getId()]], 'type' => 'Pushes']
-            ]),
-        ];
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($repository));
     }
 }

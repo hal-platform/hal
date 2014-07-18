@@ -187,8 +187,8 @@ services:
     class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
     arguments:
       - @api.helper
-      - @url.helper
       - @repository.repo
+      - @api.repository.normalizer
 
   api.repository.tags:
     class: 'QL\Hal\Controllers\Api\Repository\TagsController'
@@ -227,6 +227,7 @@ services:
     arguments:
       - @api.helper
       - @repository.repo
+      - @api.repository.normalizer
 
   ######################################################################################################################
   # USER CONTROLLERS

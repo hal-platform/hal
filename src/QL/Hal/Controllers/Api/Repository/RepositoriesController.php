@@ -1,11 +1,17 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Repository;
 
+use QL\Hal\Api\RepositoryNormalizer;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Repositories Controller
@@ -13,56 +19,51 @@ use QL\Hal\Helpers\ApiHelper;
 class RepositoriesController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
-    private $repositories;
+    private $repositoryRepo;
+
+    /**
+     * @type RepositoryNormalizer
+     */
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param RepositoryRepository $repositories
+     * @param RepositoryRepository $repositoryRepo
+     * @param RepositoryNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        RepositoryRepository $repositories
+        RepositoryRepository $repositoryRepo,
+        RepositoryNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->repositories = $repositories;
+        $this->repositoryRepo = $repositoryRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
-     * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response)
     {
-        $links = [
-            'self' => ['href' => 'api.repositories'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $repositories = $this->repositories->findBy([], ['id' => 'ASC']);
-
-        $content = [
-            'count' => count($repositories),
-            'repositories' => []
-        ];
-
-        foreach ($repositories as $repository) {
-            $content['repositories'][] = [
-                'id' => $repository->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.repository', ['id' => $repository->getId()]]]
-                ])
-            ];
+        $repos = $this->repositoryRepo->findBy([], ['id' => 'ASC']);
+        if (!$repos) {
+            return $response->setStatus(404);
         }
 
-        $this->api->prepareResponse($response, $links, $content);
+        // Normalize all the builds
+        $normalized = array_map(function($repo) {
+            return $this->normalizer->normalize($repo);
+        }, $repos);
+
+        $this->api->prepareResponse($response, $normalized);
     }
 }
