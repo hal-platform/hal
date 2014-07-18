@@ -1,10 +1,15 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api;
 
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Index Controller
@@ -12,37 +17,38 @@ use QL\Hal\Helpers\ApiHelper;
 class IndexController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
      * @param ApiHelper $api
      */
-    public function __construct(
-        ApiHelper $api
-    ) {
+    public function __construct(ApiHelper $api)
+    {
         $this->api = $api;
     }
 
     /**
      * @param Request $request
      * @param Response $response
-     * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response)
     {
         $links = [
             'self' => ['href' => 'api.index'],
-            'logs' => ['href' => 'api.logs', 'type' => 'Logs'],
-            'environments' => ['href' => 'api.environments', 'type' => 'Environments'],
-            'servers' => ['href' => 'api.servers', 'type' => 'Servers'],
-            'groups' => ['href' => 'api.groups', 'type' => 'Groups'],
-            'users' => ['href' => 'api.users', 'type' => 'Users'],
-            'repositories' => ['href' => 'api.repositories', 'type' => 'Repositories']
+            'environments' => ['href' => 'api.environments'],
+            'servers' => ['href' => 'api.servers'],
+            'groups' => ['href' => 'api.groups'],
+            'users' => ['href' => 'api.users'],
+            'repositories' => ['href' => 'api.repositories']
         ];
 
-        $this->api->prepareResponse($response, $links, []);
+        $content = [
+            '_links' => $this->api->parseLinks($links)
+        ];
+
+
+        $this->api->prepareResponse($response, $content);
     }
 }
