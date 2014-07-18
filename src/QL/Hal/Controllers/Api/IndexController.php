@@ -41,7 +41,8 @@ class IndexController
             'servers' => ['href' => 'api.servers'],
             'groups' => ['href' => 'api.groups'],
             'users' => ['href' => 'api.users'],
-            'repositories' => ['href' => 'api.repositories']
+            'repositories' => ['href' => 'api.repositories'],
+            'queue' => ['href' => 'api.queue']
         ];
 
         $content = [
