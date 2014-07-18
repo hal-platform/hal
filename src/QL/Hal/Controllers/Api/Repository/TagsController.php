@@ -1,14 +1,19 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Repository;
 
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Services\GithubService;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Services\GithubService;
-use QL\Hal\Core\Entity\Repository;
 
 /**
  * API Repository Tags Controller
@@ -16,86 +21,71 @@ use QL\Hal\Core\Entity\Repository;
 class TagsController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     * @var GithubService
+     * @type GithubService
      */
     private $github;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
-    private $repositories;
+    private $repositoryRepo;
 
     /**
      * @param ApiHelper $api
      * @param UrlHelper $url
      * @param GithubService $github
-     * @param RepositoryRepository $repositories
+     * @param RepositoryRepository $repositoryRepo
      */
     public function __construct(
         ApiHelper $api,
         UrlHelper $url,
         GithubService $github,
-        RepositoryRepository $repositories
+        RepositoryRepository $repositoryRepo
     ) {
         $this->api = $api;
         $this->url = $url;
         $this->github = $github;
-        $this->repositories = $repositories;
+        $this->repositoryRepo = $repositoryRepo;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $repository = $this->repositories->findOneBy(['id' => $params['id']]);
-
-        if (!($repository instanceof Repository)) {
-            call_user_func($notFound);
-            return;
+        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        if (!$repository instanceof Repository) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.repository.tags', ['id' => $repository->getId()]], 'type' => 'Repository Tags'],
-            'repository' => ['href' => ['api.repository', ['id' => $repository->getId()]], 'type' => 'Repository'],
-            'index' => ['href' => 'api.index']
-        ];
+        $tags = $this->github->tags($repository->getGithubUser(), $repository->getGithubRepo());
+        if (!$tags) {
+            return $response->setStatus(404);
+        }
 
-        $tags = $this->github->tags(
-            $repository->getGithubUser(),
-            $repository->getGithubRepo()
-        );
-
-        $content = [
-            'count' => count($tags),
-            'tags' => []
-        ];
-
-        foreach ($tags as $tag) {
+        $content = array_map(function($tag) use ($repository) {
             $reference = sprintf('tag/%s', $tag['name']);
-
-            $content['tags'][] = [
+            return [
                 'name' => $tag['name'],
                 'text' => $this->url->formatGitReference($reference),
                 'reference' => $reference,
                 'commit' => $tag['object']['sha'],
-                'url' => $this->url->githubTreeUrl($repository->getGithubUser(),$repository->getGithubRepo(),$tag['name'])
+                'url' => $this->url->githubTreeUrl($repository->getGithubUser(), $repository->getGithubRepo(), $tag['name'])
             ];
-        }
+        }, $tags);
 
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $content);
     }
 }

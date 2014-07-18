@@ -1,14 +1,20 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Repository;
 
+use Closure;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Services\GithubService;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Services\GithubService;
-use QL\Hal\Core\Entity\Repository;
 
 /**
  * API Repository Branches Controller
@@ -16,95 +22,92 @@ use QL\Hal\Core\Entity\Repository;
 class BranchesController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     * @var GithubService
+     * @type GithubService
      */
     private $github;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
-    private $repositories;
+    private $repositoryRepo;
 
     /**
      * @param ApiHelper $api
      * @param UrlHelper $url
      * @param GithubService $github
-     * @param RepositoryRepository $repositories
+     * @param RepositoryRepository $repositoryRepo
      */
     public function __construct(
         ApiHelper $api,
         UrlHelper $url,
         GithubService $github,
-        RepositoryRepository $repositories
+        RepositoryRepository $repositoryRepo
     ) {
         $this->api = $api;
         $this->url = $url;
         $this->github = $github;
-        $this->repositories = $repositories;
+        $this->repositoryRepo = $repositoryRepo;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $repository = $this->repositories->findOneBy(['id' => $params['id']]);
-
-        if (!($repository instanceof Repository)) {
-            call_user_func($notFound);
-            return;
+        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        if (!$repository instanceof Repository) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.repository.branches', ['id' => $repository->getId()]], 'type' => 'Repository Tags'],
-            'repository' => ['href' => ['api.repository', ['id' => $repository->getId()]], 'type' => 'Repository'],
-            'index' => ['href' => 'api.index']
-        ];
+        $branches = $this->github->branches($repository->getGithubUser(), $repository->getGithubRepo());
+        if (!$branches) {
+            return $response->setStatus(404);
+        }
 
-        $branches = $this->github->branches(
-            $repository->getGithubUser(),
-            $repository->getGithubRepo()
-        );
+        usort($branches, $this->branchNameSort());
 
-        // sort master to top, rest alphabetically
-        usort($branches, function ($a, $b) {
-            if ($a['name'] == 'master') {
-                return -1;
-            }
-            if ($b['name'] == 'master') {
-                return 1;
-            }
-            return ($a['name'] > $b['name']);
-        });
-
-        $content = [
-            'count' => count($branches),
-            'branches' => []
-        ];
-
-        foreach ($branches as $branch) {
-            $content['branches'][] = [
+        $content = array_map(function($branch) use ($repository) {
+            return [
                 'name' => $branch['name'],
                 'text' => $this->url->formatGitReference($branch['name']),
                 'reference' => $branch['name'],
                 'commit' => $branch['object']['sha'],
-                'url' => $this->url->githubTreeUrl($repository->getGithubUser(),$repository->getGithubRepo(),$branch['name'])
+                'url' => $this->url->githubTreeUrl($repository->getGithubUser(), $repository->getGithubRepo(), $branch['name'])
             ];
-        }
+        }, $branches);
 
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * Sorts master to top, rest alphabetically
+     *
+     * @return Closure
+     */
+    private function branchNameSort()
+    {
+        return function ($a, $b) {
+            if ($a['name'] == 'master') {
+                return -1;
+            }
+
+            if ($b['name'] == 'master') {
+                return 1;
+            }
+
+            return strcmp($a['name'], $b['name']);
+        };
     }
 }
