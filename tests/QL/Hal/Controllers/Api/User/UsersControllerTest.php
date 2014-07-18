@@ -64,17 +64,20 @@ class UsersControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn($users);
 
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($users[0])
-            ->andReturn('normalized-user1');
+            ->andReturn('linked-user1');
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($users[1])
-            ->andReturn('normalized-user2');
+            ->andReturn('linked-user2');
 
         $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
+        $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-user1','normalized-user2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
         $controller = new UsersController(
@@ -86,5 +89,16 @@ class UsersControllerTest extends PHPUnit_Framework_TestCase
         $controller($this->request, $this->response);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['users']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

@@ -60,11 +60,43 @@ class UsersController
             return $response->setStatus(404);
         }
 
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($users),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => 'api.users'])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizeUsers($users, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $users
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizeUsers(array $users, $isResolved)
+    {
         // Normalize all the builds
-        $normalized = array_map(function($users) {
-            return $this->normalizer->normalize($users);
+        $normalized = array_map(function($user) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($user);
+            }
+
+            return $this->normalizer->linked($user);
         }, $users);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'users' => $normalized
+            ]
+        ];
     }
 }

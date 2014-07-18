@@ -39,15 +39,12 @@ class GroupNormalizer
      * @param Group $group
      * @return array
      */
-    public function normalizeLinked(Group $group)
+    public function linked(Group $group)
     {
-        $content = [
-            'id' => $group->getId()
-        ];
-
-        $content = array_merge($content, $this->links($group));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.group', ['id' => $group->getId()]],
+            'title' => $group->getKey()
+        ]);
     }
 
     /**
@@ -67,9 +64,7 @@ class GroupNormalizer
             'name' => $group->getName(),
         ];
 
-        $content = array_merge($content, $this->links($group));
-
-        return $content;
+        return array_merge_recursive($content, $this->links($group));
     }
 
     /**
@@ -79,9 +74,10 @@ class GroupNormalizer
     private function links(Group $group)
     {
         return [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.group', ['id' => $group->getId()]]]
-            ])
+            '_links' => [
+                'self' => $this->linked($group),
+                'index' => $this->api->parseLink(['href' => 'api.groups'])
+            ]
         ];
     }
 }

@@ -58,21 +58,35 @@ class GroupsControllerTest extends PHPUnit_Framework_TestCase
             ->with([], Mockery::type('array'))
             ->andReturn($groups);
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($groups[0])
-            ->andReturn('normalized-group1');
+            ->andReturn('linked-group1');
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($groups[1])
-            ->andReturn('normalized-group2');
+            ->andReturn('linked-group2');
+        $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
         $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-group1', 'normalized-group2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
         $controller = new GroupsController($api, $repo, $normalizer);
         $controller($this->request, $this->response);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['groups']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

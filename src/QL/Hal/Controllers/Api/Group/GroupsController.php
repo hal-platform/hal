@@ -59,11 +59,43 @@ class GroupsController
             return $response->setStatus(404);
         }
 
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($groups),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => 'api.groups'])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizeGroups($groups, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $groups
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizeGroups(array $groups, $isResolved)
+    {
         // Normalize all the builds
-        $normalized = array_map(function($group) {
-            return $this->normalizer->normalize($group);
+        $normalized = array_map(function($group) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($group);
+            }
+
+            return $this->normalizer->linked($group);
         }, $groups);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'groups' => $normalized
+            ]
+        ];
     }
 }

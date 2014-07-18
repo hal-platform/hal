@@ -39,15 +39,12 @@ class UserNormalizer
      * @param User $user
      * @return array
      */
-    public function normalizeLinked(User $user)
+    public function linked(User $user)
     {
-        $content = [
-            'id' => $user->getId()
-        ];
-
-        $content = array_merge($content, $this->links($user));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.user', ['id' => $user->getId()]],
+            'title' => $user->getHandle()
+        ]);
     }
 
     /**
@@ -69,9 +66,7 @@ class UserNormalizer
             'picture' => $user->getPictureUrl()->asString()
         ];
 
-        $content = array_merge($content, $this->links($user));
-
-        return $content;
+        return array_merge_recursive($content, $this->links($user));
     }
 
     /**
@@ -81,10 +76,10 @@ class UserNormalizer
     private function links(User $user)
     {
         return [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.user', ['id' => $user->getId()]]],
-                'index' => ['href' => 'api.users', 'type' => 'Index']
-            ])
+            '_links' => [
+                'self' => $this->linked($user),
+                'index' => $this->api->parseLink(['href' => 'api.users'])
+            ]
         ];
     }
 }

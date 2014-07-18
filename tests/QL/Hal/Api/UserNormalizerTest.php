@@ -23,24 +23,19 @@ class UserNormalizerTest extends PHPUnit_Framework_TestCase
         $this->url = Mockery::mock('QL\Hal\Helpers\UrlHelper');
     }
 
-    public function testNormalizationOfLinkedResource()
+    public function testNormalizationOfLink()
     {
         $user = new User;
         $user->setId('1234');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $normalizer = new UserNormalizer($this->api, $this->url);
-        $actual = $normalizer->normalizeLinked($user);
+        $actual = $normalizer->linked($user);
 
-        $expected = [
-            'id' => '1234',
-            '_links' => 'links'
-        ];
-
-        $this->assertSame($expected, $actual);
+        $this->assertSame('link', $actual);
     }
 
     public function testNormalization()
@@ -50,8 +45,8 @@ class UserNormalizerTest extends PHPUnit_Framework_TestCase
         $user->setPictureUrl(HttpUrl::create('http://picture/url'));
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
@@ -66,7 +61,10 @@ class UserNormalizerTest extends PHPUnit_Framework_TestCase
             'name' => null,
             'email' => null,
             'picture' => 'http://picture/url',
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'index' => 'link'
+            ]
         ];
 
         $this->assertSame($expected, $actual);
