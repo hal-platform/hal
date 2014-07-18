@@ -95,6 +95,9 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
                 'deployments' => 'link',
                 'builds' => 'link',
                 'pushes' => 'link',
+                'tags' => 'link',
+                'branches' => 'link',
+                'pullRequests' => 'link',
                 'index' => 'link',
                 'group' => 'linked-group'
             ]
@@ -147,6 +150,9 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
                 'deployments' => 'link',
                 'builds' => 'link',
                 'pushes' => 'link',
+                'tags' => 'link',
+                'branches' => 'link',
+                'pullRequests' => 'link',
                 'index' => 'link'
             ],
             '_embedded' => [

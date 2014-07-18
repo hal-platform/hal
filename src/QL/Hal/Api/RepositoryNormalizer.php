@@ -114,6 +114,9 @@ class RepositoryNormalizer
                 'deployments' => $this->api->parseLink(['href' => ['api.deployments', ['id' => $repository->getId()]]]),
                 'builds' => $this->api->parseLink(['href' => ['api.builds', ['id' => $repository->getId()]]]),
                 'pushes' => $this->api->parseLink(['href' => ['api.pushes', ['id' => $repository->getId()]]]),
+                'tags' => $this->api->parseLink(['href' => ['api.repository.tags', ['id' => $repository->getId()]]]),
+                'branches' => $this->api->parseLink(['href' => ['api.repository.branches', ['id' => $repository->getId()]]]),
+                'pullRequests' => $this->api->parseLink(['href' => ['api.repository.pullrequests', ['id' => $repository->getId()]]]),
                 'index' => $this->api->parseLink(['href' => 'api.repositories'])
             ]
         ];
