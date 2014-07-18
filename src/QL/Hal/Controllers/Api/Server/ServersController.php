@@ -1,65 +1,70 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Server;
 
+use QL\Hal\Api\ServerNormalizer;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Entity\Server;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
- * API Server Controller
+ * API Servers Controller
  */
 class ServersController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
-    private $servers;
+    /**
+     * @type ServerRepository
+     */
+    private $serverRepo;
+
+    /**
+     * @type ServerNormalizer
+     */
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param ServerRepository $servers
+     * @param ServerRepository $serverRepo
+     * @param ServerNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        ServerRepository $servers
+        ServerRepository $serverRepo,
+        ServerNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->servers = $servers;
+        $this->serverRepo = $serverRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
-     * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response)
     {
-        $links = [
-            'self' => ['href' => 'api.servers', 'type' => 'Servers'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $servers = $this->servers->findBy([], ['id' => 'DESC']);
-
-        $content = [
-            'count' => count($servers),
-            'servers' => []
-        ];
-
-        foreach ($servers as $server) {
-            $content['servers'][] = [
-                'id' => $server->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.server', ['id' => $server->getId()]]]
-                ])
-            ];
+        $servers = $this->serverRepo->findBy([], ['id' => 'ASC']);
+        if (!$servers) {
+            return $response->setStatus(404);
         }
 
-        $this->api->prepareResponse($response, $links, $content);
+        // Normalize all the builds
+        $normalized = array_map(function($server) {
+            return $this->normalizer->normalize($server);
+        }, $servers);
+
+        $this->api->prepareResponse($response, $normalized);
     }
 }

@@ -1,13 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\Server;
 
+use QL\Hal\Api\ServerNormalizer;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Server Controller
@@ -15,85 +20,47 @@ use QL\Hal\Helpers\ApiHelper;
 class ServerController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type ServerRepository
      */
-    private $url;
+    private $serverRepo;
 
     /**
-     * @var ServerRepository
+     * @type ServerNormalizer
      */
-    private $servers;
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param UrlHelper $url
-     * @param ServerRepository $servers
+     * @param ServerRepository $serverRepo
+     * @param ServerNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        UrlHelper $url,
-        ServerRepository $servers
+        ServerRepository $serverRepo,
+        ServerNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->url = $url;
-        $this->servers = $servers;
+        $this->serverRepo = $serverRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $server = $this->servers->findOneBy(['id' => $params['id']]);
-
-        if (!($server instanceof Server)) {
-            call_user_func($notFound);
-            return;
+        $server = $this->serverRepo->findOneBy(['id' => $params['id']]);
+        if (!$server instanceof Server) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.server', ['id' => $server->getId()]], 'type' => 'Server'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $content = [
-            'id' => $server->getId(),
-            'url' => $this->url->urlFor('server', ['id' => $server->getId()]),
-            'environment' => [
-                'id' => $server->getEnvironment()->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.environment', ['id' => $server->getEnvironment()->getId()]], 'type' => 'Environment']
-                ])
-            ],
-            'properties' => [],
-            'deployments' => []
-        ];
-
-        foreach ($server->getProperties() as $property) {
-            $content['properties'][] = [
-                'id' => $property->getId(),
-                'name' => $property->getName(),
-                'value' => $property->getValue()
-            ];
-        }
-
-        foreach ($server->getDeployments() as $deployment) {
-            $content['deployments'][] = [
-                'id' => $deployment->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.deployment', ['id' => $deployment->getId()]], 'type' => 'Deployment']
-                ])
-            ];
-        }
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($server));
     }
 }

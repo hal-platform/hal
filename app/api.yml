@@ -119,21 +119,22 @@ services:
       - @api.environment.normalizer
 
   ######################################################################################################################
-  # BUILD CONTROLLERS
+  # SERVER CONTROLLERS
   ######################################################################################################################
 
   api.server:
     class: 'QL\Hal\Controllers\Api\Server\ServerController'
     arguments:
       - @api.helper
-      - @url.helper
       - @server.repo
+      - @api.server.normalizer
 
   api.servers:
     class: 'QL\Hal\Controllers\Api\Server\ServersController'
     arguments:
       - @api.helper
       - @server.repo
+      - @api.server.normalizer
 
   ######################################################################################################################
   # BUILD CONTROLLERS
