@@ -58,11 +58,43 @@ class EnvironmentsController
             return $response->setStatus(404);
         }
 
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($environments),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => 'api.environments'])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizeEnvironments($environments, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $environments
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizeEnvironments(array $environments, $isResolved)
+    {
         // Normalize all the builds
-        $normalized = array_map(function($environment) {
-            return $this->normalizer->normalize($environment);
+        $normalized = array_map(function($environment) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($environment);
+            }
+
+            return $this->normalizer->linked($environment);
         }, $environments);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'environments' => $normalized
+            ]
+        ];
     }
 }

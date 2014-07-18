@@ -58,21 +58,35 @@ class EnvironmentsControllerTest extends PHPUnit_Framework_TestCase
             ->with([], Mockery::type('array'))
             ->andReturn($envs);
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($envs[0])
-            ->andReturn('normalized-env1');
+            ->andReturn('linked-env1');
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($envs[1])
             ->andReturn('normalized-env2');
         $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
+        $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-env1', 'normalized-env2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
         $controller = new EnvironmentsController($api, $repo, $normalizer);
         $controller($this->request, $this->response);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['environments']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

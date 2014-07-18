@@ -36,12 +36,7 @@ class ServersControllerTest extends PHPUnit_Framework_TestCase
             ->with([], Mockery::type('array'))
             ->andReturnNull();
 
-        $controller = new ServersController(
-            $api,
-            $repo,
-            $normalizer
-        );
-
+        $controller = new ServersController($api, $repo, $normalizer);
         $controller($this->request, $this->response);
 
         $this->assertSame(404, $this->response->getStatus());
@@ -64,27 +59,36 @@ class ServersControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn($servers);
 
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($servers[0])
-            ->andReturn('normalized-server1');
+            ->andReturn('linked-server1');
         $normalizer
-            ->shouldReceive('normalize')
+            ->shouldReceive('linked')
             ->with($servers[1])
-            ->andReturn('normalized-server2');
+            ->andReturn('linked-server2');
 
         $api
+            ->shouldReceive('parseLink')
+            ->andReturn('self-link');
+        $api
             ->shouldReceive('prepareResponse')
-            ->with($this->response, ['normalized-server1', 'normalized-server2'])
+            ->with($this->response, $this->storeExpectation($content))
             ->once();
 
-        $controller = new ServersController(
-            $api,
-            $repo,
-            $normalizer
-        );
-
+        $controller = new ServersController($api, $repo, $normalizer);
         $controller($this->request, $this->response);
 
         $this->assertSame(200, $this->response->getStatus());
+        $this->assertSame(2, $content['count']);
+        $this->assertSame('self-link', $content['_links']['self']);
+        $this->assertCount(2, $content['_links']['servers']);
+    }
+
+    public function storeExpectation(&$stored)
+    {
+        return Mockery::on(function($v) use (&$stored) {
+            $stored = $v;
+            return true;
+        });
     }
 }

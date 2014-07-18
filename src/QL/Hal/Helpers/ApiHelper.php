@@ -40,6 +40,27 @@ class ApiHelper
     }
 
     /**
+     * Formats a link
+     *
+     * @param array $properties
+     * @return array
+     */
+    public function parseLink(array $properties)
+    {
+        foreach ($properties as $property => &$value) {
+            if ($property == 'href') {
+                if (is_array($value) && count($value) == 2) {
+                    $value = $this->url->urlFor($value[0], $value[1]);
+                } else {
+                    $value = $this->url->urlFor($value);
+                }
+            }
+        }
+
+        return $properties;
+    }
+
+    /**
      * Formats a collection of links
      *
      * @param array $links
@@ -49,20 +70,8 @@ class ApiHelper
     {
         $parsed = [];
 
-        foreach ($links as $type => $properties) {
-            $link = [];
-            foreach ($properties as $property => $value) {
-                if ($property == 'href') {
-                    if (is_array($value) && count($value) == 2) {
-                        $link[$property] = $this->url->urlFor($value[0], $value[1]);
-                    } else {
-                        $link[$property] = $this->url->urlFor($value);
-                    }
-                } else {
-                    $link[$property] = $value;
-                }
-            }
-            $parsed[$type] = $link;
+        foreach ($links as $relation => $properties) {
+            $parsed[$relation] = $this->parseLink($properties);
         }
 
         return $parsed;

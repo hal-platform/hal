@@ -25,24 +25,19 @@ class ServerNormalizerTest extends PHPUnit_Framework_TestCase
         $this->envNormalizer = Mockery::mock('QL\Hal\Api\EnvironmentNormalizer');
     }
 
-    public function testNormalizationOfLinkedResource()
+    public function testNormalizationOfLink()
     {
         $server = new Server;
         $server->setId('1234');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $normalizer = new ServerNormalizer($this->api, $this->url, $this->envNormalizer);
-        $actual = $normalizer->normalizeLinked($server);
+        $actual = $normalizer->linked($server);
 
-        $expected = [
-            'id' => '1234',
-            '_links' => 'links'
-        ];
-
-        $this->assertSame($expected, $actual);
+        $this->assertSame('link', $actual);
     }
 
     public function testNormalizationWithoutCriteria()
@@ -56,14 +51,14 @@ class ServerNormalizerTest extends PHPUnit_Framework_TestCase
         $server->setEnvironment($environment);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
         $this->envNormalizer
-            ->shouldReceive('normalizeLinked')
-            ->andReturn('normalized-env');
+            ->shouldReceive('linked')
+            ->andReturn('linked-env');
 
         $normalizer = new ServerNormalizer($this->api, $this->url, $this->envNormalizer);
         $actual = $normalizer->normalize($server);
@@ -72,8 +67,11 @@ class ServerNormalizerTest extends PHPUnit_Framework_TestCase
             'id' => '1234',
             'url' => 'http://hal/page',
             'name' => 'testserver',
-            'environment' => 'normalized-env',
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'index' => 'link',
+                'environment' => 'linked-env'
+            ]
         ];
 
         $this->assertSame($expected, $actual);
@@ -90,15 +88,15 @@ class ServerNormalizerTest extends PHPUnit_Framework_TestCase
         $server->setEnvironment($environment);
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
         $this->envNormalizer
             ->shouldReceive('normalize')
             ->with($environment, ['derp'])
-            ->andReturn('normalized-env');
+            ->andReturn('embedded-env');
 
         $normalizer = new ServerNormalizer($this->api, $this->url, $this->envNormalizer);
         $actual = $normalizer->normalize($server, ['environment' => ['derp']]);
@@ -107,8 +105,13 @@ class ServerNormalizerTest extends PHPUnit_Framework_TestCase
             'id' => '1234',
             'url' => 'http://hal/page',
             'name' => 'testserver',
-            'environment' => 'normalized-env',
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'index' => 'link'
+            ],
+            '_embedded' => [
+                'environment' => 'embedded-env'
+            ]
         ];
 
         $this->assertSame($expected, $actual);

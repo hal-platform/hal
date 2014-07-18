@@ -34,20 +34,17 @@ class EnvironmentNormalizer
     }
 
     /**
-     * Normalize to the standard linked resource.
+     * Normalize to the linked resource.
      *
      * @param Environment $environment
      * @return array
      */
-    public function normalizeLinked(Environment $environment)
+    public function linked(Environment $environment)
     {
-        $content = [
-            'id' => $environment->getId()
-        ];
-
-        $content = array_merge($content, $this->links($environment));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.environment', ['id' => $environment->getId()]],
+            'title' => $environment->getKey()
+        ]);
     }
 
     /**
@@ -67,9 +64,7 @@ class EnvironmentNormalizer
             'order' => $environment->getOrder()
         ];
 
-        $content = array_merge($content, $this->links($environment));
-
-        return $content;
+        return array_merge_recursive($content, $this->links($environment));
     }
 
     /**
@@ -79,9 +74,10 @@ class EnvironmentNormalizer
     private function links(Environment $environment)
     {
         return [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.environment', ['id' => $environment->getId()]]]
-            ])
+            '_links' => [
+                'self' => $this->linked($environment),
+                'index' => $this->api->parseLink(['href' => 'api.environments'])
+            ]
         ];
     }
 }

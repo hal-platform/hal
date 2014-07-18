@@ -56,15 +56,12 @@ class ServerNormalizer
      * @param Server $server
      * @return array
      */
-    public function normalizeLinked(Server $server)
+    public function linked(Server $server)
     {
-        $content = [
-            'id' => $server->getId()
-        ];
-
-        $content = array_merge($content, $this->links($server));
-
-        return $content;
+        return $this->api->parseLink([
+            'href' => ['api.server', ['id' => $server->getId()]],
+            'title' => $server->getName()
+        ]);
     }
 
     /**
@@ -82,13 +79,14 @@ class ServerNormalizer
         $content = [
             'id' => $server->getId(),
             'url' => $this->url->urlFor('server', ['id' => $server->getId()]),
-            'name' => $server->getName(),
-            'environment' => $this->normalizeEnvironment($server->getEnvironment(), $criteria['environment'])
+            'name' => $server->getName()
         ];
 
-        $content = array_merge($content, $this->links($server));
-
-        return $content;
+        return array_merge_recursive(
+            $content,
+            $this->links($server),
+            $this->normalizeEnvironment($server->getEnvironment(), $criteria['environment'])
+        );
     }
 
     /**
@@ -98,9 +96,10 @@ class ServerNormalizer
     private function links(Server $server)
     {
         return [
-            '_links' => $this->api->parseLinks([
-                'self' => ['href' => ['api.server', ['id' => $server->getId()]]]
-            ])
+            '_links' => [
+                'self' => $this->linked($server),
+                'index' => $this->api->parseLink(['href' => 'api.servers'])
+            ]
         ];
     }
 
@@ -112,9 +111,18 @@ class ServerNormalizer
     private function normalizeEnvironment(Environment $environment, $criteria)
     {
         if ($criteria === null) {
-            return $this->envNormalizer->normalizeLinked($environment);
+            $normalized = $this->envNormalizer->linked($environment);
+            $type = '_links';
+
+        } else {
+            $normalized = $this->envNormalizer->normalize($environment, $criteria);
+            $type = '_embedded';
         }
 
-        return $this->envNormalizer->normalize($environment, $criteria);
+        return [
+            $type => [
+                'environment' => $normalized
+            ]
+        ];
     }
 }

@@ -60,11 +60,43 @@ class ServersController
             return $response->setStatus(404);
         }
 
+        // using this to play with the idea of linked vs embedded resources
+        $isResolved = false;
+
+        $content = [
+            'count' => count($servers),
+            '_links' => [
+                'self' => $this->api->parseLink(['href' => 'api.environments'])
+            ]
+        ];
+
+        $content = array_merge_recursive($content, $this->normalizeServers($servers, $isResolved));
+
+        $this->api->prepareResponse($response, $content);
+    }
+
+    /**
+     * @param array $servers
+     * @param boolean $isResolved
+     * @return array
+     */
+    private function normalizeServers(array $servers, $isResolved)
+    {
         // Normalize all the builds
-        $normalized = array_map(function($server) {
-            return $this->normalizer->normalize($server);
+        $normalized = array_map(function($server) use ($isResolved) {
+            if ($isResolved) {
+                return $this->normalizer->normalize($server);
+            }
+
+            return $this->normalizer->linked($server);
         }, $servers);
 
-        $this->api->prepareResponse($response, $normalized);
+
+        $type = ($isResolved) ? '_embedded' : '_links';
+        return [
+            $type => [
+                'servers' => $normalized
+            ]
+        ];
     }
 }

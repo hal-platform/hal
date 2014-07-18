@@ -22,24 +22,18 @@ class EnvironmentNormalizerTest extends PHPUnit_Framework_TestCase
         $this->url = Mockery::mock('QL\Hal\Helpers\UrlHelper');
     }
 
-    public function testNormalizationOfLinkedResource()
+    public function testNormalizationOfLink()
     {
         $environment = new Environment;
-        $environment->setId('1234');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
 
         $normalizer = new EnvironmentNormalizer($this->api, $this->url);
-        $actual = $normalizer->normalizeLinked($environment);
+        $actual = $normalizer->linked($environment);
 
-        $expected = [
-            'id' => '1234',
-            '_links' => 'links'
-        ];
-
-        $this->assertSame($expected, $actual);
+        $this->assertSame('link', $actual);
     }
 
     public function testNormalization()
@@ -50,8 +44,8 @@ class EnvironmentNormalizerTest extends PHPUnit_Framework_TestCase
         $environment->setOrder('1');
 
         $this->api
-            ->shouldReceive('parseLinks')
-            ->andReturn('links');
+            ->shouldReceive('parseLink')
+            ->andReturn('link');
         $this->url
             ->shouldReceive('urlFor')
             ->andReturn('http://hal/page');
@@ -64,7 +58,10 @@ class EnvironmentNormalizerTest extends PHPUnit_Framework_TestCase
             'url' => 'http://hal/page',
             'key' => 'test',
             'order' => '1',
-            '_links' => 'links'
+            '_links' => [
+                'self' => 'link',
+                'index' => 'link'
+            ]
         ];
 
         $this->assertSame($expected, $actual);
