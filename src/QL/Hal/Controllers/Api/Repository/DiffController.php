@@ -12,6 +12,8 @@ use QL\Hal\Core\Entity\Repository;
 
 /**
  * API Repository Diff Controller
+ *
+ * This route is currently disabled.
  */
 class DiffController
 {
@@ -127,6 +129,6 @@ class DiffController
         $content['stats']['deletions'] = $deletions;
         $content['stats']['changes'] = $changes;
 
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $content);
     }
 }

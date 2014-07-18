@@ -616,14 +616,14 @@ parameters:
       conditions:
         id:         '[0-9]+'
 
-    api.repository.diff:
-      method:       'GET'
-      route:        '/api/repositories/:id/diff/:base/:head'
-      stack:        ['api.repository.diff']
-      conditions:
-        id:         '[0-9]+'
-        base:       '[A-Za-z0-9]{40,40}'
-        head:       '[A-Za-z0-9]{40,40}'
+    # api.repository.diff:
+    #   method:       'GET'
+    #   route:        '/api/repositories/:id/diff/:base/:head'
+    #   stack:        ['api.repository.diff']
+    #   conditions:
+    #     id:         '[0-9]+'
+    #     base:       '[A-Za-z0-9]{40,40}'
+    #     head:       '[A-Za-z0-9]{40,40}'
 
     api.deployments:
       method:       'GET'
