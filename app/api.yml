@@ -236,11 +236,12 @@ services:
     class: 'QL\Hal\Controllers\Api\User\UserController'
     arguments:
       - @api.helper
-      - @url.helper
       - @user.repo
+      - @api.user.normalizer
 
   api.users:
     class: 'QL\Hal\Controllers\Api\User\UsersController'
     arguments:
       - @api.helper
       - @user.repo
+      - @api.user.normalizer

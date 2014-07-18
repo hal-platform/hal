@@ -1,13 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\User;
 
+use QL\Hal\Api\UserNormalizer;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API User Controller
@@ -15,64 +20,47 @@ use QL\Hal\Helpers\ApiHelper;
 class UserController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UrlHelper
+     * @type UserRepository
      */
-    private $url;
+    private $userRepo;
 
     /**
-     * @var UserRepository
+     * @type UserNormalizer
      */
-    private $users;
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param UrlHelper $url
-     * @param UserRepository $users
+     * @param UserRepository $userRepo
+     * @param UserNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        UrlHelper $url,
-        UserRepository $users
+        UserRepository $userRepo,
+        UserNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->url = $url;
-        $this->users = $users;
+        $this->userRepo = $userRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $user = $this->users->findOneBy(['id' => $params['id']]);
-
-        if (!($user instanceof User)) {
-            call_user_func($notFound);
-            return;
+        $user = $this->userRepo->findOneBy(['id' => $params['id']]);
+        if (!$user instanceof User) {
+            return $response->setStatus(404);
         }
 
-        $links = [
-            'self' => ['href' => ['api.user', ['id' => $user->getId()]], 'type' => 'User'],
-            'users' => ['href' => 'api.users', 'type' => 'Users']
-        ];
-
-        $content = [
-            'id' => $user->getId(),
-            'url' => $this->url->urlFor('user', ['id' => $user->getId()]),
-            'handle' => $user->getHandle(),
-            'name' => $user->getName(),
-            'email' => $user->getEmail(),
-            'picture' => $user->getPictureUrl()->asString()
-        ];
-
-        $this->api->prepareResponse($response, $links, $content);
+        $this->api->prepareResponse($response, $this->normalizer->normalize($user));
     }
 }

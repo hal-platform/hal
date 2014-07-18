@@ -1,11 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Api\User;
 
+use QL\Hal\Api\UserNormalizer;
 use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  * API Users Controller
@@ -13,56 +20,51 @@ use QL\Hal\Helpers\ApiHelper;
 class UsersController
 {
     /**
-     * @var ApiHelper
+     * @type ApiHelper
      */
     private $api;
 
     /**
-     * @var UserRepository
+     * @type UserRepository
      */
-    private $users;
+    private $userRepo;
+
+    /**
+     * @type UserNormalizer
+     */
+    private $normalizer;
 
     /**
      * @param ApiHelper $api
-     * @param UserRepository $users
+     * @param UserRepository $userRepo
+     * @param UserNormalizer $normalizer
      */
     public function __construct(
         ApiHelper $api,
-        UserRepository $users
+        UserRepository $userRepo,
+        UserNormalizer $normalizer
     ) {
         $this->api = $api;
-        $this->users = $users;
+        $this->userRepo = $userRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
-     * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response)
     {
-        $links = [
-            'self' => ['href' => 'api.users', 'type' => 'Users'],
-            'index' => ['href' => 'api.index']
-        ];
-
-        $users = $this->users->findBy([], ['id' => 'ASC']);
-
-        $content = [
-            'count' => count($users),
-            'users' => []
-        ];
-
-        foreach ($users as $user) {
-            $content['users'][] = [
-                'id' => $user->getId(),
-                '_links' => $this->api->parseLinks([
-                    'self' => ['href' => ['api.user', ['id' => $user->getId()]], 'type' => 'User']
-                ])
-            ];
+        $users = $this->userRepo->findBy([], ['id' => 'ASC']);
+        if (!$users) {
+            return $response->setStatus(404);
         }
 
-        $this->api->prepareResponse($response, $links, $content);
+        // Normalize all the builds
+        $normalized = array_map(function($users) {
+            return $this->normalizer->normalize($users);
+        }, $users);
+
+        $this->api->prepareResponse($response, $normalized);
     }
 }
