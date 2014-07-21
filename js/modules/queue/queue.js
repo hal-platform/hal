@@ -165,8 +165,8 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
                 ('0' + (now.getUTCDate())).slice(-2) +
                 'T' +
                 ('0' + now.getUTCHours()).slice(-2) + ':' +
-                ('0' + (now.getUTCMinutes()+1)).slice(-2) + ':' +
-                ('0' + (now.getUTCSeconds()+1)).slice(-2) +
+                ('0' + now.getUTCMinutes()).slice(-2) + ':' +
+                ('0' + now.getUTCSeconds()).slice(-2) +
                 '-0000';
         }
     };
