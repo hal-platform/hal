@@ -33,7 +33,7 @@ define(['jquery'], function($) {
             console.log(endpoint);
 
             $.getJSON(endpoint, function(data) {
-                var currentStatus = data.content.status;
+                var currentStatus = data.status;
                 $elem.text(currentStatus);
 
                 // console.log('Push ' + id + ' status: ' + currentStatus);
@@ -54,9 +54,9 @@ define(['jquery'], function($) {
                 }
 
                 if (_this.mode == 'push') {
-                    _this.updatePush(data.content, $elem);
+                    _this.updatePush(data, $elem);
                 } else if (_this.mode == 'table') {
-                    _this.updateTable(data.content, $elem);
+                    _this.updateTable(data, $elem);
                 }
             });
         },
