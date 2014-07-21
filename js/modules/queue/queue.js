@@ -124,17 +124,19 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
                 }
             }
 
-            // call api and update job rows
-            var endpoint ='/api/queue-refresh/' + jobsToUpdate.join('+');
-            $.getJSON(endpoint, function(data) {
-                for (var entry in data._embedded.jobs) {
-                    if (data._embedded.jobs[entry].type == 'build') {
-                        jobUpdater.updateBuildJob(data._embedded.jobs[entry]);
-                    } else {
-                        jobUpdater.updatePushJob(data._embedded.jobs[entry]);
+            if (jobsToUpdate.length > 0) {
+                // call api and update job rows
+                var endpoint ='/api/queue-refresh/' + jobsToUpdate.join('+');
+                $.getJSON(endpoint, function(data) {
+                    for (var entry in data._embedded.jobs) {
+                        if (data._embedded.jobs[entry].type == 'build') {
+                            jobUpdater.updateBuildJob(data._embedded.jobs[entry]);
+                        } else {
+                            jobUpdater.updatePushJob(data._embedded.jobs[entry]);
+                        }
                     }
-                }
-            });
+                });
+            }
         },
         storeInitialJobs: function() {
             var _this = this;
@@ -162,7 +164,7 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
                 ('0' + (now.getUTCMonth()+1)).slice(-2) + '-' +
                 ('0' + (now.getUTCDate())).slice(-2) +
                 'T' +
-                ('0' + (now.getUTCHours()+1)).slice(-2) + ':' +
+                ('0' + now.getUTCHours()).slice(-2) + ':' +
                 ('0' + (now.getUTCMinutes()+1)).slice(-2) + ':' +
                 ('0' + (now.getUTCSeconds()+1)).slice(-2) +
                 '-0000';
