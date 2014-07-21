@@ -160,14 +160,24 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
 
         getUTCTime: function() {
             var now = new Date();
-            return now.getUTCFullYear() + '-' +
+
+            var min = now.getUTCMinutes();
+            // if in the first half of a minute, reduce minutes by 1
+            // this is to make sure we don't miss any jobs
+            if (now.getUTCSeconds() < 30 && min > 0) {
+                min--;
+            }
+
+            var date = now.getUTCFullYear() + '-' +
                 ('0' + (now.getUTCMonth()+1)).slice(-2) + '-' +
-                ('0' + (now.getUTCDate())).slice(-2) +
-                'T' +
+                ('0' + (now.getUTCDate())).slice(-2);
+
+            var time =
                 ('0' + now.getUTCHours()).slice(-2) + ':' +
-                ('0' + now.getUTCMinutes()).slice(-2) + ':' +
-                ('0' + now.getUTCSeconds()).slice(-2) +
-                '-0000';
+                ('0' + min).slice(-2) + ':' +
+                '00';
+
+            return date + 'T' + time + '-0000';
         }
     };
 });
