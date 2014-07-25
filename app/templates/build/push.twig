@@ -4,9 +4,84 @@
 
 {% block content %}
 
-    <h2>Push Build {{ build.id }}</h2>
+    <h2>Push Build</h2>
 
-    <p>This build of {{ build.repository.key }} can be pushed to the following servers.</p>
+    <p>Please review the below build details before pushing.</p>
+
+    <div class="details-box">
+        <dl class="split--left mbn">
+            <dt class="split--left__title">
+                Build ID
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id }}</a>
+            </dd>
+            <dt class="split--left__title">
+                Repository
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.key }}</a>
+            </dd>
+            <dt class="split--left__title">
+                Environment
+            </dt>
+            <dd class="split--left__value">
+                {{ build.environment.key }}
+            </dd>
+            <dt class="split--left__title">
+                Reference
+            </dt>
+            <dd class="split--left__value">
+                {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
+                    <span class="status-before--success">
+                        <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
+                    </span>
+                {% else %}
+                    <span class="status-before--other">
+                        <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
+                    </span>
+                {% endif %}
+                <svg viewBox="0 0 32 32" class="icon">
+                    <use xlink:href="#fork"></use>
+                </svg>
+            </dd>
+            <dt class="split--left__title">
+                Commit
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
+                <span class="icon">
+                  <svg viewBox="0 0 32 32">
+                      <use xlink:href="#github"></use>
+                  </svg>
+                </span>
+            </dd>
+            <dt class="split--left__title">
+                Prepared By
+            </dt>
+            <dd class="split--left__value">
+                {% if build.user %}
+                    <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
+                {% elseif build.consumer %}
+                    {{ build.consumer.name[:20] }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </dd>
+            <dt class="split--left__title">
+                Completed
+            </dt>
+            <dd class="split--left__value">
+                {{ build.end|reldate }}
+            </dd>
+
+        </dl>
+    </div>
+
+    <p>
+        This build can be pushed to the following servers. Please review the current status of each server below
+        before selecting which servers you wish to deploy to.
+    </p>
 
     <form action="{{ urlFor('push.handle', {'repo': build.repository.key, 'build': build.id}) }}" method="post">
     <div class="overflow-container">
@@ -17,7 +92,7 @@
                 <th>Reference</th>
                 <th>Commit</th>
                 <th>Pushed</th>
-                <th>Initiator</th>
+                <th>Pushed By</th>
                 <th></th>
             </tr>
             </thead>
