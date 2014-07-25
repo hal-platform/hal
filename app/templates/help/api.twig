@@ -23,11 +23,7 @@
         <li><a href="{{ urlFor('api.index') }}">{{ uriFor('api.index') }}</a></li>
     </ul>
 
-    <h4>Logs</h4>
 
-    <ul>
-        <li><a href="{{ urlFor('api.logs') }}">{{ uriFor('api.logs') }}</a></li>
-    </ul>
 
     <h4>Environments</h4>
 
@@ -65,7 +61,6 @@
         <li><a href="{{ urlFor('api.repository.tags', {id: ':id'}) }}">{{ uriFor('api.repository.tags', {id: ':id'}) }}</a></li>
         <li><a href="{{ urlFor('api.repository.branches', {id: ':id'}) }}">{{ uriFor('api.repository.branches', {id: ':id'}) }}</a></li>
         <li><a href="{{ urlFor('api.repository.pullrequests', {id: ':id'}) }}">{{ uriFor('api.repository.pullrequests', {id: ':id'}) }}</a></li>
-        <li><a href="{{ urlFor('api.repository.diff', {id: ':id', base: ':base', head: ':head'}) }}">{{ uriFor('api.repository.diff', {id: ':id', base: ':base', head: ':head'}) }}</a></li>
     </ul>
 
     <h4>Deployments</h4>
