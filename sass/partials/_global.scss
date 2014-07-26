@@ -1,54 +1,177 @@
 html {
-    background-color: $white;
+    background-color: tint($light-grey, 50%);
+    @include margin-trailer(2);
 }
 
-[role="banner"] {
-    background:
-        radial-gradient(black 15%, transparent 16%) 0 0,
-        radial-gradient(black 15%, transparent 16%) 8px 8px,
-        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
-        radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
-    background-color: #282828;
-    background-size: 16px 16px;
-    color: $white;
-    @include padding-leader(.5);
+svg {
+    fill: currentColor;
 }
 
-.logo {
-    color: $white;
-    display: block;
+@keyframes "pulse" {
+  0% {
+    opacity: 1;
+  }
 
-    &:hover {
-        color: $white;
-        text-decoration: none;
-    }
+  100% {
+    opacity: 0;
+  }
 }
 
-.logo img {
-    width: 100px;
-    margin-right: msem(1);
-    display: inline-block;
+.circular,
+.hal-eye .ring:before,
+.hal-eye .oculus .iris {
+  border-radius: 100%;
 }
 
-.logo h1 {
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
+.hal > .wrapper {
+  @include rhythm(0,1,1,0);
+  padding-left: msem(1);
+  padding-right: msem(1);
+  background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px, linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px, linear-gradient(27deg, #222222 5px, transparent 5px) 0px 10px, linear-gradient(207deg, #222222 5px, transparent 5px) 10px 5px, linear-gradient(90deg, #1b1b1b 10px, transparent 10px), linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+  background-color: #131313;
+  background-size: 20px 20px;
 }
 
-.sub-heading {
-    margin-bottom: 0;
-    @include padding-trailer();
+.hal-label {
+  @include adjust-font-size-to(ms(2));
+  background-color: #020202;
+  border: 5px solid #d8d8d8;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4) inset;
+  color: #f0f0f0;
+  margin: 0 auto 0.90909em;
+  width: msem(17);
+  overflow: hidden;
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, #0071d4), color-stop(50%, #020202));
+  background-image: linear-gradient(left, #0071d4 50%, #020202 50%);
 }
 
-.branding-container {
-    max-width: 60em;
-    margin: 0 auto;
-    padding: 0 ms(-2);
+.hal-label > span {
+  display: block;
+  float: left;
+  line-height: 1;
+  padding: 0.45455em;
+  width: 50%;
+}
 
-    @include breakpoint(32em) {
-        padding: 0 ms(1);
-    }
+.hal-label__name {
+  color: #f0f0f0;
+  padding-left: 1.36364em;
+  text-align: right;
+}
+
+.hal-label__version {
+  text-align: left;
+}
+
+.hal-eye {
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 5px rgba(0, 0, 0, 0.3);
+  height: 6em;
+  margin: 0 auto;
+  position: relative;
+  width: 6em;
+}
+
+.hal-eye .ring {
+  height: 100%;
+  padding: 0.5em;
+  position: relative;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #a9a9a9), color-stop(20%, #ffffff), color-stop(40%, #595959), color-stop(65%, #b3b3b3), color-stop(100%, #666666));
+  background-image: linear-gradient(#a9a9a9, #ffffff 20%, #595959 40%, #b3b3b3 65%, #666666);
+}
+
+.hal-eye .ring:before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #737373), color-stop(14%, #666666), color-stop(50%, #a9a9a9), color-stop(72%, #999999), color-stop(80%, #b7b7b7), color-stop(100%, #cccccc));
+  background-image: linear-gradient(#737373, #666666 14%, #a9a9a9 50%, #999999 72%, #b7b7b7 80%, #cccccc);
+}
+
+.hal-eye .oculus {
+  background-color: #000;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  height: 80%;
+  left: 50%;
+  margin: -40% 0 0 -40%;
+  position: absolute;
+  top: 50%;
+  width: 80%;
+}
+
+.hal-eye .oculus .iris {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.hal-eye .oculus .iris.narrow {
+  background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 85, color-stop(2%, #fff063), color-stop(10%, #fa0c02), color-stop(30%, #c80901), color-stop(55%, #310200), color-stop(85%, #000000));
+  background-image: radial-gradient(center center, circle cover, #fff063 2%, #fa0c02 10%, #c80901 30%, #310200 55%, #000000 85%);
+}
+
+.hal-eye .oculus .iris.wide {
+  background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 85, color-stop(5%, #fff063), color-stop(15%, #fa0c02), color-stop(40%, #c80901), color-stop(65%, #0c0000), color-stop(85%, #000000));
+  background-image: radial-gradient(center center, circle cover, #fff063 5%, #fa0c02 15%, #c80901 40%, #0c0000 65%, #000000 85%);
+  animation: pulse 2s ease-in-out infinite alternate;
+  transform: translate3d(0,0,0);
+}
+
+.hal-eye .highlight {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: 100%;
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.12);
+  height: 8%;
+  left: 50%;
+  margin-left: -12%;
+  position: absolute;
+  top: 6%;
+  width: 24%;
+}
+
+.hal-eye .highlight:before, .hal-eye .highlight:after {
+  border-radius: 100%;
+  left: 50%;
+  position: absolute;
+}
+
+.hal-eye .highlight:before {
+  content: '';
+  display: block;
+  height: 50%;
+  width: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.1);
+  margin-left: -25%;
+  top: 130%;
+}
+
+.hal-eye .highlight:after {
+  content: '';
+  display: block;
+  height: 26%;
+  width: 26%;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.1);
+  margin-left: -13%;
+  top: 250%;
+}
+
+.hal-eye .highlight.alpha {
+  left: 75%;
+  margin-left: 0;
+  top: 30%;
+  transform: rotate(60deg);
+}
+
+.hal-eye .highlight.beta {
+  left: 2%;
+  margin-left: 0;
+  top: 30%;
+  transform: rotate(-60deg);
 }
 
 [role="main"] {
@@ -63,6 +186,12 @@ html {
     @include breakpoint(32em) {
         padding: 0 ms(1);
         @include rhythm(0,1,.5,0);
+        border-radius: 5px;
+
+    }
+
+    @include breakpoint(42.1875em) {
+        margin-top: -5em;
     }
 }
 

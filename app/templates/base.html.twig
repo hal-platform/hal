@@ -32,38 +32,130 @@
     <!-- BEGIN HEADER -->
     {% block header %}
         <header role="banner">
-            <div class="branding-container">
-                <a class="logo" href="/">
-                    <img src="/img/logo.svg" alt="Hal9000">
-                    <h1>HAL 9000</h1>
-                </a>
-                <h2 class="zeta sub-heading">Child of Codepushinator, QBERT and Github Enterprise</h2>
+            <div class="hal">
+                <div class="wrapper">
+
+                    <h1 class="hal-label">
+                        <span class="hal-label__name">HAL</span>
+                        <span class="hal-label__version">9000</span>
+                    </h1>
+
+                    <div class="hal-eye circular">
+                        <div class="ring circular"></div>
+                        <div class="oculus circular">
+                            <div class="iris circular narrow"></div>
+                            <div class="iris circular wide"></div>
+                            <div class="highlight alpha"></div>
+                            <div class="highlight"></div>
+                            <div class="highlight beta"></div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
             {% block navigation %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
                         {% if account %}
                             <li>
-                                <a href="{{ urlFor('dashboard') }}" title="Home">
-                                <span class="icon" style="fill:white"><svg viewBox="0 0 32 32">
-                                        <use xlink:href="#home"></use>
-                                    </svg></span>
+                                <a href="{{ urlFor('dashboard') }}" title="Dashboard">
+                                <svg class="icon" viewBox="-3 0 32 32">
+                                    <use xlink:href="#dashboard"></use>
+                                </svg>
+                                Dashboard
                                 </a>
                             </li>
-                            <li><a href="{{ urlFor('groups') }}" title="groups">Groups</a></li>
-                            <li><a href="{{ urlFor('servers') }}" title="servers">Servers</a></li>
+                            <li>
+                                <a href="{{ urlFor('groups') }}" title="groups">
+                                    <svg class="icon" viewBox="0 0 32 32">
+                                        <use xlink:href="#list"></use>
+                                    </svg>
+                                    Groups
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ urlFor('servers') }}" title="servers">
+                                    <svg class="icon" viewBox="-4 0 32 32">
+                                        <use xlink:href="#server"></use>
+                                    </svg>
+                                    Servers
+                                </a>
+                            </li>
                             {% if isUserAdmin(account) %}
-                                <li><a href="{{ urlFor('repositories') }}" title="repositories">Repositories</a></li>
-                                <li><a href="{{ urlFor('environments') }}" title="environments">Environments</a></li>
-                                <li><a href="{{ urlFor('users') }}" title="users">Users</a></li>
-                                <li><a href="{{ urlFor('logs', {'page': '1'}) }}">Logs</a></li>
+                                <li>
+                                    <a href="{{ urlFor('repositories') }}" title="repositories">
+                                        <svg class="icon" viewBox="-3 0 32 32">
+                                            <use xlink:href="#repo"></use>
+                                        </svg>
+                                        Repositories
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ urlFor('environments') }}" title="environments">
+                                        <svg class="icon" viewBox="-1 0 32 32">
+                                            <use xlink:href="#leaf"></use>
+                                        </svg>
+                                        Environments
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ urlFor('users') }}" title="users">
+                                        <svg class="icon" viewBox="0 0 32 32">
+                                            <use xlink:href="#users"></use>
+                                        </svg>
+                                        Users
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ urlFor('logs', {'page': '1'}) }}">
+                                        <svg class="icon" viewBox="0 0 32 32">
+                                            <use xlink:href="#paper-roll"></use>
+                                        </svg>
+                                        Logs
+                                    </a>
+                                </li>
                             {% endif %}
-                            <li><a href="{{ urlFor('user.current') }}" title="profile">Profile</a></li>
-                            <li><a href="{{ urlFor('help') }}" title="help">Help</a></li>
-                            <li><a href="{{ urlFor('logout') }}" title="logout">Logout</a></li>
+                            <li>
+                                <a href="{{ urlFor('user.current') }}" title="profile">
+                                    <svg class="icon" viewBox="0 0 32 32">
+                                        <use xlink:href="#user-card"></use>
+                                    </svg>
+                                    Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ urlFor('help') }}" title="help">
+                                    <svg class="icon" viewBox="-6 0 32 32">
+                                        <use xlink:href="#question"></use>
+                                    </svg>
+                                    Help
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ urlFor('logout') }}" title="logout">
+                                    <svg class="icon" viewBox="0 0 32 32">
+                                        <use xlink:href="#sign-out"></use>
+                                    </svg>
+                                    Logout
+                                </a>
+                            </li>
                         {% else %}
-                            <li><a href="{{ urlFor('login') }}" title="login">Login</a></li>
-                            <li><a href="{{ urlFor('help') }}" title="help">Help</a></li>
+                            <li class="signed-out">
+                                <a href="{{ urlFor('login') }}" title="login">
+                                    <svg class="icon" viewBox="0 0 32 32">
+                                        <use xlink:href="#sign-in"></use>
+                                    </svg>
+                                    Login
+                                </a>
+                            </li>
+                            <li class="signed-out">
+                                <a href="{{ urlFor('help') }}" title="help">
+                                    <svg class="icon" viewBox="-6 0 32 32">
+                                        <use xlink:href="#question"></use>
+                                    </svg>
+                                Help
+                                </a>
+                            </li>
                         {% endif %}
                     </ul>
                 </nav>
