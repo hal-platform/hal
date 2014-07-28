@@ -1,3 +1,37 @@
 h2, .beta {
     color: $bright-blue;
 }
+
+.hal-label {
+    @include adjust-font-size-to(ms(4));
+    background-color: $text-color;
+    border: 2px solid $light-grey;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4) inset;
+    color: $white;
+    margin: 0 auto;
+    @include trailer(.5);
+    width: msem(15);
+    overflow: hidden;
+    background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, $bright-blue), color-stop(50%, $text-color));
+    background-image: linear-gradient(left, $bright-blue 50%, $text-color 50%);
+
+    @include breakpoint(42.1875em) {
+        margin-bottom: 0;
+    }
+}
+
+.hal-label > span {
+  display: block;
+  float: left;
+  @include rhythm(0,.1,.1,0);
+  @include padding-x(msem(-10));
+  width: 50%;
+}
+
+.hal-label__name {
+  text-align: right;
+}
+
+.hal-label__version {
+  text-align: left;
+}

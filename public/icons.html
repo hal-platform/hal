@@ -2358,11 +2358,9 @@
           <p>All of these icons are available for use throughout the site. They are svg and can just be used inline, like so:</p>
           <div class="markup">
             <pre><code>
-&lt;span class="icon"&gt;
-    &lt;svg viewBox="0 0 32 32"&gt;
-        &lt;use xlink:href="#change-to-id-of-icon-you-want"&gt;&lt;/use&gt;
-    &lt;/svg&gt;
-&lt;/span&gt;
+&lt;svg viewBox="0 0 32 32" class="icon"&gt;
+    &lt;use xlink:href="#change-to-id-of-icon-you-want"&gt;&lt;/use&gt;
+&lt;/svg&gt;
             </code></pre>
           </div>
 
@@ -2371,8 +2369,8 @@
             <pre><code>
 .icon {
     position: relative;
-    width: 18px;
-    height: 18px;
+    width: 1em;
+    height: 1em;
     fill: $text-color;
     display: inline-block;
 }
