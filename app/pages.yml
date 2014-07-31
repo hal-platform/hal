@@ -632,3 +632,6 @@ services:
   error.pages.twig:
     parent: 'twig.template'
     arguments: ['error.twig']
+
+  debug.page:
+    class: 'QL\Hal\Controllers\DebugController'
