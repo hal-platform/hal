@@ -2,6 +2,7 @@
 
 namespace QL\Hal\Services;
 
+use RuntimeException;
 use MCP\Corp\Account\LdapService;
 use MCP\Cache\CacheInterface;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
@@ -542,9 +543,12 @@ class PermissionsService
      *
      * @param $user
      * @return LdapUser|null
+     * @throws RuntimeException
      */
     private function getUser($user)
     {
+        $input = $user;
+
         if ($user instanceof LdapUser) {
             return $user;
         }
@@ -560,6 +564,15 @@ class PermissionsService
 
         $user = $this->ldap->getUserByWindowsUsername($user);
         $this->cache->set($key, $user);
+
+        // sanity check
+        if (!($user instanceof LdapUser)) {
+            throw new RuntimeException(
+                'Unable to convert user input %s into MCP User. Result is %s instead. This should never happen.',
+                var_export($input, true),
+                var_export($user, true)
+            );
+        }
 
         return $user;
     }
