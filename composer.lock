@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2e96dd9fc8b64d2acd2d9965f5e661a5",
+    "hash": "9691d7884742c3e5f7cbd1735fbc6b02",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -66,7 +66,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -120,7 +120,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
+                    "name": "Jonathan H. Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -187,7 +187,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan H. Wage",
+                    "name": "Jonathan Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -208,7 +208,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -413,7 +413,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -750,17 +750,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.2.0-alpha1",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "d3ecd7b8087314250b4905bc33d87a16da7fa7d2"
+                "reference": "043e07f828bb83cf61e5402821baabba5017c454"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-hal-core-2.2.0-alpha1-60b636.zip",
-                "reference": "d3ecd7b8087314250b4905bc33d87a16da7fa7d2",
-                "shasum": "892fe954cd465d50bb871abaab06b1d90f0727f6"
+                "url": "http://composer//dist/ql-hal-core-2.2.0-dc0562.zip",
+                "reference": "043e07f828bb83cf61e5402821baabba5017c454",
+                "shasum": "869d83df9faf938f47d7fd9290eede8d063bc54a"
             },
             "require": {
                 "doctrine/orm": "~2.4",
@@ -814,7 +814,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2014-07-14 17:20:43"
+            "time": "2014-08-15 13:07:35"
         },
         {
             "name": "ql/mcp-cache",
@@ -879,13 +879,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-core.git",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf"
+                "reference": "1.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-core-1.0.1-578aad.zip",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf",
-                "shasum": "4ab925396c0ef4d2adbdfc58716fb6ef536b26a8"
+                "url": "http://composer//dist/ql-mcp-core-1.0.1-d1b76f.zip",
+                "reference": "1.0.1",
+                "shasum": "33c9dd1e298f45d64a2f774c7501c203276d9152"
             },
             "archive": {
                 "exclude": [
@@ -941,13 +941,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-corp-account.git",
-                "reference": "44baf64add34e95ef8228e13e4ea12a80f5e3a83"
+                "reference": "0.2.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-corp-account-0.2.0-8f8dfa.zip",
-                "reference": "44baf64add34e95ef8228e13e4ea12a80f5e3a83",
-                "shasum": "8cedebde08a7d2c9d7a65a88b24297bf08a6f708"
+                "url": "http://composer//dist/ql-mcp-corp-account-0.2.0-ab11a0.zip",
+                "reference": "0.2.0",
+                "shasum": "654645d3f46b341cefce4013887d539eb300b496"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -985,13 +985,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-logger.git",
-                "reference": "107ae5ec4a74a20b7ba83bfbb9ef88bb1a3b8f7a"
+                "reference": "1.2.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-logger-1.2.0-dfec33.zip",
-                "reference": "107ae5ec4a74a20b7ba83bfbb9ef88bb1a3b8f7a",
-                "shasum": "ca96a0dee5aeb1b462298d5625df77aafdf4bac0"
+                "url": "http://composer//dist/ql-mcp-logger-1.2.0-4acc7d.zip",
+                "reference": "1.2.0",
+                "shasum": "f4ed617e19cd7f98bb85b521a673fe8ee924c04b"
             },
             "archive": {
                 "exclude": [
@@ -1467,7 +1467,7 @@
                     "role": "Lead Developer"
                 },
                 {
-                    "name": "Armin Ronacher2",
+                    "name": "Armin Ronacher",
                     "email": "armin.ronacher@active-4.com",
                     "role": "Project Founder"
                 },
@@ -2176,9 +2176,9 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/hal-core": 15,
         "ql/mcp-corp-account": 5
     },
+    "prefer-stable": true,
     "platform": {
         "php-64bit": "~5.4"
     },
