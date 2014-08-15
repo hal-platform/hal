@@ -71,6 +71,14 @@ parameters:
       route:  '/debug'
       stack:  ['login.bouncer', 'debug.page']
 
+    admin:
+        method: 'GET'
+        route: '/superadmin'
+        stack:
+            - login.bouncer
+            - admin.bouncer
+            - admin.utility.page
+
     ########################################################################################################################
     # BUILD ROUTES
     ########################################################################################################################

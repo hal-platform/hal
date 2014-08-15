@@ -628,6 +628,10 @@ services:
     arguments:
       - 'logs.twig'
 
+  admin.utility.page:
+    class: 'QL\Hal\Controllers\AdminController'
+    arguments: [@doctrine.config]
+
   # The twig template for slim errors (404, 500)
   error.pages.twig:
     parent: 'twig.template'
