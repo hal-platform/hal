@@ -121,6 +121,8 @@ class LoginHandleController
         $user->setHandle($account->windowsUsername());
         $user->setName($account->displayName());
         $user->setPictureUrl($account->badgePhotoUrl());
+        $user->setIsActive(true);
+
         $this->em->persist($user);
         $this->em->flush();
 
