@@ -399,7 +399,7 @@ class PermissionsService
     public function repositoryPermissionPairs($repository)
     {
         $repository = $this->repositories->findOneBy(['key' => $repository]);
-        $users = $this->users->findBy([], ['name' => 'ASC']);
+        $users = $this->users->findBy(['isActive' => true], ['name' => 'ASC']);
 
         $permissions = [];
 

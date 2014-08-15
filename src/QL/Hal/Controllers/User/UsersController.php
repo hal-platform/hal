@@ -57,7 +57,7 @@ class UsersController
     public function __invoke(Request $request, Response $response)
     {
         $rendered = $this->layout->render($this->template, [
-            'users' => $this->userRepo->findBy([], ['name' => 'ASC'])
+            'users' => $this->userRepo->findBy(['isActive' => true], ['name' => 'ASC'])
         ]);
 
         $response->body($rendered);
