@@ -89,7 +89,7 @@ class DashboardController
         // builds
         $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.user = :user AND b.status IN (:status) ORDER BY b.start DESC';
         $query = $this->em->createQuery($dql)
-            ->setParameter('user', $user)
+            ->setParameter('user', $user) // user that will show pushes for front end work ->setParameter('user', 2024851)
             ->setParameter('status', ['Success', 'Error'])
             ->setMaxResults(5);
         $builds = $query->getResult();
@@ -97,7 +97,7 @@ class DashboardController
         // pushes
         $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.user = :user AND p.status IN (:status) ORDER BY p.start DESC';
         $query = $this->em->createQuery($dql)
-            ->setParameter('user', $user)
+            ->setParameter('user', $user) // user that will show pushes for front end work ->setParameter('user', 2024851)
             ->setParameter('status', ['Success', 'Error'])
             ->setMaxResults(5);
         $pushes = $query->getResult();

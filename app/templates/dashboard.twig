@@ -6,93 +6,53 @@
 
     <h2>Hello, {{ getUsersActualName(user) }}.</h2>
 
-    <p>
-        This page is ugly. Mostly on purpose. I've dumped out the information we should need to build the dashboard
-        page. It just needs to be styled nicely.
-    </p>
-
     {# QUICK BUILD #}
 
-    <h3>Quick Build</h3>
-    <ul>
-        {% for repository in repositories %}
-            <li><a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repository.id}) }}">Start New Build for {{ repository.key }}</a></li>
-        {% else %}
-            <li>Looks like you don't have access to anything.</li>
-        {% endfor %}
-    </ul>
+    <a class="btn hide-btn">Start a Build</a>
+    <div class="hide-box">
+        <h3>Choose a Repository</h3>
+        <div class="form-wrapper">
+            <form action="" method="post">
+                <ul class="form-fields">
+                    <li>
+                        <label for="search">Filter Repositories</label>
+                        <input class="text-input js-filter__input" type="text" id="search" name="search" autofocus>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="col-list">
+            <ul class="list--bare js-filter">
+                {% for repository in repositories %}
+                    <li><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.key }}</a></li>
+                {% else %}
+                    <li>Looks like you don't have access to anything.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
     {# PENDING WORK #}
 
-    {% if pending or true %}
-        <h3>Pending Agent Work</h3>
-        <ul>
-            {% for item in pending %}
-                <li>
-                    {% if item is build %}
-                        <a href="{{ urlFor('repository.status', {'id': item.repository.id}) }}">{{ item.repository.key }}</a>
-                    {% endif %}
-                    {% if item is push %}
-                        <a href="{{ urlFor('repository.status', {'id': item.build.repository.id}) }}">{{ item.build.repository.key }}</a>
-                    {% endif %},
+    <h3>Pending Agent Work</h3>
+    {% include 'partials/pending-table.twig' %}
 
-                    {% if item is build %}
-                        <a href="{{ urlFor('build', {'build': item.id}) }}">Build</a>
-                    {% endif %}
-                    {% if item is push %}
-                        <a href="{{ urlFor('push', {'push': item.id}) }}">Push</a>
-                    {% endif %},
+    <div class="dash-box-wrapper">
 
-                    {% if item.status == 'Success' %}
-                        <span class="status-before--success">{{ item.status }}</span>
-                    {% elseif item.status in ['Error', 'Removed'] %}
-                        <span class="status-before--error">{{ item.status }}</span>
-                    {% else %}
-                        <span class="status-before--other">{{ item.status }}</span>
-                    {% endif %},
+        <div class="dash-box">
+              {# RECENT USER BUILD ACTIVITY #}
 
-                    {% if item is build %}
-                        Commit <a href="{{ githubCommit(item.repository.githubUser, item.repository.githubRepo, item.commit) }}">{{ item.commit|commit }}</a>
-                        <span class="icon">
-                                    <svg viewBox="0 0 32 32">
-                                        <use xlink:href="#github"></use>
-                                    </svg>
-                                </span>
-                    {% endif %}
-                    {% if item is push %}
-                        Build <a href="{{ urlFor('build', {'build': item.build.id}) }}">{{ item.build.id[:10] }}</a>
-                    {% endif %} -->
+              <h3>Your Recent Builds</h3>
+              {% include 'partials/build-box.twig' with {'builds': builds, 'initiator': false} %}
+        </div>
 
-                    {% if item is build %}
-                        Build <a href="{{ urlFor('build', {'build': item.id}) }}">{{ item.id[:10] }}</a>
-                    {% endif %}
-                    {% if item is push %}
-                        <a href="{{ urlFor('server', {'id': item.deployment.server.id }) }}">{{ item.deployment.server.name }}</a> ({{ item.deployment.server.environment.key }})
-                    {% endif %},
+        <div class="dash-box">
+              {# RECENT USER PUSH ACTIVITY #}
 
-                    {% if item.user %}
-                        <a href="{{ urlFor('user', {'id': item.user.id}) }}">{{ item.user.name[:20] }}</a>
-                    {% elseif item.consumer %}
-                        {{ item.consumer.name[:20] }}
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    {# RECENT USER BUILD ACTIVITY #}
-
-    <h3>Your Recent Builds</h3>
-    {% include 'partials/build-table.twig' with {'builds': builds, 'initiator': false} %}
-
-
-    {# RECENT USER PUSH ACTIVITY #}
-
-    <h3>Your Recent Pushes</h3>
-    {% include 'partials/push-table.twig' with {'builds': builds, 'initiator': false} %}
-
+              <h3>Your Recent Pushes</h3>
+              {% include 'partials/push-box.twig' with {'builds': builds, 'initiator': false} %}
+        </div>
+    </div>
 
 
 

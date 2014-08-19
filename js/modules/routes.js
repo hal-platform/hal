@@ -9,6 +9,9 @@ define(['crossroads'], function(crossroads) {
             var _this = this;
 
             // route definitions
+            router.addRoute('/', function(){
+                return _this.dashboard();
+            });
             router.addRoute('/repositories/add', function() {
                 return _this.addRepository();
             });
@@ -41,7 +44,6 @@ define(['crossroads'], function(crossroads) {
                 module.repos.attach();
             });
         },
-
         orderEnvironments: function() {
             return require(['modules/order-environments'], function(module) {
                 module.init();
@@ -52,7 +54,11 @@ define(['crossroads'], function(crossroads) {
                 module.init();
             });
         },
-
+        dashboard: function() {
+            return require(['modules/dashboard'], function(module) {
+                module.init();
+            });
+        },
         updateRepositoryStatus: function() {
             return require(['modules/update-builds', 'modules/update-pushes'], function(module, module2) {
                 module.init();

@@ -1,0 +1,30 @@
+.dash-box-wrapper{
+		background-color: tint($light-grey, 50%);
+		@include margin-x(-1.15em);
+		margin-bottom: -1em;
+		overflow: hidden;
+}
+
+
+.dash-box{
+		@include border-radius(5px);
+		@include leader();
+		@include trailer();
+		@include padding-x(msem(5));
+		padding-top: msem(1);
+		background-color: #fff;
+		overflow: hidden;
+
+		@include breakpoint(40em){
+				&:nth-child(odd){
+						@include grid-span(1,1, $grid: 2, $gutter: .08);
+						clear: left;
+				}
+
+				&:nth-child(even){
+						@include grid-span(1, 2, $grid: 2, $gutter: .08);
+						clear: right;
+				}
+		}
+
+}
