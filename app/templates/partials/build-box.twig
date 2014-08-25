@@ -1,44 +1,44 @@
 {% if initiator is not defined %}
-		{% set initiator = true %}
+    {% set initiator = true %}
 {% endif %}
 {% if actions is not defined %}
-		{% set actions = true %}
+    {% set actions = true %}
 {% endif %}
 
 <ul class="list--bare cards__baby">
-		{% for build in builds %}
-		<li>
-				<article class="card__baby mbn">
-						<header class="card__header split">
-								<a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">
-										<span class="split__title">{{ build.repository.key }} ({{ build.environment.key }})</span>
-										{% if build.status == 'Success' %}
-											<span class="status-before--success">{{ build.status }}</span>
-										{% elseif build.status in ['Error', 'Removed'] %}
-											<span class="status-before--error">{{ build.status }}</span>
-										{% else %}
-											<span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
-										{% endif %}
-								</a>
-						</header>
+    {% for build in builds %}
+        <li>
+            <article class="card__baby mbn">
+                <header class="card__header split">
+                    <a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">
+                        <span class="split__title">{{ build.repository.key }} ({{ build.environment.key }})</span>
+                        {% if build.status == 'Success' %}
+                            <span class="status-before--success">{{ build.status }}</span>
+                        {% elseif build.status in ['Error', 'Removed'] %}
+                            <span class="status-before--error">{{ build.status }}</span>
+                        {% else %}
+                            <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
+                        {% endif %}
+                    </a>
+                </header>
 
-						<section class="card__details">
-								<ul class="split mbn">
-										<li>
-												<span class="split__title">{{ build.end|reldate }}</span>
-												<a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
-												<svg viewBox="0 0 32 32" class="icon">
-														<use xlink:href="#fork"></use>
-												</svg>
-										</li>
-								</ul>
-						</section>
-				</article>
+                <section class="card__details">
+                    <ul class="split mbn">
+                        <li>
+                            <span class="split__title">{{ build.end|reldate }}</span>
+                            <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
+                            <svg viewBox="0 0 32 32" class="icon">
+                                <use xlink:href="#fork"></use>
+                            </svg>
+                        </li>
+                    </ul>
+                </section>
+            </article>
 
-		</li>
+        </li>
 
-	{% else %}
-		<li>No builds found.</li>
-	{% endfor %}
+    {% else %}
+        <li>No builds found.</li>
+    {% endfor %}
 
 </ul>

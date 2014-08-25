@@ -1,12 +1,12 @@
 .build-box{
-		@include trailer();
+    @include trailer();
 }
 
 .js-hide-box{
-		display: none;
+    display: none;
 }
 
 .col-list{
-		@include columns(8em 3);
-		@include rhythm(0,.25,.25,1);
+    @include columns(8em 3);
+    @include rhythm(0,.25,.25,1);
 }

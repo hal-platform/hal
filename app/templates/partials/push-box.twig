@@ -1,37 +1,35 @@
 {% if initiator is not defined %}
-		{% set initiator = true %}
+    {% set initiator = true %}
 {% endif %}
 
 <ul class="list--bare cards__baby">
-		{% for push in pushes %}
-		<li>
+    {% for push in pushes %}
+        <li>
+            <article class="card__baby mbn">
+                <header class="card__header split">
+                    <a href="{{ urlFor('push', {'push': push.id}) }}">
+                        <span class="split__title">{{ push.build.repository.key }} ({{ push.deployment.server.environment.key }})</span>
+                        {% if push.status == 'Success' %}
+                            <span class="status-before--success">{{ push.status }}</span>
+                        {% elseif push.status == 'Error' %}
+                            <span class="status-before--error">{{ push.status }}</span>
+                        {% else %}
+                            <span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
+                        {% endif %}
+                    </a>
+                </header>
 
-			<article class="card__baby mbn">
-					<header class="card__header split">
-							<a href="{{ urlFor('push', {'push': push.id}) }}">
-									<span class="split__title">{{ push.build.repository.key }} ({{ push.deployment.server.environment.key }})</span>
-									{% if push.status == 'Success' %}
-											<span class="status-before--success">{{ push.status }}</span>
-									{% elseif push.status == 'Error' %}
-											<span class="status-before--error">{{ push.status }}</span>
-									{% else %}
-											<span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
-									{% endif %}
-							</a>
-					</header>
-
-					<section class="card__details">
-							<ul class="split mbn">
-									<li>
-											<span class="split__title">{{ push.start|reldate }}</span>
-											<a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
-									</li>
-							</ul>
-					</section>
-			</article>
-		</li>
-		{% else %}
-			<li>No pushes found.</li>
-		{% endfor %}
-
+                <section class="card__details">
+                    <ul class="split mbn">
+                        <li>
+                            <span class="split__title">{{ push.start|reldate }}</span>
+                            <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
+                        </li>
+                    </ul>
+                </section>
+            </article>
+        </li>
+    {% else %}
+        <li>No pushes found.</li>
+    {% endfor %}
 </ul>

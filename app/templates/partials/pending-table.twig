@@ -1,73 +1,72 @@
 {% if pending or true %}
 <table class="tablesaw tablesaw-stack" data-mode="stack">
-		<thead>
-				<th>Type</th>
-				<th>Status</th>
-				<th>Environment</th>
-				<th>Server</th>
-				<th>Initiator</th>
-		</thead>
-		<tbody>
-		{% for item in pending %}
-				<tr>
-					<td>
-						{% if item is build %}
-								<a href="{{ urlFor('repository.status', {'id': item.repository.id}) }}">{{ item.repository.key }}</a>
-						{% endif %}
-						{% if item is push %}
-								<a href="{{ urlFor('repository.status', {'id': item.build.repository.id}) }}">{{ item.build.repository.key }}</a>
-						{% endif %}
+    <thead>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Environment</th>
+        <th>Server</th>
+        <th>Initiator</th>
+    </thead>
+    <tbody>
+        {% for item in pending %}
+            <tr>
+                <td>
+                    {% if item is build %}
+                        <a href="{{ urlFor('repository.status', {'id': item.repository.id}) }}">{{ item.repository.key }}</a>
+                    {% endif %}
+                    {% if item is push %}
+                        <a href="{{ urlFor('repository.status', {'id': item.build.repository.id}) }}">{{ item.build.repository.key }}</a>
+                    {% endif %}
 
-						{% if item is build %}
-								(<a href="{{ urlFor('build', {'build': item.id}) }}">Build</a>)
-						{% endif %}
-						{% if item is push %}
-								(<a href="{{ urlFor('push', {'push': item.id}) }}">Push</a>)
-						{% endif %}
-					</td>
-					<td>
-						{% if item.status == 'Success' %}
-								<span class="status-before--success">{{ item.status }}</span>
-						{% elseif item.status in ['Error', 'Removed'] %}
-								<span class="status-before--error">{{ item.status }}</span>
-						{% else %}
-								<span class="status-before--other">{{ item.status }}</span>
-						{% endif %}
-					</td>
-					<td>
-						{% if item is build %}
-								Commit <a href="{{ githubCommit(item.repository.githubUser, item.repository.githubRepo, item.commit) }}">{{ item.commit|commit }}</a>
-								<span class="icon">
-														<svg viewBox="0 0 32 32">
-																<use xlink:href="#github"></use>
-														</svg>
-												</span>
-						{% endif %}
-						{% if item is push %}
-								Build <a href="{{ urlFor('build', {'build': item.build.id}) }}">{{ item.build.id[:10] }}</a>
-						{% endif %} 
+                    {% if item is build %}
+                        (<a href="{{ urlFor('build', {'build': item.id}) }}">Build</a>)
+                    {% endif %}
+                    {% if item is push %}
+                        (<a href="{{ urlFor('push', {'push': item.id}) }}">Push</a>)
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.status == 'Success' %}
+                        <span class="status-before--success">{{ item.status }}</span>
+                    {% elseif item.status in ['Error', 'Removed'] %}
+                        <span class="status-before--error">{{ item.status }}</span>
+                    {% else %}
+                        <span class="status-before--other">{{ item.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item is build %}
+                        Commit <a href="{{ githubCommit(item.repository.githubUser, item.repository.githubRepo, item.commit) }}">{{ item.commit|commit }}</a>
+                        <span class="icon">
+                            <svg viewBox="0 0 32 32">
+                                <use xlink:href="#github"></use>
+                            </svg>
+                        </span>
+                    {% endif %}
+                    {% if item is push %}
+                        Build <a href="{{ urlFor('build', {'build': item.build.id}) }}">{{ item.build.id[:10] }}</a>
+                    {% endif %} 
 
-					</td>
-					<td>
-
-						{% if item is build %}
-								Build <a href="{{ urlFor('build', {'build': item.id}) }}">{{ item.id[:10] }}</a>
-						{% endif %}
-						{% if item is push %}
-								<a href="{{ urlFor('server', {'id': item.deployment.server.id }) }}">{{ item.deployment.server.name }}</a> ({{ item.deployment.server.environment.key }})
-						{% endif %}
-					</td>
-					<td>
-						{% if item.user %}
-								<a href="{{ urlFor('user', {'id': item.user.id}) }}">{{ item.user.name[:20] }}</a>
-						{% elseif item.consumer %}
-								{{ item.consumer.name[:20] }}
-						{% else %}
-								Unknown
-						{% endif %}
-					</td>
-				</tr>
-		{% endfor %}
-	</tbody>
+                </td>
+                <td>
+                    {% if item is build %}
+                        Build <a href="{{ urlFor('build', {'build': item.id}) }}">{{ item.id[:10] }}</a>
+                    {% endif %}
+                    {% if item is push %}
+                        <a href="{{ urlFor('server', {'id': item.deployment.server.id }) }}">{{ item.deployment.server.name }}</a> ({{ item.deployment.server.environment.key }})
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.user %}
+                        <a href="{{ urlFor('user', {'id': item.user.id}) }}">{{ item.user.name[:20] }}</a>
+                    {% elseif item.consumer %}
+                        {{ item.consumer.name[:20] }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endif %}
