@@ -2,7 +2,7 @@
     @extend %clearfix;
 }
 
-.cards__baby > li{
+.cards--baby > li{
     width: 100%;
     @include adjust-font-size-to(ms(-1));
     @include trailer(2);
@@ -38,7 +38,7 @@
     }
 }
 
-.card, .card__baby {
+.card, .card--baby {
     @include padding-x(msem(-1));
     @include rhythm(0,.25,.25,1);
     box-shadow: 0 0 0 8px $light-grey;

@@ -1,0 +1,4 @@
+.col-list{
+		@include columns(8em 3);
+		@include rhythm(0,.25,.25,1);
+}

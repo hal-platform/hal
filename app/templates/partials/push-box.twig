@@ -2,10 +2,10 @@
     {% set initiator = true %}
 {% endif %}
 
-<ul class="list--bare cards__baby">
+<ul class="list--bare cards--baby">
     {% for push in pushes %}
         <li>
-            <article class="card__baby mbn">
+            <article class="card--baby mbn">
                 <header class="card__header split">
                     <a href="{{ urlFor('push', {'push': push.id}) }}">
                         <span class="split__title">{{ push.build.repository.key }} ({{ push.deployment.server.environment.key }})</span>

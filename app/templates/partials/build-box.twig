@@ -5,10 +5,10 @@
     {% set actions = true %}
 {% endif %}
 
-<ul class="list--bare cards__baby">
+<ul class="list--bare cards--baby">
     {% for build in builds %}
         <li>
-            <article class="card__baby mbn">
+            <article class="card--baby mbn">
                 <header class="card__header split">
                     <a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">
                         <span class="split__title">{{ build.repository.key }} ({{ build.environment.key }})</span>

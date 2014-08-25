@@ -5,3 +5,7 @@
 .mls {
     margin-left: 5px;
 }
+
+.trailer{
+    @include trailer();
+}
