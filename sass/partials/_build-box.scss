@@ -1,9 +1,9 @@
-.hide-box{
-		display: none;
+.build-box{
+		@include trailer();
 }
 
-.hide-btn{
-		@include trailer(2);
+.js-hide-box{
+		display: none;
 }
 
 .col-list{

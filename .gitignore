@@ -33,5 +33,5 @@
 # dumb atlassian sourcetree file that keeps re-creating itself
 atlassian-ide-plugin.xml
 
-#routing file for php server
+# routing file for php server
 public/routing.php

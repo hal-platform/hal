@@ -2,8 +2,8 @@ define(['jquery'], function($) {
 		return {
 				filterList: '.js-filter',
 				inputTarget: '.js-filter__input',
-				toggleBtn: '.hide-btn',
-				hideContent: '.hide-box',
+				toggleBtn: '.js-hide-btn',
+				hideContent: '.js-hide-box',
 				init: function() {
 					this.toggle();
 

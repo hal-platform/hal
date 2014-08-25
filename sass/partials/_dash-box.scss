@@ -9,11 +9,9 @@
 .dash-box{
 		@include border-radius(5px);
 		@include leader();
-		@include trailer();
 		@include padding-x(msem(5));
 		padding-top: msem(1);
 		background-color: #fff;
-		overflow: hidden;
 
 		@include breakpoint(40em){
 				&:nth-child(odd){
