@@ -72,11 +72,8 @@ class DashboardController
         // pending work
         $dql = 'SELECT b, p FROM QL\Hal\Core\Entity\Build b, QL\Hal\Core\Entity\Push p WHERE b.status in (:buildstatus) AND p.status IN (:pushstatus)';
         $query = $this->em->createQuery($dql)
-            // FIX ME @todo
-            //->setParameter('buildstatus', ['Waiting', 'Building'])
-            //->setParameter('pushstatus', ['Waiting', 'Pushing'])
-            ->setParameter('buildstatus', ['Waiting', 'Building', 'Success'])
-            ->setParameter('pushstatus', ['Waiting', 'Pushing', 'Success'])
+            ->setParameter('buildstatus', ['Waiting', 'Building'])
+            ->setParameter('pushstatus', ['Waiting', 'Pushing'])
             ->setMaxResults(25);
         $pending = $query->getResult();
 

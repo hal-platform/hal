@@ -33,7 +33,7 @@
     </div>
 
     {# PENDING WORK #}
-    {% if isAdmin %}
+    {% if isAdmin and pending %}
       <h3>Pending Agent Work</h3>
       {% include 'partials/pending-table.twig' %} 
     {% endif %}
@@ -56,48 +56,4 @@
         </div>
     </div>
 
-
-
-
-
-
-
-    {#
-    Not sure what to do with this stuff... Integrated here? Another page? Login? Not sure.
-
-    <h2>Hello, {{ getUsersActualName(user) }}.</h2>
-
-    <p>
-        You have reached the latest version of the code building and pushing tool for unix-based applications.
-    <p>
-    <p>
-        The 9000 series is the most reliable computer ever made. No 9000 computer has ever made a mistake or distorted information. We are all, by any practical definition of the words, foolproof and incapable of error.
-    </p>
-
-    <p>If you feel you do not have the correct permissions or need support to remedy a mistake you have made, please contact our support personnel on standby: <a href="{{ urlFor('help') }}">Contact support</a>.</p>
-
-    <p>I look forward to working with you.</p>
-
-
-
-    <h3>Instructions</h3>
-    <p>
-        Applications are assigned to <strong>groups</strong> or <strong>organizations</strong>. To push code for an application, follow these steps:
-        <ol>
-            <li>Find the repository under the group by starting on the <a href="{{ urlFor('groups') }}">Groups</a>.</li>
-            <li>Go to the repository status page.</li>
-            <li>Create a build for a specific environment.</li>
-            <li>Push the build to your desired servers.</li>
-        </ol>
-
-        <small><strong>Note</strong>: Push permissions are strictly regulated. If you feel your permissions are incorrect due to a mistake made by another human, open an inquiry by <a href="{{ urlFor('help') }}">contacting support</a>.</small>
-    </p>
-    #}
-
 {% endblock %}
-
-{# ideas for this page:
-    - list of the most recent pushes
-    - "hot" or "active" repositories -> shortcuts right to their deployment page
-    - Most recent builds/pushes triggered by this user and their status (and if they are still the latest deployment for that repo)
-#}
