@@ -33,9 +33,11 @@
     </div>
 
     {# PENDING WORK #}
+    {% if isAdmin %}
+      <h3>Pending Agent Work</h3>
+      {% include 'partials/pending-table.twig' %} 
+    {% endif %}
 
-    <h3>Pending Agent Work</h3>
-    {% include 'partials/pending-table.twig' %}
 
     <div class="dash-box-wrapper">
 
@@ -53,6 +55,9 @@
               {% include 'partials/push-box.twig' with {'builds': builds, 'initiator': false} %}
         </div>
     </div>
+
+
+
 
 
 
