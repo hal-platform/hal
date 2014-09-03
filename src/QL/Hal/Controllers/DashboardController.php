@@ -37,6 +37,9 @@ class DashboardController
      */
     private $permissions;
 
+    /**
+     * @var EntityManager
+     */
     private $em;
 
     /**
