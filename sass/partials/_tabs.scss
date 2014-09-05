@@ -1,0 +1,23 @@
+// prototype... refactor
+
+// should use nav
+.tabs{
+    margin-top: 1.5em;
+
+    li{
+      float: left;
+      margin: 0px 5px;
+    }
+
+    .active{
+      background-color: $light-grey;
+    }
+}
+
+.tab{
+  display: none;
+}
+
+.active{
+  display: block;
+}

@@ -1,0 +1,41 @@
+//prototype code.  needs refactor
+// js class need to be moved
+
+.drop-down{
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 100;
+}
+
+.js-search-drop{
+    display: none;
+    overflow: auto;
+    max-height: 300px;
+}
+
+.js-search-results {
+
+  li{
+      padding-left: 30px;
+      padding-right: 30px;
+  }
+
+  li:hover{
+      background-color: $yellow;
+  }
+}
+
+@keyframes highlight{
+	0%, 100%{
+		background-color: none;
+	}
+
+	50%{
+		background-color: $bright-blue;
+	}
+}
+
+.js-highlight{
+	 animation: highlight 2s;
+}

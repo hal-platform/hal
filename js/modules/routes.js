@@ -22,7 +22,9 @@ define(['crossroads'], function(crossroads) {
             router.addRoute('/repositories/:throwaway:/deployments', function() {
                 return _this.addDeployments();
             });
-
+            router.addRoute('/repositories/:id:/build', function() {
+                return _this.startBuild();
+            });
             router.addRoute('/repositories/:id:/status', function() {
                 return _this.updateRepositoryStatus();
             });
@@ -56,6 +58,11 @@ define(['crossroads'], function(crossroads) {
         },
         dashboard: function() {
             return require(['modules/dashboard'], function(module) {
+                module.init();
+            });
+        },
+        startBuild: function() {
+            return require(['modules/start-build'], function(module) {
                 module.init();
             });
         },
