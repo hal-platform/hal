@@ -553,6 +553,13 @@ parameters:
       conditions:
         id:         '[0-9]+'
 
+    api.user.permissions:
+      method:       'GET'
+      route:        '/api/users/:id/permissions'
+      stack:        ['api.user.permissions']
+      conditions:
+        id:         '[0-9]+'
+
     api.deployment:
       method:       'GET'
       route:        '/api/deployment/:id'

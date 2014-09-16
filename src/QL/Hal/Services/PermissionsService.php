@@ -159,8 +159,11 @@ class PermissionsService
      */
     public function allowAdmin($user)
     {
+        $user = $this->getUser($user);
+
         if (!($user instanceof LdapUser)) {
-            $user = $this->getUser($user);
+            // user not found in ldap
+            return false;
         }
 
         // Super Admin
@@ -196,8 +199,11 @@ class PermissionsService
      */
     public function allowDelete($user)
     {
+        $user = $this->getUser($user);
+
         if (!($user instanceof LdapUser)) {
-            $user = $this->getUser($user);
+            // user not found in ldap
+            return false;
         }
 
         // Super Admin
@@ -211,6 +217,24 @@ class PermissionsService
         }
 
         // God Override
+        return $this->allowGodMode($user);
+    }
+
+    /**
+     * Check if a user is allowed god mode access
+     *
+     * @param $user
+     * @return bool
+     */
+    public function allowGodMode($user)
+    {
+        $user = $this->getUser($user);
+
+        if (!($user instanceof LdapUser)) {
+            // user not found in ldap
+            return false;
+        }
+
         if ($user->commonId() == $this->god) {
             return true;
         }
@@ -228,45 +252,7 @@ class PermissionsService
      */
     public function allowPush($user, $repository, $environment)
     {
-        if (!($user instanceof LdapUser)) {
-            $user = $this->getUser($user);
-        }
-
-        // Super Admin
-        if ($this->isUserInGroup($user, $this->generateSuperAdminDn())) {
-            return true;
-        }
-
-        // HAL Admin (HAL 9000 Push Permission)
-        if (in_array($repository, $this->halRepos) && $this->isUserInGroup($user, $this->generateHalAdminDn())) {
-            return true;
-        }
-
-        // Non-Production Rules
-        if (!$this->isEnvironmentProduction($environment)) {
-
-            // HAL Admin
-            if ($this->isUserInGroup($user, $this->generateHalAdminDn())) {
-                return true;
-            }
-
-            // Github Collaborators
-            if ($this->isUserCollaborator($user, $repository)) {
-                return true;
-            }
-
-            // LDAP Repository Permissions
-            if ($this->isUserInGroup($user, $this->generateRepositoryDn($repository, $environment))) {
-                return true;
-            }
-        }
-
-        // God Override
-        if ($user->commonId() == $this->god) {
-            return true;
-        }
-
-        return false;
+        return ($this->allowPushByMatchingRule($user, $repository, $environment) === false) ? false : true;
     }
 
     /**
@@ -280,44 +266,111 @@ class PermissionsService
      */
     public function allowBuild($user, $repository)
     {
+        return ($this->allowBuildByMatchingRule($user, $repository) === false) ? false : true;
+    }
+
+    /**
+     * Check if a user is allowed to push to a given repository:environment pair and if the result is true, return
+     * the matching rule that allowed access. Return false otherwise.
+     *
+     * @param $user
+     * @param $repository
+     * @param $environment
+     * @return string|false
+     */
+    public function allowPushByMatchingRule($user, $repository, $environment)
+    {
+        $user = $this->getUser($user);
+
         if (!($user instanceof LdapUser)) {
-            $user = $this->getUser($user);
+            // user not found in ldap
+            return false;
         }
 
         // Super Admin
         if ($this->isUserInGroup($user, $this->generateSuperAdminDn())) {
-            return true;
+            return 'ldap:super-admin';
         }
 
-        // HAL Admin
-        if ($this->isUserInGroup($user, $this->generateHalAdminDn())) {
-            return true;
+        // HAL Admin (HAL 9000 Push Permission)
+        if (in_array($repository, $this->halRepos) && $this->isUserInGroup($user, $this->generateHalAdminDn())) {
+            return 'ldap:hal-admin';
         }
 
-        // Project Admin
-        if ($this->isUserInGroup($user, $this->generateProjectAdminDn())) {
-            return true;
-        }
+        // Non-Production Rules
+        if (!$this->isEnvironmentProduction($environment)) {
 
-        // Github Collaborators
-        if ($this->isUserCollaborator($user, $repository)) {
-            return true;
-        }
+            // HAL Admin
+            if ($this->isUserInGroup($user, $this->generateHalAdminDn())) {
+                return 'ldap:hal-admin (non-prod)';
+            }
 
-        // LDAP Repository Permissions (any environment)
-        foreach ($this->environments->findAll() as $environment) {
-            if ($this->isUserInGroup($user, $this->generateRepositoryDn($repository, $environment->getKey()))) {
-                return true;
+            // Github Collaborators
+            if ($this->isUserCollaborator($user, $repository)) {
+                return 'github:collaborator (non-prod)';
+            }
+
+            // LDAP Repository Permissions
+            if ($this->isUserInGroup($user, $this->generateRepositoryDn($repository, $environment))) {
+                return 'ldap:repository-group (non-prod)';
             }
         }
 
         // God Override
-        if ($user->commonId() == $this->god) {
-            return true;
+        return $this->allowGodMode($user);
+    }
+
+    /**
+     * Check if a user is allowed to build a given repository and, if the result is true, return the matching tool
+     * that allowed access.
+     *
+     * You can build if you're an admin or have any connection to the repository (collaborator or any LDAP permission)
+     *
+     * @param $user
+     * @param $repository
+     * @return bool
+     */
+    public function allowBuildByMatchingRule($user, $repository)
+    {
+        $user = $this->getUser($user);
+
+        if (!($user instanceof LdapUser)) {
+            // user not found in ldap
+            return false;
         }
 
-        return false;
+        // Super Admin
+        if ($this->isUserInGroup($user, $this->generateSuperAdminDn())) {
+            return 'ldap:super-admin';
+        }
+
+        // HAL Admin (HAL 9000 Push Permission)
+        if (in_array($repository, $this->halRepos) && $this->isUserInGroup($user, $this->generateHalAdminDn())) {
+            return 'ldap:hal-admin';
+        }
+
+        // Project Admin
+        if ($this->isUserInGroup($user, $this->generateProjectAdminDn())) {
+            return 'ldap:project-admin';
+        }
+
+        // Github Collaborators
+        if ($this->isUserCollaborator($user, $repository)) {
+            return 'github:collaborator';
+        }
+
+        // Any user that can push to any environment
+        foreach ($this->environments->findAll() as $environment) {
+            if ($rule = $this->allowPushByMatchingRule($user, $repository, $environment->getKey())) {
+                return sprintf('push::%s', $rule);
+            }
+        }
+
+        // God Override
+        return $this->allowGodMode($user);
     }
+
+
 
     ####################################################################################################################
     # ANALYTICS
@@ -351,8 +404,11 @@ class PermissionsService
      */
     public function userRepositories($user)
     {
+        $user = $this->getUser($user);
+
         if (!($user instanceof LdapUser)) {
-            $user = $this->getUser($user);
+            // user not found in ldap
+            return false;
         }
 
         $repositories = [];
@@ -369,20 +425,63 @@ class PermissionsService
     /**
      * Get all permission pairs for a user
      *
+     * @deprecated
+     *
      * @param LdapUser|string $user
      * @return array
      */
     public function userPermissionPairs($user)
     {
+        return $this->userPushPermissionPairs($user);
+    }
+
+    /**
+     * Get all push permission pairs for a user
+     *
+     * @param $user
+     * @return array
+     */
+    public function userPushPermissionPairs($user)
+    {
+        $user = $this->getUser($user);
+
         if (!($user instanceof LdapUser)) {
-            $user = $this->getUser($user);
+            // user not found in ldap
+            return false;
         }
 
         $permissions = [];
 
         foreach ($this->getPermissionPairs() as $pair) {
-            if ($this->allowPush($user, $pair['repository']->getKey(), $pair['environment']->getKey())) {
-                //$permissions[] = $pair;
+            if ($rule = $this->allowPushByMatchingRule($user, $pair['repository']->getKey(), $pair['environment']->getKey())) {
+                $pair['rule'] = $rule;
+                $permissions[$pair['environment']->getKey()][] = $pair;
+            }
+        }
+
+        return $permissions;
+    }
+
+    /**
+     * Get all build permission pairs for a user
+     *
+     * @param $user
+     * @return array
+     */
+    public function userBuildPermissionPairs($user)
+    {
+        $user = $this->getUser($user);
+
+        if (!($user instanceof LdapUser)) {
+            // user not found in ldap
+            return false;
+        }
+
+        $permissions = [];
+
+        foreach ($this->getPermissionPairs() as $pair) {
+            if ($rule = $this->allowBuildByMatchingRule($user, $pair['repository']->getKey(), $pair['environment']->getKey())) {
+                $pair['rule'] = $rule;
                 $permissions[$pair['environment']->getKey()][] = $pair;
             }
         }
@@ -476,22 +575,22 @@ class PermissionsService
      */
     private function isUserCollaborator(LdapUser $user, $repository)
     {
-        $key = 'github.collaborator.'.md5($user->commonId().$repository);
+        $key = 'github.collaborator.'.$user->commonId().'.'.$repository;
 
-        if ($member = $this->cache->get($key)) {
-            return $member;
+        if ($result = $this->cache->get($key)) {
+            return $result;
         }
 
         $repository = $this->repositories->findOneBy(['key' => $repository]);
 
-        $member = $this->github->isUserCollaborator(
+        $result = $this->github->isUserCollaborator(
             $repository->getGithubUser(),
             $repository->getGithubRepo(),
             $user->windowsUsername()
         );
-        $this->cache->set($key, $member);
+        $this->cache->set($key, $result, 120);
 
-        return $member;
+        return $result;
     }
 
     ####################################################################################################################
@@ -547,8 +646,6 @@ class PermissionsService
      */
     private function getUser($user)
     {
-        $input = $user;
-
         if ($user instanceof LdapUser) {
             return $user;
         }
@@ -565,16 +662,11 @@ class PermissionsService
         $user = $this->ldap->getUserByWindowsUsername($user);
         $this->cache->set($key, $user);
 
-        // sanity check
-        if (!($user instanceof LdapUser)) {
-            throw new RuntimeException(
-                'Unable to convert user input %s into MCP User. Result is %s instead. This should never happen.',
-                var_export($input, true),
-                var_export($user, true)
-            );
+        if ($user instanceof LdapUser) {
+            return $user;
+        } else {
+            return null;
         }
-
-        return $user;
     }
 
     ####################################################################################################################

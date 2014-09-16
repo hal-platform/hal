@@ -78,6 +78,7 @@ class UserNormalizer
         return [
             '_links' => [
                 'self' => $this->linked($user),
+                'permissions' => $this->api->parseLink(['href' => ['api.user.permissions', ['id' => $user->getId()]]]),
                 'index' => $this->api->parseLink(['href' => 'api.users'])
             ]
         ];

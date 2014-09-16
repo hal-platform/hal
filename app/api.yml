@@ -246,3 +246,12 @@ services:
       - @api.helper
       - @user.repo
       - @api.user.normalizer
+
+  api.user.permissions:
+    class: 'QL\Hal\Controllers\Api\User\UserPermissionsController'
+    arguments:
+      - @api.helper
+      - @user.repo
+      - @api.environment.normalizer
+      - @api.repository.normalizer
+      - @permissions
