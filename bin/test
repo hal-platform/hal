@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
-BIN="$DIR/../vendor/bin/phpunit"
 
+BIN="$DIR/../vendor/bin/phpunit"
 PARAMETERS=""
 NO_SUITE="--testsuite none"
+RAPID_CONFIG_FILE="--configuration $DIR/../tests/phpunit.rapid-dev.xml"
 STOP_SUITE=false
 
 for var in "$@"
 do
-    if [[ "${var:0:2}" != "--" ]] ; then
-        STOP_SUITE=true
-        var=$(cd "$(dirname "$1")"; pwd)/$(basename "$1")
+    if [ "$var" = "--rapid" ] ; then
+        BIN="$BIN $RAPID_CONFIG_FILE"
+    else
+        PARAMETERS="$PARAMETERS $var"
     fi
 
-    PARAMETERS="$PARAMETERS $var"
-
+    if [[ "${var:0:2}" != "--" ]] ; then
+        STOP_SUITE=true
+    fi
 done
 
 # if we think the user is targeting a file, remove the testsuite
@@ -23,5 +26,4 @@ if $STOP_SUITE; then
     BIN="$BIN $NO_SUITE"
 fi
 
-cd "$DIR/../tests"
 $BIN$PARAMETERS

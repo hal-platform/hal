@@ -3,10 +3,11 @@
 *.swp
 .DS_Store
 .sublime-workspace
+atlassian-ide-plugin.xml
 
 # testing
-/phpunit/
-/tests/phpunit.xml
+/.phpunit/
+/phpunit.xml
 
 # compiled assets / package installation
 /.bundle/
@@ -29,9 +30,3 @@
 /app/cache/*
 
 /.vagrant
-
-# dumb atlassian sourcetree file that keeps re-creating itself
-atlassian-ide-plugin.xml
-
-# routing file for php server
-public/routing.php
