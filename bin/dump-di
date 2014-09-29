@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 
 $root = __DIR__ . '/../';
-$file = $root . 'src/QL/Hal/CachedContainer.php';
+$file = $root . 'src/CachedContainer.php';
 $class = 'QL\Hal\CachedContainer';
 
 if (!$container = @include $root . '/app/bootstrap.php') {

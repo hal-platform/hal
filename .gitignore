@@ -24,7 +24,7 @@ atlassian-ide-plugin.xml
 
 # compiled configuration
 /app/config.yml
-/src/QL/Hal/CachedContainer.php
+/src/CachedContainer.php
 
 # doctrine cache
 /app/cache/*
