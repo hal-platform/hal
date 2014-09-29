@@ -40,7 +40,7 @@ function buildDi($root)
     $builder = new YamlFileLoader($container, new FileLocator($root));
     $builder->load('app/config.yml');
 
-    $container->setParameter('root', $root);
+    $container->set('root', $root);
     $container->compile();
 
     return $container;

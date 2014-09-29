@@ -28,6 +28,9 @@ services:
     class: 'Symfony\Component\DependencyInjection\ContainerInterface'
     synthetic: true
 
+    root:
+        synthetic: true
+
   ######################################################################################################################
   # DOCTRINE CONFIGURATION
   ######################################################################################################################
@@ -124,7 +127,7 @@ services:
 
   directory.helper:
     class: 'QL\Hal\Helpers\DirectoryHelper'
-    arguments: [%root%]
+    arguments: [@root]
 
   user.helper:
     class: 'QL\Hal\Helpers\LazyUserHelper'
@@ -157,12 +160,18 @@ services:
   # Twig Loader
   twigLoader:
     class: 'Twig_Loader_Filesystem'
-    arguments: ['%root%/app/templates']
+    arguments: [@twigLoader.path]
+
+  twigLoader.path:
+    class: 'NOTHING_TO_SEE_HERE'
+    factory_service: 'directory.helper'
+    factory_method: 'fullPath'
+    arguments: ['app/templates']
 
   # Twig Environment
   twigEnv:
     class: 'Twig_Environment'
-    arguments: ['@twigLoader']
+    arguments: [@twigLoader]
     calls:
       - ['addExtension', [@twigExtension]]
 
@@ -328,7 +337,7 @@ services:
     arguments: [@github.client]
 
   github.commitService:
-      class: 'Github\Api\GitData\Commits'
+    class: 'Github\Api\GitData\Commits'
     arguments: [@github.client]
 
   github.repoService:
