@@ -1,62 +1,45 @@
 {
-    "name":             "ql/hal",
-    "description":      "Web-based tool for managing code pushes to Linux/UNIX machines.",
-    "license":          "proprietary",
+    "name": "ql/hal",
+    "description": "Web application for managing code pushes for UNIX-based projects",
+    "license": "proprietary",
     "authors": [
         {
-            "name":     "Matt Colf",
-            "email":    "matthewcolf@quickenloans.com",
-            "role":     "Developer"
-        },
-        {
-            "name":     "Steve Kluck",
-            "email":    "stevekluck@quickenloans.com",
-            "role":     "Developer"
-        },
-        {
-            "name":     "Bridget Schiefer",
-            "email":    "bridgetschiefer@quickenloans.com",
-            "role":     "Developer"
-        },
-        {
-            "name":     "Matt Nagi",
-            "email":    "mattnagi@quickenloans.com",
-            "role":     "Developer"
+            "name": "IT Team Web Core",
+            "email": "itteamwebcore@quickenloans.com"
         }
     ],
-    "require": {
-        "knplabs/github-api":               "1.2.1",
-        "php-64bit":                        "~5.4",
-        "psr/log":                          "*",
-        "ql/hal-core":                      "~2.2",
-        "ql/mcp-cache":                     "~2.1",
-        "ql/mcp-core":                      "1.*",
-        "ql/mcp-corp-account":              "~0.2@rc",
-        "ql/mcp-logger":                    "1.2.*",
-        "slim/slim":                        "2.4.*",
-        "symfony/dependency-injection":     "2.4.*",
-        "symfony/config":                   "2.4.*",
-        "symfony/debug":                    "2.5.*",
-        "symfony/yaml":                     "2.4.*",
-        "twig/twig":                        "~1.15"
-    },
-    "require-dev": {
-        "mockery/mockery":                  "*",
-        "phpmd/phpmd":                      "*",
-        "phpunit/phpunit":                  "3.7.*",
-        "squizlabs/php_codesniffer":        "*"
-    },
+
     "autoload": {
-        "psr-0": {
-            "QL\\Hal":                      ["src", "tests"]
+        "psr-4": {
+            "QL\\Hal\\": "src"
         }
     },
-    "prefer-stable":                        true,
     "repositories": [
         {
             "type": "composer",
             "url": "http://composer/"
         }
-    ]
-
+    ],
+    "require": {
+        "knplabs/github-api": "1.2.1",
+        "php-64bit": "~5.4",
+        "psr/log": "*",
+        "ql/hal-core": "~2.2",
+        "ql/mcp-cache": "~2.1",
+        "ql/mcp-core": "1.*",
+        "ql/mcp-corp-account": "~0.2@rc",
+        "ql/mcp-logger": "1.2.*",
+        "slim/slim": "2.4.*",
+        "symfony/dependency-injection": "2.4.*",
+        "symfony/config": "2.4.*",
+        "symfony/debug": "2.5.*",
+        "symfony/yaml": "2.4.*",
+        "twig/twig": "~1.15"
+    },
+    "require-dev": {
+        "mockery/mockery": "*",
+        "phpmd/phpmd": "*",
+        "phpunit/phpunit": "4.*",
+        "squizlabs/php_codesniffer": "*"
+    }
 }
