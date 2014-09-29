@@ -1,6 +1,6 @@
 imports:
-  - resource: pages.yml
-  - resource: api.yml
+  - resource: di.pages.yml
+  - resource: di.api.yml
 
 parameters:
     # environment independent parameters
