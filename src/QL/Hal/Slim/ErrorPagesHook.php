@@ -79,6 +79,6 @@ class ErrorPagesHook
             $app->status(500);
             $app->response()->write($output);
             $app->stop();
-        }); 
+        });
     }
 }
