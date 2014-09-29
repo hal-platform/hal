@@ -2,19 +2,20 @@
 
 namespace QL\Hal\Controllers;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Collections\Criteria;
+use MCP\Corp\Account\User as LdapUser;
+use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Entity\Repository\BuildRepository;
+use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\Layout;
 use QL\Hal\Services\PermissionsService;
-use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
-use MCP\Corp\Account\User as LdapUser;
+use Twig_Template;
 
-/**
- *  Hello Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class DashboardController
 {
     /**
@@ -38,81 +39,123 @@ class DashboardController
     private $permissions;
 
     /**
-     * @var EntityManager
+     * @var BuildRepository
      */
-    private $em;
+    private $buildRepo;
+
+    /**
+     * @var PushRepository
+     */
+    private $pushRepo;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepo;
 
     /**
      * @param Twig_Template $template
      * @param Layout $layout
      * @param LdapUser $user
      * @param PermissionsService $permissions
-     * @param EntityManager $em
+     * @param BuildRepository $buildRepo
+     * @param PushRepository $pushRepo
+     * @param UserRepository $userRepo
      */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
         LdapUser $user,
         PermissionsService $permissions,
-        EntityManager $em
+        BuildRepository $buildRepo,
+        PushRepository $pushRepo,
+        UserRepository $userRepo
     ) {
         $this->template = $template;
         $this->layout = $layout;
         $this->user = $user;
         $this->permissions = $permissions;
-        $this->em = $em;
+
+        $this->buildRepo = $buildRepo;
+        $this->pushRepo = $pushRepo;
+        $this->userRepo = $userRepo;
     }
 
     /**
-     *  Run the controller
-     *
      *  @param Request $request
      *  @param Response $response
      *  @param array $params
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        // pending work
-        $dql = 'SELECT b, p FROM QL\Hal\Core\Entity\Build b, QL\Hal\Core\Entity\Push p WHERE b.status in (:buildstatus) AND p.status IN (:pushstatus)';
-        $query = $this->em->createQuery($dql)
-            ->setParameter('buildstatus', ['Waiting', 'Building'])
-            ->setParameter('pushstatus', ['Waiting', 'Pushing'])
-            ->setMaxResults(25);
-        $pending = $query->getResult();
+        // user that will show pushes for front end work findOneBy(['id' => 2024851])
+        $user = $this->userRepo->findOneBy(['id' => $this->user->commonId()]);
+        $recentBuilds = $this->buildRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
+        $recentPushes = $this->pushRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
 
-        // user
-        $dql = 'SELECT u FROM QL\Hal\Core\Entity\User u WHERE u.id = :id';
-        $query = $this->em->createQuery($dql)
-            ->setParameter('id', $this->user->commonId());
-        $user = $query->getOneOrNullResult();
+        $pending = [];
+        if ($this->permissions->allowAdmin($user)) {
+            $pending = $this->getAllPendingJobs();
+        }
 
-        // builds
-        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.user = :user AND b.status IN (:status) ORDER BY b.start DESC';
-        $query = $this->em->createQuery($dql)
-            ->setParameter('user', $user) // user that will show pushes for front end work ->setParameter('user', 2024851)
-            ->setParameter('status', ['Success', 'Error'])
-            ->setMaxResults(5);
-        $builds = $query->getResult();
+        $rendered = $this->layout->render($this->template, [
+            'user' => $this->user,
+            'repositories' => $this->permissions->userRepositories($this->user),
+            'pending' => $pending,
+            'builds' => $recentBuilds,
+            'pushes' => $recentPushes
+        ]);
 
-        // pushes
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.user = :user AND p.status IN (:status) ORDER BY p.start DESC';
-        $query = $this->em->createQuery($dql)
-            ->setParameter('user', $user) // user that will show pushes for front end work ->setParameter('user', 2024851)
-            ->setParameter('status', ['Success', 'Error'])
-            ->setMaxResults(5);
-        $pushes = $query->getResult();
+        $response->setBody($rendered);
+    }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'user' => $this->user,
-                    'repositories' => $this->permissions->userRepositories($this->user),
-                    'pending' => $pending,
-                    'builds' => $builds,
-                    'pushes' => $pushes
-                ]
-            )
-        );
+    /**
+     * @return array
+     */
+    private function getAllPendingJobs()
+    {
+        $buildCriteria = (new Criteria)
+            ->where(Criteria::expr()->eq('status', 'Waiting'))
+            ->orWhere(Criteria::expr()->eq('status', 'Building'))
+            ->orderBy(['created' => 'DESC']);
+
+        $pushCriteria = (new Criteria)
+            ->where(Criteria::expr()->eq('status', 'Waiting'))
+            ->orWhere(Criteria::expr()->eq('status', 'Pushing'))
+            ->orderBy(['created' => 'DESC']);
+
+        $builds = $this->buildRepo->matching($buildCriteria);
+        $pushes = $this->pushRepo->matching($pushCriteria);
+
+        $jobs = array_merge($builds->toArray(), $pushes->toArray());
+        usort($jobs, $this->queueSort());
+
+        return $jobs;
+    }
+
+    /**
+     * @return Closure
+     */
+    private function queueSort()
+    {
+        return function($aEntity, $bEntity) {
+            $a = $aEntity->getCreated();
+            $b = $bEntity->getCreated();
+
+            if ($a == $b) {
+                return 0;
+            }
+
+            // If missing created time, move to bottom
+            if ($a === null xor $b === null) {
+                return ($a === null) ? 1 : 0;
+            }
+
+            if ($a < $b) {
+                return 1;
+            }
+
+            return -1;
+        };
     }
 }

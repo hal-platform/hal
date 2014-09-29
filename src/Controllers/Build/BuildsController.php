@@ -97,7 +97,7 @@ class BuildsController
             return;
         }
 
-        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.status ASC, b.end DESC';
+        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.created DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(self::MAX_PER_PAGE)
             ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
@@ -113,17 +113,14 @@ class BuildsController
         $total = count($paginator);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'repo' => $repo,
-                    'builds' => $builds,
-                    'page' => $page,
-                    'last' => $last,
-                    'user' => $this->user
-                ]
-            )
-        );
+        $rendered = $this->layout->render($this->template, [
+            'repo' => $repo,
+            'builds' => $builds,
+            'page' => $page,
+            'last' => $last,
+            'user' => $this->user
+        ]);
+
+        $response->setBody($rendered);
     }
 }

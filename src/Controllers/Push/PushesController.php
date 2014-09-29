@@ -88,7 +88,7 @@ class PushesController
             return;
         }
 
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p JOIN p.deployment d WHERE d.repository = :repo ORDER BY p.id DESC';
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p JOIN p.deployment d WHERE d.repository = :repo ORDER BY p.created DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(self::MAX_PER_PAGE)
             ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
@@ -104,16 +104,13 @@ class PushesController
         $total = count($paginator);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'repo' => $repo,
-                    'pushes' => $pushes,
-                    'page' => $page,
-                    'last' => $last
-                ]
-            )
-        );
+        $rendered = $this->layout->render($this->template, [
+            'repo' => $repo,
+            'pushes' => $pushes,
+            'page' => $page,
+            'last' => $last
+        ]);
+
+        $response->setBody($rendered);
     }
 }

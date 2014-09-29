@@ -27,48 +27,48 @@ use Twig_Template;
 class RepositoryStatusController
 {
     /**
-     *  @var Twig_Template
+     * @var Twig_Template
      */
     private $template;
 
     /**
-     *  @var Layout
+     * @var Layout
      */
     private $layout;
 
     /**
-     *  @var EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     *  @var RepositoryRepository
+     * @var RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @var BuildRepository
+     * @var BuildRepository
      */
     private $buildRepo;
 
     /**
-     *  @var PushRepository
+     * @var PushRepository
      */
     private $pushRepo;
 
     /**
-     *  @var User
+     * @var User
      */
     private $user;
 
     /**
-     *  @param Twig_Template $template
-     *  @param Layout $layout
-     *  @param EntityManager $em
-     *  @param RepositoryRepository $repoRepo
-     *  @param BuildRepository $buildRepo
-     *  @param PushRepository $pushRepo
-     *  @param User $user
+     * @param Twig_Template $template
+     * @param Layout $layout
+     * @param EntityManager $em
+     * @param RepositoryRepository $repoRepo
+     * @param BuildRepository $buildRepo
+     * @param PushRepository $pushRepo
+     * @param User $user
      */
     public function __construct(
         Twig_Template $template,
@@ -89,10 +89,10 @@ class RepositoryStatusController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
@@ -103,40 +103,23 @@ class RepositoryStatusController
             return;
         }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'repo' => $repo,
-                    'builds' => $this->getAvailableBuilds($repo),
-                    'statuses' => $this->getDeploymentsWithStatus($repo),
-                    'user' => $this->user
-                ]
-            )
-        );
+        $builds = $this->buildRepo->findBy(['repository' => $repo], ['created' => 'DESC'], 10);
+
+        $rendered = $this->layout->render($this->template, [
+            'repo' => $repo,
+            'builds' => $builds,
+            'statuses' => $this->getDeploymentsWithStatus($repo),
+            'user' => $this->user
+        ]);
+
+        $response->setBody($rendered);
     }
 
     /**
-     *  Get the available builds for a given repository
+     * Get an array of deployments and latest push for each
      *
-     *  @param Repository $repo
-     *  @return Build[]
-     */
-    private function getAvailableBuilds(Repository $repo)
-    {
-        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.status ASC, b.end DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(10)
-            ->setParameter('repo', $repo);
-
-        return $query->getResult();
-    }
-
-    /**
-     *  Get an array of deployments and latest push for each
-     *
-     *  @param Repository $repo
-     *  @return array
+     * @param Repository $repo
+     * @return array
      */
     private function getDeploymentsWithStatus(Repository $repo)
     {

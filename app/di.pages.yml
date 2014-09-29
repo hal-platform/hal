@@ -15,7 +15,9 @@ services:
       - @layout
       - @user
       - @permissions
-      - @doctrine.em
+      - @build.repo
+      - @push.repo
+      - @user.repo
   dashboard.twig:
     parent: 'twig.template'
     arguments: ['dashboard.twig']
@@ -557,7 +559,7 @@ services:
 
   admin.dashboard.page:
     parent: 'static.controller'
-    arguments: ['@admin.dashboard.twig']
+    arguments: [@admin.dashboard.twig]
   admin.dashboard.twig:
     parent: 'twig.template'
     arguments: ['admin/dashboard.twig']
