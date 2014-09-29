@@ -103,7 +103,7 @@ services:
     class: 'QL\Hal\Slim\McpLoggerHook'
     arguments: ['@logger.mcp.factory', '@slim.environment']
   slim.hook.errors:
-    class: 'QL\Hal\Slim\ErrorPagesHook'
+    class: 'QL\Hal\Slim\ErrorHandlerHook'
     arguments: ['@logger', '%debug%', '@error.pages.twig']
   slim.hook.twig:
     class: 'QL\Hal\Slim\TwigEnvironmentHook'

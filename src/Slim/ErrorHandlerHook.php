@@ -20,7 +20,7 @@ use Twig_Template;
  *
  * This hook should be attached to the "slim.before" event.
  */
-class ErrorPagesHook
+class ErrorHandlerHook
 {
     /**
      * @var LoggerInterface
