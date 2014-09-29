@@ -63,6 +63,7 @@ class UserNormalizerTest extends PHPUnit_Framework_TestCase
             'picture' => 'http://picture/url',
             '_links' => [
                 'self' => 'link',
+                'permissions' => 'link',
                 'index' => 'link'
             ]
         ];
