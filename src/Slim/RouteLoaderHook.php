@@ -68,7 +68,7 @@ class RouteLoaderHook
 
             $methods = $this->methods($details);
             $conditions = $this->nullable('conditions', $details);
-            $url = rtrim($details['route'], '/').'/';
+            $url = $details['route'];
             $stack = $this->convertStackToCallables($details['stack']);
 
             // Prepend the url to the stack
