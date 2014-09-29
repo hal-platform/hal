@@ -3,12 +3,10 @@ services:
 
   delete.confirm.page:
     class: 'QL\Hal\Controllers\StaticController'
-    arguments:
-      - @delete.confirm.twig
+    arguments: [@delete.confirm.twig]
   delete.confirm.twig:
     parent: 'twig.template'
-    arguments:
-      - 'delete.confirm.twig'
+    arguments: ['delete.confirm.twig']
 
   dashboard.page:
     class: 'QL\Hal\Controllers\DashboardController'
@@ -24,7 +22,7 @@ services:
 
   login.page:
     class: 'QL\Hal\Controllers\LoginController'
-    arguments: ['@login.twig']
+    arguments: [@login.twig]
   login.twig:
     parent: 'twig.template'
     arguments: ['login.twig']
@@ -40,7 +38,7 @@ services:
 
   logout.handle:
     class: 'QL\Hal\Controllers\LogoutController'
-    arguments: ['@session', '@url.helper']
+    arguments: [@session, @url.helper]
 
   queue.page:
     class: 'QL\Hal\Controllers\QueueController'
@@ -257,8 +255,7 @@ services:
       - @build.repo
   build.twig:
     parent: 'twig.template'
-    arguments:
-      - "build/build.twig"
+    arguments: ['build/build.twig']
 
   build.start.page:
     class: "QL\\Hal\\Controllers\\Build\\BuildStartController"
@@ -270,8 +267,7 @@ services:
       - @github
   build.start.twig:
     parent: 'twig.template'
-    arguments:
-      - "build/start.twig"
+    arguments: ['build/start.twig']
 
   build.start.handle.page:
     class: "QL\\Hal\\Controllers\\Build\\BuildStartHandleController"
@@ -296,8 +292,7 @@ services:
       - @user
   build.push.twig:
     parent: 'twig.template'
-    arguments:
-      - "build/push.twig"
+    arguments: ['build/push.twig']
 
   rollback.page:
     class: "QL\\Hal\\Controllers\\Repository\\RollbackController"
@@ -310,8 +305,7 @@ services:
       - @user
   rollback.twig:
     parent: 'twig.template'
-    arguments:
-      - "repository/rollback.twig"
+    arguments: ['repository/rollback.twig']
 
   build.push.handle:
     class: 'QL\Hal\Controllers\Build\BuildPushHandleController'
@@ -336,8 +330,7 @@ services:
       - @user
   builds.twig:
     parent: 'twig.template'
-    arguments:
-      - "build/builds.twig"
+    arguments: ['build/builds.twig']
 
   ######################################################################################################################
   # PUSH CONTROLLERS
@@ -351,8 +344,7 @@ services:
       - @push.repo
   push.twig:
     parent: 'twig.template'
-    arguments:
-      - "push/push.twig"
+    arguments: ['push/push.twig']
 
   pushes.page:
     class: "QL\\Hal\\Controllers\\Push\\PushesController"
@@ -364,8 +356,7 @@ services:
       - @push.repo
   pushes.twig:
     parent: 'twig.template'
-    arguments:
-      - "push/pushes.twig"
+    arguments: ['push/pushes.twig']
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
@@ -530,8 +521,7 @@ services:
       - @permissions
   user.twig:
     parent: 'twig.template'
-    arguments:
-      - 'user/user.twig'
+    arguments: ['user/user.twig']
 
   users.page:
     class: 'QL\Hal\Controllers\User\UsersController'
@@ -541,8 +531,7 @@ services:
       - @user.repo
   users.twig:
     parent: 'twig.template'
-    arguments:
-      - 'user/users.twig'
+    arguments: ['user/users.twig']
 
   user.edit.page:
     class: 'QL\Hal\Controllers\User\EditController'
@@ -557,13 +546,10 @@ services:
       - @user
   user.edit.twig:
     parent: 'twig.template'
-    arguments:
-      - 'user/user.edit.twig'
+    arguments: ['user/user.edit.twig']
   user.edit.handle:
     class: 'QL\Hal\Controllers\User\EditHandle'
-    arguments:
-      - @user.repo
-      - @url.helper
+    arguments: [@user.repo, @url.helper]
 
   ######################################################################################################################
   # ADMIN CONTROLLERS
@@ -582,26 +568,24 @@ services:
 
   help.page:
     parent: 'static.controller'
-    arguments: ['@help.twig']
+    arguments: [@help.twig]
   help.twig:
     parent: 'twig.template'
     arguments: ['help/help.twig']
 
   help.deployment.page:
     parent: 'static.controller'
-    arguments: ['@help.deployment.twig']
+    arguments: [@help.deployment.twig]
   help.deployment.twig:
     parent: 'twig.template'
     arguments: ['help/deployment.twig']
 
   help.api.page:
     parent: 'static.controller'
-    arguments:
-      - @help.api.twig
+    arguments: [@help.api.twig]
   help.api.twig:
     parent: 'twig.template'
-    arguments:
-      - 'help/api.twig'
+    arguments: ['help/api.twig']
 
   ######################################################################################################################
   # GENERAL USE CONTROLLERS
@@ -612,7 +596,7 @@ services:
 
   denied.page:
     parent: 'static.controller'
-    arguments: ['@denied.twig', 403]
+    arguments: [@denied.twig, 403]
   denied.twig:
     parent: 'twig.template'
     arguments: ['denied.twig']
@@ -625,8 +609,7 @@ services:
       - @doctrine.em
   logs.twig:
     parent: 'twig.template'
-    arguments:
-      - 'logs.twig'
+    arguments: ['logs.twig']
 
   admin.utility.page:
     class: 'QL\Hal\Controllers\AdminController'

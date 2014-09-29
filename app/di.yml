@@ -45,8 +45,7 @@ services:
     class: 'NOTHING_TO_SEE_HERE'
     factory_service: 'directory.helper'
     factory_method: 'fullPath'
-    arguments:
-      - 'app/cache/doctrine/proxy'
+    arguments: ['app/cache/doctrine/proxy']
 
   doctrine.events:
     class: 'Doctrine\Common\EventManager'
@@ -56,13 +55,11 @@ services:
 
   doctrine.logger:
     class: 'QL\Hal\Logger\DoctrineEntityLogger'
-    arguments:
-      - @user.helper
+    arguments: [@user.helper]
 
   doctrine.persist.listener:
     class: 'QL\Hal\Core\Entity\Listener\EntityPersistListener'
-    arguments:
-      - @clock
+    arguments: [@clock]
 
   ######################################################################################################################
   # APPLICATION
@@ -73,7 +70,7 @@ services:
     arguments:
       - debug: '%debug%'
       - log.writer: '@slim.logger'
-    configurator: ['@slim.configurator', 'configure']
+    configurator: [@slim.configurator, 'configure']
 
   slim.environment:
     class: 'Slim\Environment'
@@ -94,24 +91,24 @@ services:
 
   slim.configurator:
     class: 'QL\Hal\Slim\SlimConfigurator'
-    arguments: ['@service_container', '%slim.hooks%']
+    arguments: [@service_container, %slim.hooks%]
 
   slim.hook.routes:
     class: 'QL\Hal\Slim\RouteLoaderHook'
-    arguments: ['@service_container', '%routes%']
+    arguments: [@service_container, %routes%]
   slim.hook.logger:
     class: 'QL\Hal\Slim\McpLoggerHook'
-    arguments: ['@logger.mcp.factory', '@slim.environment']
+    arguments: [@logger.mcp.factory, @slim.environment]
   slim.hook.errors:
     class: 'QL\Hal\Slim\ErrorHandlerHook'
-    arguments: ['@logger', '%debug%', '@error.pages.twig']
+    arguments: [@logger, %debug%, @error.pages.twig]
   slim.hook.twig:
     class: 'QL\Hal\Slim\TwigEnvironmentHook'
-    arguments: ['@twigEnv', '@session']
+    arguments: [@twigEnv, @session]
 
   slim.logger:
     class: 'QL\Hal\Logger\McpLogWriter'
-    arguments: ['@logger']
+    arguments: [@logger]
 
   ######################################################################################################################
   # HELPERS
@@ -127,18 +124,15 @@ services:
 
   directory.helper:
     class: 'QL\Hal\Helpers\DirectoryHelper'
-    arguments:
-      - %root%
+    arguments: [%root%]
 
   user.helper:
     class: 'QL\Hal\Helpers\LazyUserHelper'
-    arguments:
-      - @service_container
+    arguments: [@service_container]
 
   api.helper:
     class: 'QL\Hal\Helpers\ApiHelper'
-    arguments:
-      - @url.helper
+    arguments: [@url.helper]
 
   time.helper:
     class: 'QL\Hal\Helpers\TimeHelper'
@@ -163,21 +157,18 @@ services:
   # Twig Loader
   twigLoader:
     class: 'Twig_Loader_Filesystem'
-    arguments:
-      - '%root%/app/templates'
+    arguments: ['%root%/app/templates']
 
   # Twig Environment
   twigEnv:
     class: 'Twig_Environment'
     arguments: ['@twigLoader']
     calls:
-      - ['addExtension', ['@twigExtension']]
+      - ['addExtension', [@twigExtension]]
 
   layout:
     class: 'QL\Hal\Layout'
-    arguments:
-      - @user
-      - @permissions
+    arguments: [@user, @permissions]
 
   # The primary twig template. All other twig services should use this service as a parent
   twig.template:
@@ -218,10 +209,9 @@ services:
 
   ldapService:
     class: 'MCP\Corp\Account\QLAdService'
-    arguments:
-      - @ldapTransport
+    arguments: [@ldapTransport]
     calls:
-      - ['authenticate', ['%ldap.username%', '%ldap.password%', false]]
+      - ['authenticate', [%ldap.username%, %ldap.password%, false]]
 
   cache:
     class: 'MCP\Cache\MemoryCache'
@@ -271,15 +261,11 @@ services:
 
   api.environment.normalizer:
     class: 'QL\Hal\Api\EnvironmentNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
+    arguments: [@api.helper, @url.helper]
 
   api.group.normalizer:
     class: 'QL\Hal\Api\GroupNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
+    arguments: [@api.helper, @url.helper]
 
   api.repository.normalizer:
     class: 'QL\Hal\Api\RepositoryNormalizer'
@@ -297,9 +283,7 @@ services:
 
   api.user.normalizer:
     class: 'QL\Hal\Api\UserNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
+    arguments: [@api.helper, @url.helper]
 
   ######################################################################################################################
   # Github API
@@ -308,79 +292,68 @@ services:
   github:
     class: 'QL\Hal\Services\GithubService'
     arguments:
-      - '@github.userService'
-      - '@github.repoService'
-      - '@github.refService'
-      - '@github.pullService'
-      - '@github.commitService'
-      - '@github.pager'
+      - @github.userService
+      - @github.repoService
+      - @github.refService
+      - @github.pullService
+      - @github.commitService
+      - @github.pager
       - @github.commitRepo
 
   github.client:
     class: 'Github\Client'
-    arguments: ['@github.httpClient']
+    arguments: [@github.httpClient]
 
   github.httpClient:
     class: 'QL\Hal\GithubApi\HackCachedHttpClient'
     arguments:
-      - {base_url: '%github.baseurl%'}
+      - {base_url: %github.baseurl%}
     calls:
-      - ['authenticate', ['%github.token%', null, 'http_token']]
+      - ['authenticate', [%github.token%, null, 'http_token']]
 
   github.pager:
     class: 'Github\ResultPager'
-    arguments:
-      - @github.client
+    arguments: [@github.client]
 
   github.orgService:
     class: 'Github\Api\Organization'
-    arguments:
-      - @github.client
+    arguments: [@github.client]
 
   github.pullService:
     class: 'Github\Api\PullRequest'
-    arguments:
-      - @github.client
+    arguments: [@github.client]
 
   github.refService:
     class: 'Github\Api\GitData\References'
-    arguments:
-      - @github.client
+    arguments: [@github.client]
 
   github.commitService:
       class: 'Github\Api\GitData\Commits'
-      arguments:
-        - @github.client
+    arguments: [@github.client]
 
   github.repoService:
     class: 'Github\Api\Repo'
-    arguments:
-      - @github.client
+    arguments: [@github.client]
 
   github.userService:
     class: 'QL\Hal\GithubApi\HackUser'
-    arguments:
-      - @github.client
+    arguments: [@github.client]
 
   github.commitRepo:
     class: 'Github\Api\Repository\Commits'
-    arguments:
-      - @github.client
+    arguments: [@github.client]
 
   ######################################################################################################################
   # SESSION
   ######################################################################################################################
 
-  sessionHandler:
-    class: 'QL\Hal\Services\Session\Handler\DoctrineHandler'
-    arguments:
-      - @session.repo
-      - @doctrine.em
-
   session:
     class: 'QL\Hal\Session'
-    arguments:
-      - @sessionHandler
+    arguments: [@session.handler]
+
+  session.handler:
+    class: 'QL\Hal\Services\Session\Handler\DoctrineHandler'
+    arguments: [@session.repo, @doctrine.em]
 
   ######################################################################################################################
   # Logging
@@ -388,17 +361,17 @@ services:
 
   logger:
     class: 'MCP\Service\Logger\Logger'
-    arguments: ['@logger.mcp.service', '@logger.mcp.factory']
+    arguments: [@logger.mcp.service, @logger.mcp.factory]
 
   logger.mcp.service:
     class: 'MCP\Service\Logger\Service\GuzzleService'
-    arguments: ['@logger.mcp.guzzle', '@logger.mcp.renderer', true]
+    arguments: [@logger.mcp.guzzle, @logger.mcp.renderer, true]
   logger.mcp.guzzle:
     class: 'Guzzle\Http\Client'
-    arguments: ['%logger.mcp.host%']
+    arguments: [%logger.mcp.host%]
   logger.mcp.renderer:
     class: 'MCP\Service\Logger\Renderer\XmlRenderer'
-    arguments: ['@logger.mcp.writer']
+    arguments: [@logger.mcp.writer]
   logger.mcp.writer:
     class: 'XMLWriter'
 
@@ -406,9 +379,9 @@ services:
     class: 'MCP\Service\Logger\Adapter\Psr\MessageFactory'
     arguments: ['@clock']
     calls:
-      - ['setDefaultProperty', ['applicationId', '%applicationId%']]
+      - ['setDefaultProperty', ['applicationId', %applicationId%]]
       # replaced at runtime, maybe
-      - ['setDefaultProperty', ['machineIPAddress', '@logger.mcp.serverIp']]
+      - ['setDefaultProperty', ['machineIPAddress', @logger.mcp.serverIp]]
       # replaced at runtime
       - ['setDefaultProperty', ['machineName', 'localhost']]
   logger.mcp.serverIp:

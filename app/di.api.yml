@@ -7,8 +7,7 @@ services:
 
   api.index:
     class: 'QL\Hal\Controllers\Api\IndexController'
-    arguments:
-      - @api.helper
+    arguments: [@api.helper]
 
   ######################################################################################################################
   # GITHUB CONTROLLERS
@@ -16,15 +15,15 @@ services:
 
   api.github.users:
     class: 'QL\Hal\Github\UsersApi'
-    arguments: ['@github']
+    arguments: [@github]
 
   api.github.user.repositories:
     class: 'QL\Hal\Github\ReposApi'
-    arguments: ['@github']
+    arguments: [@github]
 
   api.github.user.repository.pullrequests:
     class: 'QL\Hal\Github\PullRequestsApi'
-    arguments: ['@github']
+    arguments: [@github]
 
   ######################################################################################################################
   # QUEUE CONTROLLERS
@@ -62,9 +61,7 @@ services:
 
   api.build.log:
     class: 'QL\Hal\Controllers\Api\Build\LogController'
-    arguments:
-      - @api.helper
-      - @build.repo
+    arguments: [@api.helper, @build.repo]
 
   api.builds:
     class: 'QL\Hal\Controllers\Api\Build\BuildsController'
