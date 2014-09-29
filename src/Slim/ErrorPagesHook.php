@@ -8,11 +8,12 @@
 namespace QL\Hal\Slim;
 
 use Exception;
-use Slim\Slim;
-use Twig_Template;
 use PDOException;
 use Psr\Log\LoggerInterface;
 use Slim\Http\Response;
+use Slim\Slim;
+use Symfony\Component\Debug\Exception\FatalErrorException;
+use Twig_Template;
 
 /**
  * Define error page handlers.
@@ -49,36 +50,80 @@ class ErrorPagesHook
     }
 
     /**
-     * @param Slim $app
+     * @param Slim $slim
      * @return null
      */
-    public function __invoke(Slim $app)
+    public function __invoke(Slim $slim)
     {
         // 404 Error Handler
-        $app->notFound(function () use ($app) {
+        $slim->notFound(function () use ($slim) {
             $output = $this->twig->render(['message' => 'Page Not Found']);
 
-            $app->status(404);
-            $app->response()->write($output);
-            $app->stop();
+            $slim->status(404);
+            $slim->response()->write($output);
+            $slim->stop();
         });
 
         // 500 Error Handler
-        $app->error(function (Exception $e) use ($app) {
-            $message = $e->getMessage();
-            $context = ['exceptionData' => $e->getTraceAsString()];
+        $slim->error(function (Exception $exception) use ($slim) {
+            $message = $exception->getMessage();
+            $context = ['exceptionData' => $exception->getTraceAsString()];
 
             $this->logger->error($message, $context);
 
-            if ($e instanceof PDOException) {
+            if ($exception instanceof PDOException) {
                 $message = "There's a problem with the database. Wait a bit and try again.\n" . $message;
             }
 
             $output = $this->twig->render(['message' => $message]);
 
-            $app->status(500);
-            $app->response()->write($output);
-            $app->stop();
+            $slim->status(500);
+            $slim->response()->write($output);
+
+            if ($exception instanceof FatalErrorException) {
+                // For fatal errors, the response must be rendered manually. Slim cannot handle it.
+                $this->renderFatal($slim);
+                exit;
+            } else {
+                $slim->stop();
+            }
         });
+    }
+
+    /**
+     * This code was ripped from Slim\Slim
+     *
+     * @param Slim $slim
+     * @return null
+     */
+    private function renderFatal(Slim $slim)
+    {
+        list($status, $headers, $body) = $slim->response()->finalize();
+
+        // Skip cookies
+
+        //Send headers
+        if (headers_sent() === false) {
+            //Send status
+            $type = Response::getMessageForCode($status);
+            if (strpos(PHP_SAPI, 'cgi') === 0) {
+                header(sprintf('Status: %s', $type));
+            } else {
+                header(sprintf('HTTP/%s %s', $slim->config('http.version'), $type));
+            }
+
+            //Send headers
+            foreach ($headers as $name => $value) {
+                $hValues = explode("\n", $value);
+                foreach ($hValues as $hVal) {
+                    header("$name: $hVal", false);
+                }
+            }
+        }
+
+        //Send body, but only if it isn't a HEAD request
+        if (!$slim->request()->isHead()) {
+            echo $body;
+        }
     }
 }
