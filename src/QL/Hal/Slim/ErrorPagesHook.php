@@ -68,11 +68,11 @@ class ErrorPagesHook
             $message = $e->getMessage();
             $context = ['exceptionData' => $e->getTraceAsString()];
 
-            if ($e instanceof PDOException) {
-                $message = "There's a problem with the database. Wait a bit and try again.\r\n".$message;
-            }
-
             $this->logger->error($message, $context);
+
+            if ($e instanceof PDOException) {
+                $message = "There's a problem with the database. Wait a bit and try again.\n" . $message;
+            }
 
             $output = $this->twig->render(['message' => $message]);
 
