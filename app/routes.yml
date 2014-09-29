@@ -41,10 +41,10 @@ parameters:
       route: '/help/deployment'
       stack: ['help.deployment.page']
 
-    help.api:
-      method: 'GET'
-      route: '/help/api'
-      stack: ['help.api.page']
+    # help.api:
+    #   method: 'GET'
+    #   route: '/help/api'
+    #   stack: ['help.api.page']
 
     admin.dashboard:
       method: 'GET'
