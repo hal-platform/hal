@@ -59,10 +59,10 @@
                         {% if account %}
                             <li>
                                 <a href="{{ urlFor('dashboard') }}" title="Dashboard">
-                                <svg class="icon" viewBox="-3 0 32 32">
-                                    <use xlink:href="#dashboard"></use>
-                                </svg>
-                                Dashboard
+                                    <svg class="icon" viewBox="-3 0 32 32">
+                                        <use xlink:href="#dashboard"></use>
+                                    </svg>
+                                    Dashboard
                                 </a>
                             </li>
                             <li>
@@ -73,15 +73,16 @@
                                     Groups
                                 </a>
                             </li>
-                            <li>
-                                <a href="{{ urlFor('servers') }}" title="servers">
-                                    <svg class="icon" viewBox="-4 0 32 32">
-                                        <use xlink:href="#server"></use>
-                                    </svg>
-                                    Servers
-                                </a>
-                            </li>
+
                             {% if isUserAdmin(account) %}
+                                <li>
+                                    <a href="{{ urlFor('servers') }}" title="servers">
+                                        <svg class="icon" viewBox="-4 0 32 32">
+                                            <use xlink:href="#server"></use>
+                                        </svg>
+                                        Servers
+                                    </a>
+                                </li>
                                 <li>
                                     <a href="{{ urlFor('repositories') }}" title="repositories">
                                         <svg class="icon" viewBox="-3 0 32 32">

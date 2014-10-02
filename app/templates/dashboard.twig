@@ -8,36 +8,41 @@
 
     {# QUICK BUILD #}
 
-    <button class="btn trailer js-hide-btn">Start a Build</button>
-    <div class="js-hide-box">
-        <h3>Choose a Repository</h3>
-        <div class="form-wrapper">
-            <form action="" method="post">
-                <ul class="form-fields">
-                    <li>
-                        <label for="search">Filter Repositories</label>
-                        <input class="text-input js-filter__input" type="text" id="search" name="search" autofocus>
-                    </li>
+    {% if repositories %}
+        <button class="btn trailer js-hide-btn">Start a Build</button>
+        <div class="js-hide-box">
+            <h3>Choose a Repository</h3>
+            <div class="form-wrapper">
+                <form action="" method="post">
+                    <ul class="form-fields">
+                        <li>
+                            <label for="search">Filter Repositories</label>
+                            <input class="text-input js-filter__input" type="text" id="search" name="search" autofocus>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <div class="col-list">
+                <ul class="list--bare js-filter">
+                    {% for repository in repositories %}
+                        <li><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.key }}</a></li>
+                    {% else %}
+                        <li>Looks like you don't have access to anything.</li>
+                    {% endfor %}
                 </ul>
-            </form>
+            </div>
         </div>
-        <div class="col-list">
-            <ul class="list--bare js-filter">
-                {% for repository in repositories %}
-                    <li><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.key }}</a></li>
-                {% else %}
-                    <li>Looks like you don't have access to anything.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+    {% else %}
+
+       {{ block('intro') }}
+
+    {% endif %}
 
     {# PENDING WORK #}
     {% if isAdmin and pending %}
-      <h3>Pending Agent Work</h3>
-      {% include 'partials/pending-table.twig' %}
+        <h3>Pending Builds and Pushes</h3>
+        {% include 'partials/pending-table.twig' %}
     {% endif %}
-
 
     <div class="dash-box-wrapper">
 
@@ -52,8 +57,28 @@
               {# RECENT USER PUSH ACTIVITY #}
 
               <h3>Your Recent Pushes</h3>
-              {% include 'partials/push-box.twig' with {'builds': builds, 'initiator': false} %}
+              {% include 'partials/push-box.twig' with {'pushes': pushes, 'initiator': false} %}
         </div>
     </div>
 
+{% endblock %}
+
+{% block intro %}
+    <div>
+        <h4>My name is HAL.</h4>
+        <p><strong>I deploy code to other, less capable machines.</strong></p>
+
+        <p>
+            You have reached the latest version of the code building and pushing tool for unix-based applications.
+           <br><br>
+            The 9000 series is the most reliable computer ever made. No 9000 computer has ever made a mistake or distorted information. We are all, by any practical definition of the words, foolproof and incapable of error.
+           <br><br>
+            Applications are organized in <strong>groups</strong>. To deploy an application, find the repository under the groups menu option.
+
+            If you you do not have the correct permissions or need support to remedy a mistake you have made, please check the <a href="{{ urlFor('help') }}">support page</a> for assistance.
+            This page also has instructions on how to add an application so I can deploy it.
+        </p>
+
+        <p>I look forward to working with you.</p>
+    </div>
 {% endblock %}
