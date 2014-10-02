@@ -8,13 +8,15 @@
     <ul>
         <li><a href="#build-environment">Build scripting environment</a></li>
         <li><a href="#push-environment">Push scripting environment</a></li>
+        <li><a href="#package-managers">Supported package managers</a></li>
     </ul>
 
     <p>An application can specify a command to run in each of these separate steps in the deployment process:</p>
     <ul>
-        <li>Build</li>
-        <li>Pre-push</li>
-        <li>Post-push</li>
+        <li><strong>Build</strong> (Runs on build server)</li>
+        <li><strong>Pre-push Build Transform</strong> (Runs on build server)</li>
+        <li><strong>Pre-push</strong> (Runs on deployment web server)</li>
+        <li><strong>Post-push</strong> (Runs on deployment web server)</li>
     </ul>
 
     <p>These commands must be executable in a standard shell environment. It is common for applications to create a special bin within the project folder, but any command will do.</p>
@@ -31,7 +33,7 @@
         All commands are executed from the directory of the application.
     </p>
     <p>
-       Build command are executed from an isolated environment on the build server. Push commands are executed on the server the application code is being pushed to.
+       Build command are executed from a semi-isolated environment on the build server. Push commands are executed on the server the application code is being pushed to.
     </p>
     <p class="alert-bar--highlight">
         The exit code of the command MUST be 0. HAL 9000 will consider any command with a non-zero exit code as a failure.
@@ -113,6 +115,10 @@
                 <td>HAL_HOSTNAME</td>
                 <td>Hostname of server</td>
             </tr>
+            <tr>
+                <td>HAL_PATH</td>
+                <td>Full path of deployment directory on server</td>
+            </tr>
         </tbody>
     </table>
 
@@ -136,4 +142,53 @@ date: ''    # ISO 8601 date
         a new push and overwrite the failed one.
     </p>
 
+    <a name="package-managers"></a>
+    <h3>Supported package managers</h3>
+
+    <p>The following package managers are supported</p>
+    <ul>
+        <li>Composer (PHP)</li>
+        <li>NPM (Node)</li>
+        <li>Bundler (Ruby)</li>
+        <li>Gem (Ruby)</li>
+    </ul>
+
+    <p>
+        Each project has its own dedicated <strong>$HOME</strong> directory, and caches and packages will be installed there.
+        HAL 9000 automatically sets isolated installation and caching directories for these tools.
+    </p>
+
+    <p>
+        <strong>A note on rubygems and bundler</strong><br>
+        Rubygems.org is one of the most unreliable package repositories. If you rely on ruby tools to deploy, consider packaging the ruby code and commiting
+        to your codebase.
+    </p>
+
+    <p class="alert-bar--error">Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.</p>
+
+    <p>Installing gems or npm dependencies outside of the <strong>$HOME</strong> directory is unsupported and may break without warning. <strong>DO NOT DO THAT</strong>.</p>
+
+    <h4>Recommended installation commands</h4>
+    <table>
+        <thead>
+            <tr>
+                <td>Manager</td>
+                <td>Command</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Composer</td>
+                <td><code>composer install --no-dev --prefer-dist --no-interaction</code></td>
+            </tr>
+            <tr>
+                <td>NPM</td>
+                <td><code>npm install --production</code></td>
+            </tr>
+            <tr>
+                <td>Bundler</td>
+                <td><code>bundle install --frozen</code></td>
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}
