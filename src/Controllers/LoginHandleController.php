@@ -86,33 +86,32 @@ class LoginHandleController
         $redirect = $request->get('redirect', null);
 
         if (!$username || !$password) {
-            $response->body(
-                $this->template->render(
-                    [
-                        'error' => "A username and password must be entered."
-                    ]
-                )
-            );
+
+            $rendered = $this->template->render([
+                'error' => 'A username and password must be entered.'
+            ])
+
+            $response->body($rendered);
             return;
         }
 
         $account = $this->ldap->authenticate($username, $password);
 
         if (!$account) {
-            $response->body(
-                $this->template->render(
-                    [
-                        'error' => 'Authentication failed.'
-                    ]
-                )
-            );
+            $rendered = $this->template->render([
+                'error' => 'Authentication failed.'
+            ])
+
+            $response->body($rendered);
             return;
         }
 
         $this->session->set('account', $account);
+        $this->session->set('isFirstLogin', false);
         $user = $this->userRepo->findOneBy(['id' => $account->commonId()]);
 
         if (!$user) {
+            $this->session->set('isFirstLogin', true);
             $user = new User();
         }
 

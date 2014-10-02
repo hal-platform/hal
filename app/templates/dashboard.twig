@@ -32,7 +32,9 @@
                 </ul>
             </div>
         </div>
-    {% else %}
+    {% endif %}
+
+    {% if not repositories or isFirstLogin %}
 
        {{ block('intro') }}
 

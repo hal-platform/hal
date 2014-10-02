@@ -44,5 +44,6 @@ class TwigEnvironmentHook
     {
         $this->environment->addGlobal('session', $this->session);
         $this->environment->addGlobal('account', $this->session->get('account'));
+        $this->environment->addGlobal('isFirstLogin', $this->session->get('isFirstLogin'));
     }
 }
