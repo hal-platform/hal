@@ -10,7 +10,7 @@ BUNDLER="bundle install"
 
 # Use isolated gem installation if deploying from HAL
 if [ -n "$HAL_ENVIRONMENT" ]; then
-    BUNDLER="bundle install --deployment  --binstubs"
+    BUNDLER="bundle install --deployment --binstubs"
 fi
 
 $COMPOSER
