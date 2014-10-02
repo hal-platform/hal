@@ -25,7 +25,7 @@
                 <section class="card__details">
                     <ul class="split mbn">
                         <li>
-                            <span class="split__title">{{ build.end|reldate }}</span>
+                            <span class="split__title">{{ build.created|reldate }}</span>
                             <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
                             <svg viewBox="0 0 32 32" class="icon">
                                 <use xlink:href="#fork"></use>

@@ -54,7 +54,7 @@
                 {% endif %}
             </td>
             {% endif %}
-            <td class="js-build-date">{{ build.end|reldate }}</td>
+            <td class="js-build-date">{{ build.created|reldate }}</td>
             {% if actions %}
 
                 {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
