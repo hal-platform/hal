@@ -28,8 +28,8 @@ services:
     class: 'Symfony\Component\DependencyInjection\ContainerInterface'
     synthetic: true
 
-    root:
-        synthetic: true
+  root:
+    synthetic: true
 
   ######################################################################################################################
   # DOCTRINE CONFIGURATION

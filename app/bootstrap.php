@@ -32,6 +32,9 @@ if (!class_exists('QL\Hal\CachedContainer') || (php_sapi_name() === 'cli')) {
     }
 }
 
+// Set the synthetic root service. This must not ever be cached.
+$container->set('root', $root);
+
 return $container;
 
 function buildDi($root)
@@ -40,7 +43,6 @@ function buildDi($root)
     $builder = new YamlFileLoader($container, new FileLocator($root));
     $builder->load('app/config.yml');
 
-    $container->set('root', $root);
     $container->compile();
 
     return $container;
