@@ -7,8 +7,8 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 # install and configure
 "$DIR"/install
 "$DIR"/config
-"$DIR"/doctrine orm:generate:proxies
 "$DIR"/dump-di
+"$DIR"/doctrine orm:generate:proxies
 "$DIR"/gulp --deploy
 
 # Remove artifacts from deployment - keep your builds tidy!
