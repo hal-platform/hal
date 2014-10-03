@@ -9,9 +9,10 @@ atlassian-ide-plugin.xml
 /.phpunit/
 /phpunit.xml
 
-# compiled assets / package installation
+# compiled assets / package installation / deployment
 /.bundle/
 /.sass-cache/
+/.twig/
 /bin/sass
 /bin/sass-convert
 /bin/scss
@@ -23,10 +24,11 @@ atlassian-ide-plugin.xml
 /vendor/
 
 # compiled configuration
-/app/config.yml
+/configuration/config.env.yml
 /src/CachedContainer.php
 
 # doctrine cache
 /app/cache/*
 
+# misc
 /.vagrant
