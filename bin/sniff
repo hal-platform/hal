@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-./vendor/bin/phpcs lib --standard=PSR2 --report=full

@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-./bin/clean
-./bin/composer validate
-./bin/composer self-update
-./bin/composer update
