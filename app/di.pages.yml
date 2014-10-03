@@ -6,6 +6,7 @@ services:
     arguments: [@delete.confirm.twig]
   delete.confirm.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['delete.confirm.twig']
 
   dashboard.page:
@@ -20,6 +21,7 @@ services:
       - @user.repo
   dashboard.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['dashboard.twig']
 
   login.page:
@@ -27,6 +29,7 @@ services:
     arguments: [@login.twig]
   login.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['login.twig']
   login.handle:
     class: 'QL\Hal\Controllers\LoginHandleController'
@@ -51,6 +54,7 @@ services:
         - @push.repo
   queue.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['queue.twig']
 
   ######################################################################################################################
@@ -65,6 +69,7 @@ services:
       - @group.repo
   groups.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['group/groups.twig']
 
   group.page:
@@ -76,6 +81,7 @@ services:
       - @repository.repo
   group.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['group/group.twig']
 
   group.admin.add.page:
@@ -89,6 +95,7 @@ services:
       - @url.helper
   group.admin.add.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments:  ['group/admin.add.twig']
   group.admin.add.handle:
     parent: 'group.admin.add.page'
@@ -104,6 +111,7 @@ services:
       - @url.helper
   group.admin.edit.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments:  ['group/admin.edit.twig']
   group.admin.edit.handle:
     parent: 'group.admin.edit.page'
@@ -127,6 +135,7 @@ services:
       - @repository.repo
   repositories.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/repositories.twig']
 
   repository.page:
@@ -139,6 +148,7 @@ services:
       - @permissions
   repository.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/repository.twig']
 
   repository.status.page:
@@ -153,6 +163,7 @@ services:
       - @user
   repository.status.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/status.twig']
 
   repository.admin.add.page:
@@ -168,6 +179,7 @@ services:
       - @url.helper
   repository.admin.add.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/admin.add.twig']
   repository.admin.add.handle:
     parent: 'repository.admin.add.page'
@@ -184,6 +196,7 @@ services:
         - @url.helper
   repository.admin.edit.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/admin.edit.twig']
   repository.admin.edit.handle:
     parent: 'repository.admin.edit.page'
@@ -212,6 +225,7 @@ services:
       - @deployment.repo
   repository.deployments.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/deployments.twig']
 
   repository.deployment.admin.add.handle:
@@ -240,6 +254,7 @@ services:
       - @deployment.repo
   repository.deployment.admin.edit.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/deployment.twig']
 
   repository.deployment.admin.edit.handle:
@@ -257,6 +272,7 @@ services:
       - @build.repo
   build.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['build/build.twig']
 
   build.start.page:
@@ -269,6 +285,7 @@ services:
       - @github
   build.start.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['build/start.twig']
 
   build.start.handle.page:
@@ -294,6 +311,7 @@ services:
       - @user
   build.push.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['build/push.twig']
 
   rollback.page:
@@ -307,6 +325,7 @@ services:
       - @user
   rollback.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['repository/rollback.twig']
 
   build.push.handle:
@@ -332,6 +351,7 @@ services:
       - @user
   builds.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['build/builds.twig']
 
   ######################################################################################################################
@@ -346,6 +366,7 @@ services:
       - @push.repo
   push.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['push/push.twig']
 
   pushes.page:
@@ -358,6 +379,7 @@ services:
       - @push.repo
   pushes.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['push/pushes.twig']
 
   ######################################################################################################################
@@ -372,6 +394,7 @@ services:
       - @environment.repo
   environments.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['environment/environments.twig']
 
   environment.page:
@@ -383,6 +406,7 @@ services:
       - @server.repo
   environment.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['environment/environment.twig']
 
   environment.admin.reorder.page:
@@ -393,6 +417,7 @@ services:
       - @environment.repo
   environment.admin.reorder.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['environment/admin.reorder.twig']
   environment.admin.reorder.handle:
     class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
@@ -413,6 +438,7 @@ services:
       - @url.helper
   environment.admin.add.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['environment/admin.add.twig']
   environment.admin.add.handle:
     parent: environment.admin.add.page
@@ -428,6 +454,7 @@ services:
       - @url.helper
   environment.admin.edit.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['environment/admin.edit.twig']
   environment.admin.edit.handle:
     parent: environment.admin.edit.page
@@ -453,6 +480,7 @@ services:
       - @server.repo
   servers.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['server/servers.twig']
 
   server.page:
@@ -464,6 +492,7 @@ services:
       - @deployment.repo
   server.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['server/server.twig']
 
   server.admin.add.page:
@@ -478,6 +507,7 @@ services:
       - @url.helper
   server.admin.add.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['server/admin.add.twig']
   server.admin.add.handle:
     parent: 'server.admin.add.page'
@@ -494,6 +524,7 @@ services:
       - @url.helper
   server.admin.edit.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['server/admin.edit.twig']
   server.admin.edit.handle:
     parent: 'server.admin.edit.page'
@@ -523,6 +554,7 @@ services:
       - @permissions
   user.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['user/user.twig']
 
   users.page:
@@ -533,6 +565,7 @@ services:
       - @user.repo
   users.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['user/users.twig']
 
   user.edit.page:
@@ -548,6 +581,7 @@ services:
       - @user
   user.edit.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['user/user.edit.twig']
   user.edit.handle:
     class: 'QL\Hal\Controllers\User\EditHandle'
@@ -562,6 +596,7 @@ services:
     arguments: [@admin.dashboard.twig]
   admin.dashboard.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['admin/dashboard.twig']
 
   ######################################################################################################################
@@ -573,6 +608,7 @@ services:
     arguments: [@help.twig]
   help.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['help/help.twig']
 
   help.deployment.page:
@@ -580,6 +616,7 @@ services:
     arguments: [@help.deployment.twig]
   help.deployment.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['help/deployment.twig']
 
   help.api.page:
@@ -587,6 +624,7 @@ services:
     arguments: [@help.api.twig]
   help.api.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['help/api.twig']
 
   ######################################################################################################################
@@ -601,6 +639,7 @@ services:
     arguments: [@denied.twig, 403]
   denied.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['denied.twig']
 
   logs.page:
@@ -611,6 +650,7 @@ services:
       - @doctrine.em
   logs.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['logs.twig']
 
   admin.utility.page:
@@ -620,6 +660,7 @@ services:
   # The twig template for slim errors (404, 500)
   error.pages.twig:
     parent: 'twig.template'
+    tags: [{name: 'twig.template'}]
     arguments: ['error.twig']
 
   debug.page:

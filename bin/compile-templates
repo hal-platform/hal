@@ -1,0 +1,51 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
+
+namespace QL\Hal\Bootstrap;
+
+use Slim\Environment;
+
+$root = __DIR__ . '/..';
+if (!$container = @include $root . '/app/bootstrap.php') {
+    echo "The application failed to start.\n";
+    exit(1);
+}
+
+// start slim to prime twig extension and inject synthetic services
+Environment::mock(['PATH_INFO' => '/derpderp']);
+$slim = $container->get('slim');
+$slim->call();
+// $container->set('slim.environment', $slim->environment());
+// $container->set('slim.request', $slim->request());
+// $container->set('slim.response', $slim->response());
+// $container->set('slim.parameters', []);
+// $container->set('slim.halt', [$slim, 'halt']);
+
+// find and attempt to load the templates
+$templates = $container->findTaggedServiceIds('twig.template');
+$twigCache = $container->get('twig.cache.dir');
+$output = 'No templates found';
+
+// Always create twig cache if not found
+if (!file_exists($twigCache)) {
+    mkdir($twigCache);
+}
+
+if ($templates) {
+    $output = "\nTemplates:\n";
+    foreach (array_keys($templates) as $template) {
+        $output .= $template . "\n";
+        $container->get($template)->render([]);
+    }
+}
+
+echo <<<OUTPUT
+Compiling twig templates
+Target: $twigCache
+$output
+OUTPUT;

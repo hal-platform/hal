@@ -2,17 +2,6 @@ imports:
   - resource: di.pages.yml
   - resource: di.api.yml
 
-parameters:
-    # environment independent parameters
-    slim.hooks:
-        slim.before:
-            - 'slim.hook.logger'
-            - 'slim.hook.errors'
-            - 'slim.hook.twig'
-        slim.before.router:
-            - 'slim.hook.routes'
-    applicationId: '200947'
-
 services:
 
   ######################################################################################################################
@@ -108,7 +97,7 @@ services:
   slim.hook.twig:
     class: 'QL\Hal\Slim\TwigEnvironmentHook'
     arguments:
-      - @twigEnv
+      - @twig.environment
       - @session
       - %app.title%
 
@@ -152,7 +141,7 @@ services:
   ######################################################################################################################
 
   # HAL Twig Extension
-  twigExtension:
+  twig.extension:
     class: 'QL\Hal\Twig\HalExtension'
     arguments:
       - @permissions
@@ -161,22 +150,32 @@ services:
       - @time.helper
 
   # Twig Loader
-  twigLoader:
+  twig.loader:
     class: 'Twig_Loader_Filesystem'
-    arguments: [@twigLoader.path]
+    arguments: [@twig.loader.path]
 
-  twigLoader.path:
+  twig.loader.path:
     class: 'NOTHING_TO_SEE_HERE'
     factory_service: 'directory.helper'
     factory_method: 'fullPath'
     arguments: ['app/templates']
 
   # Twig Environment
-  twigEnv:
+  twig.environment:
     class: 'Twig_Environment'
-    arguments: [@twigLoader]
+    arguments:
+      - @twig.loader
+      -
+        cache: @twig.cache.dir
+        debug: %debug%
     calls:
-      - ['addExtension', [@twigExtension]]
+      - ['addExtension', [@twig.extension]]
+
+  twig.cache.dir:
+    class: 'GENERATED_SCALAR'
+    factory_service: 'directory.helper'
+    factory_method: 'fullPath'
+    arguments: ['.twig']
 
   layout:
     class: 'QL\Hal\Layout'
@@ -185,7 +184,7 @@ services:
   # The primary twig template. All other twig services should use this service as a parent
   twig.template:
     class: 'Twig_Template'
-    factory_service: 'twigEnv'
+    factory_service: 'twig.environment'
     factory_method: 'loadTemplate'
 
   ######################################################################################################################
@@ -206,7 +205,7 @@ services:
     arguments:
       - @session
       - @permissions
-      - @twigEnv
+      - @twig.environment
 
   ######################################################################################################################
   # NON-DATABASE SERVICES

@@ -5,3 +5,14 @@ imports:
     - resource: config.env.yml
     - resource: routes.yml
 
+parameters:
+    # environment independent parameters
+    applicationId: '200947'
+
+    slim.hooks:
+        slim.before:
+            - 'slim.hook.logger'
+            - 'slim.hook.errors'
+            - 'slim.hook.twig'
+        slim.before.router:
+            - 'slim.hook.routes'
