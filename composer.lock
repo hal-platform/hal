@@ -198,7 +198,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -274,7 +274,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -405,7 +405,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -459,7 +459,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -899,13 +899,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-core.git",
-                "reference": "1.0.1"
+                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-core-1.0.1-d1b76f.zip",
-                "reference": "1.0.1",
-                "shasum": "33c9dd1e298f45d64a2f774c7501c203276d9152"
+                "url": "http://composer//dist/ql-mcp-core-1.0.1-578aad.zip",
+                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf",
+                "shasum": "4ab925396c0ef4d2adbdfc58716fb6ef536b26a8"
             },
             "archive": {
                 "exclude": [
@@ -1005,13 +1005,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-logger.git",
-                "reference": "1.2.0"
+                "reference": "107ae5ec4a74a20b7ba83bfbb9ef88bb1a3b8f7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-logger-1.2.0-4acc7d.zip",
-                "reference": "1.2.0",
-                "shasum": "f4ed617e19cd7f98bb85b521a673fe8ee924c04b"
+                "url": "http://composer//dist/ql-mcp-logger-1.2.0-dfec33.zip",
+                "reference": "107ae5ec4a74a20b7ba83bfbb9ef88bb1a3b8f7a",
+                "shasum": "ca96a0dee5aeb1b462298d5625df77aafdf4bac0"
             },
             "archive": {
                 "exclude": [
@@ -2099,16 +2099,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.2.6",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c28a790620fe30b049bb693be1ef9cd4e0fe906c"
+                "reference": "6913ac6c2f71ce18ff09b605df2fa37a6d789fd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c28a790620fe30b049bb693be1ef9cd4e0fe906c",
-                "reference": "c28a790620fe30b049bb693be1ef9cd4e0fe906c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6913ac6c2f71ce18ff09b605df2fa37a6d789fd9",
+                "reference": "6913ac6c2f71ce18ff09b605df2fa37a6d789fd9",
                 "shasum": ""
             },
             "require": {
@@ -2122,7 +2122,7 @@
                 "phpunit/php-file-iterator": "~1.3.1",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-timer": "~1.0.2",
-                "phpunit/phpunit-mock-objects": "~2.2",
+                "phpunit/phpunit-mock-objects": "~2.3",
                 "sebastian/comparator": "~1.0",
                 "sebastian/diff": "~1.1",
                 "sebastian/environment": "~1.0",
@@ -2139,7 +2139,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.2.x-dev"
+                    "dev-master": "4.3.x-dev"
                 }
             },
             "autoload": {
@@ -2169,7 +2169,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-09-14 09:31:24"
+            "time": "2014-10-03 05:17:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

@@ -154,13 +154,15 @@ class BuildStartController
             $repo->getGithubRepo()
         );
 
-        $pulls = array_merge($open, $closed);
-
-        usort($pulls, function ($a, $b) {
+        $sorter = function ($a, $b) {
             return ($a['number'] < $b['number']);
-        });
+        };
 
-        return $pulls;
+        // sort arrays
+        uasort($open, $sorter);
+        uasort($closed, $sorter);
+
+        return array_merge($open, $closed);
     }
 
 
