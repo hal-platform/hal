@@ -33,7 +33,7 @@ class ApiHelper
      */
     public function prepareResponse(Response &$response, $content)
     {
-        $response->header('Content-Type', 'application/json; charset=utf-8');
+        $response->header('Content-Type', 'application/hal+json; charset=utf-8');
         $response->body(json_encode(
             $content
         , JSON_UNESCAPED_SLASHES));
