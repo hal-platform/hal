@@ -37,7 +37,7 @@ services:
     class: 'NOTHING_TO_SEE_HERE'
     factory_service: 'directory.helper'
     factory_method: 'fullPath'
-    arguments: ['app/cache/doctrine/proxy']
+    arguments: ['.doctrine']
 
   doctrine.events:
     class: 'Doctrine\Common\EventManager'
