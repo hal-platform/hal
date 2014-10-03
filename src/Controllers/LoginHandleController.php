@@ -89,7 +89,7 @@ class LoginHandleController
 
             $rendered = $this->template->render([
                 'error' => 'A username and password must be entered.'
-            ])
+            ]);
 
             $response->body($rendered);
             return;
@@ -100,7 +100,7 @@ class LoginHandleController
         if (!$account) {
             $rendered = $this->template->render([
                 'error' => 'Authentication failed.'
-            ])
+            ]);
 
             $response->body($rendered);
             return;
