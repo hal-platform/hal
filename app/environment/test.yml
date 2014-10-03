@@ -1,0 +1,15 @@
+parameters:
+    app.title: 'HAL 9000 TEST'
+
+
+    doctrine.connection:
+        driver:         pdo_mysql
+        host:           test.example.com
+        user:           placeholder
+        password:       placeholder
+        dbname:         hal9000_test
+
+    github.token: ''
+    github.baseurl: 'http://git/api/v3/'
+
+    logger.mcp.host: 'http://qlsonictest:2581/web/core/logentries'

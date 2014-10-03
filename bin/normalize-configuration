@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+if [ -z  "$HAL_ENVIRONMENT" ] ; then
+    echo "HAL 9000 environment not found. Using development configuration."
+    HAL_ENVIRONMENT="dev"
+fi
+
+DIR=$( cd "$( dirname "$0" )" && pwd )
+TARGET_CONFIG="config.env.yml"
+NORMALIZED_ENV=$(echo "$HAL_ENVIRONMENT" | tr "[:upper:]" "[:lower:]")
+CONFIG="$NORMALIZED_ENV.yml"
+
+echo "Current environment: $HAL_ENVIRONMENT"
+echo "Normalized environment: $NORMALIZED_ENV"
+
+EXISTS=$(test -e $DIR/../app/environment/$CONFIG && echo 1 || echo 0)
+if [[ $EXISTS -eq "1" ]]; then
+    echo "Configuration found: $CONFIG"
+    echo "Overwriting $TARGET_CONFIG"
+    cat "$DIR/../app/environment/$CONFIG" > "$DIR/../app/config.env.yml"
+else
+    echo "Configuration not found: $CONFIG"
+fi

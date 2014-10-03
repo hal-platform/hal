@@ -1,0 +1,14 @@
+parameters:
+    # use this file for default settings that can be overridden by dev|test|prod config
+    app.title: 'HAL 9000'
+
+    debug: false
+    debug.godmode: 0
+
+    ldap.host: 'ldap.example.com'
+    ldap.domain: 'MI'
+    ldap.baseDn: 'DC=mi,DC=corp'
+    ldap.username: ''
+    ldap.password: ''
+
+    doctrine.devmode: false

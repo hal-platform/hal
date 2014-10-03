@@ -6,7 +6,7 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 
 # install and configure
 "$DIR"/install
-"$DIR"/config
+"$DIR"/normalize-configuration
 "$DIR"/dump-di
 "$DIR"/doctrine orm:generate:proxies
 "$DIR"/gulp --deploy
