@@ -107,7 +107,10 @@ services:
     arguments: [@logger, %debug%, @error.pages.twig]
   slim.hook.twig:
     class: 'QL\Hal\Slim\TwigEnvironmentHook'
-    arguments: [@twigEnv, @session]
+    arguments:
+      - @twigEnv
+      - @session
+      - %app.title%
 
   slim.logger:
     class: 'QL\Hal\Logger\McpLogWriter'

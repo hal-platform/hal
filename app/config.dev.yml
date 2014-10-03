@@ -5,6 +5,7 @@ imports:
 
 parameters:
   debug: true
+  app.title: 'HAL 9000 DEV'
 
   doctrine.devmode: true
   doctrine.connection:

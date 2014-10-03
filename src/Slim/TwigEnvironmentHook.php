@@ -28,13 +28,20 @@ class TwigEnvironmentHook
     private $session;
 
     /**
+     * @var string
+     */
+    private $appTitle;
+
+    /**
      * @param Twig_Environment $environment
      * @param Session $session
+     * @param Session $session
      */
-    public function __construct(Twig_Environment $environment, Session $session)
+    public function __construct(Twig_Environment $environment, Session $session, $appTitle)
     {
         $this->environment = $environment;
         $this->session = $session;
+        $this->appTitle = $appTitle;
     }
 
     /**
@@ -45,5 +52,7 @@ class TwigEnvironmentHook
         $this->environment->addGlobal('session', $this->session);
         $this->environment->addGlobal('account', $this->session->get('account'));
         $this->environment->addGlobal('isFirstLogin', $this->session->get('isFirstLogin'));
+
+        $this->environment->addGlobal('app_title', $this->appTitle);
     }
 }
