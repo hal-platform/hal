@@ -6,6 +6,13 @@
 
     <h2>Hello, {{ getUsersActualName(user) }}.</h2>
 
+
+    {% if isFirstLogin %}
+
+       {{ block('intro') }}
+
+    {% endif %}
+
     {# QUICK BUILD #}
 
     {% if repositories %}
@@ -32,12 +39,6 @@
                 </ul>
             </div>
         </div>
-    {% endif %}
-
-    {% if not repositories or isFirstLogin %}
-
-       {{ block('intro') }}
-
     {% endif %}
 
     {# PENDING WORK #}
