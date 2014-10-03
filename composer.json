@@ -23,6 +23,7 @@
     "require": {
         "knplabs/github-api": "1.2.1",
         "php-64bit": "~5.4",
+        "predis/predis": "~1.0",
         "psr/log": "*",
         "ql/hal-core": "~2.3",
         "ql/mcp-cache": "~2.1",
