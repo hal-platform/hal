@@ -1,28 +1,64 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Helpers;
 
+use Predis\Client as Predis;
+use Slim\Http\Request;
 use Slim\Http\Response;
 
-/**
- * Helper Class for API Endpoints
- *
- * @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class ApiHelper
 {
+    const API_RESPONSE_CACHE_TIME = 10;
+
     /**
      * @var UrlHelper
      */
     private $url;
 
     /**
-     * @param UrlHelper $url
+     * @var Predis
      */
-    public function __construct(
-        UrlHelper $url
-    ) {
+    private $predis;
+
+    /**
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * @var float
+     */
+    private $pageResponseStart;
+
+    /**
+     * @var array
+     */
+    private $customCacheTimes;
+
+    /**
+     * @var string|null
+     */
+    private $cacheKey;
+
+    /**
+     * @param UrlHelper $url
+     * @param Predis $predis
+     * @param Request $request
+     * @param array $customCacheTimes
+     */
+    public function __construct(UrlHelper $url, Predis $predis, Request $request, array $customCacheTimes)
+    {
         $this->url = $url;
+        $this->predis = $predis;
+        $this->request = $request;
+
+        $this->customCacheTimes = $customCacheTimes;
+        $this->pageResponseStart = microtime(true);
     }
 
     /**
@@ -30,13 +66,57 @@ class ApiHelper
      *
      * @param Response $response
      * @param $content
+     *
+     * @return null
      */
-    public function prepareResponse(Response &$response, $content)
+    public function prepareResponse(Response $response, $content)
     {
+        $body = json_encode($content, JSON_UNESCAPED_SLASHES);
+
         $response->header('Content-Type', 'application/hal+json; charset=utf-8');
-        $response->body(json_encode(
-            $content
-        , JSON_UNESCAPED_SLASHES));
+        $response->body($body);
+
+        // attempt to cache the response
+        if ($this->request->isGet()) {
+            // do not cache if cache time is 0
+            if ($cacheTime = $this->cacheTime()) {
+                $this->predis->setex($this->cacheKey(), $cacheTime, $body);
+            }
+        }
+
+        $response->header('hal_cache_status', 'NOT CACHED');
+        $response->header('hal_response_time', round(microtime(true) - $this->pageResponseStart, 2));
+    }
+
+    /**
+     * Check if the response is cached and attach to the response
+     *
+     * Returns true if response is cached.
+     *
+     * @param Response $response
+     *
+     * @return boolean
+     */
+    public function checkForCachedResponse(Response $response)
+    {
+        // Only get requests are cached
+        if (!$this->request->isGet()) {
+            return false;
+        }
+
+        $key = $this->cacheKey();
+
+        if ($cached = $this->predis->get($key)) {
+            $response->header('Content-Type', 'application/hal+json; charset=utf-8');
+            $response->body($cached);
+
+            $response->header('hal_cache_status', 'CACHED');
+            $response->header('hal_response_time', round(microtime(true) - $this->pageResponseStart, 2));
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -86,5 +166,37 @@ class ApiHelper
         }
 
         return $parsed;
+    }
+
+    /**
+     * Lazy load the cache key from the request
+     *
+     * url + query string = unique-ish cache key
+     *
+     * @return string
+     */
+    private function cacheKey()
+    {
+        if (!$this->cacheKey) {
+            $unique = $this->request->getPathInfo() . '?' . http_build_query($this->request->get());
+            $this->cacheKey = sha1($unique);
+        }
+
+        return $this->cacheKey;
+    }
+
+    /**
+     * Get the cache time in seconds
+     *
+     * @return int
+     */
+    private function cacheTIme()
+    {
+        $name = $this->url->currentRoute()->getName();
+        if (isset($this->customCacheTimes[$name])) {
+            return $this->customCacheTimes[$name];
+        }
+
+        return self::API_RESPONSE_CACHE_TIME;
     }
 }

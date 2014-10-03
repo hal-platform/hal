@@ -127,7 +127,7 @@ services:
 
   api.helper:
     class: 'QL\Hal\Helpers\ApiHelper'
-    arguments: [@url.helper]
+    arguments: [@url.helper, @redis, @slim.request, %api.cachetimes%]
 
   time.helper:
     class: 'QL\Hal\Helpers\TimeHelper'
@@ -188,7 +188,7 @@ services:
     factory_method: 'loadTemplate'
 
   ######################################################################################################################
-  # BOUNCERS
+  # MIDDLEWARE
   ######################################################################################################################
 
   # Bounce unauthenticated users
@@ -206,6 +206,10 @@ services:
       - @session
       - @permissions
       - @twig.environment
+
+  cachedApi.middleware:
+    class: 'QL\Hal\Middleware\CachedApiMiddleware'
+    arguments: [@api.helper]
 
   ######################################################################################################################
   # NON-DATABASE SERVICES

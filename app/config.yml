@@ -16,3 +16,13 @@ parameters:
             - 'slim.hook.twig'
         slim.before.router:
             - 'slim.hook.routes'
+
+
+    # To set a specific cache time for a route, add the route name as a key,
+    # and the time to cache in seconds. If not specified, default time is 10 seconds.
+    api.cachetimes:
+        # these are lower because having the most update to date status is critical
+        api.build: 5
+        api.push: 5
+        api.queue: 0 # the queue api uses no caching
+        api.queue.refresh: 0 # the queue api uses no caching

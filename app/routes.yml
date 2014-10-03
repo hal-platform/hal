@@ -503,67 +503,67 @@ parameters:
     api.index:
       method:       'GET'
       route:        '/api'
-      stack:        ['api.index']
+      stack:        ['cachedApi.middleware', 'api.index']
 
     api.environments:
       method:       'GET'
       route:        '/api/environments'
-      stack:        ['api.environments']
+      stack:        ['cachedApi.middleware', 'api.environments']
 
     api.environment:
       method:       'GET'
       route:        '/api/environments/:id'
-      stack:        ['api.environment']
+      stack:        ['cachedApi.middleware', 'api.environment']
       conditions:
         id:         '[0-9]+'
 
     api.servers:
       method:       'GET'
       route:        '/api/servers'
-      stack:        ['api.servers']
+      stack:        ['cachedApi.middleware', 'api.servers']
 
     api.server:
       method:       'GET'
       route:        '/api/servers/:id'
-      stack:        ['api.server']
+      stack:        ['cachedApi.middleware', 'api.server']
       conditions:
         id:         '[0-9]+'
 
     api.groups:
       method:       'GET'
       route:        '/api/groups'
-      stack:        ['api.groups']
+      stack:        ['cachedApi.middleware', 'api.groups']
 
     api.group:
       method:       'GET'
       route:        '/api/groups/:id'
-      stack:        ['api.group']
+      stack:        ['cachedApi.middleware', 'api.group']
       conditions:
         id:         '[0-9]+'
 
     api.users:
       method:       'GET'
       route:        '/api/users'
-      stack:        ['api.users']
+      stack:        ['cachedApi.middleware', 'api.users']
 
     api.user:
       method:       'GET'
       route:        '/api/users/:id'
-      stack:        ['api.user']
+      stack:        ['cachedApi.middleware', 'api.user']
       conditions:
         id:         '[0-9]+'
 
     api.user.permissions:
       method:       'GET'
       route:        '/api/users/:id/permissions'
-      stack:        ['api.user.permissions']
+      stack:        ['cachedApi.middleware', 'api.user.permissions']
       conditions:
         id:         '[0-9]+'
 
     api.deployment:
       method:       'GET'
       route:        '/api/deployment/:id'
-      stack:        ['api.deployment']
+      stack:        ['cachedApi.middleware', 'api.deployment']
       conditions:
         id:         '[0-9]+'
 
@@ -571,68 +571,68 @@ parameters:
     api.deployment.lastpush:
       method:       'GET'
       route:        '/api/deployment/:id/lastPush'
-      stack:        ['api.deployment.lastpush']
+      stack:        ['cachedApi.middleware', 'api.deployment.lastpush']
       conditions:
         id:         '[0-9]+'
 
     api.build:
       method:       'GET'
       route:        '/api/build/:id'
-      stack:        ['api.build']
+      stack:        ['cachedApi.middleware', 'api.build']
       conditions:
         id:         '[A-Za-z0-9]+'
 
     api.build.log:
       method:       'GET'
       route:        '/api/build/:id/log'
-      stack:        ['api.build.log']
+      stack:        ['cachedApi.middleware', 'api.build.log']
       conditions:
         id:         '[A-Za-z0-9]+'
 
     api.push:
       method:       'GET'
       route:        '/api/push/:id'
-      stack:        ['api.push']
+      stack:        ['cachedApi.middleware', 'api.push']
       conditions:
         id:         '[0-9]+'
 
     api.push.log:
       method:       'GET'
       route:        '/api/push/:id/log'
-      stack:        ['api.push.log']
+      stack:        ['cachedApi.middleware', 'api.push.log']
       conditions:
         id:         '[0-9]+'
 
     api.repositories:
       method:       'GET'
       route:        '/api/repositories'
-      stack:        ['api.repositories']
+      stack:        ['cachedApi.middleware', 'api.repositories']
 
     api.repository:
       method:       'GET'
       route:        '/api/repositories/:id'
-      stack:        ['api.repository']
+      stack:        ['cachedApi.middleware', 'api.repository']
       conditions:
         id:         '[0-9]+'
 
     api.repository.tags:
       method:       'GET'
       route:        '/api/repositories/:id/tags'
-      stack:        ['api.repository.tags']
+      stack:        ['cachedApi.middleware', 'api.repository.tags']
       conditions:
         id:         '[0-9]+'
 
     api.repository.branches:
       method:       'GET'
       route:        '/api/repositories/:id/branches'
-      stack:        ['api.repository.branches']
+      stack:        ['cachedApi.middleware', 'api.repository.branches']
       conditions:
         id:         '[0-9]+'
 
     api.repository.pullrequests:
       method:       'GET'
       route:        '/api/repositories/:id/pullrequests'
-      stack:        ['api.repository.pullrequests']
+      stack:        ['cachedApi.middleware', 'api.repository.pullrequests']
       conditions:
         id:         '[0-9]+'
 
@@ -648,33 +648,33 @@ parameters:
     api.deployments:
       method:       'GET'
       route:        '/api/repositories/:id/deployments'
-      stack:        ['api.deployments']
+      stack:        ['cachedApi.middleware', 'api.deployments']
       conditions:
         id:         '[0-9]+'
 
     api.builds:
       method:       'GET'
       route:        '/api/repositories/:id/builds'
-      stack:        ['api.builds']
+      stack:        ['cachedApi.middleware', 'api.builds']
       conditions:
         id:         '[0-9]+'
 
     api.pushes:
       method:       'GET'
       route:        '/api/repositories/:id/pushes'
-      stack:        ['api.pushes']
+      stack:        ['cachedApi.middleware', 'api.pushes']
       conditions:
         id:         '[0-9]+'
 
     api.queue:
       method: 'GET'
       route: '/api/queue'
-      stack: ['api.queue']
+      stack: ['cachedApi.middleware', 'api.queue']
 
     api.queue.refresh:
       method: 'GET'
       route: '/api/queue-refresh/:uniqueId'
-      stack: ['api.queue.refresh']
+      stack: ['cachedApi.middleware', 'api.queue.refresh']
       conditions:
         uniqueId: '[0-9a-z\+\-]+'
 

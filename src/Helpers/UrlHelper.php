@@ -6,6 +6,7 @@ namespace QL\Hal\Helpers;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Router;
+use Slim\Route;
 use QL\Hal\Services\GithubService;
 
 /**
@@ -51,6 +52,16 @@ class UrlHelper
         $this->response = $response;
         $this->router = $router;
         $this->github = $github;
+    }
+
+    /**
+     *  Get the current route
+     *
+     *  @return Route
+     */
+    public function currentRoute()
+    {
+        return $this->router->getCurrentRoute();
     }
 
     /**
