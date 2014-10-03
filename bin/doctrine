@@ -6,8 +6,11 @@ namespace QL\Hal\Bootstrap;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 
 $root = __DIR__ . '/..';
-require_once $root . '/app/bootstrap.php';
+if (!$container = @include $root . '/app/bootstrap.php') {
+    http_response_code(500);
+    echo "Boom goes the dynamite.\n";
+    exit;
+};
 
-$container = buildDi($root);
 $helperSet = ConsoleRunner::createHelperSet($container->get('doctrine.em'));
 ConsoleRunner::run($helperSet, []);
