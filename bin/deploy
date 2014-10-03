@@ -1,21 +1,40 @@
 #!/usr/bin/env bash
 
-set -e
+# functions
+function loadTitles() {
+    read -r -d '' TITLE_INSTALL <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ COMPOSER / NPM / BUNDLER INSTALLATION                                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_CONFIG <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ NORMALIZE ENVIRONMENT CONFIGURATION                                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_DUMP <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ CACHING DI CONTAINER                                                         ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_TWIG <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ CACHING TWIG TEMPLATES                                                       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_DOCTRINE <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ CACHING DOCTRINE PROXIES                                                     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_GULP <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ RUNNING GULP DEPLOY                                                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+}
 
-DIR=$( cd "$( dirname "$0" )" && pwd )
-
-# install and configure
-"$DIR"/install
-"$DIR"/normalize-configuration
-"$DIR"/dump-di
-"$DIR/"compile-templates
-"$DIR"/doctrine orm:generate:proxies
-"$DIR"/gulp --deploy
-
-# Remove artifacts from deployment - keep your builds tidy!
-
-# Remove unneeded files if deploying from HAL
-if [ -n "$HAL_ENVIRONMENT" ]; then
+function removeArtifacts() {
     DELFILES=(
         ".sass-cache"
         "node_modules"
@@ -41,4 +60,37 @@ if [ -n "$HAL_ENVIRONMENT" ]; then
         fi
 
     done
+}
+
+# setup
+
+DIR=$( cd "$( dirname "$0" )" && pwd )
+loadTitles
+
+set -e
+
+# install and configure
+echo "$TITLE_INSTALL"
+"$DIR"/install
+
+echo "$TITLE_CONFIG"
+"$DIR"/normalize-configuration
+
+echo "$TITLE_DUMP"
+"$DIR"/dump-di
+
+echo "$TITLE_TWIG"
+"$DIR/"compile-templates
+
+echo "$TITLE_DOCTRINE"
+"$DIR"/doctrine orm:generate:proxies
+
+echo "$TITLE_GULP"
+"$DIR"/gulp --deploy
+
+# Remove artifacts from deployment - keep your builds tidy!
+
+# Remove unneeded files if deploying from HAL
+if [ -n "$HAL_ENVIRONMENT" ]; then
+    removeArtifacts
 fi
