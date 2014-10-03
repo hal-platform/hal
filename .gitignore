@@ -23,7 +23,7 @@ atlassian-ide-plugin.xml
 /vendor/
 
 # compiled configuration
-/configuration/config.env.yml
+/app/config.env.yml
 /src/CachedContainer.php
 
 # deployment caches
