@@ -1,124 +1,145 @@
 define(['jquery'], function($) {
     return {
         searchList: '.js-search-list',
-        searchInput: '.js-search-input',
-        searchOutput: '.js-search-drop',
-        searchResultList: '.js-search-results',
+        searchListRadio: $('.js-search-list li input'),
+        searchInput: $('.js-search-input'),
+        searchOutput: $('.js-search-drop'),
+        searchResultList: $('.js-search-results'),
+        searchResultItems: $('.js-search-results li'),
         searchItem: '.js-search-item',
+        searchListItems: $('.js-search-item'),
         tabsContainer: '.js-tabs',
+        tabsLink: $('.js-tabs li a'),
+        commitId: $('.js-commitId'),
+        commitRegEx: /^[0-9 A-F a-f]{40,40}$/,
         init: function() {
             var _this = this;
-            //to do
-            // refactor everything
-              // js
-                 // use bind instead of _this
-                 // all dom calls to the top
-              // css
-            // user selects radio
-              // text replaces what is in input if populated
-           // prettify drop down
-                // make drop same size as input
-               // animation issues with drop down
-                  // no animation initially
-                  // when list is short, draws to max height then redraws to actual height
-                  // try css animations instead
-               // when div is visible should be scolled to top
-           // tabs
-             // first tab has active class just to show it.  needs rethinking.  try to remove that class
-             // prettify all tabs
-            $(this.searchInput).on({
+            var queryHash = window.location.hash;
+
+            this.searchInput.on({
                 blur: function(){
-                  $(_this.searchOutput).slideUp("slow");
+                    _this.searchOutput.slideUp("slow");
                 },
-                focus: function(){
-                  $(_this.searchOutput).slideDown("slow");
-                  _this.searchItems();
-                  $(_this.searchOutput).scrollTop();
+                focus: function(e){
+                    _this.searchItems();
+                },
+                paste: function(){
+                    _this.delay(function(){
+                        var searchTxt = _this.searchInput.val();
+                        if (_this.commitRegEx.test(searchTxt)){
+                            _this.commitId.val(searchTxt);
+                        } else {
+                            _this.searchItems();
+                        }
+                    }, 100);
                 },
                 keyup: function(){
-                  _this.delay(function(){
-                      _this.searchItems();
-                  }, 100);
+                    _this.delay(function(){
+                        var searchTxt = _this.searchInput.val();
+                        if (_this.commitRegEx.test(searchTxt)){
+                             _this.commitId.val(searchTxt);
+                        } else {
+                            _this.searchItems();
+                        }
+                    }, 100);
                 }
             });
 
-            $(this.searchList + ' li input').on("click",function(){
-                //console.log("selected");
+            //console.log(queryHash);
+            if (queryHash){
+                this.queryLookup(queryHash);
+            }
+
+            this.searchListRadio.on("click",function(){
                 _this.selectRadio(this);
             });
 
-            $(this.searchResultList).on("click", this.searchItem, function(){
+            this.searchResultList.on("click", this.searchItem, function(){
                 _this.selectItem(this);
             });
             //prototype ... refactor tabs
-            $(this.tabsContainer + ' li a').on("click", function(e){
-                //console.log("click tab");
-                var currentTab = $(this).attr('name');
-                $('.' + currentTab).show().siblings().hide();
-                $(this).parent('li').addClass('active').siblings().removeClass('active');
-                e.preventDefault();
+            this.tabsLink.on("click", function(e){
+                _this.tabs(e, this);
+            });
+        },
+        queryLookup: function(query){
+            query = query.split('pr')[1];
+            // this.searchInput.val(query);
+            // this.searchItems();
+            // this.searchOutput.on("click", $.proxy(function(){
+            //     console.log("slideUp");
+            //     this.searchOutput.slideUp("slow");
+            // }, this));
+        },
+        tabs: function(ev, ele){
+            var currentTab = $(ele).attr('name');
+            //content gets shown or hidden
+            $('.' + currentTab).show().siblings().hide();
+            //tabs turn active
+            $(ele).parent('li').addClass('active').siblings().removeClass('active');
+            ev.preventDefault();
+        },
+        searchItems: function(){
+            var _this = this;
+            var searchVal = this.searchInput.val().toLowerCase();
+            var count = 0;
+
+            _this.searchOutput.width(_this.searchInput.width() + 25);
+
+            $(window).on("resize", function(){
+                _this.searchOutput.width(_this.searchInput.width() + 25);
             });
 
-         },
-         searchItems: function(){
-             var searchList = $(this.searchList + '> li input');
-             var searchField = $(this.searchInput);
-             var searchDrop = $(this.searchOutput);
-             var searchResults = $(this.searchResultList);
-             var _this = this;
-             var searchVal = searchField.val().toLowerCase();
+            this.searchResultList.html('');
+            this.searchListRadio.each(function(){
+                var itemVal = $(this).val();
+                var txt = _this.cleanValue(itemVal.toLowerCase());
 
-                searchResults.html('');
-                searchList.each(function(){
-                    var txt = $(this).val().toLowerCase();
-                    var itemVal = $(this).val();
-                    var tagCheck = (txt.substring(0, 4) == 'tag/');
-                    var pullCheck = (txt.substring(0, 5) == 'pull/');
+                if (txt.indexOf(searchVal) === 0){
+                    $("<li class='js-search-item' data-val='" + itemVal + "'>" + txt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
+                }
 
-                    if ((tagCheck) || (pullCheck)){
-                        txt = txt.split('/')[1];
-                    }
+                //$(this).toggle(txt.indexOf(searchVal) === 0);
 
-                    if (txt.indexOf(searchVal) === 0){
-                        searchDrop.slideDown("slow");
-                        searchResults.append("<li class='js-search-item' data-val='" + itemVal + "'>" + txt + "</li>");
-                    }
-                });
-         },
-         selectItem: function(element){
-              var searchBox = $(this.searchInput);
-              var eleVal = $(element).attr("data-val");
-              var currentRadio = $('input[value="' + eleVal + '"]');
-              var tabId = currentRadio.closest("div").attr("data-id");
-              var currentTab = $(this.tabsContainer + ' li[data-id="'+ tabId +'"]');
-              var _this = this;
+                count++;
+                // this runs if the list is already present and the user focuses on the input field again
+                _this.searchOutput.show().slideDown("slow");
+            });
 
-              searchBox.val($(element).text());
-              currentRadio.closest("div").show().siblings().hide();
+            if (count > 12){
+                this.searchOutput.css("max-height", "300px");
+            }
+        },
+        cleanValue: function(valString){
+            var isTag = (valString.substring(0, 4) == 'tag/');
+            var isPull = (valString.substring(0, 5) == 'pull/');
 
-              currentTab.addClass('active').siblings().removeClass('active');
-              currentRadio.prop("checked", true);
-              currentRadio.parent().addClass('js-highlight');
-              setTimeout(function(){
-                  console.log(currentRadio);
-                  currentRadio.parent().removeClass('js-highlight');
-              }, 5000);
-         },
-         selectRadio: function(element){
-           var searchBox = $(this.searchInput);
-           searchBox.val($(element).val());
-           console.log("select radio");
-           $(element).parent().addClass('js-highlight');
-           setTimeout(function(){
-             $(element).parent().removeClass('js-highlight');
-           }, 5000);
+            if ((isTag) || (isPull)){
+                valString = valString.split('/')[1];
+            }
 
-         },
-         delay: function(callback, ms){
-             var timer = 0;
-             clearTimeout(timer);
-             timer = setTimeout(callback, ms);
-         }
+            return valString;
+        },
+        selectItem: function(element){
+            var eleVal = $(element).attr("data-val");
+            var currentRadio = $(this.searchList + ' input[value="' + eleVal + '"]');
+            var tabId = currentRadio.closest("div").attr("data-id");
+            var currentTab = $(this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li");
+            var _this = this;
 
-     };
+            this.searchInput.val($(element).text());
+            currentRadio.closest("div").show().siblings().hide();
+
+            currentTab.addClass('active').siblings().removeClass('active');
+            currentRadio.prop("checked", true);
+        },
+        selectRadio: function(element){
+            this.searchInput.val(this.cleanValue($(element).val()));
+        },
+        delay: function(callback, ms){
+            var timer = 0;
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        }
+    };
 });

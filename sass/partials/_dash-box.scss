@@ -1,8 +1,12 @@
 .dash-box-wrapper{
     background-color: tint($light-grey, 50%);
-    @include margin-x(-1.15em);
+    @include margin-x(-0.8em);
     margin-bottom: -1em;
     overflow: hidden;
+
+    @include breakpoint(33em){
+       @include margin-x(-1.09em);
+    }
 }
 
 
