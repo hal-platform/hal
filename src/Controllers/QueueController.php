@@ -65,7 +65,7 @@ class QueueController
     public function __invoke(Request $request, Response $response)
     {
         $rendered = $this->layout->render($this->template, [
-            'jobs' => $this->getPendingJobs()
+            'pending' => $this->getPendingJobs()
         ]);
 
         $response->body($rendered);

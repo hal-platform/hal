@@ -672,10 +672,6 @@ services:
       parent: 'twig.template'
       tags: [{name: 'twig.template'}]
       arguments: ['partials/build-table.twig']
-  twig.template.partial.dashboard:
-      parent: 'twig.template'
-      tags: [{name: 'twig.template'}]
-      arguments: ['partials/dashboard.twig']
   twig.template.partial.icons:
       parent: 'twig.template'
       tags: [{name: 'twig.template'}]

@@ -19,33 +19,54 @@ define(['jquery', 'handlebars'], function($, handlebars) {
 
         addBuildJob: function(build) {
             var buildId = String(build.id);
+            var reference = String(build.reference.text);
+
             var context = {
-                buildId: buildId,
                 uniqueId: build.uniqueId,
+
+                buildId: buildId,
                 buildIdShort: buildId.slice(0, 10),
+                buildUrl: build.url,
+
                 buildStatusStyle: this.determineStatusStyle(build.status),
                 buildStatus: build.status,
+
                 environmentName: build._links.environment.title,
-                repoId:  build._embedded.repository.id,
+                reference: reference.slice(0, 15),
+                referenceUrl: build.commit.url,
+
                 repoName: build._embedded.repository.key,
-                buildTime: build.created.text
+                repoUrl: build._embedded.repository.url,
+
+                initiator: build._links.user.title
             };
 
             return this.buildTemplate(context);
         },
         addPushJob: function(push) {
             var pushId = String(push.id);
+            var buildId = String(push._embedded.build.id);
             var context = {
-                pushId: pushId,
                 uniqueId: push.uniqueId,
+
+                buildId: buildId,
+                buildIdShort: buildId.slice(0, 10),
+                buildUrl: push._embedded.build.url,
+
+                pushId: pushId,
                 pushIdShort: pushId.slice(0, 10),
+                pushUrl: push.url,
+
                 pushStatusStyle: this.determineStatusStyle(push.status),
                 pushStatus: push.status,
+
                 environmentName: push._embedded.build._links.environment.title,
                 serverName: push._embedded.deployment._links.server.title,
-                repoId:  push._embedded.build._embedded.repository.id,
+
                 repoName: push._embedded.build._embedded.repository.key,
-                pushTime: push.created.text
+                repoUrl: push._embedded.build._embedded.repository.url,
+
+                initiator: push._links.user.title
             };
 
             return this.pushTemplate(context);
@@ -71,11 +92,6 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                     .removeClass(this.thinkingClass)
                     .addClass(this.failureClass);
             }
-
-            var $container = $elem.closest('tr');
-            $container
-                .children('.js-start-date')
-                .text(job.start.text);
         },
         updateBuildJob: function(job) {
             var $elem = $('[data-build="' + job.id + '"]');
@@ -97,11 +113,6 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                     .removeClass(this.thinkingClass)
                     .addClass(this.failureClass);
             }
-
-            var $container = $elem.closest('tr');
-            $container
-                .children('.js-start-date')
-                .text(job.start.text);
         },
 
         stopThinking: function(jobTarget) {
