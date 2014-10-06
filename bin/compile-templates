@@ -20,11 +20,6 @@ if (!$container = @include $root . '/app/bootstrap.php') {
 Environment::mock(['PATH_INFO' => '/derpderp']);
 $slim = $container->get('slim');
 $slim->call();
-// $container->set('slim.environment', $slim->environment());
-// $container->set('slim.request', $slim->request());
-// $container->set('slim.response', $slim->response());
-// $container->set('slim.parameters', []);
-// $container->set('slim.halt', [$slim, 'halt']);
 
 // find and attempt to load the templates
 $templates = $container->findTaggedServiceIds('twig.template');
@@ -39,8 +34,10 @@ if (!file_exists($twigCache)) {
 if ($templates) {
     $output = "\nTemplates:\n";
     foreach (array_keys($templates) as $template) {
-        $output .= $template . "\n";
-        $container->get($template)->render([]);
+        $twig = $container->get($template);
+
+        $output .= $twig->getTemplateName() . "\n";
+        $twig->render([]);
     }
 }
 

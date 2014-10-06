@@ -151,7 +151,7 @@ services:
 
   # Twig Loader
   twig.loader:
-    class: 'Twig_Loader_Filesystem'
+    class: 'QL\Hal\Twig\BetterCachingTwigFilesystem'
     arguments: [@twig.loader.path]
 
   twig.loader.path:

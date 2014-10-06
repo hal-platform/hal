@@ -653,9 +653,42 @@ services:
 
   # The twig template for slim errors (404, 500)
   error.pages.twig:
-    parent: 'twig.template'
-    tags: [{name: 'twig.template'}]
-    arguments: ['error.twig']
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['error.twig']
 
   debug.page:
     class: 'QL\Hal\Controllers\DebugController'
+
+  ######################################################################################################################
+  # DUMMY TWIGS TO FORCE TEMPLATE CACHING
+  ######################################################################################################################
+
+  twig.template.partial.buildBox:
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['partials/build-box.twig']
+  twig.template.partial.buildTable:
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['partials/build-table.twig']
+  twig.template.partial.dashboard:
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['partials/dashboard.twig']
+  twig.template.partial.icons:
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['partials/icons.twig']
+  twig.template.partial.pendingTable:
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['partials/pending-table.twig']
+  twig.template.partial.pushBox:
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['partials/push-box.twig']
+  twig.template.partial.pushTable:
+      parent: 'twig.template'
+      tags: [{name: 'twig.template'}]
+      arguments: ['partials/push-table.twig']
