@@ -21,10 +21,6 @@ services:
     class: 'QL\Hal\Github\ReposApi'
     arguments: [@github]
 
-  api.github.user.repository.pullrequests:
-    class: 'QL\Hal\Github\PullRequestsApi'
-    arguments: [@github]
-
   ######################################################################################################################
   # QUEUE CONTROLLERS
   ######################################################################################################################
