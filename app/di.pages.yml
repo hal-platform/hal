@@ -246,20 +246,6 @@ services:
       - @session
       - @url.helper
 
-  repository.deployment.admin.edit.page:
-    class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentController'
-    arguments:
-      - @repository.deployment.admin.edit.twig
-      - @layout
-      - @deployment.repo
-  repository.deployment.admin.edit.twig:
-    parent: 'twig.template'
-    tags: [{name: 'twig.template'}]
-    arguments: ['repository/deployment.twig']
-
-  repository.deployment.admin.edit.handle:
-    parent: repository.deployment.admin.edit.page
-
   ######################################################################################################################
   # BUILD CONTROLLERS
   #####################################################################################################################

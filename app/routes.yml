@@ -1,672 +1,562 @@
 parameters:
-  routes:
-    login:
-      method:     "GET"
-      route:      "/login"
-      stack:
-        - login.page
-
-    login.handle:
-      method:     "POST"
-      route:      "/login"
-      stack:
-        - login.handle
-
-    dashboard:
-      method:     "GET"
-      route:      "/"
-      stack:
-        - login.bouncer
-        - dashboard.page
-
-    logout:
-      method:     "GET"
-      route:      "/logout"
-      stack:
-        - login.bouncer
-        - logout.handle
-
-    denied:
-      method: 'GET'
-      route: '/denied'
-      stack: ['denied.page']
-
-    help:
-      method: 'GET'
-      route: '/help'
-      stack: ['help.page']
-
-    help.deployment:
-      method: 'GET'
-      route: '/help/deployment'
-      stack: ['help.deployment.page']
-
-    # help.api:
-    #   method: 'GET'
-    #   route: '/help/api'
-    #   stack: ['help.api.page']
-
-    admin.dashboard:
-      method: 'GET'
-      route: '/admin'
-      stack: ['login.bouncer', 'admin.bouncer', 'admin.dashboard.page']
-
-    logs:
-      method: 'GET'
-      route: '/logs(/page/:page)'
-      stack:
-        - login.bouncer
-        - admin.bouncer
-        - logs.page
-      conditions:
-        page: "[0-9]+"
-
-    queue:
-      method: 'GET'
-      route: '/queue'
-      stack: ['login.bouncer', 'queue.page']
-
-    debug:
-      method: 'GET'
-      route:  '/debug'
-      stack:  ['login.bouncer', 'debug.page']
-
-    admin:
-        method: 'GET'
-        route: '/superadmin'
-        stack:
-            - login.bouncer
-            - admin.bouncer
-            - admin.utility.page
-
-    ########################################################################################################################
-    # BUILD ROUTES
-    ########################################################################################################################
-
-    build.history:
-      method:     "GET"
-      route:      "/repositories/:id/builds(/page/:page)"
-      stack:
-        - login.bouncer
-        - builds.page
-      conditions:
-        id:       "[0-9]+"
-        page:     "[0-9]+"
-
-    build:
-      method:     "GET"
-      route:      "/build/:build"
-      stack:
-        - login.bouncer
-        - build.page
-      conditions:
-        build:    "[A-Za-z0-9_-]+"
-
-    build.start:
-      method:     "GET"
-      route:      "/repositories/:id/build"
-      stack:
-        - login.bouncer
-        - build.start.page
-      conditions:
-        id:       "[0-9]+"
-
-    build.handle:
-      method:     "POST"
-      route:      "/repositories/:id/build"
-      stack:
-        - login.bouncer
-        - build.start.handle.page
-      conditions:
-        id:       "[0-9]+"
-
-    ########################################################################################################################
-    # PUSH ROUTES
-    ########################################################################################################################
-
-    push:
-      method:     "GET"
-      route:      "/push/:push"
-      stack:
-        - login.bouncer
-        - push.page
-      conditions:
-        push:     "[0-9]+"
-
-    push.start:
-      method:     "GET"
-      route:      "/build/:build/push"
-      stack:
-        - login.bouncer
-        - build.push.page
-      conditions:
-        build:    "[A-Za-z0-9_-]+"
-
-    push.handle:
-      method:     "POST"
-      route:      "/build/:build/push"
-      stack:
-        - login.bouncer
-        - build.push.handle
-      conditions:
-        build:    "[A-Za-z0-9_-]+"
-
-    push.history:
-      method:     "GET"
-      route:      "/repositories/:id/pushes(/page/:page)"
-      stack:
-        - login.bouncer
-        - pushes.page
-      conditions:
-        id:       "[0-9]+"
-        page:     "[0-9]+"
-
-    rollback:
-      method:     "GET"
-      route:      "/repositories/:id/rollback/:server"
-      stack:
-        - login.bouncer
-        - rollback.page
-      conditions:
-        id:       "[0-9]+"
-        server:   "[0-9]+"
-
-    ########################################################################################################################
-    # SERVER ROUTES
-    ########################################################################################################################
-
-    servers:
-      method:     'GET'
-      route:      '/servers'
-      stack:      ['login.bouncer', 'servers.page']
-
-    server:
-      method:     'GET'
-      route:      '/servers/:id'
-      stack:      ['login.bouncer', 'server.page']
-      conditions:
-        id:       '[\d]+'
-
-    server.admin.add:
-      method:     'GET'
-      route:      '/servers/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'server.admin.add.page']
-    server.admin.add.handle:
-      method:     'POST'
-      route:      '/servers/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'server.admin.add.handle']
-
-    server.admin.edit:
-      method:     'GET'
-      route:      '/servers/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'server.admin.edit.page']
-      conditions:
-        id:       '[\d]+'
-    server.admin.edit.handle:
-      method:     'POST'
-      route:      '/servers/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'server.admin.edit.handle']
-      conditions:
-        id:       '[\d]+'
-
-    server.admin.remove.confirm:
-      method:     'GET'
-      route:      '/servers/:id/remove'
-      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
-      conditions:
-          id:     '[\d]+'
-    server.admin.remove.handle:
-      method:     'POST'
-      route:      '/servers/:id/remove'
-      stack:      ['login.bouncer', 'admin.bouncer', 'server.admin.remove.handle']
-      conditions:
-        id:       '[\d]+'
-
-    ########################################################################################################################
-    # USER ROUTES
-    ########################################################################################################################
-
-    user:
-      method:     'GET'
-      route:      '/users/:id'
-      stack:      ['login.bouncer', 'user.page']
-      conditions:
-        id:       '[\d]+'
-
-    user.current:
-      method:     'GET'
-      route:      '/users/current'
-      stack:      ['login.bouncer', 'user.page']
-
-    users:
-      method:     'GET'
-      route:      '/users'
-      stack:      ['login.bouncer', 'users.page']
-
-    user.edit:
-      method:     'GET'
-      route:      '/users/:id/edit'
-      stack:      ['login.bouncer', 'user.edit.page']
-      conditions:
-        id:       '[\d]+'
-
-    user.edit.handle:
-      method:     'POST'
-      route:      '/users/:id/edit'
-      stack:      ['login.bouncer', 'user.edit.handle']
-      conditions:
-        id:       '[\d]+'
-
-    ########################################################################################################################
-    # REPOSITORY ROUTES
-    ########################################################################################################################
-
-    repositories:
-      method:     'GET'
-      route:      '/repositories'
-      stack:      ['login.bouncer', 'repositories.page']
-
-    repository:
-      method:     'GET'
-      route:      '/repositories/:id'
-      stack:      ['login.bouncer', 'repository.page']
-      conditions:
-        id:       '[\d]+'
-
-    repository.status:
-      method:     'GET'
-      route:      '/repositories/:id/status'
-      stack:      ['login.bouncer', 'repository.status.page']
-      conditions:
-        id:       '[\d]+'
-
-    repository.admin.add:
-      method:     'GET'
-      route:      '/repositories/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.admin.add.page']
-    repository.admin.add.handle:
-      method:     'POST'
-      route:      '/repositories/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.admin.add.handle']
-
-    repository.admin.edit:
-      method:     'GET'
-      route:      '/repositories/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.page']
-      conditions:
-        repo:     '[\d]+'
-    repository.admin.edit.handle:
-      method:     'POST'
-      route:      '/repositories/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.handle']
-      conditions:
-        repo:     '[\d]+'
-
-    repository.admin.remove.confirm:
-      method:     'GET'
-      route:      '/repositories/:id/remove'
-      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
-      conditions:
-        id:       '[\d]+'
-    repository.admin.remove.handle:
-      method:     'POST'
-      route:      '/repositories/:id/remove'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.admin.remove.handle']
-      conditions:
-        id:       '[\d]+'
-
-    ########################################################################################################################
-    # REPOSITORY DEPLOYMENT ROUTES
-    ########################################################################################################################
-
-    repository.deployments:
-      method:     'GET'
-      route:      '/repositories/:id/deployments'
-      stack:      ['login.bouncer', 'repository.deployments.page']
-      conditions:
-        id:       '[\d]+'
-
-    repository.deployment.admin.add.handle:
-      method:     'POST'
-      route:      '/repositories/:id/deployments/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.add.handle']
-      conditions:
-        id:       '[\d]+'
-
-    repository.deployment.admin.remove.handle:
-      method:     'GET'
-      route:      '/repositories/:repoId/deployments/:id/remove'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.remove.handle']
-      conditions:
-        repoId:   '[\d]+'
-        id:       '[\d]+'
-
-    repository.deployment.admin.edit:
-      method:     'GET'
-      route:      '/repositories/:repoId/deployments/:id'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.edit.page']
-      conditions:
-        repoId:   '[\d]+'
-        id:       '[\d]+'
-
-    # NOT IMPLEMENTED YET!
-    repository.deployment.admin.edit.handle:
-      method:     'POST'
-      route:      '/repositories/:repoId/deployments/:id'
-      stack:      ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.edit.handle']
-      conditions:
-        repoId:   '[\d]+'
-        id:       '[\d]+'
-
-    ########################################################################################################################
-    # GROUP ROUTES
-    ########################################################################################################################
-
-    groups:
-      method:     'GET'
-      route:      '/groups'
-      stack:      ['login.bouncer', 'groups.page']
-
-    group:
-      method:     'GET'
-      route:      '/groups/:id'
-      stack:      ['login.bouncer', 'group.page']
-      conditions:
-        id:       '[\d]+'
-
-    group.admin.add:
-      method:     'GET'
-      route:      '/groups/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'group.admin.add.page']
-    group.admin.add.handle:
-      method:     'POST'
-      route:      '/groups/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'group.admin.add.handle']
-
-    group.admin.edit:
-      method:     'GET'
-      route:      '/groups/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'group.admin.edit.page']
-      conditions:
-        id:       '[\d]+'
-    group.admin.edit.handle:
-      method:     'POST'
-      route:      '/groups/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'group.admin.edit.handle']
-      conditions:
-        id:       '[\d]+'
-
-    group.admin.remove.confirm:
-      method:     'GET'
-      route:      '/groups/:id/remove'
-      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
-      conditions:
-        id:       '[\d]+'
-    group.admin.remove.handle:
-      method:     'POST'
-      route:      '/groups/:id/remove'
-      stack:      ['login.bouncer', 'admin.bouncer', 'group.admin.remove.handle']
-      conditions:
-        id:       '[\d]+'
-
-    ########################################################################################################################
-    # ENVIRONMENT ROUTES
-    ########################################################################################################################
-
-    environments:
-      method:     'GET'
-      route:      '/environments'
-      stack:      ['login.bouncer', 'environments.page']
-      conditions:
-        id:       '[0-9]+'
-
-    environment:
-      method:     'GET'
-      route:      '/environments/:id'
-      stack:      ['login.bouncer', 'environment.page']
-      conditions:
-        id:       '[0-9]+'
-
-    environment.admin.reorder:
-      method:     'GET'
-      route:      '/environments/reorder'
-      stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.page']
-    environment.admin.reorder.handle:
-      method:     'POST'
-      route:      '/environments/reorder'
-      stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.handle']
-
-    environment.admin.add:
-      method:     'GET'
-      route:      '/environments/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.add.page']
-    environment.admin.add.handle:
-      method:     'POST'
-      route:      '/environments/add'
-      stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.add.handle']
-
-    environment.admin.remove.confirm:
-      method:     'GET'
-      route:      '/environments/:id/delete'
-      stack:      ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
-      conditions:
-        id:       '[0-9]+'
-    environment.admin.remove.handle:
-      method:     'POST'
-      route:      '/environments/:id/delete'
-      stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.remove.handle']
-      conditions:
-        id:       '[0-9]+'
-
-    environment.admin.edit:
-      method:     'GET'
-      route:      '/environments/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.page']
-      conditions:
-        id:       '[0-9]+'
-
-    environment.admin.edit.handle:
-      method:     'POST'
-      route:      '/environments/:id/edit'
-      stack:      ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.handle']
-      conditions:
-        id:       '[0-9]+'
-
-    ########################################################################################################################
-    # GITHUB API ROUTES
-    ########################################################################################################################
-
-    api.github.users:
-      method:     'GET'
-      route:      '/api/github/users'
-      stack:      ['login.bouncer', 'api.github.users']
-
-    api.github.user.repositories:
-      method:     'GET'
-      route:      '/api/github/users/:username/repositories'
-      stack:      ['login.bouncer', 'api.github.user.repositories']
-      conditions:
-        username: '[A-Za-z0-9_-]+'
-
-    ########################################################################################################################
-    # PUBLIC API ROUTES
-    ########################################################################################################################
-
-    api.index:
-      method:       'GET'
-      route:        '/api'
-      stack:        ['cachedApi.middleware', 'api.index']
-
-    api.environments:
-      method:       'GET'
-      route:        '/api/environments'
-      stack:        ['cachedApi.middleware', 'api.environments']
-
-    api.environment:
-      method:       'GET'
-      route:        '/api/environments/:id'
-      stack:        ['cachedApi.middleware', 'api.environment']
-      conditions:
-        id:         '[0-9]+'
-
-    api.servers:
-      method:       'GET'
-      route:        '/api/servers'
-      stack:        ['cachedApi.middleware', 'api.servers']
-
-    api.server:
-      method:       'GET'
-      route:        '/api/servers/:id'
-      stack:        ['cachedApi.middleware', 'api.server']
-      conditions:
-        id:         '[0-9]+'
-
-    api.groups:
-      method:       'GET'
-      route:        '/api/groups'
-      stack:        ['cachedApi.middleware', 'api.groups']
-
-    api.group:
-      method:       'GET'
-      route:        '/api/groups/:id'
-      stack:        ['cachedApi.middleware', 'api.group']
-      conditions:
-        id:         '[0-9]+'
-
-    api.users:
-      method:       'GET'
-      route:        '/api/users'
-      stack:        ['cachedApi.middleware', 'api.users']
-
-    api.user:
-      method:       'GET'
-      route:        '/api/users/:id'
-      stack:        ['cachedApi.middleware', 'api.user']
-      conditions:
-        id:         '[0-9]+'
-
-    api.user.permissions:
-      method:       'GET'
-      route:        '/api/users/:id/permissions'
-      stack:        ['cachedApi.middleware', 'api.user.permissions']
-      conditions:
-        id:         '[0-9]+'
-
-    api.deployment:
-      method:       'GET'
-      route:        '/api/deployment/:id'
-      stack:        ['cachedApi.middleware', 'api.deployment']
-      conditions:
-        id:         '[0-9]+'
-
-    # @todo change this url because it is terrible
-    api.deployment.lastpush:
-      method:       'GET'
-      route:        '/api/deployment/:id/lastPush'
-      stack:        ['cachedApi.middleware', 'api.deployment.lastpush']
-      conditions:
-        id:         '[0-9]+'
-
-    api.build:
-      method:       'GET'
-      route:        '/api/build/:id'
-      stack:        ['cachedApi.middleware', 'api.build']
-      conditions:
-        id:         '[A-Za-z0-9]+'
-
-    api.build.log:
-      method:       'GET'
-      route:        '/api/build/:id/log'
-      stack:        ['cachedApi.middleware', 'api.build.log']
-      conditions:
-        id:         '[A-Za-z0-9]+'
-
-    api.push:
-      method:       'GET'
-      route:        '/api/push/:id'
-      stack:        ['cachedApi.middleware', 'api.push']
-      conditions:
-        id:         '[0-9]+'
-
-    api.push.log:
-      method:       'GET'
-      route:        '/api/push/:id/log'
-      stack:        ['cachedApi.middleware', 'api.push.log']
-      conditions:
-        id:         '[0-9]+'
-
-    api.repositories:
-      method:       'GET'
-      route:        '/api/repositories'
-      stack:        ['cachedApi.middleware', 'api.repositories']
-
-    api.repository:
-      method:       'GET'
-      route:        '/api/repositories/:id'
-      stack:        ['cachedApi.middleware', 'api.repository']
-      conditions:
-        id:         '[0-9]+'
-
-    api.repository.tags:
-      method:       'GET'
-      route:        '/api/repositories/:id/tags'
-      stack:        ['cachedApi.middleware', 'api.repository.tags']
-      conditions:
-        id:         '[0-9]+'
-
-    api.repository.branches:
-      method:       'GET'
-      route:        '/api/repositories/:id/branches'
-      stack:        ['cachedApi.middleware', 'api.repository.branches']
-      conditions:
-        id:         '[0-9]+'
-
-    api.repository.pullrequests:
-      method:       'GET'
-      route:        '/api/repositories/:id/pullrequests'
-      stack:        ['cachedApi.middleware', 'api.repository.pullrequests']
-      conditions:
-        id:         '[0-9]+'
-
-    # api.repository.diff:
-    #   method:       'GET'
-    #   route:        '/api/repositories/:id/diff/:base/:head'
-    #   stack:        ['api.repository.diff']
-    #   conditions:
-    #     id:         '[0-9]+'
-    #     base:       '[A-Za-z0-9]{40,40}'
-    #     head:       '[A-Za-z0-9]{40,40}'
-
-    api.deployments:
-      method:       'GET'
-      route:        '/api/repositories/:id/deployments'
-      stack:        ['cachedApi.middleware', 'api.deployments']
-      conditions:
-        id:         '[0-9]+'
-
-    api.builds:
-      method:       'GET'
-      route:        '/api/repositories/:id/builds'
-      stack:        ['cachedApi.middleware', 'api.builds']
-      conditions:
-        id:         '[0-9]+'
-
-    api.pushes:
-      method:       'GET'
-      route:        '/api/repositories/:id/pushes'
-      stack:        ['cachedApi.middleware', 'api.pushes']
-      conditions:
-        id:         '[0-9]+'
-
-    api.queue:
-      method: 'GET'
-      route: '/api/queue'
-      stack: ['cachedApi.middleware', 'api.queue']
-
-    api.queue.refresh:
-      method: 'GET'
-      route: '/api/queue-refresh/:uniqueId'
-      stack: ['cachedApi.middleware', 'api.queue.refresh']
-      conditions:
-        uniqueId: '[0-9a-z\+\-]+'
-
+    routes.regex.buildId: '[A-Za-z0-9_-]+'
+    routes.regex.pushId: %routes.regex.buildId%
+
+    routes:
+        login:
+            method: 'GET'
+            route: '/login'
+            stack: ['login.page']
+
+        login.handle:
+            method: 'GET'
+            route: '/login'
+            stack: ['login.handle']
+
+        dashboard:
+            method: 'GET'
+            route: '/'
+            stack: ['login.bouncer', 'dashboard.page']
+
+        logout:
+            method: 'GET'
+            route: '/logout'
+            stack: ['login.bouncer', 'logout.handle']
+
+        denied:
+            method: 'GET'
+            route: '/denied'
+            stack: ['denied.page']
+
+        help:
+            method: 'GET'
+            route: '/help'
+            stack: ['help.page']
+
+        help.deployment:
+            method: 'GET'
+            route: '/help/deployment'
+            stack: ['help.deployment.page']
+
+        # help.api:
+        #     method: 'GET'
+        #     route: '/help/api'
+        #     stack: ['help.api.page']
+
+        admin.dashboard:
+            method: 'GET'
+            route: '/admin'
+            stack: ['login.bouncer', 'admin.bouncer', 'admin.dashboard.page']
+
+        logs:
+            method: 'GET'
+            route: '/logs(/page/:page)'
+            stack: ['login.bouncer', 'admin.bouncer', 'logs.page']
+            conditions: {page: '[0-9]+'}
+
+        queue:
+            method: 'GET'
+            route: '/queue'
+            stack: ['login.bouncer', 'queue.page']
+
+        debug:
+            method: 'GET'
+            route:  '/debug'
+            stack:  ['login.bouncer', 'debug.page']
+
+        admin:
+            method: 'GET'
+            route: '/superadmin'
+            stack: ['login.bouncer', 'admin.bouncer', 'admin.utility.page']
+
+        ########################################################################################################################
+        # BUILD ROUTES
+        ########################################################################################################################
+
+        build.history:
+            method: 'GET'
+            route: '/repositories/:id/builds(/page/:page)'
+            stack: ['login.bouncer', 'builds.page']
+            conditions: {id: '[0-9]+', page: '[0-9]+'}
+
+        build:
+            method: 'GET'
+            route: '/build/:build'
+            stack: ['login.bouncer', 'build.page']
+            conditions: {build: %routes.regex.buildId%}
+
+        build.start:
+            method: 'GET'
+            route: '/repositories/:id/build'
+            stack: ['login.bouncer', 'build.start.page']
+            conditions: {id: '[0-9]+'}
+
+        build.handle:
+            method: 'POST'
+            route: '/repositories/:id/build'
+            stack: ['login.bouncer', 'build.start.handle.page']
+            conditions: {id: '[0-9]+'}
+
+        ########################################################################################################################
+        # PUSH ROUTES
+        ########################################################################################################################
+
+        push:
+            method: 'GET'
+            route: '/push/:push'
+            stack: ['login.bouncer', 'push.page']
+            conditions: {push: %routes.regex.pushId%}
+
+        push.start:
+            method: 'GET'
+            route: '/build/:build/push'
+            stack: ['login.bouncer', 'build.push.page']
+            conditions: {build: %routes.regex.buildId%}
+
+        push.handle:
+            method: 'GET'
+            route: '/build/:build/push'
+            stack: ['login.bouncer', 'build.push.handle']
+            conditions: {build: %routes.regex.buildId%}
+
+        push.history:
+            method: 'GET'
+            route: '/repositories/:id/pushes(/page/:page)'
+            stack: ['login.bouncer', 'pushes.page']
+            conditions: {id: '[A-Za-z0-9_-]+', page: '[\d]+'}
+
+        rollback:
+            method: 'GET'
+            route: '/repositories/:id/rollback/:server'
+            stack: ['login.bouncer', 'rollback.page']
+            conditions: {id: '[A-Za-z0-9_-]+', server: '[\d]+'}
+
+        ########################################################################################################################
+        # SERVER ROUTES
+        ########################################################################################################################
+
+        servers:
+            method: 'GET'
+            route: '/servers'
+            stack: ['login.bouncer', 'servers.page']
+
+        server:
+            method: 'GET'
+            route: '/servers/:id'
+            stack: ['login.bouncer', 'server.page']
+            conditions: {id: '[\d]+'}
+
+        server.admin.add:
+            method: 'GET'
+            route: '/servers/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.page']
+        server.admin.add.handle:
+            method: 'POST'
+            route: '/servers/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.handle']
+
+        server.admin.edit:
+            method: 'GET'
+            route: '/servers/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.page']
+            conditions: {id: '[\d]+'}
+        server.admin.edit.handle:
+            method: 'POST'
+            route: '/servers/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.handle']
+            conditions: {id: '[\d]+'}
+
+        server.admin.remove.confirm:
+            method: 'GET'
+            route: '/servers/:id/remove'
+            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            conditions: {id: '[\d]+'}
+        server.admin.remove.handle:
+            method: 'POST'
+            route: '/servers/:id/remove'
+            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.remove.handle']
+            conditions: {id: '[\d]+'}
+
+        ########################################################################################################################
+        # USER ROUTES
+        ########################################################################################################################
+
+        user:
+            method: 'GET'
+            route: '/users/:id'
+            stack: ['login.bouncer', 'user.page']
+            conditions: {id: '[\d]+'}
+
+        user.current:
+            method: 'GET'
+            route: '/users/current'
+            stack: ['login.bouncer', 'user.page']
+
+        users:
+            method: 'GET'
+            route: '/users'
+            stack: ['login.bouncer', 'users.page']
+
+        user.edit:
+            method: 'GET'
+            route: '/users/:id/edit'
+            stack: ['login.bouncer', 'user.edit.page']
+            conditions: {id: '[\d]+'}
+
+        user.edit.handle:
+            method: 'POST'
+            route: '/users/:id/edit'
+            stack: ['login.bouncer', 'user.edit.handle']
+            conditions: {id: '[\d]+'}
+
+        ########################################################################################################################
+        # REPOSITORY ROUTES
+        ########################################################################################################################
+
+        repositories:
+            method: 'GET'
+            route: '/repositories'
+            stack: ['login.bouncer', 'repositories.page']
+
+        repository:
+            method: 'GET'
+            route: '/repositories/:id'
+            stack: ['login.bouncer', 'repository.page']
+            conditions: {id: '[\d]+'}
+
+        repository.status:
+            method: 'GET'
+            route: '/repositories/:id/status'
+            stack: ['login.bouncer', 'repository.status.page']
+            conditions: {id: '[\d]+'}
+
+        repository.admin.add:
+            method: 'GET'
+            route: '/repositories/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.add.page']
+        repository.admin.add.handle:
+            method: 'POST'
+            route: '/repositories/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.add.handle']
+
+        repository.admin.edit:
+            method: 'GET'
+            route: '/repositories/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.page']
+            conditions: {id: '[\d]+'}
+        repository.admin.edit.handle:
+            method: 'POST'
+            route: '/repositories/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.handle']
+            conditions: {id: '[\d]+'}
+
+        repository.admin.remove.confirm:
+            method: 'GET'
+            route: '/repositories/:id/remove'
+            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            conditions: {id: '[\d]+'}
+        repository.admin.remove.handle:
+            method: 'POST'
+            route: '/repositories/:id/remove'
+            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.remove.handle']
+            conditions: {id: '[\d]+'}
+
+        ########################################################################################################################
+        # REPOSITORY DEPLOYMENT ROUTES
+        ########################################################################################################################
+
+        repository.deployments:
+            method: 'GET'
+            route: '/repositories/:id/deployments'
+            stack: ['login.bouncer', 'repository.deployments.page']
+            conditions: {id: '[\d]+'}
+
+        repository.deployment.admin.add.handle:
+            method: 'POST'
+            route: '/repositories/:id/deployments/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.add.handle']
+            conditions: {id: '[\d]+'}
+
+        repository.deployment.admin.remove.handle:
+            method: 'GET'
+            route: '/repositories/:repoId/deployments/:id/remove'
+            stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.remove.handle']
+            conditions: {repoId: '[\d]+', id: '[\d]+'}
+
+        ########################################################################################################################
+        # GROUP ROUTES
+        ########################################################################################################################
+
+        groups:
+            method: 'GET'
+            route: '/groups'
+            stack: ['login.bouncer', 'groups.page']
+
+        group:
+            method: 'GET'
+            route: '/groups/:id'
+            stack: ['login.bouncer', 'group.page']
+            conditions: {id: '[\d]+'}
+
+        group.admin.add:
+            method: 'GET'
+            route: '/groups/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.add.page']
+        group.admin.add.handle:
+            method: 'POST'
+            route: '/groups/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.add.handle']
+
+        group.admin.edit:
+            method: 'GET'
+            route: '/groups/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.page']
+            conditions: {id: '[\d]+'}
+        group.admin.edit.handle:
+            method: 'POST'
+            route: '/groups/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.handle']
+            conditions: {id: '[\d]+'}
+
+        group.admin.remove.confirm:
+            method: 'GET'
+            route: '/groups/:id/remove'
+            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            conditions: {id: '[\d]+'}
+        group.admin.remove.handle:
+            method: 'POST'
+            route: '/groups/:id/remove'
+            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.remove.handle']
+            conditions: {id: '[\d]+'}
+
+        ########################################################################################################################
+        # ENVIRONMENT ROUTES
+        ########################################################################################################################
+
+        environments:
+            method: 'GET'
+            route: '/environments'
+            stack: ['login.bouncer', 'environments.page']
+            conditions: {id: '[\d]+'}
+
+        environment:
+            method: 'GET'
+            route: '/environments/:id'
+            stack: ['login.bouncer', 'environment.page']
+            conditions: {id: '[\d]+'}
+
+        environment.admin.reorder:
+            method: 'GET'
+            route: '/environments/reorder'
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.page']
+        environment.admin.reorder.handle:
+            method: 'POST'
+            route: '/environments/reorder'
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.handle']
+
+        environment.admin.add:
+            method: 'GET'
+            route: '/environments/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.add.page']
+        environment.admin.add.handle:
+            method: 'POST'
+            route: '/environments/add'
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.add.handle']
+
+        environment.admin.remove.confirm:
+            method: 'GET'
+            route: '/environments/:id/delete'
+            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            conditions: {id: '[\d]+'}
+        environment.admin.remove.handle:
+            method: 'POST'
+            route: '/environments/:id/delete'
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.remove.handle']
+            conditions: {id: '[\d]+'}
+
+        environment.admin.edit:
+            method: 'GET'
+            route: '/environments/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.page']
+            conditions: {id: '[\d]+'}
+
+        environment.admin.edit.handle:
+            method: 'POST'
+            route: '/environments/:id/edit'
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.handle']
+            conditions: {id: '[\d]+'}
+
+        ########################################################################################################################
+        # GITHUB API ROUTES
+        ########################################################################################################################
+
+        api.github.users:
+            method: 'GET'
+            route: '/api/github/users'
+            stack: ['login.bouncer', 'api.github.users']
+
+        api.github.user.repositories:
+            method: 'GET'
+            route: '/api/github/users/:username/repositories'
+            stack: ['login.bouncer', 'api.github.user.repositories']
+            conditions: {username: '[A-Za-z0-9_-]+'}
+
+        ########################################################################################################################
+        # PUBLIC API ROUTES
+        ########################################################################################################################
+
+        api.index:
+            method: 'GET'
+            route: '/api'
+            stack: ['cachedApi.middleware', 'api.index']
+
+        api.environments:
+            method: 'GET'
+            route: '/api/environments'
+            stack: ['cachedApi.middleware', 'api.environments']
+
+        api.environment:
+            method: 'GET'
+            route: '/api/environments/:id'
+            stack: ['cachedApi.middleware', 'api.environment']
+            conditions: {id: '[\d]+'}
+
+        api.servers:
+            method: 'GET'
+            route: '/api/servers'
+            stack: ['cachedApi.middleware', 'api.servers']
+
+        api.server:
+            method: 'GET'
+            route: '/api/servers/:id'
+            stack: ['cachedApi.middleware', 'api.server']
+            conditions: {id: '[\d]+'}
+
+        api.groups:
+            method: 'GET'
+            route: '/api/groups'
+            stack: ['cachedApi.middleware', 'api.groups']
+
+        api.group:
+            method: 'GET'
+            route: '/api/groups/:id'
+            stack: ['cachedApi.middleware', 'api.group']
+            conditions: {id: '[\d]+'}
+
+        api.users:
+            method: 'GET'
+            route: '/api/users'
+            stack: ['cachedApi.middleware', 'api.users']
+
+        api.user:
+            method: 'GET'
+            route: '/api/users/:id'
+            stack: ['cachedApi.middleware', 'api.user']
+            conditions: {id: '[\d]+'}
+
+        api.user.permissions:
+            method: 'GET'
+            route: '/api/users/:id/permissions'
+            stack: ['cachedApi.middleware', 'api.user.permissions']
+            conditions: {id: '[\d]+'}
+
+        api.deployment:
+            method: 'GET'
+            route: '/api/deployment/:id'
+            stack: ['cachedApi.middleware', 'api.deployment']
+            conditions: {id: '[\d]+'}
+
+        # @todo change this url because it is terrible
+        api.deployment.lastpush:
+            method: 'GET'
+            route: '/api/deployment/:id/lastPush'
+            stack: ['cachedApi.middleware', 'api.deployment.lastpush']
+            conditions: {id: '[\d]+'}
+
+        api.build:
+            method: 'GET'
+            route: '/api/build/:id'
+            stack: ['cachedApi.middleware', 'api.build']
+            conditions: {id: %routes.regex.buildId%}
+
+        api.build.log:
+            method: 'GET'
+            route: '/api/build/:id/log'
+            stack: ['cachedApi.middleware', 'api.build.log']
+            conditions: {id: %routes.regex.buildId%}
+
+        api.push:
+            method: 'GET'
+            route: '/api/push/:id'
+            stack: ['cachedApi.middleware', 'api.push']
+            conditions: {id: %routes.regex.pushId%}
+
+        api.push.log:
+            method: 'GET'
+            route: '/api/push/:id/log'
+            stack: ['cachedApi.middleware', 'api.push.log']
+            conditions: {id: %routes.regex.pushId%}
+
+        api.repositories:
+            method: 'GET'
+            route: '/api/repositories'
+            stack: ['cachedApi.middleware', 'api.repositories']
+
+        api.repository:
+            method: 'GET'
+            route: '/api/repositories/:id'
+            stack: ['cachedApi.middleware', 'api.repository']
+            conditions: {id: '[\d]+'}
+
+        api.repository.tags:
+            method: 'GET'
+            route: '/api/repositories/:id/tags'
+            stack: ['cachedApi.middleware', 'api.repository.tags']
+            conditions: {id: '[\d]+'}
+
+        api.repository.branches:
+            method: 'GET'
+            route: '/api/repositories/:id/branches'
+            stack: ['cachedApi.middleware', 'api.repository.branches']
+            conditions: {id: '[\d]+'}
+
+        api.repository.pullrequests:
+            method: 'GET'
+            route: '/api/repositories/:id/pullrequests'
+            stack: ['cachedApi.middleware', 'api.repository.pullrequests']
+            conditions: {id: '[\d]+'}
+
+        # api.repository.diff:
+        #     method: 'GET'
+        #     route: '/api/repositories/:id/diff/:base/:head'
+        #     stack: ['api.repository.diff']
+        #     conditions: {id: '[\d]+', base: '[A-Za-z0-9]{40,40}', head: '[A-Za-z0-9]{40,40}'}
+
+        api.deployments:
+            method: 'GET'
+            route: '/api/repositories/:id/deployments'
+            stack: ['cachedApi.middleware', 'api.deployments']
+            conditions: {id: '[\d]+'}
+
+        api.builds:
+            method: 'GET'
+            route: '/api/repositories/:id/builds'
+            stack: ['cachedApi.middleware', 'api.builds']
+            conditions: {id: '[\d]+'}
+
+        api.pushes:
+            method: 'GET'
+            route: '/api/repositories/:id/pushes'
+            stack: ['cachedApi.middleware', 'api.pushes']
+            conditions: {id: '[\d]+'}
+
+        api.queue:
+            method: 'GET'
+            route: '/api/queue'
+            stack: ['cachedApi.middleware', 'api.queue']
+
+        api.queue.refresh:
+            method: 'GET'
+            route: '/api/queue-refresh/:uniqueId'
+            stack: ['cachedApi.middleware', 'api.queue.refresh']
+            conditions: {uniqueId: '[0-9a-z\+\-]+'}
