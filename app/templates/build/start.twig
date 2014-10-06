@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Create New "~repo.key~" Build" %}
+{% set page_title = "Create new "~repo.key~" build" %}
 
 {% block content %}
 
-    <h2>Create a new {{ repo.key }} build</h2>
+    <h2>Create new {{ repo.key }} build</h2>
 
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
 
@@ -50,7 +50,12 @@
     {% endfor %}
     </ul>
 
-    <h4>Pull Requests</h4>
+    <h4>
+        Open Pull Requests
+        {% if not closed_pulls %}
+            <small>(<a href="{{ uriFor('build.start', {id: repoId}) ~ '?with_closed=1'}}">View recent closed pull requests</a>)</small>
+        {% endif %}
+    </h4>
     <ul class="check-list">
         {% for pull in pulls %}
             <li class="pr-selection">
@@ -65,13 +70,36 @@
                 </label>
                 <p>
                     <span class="{{ pull.state }}">[{{ pull.state }}]</span>
-                    <code>{{ pull.base.ref }} <-- {{ pull.head.user.login }}/{{ pull.head.ref }}</code>
+                    <code>{{ pull.base.ref }} ⬅ {{ pull.head.user.login }}/{{ pull.head.ref }}</code>
                 </p>
             </li>
         {% else %}
             <li>There are no pull requests.</li>
         {% endfor %}
     </ul>
+
+    {% if closed_pulls %}
+        <h4>Recent Closed Pull Requests</h4>
+        <ul class="check-list">
+            {% for pull in closed_pulls %}
+                <li class="pr-selection">
+                    <input id="pr{{ pull.number }}" type="radio" name="reference" value="pull/{{ pull.number }}">
+                    <label for="pr{{ pull.number }}">{{ pull.title }}
+                        (<a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                        <span class="icon">
+                            <svg viewBox="0 0 32 32">
+                                <use xlink:href="#github"></use>
+                            </svg>
+                        </span>)
+                    </label>
+                    <p>
+                        <span class="{{ pull.state }}">[{{ pull.state }}]</span>
+                        <code>{{ pull.base.ref }} ⬅ {{ pull.head.user.login }}/{{ pull.head.ref }}</code>
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
     <h4>Commit</h4>
     <ul class="check-list form-wrapper">

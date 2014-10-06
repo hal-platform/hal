@@ -72,25 +72,25 @@ class BuildStartController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $repo = $this->repoRepo->findOneBy(['id' => $params['id']]);
-
-        if (!$repo) {
-            call_user_func($notFound);
-            return;
+        if (!$repo = $this->repoRepo->findOneBy(['id' => $params['id']])) {
+            return call_user_func($notFound);
         }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'repo' => $repo,
-                    'branches' => $this->getBranches($repo),
-                    'tags' => $this->getTags($repo),
-                    'pulls' => $this->getPullRequests($repo),
-                    'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
-                ]
-            )
-        );
+        $context = [
+            'repoId' => $params['id'],
+            'repo' => $repo,
+            'branches' => $this->getBranches($repo),
+            'tags' => $this->getTags($repo),
+            'pulls' => $this->github->openPullRequests($repo->getGithubUser(), $repo->getGithubRepo()),
+            'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
+        ];
+
+        // add closed pull requests if requested in query string
+        if ($request->get('with_closed')) {
+            $context['closed_pulls'] = $this->github->closedPullRequests($repo->getGithubUser(), $repo->getGithubRepo());
+        }
+
+        $response->body($this->layout->render($this->template, $context));
     }
 
     /**
@@ -135,35 +135,4 @@ class BuildStartController
 
         return $tags;
     }
-
-    /**
-     *  Get an array of pull requests for a repository
-     *
-     *  @param Repository $repo
-     *  @return array
-     */
-    private function getPullRequests(Repository $repo)
-    {
-        $open = $this->github->openPullRequests(
-            $repo->getGithubUser(),
-            $repo->getGithubRepo()
-        );
-
-        $closed = $this->github->closedPullRequests(
-            $repo->getGithubUser(),
-            $repo->getGithubRepo()
-        );
-
-        $sorter = function ($a, $b) {
-            return ($a['number'] < $b['number']);
-        };
-
-        // sort arrays
-        uasort($open, $sorter);
-        uasort($closed, $sorter);
-
-        return array_merge($open, $closed);
-    }
-
-
 }
