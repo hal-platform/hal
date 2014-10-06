@@ -605,13 +605,21 @@ services:
     tags: [{name: 'twig.template'}]
     arguments: ['help/deployment.twig']
 
-  help.api.page:
+  # help.api.page:
+  #   parent: 'static.controller'
+  #   arguments: [@help.api.twig]
+  # help.api.twig:
+  #   parent: 'twig.template'
+  #   tags: [{name: 'twig.template'}]
+  #   arguments: ['help/api.twig']
+
+  help.hal.page:
     parent: 'static.controller'
-    arguments: [@help.api.twig]
-  help.api.twig:
+    arguments: [@help.hal.twig]
+  help.hal.twig:
     parent: 'twig.template'
     tags: [{name: 'twig.template'}]
-    arguments: ['help/api.twig']
+    arguments: ['help/hal.twig']
 
   ######################################################################################################################
   # GENERAL USE CONTROLLERS

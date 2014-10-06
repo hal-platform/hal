@@ -28,21 +28,6 @@ parameters:
             route: '/denied'
             stack: ['denied.page']
 
-        help:
-            method: 'GET'
-            route: '/help'
-            stack: ['help.page']
-
-        help.deployment:
-            method: 'GET'
-            route: '/help/deployment'
-            stack: ['help.deployment.page']
-
-        # help.api:
-        #     method: 'GET'
-        #     route: '/help/api'
-        #     stack: ['help.api.page']
-
         admin.dashboard:
             method: 'GET'
             route: '/admin'
@@ -68,6 +53,30 @@ parameters:
             method: 'GET'
             route: '/superadmin'
             stack: ['login.bouncer', 'admin.bouncer', 'admin.utility.page']
+
+        ########################################################################################################################
+        # HELP ROUTES
+        ########################################################################################################################
+
+        help:
+            method: 'GET'
+            route: '/help'
+            stack: ['help.page']
+
+        help.deployment:
+            method: 'GET'
+            route: '/help/deployment'
+            stack: ['help.deployment.page']
+
+        help.hal:
+            method: 'GET'
+            route: '/help/hal'
+            stack: ['help.hal.page']
+
+        # help.api:
+        #     method: 'GET'
+        #     route: '/help/api'
+        #     stack: ['help.api.page']
 
         ########################################################################################################################
         # BUILD ROUTES
