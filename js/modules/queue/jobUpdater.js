@@ -32,7 +32,7 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                 buildStatus: build.status,
 
                 environmentName: build._links.environment.title,
-                reference: reference.slice(0, 15),
+                reference: this.determineGitRef(reference),
                 referenceUrl: build.commit.url,
 
                 repoName: build._embedded.repository.key,
@@ -136,6 +136,31 @@ define(['jquery', 'handlebars'], function($, handlebars) {
             }
 
             return 'other';
+        },
+        determineGitRef: function(gitref) {
+            var prRegex = /^pull\/([\d]+)$/i,
+                tagRegex = /^tag\/([\x21-\x7E]+)$/i,
+                commitRegex = /^[a-f]{40}$/i,
+                match = null;
+
+            match = prRegex.exec(gitref);
+            if (match !== null && match.length > 0) {
+                return "Pull Request #" + match.pop();
+            }
+
+            match = tagRegex.exec(gitref);
+            if (match !== null && match.length > 0) {
+                return "Tag " + match.pop();
+            }
+
+            match = commitRegex.exec(gitref);
+            if (match !== null && match.length == 1) {
+                return "Commit " + match.pop().slice(0, 10);
+            }
+
+            var refMini = gitref.slice(0, 15);
+            var refFirst = refMini.charAt(0).toUpperCase();
+            return refFirst + refMini.substr(1) + ' Branch';
         }
     };
 });
