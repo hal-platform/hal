@@ -56,5 +56,5 @@
 }
 
 .radio-grid input[type="radio"]:checked + label{
-    background-color: lighten($blue, 25%);
+    background-color: $light-yellow;
 }
