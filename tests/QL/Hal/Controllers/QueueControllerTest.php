@@ -68,7 +68,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
 
         $controller($this->request, $this->response);
 
-        $this->assertSame(['jobs' => []], $context);
+        $this->assertSame(['pending' => []], $context);
     }
 
     public function testWithJobs()
@@ -90,7 +90,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
         $pushes[1]->setCreated(new TimePoint(2014, 3, 20, 12, 0, 0, 'UTC'));
 
         // Expect the jobs are sorted in descending order
-        $expectedContext = ['jobs' => [
+        $expectedContext = ['pending' => [
             $pushes[1],
             $builds[1],
             $builds[0],
