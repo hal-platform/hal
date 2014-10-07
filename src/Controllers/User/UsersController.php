@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\User;
 
+use Doctrine\ORM\EntityManager;
+use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Layout;
 use Slim\Http\Request;
@@ -36,18 +38,38 @@ class UsersController
     private $userRepo;
 
     /**
+     * User for autopruning removed users.
+     *
+     *  @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * User for autopruning removed users.
+     *
+     * @var LdapService
+     */
+    private $ldap;
+
+    /**
      *  @param Twig_Template $template
      *  @param Layout $layout
      *  @param UserRepository $userRepo
+     *  @param EntityManager $entityManager
+     *  @param LdapService $ldap
      */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
-        UserRepository $userRepo
+        UserRepository $userRepo,
+        EntityManager $entityManager,
+        LdapService $ldap
     ) {
         $this->template = $template;
         $this->layout = $layout;
         $this->userRepo = $userRepo;
+        $this->entityManager = $entityManager;
+        $this->ldap = $ldap;
     }
 
     /**
@@ -56,10 +78,39 @@ class UsersController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $rendered = $this->layout->render($this->template, [
-            'users' => $this->userRepo->findBy(['isActive' => true], ['name' => 'ASC'])
-        ]);
+        $users = $this->userRepo->findBy(['isActive' => true], ['name' => 'ASC']);
+        $context = [
+            'users' => $users
+        ];
 
+        if ($request->get('prune') && $prunedUsers = $this->autoPrune($users)) {
+            $context['pruned'] = $prunedUsers;
+        }
+
+        $rendered = $this->layout->render($this->template, $context);
         $response->body($rendered);
+    }
+
+    /**
+     * @param array $users
+     * @return null
+     */
+    private function autoPrune(array $users)
+    {
+        $pruned = [];
+
+        foreach ($users as $user) {
+            if (!$ldapUser = $this->ldap->getUserByWindowsUsername($user->getHandle())) {
+                $pruned[] = $user->getHandle();
+                $user->setIsActive(false);
+                $this->entityManager->merge($user);
+            }
+        }
+
+        if ($pruned) {
+            $this->entityManager->flush();
+        }
+
+        return $pruned;
     }
 }

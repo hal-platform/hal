@@ -3,6 +3,13 @@
 {% set page_title = "Users" %}
 
 {% block content %}
+
+    {% if pruned %}
+        <div class="alert-bar">
+            <p>The users <strong>{{ pruned|join(', ') }}</strong> have been removed.</p>
+        </div>
+    {% endif %}
+
     <h2>Users</h2>
 
     <table class="tablesaw tablesaw-stack" data-mode="stack">

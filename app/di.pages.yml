@@ -549,6 +549,8 @@ services:
       - @users.twig
       - @layout
       - @user.repo
+      - @doctrine.em
+      - @ldapService
   users.twig:
     parent: 'twig.template'
     tags: [{name: 'twig.template'}]
