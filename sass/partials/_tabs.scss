@@ -3,28 +3,27 @@
     margin-bottom: 0;
 
     li{
-      float: left;
-      padding: ms(-2) ms(0);
-      background-color: $light-grey;
-      //border-bottom: 2px solid $blue;
-      transition: all 0.2s ease-in-out;
+        float: left;
+        padding: ms(-2) ms(0);
+        background-color: $light-grey;
+        transition: all 0.2s ease-in-out;
 
       a{
-        color: $grey;
+          color: $grey;
       }
     }
 
     .active{
-      background-color: $blue;
+        background-color: $blue;
 
-      a{
-        color: $white;
-      }
+        a{
+            color: $white;
+        }
     }
 }
 
 .tab{
-  display: none;
+    display: none;
 }
 
 .tab-content{

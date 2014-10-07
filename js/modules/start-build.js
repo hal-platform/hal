@@ -45,10 +45,15 @@ define(['jquery'], function($) {
                 }
             });
 
-            //console.log(queryHash);
             if (queryHash){
                 this.queryLookup(queryHash);
             }
+
+            this.searchOutput.width(this.searchInput.width() + 25);
+
+            $(window).on("resize", function(){
+                _this.searchOutput.width(_this.searchInput.width() + 25);
+            });
 
             this.searchListRadio.on("click",function(){
                 _this.selectRadio(this);
@@ -57,19 +62,14 @@ define(['jquery'], function($) {
             this.searchResultList.on("click", this.searchItem, function(){
                 _this.selectItem(this);
             });
-            //prototype ... refactor tabs
+
             this.tabsLink.on("click", function(e){
                 _this.tabs(e, this);
             });
         },
         queryLookup: function(query){
             query = query.split('pr')[1];
-            // this.searchInput.val(query);
-            // this.searchItems();
-            // this.searchOutput.on("click", $.proxy(function(){
-            //     console.log("slideUp");
-            //     this.searchOutput.slideUp("slow");
-            // }, this));
+            this.selectItem($("<li class='js-search-item' data-val='pull/" + query + "'>" + query + "</li>"));
         },
         tabs: function(ev, ele){
             var currentTab = $(ele).attr('name');
@@ -83,23 +83,21 @@ define(['jquery'], function($) {
             var _this = this;
             var searchVal = this.searchInput.val().toLowerCase();
             var count = 0;
-
-            _this.searchOutput.width(_this.searchInput.width() + 25);
-
-            $(window).on("resize", function(){
-                _this.searchOutput.width(_this.searchInput.width() + 25);
-            });
-
+          
             this.searchResultList.html('');
             this.searchListRadio.each(function(){
                 var itemVal = $(this).val();
                 var txt = _this.cleanValue(itemVal.toLowerCase());
 
+                var labelTxt = $("label[for='pr" + txt +"'] .js-title").text().toLowerCase();
+
                 if (txt.indexOf(searchVal) === 0){
                     $("<li class='js-search-item' data-val='" + itemVal + "'>" + txt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
                 }
 
-                //$(this).toggle(txt.indexOf(searchVal) === 0);
+                if (labelTxt.indexOf(searchVal) === 0){
+                    $("<li class='js-search-item' data-val='" + itemVal + "'>" + labelTxt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
+                }
 
                 count++;
                 // this runs if the list is already present and the user focuses on the input field again
