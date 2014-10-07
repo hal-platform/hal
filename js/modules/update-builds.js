@@ -106,11 +106,6 @@ define(['jquery'], function($) {
                     .children('.js-build-push')
                     .html('<a href="/build/' + data.id + '/push">Push</a>');
             }
-
-            // Add end time if present
-            $container
-                .children('.js-build-date')
-                .text(data.end.text);
         }
     };
 });

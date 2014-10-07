@@ -79,11 +79,6 @@ define(['jquery'], function($) {
         },
         updateTable: function(data, $elem) {
             var $container = $elem.closest('tr');
-
-            // Add end time if present
-            $container
-                .children('.js-push-date')
-                .text(data.end.text);
         }
     };
 });
