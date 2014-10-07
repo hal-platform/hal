@@ -1,25 +1,18 @@
-{% if initiator is not defined %}
-    {% set initiator = true %}
-{% endif %}
-{% if actions is not defined %}
-    {% set actions = true %}
-{% endif %}
-
 <table class="tablesaw tablesaw-stack" data-mode="stack">
     <thead>
         <th>Build</th>
         <th>Status</th>
+        <th>Env</th>
         <th>Reference</th>
-        <th>Commit</th>
-        {% if initiator %}<th>Initiator</th>{% endif %}
+        <th>Initiator</th>
         <th>Date</th>
-        {% if actions %}<th></th>{% endif %}
+        <th></th>
     </thead>
     <tbody>
     {% for build in builds %}
         <tr>
 
-            <td><a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">{{ build.id[:10] }}</a> ({{ build.environment.key }})</td>
+            <td><a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">{{ build.id[:10] }}</a></td>
             <td>
                 {% if build.status == 'Success' %}
                     <span class="status-before--success">{{ build.status }}</span>
@@ -29,39 +22,27 @@
                     <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
                 {% endif %}
             </td>
+            <td>{{ build.environment.key }}</td>
             <td>
-                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
+                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch[:15]|gitref }}</a>
                 <svg viewBox="0 0 32 32" class="icon">
                     <use xlink:href="#fork"></use>
                 </svg>
             </td>
             <td>
-                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
-                <span class="icon">
-                    <svg viewBox="0 0 32 32">
-                        <use xlink:href="#github"></use>
-                    </svg>
-                </span>
-            </td>
-            {% if initiator %}
-            <td>
                 {% if build.user %}
-                    <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name[:20] }}</a>
-                {% elseif build.consumer %}
-                    {{ build.consumer.name[:20] }}
+                    <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.handle }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
             </td>
-            {% endif %}
             <td>{{ build.created|reldate }}</td>
-            {% if actions %}
 
-                {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
-                {% set canPush = false %}
-                {% if build.status in ['Waiting', 'Building'] and canUserPush(user, build.repository.key, build.server.environment.key) %}
-                    {% set canPush = true %}
-                {% endif %}
+            {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
+            {% set canPush = false %}
+            {% if build.status in ['Waiting', 'Building'] and canUserPush(user, build.repository.key, build.server.environment.key) %}
+                {% set canPush = true %}
+            {% endif %}
 
             <td{{ canPush ? ' class="js-build-push"' }}>
                 {% if build.status == 'Success' %}
@@ -70,13 +51,10 @@
                     {% endif %}
                 {% endif %}
             </td>
-            {% endif %}
         </tr>
     {% else %}
         <tr>
-            <td colspan="7">
-                No builds found.
-            </td>
+            <td colspan="8">No builds found.</td>
         </tr>
     {% endfor %}
     </tbody>

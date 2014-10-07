@@ -1,14 +1,10 @@
-{% if initiator is not defined %}
-    {% set initiator = true %}
-{% endif %}
-
 <table class="tablesaw tablesaw-stack" data-mode="stack">
     <thead>
         <th>Push</th>
         <th>Status</th>
-        <th>Build</th>
-        <th>Server</th>
-        {% if initiator %}<th>Initiator</th>{% endif %}
+        <th>Env → Server</th>
+        <th>Reference</th>
+        <th>Initiator</th>
         <th>Date</th>
     </thead>
     <tbody>
@@ -24,26 +20,20 @@
                     <span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
                 {% endif %}
             </td>
-            <td><a href="{{ urlFor('build', {'repo': push.build.repository.key, 'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
-            <td><a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})</td>
-            {% if initiator %}
+            <td>{{ push.deployment.server.environment.key }} → {{ push.deployment.server.name }}</a></td>
+            <td>Build <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
             <td>
                 {% if push.user %}
-                    <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
-                {% elseif push.consumer %}
-                    {{ push.consumer.name[:20] }}
+                    <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
             </td>
-            {% endif %}
             <td>{{ push.created|reldate }}</td>
         </tr>
     {% else %}
         <tr>
-            <td colspan="5">
-                No pushes found.
-            </td>
+            <td colspan="6">No pushes found.</td>
         </tr>
     {% endfor %}
     </tbody>
