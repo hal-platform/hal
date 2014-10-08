@@ -14,6 +14,10 @@
 
 .js-search-item{
     display: none;
+
+    li.selected{
+      background-color: $yellow;
+    }
 }
 
 .js-search-drop{
@@ -25,10 +29,15 @@
         padding-left: msem(0);
     }
 
+    li:nth-child(odd){
+        background-color: lighten($bright-blue, 35%);
+    }
+
     li:hover{
         background-color: $yellow;
         cursor: pointer;
     }
+
 }
 
 .js-form-toggle {
