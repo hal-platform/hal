@@ -1,5 +1,5 @@
 parameters:
-    routes.regex.buildId: '[A-Za-z0-9_-]+'
+    routes.regex.buildId: '[A-Za-z0-9\_\-\.]+'
     routes.regex.pushId: %routes.regex.buildId%
 
     routes:
