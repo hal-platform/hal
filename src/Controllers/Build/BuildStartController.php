@@ -82,13 +82,9 @@ class BuildStartController
             'branches' => $this->getBranches($repo),
             'tags' => $this->getTags($repo),
             'pulls' => $this->github->openPullRequests($repo->getGithubUser(), $repo->getGithubRepo()),
+            'closed_pulls' => $this->github->closedPullRequests($repo->getGithubUser(), $repo->getGithubRepo()),
             'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ];
-
-        // add closed pull requests if requested in query string
-        if ($request->get('with_closed')) {
-            $context['closed_pulls'] = $this->github->closedPullRequests($repo->getGithubUser(), $repo->getGithubRepo());
-        }
 
         $response->body($this->layout->render($this->template, $context));
     }
