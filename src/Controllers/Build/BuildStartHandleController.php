@@ -147,9 +147,13 @@ class BuildStartHandleController
             return;
         }
 
-        $reference = ($request->post('reference', null) == 'commit')
-            ? $request->post('commit', null)
-            : $request->post('reference', null);
+        // gitref
+        // pull/*
+        // tag/*
+        // [a-f]{40}
+        // *
+
+        $reference = $request->post('reference', null);
 
         if (!$result = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
             $this->session->addFlash(self::ERR_BAD_REF);

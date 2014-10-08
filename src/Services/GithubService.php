@@ -322,6 +322,10 @@ class GithubService
      */
     public function resolve($user, $repo, $reference)
     {
+        if (strlen($reference) === 0) {
+            return null;
+        }
+
         if ($sha = $this->resolveTag($user, $repo, $reference)) {
             return [$reference, $sha];
         }
