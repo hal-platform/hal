@@ -78,7 +78,7 @@
                             <use xlink:href="#tag"></use>
                         </svg>
                     </span>
-                    {{ tag.name }} <br />(<a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha[:7] }}</a>
+                    {{ tag.name }} <br />(<a href="{{ githubRelease(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha[:7] }}</a>
                         <span class="icon">
                             <svg viewBox="0 0 32 32">
                                 <use xlink:href="#github"></use>

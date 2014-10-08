@@ -82,6 +82,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('githubTreeish', array($this->url, 'githubTreeUrl')),
             new Twig_SimpleFunction('githubPullRequest', array($this->url, 'githubPullRequestUrl')),
             new Twig_SimpleFunction('githubReference', array($this->url, 'githubReferenceUrl')),
+            new Twig_SimpleFunction('githubRelease', array($this->url, 'githubReleaseUrl')),
             new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName')),
             new Twig_SimpleFunction('githubCommitIsCurrent', array($this, 'commitIsCurrent'))
         );

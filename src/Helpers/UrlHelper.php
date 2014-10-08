@@ -172,6 +172,23 @@ class UrlHelper
     }
 
     /**
+     *  Get the URL of a Github repository release
+     *
+     *  @param $user
+     *  @param $repo
+     *  @param $tag
+     *  @return string
+     */
+    public function githubReleaseUrl($user, $repo, $tag)
+    {
+        return sprintf(
+            '%s/releases/tag/%s',
+            $this->githubRepoUrl($user, $repo),
+            $tag
+        );
+    }
+
+    /**
      *  Get the URL of a Github pull request
      *
      *  @param $user
