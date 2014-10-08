@@ -14,7 +14,7 @@
                 Build ID
             </dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id }}</a>
+                <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
             </dd>
             <dt class="split--left__title">
                 Repository

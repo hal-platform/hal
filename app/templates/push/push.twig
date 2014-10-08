@@ -16,6 +16,12 @@
             <dd class="split--left__value">
                 {{ push.id }}
             </dd>
+            <dt class="split--left__title">
+                Short Id
+            </dt>
+            <dd class="split--left__value">
+                {{ push.id|formatPushId }}
+            </dd>
 
             <dt class="split--left__title">
                 Server
@@ -35,7 +41,7 @@
                 Build
             </dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id }}</a>
+                <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a>
                 {% if (push.build.status == 'Removed') %}
                     (Removed)
                 {% endif %}

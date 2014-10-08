@@ -8,6 +8,7 @@ imports:
 parameters:
     # environment independent parameters
     applicationId: '200947'
+    application.major.version: '2'
 
     slim.hooks:
         slim.before:
@@ -26,3 +27,6 @@ parameters:
         api.push: 5
         api.queue: 0 # the queue api uses no caching
         api.queue.refresh: 0 # the queue api uses no caching
+
+    # base58
+    unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'

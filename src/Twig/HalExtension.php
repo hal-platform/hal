@@ -102,7 +102,9 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
             new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
             new Twig_SimpleFilter('gitref', array($this->url, 'formatGitReference')),
-            new Twig_SimpleFilter('commit', array($this->url, 'formatGitCommit'))
+            new Twig_SimpleFilter('commit', array($this->url, 'formatGitCommit')),
+            new Twig_SimpleFilter('formatBuildId', array($this, 'formatBuildId')),
+            new Twig_SimpleFilter('formatPushId', array($this, 'formatPushId'))
         );
     }
 
@@ -190,5 +192,31 @@ class HalExtension extends Twig_Extension
         }
 
         return json_encode($raw, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * @param string|int $id
+     * @return string
+     */
+    public function formatBuildId($id)
+    {
+        if (substr($id, 0, 1) == 'b') {
+            return strtolower(substr($id, 5));
+        }
+
+        return substr($id, 0, 10);
+    }
+
+    /**
+     * @param string|int $id
+     * @return string
+     */
+    public function formatPushId($id)
+    {
+        if (substr($id, 0, 1) == 'p') {
+            return strtolower(substr($id, 5));
+        }
+
+        return $id;
     }
 }

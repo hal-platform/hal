@@ -35,7 +35,7 @@
                                         {{ status.latest.status }}
                                     </span>
                                 {% endif %}
-                                (<a href="{{ urlFor('push', {'push': status.latest.id}) }}">{{ status.latest.id }}</a>)
+                                (<a href="{{ urlFor('push', {'push': status.latest.id}) }}">{{ status.latest.id|formatPushId }}</a>)
                             {% else %}
                                 None
                             {% endif %}
@@ -43,7 +43,7 @@
                         <li>
                             <span class="split__title">Build:</span>
                             {% if status.success %}
-                                <a href="{{ urlFor('build', {'repo': repo.id, 'build': status.success.build.id}) }}">{{ status.success.build.id[:10] }}</a>
+                                <a href="{{ urlFor('build', {'repo': repo.id, 'build': status.success.build.id}) }}">{{ status.success.build.id|formatBuildId }}</a>
                             {% else %}
                                 Unknown
                             {% endif %}

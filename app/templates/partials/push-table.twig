@@ -10,7 +10,7 @@
     <tbody>
     {% for push in pushes %}
         <tr>
-            <td><a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id }}</a></td>
+            <td><a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a></td>
             <td>
                 {% if push.status == 'Success' %}
                     <span class="status-before--success">{{ push.status }}</span>
@@ -21,7 +21,7 @@
                 {% endif %}
             </td>
             <td>{{ push.deployment.server.environment.key }} → {{ push.deployment.server.name }}</a></td>
-            <td>Build <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
+            <td>Build <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
             <td>
                 {% if push.user %}
                     <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>

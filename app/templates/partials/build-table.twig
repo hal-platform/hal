@@ -12,7 +12,7 @@
     {% for build in builds %}
         <tr>
 
-            <td><a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">{{ build.id[:10] }}</a></td>
+            <td><a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">{{ build.id|formatBuildId }}</a></td>
             <td>
                 {% if build.status == 'Success' %}
                     <span class="status-before--success">{{ build.status }}</span>

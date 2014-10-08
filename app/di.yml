@@ -132,6 +132,10 @@ services:
   time.helper:
     class: 'QL\Hal\Helpers\TimeHelper'
 
+  unique.helper:
+    class: 'QL\Hal\Helpers\UniqueHelper'
+    arguments: [%application.major.version%, %unique.alphabet%]
+
   clock:
     class: 'MCP\DataType\Time\Clock'
     arguments: ['now', 'UTC']

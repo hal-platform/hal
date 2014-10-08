@@ -286,6 +286,7 @@ services:
       - @user
       - @permissions
       - @github
+      - @unique.helper
 
   build.push.page:
     class: "QL\\Hal\\Controllers\\Build\\BuildPushController"
