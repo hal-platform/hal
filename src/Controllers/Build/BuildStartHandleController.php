@@ -9,11 +9,13 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\UniqueHelper;
+use QL\Hal\Services\GithubService;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Services\GithubService;
+
 
 /**
  *  Build Start Handle Controller
@@ -76,6 +78,11 @@ class BuildStartHandleController
     private $github;
 
     /**
+     * @var UniqueHelper
+     */
+    private $unique;
+
+    /**
      * @param Session $session
      * @param RepositoryRepository $repoRepo
      * @param UserRepository $userRepository
@@ -85,6 +92,7 @@ class BuildStartHandleController
      * @param User $user
      * @param PermissionsService $permissions
      * @param GithubService $github
+     * @param UniqueHelper $unique
      */
     public function __construct(
         Session $session,
@@ -95,7 +103,8 @@ class BuildStartHandleController
         UrlHelper $url,
         User $user,
         PermissionsService $permissions,
-        GithubService $github
+        GithubService $github,
+        UniqueHelper $unique
     ) {
         $this->session = $session;
         $this->repoRepo = $repoRepo;
@@ -106,6 +115,7 @@ class BuildStartHandleController
         $this->user = $user;
         $this->permissions = $permissions;
         $this->github = $github;
+        $this->unique = $unique;
     }
 
     /**
@@ -150,7 +160,8 @@ class BuildStartHandleController
         list($reference, $commit) = $result;
 
         $build = new Build();
-        $id = hash('sha1', uniqid());
+        $id = $this->unique->generateBuildId();
+
         $build->setId($id);
         $build->setStatus('Waiting');
         $build->setBranch($reference);
