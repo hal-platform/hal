@@ -78,9 +78,12 @@ define(['jquery'], function($) {
             });
 
             this.searchListRadio.on("click",function(){
-                console.log("i just hit a radio");
                 if (_this.commitId.val() !== ''){
                     _this.commitId.val('');
+                }
+
+                if (_this.errorText.text() !== ''){
+                    _this.errorText.text('');
                 }
                 _this.selectRadio(this);
             });
@@ -111,6 +114,7 @@ define(['jquery'], function($) {
                 count = 0;
 
             this.searchResultList.html('');
+
             this.searchListRadio.each(function(){
                 var itemVal = $(this).val(),
                     searchTxt = $(this).attr("data-search"),
