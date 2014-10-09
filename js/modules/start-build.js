@@ -165,7 +165,7 @@ define(['jquery'], function($) {
             });
 
             if (found === 0){
-                this.errorText.text('Sorry, Dave! I have no idea what you are looking for.');
+                this.errorText.text('Sorry, Dave. I am afraid I can not do that.');
             }
         },
         setSvg: function(itemType){
