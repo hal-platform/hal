@@ -9,3 +9,7 @@
 .trailer{
     @include trailer();
 }
+
+.leader{
+    @include leader();
+}

@@ -21,7 +21,7 @@
     </ul>
 
     <h3>Choose what to build:</h3>
-
+    <p class="js-error"></p>
     <ul class="form-fields form-wrapper">
         <li class="mbn">
             <label for="search">Search for a Branch, Tag, Pull Request, or enter a Commit ID.</label>
@@ -34,11 +34,50 @@
             <!-- search results go here -->
         </ul>
     </div>
+
+    <div class="leader"><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
+
       <ul class="nav tabs js-tabs">
-          <li class="active"><a name="js-tab1">Branches</a></li>
-          <li><a name="js-tab2">Tags</a></li>
-          <li><a name="js-tab3">Open Pull Requests</a></li>
-          <li><a name="js-tab4">Closed Pull Requests</a></li>
+          <li class="active">
+              <a name="js-tab1">
+                  <span class="icon">
+                      <svg viewBox="0 0 32 32">
+                          <use xlink:href="#branch"></use>
+                      </svg>
+                  </span>
+                  <span class="tab-text">Branches</span>
+              </a>
+          </li>
+          <li>
+              <a name="js-tab2">
+                  <span class="icon">
+                      <svg viewBox="0 0 32 32">
+                          <use xlink:href="#tag"></use>
+                      </svg>
+                  </span>
+                  <span class="tab-text">Tags</span>
+              </a>
+          </li>
+          <li>
+              <a name="js-tab3">
+                  <span class="icon open">
+                      <svg viewBox="0 0 32 32">
+                          <use xlink:href="#pull"></use>
+                      </svg>
+                  </span>
+                  <span class="tab-text">Open Pull Requests</span>
+              </a>
+          </li>
+          <li>
+              <a name="js-tab4">
+                  <span class="icon closed">
+                      <svg viewBox="0 0 32 32">
+                          <use xlink:href="#pull"></use>
+                      </svg>
+                  </span>
+                  <span class="tab-text">Closed Pull Requests</span>
+              </a>
+          </li>
       </ul>
 
     <div class="tab-content js-tab-content">
@@ -46,8 +85,8 @@
         <ul data-type="branch" class="check-list js-search-list radio-grid">
         {% for branch in branches %}
             <li>
-                <input id="{{ branch.object.sha }}-{{ branch.name }}" type="radio" name="reference" value="{{ branch.name }}">
-                <label for="{{ branch.object.sha }}-{{ branch.name }}">
+                <input id="{{ branch.object.sha }}-{{ branch.name }}" data-search="{{ branch.name }}" type="radio" name="reference" value="{{ branch.name }}">
+                <label for="{{ branch.object.sha }}-{{ branch.name }}" title="{{ branch.name }}">
                     <span class="icon">
                         <svg viewBox="0 0 32 32">
                             <use xlink:href="#branch"></use>
@@ -71,7 +110,7 @@
         <ul data-type="tag" class="check-list js-search-list radio-grid">
         {% for tag in tags %}
             <li>
-                <input id="{{ tag.object.sha }}-{{ tag.name }}" type="radio" name="reference" value="tag/{{ tag.name }}">
+                <input id="{{ tag.object.sha }}-{{ tag.name }}" data-search="{{ tag.name }}" type="radio" name="reference" value="tag/{{ tag.name }}">
                 <label for="{{ tag.object.sha }}-{{ tag.name }}">
                     <span class="icon">
                         <svg viewBox="0 0 32 32">
@@ -96,8 +135,8 @@
         <ul data-type="pull" class="check-list js-search-list radio-grid">
             {% for pull in pulls %}
                 <li class="pr-selection">
-                    <input id="pr{{ pull.number }}" type="radio" name="reference" value="pull/{{ pull.number }}">
-                    <label for="pr{{ pull.number }}">
+                    <input id="pr{{ pull.number }}" data-search="{{ pull.number }}" data-status="{{ pull.state }}" type="radio" name="reference" value="pull/{{ pull.number }}">
+                    <label for="pr{{ pull.number }}" title="{{ pull.title }}">
                         <span class="icon {{ pull.state }}">
                             <svg viewBox="0 0 32 32">
                                 <use xlink:href="#pull"></use>
@@ -124,8 +163,8 @@
         <ul data-type="pull" class="check-list js-search-list radio-grid">
             {% for pull in closed_pulls %}
                 <li class="pr-selection">
-                    <input id="pr{{ pull.number }}" type="radio" name="reference" value="pull/{{ pull.number }}">
-                    <label for="pr{{ pull.number }}">
+                    <input id="pr{{ pull.number }}" data-search="{{ pull.number }}" data-status="{{ pull.state }}" type="radio" name="reference" value="pull/{{ pull.number }}">
+                    <label for="pr{{ pull.number }}" title="{{ pull.title }}">
                         <span class="icon {{ pull.state }}">
                             <svg viewBox="0 0 32 32">
                                 <use xlink:href="#pull"></use>
@@ -139,7 +178,7 @@
                             </svg>
                         </span>
                         <br />
-                        <span class="pr-smtxt">From <span class="pr-label">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />to <span class="pr-label">{{ pull.base.ref }}</span></span>
+                        <span class="pr-smtxt">From <span class="pr-label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />to <span class="pr-label" title="{{ pull.base.ref }}">{{ pull.base.ref }}</span></span>
 
                     </label>
                 </li>
@@ -155,7 +194,7 @@
 
     </div>
 
-    <input class="btn" type="submit" value="Start Build" name="submit">
+    <input class="btn btn--action" type="submit" value="Start Build" name="submit">
 
     </form>
 

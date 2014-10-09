@@ -12,16 +12,30 @@ define(['jquery'], function($) {
         tabsLink: $('.js-tabs li a'),
         commitId: $('.js-commitId'),
         commitRegEx: /^[0-9 A-F a-f]{40,40}$/,
+        errorText: $('.js-error'),
         init: function() {
-            var _this = this;
-            var queryHash = window.location.hash;
+            var _this = this,
+                queryHash = window.location.hash;
 
             this.searchInput.on({
                 blur: function(){
                     _this.searchOutput.slideUp("slow");
+
+                    _this.delay(function(){
+                        var txt = _this.searchInput.val();
+                        if (_this.commitRegEx.test(txt)){
+                             _this.commitId.val(txt);
+                        } else {
+                            if (txt !== ''){
+                              _this.searchRadio(txt);
+                            }
+                        }
+
+                    }, 100);
                 },
                 focus: function(e){
                     _this.searchItems();
+                    _this.errorText.text('');
                 },
                 paste: function(){
                     _this.delay(function(){
@@ -38,8 +52,6 @@ define(['jquery'], function($) {
                         var searchTxt = _this.searchInput.val();
                         if (_this.commitRegEx.test(searchTxt)){
                              _this.commitId.val(searchTxt);
-                        } else if(e.which == 40 || e.which == 38 || e.which == 13){
-                            _this.arrowKeys(e);
                         } else {
                             _this.searchItems();
                         }
@@ -73,23 +85,6 @@ define(['jquery'], function($) {
             query = query.split('pr')[1];
             this.selectItem($("<li class='js-search-item' data-val='pull/" + query + "'>" + query + "</li>"));
         },
-        arrowKeys: function(ev){
-            if (ev.which == 40){
-                console.log("40 was pressed");
-                console.log(this.searchOutput);
-                $('.js-search-drop').show();
-                console.log("down was pressed change to if");
-                $('.js-search-item').first().addClass('selected');
-                console.log(this.searchListItems.first());
-            } else if (ev.which == 38){
-                console.log("38 was pressed");
-
-            } else if (ev.which == 13){
-                console.log("13 was pressed");
-            } else {
-                console.log("no idea what the hell you pressed");
-            }
-        },
         tabs: function(ev, ele){
             var currentTab = $(ele).attr('name');
             //content gets shown or hidden
@@ -99,25 +94,27 @@ define(['jquery'], function($) {
             ev.preventDefault();
         },
         searchItems: function(){
-            var _this = this;
-            var searchVal = this.searchInput.val().toLowerCase();
-            var count = 0;
+            var _this = this,
+                searchVal = this.searchInput.val().toLowerCase(),
+                count = 0;
 
             this.searchResultList.html('');
             this.searchListRadio.each(function(){
-                var itemObj = {};
-                itemObj.itemVal = $(this).val();
-                itemObj.txt = _this.cleanValue(itemObj.itemVal.toLowerCase());
-                itemObj.itemType = $(this).closest('ul').attr("data-type");
-                itemObj.labelTxt = $("label[for='pr" + itemObj.txt +"'] .js-title").text().toLowerCase();
-                itemObj.svg = _this.setSvg(itemObj.itemType);
+                var itemVal = $(this).val(),
+                    searchTxt = $(this).attr("data-search"),
+                    itemType = $(this).closest('ul').attr("data-type"),
+                    labelTxt = $("label[for='pr" + searchTxt +"'] .js-title").text().toLowerCase(),
+                    svg = _this.setSvg(itemType),
+                    statClass = $(this).attr("data-status"),
+                    displayTxt = _this.displayValue(searchTxt.toLowerCase(), itemType),
+                    pullSearch = ((itemType == 'pull') ? 'PR #' + searchTxt : searchTxt);
 
-                if (itemObj.txt.indexOf(searchVal) === 0){
-                    $("<li class='js-search-item' data-val='" + itemObj.itemVal + "'><span class='icon'><svg viewBox='0 0 32 32'><use xlink:href='" + itemObj.svg + "'></use></svg></span> " + itemObj.txt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
+                if (pullSearch.toLowerCase().indexOf(searchVal) === 0 || searchTxt.indexOf(searchVal) === 0){
+                    $("<li class='js-search-item' data-val='" + itemVal + "'><span class='icon " + statClass + "'><svg viewBox='0 0 32 32'><use xlink:href='" + svg + "'></use></svg></span> " + displayTxt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
                 }
 
-                if (itemObj.labelTxt.indexOf(searchVal) === 0 && itemObj.itemType == 'pull'){
-                    $("<li class='js-search-item' data-val='" + itemObj.itemVal + "'><span class='icon'><svg viewBox='0 0 32 32'><use xlink:href='" + itemObj.svg + "'></use></svg></span> " + itemObj.labelTxt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
+                if (labelTxt.indexOf(searchVal) === 0 && itemType == 'pull'){
+                    $("<li class='js-search-item' data-val='" + itemVal + "'><span class='icon " + statClass + "'><svg viewBox='0 0 32 32'><use xlink:href='" + svg + "'></use></svg></span> " + labelTxt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
                 }
 
                 count++;
@@ -127,6 +124,32 @@ define(['jquery'], function($) {
 
             if (count > 12){
                 this.searchOutput.css("max-height", "300px");
+            }
+        },
+        searchRadio: function(txt){
+            var _this = this;
+            var found = 0;
+
+            this.searchListRadio.each(function(){
+                var itemType = $(this).closest('ul').attr("data-type"),
+                    searchStr = $(this).attr("data-search"),
+                    labelTxt = $("label[for='pr" + searchStr +"'] .js-title").text().toLowerCase(),
+                    tabId = $(this).closest("div").attr("data-id"),
+                    currentTab = $(this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li"),
+                    pullSearch = 'PR #' + searchStr;
+
+                if (pullSearch.toLowerCase().indexOf(txt.toLowerCase()) === 0 || searchStr.toLowerCase().indexOf(txt.toLowerCase()) === 0 || labelTxt.toLowerCase().indexOf(txt.toLowerCase()) === 0){
+                    // select this radio change to tab
+                    $(this).closest("div").show().siblings().hide();
+                    currentTab.addClass('active').siblings().removeClass('active');
+                    $(this).prop("checked", true);
+                    found = 1;
+                    return false;
+                }
+            });
+
+            if (found === 0){
+                this.errorText.text('Sorry, Dave! I have no idea what you are looking for.');
             }
         },
         setSvg: function(itemType){
@@ -139,22 +162,19 @@ define(['jquery'], function($) {
             }
 
         },
-        cleanValue: function(valString){
-            var isTag = (valString.substring(0, 4) == 'tag/');
-            var isPull = (valString.substring(0, 5) == 'pull/');
-
-            if ((isTag) || (isPull)){
-                valString = valString.split('/')[1];
+        displayValue: function(valString, valType){
+            if(valType == 'pull'){
+                valString = 'PR #' + valString;
             }
 
             return valString;
         },
         selectItem: function(element){
-            var eleVal = $(element).attr("data-val");
-            var currentRadio = $(this.searchList + ' input[value="' + eleVal + '"]');
-            var tabId = currentRadio.closest("div").attr("data-id");
-            var currentTab = $(this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li");
-            var _this = this;
+            var eleVal = $(element).attr("data-val"),
+                currentRadio = $(this.searchList + ' input[value="' + eleVal + '"]'),
+                tabId = currentRadio.closest("div").attr("data-id"),
+                currentTab = $(this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li"),
+                _this = this;
 
             this.searchInput.val($.trim($(element).text()));
             currentRadio.closest("div").show().siblings().hide();
@@ -163,7 +183,9 @@ define(['jquery'], function($) {
             currentRadio.prop("checked", true);
         },
         selectRadio: function(element){
-              this.searchInput.val(this.cleanValue($(element).val()));
+              var type = $(element).closest('ul').attr("data-type");
+
+              this.searchInput.val(this.displayValue($(element).attr("data-search"), type));
         },
         delay: function(callback, ms){
             var timer = 0;

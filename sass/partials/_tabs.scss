@@ -24,6 +24,14 @@
     }
 }
 
+.tab-text{
+    display: none;
+
+    @include breakpoint(60em){
+        display: inline-block;
+    }
+}
+
 .tab{
     display: none;
 }
