@@ -1,4 +1,9 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Build;
 
@@ -11,44 +16,39 @@ use Slim\Http\Response;
 use QL\Hal\Layout;
 use QL\Hal\Services\GithubService;
 
-/**
- *  Build Start Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class BuildStartController
 {
     /**
-     *  @var Twig_Template
+     * @var Twig_Template
      */
     private $template;
 
     /**
-     *  @var Layout
+     * @var Layout
      */
     private $layout;
 
     /**
-     *  @var RepositoryRepository
+     * @var RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @var EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     *  @var GithubService
+     * @var GithubService
      */
     private $github;
 
     /**
-     *  @param Twig_Template $template
-     *  @param Layout $layout
-     *  @param RepositoryRepository $repoRepo
-     *  @param EnvironmentRepository $envRepo
-     *  @param GithubService $github
+     * @param Twig_Template $template
+     * @param Layout $layout
+     * @param RepositoryRepository $repoRepo
+     * @param EnvironmentRepository $envRepo
+     * @param GithubService $github
      */
     public function __construct(
         Twig_Template $template,
@@ -65,10 +65,10 @@ class BuildStartController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
@@ -81,8 +81,8 @@ class BuildStartController
             'repo' => $repo,
             'branches' => $this->getBranches($repo),
             'tags' => $this->getTags($repo),
-            'pulls' => $this->github->openPullRequests($repo->getGithubUser(), $repo->getGithubRepo()),
-            'closed_pulls' => $this->github->closedPullRequests($repo->getGithubUser(), $repo->getGithubRepo()),
+            'pulls' => $this->getPullRequests($repo),
+            'closed_pulls' => $this->getPullRequests($repo, false),
             'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ];
 
@@ -90,10 +90,10 @@ class BuildStartController
     }
 
     /**
-     *  Get an array of branches for a repository
+     * Get an array of branches for a repository
      *
-     *  @param Repository $repo
-     *  @return array
+     * @param Repository $repo
+     * @return array
      */
     private function getBranches(Repository $repo)
     {
@@ -117,10 +117,10 @@ class BuildStartController
     }
 
     /**
-     *  Get an array of tags for a repository
+     * Get an array of tags for a repository
      *
-     *  @param Repository $repo
-     *  @return array
+     * @param Repository $repo
+     * @return array
      */
     private function getTags(Repository $repo)
     {
@@ -130,5 +130,26 @@ class BuildStartController
         );
 
         return $tags;
+    }
+
+    /**
+     * Get pull requests, sort in descending order by number.
+     *
+     * @param Repository $repo
+     * @return array
+     */
+    private function getPullRequests(Repository $repo, $open = true)
+    {
+        $getter = ($open) ? 'openPullRequests' : 'closedPullRequests';
+        $pr = $this->github->$getter(
+            $repo->getGithubUser(),
+            $repo->getGithubRepo()
+        );
+
+        usort($pr, function ($a, $b) {
+            return ($a['number'] < $b['number']);
+        });
+
+        return $pr;
     }
 }
