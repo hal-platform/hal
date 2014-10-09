@@ -39,6 +39,11 @@
             @include grid-span(1, 4, $grid: 4, $gutter: .1);
         }
     }
+
+}
+
+.radio-grid li.full{
+    width: 100%;
 }
 
 .radio-grid input[type="radio"]{
