@@ -91,6 +91,7 @@ class RepositoryNormalizer
                 'url' => $this->url->githubRepoUrl($repository->getGithubUser(), $repository->getGithubRepo())
             ],
             'buildCmd' => $repository->getBuildCmd(),
+            'buildTransformCmd' => $repository->getBuildTransformCmd(),
             'prePushCmd' => $repository->getPrePushCmd(),
             'postPushCmd' => $repository->getPostPushCmd()
         ];

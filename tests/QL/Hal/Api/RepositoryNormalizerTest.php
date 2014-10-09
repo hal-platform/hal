@@ -88,6 +88,7 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
                 'url' => 'http://git/user/repo'
             ],
             'buildCmd' => null,
+            'buildTransformCmd' => null,
             'prePushCmd' => null,
             'postPushCmd' => null,
             '_links' => [
@@ -143,6 +144,7 @@ class RepositoryNormalizerTest extends PHPUnit_Framework_TestCase
                 'url' => 'http://git/user/repo'
             ],
             'buildCmd' => null,
+            'buildTransformCmd' => null,
             'prePushCmd' => null,
             'postPushCmd' => null,
             '_links' => [
