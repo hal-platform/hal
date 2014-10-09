@@ -153,7 +153,9 @@ class BuildStartHandleController
         // [a-f]{40}
         // *
 
-        $reference = $request->post('reference', null);
+        $reference = ($request->post('gitref', null))
+            ? $request->post('gitref', null)            // hidden field on user commit paste
+            : $request->post('referejce', null);        // radio button selection from tabs
 
         if (!$result = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
             $this->session->addFlash(self::ERR_BAD_REF);

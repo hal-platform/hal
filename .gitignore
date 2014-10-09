@@ -5,6 +5,9 @@
 .sublime-workspace
 atlassian-ide-plugin.xml
 
+# old
+/app/cache/*
+
 # testing
 /.phpunit/
 /phpunit.xml
