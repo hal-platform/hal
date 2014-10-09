@@ -10,12 +10,20 @@ define(['jquery'], function($) {
         searchListItems: $('.js-search-item'),
         tabsContainer: '.js-tabs',
         tabsLink: $('.js-tabs li a'),
+        formEle: $('form[name="start-build"]'),
         commitId: $('.js-commitId'),
         commitRegEx: /^[0-9 A-F a-f]{40,40}$/,
         errorText: $('.js-error'),
         init: function() {
             var _this = this,
                 queryHash = window.location.hash;
+
+            this.formEle.on("submit", function(){
+                var txt = _this.searchInput.val();
+                if (!_this.commitRegEx.test(txt) && txt !== ''){
+                     _this.searchRadio(txt);
+                }
+            });
 
             this.searchInput.on({
                 blur: function(){
@@ -70,6 +78,10 @@ define(['jquery'], function($) {
             });
 
             this.searchListRadio.on("click",function(){
+                console.log("i just hit a radio");
+                if (_this.commitId.val() !== ''){
+                    _this.commitId.val('');
+                }
                 _this.selectRadio(this);
             });
 
@@ -133,9 +145,9 @@ define(['jquery'], function($) {
             this.searchListRadio.each(function(){
                 var itemType = $(this).closest('ul').attr("data-type"),
                     searchStr = $(this).attr("data-search"),
-                    labelTxt = $("label[for='pr" + searchStr +"'] .js-title").text().toLowerCase(),
+                    labelTxt = $("label[for='pr" + searchStr + "'] .js-title").text().toLowerCase(),
                     tabId = $(this).closest("div").attr("data-id"),
-                    currentTab = $(this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li"),
+                    currentTab = $(_this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li"),
                     pullSearch = 'PR #' + searchStr;
 
                 if (pullSearch.toLowerCase().indexOf(txt.toLowerCase()) === 0 || searchStr.toLowerCase().indexOf(txt.toLowerCase()) === 0 || labelTxt.toLowerCase().indexOf(txt.toLowerCase()) === 0){

@@ -8,7 +8,7 @@
 
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
 
-    <form method="post" action="{{ urlFor('build.handle', {'id': repo.id}) }}">
+    <form method="post" action="{{ urlFor('build.handle', {'id': repo.id}) }}" name="start-build">
 
     <h3>Choose what environment to build for:</h3>
     <ul class="check-list radio-grid radio-grid__env">
