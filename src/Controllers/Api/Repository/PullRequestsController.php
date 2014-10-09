@@ -109,7 +109,7 @@ class PullRequestsController
                 'from' => strtolower($from),
                 'to' => strtolower($to),
 
-                'url' => $this->url->githubTreeUrl($repository->getGithubUser(), $repository->getGithubRepo(), $pull['number']),
+                'url' => $this->url->githubPullRequestUrl($repository->getGithubUser(), $repository->getGithubRepo(), $pull['number']),
                 'diff_url' => $pull['diff_url']
             ];
         };
