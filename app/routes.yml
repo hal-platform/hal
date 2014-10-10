@@ -1,6 +1,7 @@
 parameters:
     routes.regex.buildId: '[A-Za-z0-9\_\-\.]+'
     routes.regex.pushId: %routes.regex.buildId%
+    routes.regex.queue.refresh: '[A-Za-z0-9\+\-\.]+'
 
     routes:
         login:
@@ -568,4 +569,4 @@ parameters:
             method: 'GET'
             route: '/api/queue-refresh/:uniqueId'
             stack: ['cachedApi.middleware', 'api.queue.refresh']
-            conditions: {uniqueId: '[0-9a-z\+\-]+'}
+            conditions: {uniqueId: %routes.regex.queue.refresh%}
