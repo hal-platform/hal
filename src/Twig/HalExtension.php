@@ -201,7 +201,7 @@ class HalExtension extends Twig_Extension
     public function formatBuildId($id)
     {
         if (substr($id, 0, 1) == 'b') {
-            return strtolower(substr($id, 5));
+            return strtolower(substr($id, 6));
         }
 
         return substr($id, 0, 10);
@@ -214,7 +214,7 @@ class HalExtension extends Twig_Extension
     public function formatPushId($id)
     {
         if (substr($id, 0, 1) == 'p') {
-            return strtolower(substr($id, 5));
+            return strtolower(substr($id, 6));
         }
 
         return $id;
