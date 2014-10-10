@@ -1,4 +1,5 @@
 define(['modules/routes', 'modules/terminal', 'underscore'], function(routes, terminal, _) {
+    var date = new Date();
     var app = {
         init: function() {
             var router = routes.init();
@@ -38,7 +39,8 @@ define(['modules/routes', 'modules/terminal', 'underscore'], function(routes, te
             signals: 'vendor/signals.min',
             tablesaw: 'vendor/tablesaw.min',
             underscore: 'vendor/underscore.min'
-        }
+        },
+        urlArgs: "" + date.getFullYear() + date.getMonth() + date.getDate()
     });
 
     app.init();
