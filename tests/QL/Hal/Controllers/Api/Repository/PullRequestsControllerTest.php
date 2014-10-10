@@ -149,7 +149,7 @@ class PullRequestsControllerTest extends PHPUnit_Framework_TestCase
         $url
             ->shouldReceive('formatGitReference');
         $url
-            ->shouldReceive('githubTreeUrl');
+            ->shouldReceive('githubPullRequestUrl');
 
         $api
             ->shouldReceive('prepareResponse')
