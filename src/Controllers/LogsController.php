@@ -59,8 +59,7 @@ class LogsController
         $page = (isset($params['page'])) ? $params['page'] : 1;
 
         if ($page < 1) {
-            call_user_func($notFound);
-            return;
+            return call_user_func($notFound);
         }
 
         $dql = 'SELECT l FROM QL\Hal\Core\Entity\Log l ORDER BY l.recorded DESC';
@@ -73,7 +72,6 @@ class LogsController
         $total = count($paginator);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $response->setStatus(440);
         $response->body(
             $this->layout->render(
                 $this->template,

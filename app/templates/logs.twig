@@ -30,7 +30,7 @@
                 <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.name }}</a></td>
                 <td><b>{{ log.action }}</b></td>
                 <td>{{ log.entity }}</td>
-                <td><code>{{ log.data|jsonPretty|raw }}</code></td>
+                <td><pre>{{ log.data|jsonPretty|raw }}</pre></td>
             </tr>
         {% else %}
             <tr>

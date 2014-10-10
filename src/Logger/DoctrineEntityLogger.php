@@ -109,6 +109,13 @@ class DoctrineEntityLogger
         } else {
             // updated data (show changes only)
             $data = $uow->getEntityChangeSet($entity);
+
+            // doctrine is weird
+            foreach ($data as $k => &$v) {
+                if (is_array($v) && count($v) === 2 && $v[0] === null) {
+                    $v = array_pop($v);
+                }
+            }
         }
 
         $log = new Log();
