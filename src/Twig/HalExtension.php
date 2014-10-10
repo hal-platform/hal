@@ -200,7 +200,7 @@ class HalExtension extends Twig_Extension
      */
     public function formatBuildId($id)
     {
-        if (substr($id, 0, 1) == 'b') {
+        if (preg_match('#^b[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$#', $id)) {
             return strtolower(substr($id, 6));
         }
 
@@ -213,7 +213,7 @@ class HalExtension extends Twig_Extension
      */
     public function formatPushId($id)
     {
-        if (substr($id, 0, 1) == 'p') {
+        if (preg_match('#^p[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$#', $id)) {
             return strtolower(substr($id, 6));
         }
 
