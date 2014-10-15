@@ -4,7 +4,9 @@
 
 {% block content %}
 
-    <h2>Hello, {{ getUsersActualName(user) }}.</h2>
+    <h2 data-nofunzone="{{ user.firstName ? user.firstName ~ '.' : '' }}" data-freud="{{ getUsersFreudianName() }}.">
+        Hello, {{ getUsersActualName(user) }}.
+    </h2>
 
     {% if isFirstLogin or not repositories %}
        {{ block('intro') }}

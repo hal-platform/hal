@@ -63,15 +63,22 @@ $scanSize: 1px;
 }
 
 .terminal__entry .cursor:after {
-    // -webkit-animation:blink 2s 120;
-    // animation:blink 2s 120;
-    content:"\220E";
-    font-size:120%;
+    content: "\220E";
+    font-size: 120%;
 }
 
-@-webkit-keyframes blink{
-  to {opacity: .0;}
+.univCursor:after {
+    animation: blink 1s step-end infinite;
+    content: "\220E";
+    font-size: 100%;
 }
-@keyframes blink{
-  to {opacity: .0;}
+
+@keyframes blink {
+    from, to {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
 }
+

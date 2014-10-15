@@ -1,4 +1,4 @@
-define(['modules/routes', 'modules/terminal', 'underscore'], function(routes, terminal, _) {
+define(['modules/routes', 'modules/terminal', 'modules/nofunzone', 'underscore'], function(routes, terminal, nofunzone, _) {
     var date = new Date();
     var app = {
         init: function() {
@@ -6,6 +6,7 @@ define(['modules/routes', 'modules/terminal', 'underscore'], function(routes, te
             router.parse(this.getPath());
 
             terminal.init();
+            nofunzone.init();
         },
         getPath: function() {
             var a, path;

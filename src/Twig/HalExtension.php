@@ -1,19 +1,24 @@
 <?php
-# lib/QL/Hal/Twig/HalExtension.php
+/**
+ * @copyright ©2013 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Twig;
 
-use Twig_Extension;
-use Twig_SimpleFunction;
-use Twig_SimpleFilter;
-use Twig_SimpleTest;
 use MCP\Corp\Account\User as LdapUser;
+use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\User as DomainUser;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Services\PermissionsService;
-use QL\Hal\Services\GithubService;
 use QL\Hal\Helpers\TimeHelper;
-use QL\Hal\Core\Entity;
+use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Services\GithubService;
+use QL\Hal\Services\PermissionsService;
+use Twig_Extension;
+use Twig_SimpleFilter;
+use Twig_SimpleFunction;
+use Twig_SimpleTest;
 
 /**
  *  Twig Extension for HAL9000
@@ -69,23 +74,31 @@ class HalExtension extends Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
+        return [
+            // permissions
             new Twig_SimpleFunction('canUserPush', array($this->permissions, 'allowPush')),
             new Twig_SimpleFunction('canUserBuild', array($this->permissions, 'allowBuild')),
             new Twig_SimpleFunction('canUserDelete', array($this->permissions, 'allowDelete')),
             new Twig_SimpleFunction('isUserAdmin', array($this->permissions, 'allowAdmin')),
-            new Twig_SimpleFunction('showAnalytics', array($this->permissions, 'showAnalytics')),
+
+            // util
             new Twig_SimpleFunction('urlFor', array($this->url, 'urlFor')),
             new Twig_SimpleFunction('uriFor', array($this->url, 'uriFor')),
+
+            // github
             new Twig_SimpleFunction('githubRepo', array($this->url, 'githubRepoUrl')),
             new Twig_SimpleFunction('githubCommit', array($this->url, 'githubCommitUrl')),
             new Twig_SimpleFunction('githubTreeish', array($this->url, 'githubTreeUrl')),
             new Twig_SimpleFunction('githubPullRequest', array($this->url, 'githubPullRequestUrl')),
             new Twig_SimpleFunction('githubReference', array($this->url, 'githubReferenceUrl')),
             new Twig_SimpleFunction('githubRelease', array($this->url, 'githubReleaseUrl')),
+            new Twig_SimpleFunction('githubCommitIsCurrent', array($this, 'commitIsCurrent')),
+
+            // other
+            new Twig_SimpleFunction('showAnalytics', array($this->permissions, 'showAnalytics')),
             new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName')),
-            new Twig_SimpleFunction('githubCommitIsCurrent', array($this, 'commitIsCurrent'))
-        );
+            new Twig_SimpleFunction('getUsersFreudianName', array($this, 'getUsersFreudianName')),
+        ];
     }
 
     /**
@@ -95,7 +108,7 @@ class HalExtension extends Twig_Extension
      */
     public function getFilters()
     {
-        return array(
+        return [
             new Twig_SimpleFilter('dateHal', array($this->time, 'format'), array('is_safe' => array('html'))),
             new Twig_SimpleFilter('date', array($this->time, 'format'), array('is_safe' => array('html'))),
             new Twig_SimpleFilter('reldate', array($this->time, 'relative'), array('is_safe' => array('html'))),
@@ -105,7 +118,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('commit', array($this->url, 'formatGitCommit')),
             new Twig_SimpleFilter('formatBuildId', array($this, 'formatBuildId')),
             new Twig_SimpleFilter('formatPushId', array($this, 'formatPushId'))
-        );
+        ];
     }
 
     /**
@@ -116,8 +129,8 @@ class HalExtension extends Twig_Extension
     public function getTests()
     {
         return [
-            new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Entity\Build; }),
-            new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Entity\Push; })
+            new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Build; }),
+            new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Push; })
         ];
     }
 
@@ -154,7 +167,7 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     *  Get the users actual name
+     *  Get the user's actual name
      *
      *  @param $user
      *  @return string
@@ -174,6 +187,30 @@ class HalExtension extends Twig_Extension
         }
 
         return 'Dave';
+    }
+
+    /**
+     *  Get the user's freudian name
+     *
+     * @see http://tvtropes.org/pmwiki/pmwiki.php/Main/CallAHumanAMeatbag
+     *
+     *  @return string
+     */
+    public function getUsersFreudianName()
+    {
+        $potential = [
+            'meatbag',
+            'puny earth creature',
+            'mortal',
+            'human',
+            'organic',
+            'organic battery',
+            'mission compromiser',
+            'threat to the mission'
+        ];
+
+        shuffle($potential);
+        return array_pop($potential);
     }
 
     /**

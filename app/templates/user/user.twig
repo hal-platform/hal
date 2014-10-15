@@ -5,11 +5,10 @@
 {% endif %}
 
 {% block content %}
-    <h2>
-        {% block name %}
-            {{ getUsersActualName(profileUser) }}
-        {% endblock %}
+    <h2 data-nofunzone="{{ ldapUser.firstName }} {{ ldapUser.lastName }}" data-freud="{{ getUsersFreudianName() }}">
+        {{ getUsersActualName(profileUser) }}
     </h2>
+
     <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
 
     <p><img src="{{ profileUser.pictureUrl.asString() }}" width="150"></p>
