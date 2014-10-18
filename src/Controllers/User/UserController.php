@@ -99,14 +99,21 @@ class UserController
     {
         // default to current user
         $id = (isset($params['id'])) ? $params['id'] : $this->user->commonId();
+
         if (!$user = $this->userRepo->findOneBy(['id' => $id])) {
             return call_user_func($notFound);
         }
 
+        // is the user viewing their own profile?
+        $self = ($id == $this->user->commonId());
+
         $rendered = $this->layout->render($this->template, [
+            'self' => $self,
+            'tokens' => [],
+            //'tokens' => ($self) ? $this->tokens->findBy(['user' => $this->user]) : [], @todo NYI
             'profileUser' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
-            'permissions' => $this->permissions->userPermissionPairs($user->getHandle()),
+            'permissions' => $this->permissions->userPushPermissionPairs($user->getHandle()),
             'pushes' => $this->getPushCount($user),
             'builds' => $this->getBuildCount($user)
         ]);
