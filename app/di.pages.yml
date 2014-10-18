@@ -536,6 +536,7 @@ services:
       - @layout
       - @ldapService
       - @user.repo
+      - @token.repo
       - @user
       - @doctrine.em
       - @permissions
@@ -575,6 +576,26 @@ services:
   user.edit.handle:
     class: 'QL\Hal\Controllers\User\EditHandle'
     arguments: [@user.repo, @url.helper]
+
+  ######################################################################################################################
+  # USER TOKEN MANAGEMENT CONTROLLERS
+  ######################################################################################################################
+
+  user.token.create.handle:
+    class: 'QL\Hal\Controllers\User\Token\TokenCreateController'
+    arguments:
+      - @doctrine.em
+      - @user.repo
+      - @user
+      - @url.helper
+
+  user.token.delete.handle:
+    class: 'QL\Hal\Controllers\User\Token\TokenDeleteController'
+    arguments:
+      - @doctrine.em
+      - @token.repo
+      - @user
+      - @url.helper
 
   ######################################################################################################################
   # ADMIN CONTROLLERS

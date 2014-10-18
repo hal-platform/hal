@@ -7,11 +7,13 @@
 
 namespace QL\Hal\Controllers\User\Token;
 
+use QL\Hal\Core\Entity\Repository\TokenRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use MCP\Corp\Account\User as LdapUser;
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Core\Entity\Token;
 
 /**
  * Allow a user to delete an API token
@@ -22,6 +24,11 @@ class TokenDeleteController
      * @var EntityManager
      */
     private $em;
+
+    /**
+     * @var TokenRepository
+     */
+    private $tokens;
 
     /**
      * @var LdapUser
@@ -35,15 +42,18 @@ class TokenDeleteController
 
     /**
      * @param EntityManager $em
+     * @param TokenRepository $tokens
      * @param LdapUser $user
      * @param UrlHelper $url
      */
     public function __construct(
         EntityManager $em,
+        TokenRepository $tokens,
         LdapUser $user,
         UrlHelper $url
     ) {
         $this->em = $em;
+        $this->tokens = $tokens;
         $this->user = $user;
         $this->url = $url;
     }
@@ -55,16 +65,15 @@ class TokenDeleteController
      */
     public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
     {
-        die('nyi'); // @todo NYI
-
-        $token = $this->tokens->getOneBy(['token' => $params['token']]);
+        $token = $this->tokens->findOneBy(['value' => $params['token']]);
 
         if (!$token instanceof Token) {
-            // 404
+            return $notFound();
         }
 
         if ($token->getUser()->getId() !== $this->user->commonId()) {
-            // no permission to delete
+            // no permission to delete, silently fail for the baddy
+            $response->redirect($this->url->urlFor('user.current'), 303);
         }
 
         $this->em->remove($token);

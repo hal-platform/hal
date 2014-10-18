@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\User;
 use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
+use QL\Hal\Core\Entity\Repository\TokenRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Layout;
@@ -52,6 +53,11 @@ class UserController
     private $userRepo;
 
     /**
+     * @var TokenRepository
+     */
+    private $tokens;
+
+    /**
      *  @var LdapUser
      */
     private $user;
@@ -66,6 +72,7 @@ class UserController
      * @param Layout $layout
      * @param LdapService $ldap
      * @param UserRepository $userRepo
+     * @param TokenRepository $tokens
      * @param LdapUser $user
      * @param EntityManager $em
      * @param PermissionsService $permissions
@@ -75,6 +82,7 @@ class UserController
         Layout $layout,
         LdapService $ldap,
         UserRepository $userRepo,
+        TokenRepository $tokens,
         LdapUser $user,
         EntityManager $em,
         PermissionsService $permissions
@@ -84,6 +92,7 @@ class UserController
         $this->permissions = $permissions;
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
+        $this->tokens = $tokens;
         $this->user = $user;
         $this->em = $em;
     }
@@ -109,8 +118,7 @@ class UserController
 
         $rendered = $this->layout->render($this->template, [
             'self' => $self,
-            'tokens' => [],
-            //'tokens' => ($self) ? $this->tokens->findBy(['user' => $this->user]) : [], @todo NYI
+            'tokens' => ($self) ? $this->tokens->findBy(['user' => $user]) : [],
             'profileUser' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
             'permissions' => $this->permissions->userPushPermissionPairs($user->getHandle()),
