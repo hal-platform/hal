@@ -33,11 +33,6 @@ class ErrorHandlerHook
     private $logger;
 
     /**
-     * @var boolean
-     */
-    private $isDebugMode;
-
-    /**
      * @var Twig_Template
      */
     private $twig;
@@ -45,18 +40,15 @@ class ErrorHandlerHook
     /**
      * @param ExceptionDispatcher $dispatcher
      * @param LoggerInterface $logger
-     * @param $isDebugMode
      * @param Twig_Template $twig
      */
     public function __construct(
         ExceptionDispatcher $dispatcher,
         LoggerInterface $logger,
-        $isDebugMode,
         Twig_Template $twig
     ) {
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
-        $this->isDebugMode = $isDebugMode;
         $this->twig = $twig;
     }
 
