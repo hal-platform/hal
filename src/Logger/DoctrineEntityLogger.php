@@ -130,7 +130,7 @@ class DoctrineEntityLogger
         $log->setData(json_encode($data));
 
         $this->em->persist($log);
-        $uow->computeChangeSet($this->em->getClassMetadata('QL\\Hal\\Core\\Entity\\Log'), $log);
+        $uow->computeChangeSet($this->em->getClassMetadata('QL\\Hal\\Core\\Entity\\AuditLog'), $log);
     }
 
     /**
