@@ -97,7 +97,7 @@ services:
     arguments: [@logger.mcp.factory, @slim.environment]
   slim.hook.errors:
     class: 'QL\Hal\Slim\ErrorHandlerHook'
-    arguments: [@logger, %debug%, @error.pages.twig]
+    arguments: [@exception.dispatcher, @logger, %debug%, @error.pages.twig]
   slim.hook.twig:
     class: 'QL\Hal\Slim\TwigEnvironmentHook'
     arguments:
@@ -108,6 +108,13 @@ services:
   slim.logger:
     class: 'QL\Hal\Logger\McpLogWriter'
     arguments: [@logger]
+
+  ######################################################################################################################
+  # ERROR & EXCEPTION HANDLING
+  ######################################################################################################################
+
+  exception.dispatcher:
+    class: 'QL\ExceptionToolkit\ExceptionDispatcher'
 
   ######################################################################################################################
   # HELPERS

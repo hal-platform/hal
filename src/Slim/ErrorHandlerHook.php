@@ -10,6 +10,9 @@ namespace QL\Hal\Slim;
 use Exception;
 use PDOException;
 use Psr\Log\LoggerInterface;
+use QL\ExceptionToolkit\ExceptionDispatcher;
+use QL\HttpProblem\Formatter\JsonFormatter;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Response;
 use Slim\Slim;
 use Symfony\Component\Debug\Exception\FatalErrorException;
@@ -22,6 +25,8 @@ use Twig_Template;
  */
 class ErrorHandlerHook
 {
+    private $dispatcher;
+
     /**
      * @var LoggerInterface
      */
@@ -38,12 +43,18 @@ class ErrorHandlerHook
     private $twig;
 
     /**
+     * @param ExceptionDispatcher $dispatcher
      * @param LoggerInterface $logger
-     * @param boolean $isDebugMode
+     * @param $isDebugMode
      * @param Twig_Template $twig
      */
-    public function __construct(LoggerInterface $logger, $isDebugMode, Twig_Template $twig)
-    {
+    public function __construct(
+        ExceptionDispatcher $dispatcher,
+        LoggerInterface $logger,
+        $isDebugMode,
+        Twig_Template $twig
+    ) {
+        $this->dispatcher = $dispatcher;
         $this->logger = $logger;
         $this->isDebugMode = $isDebugMode;
         $this->twig = $twig;
@@ -55,64 +66,108 @@ class ErrorHandlerHook
      */
     public function __invoke(Slim $slim)
     {
-        // 404 Error Handler
+        // Register Not Found Handler
         $slim->notFound(function () use ($slim) {
-            $output = $this->twig->render(['message' => 'Page Not Found']);
-
-            $slim->status(404);
-            $slim->response()->write($output);
+            $this->prepareTwigResponse($slim, 'Page Not Found', 404);
             $slim->stop();
         });
 
-        // 500 Error Handler
+        // Register Exception Handlers
         $slim->error(function (Exception $exception) use ($slim) {
-            $message = $exception->getMessage();
-            $context = ['exceptionData' => $exception->getTraceAsString()];
+            $this->dispatcher->dispatch($exception);
+            $slim->stop();
+        });
 
-            $this->logger->error($message, $context);
+        // Handle Http Problems
+        $this->dispatcher->add(function (HttpProblemException $exception) use ($slim) {
+            $this->prepareResponse(
+                $slim,
+                JsonFormatter::content($exception->problem()),
+                JsonFormatter::status($exception->problem()),
+                JsonFormatter::headers($exception->problem())
+            );
+        });
 
-            if ($exception instanceof PDOException) {
-                $message = "There's a problem with the database. Wait a bit and try again.\n" . $message;
-            }
+        // Handle Fatal Exceptions
+        $this->dispatcher->add(function (FatalErrorException $exception) use ($slim) {
+            $this->prepareTwigResponse($slim, $exception->getMessage());
+            $this->forceSendResponse($slim);
+        });
 
-            $output = $this->twig->render(['message' => $message]);
+        // Handle PDO Exceptions
+        $this->dispatcher->add(function (PDOException $exception) use ($slim) {
+            $this->sendLog($exception->getMessage(), ['exceptionData' => $exception->getTraceAsString()]);
+            $this->prepareTwigResponse(
+                $slim,
+                sprintf("There's a problem with the database. Wait a bit and try again.\n%s", $exception->getMessage())
+            );
+        });
 
-            $slim->status(500);
-            $slim->response()->write($output);
-
-            if ($exception instanceof FatalErrorException) {
-                // For fatal errors, the response must be rendered manually. Slim cannot handle it.
-                $this->renderFatal($slim);
-                exit;
-            } else {
-                $slim->stop();
-            }
+        // Handle All Other Exceptions
+        $this->dispatcher->add(function (Exception $exception) use ($slim) {
+            $this->sendLog($exception->getMessage(), ['exceptionData' => $exception->getTraceAsString()]);
+            $this->prepareTwigResponse($slim, $exception->getMessage());
         });
     }
 
     /**
-     * This code was ripped from Slim\Slim
+     * Prepare Twig formatted response for output
      *
      * @param Slim $slim
-     * @return null
+     * @param string $message
+     * @param int $status
+     * @param array $headers
      */
-    private function renderFatal(Slim $slim)
+    public function prepareTwigResponse(Slim $slim, $message, $status = 500, $headers = [])
+    {
+        $this->prepareResponse($slim, $this->twig->render(['message' => $message]), $status, $headers);
+    }
+
+    /**
+     * Prepare response for output
+     *
+     * @param Slim $slim
+     * @param string $body
+     * @param int $status
+     * @param array $headers
+     */
+    public function prepareResponse(Slim $slim, $body, $status = 500, $headers = [])
+    {
+        $slim->response->setBody($body);
+        $slim->response->setStatus($status);
+        foreach ($headers as $key => $value) {
+            $slim->response->header($key, $value);
+        }
+    }
+
+    /**
+     * Create and send a log message
+     *
+     * @param $message
+     * @param $context
+     */
+    public function sendLog($message, $context = [])
+    {
+        $this->logger->error($message, $context);
+    }
+
+    /**
+     * Force sending of the response
+     *
+     * @param Slim $slim
+     */
+    public function forceSendResponse(Slim $slim)
     {
         list($status, $headers, $body) = $slim->response()->finalize();
 
-        // Skip cookies
-
-        //Send headers
         if (headers_sent() === false) {
-            //Send status
-            $type = Response::getMessageForCode($status);
             if (strpos(PHP_SAPI, 'cgi') === 0) {
-                header(sprintf('Status: %s', $type));
+                header(sprintf('Status: %s', Response::getMessageForCode($status)));
             } else {
-                header(sprintf('HTTP/%s %s', $slim->config('http.version'), $type));
+                header(sprintf('HTTP/%s %s', $slim->config('http.version'), Response::getMessageForCode($status)));
             }
 
-            //Send headers
+            // send headers
             foreach ($headers as $name => $value) {
                 $hValues = explode("\n", $value);
                 foreach ($hValues as $hVal) {
@@ -121,9 +176,12 @@ class ErrorHandlerHook
             }
         }
 
-        //Send body, but only if it isn't a HEAD request
-        if (!$slim->request()->isHead()) {
-            echo $body;
+        // do not set body for HEAD requests
+        if ($slim->request->isHead()) {
+            return;
         }
+
+        echo $body;
+        exit();
     }
 }

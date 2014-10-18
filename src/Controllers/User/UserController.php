@@ -16,6 +16,7 @@ use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Layout;
 use QL\Hal\PushPermissionService;
 use QL\Hal\Services\PermissionsService;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
