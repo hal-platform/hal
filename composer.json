@@ -16,12 +16,12 @@
     },
     "repositories": [
         {
-            "type": "composer",
-            "url": "http://composer/"
-        },
-        {
             "type": "vcs",
             "url": "git@git:web-core/hal-core.git"
+        },
+        {
+            "type": "composer",
+            "url": "http://composer/"
         }
     ],
     "require": {

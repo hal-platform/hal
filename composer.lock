@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b92a4477124d64442f0ed7275d7843b2",
+    "hash": "53130d19076900d23be2b96cacb9aa4c",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -793,7 +793,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "b62d44185e5dd63384eac2998ffe641cb475a649"
+                "reference": "95a262dc704adb9e74d08a82a581d9cfef17cd6f"
             },
             "require": {
                 "doctrine/orm": "~2.4",
@@ -824,7 +824,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2014-10-14 13:35:53"
+            "time": "2014-10-18 17:05:39"
         },
         {
             "name": "ql/mcp-cache",
