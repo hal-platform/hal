@@ -4,13 +4,13 @@ namespace QL\Hal\Logger;
 
 use DateTime;
 use DateTimeZone;
+use QL\Hal\Core\Entity\AuditLog;
 use ReflectionClass;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use MCP\Corp\Account\User as LdapUser;
 use MCP\DataType\Time\TimePoint;
-use QL\Hal\Core\Entity\Log;
 use QL\Hal\Core\Entity\Session;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\LazyUserHelper;
@@ -84,7 +84,7 @@ class DoctrineEntityLogger
     private function log($entity, $action, UnitOfWork $uow)
     {
         // prevent logging loop
-        if ($entity instanceof Log || $entity instanceof Session || $entity instanceof User) {
+        if ($entity instanceof AuditLog || $entity instanceof Session || $entity instanceof User) {
             return;
         }
 
@@ -118,7 +118,7 @@ class DoctrineEntityLogger
             }
         }
 
-        $log = new Log();
+        $log = new AuditLog();
         $log->setUser($this->getUser($this->userHelper->getUser()));
         $log->setRecorded($this->getTimepoint());
         $log->setEntity(sprintf(
