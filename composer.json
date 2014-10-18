@@ -18,6 +18,10 @@
         {
             "type": "composer",
             "url": "http://composer/"
+        },
+        {
+            "type": "vcs",
+            "url": "git@git:web-core/hal-core.git"
         }
     ],
     "require": {
@@ -25,7 +29,7 @@
         "php-64bit": "~5.4",
         "predis/predis": "~1.0",
         "psr/log": "*",
-        "ql/hal-core": "~2.3",
+        "ql/hal-core": "dev-master@dev",
         "ql/mcp-cache": "~2.1",
         "ql/mcp-core": "1.*",
         "ql/mcp-corp-account": "~0.2@rc",
