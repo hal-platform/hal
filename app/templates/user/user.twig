@@ -21,6 +21,8 @@
         <li><a href="http://rockworldapps/roster/default.aspx?firstname={{ ldapUser.firstName }}&lastname={{ ldapUser.lastName }}">Rockword Link</a></li>
     </ul>
 
+
+
     <h3>Stats</h3>
     <ul>
         <li><b>Total Builds:</b> {{ builds }}</li>
@@ -34,37 +36,6 @@
             </span>
         </li>
     </ul>
-
-    {% if self %}
-        <h3>Personal Access Tokens</h3>
-        <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
-
-        <form action="{{ urlFor('user.token.create.handle') }}" method="post">
-        <table class="tablesaw tablesaw-stack" data-mode="stack">
-            <thead>
-                <th>Label</th>
-                <th>Token</th>
-                <th></th>
-            </thead>
-            <tbody>
-            {% for token in tokens %}
-                <tr>
-                    <td>{{ token.label }}</td>
-                    <td>{{ token.value }}</td>
-                    <td><a class="btn--destructive" href="{{ urlFor('user.token.delete.handle', {token: token.value}) }}">Revoke</a></td>
-                </tr>
-            {% endfor %}
-                <tr>
-                    <td colspan="2">
-                        <input type="text" name="label" maxlength="128" class="text-input t50" required>
-                    </td>
-                    <td><input class="btn" type="submit" value="Generate"></td>
-                </tr>
-            </tbody>
-        </table>
-        </form>
-
-    {% endif %}
 
     {% if permissions %}
         <h3>Permissions</h3>
@@ -95,17 +66,45 @@
             {% endfor %}
             </tbody>
         </table>
+    {% endif %}
 
+    {% if self %}
+        <h3>Personal Access Tokens</h3>
+        <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
 
-
+        <form action="{{ urlFor('user.token.create.handle') }}" method="post">
+        <table class="tablesaw tablesaw-stack" data-mode="stack">
+            <thead>
+                <th>Label</th>
+                <th>Token</th>
+                <th></th>
+            </thead>
+            <tbody>
+            {% for token in tokens %}
+                <tr>
+                    <td>{{ token.label }}</td>
+                    <td>{{ token.value }}</td>
+                    <td><a class="btn--destructive" href="{{ urlFor('user.token.delete.handle', {token: token.value}) }}">Revoke</a></td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <td colspan="2">
+                        <input type="text" name="label" maxlength="128" class="text-input t50" required>
+                    </td>
+                    <td><input class="btn" type="submit" value="Generate"></td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
     {% endif %}
 
     <div>
-    {% block actions %}
-        {% if isAdmin or commonId == profileUser.getId %}
-            {# secondary actions #}
-            <a class="btn--action" href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
-        {% endif %}
-    {% endblock %}
+        {% block actions %}
+            {% if isAdmin or commonId == profileUser.getId %}
+                {# secondary actions #}
+                <a class="btn--action" href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
+            {% endif %}
+        {% endblock %}
     <div>
+
 {% endblock %}
