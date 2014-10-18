@@ -434,7 +434,7 @@ parameters:
         api.index:
             method: 'GET'
             route: '/api'
-            stack: ['cachedApi.middleware', 'api.index']
+            stack: ['api.auth.bouncer', 'cachedApi.middleware', 'api.index']
 
         api.environments:
             method: 'GET'

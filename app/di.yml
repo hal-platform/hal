@@ -20,6 +20,10 @@ services:
   root:
     synthetic: true
 
+  # This is set by the API Auth Bouncer
+  requester:
+    synthetic: true
+
   ######################################################################################################################
   # DOCTRINE CONFIGURATION
   ######################################################################################################################
@@ -210,6 +214,14 @@ services:
       - @session
       - @permissions
       - @twig.environment
+
+  # Bounce unauthenticated api clients
+  api.auth.bouncer:
+    class: 'QL\Hal\Bouncers\ApiAuthBouncer'
+    arguments:
+      - @service_container
+      - @ldapService
+      - @token.repo
 
   cachedApi.middleware:
     class: 'QL\Hal\Middleware\CachedApiMiddleware'

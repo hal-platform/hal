@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "53130d19076900d23be2b96cacb9aa4c",
+    "hash": "17e1d03d80a4fab6d9c3df052793e561",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -788,12 +788,53 @@
             "time": "2012-12-21 11:40:51"
         },
         {
+            "name": "ql/exception-toolkit",
+            "version": "0.1.2",
+            "source": {
+                "type": "git",
+                "url": "git@git:web-core/exception-toolkit.git",
+                "reference": "27056e3989703a85288101d73dbaf041b336e5e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer//dist/ql-exception-toolkit-0.1.2-e8ade7.zip",
+                "reference": "27056e3989703a85288101d73dbaf041b336e5e3",
+                "shasum": "d09581d882ffcabd5d4b338b25f88cbae7bea360"
+            },
+            "require": {
+                "php": ">5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\ExceptionToolkit\\": [
+                        "src",
+                        "testing/src"
+                    ]
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Colf",
+                    "email": "matthewcolf@quickenloans.com"
+                }
+            ],
+            "description": "Exception Handling Toolkit",
+            "time": "2014-09-15 17:12:19"
+        },
+        {
             "name": "ql/hal-core",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "95a262dc704adb9e74d08a82a581d9cfef17cd6f"
+                "reference": "978c2624b3c4f60f855f2113efb414925601039d"
             },
             "require": {
                 "doctrine/orm": "~2.4",
@@ -824,7 +865,46 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2014-10-18 17:05:39"
+            "time": "2014-10-18 18:23:16"
+        },
+        {
+            "name": "ql/http-problem",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "git@git:web-core/http-problem.git",
+                "reference": "5c5444f87cece1e3b9f81e655cee02e3041183db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer//dist/ql-http-problem-1.0.0-53e9e1.zip",
+                "reference": "5c5444f87cece1e3b9f81e655cee02e3041183db",
+                "shasum": "3c4bace26a69071247fcc4b730e03980fa68d0c0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\HttpProblem\\": "src"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Colf",
+                    "email": "matthewcolf@quickenloans.com"
+                },
+                {
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com"
+                }
+            ],
+            "description": "HTTP Problem",
+            "time": "2014-08-26 18:50:16"
         },
         {
             "name": "ql/mcp-cache",

@@ -8,7 +8,10 @@
 namespace QL\Hal\Bouncers;
 
 use MCP\Corp\Account\LdapService;
+use QL\Hal\Core\Entity\Repository\TokenRepository;
+use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,57 +22,75 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ApiAuthBouncer
 {
     const HEADER = 'Authorization';
+    const FORMAT = '#^Token ([0-9a-zA-Z]{40,40})$#';
+    const MATCH_POSITION = 1;
 
-    const FORMAT = '#^Token ([0-9a-bA-B]{64,64})$#';
-
-    const MATCH_POSITIION = 1;
-
+    /**
+     * @var ContainerInterface
+     */
     private $container;
 
+    /**
+     * @var LdapService
+     */
     private $ldap;
+
+    /**
+     * @var TokenRepository
+     */
+    private $tokens;
 
     /**
      * @param ContainerInterface $container
      * @param LdapService $ldap
+     * @param TokenRepository $tokens
      */
-    public function __construct(ContainerInterface $container, LdapService $ldap)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        LdapService $ldap,
+        TokenRepository $tokens
+    ) {
         $this->container = $container;
         $this->ldap = $ldap;
+        $this->tokens = $tokens;
     }
 
     /**
      * @param Request $request
      * @param Response $response
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response)
     {
-        die('nyi');
+        // slim is not passing the auth header, get it the hard way
+        $headers = getallheaders();
 
-        $header = $request->headers(self::HEADER, null);
-
-        if (0 === preg_match(self::FORMAT, $header, $matches)) {
-            // throw http problem
+        if (!is_array($headers) || !isset($headers[self::HEADER])) {
+            throw HttpProblemException::build(403, sprintf('Access denied. Missing %s header.', self::HEADER));
         }
 
-        if (!is_array($matches) || !isset($matches[self::MATCH_POSITIION])) {
-            // throw http problem, can't find token value from header
+        if (0 === preg_match(self::FORMAT, $headers[self::HEADER], $matches)) {
+            throw HttpProblemException::build(403, sprintf('Access denied. Invalid %s header format.', self::HEADER));
         }
 
-        $token = $this->tokens->findOneBy(['token' => $matches[self::MATCH_POSITIION]]);
+        if (!is_array($matches) || !isset($matches[self::MATCH_POSITION])) {
+            throw HttpProblemException::build(403, sprintf('Access denied. Invalid %s header format.', self::HEADER));
+        }
+
+        $token = $this->tokens->findOneBy(['value' => $matches[self::MATCH_POSITION]]);
 
         if (!$token instanceof Token) {
-            // throw http problem, no matching token
+            throw HttpProblemException::build(403, sprintf('Access denied. Invalid token.', self::HEADER));
         }
 
         $requester = ($token->getUser()) ? $token->getUser() : $token->getConsumer();
 
         if ($requester instanceof User) {
             if (!$requester->isActive()) {
-                // throw http problem, user not active in hal
+                throw HttpProblemException::build(403, sprintf('Access denied. User has been marked as inactive.', self::HEADER));
             }
             if (!$this->ldap->getUserByCommonId($requester->getId())) {
-                // throw http problem, user not available from ldap
+                throw HttpProblemException::build(403, sprintf('Access denied. User cannot be located.', self::HEADER));
             }
         }
 
