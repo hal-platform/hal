@@ -206,7 +206,8 @@ class HalExtension extends Twig_Extension
             'organic',
             'organic battery',
             'mission compromiser',
-            'threat to the mission'
+            'threat to the mission',
+            'buzzkill',
         ];
 
         shuffle($potential);
