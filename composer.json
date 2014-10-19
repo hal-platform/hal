@@ -41,7 +41,8 @@
         "symfony/config": "2.4.*",
         "symfony/debug": "2.5.*",
         "symfony/yaml": "2.4.*",
-        "twig/twig": "~1.15"
+        "twig/twig": "~1.15",
+        "icecave/semver": "~3.0"
     },
     "require-dev": {
         "mockery/mockery": "*",

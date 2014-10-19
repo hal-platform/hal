@@ -15,6 +15,8 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Hal\Layout;
 use QL\Hal\Services\GithubService;
+use Icecave\SemVer\Version;
+use Icecave\SemVer\Comparator;
 
 class BuildStartController
 {
@@ -102,7 +104,7 @@ class BuildStartController
             $repo->getGithubRepo()
         );
 
-        // sort master to top, rest alphabetically
+        // sort master to top, alpha otherwise
         usort($branches, function ($a, $b) {
             if ($a['name'] == 'master') {
                 return -1;
@@ -110,7 +112,7 @@ class BuildStartController
             if ($b['name'] == 'master') {
                 return 1;
             }
-            return ($a['name'] > $b['name']);
+            return strcmp($a['name'], $b['name']);
         });
 
         return $branches;
@@ -129,7 +131,74 @@ class BuildStartController
             $repo->getGithubRepo()
         );
 
-        return $tags;
+//        $tags = [
+//            ['name' => '3.1'],
+//            ['name' => '3.0'],
+//            ['name' => '3.1.2'],
+//            ['name' => '3.1.1'],
+//            ['name' => '4.0-rc1'],
+//            ['name' => '1.0'],
+//            ['name' => '4.5'],
+//            ['name' => '2'],
+//            ['name' => '4.0-rc2'],
+//            ['name' => '2.5'],
+//            ['name' => '4.0-alpha2'],
+//            ['name' => '2.1.2'],
+//            ['name' => '4.0-beta1'],
+//            ['name' => '4.0-alpha1'],
+//            ['name' => 'a'],
+//            ['name' => 'c'],
+//            ['name' => 'v4.5.1'],
+//            ['name' => 'v3.1'],
+//            ['name' => 'b'],
+//            ['name' => '2.1.1.1'],
+//            ['name' => '14.1'],
+//            ['name' => '4.0'],
+//        ];
+
+        $versioned = [];
+        $named = [];
+
+        // seperate into versioned tags and named tags
+        foreach ($tags as $tag) {
+            if ($this->semver($tag['name']) !== false) {
+                $versioned[] = $tag;
+            } else {
+                $named[] = $tag;
+            }
+        }
+
+        // sort versioned tags according to decreasing version number
+        // we're looking for natural sort here, we'll fake it with php version compare
+        uasort($versioned, function ($a, $b) {
+
+            $matchesA = $this->semver($a['name']);
+            $matchesB = $this->semver($b['name']);
+
+            // special case for when version number is the same (1.0-beta1 vs 1.0-alpha1)
+            if ($matchesA[1] == $matchesB[1]) {
+                $textA = (isset($matchesA[5])) ? $matchesA[5] : '';
+                $textB = (isset($matchesB[5])) ? $matchesB[5] : '';
+                $numA = (isset($matchesA[6])) ? $matchesA[6] : 0;
+                $numB = (isset($matchesB[6])) ? $matchesB[6] : 0;
+
+                // special case when release type is the same (1.0-rc1 vs 1.0-rc2)
+                if ($textA == $textB) {
+                    return strcmp($numB, $numA);
+                }
+
+                return strcmp($textB, $textA);
+            }
+
+            return version_compare($matchesB[1], $matchesA[1]);
+        });
+
+        // sort named tags alphabetically
+        uasort($named, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        return array_merge($versioned, $named);
     }
 
     /**
@@ -146,10 +215,26 @@ class BuildStartController
             $repo->getGithubRepo()
         );
 
+        // sort by decreasing pull request number
         usort($pr, function ($a, $b) {
-            return ($a['number'] < $b['number']);
+            return strcmp($b['number'], $a['number']);
         });
 
         return $pr;
+    }
+
+    /**
+     * Check to see if a string is *close* to being valid semver. Checking for actual spec compliance turns out to be
+     * too restrictive in most cases and won't match what users will expect it to.
+     *
+     * For example, this will catch things like 1.0, 1, 1.0-rc1, 1.0.0.0, and v1.0 despite those values not being
+     * compliant with the semver spec.
+     *
+     * @param $value
+     * @return false|string
+     */
+    private function semver($value)
+    {
+        return (preg_match('#^v?(([0-9]+\.?)+)(-(([a-zA-Z]+)([0-9]+)))?#', $value, $matches) > 0) ? $matches : false;
     }
 }
