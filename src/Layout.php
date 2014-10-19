@@ -8,15 +8,25 @@
 namespace QL\Hal;
 
 use MCP\Corp\Account\User;
-use Twig_Template;
 use QL\Hal\Services\PermissionsService;
+use Twig_Template;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * @todo This needs to be removed in favor of global context.
+ *
+ * This depends on the container instead of the user directly so that it can
+ * lazy load the user and fail gracefully if the synthetic user was never injected.
+ *
+ * Previously, the user was injected directly into the class, and it was flooding core with errors
+ * about the user being synthetic/uninitialized. Not sure if this affected users.
+ */
 class Layout
 {
     /**
-     * @var User
+     * @var ContainerInterface
      */
-    private $currentUserContext;
+    private $di;
 
     /**
      * @var PermissionsService
@@ -24,14 +34,12 @@ class Layout
     private $permissions;
 
     /**
-     * @param User $currentUserContext
+     * @param ContainerInterface $di
      * @param PermissionsService $permissions
      */
-    public function __construct(
-        User $currentUserContext,
-        PermissionsService $permissions
-    ) {
-        $this->currentUserContext = $currentUserContext;
+    public function __construct(ContainerInterface $di, PermissionsService $permissions)
+    {
+        $this->di = $di;
         $this->permissions = $permissions;
     }
 
@@ -56,15 +64,22 @@ class Layout
      */
     public function render(Twig_Template $template, array $data = [])
     {
-        $data = array_merge(
-            $data,
-            [
-                'commonId' => $this->currentUserContext->commonId(),
-                'isAdmin' => $this->permissions->allowAdmin($this->currentUserContext),
-                'allowDelete' => $this->permissions->allowDelete($this->currentUserContext),
-                'currentUser' => $this->currentUserContext
-            ]
-        );
+        $layoutData = [
+            'isAdmin' => false,
+            'allowDelete' => false
+        ];
+
+        // Only load user if it has been initialized
+        if ($this->di->initialized('user')) {
+            $user = $this->di->get('user');
+            $layoutData = [
+                'isAdmin' => $this->permissions->allowAdmin($user),
+                'allowDelete' => $this->permissions->allowDelete($user),
+                'currentUser' => $user
+            ];
+        }
+
+        $data = array_merge($data, $layoutData);
 
         return $template->render($data);
     }
