@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "27e77e83fc55477d03a850e550fcdf9d",
+    "hash": "44626d13ae78b7e722ceb8f61a018098",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -198,7 +198,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -274,7 +274,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -402,7 +402,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -456,7 +456,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1139,13 +1139,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-core.git",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf"
+                "reference": "1.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-core-1.0.1-578aad.zip",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf",
-                "shasum": "4ab925396c0ef4d2adbdfc58716fb6ef536b26a8"
+                "url": "http://composer//dist/ql-mcp-core-1.0.1-d1b76f.zip",
+                "reference": "1.0.1",
+                "shasum": "33c9dd1e298f45d64a2f774c7501c203276d9152"
             },
             "archive": {
                 "exclude": [
@@ -1241,17 +1241,17 @@
         },
         {
             "name": "ql/mcp-logger",
-            "version": "1.2.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-logger.git",
-                "reference": "107ae5ec4a74a20b7ba83bfbb9ef88bb1a3b8f7a"
+                "reference": "ea0e2a331bd92ce0f4f4e3ea4e9eccf861022946"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-logger-1.2.0-dfec33.zip",
-                "reference": "107ae5ec4a74a20b7ba83bfbb9ef88bb1a3b8f7a",
-                "shasum": "ca96a0dee5aeb1b462298d5625df77aafdf4bac0"
+                "url": "http://composer//dist/ql-mcp-logger-1.3.1-60bb9a.zip",
+                "reference": "ea0e2a331bd92ce0f4f4e3ea4e9eccf861022946",
+                "shasum": "cafd9bace02edd62b04d362189e09359af81adef"
             },
             "archive": {
                 "exclude": [
@@ -1273,6 +1273,7 @@
             },
             "require-dev": {
                 "guzzle/http": "*",
+                "guzzlehttp/guzzle": "*",
                 "mockery/mockery": ">=0.8",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
@@ -1316,7 +1317,7 @@
                 "issues": "http://git/mnagi/mcp-logger/issues",
                 "source": "http://git/mnagi/mcp-logger"
             },
-            "time": "2014-04-22 20:32:30"
+            "time": "2014-06-17 14:12:02"
         },
         {
             "name": "slim/slim",
