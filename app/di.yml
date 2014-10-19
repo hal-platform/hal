@@ -94,7 +94,7 @@ services:
     arguments: [@service_container, %routes%]
   slim.hook.logger:
     class: 'QL\Hal\Slim\McpLoggerHook'
-    arguments: [@logger.mcp.factory, @slim.environment]
+    arguments: [@logger.mcp.factory, @slim.environment, @slim.request]
   slim.hook.errors:
     class: 'QL\Hal\Slim\ErrorHandlerHook'
     arguments: [@exception.dispatcher, @logger, @error.pages.twig]

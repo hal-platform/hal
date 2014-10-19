@@ -10,6 +10,7 @@ namespace QL\Hal\Slim;
 use MCP\DataType\IPv4Address;
 use MCP\Service\Logger\MessageFactoryInterface;
 use Slim\Environment;
+use Slim\Http\Request;
 
 /**
  * Set default log message properties.
@@ -29,13 +30,20 @@ class McpLoggerHook
     private $env;
 
     /**
+     * @var Request
+     */
+    private $request;
+
+    /**
      * @param MessageFactoryInterface $factory
      * @param Environment $env
+     * @param Request $request
      */
-    public function __construct(MessageFactoryInterface $factory, Environment $env)
+    public function __construct(MessageFactoryInterface $factory, Environment $env, Request $request)
     {
         $this->factory = $factory;
         $this->env = $env;
+        $this->request = $request;
     }
 
     /**
@@ -43,7 +51,14 @@ class McpLoggerHook
      */
     public function __invoke()
     {
-        $this->factory->setDefaultProperty('machineName', $this->env['SERVER_NAME']);
+        // server
+        $this->factory->setDefaultProperty('machineName', $this->request->getHost());
+
+        // client
+        $this->factory->setDefaultProperty('Referrer',  $this->request->getReferrer());
+        $this->factory->setDefaultProperty('Url',  $this->request->getUrl() . $this->request->getPathInfo());
+        $this->factory->setDefaultProperty('UserAgentBrowser', $this->request->getUserAgent());
+        $this->factory->setDefaultProperty('UserIPAddress', $this->request->getIp());
 
         // slim doesn't expose this var
         if (!isset($_SERVER['SERVER_ADDR'])) {
