@@ -14,11 +14,6 @@
     {% endblock %}
     {% block meta %}
         <meta name="format-detection" content="telephone=no">
-        <meta name="author" content="Matt Colf &lt;matthewcolf@quickenloans.com&gt;">
-        <meta name="author" content="Matthew Nagi &lt;mattnagi@quickenloans.com&gt;">
-        <meta name="author" content="Bridget Schiefer &lt;bridgetschiefer@quickenloans.com&gt;">
-        <meta name="author" content="Dave Gillhespy &lt;davegillhespy@quickenloans.com&gt;">
-        <meta name="description" content="A push tool for code being deployed on Linux/UNIX boxes.">
     {% endblock %}
     {% block style %}
         <link rel="stylesheet" href="/css/style.css?{{ "now"|date(false, "Y-m-d") }}">
@@ -203,7 +198,7 @@
 {% endblock %}
 
 {% block script %}
-    <script data-main="/js/main" src="/js/vendor/require-2.1.11.min.js"></script>
+    <script data-main="/js/main" src="/js/vendor/require-2.1.11.min.js?{{ "now"|date(false, "Y-m-d") }}"></script>
     {% block pageScript %}{% endblock %}
     {% if (not user or (user and showAnalytics(user))) %}
         <!-- BEGIN ANLYTICS -->
