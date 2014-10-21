@@ -1,0 +1,17 @@
+[class=inline-list], [class^=inline-list--] {
+    margin-left: 0;
+    display: inline;
+    list-style-type: none;
+}
+
+[class=inline-list] > li, [class^=inline-list--] > li{
+    display: inline;
+}
+
+.inline-list--comma > li::after {
+    content: ", ";
+}
+
+.inline-list--comma > li:last-child::after {
+    content: "";
+}

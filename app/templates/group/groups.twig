@@ -10,15 +10,39 @@
         to view the member repositories and to push code if you have permission.
     </p>
 
-    {% if groups %}
-        <ul class="block-list block-list--limit">
+    <table class="tablesaw tablesaw-stack" data-mode="stack">
+        <thead>
+            <tr>
+                <th>Group</th>
+                <th>Repositories</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for group in groups %}
-            <li><a href="{{ urlFor('group', {'id': group.id}) }}">{{ group.name }}</a></li>
+            <tr>
+                <td>
+                    <a href="{{ urlFor('group', {'id': group.id}) }}">{{ group.name }}</a>
+                </td>
+
+                <td>
+                    {% if not group.repositories.isEmpty %}
+                        <ul class="inline-list--comma">
+                            {% for repo in group.repositories %}
+                                <li><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.key }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        This group has no repositories.
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">There are no groups.</td>
+            </tr>
         {% endfor %}
-        </ul>
-    {% else %}
-        <p>There are no repository groups.</p>
-    {% endif %}
+        </tbody>
+    </table>
 
     <div>
         {# primary action #}
