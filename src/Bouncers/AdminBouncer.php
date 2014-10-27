@@ -7,23 +7,21 @@
 
 namespace QL\Hal\Bouncers;
 
+use QL\Hal\Services\PermissionsService;
+use QL\Hal\Session;
+use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Exception\Stop;
-use QL\Hal\Session;
-use QL\Hal\Services\PermissionsService;
 use Twig_Environment;
 use MCP\Corp\Account\User;
 
 /**
- *  A bouncer that checks to see if the current user is an admin
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
+ * A bouncer that checks to see if the current user is an admin
  */
 class AdminBouncer
 {
     /**
-     *  @var \QL\Hal\Session
+     * @var Session
      */
     private $session;
 
@@ -33,16 +31,14 @@ class AdminBouncer
     private $permissions;
 
     /**
-     *  @var \Twig_Environment
+     * @var Twig_Environment
      */
     private $twig;
 
     /**
-     *  Constructor
-     *
-     *  @param Session $session
-     *  @param PermissionsService $permissions
-     *  @param Twig_Environment $twig
+     * @param Session $session
+     * @param PermissionsService $permissions
+     * @param Twig_Environment $twig
      */
     public function __construct(Session $session, PermissionsService $permissions, Twig_Environment $twig)
     {
@@ -52,11 +48,12 @@ class AdminBouncer
     }
 
     /**
-     *  Run the bouncer
+     * @param Request $request
+     * @param Response $response
      *
-     *  @param Request $request
-     *  @param Response $response
-     *  @throws Stop
+     * @throws Stop
+     *
+     * @return null
      */
     public function __invoke(Request $request, Response $response)
     {
@@ -65,7 +62,7 @@ class AdminBouncer
         if (!($account instanceof User) || !$this->permissions->allowAdmin($account)) {
             $response->status(403);
             $response->body($this->twig->loadTemplate('denied.twig')->render([]));
-            throw new Stop();
+            throw new Stop;
         }
     }
 }

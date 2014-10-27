@@ -7,39 +7,37 @@
 
 namespace QL\Hal\Bouncers;
 
+use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Session;
+use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use QL\Hal\Session;
-use QL\Hal\Helpers\UrlHelper;
 
 /**
- *  A bouncer that checks to see if the current user is logged in
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- *  @author Matt Nagi <mattnagi@quickenloans.com>
+ * A bouncer that checks to see if the current user is logged in
  */
 class LoginBouncer
 {
     /**
-     *  @var Session
+     * @var Session
      */
     private $session;
 
     /**
-     *  @var ContainerInterface
+     * @var ContainerInterface
      */
     private $container;
 
     /**
-     *  @var UrlHelper
+     * @var UrlHelper
      */
     private $url;
 
     /**
-     *  @param Session $session
-     *  @param ContainerInterface $container
-     *  @param UrlHelper $url
+     * @param Session $session
+     * @param ContainerInterface $container
+     * @param UrlHelper $url
      */
     public function __construct(Session $session, ContainerInterface $container, UrlHelper $url)
     {
@@ -49,13 +47,18 @@ class LoginBouncer
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
+     * @param Request $request
+     * @param Response $response
+     *
+     * @throws Stop
+     *
+     * @return null
      */
     public function __invoke(Request $request, Response $response)
     {
         if (!$this->session->get('account')) {
-            $this->url->redirectFor('login', [], ['redirect' => $request->getResourceUri()]);
+            $this->url->redirectFor('login', [], ['redirect' => $request->getPathInfo()]);
+            throw new Stop;
         }
 
         $this->container->set('user', $this->session->get('account'));
