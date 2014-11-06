@@ -64,7 +64,13 @@ gulp.task('images', function() {
 });
 
 gulp.task('optimizeJS', function(cb) {
-    exec('node node_modules/.bin/r.js -o js/optimizer.json', function (err, stdout, stderr) {
+    var flags = "";
+    if(isDeploy == false) {
+        // override optimize setting if not deploy
+        flags = " optimize=none"
+    }
+
+    exec('node node_modules/.bin/r.js -o js/optimizer.json' + flags, function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);

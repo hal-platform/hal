@@ -16,7 +16,6 @@
             ]
         },
 
-
         // Shared modules
         {
             "name": "modules/queue/queue",
