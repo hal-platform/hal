@@ -1,33 +1,78 @@
 {
-  "appDir"              : "./",
-  "baseUrl"             : "./",
-  "dir"                 : "../public/js",
-  "fileExclusionRegExp" : (/optimizer\.json|head/),
-  "optimize"            : "uglify2",
-  "removeCombined"      : true,
-  "skipDirOptimize"     : true,
-  "modules"             : [
-    {
-      "name": "main",
-      "include": [
-        "jquery",
-        "jquerySortable",
-        "tablesaw"
-      ]
+    "appDir"              : "./",
+    "baseUrl"             : "./",
+    "dir"                 : "../public/js",
+    "fileExclusionRegExp" : (/optimizer\.json|head/),
+    "optimize"            : "uglify2",
+    "removeCombined"      : true,
+    "skipDirOptimize"     : true,
+    "modules"             : [
+        {
+            "name": "main",
+            "include": [
+                "jquery",
+                "jquerySortable",
+                "tablesaw"
+            ]
+        },
+
+
+        // Shared modules
+        {
+            "name": "modules/queue/queue",
+            "exclude": [ "main" ]
+        },
+
+        // controllers
+        {
+            "name": "controller/build",
+            "exclude": [ "main" ]
+        },
+        {
+            "name": "controller/build-create",
+            "exclude": [ "main" ]
+        },
+        {
+            "name": "controller/dashboard",
+            "exclude": [ "main", "modules/queue/queue" ]
+        },
+        {
+            "name": "controller/environment-manage",
+            "exclude": [ "main" ]
+        },
+        {
+            "name": "controller/push",
+            "exclude": [ "main" ]
+        },
+        {
+            "name": "controller/queue",
+            "exclude": [ "main", "modules/queue/queue" ]
+        },
+        {
+            "name": "controller/repository-add",
+            "exclude": [ "main" ]
+        },
+        {
+            "name": "controller/repository-deployment-add",
+            "exclude": [ "main" ]
+        },
+        {
+            "name": "controller/repository-status",
+            "exclude": [ "main" ]
+        }
+    ],
+    "shim": {
+        "underscore": {
+            "exports": "_"
+        }
+    },
+    "paths": {
+        "crossroads": "vendor/crossroads.min",
+        "jquery": "vendor/jquery-2.min",
+        "jquerySortable": "vendor/jquery.sortable.min",
+        "nunjucks": "vendor/nunjucks.min",
+        "signals": "vendor/signals.min",
+        "tablesaw": "vendor/tablesaw.min",
+        "underscore": "vendor/underscore.min"
     }
-  ],
-  "shim": {
-    "underscore": {
-      "exports": "_"
-    }
-  },
-  "paths": {
-    "crossroads": "vendor/crossroads.min",
-    "jquery": "vendor/jquery-2.min",
-    "jquerySortable": "vendor/jquery.sortable.min",
-    "nunjucks": "vendor/nunjucks.min",
-    "signals": "vendor/signals.min",
-    "tablesaw": "vendor/tablesaw.min",
-    "underscore": "vendor/underscore.min"
-  }
 }
