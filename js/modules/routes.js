@@ -57,8 +57,9 @@ define(['crossroads'], function(crossroads) {
             });
         },
         dashboard: function() {
-            return require(['modules/dashboard'], function(module) {
-                module.init();
+            return require(['modules/dashboard', 'modules/queue/queue'], function(dashboard, queue) {
+                dashboard.init();
+                queue.init();
             });
         },
         startBuild: function() {
