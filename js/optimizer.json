@@ -7,12 +7,13 @@
     "removeCombined"      : true,
     "skipDirOptimize"     : true,
     "modules"             : [
+        // Global main module
         {
             "name": "main",
             "include": [
                 "jquery",
                 "jquerySortable",
-                "tablesaw"
+                "jqueryTablesaw"
             ]
         },
 
@@ -60,6 +61,12 @@
             "exclude": [ "main" ]
         }
     ],
+    "stubModules" : [
+        "json",
+        "text"
+    ],
+
+    // Make sure "shim" and "paths" match the same values in optimizer.json!
     "shim": {
         "underscore": {
             "exports": "_"
@@ -69,9 +76,12 @@
         "crossroads": "vendor/crossroads.min",
         "jquery": "vendor/jquery-2.min",
         "jquerySortable": "vendor/jquery.sortable.min",
+        "jqueryTablesaw": "vendor/jquery.tablesaw",
         "nunjucks": "vendor/nunjucks.min",
         "signals": "vendor/signals.min",
         "tablesaw": "vendor/tablesaw.min",
-        "underscore": "vendor/underscore.min"
+        "underscore": "vendor/underscore.min",
+        "json": "vendor/requirejs-plugins/json",
+        "text": "vendor/requirejs-plugins/text"
     }
 }
