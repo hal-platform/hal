@@ -9,6 +9,7 @@
 namespace QL\Hal\Bootstrap;
 
 use Slim\Environment;
+use Symfony\Component\Finder\Finder;
 
 $root = __DIR__ . '/..';
 if (!$container = @include $root . '/app/bootstrap.php') {
@@ -22,26 +23,32 @@ $slim = $container->get('slim');
 $slim->call();
 
 // find and attempt to load the templates
-$templates = $container->findTaggedServiceIds('twig.template');
-$twigCache = $container->get('twig.cache.dir');
+$twigCache = $container->get('twig.template.dir');
 $output = 'No templates found';
 
-// Always create twig cache if not found
-if (!file_exists($twigCache)) {
-    mkdir($twigCache);
-}
+$files = (new Finder)
+    ->files()
+    ->name('*.twig')
+    ->in($twigCache);
 
-if ($templates) {
-    $output = "\nTemplates:\n";
-    foreach (array_keys($templates) as $template) {
-        $twig = $container->get($template);
+if ($files) {
+    // Always create twig cache if not found
+    if (!file_exists($twigCache)) {
+        mkdir($twigCache);
+    }
 
-        $output .= $twig->getTemplateName() . "\n";
-        $twig->render([]);
+    $output = "Templates:\n";
+    $env = $container->get('twig.environment');
+
+    foreach ($files as $file) {
+        $output .= $file->getRelativePathname() . "\n";
+        $template = $env->loadTemplate($file->getRelativePathname());
+        $template->render([]);
     }
 }
 
 echo <<<OUTPUT
+
 Compiling twig templates
 Target: $twigCache
 $output

@@ -1,0 +1,43 @@
+# services stolen from vendor/ql/panthor/configuration/di.yml
+# they will be here until we can fully port hal to panthor and use the default di.yml
+parameters:
+    # twig defaults
+    twig.debug: true
+    twig.template.dir: 'app/templates'
+    twig.cache.dir: '.twig'
+
+services:
+
+    # aliases
+    twig.cache.dir:                 {parent: panthor.twig.cache.dir}
+    twig.template.dir:              {parent: panthor.twig.template.dir}
+    # twig.template:                  {parent: panthor.twig.template}
+    # twig.context:                   {parent: panthor.twig.context}
+    twig.loader:                    {parent: panthor.twig.loader}
+    twig.environment:               {parent: panthor.twig.environment}
+
+    # twig
+    panthor.twig.configurator:
+        class: 'QL\Panthor\Twig\EnvironmentConfigurator'
+        arguments: [%twig.debug%, @twig.cache.dir]
+
+    panthor.twig.template.dir:
+        class: 'Factory_generated_scalar'
+        factory_class: 'QL\Panthor\Utility\Stringify'
+        factory_method: 'template'
+        arguments: ['%%s/%%s', [@root, %twig.template.dir%]]
+
+    panthor.twig.cache.dir:
+        class: 'Factory_generated_scalar'
+        factory_class: 'QL\Panthor\Utility\Stringify'
+        factory_method: 'template'
+        arguments: ['%%s/%%s', [@root, %twig.cache.dir%]]
+
+    panthor.twig.loader:
+        class: 'QL\Panthor\Twig\BetterCachingFilesystem'
+        arguments: [@panthor.twig.template.dir]
+
+    panthor.twig.environment:
+        class: 'Twig_Environment'
+        arguments: [@twig.loader]
+        configurator: [@panthor.twig.configurator, 'configure']

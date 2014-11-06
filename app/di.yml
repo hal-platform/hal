@@ -1,6 +1,7 @@
 imports:
   - resource: di.pages.yml
   - resource: di.api.yml
+  - resource: di.panthor.yml
 
 services:
 
@@ -167,35 +168,13 @@ services:
     class: 'QL\Hal\Twig\GithubExtension'
     arguments: [@url.helper, @github]
 
-  # Twig Loader
-  twig.loader:
-    class: 'QL\Hal\Twig\BetterCachingTwigFilesystem'
-    arguments: [@twig.loader.path]
-
-  twig.loader.path:
-    class: 'NOTHING_TO_SEE_HERE'
-    factory_service: 'directory.helper'
-    factory_method: 'fullPath'
-    arguments: ['app/templates']
-
   # Twig Environment
   twig.environment:
-    class: 'Twig_Environment'
-    arguments:
-      - @twig.loader
-      -
-        cache: @twig.cache.dir
-        debug: %debug%
+    parent: 'panthor.twig.environment'
     calls:
       - ['addExtension', [@twig.extension.hal]]
       - ['addExtension', [@twig.extension.permissions]]
       - ['addExtension', [@twig.extension.github]]
-
-  twig.cache.dir:
-    class: 'GENERATED_SCALAR'
-    factory_service: 'directory.helper'
-    factory_method: 'fullPath'
-    arguments: ['.twig']
 
   layout:
     class: 'QL\Hal\Layout'
