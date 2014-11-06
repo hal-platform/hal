@@ -19,6 +19,8 @@
                                 <span class="status-before--success">{{ job.status }}</span>
                             {% elseif job.status in ['Error', 'Removed'] %}
                                 <span class="status-before--error">{{ job.status }}</span>
+                            {% elseif job.status in ['Waiting', 'Building', 'Pushing'] %}
+                                <span class="status-before--thinking" data-build="{{ job.id }}">{{ job.status }}</span>
                             {% else %}
                                 <span class="status-before--other" data-build="{{ job.id }}">{{ job.status }}</span>
                             {% endif %}
@@ -43,6 +45,8 @@
                                 <span class="status-before--success">{{ job.status }}</span>
                             {% elseif job.status in ['Error', 'Removed'] %}
                                 <span class="status-before--error">{{ job.status }}</span>
+                            {% elseif job.status in ['Waiting', 'Building', 'Pushing'] %}
+                                <span class="status-before--thinking" data-push="{{ job.id }}">{{ job.status }}</span>
                             {% else %}
                                 <span class="status-before--other" data-push="{{ job.id }}">{{ job.status }}</span>
                             {% endif %}
@@ -57,7 +61,7 @@
             {% endfor %}
         {% else %}
             <tr id="js-emptyQueue">
-                <td colspan="6">There are no jobs queued.</td>
+                <td colspan="6">There are no jobs queued.<br>You do not need to refresh the page. New jobs will be added to the queue as they are created.</td>
             </tr>
         {% endif %}
     </tbody>

@@ -7,46 +7,4 @@
 
     {% include 'partials/pending-table.twig' %}
 
-{% verbatim %}
-<script id="build-template" type="text/x-handlebars-template">
-<tr id="{{ uniqueId }}">
-    <td>
-        <a href="{{ buildUrl }}">Build</a>
-    </td>
-    <td>
-        <a href="{{ repoUrl }}/status">{{ repoName }}</a>
-    </td>
-    <td>
-        <span class="status-before--{{ buildStatusStyle }}" data-build="{{ buildId }}">{{  buildStatus }}</span>
-    </td>
-    <td>{{ environmentName }}</td>
-    <td>
-    <a href="{{ referenceUrl }}">{{ reference }}</a>
-        <span class="icon">
-            <svg viewBox="0 0 32 32">
-                <use xlink:href="#github"></use>
-            </svg>
-        </span>
-    </td>
-    <td>{{ initiator }}</td>
-</tr>
-</script>
-<script id="push-template" type="text/x-handlebars-template">
-<tr id="{{ uniqueId }}">
-    <td>
-        <a href="{{ pushUrl }}">Push</a>
-    </td>
-    <td>
-        <a href="{{ repoUrl }}/status">{{ repoName }}</a>
-    </td>
-    <td>
-        <span class="status-before--{{ pushStatusStyle }}" data-push="{{ pushId }}">{{  pushStatus }}</span>
-    </td>
-    <td>{{ environmentName }} → {{ serverName }}</td>
-    <td>Build <a href="{{ buildUrl }}">{{ buildId }}</a></td>
-    <td>{{ initiator }}</td>
-</tr>
-</script>
-{% endverbatim %}
-
 {% endblock %}

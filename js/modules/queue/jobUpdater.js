@@ -1,4 +1,4 @@
-define(['jquery', 'handlebars'], function($, handlebars) {
+define(['jquery', 'nunjucks'], function($, nunjucks) {
     return {
         buildTemplate: null,
         pushTemplate: null,
@@ -9,17 +9,17 @@ define(['jquery', 'handlebars'], function($, handlebars) {
         failureClass: 'status-before--error',
 
         init: function() {
-            // compile templates
-            var buildSource = $("#build-template").html();
-            this.buildTemplate = handlebars.compile(buildSource);
-
-            var pushSource = $("#push-template").html();
-            this.pushTemplate = handlebars.compile(pushSource);
+            nunjucks.configure('views');
+            // @todo compile templates
         },
 
         addBuildJob: function(build) {
             var buildId = String(build.id);
             var reference = String(build.reference.text);
+            var initiator = 'Unknown';
+            if (build._links.hasOwnProperty('user')) {
+                initiator = build._links.user.title;
+            }
 
             var context = {
                 uniqueId: build.uniqueId,
@@ -38,14 +38,19 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                 repoName: build._embedded.repository.key,
                 repoUrl: build._embedded.repository.url,
 
-                initiator: build._links.user.title
+                initiator: initiator
             };
 
-            return this.buildTemplate(context);
+            return nunjucks.render('queue.build.html', context);
         },
         addPushJob: function(push) {
             var pushId = String(push.id);
             var buildId = String(push._embedded.build.id);
+            var initiator = 'Unknown';
+            if (push._links.hasOwnProperty('user')) {
+                initiator = push._links.user.title;
+            }
+
             var context = {
                 uniqueId: push.uniqueId,
 
@@ -66,10 +71,10 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                 repoName: push._embedded.build._embedded.repository.key,
                 repoUrl: push._embedded.build._embedded.repository.url,
 
-                initiator: push._links.user.title
+                initiator: initiator
             };
 
-            return this.pushTemplate(context);
+            return nunjucks.render('queue.push.html', context);
         },
 
         updatePushJob: function(job) {
@@ -133,6 +138,8 @@ define(['jquery', 'handlebars'], function($, handlebars) {
                 return 'success';
             } else if (status == 'Error') {
                 return 'error';
+            } else if (status == 'Waiting' || status == 'Building' || status == 'Pushing') {
+                return 'thinking';
             }
 
             return 'other';

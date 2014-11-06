@@ -1,4 +1,4 @@
-define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handlebars, jobUpdater) {
+define(['jquery', 'modules/queue/jobUpdater'], function($, jobUpdater) {
     return {
         pollingTimer: null,
         interval: 10,
@@ -14,7 +14,7 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
         init: function() {
             this.lastRead = this.getUTCTime();
             this.$queue = $(this.queueTarget);
-            this.attachPollingButton();
+            this.togglePolling();
 
             jobUpdater.init();
 
@@ -35,33 +35,15 @@ define(['jquery', 'handlebars', 'modules/queue/jobUpdater'], function($, handleb
                 _this.refresh();
             }, _this.interval * 1000);
         },
-
-        attachPollingButton: function() {
-            var _this = this;
-
-            var $pollingButton = $('<a href="#" class="btn btn--destructive">Polling is disabled</a>');
-            $pollingButton.click(function(e) {
-                e.preventDefault();
-                var currentTimer = _this.togglePolling($pollingButton);
-            });
-
-            this.$queue.closest('table').before($pollingButton);
-        },
-        togglePolling: function($pollingButton) {
+        togglePolling: function() {
             var _this = this;
 
             if (this.pollingTimer === null) {
                 this.refresh();
                 this.pollingTimer = this.startRefreshTimer();
-                $pollingButton
-                    .text('Polling is enabled')
-                    .removeClass('btn--destructive');
             } else {
                 clearInterval(this.pollingTimer);
                 this.pollingTimer = null;
-                $pollingButton
-                    .text('Polling is disabled')
-                    .addClass('btn--destructive');
 
                 jobUpdater.stopThinking(this.jobTarget);
             }

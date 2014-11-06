@@ -1,0 +1,14 @@
+<tr id="{{ uniqueId }}">
+    <td>
+        <a href="{{ pushUrl }}">Push</a>
+    </td>
+    <td>
+        <a href="{{ repoUrl }}/status">{{ repoName }}</a>
+    </td>
+    <td>
+        <span class="status-before--{{ pushStatusStyle }}" data-push="{{ pushId }}">{{  pushStatus }}</span>
+    </td>
+    <td>{{ environmentName }} → {{ serverName }}</td>
+    <td>Build <a href="{{ buildUrl }}">{{ buildId }}</a></td>
+    <td>{{ initiator }}</td>
+</tr>
