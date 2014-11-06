@@ -13,8 +13,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\User as DomainUser;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Services\GithubService;
-use QL\Hal\Services\PermissionsService;
+use QL\Hal\Session;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -30,19 +29,9 @@ class HalExtension extends Twig_Extension
     const NAME = 'hal';
 
     /**
-     * @type PermissionsService
-     */
-    private $permissions;
-
-    /**
      * @type UrlHelper
      */
     private $url;
-
-    /**
-     * @type GithubService
-     */
-    private $github;
 
     /**
      * @type TimeHelper
@@ -50,31 +39,35 @@ class HalExtension extends Twig_Extension
     private $time;
 
     /**
+     * @type Session
+     */
+    private $session;
+
+    /**
+     * @type string
+     */
+    private $applicationTitle;
+
+    /**
      * @type string
      */
     private $applicationSha;
 
     /**
-     * Constructor
-     *
-     * @param PermissionsService $permissions
      * @param UrlHelper $url
-     * @param GithubService $github
      * @param TimeHelper $time
-     * @param string $applicationSha
+     * @param Session $session
+     * @param string $appTitle
+     * @param string $appSha
      */
-    public function __construct(
-        PermissionsService $permissions,
-        UrlHelper $url,
-        GithubService $github,
-        TimeHelper $time,
-        $applicationSha
-    ) {
-        $this->permissions = $permissions;
+    public function __construct(UrlHelper $url, TimeHelper $time, Session $session, $appTitle, $appSha)
+    {
         $this->url = $url;
-        $this->github = $github;
         $this->time = $time;
-        $this->applicationSha = $applicationSha;
+        $this->session = $session;
+
+        $this->applicationTitle = $appTitle;
+        $this->applicationSha = $appSha;
     }
 
     /**
@@ -95,27 +88,11 @@ class HalExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            // permissions
-            new Twig_SimpleFunction('canUserPush', array($this->permissions, 'allowPush')),
-            new Twig_SimpleFunction('canUserBuild', array($this->permissions, 'allowBuild')),
-            new Twig_SimpleFunction('canUserDelete', array($this->permissions, 'allowDelete')),
-            new Twig_SimpleFunction('isUserAdmin', array($this->permissions, 'allowAdmin')),
-
             // util
             new Twig_SimpleFunction('urlFor', array($this->url, 'urlFor')),
             new Twig_SimpleFunction('uriFor', array($this->url, 'uriFor')),
 
-            // github
-            new Twig_SimpleFunction('githubRepo', array($this->url, 'githubRepoUrl')),
-            new Twig_SimpleFunction('githubCommit', array($this->url, 'githubCommitUrl')),
-            new Twig_SimpleFunction('githubTreeish', array($this->url, 'githubTreeUrl')),
-            new Twig_SimpleFunction('githubPullRequest', array($this->url, 'githubPullRequestUrl')),
-            new Twig_SimpleFunction('githubReference', array($this->url, 'githubReferenceUrl')),
-            new Twig_SimpleFunction('githubRelease', array($this->url, 'githubReleaseUrl')),
-            new Twig_SimpleFunction('githubCommitIsCurrent', array($this, 'commitIsCurrent')),
-
             // other
-            new Twig_SimpleFunction('showAnalytics', array($this->permissions, 'showAnalytics')),
             new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName')),
             new Twig_SimpleFunction('getUsersFreudianName', array($this, 'getUsersFreudianName')),
         ];
@@ -133,8 +110,6 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('reldate', array($this->time, 'relative'), array('is_safe' => array('html'))),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
             new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
-            new Twig_SimpleFilter('gitref', array($this->url, 'formatGitReference')),
-            new Twig_SimpleFilter('commit', array($this->url, 'formatGitCommit')),
             new Twig_SimpleFilter('formatBuildId', array($this, 'formatBuildId')),
             new Twig_SimpleFilter('formatPushId', array($this, 'formatPushId'))
         ];
@@ -159,25 +134,13 @@ class HalExtension extends Twig_Extension
     public function getGlobals()
     {
         return [
-            'applicationSha' => $this->applicationSha
+            'applicationSha' => $this->applicationSha,
+            'applicationTitle' =>  $this->applicationTitle,
+
+            'session' =>  $this->session,
+            'account' =>  $this->session->get('account'),
+            'isFirstLogin' =>  $this->session->get('isFirstLogin'),
         ];
-    }
-
-    /**
-     * Check if a commit hash is the most recent for a given Github user, repo, and reference
-     *
-     * @param $user
-     * @param $repo
-     * @param $reference
-     * @param $commit
-     * @return bool
-     */
-    public function commitIsCurrent($user, $repo, $reference, $commit)
-    {
-        $resolve = $this->github->resolve($user, $repo, $reference);
-        $current = (is_array($resolve)) ? $resolve[1] : null;
-
-        return ($current == $commit) ? true : false;
     }
 
     /**
@@ -284,6 +247,6 @@ class HalExtension extends Twig_Extension
             return strtolower(substr($id, 6));
         }
 
-        return $id;
+        return substr($id, 0, 10);;
     }
 }

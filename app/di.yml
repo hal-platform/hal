@@ -98,12 +98,6 @@ services:
   slim.hook.errors:
     class: 'QL\Hal\Slim\ErrorHandlerHook'
     arguments: [@exception.dispatcher, @logger, @error.pages.twig]
-  slim.hook.twig:
-    class: 'QL\Hal\Slim\TwigEnvironmentHook'
-    arguments:
-      - @twig.environment
-      - @session
-      - %application.title%
 
   slim.logger:
     class: 'QL\Hal\Logger\McpLogWriter'
@@ -155,15 +149,23 @@ services:
   # TWIG STUFF
   ######################################################################################################################
 
-  # HAL Twig Extension
-  twig.extension:
+  # Twig Extensions
+  twig.extension.hal:
     class: 'QL\Hal\Twig\HalExtension'
     arguments:
-      - @permissions
       - @url.helper
-      - @github
       - @time.helper
+      - @session
+      - %application.title%
       - %application.sha%
+
+  twig.extension.permissions:
+    class: 'QL\Hal\Twig\PermissionExtension'
+    arguments: [@permissions]
+
+  twig.extension.github:
+    class: 'QL\Hal\Twig\GithubExtension'
+    arguments: [@url.helper, @github]
 
   # Twig Loader
   twig.loader:
@@ -185,7 +187,9 @@ services:
         cache: @twig.cache.dir
         debug: %debug%
     calls:
-      - ['addExtension', [@twig.extension]]
+      - ['addExtension', [@twig.extension.hal]]
+      - ['addExtension', [@twig.extension.permissions]]
+      - ['addExtension', [@twig.extension.github]]
 
   twig.cache.dir:
     class: 'GENERATED_SCALAR'

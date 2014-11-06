@@ -15,7 +15,6 @@ parameters:
         slim.before:
             - 'slim.hook.logger'
             - 'slim.hook.errors'
-            - 'slim.hook.twig'
         slim.before.router:
             - 'slim.hook.routes'
 
