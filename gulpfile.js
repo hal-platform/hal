@@ -27,7 +27,7 @@ gulp.task('styles', function() {
     return g;
 });
 
-gulp.task('scripts', ['cleanJS', 'optimizeJS'], function() {
+gulp.task('scripts', ['cleanJS', 'cachebustJS', 'optimizeJS'], function() {
     gulp.start('jshint');
 });
 
@@ -63,7 +63,7 @@ gulp.task('images', function() {
         .pipe(gulp.dest('public/img'));
 });
 
-gulp.task('optimizeJS', function(cb) {
+gulp.task('optimizeJS', ['cachebustJS'], function(cb) {
     var flags = "";
     if(isDeploy == false) {
         // override optimize setting if not deploy
@@ -112,6 +112,22 @@ gulp.task('clean', function() {
 gulp.task('cleanJS', function() {
     return gulp.src(['public/js'], { read: false })
         .pipe(plugins.clean());
+});
+
+gulp.task('cachebustJS', function() {
+
+    var sha = process.env.HAL_COMMIT;
+    if (sha === undefined || !sha) {
+        sha = 'dev' + (new Date()).getTime();
+    }
+
+    return gulp.src('js/require-config-default.json')
+        .pipe(plugins.rename('require-config.json'))
+        .pipe(plugins.jsonEditor(function(json) {
+            json.urlArgs = 'v=' + sha;
+            return json;
+        }))
+      .pipe(gulp.dest('js/'));
 });
 
 gulp.task('default', ['clean'], function() {

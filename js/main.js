@@ -19,7 +19,7 @@ require.config({
     }
 });
 
-require(['controller/_common', 'json!config.json'], function(app, config) {
+require(['controller/_common', 'json!require-config.json'], function(app, config) {
 
     // further requirejs config
     require.config(config);

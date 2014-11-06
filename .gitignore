@@ -5,9 +5,6 @@
 .sublime-workspace
 atlassian-ide-plugin.xml
 
-# old
-/app/cache/*
-
 # testing
 /.phpunit/
 /phpunit.xml
@@ -19,6 +16,7 @@ atlassian-ide-plugin.xml
 /bin/sass-convert
 /bin/scss
 /bower_components/
+/js/require-config.json
 /node_modules/
 /public/css/
 /public/img/

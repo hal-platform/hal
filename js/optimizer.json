@@ -2,7 +2,7 @@
     "appDir"              : "./",
     "baseUrl"             : "./",
     "dir"                 : "../public/js",
-    "fileExclusionRegExp" : (/optimizer\.json|head/),
+    "fileExclusionRegExp" : (/optimizer\.json|require-config-default\.json/),
     "optimize"            : "uglify2",
     "removeCombined"      : true,
     "skipDirOptimize"     : true,
@@ -13,7 +13,8 @@
             "include": [
                 "jquery",
                 "jquerySortable",
-                "jqueryTablesaw"
+                "jqueryTablesaw",
+                "json!require-config.json"
             ]
         },
 
