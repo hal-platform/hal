@@ -103,7 +103,7 @@ services:
     arguments:
       - @twig.environment
       - @session
-      - %app.title%
+      - %application.title%
 
   slim.logger:
     class: 'QL\Hal\Logger\McpLogWriter'
@@ -163,6 +163,7 @@ services:
       - @url.helper
       - @github
       - @time.helper
+      - %application.sha%
 
   # Twig Loader
   twig.loader:
@@ -424,7 +425,7 @@ services:
     class: 'MCP\Service\Logger\Adapter\Psr\MessageFactory'
     arguments: ['@clock']
     calls:
-      - ['setDefaultProperty', ['applicationId', %applicationId%]]
+      - ['setDefaultProperty', ['applicationId', %application.id%]]
       # replaced at runtime, maybe
       - ['setDefaultProperty', ['machineIPAddress', @logger.mcp.serverIp]]
       # replaced at runtime

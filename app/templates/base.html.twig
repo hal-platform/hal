@@ -1,5 +1,7 @@
 {% extends 'layout.html.twig' %}
 
+{% set buster = applicationSha[:4] ?: 'dev' ~ 'now'|date('U') %}
+
 {% block head %}
     <title>
         {% if page_title %}{{ page_title }} - {% endif %}{{ app_title }}
@@ -16,7 +18,7 @@
         <meta name="format-detection" content="telephone=no">
     {% endblock %}
     {% block style %}
-        <link rel="stylesheet" href="/css/style.css?{{ "now"|date(false, "Y-m-d") }}">
+        <link rel="stylesheet" href="/css/style.css?v={{ buster }}">
     {% endblock %}
 {% endblock %}
 
@@ -198,7 +200,7 @@
 {% endblock %}
 
 {% block script %}
-    <script data-main="/js/main" src="/js/vendor/require-2.1.11.min.js?{{ "now"|date(false, "Y-m-d") }}"></script>
+    <script data-main="/js/main.js?v={{ buster }}" src="/js/vendor/require-2.1.11.min.js"></script>
     {% block pageScript %}{% endblock %}
     {% if (not user or (user and showAnalytics(user))) %}
         <!-- BEGIN ANLYTICS -->

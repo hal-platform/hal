@@ -43,6 +43,10 @@ function buildDi($root)
     $builder = new YamlFileLoader($container, new FileLocator($root));
     $builder->load('app/config.yml');
 
+    if (array_key_exists('HAL_COMMIT', $_SERVER)) {
+        $container->setParameter('application.sha', $_SERVER['HAL_COMMIT']);
+    }
+
     $container->compile();
 
     return $container;

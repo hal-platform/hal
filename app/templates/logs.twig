@@ -26,7 +26,7 @@
         <tbody>
         {% for log in logs %}
             <tr>
-                <td>{{ log.recorded|date }}</td>
+                <td>{{ log.recorded|timepoint }}</td>
                 <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.name }}</a></td>
                 <td><b>{{ log.action }}</b></td>
                 <td>{{ log.entity }}</td>

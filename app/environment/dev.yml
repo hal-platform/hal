@@ -1,5 +1,5 @@
 parameters:
-    app.title: 'HAL 9000 DEV'
+    application.title: 'HAL 9000 DEV'
     debug: true
 
     doctrine.connection:

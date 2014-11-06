@@ -29,13 +29,30 @@ class HalExtension extends Twig_Extension
 {
     const NAME = 'hal';
 
+    /**
+     * @type PermissionsService
+     */
     private $permissions;
 
+    /**
+     * @type UrlHelper
+     */
     private $url;
 
+    /**
+     * @type GithubService
+     */
     private $github;
 
+    /**
+     * @type TimeHelper
+     */
     private $time;
+
+    /**
+     * @type string
+     */
+    private $applicationSha;
 
     /**
      * Constructor
@@ -44,17 +61,20 @@ class HalExtension extends Twig_Extension
      * @param UrlHelper $url
      * @param GithubService $github
      * @param TimeHelper $time
+     * @param string $applicationSha
      */
     public function __construct(
         PermissionsService $permissions,
         UrlHelper $url,
         GithubService $github,
-        TimeHelper $time
+        TimeHelper $time,
+        $applicationSha
     ) {
         $this->permissions = $permissions;
         $this->url = $url;
         $this->github = $github;
         $this->time = $time;
+        $this->applicationSha = $applicationSha;
     }
 
     /**
@@ -109,8 +129,7 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('dateHal', array($this->time, 'format'), array('is_safe' => array('html'))),
-            new Twig_SimpleFilter('date', array($this->time, 'format'), array('is_safe' => array('html'))),
+            new Twig_SimpleFilter('timepoint', array($this->time, 'format'), array('is_safe' => array('html'))),
             new Twig_SimpleFilter('reldate', array($this->time, 'relative'), array('is_safe' => array('html'))),
             new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
             new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
@@ -131,6 +150,16 @@ class HalExtension extends Twig_Extension
         return [
             new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Build; }),
             new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Push; })
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGlobals()
+    {
+        return [
+            'applicationSha' => $this->applicationSha
         ];
     }
 

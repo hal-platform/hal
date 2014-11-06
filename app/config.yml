@@ -7,8 +7,9 @@ imports:
 
 parameters:
     # environment independent parameters
-    applicationId: '200947'
+    application.id: '200947'
     application.major.version: '2'
+    application.sha: ''
 
     slim.hooks:
         slim.before:
