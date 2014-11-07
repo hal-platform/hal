@@ -57,6 +57,14 @@
     @include rhythm(.5,0,0,0);
 }
 
+.card__details .split {
+    margin-bottom: 0;
+}
+
+.rollback {
+    float: right;
+}
+
 .rollback .icon {
     transition: all .9s ease;
 }

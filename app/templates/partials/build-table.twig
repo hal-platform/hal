@@ -40,13 +40,13 @@
 
             {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
             {% set canPush = false %}
-            {% if build.status in ['Waiting', 'Building'] and canUserPush(user, build.repository.key, build.server.environment.key) %}
+            {% if build.status in ['Waiting', 'Building'] and canUserPush(user, build.repository.key, build.environment.key) %}
                 {% set canPush = true %}
             {% endif %}
 
             <td{{ canPush ? ' class="js-build-push"' }}>
                 {% if build.status == 'Success' %}
-                    {% if canUserPush(user, build.repository.key, build.server.environment.key) %}
+                    {% if canUserPush(user, build.repository.key, build.environment.key) %}
                         <a href="{{ urlFor('push.start', {'repo': build.repository.key, 'build': build.id}) }}">Push</a>
                     {% endif %}
                 {% endif %}

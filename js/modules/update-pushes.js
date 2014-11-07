@@ -57,6 +57,8 @@ define(['jquery'], function($) {
                     _this.updatePush(data, $elem);
                 } else if (_this.mode == 'table') {
                     _this.updateTable(data, $elem);
+                } else if (_this.mode == 'grid') {
+                    _this.updateGrid(data, $elem);
                 }
             });
         },
@@ -78,7 +80,10 @@ define(['jquery'], function($) {
                 .text(data.end.text);
         },
         updateTable: function(data, $elem) {
-            var $container = $elem.closest('tr');
+            // derp
+        },
+        updateTable: function(data, $elem) {
+            // derp
         }
     };
 });

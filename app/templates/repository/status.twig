@@ -2,92 +2,32 @@
 
 {% set page_title = repo.key %}
 
+{% import _self as macros %}
+
 {% block content %}
-    <h2>{{ repo.key }} Repository Status</h2>
+    <h2>{{ repo.key }} repository status</h2>
 
     <h3>Server Status</h3>
     <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
 
     <ul class="list--bare cards">
         {% for status in statuses %}
-        <li>
-            <article class="card">
-                <header class="card__header">
-                    <h4 class="mbn"><a href="{{ urlFor('server', {'id': status.deploy.server.id}) }}">{{ status.deploy.server.name }}</a> ({{ status.deploy.server.environment.key }})</h4>
-                    <p class="mbn">{{ status.latest.end|reldate }}</p>
-                </header>
 
-                <section class="card__details">
-                    <ul class="split">
-                        <li>
-                            <span class="split__title">Last push:</span>
-                            {% if status.latest %}
-                                {% if status.latest.status == 'Success' %}
-                                    <span class="status-before--success">
-                                        {{ status.latest.status }}
-                                    </span>
-                                {% elseif status.latest.status == 'Error' %}
-                                    <span class="status-before--error">
-                                        {{ status.latest.status }}
-                                    </span>
-                                {% else %}
-                                    <span class="status-before--other" data-push="{{ status.latest.id }}">
-                                        {{ status.latest.status }}
-                                    </span>
-                                {% endif %}
-                                (<a href="{{ urlFor('push', {'push': status.latest.id}) }}">{{ status.latest.id|formatPushId }}</a>)
-                            {% else %}
-                                None
-                            {% endif %}
-                        </li>
-                        <li>
-                            <span class="split__title">Build:</span>
-                            {% if status.success %}
-                                <a href="{{ urlFor('build', {'repo': repo.id, 'build': status.success.build.id}) }}">{{ status.success.build.id|formatBuildId }}</a>
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </li>
-                        <li>
-                            <span class="split__title">Reference:</span>
-                            {% if status.success %}
-                                {% if githubCommitIsCurrent(repo.githubUser, repo.githubRepo, status.success.build.branch, status.success.build.commit) %}
-                                <span class="status-before--success">
-                                    <a href="{{ githubReference(repo.githubUser, repo.githubRepo, status.success.build.branch) }}">{{ status.success.build.branch|gitref }}</a>
-                                </span>
-                                {% else %}
-                                <span class="status-before--warning">
-                                    <a href="{{ githubReference(repo.githubUser, repo.githubRepo, status.success.build.branch) }}">{{ status.success.build.branch|gitref }}</a>
-                                </span>
-                                {% endif %}
-                                <svg viewBox="0 0 32 32" class="icon">
-                                    <use xlink:href="#fork"></use>
-                                </svg>
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </li>
-                        <li>
-                            <span class="split__title">Commit:</span>
-                            {% if status.success %}
-                                <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit|commit }}</a>
-                                <svg viewBox="0 0 32 32" class="icon">
-                                    <use xlink:href="#github"></use>
-                                </svg>
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </li>
-                    </ul>
-                    <a class="btn--full rollback" href="{{ urlFor('rollback', {'id': repo.id, 'server': status.deploy.server.id}) }}">
-                        <svg viewBox="0 0 32 32" class="icon">
-                            <use xlink:href="#revert"></use>
-                        </svg>
-                        Rollback
-                    </a>
-                </section>
-            </article>
-        </li>
+            {# Determine the active push #}
+            {% if status.latest.status in ['Waiting', 'Pushing'] %}
+                {% set activePush = status.latest %}
+            {% elseif status.success %}
+                {% set activePush = status.success %}
+            {% endif %}
+
+            {# Determine if the is a history to rollback to, or user is allowed to #}
+            {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
+                {% set canRollback = true %}
+            {% else %}
+                {% set canRollback = false %}
+            {% endif %}
+
+            <li>{{ macros.pushCard(repo, status.deploy.server, activePush, canRollback) }}</li>
         {% endfor %}
     </ul>
 
@@ -103,3 +43,81 @@
     </p>
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 {% endblock %}
+
+{% macro pushCard(repo, server, active, canRollback) %}
+
+    <article class="card">
+        <header class="card__header">
+            <h4 class="mbn">
+                <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a> ({{ server.environment.key }})
+
+            {% if canRollback %}
+                <a class="rollback" href="{{ urlFor('rollback', {'id': repo.id, 'server': server.id}) }}" title="Rollback to a successful build">
+                    <svg viewBox="0 0 32 32" class="icon">
+                        <use xlink:href="#revert"></use>
+                    </svg>
+                </a>
+            {% endif %}
+
+            </h4>
+            <p class="mbn">{{ active.created|reldate }}</p>
+        </header>
+
+        <section class="card__details">
+            <ul class="split">
+                <li>
+                    <span class="split__title">Last push:</span>
+                    {% if active %}
+                        {% if active.status in ['Success', 'Error'] %}
+                            <span class="status-before--{{ active.status == 'Success' ? 'success' : 'error' }}">
+                                {{ active.status }}
+                            </span>
+                        {% else %}
+                            <span class="status-before--other" data-push="{{ active.id }}">
+                                {{ active.status }}
+                            </span>
+                        {% endif %}
+
+                        (<a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                    {% else %}
+                        None
+                    {% endif %}
+                </li>
+                <li>
+                    <span class="split__title">Build:</span>
+                    {% if active %}
+                        <a href="{{ urlFor('build', {'repo': repo.id, 'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </li>
+                <li>
+                    <span class="split__title">Reference:</span>
+                    {% if active %}
+                        {% set isCurrent = githubCommitIsCurrent(repo.githubUser, repo.githubRepo, active.build.branch, active.build.commit) %}
+                        <span class="status-before--{{ isCurrent ? 'success' : 'warning' }}">
+                            <a href="{{ githubReference(repo.githubUser, repo.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
+                        </span>
+
+                        <svg viewBox="0 0 32 32" class="icon">
+                            <use xlink:href="#fork"></use>
+                        </svg>
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </li>
+                <li>
+                    <span class="split__title">Commit:</span>
+                    {% if active %}
+                        <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
+                        <svg viewBox="0 0 32 32" class="icon">
+                            <use xlink:href="#github"></use>
+                        </svg>
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </li>
+            </ul>
+        </section>
+    </article>
+{% endmacro %}
