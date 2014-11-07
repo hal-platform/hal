@@ -64,9 +64,10 @@
                                 <li>{{ macros.navlink('Repositories', urlFor('repositories'), 'repo', '-3 0') }}</li>
                                 <li>{{ macros.navlink('Environments', urlFor('environments'), 'leaf', '-1 0') }}</li>
                                 <li>{{ macros.navlink('Users', urlFor('users'), 'users') }}</li>
-                                <li>{{ macros.navlink('Logs', urlFor('logs', {'page': '1'}), 'paper-roll') }}</li>
+                                {# <li>{{ macros.navlink('Logs', urlFor('logs', {'page': '1'}), 'paper-roll') }}</li> #}
                             {% endif %}
 
+                            <li>{{ macros.navlink('Queue', urlFor('queue'), 'in') }}</li>
                             <li>{{ macros.navlink('Profile', urlFor('user.current'), 'user-card') }}</li>
                             <li>{{ macros.navlink('Help', urlFor('help'), 'question', '-6 0') }}</li>
                             <li>{{ macros.navlink('Logout', urlFor('logout'), 'sign-out') }}</li>
