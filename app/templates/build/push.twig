@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h2>Push Build</h2>
+    <h2>Push a build</h2>
 
     <p>Please review the below build details before pushing.</p>
 
@@ -91,57 +91,72 @@
                 <th>Server</th>
                 <th>Reference</th>
                 <th>Commit</th>
-                <th>Pushed</th>
+                <th>Last Pushed</th>
                 <th>Pushed By</th>
-                <th></th>
+                <th class="js-toggle-container"></th>
             </tr>
             </thead>
             <tbody>
             {% set allowSubmit = false %}
             {% for status in statuses %}
+
+                {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
+
                 <tr>
-                    <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }}</a> ({{ status.deployment.server.environment.key }})</td>
-                    {% if status.success %}
+                    <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }}</a></td>
+                    {% if inProgress or status.success %}
+                        {% set active = inProgress ? status.latest : status.success %}
+
+                        {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, active.build.branch, active.build.commit) %}
+                            {% set isCurrent = true %}
+                        {% else %}
+                            {% set isCurrent = false %}
+                        {% endif %}
+
                         <td>
-                            <span {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, status.success.build.branch, status.success.build.commit) %}
-                                class="status-before--success"
-                            {% else %}
-                                class="status-before--other"
-                            {% endif %}>
-                                <a href="{{ githubReference(status.success.build.repository.githubUser, status.success.build.repository.githubRepo, status.success.build.branch) }}">{{ status.success.build.branch|gitref }}</a>
+                            <span class="status-before--{{ isCurrent ? 'success' : 'other' }}">
+                                <a href="{{ githubReference(active.build.repository.githubUser, active.build.repository.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
                                 <svg viewBox="0 0 32 32" class="icon">
                                     <use xlink:href="#fork"></use>
                                 </svg>
                             </span>
                         </td>
                         <td>
-                            <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, status.success.build.commit) }}">{{ status.success.build.commit|commit }}</a>
+                            <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
                             <span class="icon">
                                 <svg viewBox="0 0 32 32">
                                     <use xlink:href="#github"></use>
                                 </svg>
                             </span>
                         </td>
-                        <td>{{ status.success.end|reldate }} (Push <a href="{{ urlFor('push', {'push': status.success.id}) }}">{{ status.success.id }}</a>)</td>
                         <td>
-                            {% if status.success.user %}
-                                <a href="{{ urlFor('user', {'id': status.success.user.id}) }}">{{ status.success.user.name }}</a>
-                            {% elseif status.success.consumer %}
-                                {{ status.success.consumer.name[:20] }}
+                            {% if inProgress %}
+                                Now
+                            {% else %}
+                                {{ active.created|reldate }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id }}</a>)
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if active.user %}
+                                <a href="{{ urlFor('user', {'id': active.user.id}) }}">{{ active.user.name }}</a>
+                            {% elseif active.consumer %}
+                                {{ active.consumer.name[:20] }}
                             {% else %}
                                 Unknown
                             {% endif %}
                         </td>
                     {% else %}
-                        <td colspan="4"></td>
+                        {# No successful pushes #}
+                        <td colspan="4">No successful pushes found.</td>
                     {% endif %}
                     <td>
-                        {% if canUserPush(user, status.deployment.repository.key, status.deployment.server.environment.key) %}
+                        {% if inProgress %}
+                            Please Wait
+                        {% elseif canUserPush(currentUser, status.deployment.repository.key, status.deployment.server.environment.key) %}
                             {% if status.deployment.id in selected %}
-                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}" checked></label>
-                            {% else %}
-                                <label>Push Now <input type="checkbox" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"></label>
+                                {% set isChecked = "checked" %}
                             {% endif %}
+                            <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}" {{ isChecked }}></label>
                             {% set allowSubmit = true %}
                         {% else %}
                             No Access

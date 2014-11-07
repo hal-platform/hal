@@ -32,6 +32,10 @@
             "exclude": [ "main" ]
         },
         {
+            "name": "controller/push-create",
+            "exclude": [ "main" ]
+        },
+        {
             "name": "controller/environment-manage",
             "exclude": [ "main" ]
         },

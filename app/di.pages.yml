@@ -279,13 +279,14 @@ services:
       - @layout
       - @doctrine.em
       - @build.repo
-      - @user
+      - @deployment.repo
+      - @server.repo
   build.push.twig:
     parent: 'twig.template'
     arguments: ['build/push.twig']
 
   rollback.page:
-    class: "QL\\Hal\\Controllers\\Repository\\RollbackController"
+    class: 'QL\Hal\Controllers\Repository\RollbackController'
     arguments:
       - @rollback.twig
       - @layout
@@ -327,7 +328,7 @@ services:
   ######################################################################################################################
 
   push.page:
-    class: "QL\\Hal\\Controllers\\Push\\PushController"
+    class: 'QL\Hal\Controllers\Push\PushController'
     arguments:
       - @push.twig
       - @layout
@@ -337,7 +338,7 @@ services:
     arguments: ['push/push.twig']
 
   pushes.page:
-    class: "QL\\Hal\\Controllers\\Push\\PushesController"
+    class: 'QL\Hal\Controllers\Push\PushesController'
     arguments:
       - @pushes.twig
       - @layout

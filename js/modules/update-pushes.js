@@ -82,7 +82,7 @@ define(['jquery'], function($) {
         updateTable: function(data, $elem) {
             // derp
         },
-        updateTable: function(data, $elem) {
+        updateGrid: function(data, $elem) {
             // derp
         }
     };

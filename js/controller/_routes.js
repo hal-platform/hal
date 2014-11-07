@@ -4,7 +4,9 @@ define([], function() {
 
         { url: "/repositories/add",                 controller: "repository-add" },
         { url: "/repositories/:id:/deployments",    controller: "repository-deployment-add" },
+
         { url: "/repositories/:id:/build",          controller: "build-create" },
+        { url: "/build/:id:/push",                  controller: "push-create" },
 
         { url: "/",                                 controller: "dashboard",                    component: "queue-dashboard" },
         { url: "/queue",                            controller: "queue",                        component: "queue-dashboard" },

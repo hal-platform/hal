@@ -1,129 +1,180 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
+use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
-use Twig_Template;
+use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
-use MCP\Corp\Account\User;
+use Twig_Template;
 
-/**
- *  Build Push Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class BuildPushController
 {
     /**
-     *  @var Twig_Template
+     * @type Twig_Template
      */
     private $template;
 
     /**
-     *  @var Layout
+     * @type Layout
      */
     private $layout;
 
     /**
-     *  @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     *  @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     *  @var User
+     * @type DeploymentRepository
      */
-    private $user;
+    private $deploymentRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param Layout $layout
-     *  @param EntityManager $em
-     *  @param BuildRepository $buildRepo
-     *  @param User $user
+     * @type ServerRepository
+     */
+    private $serverRepo;
+
+    /**
+     * @param Twig_Template $template
+     * @param Layout $layout
+     * @param EntityManager $em
+     * @param BuildRepository $buildRepo
+     * @param DeploymentRepository $deploymentRepo
+     * @param ServerRepository $serverRepo
      */
     public function __construct(
         Twig_Template $template,
         Layout $layout,
         EntityManager $em,
         BuildRepository $buildRepo,
-        User $user
+        DeploymentRepository $deploymentRepo,
+        ServerRepository $serverRepo
     ) {
         $this->template = $template;
         $this->layout = $layout;
         $this->em = $em;
         $this->buildRepo = $buildRepo;
-        $this->user = $user;
+        $this->deploymentRepo = $deploymentRepo;
+        $this->serverRepo = $serverRepo;
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $build = $this->buildRepo->findOneBy(['id' => $params['build']]);
 
         if (!$build || $build->getStatus() != 'Success') {
-            call_user_func($notFound);
-            return;
+            return call_user_func($notFound);
         }
 
-        $dql = "SELECT d FROM QL\Hal\Core\Entity\Deployment d JOIN d.server s WHERE d.repository = :repo AND s.environment = :env";
-        $query = $this->em->createQuery($dql)
-            ->setParameter('repo', $build->getRepository())
-            ->setParameter('env', $build->getEnvironment());
-        $deployments = $query->getResult();
+        $deployments = $this->getDeploymentsForBuild($build);
 
         $statuses = [];
         foreach ($deployments as $deployment) {
+
+            $latest = $this->getLastPush($deployment);
+            if ($latest && $latest->getStatus() === 'Success') {
+                $success = $latest;
+            } else {
+                $success = $this->getLastSuccessfulPush($deployment);
+            }
+
             $statuses[] = [
                 'deployment' => $deployment,
-                'success' => $this->getDeploymentStatus($deployment)
+                'latest' => $latest,
+                'success' => $success
             ];
         }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'build' => $build,
-                    'deployments' => $deployments,
-                    'user' => $this->user,
-                    'selected' => $request->get('deployments', []),
-                    'statuses' => $statuses
-                ]
-            )
-        );
+        $rendered = $this->layout->render($this->template, [
+            'build' => $build,
+            'selected' => $request->get('deployments', []),
+            'statuses' => $statuses
+        ]);
+
+        $response->setBody($rendered);
     }
 
     /**
-     * Get the last successful push for a given deployment
+     * Get the deployments a build can be deployed to.
+     *
+     * @todo Move to repository
+     *
+     * @param Build $build
+     *
+     * @return Deployments[]
+     */
+    private function getDeploymentsForBuild(Build $build)
+    {
+        $servers = $this->serverRepo->findBy(['environment' => $build->getEnvironment()]);
+
+        $criteria = [
+            'repository' => $build->getRepository(),
+            'server' => $servers
+        ];
+
+        return $this->deploymentRepo->findBy($criteria, ['server' => 'ASC']);
+    }
+
+    /**
+     * Get the last push for a given deployment.
      *
      * @todo Move to repository
      *
      * @param Deployment $deployment
-     * @return null|Push
+     *
+     * @return Push|null
      */
-    private function getDeploymentStatus(Deployment $deployment)
+    private function getLastPush(Deployment $deployment)
+    {
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.created DESC';
+        $query = $this->em->createQuery($dql)
+            ->setMaxResults(1)
+            ->setParameter('deploy', $deployment);
+
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * Get the last successful push for a given deployment.
+     *
+     * @todo Move to repository
+     *
+     * @param Deployment $deployment
+     *
+     * @return Push|null
+     */
+    private function getLastSuccessfulPush(Deployment $deployment)
     {
         // get last successful push
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.end DESC';
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.created DESC';
         $query = $this->em->createQuery($dql)
                           ->setMaxResults(1)
                           ->setParameter('deploy', $deployment)
                           ->setParameter('status', 'Success');
+
         return $query->getOneOrNullResult();
     }
 }
