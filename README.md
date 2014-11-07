@@ -1,8 +1,8 @@
 # HAL 9000 #
 
 - [Initial HAL 9000 Setup](#initial-hal-9000-setup)
-- [Updating HAL 9000 after a release](#updateing-hal-9000-after-a-release)
-- [Making Front-End Changes](#making-front-end-changes)
+- [Updating HAL 9000 after a release](#updating-hal-9000-after-a-release-or-pull)
+- [Making Front-end Changes](#making-front-end-changes)
 
 ## Initial HAL 9000 Setup
 
