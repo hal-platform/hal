@@ -1,5 +1,7 @@
 {% extends 'layout.html.twig' %}
 
+{% import _self as macros %}
+
 {% set buster = applicationSha[:4] ?: 'dev' ~ 'now'|date('U') %}
 
 {% block head %}
@@ -54,106 +56,24 @@
                 <nav role="navigation">
                     <ul class="nav--main mbn">
                         {% if account %}
-                            <li>
-                                <a href="{{ urlFor('dashboard') }}" title="Dashboard">
-                                    <svg class="icon" viewBox="-3 0 32 32">
-                                        <use xlink:href="#dashboard"></use>
-                                    </svg>
-                                    Dashboard
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ urlFor('groups') }}" title="groups">
-                                    <svg class="icon" viewBox="0 0 32 32">
-                                        <use xlink:href="#list"></use>
-                                    </svg>
-                                    Groups
-                                </a>
-                            </li>
+                            <li>{{ macros.navlink('Dashboard', urlFor('dashboard'), 'dashboard', '-3 0') }}</li>
+                            <li>{{ macros.navlink('Groups', urlFor('groups'), 'list') }}</li>
 
                             {% if isUserAdmin(account) %}
-                                <li>
-                                    <a href="{{ urlFor('servers') }}" title="servers">
-                                        <svg class="icon" viewBox="-4 0 32 32">
-                                            <use xlink:href="#server"></use>
-                                        </svg>
-                                        Servers
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ urlFor('repositories') }}" title="repositories">
-                                        <svg class="icon" viewBox="-3 0 32 32">
-                                            <use xlink:href="#repo"></use>
-                                        </svg>
-                                        Repositories
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ urlFor('environments') }}" title="environments">
-                                        <svg class="icon" viewBox="-1 0 32 32">
-                                            <use xlink:href="#leaf"></use>
-                                        </svg>
-                                        Environments
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ urlFor('users') }}" title="users">
-                                        <svg class="icon" viewBox="0 0 32 32">
-                                            <use xlink:href="#users"></use>
-                                        </svg>
-                                        Users
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ urlFor('logs', {'page': '1'}) }}">
-                                        <svg class="icon" viewBox="0 0 32 32">
-                                            <use xlink:href="#paper-roll"></use>
-                                        </svg>
-                                        Logs
-                                    </a>
-                                </li>
+                                <li>{{ macros.navlink('Servers', urlFor('servers'), 'server', '-4 0') }}</li>
+                                <li>{{ macros.navlink('Repositories', urlFor('repositories'), 'repo', '-3 0') }}</li>
+                                <li>{{ macros.navlink('Environments', urlFor('environments'), 'leaf', '-1 0') }}</li>
+                                <li>{{ macros.navlink('Users', urlFor('users'), 'users') }}</li>
+                                <li>{{ macros.navlink('Logs', urlFor('logs', {'page': '1'}), 'paper-roll') }}</li>
                             {% endif %}
-                            <li>
-                                <a href="{{ urlFor('user.current') }}" title="profile">
-                                    <svg class="icon" viewBox="0 0 32 32">
-                                        <use xlink:href="#user-card"></use>
-                                    </svg>
-                                    Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ urlFor('help') }}" title="help">
-                                    <svg class="icon" viewBox="-6 0 32 32">
-                                        <use xlink:href="#question"></use>
-                                    </svg>
-                                    Help
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ urlFor('logout') }}" title="logout">
-                                    <svg class="icon" viewBox="0 0 32 32">
-                                        <use xlink:href="#sign-out"></use>
-                                    </svg>
-                                    Logout
-                                </a>
-                            </li>
+
+                            <li>{{ macros.navlink('Profile', urlFor('user.current'), 'user-card') }}</li>
+                            <li>{{ macros.navlink('Help', urlFor('help'), 'question', '-6 0') }}</li>
+                            <li>{{ macros.navlink('Logout', urlFor('logout'), 'sign-out') }}</li>
+
                         {% else %}
-                            <li class="signed-out">
-                                <a href="{{ urlFor('login') }}" title="login">
-                                    <svg class="icon" viewBox="0 0 32 32">
-                                        <use xlink:href="#sign-in"></use>
-                                    </svg>
-                                    Login
-                                </a>
-                            </li>
-                            <li class="signed-out">
-                                <a href="{{ urlFor('help') }}" title="help">
-                                    <svg class="icon" viewBox="-6 0 32 32">
-                                        <use xlink:href="#question"></use>
-                                    </svg>
-                                Help
-                                </a>
-                            </li>
+                            <li class="signed-out">{{ macros.navlink('Help', urlFor('help'), 'question', '-6 0') }}</li>
+                            <li class="signed-out">{{ macros.navlink('Login', urlFor('login'), 'sign-in') }}</li>
                         {% endif %}
                     </ul>
                 </nav>
@@ -216,3 +136,12 @@
         <!-- END ANLYTICS -->
     {% endif %}
 {% endblock %}
+
+{% macro navlink(title, link, icon, viewbox) %}
+    <a href="{{ link }}" title="{{ title }}">
+        <svg class="icon" viewBox="{{ viewbox|default('0 0') }} 32 32">
+            <use xlink:href="#{{ icon }}"></use>
+        </svg>
+        {{ title }}
+    </a>
+{% endmacro %}
