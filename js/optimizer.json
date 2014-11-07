@@ -55,7 +55,7 @@
                 "controller/builds",
                 "controller/push",
                 "controller/pushes",
-                "controller/repository-status",
+                "controller/repository-status"
             ]
         },
         {
@@ -64,7 +64,7 @@
             "exclude": [ "main" ],
             "include": [
                 "controller/dashboard",
-                "controller/queue",
+                "controller/queue"
             ]
         }
     ],
