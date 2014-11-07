@@ -1,4 +1,4 @@
-# HAL 9000 #
+# HAL 9000
 
 - [Initial HAL 9000 Setup](#initial-hal-9000-setup)
 - [Updating HAL 9000 after a release](#updating-hal-9000-after-a-release-or-pull)
