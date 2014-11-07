@@ -138,8 +138,9 @@ class HalExtension extends Twig_Extension
             'applicationTitle' =>  $this->applicationTitle,
 
             'session' =>  $this->session,
-            'currentUser' =>  $this->session->get('account'),
-            'isFirstLogin' =>  $this->session->get('isFirstLogin'),
+            'currentHalUser' =>  $this->session->get('hal-user'),
+            'currentLdapUser' =>  $this->session->get('ldap-user'),
+            'isFirstLogin' =>  $this->session->get('is-first-login'),
         ];
     }
 

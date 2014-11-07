@@ -15,7 +15,7 @@
 
     <div>
         {# primary action #}
-        {% if isUserAdmin(currentUser) %}
+        {% if isUserAdmin(currentLdapUser) %}
             <a class="btn" href="{{ urlFor('environment.admin.add') }}">Add Environment</a>
         {% endif %}
         {% if envs %}

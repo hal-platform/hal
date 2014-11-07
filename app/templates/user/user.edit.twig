@@ -1,14 +1,19 @@
 {% extends "user/user.twig" %}
 
-{% set page_title = 'Edit Profile: '~ldapUser.firstName~' '~ldapUser.lastName %}
+{% set isSelf = (currentHalUser.id == user.id) %}
+{% set name = ldapUser ? ldapUser.firstName ~ ' ' ~ ldapUser.lastName : user.name %}
+{% set isEditing = true %}
+
+{% set page_title = 'Edit Profile: ' ~ name %}
 
 {% block name %}
-    <input class="text-input" type="text" value="{{ getUsersActualName(profileUser) }}">
+    <h2>Name</h2>
+    <input class="text-input" type="text" value="{{ getUsersActualName(user) }}">
 {% endblock %}
 
 {% block actions %}
     <input class="btn" type="submit" value="Save Profile">
-    <a class="secondary-action" href="{{ urlFor('user', {'id': profileUser.id}) }}">Cancel</a>
+    <a class="secondary-action" href="{{ urlFor('user', {'id': user.id}) }}">Cancel</a>
 {% endblock %}
 
 {% block content %}

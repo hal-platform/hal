@@ -78,12 +78,25 @@ class UsersController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $users = $this->userRepo->findBy(['isActive' => true], ['name' => 'ASC']);
+        $users = $this->userRepo->findBy([], ['name' => 'ASC']);
+
+        $active = [];
+        $inactive = [];
+
+        foreach ($users as $user) {
+            if ($user->isActive()) {
+                $active[] = $user;
+            } else {
+                $inactive[] = $user;
+            }
+        }
+
         $context = [
-            'users' => $users
+            'users' => $active,
+            'inactiveUsers' => $inactive
         ];
 
-        if ($request->get('prune') && $prunedUsers = $this->autoPrune($users)) {
+        if ($request->get('prune') && $prunedUsers = $this->autoPrune($active)) {
             $context['pruned'] = $prunedUsers;
         }
 

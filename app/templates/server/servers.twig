@@ -28,7 +28,7 @@
 
     <div>
         {# primary action #}
-        {% if isUserAdmin(currentUser) %}
+        {% if isUserAdmin(currentLdapUser) %}
             <a class="btn" href="{{ urlFor('server.admin.add') }}">Add Server</a>
         {% endif %}
     </div>

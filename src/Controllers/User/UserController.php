@@ -61,7 +61,7 @@ class UserController
     /**
      *  @var LdapUser
      */
-    private $user;
+    private $ldapUser;
 
     /**
      *  @var EntityManager
@@ -74,7 +74,7 @@ class UserController
      * @param LdapService $ldap
      * @param UserRepository $userRepo
      * @param TokenRepository $tokens
-     * @param LdapUser $user
+     * @param LdapUser $ldapUser
      * @param EntityManager $em
      * @param PermissionsService $permissions
      */
@@ -84,7 +84,7 @@ class UserController
         LdapService $ldap,
         UserRepository $userRepo,
         TokenRepository $tokens,
-        LdapUser $user,
+        LdapUser $ldapUser,
         EntityManager $em,
         PermissionsService $permissions
     ) {
@@ -94,7 +94,7 @@ class UserController
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
         $this->tokens = $tokens;
-        $this->user = $user;
+        $this->ldapUser = $ldapUser;
         $this->em = $em;
     }
 
@@ -103,24 +103,27 @@ class UserController
      * @param Response $response
      * @param array $params
      * @param callable $notFound
-     * @return mixed
+     *
+     * @return null
      */
     public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
     {
         // default to current user
-        $id = (isset($params['id'])) ? $params['id'] : $this->user->commonId();
+        $id = (isset($params['id'])) ? $params['id'] : $this->ldapUser->commonId();
 
         if (!$user = $this->userRepo->findOneBy(['id' => $id])) {
             return call_user_func($notFound);
         }
 
-        // is the user viewing their own profile?
-        $self = ($id == $this->user->commonId());
+        // If current user, load tokens
+        $tokens = [];
+        if ($id == $this->ldapUser->commonId()) {
+            $tokens = $this->tokens->findBy(['user' => $user]);
+        }
 
         $rendered = $this->layout->render($this->template, [
-            'self' => $self,
-            'tokens' => ($self) ? $this->tokens->findBy(['user' => $user]) : [],
-            'profileUser' => $user,
+            'tokens' => $tokens,
+            'user' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
             'permissions' => $this->permissions->userPushPermissionPairs($user->getHandle()),
             'pushes' => $this->getPushCount($user),

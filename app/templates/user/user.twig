@@ -1,34 +1,44 @@
 {% extends 'base.html.twig' %}
 
+{% set isSelf = (currentHalUser.id == user.id) %}
+{% set name = ldapUser ? ldapUser.firstName ~ ' ' ~ ldapUser.lastName : user.name %}
+
 {% if page_title is not defined %}
-    {% set page_title = ldapUser.firstName~' '~ldapUser.lastName %}
+    {% set page_title = name %}
 {% endif %}
 
 {% block content %}
-    <h2 data-nofunzone="{{ ldapUser.firstName }} {{ ldapUser.lastName }}" data-freud="{{ getUsersFreudianName() }}">
-        {{ getUsersActualName(profileUser) }}
+
+    {% block name %}
+    <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
+        {{ getUsersActualName(user) }}
     </h2>
+    {% endblock %}
 
-    <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
+    {% if ldapUser %}
+        <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
+    {% endif %}
 
-    <p><img src="{{ profileUser.pictureUrl.asString() }}" width="150"></p>
+    <p><img src="{{ user.pictureUrl.asString() }}" width="150"></p>
 
     <h3>Contact</h3>
     <ul>
-        <li>Email: <a href="mailto:{{ profileUser.Email }}">{{ profileUser.Email }}</a></li>
-        <li>Phone: {{ ldapUser.workPhone }} (x<strong>{{ ldapUser.workExt }}</strong>)</li>
-        <li>Mobile: {{ ldapUser.mobilePhone }}</li>
-        <li><a href="http://rockworldapps/roster/default.aspx?firstname={{ ldapUser.firstName }}&lastname={{ ldapUser.lastName }}">Rockword Link</a></li>
+        <li>Email: <a href="mailto:{{ user.Email }}">{{ user.Email }}</a></li>
+        {% if ldapUser %}
+            <li>Phone: {{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})</li>
+            <li>Mobile: {{ ldapUser.mobilePhone }}</li>
+            <li><a href="http://quniverse/profiles/Person.aspx?accountname=MI%5c{{ user.handle }}">Rockword Profile</a></li>
+        {% endif %}
     </ul>
-
-
 
     <h3>Stats</h3>
     <ul>
+        <li><b>HAL Status:</b> {{ user.isActive ? 'active' : 'inactive' }}</li>
+        <li><b>LDAP Status:</b> {{ ldapUser ? 'active' : 'removed' }}</li>
         <li><b>Total Builds:</b> {{ builds }}</li>
         <li><b>Total Pushes:</b> {{ pushes }}</li>
         <li>
-            <b>Github Page:</b> <a href="http://git/{{ profileUser.handle }}">http://git/{{ profileUser.handle }}</a>
+            <b>Github Page:</b> <a href="http://git/{{ user.handle }}">http://git/{{ user.handle }}</a>
             <span class="icon">
                 <svg viewBox="0 0 32 32">
                     <use xlink:href="#github"></use>
@@ -46,29 +56,27 @@
             <thead>
             <tr>
                 <th>Environment</th>
-                <th colspan="3">Repositories</th>
+                <th>Repositories</th>
             </tr>
             </thead>
             <tbody>
             {% for pairs in permissions %}
                 <tr>
                     <td>{{ pairs|first.environment.key|title }}</td>
-                    {% for chunk in pairs|chunk(3) %}
-                        <td>
-                            <ul>
-                                {% for pair in chunk %}
-                                    <li><a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    {% endfor %}
+                    <td>
+                        <ul class="inline-list--comma">
+                            {% for pair in pairs %}
+                                <li><a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     {% endif %}
 
-    {% if self %}
+    {% if isSelf and not isEditing %}
         <h3>Personal Access Tokens</h3>
         <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
 
@@ -100,9 +108,9 @@
 
     <div>
         {% block actions %}
-            {% if isUserAdmin(currentUser) or currentUser.commonId == profileUser.getId %}
+            {% if isUserAdmin(currentLdapUser) or isSelf %}
                 {# secondary actions #}
-                <a class="btn--action" href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
+                <a class="btn--action" href="{{ urlFor('user.edit', {'id': user.id}) }}">Edit</a>
             {% endif %}
         {% endblock %}
     </div>

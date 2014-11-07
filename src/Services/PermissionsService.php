@@ -384,6 +384,12 @@ class PermissionsService
      */
     public function showAnalytics($user)
     {
+        $user = $this->getUser($user);
+        if (!$user instanceof LdapUser) {
+            // user not found in ldap
+            return true;
+        }
+
         // don't show for HAL admins (web-core folks)
         if ($this->isUserInGroup($user, $this->generateHalAdminDn())) {
             return false;
@@ -406,7 +412,7 @@ class PermissionsService
     {
         $user = $this->getUser($user);
 
-        if (!($user instanceof LdapUser)) {
+        if (!$user instanceof LdapUser) {
             // user not found in ldap
             return false;
         }

@@ -57,7 +57,7 @@ class AdminBouncer
      */
     public function __invoke(Request $request, Response $response)
     {
-        $account = $this->session->get('account');
+        $account = $this->session->get('ldap-user');
 
         if (!($account instanceof User) || !$this->permissions->allowAdmin($account)) {
             $response->status(403);

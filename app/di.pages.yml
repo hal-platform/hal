@@ -13,7 +13,7 @@ services:
     arguments:
       - @dashboard.twig
       - @layout
-      - @user
+      - @currentUser.ldap
       - @permissions
       - @build.repo
       - @push.repo
@@ -150,7 +150,7 @@ services:
       - @repository.repo
       - @build.repo
       - @push.repo
-      - @user
+      - @currentUser.ldap
   repository.status.twig:
     parent: 'twig.template'
     arguments: ['repository/status.twig']
@@ -267,7 +267,7 @@ services:
       - @environment.repo
       - @doctrine.em
       - @url.helper
-      - @user
+      - @currentUser.ldap
       - @permissions
       - @github
       - @unique.helper
@@ -293,7 +293,7 @@ services:
       - @repository.repo
       - @server.repo
       - @doctrine.em
-      - @user
+      - @currentUser.ldap
   rollback.twig:
     parent: 'twig.template'
     arguments: ['repository/rollback.twig']
@@ -307,7 +307,7 @@ services:
       - @user.repo
       - @doctrine.em
       - @url.helper
-      - @user
+      - @currentUser.ldap
       - @permissions
 
   builds.page:
@@ -318,7 +318,7 @@ services:
       - @doctrine.em
       - @repository.repo
       - @build.repo
-      - @user
+      - @currentUser.ldap
   builds.twig:
     parent: 'twig.template'
     arguments: ['build/builds.twig']
@@ -508,7 +508,7 @@ services:
       - @ldapService
       - @user.repo
       - @token.repo
-      - @user
+      - @currentUser.ldap
       - @doctrine.em
       - @permissions
   user.twig:
@@ -537,7 +537,7 @@ services:
       - @user.repo
       - @doctrine.em
       - @url.helper
-      - @user
+      - @currentUser.ldap
   user.edit.twig:
     parent: 'twig.template'
     arguments: ['user/user.edit.twig']
@@ -554,7 +554,7 @@ services:
     arguments:
       - @doctrine.em
       - @user.repo
-      - @user
+      - @currentUser.ldap
       - @url.helper
 
   user.token.delete.handle:
@@ -562,7 +562,7 @@ services:
     arguments:
       - @doctrine.em
       - @token.repo
-      - @user
+      - @currentUser.ldap
       - @url.helper
 
   ######################################################################################################################

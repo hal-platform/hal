@@ -55,11 +55,11 @@
             {% block navigation %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
-                        {% if currentUser %}
+                        {% if currentLdapUser %}
                             <li>{{ base_macros.navlink('Dashboard', urlFor('dashboard'), 'dashboard', '-3 0') }}</li>
                             <li>{{ base_macros.navlink('Groups', urlFor('groups'), 'list') }}</li>
 
-                            {% if isUserAdmin(currentUser) %}
+                            {% if isUserAdmin(currentLdapUser) %}
                                 <li>{{ base_macros.navlink('Servers', urlFor('servers'), 'server', '-4 0') }}</li>
                                 <li>{{ base_macros.navlink('Repositories', urlFor('repositories'), 'repo', '-3 0') }}</li>
                                 <li>{{ base_macros.navlink('Environments', urlFor('environments'), 'leaf', '-1 0') }}</li>
@@ -123,7 +123,7 @@
 {% block script %}
     <script data-main="/js/main.js?v={{ buster }}" src="/js/vendor/require-2.1.11.min.js"></script>
     {% block pageScript %}{% endblock %}
-    {% if (not user or (user and showAnalytics(user))) %}
+    {% if showAnalytics(currentLdapUser) %}
         <!-- BEGIN ANLYTICS -->
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

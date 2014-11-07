@@ -75,6 +75,20 @@ class Session
     }
 
     /**
+     *  Clear the session
+     *
+     *  @return null
+     */
+    public function clear()
+    {
+        if (!$this->started()) {
+            return;
+        }
+
+        $_SESSION = [];
+    }
+
+    /**
      *  Set a key value pair in session
      *
      *  @param string $key

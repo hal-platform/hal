@@ -9,20 +9,22 @@ services:
   # RUN TIME INJECTED (SYNTHETIC) SERVICES
   ######################################################################################################################
 
-  # This is set by LoginBouncer
-  user:
+  # Set by LoginBouncer
+  currentUser.ldap:
     class: 'MCP\Corp\Account\User'
     synthetic: true
 
-  service_container:
-    class: 'Symfony\Component\DependencyInjection\ContainerInterface'
+  # Set by LoginBouncer
+  currentUser.hal:
+    class: 'QL\Hal\Core\Entity\User'
     synthetic: true
 
-  root:
-    synthetic: true
-
-  # This is set by the API Auth Bouncer
+  # Set by the API Auth Bouncer
   requester:
+    synthetic: true
+
+  # Set by bootstrap
+  root:
     synthetic: true
 
   ######################################################################################################################

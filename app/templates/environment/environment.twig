@@ -14,14 +14,14 @@
         {% endfor %}
     </ul>
 
-    {% if isUserAdmin(currentUser) and servers %}
+    {% if isUserAdmin(currentLdapUser) and servers %}
         <p><strong>Note:</strong> All associated servers must be removed or transferred to remove this environment.</p>
     {% endif %}
 
     <div>
-        {% if isUserAdmin(currentUser) %}
+        {% if isUserAdmin(currentLdapUser) %}
             <a class="btn--action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a>
-            {% if not servers and canUserDelete(currentUser) %}
+            {% if not servers and canUserDelete(currentLdapUser) %}
                 <a class="btn--destructive secondary-action" href="{{ urlFor('environment.admin.remove.handle', {id: env.id}) }}">Remove Environment</a>
             {% endif %}
         {% endif %}

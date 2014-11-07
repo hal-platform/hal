@@ -56,11 +56,12 @@ class LoginBouncer
      */
     public function __invoke(Request $request, Response $response)
     {
-        if (!$this->session->get('account')) {
+        if (!$this->session->get('hal-user')) {
             $this->url->redirectFor('login', [], ['redirect' => $request->getPathInfo()]);
             throw new Stop;
         }
 
-        $this->container->set('user', $this->session->get('account'));
+        $this->container->set('currentUser.ldap', $this->session->get('ldap-user'));
+        $this->container->set('currentUser.hal', $this->session->get('hal-user'));
     }
 }

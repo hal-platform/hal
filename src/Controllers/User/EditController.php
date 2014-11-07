@@ -64,7 +64,7 @@ class EditController
     /**
      *  @var LdapUser
      */
-    private $currentUser;
+    private $ldapUser;
 
     /**
      *  @param Twig_Template $template
@@ -74,7 +74,7 @@ class EditController
      *  @param UserRepository $userRepo
      *  @param EntityManager $em
      *  @param UrlHelper $url
-     *  @param LdapUser $currentUser
+     *  @param LdapUser $ldapUser
      */
     public function __construct(
         Twig_Template $template,
@@ -84,7 +84,7 @@ class EditController
         UserRepository $userRepo,
         EntityManager $em,
         UrlHelper $url,
-        LdapUser $currentUser
+        LdapUser $ldapUser
     ) {
         $this->template = $template;
         $this->layout = $layout;
@@ -93,7 +93,7 @@ class EditController
         $this->userRepo = $userRepo;
         $this->em = $em;
         $this->url = $url;
-        $this->currentUser = $currentUser;
+        $this->ldapUser = $ldapUser;
     }
 
     /**
@@ -116,10 +116,10 @@ class EditController
         }
 
         $rendered = $this->layout->render($this->template, [
-            'profileUser' => $user,
+            'user' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
-            'permissions' => $this->permissions->userPermissionPairs($user->getHandle()),
-            'pushes' => $this->getPushCount($user)
+            'pushes' => $this->getPushCount($user),
+            'builds' => $this->getBuildCount($user)
         ]);
 
         $response->body($rendered);
@@ -135,7 +135,22 @@ class EditController
     {
         $dql = 'SELECT count(p.id) FROM QL\Hal\Core\Entity\Push p WHERE p.user = :user';
         $query = $this->em->createQuery($dql)
-                          ->setParameter('user', $user);
+            ->setParameter('user', $user);
+
+        return $query->getSingleScalarResult();
+    }
+
+    /**
+     * Get the number of builds for a given user entity
+     *
+     * @param User $user
+     * @return mixed
+     */
+    private function getBuildCount(User $user)
+    {
+        $dql = 'SELECT count(b.id) FROM QL\Hal\Core\Entity\Build b WHERE b.user = :user';
+        $query = $this->em->createQuery($dql)
+            ->setParameter('user', $user);
 
         return $query->getSingleScalarResult();
     }
@@ -148,7 +163,7 @@ class EditController
      */
     private function isUserAllowed(User $user)
     {
-        if ($this->permissions->allowAdmin($this->currentUser)) {
+        if ($this->permissions->allowAdmin($this->ldapUser)) {
             return true;
         }
 

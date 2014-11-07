@@ -2,6 +2,8 @@
 
 {% set page_title = "Users" %}
 
+{% import _self as macros %}
+
 {% block content %}
 
     {% if pruned %}
@@ -11,7 +13,16 @@
     {% endif %}
 
     <h2>Users</h2>
+    {{ macros.userTable(users) }}
 
+    {% if isUserAdmin(currentLdapUser) and inactiveUsers %}
+        <h2>Inactive Users</h2>
+        {{ macros.userTable(inactiveUsers) }}
+    {% endif %}
+{% endblock %}
+
+
+{% macro userTable(users) %}
     <table class="tablesaw tablesaw-stack" data-mode="stack">
         <thead>
         <tr>
@@ -36,5 +47,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-{% endblock %}
+{% endmacro %}
