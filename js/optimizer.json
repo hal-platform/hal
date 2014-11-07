@@ -19,35 +19,21 @@
         },
 
         // Shared modules
-        {
-            "name": "modules/queue/queue",
-            "exclude": [ "main" ]
-        },
+        // Modules used in multiple controllers must be listed first!
+        // Add the module name to the "exclude" list for the controllers that use it.
+        // {
+        //     "name": "modules/sample-module",
+        //     "exclude": [ "main" ]
+        // },
 
         // controllers
-        {
-            "name": "controller/build",
-            "exclude": [ "main" ]
-        },
         {
             "name": "controller/build-create",
             "exclude": [ "main" ]
         },
         {
-            "name": "controller/dashboard",
-            "exclude": [ "main", "modules/queue/queue" ]
-        },
-        {
             "name": "controller/environment-manage",
             "exclude": [ "main" ]
-        },
-        {
-            "name": "controller/push",
-            "exclude": [ "main" ]
-        },
-        {
-            "name": "controller/queue",
-            "exclude": [ "main", "modules/queue/queue" ]
         },
         {
             "name": "controller/repository-add",
@@ -57,9 +43,29 @@
             "name": "controller/repository-deployment-add",
             "exclude": [ "main" ]
         },
+
+        // components (controller groups)
+        // Combine multiple controllers into components and add "component" to their route
         {
-            "name": "controller/repository-status",
-            "exclude": [ "main" ]
+            "name": "component/job-updater",
+            "create": true,
+            "exclude": [ "main" ],
+            "include": [
+                "controller/build",
+                "controller/builds",
+                "controller/push",
+                "controller/pushes",
+                "controller/repository-status",
+            ]
+        },
+        {
+            "name": "component/queue-dashboard",
+            "create": true,
+            "exclude": [ "main" ],
+            "include": [
+                "controller/dashboard",
+                "controller/queue",
+            ]
         }
     ],
     "stubModules" : [

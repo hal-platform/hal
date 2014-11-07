@@ -23,8 +23,15 @@ define(
             attachRoutes: function(router, routes) {
                 routes.forEach(function(route) {
                     router.addRoute(route.url, function() {
-                        var modulePath = "controller/" + route.controller;
-                        require([modulePath], function(controller) {});
+                        var controllerModule = "controller/" + route.controller;
+
+                        if (!route.hasOwnProperty('component')) {
+                            return require([controllerModule], function(controller) {});
+                        }
+
+                        require(["component/" + route.component], function(component) {
+                            return require([controllerModule], function(controller) {});
+                        });
                     });
                 });
             },

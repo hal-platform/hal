@@ -1,4 +1,4 @@
-define(['jquery', 'modules/queue/jobUpdater'], function($, jobUpdater) {
+define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
     return {
         pollingTimer: null,
         interval: 10,
