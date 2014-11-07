@@ -9,18 +9,17 @@ atlassian-ide-plugin.xml
 /.phpunit/
 /phpunit.xml
 
-# compiled assets / package installation
+# compiled assets
 /.bundle/
 /.sass-cache/
-/bin/sass
-/bin/sass-convert
-/bin/scss
-/bower_components/
 /js/require-config.json
-/node_modules/
 /public/css/
 /public/img/
 /public/js/
+
+# package installation
+/bower_components/
+/node_modules/
 /vendor/
 
 # compiled configuration

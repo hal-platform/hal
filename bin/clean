@@ -1,36 +1,31 @@
 #!/usr/bin/env bash
 DIR=$( cd "$( dirname "$0" )" && pwd )
-DELFILES=(
-    "src/CachedContainer.php"
-)
 
-DELFOLDERS=(
-    ".sass-cache"
-    "node_modules"
-    "phpunit"
-    "vendor"
-    "app/cache/*"
-)
+function clean() {
+    DELFILES=(
+        ".bundle"
+        ".doctrine"
+        ".phpunit"
+        ".sass-cache"
+        ".twig"
+        "js/require-config.json"
+        "src/CachedContainer.php"
+        "node_modules"
+        "bower_components"
+        "vendor"
+    )
 
-# Remove files
-for i in ${DELFILES[@]}
-do
-    FILE="$DIR/../$i"
-    EXISTS=$(test -e $FILE && echo 1 || echo 0)
-    if [[ $EXISTS -eq "1" ]]; then
-        echo "Removing $FILE"
-        rm -f "$FILE"
-    fi
+    # Remove files
+    for i in ${DELFILES[@]}
+    do
+        FILE="$DIR/../$i"
+        EXISTS=$(test -e $FILE && echo 1 || echo 0)
+        if [[ $EXISTS -eq "1" ]]; then
+            echo "Removing $FILE"
+            rm -rf "$FILE"
+        fi
 
-done
+    done
+}
 
-# Remove directories
-for i in ${DELFOLDERS[@]}
-do
-    FILE="$DIR/../$i"
-    EXISTS=$(test -e $FILE && echo 1 || echo 0)
-    if [[ $EXISTS -eq "1" ]]; then
-        echo "Removing $FILE"
-        rm -r "$FILE"
-    fi
-done
+clean
