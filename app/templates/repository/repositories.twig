@@ -40,7 +40,7 @@
     </table>
 
     {# primary action #}
-    {% if isAdmin %}
+    {% if isUserAdmin(currentUser) %}
         <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
     {% endif %}
 {% endblock %}

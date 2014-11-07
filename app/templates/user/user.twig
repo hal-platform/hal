@@ -100,7 +100,7 @@
 
     <div>
         {% block actions %}
-            {% if isAdmin or currentUser.commonId == profileUser.getId %}
+            {% if isUserAdmin(currentUser) or currentUser.commonId == profileUser.getId %}
                 {# secondary actions #}
                 <a class="btn--action" href="{{ urlFor('user.edit', {'id': profileUser.id}) }}">Edit</a>
             {% endif %}

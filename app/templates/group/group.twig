@@ -44,17 +44,17 @@
     {% else %}
         <p>
             There are no repositories associated with this group.
-            {% if isAdmin %}
+            {% if isUserAdmin(currentUser) %}
                 <br><a href="{{ urlFor('repository.admin.add') }}">Add a repository</a>
             {% endif %}
         </p>
     {% endif %}
 
-    {% if isAdmin and repos %}
+    {% if isUserAdmin(currentUser) and repos %}
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    {% if isAdmin %}
+    {% if isUserAdmin(currentUser) %}
         <ul class="choice-list--flush">
             <li class="choice-list__choice">
                 <a class="btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>

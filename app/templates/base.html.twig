@@ -55,11 +55,11 @@
             {% block navigation %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
-                        {% if account %}
+                        {% if currentUser %}
                             <li>{{ macros.navlink('Dashboard', urlFor('dashboard'), 'dashboard', '-3 0') }}</li>
                             <li>{{ macros.navlink('Groups', urlFor('groups'), 'list') }}</li>
 
-                            {% if isUserAdmin(account) %}
+                            {% if isUserAdmin(currentUser) %}
                                 <li>{{ macros.navlink('Servers', urlFor('servers'), 'server', '-4 0') }}</li>
                                 <li>{{ macros.navlink('Repositories', urlFor('repositories'), 'repo', '-3 0') }}</li>
                                 <li>{{ macros.navlink('Environments', urlFor('environments'), 'leaf', '-1 0') }}</li>

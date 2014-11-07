@@ -17,12 +17,12 @@
         {% endfor %}
     </ul>
 
-    {% if isAdmin and deployments %}
+    {% if isUserAdmin(currentUser) and deployments %}
         <p><strong>Note:</strong> All associated deployments must be removed or transferred to remove this server.</p>
     {% endif %}
 
     <div>
-        {% if isAdmin %}
+        {% if isUserAdmin(currentUser) %}
             <a class="btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
             {% if not deployments and canUserDelete(currentUser) %}
                 <a class="btn--destructive secondary-action" href="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}">Remove Server</a>

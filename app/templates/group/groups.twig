@@ -46,7 +46,7 @@
 
     <div>
         {# primary action #}
-        {% if isAdmin %}
+        {% if isUserAdmin(currentUser) %}
             <a class="btn" href="{{ urlFor('group.admin.add') }}">Add Group</a>
         {% endif %}
     </div>
