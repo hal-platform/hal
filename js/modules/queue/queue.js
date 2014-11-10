@@ -14,12 +14,14 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
         init: function() {
             this.lastRead = this.getUTCTime();
             this.$queue = $(this.queueTarget);
-            this.togglePolling();
+            if (this.$queue.length) {
+                this.togglePolling();
 
-            jobUpdater.init();
+                jobUpdater.init();
 
-            // Need to load initial jobs list
-            this.storeInitialJobs();
+                // Need to load initial jobs list
+                this.storeInitialJobs();
+            }
         },
         refresh: function() {
             // get new jobs
