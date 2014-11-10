@@ -9,7 +9,6 @@ namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -20,11 +19,6 @@ class EnvironmentController
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var EnvironmentRepository
@@ -38,18 +32,15 @@ class EnvironmentController
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param EnvironmentRepository $envRepo
      *  @param ServerRepository $serverRepo
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         EnvironmentRepository $envRepo,
         ServerRepository $serverRepo
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->envRepo = $envRepo;
         $this->serverRepo = $serverRepo;
     }
@@ -68,11 +59,11 @@ class EnvironmentController
             return $notFound();
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'env' => $environment,
             'servers' => $this->serverRepo->findBy(['environment' => $environment])
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }

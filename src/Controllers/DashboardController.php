@@ -1,4 +1,9 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers;
 
@@ -10,7 +15,6 @@ use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Layout;
 use QL\Hal\Services\PermissionsService;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -22,11 +26,6 @@ class DashboardController
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var LdapUser
@@ -55,7 +54,6 @@ class DashboardController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param LdapUser $user
      * @param PermissionsService $permissions
      * @param BuildRepository $buildRepo
@@ -64,7 +62,6 @@ class DashboardController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         LdapUser $user,
         PermissionsService $permissions,
         BuildRepository $buildRepo,
@@ -72,7 +69,6 @@ class DashboardController
         UserRepository $userRepo
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->user = $user;
         $this->permissions = $permissions;
 
@@ -98,7 +94,7 @@ class DashboardController
             $pending = $this->getAllPendingJobs();
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'user' => $this->user,
             'repositories' => $this->permissions->userRepositories($this->user),
             'pending' => $pending,

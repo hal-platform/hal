@@ -1,18 +1,17 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Build;
 
 use QL\Hal\Core\Entity\Repository\BuildRepository;
-use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use Twig_Template;
 
-/**
- *  Build Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class BuildController
 {
     /**
@@ -21,26 +20,16 @@ class BuildController
     private $template;
 
     /**
-     *  @var Layout
-     */
-    private $layout;
-
-    /**
      *  @var BuildRepository
      */
     private $buildRepo;
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param BuildRepository $buildRepo
      */
-    public function __construct(
-        Twig_Template $template,
-        Layout $layout,
-        BuildRepository $buildRepo
-    ) {
-        $this->layout = $layout;
+    public function __construct(Twig_Template $template, BuildRepository $buildRepo)
+    {
         $this->template = $template;
         $this->buildRepo = $buildRepo;
     }
@@ -60,13 +49,10 @@ class BuildController
             return;
         }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'build' => $build
-                ]
-            )
-        );
+        $rendered = $this->template->render([
+            'build' => $build
+        ]);
+
+        $response->setBody($rendered);
     }
 }

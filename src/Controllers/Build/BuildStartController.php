@@ -10,13 +10,10 @@ namespace QL\Hal\Controllers\Build;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository;
-use Twig_Template;
+use QL\Hal\Services\GithubService;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
-use QL\Hal\Services\GithubService;
-use Icecave\SemVer\Version;
-use Icecave\SemVer\Comparator;
+use Twig_Template;
 
 class BuildStartController
 {
@@ -24,11 +21,6 @@ class BuildStartController
      * @var Twig_Template
      */
     private $template;
-
-    /**
-     * @var Layout
-     */
-    private $layout;
 
     /**
      * @var RepositoryRepository
@@ -47,14 +39,12 @@ class BuildStartController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param RepositoryRepository $repoRepo
      * @param EnvironmentRepository $envRepo
      * @param GithubService $github
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         RepositoryRepository $repoRepo,
         EnvironmentRepository $envRepo,
         GithubService $github
@@ -88,7 +78,7 @@ class BuildStartController
             'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ];
 
-        $response->body($this->layout->render($this->template, $context));
+        $response->body($this->template->render($context));
     }
 
     /**

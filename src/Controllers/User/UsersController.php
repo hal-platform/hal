@@ -10,27 +10,16 @@ namespace QL\Hal\Controllers\User;
 use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Entity\Repository\UserRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- *  Users Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class UsersController
 {
     /**
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var UserRepository
@@ -53,20 +42,17 @@ class UsersController
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param UserRepository $userRepo
      *  @param EntityManager $entityManager
      *  @param LdapService $ldap
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         UserRepository $userRepo,
         EntityManager $entityManager,
         LdapService $ldap
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->userRepo = $userRepo;
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
@@ -100,8 +86,8 @@ class UsersController
             $context['pruned'] = $prunedUsers;
         }
 
-        $rendered = $this->layout->render($this->template, $context);
-        $response->body($rendered);
+        $rendered = $this->template->render($context);
+        $response->setBody($rendered);
     }
 
     /**

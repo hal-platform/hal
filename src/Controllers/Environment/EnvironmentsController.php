@@ -8,7 +8,6 @@
 namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -21,27 +20,17 @@ class EnvironmentsController
     private $template;
 
     /**
-     *  @var Layout
-     */
-    private $layout;
-
-    /**
      *  @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param EnvironmentRepository $envRepo
      */
-    public function __construct(
-        Twig_Template $template,
-        Layout $layout,
-        EnvironmentRepository $envRepo
-    ) {
+    public function __construct(Twig_Template $template, EnvironmentRepository $envRepo)
+    {
         $this->template = $template;
-        $this->layout = $layout;
         $this->envRepo = $envRepo;
     }
 
@@ -54,10 +43,10 @@ class EnvironmentsController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'envs' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }

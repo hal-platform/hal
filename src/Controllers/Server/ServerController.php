@@ -9,27 +9,16 @@ namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- *  Server Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class ServerController
 {
     /**
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var ServerRepository
@@ -43,18 +32,15 @@ class ServerController
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param ServerRepository $serverRepo
      *  @param DeploymentRepository $deployRepo
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         ServerRepository $serverRepo,
         DeploymentRepository $deployRepo
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->serverRepo = $serverRepo;
         $this->deployRepo = $deployRepo;
     }
@@ -71,12 +57,12 @@ class ServerController
             return $notFound();
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'server' => $server,
             'deployments' => $this->deployRepo->findBy(['server' => $server])
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }
 

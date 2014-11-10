@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Layout;
 use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -23,11 +22,6 @@ class AdminEditController
      * @var Twig_Template
      */
     private $template;
-
-    /**
-     * @var Layout
-     */
-    private $layout;
 
     /**
      * @var GroupRepository
@@ -51,7 +45,6 @@ class AdminEditController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param GroupRepository $groupRepo
      * @param EntityManager $entityManager
      * @param Session $session
@@ -59,14 +52,12 @@ class AdminEditController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         GroupRepository $groupRepo,
         EntityManager $entityManager,
         Session $session,
         UrlHelper $url
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->groupRepo = $groupRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
@@ -104,7 +95,7 @@ class AdminEditController
             }
         }
 
-        $rendered = $this->layout->render($this->template, $renderContext);
+        $rendered = $this->template->render($renderContext);
         $response->body($rendered);
     }
 

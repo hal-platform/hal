@@ -11,8 +11,8 @@ services:
     # aliases
     twig.cache.dir:                 {parent: panthor.twig.cache.dir}
     twig.template.dir:              {parent: panthor.twig.template.dir}
-    # twig.template:                  {parent: panthor.twig.template}
-    # twig.context:                   {parent: panthor.twig.context}
+    twig.template:                  {parent: panthor.twig.template}
+    twig.context:                   {parent: panthor.twig.context}
     twig.loader:                    {parent: panthor.twig.loader}
     twig.environment:               {parent: panthor.twig.environment}
 
@@ -41,3 +41,9 @@ services:
         class: 'Twig_Environment'
         arguments: [@twig.loader]
         configurator: [@panthor.twig.configurator, 'configure']
+
+    panthor.twig.template:
+        class: 'QL\Panthor\Twig\LazyTwig'
+        arguments: [@twig.environment, @twig.context]
+    panthor.twig.context:
+        class: 'QL\Panthor\Twig\Context'

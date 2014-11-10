@@ -14,27 +14,16 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- *  Repository Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class RepositoryStatusController
 {
     /**
      * @var Twig_Template
      */
     private $template;
-
-    /**
-     * @var Layout
-     */
-    private $layout;
 
     /**
      * @var EntityManager
@@ -63,7 +52,6 @@ class RepositoryStatusController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
@@ -72,7 +60,6 @@ class RepositoryStatusController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
@@ -80,7 +67,6 @@ class RepositoryStatusController
         User $user
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->em = $em;
         $this->repoRepo = $repoRepo;
         $this->buildRepo = $buildRepo;
@@ -105,7 +91,7 @@ class RepositoryStatusController
 
         $builds = $this->buildRepo->findBy(['repository' => $repo], ['created' => 'DESC'], 10);
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
             'statuses' => $this->getDeploymentsWithStatus($repo),

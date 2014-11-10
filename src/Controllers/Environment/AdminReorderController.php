@@ -8,16 +8,10 @@
 namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- *  Environment Reorder Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class AdminReorderController
 {
     /**
@@ -26,27 +20,17 @@ class AdminReorderController
     private $template;
 
     /**
-     *  @var Layout
-     */
-    private $layout;
-
-    /**
      *  @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param EnvironmentRepository $envRepo
      */
-    public function __construct(
-        Twig_Template $template,
-        Layout $layout,
-        EnvironmentRepository $envRepo
-    ) {
+    public function __construct(Twig_Template $template, EnvironmentRepository $envRepo)
+    {
         $this->template = $template;
-        $this->layout = $layout;
         $this->envRepo = $envRepo;
     }
 
@@ -64,10 +48,10 @@ class AdminReorderController
             return $notFound();
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'envs' => $environments
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }

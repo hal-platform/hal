@@ -13,7 +13,6 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Layout;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Session;
 use Slim\Http\Request;
@@ -26,11 +25,6 @@ class AdminAddController
      * @var Twig_Template
      */
     private $template;
-
-    /**
-     * @var Layout
-     */
-    private $layout;
 
     /**
      * @var GroupRepository
@@ -71,7 +65,6 @@ class AdminAddController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param GroupRepository $groupRepo
      * @param RepositoryRepository $repoRepo
      * @param EntityManager $entityManager
@@ -81,7 +74,6 @@ class AdminAddController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         GroupRepository $groupRepo,
         RepositoryRepository $repoRepo,
         EntityManager $entityManager,
@@ -90,7 +82,6 @@ class AdminAddController
         UrlHelper $url
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->groupRepo = $groupRepo;
         $this->repoRepo = $repoRepo;
         $this->entityManager = $entityManager;
@@ -148,7 +139,7 @@ class AdminAddController
             }
         }
 
-        $rendered = $this->layout->render($this->template, $renderContext);
+        $rendered = $this->template->render($renderContext);
         $response->body($rendered);
     }
 

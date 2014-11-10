@@ -1,4 +1,9 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Push;
 
@@ -6,16 +11,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use Twig_Template;
 
-/**
- *  Repository Push History Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class PushesController
 {
     const MAX_PER_PAGE = 25;
@@ -24,11 +23,6 @@ class PushesController
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var EntityManager
@@ -47,20 +41,17 @@ class PushesController
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param EntityManager $em
      *  @param RepositoryRepository $repoRepo
      *  @param PushRepository $pushRepo
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         PushRepository $pushRepo
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->em = $em;
         $this->pushRepo = $pushRepo;
         $this->repoRepo = $repoRepo;
@@ -104,7 +95,7 @@ class PushesController
         $total = count($paginator);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'repo' => $repo,
             'pushes' => $pushes,
             'page' => $page,

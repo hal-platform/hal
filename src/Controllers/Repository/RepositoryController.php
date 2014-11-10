@@ -9,28 +9,17 @@ namespace QL\Hal\Controllers\Repository;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Layout;
 use QL\Hal\Services\PermissionsService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- * Class RepositoryController
- *
- * @package QL\Hal\Controllers\Repository
- */
 class RepositoryController
 {
     /**
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var RepositoryRepository
@@ -49,20 +38,17 @@ class RepositoryController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param RepositoryRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
      * @param PermissionsService $permissions
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         RepositoryRepository $repoRepo,
         DeploymentRepository $deploymentRepo,
         PermissionsService $permissions
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->repoRepo = $repoRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->permissions = $permissions;
@@ -80,7 +66,7 @@ class RepositoryController
             return $notFound();
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'repository' => $repo,
             'deployments' => $this->deploymentRepo->findBy(['repository' => $repo], ['server' => 'ASC']),
             'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey())

@@ -23,7 +23,6 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
     public $response;
 
     public $twig;
-    public $layout;
     public $buildRepo;
     public $pushRepo;
 
@@ -33,7 +32,6 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
         $this->response = new Response;
 
         $this->twig = Mockery::mock('Twig_Template');
-        $this->layout = Mockery::mock('QL\Hal\Layout');
         $this->buildRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\BuildRepository');
         $this->pushRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\PushRepository');
     }
@@ -51,20 +49,15 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn(new ArrayCollection($pushes));
 
         $context = null;
-        $this->layout
+        $this->twig
             ->shouldReceive('render')
-            ->with($this->twig, Mockery::on(function($v) use (&$context) {
+            ->with(Mockery::on(function($v) use (&$context) {
                 $context = $v;
                 return true;
             }))
             ->once();
 
-        $controller = new QueueController(
-            $this->twig,
-            $this->layout,
-            $this->buildRepo,
-            $this->pushRepo
-        );
+        $controller = new QueueController($this->twig, $this->buildRepo, $this->pushRepo);
 
         $controller($this->request, $this->response);
 
@@ -107,20 +100,15 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn(new ArrayCollection($pushes));
 
         $context = null;
-        $this->layout
+        $this->twig
             ->shouldReceive('render')
-            ->with($this->twig, Mockery::on(function($v) use (&$context) {
+            ->with(Mockery::on(function($v) use (&$context) {
                 $context = $v;
                 return true;
             }))
             ->once();
 
-        $controller = new QueueController(
-            $this->twig,
-            $this->layout,
-            $this->buildRepo,
-            $this->pushRepo
-        );
+        $controller = new QueueController($this->twig, $this->buildRepo, $this->pushRepo);
 
         $controller($this->request, $this->response);
 

@@ -13,7 +13,6 @@ use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Repository\TokenRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\Repository\UserRepository;
-use QL\Hal\Layout;
 use QL\Hal\PushPermissionService;
 use QL\Hal\Services\PermissionsService;
 use QL\HttpProblem\HttpProblemException;
@@ -21,22 +20,12 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- *  Profile Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class UserController
 {
     /**
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      * @var PermissionsService
@@ -70,7 +59,6 @@ class UserController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param LdapService $ldap
      * @param UserRepository $userRepo
      * @param TokenRepository $tokens
@@ -80,7 +68,6 @@ class UserController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         LdapService $ldap,
         UserRepository $userRepo,
         TokenRepository $tokens,
@@ -89,7 +76,6 @@ class UserController
         PermissionsService $permissions
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->permissions = $permissions;
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
@@ -121,7 +107,7 @@ class UserController
             $tokens = $this->tokens->findBy(['user' => $user]);
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'tokens' => $tokens,
             'user' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
@@ -130,7 +116,7 @@ class UserController
             'builds' => $this->getBuildCount($user)
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 
     /**

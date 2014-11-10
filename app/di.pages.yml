@@ -5,28 +5,27 @@ services:
     class: 'QL\Hal\Controllers\StaticController'
     arguments: [@delete.confirm.twig]
   delete.confirm.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['delete.confirm.twig']
 
   dashboard.page:
     class: 'QL\Hal\Controllers\DashboardController'
     arguments:
       - @dashboard.twig
-      - @layout
       - @currentUser.ldap
       - @permissions
       - @build.repo
       - @push.repo
       - @user.repo
   dashboard.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['dashboard.twig']
 
   login.page:
     class: 'QL\Hal\Controllers\LoginController'
     arguments: [@login.twig]
   login.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['login.twig']
   login.handle:
     class: 'QL\Hal\Controllers\LoginHandleController'
@@ -46,11 +45,10 @@ services:
     class: 'QL\Hal\Controllers\QueueController'
     arguments:
         - @queue.twig
-        - @layout
         - @build.repo
         - @push.repo
   queue.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['queue.twig']
 
   ######################################################################################################################
@@ -59,36 +57,31 @@ services:
 
   groups.page:
     class: 'QL\Hal\Controllers\Group\GroupsController'
-    arguments:
-      - @groups.twig
-      - @layout
-      - @group.repo
+    arguments: [@groups.twig, @group.repo]
   groups.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['group/groups.twig']
 
   group.page:
     class: 'QL\Hal\Controllers\Group\GroupController'
     arguments:
       - @group.twig
-      - @layout
       - @group.repo
       - @repository.repo
   group.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['group/group.twig']
 
   group.admin.add.page:
     class: 'QL\Hal\Controllers\Group\AdminAddController'
     arguments:
       - @group.admin.add.twig
-      - @layout
       - @group.repo
       - @doctrine.em
       - @session
       - @url.helper
   group.admin.add.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments:  ['group/admin.add.twig']
   group.admin.add.handle:
     parent: 'group.admin.add.page'
@@ -97,13 +90,12 @@ services:
     class: 'QL\Hal\Controllers\Group\AdminEditController'
     arguments:
       - @group.admin.edit.twig
-      - @layout
       - @group.repo
       - @doctrine.em
       - @session
       - @url.helper
   group.admin.edit.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments:  ['group/admin.edit.twig']
   group.admin.edit.handle:
     parent: 'group.admin.edit.page'
@@ -121,45 +113,39 @@ services:
 
   repositories.page:
     class: 'QL\Hal\Controllers\Repository\RepositoriesController'
-    arguments:
-      - @repositories.twig
-      - @layout
-      - @repository.repo
+    arguments: [@repositories.twig, @repository.repo]
   repositories.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['repository/repositories.twig']
 
   repository.page:
     class: 'QL\Hal\Controllers\Repository\RepositoryController'
     arguments:
       - @repository.twig
-      - @layout
       - @repository.repo
       - @deployment.repo
       - @permissions
   repository.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['repository/repository.twig']
 
   repository.status.page:
     class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
     arguments:
       - @repository.status.twig
-      - @layout
       - @doctrine.em
       - @repository.repo
       - @build.repo
       - @push.repo
       - @currentUser.ldap
   repository.status.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['repository/status.twig']
 
   repository.admin.add.page:
     class: 'QL\Hal\Controllers\Repository\AdminAddController'
     arguments:
       - @repository.admin.add.twig
-      - @layout
       - @group.repo
       - @repository.repo
       - @doctrine.em
@@ -167,7 +153,7 @@ services:
       - @session
       - @url.helper
   repository.admin.add.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['repository/admin.add.twig']
   repository.admin.add.handle:
     parent: 'repository.admin.add.page'
@@ -176,14 +162,13 @@ services:
     class: 'QL\Hal\Controllers\Repository\AdminEditController'
     arguments:
         - @repository.admin.edit.twig
-        - @layout
         - @group.repo
         - @repository.repo
         - @doctrine.em
         - @session
         - @url.helper
   repository.admin.edit.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['repository/admin.edit.twig']
   repository.admin.edit.handle:
     parent: 'repository.admin.edit.page'
@@ -205,13 +190,12 @@ services:
     class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentsController'
     arguments:
       - @repository.deployments.twig
-      - @layout
       - @environment.repo
       - @server.repo
       - @repository.repo
       - @deployment.repo
   repository.deployments.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['repository/deployments.twig']
 
   repository.deployment.admin.add.handle:
@@ -237,29 +221,25 @@ services:
   #####################################################################################################################
 
   build.page:
-    class: "QL\\Hal\\Controllers\\Build\\BuildController"
-    arguments:
-      - @build.twig
-      - @layout
-      - @build.repo
+    class: 'QL\Hal\Controllers\Build\BuildController'
+    arguments: [@build.twig, @build.repo]
   build.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['build/build.twig']
 
   build.start.page:
-    class: "QL\\Hal\\Controllers\\Build\\BuildStartController"
+    class: 'QL\Hal\Controllers\Build\BuildStartController'
     arguments:
       - @build.start.twig
-      - @layout
       - @repository.repo
       - @environment.repo
       - @github
   build.start.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['build/start.twig']
 
   build.start.handle.page:
-    class: "QL\\Hal\\Controllers\\Build\\BuildStartHandleController"
+    class: 'QL\Hal\Controllers\Build\BuildStartHandleController'
     arguments:
       - @session
       - @repository.repo
@@ -273,29 +253,27 @@ services:
       - @unique.helper
 
   build.push.page:
-    class: "QL\\Hal\\Controllers\\Build\\BuildPushController"
+    class: 'QL\Hal\Controllers\Build\BuildPushController'
     arguments:
       - @build.push.twig
-      - @layout
       - @doctrine.em
       - @build.repo
       - @deployment.repo
       - @server.repo
   build.push.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['build/push.twig']
 
   rollback.page:
     class: 'QL\Hal\Controllers\Repository\RollbackController'
     arguments:
       - @rollback.twig
-      - @layout
       - @repository.repo
       - @server.repo
       - @doctrine.em
       - @currentUser.ldap
   rollback.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['repository/rollback.twig']
 
   build.push.handle:
@@ -311,16 +289,15 @@ services:
       - @permissions
 
   builds.page:
-    class: "QL\\Hal\\Controllers\\Build\\BuildsController"
+    class: 'QL\Hal\Controllers\Build\BuildsController'
     arguments:
       - @builds.twig
-      - @layout
       - @doctrine.em
       - @repository.repo
       - @build.repo
       - @currentUser.ldap
   builds.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['build/builds.twig']
 
   ######################################################################################################################
@@ -329,24 +306,20 @@ services:
 
   push.page:
     class: 'QL\Hal\Controllers\Push\PushController'
-    arguments:
-      - @push.twig
-      - @layout
-      - @push.repo
+    arguments: [@push.twig, @push.repo]
   push.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['push/push.twig']
 
   pushes.page:
     class: 'QL\Hal\Controllers\Push\PushesController'
     arguments:
       - @pushes.twig
-      - @layout
       - @doctrine.em
       - @repository.repo
       - @push.repo
   pushes.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['push/pushes.twig']
 
   ######################################################################################################################
@@ -355,33 +328,26 @@ services:
 
   environments.page:
     class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
-    arguments:
-      - @environments.twig
-      - @layout
-      - @environment.repo
+    arguments: [@environments.twig, @environment.repo]
   environments.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['environment/environments.twig']
 
   environment.page:
     class: 'QL\Hal\Controllers\Environment\EnvironmentController'
     arguments:
       - @environment.twig
-      - @layout
       - @environment.repo
       - @server.repo
   environment.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['environment/environment.twig']
 
   environment.admin.reorder.page:
     class: 'QL\Hal\Controllers\Environment\AdminReorderController'
-    arguments:
-      - @environment.admin.reorder.twig
-      - @layout
-      - @environment.repo
+    arguments: [@environment.admin.reorder.twig, @environment.repo]
   environment.admin.reorder.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['environment/admin.reorder.twig']
   environment.admin.reorder.handle:
     class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
@@ -395,13 +361,12 @@ services:
     class: 'QL\Hal\Controllers\Environment\AdminAddController'
     arguments:
       - @environment.admin.add.twig
-      - @layout
       - @environment.repo
       - @doctrine.em
       - @session
       - @url.helper
   environment.admin.add.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['environment/admin.add.twig']
   environment.admin.add.handle:
     parent: environment.admin.add.page
@@ -410,13 +375,12 @@ services:
     class: 'QL\Hal\Controllers\Environment\AdminEditController'
     arguments:
       - @environment.admin.edit.twig
-      - @layout
       - @environment.repo
       - @doctrine.em
       - @session
       - @url.helper
   environment.admin.edit.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['environment/admin.edit.twig']
   environment.admin.edit.handle:
     parent: environment.admin.edit.page
@@ -436,37 +400,32 @@ services:
 
   servers.page:
     class: 'QL\Hal\Controllers\Server\ServersController'
-    arguments:
-      - @servers.twig
-      - @layout
-      - @server.repo
+    arguments: [@servers.twig, @server.repo]
   servers.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['server/servers.twig']
 
   server.page:
     class: 'QL\Hal\Controllers\Server\ServerController'
     arguments:
       - @server.twig
-      - @layout
       - @server.repo
       - @deployment.repo
   server.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['server/server.twig']
 
   server.admin.add.page:
     class: 'QL\Hal\Controllers\Server\AdminAddController'
     arguments:
       - @server.admin.add.twig
-      - @layout
       - @server.repo
       - @environment.repo
       - @doctrine.em
       - @session
       - @url.helper
   server.admin.add.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['server/admin.add.twig']
   server.admin.add.handle:
     parent: 'server.admin.add.page'
@@ -475,14 +434,13 @@ services:
     class: 'QL\Hal\Controllers\Server\AdminEditController'
     arguments:
       - @server.admin.edit.twig
-      - @layout
       - @server.repo
       - @environment.repo
       - @doctrine.em
       - @session
       - @url.helper
   server.admin.edit.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['server/admin.edit.twig']
   server.admin.edit.handle:
     parent: 'server.admin.edit.page'
@@ -504,7 +462,6 @@ services:
     class: 'QL\Hal\Controllers\User\UserController'
     arguments:
       - @user.twig
-      - @layout
       - @ldapService
       - @user.repo
       - @token.repo
@@ -512,33 +469,31 @@ services:
       - @doctrine.em
       - @permissions
   user.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['user/user.twig']
 
   users.page:
     class: 'QL\Hal\Controllers\User\UsersController'
     arguments:
       - @users.twig
-      - @layout
       - @user.repo
       - @doctrine.em
       - @ldapService
   users.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['user/users.twig']
 
   user.edit.page:
     class: 'QL\Hal\Controllers\User\EditController'
     arguments:
       - @user.edit.twig
-      - @layout
       - @permissions
       - @ldapService
       - @user.repo
       - @url.helper
       - @currentUser.ldap
   user.edit.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['user/user.edit.twig']
   user.edit.handle:
     class: 'QL\Hal\Controllers\User\EditHandle'
@@ -572,7 +527,7 @@ services:
     parent: 'static.controller'
     arguments: [@admin.dashboard.twig]
   admin.dashboard.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['admin/dashboard.twig']
 
   ######################################################################################################################
@@ -583,29 +538,29 @@ services:
     parent: 'static.controller'
     arguments: [@help.twig]
   help.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['help/help.twig']
 
   help.deployment.page:
     parent: 'static.controller'
     arguments: [@help.deployment.twig]
   help.deployment.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['help/deployment.twig']
 
   # help.api.page:
   #   parent: 'static.controller'
   #   arguments: [@help.api.twig]
   # help.api.twig:
-  #   parent: 'twig.template'
-  #   tags: [{name: 'twig.template'}]
+  #   parent: 'twig.template.old'
+  #   tags: [{name: 'twig.template.old'}]
   #   arguments: ['help/api.twig']
 
   help.hal.page:
     parent: 'static.controller'
     arguments: [@help.hal.twig]
   help.hal.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['help/hal.twig']
 
   ######################################################################################################################
@@ -619,17 +574,14 @@ services:
     parent: 'static.controller'
     arguments: [@denied.twig, 403]
   denied.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['denied.twig']
 
   logs.page:
     class: 'QL\Hal\Controllers\LogsController'
-    arguments:
-      - @logs.twig
-      - @layout
-      - @doctrine.em
+    arguments: [@logs.twig, @doctrine.em]
   logs.twig:
-    parent: 'twig.template'
+    parent: 'twig.template.old'
     arguments: ['logs.twig']
 
   admin.utility.page:
@@ -638,7 +590,7 @@ services:
 
   # The twig template for slim errors (404, 500)
   error.pages.twig:
-      parent: 'twig.template'
+      parent: 'twig.template.old'
       arguments: ['error.twig']
 
   debug.page:

@@ -8,16 +8,10 @@
 namespace QL\Hal\Controllers\Repository;
 
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- *  Repositories Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class RepositoriesController
 {
     /**
@@ -26,24 +20,17 @@ class RepositoriesController
     private $template;
 
     /**
-     *  @var Layout
-     */
-    private $layout;
-
-    /**
      *  @var RepositoryRepository
      */
     private $repoRepo;
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param RepositoryRepository $repoRepo
      */
-    public function __construct(Twig_Template $template, Layout $layout, RepositoryRepository $repoRepo)
+    public function __construct(Twig_Template $template, RepositoryRepository $repoRepo)
     {
         $this->template = $template;
-        $this->layout = $layout;
         $this->repoRepo = $repoRepo;
     }
 
@@ -56,7 +43,7 @@ class RepositoriesController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'repos' => $this->repoRepo->findBy([], ['key' => 'ASC'])
         ]);
 

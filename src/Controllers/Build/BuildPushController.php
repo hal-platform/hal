@@ -14,7 +14,6 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use QL\Hal\Layout;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -25,11 +24,6 @@ class BuildPushController
      * @type Twig_Template
      */
     private $template;
-
-    /**
-     * @type Layout
-     */
-    private $layout;
 
     /**
      * @type EntityManager
@@ -53,7 +47,6 @@ class BuildPushController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param EntityManager $em
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
@@ -61,14 +54,12 @@ class BuildPushController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         EntityManager $em,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
         ServerRepository $serverRepo
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->em = $em;
         $this->buildRepo = $buildRepo;
         $this->deploymentRepo = $deploymentRepo;
@@ -108,7 +99,7 @@ class BuildPushController
             ];
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'build' => $build,
             'selected' => $request->get('deployments', []),
             'statuses' => $statuses

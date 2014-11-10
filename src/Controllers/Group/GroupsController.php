@@ -1,18 +1,17 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Group;
 
-use Twig_Template;
+use QL\Hal\Core\Entity\Repository\GroupRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
-use QL\Hal\Core\Entity\Repository\GroupRepository;
+use Twig_Template;
 
-/**
- *  Groups Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class GroupsController
 {
     /**
@@ -21,27 +20,17 @@ class GroupsController
     private $template;
 
     /**
-     *  @var Layout
-     */
-    private $layout;
-
-    /**
      *  @var GroupRepository
      */
     private $groupRepo;
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param GroupRepository $groupRepo
      */
-    public function __construct(
-        Twig_Template $template,
-        Layout $layout,
-        GroupRepository $groupRepo
-    ) {
+    public function __construct(Twig_Template $template, GroupRepository $groupRepo)
+    {
         $this->template = $template;
-        $this->layout = $layout;
         $this->groupRepo = $groupRepo;
     }
 
@@ -53,7 +42,7 @@ class GroupsController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'groups' => $this->groupRepo->findBy([], ['name' => 'ASC'])
         ]);
 

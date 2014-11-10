@@ -1,4 +1,9 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers;
 
@@ -9,17 +14,11 @@ use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Layout;
 use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- *  Login Handle Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class LoginHandleController
 {
     /**

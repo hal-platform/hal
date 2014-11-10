@@ -12,28 +12,18 @@ use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Layout;
 use QL\Hal\Services\PermissionsService;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-/**
- * User Edit Controller
- *
- * @package QL\Hal\Controllers\User
- */
 class EditController
 {
     /**
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var PermissionsService
@@ -62,7 +52,6 @@ class EditController
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param PermissionsService $permissions
      *  @param LdapService $ldap
      *  @param UserRepository $userRepo
@@ -71,7 +60,6 @@ class EditController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         PermissionsService $permissions,
         LdapService $ldap,
         UserRepository $userRepo,
@@ -79,7 +67,6 @@ class EditController
         LdapUser $ldapUser
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->permissions = $permissions;
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
@@ -102,18 +89,17 @@ class EditController
         }
 
         if (!$this->isUserAllowed($user)) {
-            // the answer is no
             return $this->url->redirectFor('denied');
         }
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'user' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
             'pushes' => count($user->getPushes()),
             'builds' => count($user->getBuilds())
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 
     /**

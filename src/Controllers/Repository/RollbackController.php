@@ -1,26 +1,26 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManager;
+use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
-use MCP\Corp\Account\User;
+use Twig_Template;
 
-/**
- *  Rollback Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class RollbackController
 {
+    /**
+     *  @var Twig_Template
+     */
     private $template;
-
-    private $layout;
 
     /**
      *  @var RepositoryRepository
@@ -38,28 +38,25 @@ class RollbackController
     private $em;
 
     /**
-     *  @var User
+     *  @var LdapUser
      */
     private $user;
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param RepositoryRepository $repoRepo
      *  @param ServerRepository $serverRepository
      *  @param EntityManager $em
-     *  @param User $user
+     *  @param LdapUser $user
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         RepositoryRepository $repoRepo,
         ServerRepository $serverRepository,
         EntityManager $em,
-        User $user
+        LdapUser $user
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->repoRepo = $repoRepo;
         $this->serverRepo = $serverRepository;
         $this->em = $em;
@@ -86,16 +83,11 @@ class RollbackController
             ->setParameter('buildstatus', 'Success');
         $pushes = $query->getResult();
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'repo' => $repo,
-                    'server' => $server,
-                    'pushes' => $pushes,
-                    'user' => $this->user
-                ]
-            )
-        );
+        $rendered = $this->template->render([
+            'repo' => $repo,
+            'server' => $server,
+            'pushes' => $pushes,
+            'user' => $this->user
+        ]);
     }
 }

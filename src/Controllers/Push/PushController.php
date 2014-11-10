@@ -1,18 +1,17 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Push;
 
 use QL\Hal\Core\Entity\Repository\PushRepository;
-use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
+use Twig_Template;
 
-/**
- *  Push Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class PushController
 {
     /**
@@ -21,26 +20,16 @@ class PushController
     private $template;
 
     /**
-     *  @var Layout
-     */
-    private $layout;
-
-    /**
      *  @var PushRepository
      */
     private $pushRepo;
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param PushRepository $pushRepo
      */
-    public function __construct(
-        Twig_Template $template,
-        Layout $layout,
-        PushRepository $pushRepo
-    ) {
-        $this->layout = $layout;
+    public function __construct(Twig_Template $template, PushRepository $pushRepo)
+    {
         $this->template = $template;
         $this->pushRepo = $pushRepo;
     }
@@ -60,13 +49,10 @@ class PushController
             return;
         }
 
-        $response->body(
-            $this->layout->render(
-                $this->template,
-                [
-                    'push' => $push
-                ]
-            )
-        );
+        $rendered = $this->template->render([
+            'push' => $push
+        ]);
+
+        $response->setBody($rendered);
     }
 }

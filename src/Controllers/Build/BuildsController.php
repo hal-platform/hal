@@ -1,22 +1,21 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use MCP\Corp\Account\User;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use Twig_Template;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Hal\Layout;
-use MCP\Corp\Account\User;
+use Twig_Template;
 
-/**
- *  Repository Build History Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class BuildsController
 {
     const MAX_PER_PAGE = 25;
@@ -25,11 +24,6 @@ class BuildsController
      *  @var Twig_Template
      */
     private $template;
-
-    /**
-     *  @var Layout
-     */
-    private $layout;
 
     /**
      *  @var EntityManager
@@ -53,7 +47,6 @@ class BuildsController
 
     /**
      *  @param Twig_Template $template
-     *  @param Layout $layout
      *  @param EntityManager $em
      *  @param RepositoryRepository $repoRepo
      *  @param BuildRepository $buildRepo
@@ -61,14 +54,12 @@ class BuildsController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
         User $user
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->em = $em;
         $this->buildRepo = $buildRepo;
         $this->repoRepo = $repoRepo;
@@ -113,7 +104,7 @@ class BuildsController
         $total = count($paginator);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $rendered = $this->layout->render($this->template, [
+        $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
             'page' => $page,

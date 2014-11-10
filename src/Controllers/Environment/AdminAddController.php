@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Layout;
 use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -23,11 +22,6 @@ class AdminAddController
      * @var Twig_Template
      */
     private $template;
-
-    /**
-     * @var Layout
-     */
-    private $layout;
 
     /**
      * @var EnvironmentRepository
@@ -51,7 +45,6 @@ class AdminAddController
 
     /**
      * @param Twig_Template $template
-     * @param Layout $layout
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
      * @param Session $session
@@ -59,14 +52,12 @@ class AdminAddController
      */
     public function __construct(
         Twig_Template $template,
-        Layout $layout,
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,
         Session $session,
         UrlHelper $url
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->envRepo = $envRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
@@ -94,8 +85,8 @@ class AdminAddController
             return $this->url->redirectFor('environments');
         }
 
-        $rendered = $this->layout->render($this->template, $renderContext);
-        $response->body($rendered);
+        $rendered = $this->template->render($renderContext);
+        $response->setBody($rendered);
     }
 
     /**
