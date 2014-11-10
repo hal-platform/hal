@@ -225,14 +225,23 @@ parameters:
 
         user.token.create.handle:
             method: 'POST'
-            route: '/tokens'
+            route: '/users/:id/tokens'
             stack: ['login.bouncer', 'user.token.create.handle']
+            conditions: {id: '[\d]+'}
 
-        user.token.delete.handle:
+        user.token.delete.confirm:
             method: 'GET'
-            route: '/tokens/:token/revoke'
+            route: '/users/:id/tokens/:token/revoke'
+            stack: ['login.bouncer', 'delete.confirm.page']
+            conditions:
+                - id: '[\d]+'
+                - token: '[0-9a-zA-Z]{40,40}'
+        user.token.delete.handle:
+            method: 'POST'
+            route: '/users/:id/tokens/:token/revoke'
             stack: ['login.bouncer', 'user.token.delete.handle']
             conditions:
+                - id: '[\d]+'
                 - token: '[0-9a-zA-Z]{40,40}'
 
         ########################################################################################################################

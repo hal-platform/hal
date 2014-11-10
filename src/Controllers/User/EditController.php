@@ -94,9 +94,7 @@ class EditController
 
         $rendered = $this->template->render([
             'user' => $user,
-            'ldapUser' => $this->ldap->getUserByCommonId($id),
-            'pushes' => count($user->getPushes()),
-            'builds' => count($user->getBuilds())
+            'ldapUser' => $this->ldap->getUserByCommonId($id)
         ]);
 
         $response->setBody($rendered);

@@ -464,9 +464,7 @@ services:
       - @user.twig
       - @ldapService
       - @user.repo
-      - @token.repo
       - @currentUser.ldap
-      - @doctrine.em
       - @permissions
   user.twig:
     parent: 'twig.template.old'
@@ -508,16 +506,18 @@ services:
     arguments:
       - @doctrine.em
       - @user.repo
-      - @currentUser.ldap
       - @url.helper
+      - @permissions
+      - @currentUser.hal
 
   user.token.delete.handle:
     class: 'QL\Hal\Controllers\User\Token\TokenDeleteController'
     arguments:
       - @doctrine.em
       - @token.repo
-      - @currentUser.ldap
       - @url.helper
+      - @permissions
+      - @currentUser.hal
 
   ######################################################################################################################
   # ADMIN CONTROLLERS

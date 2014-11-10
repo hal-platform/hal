@@ -7,13 +7,14 @@
 
 namespace QL\Hal\Controllers\User\Token;
 
+use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Repository\TokenRepository;
+use QL\Hal\Core\Entity\Token;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Services\PermissionsService;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use MCP\Corp\Account\User as LdapUser;
-use Doctrine\ORM\EntityManager;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Core\Entity\Token;
 
 /**
  * Allow a user to delete an API token
@@ -23,17 +24,12 @@ class TokenDeleteController
     /**
      * @var EntityManager
      */
-    private $em;
+    private $entityManager;
 
     /**
      * @var TokenRepository
      */
-    private $tokens;
-
-    /**
-     * @var LdapUser
-     */
-    private $user;
+    private $tokenRepo;
 
     /**
      * @var UrlHelper
@@ -41,22 +37,36 @@ class TokenDeleteController
     private $url;
 
     /**
-     * @param EntityManager $em
-     * @param TokenRepository $tokens
-     * @param LdapUser $user
+     * @var PermissionsService
+     */
+    private $permissions;
+
+    /**
+     * @var LdapUser
+     */
+    private $currentUser;
+
+    /**
+     * @param EntityManager $entityManager
+     * @param TokenRepository $tokenRepo
      * @param UrlHelper $url
+     * @param PermissionsService $permissions
+     * @param User $currentUser
      */
     public function __construct(
-        EntityManager $em,
-        TokenRepository $tokens,
-        LdapUser $user,
-        UrlHelper $url
+        EntityManager $entityManager,
+        TokenRepository $tokenRepo,
+        UrlHelper $url,
+        PermissionsService $permissions,
+        User $currentUser
     ) {
-        $this->em = $em;
-        $this->tokens = $tokens;
-        $this->user = $user;
+        $this->entityManager = $entityManager;
+        $this->tokenRepo = $tokenRepo;
+        $this->permissions = $permissions;
         $this->url = $url;
+        $this->currentUser = $currentUser;
     }
+
     /**
      * @param Request $request
      * @param Response $response
@@ -65,20 +75,35 @@ class TokenDeleteController
      */
     public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
     {
-        $token = $this->tokens->findOneBy(['value' => $params['token']]);
+        $token = $this->tokenRepo->findOneBy(['value' => $params['token']]);
 
         if (!$token instanceof Token) {
-            return $notFound();
+            return call_user_func($notFound);
         }
 
-        if ($token->getUser()->getId() !== $this->user->commonId()) {
+        if (!$this->isUserAllowed($token->getUser())) {
             // no permission to delete, silently fail for the baddy
-            $response->redirect($this->url->urlFor('user.current'), 303);
+            return $this->url->redirectFor('user.edit', ['id' => $params['id']], [], 303);
         }
 
-        $this->em->remove($token);
-        $this->em->flush();
+        $this->entityManager->remove($token);
+        $this->entityManager->flush();
 
-        $response->redirect($this->url->urlFor('user.current'), 303);
+        $this->url->redirectFor('user.edit', ['id' => $params['id']], [], 303);
+    }
+
+    /**
+     * Does the user have the correct permissions to access this page?
+     *
+     * @param User $user
+     * @return boolean
+     */
+    private function isUserAllowed(User $user)
+    {
+        if ($this->permissions->allowAdmin($this->currentUser)) {
+            return true;
+        }
+
+        return ($this->currentUser->getId() == $user->getId());
     }
 }

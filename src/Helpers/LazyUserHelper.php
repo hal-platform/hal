@@ -30,6 +30,6 @@ class LazyUserHelper
      */
     public function getUser()
     {
-        return $this->container->get('user');
+        return $this->container->get('currentUser.ldap');
     }
 }

@@ -3,21 +3,17 @@
 {% set isSelf = (currentHalUser.id == user.id) %}
 {% set name = ldapUser ? ldapUser.firstName ~ ' ' ~ ldapUser.lastName : user.name %}
 
-{% if page_title is not defined %}
-    {% set page_title = name %}
-{% endif %}
+{% set page_title = name %}
 
 {% block content %}
 
-    {% block name %}
-        {% if isSelf %}
-            <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
-                {{ getUsersActualName(user) }}
-            </h2>
-        {% else %}
-            <h2>{{ name }}</h2>
-        {% endif %}
-    {% endblock %}
+    {% if isSelf %}
+        <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
+            {{ getUsersActualName(user) }}
+        </h2>
+    {% else %}
+        <h2>{{ name }}</h2>
+    {% endif %}
 
     {% if ldapUser %}
         <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
@@ -84,43 +80,32 @@
         </table>
     {% endif %}
 
-    {% if isSelf and not isEditing %}
+    {% if isSelf %}
         <h3>Personal Access Tokens</h3>
         <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
 
-        <form action="{{ urlFor('user.token.create.handle') }}" method="post">
-        <table class="tablesaw tablesaw-stack" data-mode="stack">
-            <thead>
-                <th>Label</th>
-                <th>Token</th>
-                <th></th>
-            </thead>
-            <tbody>
-            {% for token in tokens %}
-                <tr>
-                    <td>{{ token.label }}</td>
-                    <td>{{ token.value }}</td>
-                    <td><a class="btn--destructive" href="{{ urlFor('user.token.delete.handle', {token: token.value}) }}">Revoke</a></td>
-                </tr>
-            {% endfor %}
-                <tr>
-                    <td colspan="2">
-                        <input type="text" name="label" maxlength="128" class="text-input t50" required>
-                    </td>
-                    <td><input class="btn" type="submit" value="Generate"></td>
-                </tr>
-            </tbody>
-        </table>
-        </form>
+        {% if not user.tokens.isEmpty %}
+            <table class="tablesaw tablesaw-stack" data-mode="stack">
+                <thead>
+                    <th>Label</th>
+                    <th>Token</th>
+                </thead>
+                <tbody>
+                    {% for token in user.tokens %}
+                    <tr>
+                        <td>{{ token.label }}</td>
+                        <td>{{ token.value }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     {% endif %}
 
     <div>
-        {% block actions %}
-            {% if isUserAdmin(currentLdapUser) or isSelf %}
-                {# secondary actions #}
-                <a class="btn--action" href="{{ urlFor('user.edit', {'id': user.id}) }}">Edit</a>
-            {% endif %}
-        {% endblock %}
+        {% if isUserAdmin(currentLdapUser) or isSelf %}
+            <a class="btn--action" href="{{ urlFor('user.edit', {'id': user.id}) }}">Edit</a>
+        {% endif %}
     </div>
 
 {% endblock %}
