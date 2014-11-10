@@ -13,3 +13,15 @@ parameters:
     ldap.password: ''
 
     doctrine.devmode: false
+
+    navigation.list:
+        dashboard: 'Dashboard'
+        queue: 'Queue'
+        groups: 'Groups'
+        repositories: 'Repositories'
+        servers: 'Servers'
+        environments: 'Environments'
+        users: 'Users'
+        logs: 'Logs'
+        admin: 'Admin'
+        help: 'Help'

@@ -481,22 +481,19 @@ services:
     parent: 'twig.template.old'
     arguments: ['user/users.twig']
 
-  user.edit.page:
-    class: 'QL\Hal\Controllers\User\EditController'
-    arguments:
-      - @user.edit.twig
-      - @permissions
-      - @ldapService
-      - @user.repo
-      - @url.helper
-      - @currentUser.ldap
-  user.edit.twig:
-    parent: 'twig.template.old'
-    arguments: ['user/user.edit.twig']
-  user.edit.handle:
-    class: 'QL\Hal\Controllers\User\EditHandle'
-    arguments: [@user.repo, @url.helper]
+  user.preferences.handle:
+    class: 'QL\Hal\Controllers\User\EditPreferencesHandle'
+    arguments: [@slim, @url.helper]
 
+  user.settings.page:
+    class: 'QL\Hal\Controllers\User\SettingsController'
+    arguments:
+      - @user.settings.twig
+      - @user.repo
+      - @currentUser.hal
+  user.settings.twig:
+    parent: 'twig.template.old'
+    arguments: ['user/settings.twig']
   ######################################################################################################################
   # USER TOKEN MANAGEMENT CONTROLLERS
   ######################################################################################################################

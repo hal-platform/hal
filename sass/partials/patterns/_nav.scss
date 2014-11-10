@@ -10,7 +10,8 @@
     height: 100%;
 }
 
-.nav--main li a {
+.nav--main li a,
+.nav--preferences li label {
     border-bottom: 1px solid $text-color;
     @include padding-leader(.25);
     @include padding-trailer(.25);
@@ -36,6 +37,35 @@
     border-top: 1px solid $white;
 }
 
+.nav--preferences {
+    background-color: transparent;
+}
+
+.nav--preferences li label {
+    color: black;
+    background-color: transparent;
+    border: none;
+}
+
+.nav--preferences .pref-off {
+    color: $error-color;
+    display: inline;
+}
+.nav--preferences .pref-on {
+    color: $success-color;
+    display: none;
+}
+
+.nav--preferences input {
+    display: none;
+}
+.nav--preferences input:checked ~ .pref-on {
+    display: inline;
+}
+.nav--preferences input:checked ~ .pref-off {
+    display: none;
+}
+
 @include breakpoint(30.0625em) {
     [class*="nav"] {
         > li {
@@ -53,7 +83,8 @@
         flex-wrap: wrap;
     }
 
-    .nav--main li a {
+    .nav--main li a,
+    .nav--preferences li label {
         text-align: center;
         @include padding-trailer(.25);
         padding-left: msem(-1);
@@ -68,6 +99,10 @@
 
     .nav--main li a .icon {
         display: block;
+    }
+
+    .nav--main li a .icon,
+    .nav--preferences .icon {
         margin: 0 auto msem(-3);
         width: 32px;
         height: 32px;
@@ -75,6 +110,13 @@
 
     .nav--main li:first-child a {
         border-top: 0;
+    }
+
+    .nav--preferences .pref-off {
+        display: block;
+    }
+    .nav--preferences input:checked ~ .pref-on {
+        display: block;
     }
 }
 

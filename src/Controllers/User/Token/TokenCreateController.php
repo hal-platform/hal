@@ -91,7 +91,7 @@ class TokenCreateController
             $token = $this->generateToken($user, $label);
         }
 
-        $this->url->redirectFor('user.edit', ['id' => $id], [], 303);
+        $this->url->redirectFor('settings');
     }
 
     /**

@@ -197,26 +197,20 @@ parameters:
             stack: ['login.bouncer', 'user.page']
             conditions: {id: '[\d]+'}
 
-        user.current:
+        settings:
             method: 'GET'
-            route: '/users/current'
-            stack: ['login.bouncer', 'user.page']
+            route: '/settings'
+            stack: ['login.bouncer', 'user.settings.page']
 
         users:
             method: 'GET'
             route: '/users'
             stack: ['login.bouncer', 'users.page']
 
-        user.edit:
-            method: 'GET'
-            route: '/users/:id/edit'
-            stack: ['login.bouncer', 'user.edit.page']
-            conditions: {id: '[\d]+'}
-
-        user.edit.handle:
+        user.preferences.handle:
             method: 'POST'
-            route: '/users/:id/edit'
-            stack: ['login.bouncer', 'user.edit.handle']
+            route: '/users/:id/preferences'
+            stack: ['login.bouncer', 'user.preferences.handle']
             conditions: {id: '[\d]+'}
 
         ########################################################################################################################

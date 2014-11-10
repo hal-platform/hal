@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\User as DomainUser;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use Slim\Http\Request;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -27,6 +28,11 @@ use Twig_SimpleTest;
 class HalExtension extends Twig_Extension
 {
     const NAME = 'hal';
+
+    /**
+     * @type Request
+     */
+    private $request;
 
     /**
      * @type UrlHelper
@@ -54,20 +60,41 @@ class HalExtension extends Twig_Extension
     private $applicationSha;
 
     /**
+     * @type array
+     */
+    private $navigationList;
+
+    /**
+     * @type array|null
+     */
+    private $parsedNavigationList;
+
+    /**
+     * @param Request $request
      * @param UrlHelper $url
      * @param TimeHelper $time
      * @param Session $session
      * @param string $appTitle
      * @param string $appSha
+     * @param array $navigationList
      */
-    public function __construct(UrlHelper $url, TimeHelper $time, Session $session, $appTitle, $appSha)
-    {
+    public function __construct(
+        Request $request,
+        UrlHelper $url,
+        TimeHelper $time,
+        Session $session,
+        $appTitle,
+        $appSha,
+        array $navigationList
+    ) {
+        $this->request = $request;
         $this->url = $url;
         $this->time = $time;
         $this->session = $session;
 
         $this->applicationTitle = $appTitle;
         $this->applicationSha = $appSha;
+        $this->navigationList = $navigationList;
     }
 
     /**
@@ -89,12 +116,13 @@ class HalExtension extends Twig_Extension
     {
         return [
             // util
-            new Twig_SimpleFunction('urlFor', array($this->url, 'urlFor')),
-            new Twig_SimpleFunction('uriFor', array($this->url, 'uriFor')),
+            new Twig_SimpleFunction('urlFor', [$this->url, 'urlFor']),
+            new Twig_SimpleFunction('uriFor', [$this->url, 'uriFor']),
+            new Twig_SimpleFunction('isNavOn', [$this, 'isNavigationOn']),
 
             // other
-            new Twig_SimpleFunction('getUsersActualName', array($this, 'getUsersActualName')),
-            new Twig_SimpleFunction('getUsersFreudianName', array($this, 'getUsersFreudianName')),
+            new Twig_SimpleFunction('getUsersActualName', [$this, 'getUsersActualName']),
+            new Twig_SimpleFunction('getUsersFreudianName', [$this, 'getUsersFreudianName']),
         ];
     }
 
@@ -106,12 +134,12 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('timepoint', array($this->time, 'format'), array('is_safe' => array('html'))),
-            new Twig_SimpleFilter('reldate', array($this->time, 'relative'), array('is_safe' => array('html'))),
-            new Twig_SimpleFilter('chunk', array($this, 'arrayChunk')),
-            new Twig_SimpleFilter('jsonPretty', array($this, 'jsonPretty')),
-            new Twig_SimpleFilter('formatBuildId', array($this, 'formatBuildId')),
-            new Twig_SimpleFilter('formatPushId', array($this, 'formatPushId'))
+            new Twig_SimpleFilter('timepoint', [$this->time, 'format'], ['is_safe' => ['html']]),
+            new Twig_SimpleFilter('reldate', [$this->time, 'relative'], ['is_safe' => ['html']]),
+            new Twig_SimpleFilter('chunk', [$this, 'arrayChunk']),
+            new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty']),
+            new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
+            new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId'])
         ];
     }
 
@@ -141,6 +169,9 @@ class HalExtension extends Twig_Extension
             'currentHalUser' =>  $this->session->get('hal-user'),
             'currentLdapUser' =>  $this->session->get('ldap-user'),
             'isFirstLogin' =>  $this->session->get('is-first-login'),
+            'ishttpsOn' =>  $this->request->getScheme() === 'https',
+
+            'navItems' => $this->navigationList
         ];
     }
 
@@ -248,6 +279,51 @@ class HalExtension extends Twig_Extension
             return strtolower(substr($id, 6));
         }
 
-        return substr($id, 0, 10);;
+        return substr($id, 0, 10);
+    }
+
+    /**
+     * @param string $navSelection
+     * @return boolean
+     */
+    public function isNavigationOn($navSelection)
+    {
+        $cookie = $this->request->cookies->get('navpref');
+        if ($cookie === null) {
+            $this->parsedNavigationList = $this->defaultNavigation();
+        } else {
+            $this->parsedNavigationList = [];
+            foreach (explode(' ', $cookie) as $item) {
+                if (!$item) continue;
+                $this->parsedNavigationList[$item] = true;
+            }
+        }
+
+        if (!array_key_exists($navSelection, $this->parsedNavigationList)) {
+            return false;
+        }
+
+        return ($this->parsedNavigationList[$navSelection] === true);
+    }
+
+    /**
+     * @return array
+     */
+    private function defaultNavigation()
+    {
+        return [
+            'dashboard' => true,
+            'queue' => true,
+            'groups' => true,
+
+            'repositories' => false,
+            'servers' => false,
+            'environments' => false,
+            'users' => false,
+            'logs' => false,
+
+            'admin' => true,
+            'help' => true
+        ];
     }
 }

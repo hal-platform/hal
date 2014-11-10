@@ -81,15 +81,12 @@ class TokenDeleteController
             return call_user_func($notFound);
         }
 
-        if (!$this->isUserAllowed($token->getUser())) {
-            // no permission to delete, silently fail for the baddy
-            return $this->url->redirectFor('user.edit', ['id' => $params['id']], [], 303);
+        if ($this->isUserAllowed($token->getUser())) {
+            $this->entityManager->remove($token);
+            $this->entityManager->flush();
         }
 
-        $this->entityManager->remove($token);
-        $this->entityManager->flush();
-
-        $this->url->redirectFor('user.edit', ['id' => $params['id']], [], 303);
+        $this->url->redirectFor('settings');
     }
 
     /**

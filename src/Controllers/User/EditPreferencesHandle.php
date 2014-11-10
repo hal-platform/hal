@@ -7,18 +7,20 @@
 
 namespace QL\Hal\Controllers\User;
 
-use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Slim;
 use Twig_Template;
 
-class EditHandle
+class EditPreferencesHandle
 {
+    const COOKIE_TIME = '6 months';
+
     /**
-     * @var UserRepository
+     * @var Slim
      */
-    private $userRepo;
+    private $slim;
 
     /**
      * @var UrlHelper
@@ -26,12 +28,11 @@ class EditHandle
     private $url;
 
     /**
-     *  @param UserRepository $userRepo
      *  @param UrlHelper $url
      */
-    public function __construct(UserRepository $userRepo, UrlHelper $url)
+    public function __construct(Slim $slim, UrlHelper $url)
     {
-        $this->userRepo = $userRepo;
+        $this->slim = $slim;
         $this->url = $url;
     }
 
@@ -44,10 +45,14 @@ class EditHandle
     public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
     {
         $id = $params['id'];
-        if (!$user = $this->userRepo->findOneBy(['id' => $id])) {
-            return call_user_func($notFound);
+        $nav = $request->post('nav');
+
+        if (is_array($nav)) {
+            $nav = implode(' ', $nav);
         }
 
-        $this->url->redirectFor('denied');
+        $this->slim->setCookie('navpref', trim($nav), static::COOKIE_TIME);
+
+        $this->url->redirectFor('settings');
     }
 }

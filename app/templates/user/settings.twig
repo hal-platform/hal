@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Settings' %}
+
+{% block content %}
+
+    <h2>Settings</h2>
+
+    <h3>Navigation Preferences</h3>
+    <p>Customize the items on the navigation menu</p>
+
+    <form action="{{ urlFor('user.preferences.handle', {id: user.id}) }}" method="post">
+        <ul class="nav--main nav--preferences mbn">
+            {% for item, description in navItems %}
+                <li>
+                    <label>
+                        <input type="checkbox" name="nav[]" value="{{ item }}" {{ isNavOn(item) ? ' checked' : ''}}>
+
+                        <svg class="icon pref-on" viewBox="0 0 32 32">
+                            <use xlink:href="#tick"></use>
+                        </svg>
+                        <svg class="icon pref-off" viewBox="0 0 32 32">
+                            <use xlink:href="#cross"></use>
+                        </svg>
+
+                        {{ description }}
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+        <input class="btn" type="submit" value="Save">
+    </form>
+
+    <h3>Personal Access Tokens</h3>
+    <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
+
+    <form action="{{ urlFor('user.token.create.handle', {id: user.id}) }}" method="post">
+        <table class="tablesaw tablesaw-stack" data-mode="stack">
+            <thead>
+                <th>Label</th>
+                <th>Token</th>
+                <th></th>
+            </thead>
+            <tbody>
+            {% for token in user.tokens %}
+                <tr>
+                    <td>{{ token.label }}</td>
+                    <td>{{ token.value }}</td>
+                    <td><a class="btn--destructive" href="{{ urlFor('user.token.delete.confirm', {id: user.id, token: token.value}) }}">Revoke</a></td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <td colspan="2">
+                        <input type="text" name="label" maxlength="50" class="text-input t50" placeholder="Token name or label..." required>
+                    </td>
+                    <td><input class="btn" type="submit" value="Generate"></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+{% endblock %}

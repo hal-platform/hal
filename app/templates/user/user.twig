@@ -7,19 +7,16 @@
 
 {% block content %}
 
-    {% if isSelf %}
-        <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
-            {{ getUsersActualName(user) }}
-        </h2>
-    {% else %}
-        <h2>{{ name }}</h2>
-    {% endif %}
+    <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
+        {{ getUsersActualName(user) }}
+    </h2>
 
     {% if ldapUser %}
         <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
     {% endif %}
 
-    <p><img src="{{ user.pictureUrl.asString() }}" width="150"></p>
+    {% set profilePicture = user.pictureUrl.host ~ user.pictureUrl.path %}
+    <p><img src="{{ ishttpsOn ? 'https' : 'http' }}://{{ profilePicture }}" width="150"></p>
 
     <h3>Contact</h3>
     <ul>
@@ -51,9 +48,10 @@
         </li>
     </ul>
 
-    {% if permissions %}
-        <h3>Permissions</h3>
 
+    <h3>Permissions</h3>
+
+    {% if permissions %}
         <p><strong>{{ ldapUser.firstName }} {{ ldapUser.lastName }}</strong> can push the following repositories to the specified environments.</p>
 
         <table class="tablesaw tablesaw-stack" data-mode="stack">
@@ -64,48 +62,22 @@
             </tr>
             </thead>
             <tbody>
-            {% for pairs in permissions %}
-                <tr>
-                    <td>{{ pairs|first.environment.key|title }}</td>
-                    <td>
-                        <ul class="inline-list--comma">
-                            {% for pair in pairs %}
-                                <li><a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-            {% endfor %}
+                {% for pairs in permissions %}
+                    <tr>
+                        <td>{{ pairs|first.environment.key|title }}</td>
+                        <td>
+                            <ul class="inline-list--comma">
+                                {% for pair in pairs %}
+                                    <li><a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p><strong>{{ name }}</strong> has no permissions.</p>
     {% endif %}
-
-    {% if isSelf %}
-        <h3>Personal Access Tokens</h3>
-        <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
-
-        {% if not user.tokens.isEmpty %}
-            <table class="tablesaw tablesaw-stack" data-mode="stack">
-                <thead>
-                    <th>Label</th>
-                    <th>Token</th>
-                </thead>
-                <tbody>
-                    {% for token in user.tokens %}
-                    <tr>
-                        <td>{{ token.label }}</td>
-                        <td>{{ token.value }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-    {% endif %}
-
-    <div>
-        {% if isUserAdmin(currentLdapUser) or isSelf %}
-            <a class="btn--action" href="{{ urlFor('user.edit', {'id': user.id}) }}">Edit</a>
-        {% endif %}
-    </div>
 
 {% endblock %}

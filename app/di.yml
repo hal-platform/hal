@@ -156,11 +156,13 @@ services:
   twig.extension.hal:
     class: 'QL\Hal\Twig\HalExtension'
     arguments:
+      - @slim.request
       - @url.helper
       - @time.helper
       - @session
       - %application.title%
       - %application.sha%
+      - %navigation.list%
 
   twig.extension.permissions:
     class: 'QL\Hal\Twig\PermissionExtension'

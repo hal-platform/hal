@@ -56,25 +56,28 @@
                 <nav role="navigation">
                     <ul class="nav--main mbn">
                         {% if currentLdapUser %}
-                            <li>{{ base_macros.navlink('Dashboard', urlFor('dashboard'), 'dashboard', '-3 0') }}</li>
-                            <li>{{ base_macros.navlink('Groups', urlFor('groups'), 'list') }}</li>
+                            {{ base_macros.optionalNavlink('Dashboard', 'dashboard', 'dashboard', '-3') }}
+                            {{ base_macros.optionalNavlink('Queue', 'queue', 'in') }}
 
-                            {% if isUserAdmin(currentLdapUser) %}
-                                <li>{{ base_macros.navlink('Servers', urlFor('servers'), 'server', '-4 0') }}</li>
-                                <li>{{ base_macros.navlink('Repositories', urlFor('repositories'), 'repo', '-3 0') }}</li>
-                                <li>{{ base_macros.navlink('Environments', urlFor('environments'), 'leaf', '-1 0') }}</li>
-                                <li>{{ base_macros.navlink('Users', urlFor('users'), 'users') }}</li>
-                                {# <li>{{ base_macros.navlink('Logs', urlFor('logs', {'page': '1'}), 'paper-roll') }}</li> #}
+                            {{ base_macros.optionalNavlink('Groups', 'groups', 'list') }}
+                            {{ base_macros.optionalNavlink('Repositories', 'repositories', 'repo', '-3') }}
+
+                            {{ base_macros.optionalNavlink('Servers', 'servers', 'server', '-4') }}
+                            {{ base_macros.optionalNavlink('Environments', 'environments', 'leaf', '-1') }}
+                            {{ base_macros.optionalNavlink('Users', 'users', 'users') }}
+                            {{ base_macros.optionalNavlink('Logs', 'logs', 'paper-roll') }}
+
+                            {% if isUserAdmin(currentHalUser) %}
+                                {{ base_macros.optionalNavlink('Admin', 'admin', 'watch') }}
                             {% endif %}
+                            {{ base_macros.optionalNavlink('Help', 'help', 'question', '-6') }}
 
-                            <li>{{ base_macros.navlink('Queue', urlFor('queue'), 'in') }}</li>
-                            <li>{{ base_macros.navlink('Profile', urlFor('user.current'), 'user-card') }}</li>
-                            <li>{{ base_macros.navlink('Help', urlFor('help'), 'question', '-6 0') }}</li>
-                            <li>{{ base_macros.navlink('Logout', urlFor('logout'), 'sign-out') }}</li>
+                            <li>{{ base_macros.navlink('Settings', 'settings', 'settings') }}</li>
+                            <li>{{ base_macros.navlink('Logout', 'logout', 'sign-out') }}</li>
 
                         {% else %}
-                            <li class="signed-out">{{ base_macros.navlink('Help', urlFor('help'), 'question', '-6 0') }}</li>
-                            <li class="signed-out">{{ base_macros.navlink('Login', urlFor('login'), 'sign-in') }}</li>
+                            <li class="signed-out">{{ base_macros.navlink('Help', 'help', 'question', '-6') }}</li>
+                            <li class="signed-out">{{ base_macros.navlink('Login', 'login', 'sign-in') }}</li>
                         {% endif %}
                     </ul>
                 </nav>
@@ -138,11 +141,18 @@
     {% endif %}
 {% endblock %}
 
-{% macro navlink(title, link, icon, viewbox) %}
-    <a href="{{ link }}" title="{{ title }}">
-        <svg class="icon" viewBox="{{ viewbox|default('0 0') }} 32 32">
+{% macro navlink(title, key, icon, customWidth) %}
+    <a href="{{ urlFor(key) }}" title="{{ title }}">
+        <svg class="icon" viewBox="{{ customWidth|default('0') }} 0 32 32">
             <use xlink:href="#{{ icon }}"></use>
         </svg>
         {{ title }}
     </a>
+{% endmacro %}
+
+{% macro optionalNavlink(title, key, icon, customWidth) %}
+    {% import _self as base_macros %}
+    {% if isNavOn(key) %}
+        <li>{{ base_macros.navlink(title, key, icon, customWidth) }}</li>
+    {% endif %}
 {% endmacro %}
