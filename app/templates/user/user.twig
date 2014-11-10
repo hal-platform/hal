@@ -10,9 +10,13 @@
 {% block content %}
 
     {% block name %}
-    <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
-        {{ getUsersActualName(user) }}
-    </h2>
+        {% if isSelf %}
+            <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
+                {{ getUsersActualName(user) }}
+            </h2>
+        {% else %}
+            <h2>{{ name }}</h2>
+        {% endif %}
     {% endblock %}
 
     {% if ldapUser %}
@@ -31,10 +35,14 @@
         {% endif %}
     </ul>
 
-    <h3>Stats</h3>
+    <h3>Status</h3>
     <ul>
-        <li><b>HAL Status:</b> {{ user.isActive ? 'active' : 'inactive' }}</li>
-        <li><b>LDAP Status:</b> {{ ldapUser ? 'active' : 'removed' }}</li>
+        <li><b>HAL:</b> {{ user.isActive ? 'Active' : 'Inactive' }}</li>
+        <li><b>LDAP:</b> {{ ldapUser ? 'Active' : 'Inactive' }}</li>
+    </ul>
+
+    <h3>Activity</h3>
+    <ul>
         <li><b>Total Builds:</b> {{ builds }}</li>
         <li><b>Total Pushes:</b> {{ pushes }}</li>
         <li>
