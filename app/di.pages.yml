@@ -535,7 +535,6 @@ services:
       - @permissions
       - @ldapService
       - @user.repo
-      - @doctrine.em
       - @url.helper
       - @currentUser.ldap
   user.edit.twig:

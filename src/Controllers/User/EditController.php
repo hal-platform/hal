@@ -7,7 +7,6 @@
 
 namespace QL\Hal\Controllers\User;
 
-use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Repository\UserRepository;
@@ -52,11 +51,6 @@ class EditController
     private $userRepo;
 
     /**
-     *  @var EntityManager
-     */
-    private $em;
-
-    /**
      *  @var UrlHelper
      */
     private $url;
@@ -72,7 +66,6 @@ class EditController
      *  @param PermissionsService $permissions
      *  @param LdapService $ldap
      *  @param UserRepository $userRepo
-     *  @param EntityManager $em
      *  @param UrlHelper $url
      *  @param LdapUser $ldapUser
      */
@@ -82,7 +75,6 @@ class EditController
         PermissionsService $permissions,
         LdapService $ldap,
         UserRepository $userRepo,
-        EntityManager $em,
         UrlHelper $url,
         LdapUser $ldapUser
     ) {
@@ -91,7 +83,6 @@ class EditController
         $this->permissions = $permissions;
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
-        $this->em = $em;
         $this->url = $url;
         $this->ldapUser = $ldapUser;
     }
@@ -118,41 +109,11 @@ class EditController
         $rendered = $this->layout->render($this->template, [
             'user' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($id),
-            'pushes' => $this->getPushCount($user),
-            'builds' => $this->getBuildCount($user)
+            'pushes' => count($user->getPushes()),
+            'builds' => count($user->getBuilds())
         ]);
 
         $response->body($rendered);
-    }
-
-    /**
-     *  Get the number of pushes for a given user entity
-     *
-     *  @param User $user
-     *  @return mixed
-     */
-    private function getPushCount(User $user)
-    {
-        $dql = 'SELECT count(p.id) FROM QL\Hal\Core\Entity\Push p WHERE p.user = :user';
-        $query = $this->em->createQuery($dql)
-            ->setParameter('user', $user);
-
-        return $query->getSingleScalarResult();
-    }
-
-    /**
-     * Get the number of builds for a given user entity
-     *
-     * @param User $user
-     * @return mixed
-     */
-    private function getBuildCount(User $user)
-    {
-        $dql = 'SELECT count(b.id) FROM QL\Hal\Core\Entity\Build b WHERE b.user = :user';
-        $query = $this->em->createQuery($dql)
-            ->setParameter('user', $user);
-
-        return $query->getSingleScalarResult();
     }
 
     /**
