@@ -8,7 +8,6 @@
 namespace QL\Hal\Controllers;
 
 use Doctrine\Common\Collections\Criteria;
-use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
@@ -28,9 +27,9 @@ class DashboardController
     private $template;
 
     /**
-     *  @var LdapUser
+     *  @var User
      */
-    private $user;
+    private $currentUser;
 
     /**
      * @var PermissionsService
@@ -54,7 +53,7 @@ class DashboardController
 
     /**
      * @param Twig_Template $template
-     * @param LdapUser $user
+     * @param User $currentUser
      * @param PermissionsService $permissions
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
@@ -62,14 +61,14 @@ class DashboardController
      */
     public function __construct(
         Twig_Template $template,
-        LdapUser $user,
+        User $currentUser,
         PermissionsService $permissions,
         BuildRepository $buildRepo,
         PushRepository $pushRepo,
         UserRepository $userRepo
     ) {
         $this->template = $template;
-        $this->user = $user;
+        $this->currentUser = $currentUser;
         $this->permissions = $permissions;
 
         $this->buildRepo = $buildRepo;
@@ -84,8 +83,8 @@ class DashboardController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        // user that will show pushes for front end work findOneBy(['id' => 2024851])
-        $user = $this->userRepo->findOneBy(['id' => $this->user->commonId()]);
+        $user = $this->userRepo->find($this->currentUser->getId());
+
         $recentBuilds = $this->buildRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
         $recentPushes = $this->pushRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
 
@@ -95,8 +94,7 @@ class DashboardController
         }
 
         $rendered = $this->template->render([
-            'user' => $this->user,
-            'repositories' => $this->permissions->userRepositories($this->user),
+            'repositories' => $this->permissions->userRepositories($this->currentUser),
             'pending' => $pending,
             'builds' => $recentBuilds,
             'pushes' => $recentPushes

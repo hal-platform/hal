@@ -21,7 +21,7 @@
             {% endif %}
 
             {# Determine if the is a history to rollback to, or user is allowed to #}
-            {% if status.success and canUserPush(currentLdapUser, repo.key, status.deploy.server.environment.key) %}
+            {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
                 {% set canRollback = true %}
             {% else %}
                 {% set canRollback = false %}
@@ -35,7 +35,7 @@
 
     <h3>Recent Builds</h3>
     <p>
-        {% if canUserBuild(currentLdapUser, repo.key) %}
+        {% if canUserBuild(currentUser, repo.key) %}
             <a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
         {% endif %}
         <a class="btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>

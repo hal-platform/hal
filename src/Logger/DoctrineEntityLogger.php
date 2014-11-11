@@ -1,26 +1,25 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Logger;
 
 use DateTime;
 use DateTimeZone;
-use QL\Hal\Core\Entity\AuditLog;
-use ReflectionClass;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-use MCP\Corp\Account\User as LdapUser;
 use MCP\DataType\Time\TimePoint;
+use QL\Hal\Core\Entity\AuditLog;
 use QL\Hal\Core\Entity\Session;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\LazyUserHelper;
+use ReflectionClass;
 use Zend\Ldap\Ldap;
 
-/**
- * Doctrine Entity Change Tracking Logger
- *
- * @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class DoctrineEntityLogger
 {
     const ACTION_CREATE = 'CREATE';
@@ -40,9 +39,8 @@ class DoctrineEntityLogger
     /**
      * @param LazyUserHelper $userHelper
      */
-    public function __construct(
-        LazyUserHelper $userHelper
-    ) {
+    public function __construct(LazyUserHelper $userHelper)
+    {
         $this->userHelper = $userHelper;
     }
 
@@ -118,8 +116,12 @@ class DoctrineEntityLogger
             }
         }
 
-        $log = new AuditLog();
-        $log->setUser($this->getUser($this->userHelper->getUser()));
+        $log = new AuditLog;
+
+        $sessionUser = $this->userHelper->getUser();
+        $user = $this->em->find('QL\\Hal\\Core\\Entity\\User', $sessionUser->getId());
+        $log->setUser($user);
+
         $log->setRecorded($this->getTimepoint());
         $log->setEntity(sprintf(
             '%s:%s',
@@ -151,16 +153,5 @@ class DoctrineEntityLogger
             $now->format('s'),
             'UTC'
         );
-    }
-
-    /**
-     * Exchange an LDAP user for a Doctrine user
-     *
-     * @param LdapUser $user
-     * @return User
-     */
-    private function getUser(LdapUser $user)
-    {
-        return $this->em->find('QL\\Hal\\Core\\Entity\\User', $user->commonId());
     }
 }

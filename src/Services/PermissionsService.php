@@ -414,7 +414,7 @@ class PermissionsService
 
         if (!$user instanceof LdapUser) {
             // user not found in ldap
-            return false;
+            return [];
         }
 
         $repositories = [];
@@ -429,19 +429,6 @@ class PermissionsService
     }
 
     /**
-     * Get all permission pairs for a user
-     *
-     * @deprecated
-     *
-     * @param LdapUser|string $user
-     * @return array
-     */
-    public function userPermissionPairs($user)
-    {
-        return $this->userPushPermissionPairs($user);
-    }
-
-    /**
      * Get all push permission pairs for a user
      *
      * @param $user
@@ -453,7 +440,7 @@ class PermissionsService
 
         if (!($user instanceof LdapUser)) {
             // user not found in ldap
-            return false;
+            return [];
         }
 
         $permissions = [];
@@ -480,7 +467,7 @@ class PermissionsService
 
         if (!($user instanceof LdapUser)) {
             // user not found in ldap
-            return false;
+            return [];
         }
 
         $permissions = [];
@@ -648,10 +635,13 @@ class PermissionsService
      *
      * @param $user
      * @return LdapUser|null
-     * @throws RuntimeException
      */
     private function getUser($user)
     {
+        if (!$user) {
+            return null;
+        }
+
         if ($user instanceof LdapUser) {
             return $user;
         }

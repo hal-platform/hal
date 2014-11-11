@@ -1,24 +1,24 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
-use MCP\Corp\Account\User;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-/**
- * Build Push Handle Controller
- *
- * @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class BuildPushHandleController
 {
     const ERR_NO_DEPS = 'You must select at least one deployment.';
@@ -59,7 +59,7 @@ class BuildPushHandleController
     /**
      * @var User
      */
-    private $user;
+    private $currentUser;
 
     /**
      * @var PermissionsService
@@ -73,7 +73,7 @@ class BuildPushHandleController
      * @param UserRepository $userRepo
      * @param EntityManager $em
      * @param UrlHelper $url
-     * @param User $user
+     * @param User $currentUser
      * @param PermissionsService $permissions
      */
     public function __construct(
@@ -83,7 +83,7 @@ class BuildPushHandleController
         UserRepository $userRepo,
         EntityManager $em,
         UrlHelper $url,
-        User $user,
+        User $currentUser,
         PermissionsService $permissions
     ) {
         $this->session = $session;
@@ -92,7 +92,7 @@ class BuildPushHandleController
         $this->userRepo = $userRepo;
         $this->em = $em;
         $this->url = $url;
-        $this->user = $user;
+        $this->currentUser = $currentUser;
         $this->permissions = $permissions;
     }
 
@@ -107,8 +107,7 @@ class BuildPushHandleController
         $build = $this->buildRepo->findOneBy(['id' => $params['build']]);
 
         if (!$build || $build->getStatus() != 'Success') {
-            call_user_func($notFound);
-            return;
+            return call_user_func($notFound);
         }
 
         $deploymentIds = $request->post('deployments', []);
@@ -130,20 +129,20 @@ class BuildPushHandleController
                 return;
             }
 
-            if (!$this->permissions->allowPush($this->user, $build->getRepository()->getKey(), $deployment->getServer()->getEnvironment()->getKey())) {
+            if (!$this->permissions->allowPush($this->currentUser, $build->getRepository()->getKey(), $deployment->getServer()->getEnvironment()->getKey())) {
                 $this->session->addFlash(
-                    sprintf(
-                        self::ERR_NO_PERM,
-                        $deployment->getServer()->getName()
-                    )
+                    sprintf(self::ERR_NO_PERM, $deployment->getServer()->getName())
                 );
                 $response->redirect($request->getReferer(), 303);
                 return;
             }
 
             $push = new Push();
+
+            $user = $this->userRepo->find($this->currentUser->getId());
+
             $push->setStatus('Waiting');
-            $push->setUser($this->userRepo->findOneBy(['id' => $this->user->commonId()]));
+            $push->setUser($user);
             $push->setBuild($build);
             $push->setDeployment($deployment);
             $pushes[] = $push;

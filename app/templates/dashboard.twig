@@ -4,8 +4,8 @@
 
 {% block content %}
 
-    <h2 data-nofunzone="{{ user.firstName ? user.firstName ~ '.' : '' }}" data-freud="{{ getUsersFreudianName() }}.">
-        Hello, {{ getUsersActualName(user) }}.
+    <h2 data-nofunzone="{{ getUsersActualName(currentUser) ~ '.' }}" data-freud="{{ getUsersFreudianName() }}.">
+        Hello, {{ getUsersActualName(currentUser) }}.
     </h2>
 
     {% if isFirstLogin or not repositories %}
@@ -41,7 +41,7 @@
     {% endif %}
 
     {# PENDING WORK #}
-    {% if isUserAdmin(currentLdapUser) and pending %}
+    {% if isUserAdmin(currentUser) and pending %}
         <h3>Push and Build Queue</h3>
         {% include 'partials/pending-table.twig' %}
     {% endif %}

@@ -97,7 +97,7 @@ class LoginHandleController
             return;
         }
 
-        $user = $this->userRepo->findOneBy(['id' => $account->commonId()]);
+        $user = $this->userRepo->find($account->commonId());
 
         // account disabled manually
         if ($user && !$user->isActive()) {
@@ -115,8 +115,7 @@ class LoginHandleController
         $this->updateUserDetails($account, $user);
 
         $this->session->clear();
-        $this->session->set('hal-user', $user);
-        $this->session->set('ldap-user', $account);
+        $this->session->set('user', $user);
         $this->session->set('is-first-login', $isFirstLogin);
 
         if ($redirect) {

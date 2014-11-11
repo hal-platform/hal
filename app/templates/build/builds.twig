@@ -7,7 +7,7 @@
 
     <h2>{{ repo.key }} Build History</h2>
 
-    {% include 'partials/build-table.twig' with {'builds': builds, 'user': user} %}
+    {% include 'partials/build-table.twig' with {'builds': builds} %}
 
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">

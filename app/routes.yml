@@ -29,15 +29,10 @@ parameters:
             route: '/denied'
             stack: ['denied.page']
 
-        admin.dashboard:
-            method: 'GET'
-            route: '/admin'
-            stack: ['login.bouncer', 'admin.bouncer', 'admin.dashboard.page']
-
         logs:
             method: 'GET'
             route: '/logs(/page/:page)'
-            stack: ['login.bouncer', 'admin.bouncer', 'logs.page']
+            stack: ['admin.bouncer', 'logs.page']
             conditions: {page: '[0-9]+'}
 
         queue:
@@ -52,8 +47,13 @@ parameters:
 
         admin:
             method: 'GET'
+            route: '/admin'
+            stack: ['admin.bouncer', 'admin.dashboard.page']
+
+        admin.super:
+            method: 'GET'
             route: '/superadmin'
-            stack: ['login.bouncer', 'admin.bouncer', 'admin.utility.page']
+            stack: ['admin.bouncer', 'admin.utility.page']
 
         ########################################################################################################################
         # HELP ROUTES

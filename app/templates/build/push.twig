@@ -152,7 +152,7 @@
                     <td>
                         {% if inProgress %}
                             Please Wait
-                        {% elseif canUserPush(currentLdapUser, status.deployment.repository.key, status.deployment.server.environment.key) %}
+                        {% elseif canUserPush(currentUser, status.deployment.repository.key, status.deployment.server.environment.key) %}
                             {% if status.deployment.id in selected %}
                                 {% set isChecked = "checked" %}
                             {% endif %}

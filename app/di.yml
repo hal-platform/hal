@@ -10,12 +10,7 @@ services:
   ######################################################################################################################
 
   # Set by LoginBouncer
-  currentUser.ldap:
-    class: 'MCP\Corp\Account\User'
-    synthetic: true
-
-  # Set by LoginBouncer
-  currentUser.hal:
+  currentUser:
     class: 'QL\Hal\Core\Entity\User'
     synthetic: true
 
@@ -204,7 +199,8 @@ services:
     arguments:
       - @session
       - @permissions
-      - @twig.environment
+      - @denied.twig
+      - @login.bouncer
 
   # Bounce unauthenticated api clients
   api.auth.bouncer:

@@ -44,23 +44,23 @@
     {% else %}
         <p>
             There are no repositories associated with this group.
-            {% if isUserAdmin(currentLdapUser) %}
+            {% if isUserAdmin(currentUser) %}
                 <br><a href="{{ urlFor('repository.admin.add') }}">Add a repository</a>
             {% endif %}
         </p>
     {% endif %}
 
-    {% if isUserAdmin(currentLdapUser) and repos %}
+    {% if isUserAdmin(currentUser) and repos %}
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    {% if isUserAdmin(currentLdapUser) %}
+    {% if isUserAdmin(currentUser) %}
         <ul class="choice-list--flush">
             <li class="choice-list__choice">
                 <a class="btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit</a></p>
             </li>
 
-            {% if not repos and canUserDelete(currentLdapUser) %}
+            {% if not repos and canUserDelete(currentUser) %}
                 <a class="btn--destructive secondary-action" href="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}">Remove Group</a>
             {% endif %}
         </ul>

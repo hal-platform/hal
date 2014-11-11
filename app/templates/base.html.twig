@@ -55,7 +55,7 @@
             {% block navigation %}
                 <nav role="navigation">
                     <ul class="nav--main mbn">
-                        {% if currentLdapUser %}
+                        {% if currentUser %}
                             {{ base_macros.optionalNavlink('Dashboard', 'dashboard', 'dashboard', '-3') }}
                             {{ base_macros.optionalNavlink('Queue', 'queue', 'in') }}
 
@@ -67,7 +67,7 @@
                             {{ base_macros.optionalNavlink('Users', 'users', 'users') }}
                             {{ base_macros.optionalNavlink('Logs', 'logs', 'paper-roll') }}
 
-                            {% if isUserAdmin(currentHalUser) %}
+                            {% if isUserAdmin(currentUser) %}
                                 {{ base_macros.optionalNavlink('Admin', 'admin', 'watch') }}
                             {% endif %}
                             {{ base_macros.optionalNavlink('Help', 'help', 'question', '-6') }}
@@ -126,7 +126,7 @@
 {% block script %}
     <script data-main="/js/main.js?v={{ buster }}" src="/js/vendor/require-2.1.11.min.js"></script>
     {% block pageScript %}{% endblock %}
-    {% if showAnalytics(currentLdapUser) %}
+    {% if showAnalytics(currentUser) %}
         <!-- BEGIN ANLYTICS -->
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

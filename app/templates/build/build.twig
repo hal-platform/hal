@@ -102,7 +102,7 @@
 
     </div>
 
-    {% if canUserBuild(currentLdapUser, build.repository.key) %}
+    {% if canUserBuild(currentUser, build.repository.key) %}
         {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
         {% set unpushableMessage = 'Your build cannot be pushed.' %}
 

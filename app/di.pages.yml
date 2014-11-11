@@ -12,7 +12,7 @@ services:
     class: 'QL\Hal\Controllers\DashboardController'
     arguments:
       - @dashboard.twig
-      - @currentUser.ldap
+      - @currentUser
       - @permissions
       - @build.repo
       - @push.repo
@@ -137,7 +137,6 @@ services:
       - @repository.repo
       - @build.repo
       - @push.repo
-      - @currentUser.ldap
   repository.status.twig:
     parent: 'twig.template.old'
     arguments: ['repository/status.twig']
@@ -247,7 +246,7 @@ services:
       - @environment.repo
       - @doctrine.em
       - @url.helper
-      - @currentUser.ldap
+      - @currentUser
       - @permissions
       - @github
       - @unique.helper
@@ -271,7 +270,6 @@ services:
       - @repository.repo
       - @server.repo
       - @doctrine.em
-      - @currentUser.ldap
   rollback.twig:
     parent: 'twig.template.old'
     arguments: ['repository/rollback.twig']
@@ -285,7 +283,7 @@ services:
       - @user.repo
       - @doctrine.em
       - @url.helper
-      - @currentUser.ldap
+      - @currentUser
       - @permissions
 
   builds.page:
@@ -295,7 +293,6 @@ services:
       - @doctrine.em
       - @repository.repo
       - @build.repo
-      - @currentUser.ldap
   builds.twig:
     parent: 'twig.template.old'
     arguments: ['build/builds.twig']
@@ -464,7 +461,6 @@ services:
       - @user.twig
       - @ldapService
       - @user.repo
-      - @currentUser.ldap
       - @permissions
   user.twig:
     parent: 'twig.template.old'
@@ -490,7 +486,7 @@ services:
     arguments:
       - @user.settings.twig
       - @user.repo
-      - @currentUser.hal
+      - @currentUser
   user.settings.twig:
     parent: 'twig.template.old'
     arguments: ['user/settings.twig']
@@ -505,7 +501,7 @@ services:
       - @user.repo
       - @url.helper
       - @permissions
-      - @currentUser.hal
+      - @currentUser
 
   user.token.delete.handle:
     class: 'QL\Hal\Controllers\User\Token\TokenDeleteController'
@@ -514,7 +510,7 @@ services:
       - @token.repo
       - @url.helper
       - @permissions
-      - @currentUser.hal
+      - @currentUser
 
   ######################################################################################################################
   # ADMIN CONTROLLERS

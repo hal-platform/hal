@@ -121,6 +121,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('isNavOn', [$this, 'isNavigationOn']),
 
             // other
+            new Twig_SimpleFunction('getUsersName', [$this, 'getUsersName']),
+            new Twig_SimpleFunction('getUsersFirstName', [$this, 'getUsersFirstName']),
             new Twig_SimpleFunction('getUsersActualName', [$this, 'getUsersActualName']),
             new Twig_SimpleFunction('getUsersFreudianName', [$this, 'getUsersFreudianName']),
         ];
@@ -166,8 +168,7 @@ class HalExtension extends Twig_Extension
             'applicationTitle' =>  $this->applicationTitle,
 
             'session' =>  $this->session,
-            'currentHalUser' =>  $this->session->get('hal-user'),
-            'currentLdapUser' =>  $this->session->get('ldap-user'),
+            'currentUser' =>  $this->session->get('user'),
             'isFirstLogin' =>  $this->session->get('is-first-login'),
             'ishttpsOn' =>  $this->request->getScheme() === 'https',
 
@@ -193,24 +194,55 @@ class HalExtension extends Twig_Extension
     /**
      *  Get the user's actual name
      *
-     *  @param $user
+     *  @param LdapUser|DomainUser $user
      *  @return string
      */
     public function getUsersActualName($user)
     {
-        $name = '';
-        if ($user instanceof LdapUser) {
-            $name = $user->firstName();
-
-        } elseif ($user instanceof DomainUser) {
-            $name = $user->getName();
-        }
+        $name = $this->getUsersFirstName($user);
 
         if (preg_match('/(Dave|David)/', $name) === 1) {
             return 'Frank';
         }
 
         return 'Dave';
+    }
+
+    /**
+     *  Get the user's first name
+     *
+     *  @param LdapUser|DomainUser $user
+     *  @return string
+     */
+    public function getUsersFirstName($user)
+    {
+        $name = $this->getUsersName($user);
+
+        return strstr($name, ' ');
+    }
+
+    /**
+     *  Get the user's name
+     *
+     *  @param LdapUser|DomainUser $user
+     *  @return string
+     */
+    public function getUsersName($user)
+    {
+        $name = '';
+        if ($user instanceof LdapUser) {
+            $name = sprintf('%s %s', $user->firstName(), $user->lastName());
+
+        } elseif ($user instanceof DomainUser) {
+            $exploded = explode(',', $user->getName());
+            if ($exploded === 2) {
+                $name = sprintf('%s %s', $exploded[1], $exploded[0]);
+            } else {
+                $name = $user->getName();
+            }
+        }
+
+        return trim($name);
     }
 
     /**

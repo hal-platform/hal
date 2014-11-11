@@ -12,8 +12,7 @@ use QL\Hal\Session;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Environment;
-use MCP\Corp\Account\User;
+use Twig_Template;
 
 /**
  * A bouncer that checks to see if the current user is an admin
@@ -31,20 +30,27 @@ class AdminBouncer
     private $permissions;
 
     /**
-     * @var Twig_Environment
+     * @var Twig_Template
      */
     private $twig;
 
     /**
+     * @var LoginBouncer
+     */
+    private $loginBouncer;
+
+    /**
      * @param Session $session
      * @param PermissionsService $permissions
-     * @param Twig_Environment $twig
+     * @param Twig_Template $twig
+     * @param LoginBouncer $loginBouncer
      */
-    public function __construct(Session $session, PermissionsService $permissions, Twig_Environment $twig)
+    public function __construct(Session $session, PermissionsService $permissions, Twig_Template $twig, LoginBouncer $loginBouncer)
     {
         $this->session = $session;
         $this->permissions = $permissions;
         $this->twig = $twig;
+        $this->loginBouncer = $loginBouncer;
     }
 
     /**
@@ -57,12 +63,18 @@ class AdminBouncer
      */
     public function __invoke(Request $request, Response $response)
     {
-        $account = $this->session->get('ldap-user');
+        // Let login bouncer run first
+        call_user_func($this->loginBouncer, $request, $response);
 
-        if (!($account instanceof User) || !$this->permissions->allowAdmin($account)) {
-            $response->status(403);
-            $response->body($this->twig->loadTemplate('denied.twig')->render([]));
-            throw new Stop;
+        $user = $this->session->get('user');
+        if ($this->permissions->allowAdmin($user)) {
+            return;
         }
+
+        $rendered = $this->twig->render([]);
+        $response->setStatus(403);
+        $response->setBody($rendered);
+
+        throw new Stop;
     }
 }

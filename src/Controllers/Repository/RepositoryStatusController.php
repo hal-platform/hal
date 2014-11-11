@@ -8,7 +8,6 @@
 namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManager;
-use MCP\Corp\Account\User;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
@@ -46,32 +45,24 @@ class RepositoryStatusController
     private $pushRepo;
 
     /**
-     * @var User
-     */
-    private $user;
-
-    /**
      * @param Twig_Template $template
      * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
-     * @param User $user
      */
     public function __construct(
         Twig_Template $template,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
-        PushRepository $pushRepo,
-        User $user
+        PushRepository $pushRepo
     ) {
         $this->template = $template;
         $this->em = $em;
         $this->repoRepo = $repoRepo;
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
-        $this->user = $user;
     }
 
     /**
@@ -85,8 +76,7 @@ class RepositoryStatusController
         $repo = $this->repoRepo->find($params['id']);
 
         if (!$repo) {
-            call_user_func($notFound);
-            return;
+            return call_user_func($notFound);
         }
 
         $builds = $this->buildRepo->findBy(['repository' => $repo], ['created' => 'DESC'], 10);
@@ -94,8 +84,7 @@ class RepositoryStatusController
         $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
-            'statuses' => $this->getDeploymentsWithStatus($repo),
-            'user' => $this->user
+            'statuses' => $this->getDeploymentsWithStatus($repo)
         ]);
 
         $response->setBody($rendered);

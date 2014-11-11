@@ -11,7 +11,7 @@
         {% for environment in environments %}
             <h3>{{ environment.key }}</h3>
 
-            {% if isUserAdmin(currentLdapUser) %}
+            {% if isUserAdmin(currentUser) %}
                 <form action="{{ urlFor('repository.deployment.admin.add.handle', {id: repository.id}) }}" method="post">
             {% endif %}
 
@@ -31,11 +31,11 @@
                                 {{ deployment.path }}
                             </td>
                             <td>
-                                {% if canUserDelete(currentLdapUser) %}
+                                {% if canUserDelete(currentUser) %}
                                 <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repoId: deployment.repository.id, id: deployment.id}) }}">Remove</a>
                                 {% endif %}
                                 {# @todo add edit functionality
-                                {% if isUserAdmin(currentLdapUser) %}
+                                {% if isUserAdmin(currentUser) %}
                                     <a href="{{ urlFor('repository.deployment.admin.edit', {repoId: repository.id, id: deployment.id}) }}">Edit</a>
                                 {% endif %}
                                 #}
@@ -43,7 +43,7 @@
                         </tr>
                     {% endfor %}
 
-                    {% if isUserAdmin(currentLdapUser) %}
+                    {% if isUserAdmin(currentUser) %}
                         <tr>
                             <td>
                                 {# @todo: need to solve for no servers for environment #}
@@ -65,7 +65,7 @@
     {% else %}
         <p>
             There are no environments.
-            {% if isUserAdmin(currentLdapUser) %}
+            {% if isUserAdmin(currentUser) %}
                 <br><a href="{{ urlFor('environment.admin.add') }}">Add an environment</a>
             {% endif %}
         </p>
@@ -73,7 +73,7 @@
 
     <div>
         {# primary action #}
-        {% if environments and isUserAdmin(currentLdapUser) %}
+        {% if environments and isUserAdmin(currentUser) %}
             <input class="btn" type="submit" value="Save Deployment Relationships">
             </form>
         {% endif %}

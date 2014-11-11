@@ -1,13 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
-use MCP\Corp\Account\User;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\UniqueHelper;
 use QL\Hal\Services\GithubService;
@@ -16,12 +21,6 @@ use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-
-/**
- *  Build Start Handle Controller
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class BuildStartHandleController
 {
     /**
@@ -65,7 +64,7 @@ class BuildStartHandleController
     /**
      * @var User
      */
-    private $user;
+    private $currentUser;
 
     /**
      * @var PermissionsService
@@ -89,7 +88,7 @@ class BuildStartHandleController
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $em
      * @param UrlHelper $url
-     * @param User $user
+     * @param User $currentUser
      * @param PermissionsService $permissions
      * @param GithubService $github
      * @param UniqueHelper $unique
@@ -101,7 +100,7 @@ class BuildStartHandleController
         EnvironmentRepository $envRepo,
         EntityManager $em,
         UrlHelper $url,
-        User $user,
+        User $currentUser,
         PermissionsService $permissions,
         GithubService $github,
         UniqueHelper $unique
@@ -112,7 +111,7 @@ class BuildStartHandleController
         $this->envRepo = $envRepo;
         $this->em = $em;
         $this->url = $url;
-        $this->user = $user;
+        $this->currentUser = $currentUser;
         $this->permissions = $permissions;
         $this->github = $github;
         $this->unique = $unique;
@@ -126,13 +125,11 @@ class BuildStartHandleController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-
         $repo = $this->repoRepo->findOneBy(['id' => $params['id']]);
         $env = $this->envRepo->findOneBy(['key' => $request->post('environment', null)]);
 
         if (!$repo) {
-            call_user_func($notFound);
-            return;
+            return call_user_func($notFound);
         }
 
         if (!$env) {
@@ -141,7 +138,7 @@ class BuildStartHandleController
             return;
         }
 
-        if (!$this->permissions->allowBuild($this->user, $repo->getKey())) {
+        if (!$this->permissions->allowBuild($this->currentUser, $repo->getKey())) {
             $this->session->addFlash(sprintf(self::ERR_NO_PERM, $env->getKey()));
             $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
             return;
@@ -167,12 +164,13 @@ class BuildStartHandleController
 
         $build = new Build();
         $id = $this->unique->generateBuildId();
+        $user = $this->userRepo->find($this->currentUser->getId());
 
         $build->setId($id);
         $build->setStatus('Waiting');
         $build->setBranch($reference);
         $build->setCommit($commit);
-        $build->setUser($this->userRepo->findOneBy(['id' => $this->user->commonId()]));
+        $build->setUser($user);
         $build->setRepository($repo);
         $build->setEnvironment($env);
         $this->em->persist($build);

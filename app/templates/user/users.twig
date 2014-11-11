@@ -15,7 +15,7 @@
     <h2>Users</h2>
     {{ macros.userTable(users) }}
 
-    {% if isUserAdmin(currentLdapUser) and inactiveUsers %}
+    {% if isUserAdmin(currentUser) and inactiveUsers %}
         <h2>Inactive Users</h2>
         {{ macros.userTable(inactiveUsers) }}
     {% endif %}
