@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "58492fa5e38fc1fefe5592cb1f5fd27a",
+    "hash": "d948ed84734b9bddb0d520bc7e24ccc7",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1068,6 +1068,66 @@
             "description": "Handles authenticating a username/password to Quicken Loans' corporate set of usernames and passwords. Note that this will NOT work for any public facing websites (yet). This will only work for internal QL applications.",
             "homepage": "http://git/mnagi/mcp-corp-account",
             "time": "2013-11-07 19:22:46"
+        },
+        {
+            "name": "ql/mcp-crypto",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "git@git:mcp/mcp-crypto.git",
+                "reference": "385475686082b7ecbfe904beb894e59c6480882f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-mcp-crypto-1.2.0-636308.zip",
+                "reference": "385475686082b7ecbfe904beb894e59c6480882f",
+                "shasum": "491a1200f2b54fff417e4b19008f8c2b283b0db7"
+            },
+            "archive": {
+                "exclude": [
+                    "/tests",
+                    "/phpunit.xml.dist",
+                    "/README.md"
+                ]
+            },
+            "require": {
+                "ext-mcrypt": "*",
+                "ext-pcre": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "*",
+                "squizlabs/php_codesniffer": "*"
+            },
+            "suggest": {
+                "ext-openssl": "Provides a better random number generator for generating a key"
+            },
+            "bin": [
+                "bin/symmetric-keygen"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MCP\\Crypto\\": "src"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Fahnert",
+                    "email": "chrisfahnert@quickenloans.com"
+                },
+                {
+                    "name": "Matt Nagi",
+                    "email": "mattnagi@quickenloans.com"
+                }
+            ],
+            "description": "Simple, opinionated symmetric encryption",
+            "homepage": "http://git/mnagi/mcp-crypto",
+            "time": "2014-06-05 20:39:26"
         },
         {
             "name": "ql/mcp-logger",

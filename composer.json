@@ -35,6 +35,7 @@
         "ql/mcp-cache": "~2.1",
         "ql/mcp-core": "1.*",
         "ql/mcp-corp-account": "~0.2@rc",
+        "ql/mcp-crypto": "~1.2",
         "ql/mcp-logger": "1.3.*",
         "ql/panthor": "~1.1",
         "slim/slim": "2.4.*",
