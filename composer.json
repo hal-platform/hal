@@ -30,7 +30,7 @@
         "predis/predis": "~1.0",
         "psr/log": "*",
         "ql/exception-toolkit": "~0.1",
-        "ql/hal-core": "dev-master@dev",
+        "ql/hal-core": "dev-master",
         "ql/http-problem": "~1.0",
         "ql/mcp-cache": "~2.1",
         "ql/mcp-core": "1.*",
