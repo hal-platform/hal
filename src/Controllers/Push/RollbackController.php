@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Repository;
+namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
@@ -78,5 +78,7 @@ class RollbackController
             'server' => $server,
             'pushes' => $pushes
         ]);
+
+        $response->setBody($rendered);
     }
 }

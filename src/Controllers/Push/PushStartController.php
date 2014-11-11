@@ -18,7 +18,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
 
-class BuildPushController
+class PushStartController
 {
     /**
      * @type Twig_Template

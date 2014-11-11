@@ -120,13 +120,13 @@ parameters:
         push.start:
             method: 'GET'
             route: '/build/:build/push'
-            stack: ['login.bouncer', 'build.push.page']
+            stack: ['login.bouncer', 'push.start.page']
             conditions: {build: %routes.regex.buildId%}
 
-        push.handle:
+        push.start.handle:
             method: 'POST'
             route: '/build/:build/push'
-            stack: ['login.bouncer', 'build.push.handle']
+            stack: ['login.bouncer', 'push.start.handle']
             conditions: {build: %routes.regex.buildId%}
 
         push.history:
@@ -138,7 +138,7 @@ parameters:
         rollback:
             method: 'GET'
             route: '/repositories/:id/rollback/:server'
-            stack: ['login.bouncer', 'rollback.page']
+            stack: ['login.bouncer', 'push.rollback.page']
             conditions: {id: '[A-Za-z0-9_-]+', server: '[\d]+'}
 
         ########################################################################################################################

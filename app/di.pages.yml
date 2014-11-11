@@ -251,31 +251,24 @@ services:
       - @github
       - @unique.helper
 
-  build.push.page:
-    class: 'QL\Hal\Controllers\Build\BuildPushController'
+  ######################################################################################################################
+  # PUSH CONTROLLERS
+  ######################################################################################################################
+
+  push.start.page:
+    class: 'QL\Hal\Controllers\Push\PushStartController'
     arguments:
-      - @build.push.twig
+      - @push.start.twig
       - @doctrine.em
       - @build.repo
       - @deployment.repo
       - @server.repo
-  build.push.twig:
+  push.start.twig:
     parent: 'twig.template.old'
-    arguments: ['build/push.twig']
+    arguments: ['push/start.twig']
 
-  rollback.page:
-    class: 'QL\Hal\Controllers\Repository\RollbackController'
-    arguments:
-      - @rollback.twig
-      - @repository.repo
-      - @server.repo
-      - @doctrine.em
-  rollback.twig:
-    parent: 'twig.template.old'
-    arguments: ['repository/rollback.twig']
-
-  build.push.handle:
-    class: 'QL\Hal\Controllers\Build\BuildPushHandleController'
+  push.start.handle:
+    class: 'QL\Hal\Controllers\Push\PushStartHandler'
     arguments:
       - @session
       - @build.repo
@@ -285,6 +278,17 @@ services:
       - @url.helper
       - @currentUser
       - @permissions
+
+  push.rollback.page:
+    class: 'QL\Hal\Controllers\Push\RollbackController'
+    arguments:
+      - @rollback.twig
+      - @repository.repo
+      - @server.repo
+      - @doctrine.em
+  rollback.twig:
+    parent: 'twig.template.old'
+    arguments: ['push/rollback.twig']
 
   builds.page:
     class: 'QL\Hal\Controllers\Build\BuildsController'
@@ -296,10 +300,6 @@ services:
   builds.twig:
     parent: 'twig.template.old'
     arguments: ['build/builds.twig']
-
-  ######################################################################################################################
-  # PUSH CONTROLLERS
-  ######################################################################################################################
 
   push.page:
     class: 'QL\Hal\Controllers\Push\PushController'
