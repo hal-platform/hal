@@ -7,185 +7,61 @@
 
 namespace QL\Hal;
 
-use SessionHandlerInterface;
+use Slim\Helper\Set;
 
-/**
- *  Session Handler
- */
-class Session
+class Session extends Set
 {
     const FLASH_KEY = 'flash';
 
-    private $handler;
-
     /**
-     *  Constructor
-     */
-    public function __construct(SessionHandlerInterface $handler = null)
-    {
-        $this->handler = $handler;
-
-        $this->start();
-
-        if (false == $this->has(self::FLASH_KEY)) {
-            $this->set(self::FLASH_KEY, array());
-        }
-    }
-
-    /**
-     *  Check if session is started
+     * Get an array of flash messages (and clear all flashes stored)
      *
-     *  @return bool
-     */
-    public function started()
-    {
-        return (session_status() == PHP_SESSION_ACTIVE) ? true : false;
-    }
-
-    /**
-     *  Start the session if it hasn't already been started
-     */
-    public function start()
-    {
-        if (false == $this->started()) {
-
-            if ($this->handler instanceof SessionHandlerInterface) {
-                session_set_save_handler(
-                    array($this->handler, 'open'),
-                    array($this->handler, 'close'),
-                    array($this->handler, 'read'),
-                    array($this->handler, 'write'),
-                    array($this->handler, 'destroy'),
-                    array($this->handler, 'gc')
-                );
-            }
-
-            session_start();
-        }
-    }
-
-    /**
-     *  End the current session
-     */
-    public function end()
-    {
-        if ($this->started()) {
-            session_destroy();
-        }
-    }
-
-    /**
-     *  Clear the session
+     * If a message is provided, a flash is instead added.
      *
-     *  @return null
+     * @param string|null $message
+     *
+     * @return array|null
      */
-    public function clear()
+    public function flash($message = null)
     {
-        if (!$this->started()) {
+        $flashes = $this->getFlashes();
+
+        if (func_num_args() > 0) {
+            // Add flash
+            $flashes[] = $message;
+            $this->set(self::FLASH_KEY, $flashes);
             return;
         }
 
-        $_SESSION = [];
+        // Get flash
+        $this->set(self::FLASH_KEY, []);
+        return $flashes;
     }
 
     /**
-     *  Set a key value pair in session
+     * @deprecated Use flash($message) instead
      *
-     *  @param string $key
-     *  @param mixed $val
-     */
-    public function set($key, $val)
-    {
-        if (is_resource($val)) {
-            // BAD! BAD!
-        }
-
-        $_SESSION[$key] = $val;
-    }
-
-    /**
-     *  Check if the session has a key
+     * Add a new flash message
      *
-     *  @param $key
-     *  @return bool
-     */
-    public function has($key)
-    {
-        return (isset($_SESSION[$key])) ? true : false;
-    }
-
-    /**
-     *  Get a value from session, returned default if not set
-     *
-     *  @param string $key
-     *  @param mixed $default
-     *  @return mixed
-     */
-    public function get($key, $default = null)
-    {
-        return ($this->has($key)) ? $_SESSION[$key] : $default;
-    }
-
-    /**
-     *  Check if any flash messages are available
-     *
-     * @param null $key
-     * @return bool
-     */
-    public function hasFlash($key = null)
-    {
-        $messages = $this->get(self::FLASH_KEY);
-
-        if ($key === null) {
-            return (count($messages) > 0) ? true : false;
-        } else {
-            return (isset($messages[$key])) ? true : false;
-        }
-
-    }
-
-    /**
-     *  Get an array of flash messages
-     *
-     *  @param null $key
-     *  @return array
-     */
-    public function getFlash($key = null)
-    {
-        $messages = array();
-
-        if ($this->hasFlash($key)) {
-            if ($key === null) {
-                $messages = $this->get(self::FLASH_KEY);
-                $this->set(self::FLASH_KEY, array());
-            } else {
-                $messages = $this->get(self::FLASH_KEY);
-                $message = $messages[$key];
-                unset($messages[$key]);
-                $this->set(self::FLASH_KEY, $messages);
-                $messages = array($message);
-            }
-        }
-
-        return $messages;
-    }
-
-    /**
-     *  Add a new flash message
-     *
-     *  @param $message
-     *  @param $key
+     * @param string $message
      */
     public function addFlash($message, $key = null)
     {
-        $messages = $this->get(self::FLASH_KEY);
+        $this->flash($message);
+    }
 
-        if ($key === null) {
-            $messages[] = $message;
-        } else {
-            $messages[$key] = $message;
+    /**
+     * Flash helper
+     *
+     * @return array
+     */
+    private function getFlashes()
+    {
+        $messages = $this->get(self::FLASH_KEY);
+        if (!is_array($messages)) {
+            $messages = [];
         }
 
-        $this->set(self::FLASH_KEY, $messages);
+        return $messages;
     }
 }

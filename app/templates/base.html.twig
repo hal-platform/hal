@@ -91,7 +91,7 @@
         {% block flash %}
             {% if session.hasFlash() %}
                 <div class="alert-bar">
-                    {% for message in session.getFlash() %}
+                    {% for message in session.flash() %}
                         <p>{{ message|raw }}</p>
                     {% endfor %}
                 </div>

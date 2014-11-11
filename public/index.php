@@ -21,6 +21,7 @@ if (!$container = @include $root . '/app/bootstrap.php') {
 $app = $container->get('slim');
 
 // Custom application logic here
+ini_set('session.use_cookies', '0');
 
 # convert errors to exceptions
 ErrorHandler::register();

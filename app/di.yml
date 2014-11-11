@@ -18,10 +18,6 @@ services:
   requester:
     synthetic: true
 
-  # Set by bootstrap
-  root:
-    synthetic: true
-
   ######################################################################################################################
   # DOCTRINE CONFIGURATION
   ######################################################################################################################
@@ -60,36 +56,12 @@ services:
   ######################################################################################################################
 
   slim:
-    class: 'Slim\Slim'
+    parent: 'panthor.slim'
     arguments:
-      - debug: '%debug%'
-      - log.writer: '@slim.logger'
-    configurator: [@slim.configurator, 'configure']
+      - %slim.configuration%
+    calls:
+      - ['add', [@slim.session]]
 
-  slim.environment:
-    class: 'Slim\Environment'
-    factory_service: 'slim'
-    factory_method: 'environment'
-  slim.request:
-    class: 'Slim\Http\Request'
-    factory_service: 'slim'
-    factory_method: 'request'
-  slim.response:
-    class: 'Slim\Http\Response'
-    factory_service: 'slim'
-    factory_method: 'response'
-  slim.router:
-    class: 'Slim\Router'
-    factory_service: 'slim'
-    factory_method: 'router'
-
-  slim.configurator:
-    class: 'QL\Hal\Slim\SlimConfigurator'
-    arguments: [@service_container, %slim.hooks%]
-
-  slim.hook.routes:
-    class: 'QL\Hal\Slim\RouteLoaderHook'
-    arguments: [@service_container, %routes%]
   slim.hook.logger:
     class: 'QL\Hal\Slim\McpLoggerHook'
     arguments: [@logger.mcp.factory, @slim.environment, @slim.request]
@@ -97,9 +69,9 @@ services:
     class: 'QL\Hal\Slim\ErrorHandlerHook'
     arguments: [@exception.dispatcher, @logger, @error.pages.twig]
 
-  slim.logger:
-    class: 'QL\Hal\Logger\McpLogWriter'
-    arguments: [@logger]
+  slim.session:
+    class: 'QL\Hal\Slim\SessionMiddleware'
+    arguments: [@session.handler, @service_container]
 
   ######################################################################################################################
   # ERROR & EXCEPTION HANDLING
@@ -138,10 +110,6 @@ services:
   unique.helper:
     class: 'QL\Hal\Helpers\UniqueHelper'
     arguments: [%application.major.version%, %unique.alphabet%]
-
-  clock:
-    class: 'MCP\DataType\Time\Clock'
-    arguments: ['now', 'UTC']
 
   ######################################################################################################################
   # TWIG STUFF
@@ -374,11 +342,12 @@ services:
 
   session:
     class: 'QL\Hal\Session'
-    arguments: [@session.handler]
+    factory_service: 'session.handler'
+    factory_method: 'load'
 
   session.handler:
-    class: 'QL\Hal\Services\Session\Handler\DoctrineHandler'
-    arguments: [@session.repo, @doctrine.em]
+    class: 'QL\Hal\SessionHandler'
+    arguments: [@slim.cookies, %session.cookie.configuration%]
 
   ######################################################################################################################
   # Logging
