@@ -5,16 +5,13 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Github;
+namespace QL\Hal\Controllers\GithubApi;
 
 use QL\Hal\Services\GithubService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-/**
- * @api
- */
-class UsersApi
+class Users
 {
     /**
      * @var GithubService

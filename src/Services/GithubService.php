@@ -11,11 +11,11 @@ use Github\Api\GitData\Commits as CommitApi;
 use Github\Api\GitData\References as ReferenceApi;
 use Github\Api\PullRequest as PullRequestApi;
 use Github\Api\Repository\Commits as CommitRepo;
+use Github\Api\User as UserApi;
 
 use Github\Api\Repo;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
-use QL\Hal\GithubApi\HackUser;
 
 /**
  * You know whats really annoying? Wrapping every api request in a try/catch.
@@ -32,7 +32,7 @@ class GithubService
     const REGEX_COMMIT = '#^[0-9a-f]{40}$#';
 
     /**
-     * @var HackUser
+     * @var UserApi
      */
     private $userApi;
 
@@ -67,7 +67,7 @@ class GithubService
     private $commitRepo;
 
     /**
-     * @param HackUser $user
+     * @param UserApi $user
      * @param Repo $repo
      * @param ReferenceApi $ref
      * @param PullRequestApi $pull
@@ -76,7 +76,7 @@ class GithubService
      * @param CommitRepo $commitRepo
      */
     public function __construct(
-        HackUser $user,
+        UserApi $user,
         Repo $repo,
         ReferenceApi $ref,
         PullRequestApi $pull,
@@ -132,9 +132,9 @@ class GithubService
     {
         try {
             if ($getAll) {
-                $pulls = $this->pager->fetchAll($this->pullApi, 'all', [$user, $repo, 'closed']);
+                $pulls = $this->pager->fetchAll($this->pullApi, 'all', [$user, $repo, ['state' => 'closed']]);
             } else {
-                $pulls = $this->pullApi->all($user, $repo, 'closed');
+                $pulls = $this->pullApi->all($user, $repo, ['state' => 'closed']);
             }
         } catch (RuntimeException $e) {
             $pulls = [];

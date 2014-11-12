@@ -14,11 +14,11 @@ services:
   ######################################################################################################################
 
   api.github.users:
-    class: 'QL\Hal\Github\UsersApi'
+    class: 'QL\Hal\Controllers\GithubApi\Users'
     arguments: [@github]
 
   api.github.user.repositories:
-    class: 'QL\Hal\Github\ReposApi'
+    class: 'QL\Hal\Controllers\GithubApi\Repos'
     arguments: [@github]
 
   ######################################################################################################################

@@ -50,7 +50,6 @@ class BuildStartController
         GithubService $github
     ) {
         $this->template = $template;
-        $this->layout = $layout;
         $this->repoRepo = $repoRepo;
         $this->envRepo = $envRepo;
         $this->github = $github;

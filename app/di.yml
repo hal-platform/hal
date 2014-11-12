@@ -332,7 +332,7 @@ services:
     arguments: [@github.client]
 
   github.userService:
-    class: 'QL\Hal\GithubApi\HackUser'
+    class: 'Github\Api\User'
     arguments: [@github.client]
 
   github.commitRepo:

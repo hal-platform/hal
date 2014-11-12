@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Github;
+namespace QL\Hal\Controllers\GithubApi;
 
 use Mockery;
 use PHPUnit_Framework_TestCase;
@@ -13,7 +13,7 @@ use Slim\Environment;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class ReposApiTest extends PHPUnit_Framework_TestCase
+class ReposTest extends PHPUnit_Framework_TestCase
 {
     public $githubService;
     public $request;
@@ -29,7 +29,7 @@ class ReposApiTest extends PHPUnit_Framework_TestCase
 
     public function testCalledWithoutParamsBombsOut()
     {
-        $repos = new ReposApi($this->githubService);
+        $repos = new Repos($this->githubService);
         $repos($this->request, $this->response);
 
         $this->assertSame(404, $this->response->getStatus());
@@ -37,7 +37,7 @@ class ReposApiTest extends PHPUnit_Framework_TestCase
 
     public function testCalledWithoutCorrectParametersBombsOut()
     {
-        $repos = new ReposApi($this->githubService);
+        $repos = new Repos($this->githubService);
         $repos($this->request, $this->response, []);
 
         $this->assertSame(404, $this->response->getStatus());
@@ -45,7 +45,7 @@ class ReposApiTest extends PHPUnit_Framework_TestCase
 
     public function testCalledWithEmptyParametersBombsOut()
     {
-        $repos = new ReposApi($this->githubService);
+        $repos = new Repos($this->githubService);
         $repos($this->request, $this->response, ['username' => '']);
 
         $this->assertSame(400, $this->response->getStatus());
@@ -79,7 +79,7 @@ JSON;
             ->with('testuser')
             ->andReturn($apiData);
 
-        $repos = new ReposApi($this->githubService);
+        $repos = new Repos($this->githubService);
         $repos($this->request, $this->response, ['username' => 'testuser']);
 
         $this->assertSame($expectedJson, $this->response->getBody());
