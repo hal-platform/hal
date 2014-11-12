@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\User;
 
 use QL\Hal\Helpers\UrlHelper;
+use QL\Panthor\Http\EncryptedCookies;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Slim;
@@ -18,9 +19,9 @@ class EditPreferencesHandle
     const COOKIE_TIME = '6 months';
 
     /**
-     * @var Slim
+     * @var EncryptedCookies
      */
-    private $slim;
+    private $cookies;
 
     /**
      * @var UrlHelper
@@ -28,11 +29,12 @@ class EditPreferencesHandle
     private $url;
 
     /**
+     *  @param EncryptedCookies $cookies
      *  @param UrlHelper $url
      */
-    public function __construct(Slim $slim, UrlHelper $url)
+    public function __construct(EncryptedCookies $cookies, UrlHelper $url)
     {
-        $this->slim = $slim;
+        $this->cookies = $cookies;
         $this->url = $url;
     }
 
@@ -51,7 +53,7 @@ class EditPreferencesHandle
             $nav = implode(' ', $nav);
         }
 
-        $this->slim->setCookie('navpref', trim($nav), static::COOKIE_TIME);
+        $this->cookies->setCookie('navpref', trim($nav), static::COOKIE_TIME);
 
         $this->url->redirectFor('settings');
     }

@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Twig;
 
+use QL\Panthor\Http\EncryptedCookies;
 use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
@@ -33,6 +34,11 @@ class HalExtension extends Twig_Extension
      * @type Request
      */
     private $request;
+
+    /**
+     * @type EncryptedCookies
+     */
+    private $cookies;
 
     /**
      * @type UrlHelper
@@ -71,6 +77,7 @@ class HalExtension extends Twig_Extension
 
     /**
      * @param Request $request
+     * @param EncryptedCookies $cookies
      * @param UrlHelper $url
      * @param TimeHelper $time
      * @param Session $session
@@ -80,6 +87,7 @@ class HalExtension extends Twig_Extension
      */
     public function __construct(
         Request $request,
+        EncryptedCookies $cookies,
         UrlHelper $url,
         TimeHelper $time,
         Session $session,
@@ -88,6 +96,7 @@ class HalExtension extends Twig_Extension
         array $navigationList
     ) {
         $this->request = $request;
+        $this->cookies = $cookies;
         $this->url = $url;
         $this->time = $time;
         $this->session = $session;
@@ -320,7 +329,7 @@ class HalExtension extends Twig_Extension
      */
     public function isNavigationOn($navSelection)
     {
-        $cookie = $this->request->cookies->get('navpref');
+        $cookie = $this->cookies->getCookie('navpref');
         if ($cookie === null) {
             $this->parsedNavigationList = $this->defaultNavigation();
         } else {

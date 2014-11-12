@@ -120,6 +120,7 @@ services:
     class: 'QL\Hal\Twig\HalExtension'
     arguments:
       - @slim.request
+      - @slim.cookies
       - @url.helper
       - @time.helper
       - @session
