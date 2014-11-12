@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "654f11183063bfa2d52425848cef614e",
+    "hash": "580815d5c09176e8558f0e14010dce80",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -908,26 +908,27 @@
         },
         {
             "name": "ql/mcp-cache",
-            "version": "2.1.2",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-cache.git",
-                "reference": "2fcd84f8b8d79c8febd7a7898ac561dd29edd0b8"
+                "reference": "6018e7f38d95f38fbfba609b5167f6f4cdc677ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-cache-2.1.2-f95763.zip",
-                "reference": "2fcd84f8b8d79c8febd7a7898ac561dd29edd0b8",
-                "shasum": "f940fc21a1ad5b5a640ef71926c31a11738b1251"
+                "url": "http://composer/dist/ql-mcp-cache-2.2.0-cacf88.zip",
+                "reference": "6018e7f38d95f38fbfba609b5167f6f4cdc677ac",
+                "shasum": "8ce7bad5c0f67e1e578fb087dc2c94fcba07ffee"
             },
             "archive": {
                 "exclude": [
                     "/bin",
                     "/phpunit.xml.dist",
-                    "/tests"
+                    "/testing"
                 ]
             },
             "require": {
+                "php": ">=5.4",
                 "ql/mcp-core": ">=1"
             },
             "conflict": {
@@ -936,18 +937,14 @@
             "require-dev": {
                 "mockery/mockery": "*",
                 "phpunit/php-invoker": "*",
-                "phpunit/phpunit": "3.7.*",
+                "phpunit/phpunit": "4.*",
                 "predis/predis": "*"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.1.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "MCP\\Cache\\": "src"
+                    "MCP\\Cache\\": "src",
+                    "MCP\\Cache\\Testing\\": "testing/src"
                 }
             },
             "license": [
@@ -961,7 +958,7 @@
             ],
             "description": "Caching standard for mcp services",
             "homepage": "http://git/mcp/mcp-cache",
-            "time": "2014-06-23 17:07:51"
+            "time": "2014-11-12 15:03:06"
         },
         {
             "name": "ql/mcp-core",
