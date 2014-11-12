@@ -1,28 +1,32 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Services;
 
 use RuntimeException;
 use MCP\Corp\Account\LdapService;
-use MCP\Cache\CacheInterface;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use MCP\Corp\Account\User as LdapUser;
+use MCP\Cache\CachingTrait;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Core\Entity\Repository;
-use MCP\Corp\Account\User as LdapUser;
+use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User as EntityUser;
 use Zend\Ldap\Dn;
 
-/**
- * Permissions Service
- *
- * Determines user visibility, build, and push permissions for HAL 9000.
- *
- * @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class PermissionsService
 {
+    use CachingTrait;
+
+    const CACHE_COLLAB = 'permissions:github.%s.%s';
+    const CACHE_LDAP_GROUP = 'permissions:ldap.group.%s';
+    const CACHE_LDAP_USER = 'permissions:ldap.user.%s';
+
     /**
      * Super Admin Group
      *
@@ -84,11 +88,6 @@ class PermissionsService
     private $github;
 
     /**
-     * @var CacheInterface
-     */
-    private $cache;
-
-    /**
      * The common ID of a user that will be granted Super Admin status. Used for testing only.
      *
      * @var string
@@ -112,7 +111,6 @@ class PermissionsService
      * @param UserRepository $users
      * @param EnvironmentRepository $environments
      * @param GithubService $github
-     * @param CacheInterface $cache
      * @param string $god
      */
     public function __construct(
@@ -122,7 +120,6 @@ class PermissionsService
         UserRepository $users,
         EnvironmentRepository $environments,
         GithubService $github,
-        CacheInterface $cache,
         $god
     ) {
         $this->ldap = $ldap;
@@ -131,7 +128,6 @@ class PermissionsService
         $this->users = $users;
         $this->environments = $environments;
         $this->github = $github;
-        $this->cache = $cache;
         $this->god = $god;
 
         $this->productionEnvironments = [
@@ -568,9 +564,8 @@ class PermissionsService
      */
     private function isUserCollaborator(LdapUser $user, $repository)
     {
-        $key = 'github.collaborator.'.$user->commonId().'.'.$repository;
-
-        if ($result = $this->cache->get($key)) {
+        $key = sprintf(self::CACHE_COLLAB, $user->commonId(), $repository);
+        if ($result = $this->getFromCache($key)) {
             return $result;
         }
 
@@ -581,8 +576,8 @@ class PermissionsService
             $repository->getGithubRepo(),
             $user->windowsUsername()
         );
-        $this->cache->set($key, $result, 120);
 
+        $this->setToCache($key, $result);
         return $result;
     }
 
@@ -618,22 +613,22 @@ class PermissionsService
      */
     private function usersInGroup(Dn $group)
     {
-        $key = 'ldap.group.'.md5($group);
+        $key = sprintf(self::CACHE_LDAP_GROUP, md5($group));
 
-        if ($result = $this->cache->get($key)) {
+        if ($result = $this->getFromCache($key)) {
             return $result;
         }
 
         $users = $this->ldap->usersInGroup($group);
-        $this->cache->set($key, $users);
 
+        $this->setToCache($key, $users);
         return $users;
     }
 
     /**
      * Get an LDAP user by Windows Username
      *
-     * @param $user
+     * @param string|LdapUser|EntityUser $user
      * @return LdapUser|null
      */
     private function getUser($user)
@@ -645,24 +640,25 @@ class PermissionsService
         if ($user instanceof LdapUser) {
             return $user;
         }
+
         if ($user instanceof EntityUser) {
             $user = $user->getHandle();
         }
 
-        $key = 'ldap.user.'.md5($user);
+        $key = sprintf(self::CACHE_LDAP_USER, $user);
 
-        if ($result = $this->cache->get($key)) {
+        if ($result = $this->getFromCache($key)) {
             return $result;
         }
 
-        $user = $this->ldap->getUserByWindowsUsername($user);
-        $this->cache->set($key, $user);
+        $ldapUser = $this->ldap->getUserByWindowsUsername($user);
 
-        if ($user instanceof LdapUser) {
-            return $user;
-        } else {
-            return null;
+        if ($ldapUser instanceof LdapUser) {
+            $this->setToCache($key, $ldapUser);
+            return $ldapUser;
         }
+
+        return null;
     }
 
     ####################################################################################################################

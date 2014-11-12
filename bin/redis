@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
+
+namespace QL\Hal\Bootstrap;
+
+$root = __DIR__ . '/..';
+if (!$container = @include $root . '/app/bootstrap.php') {
+    echo "The application failed to start.\n";
+    exit(1);
+}
+
+$redis = $container->get('redis');
+
+// List keys in the hal namespace
+$keys = $redis->keys('*');
+print_r($keys);

@@ -201,7 +201,8 @@ services:
       - ['authenticate', [%ldap.username%, %ldap.password%, false]]
 
   cache:
-    class: 'MCP\Cache\MemoryCache'
+    class: 'MCP\Cache\PredisCache'
+    arguments: [@redis]
 
   permissions:
     class: 'QL\Hal\Services\PermissionsService'
@@ -212,8 +213,10 @@ services:
       - @user.repo
       - @environment.repo
       - @github
-      - @cache
       - '%debug.godmode%'
+    calls:
+      - ['setCache', [@cache]]
+      - ['setCacheTTL', [%permissions.cache.ttl%]]
 
   redis:
     class: 'Predis\Client'
