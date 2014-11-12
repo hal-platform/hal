@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Build;
+namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
@@ -101,7 +101,7 @@ class PushStartController
 
         $rendered = $this->template->render([
             'build' => $build,
-            'selected' => $request->get('deployments', []),
+            'selected' => $request->get('deployment'),
             'statuses' => $statuses
         ]);
 

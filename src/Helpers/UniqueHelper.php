@@ -57,6 +57,11 @@ class UniqueHelper
     }
 
     /**
+     * Template:
+     *     b{VERSION}.{TIME}{UNIQUE}
+     * Example:
+     *     b2.1115555
+     *
      * @return string
      */
     public function generateBuildId()
@@ -74,6 +79,11 @@ class UniqueHelper
     }
 
     /**
+     * Template:
+     *     p{VERSION}.{TIME}{UNIQUE}
+     * Example:
+     *     p2.1115555
+     *
      * @return string
      */
     public function generatePushId()
@@ -81,7 +91,7 @@ class UniqueHelper
         $date = $this->timeHash();
         $unique = $this->randomHash(4);
 
-        // p{VERSION}.{TIME}{UNIQUE}
+
         return sprintf(
             'p%d.%s%s',
             $this->version,
@@ -150,6 +160,8 @@ class UniqueHelper
      * The 2 digit year is used so that every time > 2010ish will consistently hash to 3 characters in base 58.
      *
      * What happens in the year 2100? I don't care. I will be dead. <-- Planned obsolescence
+     *
+     * @return int (2 char)
      */
     protected function timeHash()
     {

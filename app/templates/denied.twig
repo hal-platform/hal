@@ -2,8 +2,7 @@
 
 {% set page_title = "Access Denied" %}
 
-{% set name = getUsersActualName(user) %}
-
+{% set name = getUsersActualName(currentUser) %}
 
 {% block content %}
 <div class="error-page">

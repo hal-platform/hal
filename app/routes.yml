@@ -126,7 +126,7 @@ parameters:
         push.start.handle:
             method: 'POST'
             route: '/build/:build/push'
-            stack: ['login.bouncer', 'push.start.handle']
+            stack: ['login.bouncer', 'push.start.handler']
             conditions: {build: %routes.regex.buildId%}
 
         push.history:

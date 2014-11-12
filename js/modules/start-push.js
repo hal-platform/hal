@@ -8,8 +8,6 @@ define(['jquery'], function($) {
             $container = $(this.target);
             this.$checks = $(this.checkTarget);
 
-            console.log($container.length);
-            console.log(this.$checks.length);
             if ($container.length && this.$checks.length > 1) {
                 this.attach($container);
             }

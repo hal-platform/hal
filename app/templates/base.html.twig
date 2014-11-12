@@ -89,9 +89,9 @@
 
     <main role="main">
         {% block flash %}
-            {% if session.hasFlash() %}
+            {% if session.flash(true) %}
                 <div class="alert-bar">
-                    {% for message in session.flash() %}
+                    {% for message in session.flash(false) %}
                         <p>{{ message|raw }}</p>
                     {% endfor %}
                 </div>

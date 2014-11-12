@@ -83,7 +83,7 @@
         before selecting which servers you wish to deploy to.
     </p>
 
-    <form action="{{ urlFor('push.start.handle', {'repo': build.repository.key, 'build': build.id}) }}" method="post">
+    <form action="{{ urlFor('push.start.handle', {'build': build.id}) }}" method="post">
     <div class="overflow-container">
         <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>
@@ -101,6 +101,7 @@
             {% for status in statuses %}
 
                 {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
+                {% set isSelected = (status.deployment.id == selected) %}
 
                 <tr>
                     <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }}</a></td>
@@ -149,14 +150,12 @@
                         {# No successful pushes #}
                         <td colspan="4">No successful pushes found.</td>
                     {% endif %}
+
                     <td>
                         {% if inProgress %}
                             Please Wait
                         {% elseif canUserPush(currentUser, status.deployment.repository.key, status.deployment.server.environment.key) %}
-                            {% if status.deployment.id in selected %}
-                                {% set isChecked = "checked" %}
-                            {% endif %}
-                            <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}" {{ isChecked }}></label>
+                            <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
                             {% set allowSubmit = true %}
                         {% else %}
                             No Access

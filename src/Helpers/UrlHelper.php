@@ -69,11 +69,12 @@ class UrlHelper
      *
      *  @param string $route
      *  @param array $params
+     *  @param array $query
      *  @return string
      */
-    public function urlFor($route, array $params = [])
+    public function urlFor($route, array $params = [], array $query = [])
     {
-        return $this->request->getUrl() . $this->router->urlFor($route, $params);
+        return $this->request->getUrl() . $this->uriFor($route, $params, $query);
     }
 
     /**
@@ -81,11 +82,13 @@ class UrlHelper
      *
      * @param string $route
      * @param array $params
+     * @param array $query
      * @return string
      */
-    public function uriFor($route, array $params = [])
+    public function uriFor($route, array $params = [], array $query = [])
     {
-        return $this->router->urlFor($route, $params);
+        $url = $this->router->urlFor($route, $params);
+        return $this->appendQueryString($url, $query);
     }
 
     /**
@@ -93,16 +96,14 @@ class UrlHelper
      *
      * @param string $route
      * @param array $params
-     * @param array $vars
-     * @param int $code
+     * @param array $query
+     *
+     * @param null
      */
-    public function redirectFor($route, array $params = [], $vars = [], $code = 302)
+    public function redirectFor($route, array $params = [], $query = [], $code = 302)
     {
         $url = $this->urlFor($route, $params);
-
-        if (count($vars)) {
-            $url = sprintf('%s?%s', $url, http_build_query($vars));
-        }
+        $url = $this->appendQueryString($url, $query);
 
         $this->response->redirect($url, $code);
     }
@@ -263,5 +264,20 @@ class UrlHelper
     public function formatGitCommit($reference)
     {
         return substr($reference, 0, 7);
+    }
+
+    /**
+     * @param string $url
+     * @param array $query
+     *
+     * @return string
+     */
+    private function appendQueryString($url, array $query)
+    {
+        if (count($query)) {
+            $url = sprintf('%s?%s', $url, http_build_query($query));
+        }
+
+        return $url;
     }
 }

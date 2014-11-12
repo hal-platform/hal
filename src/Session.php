@@ -16,25 +16,43 @@ class Session extends Set
     /**
      * Get an array of flash messages (and clear all flashes stored)
      *
-     * If a message is provided, a flash is instead added.
+     * The provided parameter acts as either a message to store, or whether to $keep existing messages.
      *
-     * @param string|null $message
+     * Examples:
+     * If a string message is provided, a flash is added.
+     * If true is provided, the flash messages are retrieved and NOT cleared.
+     * If false is provided, the flash messages are retrieved and cleared.
+     *
+     * Default behavior:
+     * Retrieve flashes and clear
+     *
+     * @param boolean|string|null $message|$keepFlashes
      *
      * @return array|null
      */
-    public function flash($message = null)
+    public function flash($action = null)
     {
         $flashes = $this->getFlashes();
 
-        if (func_num_args() > 0) {
+        if (func_num_args() > 0 && is_bool($action)) {
+            if (!$action) {
+                // Reset flash
+                $this->set(self::FLASH_KEY, []);
+            }
+
+            return $flashes;
+        }
+
+        if (func_num_args() > 0 && is_string($action)) {
             // Add flash
-            $flashes[] = $message;
+            $flashes[] = $action;
             $this->set(self::FLASH_KEY, $flashes);
             return;
         }
 
-        // Get flash
+        // Reset flash
         $this->set(self::FLASH_KEY, []);
+
         return $flashes;
     }
 

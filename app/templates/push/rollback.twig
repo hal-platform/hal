@@ -9,8 +9,7 @@
 
     <p>
         This table shows all builds that have been successfully pushed to this server and that are still available for rollback to.
-        To rollback, simply choose a build, click 'rollback', and a new push will be started that will replace what is currently on
-        the server with the contents of the build you selected.
+        To rollback, simply choose a build, click 'rollback', and you'll be able to initate a new push.
     </p>
 
     <div class="overflow-container">
@@ -26,7 +25,7 @@
             <tbody>
                 {% for push in pushes %}
                 <tr>
-                    <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id[:10] }}</a></td>
+                    <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
                     <td>
                         <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a>
                         <svg viewBox="0 0 32 32" class="icon">
@@ -41,7 +40,7 @@
                             </svg>
                         </span>
                     </td>
-                    <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id }}</a>)</td>
+                    <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)</td>
                     <td>
                         {% if push.user %}
                             <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
@@ -53,8 +52,8 @@
                     </td>
                     <td>
                         {% if push.build.status == 'Success'%}
-                            {% if canUserPush(user, repo.key, push.build.server.environment.key) %}
-                                <a href="{{ urlFor('push.start', {'repo': repo.key, 'build': push.build.id}) }}?deployments[]={{ push.deployment.id }}">Rollback</a>
+                            {% if canUserPush(currentUser, repo.key, push.build.server.environment.key) %}
+                                <a href="{{ urlFor('push.start', {'repo': repo.key, 'build': push.build.id}, {deployment: push.deployment.id}) }}">Rollback</a>
                             {% endif %}
                         {% elseif push.build.status == 'Removed' %}
                             Removed

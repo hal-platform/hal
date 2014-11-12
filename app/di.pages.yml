@@ -238,9 +238,10 @@ services:
     arguments: ['build/start.twig']
 
   build.start.handle.page:
-    class: 'QL\Hal\Controllers\Build\BuildStartHandleController'
+    class: 'QL\Hal\Controllers\Build\BuildStartHandler'
     arguments:
       - @session
+      - @build.repo
       - @repository.repo
       - @user.repo
       - @environment.repo
@@ -267,17 +268,19 @@ services:
     parent: 'twig.template.old'
     arguments: ['push/start.twig']
 
-  push.start.handle:
+  push.start.handler:
     class: 'QL\Hal\Controllers\Push\PushStartHandler'
     arguments:
       - @session
       - @build.repo
+      - @push.repo
       - @deployment.repo
       - @user.repo
       - @doctrine.em
       - @url.helper
       - @currentUser
       - @permissions
+      - @unique.helper
 
   push.rollback.page:
     class: 'QL\Hal\Controllers\Push\RollbackController'

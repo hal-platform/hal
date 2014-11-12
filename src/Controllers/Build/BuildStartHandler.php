@@ -9,19 +9,20 @@ namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\UniqueHelper;
+use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class BuildStartHandleController
+class BuildStartHandler
 {
     /**
      *  Flash Messages
@@ -35,6 +36,11 @@ class BuildStartHandleController
      * @var Session
      */
     private $session;
+
+    /**
+     * @var BuildRepository
+     */
+    private $buildRepo;
 
     /**
      * @var RepositoryRepository
@@ -83,6 +89,7 @@ class BuildStartHandleController
 
     /**
      * @param Session $session
+     * @param BuildRepository $buildRepo
      * @param RepositoryRepository $repoRepo
      * @param UserRepository $userRepository
      * @param EnvironmentRepository $envRepo
@@ -95,6 +102,7 @@ class BuildStartHandleController
      */
     public function __construct(
         Session $session,
+        BuildRepository $buildRepo,
         RepositoryRepository $repoRepo,
         UserRepository $userRepository,
         EnvironmentRepository $envRepo,
@@ -106,6 +114,7 @@ class BuildStartHandleController
         UniqueHelper $unique
     ) {
         $this->session = $session;
+        $this->buildRepo = $buildRepo;
         $this->repoRepo = $repoRepo;
         $this->userRepo = $userRepository;
         $this->envRepo = $envRepo;
@@ -133,14 +142,14 @@ class BuildStartHandleController
         }
 
         if (!$env) {
-            $this->session->addFlash(self::ERR_NO_ENV);
-            $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
+            $this->session->flash(self::ERR_NO_ENV);
+            $this->url->redirectFor('build.start', ['id' => $repo->getId()], [], 303);
             return;
         }
 
         if (!$this->permissions->allowBuild($this->currentUser, $repo->getKey())) {
-            $this->session->addFlash(sprintf(self::ERR_NO_PERM, $env->getKey()));
-            $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
+            $this->session->flash(sprintf(self::ERR_NO_PERM, $env->getKey()));
+            $this->url->redirectFor('build.start', ['id' => $repo->getId()], [], 303);
             return;
         }
 
@@ -155,14 +164,14 @@ class BuildStartHandleController
             : $request->post('reference', null);        // radio button selection from tabs
 
         if (!$result = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
-            $this->session->addFlash(self::ERR_BAD_REF);
-            $response->redirect($this->url->urlFor('build.start', ['id' => $repo->getId()]), 303);
+            $this->session->flash(self::ERR_BAD_REF);
+            $this->url->redirectFor('build.start', ['id' => $repo->getId()], [], 303);
             return;
         }
 
         list($reference, $commit) = $result;
 
-        $build = new Build();
+        $build = new Build;
         $id = $this->unique->generateBuildId();
         $user = $this->userRepo->find($this->currentUser->getId());
 
@@ -173,9 +182,26 @@ class BuildStartHandleController
         $build->setUser($user);
         $build->setRepository($repo);
         $build->setEnvironment($env);
-        $this->em->persist($build);
 
-        $this->session->addFlash(self::NOT_FINISH);
-        $response->redirect($this->url->urlFor('build', ['build' => $id]), 303);
+        $this->dupeCatcher($build);
+
+        $this->em->persist($build);
+        $this->em->flush();
+
+        $this->session->flash(self::NOT_FINISH);
+        $this->url->redirectFor('build', ['build' => $id], [], 303);
+    }
+
+    /**
+     * @param Build $build
+     * @return null
+     */
+    private function dupeCatcher(Build $build)
+    {
+        $dupe = $this->buildRepo->findBy(['id' => [$build->getId()]]);
+        if ($dupe) {
+            $build->setId('1235');
+            $this->dupeCatcher($build);
+        }
     }
 }

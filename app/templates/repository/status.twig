@@ -60,7 +60,7 @@
             {% endif %}
 
             </h4>
-            <p class="mbn">{{ active.created|reldate }}</p>
+            <p class="mbn">{{ active.created ? active.created|reldate : 'Never' }}</p>
         </header>
 
         <section class="card__details">
