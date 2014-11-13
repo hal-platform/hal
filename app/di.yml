@@ -30,6 +30,7 @@ services:
       - ['@doctrine.mapping']
       - %doctrine.devmode%
       - @doctrine.proxy.dir
+      - @cache.doctrine
 
   doctrine.proxy.dir:
     class: 'NOTHING_TO_SEE_HERE'
@@ -44,7 +45,7 @@ services:
       - ['addEventListener', [['prePersist'], @doctrine.persist.listener]]
 
   doctrine.logger:
-    class: 'QL\Hal\Logger\DoctrineEntityLogger'
+    class: 'QL\Hal\Doctrine\EntityChangeLogger'
     arguments: [@user.helper]
 
   doctrine.persist.listener:
@@ -92,6 +93,10 @@ services:
   cache.github:
     class: 'QL\Hal\Github\MCPCache'
     arguments: [@cache]
+
+  cache.doctrine:
+    class: 'QL\Hal\Doctrine\PredisCache'
+    arguments: [@redis, %cache.doctrine.ttl%]
 
   ######################################################################################################################
   # HELPERS
@@ -228,7 +233,7 @@ services:
       - '%debug.godmode%'
     calls:
       - ['setCache', [@cache]]
-      - ['setCacheTTL', [%permissions.cache.ttl%]]
+      - ['setCacheTTL', [%cache.permissions.ttl%]]
 
   redis:
     class: 'Predis\Client'

@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Logger;
+namespace QL\Hal\Doctrine;
 
 use DateTime;
 use DateTimeZone;
@@ -20,7 +20,7 @@ use QL\Hal\Helpers\LazyUserHelper;
 use ReflectionClass;
 use Zend\Ldap\Ldap;
 
-class DoctrineEntityLogger
+class EntityChangeLogger
 {
     const ACTION_CREATE = 'CREATE';
     const ACTION_UPDATE = 'UPDATE';

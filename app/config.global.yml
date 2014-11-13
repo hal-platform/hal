@@ -38,7 +38,8 @@ parameters:
         api.queue: 0 # the queue api uses no caching
         api.queue.refresh: 0 # the queue api uses no caching
 
-    permissions.cache.ttl: 600
+    cache.permissions.ttl: 600
+    cache.doctrine.ttl: 300
 
     # base58
     unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
