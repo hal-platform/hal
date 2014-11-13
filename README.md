@@ -89,7 +89,7 @@ The `deploy` flag will perform further minifying and compressing that are not do
 
 ## Redis caching
 
-Some data is cached to redis. All caching is done through `MCP\Cache` and can be disabled easily through configuration.
+Some data is cached to redis. Most caching is done through `MCP\Cache` and can be disabled easily through configuration.
 
 All redis usage is prefixed with a namespace such as `hal9000dev` or `hal9000`.
 
@@ -98,6 +98,7 @@ namespace   | Usage                           | Default TTL
 api         | Cached responses for `/api`     | 10 seconds
 github      | Enterprise github api requests  | 60 seconds
 permissions | LDAP user|group lookups         | 10 minutes
+doctrine    | Doctrine cache                  | 5 minutes
 
 #### Example cache keys:
 
@@ -118,6 +119,12 @@ hal9000:mcp-cache:github:e057d4ea363fbab414a874371da253dba3d713bc.modifiedsince
 hal9000:mcp-cache:permissions:github.1234.5678
 hal9000:mcp-cache:permissions:ldap.group.58fd9edd83341c29f1aebba81c31e257
 hal9000:mcp-cache:permissions:ldap.user.58fd9edd83341c29f1aebba81c31e257
+```
+
+**Doctrine**
+```
+hal9000dev:doctrine:dc2_5f2088971e6d3bffd2058aa1bbc0c4d5_[QL\Hal\Core\Entity\Server$CLASSMETADATA][1]
+hal9000dev:doctrine:DoctrineNamespaceCacheKey[dc2_5f2088971e6d3bffd2058aa1bbc0c4d5_]
 ```
 
 #### Non-default cache times
