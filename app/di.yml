@@ -80,6 +80,19 @@ services:
   exception.dispatcher:
     class: 'QL\ExceptionToolkit\ExceptionDispatcher'
 
+
+  ######################################################################################################################
+  # CACHING
+  ######################################################################################################################
+
+  cache:
+    class: 'MCP\Cache\PredisCache'
+    arguments: [@redis]
+
+  cache.github:
+    class: 'QL\Hal\Github\MCPCache'
+    arguments: [@cache]
+
   ######################################################################################################################
   # HELPERS
   ######################################################################################################################
@@ -102,7 +115,9 @@ services:
 
   api.helper:
     class: 'QL\Hal\Helpers\ApiHelper'
-    arguments: [@url.helper, @redis, @slim.request, %api.cachetimes%]
+    arguments: [@url.helper, @slim.request, %api.cachetimes%]
+    calls:
+      - ['setCache', [@cache]]
 
   time.helper:
     class: 'QL\Hal\Helpers\TimeHelper'
@@ -200,10 +215,6 @@ services:
     arguments: [@ldapTransport]
     calls:
       - ['authenticate', [%ldap.username%, %ldap.password%, false]]
-
-  cache:
-    class: 'MCP\Cache\PredisCache'
-    arguments: [@redis]
 
   permissions:
     class: 'QL\Hal\Services\PermissionsService'
@@ -307,10 +318,7 @@ services:
       - {base_url: %github.baseurl%}
     calls:
       - ['authenticate', [%github.token%, null, 'http_token']]
-      - ['setCache', [@github.http.cache]]
-  github.http.cache:
-    class: 'QL\Hal\Github\PredisCache'
-    arguments: [@redis]
+      - ['setCache', [@cache.github]]
 
   github.pager:
     class: 'Github\ResultPager'

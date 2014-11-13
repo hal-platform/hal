@@ -89,7 +89,7 @@ The `deploy` flag will perform further minifying and compressing that are not do
 
 ## Redis caching
 
-Some data is cached to redis.
+Some data is cached to redis. All caching is done through `MCP\Cache` and can be disabled easily through configuration.
 
 All redis usage is prefixed with a namespace such as `hal9000dev` or `hal9000`.
 
@@ -103,21 +103,21 @@ permissions | LDAP user|group lookups         | 10 minutes
 
 **API**
 ```
-hal9000:api:e057d4ea363fbab414a874371da253dba3d713bc
+hal9000:mcp-cache:api:e057d4ea363fbab414a874371da253dba3d713bc
 ```
 
 **Github**
 ```
-hal9000:github:e057d4ea363fbab414a874371da253dba3d713bc
-hal9000:github:e057d4ea363fbab414a874371da253dba3d713bc.etag
-hal9000:github:e057d4ea363fbab414a874371da253dba3d713bc.modifiedsince
+hal9000:mcp-cache:github:e057d4ea363fbab414a874371da253dba3d713bc
+hal9000:mcp-cache:github:e057d4ea363fbab414a874371da253dba3d713bc.etag
+hal9000:mcp-cache:github:e057d4ea363fbab414a874371da253dba3d713bc.modifiedsince
 ```
 
 **Permissions**
 ```
-hal9000:permissions:github.1234.5678
-hal9000:permissions:ldap.group.58fd9edd83341c29f1aebba81c31e257
-hal9000:permissions:ldap.user.58fd9edd83341c29f1aebba81c31e257
+hal9000:mcp-cache:permissions:github.1234.5678
+hal9000:mcp-cache:permissions:ldap.group.58fd9edd83341c29f1aebba81c31e257
+hal9000:mcp-cache:permissions:ldap.user.58fd9edd83341c29f1aebba81c31e257
 ```
 
 #### Non-default cache times

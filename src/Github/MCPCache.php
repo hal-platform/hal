@@ -7,12 +7,12 @@
 
 namespace QL\Hal\Github;
 
-use Github\HttpClient\Cache\CacheInterface;
+use Github\HttpClient\Cache\CacheInterface as GithubCacheInterface;
 use Guzzle\Http\Message\Response;
 use InvalidArgumentException;
-use Predis\Client as Predis;
+use MCP\Cache\CacheInterface;
 
-class PredisCache implements CacheInterface
+class MCPCache implements GithubCacheInterface
 {
     const KEY_RESPONSE = 'github:%s';
     const KEY_ETAG = 'github:%s.etag';
@@ -24,16 +24,16 @@ class PredisCache implements CacheInterface
     const DEFAULT_TTL = 60;
 
     /**
-     * @type Predis
+     * @type CacheInterface
      */
-    private $redis;
+    private $cache;
 
     /**
-     * @param Predis $redis
+     * @param CacheInterface $cache
      */
-    public function __construct(Predis $redis)
+    public function __construct(CacheInterface $cache)
     {
-        $this->redis = $redis;
+        $this->cache = $cache;
     }
 
     /**
@@ -43,9 +43,9 @@ class PredisCache implements CacheInterface
     {
         $key = sprintf(self::KEY_RESPONSE, sha1($id));
 
-        $cached = $this->redis->get($key);
+        $cached = $this->cache->get($key);
         if ($cached !== null) {
-            return unserialize($cached);
+            return $cached;
         }
 
         throw new InvalidArgumentException(sprintf('Response for URL "%s" not found', $id));
@@ -58,7 +58,7 @@ class PredisCache implements CacheInterface
     {
         $key = sprintf(self::KEY_MODIFIED, sha1($id));
 
-        return $this->redis->get($key);
+        return $this->cache->get($key);
     }
 
     /**
@@ -68,7 +68,7 @@ class PredisCache implements CacheInterface
     {
         $key = sprintf(self::KEY_ETAG, sha1($id));
 
-        return $this->redis->get($key);
+        return $this->cache->get($key);
     }
 
     /**
@@ -78,7 +78,7 @@ class PredisCache implements CacheInterface
     {
         $key = sprintf(self::KEY_ETAG, sha1($id));
 
-        return ($this->redis->get($key) !== null);
+        return ($this->cache->get($key) !== null);
     }
 
     /**
@@ -94,9 +94,9 @@ class PredisCache implements CacheInterface
 
         $ttl = $this->determineTTL($response);
 
-        $this->redis->setex($responseKey, $ttl, serialize($response));
-        $this->redis->setex($etagKey, $ttl, $response->getHeader('ETag'));
-        $this->redis->setex($modifiedKey, $ttl, time());
+        $this->cache->set($responseKey, $response, $ttl);
+        $this->cache->set($etagKey, $response->getHeader('ETag'), $ttl);
+        $this->cache->set($modifiedKey, time(), $ttl);
     }
 
     /**

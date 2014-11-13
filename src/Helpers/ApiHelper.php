@@ -7,12 +7,14 @@
 
 namespace QL\Hal\Helpers;
 
-use Predis\Client as Predis;
+use MCP\Cache\CachingTrait;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class ApiHelper
 {
+    use CachingTrait;
+
     const API_RESPONSE_CACHE_TIME = 10;
     const CACHE_KEY = 'api:%s';
 
@@ -20,11 +22,6 @@ class ApiHelper
      * @var UrlHelper
      */
     private $url;
-
-    /**
-     * @var Predis
-     */
-    private $predis;
 
     /**
      * @var Request
@@ -48,14 +45,12 @@ class ApiHelper
 
     /**
      * @param UrlHelper $url
-     * @param Predis $predis
      * @param Request $request
      * @param array $customCacheTimes
      */
-    public function __construct(UrlHelper $url, Predis $predis, Request $request, array $customCacheTimes)
+    public function __construct(UrlHelper $url, Request $request, array $customCacheTimes)
     {
         $this->url = $url;
-        $this->predis = $predis;
         $this->request = $request;
 
         $this->customCacheTimes = $customCacheTimes;
@@ -81,7 +76,7 @@ class ApiHelper
         if ($this->request->isGet()) {
             // do not cache if cache time is 0
             if ($cacheTime = $this->cacheTime()) {
-                $this->predis->setex($this->cacheKey(), $cacheTime, $body);
+                $this->setToCache($this->cacheKey(), $body, $cacheTime);
             }
         }
 
@@ -107,7 +102,7 @@ class ApiHelper
 
         $key = $this->cacheKey();
 
-        if ($cached = $this->predis->get($key)) {
+        if ($cached = $this->getFromCache($key)) {
             $response->headers->set('Content-Type', 'application/hal+json; charset=utf-8');
             $response->setBody($cached);
 
