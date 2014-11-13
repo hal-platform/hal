@@ -47,3 +47,4 @@ parameters:
     # Cookie settings
     session.cookie.configuration:
         lifetime: '1 day'
+    cookie.preferences.ttl: '5 years'

@@ -481,8 +481,11 @@ services:
     arguments: ['user/users.twig']
 
   user.preferences.handle:
-    class: 'QL\Hal\Controllers\User\EditPreferencesHandle'
-    arguments: [@slim.cookies, @url.helper]
+    class: 'QL\Hal\Controllers\User\EditPreferencesHandler'
+    arguments:
+        - @slim.cookies
+        - @url.helper
+        - %cookie.preferences.ttl%
 
   user.settings.page:
     class: 'QL\Hal\Controllers\User\SettingsController'

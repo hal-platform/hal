@@ -14,10 +14,8 @@ use Slim\Http\Response;
 use Slim\Slim;
 use Twig_Template;
 
-class EditPreferencesHandle
+class EditPreferencesHandler
 {
-    const COOKIE_TIME = '6 months';
-
     /**
      * @var EncryptedCookies
      */
@@ -29,13 +27,20 @@ class EditPreferencesHandle
     private $url;
 
     /**
+     * @var string
+     */
+    private $preferencesExpiry;
+
+    /**
      *  @param EncryptedCookies $cookies
      *  @param UrlHelper $url
+     *  @param string $preferencesExpiry
      */
-    public function __construct(EncryptedCookies $cookies, UrlHelper $url)
+    public function __construct(EncryptedCookies $cookies, UrlHelper $url, $preferencesExpiry)
     {
         $this->cookies = $cookies;
         $this->url = $url;
+        $this->preferencesExpiry = $preferencesExpiry;
     }
 
     /**
@@ -53,7 +58,7 @@ class EditPreferencesHandle
             $nav = implode(' ', $nav);
         }
 
-        $this->cookies->setCookie('navpref', trim($nav), static::COOKIE_TIME);
+        $this->cookies->setCookie('navpref', trim($nav), $this->preferencesExpiry);
 
         $this->url->redirectFor('settings');
     }
