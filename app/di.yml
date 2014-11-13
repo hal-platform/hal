@@ -299,14 +299,18 @@ services:
 
   github.client:
     class: 'Github\Client'
-    arguments: [@github.httpClient]
+    arguments: [@github.http.client]
 
-  github.httpClient:
-    class: 'QL\Hal\GithubApi\HackCachedHttpClient'
+  github.http.client:
+    class: 'QL\Hal\Github\CachedHttpClient'
     arguments:
       - {base_url: %github.baseurl%}
     calls:
       - ['authenticate', [%github.token%, null, 'http_token']]
+      - ['setCache', [@github.http.cache]]
+  github.http.cache:
+    class: 'QL\Hal\Github\PredisCache'
+    arguments: [@redis]
 
   github.pager:
     class: 'Github\ResultPager'

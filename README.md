@@ -3,6 +3,7 @@
 - [Initial HAL 9000 Setup](#initial-hal-9000-setup)
 - [Updating HAL 9000 after a release](#updating-hal-9000-after-a-release-or-pull)
 - [Making Front-end Changes](#making-front-end-changes)
+- [Redis caching](#redis-caching)
 
 ## Initial HAL 9000 Setup
 
@@ -85,4 +86,48 @@ Just don't commit with that script still on the page.
 Run `bin/gulp --deploy` to delete `public/js`, `public/img`, `public/css` and rebuild them all with production-ready settings.
 
 The `deploy` flag will perform further minifying and compressing that are not done in the standard dev compilation.
+
+## Redis caching
+
+Some data is cached to redis.
+
+All redis usage is prefixed with a namespace such as `hal9000dev` or `hal9000`.
+
+namespace   | Usage                           | Default TTL
+----------- | ------------------------------- | --------------
+api         | Cached responses for `/api`     | 10 seconds
+github      | Enterprise github api requests  | 60 seconds
+permissions | LDAP user|group lookups         | 10 minutes
+
+#### Example cache keys:
+
+**API**
+```
+hal9000:api:e057d4ea363fbab414a874371da253dba3d713bc
+```
+
+**Github**
+```
+hal9000:github:e057d4ea363fbab414a874371da253dba3d713bc
+hal9000:github:e057d4ea363fbab414a874371da253dba3d713bc.etag
+hal9000:github:e057d4ea363fbab414a874371da253dba3d713bc.modifiedsince
+```
+
+**Permissions**
+```
+hal9000:permissions:github.1234.5678
+hal9000:permissions:ldap.group.58fd9edd83341c29f1aebba81c31e257
+hal9000:permissions:ldap.user.58fd9edd83341c29f1aebba81c31e257
+```
+
+#### Non-default cache times
+
+For API calls:
+
+`build info` and `push info` are cached for 5 seconds instead of the default of 10.
+`queue` and `queue refresh` are never cached.
+
+For Github calls:
+
+[Pull Request](https://developer.github.com/v3/pulls/#list-pull-requests) and [Git Reference](https://developer.github.com/v3/git/refs/#get-a-reference) data are cached for 10 seconds instead of the default of 60.
 

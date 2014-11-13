@@ -5,19 +5,20 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\GithubApi;
+namespace QL\Hal\Github;
 
+use DateTime;
+use DateTimeZone;
 use Github\HttpClient\Cache\CacheInterface;
 use Github\HttpClient\Cache\FilesystemCache;
 use Github\HttpClient\HttpClient;
 use Guzzle\Http\Message\Response;
+use RuntimeException;
 
 /**
- * Extending the knplabs api to not be completely horrible and stupid.
- *
- * @internal
+ * Extending the knplabs api to cache based on url + query string (instead of just url) and cache to redis.
  */
-class HackCachedHttpClient extends HttpClient
+class CachedHttpClient extends HttpClient
 {
     /**
      * @var CacheInterface
@@ -29,15 +30,16 @@ class HackCachedHttpClient extends HttpClient
      *
      * @var Response
      */
-    private $lastCachedResponse;
+    protected $lastCachedResponse;
 
     /**
+     * @throws RuntimeException
      * @return CacheInterface
      */
     public function getCache()
     {
-        if (null === $this->cache) {
-            $this->cache = new FilesystemCache($this->options['cache_dir'] ?: sys_get_temp_dir().DIRECTORY_SEPARATOR.'php-github-api-cache');
+        if ($this->cache === null) {
+            throw new RuntimeException('No cache was set for the http client');
         }
 
         return $this->cache;
@@ -45,6 +47,7 @@ class HackCachedHttpClient extends HttpClient
 
     /**
      * @param $cache CacheInterface
+     * @return null
      */
     public function setCache(CacheInterface $cache)
     {
@@ -80,17 +83,22 @@ class HackCachedHttpClient extends HttpClient
 
         $request = parent::createRequest($httpMethod, $path, $body, $headers, $options);
 
+        if ($modifiedAt = $this->getCache()->getModifiedSince($cacheKey)) {
+            $modifiedAt = new DateTime('@' . $modifiedAt);
+            $modifiedAt->setTimezone(new DateTimeZone('GMT'));
+
+            $request->addHeader('If-Modified-Since', sprintf('%s GMT', $modifiedAt->format('l, d-M-y H:i:s')));
+        }
+
         if ($etag = $this->getCache()->getETag($cacheKey)) {
-            $request->addHeader(
-                'If-None-Match',
-                $etag
-            );
+            $request->addHeader('If-None-Match', $etag);
         }
 
         return $request;
     }
 
     /**
+     * @param bool $force
      * @return Response
      */
     public function getLastResponse($force = false)
@@ -115,7 +123,7 @@ class HackCachedHttpClient extends HttpClient
     {
         $cacheKey = $path;
         if (isset($options['query'])) {
-            $cacheKey .= serialize($options['query']);
+            $cacheKey .= '?' . http_build_query($options['query']);
         }
 
         return $cacheKey;
