@@ -32,6 +32,38 @@ select {
     }
 }
 
+.checkbox--pretty {
+    @include trailer();
+}
+
+.checkbox--pretty .flavor {
+    @include adjust-font-size-to(ms(-1));
+}
+
+.checkbox--pretty input {
+    display: none;
+}
+
+.checkbox--pretty .checkbox__on {
+    color: $success-color;
+    top: 2px;
+}
+
+.checkbox--pretty .checkbox__off {
+    color: $error-color;
+    top: 2px;
+}
+
+.checkbox--pretty .checkbox__off,
+.checkbox--pretty input:checked ~ .checkbox__on {
+    display: inline;
+}
+
+.checkbox--pretty .checkbox__on,
+.checkbox--pretty input:checked ~ .checkbox__off {
+    display: none;
+}
+
 .deployment-form {
     clear: right;
 }

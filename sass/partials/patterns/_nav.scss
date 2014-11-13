@@ -28,6 +28,10 @@
     }
 }
 
+.nav--preferences li label:hover {
+    border-bottom: none;
+}
+
 .nav--main li a .icon {
     margin-right: msem(-3);
 }
@@ -39,6 +43,7 @@
 
 .nav--preferences {
     background-color: transparent;
+    @include trailer();
 }
 
 .nav--preferences li label {

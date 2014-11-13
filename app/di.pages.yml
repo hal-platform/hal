@@ -484,6 +484,7 @@ services:
     class: 'QL\Hal\Controllers\User\EditPreferencesHandler'
     arguments:
         - @slim.cookies
+        - @session
         - @url.helper
         - %cookie.preferences.ttl%
 

@@ -6,32 +6,47 @@
 
     <h2>Settings</h2>
 
-    <h3>Navigation Preferences</h3>
-    <p>Customize the items on the navigation menu</p>
-
     <form action="{{ urlFor('user.preferences.handle', {id: user.id}) }}" method="post">
-        <ul class="nav--main nav--preferences mbn">
+
+        <h3>HAL Preferences</h3>
+        <p class="mbn">Customize the items on the navigation menu</p>
+
+        <ul class="nav--main nav--preferences">
             {% for item, description in navItems %}
                 <li>
                     <label>
-                        <input type="checkbox" name="nav[]" value="{{ item }}" {{ isNavOn(item) ? ' checked' : ''}}>
+                        <input type="checkbox" name="navpreferences[]" value="{{ item }}" {{ isNavOn(item) ? ' checked' : '' }}>
 
-                        <svg class="icon pref-on" viewBox="0 0 32 32">
-                            <use xlink:href="#tick"></use>
-                        </svg>
-                        <svg class="icon pref-off" viewBox="0 0 32 32">
-                            <use xlink:href="#cross"></use>
-                        </svg>
+                        <svg class="icon pref-on" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg>
+                        <svg class="icon pref-off" viewBox="0 0 32 32"><use xlink:href="#cross"></use></svg>
 
                         {{ description }}
                     </label>
                 </li>
             {% endfor %}
         </ul>
-        <input class="btn" type="submit" value="Save">
+
+        <p class="mbn"></p>
+
+        <div class="checkbox--pretty">
+            <label>
+                <input type="checkbox" name="seriousbusiness" value="1" {{ isSeriousBusinessMode() ? ' checked' : '' }}>
+
+                <svg class="icon checkbox__on" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg>
+                <svg class="icon checkbox__off" viewBox="0 0 32 32"><use xlink:href="#cross"></use></svg>
+
+                Use <strong>Serious Business&#8482;</strong> mode
+            </label>
+
+            <p class="flavor mbn">Flavor text such as <strong>Hello, Dave</strong> and <strong>I'm afraid I can't do that</strong> will be reduced across the application.</p>
+        </div>
+
+        <p>
+            <input class="btn" type="submit" value="Save Preferences">
+        </p>
     </form>
 
-    <h3>Personal Access Tokens</h3>
+    <h2>Personal Access Tokens</h2>
     <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
 
     <form action="{{ urlFor('user.token.create.handle', {id: user.id}) }}" method="post">

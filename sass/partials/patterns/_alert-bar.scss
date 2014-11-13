@@ -30,3 +30,11 @@
 .alert-bar--success {
     background-color: $success-color;
 }
+
+[class*="alert-bar"] pre {
+    text-align: left;
+    background-color: transparent;
+    color: $text-color;
+    margin-top: msem(-5);
+    margin-bottom: msem(-5);
+}

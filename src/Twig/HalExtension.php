@@ -128,6 +128,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('urlFor', [$this->url, 'urlFor']),
             new Twig_SimpleFunction('uriFor', [$this->url, 'uriFor']),
             new Twig_SimpleFunction('isNavOn', [$this, 'isNavigationOn']),
+            new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
 
             // other
             new Twig_SimpleFunction('getUsersName', [$this, 'getUsersName']),
@@ -329,7 +330,7 @@ class HalExtension extends Twig_Extension
      */
     public function isNavigationOn($navSelection)
     {
-        $cookie = $this->cookies->getCookie('navpref');
+        $cookie = $this->cookies->getCookie('navpreferences');
         if ($cookie === null) {
             $this->parsedNavigationList = $this->defaultNavigation();
         } else {
@@ -345,6 +346,16 @@ class HalExtension extends Twig_Extension
         }
 
         return ($this->parsedNavigationList[$navSelection] === true);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSeriousBusinessMode()
+    {
+        $cookie = $this->cookies->getCookie('seriousbusiness');
+
+        return (bool) $cookie;
     }
 
     /**
