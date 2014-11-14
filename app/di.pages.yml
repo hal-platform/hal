@@ -483,10 +483,12 @@ services:
   user.preferences.handle:
     class: 'QL\Hal\Controllers\User\EditPreferencesHandler'
     arguments:
-        - @slim.cookies
-        - @session
-        - @url.helper
-        - %cookie.preferences.ttl%
+      - @slim.cookies
+      - @session
+      - @url.helper
+      - @name.helper
+      - @currentUser
+      - %cookie.preferences.ttl%
 
   user.settings.page:
     class: 'QL\Hal\Controllers\User\SettingsController'

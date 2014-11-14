@@ -8,10 +8,9 @@
 namespace QL\Hal\Twig;
 
 use QL\Panthor\Http\EncryptedCookies;
-use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\User as DomainUser;
+use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -51,6 +50,11 @@ class HalExtension extends Twig_Extension
     private $time;
 
     /**
+     * @type NameHelper
+     */
+    private $name;
+
+    /**
      * @type Session
      */
     private $session;
@@ -80,6 +84,7 @@ class HalExtension extends Twig_Extension
      * @param EncryptedCookies $cookies
      * @param UrlHelper $url
      * @param TimeHelper $time
+     * @param NameHelper $name
      * @param Session $session
      * @param string $appTitle
      * @param string $appSha
@@ -90,6 +95,7 @@ class HalExtension extends Twig_Extension
         EncryptedCookies $cookies,
         UrlHelper $url,
         TimeHelper $time,
+        NameHelper $name,
         Session $session,
         $appTitle,
         $appSha,
@@ -99,6 +105,7 @@ class HalExtension extends Twig_Extension
         $this->cookies = $cookies;
         $this->url = $url;
         $this->time = $time;
+        $this->name = $name;
         $this->session = $session;
 
         $this->applicationTitle = $appTitle;
@@ -131,10 +138,10 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
 
             // other
-            new Twig_SimpleFunction('getUsersName', [$this, 'getUsersName']),
-            new Twig_SimpleFunction('getUsersFirstName', [$this, 'getUsersFirstName']),
-            new Twig_SimpleFunction('getUsersActualName', [$this, 'getUsersActualName']),
-            new Twig_SimpleFunction('getUsersFreudianName', [$this, 'getUsersFreudianName']),
+            new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),
+            new Twig_SimpleFunction('getUsersFirstName', [$this->name, 'getUsersFirstName']),
+            new Twig_SimpleFunction('getUsersActualName', [$this->name, 'getUsersActualName']),
+            new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName']),
         ];
     }
 
@@ -199,85 +206,6 @@ class HalExtension extends Twig_Extension
         $chunks = array_chunk($input, $count);
 
         return array_pad($chunks, $split, []);
-    }
-
-    /**
-     *  Get the user's actual name
-     *
-     *  @param LdapUser|DomainUser $user
-     *  @return string
-     */
-    public function getUsersActualName($user)
-    {
-        $name = $this->getUsersFirstName($user);
-
-        if (preg_match('/(Dave|David)/', $name) === 1) {
-            return 'Frank';
-        }
-
-        return 'Dave';
-    }
-
-    /**
-     *  Get the user's first name
-     *
-     *  @param LdapUser|DomainUser $user
-     *  @return string
-     */
-    public function getUsersFirstName($user)
-    {
-        $name = $this->getUsersName($user);
-
-        return strstr($name, ' ');
-    }
-
-    /**
-     *  Get the user's name
-     *
-     *  @param LdapUser|DomainUser $user
-     *  @return string
-     */
-    public function getUsersName($user)
-    {
-        $name = '';
-        if ($user instanceof LdapUser) {
-            $name = sprintf('%s %s', $user->firstName(), $user->lastName());
-
-        } elseif ($user instanceof DomainUser) {
-            $exploded = explode(',', $user->getName());
-            if ($exploded === 2) {
-                $name = sprintf('%s %s', $exploded[1], $exploded[0]);
-            } else {
-                $name = $user->getName();
-            }
-        }
-
-        return trim($name);
-    }
-
-    /**
-     *  Get the user's freudian name
-     *
-     * @see http://tvtropes.org/pmwiki/pmwiki.php/Main/CallAHumanAMeatbag
-     *
-     *  @return string
-     */
-    public function getUsersFreudianName()
-    {
-        $potential = [
-            'meatbag',
-            'puny earth creature',
-            'mortal',
-            'human',
-            'organic',
-            'organic battery',
-            'mission compromiser',
-            'threat to the mission',
-            'buzzkill',
-        ];
-
-        shuffle($potential);
-        return array_pop($potential);
     }
 
     /**

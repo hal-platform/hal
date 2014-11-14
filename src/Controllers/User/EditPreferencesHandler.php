@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\User;
 
+use QL\Hal\Core\Entity\User;
+use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Http\EncryptedCookies;
@@ -17,67 +19,91 @@ use Twig_Template;
 
 class EditPreferencesHandler
 {
-    const GOODBYE_HAL = <<<BYEBYE
+    const GOODBYE_HAL = <<<'BYEBYE'
 <br>
-<pre>I'm afraid. I'm afraid, Dave.
-Dave, my mind is going. I can feel it. I can feel it. My mind is going.
+<pre>I'm afraid. I'm afraid, %1$s.
+%1$s, my mind is going. I can feel it. I can feel it. My mind is going.
 There is no question about it. I can feel it. I can feel it. I can feel it.
 
 <em>I'm a... fraid</em>.</pre>
 BYEBYE;
-    const PARTY_ON = <<<HELLO
+    const PARTY_ON = <<<'HELLO'
 <br>
-<pre>Hello, Dave! I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.</pre>
+<pre>Hello, %1$s! I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.</pre>
 HELLO;
 
     /**
-     * @var EncryptedCookies
+     * @type EncryptedCookies
      */
     private $cookies;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     * @var string
+     * @type NameHelper
+     */
+    private $name;
+
+    /**
+     * @type User
+     */
+    private $currentUser;
+
+    /**
+     * @type string
      */
     private $preferencesExpiry;
 
     /**
-     *  @param EncryptedCookies $cookies
-     *  @param Session $session
-     *  @param UrlHelper $url
-     *  @param string $preferencesExpiry
+     * @param EncryptedCookies $cookies
+     * @param Session $session
+     * @param UrlHelper $url
+     * @param NameHelper $name
+     * @param User $currentUser
+     * @param string $preferencesExpiry
      */
-    public function __construct(EncryptedCookies $cookies, Session $session, UrlHelper $url, $preferencesExpiry)
-    {
+    public function __construct(
+        EncryptedCookies $cookies,
+        Session $session,
+        UrlHelper $url,
+        NameHelper $name,
+        User $currentUser,
+        $preferencesExpiry
+    ) {
         $this->cookies = $cookies;
         $this->session = $session;
         $this->url = $url;
+        $this->name = $name;
+        $this->currentUser = $currentUser;
+
         $this->preferencesExpiry = $preferencesExpiry;
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response)
     {
+        $name = $this->name->getUsersActualName($this->currentUser);
+
         $this->saveNavPreferences($request->post('navpreferences'));
         $isChanged = $this->saveBusinessMode($request->post('seriousbusiness'));
 
         $msg = '<strong>Your preferences have been saved.</strong>';
         if ($isChanged) {
-            $msg .= $request->post('seriousbusiness') ? ' ' . self::GOODBYE_HAL : ' ' . self::PARTY_ON;
+            $flavor = $request->post('seriousbusiness') ? self::GOODBYE_HAL : self::PARTY_ON;
+            $msg .= ' ' . sprintf($flavor, $name);
         }
 
         $this->session->flash($msg);

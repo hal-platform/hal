@@ -131,6 +131,9 @@ services:
     class: 'QL\Hal\Helpers\UniqueHelper'
     arguments: [%application.major.version%, %unique.alphabet%]
 
+  name.helper:
+    class: 'QL\Hal\Helpers\NameHelper'
+
   ######################################################################################################################
   # TWIG STUFF
   ######################################################################################################################
@@ -143,6 +146,7 @@ services:
       - @slim.cookies
       - @url.helper
       - @time.helper
+      - @name.helper
       - @session
       - %application.title%
       - %application.sha%
