@@ -42,7 +42,7 @@ define(['jquery'], function($) {
             $characters.each(function(index, el) {
                 var $char = $(el);
                 var char = $char.text();
-                var isStandardCharacter = /[A-Za-z\,\ \']/.test(char);
+                var isDelayedCharacter = /\r\n|\n|\r/.test(char);
                 lastDelay = delay * scale;
 
                 setTimeout(function() {
@@ -50,7 +50,7 @@ define(['jquery'], function($) {
                 }, lastDelay);
 
                 // Set the delay for the next character.
-                delay += isStandardCharacter ? 1 : longDelay;
+                delay += isDelayedCharacter ? longDelay : 1;
             });
 
             // remove the empty space inserted, this leaves only the cursor on the last line
