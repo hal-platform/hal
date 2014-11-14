@@ -80,7 +80,7 @@
                 <td>{{ pairs|first.environment.key|title }}</td>
                 {% for chunk in pairs|chunk(3) %}
                 <td>
-                    <ul>
+                    <ul class="col-list">
                         {% for pair in chunk %}
                             <li><a href="{{ urlFor('user', {'id': pair.user.id}) }}">{{ pair.user.name }}</a></li>
                         {% endfor %}

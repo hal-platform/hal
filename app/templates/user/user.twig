@@ -77,7 +77,7 @@
                     <tr>
                         <td>{{ pairs|first.environment.key|title }}</td>
                         <td>
-                            <ul class="inline-list--comma">
+                            <ul class="col-list">
                                 {% for pair in pairs %}
                                     <li><a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a></li>
                                 {% endfor %}
