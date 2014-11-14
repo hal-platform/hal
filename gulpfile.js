@@ -49,16 +49,6 @@ gulp.task('html', function() {
 });
 
 gulp.task('images', function() {
-    if(isDeploy == false) {
-        return gulp.src('img/**/*')
-            .pipe(plugins.imagemin({
-                optimizationLevel: 3,
-                progressive: true,
-                interlaced: true
-            }))
-            .pipe(gulp.dest('public/img'));
-    }
-
     return gulp.src('img/**/*')
         .pipe(gulp.dest('public/img'));
 });
