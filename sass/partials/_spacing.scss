@@ -13,3 +13,8 @@
 .leader{
     @include leader();
 }
+
+.fixed-size-label {
+    display: inline-block;
+    width: 7em;
+}

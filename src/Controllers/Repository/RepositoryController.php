@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Services\PermissionsService;
@@ -66,12 +67,41 @@ class RepositoryController
             return $notFound();
         }
 
+        $deployments = $this->deploymentRepo->findBy(['repository' => $repo], ['server' => 'ASC']);
+
         $rendered = $this->template->render([
             'repository' => $repo,
-            'deployments' => $this->deploymentRepo->findBy(['repository' => $repo], ['server' => 'ASC']),
+            'deployment_environments' => $this->sort($deployments),
+            'deployment_count' => count($deployments),
             'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey())
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
+    }
+
+    /**
+     * @param Deployment[] $deployments
+     * @return array
+     */
+    private function sort(array $deployments)
+    {
+        $environments = [
+            'dev' => [],
+            'test' => [],
+            'beta' => [],
+            'prod' => []
+        ];
+
+        foreach ($deployments as $deployment) {
+            $env = $deployment->getServer()->getEnvironment()->getKey();
+
+            if (!array_key_exists($env, $environments)) {
+                $environments[$env] = [];
+            }
+
+            $environments[$env][] = $deployment;
+        }
+
+        return $environments;
     }
 }

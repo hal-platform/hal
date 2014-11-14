@@ -46,8 +46,7 @@ class ServersController
         $servers = $this->serverRepo->findBy([], ['name' => 'ASC']);
 
         $rendered = $this->template->render([
-            'server_environments' => $this->sortStandard($servers),
-            'unknown_server_environments' => $this->sortUnknown($servers),
+            'server_environments' => $this->sort($servers),
             'server_count' => count($servers)
         ]);
 
@@ -58,7 +57,7 @@ class ServersController
      * @param Server[] $servers
      * @return array
      */
-    private function sortStandard(array $servers)
+    private function sort(array $servers)
     {
         $environments = [
             'dev' => [],
@@ -69,29 +68,6 @@ class ServersController
 
         foreach ($servers as $server) {
             $env = $server->getEnvironment()->getKey();
-
-            if (in_array($env, ['dev', 'test', 'beta', 'prod'])) {
-                $environments[$env][] = $server;
-            }
-        }
-
-        return $environments;
-    }
-
-    /**
-     * @param Server[] $servers
-     * @return array
-     */
-    private function sortUnknown(array $servers)
-    {
-        $environments = [];
-
-        foreach ($servers as $server) {
-            $env = $server->getEnvironment()->getKey();
-
-            if (in_array($env, ['dev', 'test', 'beta', 'prod'])) {
-                continue;
-            }
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];
