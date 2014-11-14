@@ -4,9 +4,13 @@
 
 {% block content %}
 
-    <h2 data-nofunzone="{{ getUsersActualName(currentUser) ~ '.' }}" data-freud="{{ getUsersFreudianName() }}.">
-        Hello, {{ getUsersActualName(currentUser) }}.
-    </h2>
+    {% if isSeriousBusinessMode() %}
+        <h2>Dashboard</h2>
+    {% else %}
+        <h2 data-nofunzone="{{ getUsersActualName(currentUser) ~ '.' }}" data-freud="{{ getUsersFreudianName() }}.">
+            Hello, {{ getUsersActualName(currentUser) }}.
+        </h2>
+    {% endif %}
 
     {% if isFirstLogin or not repositories %}
        {{ block('intro') }}

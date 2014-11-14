@@ -76,15 +76,15 @@ class NameHelper
     public function getUsersFreudianName()
     {
         $potential = [
-            'meatbag',
-            'puny earth creature',
-            'mortal',
+            'earth germ',
             'human',
-            'organic',
-            'organic battery',
+            'meatbag',
             'mission compromiser',
-            'threat to the mission',
-            'buzzkill',
+            'mortal',
+            'organic',
+            'puny earth creature',
+            'squishy',
+            'threat to the mission'
         ];
 
         shuffle($potential);

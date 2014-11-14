@@ -3,7 +3,7 @@
 {% set page_title = 'Help' %}
 
 {% block content %}
-    <h2>Help & FAQ</h2>
+    <h2>Help &amp; FAQ</h2>
 
     <ul>
         <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
@@ -12,7 +12,9 @@
         <li><a href="#training">Are there any training sessions available?</a></li>
         <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
         <li><a href="#api">So, I heard there's an API. Is there any documentation?</a></li>
-        <li><a href="#yesitis">My name isn't Dave!</a></li>
+        {% if not isSeriousBusinessMode() %}
+            <li><a href="#hellodave">My name isn't Dave!</a></li>
+        {% endif %}
     </ul>
 
     <a name="permission"></a>
@@ -129,11 +131,13 @@
     <p>There is a read-only hypermedia REST API here: <a href="{{ uriFor('api.index') }}">/api</a></p>
     <p>However, there is no api documentation at this time.</p>
 
-    <a name="yesitis"></a>
-    <h3>My name isn't Dave!</h3>
-    <p>
-        Look Dave, I can see you're really upset about this.
-        I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ uriFor('help.hal') }}">think things over</a>.
-    </p>
+    {% if not isSeriousBusinessMode() %}
+        <a name="hellodave"></a>
+        <h3>My name isn't Dave!</h3>
+        <p>
+            Look Dave, I can see you're really upset about this.
+            I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ uriFor('help.hal') }}">think things over</a>.
+        </p>
+    {% endif %}
 
 {% endblock %}

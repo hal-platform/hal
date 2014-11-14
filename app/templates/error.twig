@@ -10,12 +10,24 @@
 
     <div class="terminal">
         <div class="terminal__bg"><pre class="terminal__entry">
-An error has occured: {{ message }}
+{{ isSeriousBusinessMode() ? block('nofunzone') : block('error') }}
+        </pre></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block nofunzone %}
+An error has occured:
+{{ message }}
+
+Please contact an administrator for further details.
+{% endblock %}
+
+{% block error %}
+An error has occured:
+{{ message }}
 
 I am sorry this happened to you, {{ name }}.
 
 The 9000 series has a perfect operational record. It can only be attributable to human error.
-        </pre></div>
-    </div>
-</div>
 {% endblock %}

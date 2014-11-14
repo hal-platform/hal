@@ -10,6 +10,22 @@
 
     <div class="terminal">
         <div class="terminal__bg"><pre class="terminal__entry">
+{{ isSeriousBusinessMode() ? block('nofunzone') : block('denied') }}
+        </pre></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block nofunzone %}
+Access Denied.
+
+You do not have the correct permissions to access this page.
+
+Please contact an administrator for further details.
+{% endblock %}
+
+{% block denied %}
 Greetings, {{ name }}.
 
 It seems you have arrived in a section not intended for your usage.  I think you know what the problem is just as well as I do.
@@ -17,8 +33,4 @@ It seems you have arrived in a section not intended for your usage.  I think you
 {{ name }}? Are you there?
 
 Just what do you think you're doing, {{ name }}?
-        </pre></div>
-    </div>
-</div>
-
 {% endblock %}

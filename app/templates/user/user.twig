@@ -7,16 +7,27 @@
 
 {% block content %}
 
-    <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
-        {{ getUsersActualName(user) }}
-    </h2>
+    {% if isSeriousBusinessMode() %}
+        <h2>{{ name }}</h2>
+    {% else %}
+        <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
+            {{ getUsersActualName(user) }}
+        </h2>
+    {% endif %}
 
     {% if ldapUser %}
         <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
     {% endif %}
 
-    {% set profilePicture = user.pictureUrl.host ~ user.pictureUrl.path %}
-    <p><img src="{{ ishttpsOn ? 'https' : 'http' }}://{{ profilePicture }}" width="150"></p>
+
+    <p>
+        {% if ldapUser %}
+            {% set profilePicture = user.pictureUrl.host ~ user.pictureUrl.path %}
+            <img src="{{ ishttpsOn ? 'https' : 'http' }}://{{ profilePicture }}" width="150">
+        {% else %}
+            <img src="/img/noprofile.jpg" width="150">
+        {% endif %}
+    </p>
 
     <h3>Contact</h3>
     <ul>
