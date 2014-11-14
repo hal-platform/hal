@@ -63,12 +63,18 @@ HELLO;
     private $preferencesExpiry;
 
     /**
+     * @type array
+     */
+    private $defaultPreferences;
+
+    /**
      * @param EncryptedCookies $cookies
      * @param Session $session
      * @param UrlHelper $url
      * @param NameHelper $name
      * @param User $currentUser
      * @param string $preferencesExpiry
+     * @param array $preferences
      */
     public function __construct(
         EncryptedCookies $cookies,
@@ -76,7 +82,8 @@ HELLO;
         UrlHelper $url,
         NameHelper $name,
         User $currentUser,
-        $preferencesExpiry
+        $preferencesExpiry,
+        $preferences
     ) {
         $this->cookies = $cookies;
         $this->session = $session;
@@ -85,6 +92,8 @@ HELLO;
         $this->currentUser = $currentUser;
 
         $this->preferencesExpiry = $preferencesExpiry;
+
+        $this->defaultPreferences = array_fill_keys(array_keys($preferences), false);
     }
 
     /**
@@ -112,16 +121,18 @@ HELLO;
     }
 
     /**
-     * @param string|array $nav
+     * @param array $preferences
      * @return null
      */
-    private function saveNavPreferences($nav)
+    private function saveNavPreferences(array $preferences)
     {
-        if (is_array($nav)) {
-            $nav = implode(' ', $nav);
+        $pref = $this->defaultPreferences;
+
+        foreach ($preferences as $preference) {
+            $pref[$preference] = true;
         }
 
-        $this->cookies->setCookie('navpreferences', trim($nav), $this->preferencesExpiry);
+        $this->cookies->setCookie('navpreferences', json_encode($pref), $this->preferencesExpiry);
     }
 
     /**

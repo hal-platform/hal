@@ -489,6 +489,7 @@ services:
       - @name.helper
       - @currentUser
       - %cookie.preferences.ttl%
+      - %navigation.list%
 
   user.settings.page:
     class: 'QL\Hal\Controllers\User\SettingsController'
