@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Entity\Repository\GroupRepository;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -20,33 +20,30 @@ class RepositoriesController
     private $template;
 
     /**
-     *  @var RepositoryRepository
+     *  @var GroupRepository
      */
-    private $repoRepo;
+    private $groupRepo;
 
     /**
      *  @param Twig_Template $template
-     *  @param RepositoryRepository $repoRepo
+     *  @param GroupRepository $groupRepo
      */
-    public function __construct(Twig_Template $template, RepositoryRepository $repoRepo)
+    public function __construct(Twig_Template $template, GroupRepository $groupRepo)
     {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
+        $this->groupRepo = $groupRepo;
     }
 
     /**
-     *  Run the controller
-     *
      *  @param Request $request
      *  @param Response $response
-     *  @param array $params
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke(Request $request, Response $response)
     {
         $rendered = $this->template->render([
-            'repos' => $this->repoRepo->findBy([], ['key' => 'ASC'])
+            'groups' => $this->groupRepo->findBy([], ['name' => 'ASC'])
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }

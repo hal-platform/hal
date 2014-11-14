@@ -103,10 +103,8 @@ class AdminAddController
     /**
      * @param Request $request
      * @param Response $response
-     * @param array $params
-     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response)
     {
         $renderContext = [
             'form' => [
@@ -120,7 +118,7 @@ class AdminAddController
                 'post_command' => $request->post('post_command'),
                 'description' => $request->post('description')
             ],
-            'groups' => $this->groupRepo->findAll(),
+            'groups' => $this->groupRepo->findBy([], ['name' => 'ASC']),
             'errors' => $this->checkFormErrors($request)
         ];
 

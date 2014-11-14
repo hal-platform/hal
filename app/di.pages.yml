@@ -113,7 +113,7 @@ services:
 
   repositories.page:
     class: 'QL\Hal\Controllers\Repository\RepositoriesController'
-    arguments: [@repositories.twig, @repository.repo]
+    arguments: [@repositories.twig, @group.repo]
   repositories.twig:
     parent: 'twig.template.old'
     arguments: ['repository/repositories.twig']

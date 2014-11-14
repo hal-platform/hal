@@ -20,19 +20,19 @@
                     <input type="text" name="nickname" id="nickname" maxlength="24" required value="{{ form.nickname }}" class="text-input">
                 </li>
                 <li>
-                    <p>Group</p>
-                    <ul class="check-list">
-                    {% for group in groups %}
-                        {% set checked = '' %}
-                        {% if form.group == group.id %}
-                            {% set checked = ' checked="checked"' %}
-                        {% endif %}
+                    <label>Group</label>
+                    <ul class="radio-grid--form">
+                        {% for group in groups %}
+                            {% set checked = '' %}
+                            {% if form.group == group.id %}
+                                {% set checked = ' checked="checked"' %}
+                            {% endif %}
 
-                        <li>
-                            <input type="radio" name="group" id="group-{{ group.id }}" value="{{ group.id }}"{{ checked }}>
-                            <label for="group-{{ group.id }}">{{ group.key }}</label>
-                        </li>
-                    {% endfor %}
+                            <li>
+                                <input id="group-{{ group.id }}" type="radio" name="group" value="{{ group.id }}"{{ checked }}>
+                                <label for="group-{{ group.id }}">{{ group.name }}</label>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </li>
 

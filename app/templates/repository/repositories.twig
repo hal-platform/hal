@@ -11,31 +11,40 @@
                 <th>Repository</th>
                 <th>Github Source</th>
                 <th>Notification E-mail</th>
-                <th>Repo Details</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-        {% for repo in repos %}
-            <tr>
-                <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.key }}</a></td>
-                <td>
-                    <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
-                    <span class="icon">
-                        <svg viewBox="0 0 32 32">
-                            <use xlink:href="#github"></use>
-                        </svg>
-                    </span>
-                </td>
-                <td>{{ repo.email }}</td>
-                <td>
-                    <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
-                </td>
-            </tr>
-        {% else %}
+        {% set hasRepos = false %}
+        {% for group in groups %}
+
+            {% if not group.getRepositories.isEmpty %}
+                {% set hasRepos = true %}
+                <tr>
+                    <th colspan="4"><h4 class="mbn">{{ group.name }} repositories</h4></th>
+                </tr>
+
+                {% for repo in group.getRepositories %}
+                    <tr>
+                        <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.key }}</a></td>
+                        <td>
+                            <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                        </td>
+                        <td>{{ repo.email }}</td>
+                        <td>
+                            <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+
+        {% if not hasRepos %}
             <tr>
                 <td colspan="4">There are no repositories.</td>
             </tr>
-        {% endfor %}
+        {% endif %}
         </tbody>
     </table>
 

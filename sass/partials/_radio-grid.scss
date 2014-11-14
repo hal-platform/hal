@@ -1,12 +1,18 @@
-.radio-grid__env{
+.radio-grid__env {
     text-align: center;
 }
 
-.radio-grid{
+.radio-grid--form {
+    margin-left: 0;
+}
+
+.radio-grid,
+.radio-grid--form {
     overflow: hidden;
 }
 
-.radio-grid > li{
+.radio-grid > li,
+.radio-grid--form > li {
     width: 100%;
 
     @include breakpoint(40em) {
@@ -20,7 +26,9 @@
             clear:right;
         }
     }
+}
 
+.radio-grid > li {
     @include breakpoint(60em) {
         &:nth-child(4n+1) {
             @include grid-span(1, 1, $grid: 4, $gutter: .1);
@@ -39,27 +47,32 @@
             @include grid-span(1, 4, $grid: 4, $gutter: .1);
         }
     }
-
 }
 
-.radio-grid li.full{
-    width: 100%;
-}
+.radio-grid,
+.radio-grid--form {
+    li.full {
+        width: 100%;
+    }
 
-.radio-grid input[type="radio"]{
-    display: none;
-}
+    input[type="radio"] {
+        display: none;
+    }
 
-.radio-grid label{
-    border: 1px solid $light-grey;
-    transition: background-color 1s ease;
-    padding: msem(-4);
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    label {
+        border: 1px solid $light-grey;
+        transition: background-color 1s ease;
+        padding: msem(-4);
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-.radio-grid input[type="radio"]:checked + label{
-    background-color: $light-yellow;
+    input[type="radio"]:checked + label {
+        background-color: $light-yellow;
+    }
+}
+.radio-grid--form li {
+    margin-bottom: msem(1);
 }
