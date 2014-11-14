@@ -1,28 +1,39 @@
 {% extends 'base.html.twig' %}
 
+{% import _self as page_macros %}
+
 {% set page_title = "Servers" %}
 
 {% block content %}
     <h2>Servers</h2>
 
-    <table class="t50">
+    <table>
         <thead>
         <tr>
-            <th>Hostname</th>
             <th>Environment</th>
+            <th>Servers</th>
         </tr>
         </thead>
         <tbody>
-        {% for server in servers %}
-            <tr>
-                <td><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a></td>
-                <td>{{ server.environment.key }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2">There are no servers.</td>
-            </tr>
-        {% endfor %}
+            {% if server_count %}
+
+                {% for env, servers in server_environments %}
+                    {% if servers %}
+                        {{ page_macros.serversRow(env, servers) }}
+                    {% endif %}
+                {% endfor %}
+
+                {% for env, servers in unknown_server_environments %}
+                    {% if servers %}
+                        {{ page_macros.serversRow(env, servers) }}
+                    {% endif %}
+                {% endfor %}
+
+            {% else %}
+                <tr>
+                    <td colspan="2">There are no servers.</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 
@@ -33,3 +44,16 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{% macro serversRow(env, servers) %}
+<tr>
+    <td>{{ env }}</td>
+    <td>
+        <ul class="col-list">
+            {% for server in servers %}
+                <li><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </td>
+</tr>
+{% endmacro %}
