@@ -527,11 +527,18 @@ services:
   ######################################################################################################################
 
   admin.dashboard.page:
-    parent: 'static.controller'
+    class: 'QL\Hal\Controllers\Admin\DashboardCOntroller'
     arguments: [@admin.dashboard.twig]
   admin.dashboard.twig:
     parent: 'twig.template.old'
     arguments: ['admin/dashboard.twig']
+
+  admin.super.page:
+    class: 'QL\Hal\Controllers\Admin\SuperController'
+    arguments: [@admin.super.twig, @doctrine.config]
+  admin.super.twig:
+    parent: 'twig.template.old'
+    arguments: ['admin/super.twig']
 
   ######################################################################################################################
   # HELP CONTROLLERS
@@ -586,10 +593,6 @@ services:
   logs.twig:
     parent: 'twig.template.old'
     arguments: ['logs.twig']
-
-  admin.utility.page:
-    class: 'QL\Hal\Controllers\AdminController'
-    arguments: [@doctrine.config]
 
   # The twig template for slim errors (404, 500)
   error.pages.twig:

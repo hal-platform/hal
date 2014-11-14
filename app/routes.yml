@@ -53,7 +53,7 @@ parameters:
         admin.super:
             method: 'GET'
             route: '/superadmin'
-            stack: ['admin.bouncer', 'admin.utility.page']
+            stack: ['admin.bouncer', 'admin.super.page']
 
         ########################################################################################################################
         # HELP ROUTES

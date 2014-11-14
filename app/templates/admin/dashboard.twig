@@ -6,9 +6,10 @@
     <h2>Admin Dashboard</h2>
 
     <ul>
-        <li><a href="{{ urlFor('repositories') }}" title="Manage Repositories">Manage Repositories</a></li>
-        <li><a href="{{ urlFor('environments') }}" title="Manage Environments">Manage Environments</a></li>
-        <li><a href="{{ urlFor('users') }}" title="Manage Users">Users</a></li>
+        <li><a href="{{ urlFor('repositories') }}">Manage Repositories</a></li>
+        <li><a href="{{ urlFor('environments') }}">Manage Environments</a></li>
+        <li><a href="{{ urlFor('users') }}">Users</a></li>
+        <li><a href="{{ urlFor('admin.super') }}">Super Admin Dashboard</a></li>
     </ul>
 
 {% endblock %}
