@@ -39,7 +39,7 @@ class NameHelper
     {
         $name = $this->getUsersName($user);
 
-        return strstr($name, ' ');
+        return trim(strstr($name, ' ', true));
     }
 
     /**
@@ -56,8 +56,8 @@ class NameHelper
 
         } elseif ($user instanceof DomainUser) {
             $exploded = explode(',', $user->getName());
-            if ($exploded === 2) {
-                $name = sprintf('%s %s', $exploded[1], $exploded[0]);
+            if (count($exploded) === 2) {
+                $name = sprintf('%s %s', trim($exploded[1]), trim($exploded[0]));
             } else {
                 $name = $user->getName();
             }
