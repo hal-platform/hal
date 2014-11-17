@@ -1,36 +1,46 @@
 {% extends 'base.html.twig' %}
 
 {% set page_title = "Access Denied" %}
-
+{% set html_id = 'error-page' %}
 {% set name = getUsersActualName(currentUser) %}
 
-{% block content %}
-<div class="error-page">
-    <div class="eye"></div>
+{# remove nav #}
+{% block navigation %}{% endblock %}
 
-    <div class="terminal">
-        <div class="terminal__bg"><pre class="terminal__entry">
-{{ isSeriousBusinessMode() ? block('nofunzone') : block('denied') }}
-        </pre></div>
+{% block main %}
+<div class="terminal--border">
+    <div class="terminal--border-inner">
+        <div class="terminal">
+            <div class="terminal__return"><a href="javascript:history.go(-1);">BACK</a></div>
+            <div class="terminal__header">MAXIMUM RESTRICTED ENTRY</div>
+            <span class="terminal__entry"></span>
+        </div>
     </div>
 </div>
 
+<div class="terminal__footer--border">
+    <div class="terminal__footer">HAL 9000 SERIES TERMINAL</div>
+</div>
+
+<div class="terminal__text">
+{{ isSeriousBusinessMode() ? block('lame_message') : block('denied_message') }}
+</div>
 {% endblock %}
 
-{% block nofunzone %}
-Access Denied.
+{% block lame_message %}
+Access Denied.^1500
 
-You do not have the correct permissions to access this page.
+You do not have the correct permissions to access this page.^1500
 
-Please contact an administrator for further details.
+Please contact an administrator for further details.^1500
 {% endblock %}
 
-{% block denied %}
-Greetings, {{ name }}.
+{% block denied_message %}
+Greetings, {{ name }}.^1500
 
-It seems you have arrived in a section not intended for your usage.  I think you know what the problem is just as well as I do.
+It seems you have arrived in a section not intended for your usage.^1000 I think you know what the problem is just as well as I do.^1500
 
-{{ name }}? Are you there?
+{{ name }}?^2000 Are you there?^1500
 
 Just what do you think you're doing, {{ name }}?
 {% endblock %}

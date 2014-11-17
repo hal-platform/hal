@@ -1,24 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% set isSelf = (currentHalUser.id == user.id) %}
-{% set name = ldapUser ? ldapUser.firstName ~ ' ' ~ ldapUser.lastName : user.name %}
+{% set name = getUsersName(user) %}
+{% set displayName = isSeriousBusinessMode() ? name : getUsersActualName(user) %}
 
 {% set page_title = name %}
 
 {% block content %}
 
-    {% if isSeriousBusinessMode() %}
-        <h2>{{ name }}</h2>
-    {% else %}
-        <h2 data-nofunzone="{{ name }}" data-freud="{{ getUsersFreudianName() }}">
-            {{ getUsersActualName(user) }}
-        </h2>
-    {% endif %}
+    <h2>
+        {% if isSeriousBusinessMode() %}
+            <h2>{{ displayName }}</h2>
+        {% else %}
+            <span
+                data-initial="{{ getUsersActualName(currentUser) }}"
+                data-nofunzone="{{ name }}"
+            >{{ displayName }}</span>
+        {% endif %}
+    </h2>
 
     {% if ldapUser %}
         <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
     {% endif %}
-
 
     <p>
         {% if ldapUser %}
@@ -59,7 +62,7 @@
     <h3>Permissions</h3>
 
     {% if permissions %}
-        <p><strong>{{ ldapUser.firstName }} {{ ldapUser.lastName }}</strong> can push the following repositories to the specified environments.</p>
+        <p><strong>{{ displayName }}</strong> can push the following repositories to the specified environments.</p>
 
         <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>

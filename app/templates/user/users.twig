@@ -37,7 +37,13 @@
             <tr>
                 <td><a href="{{ urlFor('user', {'id': user.id}) }}">{{ user.id }}</a></td>
                 <td>{{ user.handle }}</td>
-                <td>{{ user.name }}</td>
+                <td>
+                    {% if isSeriousBusinessMode() %}
+                        {{ user.name }}
+                    {% else %}
+                        {{ getUsersActualName(user) }}
+                    {% endif %}
+                </td>
                 <td>{{ user.email }}</td>
             </tr>
         {% else %}

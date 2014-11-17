@@ -7,8 +7,12 @@
     {% if isSeriousBusinessMode() %}
         <h2>Dashboard</h2>
     {% else %}
-        <h2 data-nofunzone="{{ getUsersActualName(currentUser) ~ '.' }}" data-freud="{{ getUsersFreudianName() }}.">
-            Hello, {{ getUsersActualName(currentUser) }}.
+        <h2>
+            <span
+                data-initial=", {{ getUsersActualName(currentUser) }}."
+                data-freud=", {{ getUsersFreudianName() }}."
+                data-nofunzone=", {{ getUsersFirstName(currentUser) }}."
+            >Hello</span>
         </h2>
     {% endif %}
 

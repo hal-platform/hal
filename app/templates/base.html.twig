@@ -82,11 +82,11 @@
                     </ul>
                 </nav>
             {% endblock %}
-            {% block subnav %}{% endblock %}
         </header>
     {% endblock %}
     <!-- END HEADER -->
 
+    {% block main %}
     <main role="main">
         {% block flash %}
             {% if session.flash(true) %}
@@ -115,10 +115,10 @@
         {% block content %}{% endblock %}
         <!-- END CONTENT -->
     </main>
+    {% endblock %}
 
     <!-- BEGIN FOOTER -->
-    {% block footer %}
-    {% endblock %}
+    {% block footer %}{% endblock %}
     <!-- END FOOTER -->
 
 {% endblock %}

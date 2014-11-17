@@ -1,10 +1,168 @@
-.error-page {
-    background: radial-gradient(ellipse at center, #4c4c4c, #000000 100%);
-    min-height: 500px;
+#error-page,
+#error-page body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
 }
 
-.error-page .eye {
-    background: url(/img/eye.png) no-repeat center center;
-    background-size: 13em;
-    min-height: 20em;
+#error-page body {
+    display: flex;
+    flex-direction: column;
+}
+
+$borderSize: 5px;
+$scanline-size: 1px;
+
+$terminal-text: #bd1c1c;
+$terminal-shadow: #ff0000;
+$terminal-background: #2A0707;
+$terminal-inset: rgba(100, 30, 30, 0.5);
+$terminal-header-faded: #030303;
+
+$scanline-dark: rgba(43, 29, 29, 0.25);
+$scanline-light: rgba(187, 145, 145, 0.25);
+
+.terminal--border {
+    background-image: linear-gradient(#a9a9a9, #ffffff 20%, #595959 40%, #b3b3b3 65%, #666666);
+    padding: $borderSize;
+
+    /* flex */
+    flex: 1;
+    position: relative;
+}
+.terminal--border-inner {
+    background-color: $terminal-background;
+
+    /* flex */
+    position: absolute;
+    height: calc(100% - #{$borderSize * 2});
+    width: calc(100% - #{$borderSize * 2});
+}
+
+.terminal {
+    border: 1px solid #888888;
+    box-shadow: inset 0 0 18px 10px $terminal-inset;
+    font-family: monospace;
+    padding: $borderSize;
+
+    /* flex */
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+    /* static scanlines */
+    background: repeating-linear-gradient(
+        top,
+        transparent 0px,
+        transparent $scanline-size,
+        $scanline-dark $scanline-size,
+        $scanline-light $scanline-size * 2
+    );
+    background-size: 100% $scanline-size * 2;
+}
+
+.terminal__header {
+
+    /* At full site width - Make the header more prominent */
+    @include breakpoint(42.1875em) {
+        color: $terminal-text;
+        text-shadow: $terminal-shadow 0 0 35px;
+        animation: fadedblink 2s infinite;
+    }
+
+    color: $terminal-header-faded;
+    text-shadow: $terminal-header-faded 0 0 35px;
+
+    font-size: 3em;
+    line-height: 1em;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    top: 1.5em;
+    width: 100%;
+    z-index: 1;
+}
+
+/* return link  */
+.terminal__return {
+    left: 0;
+    position: absolute;
+    top: 1em;
+    z-index: 3;
+}
+.terminal a {
+    color: white;
+    margin-left: 1em;
+    padding: 0px 3px;
+    text-decoration: none;
+    text-shadow: #ffffff 0 0 35px;
+    text-transform: uppercase;
+    &:hover {
+        color: #4cb1dd;
+        text-shadow: #4cb1dd 0 0 35px;
+    }
+}
+
+/* where the typing goes  */
+.terminal__entry {
+    bottom: 0;
+    color: $terminal-text;
+    display: block;
+    line-height: 1em;
+    padding: 1em;
+    position: absolute;
+    text-shadow: $terminal-shadow 0 0 35px;
+    text-transform: uppercase;
+    white-space: pre-line;
+    z-index: 2;
+}
+
+/* cursor  */
+.terminal__entry:after {
+    visibility: visible;
+    content: "";
+    background-color: $terminal-text;
+    display: inline-block;
+    position: relative;
+    width: 0.5em;
+    height: 1em;
+    top: 4px;
+    margin-left: 0;
+    box-shadow: $terminal-shadow 0 0 35px;
+    animation: cursorblink 0.7s infinite;
+}
+
+/* footer  */
+.terminal__footer--border {
+    background-image: linear-gradient(#a9a9a9, #ffffff 20%, #595959 40%, #b3b3b3 65%, #666666);
+    padding: $borderSize;
+}
+.terminal__footer {
+    background: black;
+    border: 1px solid #888888;
+    color: #999999;
+    font-family: sans-serif;
+    padding-left: .5em;
+}
+
+.terminal__text {
+    display: none;
+}
+
+.typed-cursor {
+    opacity: 1;
+    animation: cursorblink 0.7s infinite;
+}
+
+@keyframes cursorblink {
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+
+@keyframes fadedblink {
+    0% { opacity:1; }
+    50% { opacity:.1; }
+    100% { opacity:1; }
 }
