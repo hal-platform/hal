@@ -527,7 +527,7 @@ services:
   ######################################################################################################################
 
   admin.dashboard.page:
-    class: 'QL\Hal\Controllers\Admin\DashboardCOntroller'
+    class: 'QL\Hal\Controllers\Admin\DashboardController'
     arguments: [@admin.dashboard.twig]
   admin.dashboard.twig:
     parent: 'twig.template.old'
