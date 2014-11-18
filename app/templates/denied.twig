@@ -23,11 +23,11 @@
 </div>
 
 <div class="terminal__text">
-{{ isSeriousBusinessMode() ? block('lame_message') : block('denied_message') }}
+{{ isSeriousBusinessMode() ? block('nofunzone') : block('denied_message') }}
 </div>
 {% endblock %}
 
-{% block lame_message %}
+{% block nofunzone %}
 Access Denied.^1500
 
 You do not have the correct permissions to access this page.^1500

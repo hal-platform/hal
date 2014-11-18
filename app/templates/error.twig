@@ -1,33 +1,50 @@
 {% extends 'base.html.twig' %}
 
 {% set page_title = 'Error' %}
-
+{% set html_id = 'error-page' %}
 {% set name = getUsersActualName(currentUser) %}
 
-{% block content %}
-<div class="error-page">
-    <div class="eye"></div>
+{# remove nav #}
+{% block navigation %}{% endblock %}
 
-    <div class="terminal">
-        <div class="terminal__bg"><pre class="terminal__entry">
-{{ isSeriousBusinessMode() ? block('nofunzone') : block('error') }}
-        </pre></div>
+{% block main %}
+<div class="terminal--border">
+    <div class="terminal--border-inner">
+        <div class="terminal">
+            <div class="terminal__return"><a href="javascript:history.go(-1);">BACK</a></div>
+            <div class="terminal__header">{{ status == 404 ? 'PAGE NOT FOUND' : 'USER ERROR DETECTED'}}</div>
+            <span class="terminal__entry"></span>
+        </div>
     </div>
+</div>
+
+<div class="terminal__footer--border">
+    <div class="terminal__footer">HAL 9000 SERIES TERMINAL</div>
+</div>
+
+<div class="terminal__text">
+{{ isSeriousBusinessMode() ? block('nofunzone') : block('error_message') }}
 </div>
 {% endblock %}
 
 {% block nofunzone %}
-An error has occured:
-{{ message }}
+An error has occured.^1500
+{% if type %}
+
+Error Type: {{ type }}
+{% endif %}
 
 Please contact an administrator for further details.
 {% endblock %}
 
-{% block error %}
-An error has occured:
-{{ message }}
+{% block error_message %}
+An error has occured.^1500
+{% if type %}
 
-I am sorry this happened to you, {{ name }}.
+Error Type: {{ type }}
+{% endif %}
 
-The 9000 series has a perfect operational record. It can only be attributable to human error.
+I am sorry this happened to you, {{ name }}.^1500
+
+The 9000 series has a perfect operational record. It can only be attributable to human error.^1500 Please stay calm.^1500 Your activity has been logged and the proper authorities have been notified.
 {% endblock %}

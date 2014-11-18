@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Slim;
 
+use ErrorException;
 use Exception;
 use PDOException;
 use Psr\Log\LoggerInterface;
@@ -25,15 +26,37 @@ use Twig_Template;
  */
 class ErrorHandlerHook
 {
+    /**
+     * @type array
+     */
+    private $levels = array(
+        E_WARNING           => 'Warning',
+        E_NOTICE            => 'Notice',
+        E_USER_ERROR        => 'User Error',
+        E_USER_WARNING      => 'User Warning',
+        E_USER_NOTICE       => 'User Notice',
+        E_STRICT            => 'Runtime Notice',
+        E_RECOVERABLE_ERROR => 'Catchable Fatal Error',
+        E_DEPRECATED        => 'Deprecated',
+        E_USER_DEPRECATED   => 'User Deprecated',
+        E_ERROR             => 'Error',
+        E_CORE_ERROR        => 'Core Error',
+        E_COMPILE_ERROR     => 'Compile Error',
+        E_PARSE             => 'Parse Error',
+    );
+
+    /**
+     * @type ExceptionDispatcher
+     */
     private $dispatcher;
 
     /**
-     * @var LoggerInterface
+     * @type LoggerInterface
      */
     private $logger;
 
     /**
-     * @var Twig_Template
+     * @type Twig_Template
      */
     private $twig;
 
@@ -58,18 +81,28 @@ class ErrorHandlerHook
      */
     public function __invoke(Slim $slim)
     {
+        $this->registerHandlers($slim);
+
         // Register Not Found Handler
         $slim->notFound(function () use ($slim) {
-            $this->prepareTwigResponse($slim, 'Page Not Found', 404);
+            $rendered = $this->twig->render(['status' => 404]);
+            $this->prepareResponse($slim, $rendered, 404);
             $slim->stop();
         });
 
-        // Register Exception Handlers
+        // Register Global Exception Handler
         $slim->error(function (Exception $exception) use ($slim) {
             $this->dispatcher->dispatch($exception);
             $slim->stop();
         });
+    }
 
+    /**
+     * @param Slim $slim
+     * @return null
+     */
+    private function registerHandlers(Slim $slim)
+    {
         // Handle Http Problems
         $this->dispatcher->add(function (HttpProblemException $exception) use ($slim) {
             $this->prepareResponse(
@@ -82,23 +115,18 @@ class ErrorHandlerHook
 
         // Handle Fatal Exceptions
         $this->dispatcher->add(function (FatalErrorException $exception) use ($slim) {
-            $this->prepareTwigResponse($slim, $exception->getMessage());
+            $this->prepareTwigResponse($slim, $exception);
             $this->forceSendResponse($slim);
         });
 
         // Handle PDO Exceptions
         $this->dispatcher->add(function (PDOException $exception) use ($slim) {
-            $this->sendLog($exception->getMessage(), ['exceptionData' => $exception->getTraceAsString()]);
-            $this->prepareTwigResponse(
-                $slim,
-                sprintf("There's a problem with the database. Wait a bit and try again.\n%s", $exception->getMessage())
-            );
+            $this->prepareTwigResponse($slim, $exception);
         });
 
         // Handle All Other Exceptions
         $this->dispatcher->add(function (Exception $exception) use ($slim) {
-            $this->sendLog($exception->getMessage(), ['exceptionData' => $exception->getTraceAsString()]);
-            $this->prepareTwigResponse($slim, $exception->getMessage());
+            $this->prepareTwigResponse($slim, $exception);
         });
     }
 
@@ -106,13 +134,29 @@ class ErrorHandlerHook
      * Prepare Twig formatted response for output
      *
      * @param Slim $slim
-     * @param string $message
+     * @param Exception $exception
      * @param int $status
-     * @param array $headers
      */
-    public function prepareTwigResponse(Slim $slim, $message, $status = 500, $headers = [])
+    private function prepareTwigResponse(Slim $slim, Exception $exception, $status = 500)
     {
-        $this->prepareResponse($slim, $this->twig->render(['message' => $message]), $status, $headers);
+        if ($status >= 500) {
+            $this->logger->error($exception->getMessage(), [
+                'exceptionData' => $exception->getTraceAsString()
+            ]);
+        }
+
+        $context = [
+            'message' => $exception->getMessage(),
+            'status' => $status
+        ];
+
+        if ($exception instanceof ErrorException && array_key_exists($exception->getSeverity(), $this->levels)) {
+            $context['type'] = $this->levels[$exception->getSeverity()];
+        }
+
+        $rendered = $this->twig->render($context);
+
+        $this->prepareResponse($slim, $rendered, $status);
     }
 
     /**
@@ -123,7 +167,7 @@ class ErrorHandlerHook
      * @param int $status
      * @param array $headers
      */
-    public function prepareResponse(Slim $slim, $body, $status = 500, $headers = [])
+    private function prepareResponse(Slim $slim, $body, $status = 500, $headers = [])
     {
         $slim->response->setBody($body);
         $slim->response->setStatus($status);
@@ -138,7 +182,7 @@ class ErrorHandlerHook
      * @param $message
      * @param $context
      */
-    public function sendLog($message, $context = [])
+    private function sendLog($message, $context = [])
     {
         $this->logger->error($message, $context);
     }
@@ -148,7 +192,7 @@ class ErrorHandlerHook
      *
      * @param Slim $slim
      */
-    public function forceSendResponse(Slim $slim)
+    private function forceSendResponse(Slim $slim)
     {
         list($status, $headers, $body) = $slim->response()->finalize();
 
