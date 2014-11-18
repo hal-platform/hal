@@ -140,6 +140,7 @@ class ErrorHandlerHook
     private function prepareTwigResponse(Slim $slim, Exception $exception, $status = 500)
     {
         if ($status >= 500) {
+            // Special note: HAL uses error log level. Agent uses critical log level.
             $this->logger->error($exception->getMessage(), [
                 'exceptionData' => $exception->getTraceAsString()
             ]);
