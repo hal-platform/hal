@@ -6,10 +6,14 @@
     <h2>Admin Dashboard</h2>
 
     <ul>
-        <li><a href="{{ urlFor('repositories') }}">Manage Repositories</a></li>
-        <li><a href="{{ urlFor('environments') }}">Manage Environments</a></li>
+        <li><a href="{{ urlFor('groups') }}">Groups</a></li>
+        <li><a href="{{ urlFor('repositories') }}">Repositories</a></li>
+        <li><a href="{{ urlFor('servers') }}">Servers</a></li>
+        <li><a href="{{ urlFor('environments') }}">Environments</a></li>
         <li><a href="{{ urlFor('users') }}">Users</a></li>
-        <li><a href="{{ urlFor('admin.super') }}">Super Admin Dashboard</a></li>
+        <li><a href="{{ urlFor('logs') }}">Logs</a></li>
     </ul>
+
+    <a href="{{ urlFor('admin.super') }}">Super Admin Dashboard</a>
 
 {% endblock %}
