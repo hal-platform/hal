@@ -54,7 +54,8 @@ class SuperController
         }
 
         $rendered = $this->template->render([
-            'old_content' => $body
+            'old_content' => $body,
+            'servername' => gethostname()
         ]);
 
         $response->setBody($rendered);

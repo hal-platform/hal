@@ -5,16 +5,29 @@
 {% block content %}
     <h2>Super Admin Dashboard</h2>
 
-    <h3>Encryption key</h3>
+    <h3>Server Information</h3>
+    <div class="stat-group">
+        <dl class="stat">
+            <dt class="stat__title"><strong>Hostname</strong></dt>
+            <dd class="stat__value">{{ servername }}</dd>
+        </dl>
+        <dl class="stat">
+            <dt class="stat__title"><strong>Encryption key</strong></dt>
+            <dd class="stat__value">Placeholder</dd>
+        </dl>
+    </div>
+
+    <h3>Caching</h3>
+    <p>Stats Placeholder</p>
+    <p>
+        <a href="javascript:void();" class="btn">Placeholder</a>
+        <a href="javascript:void();" class="btn">Placeholder</a>
+    </p>
+
+    <h3>Agent Status</h3>
     <p>Placeholder</p>
 
-    <h3>Caching Actions</h3>
-    <p>Placeholder</p>
-
-    <h3>Caching Stats</h3>
-    <p>Placheolder</p>
-
-
+    <hr>
     <h3>Old Page Content</h3>
     <pre>{{ old_content|raw }}</pre>
 
