@@ -157,8 +157,10 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('reldate', [$this->time, 'relative'], ['is_safe' => ['html']]),
             new Twig_SimpleFilter('chunk', [$this, 'arrayChunk']),
             new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty']),
+
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
-            new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId'])
+            new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
+            new Twig_SimpleFilter('sanitizeToString', [$this, 'sanitizeToString'])
         ];
     }
 
@@ -250,6 +252,37 @@ class HalExtension extends Twig_Extension
         }
 
         return substr($id, 0, 10);
+    }
+
+
+    /**
+     * @param mixed $data
+     * @return string
+     */
+    public function sanitizeToString($data)
+    {
+        // bool
+        if (is_bool($data)) {
+            return $data ? 'true' : 'false';
+        }
+
+        // scalar
+        if (is_scalar($data)) {
+            return (string) $data;
+        }
+
+        // stringable
+        if (is_object($data) && method_exists($data, '__toString')) {
+            return (string) $data;
+        }
+
+        // array
+        if (is_array($data)) {
+            return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        }
+
+        // object
+        return get_class($data);
     }
 
     /**

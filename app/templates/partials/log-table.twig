@@ -1,0 +1,34 @@
+<!-- <table class="tablesaw tablesaw-stack" data-mode="stack" style="width: 100%;"> -->
+<table>
+    <thead>
+        <th>Event</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Message</th>
+    </thead>
+    <tbody>
+    {% for log in logs %}
+        <tr>
+            <td>{{ log.event }}</td>
+            <td>{{ log.created|timepoint }}</td>
+            <td>{{ log.status }}</td>
+            <td>{{ log.message }}</td>
+        </tr>
+        {% if log.data %}
+        <tr>
+            <td colspan="4" style="text-align:left">
+                {% for key, data in log.data %}
+                    <b>{{ key }}</b>
+                    <pre style="background: #ddd;overflow-x:scroll;white-space: pre;word-wrap: normal;padding: 2px;margin:0; width: 100%;">{{ data|sanitizeToString }}</pre>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+    {% else %}
+        <tr>
+            <td colspan="4">No logs found.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+

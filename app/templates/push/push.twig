@@ -120,6 +120,10 @@
     </div>
 
     <h3>Push Log</h3>
-    <p>Push log is not available.</p>
+    {% if push.logs.isEmpty %}
+        <p>Push logs are not available.</p>
+    {% else %}
+        {% include 'partials/log-table.twig' with {'logs': push.logs} %}
+    {% endif %}
 
 {% endblock %}

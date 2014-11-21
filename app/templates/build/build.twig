@@ -121,6 +121,10 @@
     {% endif %}
 
     <h3>Build Log</h3>
-    <p>Build log is not available.</p>
+    {% if build.logs.isEmpty %}
+        <p>Build logs are not available.</p>
+    {% else %}
+        {% include 'partials/log-table.twig' with {'logs': build.logs} %}
+    {% endif %}
 
 {% endblock %}
