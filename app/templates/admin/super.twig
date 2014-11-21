@@ -18,17 +18,14 @@
     </div>
 
     <h3>Caching</h3>
-    <p>Stats Placeholder</p>
-    <p>
-        <a href="javascript:void();" class="btn">Placeholder</a>
-        <a href="javascript:void();" class="btn">Placeholder</a>
-    </p>
+
+    <h4>Doctrine Cache</h4>
+    <a href="{{ urlFor('admin.super', {}, {clear_doctrine: 1}) }}" class="btn">Clear doctrine cache</a>
+
+    <h4>Permissions Cache</h4>
+    <a href="{{ urlFor('admin.super', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
 
     <h3>Agent Status</h3>
-    <p>Placeholder</p>
-
-    <hr>
-    <h3>Old Page Content</h3>
-    <pre>{{ old_content|raw }}</pre>
+    <p>TBD</p>
 
 {% endblock %}

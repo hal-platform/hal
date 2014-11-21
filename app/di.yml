@@ -198,6 +198,15 @@ services:
       - @denied.twig
       - @login.bouncer
 
+  # Bounce non-super-admins
+  superadmin.bouncer:
+    class: 'QL\Hal\Bouncers\SuperAdminBouncer'
+    arguments:
+      - @session
+      - @permissions
+      - @denied.twig
+      - @login.bouncer
+
   # Bounce unauthenticated api clients
   api.auth.bouncer:
     class: 'QL\Hal\Bouncers\ApiAuthBouncer'
