@@ -35,7 +35,10 @@
             {% include 'partials/layout.icons.twig' %}
 
             {% block header %}
-                {% include 'partials/layout.header.twig' %}
+                {% if showNavigation is not defined %}
+                    {% set showNavigation = true %}
+                {% endif %}
+                {% include 'partials/layout.header.twig' with {showNavigation: showNavigation}%}
             {% endblock %}
 
             {% block main %}

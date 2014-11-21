@@ -23,36 +23,38 @@
         </a>
     </div>
     {% block navigation %}
-        <nav role="navigation">
-            <ul class="nav--main mbn">
-                {% if currentUser %}
-                    {{ nav_macros.optionalNavlink('Dashboard', 'dashboard', 'dashboard', '-3') }}
-                    {{ nav_macros.optionalNavlink('Queue', 'queue', 'in') }}
+        {% if showNavigation %}
+            <nav role="navigation">
+                <ul class="nav--main mbn">
+                    {% if currentUser %}
+                        {{ nav_macros.optionalNavlink('Dashboard', 'dashboard', 'dashboard', '-3') }}
+                        {{ nav_macros.optionalNavlink('Queue', 'queue', 'in') }}
 
-                    {{ nav_macros.optionalNavlink('Groups', 'groups', 'list') }}
-                    {{ nav_macros.optionalNavlink('Repositories', 'repositories', 'repo', '-3') }}
+                        {{ nav_macros.optionalNavlink('Groups', 'groups', 'list') }}
+                        {{ nav_macros.optionalNavlink('Repositories', 'repositories', 'repo', '-3') }}
 
-                    {{ nav_macros.optionalNavlink('Servers', 'servers', 'server', '-4') }}
-                    {{ nav_macros.optionalNavlink('Environments', 'environments', 'leaf', '-1') }}
-                    {{ nav_macros.optionalNavlink('Users', 'users', 'users') }}
+                        {{ nav_macros.optionalNavlink('Servers', 'servers', 'server', '-4') }}
+                        {{ nav_macros.optionalNavlink('Environments', 'environments', 'leaf', '-1') }}
+                        {{ nav_macros.optionalNavlink('Users', 'users', 'users') }}
 
-                    {# @todo FIX ME, route with required params {page: 1} #}
-                    {{ nav_macros.optionalNavlink('Logs', 'logs', 'paper-roll') }}
+                        {# @todo FIX ME, route with required params {page: 1} #}
+                        {{ nav_macros.optionalNavlink('Logs', 'logs', 'paper-roll') }}
 
-                    {% if isUserAdmin(currentUser) %}
-                        {{ nav_macros.optionalNavlink('Admin', 'admin', 'watch') }}
+                        {% if isUserAdmin(currentUser) %}
+                            {{ nav_macros.optionalNavlink('Admin', 'admin', 'watch') }}
+                        {% endif %}
+                        {{ nav_macros.optionalNavlink('Help', 'help', 'question', '-6') }}
+
+                        <li>{{ nav_macros.navlink('Settings', 'settings', 'settings') }}</li>
+                        <li>{{ nav_macros.navlink('Logout', 'logout', 'sign-out') }}</li>
+
+                    {% else %}
+                        <li class="signed-out">{{ nav_macros.navlink('Help', 'help', 'question', '-6') }}</li>
+                        <li class="signed-out">{{ nav_macros.navlink('Login', 'login', 'sign-in') }}</li>
                     {% endif %}
-                    {{ nav_macros.optionalNavlink('Help', 'help', 'question', '-6') }}
-
-                    <li>{{ nav_macros.navlink('Settings', 'settings', 'settings') }}</li>
-                    <li>{{ nav_macros.navlink('Logout', 'logout', 'sign-out') }}</li>
-
-                {% else %}
-                    <li class="signed-out">{{ nav_macros.navlink('Help', 'help', 'question', '-6') }}</li>
-                    <li class="signed-out">{{ nav_macros.navlink('Login', 'login', 'sign-in') }}</li>
-                {% endif %}
-            </ul>
-        </nav>
+                </ul>
+            </nav>
+        {% endif %}
     {% endblock %}
 </header>
 

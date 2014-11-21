@@ -5,7 +5,7 @@
 {% set name = getUsersActualName(currentUser) %}
 
 {# remove nav #}
-{% block navigation %}{% endblock %}
+{% set showNavigation = false %}
 
 {% block main %}
 <div class="terminal--border">
