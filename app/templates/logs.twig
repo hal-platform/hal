@@ -34,7 +34,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="1">
+                <td colspan="5">
                     No logs found.
                 </td>
             </tr>
@@ -45,7 +45,7 @@
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
             {% if page > 1 %}
-                <a href="{{ urlFor('logs', {'page': page-1}) }}">
+                <a href="{{ urlFor('logs.page', {'page': page-1}) }}">
                     <svg viewBox="0 0 32 32" class="icon">
                         <use xlink:href="#caret-left"></use>
                     </svg>newer
@@ -65,7 +65,7 @@
         </li>
         <li class="nav--pagination__next">
             {% if page < last %}
-                <a href="{{ urlFor('logs', {'page': page+1}) }}">
+                <a href="{{ urlFor('logs.page', {'page': page+1}) }}">
                     older <svg viewBox="0 0 32 32" class="icon mls">
                         <use xlink:href="#caret-right"></use>
                     </svg>

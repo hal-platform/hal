@@ -31,7 +31,12 @@ parameters:
 
         logs:
             method: 'GET'
-            route: '/logs(/page/:page)'
+            route: '/logs'
+            stack: ['admin.bouncer', 'logs.page']
+
+        logs.page:
+            method: 'GET'
+            route: '/logs/page/:page'
             stack: ['admin.bouncer', 'logs.page']
             conditions: {page: '[0-9]+'}
 
