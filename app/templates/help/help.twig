@@ -128,7 +128,7 @@
 
     <a name="api"></a>
     <h3>So, I heard there's an API. Is there any documentation?</h3>
-    <p>There is a read-only hypermedia REST API here: <a href="{{ uriFor('api.index') }}">/api</a></p>
+    <p>There is a read-only hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a></p>
     <p>However, there is no api documentation at this time.</p>
 
     {% if not isSeriousBusinessMode() %}
@@ -136,7 +136,7 @@
         <h3>My name isn't Dave!</h3>
         <p>
             Look Dave, I can see you're really upset about this.
-            I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ uriFor('help.hal') }}">think things over</a>.
+            I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ urlFor('help.hal') }}">think things over</a>.
         </p>
     {% endif %}
 

@@ -131,6 +131,14 @@ services:
 
     # utilities
 
+    panthor.url:
+        class: 'QL\Panthor\Utility\Url'
+        arguments:
+            - @slim.router
+            - @slim.request
+            - @slim.response
+            - @slim.halt
+
     panthor.encryption:
         class: 'MCP\Crypto\AES'
         arguments: [%encryption.secret%]
@@ -140,6 +148,15 @@ services:
         arguments: ['now', %panthor.internal.timezone%]
 
     # twig
+
+    panthor.twig.extension:
+        class: 'QL\Panthor\Twig\TwigExtension'
+        arguments:
+            - @panthor.url
+            - @panthor.clock
+            - %date.timezone%
+            - %debug%
+
     panthor.twig.configurator:
         class: 'QL\Panthor\Twig\EnvironmentConfigurator'
         arguments: [%twig.debug%, @twig.cache.dir]
@@ -164,6 +181,8 @@ services:
         class: 'Twig_Environment'
         arguments: [@twig.loader]
         configurator: [@panthor.twig.configurator, 'configure']
+        calls:
+            - ['addExtension', [@panthor.twig.extension]]
 
     panthor.twig.template:
         class: 'QL\Panthor\Twig\LazyTwig'

@@ -2,12 +2,21 @@ parameters:
     # use this file for default settings that can be overridden by dev|test|prod config
     application.title: 'HAL 9000'
 
+    ############################################################################
+    # debug
+    ############################################################################
+
     debug: false
     twig.debug: false
     debug.godmode: 0
 
+    # slim
     slim.configuration:
         debug: '%debug%'
+
+    ############################################################################
+    # ldap
+    ############################################################################
 
     ldap.host: 'ldap.example.com'
     ldap.domain: 'MI'
@@ -15,19 +24,15 @@ parameters:
     ldap.username: ''
     ldap.password: ''
 
+    ############################################################################
+    # doctrine
+    ############################################################################
+
     doctrine.devmode: false
 
-    navigation.list:
-        dashboard: 'Dashboard'
-        queue: 'Queue'
-        groups: 'Groups'
-        repositories: 'Repositories'
-        servers: 'Servers'
-        environments: 'Environments'
-        users: 'Users'
-        logs: 'Logs'
-        admin: 'Admin'
-        help: 'Help'
+    ############################################################################
+    # caching
+    ############################################################################
 
     # To set a specific cache time for a route, add the route name as a key,
     # and the time to cache in seconds. If not specified, default time is 10 seconds.
@@ -41,10 +46,29 @@ parameters:
     cache.permissions.ttl: 600
     cache.doctrine.ttl: 600
 
-    # base58
-    unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+    ############################################################################
+    # configuration
+    ############################################################################
 
-    # Cookie settings
+    unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+    date.timezone: 'America/Detroit'
+
+    ############################################################################
+    # cookie
+    ############################################################################
+
+    navigation.list:
+        dashboard: 'Dashboard'
+        queue: 'Queue'
+        groups: 'Groups'
+        repositories: 'Repositories'
+        servers: 'Servers'
+        environments: 'Environments'
+        users: 'Users'
+        logs: 'Logs'
+        admin: 'Admin'
+        help: 'Help'
+
     session.cookie.configuration:
         lifetime: '1 day'
     cookie.preferences.ttl: '5 years'

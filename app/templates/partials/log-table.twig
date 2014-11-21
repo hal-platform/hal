@@ -10,7 +10,7 @@
     {% for log in logs %}
         <tr>
             <td>{{ log.event }}</td>
-            <td>{{ log.created|timepoint }}</td>
+            <td>{{ log.created|timepoint('M j, Y g:i A') }}</td>
             <td>{{ log.status }}</td>
             <td>{{ log.message }}</td>
         </tr>

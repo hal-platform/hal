@@ -132,8 +132,6 @@ class HalExtension extends Twig_Extension
     {
         return [
             // util
-            new Twig_SimpleFunction('urlFor', [$this->url, 'urlFor']),
-            new Twig_SimpleFunction('uriFor', [$this->url, 'uriFor']),
             new Twig_SimpleFunction('isNavOn', [$this, 'isNavigationOn']),
             new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
 
@@ -153,7 +151,6 @@ class HalExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('timepoint', [$this->time, 'format'], ['is_safe' => ['html']]),
             new Twig_SimpleFilter('reldate', [$this->time, 'relative'], ['is_safe' => ['html']]),
             new Twig_SimpleFilter('chunk', [$this, 'arrayChunk']),
             new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty']),
