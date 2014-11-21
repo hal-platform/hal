@@ -42,7 +42,7 @@ class LogoutController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $this->session->end();
+        $this->session->clear();
         $this->url->redirectFor('login');
     }
 }
