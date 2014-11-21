@@ -9,14 +9,14 @@ namespace QL\Hal\Controllers\Admin;
 
 use Doctrine\ORM\Configuration;
 use Predis\Client as Predis;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class SuperController
 {
     /**
-     * @type Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
@@ -41,14 +41,14 @@ class SuperController
     private $halPushFile;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param Configuration $doctrineConfig
      * @param Predis $predis
      * @param string $encryptionKey
      * @param string $halPushFile
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         Configuration $doctrineConfig,
         Predis $predis,
         $encryptionKey,

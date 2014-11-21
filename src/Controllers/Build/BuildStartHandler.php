@@ -25,7 +25,7 @@ use Slim\Http\Response;
 class BuildStartHandler
 {
     /**
-     *  Flash Messages
+     * Flash Messages
      */
     const ERR_NO_ENV = "You must select an environment to build for.";
     const ERR_NO_PERM = "You don't have permission to build for the %s environment.";

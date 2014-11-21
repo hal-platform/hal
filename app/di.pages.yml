@@ -223,8 +223,8 @@ services:
     class: 'QL\Hal\Controllers\Build\BuildController'
     arguments: [@build.twig, @build.repo]
   build.twig:
-    parent: 'twig.template.old'
-    arguments: ['build/build.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['build/build.twig']]]
 
   build.start.page:
     class: 'QL\Hal\Controllers\Build\BuildStartController'
@@ -234,8 +234,8 @@ services:
       - @environment.repo
       - @github
   build.start.twig:
-    parent: 'twig.template.old'
-    arguments: ['build/start.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['build/start.twig']]]
 
   build.start.handle.page:
     class: 'QL\Hal\Controllers\Build\BuildStartHandler'
@@ -251,6 +251,17 @@ services:
       - @permissions
       - @github
       - @unique.helper
+
+  builds.page:
+    class: 'QL\Hal\Controllers\Build\BuildsController'
+    arguments:
+      - @builds.twig
+      - @doctrine.em
+      - @repository.repo
+      - @build.repo
+  builds.twig:
+    parent: 'twig.template'
+    calls: [['setTemplate', ['build/builds.twig']]]
 
   ######################################################################################################################
   # PUSH CONTROLLERS
@@ -292,17 +303,6 @@ services:
   rollback.twig:
     parent: 'twig.template.old'
     arguments: ['push/rollback.twig']
-
-  builds.page:
-    class: 'QL\Hal\Controllers\Build\BuildsController'
-    arguments:
-      - @builds.twig
-      - @doctrine.em
-      - @repository.repo
-      - @build.repo
-  builds.twig:
-    parent: 'twig.template.old'
-    arguments: ['build/builds.twig']
 
   push.page:
     class: 'QL\Hal\Controllers\Push\PushController'
@@ -530,8 +530,8 @@ services:
     class: 'QL\Hal\Controllers\Admin\DashboardController'
     arguments: [@admin.dashboard.twig]
   admin.dashboard.twig:
-    parent: 'twig.template.old'
-    arguments: ['admin/dashboard.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['admin/dashboard.twig']]]
 
   admin.super.page:
     class: 'QL\Hal\Controllers\Admin\SuperController'
@@ -542,8 +542,8 @@ services:
       - %encryption.secret%
       - @hal.pushfile
   admin.super.twig:
-    parent: 'twig.template.old'
-    arguments: ['admin/super.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['admin/super.twig']]]
 
   ######################################################################################################################
   # HELP CONTROLLERS

@@ -11,42 +11,42 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class BuildsController
 {
     const MAX_PER_PAGE = 25;
 
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     *  @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param EntityManager $em
-     *  @param RepositoryRepository $repoRepo
-     *  @param BuildRepository $buildRepo
+     * @param TemplateInterface $template
+     * @param EntityManager $em
+     * @param RepositoryRepository $repoRepo
+     * @param BuildRepository $buildRepo
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo
@@ -58,10 +58,10 @@ class BuildsController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {

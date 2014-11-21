@@ -11,40 +11,40 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Services\GithubService;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class BuildStartController
 {
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     * @var EnvironmentRepository
+     * @type EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @var GithubService
+     * @type GithubService
      */
     private $github;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param RepositoryRepository $repoRepo
      * @param EnvironmentRepository $envRepo
      * @param GithubService $github
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         RepositoryRepository $repoRepo,
         EnvironmentRepository $envRepo,
         GithubService $github
@@ -77,7 +77,7 @@ class BuildStartController
             'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ];
 
-        $response->body($this->template->render($context));
+        $response->setBody($this->template->render($context));
     }
 
     /**

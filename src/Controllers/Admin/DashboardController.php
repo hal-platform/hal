@@ -7,14 +7,14 @@
 
 namespace QL\Hal\Controllers\Admin;
 
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class DashboardController
 {
     /**
-     * @type Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
@@ -24,10 +24,10 @@ class DashboardController
     private $statusCode;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param int $statusCode
      */
-    public function __construct(Twig_Template $template, $statusCode = 200)
+    public function __construct(TemplateInterface $template, $statusCode = 200)
     {
         $this->template = $template;
         $this->statusCode = $statusCode;
@@ -39,7 +39,7 @@ class DashboardController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $rendered = $this->template->render([]);
+        $rendered = $this->template->render();
 
         $response->setStatus($this->statusCode);
         $response->setBody($rendered);
