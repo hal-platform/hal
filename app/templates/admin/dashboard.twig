@@ -5,15 +5,54 @@
 {% block content %}
     <h2>Admin Dashboard</h2>
 
-    <ul>
-        <li><a href="{{ urlFor('groups') }}">Groups</a></li>
-        <li><a href="{{ urlFor('repositories') }}">Repositories</a></li>
-        <li><a href="{{ urlFor('servers') }}">Servers</a></li>
-        <li><a href="{{ urlFor('environments') }}">Environments</a></li>
-        <li><a href="{{ urlFor('users') }}">Users</a></li>
-        <li><a href="{{ urlFor('logs') }}">Logs</a></li>
-    </ul>
 
-    <a href="{{ urlFor('admin.super') }}">Super Admin Dashboard</a>
+    <div class="dash-box">
+
+        <h3>Security and Permissions</h3>
+        <ul class="list--bare">
+            <li>
+                <a href="{{ urlFor('users') }}" class="btn btn--primary">
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Users
+                </a>
+            </li>
+            <li>
+                <a href="{{ urlFor('logs') }}" class="btn btn--primary">
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Logs
+                </a>
+            </li>
+            <li>
+                <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Super Admin Dashboard
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="dash-box">
+        <h3>Manage Deployments</h3>
+        <ul class="list--bare">
+            <li>
+                <a href="{{ urlFor('groups') }}" class="btn">
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Groups
+                </a>
+            </li>
+            <li>
+                <a href="{{ urlFor('repositories') }}" class="btn">
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Repositories
+                </a>
+            </li>
+            <li>
+                <a href="{{ urlFor('servers') }}" class="btn">
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Servers
+                </a>
+            </li>
+            <li>
+                <a href="{{ urlFor('environments') }}" class="btn">
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Environments
+                </a>
+            </li>
+        </ul>
+    </div>
+
 
 {% endblock %}
