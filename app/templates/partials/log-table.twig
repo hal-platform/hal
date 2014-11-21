@@ -19,7 +19,9 @@
             <td colspan="4" style="text-align:left">
                 {% for key, data in log.data %}
                     <b>{{ key }}</b>
-                    <pre style="background: #ddd;overflow-x:scroll;white-space: pre;word-wrap: normal;padding: 2px;margin:0; width: 100%;">{{ data|sanitizeToString }}</pre>
+                    <div class="pre-wrapper">
+                        <pre>{{ data|sanitizeToString }}</pre>
+                    </div>
                 {% endfor %}
             </td>
         </tr>
