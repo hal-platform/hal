@@ -20,7 +20,13 @@
                     <span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
                 {% endif %}
             </td>
-            <td>{{ push.deployment.server.environment.key }} → {{ push.deployment.server.name }}</a></td>
+            <td>
+                {% if push.deployment %}
+                    {{ push.deployment.server.environment.key }} → {{ push.deployment.server.name }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </td>
             <td>Build <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
             <td>
                 {% if push.user %}

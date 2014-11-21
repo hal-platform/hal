@@ -126,11 +126,21 @@ class PushNormalizer
             ]
         ];
 
+        if ($push->getDeployment() instanceof Deployment) {
+            $deployment = $this->normalizeDeployment($push->getDeployment(), $criteria['deployment']);
+        } else {
+            $deployment = [
+                '_embedded' => [
+                    'deployment' => null
+                ]
+            ];
+        }
+
         return array_merge_recursive(
             $content,
             $this->links($push),
             $this->normalizeBuild($push->getBuild(), $criteria['build']),
-            $this->normalizeDeployment($push->getDeployment(), $criteria['deployment']),
+            $deployment,
             $this->normalizeUser($push->getUser(), $criteria['user'])
         );
     }

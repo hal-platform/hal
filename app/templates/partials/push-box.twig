@@ -23,7 +23,11 @@
                     <ul class="split mbn">
                         <li>
                             <span class="split__title">{{ push.created|reldate }}</span>
-                            <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
+                            {% if push.deployment %}
+                                <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
+                            {% else %}
+                                Unknown
+                            {% endif %}
                         </li>
                     </ul>
                 </section>
