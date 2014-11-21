@@ -1,0 +1,10 @@
+{% if (not optional|default(false) or isNavOn(route)) %}
+    <li>
+        <a href="{{ urlFor(route, params|default({})) }}" title="{{ title }}">
+            <svg class="icon" viewBox="{{ customWidth|default('0') }} 0 32 32">
+                <use xlink:href="#{{ icon }}"></use>
+            </svg>
+            {{ title }}
+        </a>
+    </li>
+{% endif %}

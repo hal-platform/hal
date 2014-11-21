@@ -51,7 +51,7 @@ class LogsController
             return call_user_func($notFound);
         }
 
-        $dql = 'SELECT l FROM QL\Hal\Core\Entity\Log l ORDER BY l.recorded DESC';
+        $dql = 'SELECT l FROM QL\Hal\Core\Entity\AuditLog l ORDER BY l.recorded DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(self::MAX_PER_PAGE)
             ->setFirstResult(self::MAX_PER_PAGE * ($page-1));

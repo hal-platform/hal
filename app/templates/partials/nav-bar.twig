@@ -1,0 +1,43 @@
+<nav role="navigation">
+    <ul class="nav--main mbn">
+        {% if currentUser %}
+            <li>{{ base_macros.navlink(true, 'Dashboard', 'dashboard', {}, 'dashboard', '-3') }}</li>
+            <li>{{ base_macros.navlink(true, 'Queue', 'queue', {}, 'in') }}</li>
+
+            <li>{{ base_macros.navlink(true, 'Groups', 'groups', {}, 'list') }}</li>
+            <li>{{ base_macros.navlink(true, 'Repositories', 'repositories', {}, 'repo', '-3') }}</li>
+
+            <li>{{ base_macros.navlink(true, 'Servers', 'servers', {}, 'server', '-4') }}</li>
+            <li>{{ base_macros.navlink(true, 'Environments', 'environments', {}, 'leaf', '-1') }}</li>
+            <li>{{ base_macros.navlink(true, 'Users', 'users', {}, 'users') }}</li>
+            <li>{{ base_macros.navLink(true, 'Logs', 'logs', {'page': 1}, 'paper-roll') }}</li>
+
+            {% if isUserAdmin(currentUser) %}
+                <li>{{ base_macros.navlink(true, 'Admin', 'admin', {}, 'watch') }}</li>
+            {% endif %}
+
+            <li>{{ base_macros.navlink(true, 'Help', 'help', {}, 'question', '-6') }}</li>
+
+            <li>{{ base_macros.navlink(false, 'Settings', 'settings', {}, 'settings') }}</li>
+            <li>{{ base_macros.navlink(false, 'Logout', 'logout', {}, 'sign-out') }}</li>
+
+        {% else %}
+            <li class="signed-out">{{ base_macros.navlink(false, 'Help', 'help', {}, 'question', '-6') }}</li>
+            <li class="signed-out">{{ base_macros.navlink(false, 'Login', 'login', {}, 'sign-in') }}</li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% macro navlink(optional, title, route, params, icon, customWidth) %}
+    <foo></foo>
+    {% if ((not optional) or isNavOn(route)) %}
+        <li>
+            <a href="{{ urlFor(route, params|default({})) }}" title="{{ title }}">
+                <svg class="icon" viewBox="{{ customWidth|default('0') }} 0 32 32">
+                    <use xlink:href="#{{ icon }}"></use>
+                </svg>
+                {{ title }}
+            </a>
+        </li>
+    {% endif %}
+{% endmacro %}
