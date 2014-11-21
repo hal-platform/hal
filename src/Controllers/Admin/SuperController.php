@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\Admin;
 
 use Doctrine\ORM\Configuration;
+use Predis\Client as Predis;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Twig_Template;
@@ -25,6 +26,16 @@ class SuperController
     private $doctrineConfig;
 
     /**
+     * @type Predis
+     */
+    private $predis;
+
+    /**
+     * @type string
+     */
+    private $encryptionKey;
+
+    /**
      * @type string
      */
     private $halPushFile;
@@ -32,12 +43,22 @@ class SuperController
     /**
      * @param Twig_Template $template
      * @param Configuration $doctrineConfig
+     * @param Predis $predis
+     * @param string $encryptionKey
      * @param string $halPushFile
      */
-    public function __construct(Twig_Template $template, Configuration $doctrineConfig, $halPushFile)
-    {
+    public function __construct(
+        Twig_Template $template,
+        Configuration $doctrineConfig,
+        Predis $predis,
+        $encryptionKey,
+        $halPushFile
+    ) {
         $this->template = $template;
         $this->doctrineConfig = $doctrineConfig;
+        $this->predis = $predis;
+
+        $this->encryptionKey = $encryptionKey;
         $this->halPushFile = $halPushFile;
     }
 
@@ -48,7 +69,9 @@ class SuperController
     public function __invoke(Request $request, Response $response)
     {
         $context = [
-            'servername' => gethostname()
+            'servername' => gethostname(),
+            'encryption_key' => $this->encryptionKey,
+            'freespace' => $this->getFreespace()
         ];
 
         # add hal push file if possible.
@@ -66,8 +89,14 @@ class SuperController
         }
 
         # clear permissions
-        if ($request->get('clear_permissions')) {
+        $permissions = $this->getPermissions();
+        if ($request->get('clear_permissions') && $permissions) {
+            call_user_func_array([$this->predis, 'del'], $permissions);
+            $context['permission_status'] = $permissions;
 
+        } else {
+            # list permissions and ttl
+            $context['permissions'] = $this->getPermissionTTLs($permissions);
         }
 
         $rendered = $this->template->render($context);
@@ -88,5 +117,54 @@ class SuperController
 
         $cache->deleteAll();
         return sprintf('"%s" reset.', get_class($cache));
+    }
+
+    /**
+     * @return string
+     */
+    private function getFreespace()
+    {
+        exec('df -a', $output);
+
+        return implode("\n", $output);
+    }
+
+    /**
+     * @return array
+     */
+    private function getPermissions()
+    {
+        $permissions = $this->predis->keys('mcp-cache:permissions:*');
+
+        return array_map(function(&$key) {
+            $namespacePosition = strpos($key, ':');
+            if ($namespacePosition === false) {
+                return $key;
+            } else {
+                return substr($key, $namespacePosition + 1);
+            }
+        }, $permissions);
+    }
+
+    /**
+     * @param array $permissions
+     * @return array
+     */
+    private function getPermissionTTLs(array $permissions)
+    {
+        $permissionTTLs = [];
+
+        foreach ($permissions as $key) {
+            $ttl = $this->predis->ttl($key);
+
+            $key = stristr($key, 'mcp-cache:permissions:');
+            if (0 === strpos($key, 'mcp-cache:permissions:')) {
+                $key = substr($key, 22);
+            }
+
+            $permissionTTLs[$key] = $ttl;
+        }
+
+        return $permissionTTLs;
     }
 }

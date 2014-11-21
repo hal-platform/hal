@@ -8,6 +8,10 @@
         <div class="alert-bar alert-bar--success">Doctrine Caches Cleared!</div>
     {% endif %}
 
+    {% if permission_status %}
+        <div class="alert-bar alert-bar--success">Permission Caches Cleared!</div>
+    {% endif %}
+
     <h2>Super Admin Dashboard</h2>
 
     {# Server Stats #}
@@ -20,18 +24,30 @@
                 </dl>
                 <dl>
                     <dt class="split--left__title"><strong>Encryption key</strong></dt>
-                    <dd class="split--left__value">Placeholder</dd>
+                    <dd class="split--left__value">
+                        <div class="pre-wrapper">
+                            <pre>{{ encryption_key }}</pre>
+                        </div>
+                    </dd>
                 </dl>
                 <dl>
                     <dt class="split--left__title"><strong>HAL 9000 Push File</strong></dt>
                     <dd class="split--left__value">
                         {% if pushfile %}
-                            <table class="pre-wrapper"><tr><td>
-                                <pre>{{ pushfile}}</pre>
-                            </td></tr></table>
+                            <div class="pre-wrapper">
+                                <pre>{{ pushfile }}</pre>
+                            </div>
                         {% else %}
                             No push file found. Are you in dev?
                         {% endif %}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt class="split--left__title"><strong>Freespace</strong></dt>
+                    <dd class="split--left__value">
+                        <div class="pre-wrapper">
+                            <pre>{{ freespace }}</pre>
+                        </div>
                     </dd>
                 </dl>
             </dl>
@@ -54,7 +70,19 @@
 
         <h5>Permissions Cache</h5>
         <section class="trailer">
-            <a href="{{ urlFor('admin.super', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
+
+            {% if permission_status %}
+                {% for key in permission_status %}
+                    <p><strong>Deleted:</strong> {{ key }}<p>
+                {% endfor %}
+            {% else %}
+
+                {% for key, ttl in permissions %}
+                    <p><strong>{{ key}}:</strong> TTL {{ ttl }} seconds<p>
+                {% endfor %}
+
+                <a href="{{ urlFor('admin.super', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
+            {% endif %}
         </section>
     </div>
 

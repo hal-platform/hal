@@ -9,7 +9,7 @@ pre {
     background: $light-grey;
     padding: .2em;
 
-    @include adjust-font-size-to(ms(-1));
+    @include adjust-font-size-to(ms(-2));
     text-align: left;
 
     white-space: pre;
@@ -18,12 +18,12 @@ pre {
 }
 
 // this is stupid
-table.pre-wrapper {
+.pre-wrapper {
+    display: table;
     table-layout: fixed;
-    width: auto;
 
-    td {
-        padding: 0;
-        margin: 0;
-    }
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
 }

@@ -535,7 +535,12 @@ services:
 
   admin.super.page:
     class: 'QL\Hal\Controllers\Admin\SuperController'
-    arguments: [@admin.super.twig, @doctrine.config, @hal.pushfile]
+    arguments:
+      - @admin.super.twig
+      - @doctrine.config
+      - @redis
+      - %encryption.secret%
+      - @hal.pushfile
   admin.super.twig:
     parent: 'twig.template.old'
     arguments: ['admin/super.twig']
