@@ -535,7 +535,7 @@ services:
 
   admin.super.page:
     class: 'QL\Hal\Controllers\Admin\SuperController'
-    arguments: [@admin.super.twig, @doctrine.config]
+    arguments: [@admin.super.twig, @doctrine.config, @hal.pushfile]
   admin.super.twig:
     parent: 'twig.template.old'
     arguments: ['admin/super.twig']

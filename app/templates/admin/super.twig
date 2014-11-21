@@ -3,29 +3,66 @@
 {% set page_title = "Super Admin Dashboard" %}
 
 {% block content %}
+
+    {% if doctrine_status %}
+        <div class="alert-bar alert-bar--success">Doctrine Caches Cleared!</div>
+    {% endif %}
+
     <h2>Super Admin Dashboard</h2>
 
+    {# Server Stats #}
     <h3>Server Information</h3>
-    <div class="stat-group">
-        <dl class="stat">
-            <dt class="stat__title"><strong>Hostname</strong></dt>
-            <dd class="stat__value">{{ servername }}</dd>
-        </dl>
-        <dl class="stat">
-            <dt class="stat__title"><strong>Encryption key</strong></dt>
-            <dd class="stat__value">Placeholder</dd>
-        </dl>
+        <div class="details-box">
+            <dl class="split--left mbn">
+                <dl>
+                    <dt class="split--left__title"><strong>Hostname</strong></dt>
+                    <dd class="split--left__value">{{ servername }}</dd>
+                </dl>
+                <dl>
+                    <dt class="split--left__title"><strong>Encryption key</strong></dt>
+                    <dd class="split--left__value">Placeholder</dd>
+                </dl>
+                <dl>
+                    <dt class="split--left__title"><strong>HAL 9000 Push File</strong></dt>
+                    <dd class="split--left__value">
+                        {% if pushfile %}
+                            <table class="pre-wrapper"><tr><td>
+                                <pre>{{ pushfile}}</pre>
+                            </td></tr></table>
+                        {% else %}
+                            No push file found. Are you in dev?
+                        {% endif %}
+                    </dd>
+                </dl>
+            </dl>
+        </div>
     </div>
 
+    {# Caching #}
     <h3>Caching</h3>
+    <div>
+        <h5>Doctrine Cache</h5>
+        <section class="trailer">
+            {% if doctrine_status %}
+                {% for type, message in doctrine_status %}
+                    <p class="mbn"><strong>{{ type }}:</strong> {{ message }}</p>
+                {% endfor %}
+            {% else %}
+                <a href="{{ urlFor('admin.super', {}, {clear_doctrine: 1}) }}" class="btn">Clear doctrine cache</a>
+            {% endif %}
+        </section>
 
-    <h4>Doctrine Cache</h4>
-    <a href="{{ urlFor('admin.super', {}, {clear_doctrine: 1}) }}" class="btn">Clear doctrine cache</a>
+        <h5>Permissions Cache</h5>
+        <section class="trailer">
+            <a href="{{ urlFor('admin.super', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
+        </section>
+    </div>
 
-    <h4>Permissions Cache</h4>
-    <a href="{{ urlFor('admin.super', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
+    <hr>
 
+    {# Agents #}
     <h3>Agent Status</h3>
-    <p>TBD</p>
-
+    <div>
+        <p>TBD</p>
+    </div>
 {% endblock %}

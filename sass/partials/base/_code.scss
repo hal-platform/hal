@@ -3,3 +3,27 @@ code {
     background: $light-grey;
     padding: .2em;
 }
+
+pre {
+    color: $red;
+    background: $light-grey;
+    padding: .2em;
+
+    @include adjust-font-size-to(ms(-1));
+    text-align: left;
+
+    white-space: pre;
+    word-wrap: normal;
+    overflow-x: scroll;
+}
+
+// this is stupid
+table.pre-wrapper {
+    table-layout: fixed;
+    width: auto;
+
+    td {
+        padding: 0;
+        margin: 0;
+    }
+}

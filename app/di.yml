@@ -77,13 +77,18 @@ services:
     class: 'QL\Hal\Slim\SessionMiddleware'
     arguments: [@session.handler, @service_container]
 
+  hal.pushfile:
+    class: 'dynamic_scalar'
+    factory_service: 'directory.helper'
+    factory_method: 'fullPath'
+    arguments: ['.hal9000.push.yml']
+
   ######################################################################################################################
   # ERROR & EXCEPTION HANDLING
   ######################################################################################################################
 
   exception.dispatcher:
     class: 'QL\ExceptionToolkit\ExceptionDispatcher'
-
 
   ######################################################################################################################
   # CACHING
@@ -200,7 +205,7 @@ services:
 
   # Bounce non-super-admins
   superadmin.bouncer:
-    class: 'QL\Hal\Bouncers\SuperAdminBouncer'
+    class: 'QL\Hal\Bouncers\AdminBouncer'
     arguments:
       - @session
       - @permissions
