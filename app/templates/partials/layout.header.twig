@@ -1,0 +1,71 @@
+{% import _self as nav_macros %}
+
+<header role="banner">
+    <div class="hal">
+        <a href="/" class="wrapper">
+
+            <h1 class="hal-label">
+                <span class="hal-label__name">HAL</span>
+                <span class="hal-label__version">9000</span>
+            </h1>
+
+            <div class="hal-eye circular">
+                <div class="ring circular"></div>
+                <div class="oculus circular">
+                    <div class="iris circular narrow"></div>
+                    <div class="iris circular wide"></div>
+                    <div class="highlight alpha"></div>
+                    <div class="highlight"></div>
+                    <div class="highlight beta"></div>
+                </div>
+            </div>
+
+        </a>
+    </div>
+    {% block navigation %}
+        <nav role="navigation">
+            <ul class="nav--main mbn">
+                {% if currentUser %}
+                    {{ nav_macros.optionalNavlink('Dashboard', 'dashboard', 'dashboard', '-3') }}
+                    {{ nav_macros.optionalNavlink('Queue', 'queue', 'in') }}
+
+                    {{ nav_macros.optionalNavlink('Groups', 'groups', 'list') }}
+                    {{ nav_macros.optionalNavlink('Repositories', 'repositories', 'repo', '-3') }}
+
+                    {{ nav_macros.optionalNavlink('Servers', 'servers', 'server', '-4') }}
+                    {{ nav_macros.optionalNavlink('Environments', 'environments', 'leaf', '-1') }}
+                    {{ nav_macros.optionalNavlink('Users', 'users', 'users') }}
+                    {{ nav_macros.optionalNavlink('Logs', 'logs', 'paper-roll') }}
+
+                    {% if isUserAdmin(currentUser) %}
+                        {{ nav_macros.optionalNavlink('Admin', 'admin', 'watch') }}
+                    {% endif %}
+                    {{ nav_macros.optionalNavlink('Help', 'help', 'question', '-6') }}
+
+                    <li>{{ nav_macros.navlink('Settings', 'settings', 'settings') }}</li>
+                    <li>{{ nav_macros.navlink('Logout', 'logout', 'sign-out') }}</li>
+
+                {% else %}
+                    <li class="signed-out">{{ nav_macros.navlink('Help', 'help', 'question', '-6') }}</li>
+                    <li class="signed-out">{{ nav_macros.navlink('Login', 'login', 'sign-in') }}</li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endblock %}
+</header>
+
+{% macro navlink(title, key, icon, customWidth) %}
+    <a href="{{ urlFor(key) }}" title="{{ title }}">
+        <svg class="icon" viewBox="{{ customWidth|default('0') }} 0 32 32">
+            <use xlink:href="#{{ icon }}"></use>
+        </svg>
+        {{ title }}
+    </a>
+{% endmacro %}
+
+{% macro optionalNavlink(title, key, icon, customWidth) %}
+    {% import _self as nav_macros %}
+    {% if isNavOn(key) %}
+        <li>{{ nav_macros.navlink(title, key, icon, customWidth) }}</li>
+    {% endif %}
+{% endmacro %}

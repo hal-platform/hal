@@ -1,0 +1,23 @@
+{% block flash %}
+    {% if session.flash(true) %}
+        <div class="alert-bar">
+            {% for message in session.flash(false) %}
+                <p>{{ message|raw }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+{% block messages %}
+    {# GLOBAL NOTICE #}
+    {% if notice %}
+        <div class="alert-bar">
+            <p>{{ notice|raw }}</p>
+        </div>
+    {% endif %}
+    {# GLOBAL ERROR #}
+    {% if error %}
+        <div class="alert-bar">
+            <p>{{ error|raw }}</p>
+        </div>
+    {% endif %}
+{% endblock %}

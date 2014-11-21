@@ -124,15 +124,15 @@
 
     <p>Upon deployment the a yaml file in the following format will be written to the application directory:</p>
     <pre>
-# filename: APPLICATION_ROOT/.hal9000.yml
+# filename: APPLICATION_ROOT/.hal9000.push.yml
 
-id: ''      # Build ID
-source: ''  # Full url of github repository
-env: ''     # Environment of the build
-user: ''    # Username of user that triggered the push
-branch: ''  # Git Reference
-commit: ''  # Git commit SHA
-date: ''    # ISO 8601 date
+id: ''         # Build ID
+source: ''     # Full url of github repository
+env: ''        # Environment of the build
+user: ''       # Username of user that triggered the push
+reference: ''  # Git Reference
+commit: ''     # Git commit SHA
+date: ''       # ISO 8601 date
 </pre>
 
     <p class="alert-bar--error">Post-push Command Failures</p>
