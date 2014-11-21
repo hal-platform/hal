@@ -107,13 +107,13 @@ class AdminEditController
 
         $renderContext = [
             'form' => [
-                'nickname' => $request->post('nickname') ?: $repo->getKey(),
+                'key' => $request->post('key') ?: $repo->getKey(),
+                'title' => $request->post('title') ?: $repo->getDescription(),
                 'group' => $request->post('group') ?: $repo->getGroup()->getId(),
                 'notification_email' => $request->post('notification_email') ?: $repo->getEmail(),
                 'build_command' => $request->post('build_command') ?: $repo->getBuildCmd(),
                 'pre_command' => $request->post('pre_command') ?: $repo->getPrePushCmd(),
-                'post_command' => $request->post('post_command') ?: $repo->getPostPushCmd(),
-                'description' => $request->post('description') ?: $repo->getDescription()
+                'post_command' => $request->post('post_command') ?: $repo->getPostPushCmd()
             ],
             'repository' => $repo,
             'groups' => $this->groupRepo->findAll(),
@@ -146,18 +146,18 @@ class AdminEditController
      */
     private function handleFormSubmission(Request $request, Repository $repository, Group $group)
     {
-        $nickname = $request->post('nickname');
+        $key = $request->post('key');
+        $title = $request->post('title');
         $email = $request->post('notification_email');
-        $description = $request->post('description');
 
         $buildCommand = $request->post('build_command');
         $preCommand = $request->post('pre_command');
         $postCommand = $request->post('post_command');
 
-        $repository->setKey($nickname);
+        $repository->setKey($key);
+        $repository->setDescription($title);
         $repository->setGroup($group);
         $repository->setEmail($email);
-        $repository->setDescription($description);
 
         $repository->setBuildCmd($buildCommand);
         $repository->setPrePushCmd($preCommand);
@@ -181,20 +181,21 @@ class AdminEditController
         }
 
         $human = [
-            'nickname' => 'Nickname',
+            'key' => 'Key',
+            'title' => 'Title',
             'group' => 'Group',
             'notification_email' => 'Notification E-mail',
             'build_command' => 'Build Command',
             'pre_command' => 'Pre Push Command',
-            'post_command' => 'Post Push Command',
-            'description' => 'Description'
+            'post_command' => 'Post Push Command'
         ];
 
         $errors = array_merge(
-            $this->validateNickname($request->post('nickname')),
+            $this->validateKey($request->post('key')),
+            $this->validateText($request->post('title'), $human['title'], 255),
+
             $this->validateText($request->post('group'), $human['group'], 128),
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128),
-            $this->validateText($request->post('description'), $human['description'], 255),
 
             $this->validateCommand($request->post('build_command'), $human['build_command']),
             $this->validateCommand($request->post('pre_command'), $human['post_command']),
@@ -241,26 +242,26 @@ class AdminEditController
     }
 
     /**
-     * @param string $nickname
+     * @param string $key
      * @return array
      */
-    private function validateNickname($nickname)
+    private function validateKey($key)
     {
         $errors = [];
 
-        if (!$nickname) {
+        if (!$key) {
             $errors[] = 'Nickname is required';
         }
 
-        if (!preg_match('@^[a-z0-9_-]*$@', strtolower($nickname))) {
-            $errors[] = 'Nickname must be be composed of alphanumeric, underscore and/or hyphen characters';
+        if (!preg_match('@^[a-z0-9-]*$@', $key)) {
+            $errors[] = 'Nickname must be be composed of lowercase alphanumeric and/or hyphen characters';
         }
 
-        if (mb_strlen($nickname, 'UTF-8') > 24) {
+        if (mb_strlen($key, 'UTF-8') > 24) {
             $errors[] = 'Nickname must be under 24 characters';
         }
 
-        if (mb_strlen($nickname, 'UTF-8') < 2) {
+        if (mb_strlen($key, 'UTF-8') < 2) {
             $errors[] = 'Nickname must be more than 1 character';
         }
 

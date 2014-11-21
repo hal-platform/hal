@@ -108,15 +108,15 @@ class AdminAddController
     {
         $renderContext = [
             'form' => [
-                'nickname' => $request->post('nickname'),
+                'key' => $request->post('key'),
+                'title' => $request->post('title'),
                 'group' => $request->post('group'),
                 'github_user' => $request->post('github_user'),
                 'github_repo' => $request->post('github_repo'),
                 'notification_email' => $request->post('notification_email'),
                 'build_command' => $request->post('build_command'),
                 'pre_command' => $request->post('pre_command'),
-                'post_command' => $request->post('post_command'),
-                'description' => $request->post('description')
+                'post_command' => $request->post('post_command')
             ],
             'groups' => $this->groupRepo->findBy([], ['name' => 'ASC']),
             'errors' => $this->checkFormErrors($request)
@@ -148,18 +148,18 @@ class AdminAddController
      */
     private function handleFormSubmission(Request $request, Group $group)
     {
-        $nickname = $request->post('nickname');
+        $key = $request->post('key');
+        $title = $request->post('title');
         $email = $request->post('notification_email');
-        $description = $request->post('description');
 
         $user = $request->post('github_user');
         $repo = $request->post('github_repo');
 
         $repository = new Repository;
-        $repository->setKey($nickname);
+        $repository->setKey($key);
+        $repository->setDescription($title);
         $repository->setGroup($group);
         $repository->setEmail($email);
-        $repository->setDescription($description);
 
         $repository->setGithubUser($user);
         $repository->setGithubRepo($repo);
@@ -191,24 +191,25 @@ class AdminAddController
         }
 
         $human = [
-            'nickname' => 'Nickname',
+            'key' => 'Key',
+            'title' => 'Title',
             'group' => 'Group',
             'github_user' => 'Github User',
             'github_repo' => 'Github Repository',
             'notification_email' => 'Notification E-mail',
             'build_command' => 'Build Command',
             'pre_command' => 'Pre Push Command',
-            'post_command' => 'Post Push Command',
-            'description' => 'Description'
+            'post_command' => 'Post Push Command'
         ];
 
         $errors = array_merge(
-            $this->validateNickname($request->post('nickname')),
+            $this->validateKey($request->post('key')),
+            $this->validateText($request->post('title'), $human['description'], 255),
+
             $this->validateText($request->post('group'), $human['group'], 128),
             $this->validateText($request->post('github_user'), $human['github_user'], 48),
             $this->validateText($request->post('github_repo'), $human['github_repo'], 48),
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128),
-            $this->validateText($request->post('description'), $human['description'], 255),
 
             $this->validateCommand($request->post('build_command'), $human['build_command']),
             $this->validateCommand($request->post('pre_command'), $human['post_command']),
@@ -257,8 +258,8 @@ class AdminAddController
     /**
      * @param string $user
      * @param string $repo
-     * @param string[] $errors
-    */
+     * @return array
+     */
     private function validateGithubRepo($user, $repo)
     {
         $errors = [];
@@ -275,26 +276,26 @@ class AdminAddController
     }
 
     /**
-     * @param string $nickname
+     * @param string $key
      * @return array
      */
-    private function validateNickname($nickname)
+    private function validateKey($key)
     {
         $errors = [];
 
-        if (!$nickname) {
+        if (!$key) {
             $errors[] = 'Nickname is required';
         }
 
-        if (!preg_match('@^[a-z0-9_-]*$@', strtolower($nickname))) {
-            $errors[] = 'Nickname must be be composed of alphanumeric, underscore and/or hyphen characters';
+        if (!preg_match('@^[a-z0-9-]*$@', $key)) {
+            $errors[] = 'Nickname must be be composed of lowercase alphanumeric and/or hyphen characters';
         }
 
-        if (mb_strlen($nickname, 'UTF-8') > 24) {
+        if (mb_strlen($key, 'UTF-8') > 24) {
             $errors[] = 'Nickname must be under 24 characters';
         }
 
-        if (mb_strlen($nickname, 'UTF-8') < 2) {
+        if (mb_strlen($key, 'UTF-8') < 2) {
             $errors[] = 'Nickname must be more than 1 character';
         }
 

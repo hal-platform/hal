@@ -19,8 +19,12 @@
         <form action="{{ urlFor('repository.admin.edit.handle', {id: repository.id}) }}" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="nickname">Nickname</label>
-                    <input type="text" name="nickname" id="nickname" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                    <label for="key">Key <small class="additional">Lowercase, no spaces, no underscores.</small></label>
+                    <input type="text" name="key" id="key" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                </li>
+                <li>
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" maxlength="128" required value="{{ form.description }}" class="text-input">
                 </li>
                 <li>
                     <p>Group</p>
@@ -37,11 +41,6 @@
                         </li>
                     {% endfor %}
                     </ul>
-                </li>
-
-                <li>
-                    <label for="description">Description</label>
-                    <textarea name="description" id="description" maxlength="255" rows="6" class="text-input">{{ form.description }}</textarea>
                 </li>
 
                 <li>

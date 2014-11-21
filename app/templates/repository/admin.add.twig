@@ -16,8 +16,12 @@
         <form action="{{ urlFor('repository.admin.add.handle') }}" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="nickname">Nickname</label>
-                    <input type="text" name="nickname" id="nickname" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                    <label for="key">Key <small class="additional">Lowercase, no spaces, no underscores.</small></label>
+                    <input type="text" name="key" id="key" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                </li>
+                <li>
+                    <label for="title">Title</label>
+                    <input name="title" id="title" maxlength="128" required value="{{ form.description }}" class="text-input">
                 </li>
                 <li>
                     <label>Group</label>
@@ -55,10 +59,6 @@
                 <li>
                     <label for="post_command">Post Push Command <small class="additional">Will be run on remote server after code is pushed.</small></label>
                     <input type="text" name="post_command" id="post_command" size="30" maxlength="128" value="{{ form.post_command }}" class="text-input">
-                </li>
-                <li>
-                    <label for="description">Description</label>
-                    <textarea name="description" id="description" maxlength="255" rows="6" class="text-input">{{ form.description }}</textarea>
                 </li>
                 <li>
                     {# primary action #}
