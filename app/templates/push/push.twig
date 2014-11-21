@@ -4,7 +4,9 @@
 
 {% block content %}
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.deployment.repository.id}) }}">Back to Repository Status</a></p>
+    {% if push.deployment %}
+        <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.deployment.repository.id}) }}">Back to Repository Status</a></p>
+    {% endif %}
 
     <h2 class="mbn">Push Details</h2>
 
@@ -27,14 +29,22 @@
                 Server
             </dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})
+                {% if push.deployment %}
+                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})
+                {% else %}
+                    Unknown
+                {% endif %}
             </dd>
 
             <dt class="split--left__title">
                 Directory
             </dt>
             <dd class="split--left__value">
-                {{ push.deployment.path }}
+                {% if push.deployment %}
+                    {{ push.deployment.path }}
+                {% else %}
+                    Unknown
+                {% endif %}
             </dd>
 
             <dt class="split--left__title">
