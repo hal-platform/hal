@@ -66,5 +66,7 @@ class LogsController
             'last' => $last,
             'logs' => $logs
         ]);
+
+        $response->setBody($rendered);
     }
 }
