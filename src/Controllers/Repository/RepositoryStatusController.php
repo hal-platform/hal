@@ -81,10 +81,27 @@ class RepositoryStatusController
 
         $builds = $this->buildRepo->findBy(['repository' => $repo], ['created' => 'DESC'], 10);
 
+        $statuses = $this->getDeploymentsWithStatus($repo);
+
+        // seperate by environment
+        $envs = [];
+
+        foreach ($statuses as $status) {
+
+            $env = $status['environment']->getKey();
+
+            if (!isset($envs[$env])) {
+                $envs[$env] = [];
+            }
+
+            $envs[$env][] = $status;
+        }
+
         $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
-            'statuses' => $this->getDeploymentsWithStatus($repo)
+            'statuses' => $statuses,
+            'environments' => $envs
         ]);
 
         $response->setBody($rendered);
@@ -123,7 +140,8 @@ class RepositoryStatusController
             $statuses[] = [
                 'deploy' => $deploy,
                 'latest' => $latest,
-                'success' => $success
+                'success' => $success,
+                'environment' => $deploy->getServer()->getEnvironment()
             ];
         }
 

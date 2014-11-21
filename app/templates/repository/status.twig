@@ -10,6 +10,16 @@
     <h3>Server Status</h3>
     <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
 
+    {# example display of servers by environment #}
+    {#{% for env, statuses in environments %}#}
+        {#<h2>{{ env }}</h2>#}
+        {#<ul>#}
+            {#{% for status in statuses %}#}
+                {#<li>{{ status.deploy.server.name }}</li>#}
+            {#{% endfor %}#}
+        {#</ul>#}
+    {#{% endfor %}#}
+
     <ul class="list--bare cards">
         {% for status in statuses %}
 
