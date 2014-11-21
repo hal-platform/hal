@@ -4,9 +4,7 @@
 
 {% block content %}
 
-    {% if push.deployment %}
-        <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.deployment.repository.id}) }}">Back to Repository Status</a></p>
-    {% endif %}
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.build.repository.id}) }}">Back to Repository Status</a></p>
 
     <h2 class="mbn">Push Details</h2>
 

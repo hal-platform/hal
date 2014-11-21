@@ -54,6 +54,8 @@
                         {% if push.build.status == 'Success'%}
                             {% if push.deployment and canUserPush(currentUser, repo.key, push.build.server.environment.key) %}
                                 <a href="{{ urlFor('push.start', {'repo': repo.key, 'build': push.build.id}, {deployment: push.deployment.id}) }}">Rollback</a>
+                            {% else %}
+                                <a href="{{ urlFor('push.start', {'repo': repo.key, 'build': push.build.id}) }}">Rollback</a>
                             {% endif %}
                         {% elseif push.build.status == 'Removed' %}
                             Removed
