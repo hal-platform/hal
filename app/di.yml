@@ -48,9 +48,8 @@ services:
     class: 'QL\Hal\Doctrine\EntityChangeLogger'
     arguments: [@user.helper]
 
-  # @todo make a real one, just make it work for now
   doctrine.random.id:
-    class: 'QL\Hal\Doctrine\RandomId'
+    class: 'QL\Hal\Core\RandomGenerator'
 
   doctrine.persist.listener:
     class: 'QL\Hal\Core\Entity\Listener\EntityPersistListener'
