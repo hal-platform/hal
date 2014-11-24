@@ -15,44 +15,44 @@ use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\PermissionsService;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class DashboardController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var User
+     * @type User
      */
     private $currentUser;
 
     /**
-     * @var PermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     * @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @var PushRepository
+     * @type PushRepository
      */
     private $pushRepo;
 
     /**
-     * @var UserRepository
+     * @type UserRepository
      */
     private $userRepo;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param User $currentUser
      * @param PermissionsService $permissions
      * @param BuildRepository $buildRepo
@@ -60,7 +60,7 @@ class DashboardController
      * @param UserRepository $userRepo
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         User $currentUser,
         PermissionsService $permissions,
         BuildRepository $buildRepo,
@@ -77,11 +77,10 @@ class DashboardController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
+     * @param Request $request
+     * @param Response $response
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke(Request $request, Response $response)
     {
         $user = $this->userRepo->find($this->currentUser->getId());
 

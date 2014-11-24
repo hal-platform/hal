@@ -14,10 +14,10 @@ use Psr\Log\LoggerInterface;
 use QL\ExceptionToolkit\ExceptionDispatcher;
 use QL\HttpProblem\Formatter\JsonFormatter;
 use QL\HttpProblem\HttpProblemException;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
 use Slim\Slim;
 use Symfony\Component\Debug\Exception\FatalErrorException;
-use Twig_Template;
 
 /**
  * Define error page handlers.
@@ -56,23 +56,23 @@ class ErrorHandlerHook
     private $logger;
 
     /**
-     * @type Twig_Template
+     * @type TemplateInterface
      */
-    private $twig;
+    private $template;
 
     /**
      * @param ExceptionDispatcher $dispatcher
      * @param LoggerInterface $logger
-     * @param Twig_Template $twig
+     * @param TemplateInterface $template
      */
     public function __construct(
         ExceptionDispatcher $dispatcher,
         LoggerInterface $logger,
-        Twig_Template $twig
+        TemplateInterface $template
     ) {
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
-        $this->twig = $twig;
+        $this->template = $template;
     }
 
     /**
@@ -85,7 +85,7 @@ class ErrorHandlerHook
 
         // Register Not Found Handler
         $slim->notFound(function () use ($slim) {
-            $rendered = $this->twig->render(['status' => 404]);
+            $rendered = $this->template->render(['status' => 404]);
             $this->prepareResponse($slim, $rendered, 404);
             $slim->stop();
         });
@@ -155,7 +155,7 @@ class ErrorHandlerHook
             $context['type'] = $this->levels[$exception->getSeverity()];
         }
 
-        $rendered = $this->twig->render($context);
+        $rendered = $this->template->render($context);
 
         $this->prepareResponse($slim, $rendered, $status);
     }

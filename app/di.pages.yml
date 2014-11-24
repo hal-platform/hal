@@ -5,8 +5,8 @@ services:
     class: 'QL\Hal\Controllers\StaticController'
     arguments: [@delete.confirm.twig]
   delete.confirm.twig:
-    parent: 'twig.template.old'
-    arguments: ['delete.confirm.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['delete.confirm.twig']]]
 
   dashboard.page:
     class: 'QL\Hal\Controllers\DashboardController'
@@ -18,15 +18,16 @@ services:
       - @push.repo
       - @user.repo
   dashboard.twig:
-    parent: 'twig.template.old'
-    arguments: ['dashboard.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['dashboard.twig']]]
 
   login.page:
     class: 'QL\Hal\Controllers\LoginController'
     arguments: [@login.twig]
   login.twig:
-    parent: 'twig.template.old'
+    parent: 'twig.template'
     arguments: ['login.twig']
+    calls: [['setTemplate', ['login.twig']]]
   login.handle:
     class: 'QL\Hal\Controllers\LoginHandleController'
     arguments:
@@ -48,8 +49,8 @@ services:
         - @build.repo
         - @push.repo
   queue.twig:
-    parent: 'twig.template.old'
-    arguments: ['queue.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['queue.twig']]]
 
   ######################################################################################################################
   # GROUP CONTROLLERS
@@ -115,8 +116,8 @@ services:
     class: 'QL\Hal\Controllers\Repository\RepositoriesController'
     arguments: [@repositories.twig, @group.repo]
   repositories.twig:
-    parent: 'twig.template.old'
-    arguments: ['repository/repositories.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['repository/repositories.twig']]]
 
   repository.page:
     class: 'QL\Hal\Controllers\Repository\RepositoryController'
@@ -126,8 +127,8 @@ services:
       - @deployment.repo
       - @permissions
   repository.twig:
-    parent: 'twig.template.old'
-    arguments: ['repository/repository.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['repository/repository.twig']]]
 
   repository.status.page:
     class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
@@ -138,8 +139,8 @@ services:
       - @build.repo
       - @push.repo
   repository.status.twig:
-    parent: 'twig.template.old'
-    arguments: ['repository/status.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['repository/status.twig']]]
 
   repository.admin.add.page:
     class: 'QL\Hal\Controllers\Repository\AdminAddController'
@@ -152,8 +153,8 @@ services:
       - @session
       - @url.helper
   repository.admin.add.twig:
-    parent: 'twig.template.old'
-    arguments: ['repository/admin.add.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['repository/admin.add.twig']]]
   repository.admin.add.handle:
     parent: 'repository.admin.add.page'
 
@@ -167,8 +168,8 @@ services:
         - @session
         - @url.helper
   repository.admin.edit.twig:
-    parent: 'twig.template.old'
-    arguments: ['repository/admin.edit.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['repository/admin.edit.twig']]]
   repository.admin.edit.handle:
     parent: 'repository.admin.edit.page'
 
@@ -194,8 +195,8 @@ services:
       - @repository.repo
       - @deployment.repo
   repository.deployments.twig:
-    parent: 'twig.template.old'
-    arguments: ['repository/deployments.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['repository/deployments.twig']]]
 
   repository.deployment.admin.add.handle:
     class: 'QL\Hal\Controllers\Repository\Deployment\AdminAddHandle'
@@ -553,30 +554,28 @@ services:
     parent: 'static.controller'
     arguments: [@help.twig]
   help.twig:
-    parent: 'twig.template.old'
-    arguments: ['help/help.twig']
-
+    parent: 'twig.template'
+    calls: [['setTemplate', ['help/help.twig']]]
   help.deployment.page:
     parent: 'static.controller'
     arguments: [@help.deployment.twig]
   help.deployment.twig:
-    parent: 'twig.template.old'
-    arguments: ['help/deployment.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['help/deployment.twig']]]
 
   # help.api.page:
   #   parent: 'static.controller'
   #   arguments: [@help.api.twig]
   # help.api.twig:
-  #   parent: 'twig.template.old'
-  #   tags: [{name: 'twig.template.old'}]
-  #   arguments: ['help/api.twig']
+  #   parent: 'twig.template'
+  #   calls: [['setTemplate', ['help/api.twig']]]
 
   help.hal.page:
     parent: 'static.controller'
     arguments: [@help.hal.twig]
   help.hal.twig:
-    parent: 'twig.template.old'
-    arguments: ['help/hal.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['help/hal.twig']]]
 
   ######################################################################################################################
   # GENERAL USE CONTROLLERS
@@ -589,20 +588,20 @@ services:
     parent: 'static.controller'
     arguments: [@denied.twig, 403]
   denied.twig:
-    parent: 'twig.template.old'
-    arguments: ['denied.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['denied.twig']]]
 
   logs.page:
     class: 'QL\Hal\Controllers\LogsController'
     arguments: [@logs.twig, @doctrine.em]
   logs.twig:
-    parent: 'twig.template.old'
-    arguments: ['logs.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['logs.twig']]]
 
   # The twig template for slim errors (404, 500)
   error.pages.twig:
-      parent: 'twig.template.old'
-      arguments: ['error.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['error.twig']]]
 
   debug.page:
     class: 'QL\Hal\Controllers\DebugController'

@@ -8,35 +8,35 @@
 namespace QL\Hal\Controllers\Repository;
 
 use QL\Hal\Core\Entity\Repository\GroupRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class RepositoriesController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var GroupRepository
+     * @type GroupRepository
      */
     private $groupRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param GroupRepository $groupRepo
+     * @param TemplateInterface $template
+     * @param GroupRepository $groupRepo
      */
-    public function __construct(Twig_Template $template, GroupRepository $groupRepo)
+    public function __construct(TemplateInterface $template, GroupRepository $groupRepo)
     {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
+     * @param Request $request
+     * @param Response $response
      */
     public function __invoke(Request $request, Response $response)
     {

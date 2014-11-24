@@ -15,52 +15,52 @@ use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class LoginHandleController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var LdapService
+     * @type LdapService
      */
     private $ldap;
 
     /**
-     *  @var UserRepository
+     * @type UserRepository
      */
     private $userRepo;
 
     /**
-     *  @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     *  @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     *  @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     *  @param Twig_Template $template
-     *  @param LdapService $ldap
-     *  @param UserRepository $userRepo
-     *  @param EntityManager $em
-     *  @param Session $session
-     *  @param UrlHelper $url
+     * @param TemplateInterface $template
+     * @param LdapService $ldap
+     * @param UserRepository $userRepo
+     * @param EntityManager $em
+     * @param Session $session
+     * @param UrlHelper $url
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         LdapService $ldap,
         UserRepository $userRepo,
         EntityManager $em,
@@ -76,8 +76,8 @@ class LoginHandleController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
+     * @param Request $request
+     * @param Response $response
      */
     public function __invoke(Request $request, Response $response)
     {

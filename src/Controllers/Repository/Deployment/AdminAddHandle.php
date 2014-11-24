@@ -22,42 +22,42 @@ use Slim\Http\Response;
 class AdminAddHandle
 {
     /**
-     *  @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 
     /**
-     *  @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     *  @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     *  @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     *  @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     *  @param ServerRepository $serverRepo
-     *  @param RepositoryRepository $repoRepo
-     *  @param DeploymentRepository $deploymentRepo
-     *  @param EntityManager $entityManager
-     *  @param Session $session
-     *  @param UrlHelper $url
+     * @param ServerRepository $serverRepo
+     * @param RepositoryRepository $repoRepo
+     * @param DeploymentRepository $deploymentRepo
+     * @param EntityManager $entityManager
+     * @param Session $session
+     * @param UrlHelper $url
      */
     public function __construct(
         ServerRepository $serverRepo,
@@ -77,10 +77,10 @@ class AdminAddHandle
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {

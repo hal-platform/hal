@@ -11,40 +11,40 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Services\PermissionsService;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class RepositoryController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @var PermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param RepositoryRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
      * @param PermissionsService $permissions
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         RepositoryRepository $repoRepo,
         DeploymentRepository $deploymentRepo,
         PermissionsService $permissions

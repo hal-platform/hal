@@ -15,44 +15,44 @@ use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Session;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class AdminAddController
 {
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var GroupRepository
+     * @type GroupRepository
      */
     private $groupRepo;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var GithubService
+     * @type GithubService
      */
     private $github;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
@@ -64,7 +64,7 @@ class AdminAddController
     private $invalidCommandParameters;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
      * @param RepositoryRepository $repoRepo
      * @param EntityManager $entityManager
@@ -73,7 +73,7 @@ class AdminAddController
      * @param UrlHelper $url
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         GroupRepository $groupRepo,
         RepositoryRepository $repoRepo,
         EntityManager $entityManager,

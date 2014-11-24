@@ -13,46 +13,46 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class RepositoryStatusController
 {
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     * @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @var PushRepository
+     * @type PushRepository
      */
     private $pushRepo;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,

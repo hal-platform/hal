@@ -17,22 +17,22 @@ use Slim\Http\Response;
 class AdminRemoveHandle
 {
     /**
-     * @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 

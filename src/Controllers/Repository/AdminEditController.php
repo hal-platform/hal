@@ -14,51 +14,51 @@ use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class AdminEditController
 {
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var GroupRepository
+     * @type GroupRepository
      */
     private $groupRepo;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
      * A list of illegal parameters to search for in system commands provided by the user.
      *
-     * @var string[]
+     * @type string[]
      */
     private $invalidCommandParameters;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param Layout $layout
      * @param GroupRepository $groupRepo
      * @param RepositoryRepository $repoRepo
@@ -68,7 +68,7 @@ class AdminEditController
      * @param UrlHelper $url
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         GroupRepository $groupRepo,
         RepositoryRepository $repoRepo,
         EntityManager $entityManager,

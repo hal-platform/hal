@@ -9,10 +9,10 @@ namespace QL\Hal\Bouncers;
 
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
+use QL\Panthor\TemplateInterface;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 /**
  * A bouncer that checks to see if the current user is an admin
@@ -30,9 +30,9 @@ class AdminBouncer
     private $permissions;
 
     /**
-     * @var Twig_Template
+     * @var TemplateInterface
      */
-    private $twig;
+    private $template;
 
     /**
      * @var LoginBouncer
@@ -42,14 +42,14 @@ class AdminBouncer
     /**
      * @param Session $session
      * @param PermissionsService $permissions
-     * @param Twig_Template $twig
+     * @param TemplateInterface $template
      * @param LoginBouncer $loginBouncer
      */
-    public function __construct(Session $session, PermissionsService $permissions, Twig_Template $twig, LoginBouncer $loginBouncer)
+    public function __construct(Session $session, PermissionsService $permissions, TemplateInterface $template, LoginBouncer $loginBouncer)
     {
         $this->session = $session;
         $this->permissions = $permissions;
-        $this->twig = $twig;
+        $this->template = $template;
         $this->loginBouncer = $loginBouncer;
     }
 
@@ -71,7 +71,7 @@ class AdminBouncer
             return;
         }
 
-        $rendered = $this->twig->render([]);
+        $rendered = $this->template->render();
         $response->setStatus(403);
         $response->setBody($rendered);
 

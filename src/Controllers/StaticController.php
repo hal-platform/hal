@@ -1,8 +1,13 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers;
 
-use Twig_Template;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -12,34 +17,34 @@ use Slim\Http\Response;
 class StaticController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var int
+     * @type int
      */
     private $statusCode;
 
     /**
-     *  @param Twig_Template $template
-     *  @param int $statusCode
+     * @param TemplateInterface $template
+     * @param int $statusCode
      */
-    public function __construct(Twig_Template $template, $statusCode = 200)
+    public function __construct(TemplateInterface $template, $statusCode = 200)
     {
         $this->template = $template;
         $this->statusCode = $statusCode;
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
+     * @param Request $request
+     * @param Response $response
      */
     public function __invoke(Request $request, Response $response)
     {
-        $rendered = $this->template->render([]);
+        $rendered = $this->template->render();
 
         $response->setStatus($this->statusCode);
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }

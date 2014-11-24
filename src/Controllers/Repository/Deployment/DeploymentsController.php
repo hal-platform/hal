@@ -11,46 +11,46 @@ use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class DeploymentsController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var EnvironmentRepository
+     * @type EnvironmentRepository
      */
     private $environmentRepo;
 
     /**
-     *  @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 
     /**
-     *  @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param EnvironmentRepository $environmentRepo
-     *  @param ServerRepository $serverRepo
-     *  @param RepositoryRepository $repoRepo
-     *  @param DeploymentRepository $deploymentRepo
+     * @param TemplateInterface $template
+     * @param EnvironmentRepository $environmentRepo
+     * @param ServerRepository $serverRepo
+     * @param RepositoryRepository $repoRepo
+     * @param DeploymentRepository $deploymentRepo
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         EnvironmentRepository $environmentRepo,
         ServerRepository $serverRepo,
         RepositoryRepository $repoRepo,
@@ -64,10 +64,10 @@ class DeploymentsController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
@@ -82,6 +82,6 @@ class DeploymentsController
             'deployments' => $this->deploymentRepo->findBy(['repository' => $repo], ['server' => 'ASC'])
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }

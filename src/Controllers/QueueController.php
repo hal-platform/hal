@@ -12,33 +12,33 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class QueueController
 {
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @var PushRepository
+     * @type PushRepository
      */
     private $pushRepo;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      */
-    public function __construct(Twig_Template $template, BuildRepository $buildRepo, PushRepository $pushRepo)
+    public function __construct(TemplateInterface $template, BuildRepository $buildRepo, PushRepository $pushRepo)
     {
         $this->template = $template;
         $this->buildRepo = $buildRepo;
@@ -56,7 +56,7 @@ class QueueController
             'pending' => $this->getPendingJobs()
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 
     /**

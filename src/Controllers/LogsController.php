@@ -9,29 +9,29 @@ namespace QL\Hal\Controllers;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class LogsController
 {
     const MAX_PER_PAGE = 25;
 
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param EntityManager $em
      */
-    public function __construct(Twig_Template $template, EntityManager $em)
+    public function __construct(TemplateInterface $template, EntityManager $em)
     {
         $this->template = $template;
         $this->em = $em;
