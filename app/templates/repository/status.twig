@@ -64,7 +64,6 @@
                 {% endif %}
 
             </h4>
-            <p class="mbn">{{ active.created ? active.created|reldate : 'Never' }}</p>
         </header>
 
         <section class="card__details">
@@ -85,6 +84,13 @@
                         (<a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
                     {% else %}
                         None
+                    {% endif %}
+                <li>
+                    <span class="split__title">Pushed on:</span>
+                    {% if active.created %}
+                        {{ active.created|reldate }}
+                    {% else %}
+                        Never
                     {% endif %}
                 </li>
                 <li>
