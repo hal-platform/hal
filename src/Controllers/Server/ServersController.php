@@ -9,39 +9,39 @@ namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class ServersController
 {
     /**
-     *  @var Twig_Template
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     *  @var ServerRepository
+     * @var ServerRepository
      */
     private $serverRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param ServerRepository $serverRepo
+     * @param TemplateInterface $template
+     * @param ServerRepository $serverRepo
      */
-    public function __construct(Twig_Template $template, ServerRepository $serverRepo)
+    public function __construct(TemplateInterface $template, ServerRepository $serverRepo)
     {
         $this->template = $template;
         $this->serverRepo = $serverRepo;
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke(Request $request, Response $response)
     {
         $servers = $this->serverRepo->findBy([], ['name' => 'ASC']);
 

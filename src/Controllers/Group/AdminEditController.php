@@ -12,46 +12,46 @@ use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class AdminEditController
 {
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var GroupRepository
+     * @type GroupRepository
      */
     private $groupRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         GroupRepository $groupRepo,
         EntityManager $entityManager,
         Session $session,
@@ -96,7 +96,7 @@ class AdminEditController
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 
     /**

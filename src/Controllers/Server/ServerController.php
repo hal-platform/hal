@@ -9,34 +9,34 @@ namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class ServerController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 
     /**
-     *  @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deployRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param ServerRepository $serverRepo
-     *  @param DeploymentRepository $deployRepo
+     * @param TemplateInterface $template
+     * @param ServerRepository $serverRepo
+     * @param DeploymentRepository $deployRepo
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         ServerRepository $serverRepo,
         DeploymentRepository $deployRepo
     ) {
@@ -46,10 +46,10 @@ class ServerController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {

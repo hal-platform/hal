@@ -9,34 +9,34 @@ namespace QL\Hal\Controllers\Group;
 
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class GroupController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var GroupRepository
+     * @type GroupRepository
      */
     private $groupRepo;
 
     /**
-     *  @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param GroupRepository $groupRepo
-     *  @param RepositoryRepository $repoRepo
+     * @param TemplateInterface $template
+     * @param GroupRepository $groupRepo
+     * @param RepositoryRepository $repoRepo
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         GroupRepository $groupRepo,
         RepositoryRepository $repoRepo
     ) {
@@ -46,10 +46,10 @@ class GroupController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
@@ -62,6 +62,6 @@ class GroupController
             'repos' => $this->repoRepo->findBy(['group' => $group], ['key' => 'ASC'])
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }

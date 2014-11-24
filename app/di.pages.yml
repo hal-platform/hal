@@ -59,8 +59,8 @@ services:
     class: 'QL\Hal\Controllers\Group\GroupsController'
     arguments: [@groups.twig, @group.repo]
   groups.twig:
-    parent: 'twig.template.old'
-    arguments: ['group/groups.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['group/groups.twig']]]
 
   group.page:
     class: 'QL\Hal\Controllers\Group\GroupController'
@@ -69,8 +69,8 @@ services:
       - @group.repo
       - @repository.repo
   group.twig:
-    parent: 'twig.template.old'
-    arguments: ['group/group.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['group/group.twig']]]
 
   group.admin.add.page:
     class: 'QL\Hal\Controllers\Group\AdminAddController'
@@ -81,8 +81,8 @@ services:
       - @session
       - @url.helper
   group.admin.add.twig:
-    parent: 'twig.template.old'
-    arguments:  ['group/admin.add.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['group/admin.add.twig']]]
   group.admin.add.handle:
     parent: 'group.admin.add.page'
 
@@ -95,8 +95,8 @@ services:
       - @session
       - @url.helper
   group.admin.edit.twig:
-    parent: 'twig.template.old'
-    arguments:  ['group/admin.edit.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['group/admin.edit.twig']]]
   group.admin.edit.handle:
     parent: 'group.admin.edit.page'
   group.admin.remove.handle:
@@ -330,8 +330,8 @@ services:
     class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
     arguments: [@environments.twig, @environment.repo]
   environments.twig:
-    parent: 'twig.template.old'
-    arguments: ['environment/environments.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['environment/environments.twig']]]
 
   environment.page:
     class: 'QL\Hal\Controllers\Environment\EnvironmentController'
@@ -340,15 +340,15 @@ services:
       - @environment.repo
       - @server.repo
   environment.twig:
-    parent: 'twig.template.old'
-    arguments: ['environment/environment.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['environment/environment.twig']]]
 
   environment.admin.reorder.page:
     class: 'QL\Hal\Controllers\Environment\AdminReorderController'
     arguments: [@environment.admin.reorder.twig, @environment.repo]
   environment.admin.reorder.twig:
-    parent: 'twig.template.old'
-    arguments: ['environment/admin.reorder.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['environment/admin.reorder.twig']]]
   environment.admin.reorder.handle:
     class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
     arguments:
@@ -366,8 +366,8 @@ services:
       - @session
       - @url.helper
   environment.admin.add.twig:
-    parent: 'twig.template.old'
-    arguments: ['environment/admin.add.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['environment/admin.add.twig']]]
   environment.admin.add.handle:
     parent: environment.admin.add.page
 
@@ -380,8 +380,8 @@ services:
       - @session
       - @url.helper
   environment.admin.edit.twig:
-    parent: 'twig.template.old'
-    arguments: ['environment/admin.edit.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['environment/admin.edit.twig']]]
   environment.admin.edit.handle:
     parent: environment.admin.edit.page
 
@@ -402,8 +402,8 @@ services:
     class: 'QL\Hal\Controllers\Server\ServersController'
     arguments: [@servers.twig, @server.repo]
   servers.twig:
-    parent: 'twig.template.old'
-    arguments: ['server/servers.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['server/servers.twig']]]
 
   server.page:
     class: 'QL\Hal\Controllers\Server\ServerController'
@@ -412,8 +412,8 @@ services:
       - @server.repo
       - @deployment.repo
   server.twig:
-    parent: 'twig.template.old'
-    arguments: ['server/server.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['server/server.twig']]]
 
   server.admin.add.page:
     class: 'QL\Hal\Controllers\Server\AdminAddController'
@@ -425,8 +425,8 @@ services:
       - @session
       - @url.helper
   server.admin.add.twig:
-    parent: 'twig.template.old'
-    arguments: ['server/admin.add.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['server/admin.add.twig']]]
   server.admin.add.handle:
     parent: 'server.admin.add.page'
 
@@ -440,8 +440,8 @@ services:
       - @session
       - @url.helper
   server.admin.edit.twig:
-    parent: 'twig.template.old'
-    arguments: ['server/admin.edit.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['server/admin.edit.twig']]]
   server.admin.edit.handle:
     parent: 'server.admin.edit.page'
 

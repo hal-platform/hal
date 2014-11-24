@@ -14,44 +14,44 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class AdminAddController
 {
     /**
-     * @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 
     /**
-     * @var EnvironmentRepository
+     * @type EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
@@ -59,7 +59,7 @@ class AdminAddController
      * @param UrlHelper $url
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         ServerRepository $serverRepo,
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,

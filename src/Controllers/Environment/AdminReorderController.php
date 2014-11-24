@@ -8,39 +8,37 @@
 namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class AdminReorderController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var EnvironmentRepository
+     * @type EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param EnvironmentRepository $envRepo
+     * @param TemplateInterface $template
+     * @param EnvironmentRepository $envRepo
      */
-    public function __construct(Twig_Template $template, EnvironmentRepository $envRepo)
+    public function __construct(TemplateInterface $template, EnvironmentRepository $envRepo)
     {
         $this->template = $template;
         $this->envRepo = $envRepo;
     }
 
     /**
-     *  Run the controller
-     *
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {

@@ -8,37 +8,35 @@
 namespace QL\Hal\Controllers\Group;
 
 use QL\Hal\Core\Entity\Repository\GroupRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class GroupsController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var GroupRepository
+     * @type GroupRepository
      */
     private $groupRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param GroupRepository $groupRepo
+     * @param TemplateInterface $template
+     * @param GroupRepository $groupRepo
      */
-    public function __construct(Twig_Template $template, GroupRepository $groupRepo)
+    public function __construct(TemplateInterface $template, GroupRepository $groupRepo)
     {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
     }
 
     /**
-     *  Run the controller
-     *
-     *  @param Request $request
-     *  @param Response $response
+     * @param Request $request
+     * @param Response $response
      */
     public function __invoke(Request $request, Response $response)
     {
@@ -46,6 +44,6 @@ class GroupsController
             'groups' => $this->groupRepo->findBy([], ['name' => 'ASC'])
         ]);
 
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 }
