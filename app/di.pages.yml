@@ -591,12 +591,12 @@ services:
     parent: 'twig.template'
     calls: [['setTemplate', ['denied.twig']]]
 
-  logs.page:
-    class: 'QL\Hal\Controllers\LogsController'
-    arguments: [@logs.twig, @doctrine.em]
-  logs.twig:
+  audit.logs.page:
+    class: 'QL\Hal\Controllers\AuditLogsController'
+    arguments: [@audit.logs.twig, @doctrine.em]
+  audit.logs.twig:
     parent: 'twig.template'
-    calls: [['setTemplate', ['logs.twig']]]
+    calls: [['setTemplate', ['audit.logs.twig']]]
 
   # The twig template for slim errors (404, 500)
   error.pages.twig:

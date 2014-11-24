@@ -32,12 +32,12 @@ parameters:
         logs:
             method: 'GET'
             route: '/logs'
-            stack: ['admin.bouncer', 'logs.page']
+            stack: ['admin.bouncer', 'audit.logs.page']
 
         logs.page:
             method: 'GET'
             route: '/logs/page/:page'
-            stack: ['admin.bouncer', 'logs.page']
+            stack: ['admin.bouncer', 'audit.logs.page']
             conditions: {page: '[0-9]+'}
 
         queue:

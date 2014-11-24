@@ -13,7 +13,7 @@ use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class LogsController
+class AuditLogsController
 {
     const MAX_PER_PAGE = 25;
 
