@@ -14,14 +14,14 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class PushStartController
 {
     /**
-     * @type Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
@@ -46,14 +46,14 @@ class PushStartController
     private $serverRepo;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param EntityManager $em
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
      * @param ServerRepository $serverRepo
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         EntityManager $em,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,

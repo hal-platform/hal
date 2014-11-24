@@ -10,40 +10,40 @@ namespace QL\Hal\Controllers\Push;
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class RollbackController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     *  @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 
     /**
-     *  @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     *  @param Twig_Template $template
+     *  @param TemplateInterface $template
      *  @param RepositoryRepository $repoRepo
      *  @param ServerRepository $serverRepository
      *  @param EntityManager $em
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         RepositoryRepository $repoRepo,
         ServerRepository $serverRepository,
         EntityManager $em

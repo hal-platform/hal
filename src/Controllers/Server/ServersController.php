@@ -16,12 +16,12 @@ use Slim\Http\Response;
 class ServersController
 {
     /**
-     * @var TemplateInterface
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 

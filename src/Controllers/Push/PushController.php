@@ -8,45 +8,44 @@
 namespace QL\Hal\Controllers\Push;
 
 use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class PushController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var PushRepository
+     * @type PushRepository
      */
     private $pushRepo;
 
     /**
-     *  @param Twig_Template $template
-     *  @param PushRepository $pushRepo
+     * @param TemplateInterface $template
+     * @param PushRepository $pushRepo
      */
-    public function __construct(Twig_Template $template, PushRepository $pushRepo)
+    public function __construct(TemplateInterface $template, PushRepository $pushRepo)
     {
         $this->template = $template;
         $this->pushRepo = $pushRepo;
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * @param Request $request
+     * @param Response $response
+     * @param array $params
+     * @param callable $notFound
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         $push = $this->pushRepo->findOneBy(['id' => $params['push']]);
 
         if (!$push) {
-            call_user_func($notFound);
-            return;
+            return call_user_func($notFound);
         }
 
         $rendered = $this->template->render([

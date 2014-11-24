@@ -10,44 +10,44 @@ namespace QL\Hal\Controllers\User;
 use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class UsersController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var UserRepository
+     * @type UserRepository
      */
     private $userRepo;
 
     /**
-     * User for autopruning removed users.
+     * Used for autopruning removed users.
      *
-     *  @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * User for autopruning removed users.
+     * Used for autopruning removed users.
      *
-     * @var LdapService
+     * @type LdapService
      */
     private $ldap;
 
     /**
-     *  @param Twig_Template $template
-     *  @param UserRepository $userRepo
-     *  @param EntityManager $entityManager
-     *  @param LdapService $ldap
+     * @param TemplateInterface $template
+     * @param UserRepository $userRepo
+     * @param EntityManager $entityManager
+     * @param LdapService $ldap
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         UserRepository $userRepo,
         EntityManager $entityManager,
         LdapService $ldap
@@ -59,8 +59,8 @@ class UsersController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
+     * @param Request $request
+     * @param Response $response
      */
     public function __invoke(Request $request, Response $response)
     {

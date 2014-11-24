@@ -9,37 +9,34 @@ namespace QL\Hal\Controllers\User;
 
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class SettingsController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     *  @var UserRepository
+     * @type UserRepository
      */
     private $userRepo;
 
     /**
-     *  @var User
+     * @type User
      */
     private $currentUser;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param UserRepository $userRepo
      * @param User $currentUser
      */
-    public function __construct(
-        Twig_Template $template,
-        UserRepository $userRepo,
-        User $currentUser
-    ) {
+    public function __construct(TemplateInterface $template, UserRepository $userRepo, User $currentUser)
+    {
         $this->template = $template;
         $this->userRepo = $userRepo;
         $this->currentUser = $currentUser;

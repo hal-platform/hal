@@ -276,8 +276,8 @@ services:
       - @deployment.repo
       - @server.repo
   push.start.twig:
-    parent: 'twig.template.old'
-    arguments: ['push/start.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['push/start.twig']]]
 
   push.start.handler:
     class: 'QL\Hal\Controllers\Push\PushStartHandler'
@@ -301,15 +301,15 @@ services:
       - @server.repo
       - @doctrine.em
   rollback.twig:
-    parent: 'twig.template.old'
-    arguments: ['push/rollback.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['push/rollback.twig']]]
 
   push.page:
     class: 'QL\Hal\Controllers\Push\PushController'
     arguments: [@push.twig, @push.repo]
   push.twig:
-    parent: 'twig.template.old'
-    arguments: ['push/push.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['push/push.twig']]]
 
   pushes.page:
     class: 'QL\Hal\Controllers\Push\PushesController'
@@ -319,8 +319,8 @@ services:
       - @repository.repo
       - @push.repo
   pushes.twig:
-    parent: 'twig.template.old'
-    arguments: ['push/pushes.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['push/pushes.twig']]]
 
   ######################################################################################################################
   # ENVIRONMENT CONTROLLERS
@@ -466,8 +466,8 @@ services:
       - @user.repo
       - @permissions
   user.twig:
-    parent: 'twig.template.old'
-    arguments: ['user/user.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['user/user.twig']]]
 
   users.page:
     class: 'QL\Hal\Controllers\User\UsersController'
@@ -477,8 +477,8 @@ services:
       - @doctrine.em
       - @ldapService
   users.twig:
-    parent: 'twig.template.old'
-    arguments: ['user/users.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['user/users.twig']]]
 
   user.preferences.handle:
     class: 'QL\Hal\Controllers\User\EditPreferencesHandler'
@@ -498,8 +498,8 @@ services:
       - @user.repo
       - @currentUser
   user.settings.twig:
-    parent: 'twig.template.old'
-    arguments: ['user/settings.twig']
+    parent: 'twig.template'
+    calls: [['setTemplate', ['user/settings.twig']]]
   ######################################################################################################################
   # USER TOKEN MANAGEMENT CONTROLLERS
   ######################################################################################################################

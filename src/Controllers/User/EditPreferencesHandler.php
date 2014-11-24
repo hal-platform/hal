@@ -15,7 +15,6 @@ use QL\Panthor\Http\EncryptedCookies;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Slim;
-use Twig_Template;
 
 class EditPreferencesHandler
 {

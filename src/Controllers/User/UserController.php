@@ -11,40 +11,40 @@ use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\PermissionsService;
+use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
 
 class UserController
 {
     /**
-     *  @var Twig_Template
+     * @type TemplateInterface
      */
     private $template;
 
     /**
-     * @var PermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     *  @var LdapService
+     * @type LdapService
      */
     private $ldap;
 
     /**
-     *  @var UserRepository
+     * @type UserRepository
      */
     private $userRepo;
 
     /**
-     * @param Twig_Template $template
+     * @param TemplateInterface $template
      * @param LdapService $ldap
      * @param UserRepository $userRepo
      * @param PermissionsService $permissions
      */
     public function __construct(
-        Twig_Template $template,
+        TemplateInterface $template,
         LdapService $ldap,
         UserRepository $userRepo,
         PermissionsService $permissions
