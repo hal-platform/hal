@@ -35,3 +35,15 @@ $link-interaction-color: tint($blue, 20%); // :hover, :active, :focus
 ///
 $selection-bg-color: $blue;
 $selection-text-color: $white;
+
+/**
+ * 2001 Inspiration References:
+ * http://fc08.deviantart.net/fs27/f/2008/112/b/0/HAL_9000_Interface_Sreensaver_by_KoKaine.png
+ * http://ministryoftype.co.uk/words/article/2008_a_type_odyssey/
+ * http://ministryoftype.co.uk/images/files/type-odyssey-desktop.jpg
+ * http://i.ytimg.com/vi/XDi2s5Vhjts/maxresdefault.jpg
+ */
+$hal-purple: rgb(180, 120, 175);
+$hal-cyan: rgb(70, 120, 145);
+$hal-red: rgb(140, 55, 70);
+$hal-blue: rgb(65, 130, 215);

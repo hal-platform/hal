@@ -76,30 +76,30 @@
 /* env specific colors for push cards */
 .cards--test {
     .card {
-        box-shadow: 0 0 0 8px $dark-orange;
+        box-shadow: 0 0 0 8px $hal-blue;
     }
     .card__header {
-        background-color: $dark-orange;
+        background-color: $hal-blue;
         a { color: $white }
     }
 }
 
 .cards--beta {
     .card {
-        box-shadow: 0 0 0 8px $blue;
+        box-shadow: 0 0 0 8px $hal-cyan;
     }
     .card__header {
-        background-color: $blue;
+        background-color: $hal-cyan;
         a { color: $white }
     }
 }
 
 .cards--prod {
     .card {
-        box-shadow: 0 0 0 8px $red;
+        box-shadow: 0 0 0 8px $hal-red;
     }
     .card__header {
-        background-color: $red;
+        background-color: $hal-red;
         a { color: $white }
     }
 }
