@@ -61,32 +61,35 @@
 
     <h3>Permissions</h3>
 
-    <p>The following users have permission to push <strong>{{ repository.key }}</strong> to the specified environment.</p>
-
-    <table class="tablesaw tablesaw-stack" data-mode="stack">
-        <thead>
-        <tr>
-            <th>Environment</th>
-            <th>Users</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for pairs in permissions %}
+    {% if permissions %}
+        <p>The following users have permission to push <strong>{{ repository.key }}</strong> to the specified environment.</p>
+        <table class="tablesaw tablesaw-stack" data-mode="stack">
+            <thead>
             <tr>
-                <td>{{ pairs|first.environment.key|title }}</td>
-                <td>
-                    <ul class="col-list">
-                        {% for pair in pairs %}
-                            <li><a href="{{ urlFor('user', {'id': pair.user.id}) }}">{{ pair.user.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </td>
+                <th>Environment</th>
+                <th>Users</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for pairs in permissions %}
+                <tr>
+                    <td>{{ pairs|first.environment.key|title }}</td>
+                    <td>
+                        <ul class="col-list">
+                            {% for pair in pairs %}
+                                <li><a href="{{ urlFor('user', {'id': pair.user.id}) }}">{{ pair.user.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No users can push this repository.</p>
+    {% endif %}
 
-    <h3>Server Deployments:</h3>
+    <h3>Server Deployments</h3>
     {% if deployment_count %}
         <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>
