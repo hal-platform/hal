@@ -18,7 +18,7 @@ gulp.task('styles', function() {
             bundle_exec: true
         }))
         .pipe(plugins.autoprefixer({browsers: ['last 5 versions', '> 1%']}))
-        .pipe(gulp.dest('public/css'));
+        .pipe(gulp.dest('public'));
 
     if (isDeploy === false) {
         g.pipe(plugins.livereload(server));
