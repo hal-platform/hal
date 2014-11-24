@@ -85,7 +85,7 @@
 .hal-eye .oculus .iris.wide {
   background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 85, color-stop(5%, #fff063), color-stop(15%, #fa0c02), color-stop(40%, #c80901), color-stop(65%, #0c0000), color-stop(85%, #000000));
   background-image: radial-gradient(center center, circle cover, #fff063 5%, #fa0c02 15%, #c80901 40%, #0c0000 65%, #000000 85%);
-  animation: pulse 2s ease-in-out infinite alternate;
+  animation: pulse 2s ease-in-out 5 alternate;
   transform: translate3d(0,0,0);
 }
 
