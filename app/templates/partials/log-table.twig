@@ -20,7 +20,11 @@
                 {% for key, data in log.data %}
                     <b>{{ key }}</b>
                     <div class="pre-wrapper">
-                        <pre>{{ data|sanitizeToString }}</pre>
+                        {% if key == 'output' or key == 'errorOutput' %}
+                            <pre style="background-color: black">{{ data|ansi_to_html }}</pre>
+                        {% else %}
+                            <pre>{{ data|sanitizeToString }}</pre>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </td>
