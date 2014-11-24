@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "gulp": "^3.6.0",
-    "gulp-autoprefixer": "0.0.6",
+    "gulp-autoprefixer": "^2.0.0",
     "gulp-clean": "^0.2.4",
     "gulp-compass": "^1.1.8",
     "gulp-concat": "^2.2.0",

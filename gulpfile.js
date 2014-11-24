@@ -17,7 +17,7 @@ gulp.task('styles', function() {
             require: ['modular-scale', 'breakpoint', 'singularitygs'],
             bundle_exec: true
         }))
-        .pipe(plugins.autoprefixer('last 5 versions', '> 1%'))
+        .pipe(plugins.autoprefixer({browsers: ['last 5 versions', '> 1%']}))
         .pipe(gulp.dest('public/css'));
 
     if (isDeploy === false) {
