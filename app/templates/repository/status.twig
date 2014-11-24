@@ -11,35 +11,29 @@
     <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
 
     {# example display of servers by environment #}
-    {#{% for env, statuses in environments %}#}
-        {#<h2>{{ env }}</h2>#}
-        {#<ul>#}
-            {#{% for status in statuses %}#}
-                {#<li>{{ status.deploy.server.name }}</li>#}
-            {#{% endfor %}#}
-        {#</ul>#}
-    {#{% endfor %}#}
+    {% for env, statuses in environments %}
+        <h3>{{ env }}</h3>
+        <ul class="list--bare cards cards--{{ env }}">
+            {% for status in statuses %}
 
-    <ul class="list--bare cards">
-        {% for status in statuses %}
+                {# Determine the active push #}
+                {% if status.latest.status in ['Waiting', 'Pushing'] %}
+                    {% set activePush = status.latest %}
+                {% elseif status.success %}
+                    {% set activePush = status.success %}
+                {% endif %}
 
-            {# Determine the active push #}
-            {% if status.latest.status in ['Waiting', 'Pushing'] %}
-                {% set activePush = status.latest %}
-            {% elseif status.success %}
-                {% set activePush = status.success %}
-            {% endif %}
+                {# Determine if the is a history to rollback to, or user is allowed to #}
+                {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
+                    {% set canRollback = true %}
+                {% else %}
+                    {% set canRollback = false %}
+                {% endif %}
 
-            {# Determine if the is a history to rollback to, or user is allowed to #}
-            {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
-                {% set canRollback = true %}
-            {% else %}
-                {% set canRollback = false %}
-            {% endif %}
-
-            <li>{{ macros.pushCard(repo, status.deploy.server, activePush, canRollback) }}</li>
-        {% endfor %}
-    </ul>
+                <li>{{ macros.pushCard(repo, status.deploy.server, activePush, canRollback) }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
 
     <p><a class="btn--toggles" href="{{ urlFor('repository', {id: repo.id}) }}">View Repository Details</a></p>
 
@@ -59,15 +53,15 @@
     <article class="card">
         <header class="card__header">
             <h4 class="mbn">
-                <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a> ({{ server.environment.key }})
+                <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a>
 
-            {% if canRollback %}
-                <a class="rollback" href="{{ urlFor('rollback', {'id': repo.id, 'server': server.id}) }}" title="Rollback to a successful build">
-                    <svg viewBox="0 0 32 32" class="icon">
-                        <use xlink:href="#revert"></use>
-                    </svg>
-                </a>
-            {% endif %}
+                {% if canRollback %}
+                    <a class="rollback" href="{{ urlFor('rollback', {'id': repo.id, 'server': server.id}) }}" title="Rollback to a successful build">
+                        <svg viewBox="0 0 32 32" class="icon">
+                            <use xlink:href="#revert"></use>
+                        </svg>
+                    </a>
+                {% endif %}
 
             </h4>
             <p class="mbn">{{ active.created ? active.created|reldate : 'Never' }}</p>

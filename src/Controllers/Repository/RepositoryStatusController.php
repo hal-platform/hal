@@ -115,10 +115,12 @@ class RepositoryStatusController
      */
     private function getDeploymentsWithStatus(Repository $repo)
     {
-        $dql = 'SELECT d FROM QL\Hal\Core\Entity\Deployment d JOIN d.server s JOIN s.environment e WHERE d.repository = :repo ORDER BY e.order ASC, s.name ASC';
+        $dql = 'SELECT d FROM QL\Hal\Core\Entity\Deployment d JOIN d.server s JOIN s.environment e WHERE d.repository = :repo ORDER BY e.order ASC';
         $query = $this->em->createQuery($dql)
             ->setParameter('repo', $repo);
         $deployments = $query->getResult();
+
+        // sort server by natural name here
 
         $statuses = [];
         foreach ($deployments as $deploy) {
