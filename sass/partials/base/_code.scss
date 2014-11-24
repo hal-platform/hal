@@ -17,6 +17,13 @@ pre {
     overflow-x: scroll;
 }
 
+.pre-ansi pre {
+    background: black;
+}
+.pre-solarized pre {
+    background: #073642;
+}
+
 // this is stupid
 .pre-wrapper {
     display: table;

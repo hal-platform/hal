@@ -19,12 +19,8 @@
             <td colspan="4" style="text-align:left">
                 {% for key, data in log.data %}
                     <b>{{ key }}</b>
-                    <div class="pre-wrapper">
-                        {% if key == 'output' or key == 'errorOutput' %}
-                            <pre style="background-color: black">{{ data|ansi_to_html }}</pre>
-                        {% else %}
-                            <pre>{{ data|sanitizeToString }}</pre>
-                        {% endif %}
+                    <div class="pre-wrapper pre-ansi">
+                        <pre>{{ data|sanitizeToString|ansi_to_html }}</pre>
                     </div>
                 {% endfor %}
             </td>
