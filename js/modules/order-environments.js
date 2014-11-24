@@ -5,11 +5,7 @@ define(['jquery'], function($) {
         init: function() {
             var _this = this;
 
-            var parent = $(this.target)
-                // hide second columns
-                .find('thead th:nth-child(2)').addClass('js-sortable-hidden').end()
-                .find('tbody td:nth-child(2)').addClass('js-sortable-hidden').end();
-
+            var parent = $(this.target);
             this.$currentTarget = parent.find('tbody')
                 // enable sorting
                 .sortable({
