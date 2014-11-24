@@ -10,3 +10,12 @@ tbody tr {
     border-bottom: 1px dotted $light-grey;
     @include adjust-font-size-to(ms(-1));
 }
+
+th.table-mid-header {
+    @include adjust-font-size-to(ms(2));
+
+    background: $bright-blue;
+    color: white;
+    font-weight: bold;
+    padding: 0 5px;
+}

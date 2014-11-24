@@ -21,7 +21,7 @@
             {% if not group.getRepositories.isEmpty %}
                 {% set hasRepos = true %}
                 <tr>
-                    <th colspan="4"><h4 class="mbn">{{ group.name }} repositories</h4></th>
+                    <th colspan="4" class="table-mid-header">{{ group.name }} repositories</th>
                 </tr>
 
                 {% for repo in group.getRepositories %}
