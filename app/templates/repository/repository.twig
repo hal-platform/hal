@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = repository.key %}
+{% set page_title = repository.description %}
 
 {% block content %}
     <h2>Repository Information</h2>
 
     <div class="details-box">
         <dl class="split--left">
-            <dt class="split--left__title">Identifier</dt>
-            <dd class="split--left__value">{{ repository.key }}</dd>
-
             <dt class="split--left__title">Name</dt>
             <dd class="split--left__value">{{ repository.description }}</dd>
+
+            <dt class="split--left__title">Identifier</dt>
+            <dd class="split--left__value">{{ repository.key }}</dd>
 
             <dt class="split--left__title">Github Source</dt>
             <dd class="split--left__value">

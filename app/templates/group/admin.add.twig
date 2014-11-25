@@ -3,7 +3,8 @@
 {% set page_title = 'Add Group' %}
 
 {% block content %}
-    <h3>Add a new group</h3>
+    <h2>Add a new group</h2>
+
     <div class="form-wrapper">
         {% if errors %}
             <ul class="error-list">
@@ -16,13 +17,24 @@
         <form action="" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="nickname">Nickname</label>
-                    <input class="text-input" type="text" name="nickname" id="nickname" maxlength="24" size="24" required value="{{ form.nickname }}">
+                    <label for="name">
+                        Name
+                        <small class="additional">Display title for this group such as <span>"Team MyTeam"</span> or <span>"My Secret Projects"</span>.</small>
+                    </label>
+                    <input type="text" name="name" id="name" maxlength="48" required value="{{ form.name }}" class="text-input">
                 </li>
+
                 <li>
-                    <label for="name">Name</label>
-                    <input class="text-input" type="text" name="name" id="name" maxlength="48" size="48" required value="{{ form.name }}">
+                    <label for="identifier">
+                        Identifier
+                        <small class="additional">
+                            Unique identifier such as <span>"myteam"</span> or <span>"my-projects"</span>.
+                            <br>Alphanumeric, hyphen, and period characters only.
+                        </small>
+                    </label>
+                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
                 </li>
+            </ul>
 
             <div>
                 {# primary action #}

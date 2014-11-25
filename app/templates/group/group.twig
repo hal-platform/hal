@@ -1,11 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Group: '~group.name %}
+{% set page_title = 'Group: ' ~ group.name %}
 
 {% block content %}
-    <h2><b>{{ group.name }}</b> group</h2>
+    <h2>Group Information</h2>
 
-    <p><b>Nickname:</b> {{ group.key }}</p>
+    <p><b>Name:</b> {{ group.name }}</p>
+    <p><b>Identifier:</b> {{ group.key }}</p>
 
     <h3>Repositories</h3>
 
@@ -16,21 +17,17 @@
                 <tr>
                     <th>Repo Status</th>
                     <th>Github Source</th>
-                    <th>Notification E-mail</th>
+                    <th>Notification Email</th>
                     <th>Repo Details</th>
                 </tr>
             </thead>
             <tbody>
             {% for repo in repos %}
                 <tr>
-                    <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.key }}</a></td>
+                    <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.description }}</a></td>
                     <td>
                         <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
-                        <span class="icon">
-                            <svg viewBox="0 0 32 32">
-                                <use xlink:href="#github"></use>
-                            </svg>
-                        </span>
+                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
                     </td>
                     <td>{{ repo.email }}</td>
                     <td>

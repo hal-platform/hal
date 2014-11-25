@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Edit Group: '~group.name %}
+{% set page_title = 'Edit Group: ' ~ group.name %}
 
 {% block content %}
     <h2>Edit <b>{{ group.name }}</b> group</h2>
+
     <div class="form-wrapper">
         {% if errors %}
             <ul class="error-list">
@@ -16,22 +17,23 @@
         <form action="{{ urlFor('group.admin.edit.handle', {id: group.id}) }}" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="nickname">Nickname</label>
-                    <input class="text-input" type="text" name="nickname" id="nickname" maxlength="24" size="24" required value="{{ form.nickname }}">
-                </li>
-                <li>
                     <label for="name">Name</label>
-                    <input class="text-input" type="text" name="name" id="name" maxlength="48" size="48" required value="{{ form.name }}">
+                    <input type="text" name="name" id="name" maxlength="48" required value="{{ form.name }}" class="text-input">
                 </li>
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Save">
 
-                    {# secondary actions #}
-                    <a class="secondary-action" href="{{ urlFor('group', {id: group.id}) }}">Cancel</a>
+                <li>
+                    <label for="identifier">Identifier</label>
+                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
                 </li>
             </ul>
 
+            <div>
+                {# primary action #}
+                <input class="btn" type="submit" value="Save">
+
+                {# secondary actions #}
+                <a class="secondary-action" href="{{ urlFor('group', {id: group.id}) }}">Cancel</a>
+            </div>
         </form>
     </div>
 {% endblock %}

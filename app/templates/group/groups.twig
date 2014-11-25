@@ -28,7 +28,7 @@
                     {% if not group.repositories.isEmpty %}
                         <ul class="inline-list--comma">
                             {% for repo in group.repositories %}
-                                <li><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.key }}</a></li>
+                                <li><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.description }}</a></li>
                             {% endfor %}
                         </ul>
                     {% else %}

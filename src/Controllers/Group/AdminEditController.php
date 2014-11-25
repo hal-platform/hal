@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -18,6 +19,8 @@ use Slim\Http\Response;
 
 class AdminEditController
 {
+    use ValidatorHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -78,7 +81,7 @@ class AdminEditController
 
         $renderContext = [
             'form' => [
-                'nickname' => ($request->isPost()) ? $request->post('nickname') : $group->getKey(),
+                'identifier' => ($request->isPost()) ? $request->post('identifier') : $group->getKey(),
                 'name' => ($request->isPost()) ? $request->post('name') : $group->getName()
             ],
             'group' => $group,
@@ -90,7 +93,7 @@ class AdminEditController
             if (!$renderContext['errors']) {
                 $group = $this->handleFormSubmission($request, $group);
 
-                $this->session->addFlash('Group updated successfully.', 'group-edit');
+                $this->session->flash('Group updated successfully.', 'success');
                 return $this->url->redirectFor('group', ['id' => $group->getId()]);
             }
         }
@@ -106,10 +109,10 @@ class AdminEditController
      */
     private function handleFormSubmission(Request $request, Group $group)
     {
-        $nickname = $request->post('nickname');
+        $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
 
-        $group->setKey($nickname);
+        $group->setKey($identifier);
         $group->setName($name);
 
         $this->entityManager->merge($group);
@@ -129,70 +132,24 @@ class AdminEditController
             return [];
         }
 
-        $nickname = $request->post('nickname');
+        $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
 
-        $errors = $this->validateNickname($nickname);
-        $errors = array_merge($errors, $this->validateName($name));
+        $errors = $this->validateSimple($identifier, 'Identifier', 24, true);
+        $errors = array_merge($errors, $this->validateText($name, 'Name', 48, true));
 
         // Only check duplicate nickname if it is being changed
-        if (!$errors && $nickname != $group->getKey()) {
-            if ($dupeGroup = $this->groupRepo->findOneBy(['key' => $nickname])) {
+        if (!$errors && $identifier !== $group->getKey()) {
+            if ($dupeGroup = $this->groupRepo->findOneBy(['key' => $identifier])) {
                 $errors[] = 'A group with this nickname already exists.';
             }
         }
 
         // Only check duplicate name if it is being changed
-        if (!$errors && $name != $group->getName()) {
+        if (!$errors && $name !== $group->getName()) {
             if ($dupeGroup = $this->groupRepo->findOneBy(['name' => $name])) {
                 $errors[] = 'A group with this name already exists.';
             }
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $nickname
-     * @return array
-     */
-    private function validateNickname($nickname)
-    {
-        $errors = [];
-
-        if (!$nickname) {
-            $errors[] = 'Nickname must be specified';
-        }
-
-        if (!preg_match('@^[a-z0-9_-]*$@', strtolower($nickname))) {
-            $errors[] = 'Nickname must be be composed of alphanumeric, underscore and/or hyphen characters';
-        }
-
-        if ($nickname > 24) {
-            $errors[] = 'Nickname must be under 24 characters';
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $name
-     * @return array
-     */
-    private function validateName($name)
-    {
-        $errors = [];
-
-        if (!$name) {
-            $errors[] = 'Name must be specified';
-        }
-
-        if (!mb_check_encoding($name, 'UTF-8')) {
-            $errors[] = 'Name must be valid UTF-8';
-        }
-
-        if (mb_strlen($name, 'UTF-8') > 48) {
-            $errors[] = 'Name must be 48 characters or under';
         }
 
         return $errors;

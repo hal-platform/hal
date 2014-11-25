@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -18,6 +19,8 @@ use Slim\Http\Response;
 
 class AdminAddController
 {
+    use ValidatorHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -72,7 +75,7 @@ class AdminAddController
     {
         $renderContext = [
             'form' => [
-                'nickname' => $request->post('nickname'),
+                'identifier' => $request->post('identifier'),
                 'name' => $request->post('name')
             ],
             'errors' => $this->checkFormErrors($request)
@@ -84,7 +87,8 @@ class AdminAddController
                 $group = $this->handleFormSubmission($request);
 
                 $message = sprintf('Group "%s" added.', $group->getName());
-                $this->session->addFlash($message, 'group-add');
+                $this->session->flash($message, 'success');
+
                 return $this->url->redirectFor('groups');
             }
         }
@@ -99,11 +103,11 @@ class AdminAddController
      */
     private function handleFormSubmission(Request $request)
     {
-        $nickname = $request->post('nickname');
+        $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
 
         $group = new Group;
-        $group->setKey($nickname);
+        $group->setKey($identifier);
         $group->setName($name);
 
         $this->entityManager->persist($group);
@@ -122,64 +126,18 @@ class AdminAddController
             return [];
         }
 
-        $nickname = $request->post('nickname');
+        $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
 
-        $errors = $this->validateNickname($nickname);
-        $errors = array_merge($errors, $this->validateName($name));
+        $errors = $this->validateSimple($identifier, 'Identifier', 24, true);
+        $errors = array_merge($errors, $this->validateText($name, 'Name', 48, true));
 
-        if (!$errors && $group = $this->groupRepo->findOneBy(['key' => $nickname])) {
-            $errors[] = 'A group with this nickname already exists.';
+        if (!$errors && $group = $this->groupRepo->findOneBy(['key' => $identifier])) {
+            $errors[] = 'A group with this identifier already exists.';
         }
 
         if (!$errors && $group = $this->groupRepo->findOneBy(['name' => $name])) {
             $errors[] = 'A group with this name already exists.';
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $nickname
-     * @return array
-     */
-    private function validateNickname($nickname)
-    {
-        $errors = [];
-
-        if (!$nickname) {
-            $errors[] = 'Nickname must be specified';
-        }
-
-        if (!preg_match('@^[a-z0-9_-]*$@', strtolower($nickname))) {
-            $errors[] = 'Nickname must be be composed of alphanumeric, underscore and/or hyphen characters';
-        }
-
-        if (mb_strlen($nickname, 'UTF-8')  > 24) {
-            $errors[] = 'Nickname must be under 24 characters';
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $name
-     * @return array
-     */
-    private function validateName($name)
-    {
-        $errors = [];
-
-        if (!$name) {
-            $errors[] = 'Name must be specified';
-        }
-
-        if (!mb_check_encoding($name, 'UTF-8')) {
-            $errors[] = 'Name must be valid UTF-8';
-        }
-
-        if (mb_strlen($name, 'UTF-8') > 48) {
-            $errors[] = 'Name must be 48 characters or under';
         }
 
         return $errors;

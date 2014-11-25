@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -20,6 +21,8 @@ use Slim\Http\Response;
 
 class AdminEditController
 {
+    use ValidatorHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -190,10 +193,10 @@ class AdminEditController
         $identifier = strtolower($request->post('identifier'));
 
         $errors = array_merge(
-            $this->validateKey($request->post('identifier'), $human['identifier']),
-            $this->validateText($request->post('name'), $human['name'], 64),
+            $this->validateSimple($identifier, $human['identifier'], 24, true),
+            $this->validateText($request->post('name'), $human['name'], 64, true),
 
-            $this->validateText($request->post('group'), $human['group'], 128),
+            $this->validateText($request->post('group'), $human['group'], 128, true),
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
 
             $this->validateCommand($request->post('build_command'), $human['build_command']),
@@ -236,62 +239,6 @@ class AdminEditController
                 // If one illegal parameter is found, just return immediately.
                 return $errors;
             }
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $identifier
-     * @param string $friendlyName
-     *
-     * @return array
-     */
-    private function validateKey($identifier, $friendlyName)
-    {
-        $errors = [];
-
-        if (!$identifier) {
-            $errors[] = "$friendlyName is required";
-        }
-
-        if (!preg_match('@^[a-z0-9-.]*$@', $identifier)) {
-            $errors[] = "$friendlyName must be be composed of lowercase alphanumeric, hyphen, and period characters";
-        }
-
-        if (mb_strlen($identifier, 'UTF-8') > 24) {
-            $errors[] = "$friendlyName must be under 24 characters";
-        }
-
-        if (mb_strlen($identifier, 'UTF-8') < 2) {
-            $errors[] = "$friendlyName must be more than 1 character";
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $value
-     * @param string $friendlyName
-     * @param int $length
-     * @param boolean $required
-     *
-     * @return array
-     */
-    private function validateText($value, $friendlyName, $length, $required = true)
-    {
-        $errors = [];
-
-        if ($required && !$value) {
-            $errors[] = sprintf('%s is required', $friendlyName);
-        }
-
-        if (!mb_check_encoding($value, 'UTF-8')) {
-            $errors[] = sprintf('%s must be valid UTF-8', $friendlyName);
-        }
-
-        if (mb_strlen($value, 'UTF-8') > $length) {
-            $errors[] = sprintf('%s must be %d characters or fewer', $friendlyName, $length);
         }
 
         return $errors;
