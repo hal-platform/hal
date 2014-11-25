@@ -121,7 +121,12 @@
                                         <span class="fixed-size-label">
                                             <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment.server.name }}</a>
                                         </span>
-                                        <code>{{ deployment.path }}</code>
+                                        {% if deployment.url %}
+                                            <span class="fixed-size-label">
+                                                <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
+                                            </span>
+                                        {% endif %}
+                                        <code>{{ deployment.path}}</code>
                                     </li>
                                 {% endfor %}
                             </ul>

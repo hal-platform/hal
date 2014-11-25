@@ -21,6 +21,7 @@
                 <tr>
                     <th>Hostname</th>
                     <th>Path</th>
+                    <th>Testing URL</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -30,6 +31,11 @@
                             <td>{{ deployment.server.name }}</td>
                             <td>
                                 {{ deployment.path }}
+                            </td>
+                            <td>
+                                {% if deployment.url %}
+                                    {{ deployment.url.asString() }}
+                                {% endif %}
                             </td>
                             <td>
                                 {% if canUserDelete(currentUser) %}
@@ -51,6 +57,7 @@
                                 </select>
                             </td>
                             <td><input type="text" name="path[]" maxlength="255" class="text-input t75"></td>
+                            <td><input type="text" name="url[]" maxlength="255" class="text-input t75" value=""></td>
                             <td></td>
                         </tr>
                     {% endif %}

@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManager;
+use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
@@ -103,18 +104,23 @@ class AdminAddHandle
 
         $servers = $request->post('server');
         $paths = $request->post('path');
+        $urls = $request->post('url'); // optional
 
         // invalid data, just pop back to page
         if (!$servers || !$paths) {
             $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
         }
 
-        if (!is_array($servers) || !is_array($paths)) {
+        if (!is_array($servers) || !is_array($paths) || !is_array($urls)) {
+            $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
+        }
+
+        if (count($servers) != count($paths) || count($servers) != count($urls)) {
             $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
         }
 
         // filter out invalid deployments
-        $deployments = $this->filterInvalidDeployments($servers, $paths);
+        $deployments = $this->filterInvalidDeployments($servers, $paths, $urls);
 
         // filter out dupes within the submitted data
         $deployments = $this->filterFormDuplicates($deployments);
@@ -124,7 +130,7 @@ class AdminAddHandle
 
         if ($deployments) {
             foreach ($deployments as $deployment) {
-                $this->addDeployment($repo, $deployment[0], $deployment[1]);
+                $this->addDeployment($repo, $deployment[0], $deployment[1], $deployment[2]);
             }
 
             $this->entityManager->flush();
@@ -145,15 +151,17 @@ class AdminAddHandle
      * @param Repository $repo
      * @param Server $server
      * @param string $path
+     * @param HttpUrl $url
      * @return null
      */
-    private function addDeployment(Repository $repo, Server $server, $path)
+    private function addDeployment(Repository $repo, Server $server, $path, HttpUrl $url)
     {
         $deployment = new Deployment;
 
         $deployment->setRepository($repo);
         $deployment->setServer($server);
         $deployment->setPath($path);
+        $deployment->setUrl($url);
 
         $this->entityManager->persist($deployment);
     }
@@ -213,7 +221,7 @@ HTML;
      *
      * @return array
      */
-    private function filterInvalidDeployments(array $servers, array $paths)
+    private function filterInvalidDeployments(array $servers, array $paths, array $urls)
     {
         $deployments = [];
         $serverCache = $this->getServers();
@@ -230,7 +238,19 @@ HTML;
                 continue;
             }
 
-            $deployments[] = [$serverId, $paths[$entry]];
+            if (strlen($urls[$entry]) > 0) {
+                $url = HttpUrl::create($urls[$entry]);
+
+                // skip invalid urls
+                if (!$url instanceof HttpUrl) {
+                    $this->addInvalidDeployment(sprintf('%s:%s', $serverCache[$serverId]->getName(), $paths[$entry]), 'invalid url');
+                    continue;
+                }
+            } else {
+                $url = null;
+            }
+
+            $deployments[] = [$serverId, $paths[$entry], $url];
         }
 
         return $deployments;
@@ -276,6 +296,7 @@ HTML;
         foreach ($deployments as $deployment) {
             $server = $serverCache[$deployment[0]];
             $path = $deployment[1];
+            $url = $deployment[2];
 
             $hash = sprintf('%s:%s', $server->getName(), $path);
 
@@ -286,7 +307,7 @@ HTML;
                 $this->addInvalidDeployment($hash, 'duplicate');
 
             } else {
-                $uniqueDeployments[] = [$server, $path];
+                $uniqueDeployments[] = [$server, $path, $url];
             }
         }
 
