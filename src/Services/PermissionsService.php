@@ -27,8 +27,10 @@ class PermissionsService
     const CACHE_LDAP_GROUP = 'permissions:ldap.group.%s';
     const CACHE_LDAP_USER = 'permissions:ldap.user.%s';
 
+    //// NEW GROUPS (clarified membership)
+
     /**
-     * Keymasters Group
+     * Key Masters Group
      *
      * - Can see the admin page.
      * - Can read, write, update, and delete all entities.
@@ -37,21 +39,23 @@ class PermissionsService
     const DN_KEYMASTER      = 'CN=git-admin-prod,OU=GIT,DC=mi,DC=corp';
 
     /**
-     * Web Core Group
+     * Super Admin Group (Web Core)
      *
      * - Can see the admin page.
      * - Can see the super admin page.
      * - Can read, write, update, and delete all entities.
      * - Can build and push all repositories to all non-production environments.
      */
-    const DN_WEBCORE        = 'CN=IT Team Web Core,OU=GIT,DC=mi,DC=corp';
+    const DN_SUPERADMIN     = 'CN=IT Team Web Core,OU=GIT,DC=mi,DC=corp';
 
     /**
-     * HAL Admin Group
+     * Admin Group
      *
      * - Can read and update entities for all repositories they have been granted access to.
      */
     const DN_ADMIN          = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
+
+    //// OLD GROUPS (to be removed)
 
     /**
      * Super Admin Group
@@ -75,6 +79,8 @@ class PermissionsService
      * Can read, write, and update all entities. Can see the full HAL 9000 UI.
      */
     const DN_ADMIN_PROJECT  = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
+
+    //// END OLD GROUPS
 
     /**
      * Build & Push Permissions Group
