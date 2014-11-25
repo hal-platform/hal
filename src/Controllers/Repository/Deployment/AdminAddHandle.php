@@ -52,6 +52,16 @@ class AdminAddHandle
     private $url;
 
     /**
+     * @type array|null
+     */
+    private $invalid;
+
+    /**
+     * @type array|null
+     */
+    private $serverCache;
+
+    /**
      * @param ServerRepository $serverRepo
      * @param RepositoryRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
@@ -74,6 +84,9 @@ class AdminAddHandle
 
         $this->session = $session;
         $this->url = $url;
+
+        // store invalid deployments here for error handling
+        $this->invalid = [];
     }
 
     /**
@@ -100,22 +113,30 @@ class AdminAddHandle
             $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
         }
 
-        $serverCache = $this->getServerCache();
+        // filter out invalid deployments
+        $deployments = $this->filterInvalidDeployments($servers, $paths);
 
-        if ($deployments = $this->sanitizeDeployments($servers, $paths, $serverCache)) {
+        // filter out dupes within the submitted data
+        $deployments = $this->filterFormDuplicates($deployments);
+
+        // filter out dupes within the stored entities
+        $deployments = $this->filterEntityDuplicates($deployments, $repo);
+
+        if ($deployments) {
             foreach ($deployments as $deployment) {
                 $this->addDeployment($repo, $deployment[0], $deployment[1]);
             }
 
             $this->entityManager->flush();
-            $flash = 'Deployments added.';
+            $this->session->flash('Deployments added.', 'success');
 
         } else {
-            // should have better fault tolerance // error handling
-            $flash = 'New deployments could not be added.';
+            $this->session->flash('New deployments could not be added.', 'error');
         }
 
-        $this->session->addFlash($flash, 'deployment-add');
+        if ($this->invalid) {
+            $this->session->flash($this->buildFlashErrors(), 'warning');
+        }
 
         $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
     }
@@ -138,18 +159,50 @@ class AdminAddHandle
     }
 
     /**
-     * @return Server[]
+     * @param string $deployment
+     * @param string $reason
      */
-    private function getServerCache()
+    private function addInvalidDeployment($deployment, $reason)
     {
-        $servers = [];
-        $serverEntities = $this->serverRepo->findAll();
+        $this->invalid[] = [
+            'deployment' => $deployment,
+            'reason' => $reason
+        ];
+    }
 
-        foreach ($serverEntities as $server) {
-            $servers[$server->getId()] = $server;
+    /**
+     * @return string
+     */
+    private function buildFlashErrors()
+    {
+        $moreflash = '';
+        foreach ($this->invalid as $invalid) {
+            $reason = ($invalid['reason'] === 'duplicate') ? 'Duplicate server' : 'Invalid path';
+            $moreflash .= sprintf('<p><strong>%s:</strong> %s</p>', $reason, $invalid['deployment']);
         }
 
-        return $servers;
+        return <<<HTML
+<p>Some deployments were skipped</p>
+<div class="alert-bar__details">
+$moreflash
+</div>
+HTML;
+    }
+
+    /**
+     * @return Server[]
+     */
+    private function getServers()
+    {
+        if (!$this->serverCache) {
+            $this->serverCache = [];
+
+            foreach ($this->serverRepo->findAll() as $server) {
+                $this->serverCache[$server->getId()] = $server;
+            }
+        }
+
+        return $this->serverCache;
     }
 
     /**
@@ -157,50 +210,52 @@ class AdminAddHandle
      *
      * @param array $servers
      * @param array $paths
-     * @param array $serverCache
+     *
      * @return array
      */
-    private function sanitizeDeployments(array $servers, array $paths, array $serverCache)
+    private function filterInvalidDeployments(array $servers, array $paths)
     {
         $deployments = [];
-        foreach ($servers as $entry => $server) {
+        $serverCache = $this->getServers();
+
+        foreach ($servers as $entry => $serverId) {
             // skip invalid server
-            if (!$server || !isset($serverCache[$server])) {
+            if (!$serverId || !isset($serverCache[$serverId])) {
                 continue;
             }
 
             // skip invalid paths
             if (!isset($paths[$entry]) || substr($paths[$entry], 0, 1) !== '/') {
+                $this->addInvalidDeployment(sprintf('%s:%s', $serverCache[$serverId]->getName(), $paths[$entry]), 'invalid');
                 continue;
             }
 
-            $deployments[] = [$server, $paths[$entry]];
+            $deployments[] = [$serverId, $paths[$entry]];
         }
-
-        // filter out dupes within the submitted data
-        $deployments = $this->filterFormDuplicates($deployments);
-
-        // filter out dupes within the stored entities
-        $deployments = $this->filterEntityDuplicates($deployments, $serverCache);
 
         return $deployments;
     }
 
     /**
      * @param array $deployments
+     *
      * @return array
      */
     private function filterFormDuplicates(array $deployments)
     {
         $uniqueDeployments = [];
         $dupes = [];
+        $serverCache = $this->getServers();
 
         foreach ($deployments as $deployment) {
-            $hash = sprintf('%s:%s', $deployment[0], $deployment[1]);
+            $server = $serverCache[$deployment[0]];
+            $hash = sprintf('%s:%s', $server->getName(), $deployment[1]);
 
             if (!isset($dupes[$hash])) {
                 $uniqueDeployments[] = $deployment;
                 $dupes[$hash] = true;
+            } else {
+                $this->addInvalidDeployment($hash, 'duplicate');
             }
         }
 
@@ -209,18 +264,28 @@ class AdminAddHandle
 
     /**
      * @param array $deployments
-     * @param array $serverCache
+     * @param Repository $repository
+     *
      * @return array
      */
-    private function filterEntityDuplicates(array $deployments, array $serverCache)
+    private function filterEntityDuplicates(array $deployments, Repository $repository)
     {
         $uniqueDeployments = [];
+        $serverCache = $this->getServers();
 
         foreach ($deployments as $deployment) {
             $server = $serverCache[$deployment[0]];
             $path = $deployment[1];
 
-            if (!$this->deploymentRepo->findOneBy(['server' => $server, 'path' => $path])) {
+            $hash = sprintf('%s:%s', $server->getName(), $path);
+
+            if ($this->deploymentRepo->findOneBy(['server' => $server, 'path' => $path])) {
+                $this->addInvalidDeployment($hash, 'duplicate');
+
+            } elseif ($this->deploymentRepo->findOneBy(['server' => $server, 'repository' => $repository])) {
+                $this->addInvalidDeployment($hash, 'duplicate');
+
+            } else {
                 $uniqueDeployments[] = [$server, $path];
             }
         }

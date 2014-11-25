@@ -2,12 +2,12 @@
     {% if session.flash(true) %}
         {% for message in session.flash(false) %}
 
-            {% set alerttype = '' %}
-            {% if (message.type == 'error') %}{% set alerttype = 'alert--error' %}{% endif %}
-            {% if (message.type == 'success') %}{% set alerttype = 'alert--success' %}{% endif %}
-            {% if (message.type == 'warning') %}{% set alerttype = 'alert--warning' %}{% endif %}
+            {% set alerttype = 'alert-bar' %}
+            {% if (message.type == 'error') %}{% set alerttype = 'alert-bar--error' %}{% endif %}
+            {% if (message.type == 'success') %}{% set alerttype = 'alert-bar--success' %}{% endif %}
+            {% if (message.type == 'warning') %}{% set alerttype = 'alert-bar--warning' %}{% endif %}
 
-            <div class="alert-bar {{ alerttype }}">
+            <div class="{{ alerttype }}">
                 {{ message|raw }}
             </div>
         {% endfor %}

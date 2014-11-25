@@ -6,6 +6,7 @@
     <h2><b>{{ repository.key }}</b> Deployment Relationships</h2>
 
     <p>Deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.</p>
+    <p>Paths must be absolute and begin with a forward slash (/).</p>
 
     {% if environments %}
         {% for environment in environments %}
@@ -34,11 +35,6 @@
                                 {% if canUserDelete(currentUser) %}
                                 <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repoId: deployment.repository.id, id: deployment.id}) }}">Remove</a>
                                 {% endif %}
-                                {# @todo add edit functionality
-                                {% if isUserAdmin(currentUser) %}
-                                    <a href="{{ urlFor('repository.deployment.admin.edit', {repoId: repository.id, id: deployment.id}) }}">Edit</a>
-                                {% endif %}
-                                #}
                             </td>
                         </tr>
                     {% endfor %}

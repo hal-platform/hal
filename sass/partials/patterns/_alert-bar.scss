@@ -1,4 +1,4 @@
-[class*="alert-bar"] {
+[class="alert-bar"], [class^="alert-bar--"] {
     background-color: $bright-blue;
     padding: 0 msem(-9);
     text-align: center;
@@ -31,10 +31,18 @@
     background-color: $success-color;
 }
 
-[class*="alert-bar"] pre {
+[class="alert-bar"] pre, [class^="alert-bar--"] pre {
     text-align: left;
     background-color: transparent;
     color: $text-color;
     margin-top: msem(-5);
     margin-bottom: msem(-5);
+}
+
+.alert-bar__details {
+    background: rgba(255, 255, 255, 0.75);
+    margin: 1em;
+    margin-bottom: 0;
+    padding: 5px;
+    text-align: left;
 }
