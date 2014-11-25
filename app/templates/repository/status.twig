@@ -12,27 +12,29 @@
 
     {# example display of servers by environment #}
     {% for env, statuses in environments %}
-        <h3>{{ env }}</h3>
-        <ul class="list--bare cards cards--{{ env }}">
-            {% for status in statuses %}
+        {% if statuses %}
+            <h3>{{ env }}</h3>
+            <ul class="list--bare cards cards--{{ env }}">
+                {% for status in statuses %}
 
-                {# Determine the active push #}
-                {% if status.latest.status in ['Waiting', 'Pushing'] %}
-                    {% set activePush = status.latest %}
-                {% elseif status.success %}
-                    {% set activePush = status.success %}
-                {% endif %}
+                    {# Determine the active push #}
+                    {% if status.latest.status in ['Waiting', 'Pushing'] %}
+                        {% set activePush = status.latest %}
+                    {% elseif status.success %}
+                        {% set activePush = status.success %}
+                    {% endif %}
 
-                {# Determine if the is a history to rollback to, or user is allowed to #}
-                {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
-                    {% set canRollback = true %}
-                {% else %}
-                    {% set canRollback = false %}
-                {% endif %}
+                    {# Determine if the is a history to rollback to, or user is allowed to #}
+                    {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
+                        {% set canRollback = true %}
+                    {% else %}
+                        {% set canRollback = false %}
+                    {% endif %}
 
-                <li>{{ macros.pushCard(repo, status.deploy.server, activePush, canRollback) }}</li>
-            {% endfor %}
-        </ul>
+                    <li>{{ macros.pushCard(repo, status.deploy.server, activePush, canRollback) }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% endfor %}
 
     <p><a class="btn--toggles" href="{{ urlFor('repository', {id: repo.id}) }}">View Repository Details</a></p>

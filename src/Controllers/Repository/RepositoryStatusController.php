@@ -9,16 +9,20 @@ namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class RepositoryStatusController
 {
+    use SortingHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -40,29 +44,29 @@ class RepositoryStatusController
     private $buildRepo;
 
     /**
-     * @type PushRepository
+     * @type DeploymentRepository
      */
-    private $pushRepo;
+    private $deploymentRepo;
 
     /**
      * @param TemplateInterface $template
      * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
-     * @param PushRepository $pushRepo
+     * @param DeploymentRepository $deploymentRepo
      */
     public function __construct(
         TemplateInterface $template,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
-        PushRepository $pushRepo
+        DeploymentRepository $deploymentRepo
     ) {
         $this->template = $template;
         $this->em = $em;
         $this->repoRepo = $repoRepo;
         $this->buildRepo = $buildRepo;
-        $this->pushRepo = $pushRepo;
+        $this->deploymentRepo = $deploymentRepo;
     }
 
     /**
@@ -73,80 +77,91 @@ class RepositoryStatusController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $repo = $this->repoRepo->find($params['id']);
-
-        if (!$repo) {
+        if (!$repo = $this->repoRepo->find($params['id'])) {
             return call_user_func($notFound);
         }
 
         $builds = $this->buildRepo->findBy(['repository' => $repo], ['created' => 'DESC'], 10);
 
-        $statuses = $this->getDeploymentsWithStatus($repo);
+        $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
+        $environments = $this->environmentalizeDeployments($deployments);
 
-        // seperate by environment
-        $envs = [];
-
-        foreach ($statuses as $status) {
-
-            $env = $status['environment']->getKey();
-
-            if (!isset($envs[$env])) {
-                $envs[$env] = [];
+        foreach ($environments as &$deployments) {
+            // i am dead inside
+            foreach ($deployments as &$deployment) {
+                $deployment = array_merge([
+                    'deploy' => $deployment
+                ], $this->getRecentPushes($deployment));
             }
-
-            $envs[$env][] = $status;
         }
 
         $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
-            'statuses' => $statuses,
-            'environments' => $envs
+            'environments' => $environments
         ]);
 
         $response->setBody($rendered);
     }
 
     /**
-     * Get an array of deployments and latest push for each
+     * Get the latest and most recent successful push for a deployment
      *
-     * @param Repository $repo
+     * @param Deployment $deployment
+     *
      * @return array
      */
-    private function getDeploymentsWithStatus(Repository $repo)
+    private function getRecentPushes(Deployment $deployment)
     {
-        $dql = 'SELECT d FROM QL\Hal\Core\Entity\Deployment d JOIN d.server s JOIN s.environment e WHERE d.repository = :repo ORDER BY e.order ASC';
+        // get last attempted push
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.id DESC';
         $query = $this->em->createQuery($dql)
-            ->setParameter('repo', $repo);
-        $deployments = $query->getResult();
+            ->setMaxResults(1)
+            ->setParameter('deploy', $deployment);
+        $latest = $query->getOneOrNullResult();
 
-        // sort server by natural name here
+        // get last successful push
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.end DESC';
+        $query = $this->em->createQuery($dql)
+            ->setMaxResults(1)
+            ->setParameter('deploy', $deployment)
+            ->setParameter('status', 'Success');
+        $success = $query->getOneOrNullResult();
 
-        $statuses = [];
-        foreach ($deployments as $deploy) {
-            // get last attempted push
-            $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.id DESC';
-            $query = $this->em->createQuery($dql)
-                ->setMaxResults(1)
-                ->setParameter('deploy', $deploy);
-            $latest = $query->getOneOrNullResult();
+        return [
+            'latest' => $latest,
+            'success' => $success
+        ];
+    }
 
-            // get last successful push
-            $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.end DESC';
-            $query = $this->em->createQuery($dql)
-                ->setMaxResults(1)
-                ->setParameter('deploy', $deploy)
-                ->setParameter('status', 'Success');
-            $success = $query->getOneOrNullResult();
+    /**
+     * @param Deployment[] $deployments
+     * @return array
+     */
+    private function environmentalizeDeployments(array $deployments)
+    {
+        $environments = [
+            'dev' => [],
+            'test' => [],
+            'beta' => [],
+            'prod' => []
+        ];
 
-            $statuses[] = [
-                'deploy' => $deploy,
-                'latest' => $latest,
-                'success' => $success,
-                'environment' => $deploy->getServer()->getEnvironment()
-            ];
+        foreach ($deployments as $deployment) {
+            $env = $deployment->getServer()->getEnvironment()->getKey();
+
+            if (!array_key_exists($env, $environments)) {
+                $environments[$env] = [];
+            }
+
+            $environments[$env][] = $deployment;
         }
 
-        return $statuses;
+        $sorter = $this->deploymentSorter();
+        foreach ($environments as &$env) {
+            usort($env, $sorter);
+        }
+
+        return $environments;
     }
 }

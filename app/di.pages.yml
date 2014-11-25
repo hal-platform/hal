@@ -137,7 +137,7 @@ services:
       - @doctrine.em
       - @repository.repo
       - @build.repo
-      - @push.repo
+      - @deployment.repo
   repository.status.twig:
     parent: 'twig.template'
     calls: [['setTemplate', ['repository/status.twig']]]

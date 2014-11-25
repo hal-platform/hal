@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Repository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Services\PermissionsService;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -17,6 +18,8 @@ use Slim\Http\Response;
 
 class RepositoryController
 {
+    use SortingHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -67,11 +70,11 @@ class RepositoryController
             return $notFound();
         }
 
-        $deployments = $this->deploymentRepo->findBy(['repository' => $repo], ['server' => 'ASC']);
+        $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
 
         $rendered = $this->template->render([
             'repository' => $repo,
-            'deployment_environments' => $this->sort($deployments),
+            'deployment_environments' => $this->environmentalizeDeployments($deployments),
             'deployment_count' => count($deployments),
             'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey())
         ]);
@@ -83,7 +86,7 @@ class RepositoryController
      * @param Deployment[] $deployments
      * @return array
      */
-    private function sort(array $deployments)
+    private function environmentalizeDeployments(array $deployments)
     {
         $environments = [
             'dev' => [],
@@ -100,6 +103,11 @@ class RepositoryController
             }
 
             $environments[$env][] = $deployment;
+        }
+
+        $sorter = $this->deploymentSorter();
+        foreach ($environments as &$env) {
+            usort($env, $sorter);
         }
 
         return $environments;
