@@ -2,10 +2,10 @@
 
 {% set page_title = repository.key %}
 
-{% set page_title = 'Edit Repository: '~repository.key %}
+{% set page_title = 'Edit Repository: ' ~ repository.key %}
 
 {% block content %}
-    <h2>Edit <strong>{{ repository.key }}</strong> repository</h2>
+    <h2>Edit Repository</h2>
 
     <div class="form-wrapper">
         {% if errors %}
@@ -19,16 +19,17 @@
         <form action="{{ urlFor('repository.admin.edit.handle', {id: repository.id}) }}" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="key">Key <small class="additional">Lowercase, no spaces, no underscores.</small></label>
-                    <input type="text" name="key" id="key" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                    <label for="name">Name</label>
+                    <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
                 </li>
                 <li>
-                    <label for="title">Title</label>
-                    <input type="text" name="title" id="title" maxlength="128" required value="{{ form.description }}" class="text-input">
+                    <label for="identifier">Identifier</label>
+                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
                 </li>
+
                 <li>
                     <p>Group</p>
-                    <ul class="check-list">
+                    <ul class="radio-grid--form">
                     {% for group in groups %}
                         {% set checked = '' %}
                         {% if form.group == group.id %}
@@ -45,38 +46,33 @@
 
                 <li>
                     <h3 class="zeta label">Github Source</h3>
-                    {{ repository.githubUser }}/{{ repository.githubRepo }}
-                    <span class="icon">
-                        <svg viewBox="0 0 32 32">
-                            <use xlink:href="#github"></use>
-                        </svg>
-                    </span>
+                    <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
+                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                    <small class="additional">Please contact a HAL administrator to change this setting.</small>
                 </li>
 
                 <li>
-                    <label for="notification_email">Notification E-mail Address <small class="additional">Notifications are sent on push or build completion.</small></label>
-                    <input type="email" name="notification_email" id="notification_email" size="30" maxlength="128" required value="{{ form.notification_email }}" class="text-input">
+                    <label for="notification_email">Notification E-mail Address</label>
+                    <input type="email" name="notification_email" id="notification_email" maxlength="128" value="{{ form.notification_email }}" class="text-input">
                 </li>
                 <li>
                     <label for="build_command">Build Command <small class="additional">Will be run on build server to build application.</small></label>
-                    <input type="text" name="build_command" id="build_command" size="30" maxlength="128" value="{{ form.build_command }}" class="text-input">
-                </li>
-                <li>
-                    <label for="pre_command">Pre Push Command <small class="additional">Will be run on remote server before code is pushed.</small></label>
-                    <input type="text" name="pre_command" id="pre_command" size="30" maxlength="128" value="{{ form.pre_command }}" class="text-input">
+                    <input type="text" name="build_command" id="build_command" maxlength="128" value="{{ form.build_command }}" class="text-input">
                 </li>
                 <li>
                     <label for="post_command">Post Push Command <small class="additional">Will be run on remote server after code is pushed.</small></label>
-                    <input type="text" name="post_command" id="post_command" size="30" maxlength="128" value="{{ form.post_command }}" class="text-input">
+                    <input type="text" name="post_command" id="post_command" maxlength="128" value="{{ form.post_command }}" class="text-input">
                 </li>
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Save">
-
-                    {# secondary actions #}
-                    <a class="secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
-                </li>
+                <li>Please contact a HAL administrator to use "pre push" or "build transform" commands.</li>
             </ul>
+
+            <div>
+                {# primary action #}
+                <input class="btn" type="submit" value="Save">
+
+                {# secondary actions #}
+                <a class="secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
+            </div>
         </form>
     </div>
 {% endblock %}

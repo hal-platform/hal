@@ -16,12 +16,21 @@
         <form action="{{ urlFor('repository.admin.add.handle') }}" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="key">Key <small class="additional">Lowercase, no spaces, no underscores.</small></label>
-                    <input type="text" name="key" id="key" maxlength="24" required value="{{ form.nickname }}" class="text-input">
+                    <label for="name">
+                        Name
+                        <small class="additional">Display title for this repository such as <span>"HAL 9000"</span> or <span>"My Secret Project"</span>.</small>
+                    </label>
+                    <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
                 </li>
                 <li>
-                    <label for="title">Title</label>
-                    <input name="title" id="title" maxlength="128" required value="{{ form.description }}" class="text-input">
+                    <label for="identifier">
+                        Identifier
+                        <small class="additional">
+                            Unique identifier such as <span>"hal9000"</span> or <span>"my-project"</span>.
+                            <br>Alphanumeric, hyphen, and period characters only.
+                        </small>
+                    </label>
+                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
                 </li>
                 <li>
                     <label>Group</label>
@@ -42,32 +51,30 @@
 
                 <li>
                     <label for="github_user">GitHub Enterprise User or Organization</label>
-                    <input type="text" name="github_user" id="github_user" size="48" maxlength="48" required value="{{ form.github_user }}" class="text-input">
+                    <input type="text" name="github_user" id="github_user" maxlength="48" required value="{{ form.github_user }}" class="text-input">
                 </li>
                 <li>
                     <label for="github_repo">GitHub Enterprise Repository</label>
-                    <input type="text" name="github_repo" id="github_repo" size="48" maxlength="48" required value="{{ form.github_repo }}" class="text-input">
+                    <input type="text" name="github_repo" id="github_repo" maxlength="48" required value="{{ form.github_repo }}" class="text-input">
                 </li>
                 <li>
-                    <label for="notification_email">Notification E-mail Address <small class="additional">Notifications are sent on push or build completion.</small></label>
-                    <input type="email" name="notification_email" id="notification_email" size="30" maxlength="128" required value="{{ form.notification_email }}" class="text-input">
+                    <label for="notification_email">Notification Email Address <small class="additional">Optional. Notifications are sent on push or build completion.</small></label>
+                    <input type="email" name="notification_email" id="notification_email" maxlength="128" value="{{ form.notification_email }}" class="text-input">
                 </li>
                 <li>
                     <label for="build_command">Build Command <small class="additional">Will be run on build server to build application.</small></label>
-                    <input type="text" name="build_command" id="build_command" size="30" maxlength="128" value="{{ form.build_command }}" class="text-input">
+                    <input type="text" name="build_command" id="build_command" maxlength="128" value="{{ form.build_command }}" class="text-input">
                 </li>
-                <li>
-                    <label for="post_command">Post Push Command <small class="additional">Will be run on remote server after code is pushed.</small></label>
-                    <input type="text" name="post_command" id="post_command" size="30" maxlength="128" value="{{ form.post_command }}" class="text-input">
-                </li>
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Add Repository">
-
-                    {# secondary actions #}
-                    <a class="secondary-action" href="{{ urlFor('repositories') }}">Cancel</a>
-                </li>
+                <li>More commands can be entered after the repository is created.</li>
             </ul>
+
+            <div>
+                {# primary action #}
+                <input class="btn" type="submit" value="Add Repository">
+
+                {# secondary actions #}
+                <a class="secondary-action" href="{{ urlFor('repositories') }}">Cancel</a>
+            </div>
         </form>
     </div>
 {% endblock %}

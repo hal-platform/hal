@@ -1,9 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Server: '~server.name %}
+{% set page_title = 'Server: ' ~ server.name %}
 
 {% block content %}
-    <h2><strong>{{ server.name }}</strong> server</h2>
+    <h2>Server Information</h2>
+
+    <h3>Hostname</h3>
+    <p>{{ server.name }}</p>
 
     <h3>Environment</h3>
     <p>{{ server.environment.key }}</p>
@@ -11,7 +14,12 @@
     <h3>Repository deployments:</h3>
     <ul>
         {% for deployment in deployments %}
-            <li><a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.key }}</a> ({{ deployment.path }})</li>
+            <li>
+                <span class="fixed-size-label">
+                    <a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.key }}</a>
+                </span>
+                <code>{{ deployment.path }}</code>
+            </li>
         {% else %}
             <li>There are no deployments associated with this server.</li>
         {% endfor %}

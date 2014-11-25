@@ -107,12 +107,12 @@ class AdminEditController
 
         $renderContext = [
             'form' => [
-                'key' => $request->post('key') ?: $repo->getKey(),
-                'title' => $request->post('title') ?: $repo->getDescription(),
+                'identifier' => $request->post('identifier') ?: $repo->getKey(),
+                'name' => $request->post('name') ?: $repo->getDescription(),
                 'group' => $request->post('group') ?: $repo->getGroup()->getId(),
                 'notification_email' => $request->post('notification_email') ?: $repo->getEmail(),
+
                 'build_command' => $request->post('build_command') ?: $repo->getBuildCmd(),
-                'pre_command' => $request->post('pre_command') ?: $repo->getPrePushCmd(),
                 'post_command' => $request->post('post_command') ?: $repo->getPostPushCmd()
             ],
             'repository' => $repo,
@@ -129,13 +129,13 @@ class AdminEditController
             if (!$renderContext['errors']) {
                 $repository = $this->handleFormSubmission($request, $repo, $group);
 
-                $this->session->addFlash('Repository updated successfully.', 'repository-edit');
+                $this->session->flash('Repository updated successfully.', 'success');
                 return $this->url->redirectFor('repository', ['id' => $repo->getId()]);
             }
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 
     /**
@@ -146,21 +146,19 @@ class AdminEditController
      */
     private function handleFormSubmission(Request $request, Repository $repository, Group $group)
     {
-        $key = $request->post('key');
-        $title = $request->post('title');
+        $identifier = strtolower($request->post('identifier'));
+        $name = $request->post('name');
         $email = $request->post('notification_email');
 
         $buildCommand = $request->post('build_command');
-        $preCommand = $request->post('pre_command');
         $postCommand = $request->post('post_command');
 
-        $repository->setKey($key);
-        $repository->setDescription($title);
+        $repository->setKey($identifier);
+        $repository->setDescription($name);
         $repository->setGroup($group);
         $repository->setEmail($email);
 
         $repository->setBuildCmd($buildCommand);
-        $repository->setPrePushCmd($preCommand);
         $repository->setPostPushCmd($postCommand);
 
         $this->entityManager->merge($repository);
@@ -181,31 +179,31 @@ class AdminEditController
         }
 
         $human = [
-            'key' => 'Key',
-            'title' => 'Title',
+            'identifier' => 'Identifier',
+            'name' => 'Name',
             'group' => 'Group',
-            'notification_email' => 'Notification E-mail',
+            'notification_email' => 'Notification Email',
             'build_command' => 'Build Command',
-            'pre_command' => 'Pre Push Command',
             'post_command' => 'Post Push Command'
         ];
 
+        $identifier = strtolower($request->post('identifier'));
+
         $errors = array_merge(
-            $this->validateKey($request->post('key')),
-            $this->validateText($request->post('title'), $human['title'], 255),
+            $this->validateKey($request->post('identifier'), $human['identifier']),
+            $this->validateText($request->post('name'), $human['name'], 64),
 
             $this->validateText($request->post('group'), $human['group'], 128),
-            $this->validateText($request->post('notification_email'), $human['notification_email'], 128),
+            $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
 
             $this->validateCommand($request->post('build_command'), $human['build_command']),
-            $this->validateCommand($request->post('pre_command'), $human['post_command']),
             $this->validateCommand($request->post('post_command'), $human['post_command'])
         );
 
-        // Only check for duplicate nickname if it is being changed
-        if (!$errors && $request->post('nickname') != $repository->getKey()) {
-            if ($repo = $this->repoRepo->findOneBy(['key' => $request->post('nickname')])) {
-                $errors[] = 'A repository with this nickname already exists.';
+        // Only check for duplicate identifier if it is being changed
+        if (!$errors && $identifier != $repository->getKey()) {
+            if ($repo = $this->repoRepo->findOneBy(['key' => $identifier])) {
+                $errors[] = 'A repository with this identifier already exists.';
             }
         }
 
@@ -213,7 +211,9 @@ class AdminEditController
     }
 
     /**
-     * @param string $nickname
+     * @param string $value
+     * @param string $friendlyName
+     *
      * @return array
      */
     private function validateCommand($value, $friendlyName)
@@ -242,27 +242,29 @@ class AdminEditController
     }
 
     /**
-     * @param string $key
+     * @param string $identifier
+     * @param string $friendlyName
+     *
      * @return array
      */
-    private function validateKey($key)
+    private function validateKey($identifier, $friendlyName)
     {
         $errors = [];
 
-        if (!$key) {
-            $errors[] = 'Nickname is required';
+        if (!$identifier) {
+            $errors[] = "$friendlyName is required";
         }
 
-        if (!preg_match('@^[a-z0-9-]*$@', $key)) {
-            $errors[] = 'Nickname must be be composed of lowercase alphanumeric and/or hyphen characters';
+        if (!preg_match('@^[a-z0-9-.]*$@', $identifier)) {
+            $errors[] = "$friendlyName must be be composed of lowercase alphanumeric, hyphen, and period characters";
         }
 
-        if (mb_strlen($key, 'UTF-8') > 24) {
-            $errors[] = 'Nickname must be under 24 characters';
+        if (mb_strlen($identifier, 'UTF-8') > 24) {
+            $errors[] = "$friendlyName must be under 24 characters";
         }
 
-        if (mb_strlen($key, 'UTF-8') < 2) {
-            $errors[] = 'Nickname must be more than 1 character';
+        if (mb_strlen($identifier, 'UTF-8') < 2) {
+            $errors[] = "$friendlyName must be more than 1 character";
         }
 
         return $errors;
@@ -273,6 +275,7 @@ class AdminEditController
      * @param string $friendlyName
      * @param int $length
      * @param boolean $required
+     *
      * @return array
      */
     private function validateText($value, $friendlyName, $length, $required = true)

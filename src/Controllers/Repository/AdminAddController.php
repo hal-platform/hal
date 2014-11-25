@@ -108,8 +108,8 @@ class AdminAddController
     {
         $renderContext = [
             'form' => [
-                'key' => $request->post('key'),
-                'title' => $request->post('title'),
+                'identifier' => $request->post('identifier'),
+                'name' => $request->post('name'),
                 'group' => $request->post('group'),
                 'github_user' => $request->post('github_user'),
                 'github_repo' => $request->post('github_repo'),
@@ -132,13 +132,13 @@ class AdminAddController
                 $repository = $this->handleFormSubmission($request, $group);
 
                 $message = sprintf('Repository "%s" added.', $repository->getKey());
-                $this->session->addFlash($message, 'repository-add');
+                $this->session->flash($message, 'success');
                 return $this->url->redirectFor('repositories');
             }
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->body($rendered);
+        $response->setBody($rendered);
     }
 
     /**
@@ -148,16 +148,16 @@ class AdminAddController
      */
     private function handleFormSubmission(Request $request, Group $group)
     {
-        $key = $request->post('key');
-        $title = $request->post('title');
+        $identifier = strtolower($request->post('identifier'));
+        $name = $request->post('name');
         $email = $request->post('notification_email');
 
         $user = $request->post('github_user');
         $repo = $request->post('github_repo');
 
         $repository = new Repository;
-        $repository->setKey($key);
-        $repository->setDescription($title);
+        $repository->setKey($identifier);
+        $repository->setDescription($name);
         $repository->setGroup($group);
         $repository->setEmail($email);
 
@@ -166,12 +166,6 @@ class AdminAddController
 
         if ($buildCommand = $request->post('build_command')) {
             $repository->setBuildCmd($buildCommand);
-        }
-        if ($preCommand = $request->post('pre_command')) {
-            $repository->setPrePushCmd($preCommand);
-        }
-        if ($postCommand = $request->post('post_command')) {
-            $repository->setPostPushCmd($postCommand);
         }
 
         $this->entityManager->persist($repository);
@@ -191,43 +185,43 @@ class AdminAddController
         }
 
         $human = [
-            'key' => 'Key',
-            'title' => 'Title',
+            'identifier' => 'Identifier',
+            'name' => 'Name',
             'group' => 'Group',
             'github_user' => 'Github User',
             'github_repo' => 'Github Repository',
-            'notification_email' => 'Notification E-mail',
-            'build_command' => 'Build Command',
-            'pre_command' => 'Pre Push Command',
-            'post_command' => 'Post Push Command'
+            'notification_email' => 'Notification Email',
+            'build_command' => 'Build Command'
         ];
 
+        $identifier = strtolower($request->post('identifier'));
+
         $errors = array_merge(
-            $this->validateKey($request->post('key')),
-            $this->validateText($request->post('title'), $human['description'], 255),
+            $this->validateKey($identifier, $human['identifier']),
+            $this->validateText($request->post('name'), $human['name'], 64),
 
             $this->validateText($request->post('group'), $human['group'], 128),
             $this->validateText($request->post('github_user'), $human['github_user'], 48),
             $this->validateText($request->post('github_repo'), $human['github_repo'], 48),
-            $this->validateText($request->post('notification_email'), $human['notification_email'], 128),
+            $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
 
             $this->validateCommand($request->post('build_command'), $human['build_command']),
-            $this->validateCommand($request->post('pre_command'), $human['post_command']),
-            $this->validateCommand($request->post('post_command'), $human['post_command']),
 
             $this->validateGithubRepo($request->post('github_user'), $request->post('github_repo'))
         );
 
         // check for duplicate nickname
-        if (!$errors && $this->repoRepo->findOneBy(['key' => $request->post('nickname')])) {
-            $errors[] = 'A repository with this nickname already exists.';
+        if (!$errors && $this->repoRepo->findOneBy(['key' => $identifier])) {
+            $errors[] = 'A repository with this identifier already exists.';
         }
 
         return $errors;
     }
 
     /**
-     * @param string $nickname
+     * @param string $value
+     * @param string $friendlyName
+     *
      * @return array
      */
     private function validateCommand($value, $friendlyName)
@@ -258,6 +252,7 @@ class AdminAddController
     /**
      * @param string $user
      * @param string $repo
+     *
      * @return array
      */
     private function validateGithubRepo($user, $repo)
@@ -276,27 +271,29 @@ class AdminAddController
     }
 
     /**
-     * @param string $key
+     * @param string $identifier
+     * @param string $friendlyName
+     *
      * @return array
      */
-    private function validateKey($key)
+    private function validateKey($identifier, $friendlyName)
     {
         $errors = [];
 
-        if (!$key) {
-            $errors[] = 'Nickname is required';
+        if (!$identifier) {
+            $errors[] = "$friendlyName is required";
         }
 
-        if (!preg_match('@^[a-z0-9-]*$@', $key)) {
-            $errors[] = 'Nickname must be be composed of lowercase alphanumeric and/or hyphen characters';
+        if (!preg_match('@^[a-z0-9-.]*$@', $identifier)) {
+            $errors[] = "$friendlyName must be be composed of lowercase alphanumeric, hyphen, and period characters";
         }
 
-        if (mb_strlen($key, 'UTF-8') > 24) {
-            $errors[] = 'Nickname must be under 24 characters';
+        if (mb_strlen($identifier, 'UTF-8') > 24) {
+            $errors[] = "$friendlyName must be under 24 characters";
         }
 
-        if (mb_strlen($key, 'UTF-8') < 2) {
-            $errors[] = 'Nickname must be more than 1 character';
+        if (mb_strlen($identifier, 'UTF-8') < 2) {
+            $errors[] = "$friendlyName must be more than 1 character";
         }
 
         return $errors;
@@ -307,6 +304,7 @@ class AdminAddController
      * @param string $friendlyName
      * @param int $length
      * @param boolean $required
+     *
      * @return array
      */
     private function validateText($value, $friendlyName, $length, $required = true)

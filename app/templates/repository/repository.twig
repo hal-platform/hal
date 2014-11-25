@@ -3,46 +3,20 @@
 {% set page_title = repository.key %}
 
 {% block content %}
-    <h2 class="mbn"><b>{{ repository.key }}</b> repository details</h2>
+    <h2>Repository Information</h2>
 
     <div class="details-box">
         <dl class="split--left">
-            <dt class="split--left__title">
-                Description
-            </dt>
-            <dd class="split--left__value">
-                {{ repository.description }}
-            </dd>
-            <dt class="split--left__title">
-                Github Source
-            </dt>
+            <dt class="split--left__title">Identifier</dt>
+            <dd class="split--left__value">{{ repository.key }}</dd>
+
+            <dt class="split--left__title">Name</dt>
+            <dd class="split--left__value">{{ repository.description }}</dd>
+
+            <dt class="split--left__title">Github Source</dt>
             <dd class="split--left__value">
                 <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
                 <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
-            </dd>
-            <dt class="split--left__title">
-                Notification E-mail
-            </dt>
-            <dd class="split--left__value">
-                {{ repository.email }}
-            </dd>
-            <dt class="split--left__title">
-                Build Command
-            </dt>
-            <dd class="split--left__value">
-                {{ repository.buildCmd ?: 'No command entered.' }}
-            </dd>
-            <dt class="split--left__title">
-                Pre-Push Command
-            </dt>
-            <dd class="split--left__value">
-                {{ repository.prePushCmd ?: 'No command entered.' }}
-            </dd>
-            <dt class="split--left__title">
-                Post-Push Command
-            </dt>
-            <dd class="split--left__value">
-                {{ repository.postPushCmd ?: 'No command entered.' }}
             </dd>
         </dl>
 
@@ -57,6 +31,43 @@
         {% if isUserAdmin(currentUser) and not deployments and canUserDelete(currentUser) %}
             <a class="btn--destructive secondary-action" href="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}">Remove Repository</a>
         {% endif %}
+    </div>
+
+    <h3>Notifications</h3>
+    <div class="details-box">
+        <dl class="split--left mbn">
+            <dt class="split--left__title">Email</dt>
+            <dd class="split--left__value">{{ repository.email ?: 'None' }}</dd>
+        </dl>
+    </div>
+
+    <h3>Commands</h3>
+    <div class="details-box">
+        <dl class="split--left mbn">
+            <dt class="split--left__title">
+                <svg class="icon" viewBox="0 0 32 32" title="On build"><use xlink:href="#code"></use></svg>
+                Build Command
+            </dt>
+            <dd class="split--left__value">{{ repository.buildCmd ?: 'No command entered.' }}</dd>
+
+            <dt class="split--left__title">
+                <svg class="icon" viewBox="0 0 32 32" title="On push"><use xlink:href="#swap-2"></use></svg>
+                Pre-Push Command
+            </dt>
+            <dd class="split--left__value">{{ repository.prePushCmd ?: 'No command entered.' }}</dd>
+
+            <dt class="split--left__title">
+                <svg class="icon" viewBox="0 0 32 32" title="On push"><use xlink:href="#swap-2"></use></svg>
+                Build Transform Command
+            </dt>
+            <dd class="split--left__value">{{ repository.buildTransformCmd ?: 'No command entered.' }}</dd>
+
+            <dt class="split--left__title">
+                <svg class="icon" viewBox="0 0 32 32" title="On push"><use xlink:href="#swap-2"></use></svg>
+                Post-Push Command
+            </dt>
+            <dd class="split--left__value">{{ repository.postPushCmd ?: 'No command entered.' }}</dd>
+        </dl>
     </div>
 
     <h3>Permissions</h3>
