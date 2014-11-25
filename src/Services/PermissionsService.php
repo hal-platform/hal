@@ -28,6 +28,32 @@ class PermissionsService
     const CACHE_LDAP_USER = 'permissions:ldap.user.%s';
 
     /**
+     * Keymasters Group
+     *
+     * - Can see the admin page.
+     * - Can read, write, update, and delete all entities.
+     * - Can build and push all repositories to all environments.
+     */
+    const DN_KEYMASTER      = 'CN=git-admin-prod,OU=GIT,DC=mi,DC=corp';
+
+    /**
+     * Web Core Group
+     *
+     * - Can see the admin page.
+     * - Can see the super admin page.
+     * - Can read, write, update, and delete all entities.
+     * - Can build and push all repositories to all non-production environments.
+     */
+    const DN_WEBCORE        = 'CN=IT Team Web Core,OU=GIT,DC=mi,DC=corp';
+
+    /**
+     * HAL Admin Group
+     *
+     * - Can read and update entities for all repositories they have been granted access to.
+     */
+    const DN_ADMIN          = 'CN=git-admin,OU=GIT,DC=mi,DC=corp';
+
+    /**
      * Super Admin Group
      *
      * Can read, write, update, and delete all entities. Can build and push all repositories in all environments. Can
@@ -144,6 +170,34 @@ class PermissionsService
     ####################################################################################################################
     # APPLICATION RULES
     ####################################################################################################################
+
+    /**
+     * Check if a user is allowed to perform super admin functions
+     *
+     * @param LdapUser|string $user
+     * @return bool
+     */
+    public function allowSuperAdmin($user)
+    {
+        $user = $this->getUser($user);
+
+        if (!($user instanceof LdapUser)) {
+            // user not found in ldap
+            return false;
+        }
+
+        // Super Admin
+        if ($this->isUserInGroup($user, $this->generateSuperAdminDn())) {
+            return true;
+        }
+
+        // God Override
+        if ($user->commonId() == $this->god) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Check if user is allowed to view admin pages

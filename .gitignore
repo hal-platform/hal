@@ -16,6 +16,8 @@ atlassian-ide-plugin.xml
 /public/css/
 /public/img/
 /public/js/
+npm-debug.log
+public/style.css
 
 # package installation
 /bower_components/

@@ -12,7 +12,7 @@ use QL\Hal\Session;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Twig_Template;
+use QL\Panthor\TemplateInterface;
 
 /**
  * A bouncer that checks to see if the current user is a super admin
@@ -42,11 +42,15 @@ class SuperAdminBouncer
     /**
      * @param Session $session
      * @param PermissionsService $permissions
-     * @param Twig_Template $twig
+     * @param TemplateInterface $twig
      * @param LoginBouncer $loginBouncer
      */
-    public function __construct(Session $session, PermissionsService $permissions, Twig_Template $twig, LoginBouncer $loginBouncer)
-    {
+    public function __construct(
+        Session $session,
+        PermissionsService $permissions,
+        TemplateInterface $twig,
+        LoginBouncer $loginBouncer
+    ) {
         $this->session = $session;
         $this->permissions = $permissions;
         $this->twig = $twig;
@@ -67,7 +71,7 @@ class SuperAdminBouncer
         call_user_func($this->loginBouncer, $request, $response);
 
         $user = $this->session->get('user');
-        if ($this->permissions->allowAdmin($user)) {
+        if ($this->permissions->allowSuperAdmin($user)) {
             return;
         }
 

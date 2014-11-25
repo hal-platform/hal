@@ -217,7 +217,7 @@ services:
 
   # Bounce non-super-admins
   superadmin.bouncer:
-    class: 'QL\Hal\Bouncers\AdminBouncer'
+    class: 'QL\Hal\Bouncers\SuperAdminBouncer'
     arguments:
       - @session
       - @permissions
