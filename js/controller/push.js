@@ -1,4 +1,6 @@
-define(['modules/update-pushes'], function(pushUpdater) {
+define(['modules/update-pushes', 'modules/event-log'], function(pushUpdater, eventLog) {
     pushUpdater.mode = 'push';
     pushUpdater.init();
+
+    eventLog.init();
 });

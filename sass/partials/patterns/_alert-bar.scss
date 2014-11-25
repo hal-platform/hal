@@ -46,3 +46,24 @@
     padding: 5px;
     text-align: left;
 }
+
+.status-block {
+    @include adjust-font-size-to(ms(1));
+    display: block;
+}
+
+.status-success {
+    color: $white;
+    background-color: $success-color;
+}
+
+.status-error {
+    color: $white;
+    background-color: $error-color;
+}
+
+.status-info {
+    color: $white;
+    background-color: $grey;
+}
+

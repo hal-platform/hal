@@ -157,6 +157,7 @@ class HalExtension extends Twig_Extension
 
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
             new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
+            new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
             new Twig_SimpleFilter('sanitizeToString', [$this, 'sanitizeToString'])
         ];
     }
@@ -249,6 +250,20 @@ class HalExtension extends Twig_Extension
         }
 
         return substr($id, 0, 10);
+    }
+
+    /**
+     * @param string $event
+     * @return string
+     */
+    public function formatEvent($event)
+    {
+        if (preg_match('#^(build|push).([a-z]*)$#', $event, $matches)) {
+            $subevent = array_pop($matches);
+            return ucfirst($subevent);
+        }
+
+        return $event;
     }
 
 

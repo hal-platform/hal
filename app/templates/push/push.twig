@@ -129,7 +129,7 @@
 
     <h3>Push Log</h3>
     {% if push.logs.isEmpty %}
-        <p>Push logs are not available.</p>
+        <p>No push events found.</p>
     {% else %}
         {% include 'partials/log-table.twig' with {'logs': push.logs} %}
     {% endif %}

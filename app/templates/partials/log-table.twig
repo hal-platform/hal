@@ -3,34 +3,68 @@
     <thead>
         <th>Event</th>
         <th>Time</th>
-        <th>Status</th>
         <th>Message</th>
+        <th class="t10"></th>
     </thead>
-    <tbody>
+
     {% for log in logs %}
-        <tr>
-            <td>{{ log.event }}</td>
-            <td>{{ log.created|timepoint('M j, Y g:i A') }}</td>
-            <td>{{ log.status }}</td>
-            <td>{{ log.message }}</td>
-        </tr>
-        {% if log.data %}
-        <tr>
-            <td colspan="4" style="text-align:left">
-                {% for key, data in log.data %}
-                    <b>{{ key }}</b>
-                    <div class="pre-wrapper pre-ansi">
-                        <pre>{{ data|sanitizeToString|ansi_to_html }}</pre>
-                    </div>
-                {% endfor %}
-            </td>
-        </tr>
+        {% set rowColor = 'status-info' %}
+        {% if log.status == 'success' %}
+            {% set rowColor = 'status-success' %}
+        {% elseif log.status == 'failure' %}
+            {% set rowColor = 'status-error' %}
         {% endif %}
+        <tbody>
+            <tr class="{{ rowColor }}">
+                <td>
+                    {% if log.status == 'success' %}
+                        <span class="status-block">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg>
+                            {{ log.event|formatEvent }}
+                        </span>
+
+                    {% elseif log.status == 'failure' %}
+                        <span class="status-block">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#spam"></use></svg>
+                            {{ log.event|formatEvent }}
+                        </span>
+                    {% else %}
+                        <span class="status-block">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#paragraph-justify-2"></use></svg>
+                            {{ log.event|formatEvent }}
+                        </span>
+                    {% endif %}
+                </td>
+                <td>{{ log.created|timepoint('M j, Y g:i A') }}</td>
+                <td>{{ log.message }}</td>
+                <td class="tr">
+                    {% if log.data %}
+                        <a class="btn btn--tiny" data-expand-btn="{{ log.id }}">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#menu-pull-down"></use></svg>
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% if log.data %}
+                <tr data-expand-target="{{ log.id }}">
+                    <td colspan="4" class="tl">
+                        {% for key, data in log.data %}
+                            <b>{{ key }}</b>
+                            <div class="pre-wrapper pre-ansi">
+                                <pre>{{ data|sanitizeToString|ansi_to_html }}</pre>
+                            </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
     {% else %}
-        <tr>
-            <td colspan="4">No logs found.</td>
-        </tr>
+        <tbody>
+            <tr>
+                <td colspan="4">No logs found.</td>
+            </tr>
+        </tbody>
     {% endfor %}
-    </tbody>
 </table>
 
