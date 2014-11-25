@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = repo.key %}
+{% set page_title = "Status: " ~ repo.description %}
 
 {% import _self as macros %}
 
 {% block content %}
-    <h2>{{ repo.key }} repository status</h2>
+    <h2>Repository Status for <strong>{{ repo.description }}</strong></h2>
 
     <h3>Server Status</h3>
     <p>These cards show the current status of all servers with deployment relationships to this repository.</p>

@@ -1,9 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Environment: '~env.key %}
+{% set page_title = 'Environment: ' ~ env.key %}
 
 {% block content %}
-    <h2><strong>{{ env.key }}</strong> environment</h2>
+    <h2>Environment Information</h2>
+
+    <p><b>Name:</b> {{ env.key }}</p>
 
     <h3>Servers</h3>
     <ul>
