@@ -27,33 +27,55 @@ class Session extends Set
      * Retrieve flashes and clear
      *
      * @param boolean|string|null $message|$keepFlashes
+     * @param string|null $flashType
      *
-     * @return array|null
+     * @return array|Flash|null
      */
-    public function flash($action = null)
+    public function flash($action = null, $type = null)
     {
-        $flashes = $this->getFlashes();
-
-        if (func_num_args() > 0 && is_bool($action)) {
-            if (!$action) {
-                // Reset flash
-                $this->set(self::FLASH_KEY, []);
-            }
-
-            return $flashes;
+        if (func_num_args() === 1 && is_bool($action)) {
+            return call_user_func_array([$this, 'getAndFlush'], func_get_args());
         }
 
         if (func_num_args() > 0 && is_string($action)) {
-            // Add flash
-            $flashes[] = $action;
-            $this->set(self::FLASH_KEY, $flashes);
-            return;
+            return call_user_func_array([$this, 'setFlash'], func_get_args());
         }
 
-        // Reset flash
-        $this->set(self::FLASH_KEY, []);
+        return call_user_func([$this, 'getAndFlush'], false);
+    }
+
+    /**
+     * @param bool $keepFlashes
+     *
+     * @return Flash[]
+     */
+    private function getAndFlush($keepFlashes)
+    {
+        $flashes = $this->getFlashes();
+
+        if (!$keepFlashes) {
+            $this->set(self::FLASH_KEY, []);
+        }
 
         return $flashes;
+    }
+
+    /**
+     * @param string $message
+     * @param string|null $type
+     *
+     * @return Flash
+     */
+    private function setFlash($message, $type = null)
+    {
+        $type = ($type) ? $type : Flash::INFO;
+        $flash = new Flash($message, $type);
+
+        $flashes = $this->getFlashes();
+        $flashes[] = $flash;
+        $this->set(self::FLASH_KEY, $flashes);
+
+        return $flash;
     }
 
     /**

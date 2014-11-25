@@ -1,10 +1,16 @@
 {% block flash %}
     {% if session.flash(true) %}
-        <div class="alert-bar">
-            {% for message in session.flash(false) %}
-                <p>{{ message|raw }}</p>
-            {% endfor %}
-        </div>
+        {% for message in session.flash(false) %}
+
+            {% set alerttype = '' %}
+            {% if (message.type == 'error') %}{% set alerttype = 'alert--error' %}{% endif %}
+            {% if (message.type == 'success') %}{% set alerttype = 'alert--success' %}{% endif %}
+            {% if (message.type == 'warning') %}{% set alerttype = 'alert--warning' %}{% endif %}
+
+            <div class="alert-bar {{ alerttype }}">
+                {{ message|raw }}
+            </div>
+        {% endfor %}
     {% endif %}
 {% endblock %}
 {% block messages %}
