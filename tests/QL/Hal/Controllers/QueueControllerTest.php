@@ -22,7 +22,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
     public $request;
     public $response;
 
-    public $twig;
+    public $template;
     public $buildRepo;
     public $pushRepo;
 
@@ -31,7 +31,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
         $this->request = new Request(Environment::mock());
         $this->response = new Response;
 
-        $this->twig = Mockery::mock('Twig_Template');
+        $this->template = Mockery::mock('QL\Panthor\TemplateInterface');
         $this->buildRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\BuildRepository');
         $this->pushRepo = Mockery::mock('QL\Hal\Core\Entity\Repository\PushRepository');
     }
@@ -49,7 +49,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn(new ArrayCollection($pushes));
 
         $context = null;
-        $this->twig
+        $this->template
             ->shouldReceive('render')
             ->with(Mockery::on(function($v) use (&$context) {
                 $context = $v;
@@ -57,7 +57,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             }))
             ->once();
 
-        $controller = new QueueController($this->twig, $this->buildRepo, $this->pushRepo);
+        $controller = new QueueController($this->template, $this->buildRepo, $this->pushRepo);
 
         $controller($this->request, $this->response);
 
@@ -100,7 +100,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             ->andReturn(new ArrayCollection($pushes));
 
         $context = null;
-        $this->twig
+        $this->template
             ->shouldReceive('render')
             ->with(Mockery::on(function($v) use (&$context) {
                 $context = $v;
@@ -108,7 +108,7 @@ class QueueControllerTest extends PHPUnit_Framework_TestCase
             }))
             ->once();
 
-        $controller = new QueueController($this->twig, $this->buildRepo, $this->pushRepo);
+        $controller = new QueueController($this->template, $this->buildRepo, $this->pushRepo);
 
         $controller($this->request, $this->response);
 
