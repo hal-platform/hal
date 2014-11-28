@@ -7,17 +7,21 @@
 
 namespace QL\Hal\Bouncers;
 
+use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Panthor\TemplateInterface;
+use Slim\Route;
+use Slim\Slim;
 
 /**
  * A bouncer that checks to see if the current user is a super admin
  */
-class SuperAdminBouncer
+class RepoAdminBouncer
 {
     /**
      * @var Session
@@ -30,7 +34,7 @@ class SuperAdminBouncer
     private $permissions;
 
     /**
-     * @var Twig_Template
+     * @var TemplateInterface
      */
     private $twig;
 
@@ -38,6 +42,21 @@ class SuperAdminBouncer
      * @var LoginBouncer
      */
     private $loginBouncer;
+
+    /**
+     * @var Route
+     */
+    private $route;
+
+    /**
+     * @var RepositoryRepository
+     */
+    private $repositories;
+
+    /**
+     * @var Slim
+     */
+    private $slim;
 
     /**
      * @param Session $session
@@ -49,12 +68,18 @@ class SuperAdminBouncer
         Session $session,
         PermissionsService $permissions,
         TemplateInterface $twig,
-        LoginBouncer $loginBouncer
+        LoginBouncer $loginBouncer,
+        Route $route,
+        RepositoryRepository $repositories,
+        Slim $slim
     ) {
         $this->session = $session;
         $this->permissions = $permissions;
         $this->twig = $twig;
         $this->loginBouncer = $loginBouncer;
+        $this->route = $route;
+        $this->repositories = $repositories;
+        $this->slim = $slim; // only for 404 calls
     }
 
     /**
@@ -72,7 +97,18 @@ class SuperAdminBouncer
 
         $user = $this->session->get('user');
 
-        if ($this->permissions->allowSuperAdmin($user)) {
+        // ASSUMPTION: the repository id will always be named 'repository' in the route
+        // dumb, but we need to look up the repo key here for user permission checks
+
+        $repo = $this->repositories->findOneBy(['id' => $this->route->getParam('repository')]);
+
+        // repo does not exist
+        if (!$repo instanceof Repository) {
+            $this->slim->notFound();
+            throw new Stop;
+        }
+
+        if ($this->permissions->allowRepoAdmin($user, $repo->getKey())) {
             return;
         }
 

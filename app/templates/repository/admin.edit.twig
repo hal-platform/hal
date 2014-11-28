@@ -16,7 +16,7 @@
             </ul>
         {% endif %}
 
-        <form action="{{ urlFor('repository.admin.edit.handle', {id: repository.id}) }}" method="post">
+        <form action="{{ urlFor('repository.admin.edit.handle', {repository: repository.id}) }}" method="post">
             <ul class="form-fields">
                 <li>
                     <label for="name">Name</label>

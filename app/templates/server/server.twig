@@ -32,7 +32,7 @@
     <div>
         {% if isUserAdmin(currentUser) %}
             <a class="btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
-            {% if not deployments and canUserDelete(currentUser) %}
+            {% if not deployments and isUserAdmin(currentUser) %}
                 <a class="btn--destructive secondary-action" href="{{ urlFor('server.admin.remove.handle', {id: server.id}) }}">Remove Server</a>
             {% endif %}
         {% endif %}

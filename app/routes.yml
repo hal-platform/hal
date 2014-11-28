@@ -275,14 +275,14 @@ parameters:
 
         repository.admin.edit:
             method: 'GET'
-            route: '/repositories/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.page']
-            conditions: {id: '[\d]+'}
+            route: '/repositories/:repository/edit'
+            stack: ['repoadmin.bouncer', 'repository.admin.edit.page']
+            conditions: {repository: '[\d]+'}
         repository.admin.edit.handle:
             method: 'POST'
-            route: '/repositories/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.edit.handle']
-            conditions: {id: '[\d]+'}
+            route: '/repositories/:repository/edit'
+            stack: ['repoadmin.bouncer', 'repository.admin.edit.handle']
+            conditions: {repository: '[\d]+'}
 
         repository.admin.remove.confirm:
             method: 'GET'
@@ -301,21 +301,21 @@ parameters:
 
         repository.deployments:
             method: 'GET'
-            route: '/repositories/:id/deployments'
+            route: '/repositories/:repository/deployments'
             stack: ['login.bouncer', 'repository.deployments.page']
-            conditions: {id: '[\d]+'}
+            conditions: {repository: '[\d]+'}
 
         repository.deployment.admin.add.handle:
             method: 'POST'
-            route: '/repositories/:id/deployments/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.add.handle']
-            conditions: {id: '[\d]+'}
+            route: '/repositories/:repository/deployments/add'
+            stack: ['repoadmin.bouncer', 'repository.deployment.admin.add.handle']
+            conditions: {repository: '[\d]+'}
 
         repository.deployment.admin.remove.handle:
             method: 'GET'
-            route: '/repositories/:repoId/deployments/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'repository.deployment.admin.remove.handle']
-            conditions: {repoId: '[\d]+', id: '[\d]+'}
+            route: '/repositories/:repository/deployments/:id/remove'
+            stack: ['repoadmin.bouncer', 'repository.deployment.admin.remove.handle']
+            conditions: {repository: '[\d]+', id: '[\d]+'}
 
         ########################################################################################################################
         # GROUP ROUTES

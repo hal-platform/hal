@@ -98,7 +98,7 @@ class AdminAddHandle
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        if (!$repo = $this->repoRepo->find($params['id'])) {
+        if (!$repo = $this->repoRepo->find($params['repository'])) {
             return $notFound();
         }
 
@@ -108,15 +108,15 @@ class AdminAddHandle
 
         // invalid data, just pop back to page
         if (!$servers || !$paths) {
-            $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
+            $this->url->redirectFor('repository.deployments', ['repository' => $repo->getId()]);
         }
 
         if (!is_array($servers) || !is_array($paths) || !is_array($urls)) {
-            $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
+            $this->url->redirectFor('repository.deployments', ['repository' => $repo->getId()]);
         }
 
         if (count($servers) != count($paths) || count($servers) != count($urls)) {
-            $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
+            $this->url->redirectFor('repository.deployments', ['repository' => $repo->getId()]);
         }
 
         // filter out invalid deployments
@@ -144,7 +144,7 @@ class AdminAddHandle
             $this->session->flash($this->buildFlashErrors(), 'warning');
         }
 
-        $this->url->redirectFor('repository.deployments', ['id' => $repo->getId()]);
+        $this->url->redirectFor('repository.deployments', ['repository' => $repo->getId()]);
     }
 
     /**
@@ -154,14 +154,17 @@ class AdminAddHandle
      * @param HttpUrl $url
      * @return null
      */
-    private function addDeployment(Repository $repo, Server $server, $path, HttpUrl $url)
+    private function addDeployment(Repository $repo, Server $server, $path, HttpUrl $url = null)
     {
         $deployment = new Deployment;
 
         $deployment->setRepository($repo);
         $deployment->setServer($server);
         $deployment->setPath($path);
-        $deployment->setUrl($url);
+
+        if ($url instanceof HttpUrl) {
+            $deployment->setUrl($url);
+        }
 
         $this->entityManager->persist($deployment);
     }
@@ -185,7 +188,17 @@ class AdminAddHandle
     {
         $moreflash = '';
         foreach ($this->invalid as $invalid) {
-            $reason = ($invalid['reason'] === 'duplicate') ? 'Duplicate server' : 'Invalid path';
+            switch ($invalid['reason']) {
+                case 'duplicate':
+                    $reason = 'Duplicate server';
+                    break;
+                case 'badurl':
+                    $reason = 'Invalid url';
+                    break;
+                default:
+                    $reason = 'Invalid path';
+                    break;
+            }
             $moreflash .= sprintf('<p><strong>%s:</strong> %s</p>', $reason, $invalid['deployment']);
         }
 
@@ -243,7 +256,7 @@ HTML;
 
                 // skip invalid urls
                 if (!$url instanceof HttpUrl) {
-                    $this->addInvalidDeployment(sprintf('%s:%s', $serverCache[$serverId]->getName(), $paths[$entry]), 'invalid url');
+                    $this->addInvalidDeployment(sprintf('%s:%s', $serverCache[$serverId]->getName(), $paths[$entry]), 'badurl');
                     continue;
                 }
             } else {

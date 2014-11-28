@@ -70,6 +70,6 @@ class AdminRemoveHandle
         $this->entityManager->flush();
 
         $this->session->addFlash('Deployment removed.', 'deploy-remove');
-        $this->url->redirectFor('repository.deployments', ['id' => $params['repoId']]);
+        $this->url->redirectFor('repository.deployments', ['repository' => $params['repository']]);
     }
 }

@@ -224,6 +224,18 @@ services:
       - @denied.twig
       - @login.bouncer
 
+  # Bounce users who don't have access to modify a repository
+  repoadmin.bouncer:
+    class: 'QL\Hal\Bouncers\RepoAdminBouncer'
+    arguments:
+      - @session
+      - @permissions
+      - @denied.twig
+      - @login.bouncer
+      - @slim.route
+      - @repository.repo
+      - @slim
+
   # Bounce unauthenticated api clients
   api.auth.bouncer:
     class: 'QL\Hal\Bouncers\ApiAuthBouncer'
@@ -264,6 +276,8 @@ services:
       - @environment.repo
       - @github
       - '%debug.godmode%'
+      - %permissions.prod.envs%
+      - %permissions.hal.repos%
     calls:
       - ['setCache', [@cache]]
       - ['setCacheTTL', [%cache.permissions.ttl%]]

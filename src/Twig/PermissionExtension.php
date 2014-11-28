@@ -45,8 +45,9 @@ class PermissionExtension extends Twig_Extension
             // permissions
             new Twig_SimpleFunction('canUserPush', [$this->permissions, 'allowPush']),
             new Twig_SimpleFunction('canUserBuild', [$this->permissions, 'allowBuild']),
-            new Twig_SimpleFunction('canUserDelete', [$this->permissions, 'allowDelete']),
             new Twig_SimpleFunction('isUserAdmin', [$this->permissions, 'allowAdmin']),
+            new Twig_SimpleFunction('isUserRepoAdmin', [$this->permissions, 'allowRepoAdmin']),
+            new Twig_SimpleFunction('isUserSuperAdmin', [$this->permissions, 'allowSuperAdmin']),
 
             // other
             new Twig_SimpleFunction('showAnalytics', [$this->permissions, 'showAnalytics'])

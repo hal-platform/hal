@@ -55,7 +55,7 @@
                 <a class="btn--action secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a></p>
             </li>
 
-            {% if not repos and canUserDelete(currentUser) %}
+            {% if not repos and isUserAdmin(currentUser) %}
             <li class="choice-list__choice">
                 <a class="btn--destructive secondary-action" href="{{ urlFor('group.admin.remove.handle', {id: group.id}) }}">Remove Group</a>
             </li>

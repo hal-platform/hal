@@ -72,3 +72,17 @@ parameters:
     session.cookie.configuration:
         lifetime: '1 day'
     cookie.preferences.ttl: '5 years'
+
+    ############################################################################
+    # permission settings
+    ############################################################################
+
+    # Environments that are considered to be 'Production'
+    permissions.prod.envs:
+        - 'prod'
+        - 'production'
+
+    # Repositories part of the HAL 9000 system
+    permissions.hal.repos:
+        - 'hal9000'
+        - 'hal9000-agent'

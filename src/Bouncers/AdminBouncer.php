@@ -67,6 +67,7 @@ class AdminBouncer
         call_user_func($this->loginBouncer, $request, $response);
 
         $user = $this->session->get('user');
+
         if ($this->permissions->allowAdmin($user)) {
             return;
         }

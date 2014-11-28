@@ -71,7 +71,7 @@ class DeploymentsController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        if (!$repo = $this->repoRepo->find($params['id'])) {
+        if (!$repo = $this->repoRepo->find($params['repository'])) {
             return $notFound();
         }
 

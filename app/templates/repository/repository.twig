@@ -24,11 +24,11 @@
         <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
 
         {# secondary actions #}
-        {% if isUserAdmin(currentUser) %}
-            <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {id: repository.id}) }}">Edit details</a>
+        {% if isUserRepoAdmin(currentUser, repository.key) %}
+            <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a>
         {% endif %}
 
-        {% if isUserAdmin(currentUser) and not deployments and canUserDelete(currentUser) %}
+        {% if isUserAdmin(currentUser) and not deployments and isUserAdmin(currentUser) %}
             <a class="btn--destructive secondary-action" href="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}">Remove Repository</a>
         {% endif %}
     </div>
@@ -140,8 +140,8 @@
         <p>There are no deployments associated with this repository.</p>
     {% endif %}
 
-    {% if isUserAdmin(currentUser) %}
-        <a class="btn" href="{{ urlFor('repository.deployments', {id: repository.id}) }}">Manage Deployment Relationships</a>
+    {% if isUserRepoAdmin(currentUser, repository.key) %}
+        <a class="btn" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a>
     {% endif %}
 
 {% endblock %}

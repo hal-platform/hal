@@ -83,9 +83,7 @@ class UserPermissionsController
             ]),
             'permissions' => [
                 'debug' => [
-                    'god' => $this->permissions->allowGodMode($user),
-                    'admin' => $this->permissions->allowAdmin($user),
-                    'delete' => $this->permissions->allowDelete($user)
+                    'admin' => $this->permissions->allowAdmin($user)
                 ],
                 'push' => $this->formatUserPermissions($user, [$this->permissions, 'userPushPermissionPairs']),
                 'build' => $this->formatUserPermissions($user, [$this->permissions, 'userBuildPermissionPairs'])
@@ -122,8 +120,7 @@ class UserPermissionsController
                     $repository = $pair['repository'];
                     $perEnvironment['repositories'][] = $this->api->parseLink([
                         'href' => ['api.repository', ['id' => $repository->getId()]],
-                        'name' => $repository->getKey(),
-                        'rule' => $pair['rule']
+                        'name' => $repository->getKey()
                     ]);
                 }
 

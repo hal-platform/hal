@@ -12,8 +12,8 @@
         {% for environment in environments %}
             <h3>{{ environment.key }}</h3>
 
-            {% if isUserAdmin(currentUser) %}
-                <form action="{{ urlFor('repository.deployment.admin.add.handle', {id: repository.id}) }}" method="post">
+            {% if isUserRepoAdmin(currentUser, repository.key) %}
+                <form action="{{ urlFor('repository.deployment.admin.add.handle', {repository: repository.id}) }}" method="post">
             {% endif %}
 
             <table class="tablesaw tablesaw-stack" data-mode="stack">
@@ -38,14 +38,14 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if canUserDelete(currentUser) %}
-                                <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repoId: deployment.repository.id, id: deployment.id}) }}">Remove</a>
+                                {% if isUserRepoAdmin(currentUser, repository.key) %}
+                                <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repository: deployment.repository.id, id: deployment.id}) }}">Remove</a>
                                 {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
 
-                    {% if isUserAdmin(currentUser) %}
+                    {% if isUserRepoAdmin(currentUser, repository.key) %}
                         <tr>
                             <td>
                                 {# @todo: need to solve for no servers for environment #}
@@ -76,7 +76,7 @@
 
     <div>
         {# primary action #}
-        {% if environments and isUserAdmin(currentUser) %}
+        {% if environments and isUserRepoAdmin(currentUser, repository.key) %}
             <input class="btn" type="submit" value="Save Deployment Relationships">
             </form>
         {% endif %}

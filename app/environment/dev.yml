@@ -1,7 +1,7 @@
 parameters:
     application.title: 'HAL 9000 DEV'
 
-    debug: true
+    debug: truez
     twig.debug: true
 
     doctrine.connection:
