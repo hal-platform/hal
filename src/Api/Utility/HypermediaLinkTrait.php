@@ -14,7 +14,7 @@ trait HypermediaLinkTrait
      * @param array $properties
      * @return array
      */
-    private function link($href, array $properties)
+    private function buildLink($href, array $properties)
     {
         return [
             'href' => $href

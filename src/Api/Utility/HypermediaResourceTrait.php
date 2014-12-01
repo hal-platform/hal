@@ -15,7 +15,7 @@ trait HypermediaResourceTrait
      * @param array $links
      * @return array
      */
-    private function resource(array $data, array $embedded = [], array $links = [])
+    private function buildResource(array $data, array $embedded = [], array $links = [])
     {
         // dedupe links when an embedded entry exists
         foreach (array_keys($embedded) as $key) {
