@@ -13,6 +13,7 @@ use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use QL\Panthor\TemplateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A bouncer that checks to see if the current user is a super admin
@@ -20,9 +21,9 @@ use QL\Panthor\TemplateInterface;
 class SuperAdminBouncer
 {
     /**
-     * @var Session
+     * @var ContainerInterface
      */
-    private $session;
+    private $di;
 
     /**
      * @var PermissionsService
@@ -40,18 +41,18 @@ class SuperAdminBouncer
     private $loginBouncer;
 
     /**
-     * @param Session $session
+     * @param ContainerInterface $di
      * @param PermissionsService $permissions
      * @param TemplateInterface $twig
      * @param LoginBouncer $loginBouncer
      */
     public function __construct(
-        Session $session,
+        ContainerInterface $di,
         PermissionsService $permissions,
         TemplateInterface $twig,
         LoginBouncer $loginBouncer
     ) {
-        $this->session = $session;
+        $this->di = $di;
         $this->permissions = $permissions;
         $this->twig = $twig;
         $this->loginBouncer = $loginBouncer;
@@ -70,7 +71,7 @@ class SuperAdminBouncer
         // Let login bouncer run first
         call_user_func($this->loginBouncer, $request, $response);
 
-        $user = $this->session->get('user');
+        $user = $this->di->get('currentUser');
 
         if ($this->permissions->allowSuperAdmin($user)) {
             return;

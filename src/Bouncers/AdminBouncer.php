@@ -13,6 +13,7 @@ use QL\Panthor\TemplateInterface;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A bouncer that checks to see if the current user is an admin
@@ -20,9 +21,9 @@ use Slim\Http\Response;
 class AdminBouncer
 {
     /**
-     * @var Session
+     * @var ContainerInterface
      */
-    private $session;
+    private $di;
 
     /**
      * @var PermissionsService
@@ -40,14 +41,18 @@ class AdminBouncer
     private $loginBouncer;
 
     /**
-     * @param Session $session
+     * @param ContainerInterface $di
      * @param PermissionsService $permissions
      * @param TemplateInterface $template
      * @param LoginBouncer $loginBouncer
      */
-    public function __construct(Session $session, PermissionsService $permissions, TemplateInterface $template, LoginBouncer $loginBouncer)
-    {
-        $this->session = $session;
+    public function __construct(
+        ContainerInterface $di,
+        PermissionsService $permissions,
+        TemplateInterface $template,
+        LoginBouncer $loginBouncer
+    ) {
+        $this->di = $di;
         $this->permissions = $permissions;
         $this->template = $template;
         $this->loginBouncer = $loginBouncer;
@@ -66,7 +71,7 @@ class AdminBouncer
         // Let login bouncer run first
         call_user_func($this->loginBouncer, $request, $response);
 
-        $user = $this->session->get('user');
+        $user = $this->di->get('currentUser');
 
         if ($this->permissions->allowAdmin($user)) {
             return;

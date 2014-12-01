@@ -13,26 +13,14 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
-use Slim\Http\Request;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
 use Twig_SimpleTest;
 
-/**
- *  Twig Extension for HAL9000
- *
- *  @author Matt Colf <matthewcolf@quickenloans.com>
- */
 class HalExtension extends Twig_Extension
 {
     const NAME = 'hal';
-
-    /**
-     * @type Request
-     */
-    private $request;
 
     /**
      * @type EncryptedCookies
@@ -55,62 +43,26 @@ class HalExtension extends Twig_Extension
     private $name;
 
     /**
-     * @type Session
-     */
-    private $session;
-
-    /**
-     * @type string
-     */
-    private $applicationTitle;
-
-    /**
-     * @type string
-     */
-    private $applicationSha;
-
-    /**
-     * @type array
-     */
-    private $navigationList;
-
-    /**
      * @type array|null
      */
     private $parsedNavigationList;
 
     /**
-     * @param Request $request
      * @param EncryptedCookies $cookies
      * @param UrlHelper $url
      * @param TimeHelper $time
      * @param NameHelper $name
-     * @param Session $session
-     * @param string $appTitle
-     * @param string $appSha
-     * @param array $navigationList
      */
     public function __construct(
-        Request $request,
         EncryptedCookies $cookies,
         UrlHelper $url,
         TimeHelper $time,
-        NameHelper $name,
-        Session $session,
-        $appTitle,
-        $appSha,
-        array $navigationList
+        NameHelper $name
     ) {
-        $this->request = $request;
         $this->cookies = $cookies;
         $this->url = $url;
         $this->time = $time;
         $this->name = $name;
-        $this->session = $session;
-
-        $this->applicationTitle = $appTitle;
-        $this->applicationSha = $appSha;
-        $this->navigationList = $navigationList;
     }
 
     /**
@@ -172,24 +124,6 @@ class HalExtension extends Twig_Extension
         return [
             new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Build; }),
             new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Push; })
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGlobals()
-    {
-        return [
-            'applicationSha' => $this->applicationSha,
-            'applicationTitle' =>  $this->applicationTitle,
-
-            'session' =>  $this->session,
-            'currentUser' =>  $this->session->get('user'),
-            'isFirstLogin' =>  $this->session->get('is-first-login'),
-            'ishttpsOn' =>  $this->request->getScheme() === 'https',
-
-            'navItems' => $this->navigationList
         ];
     }
 

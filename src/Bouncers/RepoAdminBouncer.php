@@ -17,6 +17,7 @@ use Slim\Http\Response;
 use QL\Panthor\TemplateInterface;
 use Slim\Route;
 use Slim\Slim;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A bouncer that checks to see if the current user is a super admin
@@ -24,9 +25,9 @@ use Slim\Slim;
 class RepoAdminBouncer
 {
     /**
-     * @var Session
+     * @var ContainerInterface
      */
-    private $session;
+    private $di;
 
     /**
      * @var PermissionsService
@@ -59,13 +60,13 @@ class RepoAdminBouncer
     private $slim;
 
     /**
-     * @param Session $session
+     * @param ContainerInterface $di
      * @param PermissionsService $permissions
      * @param TemplateInterface $twig
      * @param LoginBouncer $loginBouncer
      */
     public function __construct(
-        Session $session,
+        ContainerInterface $di,
         PermissionsService $permissions,
         TemplateInterface $twig,
         LoginBouncer $loginBouncer,
@@ -73,7 +74,7 @@ class RepoAdminBouncer
         RepositoryRepository $repositories,
         Slim $slim
     ) {
-        $this->session = $session;
+        $this->di = $di;
         $this->permissions = $permissions;
         $this->twig = $twig;
         $this->loginBouncer = $loginBouncer;
@@ -95,7 +96,7 @@ class RepoAdminBouncer
         // Let login bouncer run first
         call_user_func($this->loginBouncer, $request, $response);
 
-        $user = $this->session->get('user');
+        $user = $this->di->get('currentUser');
 
         // ASSUMPTION: the repository id will always be named 'repository' in the route
         // dumb, but we need to look up the repo key here for user permission checks

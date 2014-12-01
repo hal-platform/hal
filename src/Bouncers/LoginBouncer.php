@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Bouncers;
 
+use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use Slim\Exception\Stop;
@@ -25,6 +26,11 @@ class LoginBouncer
     private $session;
 
     /**
+     * @var UserRepository
+     */
+    private $repository;
+
+    /**
      * @var ContainerInterface
      */
     private $container;
@@ -36,12 +42,18 @@ class LoginBouncer
 
     /**
      * @param Session $session
+     * @param UserRepository $repository
      * @param ContainerInterface $container
      * @param UrlHelper $url
      */
-    public function __construct(Session $session, ContainerInterface $container, UrlHelper $url)
-    {
+    public function __construct(
+        Session $session,
+        UserRepository $repository,
+        ContainerInterface $container,
+        UrlHelper $url
+    ) {
         $this->session = $session;
+        $this->repository = $repository;
         $this->container = $container;
         $this->url = $url;
     }
@@ -56,11 +68,17 @@ class LoginBouncer
      */
     public function __invoke(Request $request, Response $response)
     {
-        if (!$this->session->get('user')) {
+        if (!$this->session->get('user_id')) {
             $this->url->redirectFor('login', [], ['redirect' => $request->getPathInfo()]);
             throw new Stop;
         }
 
-        $this->container->set('currentUser', $this->session->get('user'));
+        if (!$user = $this->repository->find($this->session->get('user_id'))) {
+            // log user out if not found
+            $this->url->redirectFor('logout');
+            throw new Stop;
+        }
+
+        $this->container->set('currentUser', $user);
     }
 }

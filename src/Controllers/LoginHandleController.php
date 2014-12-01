@@ -115,7 +115,7 @@ class LoginHandleController
         $this->updateUserDetails($account, $user);
 
         $this->session->clear();
-        $this->session->set('user', $user);
+        $this->session->set('user_id', $user->getId());
         $this->session->set('is-first-login', $isFirstLogin);
 
         if ($redirect) {

@@ -150,15 +150,23 @@ services:
   twig.extension.hal:
     class: 'QL\Hal\Twig\HalExtension'
     arguments:
-      - @slim.request
       - @slim.cookies
       - @url.helper
       - @time.helper
       - @name.helper
+
+  twig.extension.hal.global:
+    class: 'QL\Hal\Twig\GlobalExtension'
+    arguments:
+      - @service_container
+      - @slim.request
       - @session
-      - %application.title%
-      - %application.sha%
-      - %navigation.list%
+      - @user.repo
+    calls:
+        - ['addGlobal', ['applicationTitle', %application.title%]]
+        - ['addGlobal', ['applicationSha', %application.sha%]]
+        - ['addGlobal', ['navItems', %navigation.list%]]
+        - ['addGlobal', ['session', @session]]
 
   twig.extension.permissions:
     class: 'QL\Hal\Twig\PermissionExtension'
@@ -177,6 +185,7 @@ services:
     parent: 'panthor.twig.environment'
     calls:
       - ['addExtension', [@twig.extension.hal]]
+      - ['addExtension', [@twig.extension.hal.global]]
       - ['addExtension', [@twig.extension.permissions]]
       - ['addExtension', [@twig.extension.github]]
       - ['addExtension', [@twig.extension.ansi]]
@@ -203,6 +212,7 @@ services:
     class: 'QL\Hal\Bouncers\LoginBouncer'
     arguments:
       - @session
+      - @user.repo
       - @service_container
       - @url.helper
 
@@ -210,7 +220,7 @@ services:
   admin.bouncer:
     class: 'QL\Hal\Bouncers\AdminBouncer'
     arguments:
-      - @session
+      - @service_container
       - @permissions
       - @denied.twig
       - @login.bouncer
@@ -219,7 +229,7 @@ services:
   superadmin.bouncer:
     class: 'QL\Hal\Bouncers\SuperAdminBouncer'
     arguments:
-      - @session
+      - @service_container
       - @permissions
       - @denied.twig
       - @login.bouncer
@@ -228,7 +238,7 @@ services:
   repoadmin.bouncer:
     class: 'QL\Hal\Bouncers\RepoAdminBouncer'
     arguments:
-      - @session
+      - @service_container
       - @permissions
       - @denied.twig
       - @login.bouncer

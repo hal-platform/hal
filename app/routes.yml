@@ -22,7 +22,7 @@ parameters:
         logout:
             method: 'GET'
             route: '/logout'
-            stack: ['login.bouncer', 'logout.handle']
+            stack: ['logout.handle']
 
         denied:
             method: 'GET'
