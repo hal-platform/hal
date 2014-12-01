@@ -65,12 +65,12 @@ loadTitles
 
 set -e
 
-# Generate and export a new encryption secret
-export HAL_ENCRYPTION_SECRET=$("$DIR/../vendor/bin/symmetric-keygen")
-
 # install and configure
 echo "$TITLE_INSTALL"
 "$DIR"/install
+
+# Generate and export a new encryption secret
+export HAL_ENCRYPTION_SECRET=$("$DIR/../vendor/bin/symmetric-keygen")
 
 echo "$TITLE_CONFIG"
 "$DIR"/normalize-configuration
