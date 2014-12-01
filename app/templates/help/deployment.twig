@@ -34,9 +34,10 @@
     </p>
     <p>
        Build command are executed from a semi-isolated environment on the build server. Push commands are executed on the server the application code is being pushed to.
+       HAL 9000 will consider any command with a non-zero exit code as a failure.
     </p>
-    <p class="alert-bar--highlight">
-        The exit code of the command MUST be 0. HAL 9000 will consider any command with a non-zero exit code as a failure.
+    <p class="alert-bar--warning">
+        The exit code of the command <strong>MUST</strong> be 0.
     </p>
 
     <a name="build-environment"></a>
@@ -76,7 +77,7 @@
 
     <p>
         These variables will be available as standard environment variables in a shell scripting environment.
-        If using a PHP-based script, they are avaiable in the <strong>$_SERVER</strong> superglobal.
+        If using a PHP-based script, they are available in the <strong>$_SERVER</strong> superglobal.
     </p>
 
     <a name="push-environment"></a>
@@ -135,7 +136,7 @@ commit: ''     # Git commit SHA
 date: ''       # ISO 8601 date
 </pre>
 
-    <p class="alert-bar--error">Post-push Command Failures</p>
+    <h5 class="mbn"><strong>A note on post-push command failures</strong></h5>
     <p>
         Post-push commands run <strong>after</strong> the application code is synced to the target server. For this
         reason, returning an error state will not stop the push process. If an error occurs, you will need to start
@@ -158,15 +159,17 @@ date: ''       # ISO 8601 date
         HAL 9000 automatically sets isolated installation and caching directories for these tools.
     </p>
 
+    <h5 class="mbn"><strong>A note on rubygems and bundler</strong></h5>
     <p>
-        <strong>A note on rubygems and bundler</strong><br>
         Rubygems.org is one of the most unreliable package repositories. If you rely on ruby tools to deploy, consider packaging the ruby code and commiting
         to your codebase.
     </p>
 
-    <p class="alert-bar--error">Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.</p>
+    <p>Installing gems or npm dependencies outside of the <strong>$HOME</strong> directory is unsupported and may break without warning. <strong>DO NOT DO THIS</strong>.</p>
 
-    <p>Installing gems or npm dependencies outside of the <strong>$HOME</strong> directory is unsupported and may break without warning. <strong>DO NOT DO THAT</strong>.</p>
+    <p class="alert-bar--warning">
+        Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.
+    </p>
 
     <h4>Recommended installation commands</h4>
     <table>
@@ -179,7 +182,7 @@ date: ''       # ISO 8601 date
         <tbody>
             <tr>
                 <td>Composer</td>
-                <td><code>composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader</code></td>
+                <td><code>composer install --no-dev --prefer-dist --ansi --no-interaction --optimize-autoloader</code></td>
             </tr>
             <tr>
                 <td>NPM</td>
@@ -187,7 +190,12 @@ date: ''       # ISO 8601 date
             </tr>
             <tr>
                 <td>Bundler</td>
-                <td><code>bundle install --frozen</code></td>
+                <td>
+                    <code>
+                        gem install bundler<br>
+                        bundle install --frozen
+                    </code>
+                </td>
             </tr>
         </tbody>
     </table>

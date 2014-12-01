@@ -70,7 +70,7 @@
     }
 
     input[type="radio"]:checked + label {
-        background-color: $light-yellow;
+        background-color: $highlight-color;
     }
 }
 .radio-grid--form li {

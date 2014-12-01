@@ -21,9 +21,9 @@
 
     &:hover {
         text-decoration: none;
-        background-color: $yellow;
+        background-color: $highlight-color;
         color: $text-color;
-        border-bottom: 1px solid $yellow;
+        border-bottom: 1px solid $highlight-color;
         padding-right: msem(5);
     }
 }
