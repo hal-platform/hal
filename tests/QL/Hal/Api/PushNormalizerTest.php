@@ -112,7 +112,7 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
             ],
             '_links' => [
                 'self' => 'link',
-                'log' => 'link',
+                'logs' => 'link',
                 'build' => 'linked-build',
                 'deployment' => 'linked-deployment'
             ]
@@ -185,7 +185,7 @@ class PushNormalizerTest extends PHPUnit_Framework_TestCase
 
             '_links' => [
                 'self' => 'link',
-                'log' => 'link'
+                'logs' => 'link'
             ],
             '_embedded' => [
                 'build' => 'normalized-build',

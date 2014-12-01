@@ -133,7 +133,7 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
             ],
             '_links' => [
                 'self' => 'link',
-                'log' => 'link',
+                'logs' => 'link',
                 'index' => 'link',
                 'repository' => 'linked-repo',
                 'environment' => 'linked-env',
@@ -212,7 +212,7 @@ class BuildNormalizerTest extends PHPUnit_Framework_TestCase
             ],
             '_links' => [
                 'self' => 'link',
-                'log' => 'link',
+                'logs' => 'link',
                 'index' => 'link'
             ],
             '_embedded' => [
