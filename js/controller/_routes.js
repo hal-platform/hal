@@ -6,14 +6,14 @@ define([], function() {
         { url: "/repositories/:id:/deployments",    controller: "repository-deployment-add" },
 
         { url: "/repositories/:id:/build",          controller: "build-create" },
-        { url: "/build/:id:/push",                  controller: "push-create" },
+        { url: "/builds/:id:/push",                 controller: "push-create" },
 
         { url: "/",                                 controller: "dashboard",                    component: "queue-dashboard" },
         { url: "/queue",                            controller: "queue",                        component: "queue-dashboard" },
 
         { url: "/repositories/:id:/status",         controller: "repository-status",            component: "job-updater" },
-        { url: "/build/:id:",                       controller: "build",                        component: "job-updater" },
-        { url: "/push/:id:",                        controller: "push",                         component: "job-updater" },
+        { url: "/builds/:id:",                      controller: "build",                        component: "job-updater" },
+        { url: "/pushs/:id:",                       controller: "push",                         component: "job-updater" },
         { url: "/repositories/:id:/builds/:page*:", controller: "builds",                       component: "job-updater" },
         { url: "/repositories/:id:/pushes/:page*:", controller: "pushes",                       component: "job-updater" }
     ];
