@@ -2,18 +2,20 @@
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Helpers\UrlHelper;
 
 /**
- *
+ * Build Object Normalizer
  */
 class BuildNormalizer
 {
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
+    use EmbeddedResolutionTrait;
 
     /**
      * @var UrlHelper
@@ -81,15 +83,11 @@ class BuildNormalizer
      */
     public function resource(Build $build, array $embed = [])
     {
-        $embedded = [];
-        $embed = array_merge($this->embed, $embed);
-
-        foreach (['initiator', 'repository', 'environment'] as $key) {
-            if (in_array($key, $embed)) {
-                $method = sprintf('get%s', ucfirst($key));
-                $embedded[$key] = $build->$method;
-            }
-        }
+        $properties = [
+            'initiator' => $build->getUser(),
+            'repository' => $build->getRepository(),
+            'environment' => $build->getEnvironment()
+        ];
 
         return $this->buildResource(
             [
@@ -113,7 +111,7 @@ class BuildNormalizer
                     ),
                 ]
             ],
-            $embedded,
+            $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'initiator' => $this->users->link($build->getUser()),
                 'repository' => $this->repositories->link($build->getRepository()),
