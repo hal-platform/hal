@@ -43,8 +43,14 @@ function buildDi($root)
     $builder = new YamlFileLoader($container, new FileLocator($root));
     $builder->load('app/config.yml');
 
+    // Overwrite sha param if env var is found. This will always be set for every script during the build process.
     if (array_key_exists('HAL_COMMIT', $_SERVER)) {
         $container->setParameter('application.sha', $_SERVER['HAL_COMMIT']);
+    }
+
+    // Overwrite the encryption secret if an env var is found.
+    if (array_key_exists('HAL_ENCRYPTION_SECRET', $_SERVER)) {
+        $container->setParameter('encryption.secret', $_SERVER['HAL_ENCRYPTION_SECRET']);
     }
 
     $container->compile();
