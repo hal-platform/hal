@@ -55,9 +55,12 @@ services:
       - @build.repo
       - @api.build.normalizer
 
-  api.build.log:
-    class: 'QL\Hal\Controllers\Api\Build\LogController'
-    arguments: [@api.helper, @build.repo]
+  api.build.logs:
+    class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
+    arguments:
+        - @api.helper
+        - @build.repo
+        - @api.eventlog.normalizer
 
   api.builds:
     class: 'QL\Hal\Controllers\Api\Build\BuildsController'
@@ -158,11 +161,12 @@ services:
       - @push.repo
       - @api.push.normalizer
 
-  api.push.log:
-    class: 'QL\Hal\Controllers\Api\Push\LogController'
+  api.push.logs:
+    class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
     arguments:
       - @api.helper
       - @push.repo
+      - @api.eventlog.normalizer
 
   api.pushes:
     class: 'QL\Hal\Controllers\Api\Push\PushesController'
@@ -171,6 +175,18 @@ services:
       - @repository.repo
       - @push.repo
       - @api.push.normalizer
+
+
+  ######################################################################################################################
+  # EVENT LOG CONTROLLERS
+  ######################################################################################################################
+
+  api.event.log:
+    class: 'QL\Hal\Controllers\Api\EventLogController'
+    arguments:
+      - @api.helper
+      - @event.log.repo
+      - @api.eventlog.normalizer
 
   ######################################################################################################################
   # REPOSITORY CONTROLLERS

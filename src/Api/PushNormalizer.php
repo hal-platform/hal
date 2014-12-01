@@ -154,7 +154,7 @@ class PushNormalizer
         return [
             '_links' => [
                 'self' => $this->linked($push),
-                'log' => $this->api->parseLink(['href' => ['api.push.log', ['id' => $push->getId()]]]),
+                'logs' => $this->api->parseLink(['href' => ['api.push.logs', ['id' => $push->getId()]]]),
                 // 'index' => $this->api->parseLink(['href' => ['api.pushes', ['id' => $push->getRepository()->getId()]]]),
             ]
         ];

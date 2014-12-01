@@ -509,27 +509,33 @@ parameters:
 
         api.build:
             method: 'GET'
-            route: '/api/build/:id'
+            route: '/api/builds/:id'
             stack: ['cachedApi.middleware', 'api.build']
             conditions: {id: %routes.regex.buildId%}
 
-        api.build.log:
+        api.build.logs:
             method: 'GET'
-            route: '/api/build/:id/log'
-            stack: ['cachedApi.middleware', 'api.build.log']
+            route: '/api/builds/:id/logs'
+            stack: ['cachedApi.middleware', 'api.build.logs']
             conditions: {id: %routes.regex.buildId%}
 
         api.push:
             method: 'GET'
-            route: '/api/push/:id'
+            route: '/api/pushes/:id'
             stack: ['cachedApi.middleware', 'api.push']
             conditions: {id: %routes.regex.pushId%}
 
-        api.push.log:
+        api.push.logs:
             method: 'GET'
-            route: '/api/push/:id/log'
-            stack: ['cachedApi.middleware', 'api.push.log']
+            route: '/api/pushes/:id/logs'
+            stack: ['cachedApi.middleware', 'api.push.logs']
             conditions: {id: %routes.regex.pushId%}
+
+        api.event.log:
+            method: 'GET'
+            route: '/api/eventlogs/:id'
+            stack: ['cachedApi.middleware', 'api.event.log']
+            conditions: {id: '[a-zA-Z0-9]+'}
 
         api.repositories:
             method: 'GET'

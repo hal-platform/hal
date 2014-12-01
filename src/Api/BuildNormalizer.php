@@ -160,7 +160,7 @@ class BuildNormalizer
         return [
             '_links' => [
                 'self' => $this->linked($build),
-                'log' => $this->api->parseLink(['href' => ['api.build.log', ['id' => $build->getId()]]]),
+                'logs' => $this->api->parseLink(['href' => ['api.build.logs', ['id' => $build->getId()]]]),
                 'index' => $this->api->parseLink(['href' => ['api.builds', ['id' => $build->getRepository()->getId()]]]),
             ]
         ];
