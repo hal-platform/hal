@@ -114,7 +114,7 @@ HELLO;
             $msg .= ' ' . sprintf($flavor, $name);
         }
 
-        $this->session->flash($msg);
+        $this->session->flash($msg, 'success');
 
         $this->url->redirectFor('settings');
     }
