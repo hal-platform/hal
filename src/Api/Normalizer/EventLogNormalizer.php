@@ -14,12 +14,14 @@ class EventLogNormalizer
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
 
-    private $embed = [];
+    private $embed;
 
     public function __construct(
 
     ) {
 
+
+        $this->embed = [];
     }
 
     /**
