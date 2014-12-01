@@ -96,7 +96,7 @@ parameters:
 
         build:
             method: 'GET'
-            route: '/build/:build'
+            route: '/builds/:build'
             stack: ['login.bouncer', 'build.page']
             conditions: {build: %routes.regex.buildId%}
 
@@ -118,19 +118,19 @@ parameters:
 
         push:
             method: 'GET'
-            route: '/push/:push'
+            route: '/pushes/:push'
             stack: ['login.bouncer', 'push.page']
             conditions: {push: %routes.regex.pushId%}
 
         push.start:
             method: 'GET'
-            route: '/build/:build/push'
+            route: '/builds/:build/push'
             stack: ['login.bouncer', 'push.start.page']
             conditions: {build: %routes.regex.buildId%}
 
         push.start.handle:
             method: 'POST'
-            route: '/build/:build/push'
+            route: '/builds/:build/push'
             stack: ['login.bouncer', 'push.start.handler']
             conditions: {build: %routes.regex.buildId%}
 

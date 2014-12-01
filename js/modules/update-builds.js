@@ -29,7 +29,7 @@ define(['jquery'], function($) {
         checkStatus: function($elem) {
             var _this = this;
             var id = $elem.data('build');
-            var endpoint ='/api/build/' + id;
+            var endpoint ='/api/builds/' + id;
             console.log(endpoint);
 
             $.getJSON(endpoint, function(data) {
