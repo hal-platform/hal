@@ -46,8 +46,13 @@
         </p>
     </form>
 
+    {# {{ block('access_tokens') }}#}
+{% endblock %}
+
+{% block access_tokens %}
     <h2>Personal Access Tokens</h2>
     <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
+
 
     <form action="{{ urlFor('user.token.create.handle', {id: user.id}) }}" method="post">
         <table class="tablesaw tablesaw-stack" data-mode="stack">
@@ -73,5 +78,4 @@
             </tbody>
         </table>
     </form>
-
 {% endblock %}
