@@ -40,16 +40,15 @@
         "ql/panthor": "~1.1",
         "slim/slim": "2.4.*",
         "sensiolabs/ansi-to-html": "~1.1",
-        "symfony/dependency-injection": "~2.5",
-        "symfony/config": "~2.5",
-        "symfony/debug": "~2.5",
-        "symfony/finder": "~2.5",
-        "symfony/yaml": "~2.5",
+        "symfony/dependency-injection": "~2.6",
+        "symfony/config": "~2.6",
+        "symfony/debug": "~2.6",
+        "symfony/finder": "~2.6",
+        "symfony/yaml": "~2.6",
         "twig/twig": "~1.15"
     },
     "require-dev": {
         "mockery/mockery": "*",
-        "phpmd/phpmd": "*",
         "phpunit/phpunit": "4.*",
         "squizlabs/php_codesniffer": "*"
     }
