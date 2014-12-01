@@ -12,6 +12,7 @@ parameters:
 
     # Replaced before di compiling
     application.sha: ''
+    session.encryption.secret: %encryption.secret%
 
     slim.hooks:
         slim.before:

@@ -541,6 +541,7 @@ services:
       - @doctrine.config
       - @redis
       - %encryption.secret%
+      - %session.encryption.secret%
       - @hal.pushfile
   admin.super.twig:
     parent: 'twig.template'

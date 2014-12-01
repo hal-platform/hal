@@ -45,6 +45,7 @@ class SuperController
      * @param Configuration $doctrineConfig
      * @param Predis $predis
      * @param string $encryptionKey
+     * @param string $sessionEncryptionKey
      * @param string $halPushFile
      */
     public function __construct(
@@ -52,6 +53,7 @@ class SuperController
         Configuration $doctrineConfig,
         Predis $predis,
         $encryptionKey,
+        $sessionEncryptionKey,
         $halPushFile
     ) {
         $this->template = $template;
@@ -59,6 +61,7 @@ class SuperController
         $this->predis = $predis;
 
         $this->encryptionKey = $encryptionKey;
+        $this->sessionEncryptionKey = $sessionEncryptionKey;
         $this->halPushFile = $halPushFile;
     }
 
@@ -71,6 +74,7 @@ class SuperController
         $context = [
             'servername' => gethostname(),
             'encryption_key' => $this->encryptionKey,
+            'session_encryption_key' => $this->sessionEncryptionKey,
             'freespace' => $this->getFreespace()
         ];
 

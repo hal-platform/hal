@@ -422,7 +422,14 @@ services:
 
   session.handler:
     class: 'QL\Hal\SessionHandler'
-    arguments: [@slim.cookies, %session.cookie.configuration%]
+    arguments:
+      - @slim.cookies
+      - @session.encryption
+      - %session.cookie.configuration%
+
+  session.encryption:
+    class: 'MCP\Crypto\AES'
+    arguments: [%session.encryption.secret%]
 
   ######################################################################################################################
   # Logging

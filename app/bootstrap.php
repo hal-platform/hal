@@ -50,7 +50,7 @@ function buildDi($root)
 
     // Overwrite the encryption secret if an env var is found.
     if (array_key_exists('HAL_ENCRYPTION_SECRET', $_SERVER)) {
-        $container->setParameter('encryption.secret', $_SERVER['HAL_ENCRYPTION_SECRET']);
+        $container->setParameter('session.encryption.secret', $_SERVER['HAL_ENCRYPTION_SECRET']);
     }
 
     $container->compile();
