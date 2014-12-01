@@ -5,28 +5,46 @@
 {% block content %}
     <h2>Deployment Relationships for <b>{{ repository.description }}</b> </h2>
 
-    <p>Deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.</p>
+    <p>
+        Deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.
+        Optionally, you can add a URL such as <code>http://test1w1.website.com</code> to help users find where the code is deployed to.
+    </p>
     <p>Paths must be absolute and begin with a forward slash (/).</p>
 
-    {% if environments %}
-        {% for environment in environments %}
-            <h3>{{ environment.key }}</h3>
+    {% set canEdit = isUserRepoAdmin(currentUser, repository.key) %}
 
-            {% if isUserRepoAdmin(currentUser, repository.key) %}
-                <form action="{{ urlFor('repository.deployment.admin.add.handle', {repository: repository.id}) }}" method="post">
-            {% endif %}
+    {% if environments %}
+        {% if canEdit %}
+            <form action="{{ urlFor('repository.deployment.admin.add.handle', {repository: repository.id}) }}" method="post">
+        {% endif %}
+
+        {% for environment in environments %}
+
+            {# Get servers for only this environment #}
+            {% set envServers = [] %}
+            {% for server in servers if server.environment == environment %}
+                {% set envServers = envServers|merge([server]) %}
+            {% endfor %}
+
+            {# Get deployments for only this environment #}
+            {% set envDeployments = [] %}
+            {% for deployment in deployments if deployment.server.environment == environment %}
+                {% set envDeployments = envDeployments|merge([deployment]) %}
+            {% endfor %}
+
+            <h3>{{ environment.key }}</h3>
 
             <table class="tablesaw tablesaw-stack" data-mode="stack">
                 <thead>
                 <tr>
-                    <th>Hostname</th>
-                    <th>Path</th>
-                    <th>Testing URL</th>
-                    <th>Actions</th>
+                    <th class="t15">Hostname</th>
+                    <th class="t40">Path</th>
+                    <th>URL</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                    {% for deployment in deployments if deployment.server.environment == environment %}
+                    {% for deployment in envDeployments %}
                         <tr>
                             <td>{{ deployment.server.name }}</td>
                             <td>
@@ -38,33 +56,52 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if isUserRepoAdmin(currentUser, repository.key) %}
-                                <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repository: deployment.repository.id, id: deployment.id}) }}">Remove</a>
+                                {% if canEdit %}
+                                    <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repository: deployment.repository.id, id: deployment.id}) }}">Remove</a>
                                 {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
 
-                    {% if isUserRepoAdmin(currentUser, repository.key) %}
+                    {% if not canEdit and not envDeployments %}
+                        <tr>
+                            <td colspan="4">No deployments found.</td>
+                        </tr>
+                    {% elseif envServers %}
                         <tr>
                             <td>
-                                {# @todo: need to solve for no servers for environment #}
                                 <select class="js-newdeployment" name="server[]">
                                     <option></option>
-                                    {% for server in servers if server.environment == environment %}
+                                    {% for server in envServers %}
                                         <option value="{{ server.id }}">{{ server.name }}</option>
                                     {% endfor %}
                                 </select>
                             </td>
-                            <td><input type="text" name="path[]" maxlength="255" class="text-input t75"></td>
-                            <td><input type="text" name="url[]" maxlength="255" class="text-input t75" value=""></td>
+                            <td><input type="text" name="path[]" maxlength="255" class="text-input"></td>
+                            <td><input type="text" name="url[]" maxlength="255" class="text-input"></td>
                             <td></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">There are no servers assigned to this environment. Deployments cannot be added.</td>
                         </tr>
                     {% endif %}
                 </tbody>
             </table>
 
         {% endfor %}
+
+        {% if canEdit %}
+            <div>
+                {# primary action #}
+                <input class="btn" type="submit" value="Save Deployment Relationships">
+
+                {# secondary actions #}
+                <a class="secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
+            </div>
+        </form>
+        {% endif %}
+
     {% else %}
         <p>
             There are no environments.
@@ -74,14 +111,4 @@
         </p>
     {% endif %}
 
-    <div>
-        {# primary action #}
-        {% if environments and isUserRepoAdmin(currentUser, repository.key) %}
-            <input class="btn" type="submit" value="Save Deployment Relationships">
-            </form>
-        {% endif %}
-
-        {# secondary actions #}
-        <a class="secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
-    </div>
 {% endblock %}
