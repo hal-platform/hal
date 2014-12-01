@@ -55,13 +55,43 @@ class UrlHelper
     }
 
     /**
+     * Get the current url
+     *
+     * @return string
+     */
+    public function url()
+    {
+        $url = $this->request->getUrl().$this->request->getPath();
+        $params = $this->request->get();
+
+        return (is_array($params) && count($params)) ? sprintf('%s?%s', $url, http_build_query($params)) : $url;
+    }
+
+    /**
+     * Get the current route
+     *
+     * @return null|string
+     */
+    public function route()
+    {
+        $route = $this->router->getCurrentRoute();
+
+        if ($route instanceof Route) {
+            return $route->getName();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      *  Get the current route
      *
+     *  @deprecated
      *  @return Route
      */
     public function currentRoute()
     {
-        return $this->router->getCurrentRoute();
+        return $this->route();
     }
 
     /**
