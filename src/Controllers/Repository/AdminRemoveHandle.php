@@ -76,7 +76,7 @@ class AdminRemoveHandle
         }
 
         if ($deployments = $this->deploymentRepo->findBy(['repository' => $repo])) {
-            $this->session->addFlash('Cannot remove repository. All server deployments must first be removed.', 'repo-remove');
+            $this->session->flash('Cannot remove repository. All server deployments must first be removed.', 'error');
             return $this->url->redirectFor('repository'. ['id' => $repo->getId()]);
         }
 
@@ -84,7 +84,7 @@ class AdminRemoveHandle
         $this->entityManager->flush();
 
         $message = sprintf('Repository "%s" removed.', $repo->getKey());
-        $this->session->addFlash($message, 'repo-remove');
+        $this->session->flash($message, 'success');
         $this->url->redirectFor('repositories');
     }
 }

@@ -67,7 +67,7 @@ class AdminRemoveHandle
         }
 
         if (!$group->getRepositories()->isEmpty()) {
-            $this->session->addFlash('Cannot remove group. All associated repositories must first be removed.', 'group-remove');
+            $this->session->flash('Cannot remove group. All associated repositories must first be removed.', 'error');
             return $this->url->redirectFor('groups', ['id' => $group->getId()]);
         }
 
@@ -75,7 +75,7 @@ class AdminRemoveHandle
         $this->entityManager->flush();
 
         $message = sprintf('Group "%s" removed.', $group->getName());
-        $this->session->addFlash($message, 'group-remove');
+        $this->session->flash($message, 'success');
         $this->url->redirectFor('groups');
     }
 }

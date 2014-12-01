@@ -83,7 +83,7 @@ class AdminAddController
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
         if (!$environments = $this->envRepo->findBy([], ['order' => 'ASC'])) {
-            $this->session->addFlash('A server requires an environment. Environments must be added before servers.');
+            $this->session->flash('A server requires an environment. Environments must be added before servers.', 'error');
             return $this->url->redirectFor('environment.admin.add');
         }
 
@@ -106,7 +106,7 @@ class AdminAddController
                 $server = $this->handleFormSubmission($request, $environment);
 
                 $message = sprintf('Server "%s" added.', $server->getName());
-                $this->session->addFlash($message, 'server-add');
+                $this->session->flash($message, 'success');
                 return $this->url->redirectFor('servers');
             }
         }

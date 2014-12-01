@@ -69,7 +69,7 @@ class AdminRemoveHandle
         $this->entityManager->remove($deployment);
         $this->entityManager->flush();
 
-        $this->session->addFlash('Deployment removed.', 'deploy-remove');
+        $this->session->flash('Deployment removed.', 'success');
         $this->url->redirectFor('repository.deployments', ['repository' => $params['repository']]);
     }
 }

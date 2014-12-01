@@ -77,7 +77,7 @@ class AdminRemoveHandle
         }
 
         if ($servers = $this->serverRepo->findBy(['environment' => $environment])) {
-            $this->session->addFlash('Cannot remove environment. All associated servers must first be removed.', 'environment-remove');
+            $this->session->flash('Cannot remove environment. All associated servers must first be removed.', 'error');
             return $this->url->redirectFor('environment', ['id' => $params['id']]);
         }
 
@@ -86,7 +86,7 @@ class AdminRemoveHandle
         $this->entityManager->flush();
 
         $message = sprintf('Environment "%s" removed.', $environment->getKey());
-        $this->session->addFlash($message, 'environment-remove');
+        $this->session->flash($message, 'success');
         $this->url->redirectFor('environments');
     }
 

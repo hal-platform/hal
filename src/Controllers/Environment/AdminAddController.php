@@ -81,7 +81,7 @@ class AdminAddController
 
         if ($this->handleFormSubmission($request, $renderContext['errors'])) {
             $message = sprintf('Environment "%s" added.', $request->post('name'));
-            $this->session->addFlash($message, 'environment-add');
+            $this->session->flash($message, 'success');
             return $this->url->redirectFor('environments');
         }
 

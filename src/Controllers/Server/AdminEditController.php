@@ -105,7 +105,7 @@ class AdminEditController
             if (!$renderContext['errors']) {
                 $this->handleFormSubmission($request, $server, $environment);
 
-                $this->session->addFlash('Server updated successfully.', 'server-edit');
+                $this->session->flash('Server updated successfully.', 'success');
                 return $this->url->redirectFor('server', ['id' => $server->getId()]);
             }
         }

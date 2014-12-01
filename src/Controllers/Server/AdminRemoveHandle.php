@@ -76,7 +76,7 @@ class AdminRemoveHandle
         }
 
         if ($deployments = $this->deployRepo->findBy(['server' => $server])) {
-            $this->session->addFlash('Cannot remove server. All associated deployments must first be removed.', 'server-remove');
+            $this->session->flash('Cannot remove server. All associated deployments must first be removed.', 'error');
             return $this->url->redirectFor('server', ['id' => $params['id']]);
         }
 
@@ -84,7 +84,7 @@ class AdminRemoveHandle
         $this->entityManager->flush();
 
         $message = sprintf('Server "%s" removed.', $server->getName());
-        $this->session->addFlash($message, 'server-remove');
+        $this->session->flash($message, 'success');
         $this->url->redirectFor('servers');
     }
 }

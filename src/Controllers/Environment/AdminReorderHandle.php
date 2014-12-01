@@ -90,7 +90,7 @@ class AdminReorderHandle
         foreach ($environments as $environment) {
             $id = $environment->getId();
             if (!isset($ordered[$id])) {
-                $this->session->addFlash('An environment is missing from the new ordering.', 'reorder-error');
+                $this->session->flash('An environment is missing from the new ordering.', 'error');
                 return $this->url->redirectFor('environment.admin.reorder');
             }
 
@@ -100,7 +100,7 @@ class AdminReorderHandle
 
         // persist and redirect
         $this->entityManager->flush();
-        $this->session->addFlash('New environment orders saved!', 'reorder-success');
+        $this->session->flash('New environment orders saved!', 'success');
         $this->url->redirectFor('environments');
     }
 

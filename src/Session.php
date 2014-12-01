@@ -79,18 +79,6 @@ class Session extends Set
     }
 
     /**
-     * @deprecated Use flash($message) instead
-     *
-     * Add a new flash message
-     *
-     * @param string $message
-     */
-    public function addFlash($message, $key = null)
-    {
-        $this->flash($message);
-    }
-
-    /**
      * Flash helper
      *
      * @return array
