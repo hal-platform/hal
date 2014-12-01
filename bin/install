@@ -7,14 +7,12 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 COMPOSER="composer install --prefer-dist --dev"
 NPM="npm install"
 BUNDLER="bundle install"
-SECRETGEN=""
 
 # If deploying, use production settings
 if [ -n "$HAL_ENVIRONMENT" ]; then
     COMPOSER="composer install --prefer-dist --no-interaction --ansi --no-dev --optimize-autoloader"
     NPM="npm install --production"
     BUNDLER="bundle install --frozen"
-    SECRETGEN="$DIR/generate-encryption-secret"
 fi
 
 "$DIR/"$COMPOSER
@@ -22,5 +20,3 @@ $NPM
 
 gem install bundler
 $BUNDLER
-
-$SECRETGEN
