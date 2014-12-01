@@ -104,7 +104,6 @@ class HalExtension extends Twig_Extension
     {
         return [
             new Twig_SimpleFilter('reldate', [$this->time, 'relative'], ['is_safe' => ['html']]),
-            new Twig_SimpleFilter('chunk', [$this, 'arrayChunk']),
             new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty']),
 
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
@@ -125,21 +124,6 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleTest('build', function ($entity) { return $entity instanceof Build; }),
             new Twig_SimpleTest('push', function ($entity) { return $entity instanceof Push; })
         ];
-    }
-
-    /**
-     * Chunk an array into $split roughly equal parts
-     *
-     * @param array $input
-     * @param int $split
-     * @return array
-     */
-    public function arrayChunk(array $input, $split)
-    {
-        $count = ceil((count($input) / (int)$split));
-        $chunks = array_chunk($input, $count);
-
-        return array_pad($chunks, $split, []);
     }
 
     /**

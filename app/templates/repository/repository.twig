@@ -84,7 +84,7 @@
             <tbody>
             {% for pairs in permissions %}
                 <tr>
-                    <td>{{ pairs|first.environment.key|title }}</td>
+                    <td>{{ pairs|first.environment.key }}</td>
                     <td>
                         <ul class="col-list">
                             {% for pair in pairs %}
@@ -106,32 +106,31 @@
             <thead>
                 <tr>
                     <th>Environment</th>
-                    <th>Deployments</th>
+                    <th>Server</th>
+                    <th>Path</th>
+                    <th>URL</th>
                 </tr>
             </thead>
             <tbody>
             {% for env, deployments in deployment_environments %}
                 {% if deployments %}
-                    <tr>
-                        <td>{{ env }}</td>
-                        <td>
-                            <ul class="list--bare">
-                                {% for deployment in deployments %}
-                                    <li>
-                                        <span class="fixed-size-label">
-                                            <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment.server.name }}</a>
-                                        </span>
-                                        {% if deployment.url %}
-                                            <span class="fixed-size-label">
-                                                <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
-                                            </span>
-                                        {% endif %}
-                                        <code>{{ deployment.path}}</code>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
+                    {% set isFirst = true %}
+                    {% for deployment in deployments %}
+                        <tr>
+                            {% if isFirst %}
+                                {% set isFirst = false %}
+                                <td>{{ env }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+
+                            <td><a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment.server.name }}</a></td>
+                            <td><code>{{ deployment.path}}</code></td>
+                            <td>
+                                <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
                 {% endif %}
             {% endfor %}
             </tbody>
