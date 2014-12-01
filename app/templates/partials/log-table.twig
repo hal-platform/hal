@@ -50,7 +50,7 @@
                 <tr data-expand-target="{{ log.id }}">
                     <td colspan="4" class="tl">
                         {% for key, data in log.data %}
-                            <b>{{ key }}</b>
+                            <h4 class="mbn">{{ key }}</h4>
                             <div class="pre-wrapper pre-ansi">
                                 <pre>{{ data|sanitizeToString|ansi_to_html }}</pre>
                             </div>
