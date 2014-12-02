@@ -7,7 +7,8 @@ services:
 
     api.index:
         class: 'QL\Hal\Controllers\Api\IndexController'
-        arguments: [@api.helper]
+        arguments:
+            - @response.formatter
 
     ######################################################################################################################
     # GITHUB CONTROLLERS

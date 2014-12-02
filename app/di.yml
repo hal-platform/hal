@@ -329,7 +329,7 @@ services:
             - @normalizer.url
 
     normalizer.build:
-        class: 'QL\Hal\Api\Normalizer\BuildNormalzer'
+        class: 'QL\Hal\Api\Normalizer\BuildNormalizer'
         arguments:
             - @url.helper
             - @normalizer.user
@@ -337,48 +337,48 @@ services:
             - @normalizer.environment
 
     normalizer.deployment:
-        class: 'QL\Hal\Api\Normalizer\DeploymentNormalzer'
+        class: 'QL\Hal\Api\Normalizer\DeploymentNormalizer'
 
     normalizer.environment:
-        class: 'QL\Hal\Api\Normalizer\EnvironmentNormalzer'
+        class: 'QL\Hal\Api\Normalizer\EnvironmentNormalizer'
 
     normalizer.log.event:
-        class: 'QL\Hal\Api\Normalizer\EventLogNormalzer'
+        class: 'QL\Hal\Api\Normalizer\EventLogNormalizer'
         arguments:
             - @normalizer.build
             - @normalizer.push
 
     normalizer.group:
-        class: 'QL\Hal\Api\Normalizer\GroupNormalzer'
+        class: 'QL\Hal\Api\Normalizer\GroupNormalizer'
 
     normalizer.url:
-        class: 'QL\Hal\Api\Normalizer\HttpUrlNormalzer'
+        class: 'QL\Hal\Api\Normalizer\HttpUrlNormalizer'
 
     normalizer.push:
-        class: 'QL\Hal\Api\Normalizer\PushNormalzer'
+        class: 'QL\Hal\Api\Normalizer\PushNormalizer'
         arguments:
             - @normalizer.user
             - @normalizer.build
-            - @normalizer.environment
+            - @normalizer.deployment
 
     normalizer.repository:
-        class: 'QL\Hal\Api\Normalizer\RepositoryNormalzer'
+        class: 'QL\Hal\Api\Normalizer\RepositoryNormalizer'
         arguments:
             - @url.helper
             - @normalizer.group
 
     normalizer.server:
-        class: 'QL\Hal\Api\Normalizer\ServerNormalzer'
+        class: 'QL\Hal\Api\Normalizer\ServerNormalizer'
         arguments:
             - @normalizer.environment
 
     normalizer.timepoint:
-        class: 'QL\Hal\Api\Normalizer\TimePointNormalzer'
+        class: 'QL\Hal\Api\Normalizer\TimePointNormalizer'
         arguments:
             - @time.helper
 
     normalizer.user:
-        class: 'QL\Hal\Api\Normalizer\UserNormalzer'
+        class: 'QL\Hal\Api\Normalizer\UserNormalizer'
 
     ##
     # END NEW

@@ -2,7 +2,7 @@
 
 namespace QL\Hal\Api\Normalizer;
 
-use QL\Hal\Api\EmbeddedResolutionTrait;
+use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;

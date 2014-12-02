@@ -2,7 +2,7 @@
 
 namespace QL\Hal\Api\Normalizer;
 
-use QL\Hal\Api\EmbeddedResolutionTrait;
+use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
@@ -14,7 +14,7 @@ class PushNormalizer
 {
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
-    use EmbeddedResolutionTrait
+    use EmbeddedResolutionTrait;
 
     /**
      * @var UserNormalizer

@@ -1,6 +1,6 @@
 <?php
 
-namespace QL\Hal\Api;
+namespace QL\Hal\Api\Utility;
 
 /**
  * Embedded Resource Resolution Trait
