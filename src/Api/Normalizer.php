@@ -3,6 +3,7 @@
 namespace QL\Hal\Api;
 
 use DateTime;
+use QL\Hal\Api\Normalizer\TimePointNormalizer;
 use QL\Hal\Core\Entity\Build;
 use InvalidArgumentException;
 use MCP\DataType\Time\TimePoint;
@@ -23,6 +24,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Helpers\TimeHelper;
 
 /**
  * Object Normalizer
@@ -77,6 +79,11 @@ class Normalizer
     private $users;
 
     /**
+     * @var TimePointNormalizer
+     */
+    private $time;
+
+    /**
      * @param BuildNormalizer $builds
      * @param DeploymentNormalizer $deployments
      * @param EnvironmentNormalizer $environments
@@ -86,6 +93,7 @@ class Normalizer
      * @param RepositoryNormalizer $repositories
      * @param ServerNormalizer $servers
      * @param UserNormalizer $users
+     * @param TimePointNormalizer $time
      */
     public function __construct(
         BuildNormalizer $builds,
@@ -96,7 +104,8 @@ class Normalizer
         PushNormalizer $pushes,
         RepositoryNormalizer $repositories,
         ServerNormalizer $servers,
-        UserNormalizer $users
+        UserNormalizer $users,
+        TimePointNormalizer $time
     ) {
         $this->builds = $builds;
         $this->deployments = $deployments;
@@ -107,6 +116,7 @@ class Normalizer
         $this->repositories = $repositories;
         $this->servers = $servers;
         $this->users = $users;
+        $this->time = $time;
     }
 
     /**
@@ -144,7 +154,7 @@ class Normalizer
             case $input instanceof User:
                 return $this->resolve($this->users->resource($input));
             case $input instanceof TimePoint:
-                return $input->format(DateTime::ISO8601, 'UTC');
+                return $this->time->normalize($input);
 
         }
 

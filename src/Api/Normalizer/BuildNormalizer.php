@@ -71,7 +71,7 @@ class BuildNormalizer
         return $this->buildLink(
             ['api.build', ['id' => $build->getId()]],
             [
-                'id' => $build->getId()
+                'title' => $build->getId()
             ]
         );
     }
@@ -113,6 +113,7 @@ class BuildNormalizer
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
+                'self' => $this->link($build),
                 'initiator' => $this->users->link($build->getUser()),
                 'repository' => $this->repositories->link($build->getRepository()),
                 'environment' => $this->environments->link($build->getEnvironment()),

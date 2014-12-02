@@ -14,38 +14,36 @@ class GroupNormalizer
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
 
-    private $embed;
-
-    public function __construct(
-
-    ) {
-
-
-        $this->embed = [];
-    }
-
     /**
-     * @param Group $input
+     * @param Group $group
      * @return array
      */
-    public function link(Group $input)
+    public function link(Group $group)
     {
-        return $this->buildLink('', [
-
-        ]);
+        return $this->buildLink(
+            ['api.group', ['id' => $group->getId()]],
+            [
+                'title' => $group->getKey()
+            ]
+        );
     }
 
     /**
-     * @param Group $input
-     * @param array $embed
+     * @param Group $group
      * @return array
      */
-    public function resource(Group $input, array $embed = [])
+    public function resource(Group $group)
     {
         return $this->buildResource(
+            [
+                'id' => $group->getId(),
+                'key' => $group->getKey(),
+                'name' => $group->getName()
+            ],
             [],
-            [],
-            []
+            [
+                'self' => $this->link($group)
+            ]
         );
     }
 }

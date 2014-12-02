@@ -7,45 +7,43 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Environment;
 
 /**
- *
+ * Environment Object Normalizer
  */
 class EnvironmentNormalizer
 {
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
 
-    private $embed;
-
-    public function __construct(
-
-    ) {
-
-
-        $this->embed = [];
-    }
-
     /**
-     * @param Environment $input
+     * @param Environment $environment
      * @return array
      */
-    public function link(Environment $input)
+    public function link(Environment $environment)
     {
-        return $this->buildLink('', [
-
-        ]);
+        return $this->buildLink(
+            ['api.environment', ['id' => $environment->getId()]],
+            [
+                'title' => $environment->getKey()
+            ]
+        );
     }
 
     /**
-     * @param Environment $input
-     * @param array $embed
+     * @param Environment $environment
      * @return array
      */
-    public function resource(Environment $input, array $embed = [])
+    public function resource(Environment $environment)
     {
         return $this->buildResource(
+            [
+                'id' => $environment->getId(),
+                'key' => $environment->getKey(),
+                'order' => $environment->getOrder()
+            ],
             [],
-            [],
-            []
+            [
+                'self' => $this->link($environment)
+            ]
         );
     }
 }
