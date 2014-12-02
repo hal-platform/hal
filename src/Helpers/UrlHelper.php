@@ -86,12 +86,11 @@ class UrlHelper
     /**
      *  Get the current route
      *
-     *  @deprecated
      *  @return Route
      */
     public function currentRoute()
     {
-        return $this->route();
+        return $this->router->getCurrentRoute();
     }
 
     /**
