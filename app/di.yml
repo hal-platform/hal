@@ -1,480 +1,472 @@
 imports:
-  - resource: di.pages.yml
-  - resource: di.api.yml
-  - resource: di.panthor.yml
+    - resource: di.pages.yml
+    - resource: di.api.yml
+    - resource: di.panthor.yml
 
 services:
 
-  ######################################################################################################################
-  # RUN TIME INJECTED (SYNTHETIC) SERVICES
-  ######################################################################################################################
-
-  # Set by LoginBouncer
-  currentUser:
-    class: 'QL\Hal\Core\Entity\User'
-    synthetic: true
-
-  # Set by the API Auth Bouncer
-  requester:
-    synthetic: true
-
-  ######################################################################################################################
-  # DOCTRINE CONFIGURATION
-  ######################################################################################################################
-
-  doctrine.config:
-    class: 'Doctrine\ORM\Configuration'
-    factory_class: 'Doctrine\ORM\Tools\Setup'
-    factory_method: 'createAnnotationMetadataConfiguration'
-    arguments:
-      - ['@doctrine.mapping']
-      - %doctrine.devmode%
-      - @doctrine.proxy.dir
-      - @cache.doctrine
-
-  doctrine.proxy.dir:
-    class: 'NOTHING_TO_SEE_HERE'
-    factory_service: 'directory.helper'
-    factory_method: 'fullPath'
-    arguments: ['.doctrine']
-
-  doctrine.events:
-    class: 'Doctrine\Common\EventManager'
-    calls:
-      - ['addEventListener', [['onFlush'], @doctrine.logger]]
-      - ['addEventListener', [['prePersist'], @doctrine.persist.listener]]
-
-  doctrine.logger:
-    class: 'QL\Hal\Doctrine\EntityChangeLogger'
-    arguments: [@user.helper]
-
-  doctrine.random.id:
-    class: 'QL\Hal\Core\RandomGenerator'
-
-  doctrine.persist.listener:
-    class: 'QL\Hal\Core\Entity\Listener\EntityPersistListener'
-    arguments: [@clock, @doctrine.random.id]
-
-  ######################################################################################################################
-  # APPLICATION
-  ######################################################################################################################
-
-  slim:
-    parent: 'panthor.slim'
-    arguments:
-      - %slim.configuration%
-    calls:
-      - ['add', [@slim.session]]
-
-  slim.hook.logger:
-    class: 'QL\Hal\Slim\McpLoggerHook'
-    arguments: [@logger.mcp.factory, @slim.environment, @slim.request]
-  slim.hook.errors:
-    class: 'QL\Hal\Slim\ErrorHandlerHook'
-    arguments: [@exception.dispatcher, @logger, @error.pages.twig]
-
-  slim.session:
-    class: 'QL\Hal\Slim\SessionMiddleware'
-    arguments: [@session.handler, @service_container]
-
-  hal.pushfile:
-    class: 'dynamic_scalar'
-    factory_service: 'directory.helper'
-    factory_method: 'fullPath'
-    arguments: ['.hal9000.push.yml']
-
-  ######################################################################################################################
-  # ERROR & EXCEPTION HANDLING
-  ######################################################################################################################
-
-  exception.dispatcher:
-    class: 'QL\ExceptionToolkit\ExceptionDispatcher'
-
-  ######################################################################################################################
-  # CACHING
-  ######################################################################################################################
-
-  cache:
-    class: 'MCP\Cache\PredisCache'
-    arguments: [@redis]
-
-  cache.github:
-    class: 'QL\Hal\Github\MCPCache'
-    arguments: [@cache]
-
-  cache.doctrine:
-    class: 'QL\Hal\Doctrine\PredisCache'
-    arguments: [@redis, %cache.doctrine.ttl%]
-
-  ######################################################################################################################
-  # HELPERS
-  ######################################################################################################################
-
-  url.helper:
-    class: 'QL\Hal\Helpers\UrlHelper'
-    arguments:
-      - @slim.request
-      - @slim.response
-      - @slim.router
-      - @github
-
-  directory.helper:
-    class: 'QL\Hal\Helpers\DirectoryHelper'
-    arguments: [@root]
-
-  user.helper:
-    class: 'QL\Hal\Helpers\LazyUserHelper'
-    arguments: [@service_container]
-
-  api.helper:
-    class: 'QL\Hal\Helpers\ApiHelper'
-    arguments: [@url.helper, @slim.request, %api.cachetimes%]
-    calls:
-      - ['setCache', [@cache]]
-
-  time.helper:
-    class: 'QL\Hal\Helpers\TimeHelper'
-
-  name.helper:
-    class: 'QL\Hal\Helpers\NameHelper'
-
-  utility.id.generator:
-    class: 'QL\Hal\Core\JobIdGenerator'
-    arguments:
-      - %application.major.version%
-      - %unique.alphabet%
-      - %unique.size%
-
-  ######################################################################################################################
-  # TWIG STUFF
-  ######################################################################################################################
-
-  # Twig Extensions
-  twig.extension.hal:
-    class: 'QL\Hal\Twig\HalExtension'
-    arguments:
-      - @slim.cookies
-      - @url.helper
-      - @time.helper
-      - @name.helper
-
-  twig.extension.hal.global:
-    class: 'QL\Hal\Twig\GlobalExtension'
-    arguments:
-      - @service_container
-      - @slim.request
-      - @session
-      - @user.repo
-    calls:
-        - ['addGlobal', ['applicationTitle', %application.title%]]
-        - ['addGlobal', ['applicationSha', %application.sha%]]
-        - ['addGlobal', ['navItems', %navigation.list%]]
-        - ['addGlobal', ['session', @session]]
-
-  twig.extension.permissions:
-    class: 'QL\Hal\Twig\PermissionExtension'
-    arguments: [@permissions]
-
-  twig.extension.github:
-    class: 'QL\Hal\Twig\GithubExtension'
-    arguments: [@url.helper, @github]
-
-  twig.extension.ansi:
-    class: 'SensioLabs\AnsiConverter\Bridge\Twig\AnsiExtension'
-    arguments: [@ansi.converter]
-
-  # Twig Environment
-  twig.environment:
-    parent: 'panthor.twig.environment'
-    calls:
-      - ['addExtension', [@twig.extension.hal]]
-      - ['addExtension', [@twig.extension.hal.global]]
-      - ['addExtension', [@twig.extension.permissions]]
-      - ['addExtension', [@twig.extension.github]]
-      - ['addExtension', [@twig.extension.ansi]]
-
-  # The primary twig template. All other twig services should use this service as a parent
-  twig.template.old:
-    class: 'Twig_Template'
-    factory_service: 'twig.environment'
-    factory_method: 'loadTemplate'
-
-  ansi.converter:
-    class: 'SensioLabs\AnsiConverter\AnsiToHtmlConverter'
-    arguments: [@ansi.convert.theme, true]
-
-  ansi.convert.theme:
-    class: 'SensioLabs\AnsiConverter\Theme\Theme'
-
-  ######################################################################################################################
-  # MIDDLEWARE
-  ######################################################################################################################
-
-  # Bounce unauthenticated users
-  login.bouncer:
-    class: 'QL\Hal\Bouncers\LoginBouncer'
-    arguments:
-      - @session
-      - @user.repo
-      - @service_container
-      - @url.helper
-
-  # Bounce non-admins
-  admin.bouncer:
-    class: 'QL\Hal\Bouncers\AdminBouncer'
-    arguments:
-      - @service_container
-      - @permissions
-      - @denied.twig
-      - @login.bouncer
-
-  # Bounce non-super-admins
-  superadmin.bouncer:
-    class: 'QL\Hal\Bouncers\SuperAdminBouncer'
-    arguments:
-      - @service_container
-      - @permissions
-      - @denied.twig
-      - @login.bouncer
-
-  # Bounce users who don't have access to modify a repository
-  repoadmin.bouncer:
-    class: 'QL\Hal\Bouncers\RepoAdminBouncer'
-    arguments:
-      - @service_container
-      - @permissions
-      - @denied.twig
-      - @login.bouncer
-      - @slim.route
-      - @repository.repo
-      - @slim
-
-  # Bounce unauthenticated api clients
-  api.auth.bouncer:
-    class: 'QL\Hal\Bouncers\ApiAuthBouncer'
-    arguments:
-      - @service_container
-      - @ldapService
-      - @token.repo
-
-  cachedApi.middleware:
-    class: 'QL\Hal\Middleware\CachedApiMiddleware'
-    arguments: [@api.helper]
-
-  ######################################################################################################################
-  # NON-DATABASE SERVICES
-  ######################################################################################################################
-
-  ldapTransport:
-    class: 'Zend\Ldap\Ldap'
-    arguments:
-      -
-        host: %ldap.host%
-        baseDn: %ldap.baseDn%
-        accountDomainNameShort: %ldap.domain%
-
-  ldapService:
-    class: 'MCP\Corp\Account\QLAdService'
-    arguments: [@ldapTransport]
-    calls:
-      - ['authenticate', [%ldap.username%, %ldap.password%, false]]
-
-  permissions:
-    class: 'QL\Hal\Services\PermissionsService'
-    arguments:
-      - @ldapService
-      - @deployment.repo
-      - @repository.repo
-      - @user.repo
-      - @environment.repo
-      - @github
-      - '%debug.godmode%'
-      - %permissions.prod.envs%
-      - %permissions.hal.repos%
-    calls:
-      - ['setCache', [@cache]]
-      - ['setCacheTTL', [%cache.permissions.ttl%]]
-
-  redis:
-    class: 'Predis\Client'
-    arguments:
-      - %redis.server%
-      - {prefix: '%redis.prefix%:'}
-
-  ######################################################################################################################
-  # API Helpers
-  ######################################################################################################################
-
-  api.build.normalizer:
-    class: 'QL\Hal\Api\BuildNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
-        - @time.helper
-        - @api.environment.normalizer
-        - @api.repository.normalizer
-        - @api.user.normalizer
-
-  api.push.normalizer:
-    class: 'QL\Hal\Api\PushNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
-        - @time.helper
-        - @api.build.normalizer
-        - @api.deployment.normalizer
-        - @api.user.normalizer
-
-  api.deployment.normalizer:
-    class: 'QL\Hal\Api\DeploymentNormalizer'
-    arguments:
-        - @api.helper
-        - @api.repository.normalizer
-        - @api.server.normalizer
-
-  api.environment.normalizer:
-    class: 'QL\Hal\Api\EnvironmentNormalizer'
-    arguments: [@api.helper, @url.helper]
-
-  api.group.normalizer:
-    class: 'QL\Hal\Api\GroupNormalizer'
-    arguments: [@api.helper, @url.helper]
-
-  api.repository.normalizer:
-    class: 'QL\Hal\Api\RepositoryNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
-        - @api.group.normalizer
-
-  api.server.normalizer:
-    class: 'QL\Hal\Api\ServerNormalizer'
-    arguments:
-        - @api.helper
-        - @url.helper
-        - @api.environment.normalizer
-
-  api.user.normalizer:
-    class: 'QL\Hal\Api\UserNormalizer'
-    arguments: [@api.helper, @url.helper]
-
-  api.eventlog.normalizer:
-    class: 'QL\Hal\Api\EventLogNormalizer'
-    arguments:
-        - @api.helper
-        - @time.helper
-        - @url.helper
-
-  ######################################################################################################################
-  # Github API
-  ######################################################################################################################
-
-  github:
-    class: 'QL\Hal\Services\GithubService'
-    arguments:
-      - @github.userService
-      - @github.repoService
-      - @github.refService
-      - @github.pullService
-      - @github.commitService
-      - @github.pager
-      - @github.commitRepo
-
-  github.client:
-    class: 'Github\Client'
-    arguments: [@github.http.client]
-
-  github.http.client:
-    class: 'QL\Hal\Github\CachedHttpClient'
-    arguments:
-      - {base_url: %github.baseurl%}
-    calls:
-      - ['authenticate', [%github.token%, null, 'http_token']]
-      - ['setCache', [@cache.github]]
-
-  github.pager:
-    class: 'Github\ResultPager'
-    arguments: [@github.client]
-
-  github.orgService:
-    class: 'Github\Api\Organization'
-    arguments: [@github.client]
-
-  github.pullService:
-    class: 'Github\Api\PullRequest'
-    arguments: [@github.client]
-
-  github.refService:
-    class: 'Github\Api\GitData\References'
-    arguments: [@github.client]
-
-  github.commitService:
-    class: 'Github\Api\GitData\Commits'
-    arguments: [@github.client]
-
-  github.repoService:
-    class: 'Github\Api\Repo'
-    arguments: [@github.client]
-
-  github.userService:
-    class: 'Github\Api\User'
-    arguments: [@github.client]
-
-  github.commitRepo:
-    class: 'Github\Api\Repository\Commits'
-    arguments: [@github.client]
-
-  ######################################################################################################################
-  # SESSION
-  ######################################################################################################################
-
-  session:
-    class: 'QL\Hal\Session'
-    factory_service: 'session.handler'
-    factory_method: 'load'
-
-  session.handler:
-    class: 'QL\Hal\SessionHandler'
-    arguments:
-      - @slim.cookies
-      - @session.encryption
-      - %session.cookie.configuration%
-
-  session.encryption:
-    class: 'MCP\Crypto\AES'
-    arguments: [%session.encryption.secret%]
-
-  ######################################################################################################################
-  # Logging
-  ######################################################################################################################
-
-  logger:
-    class: 'MCP\Service\Logger\Logger'
-    arguments: [@logger.mcp.service, @logger.mcp.factory]
-
-  logger.mcp.service:
-    class: 'MCP\Service\Logger\Service\GuzzleService'
-    arguments: [@logger.mcp.guzzle, @logger.mcp.renderer, true]
-  logger.mcp.guzzle:
-    class: 'Guzzle\Http\Client'
-    arguments: [%logger.mcp.host%]
-  logger.mcp.renderer:
-    class: 'MCP\Service\Logger\Renderer\XmlRenderer'
-    arguments: [@logger.mcp.writer]
-  logger.mcp.writer:
-    class: 'XMLWriter'
-
-  logger.mcp.factory:
-    class: 'MCP\Service\Logger\Adapter\Psr\MessageFactory'
-    arguments: ['@clock']
-    calls:
-      - ['setDefaultProperty', ['applicationId', %application.id%]]
-      # replaced at runtime, maybe
-      - ['setDefaultProperty', ['machineIPAddress', @logger.mcp.serverIp]]
-      # replaced at runtime
-      - ['setDefaultProperty', ['machineName', 'localhost']]
-  logger.mcp.serverIp:
-    class: 'MCP\DataType\IPv4Address'
-    factory_class: 'MCP\DataType\IPv4Address'
-    factory_method: 'create'
-    arguments: ['0.0.0.0']
+    ######################################################################################################################
+    # RUN TIME INJECTED (SYNTHETIC) SERVICES
+    ######################################################################################################################
+
+    # Set by LoginBouncer
+    currentUser:
+        class: 'QL\Hal\Core\Entity\User'
+        synthetic: true
+
+    # Set by the API Auth Bouncer
+    requester:
+        synthetic: true
+
+    ######################################################################################################################
+    # DOCTRINE CONFIGURATION
+    ######################################################################################################################
+
+    doctrine.config:
+        class: 'Doctrine\ORM\Configuration'
+        factory_class: 'Doctrine\ORM\Tools\Setup'
+        factory_method: 'createAnnotationMetadataConfiguration'
+        arguments:
+            - ['@doctrine.mapping']
+            - %doctrine.devmode%
+            - @doctrine.proxy.dir
+            - @cache.doctrine
+
+    doctrine.proxy.dir:
+        class: 'NOTHING_TO_SEE_HERE'
+        factory_service: 'directory.helper'
+        factory_method: 'fullPath'
+        arguments: ['.doctrine']
+
+    doctrine.events:
+        class: 'Doctrine\Common\EventManager'
+        calls:
+            - ['addEventListener', [['onFlush'], @doctrine.logger]]
+            - ['addEventListener', [['prePersist'], @doctrine.persist.listener]]
+
+    doctrine.logger:
+        class: 'QL\Hal\Doctrine\EntityChangeLogger'
+        arguments: [@user.helper]
+
+    doctrine.random.id:
+        class: 'QL\Hal\Core\RandomGenerator'
+
+    doctrine.persist.listener:
+        class: 'QL\Hal\Core\Entity\Listener\EntityPersistListener'
+        arguments: [@clock, @doctrine.random.id]
+
+    ######################################################################################################################
+    # APPLICATION
+    ######################################################################################################################
+
+    slim:
+        parent: 'panthor.slim'
+        arguments:
+            - %slim.configuration%
+        calls:
+            - ['add', [@slim.session]]
+
+    slim.hook.logger:
+        class: 'QL\Hal\Slim\McpLoggerHook'
+        arguments: [@logger.mcp.factory, @slim.environment, @slim.request]
+    slim.hook.errors:
+        class: 'QL\Hal\Slim\ErrorHandlerHook'
+        arguments: [@exception.dispatcher, @logger, @error.pages.twig]
+
+    slim.session:
+        class: 'QL\Hal\Slim\SessionMiddleware'
+        arguments: [@session.handler, @service_container]
+
+    hal.pushfile:
+        class: 'dynamic_scalar'
+        factory_service: 'directory.helper'
+        factory_method: 'fullPath'
+        arguments: ['.hal9000.push.yml']
+
+    ######################################################################################################################
+    # ERROR & EXCEPTION HANDLING
+    ######################################################################################################################
+
+    exception.dispatcher:
+        class: 'QL\ExceptionToolkit\ExceptionDispatcher'
+
+    ######################################################################################################################
+    # CACHING
+    ######################################################################################################################
+
+    cache:
+        class: 'MCP\Cache\PredisCache'
+        arguments: [@redis]
+
+    cache.github:
+        class: 'QL\Hal\Github\MCPCache'
+        arguments: [@cache]
+
+    cache.doctrine:
+        class: 'QL\Hal\Doctrine\PredisCache'
+        arguments: [@redis, %cache.doctrine.ttl%]
+
+    ######################################################################################################################
+    # HELPERS
+    ######################################################################################################################
+
+    url.helper:
+        class: 'QL\Hal\Helpers\UrlHelper'
+        arguments:
+            - @slim.request
+            - @slim.response
+            - @slim.router
+            - @github
+
+    directory.helper:
+        class: 'QL\Hal\Helpers\DirectoryHelper'
+        arguments: [@root]
+
+    user.helper:
+        class: 'QL\Hal\Helpers\LazyUserHelper'
+        arguments: [@service_container]
+
+    api.helper:
+        class: 'QL\Hal\Helpers\ApiHelper'
+        arguments: [@url.helper, @slim.request, %api.cachetimes%]
+        calls:
+            - ['setCache', [@cache]]
+
+    time.helper:
+        class: 'QL\Hal\Helpers\TimeHelper'
+
+    name.helper:
+        class: 'QL\Hal\Helpers\NameHelper'
+
+    utility.id.generator:
+        class: 'QL\Hal\Core\JobIdGenerator'
+        arguments:
+            - %application.major.version%
+            - %unique.alphabet%
+            - %unique.size%
+
+    ######################################################################################################################
+    # TWIG STUFF
+    ######################################################################################################################
+
+    twig.extension.hal:
+        class: 'QL\Hal\Twig\HalExtension'
+        arguments:
+            - @slim.cookies
+            - @url.helper
+            - @time.helper
+            - @name.helper
+
+    twig.extension.hal.global:
+        class: 'QL\Hal\Twig\GlobalExtension'
+        arguments:
+            - @service_container
+            - @slim.request
+            - @session
+            - @user.repo
+        calls:
+            - ['addGlobal', ['applicationTitle', %application.title%]]
+            - ['addGlobal', ['applicationSha', %application.sha%]]
+            - ['addGlobal', ['navItems', %navigation.list%]]
+            - ['addGlobal', ['session', @session]]
+
+    twig.extension.permissions:
+        class: 'QL\Hal\Twig\PermissionExtension'
+        arguments: [@permissions]
+
+    twig.extension.github:
+        class: 'QL\Hal\Twig\GithubExtension'
+        arguments: [@url.helper, @github]
+
+    twig.extension.ansi:
+        class: 'SensioLabs\AnsiConverter\Bridge\Twig\AnsiExtension'
+        arguments: [@ansi.converter]
+
+    # Twig Environment
+    twig.environment:
+        parent: 'panthor.twig.environment'
+        calls:
+            - ['addExtension', [@twig.extension.hal]]
+            - ['addExtension', [@twig.extension.hal.global]]
+            - ['addExtension', [@twig.extension.permissions]]
+            - ['addExtension', [@twig.extension.github]]
+            - ['addExtension', [@twig.extension.ansi]]
+
+    ansi.converter:
+        class: 'SensioLabs\AnsiConverter\AnsiToHtmlConverter'
+        arguments: [@ansi.convert.theme, true]
+
+    ansi.convert.theme:
+        class: 'SensioLabs\AnsiConverter\Theme\Theme'
+
+    ######################################################################################################################
+    # MIDDLEWARE
+    ######################################################################################################################
+
+    # Bounce unauthenticated users
+    login.bouncer:
+        class: 'QL\Hal\Bouncers\LoginBouncer'
+        arguments:
+            - @session
+            - @user.repo
+            - @service_container
+            - @url.helper
+
+    # Bounce non-admins
+    admin.bouncer:
+        class: 'QL\Hal\Bouncers\AdminBouncer'
+        arguments:
+            - @service_container
+            - @permissions
+            - @denied.twig
+            - @login.bouncer
+
+    # Bounce non-super-admins
+    superadmin.bouncer:
+        class: 'QL\Hal\Bouncers\SuperAdminBouncer'
+        arguments:
+            - @service_container
+            - @permissions
+            - @denied.twig
+            - @login.bouncer
+
+    # Bounce users who don't have access to modify a repository
+    repoadmin.bouncer:
+        class: 'QL\Hal\Bouncers\RepoAdminBouncer'
+        arguments:
+            - @service_container
+            - @permissions
+            - @denied.twig
+            - @login.bouncer
+            - @slim.route
+            - @repository.repo
+            - @slim
+
+    # Bounce unauthenticated api clients
+    api.auth.bouncer:
+        class: 'QL\Hal\Bouncers\ApiAuthBouncer'
+        arguments:
+            - @service_container
+            - @ldapService
+            - @token.repo
+
+    cachedApi.middleware:
+        class: 'QL\Hal\Middleware\CachedApiMiddleware'
+        arguments: [@api.helper]
+
+    ######################################################################################################################
+    # NON-DATABASE SERVICES
+    ######################################################################################################################
+
+    ldapTransport:
+        class: 'Zend\Ldap\Ldap'
+        arguments:
+            -
+                host: %ldap.host%
+                baseDn: %ldap.baseDn%
+                accountDomainNameShort: %ldap.domain%
+
+    ldapService:
+        class: 'MCP\Corp\Account\QLAdService'
+        arguments: [@ldapTransport]
+        calls:
+            - ['authenticate', [%ldap.username%, %ldap.password%, false]]
+
+    permissions:
+        class: 'QL\Hal\Services\PermissionsService'
+        arguments:
+            - @ldapService
+            - @deployment.repo
+            - @repository.repo
+            - @user.repo
+            - @environment.repo
+            - @github
+            - '%debug.godmode%'
+            - %permissions.prod.envs%
+            - %permissions.hal.repos%
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.permissions.ttl%]]
+
+    redis:
+        class: 'Predis\Client'
+        arguments:
+            - %redis.server%
+            - {prefix: '%redis.prefix%:'}
+
+    ######################################################################################################################
+    # API Helpers
+    ######################################################################################################################
+
+    api.build.normalizer:
+        class: 'QL\Hal\Api\BuildNormalizer'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @time.helper
+            - @api.environment.normalizer
+            - @api.repository.normalizer
+            - @api.user.normalizer
+
+    api.push.normalizer:
+        class: 'QL\Hal\Api\PushNormalizer'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @time.helper
+            - @api.build.normalizer
+            - @api.deployment.normalizer
+            - @api.user.normalizer
+
+    api.deployment.normalizer:
+        class: 'QL\Hal\Api\DeploymentNormalizer'
+        arguments:
+            - @api.helper
+            - @api.repository.normalizer
+            - @api.server.normalizer
+
+    api.environment.normalizer:
+        class: 'QL\Hal\Api\EnvironmentNormalizer'
+        arguments: [@api.helper, @url.helper]
+
+    api.group.normalizer:
+        class: 'QL\Hal\Api\GroupNormalizer'
+        arguments: [@api.helper, @url.helper]
+
+    api.repository.normalizer:
+        class: 'QL\Hal\Api\RepositoryNormalizer'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @api.group.normalizer
+
+    api.server.normalizer:
+        class: 'QL\Hal\Api\ServerNormalizer'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @api.environment.normalizer
+
+    api.user.normalizer:
+        class: 'QL\Hal\Api\UserNormalizer'
+        arguments: [@api.helper, @url.helper]
+
+    api.eventlog.normalizer:
+        class: 'QL\Hal\Api\EventLogNormalizer'
+        arguments:
+            - @api.helper
+            - @time.helper
+            - @url.helper
+
+    ######################################################################################################################
+    # Github API
+    ######################################################################################################################
+
+    github:
+        class: 'QL\Hal\Services\GithubService'
+        arguments:
+            - @github.userService
+            - @github.repoService
+            - @github.refService
+            - @github.pullService
+            - @github.commitService
+            - @github.pager
+            - @github.commitRepo
+
+    github.client:
+        class: 'Github\Client'
+        arguments: [@github.http.client]
+
+    github.http.client:
+        class: 'QL\Hal\Github\CachedHttpClient'
+        arguments:
+            - {base_url: %github.baseurl%}
+        calls:
+            - ['authenticate', [%github.token%, null, 'http_token']]
+            - ['setCache', [@cache.github]]
+
+    github.pager:
+        class: 'Github\ResultPager'
+        arguments: [@github.client]
+
+    github.orgService:
+        class: 'Github\Api\Organization'
+        arguments: [@github.client]
+
+    github.pullService:
+        class: 'Github\Api\PullRequest'
+        arguments: [@github.client]
+
+    github.refService:
+        class: 'Github\Api\GitData\References'
+        arguments: [@github.client]
+
+    github.commitService:
+        class: 'Github\Api\GitData\Commits'
+        arguments: [@github.client]
+
+    github.repoService:
+        class: 'Github\Api\Repo'
+        arguments: [@github.client]
+
+    github.userService:
+        class: 'Github\Api\User'
+        arguments: [@github.client]
+
+    github.commitRepo:
+        class: 'Github\Api\Repository\Commits'
+        arguments: [@github.client]
+
+    ######################################################################################################################
+    # SESSION
+    ######################################################################################################################
+
+    session:
+        class: 'QL\Hal\Session'
+        factory_service: 'session.handler'
+        factory_method: 'load'
+
+    session.handler:
+        class: 'QL\Hal\SessionHandler'
+        arguments:
+            - @slim.cookies
+            - @session.encryption
+            - %session.cookie.configuration%
+
+    session.encryption:
+        class: 'MCP\Crypto\AES'
+        arguments: [%session.encryption.secret%]
+
+    ######################################################################################################################
+    # Logging
+    ######################################################################################################################
+
+    logger:
+        class: 'MCP\Service\Logger\Logger'
+        arguments: [@logger.mcp.service, @logger.mcp.factory]
+
+    logger.mcp.service:
+        class: 'MCP\Service\Logger\Service\GuzzleService'
+        arguments: [@logger.mcp.guzzle, @logger.mcp.renderer, true]
+    logger.mcp.guzzle:
+        class: 'Guzzle\Http\Client'
+        arguments: [%logger.mcp.host%]
+    logger.mcp.renderer:
+        class: 'MCP\Service\Logger\Renderer\XmlRenderer'
+        arguments: [@logger.mcp.writer]
+    logger.mcp.writer:
+        class: 'XMLWriter'
+
+    logger.mcp.factory:
+        class: 'MCP\Service\Logger\Adapter\Psr\MessageFactory'
+        arguments: ['@clock']
+        calls:
+            - ['setDefaultProperty', ['applicationId', %application.id%]]
+            # replaced at runtime, maybe
+            - ['setDefaultProperty', ['machineIPAddress', @logger.mcp.serverIp]]
+            # replaced at runtime
+            - ['setDefaultProperty', ['machineName', 'localhost']]
+    logger.mcp.serverIp:
+        class: 'MCP\DataType\IPv4Address'
+        factory: ['MCP\DataType\IPv4Address', 'create']
+        arguments: ['0.0.0.0']
