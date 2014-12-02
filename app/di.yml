@@ -24,8 +24,7 @@ services:
 
     doctrine.config:
         class: 'Doctrine\ORM\Configuration'
-        factory_class: 'Doctrine\ORM\Tools\Setup'
-        factory_method: 'createAnnotationMetadataConfiguration'
+        factory: ['Doctrine\ORM\Tools\Setup', 'createAnnotationMetadataConfiguration']
         arguments:
             - ['@doctrine.mapping']
             - %doctrine.devmode%
@@ -34,8 +33,7 @@ services:
 
     doctrine.proxy.dir:
         class: 'NOTHING_TO_SEE_HERE'
-        factory_service: 'directory.helper'
-        factory_method: 'fullPath'
+        factory: [@directory.helper, 'fullPath']
         arguments: ['.doctrine']
 
     doctrine.events:
@@ -79,8 +77,7 @@ services:
 
     hal.pushfile:
         class: 'dynamic_scalar'
-        factory_service: 'directory.helper'
-        factory_method: 'fullPath'
+        factory: [@directory.helper, 'fullPath']
         arguments: ['.hal9000.push.yml']
 
     ######################################################################################################################
@@ -423,8 +420,7 @@ services:
 
     session:
         class: 'QL\Hal\Session'
-        factory_service: 'session.handler'
-        factory_method: 'load'
+        factory: [@session.handler, 'load']
 
     session.handler:
         class: 'QL\Hal\SessionHandler'
