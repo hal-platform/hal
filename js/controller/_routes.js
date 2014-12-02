@@ -13,7 +13,7 @@ define([], function() {
 
         { url: "/repositories/:id:/status",         controller: "repository-status",            component: "job-updater" },
         { url: "/builds/:id:",                      controller: "build",                        component: "job-updater" },
-        { url: "/pushs/:id:",                       controller: "push",                         component: "job-updater" },
+        { url: "/pushes/:id:",                      controller: "push",                         component: "job-updater" },
         { url: "/repositories/:id:/builds/:page*:", controller: "builds",                       component: "job-updater" },
         { url: "/repositories/:id:/pushes/:page*:", controller: "pushes",                       component: "job-updater" }
     ];
