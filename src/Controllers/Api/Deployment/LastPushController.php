@@ -7,11 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
-use QL\Hal\Api\PushNormalizer;
+use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -21,9 +20,9 @@ use Slim\Http\Response;
 class LastPushController
 {
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type DeploymentRepository
@@ -31,40 +30,35 @@ class LastPushController
     private $deploymentRepo;
 
     /**
-     * @type PushNormalizer
-     */
-    private $normalizer;
-
-    /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param DeploymentRepository $deploymentRepo
-     * @param PushNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
-        DeploymentRepository $deploymentRepo,
-        PushNormalizer $normalizer
+        ResponseFormatter $formatter,
+        DeploymentRepository $deploymentRepo
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->deploymentRepo = $deploymentRepo;
-        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $deployment = $this->deploymentRepo->findOneBy(['id' => $params['id']]);
+
         if (!$deployment instanceof Deployment) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-deployment');
         }
 
         $status = $request->get('status');
+
         if ($status && !in_array($status, ['Waiting', 'Pushing', 'Error', 'Success'])) {
-            return $response->setStatus(400);
+            throw HttpProblemException::build(400, 'invalid-status');
         }
 
         if ($status === 'Success') {
@@ -74,9 +68,9 @@ class LastPushController
         }
 
         if (!$push) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'no-pushes');
         }
 
-        $this->api->prepareResponse($response, $this->normalizer->normalize($push));
+        $this->formatter->respond($push);
     }
 }

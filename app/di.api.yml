@@ -92,9 +92,8 @@ services:
     api.deployment.lastpush:
         class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @deployment.repo
-            - @api.push.normalizer
 
     ######################################################################################################################
     # ENVIRONMENT CONTROLLERS
