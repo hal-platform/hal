@@ -83,6 +83,7 @@ class PushNormalizer
         return $this->buildResource(
             [
                 'id' => $push->getId(),
+                'status' => $push->getStatus(),
                 'created' => $push->getCreated(),
                 'started' => $push->getStart(),
                 'ended' => $push->getEnd()
