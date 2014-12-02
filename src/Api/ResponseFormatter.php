@@ -86,9 +86,10 @@ class ResponseFormatter
      * Format and send the response data
      *
      * @param mixed $data
+     * @param int $status
      * @param bool $cache
      */
-    public function respond($data, $cache = true)
+    public function respond($data, $status = 200, $cache = true)
     {
         if (is_array($data)) {
             $data = $this->resolve($data);
@@ -107,6 +108,7 @@ class ResponseFormatter
         $this->response->header('Content-Type', self::TYPE);
         $this->response->header('hal_cache_status', 'NOT CACHED');
         $this->response->header('hal_response_time', round(microtime(true) - $this->start, 2));
+        $this->response->setStatus($status);
     }
 
     /**

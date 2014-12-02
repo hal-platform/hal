@@ -357,6 +357,7 @@ services:
     normalizer.push:
         class: 'QL\Hal\Api\Normalizer\PushNormalizer'
         arguments:
+            - @url.helper
             - @normalizer.user
             - @normalizer.build
             - @normalizer.deployment

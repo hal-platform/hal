@@ -12,13 +12,15 @@ use DateTimeZone;
 use Doctrine\Common\Collections\Criteria;
 use MCP\DataType\Time\Clock;
 use MCP\DataType\Time\TimePoint;
-use QL\Hal\Api\BuildNormalizer;
-use QL\Hal\Api\PushNormalizer;
+use QL\Hal\Api\Normalizer\BuildNormalizer;
+use QL\Hal\Api\Normalizer\PushNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -30,10 +32,12 @@ use Slim\Http\Response;
  */
 class QueueController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @var ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @var BuildNormalizer
@@ -61,23 +65,22 @@ class QueueController
     private $clock;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param BuildNormalizer $buildNormalizer
      * @param PushNormalizer $pushNormalizer
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
-     * @param EntityManager $entityManager
      * @param Clock $clock
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         BuildNormalizer $buildNormalizer,
         PushNormalizer $pushNormalizer,
         BuildRepository $buildRepo,
         PushRepository $pushRepo,
         Clock $clock
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->buildNormalizer = $buildNormalizer;
         $this->pushNormalizer = $pushNormalizer;
         $this->buildRepo = $buildRepo;
@@ -89,36 +92,29 @@ class QueueController
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @param callable $notFound
-     * @return null
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $since = $request->get('since');
         $createdAfter = null;
         if ($since && !$createdAfter = $this->parseValidSinceTime($since)) {
-            // @todo need to use problem+json
-            $response->setBody('Malformed Datetime! Dates must be ISO8601 UTC.');
-            return $response->setStatus(400);
+            throw HttpProblemException::build(400, 'Malformed Datetime! Dates must be ISO8601 UTC.');
         }
 
         $createdAfter = $createdAfter ?: $this->getDefaultSinceTime();
+        $jobs = $this->retrieveJobs($createdAfter);
+        $status = count($jobs) > 0 ? 200 : 404;
 
-        if (!$jobs = $this->retrieveJobs($createdAfter)) {
-            return $response->setStatus(404);
-        }
-
-        $content = [
-            'count' => count($jobs),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => 'api.queue'])
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($jobs)
             ],
-            '_embedded' => [
+            [
                 'jobs' => $this->formatQueue($jobs)
-            ]
-        ];
-
-        $this->api->prepareResponse($response, $content);
+            ],
+            []
+        ), $status);
     }
 
     /**
@@ -127,37 +123,20 @@ class QueueController
      */
     private function formatQueue(array $queue)
     {
-        $normalizedQueue = [];
-
-        $criteria = [
-            'build' => [
-                'repository' => []
-            ],
-            'deployment' => []
-        ];
-
-        foreach ($queue as $job) {
-            if ($job instanceof Push) {
-                $normalized = $this->pushNormalizer->normalize($job, $criteria);
-                $normalized = array_merge([
-                    // i need dis
-                    'uniqueId' => 'push-' . $normalized['id'],
-                    'type' => 'push'
-                ], $normalized);
-
-            } else {
-                $normalized = $this->buildNormalizer->normalize($job, $criteria['build']);
-                $normalized = array_merge([
-                    // i need dis
-                    'uniqueId' => 'build-' . $normalized['id'],
-                    'type' => 'build'
-                ], $normalized);
+        return array_map(function ($item) {
+            if ($item instanceof Push) {
+                return [
+                    'type' => 'push',
+                    'uniqueId' => sprintf('push-%s', $item->getId())
+                ] + $this->pushNormalizer->resource($item, ['build', 'deployment']);
             }
-
-            $normalizedQueue[] = $normalized;
-        }
-
-        return $normalizedQueue;
+            if ($item instanceof Build) {
+                return [
+                    'type' => 'build',
+                    'uniqueId' => sprintf('build-%s', $item->getId())
+                ] + $this->buildNormalizer->resource($item, ['repository']);
+            }
+        }, $queue);
     }
 
     /**

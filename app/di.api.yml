@@ -29,9 +29,9 @@ services:
     api.queue:
         class: 'QL\Hal\Controllers\Api\QueueController'
         arguments:
-            - @api.helper
-            - @api.build.normalizer
-            - @api.push.normalizer
+            - @response.formatter
+            - @normalizer.build
+            - @normalizer.push
             - @build.repo
             - @push.repo
             - @clock

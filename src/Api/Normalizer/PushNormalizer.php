@@ -6,6 +6,7 @@ use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
+use QL\Hal\Helpers\UrlHelper;
 
 /**
  * Push Object Normalizer
@@ -15,6 +16,11 @@ class PushNormalizer
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
+
+    /**
+     * @var UrlHelper
+     */
+    private $urls;
 
     /**
      * @var UserNormalizer
@@ -37,15 +43,18 @@ class PushNormalizer
     private $embed;
 
     /**
+     * @param UrlHelper $urls
      * @param UserNormalizer $users
      * @param BuildNormalizer $builds
      * @param DeploymentNormalizer $deployments
      */
     public function __construct(
+        UrlHelper $urls,
         UserNormalizer $users,
         BuildNormalizer $builds,
         DeploymentNormalizer $deployments
     ) {
+        $this->urls = $urls;
         $this->users = $users;
         $this->builds = $builds;
         $this->deployments = $deployments;
@@ -85,8 +94,9 @@ class PushNormalizer
                 'id' => $push->getId(),
                 'status' => $push->getStatus(),
                 'created' => $push->getCreated(),
-                'started' => $push->getStart(),
-                'ended' => $push->getEnd()
+                'start' => $push->getStart(),
+                'end' => $push->getEnd(),
+                'url' => $this->urls->urlFor('push', ['push' => $push->getId()])
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
@@ -94,7 +104,7 @@ class PushNormalizer
                 'initiator' => $this->users->link($push->getUser()),
                 'build' => $this->builds->link($push->getBuild()),
                 'deployment' => $this->deployments->link($push->getDeployment()),
-                'logs' => $this->buildLink(['href' => ['api.push.logs', ['id' => $push->getId()]]])
+                'logs' => $this->buildLink(['api.push.logs', ['id' => $push->getId()]])
             ]
         );
     }

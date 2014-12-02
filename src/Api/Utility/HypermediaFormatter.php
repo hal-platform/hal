@@ -161,6 +161,11 @@ class HypermediaFormatter
     public function parseRelations(array $relations)
     {
         return array_map(function ($child) {
+
+            if (is_null($child)) {
+                return null;
+            }
+
             return ($this->arrayIsAssoc($child)) ? $this->parseResource($child) : $this->parseResources($child);
         }, $relations);
     }
@@ -187,7 +192,7 @@ class HypermediaFormatter
     public function parseLinks(array $links)
     {
         return array_map(function ($link) {
-            return $this->parseLink($link);
+            return (is_null($link)) ? null : $this->parseLink($link);
         }, $links);
     }
 
@@ -236,7 +241,7 @@ class HypermediaFormatter
      * @param array $properties
      * @return array
      */
-    public function parseLink(array &$properties)
+    public function parseLink(array &$properties = null)
     {
         if ($this->arrayIsAssoc($properties)) {
             // single link

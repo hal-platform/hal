@@ -33,9 +33,9 @@ class DeploymentNormalizer
      * @param Deployment $deployment
      * @return array
      */
-    public function link(Deployment $deployment)
+    public function link(Deployment $deployment = null)
     {
-        return $this->buildLink(
+        return (is_null($deployment)) ? null : $this->buildLink(
             ['api.deployment', ['id' => $deployment->getId()]],
             [
                 'title' => $deployment->getServer()->getName()

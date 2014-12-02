@@ -45,7 +45,7 @@ class UserNormalizer
             [],
             [
                 'self' => $this->link($user),
-                'permissions' => $this->buildLink(['href' => ['api.user.permissions', ['id' => $user->getId()]]])
+                'permissions' => $this->buildLink(['api.user.permissions', ['id' => $user->getId()]])
             ]
         );
     }

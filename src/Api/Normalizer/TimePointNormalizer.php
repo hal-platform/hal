@@ -28,10 +28,10 @@ class TimePointNormalizer
      * @param TimePoint $time
      * @return array
      */
-    public function normalize(TimePoint $time)
+    public function normalize(TimePoint $time = null)
     {
-        return [
-            'display' => $this->time->relative($time, false),
+        return (is_null($time)) ? null : [
+            'text' => $this->time->relative($time, false),
             'datetime' => $this->time->format($time, false, 'c')
         ];
     }

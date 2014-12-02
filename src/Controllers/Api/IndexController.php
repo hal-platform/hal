@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\Api;
 
 use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -16,6 +17,8 @@ use Slim\Http\Response;
  */
 class IndexController
 {
+    use HypermediaLinkTrait;
+
     /**
      * @var ResponseFormatter
      */
@@ -38,7 +41,6 @@ class IndexController
     {
         $this->formatter->respond([
             '_links' => [
-                'self' => ['href' => 'api.index'],
                 'environments' => ['href' => 'api.environments'],
                 'servers' => ['href' => 'api.servers'],
                 'groups' => ['href' => 'api.groups'],
@@ -47,25 +49,5 @@ class IndexController
                 'queue' => ['href' => 'api.queue']
             ]
         ]);
-//
-//
-//
-//
-//        $links = [
-//            'self' => ['href' => 'api.index'],
-//            'environments' => ['href' => 'api.environments'],
-//            'servers' => ['href' => 'api.servers'],
-//            'groups' => ['href' => 'api.groups'],
-//            'users' => ['href' => 'api.users'],
-//            'repositories' => ['href' => 'api.repositories'],
-//            'queue' => ['href' => 'api.queue']
-//        ];
-//
-//        $content = [
-//            '_links' => $this->api->parseLinks($links)
-//        ];
-//
-//
-//        $this->api->prepareResponse($response, $content);
     }
 }

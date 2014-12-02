@@ -94,8 +94,9 @@ class BuildNormalizer
                 'id' => $build->getId(),
                 'status' => $build->getStatus(),
                 'created' => $build->getCreated(),
-                'started' => $build->getStart(),
-                'ended' => $build->getEnd(),
+                'start' => $build->getStart(),
+                'end' => $build->getEnd(),
+                'url' => $this->urls->urlFor('build', ['build' => $build->getId()]),
                 'source' => [
                     'reference' => $build->getBranch(),
                     'commit' => $build->getCommit(),
