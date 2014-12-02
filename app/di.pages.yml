@@ -472,11 +472,7 @@ services:
 
     users.page:
         class: 'QL\Hal\Controllers\User\UsersController'
-        arguments:
-            - @users.twig
-            - @user.repo
-            - @doctrine.em
-            - @ldapService
+        arguments: [@users.twig, @user.repo]
     users.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/users.twig']]]
@@ -547,6 +543,17 @@ services:
     admin.super.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/super.twig']]]
+
+    admin.users.page:
+        class: 'QL\Hal\Controllers\Admin\UserManagementController'
+        arguments:
+            - @admin.users.twig
+            - @user.repo
+            - @ldapService
+            - @doctrine.em
+    admin.users.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/users.management.twig']]]
 
     ######################################################################################################################
     # HELP CONTROLLERS

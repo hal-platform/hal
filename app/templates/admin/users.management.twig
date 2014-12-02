@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "User Management" %}
+
+{% block content %}
+
+    {% if pruned %}
+        <div class="alert-bar--success">
+            <p>The users <strong>{{ pruned|join(', ') }}</strong> have been disabled.</p>
+        </div>
+    {% elseif no_pruned %}
+        <div class="alert-bar">
+            <p>No users were disabled. All inactive users are already disabled in HAL.</p>
+        </div>
+    {% else %}
+        <p>
+            <a href="{{ urlFor('admin.super.users', {}, {prune: 1}) }}" class="btn btn--destructive">Disable inactive users</a>
+        </p>
+    {% endif %}
+
+    <h2>User Management</h2>
+    <table class="tablesaw tablesaw-stack" data-mode="stack">
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>HAL Status</th>
+            <th>LDAP Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td><a href="{{ urlFor('user', {'id': user.user.id}) }}">{{ user.user.id }}</a></td>
+                <td>{{ user.user.handle }}</td>
+                <td>
+                    {% if user.hal_active %}
+                        <span class="icon--success">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Active
+                        </span>
+                    {% else %}
+                        <span class="icon--error-inverse">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#nope"></use></svg> Inactive
+                        </span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.ldap_active %}
+                        <span class="icon--success">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Active
+                        </span>
+                    {% else %}
+                        <span class="icon--error-inverse">
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#remove"></use></svg> Removed
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">There are no users.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

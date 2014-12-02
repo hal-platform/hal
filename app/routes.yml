@@ -60,6 +60,11 @@ parameters:
             route: '/superadmin'
             stack: ['superadmin.bouncer', 'admin.super.page']
 
+        admin.super.users:
+            method: 'GET'
+            route: '/superadmin/users'
+            stack: ['superadmin.bouncer', 'admin.users.page']
+
         ########################################################################################################################
         # HELP ROUTES
         ########################################################################################################################

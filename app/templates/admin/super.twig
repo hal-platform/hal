@@ -20,7 +20,11 @@
             <dl class="split--left mbn">
                 <dl>
                     <dt class="split--left__title"><strong>Hostname</strong></dt>
-                    <dd class="split--left__value">{{ servername }}</dd>
+                    <dd class="split--left__value">
+                        <div class="pre-wrapper">
+                            <pre>{{ servername }}</pre>
+                        </div>
+                    </dd>
                 </dl>
                 <dl>
                     <dt class="split--left__title"><strong>Encryption key</strong></dt>
@@ -41,17 +45,17 @@
                 <dl>
                     <dt class="split--left__title"><strong>HAL 9000 Push File</strong></dt>
                     <dd class="split--left__value">
-                        {% if pushfile %}
-                            <div class="pre-wrapper">
+                        <div class="pre-wrapper">
+                            {% if pushfile %}
                                 <pre>{{ pushfile }}</pre>
-                            </div>
-                        {% else %}
-                            No push file found. Are you in dev?
-                        {% endif %}
+                            {% else %}
+                                <pre>No push file found. Are you in dev?</pre>
+                            {% endif %}
+                        </div>
                     </dd>
                 </dl>
                 <dl>
-                    <dt class="split--left__title"><strong>Freespace</strong></dt>
+                    <dt class="split--left__title"><strong>{{ isSeriousBusinessMode() ? 'Free space' : 'Spaaace' }}</strong></dt>
                     <dd class="split--left__value">
                         <div class="pre-wrapper">
                             <pre>{{ freespace }}</pre>
@@ -92,6 +96,15 @@
                 <a href="{{ urlFor('admin.super', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
             {% endif %}
         </section>
+    </div>
+
+    <hr>
+
+    <h3>User Management</h3>
+    <div>
+        <p>
+            <a href="{{ urlFor('admin.super.users') }}">View current HAL and LDAP status for all users</a>
+        </p>
     </div>
 
     <hr>

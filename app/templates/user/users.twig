@@ -5,13 +5,6 @@
 {% import _self as macros %}
 
 {% block content %}
-
-    {% if pruned %}
-        <div class="alert-bar">
-            <p>The users <strong>{{ pruned|join(', ') }}</strong> have been removed.</p>
-        </div>
-    {% endif %}
-
     <h2>Users</h2>
     {{ macros.userTable(users) }}
 

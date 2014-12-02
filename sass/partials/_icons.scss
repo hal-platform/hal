@@ -3,7 +3,7 @@
     width: 1em;
     height: 1em;
     display: inline-block;
-    top: 4px;
+    top: 3px;
 }
 
 .icon:after {
@@ -34,6 +34,33 @@
     &:after {
         @include status;
     }
+}
+
+.icon--success {
+    color: $success-color;
+}
+.icon--success-inverse {
+    color: $white;
+    background: $success-color;
+    padding: 4px;
+}
+
+.icon--error {
+    color: $error-color;
+}
+.icon--error-inverse {
+    color: $white;
+    background: $error-color;
+    padding: 4px;
+}
+
+.icon--info {
+    color: $info-color;
+}
+.icon--info-inverse {
+    color: $white;
+    background: $info-color;
+    padding: 4px;
 }
 
 .status-before--success, .status-after--success {
