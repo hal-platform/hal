@@ -32,7 +32,7 @@ class TimePointNormalizer
     {
         return [
             'display' => $this->time->relative($time, false),
-            'datetime' => $this->time->format($time, false)
+            'datetime' => $this->time->format($time, false, 'c')
         ];
     }
 }

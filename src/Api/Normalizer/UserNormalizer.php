@@ -7,45 +7,46 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\User;
 
 /**
- *
+ * User Object Normalizer
  */
 class UserNormalizer
 {
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
 
-    private $embed;
-
-    public function __construct(
-
-    ) {
-
-
-        $this->embed = [];
-    }
-
     /**
-     * @param User $input
+     * @param User $user
      * @return array
      */
-    public function link(User $input)
+    public function link(User $user)
     {
-        return $this->buildLink('', [
-
-        ]);
+        return $this->buildLink(
+            ['api.user', ['id' => $user->getId()]],
+            [
+                'title' => $user->getHandle()
+            ]
+        );
     }
 
     /**
-     * @param User $input
-     * @param array $embed
+     * @param User $user
      * @return array
      */
-    public function resource(User $input, array $embed = [])
+    public function resource(User $user)
     {
         return $this->buildResource(
+            [
+                'id' => $user->getId(),
+                'handle' => $user->getHandle(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'picture' => $user->getPictureUrl()
+            ],
             [],
-            [],
-            []
+            [
+                'self' => $this->link($user),
+                'permissions' => $this->buildLink(['href' => ['api.user.permissions', ['id' => $user->getId()]]])
+            ]
         );
     }
 }

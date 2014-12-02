@@ -3,6 +3,8 @@
 namespace QL\Hal\Api;
 
 use DateTime;
+use MCP\DataType\HttpUrl;
+use QL\Hal\Api\Normalizer\HttpUrlNormalizer;
 use QL\Hal\Api\Normalizer\TimePointNormalizer;
 use QL\Hal\Core\Entity\Build;
 use InvalidArgumentException;
@@ -84,6 +86,11 @@ class Normalizer
     private $time;
 
     /**
+     * @var HttpUrlNormalizer
+     */
+    private $url;
+
+    /**
      * @param BuildNormalizer $builds
      * @param DeploymentNormalizer $deployments
      * @param EnvironmentNormalizer $environments
@@ -94,6 +101,7 @@ class Normalizer
      * @param ServerNormalizer $servers
      * @param UserNormalizer $users
      * @param TimePointNormalizer $time
+     * @param HttpUrlNormalizer $url
      */
     public function __construct(
         BuildNormalizer $builds,
@@ -105,7 +113,8 @@ class Normalizer
         RepositoryNormalizer $repositories,
         ServerNormalizer $servers,
         UserNormalizer $users,
-        TimePointNormalizer $time
+        TimePointNormalizer $time,
+        HttpUrlNormalizer $url
     ) {
         $this->builds = $builds;
         $this->deployments = $deployments;
@@ -117,6 +126,7 @@ class Normalizer
         $this->servers = $servers;
         $this->users = $users;
         $this->time = $time;
+        $this->url = $url;
     }
 
     /**
@@ -155,7 +165,10 @@ class Normalizer
                 return $this->resolve($this->users->resource($input));
             case $input instanceof TimePoint:
                 return $this->time->normalize($input);
-
+            case $input instanceof HttpUrl:
+                return $this->url->normalize($input);
+            case is_null($input):
+                return null;
         }
 
         $type = (is_object($input)) ? get_class($input) : sprintf('%s(%s)', gettype($input), $input);
