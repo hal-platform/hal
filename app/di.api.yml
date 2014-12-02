@@ -1,266 +1,266 @@
 # Application specific endpoints and controllers go here
 services:
 
-  ######################################################################################################################
-  # API CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # API CONTROLLERS
+    ######################################################################################################################
 
-  api.index:
-    class: 'QL\Hal\Controllers\Api\IndexController'
-    arguments: [@api.helper]
+    api.index:
+        class: 'QL\Hal\Controllers\Api\IndexController'
+        arguments: [@api.helper]
 
-  ######################################################################################################################
-  # GITHUB CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # GITHUB CONTROLLERS
+    ######################################################################################################################
 
-  api.github.users:
-    class: 'QL\Hal\Controllers\GithubApi\Users'
-    arguments: [@github]
+    api.github.users:
+        class: 'QL\Hal\Controllers\GithubApi\Users'
+        arguments: [@github]
 
-  api.github.user.repositories:
-    class: 'QL\Hal\Controllers\GithubApi\Repos'
-    arguments: [@github]
+    api.github.user.repositories:
+        class: 'QL\Hal\Controllers\GithubApi\Repos'
+        arguments: [@github]
 
-  ######################################################################################################################
-  # QUEUE CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # QUEUE CONTROLLERS
+    ######################################################################################################################
 
-  api.queue:
-    class: 'QL\Hal\Controllers\Api\QueueController'
-    arguments:
-        - @api.helper
-        - @api.build.normalizer
-        - @api.push.normalizer
-        - @build.repo
-        - @push.repo
-        - @clock
+    api.queue:
+        class: 'QL\Hal\Controllers\Api\QueueController'
+        arguments:
+            - @api.helper
+            - @api.build.normalizer
+            - @api.push.normalizer
+            - @build.repo
+            - @push.repo
+            - @clock
 
-  api.queue.refresh:
-    class: 'QL\Hal\Controllers\Api\QueueRefreshController'
-    arguments:
-        - @api.helper
-        - @api.build.normalizer
-        - @api.push.normalizer
-        - @build.repo
-        - @push.repo
+    api.queue.refresh:
+        class: 'QL\Hal\Controllers\Api\QueueRefreshController'
+        arguments:
+            - @api.helper
+            - @api.build.normalizer
+            - @api.push.normalizer
+            - @build.repo
+            - @push.repo
 
-  ######################################################################################################################
-  # BUILD CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # BUILD CONTROLLERS
+    ######################################################################################################################
 
-  api.build:
-    class: 'QL\Hal\Controllers\Api\Build\BuildController'
-    arguments:
-      - @api.helper
-      - @build.repo
-      - @api.build.normalizer
+    api.build:
+        class: 'QL\Hal\Controllers\Api\Build\BuildController'
+        arguments:
+            - @api.helper
+            - @build.repo
+            - @api.build.normalizer
 
-  api.build.logs:
-    class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
-    arguments:
-        - @api.helper
-        - @build.repo
-        - @api.eventlog.normalizer
+    api.build.logs:
+        class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
+        arguments:
+            - @api.helper
+            - @build.repo
+            - @api.eventlog.normalizer
 
-  api.builds:
-    class: 'QL\Hal\Controllers\Api\Build\BuildsController'
-    arguments:
-      - @api.helper
-      - @repository.repo
-      - @build.repo
-      - @api.build.normalizer
+    api.builds:
+        class: 'QL\Hal\Controllers\Api\Build\BuildsController'
+        arguments:
+            - @api.helper
+            - @repository.repo
+            - @build.repo
+            - @api.build.normalizer
 
-  ######################################################################################################################
-  # DEPLOYMENT CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # DEPLOYMENT CONTROLLERS
+    ######################################################################################################################
 
-  api.deployment:
-    class: 'QL\Hal\Controllers\Api\Deployment\DeploymentController'
-    arguments:
-      - @api.helper
-      - @deployment.repo
-      - @api.deployment.normalizer
+    api.deployment:
+        class: 'QL\Hal\Controllers\Api\Deployment\DeploymentController'
+        arguments:
+            - @api.helper
+            - @deployment.repo
+            - @api.deployment.normalizer
 
-  api.deployments:
-    class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
-    arguments:
-      - @api.helper
-      - @repository.repo
-      - @deployment.repo
-      - @api.deployment.normalizer
+    api.deployments:
+        class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
+        arguments:
+            - @api.helper
+            - @repository.repo
+            - @deployment.repo
+            - @api.deployment.normalizer
 
-  api.deployment.lastpush:
-    class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
-    arguments:
-      - @api.helper
-      - @deployment.repo
-      - @api.push.normalizer
+    api.deployment.lastpush:
+        class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
+        arguments:
+            - @api.helper
+            - @deployment.repo
+            - @api.push.normalizer
 
-  ######################################################################################################################
-  # ENVIRONMENT CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # ENVIRONMENT CONTROLLERS
+    ######################################################################################################################
 
-  api.environment:
-    class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
-    arguments:
-      - @api.helper
-      - @environment.repo
-      - @api.environment.normalizer
+    api.environment:
+        class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
+        arguments:
+            - @api.helper
+            - @environment.repo
+            - @api.environment.normalizer
 
-  api.environments:
-    class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
-    arguments:
-      - @api.helper
-      - @environment.repo
-      - @api.environment.normalizer
+    api.environments:
+        class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
+        arguments:
+            - @api.helper
+            - @environment.repo
+            - @api.environment.normalizer
 
-  ######################################################################################################################
-  # SERVER CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # SERVER CONTROLLERS
+    ######################################################################################################################
 
-  api.server:
-    class: 'QL\Hal\Controllers\Api\Server\ServerController'
-    arguments:
-      - @api.helper
-      - @server.repo
-      - @api.server.normalizer
+    api.server:
+        class: 'QL\Hal\Controllers\Api\Server\ServerController'
+        arguments:
+            - @api.helper
+            - @server.repo
+            - @api.server.normalizer
 
-  api.servers:
-    class: 'QL\Hal\Controllers\Api\Server\ServersController'
-    arguments:
-      - @api.helper
-      - @server.repo
-      - @api.server.normalizer
+    api.servers:
+        class: 'QL\Hal\Controllers\Api\Server\ServersController'
+        arguments:
+            - @api.helper
+            - @server.repo
+            - @api.server.normalizer
 
-  ######################################################################################################################
-  # BUILD CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # BUILD CONTROLLERS
+    ######################################################################################################################
 
-  api.group:
-    class: 'QL\Hal\Controllers\Api\Group\GroupController'
-    arguments:
-      - @api.helper
-      - @group.repo
-      - @api.group.normalizer
+    api.group:
+        class: 'QL\Hal\Controllers\Api\Group\GroupController'
+        arguments:
+            - @api.helper
+            - @group.repo
+            - @api.group.normalizer
 
-  api.groups:
-    class: 'QL\Hal\Controllers\Api\Group\GroupsController'
-    arguments:
-      - @api.helper
-      - @group.repo
-      - @api.group.normalizer
+    api.groups:
+        class: 'QL\Hal\Controllers\Api\Group\GroupsController'
+        arguments:
+            - @api.helper
+            - @group.repo
+            - @api.group.normalizer
 
-  ######################################################################################################################
-  # PUSH CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # PUSH CONTROLLERS
+    ######################################################################################################################
 
-  api.push:
-    class: 'QL\Hal\Controllers\Api\Push\PushController'
-    arguments:
-      - @api.helper
-      - @push.repo
-      - @api.push.normalizer
+    api.push:
+        class: 'QL\Hal\Controllers\Api\Push\PushController'
+        arguments:
+            - @api.helper
+            - @push.repo
+            - @api.push.normalizer
 
-  api.push.logs:
-    class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
-    arguments:
-      - @api.helper
-      - @push.repo
-      - @api.eventlog.normalizer
+    api.push.logs:
+        class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
+        arguments:
+            - @api.helper
+            - @push.repo
+            - @api.eventlog.normalizer
 
-  api.pushes:
-    class: 'QL\Hal\Controllers\Api\Push\PushesController'
-    arguments:
-      - @api.helper
-      - @repository.repo
-      - @push.repo
-      - @api.push.normalizer
+    api.pushes:
+        class: 'QL\Hal\Controllers\Api\Push\PushesController'
+        arguments:
+            - @api.helper
+            - @repository.repo
+            - @push.repo
+            - @api.push.normalizer
 
 
-  ######################################################################################################################
-  # EVENT LOG CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # EVENT LOG CONTROLLERS
+    ######################################################################################################################
 
-  api.event.log:
-    class: 'QL\Hal\Controllers\Api\EventLogController'
-    arguments:
-      - @api.helper
-      - @event.log.repo
-      - @api.eventlog.normalizer
+    api.event.log:
+        class: 'QL\Hal\Controllers\Api\EventLogController'
+        arguments:
+            - @api.helper
+            - @event.log.repo
+            - @api.eventlog.normalizer
 
-  ######################################################################################################################
-  # REPOSITORY CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # REPOSITORY CONTROLLERS
+    ######################################################################################################################
 
-  api.repository:
-    class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
-    arguments:
-      - @api.helper
-      - @repository.repo
-      - @api.repository.normalizer
+    api.repository:
+        class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
+        arguments:
+            - @api.helper
+            - @repository.repo
+            - @api.repository.normalizer
 
-  api.repository.tags:
-    class: 'QL\Hal\Controllers\Api\Repository\TagsController'
-    arguments:
-      - @api.helper
-      - @url.helper
-      - @github
-      - @repository.repo
+    api.repository.tags:
+        class: 'QL\Hal\Controllers\Api\Repository\TagsController'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @github
+            - @repository.repo
 
-  api.repository.branches:
-    class: 'QL\Hal\Controllers\Api\Repository\BranchesController'
-    arguments:
-      - @api.helper
-      - @url.helper
-      - @github
-      - @repository.repo
+    api.repository.branches:
+        class: 'QL\Hal\Controllers\Api\Repository\BranchesController'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @github
+            - @repository.repo
 
-  api.repository.pullrequests:
-    class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
-    arguments:
-      - @api.helper
-      - @url.helper
-      - @github
-      - @repository.repo
+    api.repository.pullrequests:
+        class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @github
+            - @repository.repo
 
-  api.repository.diff:
-    class: 'QL\Hal\Controllers\Api\Repository\DiffController'
-    arguments:
-      - @api.helper
-      - @url.helper
-      - @github
-      - @repository.repo
+    api.repository.diff:
+        class: 'QL\Hal\Controllers\Api\Repository\DiffController'
+        arguments:
+            - @api.helper
+            - @url.helper
+            - @github
+            - @repository.repo
 
-  api.repositories:
-    class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
-    arguments:
-      - @api.helper
-      - @repository.repo
-      - @api.repository.normalizer
+    api.repositories:
+        class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
+        arguments:
+            - @api.helper
+            - @repository.repo
+            - @api.repository.normalizer
 
   ######################################################################################################################
   # USER CONTROLLERS
   ######################################################################################################################
 
-  api.user:
-    class: 'QL\Hal\Controllers\Api\User\UserController'
-    arguments:
-      - @api.helper
-      - @user.repo
-      - @api.user.normalizer
+    api.user:
+        class: 'QL\Hal\Controllers\Api\User\UserController'
+        arguments:
+            - @api.helper
+            - @user.repo
+            - @api.user.normalizer
 
-  api.users:
-    class: 'QL\Hal\Controllers\Api\User\UsersController'
-    arguments:
-      - @api.helper
-      - @user.repo
-      - @api.user.normalizer
+    api.users:
+        class: 'QL\Hal\Controllers\Api\User\UsersController'
+        arguments:
+            - @api.helper
+            - @user.repo
+            - @api.user.normalizer
 
-  api.user.permissions:
-    class: 'QL\Hal\Controllers\Api\User\UserPermissionsController'
-    arguments:
-      - @api.helper
-      - @user.repo
-      - @api.environment.normalizer
-      - @api.repository.normalizer
-      - @permissions
+    api.user.permissions:
+        class: 'QL\Hal\Controllers\Api\User\UserPermissionsController'
+        arguments:
+            - @api.helper
+            - @user.repo
+            - @api.environment.normalizer
+            - @api.repository.normalizer
+            - @permissions
