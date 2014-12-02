@@ -1,608 +1,609 @@
 # Application specific endpoints and controllers go here
 services:
 
-  delete.confirm.page:
-    class: 'QL\Hal\Controllers\StaticController'
-    arguments: [@delete.confirm.twig]
-  delete.confirm.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['delete.confirm.twig']]]
-
-  dashboard.page:
-    class: 'QL\Hal\Controllers\DashboardController'
-    arguments:
-      - @dashboard.twig
-      - @currentUser
-      - @permissions
-      - @build.repo
-      - @push.repo
-      - @user.repo
-  dashboard.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['dashboard.twig']]]
-
-  login.page:
-    class: 'QL\Hal\Controllers\LoginController'
-    arguments: [@login.twig]
-  login.twig:
-    parent: 'twig.template'
-    arguments: ['login.twig']
-    calls: [['setTemplate', ['login.twig']]]
-  login.handle:
-    class: 'QL\Hal\Controllers\LoginHandleController'
-    arguments:
-      - @login.twig
-      - @ldapService
-      - @user.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  logout.handle:
-    class: 'QL\Hal\Controllers\LogoutController'
-    arguments: [@session, @url.helper]
-
-  queue.page:
-    class: 'QL\Hal\Controllers\QueueController'
-    arguments:
-        - @queue.twig
-        - @build.repo
-        - @push.repo
-  queue.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['queue.twig']]]
-
-  ######################################################################################################################
-  # GROUP CONTROLLERS
-  ######################################################################################################################
-
-  groups.page:
-    class: 'QL\Hal\Controllers\Group\GroupsController'
-    arguments: [@groups.twig, @group.repo]
-  groups.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['group/groups.twig']]]
-
-  group.page:
-    class: 'QL\Hal\Controllers\Group\GroupController'
-    arguments:
-      - @group.twig
-      - @group.repo
-      - @repository.repo
-  group.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['group/group.twig']]]
-
-  group.admin.add.page:
-    class: 'QL\Hal\Controllers\Group\AdminAddController'
-    arguments:
-      - @group.admin.add.twig
-      - @group.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-  group.admin.add.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['group/admin.add.twig']]]
-  group.admin.add.handle:
-    parent: 'group.admin.add.page'
-
-  group.admin.edit.page:
-    class: 'QL\Hal\Controllers\Group\AdminEditController'
-    arguments:
-      - @group.admin.edit.twig
-      - @group.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-  group.admin.edit.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['group/admin.edit.twig']]]
-  group.admin.edit.handle:
-    parent: 'group.admin.edit.page'
-  group.admin.remove.handle:
-    class: 'QL\Hal\Controllers\Group\AdminRemoveHandle'
-    arguments:
-      - @group.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  ######################################################################################################################
-  # REPOSITORY CONTROLLERS
-  ######################################################################################################################
-
-  repositories.page:
-    class: 'QL\Hal\Controllers\Repository\RepositoriesController'
-    arguments: [@repositories.twig, @group.repo]
-  repositories.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['repository/repositories.twig']]]
-
-  repository.page:
-    class: 'QL\Hal\Controllers\Repository\RepositoryController'
-    arguments:
-      - @repository.twig
-      - @repository.repo
-      - @deployment.repo
-      - @permissions
-  repository.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['repository/repository.twig']]]
-
-  repository.status.page:
-    class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
-    arguments:
-      - @repository.status.twig
-      - @doctrine.em
-      - @repository.repo
-      - @build.repo
-      - @deployment.repo
-  repository.status.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['repository/status.twig']]]
-
-  repository.admin.add.page:
-    class: 'QL\Hal\Controllers\Repository\AdminAddController'
-    arguments:
-      - @repository.admin.add.twig
-      - @group.repo
-      - @repository.repo
-      - @doctrine.em
-      - @github
-      - @session
-      - @url.helper
-  repository.admin.add.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['repository/admin.add.twig']]]
-  repository.admin.add.handle:
-    parent: 'repository.admin.add.page'
-
-  repository.admin.edit.page:
-    class: 'QL\Hal\Controllers\Repository\AdminEditController'
-    arguments:
-        - @repository.admin.edit.twig
-        - @group.repo
-        - @repository.repo
-        - @doctrine.em
-        - @session
-        - @url.helper
-  repository.admin.edit.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['repository/admin.edit.twig']]]
-  repository.admin.edit.handle:
-    parent: 'repository.admin.edit.page'
-
-  repository.admin.remove.handle:
-    class: 'QL\Hal\Controllers\Repository\AdminRemoveHandle'
-    arguments:
-        - @repository.repo
-        - @deployment.repo
-        - @doctrine.em
-        - @session
-        - @url.helper
-
-  ######################################################################################################################
-  # REPOSITORY DEPLOYMENT CONTROLLERS
-  ######################################################################################################################
-
-  repository.deployments.page:
-    class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentsController'
-    arguments:
-      - @repository.deployments.twig
-      - @environment.repo
-      - @server.repo
-      - @repository.repo
-      - @deployment.repo
-  repository.deployments.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['repository/deployments.twig']]]
-
-  repository.deployment.admin.add.handle:
-    class: 'QL\Hal\Controllers\Repository\Deployment\AdminAddHandle'
-    arguments:
-      - @server.repo
-      - @repository.repo
-      - @deployment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  repository.deployment.admin.remove.handle:
-    class: 'QL\Hal\Controllers\Repository\Deployment\AdminRemoveHandle'
-    arguments:
-      - @deployment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  ######################################################################################################################
-  # BUILD CONTROLLERS
-  #####################################################################################################################
-
-  build.page:
-    class: 'QL\Hal\Controllers\Build\BuildController'
-    arguments: [@build.twig, @build.repo]
-  build.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['build/build.twig']]]
-
-  build.start.page:
-    class: 'QL\Hal\Controllers\Build\BuildStartController'
-    arguments:
-      - @build.start.twig
-      - @repository.repo
-      - @environment.repo
-      - @github
-  build.start.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['build/start.twig']]]
-
-  build.start.handle.page:
-    class: 'QL\Hal\Controllers\Build\BuildStartHandler'
-    arguments:
-      - @session
-      - @build.repo
-      - @repository.repo
-      - @user.repo
-      - @environment.repo
-      - @doctrine.em
-      - @url.helper
-      - @currentUser
-      - @permissions
-      - @github
-      - @utility.id.generator
-
-  builds.page:
-    class: 'QL\Hal\Controllers\Build\BuildsController'
-    arguments:
-      - @builds.twig
-      - @doctrine.em
-      - @repository.repo
-      - @build.repo
-  builds.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['build/builds.twig']]]
-
-  ######################################################################################################################
-  # PUSH CONTROLLERS
-  ######################################################################################################################
-
-  push.start.page:
-    class: 'QL\Hal\Controllers\Push\PushStartController'
-    arguments:
-      - @push.start.twig
-      - @doctrine.em
-      - @build.repo
-      - @deployment.repo
-      - @server.repo
-  push.start.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['push/start.twig']]]
-
-  push.start.handler:
-    class: 'QL\Hal\Controllers\Push\PushStartHandler'
-    arguments:
-      - @session
-      - @build.repo
-      - @push.repo
-      - @deployment.repo
-      - @user.repo
-      - @doctrine.em
-      - @url.helper
-      - @currentUser
-      - @permissions
-      - @utility.id.generator
-
-  push.rollback.page:
-    class: 'QL\Hal\Controllers\Push\RollbackController'
-    arguments:
-      - @rollback.twig
-      - @repository.repo
-      - @server.repo
-      - @doctrine.em
-  rollback.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['push/rollback.twig']]]
-
-  push.page:
-    class: 'QL\Hal\Controllers\Push\PushController'
-    arguments: [@push.twig, @push.repo]
-  push.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['push/push.twig']]]
-
-  pushes.page:
-    class: 'QL\Hal\Controllers\Push\PushesController'
-    arguments:
-      - @pushes.twig
-      - @doctrine.em
-      - @repository.repo
-      - @push.repo
-  pushes.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['push/pushes.twig']]]
-
-  ######################################################################################################################
-  # ENVIRONMENT CONTROLLERS
-  ######################################################################################################################
-
-  environments.page:
-    class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
-    arguments: [@environments.twig, @environment.repo]
-  environments.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['environment/environments.twig']]]
-
-  environment.page:
-    class: 'QL\Hal\Controllers\Environment\EnvironmentController'
-    arguments:
-      - @environment.twig
-      - @environment.repo
-      - @server.repo
-  environment.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['environment/environment.twig']]]
-
-  environment.admin.reorder.page:
-    class: 'QL\Hal\Controllers\Environment\AdminReorderController'
-    arguments: [@environment.admin.reorder.twig, @environment.repo]
-  environment.admin.reorder.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['environment/admin.reorder.twig']]]
-  environment.admin.reorder.handle:
-    class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
-    arguments:
-      - @environment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  environment.admin.add.page:
-    class: 'QL\Hal\Controllers\Environment\AdminAddController'
-    arguments:
-      - @environment.admin.add.twig
-      - @environment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-  environment.admin.add.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['environment/admin.add.twig']]]
-  environment.admin.add.handle:
-    parent: environment.admin.add.page
-
-  environment.admin.edit.page:
-    class: 'QL\Hal\Controllers\Environment\AdminEditController'
-    arguments:
-      - @environment.admin.edit.twig
-      - @environment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-  environment.admin.edit.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['environment/admin.edit.twig']]]
-  environment.admin.edit.handle:
-    parent: environment.admin.edit.page
-
-  environment.admin.remove.handle:
-    class: 'QL\Hal\Controllers\Environment\AdminRemoveHandle'
-    arguments:
-      - @environment.repo
-      - @server.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  ######################################################################################################################
-  # SERVER CONTROLLERS
-  ######################################################################################################################
-
-  servers.page:
-    class: 'QL\Hal\Controllers\Server\ServersController'
-    arguments: [@servers.twig, @server.repo]
-  servers.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['server/servers.twig']]]
-
-  server.page:
-    class: 'QL\Hal\Controllers\Server\ServerController'
-    arguments:
-      - @server.twig
-      - @server.repo
-      - @deployment.repo
-  server.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['server/server.twig']]]
-
-  server.admin.add.page:
-    class: 'QL\Hal\Controllers\Server\AdminAddController'
-    arguments:
-      - @server.admin.add.twig
-      - @server.repo
-      - @environment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-  server.admin.add.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['server/admin.add.twig']]]
-  server.admin.add.handle:
-    parent: 'server.admin.add.page'
-
-  server.admin.edit.page:
-    class: 'QL\Hal\Controllers\Server\AdminEditController'
-    arguments:
-      - @server.admin.edit.twig
-      - @server.repo
-      - @environment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-  server.admin.edit.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['server/admin.edit.twig']]]
-  server.admin.edit.handle:
-    parent: 'server.admin.edit.page'
-
-  server.admin.remove.handle:
-    class: 'QL\Hal\Controllers\Server\AdminRemoveHandle'
-    arguments:
-      - @server.repo
-      - @deployment.repo
-      - @doctrine.em
-      - @session
-      - @url.helper
-
-  ######################################################################################################################
-  # USER CONTROLLERS
-  ######################################################################################################################
-
-  user.page:
-    class: 'QL\Hal\Controllers\User\UserController'
-    arguments:
-      - @user.twig
-      - @ldapService
-      - @user.repo
-      - @permissions
-  user.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['user/user.twig']]]
-
-  users.page:
-    class: 'QL\Hal\Controllers\User\UsersController'
-    arguments:
-      - @users.twig
-      - @user.repo
-      - @doctrine.em
-      - @ldapService
-  users.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['user/users.twig']]]
-
-  user.preferences.handle:
-    class: 'QL\Hal\Controllers\User\EditPreferencesHandler'
-    arguments:
-      - @slim.cookies
-      - @session
-      - @url.helper
-      - @name.helper
-      - @currentUser
-      - %cookie.preferences.ttl%
-      - %navigation.list%
-
-  user.settings.page:
-    class: 'QL\Hal\Controllers\User\SettingsController'
-    arguments:
-      - @user.settings.twig
-      - @user.repo
-      - @currentUser
-  user.settings.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['user/settings.twig']]]
-  ######################################################################################################################
-  # USER TOKEN MANAGEMENT CONTROLLERS
-  ######################################################################################################################
-
-  user.token.create.handle:
-    class: 'QL\Hal\Controllers\User\Token\TokenCreateController'
-    arguments:
-      - @doctrine.em
-      - @user.repo
-      - @url.helper
-      - @permissions
-      - @currentUser
-
-  user.token.delete.handle:
-    class: 'QL\Hal\Controllers\User\Token\TokenDeleteController'
-    arguments:
-      - @doctrine.em
-      - @token.repo
-      - @url.helper
-      - @permissions
-      - @currentUser
-
-  ######################################################################################################################
-  # ADMIN CONTROLLERS
-  ######################################################################################################################
-
-  admin.dashboard.page:
-    class: 'QL\Hal\Controllers\Admin\DashboardController'
-    arguments: [@admin.dashboard.twig]
-  admin.dashboard.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['admin/dashboard.twig']]]
-
-  admin.super.page:
-    class: 'QL\Hal\Controllers\Admin\SuperController'
-    arguments:
-      - @admin.super.twig
-      - @doctrine.config
-      - @redis
-      - %encryption.secret%
-      - %session.encryption.secret%
-      - @hal.pushfile
-  admin.super.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['admin/super.twig']]]
-
-  ######################################################################################################################
-  # HELP CONTROLLERS
-  ######################################################################################################################
-
-  help.page:
-    parent: 'static.controller'
-    arguments: [@help.twig]
-  help.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['help/help.twig']]]
-  help.deployment.page:
-    parent: 'static.controller'
-    arguments: [@help.deployment.twig]
-  help.deployment.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['help/deployment.twig']]]
-
-  # help.api.page:
-  #   parent: 'static.controller'
-  #   arguments: [@help.api.twig]
-  # help.api.twig:
-  #   parent: 'twig.template'
-  #   calls: [['setTemplate', ['help/api.twig']]]
-
-  help.hal.page:
-    parent: 'static.controller'
-    arguments: [@help.hal.twig]
-  help.hal.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['help/hal.twig']]]
-
-  ######################################################################################################################
-  # GENERAL USE CONTROLLERS
-  ######################################################################################################################
-
-  static.controller:
-    class: 'QL\Hal\Controllers\StaticController'
-
-  denied.page:
-    parent: 'static.controller'
-    arguments: [@denied.twig, 403]
-  denied.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['denied.twig']]]
-
-  audit.logs.page:
-    class: 'QL\Hal\Controllers\AuditLogsController'
-    arguments: [@audit.logs.twig, @doctrine.em]
-  audit.logs.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['audit.logs.twig']]]
-
-  # The twig template for slim errors (404, 500)
-  error.pages.twig:
-    parent: 'twig.template'
-    calls: [['setTemplate', ['error.twig']]]
-
-  debug.page:
-    class: 'QL\Hal\Controllers\DebugController'
+    delete.confirm.page:
+        class: 'QL\Hal\Controllers\StaticController'
+        arguments: [@delete.confirm.twig]
+    delete.confirm.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['delete.confirm.twig']]]
+
+    dashboard.page:
+        class: 'QL\Hal\Controllers\DashboardController'
+        arguments:
+            - @dashboard.twig
+            - @currentUser
+            - @permissions
+            - @build.repo
+            - @push.repo
+            - @user.repo
+    dashboard.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['dashboard.twig']]]
+
+    login.page:
+        class: 'QL\Hal\Controllers\LoginController'
+        arguments: [@login.twig]
+    login.twig:
+        parent: 'twig.template'
+        arguments: ['login.twig']
+        calls: [['setTemplate', ['login.twig']]]
+    login.handle:
+        class: 'QL\Hal\Controllers\LoginHandleController'
+        arguments:
+            - @login.twig
+            - @ldapService
+            - @user.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    logout.handle:
+        class: 'QL\Hal\Controllers\LogoutController'
+        arguments: [@session, @url.helper]
+
+    queue.page:
+        class: 'QL\Hal\Controllers\QueueController'
+        arguments:
+            - @queue.twig
+            - @build.repo
+            - @push.repo
+    queue.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['queue.twig']]]
+
+    ######################################################################################################################
+    # GROUP CONTROLLERS
+    ######################################################################################################################
+
+    groups.page:
+        class: 'QL\Hal\Controllers\Group\GroupsController'
+        arguments: [@groups.twig, @group.repo]
+    groups.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['group/groups.twig']]]
+
+    group.page:
+        class: 'QL\Hal\Controllers\Group\GroupController'
+        arguments:
+            - @group.twig
+            - @group.repo
+            - @repository.repo
+    group.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['group/group.twig']]]
+
+    group.admin.add.page:
+        class: 'QL\Hal\Controllers\Group\AdminAddController'
+        arguments:
+            - @group.admin.add.twig
+            - @group.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+    group.admin.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['group/admin.add.twig']]]
+    group.admin.add.handle:
+        parent: 'group.admin.add.page'
+
+    group.admin.edit.page:
+        class: 'QL\Hal\Controllers\Group\AdminEditController'
+        arguments:
+            - @group.admin.edit.twig
+            - @group.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+    group.admin.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['group/admin.edit.twig']]]
+    group.admin.edit.handle:
+        parent: 'group.admin.edit.page'
+    group.admin.remove.handle:
+        class: 'QL\Hal\Controllers\Group\AdminRemoveHandle'
+        arguments:
+            - @group.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    ######################################################################################################################
+    # REPOSITORY CONTROLLERS
+    ######################################################################################################################
+
+    repositories.page:
+        class: 'QL\Hal\Controllers\Repository\RepositoriesController'
+        arguments: [@repositories.twig, @group.repo]
+    repositories.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/repositories.twig']]]
+
+    repository.page:
+        class: 'QL\Hal\Controllers\Repository\RepositoryController'
+        arguments:
+            - @repository.twig
+            - @repository.repo
+            - @deployment.repo
+            - @permissions
+    repository.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/repository.twig']]]
+
+    repository.status.page:
+        class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
+        arguments:
+            - @repository.status.twig
+            - @doctrine.em
+            - @repository.repo
+            - @build.repo
+            - @deployment.repo
+    repository.status.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/status.twig']]]
+
+    repository.admin.add.page:
+        class: 'QL\Hal\Controllers\Repository\AdminAddController'
+        arguments:
+            - @repository.admin.add.twig
+            - @group.repo
+            - @repository.repo
+            - @doctrine.em
+            - @github
+            - @session
+            - @url.helper
+    repository.admin.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/admin.add.twig']]]
+    repository.admin.add.handle:
+        parent: 'repository.admin.add.page'
+
+    repository.admin.edit.page:
+        class: 'QL\Hal\Controllers\Repository\AdminEditController'
+        arguments:
+            - @repository.admin.edit.twig
+            - @group.repo
+            - @repository.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+    repository.admin.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/admin.edit.twig']]]
+    repository.admin.edit.handle:
+        parent: 'repository.admin.edit.page'
+
+    repository.admin.remove.handle:
+        class: 'QL\Hal\Controllers\Repository\AdminRemoveHandle'
+        arguments:
+            - @repository.repo
+            - @deployment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    ######################################################################################################################
+    # REPOSITORY DEPLOYMENT CONTROLLERS
+    ######################################################################################################################
+
+    repository.deployments.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentsController'
+        arguments:
+            - @repository.deployments.twig
+            - @environment.repo
+            - @server.repo
+            - @repository.repo
+            - @deployment.repo
+    repository.deployments.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployments.twig']]]
+
+    repository.deployment.admin.add.handle:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AdminAddHandle'
+        arguments:
+            - @server.repo
+            - @repository.repo
+            - @deployment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    repository.deployment.admin.remove.handle:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AdminRemoveHandle'
+        arguments:
+            - @deployment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    ######################################################################################################################
+    # BUILD CONTROLLERS
+    #####################################################################################################################
+
+    build.page:
+        class: 'QL\Hal\Controllers\Build\BuildController'
+        arguments: [@build.twig, @build.repo]
+    build.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/build.twig']]]
+
+    build.start.page:
+        class: 'QL\Hal\Controllers\Build\BuildStartController'
+        arguments:
+            - @build.start.twig
+            - @repository.repo
+            - @environment.repo
+            - @github
+    build.start.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/start.twig']]]
+
+    build.start.handle.page:
+        class: 'QL\Hal\Controllers\Build\BuildStartHandler'
+        arguments:
+            - @session
+            - @build.repo
+            - @repository.repo
+            - @user.repo
+            - @environment.repo
+            - @doctrine.em
+            - @url.helper
+            - @currentUser
+            - @permissions
+            - @github
+            - @utility.id.generator
+
+    builds.page:
+        class: 'QL\Hal\Controllers\Build\BuildsController'
+        arguments:
+            - @builds.twig
+            - @doctrine.em
+            - @repository.repo
+            - @build.repo
+    builds.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/builds.twig']]]
+
+    ######################################################################################################################
+    # PUSH CONTROLLERS
+    ######################################################################################################################
+
+    push.start.page:
+        class: 'QL\Hal\Controllers\Push\PushStartController'
+        arguments:
+            - @push.start.twig
+            - @doctrine.em
+            - @build.repo
+            - @deployment.repo
+            - @server.repo
+    push.start.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['push/start.twig']]]
+
+    push.start.handler:
+        class: 'QL\Hal\Controllers\Push\PushStartHandler'
+        arguments:
+            - @session
+            - @build.repo
+            - @push.repo
+            - @deployment.repo
+            - @user.repo
+            - @doctrine.em
+            - @url.helper
+            - @currentUser
+            - @permissions
+            - @utility.id.generator
+
+    push.rollback.page:
+        class: 'QL\Hal\Controllers\Push\RollbackController'
+        arguments:
+            - @rollback.twig
+            - @repository.repo
+            - @server.repo
+            - @doctrine.em
+    rollback.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['push/rollback.twig']]]
+
+    push.page:
+        class: 'QL\Hal\Controllers\Push\PushController'
+        arguments: [@push.twig, @push.repo]
+    push.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['push/push.twig']]]
+
+    pushes.page:
+        class: 'QL\Hal\Controllers\Push\PushesController'
+        arguments:
+            - @pushes.twig
+            - @doctrine.em
+            - @repository.repo
+            - @push.repo
+    pushes.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['push/pushes.twig']]]
+
+    ######################################################################################################################
+    # ENVIRONMENT CONTROLLERS
+    ######################################################################################################################
+
+    environments.page:
+        class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
+        arguments: [@environments.twig, @environment.repo]
+    environments.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/environments.twig']]]
+
+    environment.page:
+        class: 'QL\Hal\Controllers\Environment\EnvironmentController'
+        arguments:
+            - @environment.twig
+            - @environment.repo
+            - @server.repo
+    environment.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/environment.twig']]]
+
+    environment.admin.reorder.page:
+        class: 'QL\Hal\Controllers\Environment\AdminReorderController'
+        arguments: [@environment.admin.reorder.twig, @environment.repo]
+    environment.admin.reorder.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/admin.reorder.twig']]]
+    environment.admin.reorder.handle:
+        class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
+        arguments:
+            - @environment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    environment.admin.add.page:
+        class: 'QL\Hal\Controllers\Environment\AdminAddController'
+        arguments:
+            - @environment.admin.add.twig
+            - @environment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+    environment.admin.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/admin.add.twig']]]
+    environment.admin.add.handle:
+        parent: environment.admin.add.page
+
+    environment.admin.edit.page:
+        class: 'QL\Hal\Controllers\Environment\AdminEditController'
+        arguments:
+            - @environment.admin.edit.twig
+            - @environment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+    environment.admin.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/admin.edit.twig']]]
+    environment.admin.edit.handle:
+        parent: environment.admin.edit.page
+
+    environment.admin.remove.handle:
+        class: 'QL\Hal\Controllers\Environment\AdminRemoveHandle'
+        arguments:
+            - @environment.repo
+            - @server.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    ######################################################################################################################
+    # SERVER CONTROLLERS
+    ######################################################################################################################
+
+    servers.page:
+        class: 'QL\Hal\Controllers\Server\ServersController'
+        arguments: [@servers.twig, @server.repo]
+    servers.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/servers.twig']]]
+
+    server.page:
+        class: 'QL\Hal\Controllers\Server\ServerController'
+        arguments:
+            - @server.twig
+            - @server.repo
+            - @deployment.repo
+    server.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/server.twig']]]
+
+    server.admin.add.page:
+        class: 'QL\Hal\Controllers\Server\AdminAddController'
+        arguments:
+            - @server.admin.add.twig
+            - @server.repo
+            - @environment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+    server.admin.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/admin.add.twig']]]
+    server.admin.add.handle:
+        parent: 'server.admin.add.page'
+
+    server.admin.edit.page:
+        class: 'QL\Hal\Controllers\Server\AdminEditController'
+        arguments:
+            - @server.admin.edit.twig
+            - @server.repo
+            - @environment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+    server.admin.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/admin.edit.twig']]]
+    server.admin.edit.handle:
+        parent: 'server.admin.edit.page'
+
+    server.admin.remove.handle:
+        class: 'QL\Hal\Controllers\Server\AdminRemoveHandle'
+        arguments:
+            - @server.repo
+            - @deployment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+
+    ######################################################################################################################
+    # USER CONTROLLERS
+    ######################################################################################################################
+
+    user.page:
+        class: 'QL\Hal\Controllers\User\UserController'
+        arguments:
+            - @user.twig
+            - @ldapService
+            - @user.repo
+            - @permissions
+    user.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/user.twig']]]
+
+    users.page:
+        class: 'QL\Hal\Controllers\User\UsersController'
+        arguments:
+            - @users.twig
+            - @user.repo
+            - @doctrine.em
+            - @ldapService
+    users.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/users.twig']]]
+
+    user.preferences.handle:
+        class: 'QL\Hal\Controllers\User\EditPreferencesHandler'
+        arguments:
+            - @slim.cookies
+            - @session
+            - @url.helper
+            - @name.helper
+            - @currentUser
+            - %cookie.preferences.ttl%
+            - %navigation.list%
+
+    user.settings.page:
+        class: 'QL\Hal\Controllers\User\SettingsController'
+        arguments:
+            - @user.settings.twig
+            - @user.repo
+            - @currentUser
+    user.settings.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/settings.twig']]]
+
+    ######################################################################################################################
+    # USER TOKEN MANAGEMENT CONTROLLERS
+    ######################################################################################################################
+
+    user.token.create.handle:
+        class: 'QL\Hal\Controllers\User\Token\TokenCreateController'
+        arguments:
+            - @doctrine.em
+            - @user.repo
+            - @url.helper
+            - @permissions
+            - @currentUser
+
+    user.token.delete.handle:
+        class: 'QL\Hal\Controllers\User\Token\TokenDeleteController'
+        arguments:
+            - @doctrine.em
+            - @token.repo
+            - @url.helper
+            - @permissions
+            - @currentUser
+
+    ######################################################################################################################
+    # ADMIN CONTROLLERS
+    ######################################################################################################################
+
+    admin.dashboard.page:
+        class: 'QL\Hal\Controllers\Admin\DashboardController'
+        arguments: [@admin.dashboard.twig]
+    admin.dashboard.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/dashboard.twig']]]
+
+    admin.super.page:
+        class: 'QL\Hal\Controllers\Admin\SuperController'
+        arguments:
+            - @admin.super.twig
+            - @doctrine.config
+            - @redis
+            - %encryption.secret%
+            - %session.encryption.secret%
+            - @hal.pushfile
+    admin.super.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/super.twig']]]
+
+    ######################################################################################################################
+    # HELP CONTROLLERS
+    ######################################################################################################################
+
+    help.page:
+        parent: 'static.controller'
+        arguments: [@help.twig]
+    help.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['help/help.twig']]]
+    help.deployment.page:
+        parent: 'static.controller'
+        arguments: [@help.deployment.twig]
+    help.deployment.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['help/deployment.twig']]]
+
+    # help.api.page:
+    #   parent: 'static.controller'
+    #   arguments: [@help.api.twig]
+    # help.api.twig:
+    #   parent: 'twig.template'
+    #   calls: [['setTemplate', ['help/api.twig']]]
+
+    help.hal.page:
+        parent: 'static.controller'
+        arguments: [@help.hal.twig]
+    help.hal.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['help/hal.twig']]]
+
+    ######################################################################################################################
+    # GENERAL USE CONTROLLERS
+    ######################################################################################################################
+
+    static.controller:
+        class: 'QL\Hal\Controllers\StaticController'
+
+    denied.page:
+        parent: 'static.controller'
+        arguments: [@denied.twig, 403]
+    denied.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['denied.twig']]]
+
+    audit.logs.page:
+        class: 'QL\Hal\Controllers\AuditLogsController'
+        arguments: [@audit.logs.twig, @doctrine.em]
+    audit.logs.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['audit.logs.twig']]]
+
+    # The twig template for slim errors (404, 500)
+    error.pages.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['error.twig']]]
+
+    debug.page:
+        class: 'QL\Hal\Controllers\DebugController'
