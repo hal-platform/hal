@@ -14,8 +14,8 @@ use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Services\PermissionsService;
-use QL\Hal\Helpers\UniqueHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use Slim\Http\Request;
@@ -75,7 +75,7 @@ class PushStartHandler
     private $permissions;
 
     /**
-     * @var UniqueHelper
+     * @var JobIdGenerator
      */
     private $unique;
 
@@ -89,7 +89,7 @@ class PushStartHandler
      * @param UrlHelper $url
      * @param User $currentUser
      * @param PermissionsService $permissions
-     * @param UniqueHelper $unique
+     * @param JobIdGenerator $unique
      */
     public function __construct(
         Session $session,
@@ -101,7 +101,7 @@ class PushStartHandler
         UrlHelper $url,
         User $currentUser,
         PermissionsService $permissions,
-        UniqueHelper $unique
+        JobIdGenerator $unique
     ) {
         $this->session = $session;
         $this->buildRepo = $buildRepo;

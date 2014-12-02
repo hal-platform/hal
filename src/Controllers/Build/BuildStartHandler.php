@@ -14,7 +14,7 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\UniqueHelper;
+use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Services\PermissionsService;
@@ -83,7 +83,7 @@ class BuildStartHandler
     private $github;
 
     /**
-     * @var UniqueHelper
+     * @var JobIdGenerator
      */
     private $unique;
 
@@ -98,7 +98,7 @@ class BuildStartHandler
      * @param User $currentUser
      * @param PermissionsService $permissions
      * @param GithubService $github
-     * @param UniqueHelper $unique
+     * @param JobIdGenerator $unique
      */
     public function __construct(
         Session $session,
@@ -111,7 +111,7 @@ class BuildStartHandler
         User $currentUser,
         PermissionsService $permissions,
         GithubService $github,
-        UniqueHelper $unique
+        JobIdGenerator $unique
     ) {
         $this->session = $session;
         $this->buildRepo = $buildRepo;

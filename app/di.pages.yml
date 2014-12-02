@@ -251,7 +251,7 @@ services:
       - @currentUser
       - @permissions
       - @github
-      - @unique.helper
+      - @utility.id.generator
 
   builds.page:
     class: 'QL\Hal\Controllers\Build\BuildsController'
@@ -292,7 +292,7 @@ services:
       - @url.helper
       - @currentUser
       - @permissions
-      - @unique.helper
+      - @utility.id.generator
 
   push.rollback.page:
     class: 'QL\Hal\Controllers\Push\RollbackController'

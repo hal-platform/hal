@@ -135,12 +135,15 @@ services:
   time.helper:
     class: 'QL\Hal\Helpers\TimeHelper'
 
-  unique.helper:
-    class: 'QL\Hal\Helpers\UniqueHelper'
-    arguments: [%application.major.version%, %unique.alphabet%]
-
   name.helper:
     class: 'QL\Hal\Helpers\NameHelper'
+
+  utility.id.generator:
+    class: 'QL\Hal\Core\JobIdGenerator'
+    arguments:
+      - %application.major.version%
+      - %unique.alphabet%
+      - %unique.size%
 
   ######################################################################################################################
   # TWIG STUFF
