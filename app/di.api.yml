@@ -85,10 +85,10 @@ services:
     api.deployments:
         class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @repository.repo
             - @deployment.repo
-            - @api.deployment.normalizer
+            - @normalizer.deployment
 
     api.deployment.lastpush:
         class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'

@@ -7,12 +7,14 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
-use QL\Hal\Api\DeploymentNormalizer;
+use QL\Hal\Api\Normalizer\DeploymentNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -21,10 +23,12 @@ use Slim\Http\Response;
  */
 class DeploymentsController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type RepositoryRepository
@@ -37,23 +41,23 @@ class DeploymentsController
     private $deploymentRepo;
 
     /**
-     * @type DeploymentNormalizer
+     * @var DeploymentNormalizer
      */
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param RepositoryRepository $repositoryRepo
      * @param DeploymentRepository $deploymentRepo
      * @param DeploymentNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         RepositoryRepository $repositoryRepo,
         DeploymentRepository $deploymentRepo,
         DeploymentNormalizer $normalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->repositoryRepo = $repositoryRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->normalizer = $normalizer;
@@ -63,55 +67,31 @@ class DeploymentsController
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+
         if (!$repository instanceof Repository) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-repository');
         }
 
         $deployments = $this->deploymentRepo->findBy(['repository' => $repository], ['id' => 'ASC']);
-        if (!$deployments) {
-            return $response->setStatus(404);
-        }
+        $status = (count($deployments) > 0) ? 200 : 404;
 
-        // using this to play with the idea of linked vs embedded resources
-        $isResolved = false;
-
-        $content = [
-            'count' => count($deployments),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => ['api.deployments', ['id' => $repository->getId()]]])
-            ]
-        ];
-
-        $content = array_merge_recursive($content, $this->normalizeDeployments($deployments, $isResolved));
-
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $deployments
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizeDeployments(array $deployments, $isResolved)
-    {
-        $normalized = array_map(function($deployment) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($deployment);
-            }
-
-            return $this->normalizer->linked($deployment);
+        $deployments = array_map(function ($deployment) {
+            return $this->normalizer->link($deployment);
         }, $deployments);
 
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'deployments' => $normalized
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($deployments)
+            ],
+            [],
+            [
+                'deployments' => $deployments
             ]
-        ];
+        ), $status);
     }
 }
