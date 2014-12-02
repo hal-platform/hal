@@ -64,10 +64,8 @@ class DeploymentNormalizer
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($deployment),
-                'pushes' => [
-                    'last' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()]]),
-                    'success' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()], ['status' => 'Success']])
-                ]
+                'last-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()]]),
+                'last-successful-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()], ['status' => 'Success']])
             ]
         );
     }
