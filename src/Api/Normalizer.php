@@ -26,7 +26,6 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\TimeHelper;
 
 /**
  * Object Normalizer
