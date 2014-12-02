@@ -296,10 +296,10 @@ services:
     ######################################################################################################################
 
     ##
-      # START NEW
-      ##
+    # START NEW
+    ##
 
-      response.formatter:
+    response.formatter:
         class: 'QL\Hal\Api\ResponseFormatter'
         arguments:
             - @slim.request
@@ -308,12 +308,12 @@ services:
             - @normalizer
             - @hypermedia.formatter
 
-      hypermedia.formatter:
+    hypermedia.formatter:
         class: 'QL\Hal\Api\Utility\HypermediaFormatter'
         arguments:
             - @url.helper
 
-      normalizer:
+    normalizer:
         class: 'QL\Hal\Api\Normalizer'
         arguments:
             - @normalizer.build
@@ -328,7 +328,7 @@ services:
             - @normalizer.timepoint
             - @normalizer.url
 
-      normalizer.build:
+    normalizer.build:
         class: 'QL\Hal\Api\Normalizer\BuildNormalzer'
         arguments:
             - @url.helper
@@ -336,53 +336,53 @@ services:
             - @normalizer.repository
             - @normalizer.environment
 
-      normalizer.deployment:
+    normalizer.deployment:
         class: 'QL\Hal\Api\Normalizer\DeploymentNormalzer'
 
-      normalizer.environment:
+    normalizer.environment:
         class: 'QL\Hal\Api\Normalizer\EnvironmentNormalzer'
 
-      normalizer.log.event:
+    normalizer.log.event:
         class: 'QL\Hal\Api\Normalizer\EventLogNormalzer'
         arguments:
             - @normalizer.build
             - @normalizer.push
 
-      normalizer.group:
+    normalizer.group:
         class: 'QL\Hal\Api\Normalizer\GroupNormalzer'
 
-      normalizer.url:
+    normalizer.url:
         class: 'QL\Hal\Api\Normalizer\HttpUrlNormalzer'
 
-      normalizer.push:
+    normalizer.push:
         class: 'QL\Hal\Api\Normalizer\PushNormalzer'
         arguments:
             - @normalizer.user
             - @normalizer.build
             - @normalizer.environment
 
-      normalizer.repository:
+    normalizer.repository:
         class: 'QL\Hal\Api\Normalizer\RepositoryNormalzer'
         arguments:
             - @url.helper
             - @normalizer.group
 
-      normalizer.server:
+    normalizer.server:
         class: 'QL\Hal\Api\Normalizer\ServerNormalzer'
         arguments:
             - @normalizer.environment
 
-      normalizer.timepoint:
+    normalizer.timepoint:
         class: 'QL\Hal\Api\Normalizer\TimePointNormalzer'
         arguments:
             - @time.helper
 
-      normalizer.user:
+    normalizer.user:
         class: 'QL\Hal\Api\Normalizer\UserNormalzer'
 
-      ##
-      # END NEW
-      ##
+    ##
+    # END NEW
+    ##
 
     api.build.normalizer:
         class: 'QL\Hal\Api\BuildNormalizer'
