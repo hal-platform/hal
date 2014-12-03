@@ -83,86 +83,90 @@
         before selecting which servers you wish to deploy to.
     </p>
 
-    <form action="{{ urlFor('push.start.handle', {'build': build.id}) }}" method="post">
-    <div class="overflow-container">
-        <table class="tablesaw tablesaw-stack" data-mode="stack">
-            <thead>
-            <tr>
-                <th>Server</th>
-                <th>Reference</th>
-                <th>Commit</th>
-                <th>Last Pushed</th>
-                <th>Pushed By</th>
-                <th class="js-toggle-container"></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% set allowSubmit = false %}
-            {% for status in statuses %}
-
-                {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
-                {% set isSelected = (status.deployment.id == selected) %}
-
+    {% if statuses %}
+        <form action="{{ urlFor('push.start.handle', {'build': build.id}) }}" method="post">
+        <div class="overflow-container">
+            <table class="tablesaw tablesaw-stack" data-mode="stack">
+                <thead>
                 <tr>
-                    <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }}</a></td>
-                    {% if inProgress or status.success %}
-                        {% set active = inProgress ? status.latest : status.success %}
+                    <th>Server</th>
+                    <th>Reference</th>
+                    <th>Commit</th>
+                    <th>Last Pushed</th>
+                    <th>Pushed By</th>
+                    <th class="js-toggle-container"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% set allowSubmit = false %}
+                {% for status in statuses %}
 
-                        {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, active.build.branch, active.build.commit) %}
-                            {% set isCurrent = true %}
+                    {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
+                    {% set isSelected = (status.deployment.id == selected) %}
+
+                    <tr>
+                        <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }}</a></td>
+                        {% if inProgress or status.success %}
+                            {% set active = inProgress ? status.latest : status.success %}
+
+                            {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, active.build.branch, active.build.commit) %}
+                                {% set isCurrent = true %}
+                            {% else %}
+                                {% set isCurrent = false %}
+                            {% endif %}
+
+                            <td>
+                                <span class="status-before--{{ isCurrent ? 'success' : 'other' }}">
+                                    <a href="{{ githubReference(active.build.repository.githubUser, active.build.repository.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
+                                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
+                                <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                            </td>
+                            <td>
+                                {% if inProgress %}
+                                    Now
+                                {% else %}
+                                    {{ active.created|reldate }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if active.user %}
+                                    <a href="{{ urlFor('user', {'id': active.user.id}) }}">{{ active.user.name }}</a>
+                                {% elseif active.consumer %}
+                                    {{ active.consumer.name[:20] }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </td>
                         {% else %}
-                            {% set isCurrent = false %}
+                            {# No successful pushes #}
+                            <td colspan="4">No successful pushes found.</td>
                         {% endif %}
 
-                        <td>
-                            <span class="status-before--{{ isCurrent ? 'success' : 'other' }}">
-                                <a href="{{ githubReference(active.build.repository.githubUser, active.build.repository.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
-                                <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
-                            </span>
-                        </td>
-                        <td>
-                            <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
-                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
-                        </td>
                         <td>
                             {% if inProgress %}
-                                Now
+                                Please Wait
+                            {% elseif canUserPush(currentUser, status.deployment.repository.key, status.deployment.server.environment.key) %}
+                                <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
+                                {% set allowSubmit = true %}
                             {% else %}
-                                {{ active.created|reldate }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                                No Access
                             {% endif %}
                         </td>
-                        <td>
-                            {% if active.user %}
-                                <a href="{{ urlFor('user', {'id': active.user.id}) }}">{{ active.user.name }}</a>
-                            {% elseif active.consumer %}
-                                {{ active.consumer.name[:20] }}
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </td>
-                    {% else %}
-                        {# No successful pushes #}
-                        <td colspan="4">No successful pushes found.</td>
-                    {% endif %}
-
-                    <td>
-                        {% if inProgress %}
-                            Please Wait
-                        {% elseif canUserPush(currentUser, status.deployment.repository.key, status.deployment.server.environment.key) %}
-                            <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
-                            {% set allowSubmit = true %}
-                        {% else %}
-                            No Access
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% if allowSubmit %}
-        <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if allowSubmit %}
+            <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
+        {% endif %}
+        </form>
+    {% else %}
+        <p>There are no servers to deploy to.</p>
     {% endif %}
-    </form>
 
 {% endblock %}
