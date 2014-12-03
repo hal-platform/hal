@@ -104,15 +104,12 @@ services:
     # ENVIRONMENT CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.environment:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @environment.repo
-            - @api.environment.normalizer
 
-    # @todo NORMALIZER MIGRATION
     api.environments:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
         arguments:

@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Environment;
 
-use QL\Hal\Api\EnvironmentNormalizer;
+use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,9 +20,9 @@ use Slim\Http\Response;
 class EnvironmentController
 {
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type EnvironmentRepository
@@ -30,37 +30,31 @@ class EnvironmentController
     private $envRepo;
 
     /**
-     * @type EnvironmentNormalizer
-     */
-    private $normalizer;
-
-    /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param EnvironmentRepository $envRepo
-     * @param EnvironmentNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
-        EnvironmentRepository $envRepo,
-        EnvironmentNormalizer $normalizer
+        ResponseFormatter $formatter,
+        EnvironmentRepository $envRepo
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->envRepo = $envRepo;
-        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $environment = $this->envRepo->findOneBy(['id' => $params['id']]);
+
         if (!$environment instanceof Environment) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-environment');
         }
 
-        $this->api->prepareResponse($response, $this->normalizer->normalize($environment));
+        $this->formatter->respond($environment);
     }
 }
