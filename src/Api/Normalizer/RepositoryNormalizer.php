@@ -77,22 +77,28 @@ class RepositoryNormalizer
                 'identifier' => $repository->getKey(),
                 'title' => $repository->getDescription(),
                 'email' => $repository->getEmail(),
-                'github' => [
-                    'user' => $repository->getGithubUser(),
-                    'repository' => $repository->getGithubRepo(),
+                'githubUser' => [
+                    'text' => $repository->getGithubUser(),
+                    'url' => $this->url->githubUserUrl($repository->getGithubUser())
+                ],
+                'githubRepo' => [
+                    'text' => $repository->getGithubRepo(),
                     'url' => $this->url->githubRepoUrl($repository->getGithubUser(), $repository->getGithubRepo())
                 ],
-                'commands' => [
-                    'build' => $repository->getBuildCmd(),
-                    'build-transform' => $repository->getBuildTransformCmd(),
-                    'pre-push' => $repository->getPrePushCmd(),
-                    'post-push' => $repository->getPostPushCmd()
-                ]
+                'buildCmd' => $repository->getBuildCmd(),
+                'buildTransformCmd' => $repository->getBuildTransformCmd(),
+                'prePushCmd' => $repository->getPrePushCmd(),
+                'postPushCmd' => $repository->getPostPushCmd()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($repository),
-                'group' => $this->groups->link($repository->getGroup())
+                'group' => $this->groups->link($repository->getGroup()),
+                'builds' => $this->buildLink(['api.builds', ['id' => $repository->getId()]]),
+                'pushes' => $this->buildLink(['api.pushes', ['id' => $repository->getId()]]),
+                'tags' => $this->buildLink(['api.repository.tags', ['id' => $repository->getId()]]),
+                'branches' => $this->buildLink(['api.repository.branches', ['id' => $repository->getId()]]),
+                'pullRequests' => $this->buildLink(['api.repository.pullrequests', ['id' => $repository->getId()]])
             ]
         );
     }

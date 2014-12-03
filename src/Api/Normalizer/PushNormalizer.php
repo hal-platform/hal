@@ -101,7 +101,7 @@ class PushNormalizer
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($push),
-                'initiator' => $this->users->link($push->getUser()),
+                'user' => $this->users->link($push->getUser()),
                 'build' => $this->builds->link($push->getBuild()),
                 'deployment' => $this->deployments->link($push->getDeployment()),
                 'logs' => $this->buildLink(['api.push.logs', ['id' => $push->getId()]])

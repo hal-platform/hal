@@ -20,10 +20,8 @@ use Slim\Http\Response;
  */
 class BuildsController
 {
-    /**
-     * @type ApiHelper
-     */
-    private $api;
+
+    private $formatter;
 
     /**
      * @type RepositoryRepository
@@ -35,9 +33,7 @@ class BuildsController
      */
     private $buildRepo;
 
-    /**
-     * @type BuildNormalizer
-     */
+
     private $normalizer;
 
     /**

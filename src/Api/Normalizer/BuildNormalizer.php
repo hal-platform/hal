@@ -115,7 +115,7 @@ class BuildNormalizer
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($build),
-                'initiator' => $this->users->link($build->getUser()),
+                'user' => $this->users->link($build->getUser()),
                 'repository' => $this->repositories->link($build->getRepository()),
                 'environment' => $this->environments->link($build->getEnvironment()),
                 'logs' => $this->buildLink(['api.build.logs', ['id' => $build->getId()]]),

@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Repository;
 
-use QL\Hal\Api\RepositoryNormalizer;
+use QL\Hal\Api\Normalizer\RepositoryNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -18,10 +19,12 @@ use Slim\Http\Response;
  */
 class RepositoriesController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type RepositoryRepository
@@ -29,21 +32,21 @@ class RepositoriesController
     private $repositoryRepo;
 
     /**
-     * @type RepositoryNormalizer
+     * @var RepositoryNormalizer
      */
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param RepositoryRepository $repositoryRepo
      * @param RepositoryNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         RepositoryRepository $repositoryRepo,
         RepositoryNormalizer $normalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->repositoryRepo = $repositoryRepo;
         $this->normalizer = $normalizer;
     }
@@ -55,47 +58,20 @@ class RepositoriesController
     public function __invoke(Request $request, Response $response)
     {
         $repos = $this->repositoryRepo->findBy([], ['id' => 'ASC']);
-        if (!$repos) {
-            return $response->setStatus(404);
-        }
+        $status = (count($repos) > 0) ? 200 : 404;
 
-        // using this to play with the idea of linked vs embedded resources
-        $isResolved = false;
-
-        $content = [
-            'count' => count($repos),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => 'api.repositories'])
-            ]
-        ];
-
-        $content = array_merge_recursive($content, $this->normalizeRepositories($repos, $isResolved));
-
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $repos
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizeRepositories(array $repos, $isResolved)
-    {
-        // Normalize all the builds
-        $normalized = array_map(function($repo) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($repo);
-            }
-
-            return $this->normalizer->linked($repo);
+        $repos = array_map(function ($repo) {
+            return $this->normalizer->link($repo);
         }, $repos);
 
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'repositories' => $normalized
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($repos)
+            ],
+            [],
+            [
+                'repositories' => $repos
             ]
-        ];
+        ), $status);
     }
 }

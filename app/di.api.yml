@@ -135,7 +135,7 @@ services:
             - @normalizer.server
 
     ######################################################################################################################
-    # BUILD CONTROLLERS
+    # GROUP CONTROLLERS
     ######################################################################################################################
 
     # @todo NORMALIZER MIGRATION
@@ -200,13 +200,11 @@ services:
     # REPOSITORY CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.repository:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @repository.repo
-            - @api.repository.normalizer
 
     # @todo NORMALIZER MIGRATION
     api.repository.tags:
@@ -244,13 +242,12 @@ services:
             - @github
             - @repository.repo
 
-    # @todo NORMALIZER MIGRATION
     api.repositories:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @repository.repo
-            - @api.repository.normalizer
+            - @normalizer.repository
 
     ######################################################################################################################
     # USER CONTROLLERS

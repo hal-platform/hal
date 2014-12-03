@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Repository;
 
-use QL\Hal\Api\RepositoryNormalizer;
+use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,9 +20,9 @@ use Slim\Http\Response;
 class RepositoryController
 {
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type RepositoryRepository
@@ -30,37 +30,31 @@ class RepositoryController
     private $repositoryRepo;
 
     /**
-     * @type RepositoryNormalizer
-     */
-    private $normalizer;
-
-    /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param RepositoryRepository $repositoryRepo
-     * @param RepositoryNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
-        RepositoryRepository $repositoryRepo,
-        RepositoryNormalizer $normalizer
+        ResponseFormatter $formatter,
+        RepositoryRepository $repositoryRepo
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->repositoryRepo = $repositoryRepo;
-        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+
         if (!$repository instanceof Repository) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-repository');
         }
 
-        $this->api->prepareResponse($response, $this->normalizer->normalize($repository));
+        $this->formatter->respond($repository);
     }
 }
