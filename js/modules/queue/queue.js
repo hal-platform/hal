@@ -64,26 +64,26 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
         },
 
         addJobs: function(data) {
-            // required properties: uniqueId, type, status
+            // required properties: id, type, status
             for(var entry in data) {
                 var job = data[entry];
                 var row;
 
                 if (job.type == 'build') {
                     // only load jobs not already loaded
-                    if (typeof this.jobs[job.uniqueId] == 'undefined') {
+                    if (typeof this.jobs[job.id] == 'undefined') {
                         row = jobUpdater.addBuildJob(job);
 
                         this.$queue.prepend(row);
-                        this.jobs[job.uniqueId] = job.status;
+                        this.jobs[job.id] = job.status;
                     }
                 } else if (job.type == 'push') {
                     // only load jobs not already loaded
-                    if (typeof this.jobs[job.uniqueId] == 'undefined') {
+                    if (typeof this.jobs[job.id] == 'undefined') {
                         row = jobUpdater.addPushJob(job);
 
                         this.$queue.prepend(row);
-                        this.jobs[job.uniqueId] = job.status;
+                        this.jobs[job.id] = job.status;
                     }
                 }
             }
@@ -106,14 +106,14 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
         retrieveJobUpdates: function() {
             var _this = this;
 
-            // a list of uniqueIds to update
+            // a list of ids to update
             var jobsToUpdate = [];
 
             // build the list of jobs to update
-            for (var uniqueId in this.jobs) {
-                var currentStatus = this.jobs[uniqueId];
+            for (var id in this.jobs) {
+                var currentStatus = this.jobs[id];
                 if (currentStatus == 'Waiting' || currentStatus == 'Building' || currentStatus == 'Pushing') {
-                    jobsToUpdate.push(uniqueId);
+                    jobsToUpdate.push(id);
                 }
             }
 
@@ -139,12 +139,8 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
                 var status = $item.text().trim();
 
                 var uniqueId = $item.data('push');
-                if (typeof uniqueId !== 'undefined') {
-                    uniqueId = 'push-' + uniqueId;
-
-                } else {
+                if (typeof uniqueId === 'undefined') {
                     uniqueId = $item.data('build');
-                    uniqueId = 'build-' + uniqueId;
                 }
 
                 _this.jobs[uniqueId] = status;

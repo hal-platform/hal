@@ -22,8 +22,6 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
             }
 
             var context = {
-                uniqueId: build.uniqueId,
-
                 buildId: buildId,
                 buildIdShort: this.formatBuildId(buildId),
                 buildUrl: build.url,
@@ -52,8 +50,6 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
             }
 
             var context = {
-                uniqueId: push.uniqueId,
-
                 buildId: buildId,
                 buildIdShort: this.formatBuildId(buildId),
                 buildUrl: push._embedded.build.url,
