@@ -11,7 +11,7 @@ BUNDLER="bundle install"
 # If deploying, use production settings
 if [ -n "$HAL_ENVIRONMENT" ]; then
     COMPOSER="composer install --prefer-dist --no-interaction --ansi --no-dev --optimize-autoloader"
-    NPM="npm install --production"
+    NPM="npm install --production --color=always"
     BUNDLER="bundle install --frozen"
 fi
 
