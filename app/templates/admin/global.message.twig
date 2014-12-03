@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Global Message" %}
+
+{% block content %}
+
+    <h2>Global Message</h2>
+
+    <h3>Current Message</h3>
+    <div class="trailer">
+        {% if message %}
+            <pre>{{ message}}</pre>
+            <p>
+                {% if ttl %}
+                    This message will expire in <strong>{{ ttl }} seconds</strong>.</p>
+                {% else %}
+                    This message will <strong>never</strong> expire.</p>
+                {% endif %}
+            </p>
+
+            <a href="#" class="btn btn--destructive">Remove message</a>
+
+        {% else %}
+            <p>No message currently set.</p>
+        {% endif %}
+    </div>
+
+    <h3>New Message</h3>
+    <div class="trailer">
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="message">
+                        Global Message
+                        <small class="additional">This message will be displayed as-is on the website (wrapped in an alert). Please do not do anything stupid.</small>
+                    </label>
+                    <textarea class="text-input" id="message" name="message" rows="3"></textarea>
+                </li>
+                <li>
+                    <label for="ttl">
+                        TTL (in seconds)
+                        <small class="additional">If empty or set to "0", the message will never expire and must be removed manually.</small>
+                    </label>
+                    <input class="text-input t10" type="text" id="ttl" name="ttl">
+                </li>
+            </ul>
+            <input class="btn" type="submit" value="Save Message" name="submit">
+        </form>
+    </div>
+{% endblock %}

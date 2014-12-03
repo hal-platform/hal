@@ -4,110 +4,65 @@
 
 {% block content %}
 
-    {% if doctrine_status %}
-        <div class="alert-bar--success">Doctrine Caches Cleared!</div>
-    {% endif %}
-
-    {% if permission_status %}
-        <div class="alert-bar--success">Permission Caches Cleared!</div>
-    {% endif %}
-
     <h2>Super Admin Dashboard</h2>
 
     {# Server Stats #}
     <h3>Server Information</h3>
-        <div class="details-box">
-            <dl class="split--left mbn">
-                <dl>
-                    <dt class="split--left__title"><strong>Hostname</strong></dt>
-                    <dd class="split--left__value">
-                        <div class="pre-wrapper">
-                            <pre>{{ servername }}</pre>
-                        </div>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt class="split--left__title"><strong>Encryption key</strong></dt>
-                    <dd class="split--left__value">
-                        <div class="pre-wrapper">
-                            <pre>{{ encryption_key }}</pre>
-                        </div>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt class="split--left__title"><strong>Session Encryption key</strong></dt>
-                    <dd class="split--left__value">
-                        <div class="pre-wrapper">
-                            <pre>{{ session_encryption_key }}</pre>
-                        </div>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt class="split--left__title"><strong>HAL 9000 Push File</strong></dt>
-                    <dd class="split--left__value">
-                        <div class="pre-wrapper">
-                            {% if pushfile %}
-                                <pre>{{ pushfile }}</pre>
-                            {% else %}
-                                <pre>No push file found. Are you in dev?</pre>
-                            {% endif %}
-                        </div>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt class="split--left__title"><strong>{{ isSeriousBusinessMode() ? 'Free space' : 'Spaaace' }}</strong></dt>
-                    <dd class="split--left__value">
-                        <div class="pre-wrapper">
-                            <pre>{{ freespace }}</pre>
-                        </div>
-                    </dd>
-                </dl>
+    <div class="details-box">
+        <dl class="split--left mbn">
+            <dl>
+                <dt class="split--left__title"><strong>Hostname</strong></dt>
+                <dd class="split--left__value">
+                    <div class="pre-wrapper">
+                        <pre>{{ servername }}</pre>
+                    </div>
+                </dd>
             </dl>
-        </div>
+            <dl>
+                <dt class="split--left__title"><strong>Encryption key</strong></dt>
+                <dd class="split--left__value">
+                    <div class="pre-wrapper">
+                        <pre>{{ encryption_key }}</pre>
+                    </div>
+                </dd>
+            </dl>
+            <dl>
+                <dt class="split--left__title"><strong>Session Encryption key</strong></dt>
+                <dd class="split--left__value">
+                    <div class="pre-wrapper">
+                        <pre>{{ session_encryption_key }}</pre>
+                    </div>
+                </dd>
+            </dl>
+            <dl>
+                <dt class="split--left__title"><strong>HAL 9000 Push File</strong></dt>
+                <dd class="split--left__value">
+                    <div class="pre-wrapper">
+                        {% if pushfile %}
+                            <pre>{{ pushfile }}</pre>
+                        {% else %}
+                            <pre>No push file found. Are you in dev?</pre>
+                        {% endif %}
+                    </div>
+                </dd>
+            </dl>
+            <dl>
+                <dt class="split--left__title"><strong>{{ isSeriousBusinessMode() ? 'Free space' : 'Spaaace' }}</strong></dt>
+                <dd class="split--left__value">
+                    <div class="pre-wrapper">
+                        <pre>{{ freespace }}</pre>
+                    </div>
+                </dd>
+            </dl>
+        </dl>
     </div>
 
-    {# Caching #}
-    <h3>Caching</h3>
+    <h3>Manage HAL 9000</h3>
     <div>
-        <h5>Doctrine Cache</h5>
-        <section class="trailer">
-            {% if doctrine_status %}
-                {% for type, message in doctrine_status %}
-                    <p class="mbn"><strong>{{ type }}:</strong> {{ message }}</p>
-                {% endfor %}
-            {% else %}
-                <a href="{{ urlFor('admin.super', {}, {clear_doctrine: 1}) }}" class="btn">Clear doctrine cache</a>
-            {% endif %}
-        </section>
-
-        <h5>Permissions Cache</h5>
-        <section class="trailer">
-
-            {% if permission_status %}
-                {% for key in permission_status %}
-                    <p><strong>Deleted:</strong> {{ key }}<p>
-                {% endfor %}
-            {% else %}
-
-                {% for key, ttl in permissions %}
-                    <p><strong>{{ key}}:</strong> TTL {{ ttl }} seconds<p>
-                {% endfor %}
-
-                <a href="{{ urlFor('admin.super', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
-            {% endif %}
-        </section>
+        <a href="{{ urlFor('admin.super.users') }}" class="btn" >User Management</a>
+        <a href="{{ urlFor('admin.super.caches') }}" class="btn">Cache Management</a>
+        <a href="{{ urlFor('admin.super.message') }}" class="btn">Global Message</a>
     </div>
-
-    <hr>
-
-    <h3>User Management</h3>
-    <div>
-        <p>
-            <a href="{{ urlFor('admin.super.users') }}">View current HAL and LDAP status for all users</a>
-        </p>
-    </div>
-
-    <hr>
 
     {# Agents #}
     <h3>Agent Status</h3>

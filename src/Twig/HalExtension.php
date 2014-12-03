@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Services\GlobalMessageService;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -26,6 +27,11 @@ class HalExtension extends Twig_Extension
      * @type EncryptedCookies
      */
     private $cookies;
+
+    /**
+     * @type GlobalMessageService
+     */
+    private $messageService;
 
     /**
      * @type UrlHelper
@@ -49,17 +55,20 @@ class HalExtension extends Twig_Extension
 
     /**
      * @param EncryptedCookies $cookies
+     * @param GlobalMessageService $messageService
      * @param UrlHelper $url
      * @param TimeHelper $time
      * @param NameHelper $name
      */
     public function __construct(
         EncryptedCookies $cookies,
+        GlobalMessageService $messageService,
         UrlHelper $url,
         TimeHelper $time,
         NameHelper $name
     ) {
         $this->cookies = $cookies;
+        $this->messageService = $messageService;
         $this->url = $url;
         $this->time = $time;
         $this->name = $name;
@@ -86,6 +95,7 @@ class HalExtension extends Twig_Extension
             // util
             new Twig_SimpleFunction('isNavOn', [$this, 'isNavigationOn']),
             new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
+            new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
 
             // other
             new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),

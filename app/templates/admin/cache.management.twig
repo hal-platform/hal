@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Cache Management" %}
+
+{% block content %}
+
+    {% if doctrine_status %}
+        <div class="alert-bar--success">Doctrine Caches Cleared!</div>
+    {% endif %}
+
+    {% if permission_status %}
+        <div class="alert-bar--success">Permission Caches Cleared!</div>
+    {% endif %}
+
+    <h2>Cache Management</h2>
+
+    <h3>Doctrine Cache</h3>
+    <section class="trailer">
+        {% if doctrine_status %}
+            {% for type, message in doctrine_status %}
+                <p class="mbn"><strong>{{ type }}:</strong> {{ message }}</p>
+            {% endfor %}
+        {% else %}
+            <a href="{{ urlFor('admin.super.caches', {}, {clear_doctrine: 1}) }}" class="btn">Clear doctrine cache</a>
+        {% endif %}
+    </section>
+
+    <h3>Permissions Cache</h3>
+    <section class="trailer">
+
+        <table class="tablesaw tablesaw-stack" data-mode="stack">
+            <thead>
+                <th>Key</th>
+                <th>TTL</th>
+            </thead>
+            <tbody>
+                {% if permission_status %}
+                    {% for key in permission_status %}
+                        <tr>
+                            <td>{{ key }}</td>
+                            <td><strong>Deleted</strong></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    {% for key, ttl in permissions %}
+                        <tr>
+                            <td>{{ key }}</td>
+                            <td>{{ ttl }} seconds</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+        <a href="{{ urlFor('admin.super.caches', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
+    </section>
+
+{% endblock %}

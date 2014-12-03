@@ -12,13 +12,16 @@
         <div class="alert-bar">
             <p>No users were disabled. All inactive users are already disabled in HAL.</p>
         </div>
-    {% else %}
+    {% endif %}
+
+    <h2>User Management</h2>
+
+    {% if not pruned and not no_pruned %}
         <p>
             <a href="{{ urlFor('admin.super.users', {}, {prune: 1}) }}" class="btn btn--destructive">Disable inactive users</a>
         </p>
     {% endif %}
 
-    <h2>User Management</h2>
     <table class="tablesaw tablesaw-stack" data-mode="stack">
         <thead>
         <tr>

@@ -535,8 +535,6 @@ services:
         class: 'QL\Hal\Controllers\Admin\SuperController'
         arguments:
             - @admin.super.twig
-            - @doctrine.config
-            - @redis
             - %encryption.secret%
             - %session.encryption.secret%
             - @hal.pushfile
@@ -554,6 +552,27 @@ services:
     admin.users.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/users.management.twig']]]
+
+    admin.caches.page:
+        class: 'QL\Hal\Controllers\Admin\CacheManagementController'
+        arguments:
+            - @admin.caches.twig
+            - @doctrine.config
+            - @redis
+    admin.caches.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/cache.management.twig']]]
+
+    admin.message.page:
+        class: 'QL\Hal\Controllers\Admin\GlobalMessageController'
+        arguments:
+            - @admin.message.twig
+            - @global.message
+            - @session
+            - @url.helper
+    admin.message.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/global.message.twig']]]
 
     ######################################################################################################################
     # HELP CONTROLLERS

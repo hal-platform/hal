@@ -150,6 +150,7 @@ services:
         class: 'QL\Hal\Twig\HalExtension'
         arguments:
             - @slim.cookies
+            - @global.message
             - @url.helper
             - @time.helper
             - @name.helper
@@ -284,6 +285,10 @@ services:
         calls:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.permissions.ttl%]]
+
+    global.message:
+        class: 'QL\Hal\Services\GlobalMessageService'
+        arguments: [@redis]
 
     redis:
         class: 'Predis\Client'

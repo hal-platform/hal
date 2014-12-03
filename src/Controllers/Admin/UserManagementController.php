@@ -66,7 +66,7 @@ class UserManagementController
      */
     public function __invoke(Request $request, Response $response)
     {
-        $users = $this->repository->findBy([], ['name' => 'ASC']);
+        $users = $this->repository->findBy([], ['isActive' => 'DESC', 'name' => 'ASC']);
 
         $parsed = [];
         foreach ($users as $user) {
