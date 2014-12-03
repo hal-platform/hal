@@ -74,7 +74,7 @@ class RepositoryNormalizer
         return $this->buildResource(
             [
                 'id' => $repository->getId(),
-                'identifier' => $repository->getKey(),
+                'key' => $repository->getKey(),
                 'title' => $repository->getDescription(),
                 'email' => $repository->getEmail(),
                 'githubUser' => [
@@ -94,6 +94,7 @@ class RepositoryNormalizer
             [
                 'self' => $this->link($repository),
                 'group' => $this->groups->link($repository->getGroup()),
+                'deployments' => $this->buildLink(['api.deployments', ['id' => $repository->getId()]]),
                 'builds' => $this->buildLink(['api.builds', ['id' => $repository->getId()]]),
                 'pushes' => $this->buildLink(['api.pushes', ['id' => $repository->getId()]]),
                 'tags' => $this->buildLink(['api.repository.tags', ['id' => $repository->getId()]]),
