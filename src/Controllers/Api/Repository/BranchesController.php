@@ -8,11 +8,14 @@
 namespace QL\Hal\Controllers\Api\Repository;
 
 use Closure;
+use QL\Hal\Api\Normalizer\RepositoryNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GithubService;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -21,10 +24,12 @@ use Slim\Http\Response;
  */
 class BranchesController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type UrlHelper
@@ -42,43 +47,49 @@ class BranchesController
     private $repositoryRepo;
 
     /**
-     * @param ApiHelper $api
+     * @var RepositoryNormalizer
+     */
+    private $repositoryNormalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
      * @param UrlHelper $url
      * @param GithubService $github
      * @param RepositoryRepository $repositoryRepo
+     * @param RepositoryNormalizer $repositoryNormalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         UrlHelper $url,
         GithubService $github,
-        RepositoryRepository $repositoryRepo
+        RepositoryRepository $repositoryRepo,
+        RepositoryNormalizer $repositoryNormalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->url = $url;
         $this->github = $github;
         $this->repositoryRepo = $repositoryRepo;
+        $this->repositoryNormalizer = $repositoryNormalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+
         if (!$repository instanceof Repository) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-repository');
         }
 
         $branches = $this->github->branches($repository->getGithubUser(), $repository->getGithubRepo());
-        if (!$branches) {
-            return $response->setStatus(404);
-        }
+        $status = (count($branches) > 0) ? 200 : 404;
 
-        usort($branches, $this->branchNameSort());
-
-        $content = array_map(function($branch) use ($repository) {
+        $branches = array_map(function ($branch) use ($repository) {
             return [
                 'name' => $branch['name'],
                 'text' => $this->url->formatGitReference($branch['name']),
@@ -88,26 +99,15 @@ class BranchesController
             ];
         }, $branches);
 
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * Sorts master to top, rest alphabetically
-     *
-     * @return Closure
-     */
-    private function branchNameSort()
-    {
-        return function ($a, $b) {
-            if ($a['name'] == 'master') {
-                return -1;
-            }
-
-            if ($b['name'] == 'master') {
-                return 1;
-            }
-
-            return strcmp($a['name'], $b['name']);
-        };
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($branches),
+                'branches' => $branches
+            ],
+            [],
+            [
+                'repository' => $this->repositoryNormalizer->link($repository)
+            ]
+        ), $status);
     }
 }
