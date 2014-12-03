@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Server;
 
-use QL\Hal\Api\ServerNormalizer;
+use QL\Hal\Api\Normalizer\ServerNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -19,10 +19,12 @@ use Slim\Http\Response;
  */
 class ServersController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type ServerRepository
@@ -30,21 +32,21 @@ class ServersController
     private $serverRepo;
 
     /**
-     * @type ServerNormalizer
+     * @var ServerNormalizer
      */
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param ServerRepository $serverRepo
      * @param ServerNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         ServerRepository $serverRepo,
         ServerNormalizer $normalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->serverRepo = $serverRepo;
         $this->normalizer = $normalizer;
     }
@@ -56,47 +58,20 @@ class ServersController
     public function __invoke(Request $request, Response $response)
     {
         $servers = $this->serverRepo->findBy([], ['id' => 'ASC']);
-        if (!$servers) {
-            return $response->setStatus(404);
-        }
+        $status = (count($servers) > 0) ? 200 : 404;
 
-        // using this to play with the idea of linked vs embedded resources
-        $isResolved = false;
-
-        $content = [
-            'count' => count($servers),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => 'api.environments'])
-            ]
-        ];
-
-        $content = array_merge_recursive($content, $this->normalizeServers($servers, $isResolved));
-
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $servers
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizeServers(array $servers, $isResolved)
-    {
-        // Normalize all the builds
-        $normalized = array_map(function($server) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($server);
-            }
-
-            return $this->normalizer->linked($server);
+        $servers = array_map(function ($server) {
+            return $this->normalizer->link($server);
         }, $servers);
 
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'servers' => $normalized
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($servers)
+            ],
+            [],
+            [
+                'servers' => $servers
             ]
-        ];
+        ), $status);
     }
 }

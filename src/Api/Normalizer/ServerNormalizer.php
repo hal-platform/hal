@@ -34,7 +34,7 @@ class ServerNormalizer
     ) {
         $this->environments = $environments;
 
-        $this->embed = ['deployments'];
+        $this->embed = ['deployments', 'environment'];
     }
 
     /**

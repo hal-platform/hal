@@ -121,21 +121,18 @@ services:
     # SERVER CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.server:
         class: 'QL\Hal\Controllers\Api\Server\ServerController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @server.repo
-            - @api.server.normalizer
 
-    # @todo NORMALIZER MIGRATION
     api.servers:
         class: 'QL\Hal\Controllers\Api\Server\ServersController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @server.repo
-            - @api.server.normalizer
+            - @normalizer.server
 
     ######################################################################################################################
     # BUILD CONTROLLERS
