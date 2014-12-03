@@ -224,14 +224,14 @@ services:
             - @repository.repo
             - @normalizer.repository
 
-    # @todo NORMALIZER MIGRATION
     api.repository.pullrequests:
         class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @url.helper
             - @github
             - @repository.repo
+            - @normalizer.repository
 
     # @todo NORMALIZER MIGRATION
     api.repository.diff:
