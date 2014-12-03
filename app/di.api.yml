@@ -36,6 +36,7 @@ services:
             - @push.repo
             - @clock
 
+    # @todo NORMALIZER MIGRATION
     api.queue.refresh:
         class: 'QL\Hal\Controllers\Api\QueueRefreshController'
         arguments:
@@ -49,6 +50,7 @@ services:
     # BUILD CONTROLLERS
     ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.build:
         class: 'QL\Hal\Controllers\Api\Build\BuildController'
         arguments:
@@ -56,6 +58,7 @@ services:
             - @build.repo
             - @api.build.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.build.logs:
         class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
         arguments:
@@ -63,6 +66,7 @@ services:
             - @build.repo
             - @api.eventlog.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.builds:
         class: 'QL\Hal\Controllers\Api\Build\BuildsController'
         arguments:
@@ -100,6 +104,7 @@ services:
     # ENVIRONMENT CONTROLLERS
     ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.environment:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
         arguments:
@@ -107,17 +112,19 @@ services:
             - @environment.repo
             - @api.environment.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.environments:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @environment.repo
-            - @api.environment.normalizer
+            - @normalizer.environment
 
     ######################################################################################################################
     # SERVER CONTROLLERS
     ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.server:
         class: 'QL\Hal\Controllers\Api\Server\ServerController'
         arguments:
@@ -125,6 +132,7 @@ services:
             - @server.repo
             - @api.server.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.servers:
         class: 'QL\Hal\Controllers\Api\Server\ServersController'
         arguments:
@@ -136,6 +144,7 @@ services:
     # BUILD CONTROLLERS
     ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.group:
         class: 'QL\Hal\Controllers\Api\Group\GroupController'
         arguments:
@@ -143,6 +152,7 @@ services:
             - @group.repo
             - @api.group.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.groups:
         class: 'QL\Hal\Controllers\Api\Group\GroupsController'
         arguments:
@@ -154,6 +164,7 @@ services:
     # PUSH CONTROLLERS
     ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.push:
         class: 'QL\Hal\Controllers\Api\Push\PushController'
         arguments:
@@ -161,6 +172,7 @@ services:
             - @push.repo
             - @api.push.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.push.logs:
         class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
         arguments:
@@ -168,6 +180,7 @@ services:
             - @push.repo
             - @api.eventlog.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.pushes:
         class: 'QL\Hal\Controllers\Api\Push\PushesController'
         arguments:
@@ -181,6 +194,7 @@ services:
     # EVENT LOG CONTROLLERS
     ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.event.log:
         class: 'QL\Hal\Controllers\Api\EventLogController'
         arguments:
@@ -192,6 +206,7 @@ services:
     # REPOSITORY CONTROLLERS
     ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.repository:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
         arguments:
@@ -199,6 +214,7 @@ services:
             - @repository.repo
             - @api.repository.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.repository.tags:
         class: 'QL\Hal\Controllers\Api\Repository\TagsController'
         arguments:
@@ -207,6 +223,7 @@ services:
             - @github
             - @repository.repo
 
+    # @todo NORMALIZER MIGRATION
     api.repository.branches:
         class: 'QL\Hal\Controllers\Api\Repository\BranchesController'
         arguments:
@@ -215,6 +232,7 @@ services:
             - @github
             - @repository.repo
 
+    # @todo NORMALIZER MIGRATION
     api.repository.pullrequests:
         class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
         arguments:
@@ -223,6 +241,7 @@ services:
             - @github
             - @repository.repo
 
+    # @todo NORMALIZER MIGRATION
     api.repository.diff:
         class: 'QL\Hal\Controllers\Api\Repository\DiffController'
         arguments:
@@ -231,6 +250,7 @@ services:
             - @github
             - @repository.repo
 
+    # @todo NORMALIZER MIGRATION
     api.repositories:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
         arguments:
@@ -238,10 +258,11 @@ services:
             - @repository.repo
             - @api.repository.normalizer
 
-  ######################################################################################################################
-  # USER CONTROLLERS
-  ######################################################################################################################
+    ######################################################################################################################
+    # USER CONTROLLERS
+    ######################################################################################################################
 
+    # @todo NORMALIZER MIGRATION
     api.user:
         class: 'QL\Hal\Controllers\Api\User\UserController'
         arguments:
@@ -249,6 +270,7 @@ services:
             - @user.repo
             - @api.user.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.users:
         class: 'QL\Hal\Controllers\Api\User\UsersController'
         arguments:
@@ -256,6 +278,7 @@ services:
             - @user.repo
             - @api.user.normalizer
 
+    # @todo NORMALIZER MIGRATION
     api.user.permissions:
         class: 'QL\Hal\Controllers\Api\User\UserPermissionsController'
         arguments:

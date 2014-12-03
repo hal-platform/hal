@@ -2,13 +2,11 @@
 
 namespace QL\Hal\Api;
 
-use DateTime;
+use InvalidArgumentException;
 use MCP\DataType\HttpUrl;
+use MCP\DataType\Time\TimePoint;
 use QL\Hal\Api\Normalizer\HttpUrlNormalizer;
 use QL\Hal\Api\Normalizer\TimePointNormalizer;
-use QL\Hal\Core\Entity\Build;
-use InvalidArgumentException;
-use MCP\DataType\Time\TimePoint;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
@@ -26,6 +24,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\Build;
 
 /**
  * Object Normalizer

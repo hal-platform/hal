@@ -6,9 +6,10 @@
  */
 namespace QL\Hal\Controllers\Api\Environment;
 
-use QL\Hal\Api\EnvironmentNormalizer;
+use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -17,10 +18,12 @@ use Slim\Http\Response;
  */
 class EnvironmentsController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type EnvironmentRepository
@@ -28,21 +31,21 @@ class EnvironmentsController
     private $envRepo;
 
     /**
-     * @type EnvironmentNormalizer
+     * @var EnvironmentNormalizer
      */
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param EnvironmentRepository $envRepo
      * @param EnvironmentNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         EnvironmentRepository $envRepo,
         EnvironmentNormalizer $normalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->envRepo = $envRepo;
         $this->normalizer = $normalizer;
     }
@@ -54,46 +57,20 @@ class EnvironmentsController
     public function __invoke(Request $request, Response $response)
     {
         $environments = $this->envRepo->findBy([], ['id' => 'ASC']);
-        if (!$environments) {
-            return $response->setStatus(404);
-        }
+        $status = (count($environments) > 0) ? 200 : 404;
 
-        // using this to play with the idea of linked vs embedded resources
-        $isResolved = false;
-
-        $content = [
-            'count' => count($environments),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => 'api.environments'])
-            ]
-        ];
-
-        $content = array_merge_recursive($content, $this->normalizeEnvironments($environments, $isResolved));
-
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $environments
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizeEnvironments(array $environments, $isResolved)
-    {
-        $normalized = array_map(function($environment) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($environment);
-            }
-
-            return $this->normalizer->linked($environment);
+        $environments = array_map(function ($environment) {
+            return $this->normalizer->link($environment);
         }, $environments);
 
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'environments' => $normalized
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($environments)
+            ],
+            [],
+            [
+                'environments' => $environments
             ]
-        ];
+        ), $status);
     }
 }
