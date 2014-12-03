@@ -233,15 +233,6 @@ services:
             - @repository.repo
             - @normalizer.repository
 
-    # @todo NORMALIZER MIGRATION
-    api.repository.diff:
-        class: 'QL\Hal\Controllers\Api\Repository\DiffController'
-        arguments:
-            - @api.helper
-            - @url.helper
-            - @github
-            - @repository.repo
-
     api.repositories:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
         arguments:
