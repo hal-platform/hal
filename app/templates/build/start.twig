@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Create new "~repo.key~" build" %}
+{% set page_title = "Start Build: " ~ repo.description %}
 
 {% block content %}
 
-    <h2>Create new {{ repo.key }} build</h2>
+    <h2>Create a new build for <strong>{{ repo.description }}</strong></h2>
 
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
 

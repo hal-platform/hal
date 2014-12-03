@@ -72,13 +72,13 @@
             </tr>
             </thead>
             <tbody>
-                {% for pairs in permissions %}
+                {% for env, permission in permissions %}
                     <tr>
-                        <td>{{ pairs|first.environment.key|title }}</td>
+                        <td>{{ env }}</td>
                         <td>
                             <ul class="col-list">
-                                {% for pair in pairs %}
-                                    <li><a href="{{ urlFor('repository', {'id': pair.repository.id}) }}">{{ pair.repository.key }}</a></li>
+                                {% for rule in permission %}
+                                    <li><a href="{{ urlFor('repository', {'id': rule.repository.id}) }}">{{ rule.repository.description }}</a></li>
                                 {% endfor %}
                             </ul>
                         </td>

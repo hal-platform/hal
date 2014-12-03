@@ -73,7 +73,7 @@
     <h3>Permissions</h3>
 
     {% if permissions %}
-        <p>The following users have permission to push <strong>{{ repository.key }}</strong> to the specified environment.</p>
+        <p>The following users have permission to push <strong>{{ repository.description }}</strong> to the specified environment.</p>
         <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>
             <tr>
@@ -82,13 +82,13 @@
             </tr>
             </thead>
             <tbody>
-            {% for pairs in permissions %}
+            {% for env, permission in permissions %}
                 <tr>
-                    <td>{{ pairs|first.environment.key }}</td>
+                    <td>{{ env }}</td>
                     <td>
                         <ul class="col-list">
-                            {% for pair in pairs %}
-                                <li><a href="{{ urlFor('user', {'id': pair.user.id}) }}">{{ pair.user.name }}</a></li>
+                            {% for rule in permission %}
+                                <li><a href="{{ urlFor('user', {'id': rule.user.id}) }}">{{ rule.user.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -125,7 +125,7 @@
                             {% endif %}
 
                             <td><a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment.server.name }}</a></td>
-                            <td><code>{{ deployment.path}}</code></td>
+                            <td><code>{{ deployment.path }}</code></td>
                             <td>
                                 <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
                             </td>

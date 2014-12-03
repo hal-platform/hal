@@ -1,12 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Push Details" %}
+{% set page_title = "Push Information" %}
 
 {% block content %}
 
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.build.repository.id}) }}">Back to Repository Status</a></p>
 
-    <h2 class="mbn">Push Details</h2>
+    <h2>Push Information</h2>
+
+    <h3 class="mbn">Push Details</h3>
 
     <div class="details-box">
         <dl class="split--left mbn">
@@ -22,29 +24,33 @@
             <dd class="split--left__value">
                 {{ push.id|formatPushId }}
             </dd>
-
             <dt class="split--left__title">
                 Server
             </dt>
             <dd class="split--left__value">
                 {% if push.deployment %}
-                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a> ({{ push.deployment.server.environment.key }})
+                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
             </dd>
-
             <dt class="split--left__title">
                 Directory
             </dt>
             <dd class="split--left__value">
                 {% if push.deployment %}
-                    {{ push.deployment.path }}
+                    <code>{{ push.deployment.path }}</code>
                 {% else %}
                     Unknown
                 {% endif %}
             </dd>
+        </dl>
+    </div>
 
+    <h3 class="mbn">Build Details</h3>
+
+    <div class="details-box">
+        <dl class="split--left mbn">
             <dt class="split--left__title">
                 Build
             </dt>
@@ -54,7 +60,22 @@
                     (Removed)
                 {% endif %}
             </dd>
-
+            <dt class="split--left__title">
+                Repository
+            </dt>
+            <dd class="split--left__value">
+                <a href="{{ urlFor('repository', {'id': push.build.repository.id}) }}">{{ push.build.repository.description }}</a>
+            </dd>
+            <dt class="split--left__title">
+                Environment
+            </dt>
+            <dd class="split--left__value">
+                {% if push.deployment %}
+                    {{ push.deployment.server.environment.key }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </dd>
             <dt class="split--left__title">
                 Reference
             </dt>
@@ -84,7 +105,13 @@
                     </svg>
                 </span>
             </dd>
+        </dl>
+    </div>
 
+    <h3 class="mbn">Push Status</h3>
+
+    <div class="details-box">
+        <dl class="split--left mbn">
             <dt class="split--left__title">
                 Status
             </dt>
@@ -127,7 +154,7 @@
         </dl>
     </div>
 
-    <h3>Event Log</h3>
+    <h3 class="mbn">Event Log</h3>
     {% if push.logs.isEmpty %}
         <p>No push events found.</p>
     {% else %}

@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = repo.key %}
+{% set page_title = "Rollbacks for " ~ repo.description %}
 
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
-    <h2>Available {{ repo.key }} Rollbacks for {{ server.name }}</h2>
+    <h2>Available rollbacks for <strong>{{ repo.description }}</strong> to <strong>{{ server.name }}</strong></h2>
 
     <p>
         This table shows all builds that have been successfully pushed to this server and that are still available for rollback to.
@@ -53,9 +53,9 @@
                     <td>
                         {% if push.build.status == 'Success'%}
                             {% if push.deployment and canUserPush(currentUser, repo.key, push.build.server.environment.key) %}
-                                <a href="{{ urlFor('push.start', {'repo': repo.key, 'build': push.build.id}, {deployment: push.deployment.id}) }}">Rollback</a>
+                                <a href="{{ urlFor('push.start', {'build': push.build.id}, {deployment: push.deployment.id}) }}">Rollback</a>
                             {% else %}
-                                <a href="{{ urlFor('push.start', {'repo': repo.key, 'build': push.build.id}) }}">Rollback</a>
+                                <a href="{{ urlFor('push.start', {'build': push.build.id}) }}">Rollback</a>
                             {% endif %}
                         {% elseif push.build.status == 'Removed' %}
                             Removed

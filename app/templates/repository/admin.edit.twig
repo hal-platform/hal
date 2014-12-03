@@ -1,8 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = repository.key %}
-
-{% set page_title = 'Edit Repository: ' ~ repository.key %}
+{% set page_title = 'Edit Repository: ' ~ repository.description %}
 
 {% block content %}
     <h2>Edit Repository</h2>
@@ -38,7 +36,7 @@
 
                         <li>
                             <input type="radio" name="group" id="group-{{ group.id }}" value="{{ group.id }}"{{ checked }}>
-                            <label for="group-{{ group.id }}">{{ group.key }}</label>
+                            <label for="group-{{ group.id }}">{{ group.name }}</label>
                         </li>
                     {% endfor %}
                     </ul>

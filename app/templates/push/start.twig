@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Push Build "~build.id %}
+{% set page_title = "Start Push: " ~ build.id %}
 
 {% block content %}
 
-    <h2>Push a build</h2>
+    <h2>Push a build for <strong>{{ build.repository.description }}</strong></h2>
 
     <p>Please review the below build details before pushing.</p>
 
@@ -20,7 +20,7 @@
                 Repository
             </dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.key }}</a>
+                <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.description }}</a>
             </dd>
             <dt class="split--left__title">
                 Environment
@@ -117,24 +117,18 @@
                         <td>
                             <span class="status-before--{{ isCurrent ? 'success' : 'other' }}">
                                 <a href="{{ githubReference(active.build.repository.githubUser, active.build.repository.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
-                                <svg viewBox="0 0 32 32" class="icon">
-                                    <use xlink:href="#fork"></use>
-                                </svg>
+                                <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
                             </span>
                         </td>
                         <td>
                             <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
-                            <span class="icon">
-                                <svg viewBox="0 0 32 32">
-                                    <use xlink:href="#github"></use>
-                                </svg>
-                            </span>
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
                         </td>
                         <td>
                             {% if inProgress %}
                                 Now
                             {% else %}
-                                {{ active.created|reldate }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id }}</a>)
+                                {{ active.created|reldate }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
                             {% endif %}
                         </td>
                         <td>

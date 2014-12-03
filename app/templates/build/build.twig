@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Build Details" %}
+{% set page_title = "Build Information" %}
 
 {% block content %}
 
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
 
-    <h2>Build Details</h2>
+    <h2>Build Information</h2>
 
+    <h3 class="mbn">Build Details</h3>
     <div class="details-box">
         <dl class="split--left mbn">
             <dt class="split--left__title">
@@ -26,7 +27,7 @@
                 Repository
             </dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('repository', {'id': build.repository.id}) }}">{{ build.repository.key }}</a>
+                <a href="{{ urlFor('repository', {'id': build.repository.id}) }}">{{ build.repository.description }}</a>
             </dd>
             <dt class="split--left__title">
                 Environment
@@ -62,6 +63,12 @@
                     </svg>
                 </span>
             </dd>
+        </dl>
+    </div>
+
+    <h3 class="mbn">Build Status</h3>
+    <div class="details-box">
+        <dl class="split--left mbn">
             <dt class="split--left__title">
                 Status
             </dt>
@@ -120,7 +127,7 @@
         {% endif %}
     {% endif %}
 
-    <h3>Event Log</h3>
+    <h3 class="mbn">Event Log</h3>
     {% if build.logs.isEmpty %}
         <p>No build events found.</p>
     {% else %}

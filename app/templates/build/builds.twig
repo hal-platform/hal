@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = repo.key~" Build History" %}
+{% set page_title = repo.description ~ " Build History" %}
 
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repo.id}) }}">Back to Repository</a></p>
 
-    <h2>{{ repo.key }} Build History</h2>
+    <h2>Build History for <strong>{{ repo.description }}</strong></h2>
 
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 
