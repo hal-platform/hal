@@ -24,10 +24,8 @@
             </td>
             <td>{{ build.environment.key }}</td>
             <td>
-                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch[:15]|gitref }}</a>
-                <svg viewBox="0 0 32 32" class="icon">
-                    <use xlink:href="#fork"></use>
-                </svg>
+                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|sliceGitref }}</a>
+                <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
             </td>
             <td>
                 {% if build.user %}

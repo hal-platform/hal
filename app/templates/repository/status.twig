@@ -10,12 +10,18 @@
     <h3>Server Status</h3>
     <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
 
+    {% set hasPushes = false %}
+
     {# example display of servers by environment #}
     {% for env, statuses in environments %}
         {% if statuses %}
             <h3>{{ env }}</h3>
             <ul class="list--bare cards cards--{{ env }}">
                 {% for status in statuses %}
+
+                    {% if status.latest %}
+                        {% set hasPushes = true %}
+                    {% endif %}
 
                     {# Determine the active push #}
                     {% if status.latest.status in ['Waiting', 'Pushing'] %}
@@ -44,8 +50,14 @@
         {% if canUserBuild(currentUser, repo.key) %}
             <a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
         {% endif %}
-        <a class="btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
-        <a class="btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
+
+        {% if builds %}
+            <a class="btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
+        {% endif %}
+
+        {% if hasPushes %}
+            <a class="btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
+        {% endif %}
     </p>
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 {% endblock %}
@@ -59,9 +71,7 @@
 
                 {% if canRollback %}
                     <a class="rollback" href="{{ urlFor('rollback', {'id': repo.id, 'server': server.id}) }}" title="Rollback to a successful build">
-                        <svg viewBox="0 0 32 32" class="icon">
-                            <use xlink:href="#revert"></use>
-                        </svg>
+                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#revert"></use></svg>
                     </a>
                 {% endif %}
 
@@ -108,12 +118,9 @@
                     {% if active %}
                         {% set isCurrent = githubCommitIsCurrent(repo.githubUser, repo.githubRepo, active.build.branch, active.build.commit) %}
                         <span class="status-before--{{ isCurrent ? 'success' : 'warning' }}">
-                            <a href="{{ githubReference(repo.githubUser, repo.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
+                            <a href="{{ githubReference(repo.githubUser, repo.githubRepo, active.build.branch) }}">{{ active.build.branch|sliceGitref }}</a>
                         </span>
-
-                        <svg viewBox="0 0 32 32" class="icon">
-                            <use xlink:href="#fork"></use>
-                        </svg>
+                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
                     {% else %}
                         Unknown
                     {% endif %}
@@ -122,9 +129,7 @@
                     <span class="split__title">Commit:</span>
                     {% if active %}
                         <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
-                        <svg viewBox="0 0 32 32" class="icon">
-                            <use xlink:href="#github"></use>
-                        </svg>
+                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
                     {% else %}
                         Unknown
                     {% endif %}

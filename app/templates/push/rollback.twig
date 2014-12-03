@@ -28,24 +28,18 @@
                     <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
                     <td>
                         <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a>
-                        <svg viewBox="0 0 32 32" class="icon">
-                            <use xlink:href="#fork"></use>
-                        </svg>
+                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
                     </td>
                     <td>
                         <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
-                        <span class="icon">
-                            <svg viewBox="0 0 32 32">
-                                <use xlink:href="#github"></use>
-                            </svg>
-                        </span>
+                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
                     </td>
                     <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)</td>
                     <td>
                         {% if push.user %}
-                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name[:20] }}</a>
+                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name|sliceString }}</a>
                         {% elseif push.consumer %}
-                            {{ push.consumer.name[:20] }}
+                            {{ push.consumer.name|sliceString }}
                         {% else %}
                             Unknown
                         {% endif %}

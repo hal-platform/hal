@@ -119,7 +119,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
             new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
             new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
-            new Twig_SimpleFilter('sanitizeToString', [$this, 'sanitizeToString'])
+            new Twig_SimpleFilter('sanitizeToString', [$this, 'sanitizeToString']),
+            new Twig_SimpleFilter('sliceString', [$this, 'sliceString'])
         ];
     }
 
@@ -194,6 +195,20 @@ class HalExtension extends Twig_Extension
         return $event;
     }
 
+    /**
+     * @param string $value
+     * @param int $size
+     * @return string
+     */
+    public function sliceString($value, $size = 20)
+    {
+        $len = mb_strlen($value);
+        if ($len <= $size + 3) {
+            return $value;
+        } else {
+            return substr($value, 0, $size) . '...';
+        }
+    }
 
     /**
      * @param mixed $data

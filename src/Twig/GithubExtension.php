@@ -69,6 +69,7 @@ class GithubExtension extends Twig_Extension
     {
         return [
             new Twig_SimpleFilter('gitref', [$this->url, 'formatGitReference']),
+            new Twig_SimpleFilter('sliceGitref', [$this, 'sliceGitReference']),
             new Twig_SimpleFilter('commit', [$this->url, 'formatGitCommit'])
         ];
     }
@@ -89,5 +90,21 @@ class GithubExtension extends Twig_Extension
         $current = (is_array($resolve)) ? $resolve[1] : null;
 
         return ($current == $commit) ? true : false;
+    }
+
+    /**
+     * @param string $gitref
+     * @param int $size
+     * @return string
+     */
+    public function sliceGitReference($gitref, $size = 30)
+    {
+        $value =  $this->url->formatGitReference($gitref);
+
+        if (mb_strlen($value) <= $size + 3) {
+            return $value;
+        } else {
+            return substr($value, 0, $size) . '...';
+        }
     }
 }

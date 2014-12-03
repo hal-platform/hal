@@ -27,19 +27,15 @@
                         </td>
                         <td>{{ job.environment.key }}
                         <td>
-                            <a href="{{ githubCommit(job.repository.githubUser, job.repository.githubRepo, job.commit) }}">{{ job.branch[:15]|gitref }}</a>
-                            <span class="icon">
-                                <svg viewBox="0 0 32 32">
-                                    <use xlink:href="#github"></use>
-                                </svg>
-                            </span>
+                            <a href="{{ githubCommit(job.repository.githubUser, job.repository.githubRepo, job.commit) }}">{{ job.branch|sliceGitref }}</a>
+                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
                         </td>
                         <td>{{ job.user ? job.user.handle : 'Unknown' }}</td>
                     </tr>
                 {% else %}
                     <tr id="push-{{ job.id }}">
                         <td><a href="{{ urlFor('push', {push: job.id}) }}">Push</a></td>
-                        <td><a href="{{ urlFor('repository.status', {id: job.build.repository.id}) }}">{{ job.build.repository.key }}</a></td>
+                        <td><a href="{{ urlFor('repository.status', {id: job.build.repository.id}) }}">{{ job.build.repository.description }}</a></td>
                         <td>
                             {% if job.status == 'Success' %}
                                 <span class="status-before--success">{{ job.status }}</span>
@@ -57,7 +53,7 @@
                             <td>{{ job.build.environment.key }} → Unknown</td>
                         {% endif %}
                         <td>
-                            Build <a href="{{ urlFor('build', {'build': job.build.id}) }}">{{ job.build.id[:10] }}</a>
+                            Build <a href="{{ urlFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a>
                         </td>
                         <td>{{ job.user ? job.user.handle : 'Unknown' }}</td>
                     </tr>

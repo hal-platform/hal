@@ -57,11 +57,7 @@
             </dt>
             <dd class="split--left__value">
                 <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
-                <span class="icon">
-                    <svg viewBox="0 0 32 32">
-                        <use xlink:href="#github"></use>
-                    </svg>
-                </span>
+                <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
             </dd>
         </dl>
     </div>
