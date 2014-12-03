@@ -25,7 +25,7 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 uniqueId: build.uniqueId,
 
                 buildId: buildId,
-                buildIdShort: buildId.slice(0, 10),
+                buildIdShort: this.formatBuildId(buildId),
                 buildUrl: build.url,
 
                 buildStatusStyle: this.determineStatusStyle(build.status),
@@ -35,8 +35,8 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 reference: this.determineGitRef(reference),
                 referenceUrl: build.commit.url,
 
-                repoName: build._embedded.repository.key,
-                repoUrl: build._embedded.repository.url,
+                repoName: build._embedded.repository.description,
+                repoStatusUrl: build._embedded.repository.url + '/status',
 
                 initiator: initiator
             };
@@ -55,11 +55,11 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 uniqueId: push.uniqueId,
 
                 buildId: buildId,
-                buildIdShort: buildId.slice(0, 10),
+                buildIdShort: this.formatBuildId(buildId),
                 buildUrl: push._embedded.build.url,
 
                 pushId: pushId,
-                pushIdShort: pushId.slice(0, 10),
+                pushIdShort: this.formatPushId(pushId),
                 pushUrl: push.url,
 
                 pushStatusStyle: this.determineStatusStyle(push.status),
@@ -68,8 +68,8 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 environmentName: push._embedded.build._links.environment.title,
                 serverName: push._embedded.deployment._links.server.title,
 
-                repoName: push._embedded.build._embedded.repository.key,
-                repoUrl: push._embedded.build._embedded.repository.url,
+                repoName: push._embedded.build._embedded.repository.description,
+                repoStatusUrl: push._embedded.build._embedded.repository.url + '/status',
 
                 initiator: initiator
             };
@@ -144,7 +144,17 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
 
             return 'other';
         },
-        determineGitRef: function(gitref) {
+        determineGitref: function(gitref) {
+            var formatted = this.formatGitref(gitref),
+                size = 30;
+
+            if (gitref.length <= size + 3) {
+                return gitref;
+            } else {
+                return gitref.slice(0, size) + '...';
+            }
+        },
+        formatGitref: function(gitref) {
             var prRegex = /^pull\/([\d]+)$/i,
                 tagRegex = /^tag\/([\x21-\x7E]+)$/i,
                 commitRegex = /^[a-f]{40}$/i,
@@ -152,22 +162,44 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
 
             match = prRegex.exec(gitref);
             if (match !== null && match.length > 0) {
-                return "Pull Request #" + match.pop();
+                return 'Pull Request #' + match.pop();
             }
 
             match = tagRegex.exec(gitref);
             if (match !== null && match.length > 0) {
-                return "Tag " + match.pop();
+                return 'Tag ' + match.pop();
             }
 
             match = commitRegex.exec(gitref);
             if (match !== null && match.length == 1) {
-                return "Commit " + match.pop().slice(0, 10);
+                return 'Commit ' + match.pop().slice(0, 7);
             }
 
-            var refMini = gitref.slice(0, 15);
-            var refFirst = refMini.charAt(0).toUpperCase();
-            return refFirst + refMini.substr(1) + ' Branch';
-        }
+            // Must be a branch
+            var refFirst = gitref.charAt(0).toUpperCase();
+            return refFirst + gitref.substr(1) + ' Branch';
+        },
+        formatBuildId: function (buildId) {
+            var regex = /^b[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$/i,
+                match = null;
+
+            match = regex.exec(buildId);
+            if (match !== null && match.length == 1) {
+                return match.pop().slice(6);
+            }
+
+            return buildId.slice(0, 10);
+        },
+        formatPushId: function (pushId) {
+            var regex = /^p[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$/i,
+                match = null;
+
+            match = regex.exec(buildId);
+            if (match !== null && match.length == 1) {
+                return match.pop().slice(6);
+            }
+
+            return pushId.slice(0, 10);
+        },
     };
 });

@@ -7,6 +7,7 @@ define(['jquery'], function($) {
         successClass: 'status-before--success',
         failureClass: 'status-before--error',
         pushTarget: '[data-push]',
+
         init: function() {
             var _this = this;
 
@@ -26,17 +27,20 @@ define(['jquery'], function($) {
 
             return $pushes;
         },
+        generateUrl: function(pushId, type) {
+            if (type === 'api-update') {
+                return '/api/pushes/' + buildId;
+            }
+        },
         checkStatus: function($elem) {
             var _this = this;
             var id = $elem.data('push');
-            var endpoint ='/api/pushes/' + id;
+            var endpoint = this.generateUrl(id, 'api-update');
             console.log(endpoint);
 
             $.getJSON(endpoint, function(data) {
                 var currentStatus = data.status;
                 $elem.text(currentStatus);
-
-                // console.log('Push ' + id + ' status: ' + currentStatus);
 
                 if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
                     // If still pending, fire up a countdown for the next callback in the chain.

@@ -37,6 +37,15 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
                 _this.refresh();
             }, _this.interval * 1000);
         },
+
+        generateUrl: function(param, type) {
+            if (type === 'new') {
+                return '/api/queue?since=' + param;
+            } else if (type === 'refresh') {
+                return '/api/queue-refresh/' + param;
+            }
+        },
+
         togglePolling: function() {
             var _this = this;
 
@@ -83,7 +92,7 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
         retrieveNewJobs: function() {
             var _this = this;
 
-            var endpoint ='/api/queue?since=' + this.lastRead;
+            var endpoint = this.generateUrl(this.lastRead, 'new');
             this.lastRead = this.getUTCTime();
 
             // retrieve jobs created since last read
@@ -110,7 +119,7 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
 
             if (jobsToUpdate.length > 0) {
                 // call api and update job rows
-                var endpoint ='/api/queue-refresh/' + jobsToUpdate.join('+');
+                var endpoint = this.generataUrl(jobsToUpdate.join('+'), 'refresh');
                 $.getJSON(endpoint, function(data) {
                     for (var entry in data._embedded.jobs) {
                         if (data._embedded.jobs[entry].type == 'build') {

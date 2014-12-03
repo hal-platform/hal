@@ -7,6 +7,7 @@ define(['jquery'], function($) {
         successClass: 'status-before--success',
         failureClass: 'status-before--error',
         buildTarget: '[data-build]',
+
         init: function() {
             var _this = this;
 
@@ -26,10 +27,18 @@ define(['jquery'], function($) {
 
             return $builds;
         },
+        generateUrl: function(buildId, type) {
+            if (type === 'api-update') {
+                return '/api/builds/' + buildId;
+
+            } else if (type === 'push') {
+                return '/builds/' + buildId + '/push';
+            }
+        },
         checkStatus: function($elem) {
             var _this = this;
             var id = $elem.data('build');
-            var endpoint ='/api/builds/' + id;
+            var endpoint = this.generateUrl(id, 'api-update');
             console.log(endpoint);
 
             $.getJSON(endpoint, function(data) {
@@ -74,7 +83,7 @@ define(['jquery'], function($) {
             if (data.status == 'Success') {
                 // Add push link if present
                 $('.js-build-push')
-                    .html('<a class="btn--action" href="/build/' + data.id + '/push">Push Build</a>');
+                    .html('<a class="btn--action" href="' + this.generateUrl(data.id, 'push') + '">Push Build</a>');
 
                 // Replace success messaging
                 $hdr = $('[data-success]');
@@ -104,7 +113,7 @@ define(['jquery'], function($) {
                 // Add push link if present
                 $container
                     .children('.js-build-push')
-                    .html('<a href="/build/' + data.id + '/push">Push</a>');
+                    .html('<a href="' + this.generateUrl(data.id, 'push') + '">Push</a>');
             }
         }
     };
