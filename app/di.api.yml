@@ -80,6 +80,7 @@ services:
         arguments:
             - @response.formatter
             - @deployment.repo
+            - @normalizer.deployment
 
     api.deployments:
         class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'

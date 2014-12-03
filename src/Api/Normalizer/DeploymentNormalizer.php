@@ -17,15 +17,31 @@ class DeploymentNormalizer
     use EmbeddedResolutionTrait;
 
     /**
+     * @var RepositoryNormalizer
+     */
+    private $repositories;
+
+    /**
+     * @var ServerNormalizer
+     */
+    private $servers;
+
+    /**
      * @var array
      */
     private $embed;
 
     /**
-     *
+     * @param RepositoryNormalizer $repositories
+     * @param ServerNormalizer $servers
      */
-    public function __construct()
-    {
+    public function __construct(
+        RepositoryNormalizer $repositories,
+        ServerNormalizer $servers
+    ) {
+        $this->repositories = $repositories;
+        $this->servers = $servers;
+
         $this->embed = [];
     }
 
@@ -59,11 +75,13 @@ class DeploymentNormalizer
             [
                 'id' => $deployment->getId(),
                 'path' => $deployment->getPath(),
-                'url' => $deployment->getUrl()
+                'url' => $deployment->getUrl(),
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($deployment),
+                'repository' => $this->repositories->link($deployment->getRepository()),
+                'server' => $this->servers->link($deployment->getServer()),
                 'last-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()]]),
                 'last-successful-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()], ['status' => 'Success']])
             ]

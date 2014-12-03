@@ -338,6 +338,9 @@ services:
 
     normalizer.deployment:
         class: 'QL\Hal\Api\Normalizer\DeploymentNormalizer'
+        arguments:
+            - @normalizer.repository
+            - @normalizer.server
 
     normalizer.environment:
         class: 'QL\Hal\Api\Normalizer\EnvironmentNormalizer'

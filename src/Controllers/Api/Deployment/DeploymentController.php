@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
+use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
@@ -24,6 +25,8 @@ class DeploymentController
      */
     private $formatter;
 
+    private $normalizer;
+
     /**
      * @type DeploymentRepository
      */
@@ -32,13 +35,16 @@ class DeploymentController
     /**
      * @param ResponseFormatter $formatter
      * @param DeploymentRepository $deploymentRepo
+     * @param DeploymentNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
-        DeploymentRepository $deploymentRepo
+        DeploymentRepository $deploymentRepo,
+        DeploymentNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
         $this->deploymentRepo = $deploymentRepo;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -55,6 +61,6 @@ class DeploymentController
             throw HttpProblemException::build(404, 'invalid-deployment');
         }
 
-        $this->formatter->respond($deployment);
+        $this->formatter->respond($this->normalizer->resource($deployment, ['server']));
     }
 }

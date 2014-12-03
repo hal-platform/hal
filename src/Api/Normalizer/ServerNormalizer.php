@@ -60,7 +60,7 @@ class ServerNormalizer
     {
         $properties = [
             'environment' => $server->getEnvironment(),
-            'deployments' => $server->getDeployments()
+            'deployments' => $server->getDeployments()->toArray()
         ];
 
         return $this->buildResource(
