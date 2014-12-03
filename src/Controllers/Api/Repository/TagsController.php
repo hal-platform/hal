@@ -7,11 +7,14 @@
 
 namespace QL\Hal\Controllers\Api\Repository;
 
+use QL\Hal\Api\Normalizer\RepositoryNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Helpers\ApiHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GithubService;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,10 +23,12 @@ use Slim\Http\Response;
  */
 class TagsController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type UrlHelper
@@ -41,41 +46,49 @@ class TagsController
     private $repositoryRepo;
 
     /**
-     * @param ApiHelper $api
+     * @var RepositoryNormalizer
+     */
+    private $repositoryNormalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
      * @param UrlHelper $url
      * @param GithubService $github
      * @param RepositoryRepository $repositoryRepo
+     * @param RepositoryNormalizer $repositoryNormalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         UrlHelper $url,
         GithubService $github,
-        RepositoryRepository $repositoryRepo
+        RepositoryRepository $repositoryRepo,
+        RepositoryNormalizer $repositoryNormalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->url = $url;
         $this->github = $github;
         $this->repositoryRepo = $repositoryRepo;
+        $this->repositoryNormalizer = $repositoryNormalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+
         if (!$repository instanceof Repository) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-repository');
         }
 
         $tags = $this->github->tags($repository->getGithubUser(), $repository->getGithubRepo());
-        if (!$tags) {
-            return $response->setStatus(404);
-        }
+        $status = (count($tags) > 0) ? 200: 404;
 
-        $content = array_map(function($tag) use ($repository) {
+        $tags = array_map(function ($tag) use ($repository) {
             $reference = sprintf('tag/%s', $tag['name']);
             return [
                 'name' => $tag['name'],
@@ -86,6 +99,15 @@ class TagsController
             ];
         }, $tags);
 
-        $this->api->prepareResponse($response, $content);
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($tags),
+                'tags' => $tags
+            ],
+            [],
+            [
+                'repository' => $this->repositoryNormalizer->link($repository)
+            ]
+        ), $status);
     }
 }

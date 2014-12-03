@@ -206,14 +206,14 @@ services:
             - @response.formatter
             - @repository.repo
 
-    # @todo NORMALIZER MIGRATION
     api.repository.tags:
         class: 'QL\Hal\Controllers\Api\Repository\TagsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @url.helper
             - @github
             - @repository.repo
+            - @normalizer.repository
 
     # @todo NORMALIZER MIGRATION
     api.repository.branches:
