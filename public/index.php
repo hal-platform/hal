@@ -10,7 +10,15 @@ namespace QL\Hal\Deadzone;
 use Exception;
 use Symfony\Component\Debug\ErrorHandler;
 
-$root = __DIR__ . '/../';
+define('MAINTENANCE', false);
+
+$root = __DIR__ . '/..';
+
+if (MAINTENANCE) {
+    require $root . 'app/templates/maintenance.html';
+    exit;
+}
+
 if (!$container = @include $root . '/app/bootstrap.php') {
     http_response_code(500);
     echo "Boom goes the dynamite.\n";
