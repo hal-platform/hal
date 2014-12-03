@@ -84,7 +84,7 @@ class BuildNormalizer
     public function resource(Build $build, array $embed = [])
     {
         $properties = [
-            'initiator' => $build->getUser(),
+            'user' => $build->getUser(),
             'repository' => $build->getRepository(),
             'environment' => $build->getEnvironment()
         ];

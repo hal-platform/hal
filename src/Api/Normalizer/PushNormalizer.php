@@ -84,7 +84,7 @@ class PushNormalizer
     public function resource(Push $push, array $embed = [])
     {
         $properties = [
-            'initiator' => $push->getUser(),
+            'user' => $push->getUser(),
             'build' => $push->getBuild(),
             'deployment' => $push->getDeployment()
         ];
