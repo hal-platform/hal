@@ -388,6 +388,8 @@ services:
 
     normalizer.user:
         class: 'QL\Hal\Api\Normalizer\UserNormalizer'
+        arguments:
+            - @permissions
 
     ##
     # END NEW

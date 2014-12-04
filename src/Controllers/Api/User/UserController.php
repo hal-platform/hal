@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\User;
 
-use QL\Hal\Api\UserNormalizer;
+use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,9 +20,9 @@ use Slim\Http\Response;
 class UserController
 {
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type UserRepository
@@ -30,37 +30,31 @@ class UserController
     private $userRepo;
 
     /**
-     * @type UserNormalizer
-     */
-    private $normalizer;
-
-    /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param UserRepository $userRepo
-     * @param UserNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
-        UserRepository $userRepo,
-        UserNormalizer $normalizer
+        ResponseFormatter $formatter,
+        UserRepository $userRepo
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->userRepo = $userRepo;
-        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $user = $this->userRepo->findOneBy(['id' => $params['id']]);
+
         if (!$user instanceof User) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-user');
         }
 
-        $this->api->prepareResponse($response, $this->normalizer->normalize($user));
+        $this->formatter->respond($user);
     }
 }

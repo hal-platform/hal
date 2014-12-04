@@ -508,12 +508,6 @@ parameters:
             stack: ['cachedApi.middleware', 'api.user']
             conditions: {id: '[\d]+'}
 
-        api.user.permissions:
-            method: 'GET'
-            route: '/api/users/:id/permissions'
-            stack: ['cachedApi.middleware', 'api.user.permissions']
-            conditions: {id: '[\d]+'}
-
         api.deployment:
             method: 'GET'
             route: '/api/deployment/:id'

@@ -244,28 +244,15 @@ services:
     # USER CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.user:
         class: 'QL\Hal\Controllers\Api\User\UserController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @user.repo
-            - @api.user.normalizer
 
-    # @todo NORMALIZER MIGRATION
     api.users:
         class: 'QL\Hal\Controllers\Api\User\UsersController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @user.repo
-            - @api.user.normalizer
-
-    # @todo NORMALIZER MIGRATION
-    api.user.permissions:
-        class: 'QL\Hal\Controllers\Api\User\UserPermissionsController'
-        arguments:
-            - @api.helper
-            - @user.repo
-            - @api.environment.normalizer
-            - @api.repository.normalizer
-            - @permissions
+            - @normalizer.user

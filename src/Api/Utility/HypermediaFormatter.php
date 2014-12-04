@@ -42,7 +42,9 @@ class HypermediaFormatter
         unset($content['_embedded']);
 
         // force self link
-        $links = ['self' => ['href' => $this->url->url()]] + $links;
+        if (!isset($links['self'])) {
+            $links = ['self' => ['href' => $this->url->url()]] + $links;
+        }
 
         // hide embedded if empty
         $embedded = (count($embedded)) ? ['_embedded' => $embedded] : [];

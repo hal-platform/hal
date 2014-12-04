@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\User;
 
-use QL\Hal\Api\UserNormalizer;
+use QL\Hal\Api\Normalizer\UserNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\UserRepository;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -19,10 +19,12 @@ use Slim\Http\Response;
  */
 class UsersController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type UserRepository
@@ -30,21 +32,21 @@ class UsersController
     private $userRepo;
 
     /**
-     * @type UserNormalizer
+     * @var UserNormalizer
      */
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param UserRepository $userRepo
      * @param UserNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         UserRepository $userRepo,
         UserNormalizer $normalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->userRepo = $userRepo;
         $this->normalizer = $normalizer;
     }
@@ -56,47 +58,20 @@ class UsersController
     public function __invoke(Request $request, Response $response)
     {
         $users = $this->userRepo->findBy([], ['id' => 'ASC']);
-        if (!$users) {
-            return $response->setStatus(404);
-        }
+        $status = (count($users) > 0) ? 200 : 404;
 
-        // using this to play with the idea of linked vs embedded resources
-        $isResolved = false;
-
-        $content = [
-            'count' => count($users),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => 'api.users'])
-            ]
-        ];
-
-        $content = array_merge_recursive($content, $this->normalizeUsers($users, $isResolved));
-
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $users
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizeUsers(array $users, $isResolved)
-    {
-        // Normalize all the builds
-        $normalized = array_map(function($user) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($user);
-            }
-
-            return $this->normalizer->linked($user);
+        $users = array_map(function ($user) {
+            return $this->normalizer->link($user);
         }, $users);
 
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'users' => $normalized
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($users)
+            ],
+            [],
+            [
+                'users' => $users
             ]
-        ];
+        ), $status);
     }
 }
