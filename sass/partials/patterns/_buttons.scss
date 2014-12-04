@@ -68,6 +68,8 @@
     padding: 0 msem(-1);
 }
 
-.toggles {
-    float: right;
+/* Ensure that svg icons within buttons are clickable */
+.btn svg {
+    pointer-events: none;
 }
+
