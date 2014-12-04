@@ -12,8 +12,7 @@ h2, .beta {
     @include trailer(.5);
     width: msem(15);
     overflow: hidden;
-    background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, $bright-blue), color-stop(50%, $text-color));
-    background-image: linear-gradient(left, $bright-blue 50%, $text-color 50%);
+    background-image: linear-gradient(to right, $bright-blue 50%, $text-color 50%);
 
     @include breakpoint(42.1875em) {
         margin-bottom: 0;
