@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Group;
 
-use QL\Hal\Api\GroupNormalizer;
+use QL\Hal\Api\Normalizer\GroupNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
-use QL\Hal\Helpers\ApiHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -18,10 +19,12 @@ use Slim\Http\Response;
  */
 class GroupsController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type GroupRepository
@@ -34,16 +37,16 @@ class GroupsController
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param GroupRepository $groupRepo
      * @param GroupNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         GroupRepository $groupRepo,
         GroupNormalizer $normalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->groupRepo = $groupRepo;
         $this->normalizer = $normalizer;
     }
@@ -55,46 +58,20 @@ class GroupsController
     public function __invoke(Request $request, Response $response)
     {
         $groups = $this->groupRepo->findBy([], ['id' => 'ASC']);
-        if (!$groups) {
-            return $response->setStatus(404);
-        }
+        $status = (count($groups) > 0) ? 200 : 404;
 
-        // using this to play with the idea of linked vs embedded resources
-        $isResolved = false;
-
-        $content = [
-            'count' => count($groups),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => 'api.groups'])
-            ]
-        ];
-
-        $content = array_merge_recursive($content, $this->normalizeGroups($groups, $isResolved));
-
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $groups
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizeGroups(array $groups, $isResolved)
-    {
-        $normalized = array_map(function($group) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($group);
-            }
-
-            return $this->normalizer->linked($group);
+        $groups = array_map(function ($group) {
+            return $this->normalizer->link($group);
         }, $groups);
 
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'groups' => $normalized
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($groups)
+            ],
+            [],
+            [
+                'groups' => $groups
             ]
-        ];
+        ), $status);
     }
 }

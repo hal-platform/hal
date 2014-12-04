@@ -135,21 +135,18 @@ services:
     # GROUP CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.group:
         class: 'QL\Hal\Controllers\Api\Group\GroupController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @group.repo
-            - @api.group.normalizer
 
-    # @todo NORMALIZER MIGRATION
     api.groups:
         class: 'QL\Hal\Controllers\Api\Group\GroupsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @group.repo
-            - @api.group.normalizer
+            - @normalizer.group
 
     ######################################################################################################################
     # PUSH CONTROLLERS

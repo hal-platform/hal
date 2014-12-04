@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Group;
 
-use QL\Hal\Api\GroupNormalizer;
+use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,9 +20,9 @@ use Slim\Http\Response;
 class GroupController
 {
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type GroupRepository
@@ -30,37 +30,31 @@ class GroupController
     private $groupRepo;
 
     /**
-     * @type GroupNormalizer
-     */
-    private $normalizer;
-
-    /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param GroupRepository $groupRepo
-     * @param GroupNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
-        GroupRepository $groupRepo,
-        GroupNormalizer $normalizer
+        ResponseFormatter $formatter,
+        GroupRepository $groupRepo
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->groupRepo = $groupRepo;
-        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $group = $this->groupRepo->findOneBy(['id' => $params['id']]);
+
         if (!$group instanceof Group) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-group');
         }
 
-        $this->api->prepareResponse($response, $this->normalizer->normalize($group));
+        $this->formatter->respond($group);
     }
 }
