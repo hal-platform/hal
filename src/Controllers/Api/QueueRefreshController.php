@@ -8,13 +8,16 @@
 namespace QL\Hal\Controllers\Api;
 
 use Doctrine\Common\Collections\Criteria;
-use QL\Hal\Helpers\ApiHelper;
-use QL\Hal\Api\BuildNormalizer;
-use QL\Hal\Api\PushNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Normalizer\BuildNormalizer;
+use QL\Hal\Api\Normalizer\PushNormalizer;
+use QL\Hal\Api\Utility\HypermediaLinkTrait;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -23,10 +26,13 @@ use Slim\Http\Response;
  */
 class QueueRefreshController
 {
+    use HypermediaResourceTrait;
+    use HypermediaLinkTrait;
+
     /**
-     * @var ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @var BuildNormalizer
@@ -49,20 +55,20 @@ class QueueRefreshController
     private $pushRepo;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param BuildNormalizer $buildNormalizer
      * @param PushNormalizer $pushNormalizer
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         BuildNormalizer $buildNormalizer,
         PushNormalizer $pushNormalizer,
         BuildRepository $buildRepo,
         PushRepository $pushRepo
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->buildNormalizer = $buildNormalizer;
         $this->pushNormalizer = $pushNormalizer;
         $this->buildRepo = $buildRepo;
@@ -73,35 +79,31 @@ class QueueRefreshController
      * @param Request $request
      * @param Response $response
      * @param array $params
-     * @return null
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         if (!isset($params['uniqueId'])) {
             // Need some kind of error messaging
-            $response->setBody('This should never have happened.');
-            return $response->setStatus(400);
+            throw HttpProblemException::build(400, 'missing-uniqueId');
         }
 
         $identifiers = explode(' ', $params['uniqueId']);
 
-        if (!$jobs = $this->retrieveJobs($identifiers)) {
-            return $response->setStatus(404);
-        }
+        $jobs = $this->retrieveJobs($identifiers);
+        $status = (count($jobs) > 0) ? 200 : 400;
 
-        $content = [
-            'count' => count($jobs),
-            '_links' => [
-                'self' => $this->api->parseLink([
-                    'href' => ['api.queue.refresh', ['uniqueId' => implode('+', $identifiers)]]
-                ])
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($jobs)
             ],
-            '_embedded' => [
+            [
                 'jobs' => $this->formatQueue($jobs)
+            ],
+            [
+                'self' => $this->buildLink(['api.queue.refresh', ['uniqueId' => implode('+', $identifiers)]])
             ]
-        ];
-
-        $this->api->prepareResponse($response, $content);
+        ), $status);
     }
 
     /**
@@ -113,11 +115,11 @@ class QueueRefreshController
     {
         $prefixLength = strlen($prefix);
 
-        $filtered = array_filter($identifiers, function($v) use ($prefix, $prefixLength) {
+        $filtered = array_filter($identifiers, function ($v) use ($prefix, $prefixLength) {
             return (substr($v, 0, $prefixLength) === $prefix);
         });
 
-        array_walk($filtered, function(&$v) use ($prefixLength) {
+        array_walk($filtered, function (&$v) use ($prefixLength) {
             $v = substr($v, $prefixLength);
         });
 
@@ -135,14 +137,14 @@ class QueueRefreshController
         foreach ($queue as $job) {
 
             if ($job instanceof Push) {
-                $normalized = $this->pushNormalizer->normalize($job);
+                $normalized = $this->pushNormalizer->resource($job);
                 $normalized = array_merge([
                     'uniqueId' => 'push-' . $normalized['id'],
                     'type' => 'push'
                 ], $normalized);
 
             } else {
-                $normalized = $this->buildNormalizer->normalize($job);
+                $normalized = $this->buildNormalizer->resource($job);
                 $normalized = array_merge([
                     'uniqueId' => 'build-' . $normalized['id'],
                     'type' => 'build'
