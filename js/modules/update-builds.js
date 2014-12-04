@@ -41,6 +41,11 @@ define(['jquery'], function($) {
             var endpoint = this.generateUrl(id, 'api-update');
             console.log(endpoint);
 
+            // Requires these properties:
+            // - id
+            // - status
+            // - start.text
+            // - end.text
             $.getJSON(endpoint, function(data) {
                 var currentStatus = data.status;
                 $elem.text(currentStatus);

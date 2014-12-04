@@ -38,9 +38,16 @@ define(['jquery'], function($) {
             var endpoint = this.generateUrl(id, 'api-update');
             console.log(endpoint);
 
+            // Requires these properties:
+            // - id
+            // - status
+            // - start.text
+            // - end.text
             $.getJSON(endpoint, function(data) {
                 var currentStatus = data.status;
                 $elem.text(currentStatus);
+
+                // console.log('Push ' + id + ' status: ' + currentStatus);
 
                 if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
                     // If still pending, fire up a countdown for the next callback in the chain.
