@@ -51,7 +51,7 @@
                         {% set canRollback = false %}
                     {% endif %}
 
-                    <li>{{ macros.pushCard(repo, status.deploy.server, activePush, canRollback) }}</li>
+                    <li>{{ macros.pushCard(repo, status.deploy, activePush, canRollback) }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
@@ -76,15 +76,21 @@
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 {% endblock %}
 
-{% macro pushCard(repo, server, active, canRollback) %}
+{% macro pushCard(repo, deployment, active, canRollback) %}
 
     <article class="card">
         <header class="card__header">
             <h4 class="mbn">
-                <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a>
+                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ deployment.server.name }}</a>
+
+                {% if deployment.url %}
+                    <a class="icon--link" href="{{ deployment.url.asString }}">
+                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#outgoing"></use></svg>
+                    </a>
+                {% endif %}
 
                 {% if canRollback %}
-                    <a class="rollback" href="{{ urlFor('rollback', {'id': repo.id, 'server': server.id}) }}" title="Rollback to a successful build">
+                    <a class="rollback icon--link" href="{{ urlFor('rollback', {'id': repo.id, 'server': deployment.server.id}) }}" title="Rollback to a successful build">
                         <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#revert"></use></svg>
                     </a>
                 {% endif %}
