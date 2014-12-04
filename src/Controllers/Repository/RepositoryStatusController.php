@@ -114,14 +114,14 @@ class RepositoryStatusController
     private function getRecentPushes(Deployment $deployment)
     {
         // get last attempted push
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.id DESC';
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.created DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(1)
             ->setParameter('deploy', $deployment);
         $latest = $query->getOneOrNullResult();
 
         // get last successful push
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.end DESC';
+        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.created DESC';
         $query = $this->em->createQuery($dql)
             ->setMaxResults(1)
             ->setParameter('deploy', $deployment)

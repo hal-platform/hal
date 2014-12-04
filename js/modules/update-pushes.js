@@ -29,7 +29,7 @@ define(['jquery'], function($) {
         },
         generateUrl: function(pushId, type) {
             if (type === 'api-update') {
-                return '/api/pushes/' + buildId;
+                return '/api/pushes/' + pushId;
             }
         },
         checkStatus: function($elem) {
