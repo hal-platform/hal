@@ -16,16 +16,6 @@
     }
 }
 
-@keyframes "pulse" {
-  0% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
 .circular,
 .hal-eye .ring:before,
 .hal-eye .oculus .iris {
@@ -85,6 +75,16 @@
   background-image: radial-gradient(circle at center, #fff063 5%, #fa0c02 15%, #c80901 40%, #0c0000 65%, #000000 85%);
   animation: pulse 2s ease-in-out 5 alternate;
   transform: translate3d(0,0,0);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 .hal-eye .highlight {
