@@ -250,7 +250,8 @@ services:
 
     cachedApi.middleware:
         class: 'QL\Hal\Middleware\CachedApiMiddleware'
-        arguments: [@api.helper]
+        arguments:
+            - @response.formatter
 
     ######################################################################################################################
     # NON-DATABASE SERVICES

@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Middleware;
 
+use QL\Hal\Api\ResponseFormatter;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Exception\Stop;
-use QL\Hal\Helpers\ApiHelper;
 
 /**
  *  Check if the response is cached and if so, halt processing so the controller is not hit.
@@ -18,16 +18,17 @@ use QL\Hal\Helpers\ApiHelper;
 class CachedApiMiddleware
 {
     /**
-     * @var ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      */
-    public function __construct(ApiHelper $api)
-    {
-        $this->api = $api;
+    public function __construct(
+        ResponseFormatter $formatter
+    ) {
+        $this->formatter = $formatter;
     }
 
     /**
@@ -37,7 +38,7 @@ class CachedApiMiddleware
      */
     public function __invoke(Request $request, Response $response)
     {
-        if ($this->api->checkForCachedResponse($response)) {
+        if ($this->formatter->sendCachedResponse($response)) {
             throw new Stop;
         }
     }
