@@ -301,10 +301,6 @@ services:
     # API Helpers
     ######################################################################################################################
 
-    ##
-    # START NEW
-    ##
-
     response.formatter:
         class: 'QL\Hal\Api\ResponseFormatter'
         arguments:
@@ -391,70 +387,6 @@ services:
         class: 'QL\Hal\Api\Normalizer\UserNormalizer'
         arguments:
             - @permissions
-
-    ##
-    # END NEW
-    ##
-
-    api.build.normalizer:
-        class: 'QL\Hal\Api\BuildNormalizer'
-        arguments:
-            - @api.helper
-            - @url.helper
-            - @time.helper
-            - @api.environment.normalizer
-            - @api.repository.normalizer
-            - @api.user.normalizer
-
-    api.push.normalizer:
-        class: 'QL\Hal\Api\PushNormalizer'
-        arguments:
-            - @api.helper
-            - @url.helper
-            - @time.helper
-            - @api.build.normalizer
-            - @api.deployment.normalizer
-            - @api.user.normalizer
-
-    api.deployment.normalizer:
-        class: 'QL\Hal\Api\DeploymentNormalizer'
-        arguments:
-            - @api.helper
-            - @api.repository.normalizer
-            - @api.server.normalizer
-
-    api.environment.normalizer:
-        class: 'QL\Hal\Api\EnvironmentNormalizer'
-        arguments: [@api.helper, @url.helper]
-
-    api.group.normalizer:
-        class: 'QL\Hal\Api\GroupNormalizer'
-        arguments: [@api.helper, @url.helper]
-
-    api.repository.normalizer:
-        class: 'QL\Hal\Api\RepositoryNormalizer'
-        arguments:
-            - @api.helper
-            - @url.helper
-            - @api.group.normalizer
-
-    api.server.normalizer:
-        class: 'QL\Hal\Api\ServerNormalizer'
-        arguments:
-            - @api.helper
-            - @url.helper
-            - @api.environment.normalizer
-
-    api.user.normalizer:
-        class: 'QL\Hal\Api\UserNormalizer'
-        arguments: [@api.helper, @url.helper]
-
-    api.eventlog.normalizer:
-        class: 'QL\Hal\Api\EventLogNormalizer'
-        arguments:
-            - @api.helper
-            - @time.helper
-            - @url.helper
 
     ######################################################################################################################
     # Github API
