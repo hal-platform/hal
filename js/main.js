@@ -8,6 +8,7 @@ require.config({
     "paths": {
         "crossroads": "vendor/crossroads.min",
         "jquery": "vendor/jquery-2.min",
+        "jquerySearchable": "vendor/jquery.searchable",
         "jquerySortable": "vendor/jquery.sortable.min",
         "jqueryTablesaw": "vendor/jquery.tablesaw",
         "nunjucks": "vendor/nunjucks.min",

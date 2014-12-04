@@ -1,30 +1,22 @@
 define(['jquery'], function($) {
     return {
-        filterList: '.js-filter',
+        filter: '.js-filter',
         inputTarget: '.js-filter__input',
+
         toggleBtn: '.js-hide-btn',
         hideContent: '.js-hide-box',
+
         init: function() {
             this.toggle();
-
-            if (this.filterList.length !==0){
-                this.filterRepos();
-            }
+            this.filterRepos();
         },
-        filterRepos: function(){
-            var repoList = $(this.filterList + '> li');
-            var searchField = $(this.inputTarget);
-            var _this = this;
-
-            searchField.keyup(function(){
-                var searchVal = searchField.val().toLowerCase();
-                _this.delay(function(){
-                    repoList.each(function(){
-                        var txt = $(this).text().toLowerCase();
-
-                        $(this).toggle(txt.indexOf(searchVal) === 0);
-                    });
-                }, 500);
+        filterRepos: function() {
+            $(this.filter).searchable({
+                selector      : 'li',
+                childSelector : 'a',
+                searchField   : this.inputTarget,
+                striped       : false,
+                searchType    : 'fuzzy'
             });
         },
         toggle: function(){
