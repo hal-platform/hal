@@ -7,12 +7,13 @@
 
 namespace QL\Hal\Controllers\Api\Push;
 
-use QL\Hal\Api\PushNormalizer;
-use QL\Hal\Core\Entity\Push;
+use QL\Hal\Api\Normalizer\PushNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -21,10 +22,12 @@ use Slim\Http\Response;
  */
 class PushesController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type RepositoryRepository
@@ -42,18 +45,18 @@ class PushesController
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param RepositoryRepository $repositoryRepo
      * @param PushRepository $pushRepo
      * @param PushNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
+        ResponseFormatter $formatter,
         RepositoryRepository $repositoryRepo,
         PushRepository $pushRepo,
         PushNormalizer $normalizer
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->repositoryRepo = $repositoryRepo;
         $this->pushRepo = $pushRepo;
         $this->normalizer = $normalizer;
@@ -63,55 +66,31 @@ class PushesController
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+
         if (!$repository instanceof Repository) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-repository');
         }
 
         $pushes = $this->pushRepo->getForRepository($repository);
-        if (!$pushes) {
-            return $response->setStatus(404);
-        }
+        $status = (count($pushes) > 0) ? 200 : 404;
 
-        // using this to play with the idea of linked vs embedded resources
-        $isResolved = false;
-
-        $content = [
-            'count' => count($pushes),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => ['api.pushes', ['id' => $repository->getId()]]])
-            ]
-        ];
-
-        $content = array_merge_recursive($content, $this->normalizePushes($pushes, $isResolved));
-
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $pushes
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizePushes(array $pushes, $isResolved)
-    {
-        $normalized = array_map(function($push) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($push);
-            }
-
-            return $this->normalizer->linked($push);
+        $pushes = array_map(function ($push) {
+            return $this->normalizer->link($push);
         }, $pushes);
 
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'pushes' => $normalized
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($pushes)
+            ],
+            [],
+            [
+                'pushes' => $pushes
             ]
-        ];
+        ), $status);
     }
 }

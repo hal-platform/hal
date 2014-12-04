@@ -155,13 +155,11 @@ services:
     # PUSH CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.push:
         class: 'QL\Hal\Controllers\Api\Push\PushController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @push.repo
-            - @api.push.normalizer
 
     api.push.logs:
         class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
@@ -171,14 +169,13 @@ services:
             - @normalizer.log.event
             - @normalizer.push
 
-    # @todo NORMALIZER MIGRATION
     api.pushes:
         class: 'QL\Hal\Controllers\Api\Push\PushesController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @repository.repo
             - @push.repo
-            - @api.push.normalizer
+            - @normalizer.push
 
 
     ######################################################################################################################

@@ -93,10 +93,10 @@ class PushNormalizer
             [
                 'id' => $push->getId(),
                 'status' => $push->getStatus(),
+                'url' => $this->urls->urlFor('push', ['push' => $push->getId()]),
                 'created' => $push->getCreated(),
                 'start' => $push->getStart(),
-                'end' => $push->getEnd(),
-                'url' => $this->urls->urlFor('push', ['push' => $push->getId()])
+                'end' => $push->getEnd()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [

@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Push;
 
-use QL\Hal\Api\PushNormalizer;
+use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\PushRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -20,9 +20,9 @@ use Slim\Http\Response;
 class PushController
 {
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type PushRepository
@@ -30,38 +30,31 @@ class PushController
     private $pushRepo;
 
     /**
-     * @type PushNormalizer
-     */
-    private $normalizer;
-
-    /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param PushRepository $pushRepo
-     * @param PushNormalizer $normalizer
      */
     public function __construct(
-        ApiHelper $api,
-        PushRepository $pushRepo,
-        PushNormalizer $normalizer
+        ResponseFormatter $formatter,
+        PushRepository $pushRepo
     ) {
-        $this->api = $api;
+        $this->formatter = $formatter;
         $this->pushRepo = $pushRepo;
-        $this->normalizer = $normalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $push = $this->pushRepo->findOneBy(['id' => $params['id']]);
 
         if (!$push instanceof Push) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-push');
         }
 
-        $this->api->prepareResponse($response, $this->normalizer->normalize($push));
+        $this->formatter->respond($push);
     }
 }
