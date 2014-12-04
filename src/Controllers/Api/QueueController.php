@@ -125,16 +125,10 @@ class QueueController
     {
         return array_map(function ($item) {
             if ($item instanceof Push) {
-                return [
-                    'type' => 'push',
-                    'uniqueId' => sprintf('push-%s', $item->getId())
-                ] + $this->pushNormalizer->resource($item, ['build', 'deployment']);
+                return $this->pushNormalizer->resource($item, ['build', 'deployment']);
             }
             if ($item instanceof Build) {
-                return [
-                    'type' => 'build',
-                    'uniqueId' => sprintf('build-%s', $item->getId())
-                ] + $this->buildNormalizer->resource($item, ['repository']);
+                return $this->buildNormalizer->resource($item, ['repository']);
             }
         }, $queue);
     }

@@ -83,15 +83,15 @@ class QueueRefreshController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        if (!isset($params['uniqueId'])) {
+        if (!isset($params['jobs'])) {
             // Need some kind of error messaging
             throw HttpProblemException::build(400, 'missing-uniqueId');
         }
 
-        $identifiers = explode(' ', $params['uniqueId']);
+        $identifiers = explode(' ', $params['jobs']);
 
         $jobs = $this->retrieveJobs($identifiers);
-        $status = (count($jobs) > 0) ? 200 : 400;
+        $status = (count($jobs) > 0) ? 200 : 404;
 
         $this->formatter->respond($this->buildResource(
             [
@@ -101,29 +101,34 @@ class QueueRefreshController
                 'jobs' => $this->formatQueue($jobs)
             ],
             [
-                'self' => $this->buildLink(['api.queue.refresh', ['uniqueId' => implode('+', $identifiers)]])
+                'self' => $this->buildLink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])
             ]
         ), $status);
     }
 
     /**
+     * Filter out a specific types of jobs from a combined list of push and build IDs
+     *
      * @param array $identifiers
-     * @param string $prefix
+     * @param string $type
      * @return array
      */
-    private function filterIdentifiers(array $identifiers, $prefix)
+    private function filterIdentifiers(array $identifiers, $type)
     {
-        $prefixLength = strlen($prefix);
+        if ($type === 'build') {
+            $prefix = 'b';
 
-        $filtered = array_filter($identifiers, function ($v) use ($prefix, $prefixLength) {
-            return (substr($v, 0, $prefixLength) === $prefix);
+        } elseif ($type === 'push') {
+            $prefix = 'p';
+
+        } else {
+            // Return empty list if no valid type provided
+            return [];
+        }
+
+        return array_filter($identifiers, function ($v) use ($prefix) {
+            return (substr($v, 0, 1) === $prefix);
         });
-
-        array_walk($filtered, function (&$v) use ($prefixLength) {
-            $v = substr($v, $prefixLength);
-        });
-
-        return $filtered;
     }
 
     /**
@@ -137,21 +142,11 @@ class QueueRefreshController
         foreach ($queue as $job) {
 
             if ($job instanceof Push) {
-                $normalized = $this->pushNormalizer->resource($job);
-                $normalized = array_merge([
-                    'uniqueId' => 'push-' . $normalized['id'],
-                    'type' => 'push'
-                ], $normalized);
+                $normalizedQueue[] = $this->pushNormalizer->resource($job);
 
-            } else {
-                $normalized = $this->buildNormalizer->resource($job);
-                $normalized = array_merge([
-                    'uniqueId' => 'build-' . $normalized['id'],
-                    'type' => 'build'
-                ], $normalized);
+            } elseif ($job instanceof Build) {
+                $normalizedQueue[] = $this->buildNormalizer->resource($job);
             }
-
-            $normalizedQueue[] = $normalized;
         }
 
         return $normalizedQueue;
@@ -165,14 +160,14 @@ class QueueRefreshController
     {
         $builds = $pushes = [];
 
-        if ($buildIds = $this->filterIdentifiers($identifiers, 'build-')) {
+        if ($buildIds = $this->filterIdentifiers($identifiers, 'build')) {
             $buildCriteria = (new Criteria)
                 ->where(Criteria::expr()->in('id', $buildIds));
             $builds = $this->buildRepo->matching($buildCriteria);
             $builds = $builds->toArray();
         }
 
-        if ($pushIds = $this->filterIdentifiers($identifiers, 'push-')) {
+        if ($pushIds = $this->filterIdentifiers($identifiers, 'push')) {
             $pushCriteria = (new Criteria)
                 ->where(Criteria::expr()->in('id', $pushIds));
             $pushes = $this->pushRepo->matching($pushCriteria);
