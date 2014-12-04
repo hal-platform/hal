@@ -18,9 +18,9 @@ class GroupNormalizer
      * @param Group $group
      * @return array
      */
-    public function link(Group $group)
+    public function link(Group $group = null)
     {
-        return $this->buildLink(
+        return  (is_null($group)) ? null : $this->buildLink(
             ['api.group', ['id' => $group->getId()]],
             [
                 'title' => $group->getKey()
@@ -32,8 +32,12 @@ class GroupNormalizer
      * @param Group $group
      * @return array
      */
-    public function resource(Group $group)
+    public function resource(Group $group = null)
     {
+        if (is_null($group)) {
+            return null;
+        }
+
         return $this->buildResource(
             [
                 'id' => $group->getId(),

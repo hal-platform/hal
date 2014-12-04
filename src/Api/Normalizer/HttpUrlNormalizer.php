@@ -13,8 +13,8 @@ class HttpUrlNormalizer
      * @param HttpUrl $url
      * @return string
      */
-    public function normalize(HttpUrl $url)
+    public function normalize(HttpUrl $url = null)
     {
-        return $url->asString();
+        return  (is_null($url)) ? null : $url->asString();
     }
 }

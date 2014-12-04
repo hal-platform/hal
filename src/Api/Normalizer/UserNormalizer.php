@@ -33,9 +33,9 @@ class UserNormalizer
      * @param User $user
      * @return array
      */
-    public function link(User $user)
+    public function link(User $user = null)
     {
-        return $this->buildLink(
+        return  (is_null($user)) ? null :$this->buildLink(
             ['api.user', ['id' => $user->getId()]],
             [
                 'title' => $user->getHandle()
@@ -47,8 +47,12 @@ class UserNormalizer
      * @param User $user
      * @return array
      */
-    public function resource(User $user)
+    public function resource(User $user = null)
     {
+        if (is_null($user)) {
+            return null;
+        }
+
         return $this->buildResource(
             [
                 'id' => $user->getId(),

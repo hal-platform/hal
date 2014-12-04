@@ -81,8 +81,12 @@ class BuildNormalizer
      * @param array $embed
      * @return array
      */
-    public function resource(Build $build, array $embed = [])
+    public function resource(Build $build = null, array $embed = [])
     {
+        if (is_null($build)) {
+            return null;
+        }
+
         $properties = [
             'user' => $build->getUser(),
             'repository' => $build->getRepository(),

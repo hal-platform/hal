@@ -64,8 +64,12 @@ class DeploymentNormalizer
      * @param array $embed
      * @return array
      */
-    public function resource(Deployment $deployment, array $embed = [])
+    public function resource(Deployment $deployment = null, array $embed = [])
     {
+        if (is_null($deployment)) {
+            return null;
+        }
+
         $properties = [
             'repository' => $deployment->getRepository(),
             'server' => $deployment->getServer()

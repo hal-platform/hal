@@ -41,9 +41,9 @@ class ServerNormalizer
      * @param Server $server
      * @return array
      */
-    public function link(Server $server)
+    public function link(Server $server = null)
     {
-        return $this->buildLink(
+        return  (is_null($server)) ? null :$this->buildLink(
             ['api.server', ['id' => $server->getId()]],
             [
                 'title' => $server->getName()
@@ -56,8 +56,12 @@ class ServerNormalizer
      * @param array $embed
      * @return array
      */
-    public function resource(Server $server, array $embed = [])
+    public function resource(Server $server = null, array $embed = [])
     {
+        if (is_null($server)) {
+            return null;
+        }
+
         $properties = [
             'environment' => $server->getEnvironment(),
             'deployments' => $server->getDeployments()->toArray()

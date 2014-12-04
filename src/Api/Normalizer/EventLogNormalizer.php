@@ -49,9 +49,9 @@ class EventLogNormalizer
      * @param EventLog $log
      * @return array
      */
-    public function link(EventLog $log)
+    public function link(EventLog $log = null)
     {
-        return $this->buildLink(
+        return  (is_null($log)) ? null :$this->buildLink(
             ['api.event.log', ['id' => $log->getId()]],
             [
                 'title' => $log->getId()
@@ -64,8 +64,12 @@ class EventLogNormalizer
      * @param array $embed
      * @return array
      */
-    public function resource(EventLog $log, array $embed = [])
+    public function resource(EventLog $log = null, array $embed = [])
     {
+        if (is_null($log)) {
+            return null;
+        }
+
         $properties = [
             'build' => $log->getBuild(),
             'push' => $log->getPush()

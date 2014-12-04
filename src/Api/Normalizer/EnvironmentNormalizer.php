@@ -18,9 +18,9 @@ class EnvironmentNormalizer
      * @param Environment $environment
      * @return array
      */
-    public function link(Environment $environment)
+    public function link(Environment $environment = null)
     {
-        return $this->buildLink(
+        return (is_null($environment)) ? null : $this->buildLink(
             ['api.environment', ['id' => $environment->getId()]],
             [
                 'title' => $environment->getKey()
@@ -32,8 +32,12 @@ class EnvironmentNormalizer
      * @param Environment $environment
      * @return array
      */
-    public function resource(Environment $environment)
+    public function resource(Environment $environment = null)
     {
+        if (is_null($environment)) {
+            return null;
+        }
+
         return $this->buildResource(
             [
                 'id' => $environment->getId(),

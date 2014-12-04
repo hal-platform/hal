@@ -66,9 +66,9 @@ class PushNormalizer
      * @param Push $push
      * @return array
      */
-    public function link(Push $push)
+    public function link(Push $push = null)
     {
-        return $this->buildLink(
+        return  (is_null($push)) ? null : $this->buildLink(
             ['api.push', ['id' => $push->getId()]],
             [
                 'title' => $push->getId()
@@ -81,8 +81,12 @@ class PushNormalizer
      * @param array $embed
      * @return array
      */
-    public function resource(Push $push, array $embed = [])
+    public function resource(Push $push = null, array $embed = [])
     {
+        if (is_null($push)) {
+            return null;
+        }
+
         $properties = [
             'user' => $push->getUser(),
             'build' => $push->getBuild(),

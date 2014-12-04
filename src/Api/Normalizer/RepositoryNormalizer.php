@@ -50,9 +50,9 @@ class RepositoryNormalizer
      * @param Repository $repository
      * @return array
      */
-    public function link(Repository $repository)
+    public function link(Repository $repository = null)
     {
-        return $this->buildLink(
+        return (is_null($repository)) ? null : $this->buildLink(
             ['api.repository', ['id' => $repository->getId()]],
             [
                 'title' => $repository->getKey()
@@ -65,8 +65,12 @@ class RepositoryNormalizer
      * @param array $embed
      * @return array
      */
-    public function resource(Repository $repository, array $embed = [])
+    public function resource(Repository $repository = null, array $embed = [])
     {
+        if (is_null($repository)) {
+            return null;
+        }
+
         $properties = [
             'group' => $repository->getGroup()
         ];
