@@ -66,9 +66,9 @@ class BuildNormalizer
      * @param Build $build
      * @return array
      */
-    public function link(Build $build)
+    public function link(Build $build = null)
     {
-        return $this->buildLink(
+        return (is_null($build)) ? null : $this->buildLink(
             ['api.build', ['id' => $build->getId()]],
             [
                 'title' => $build->getId()

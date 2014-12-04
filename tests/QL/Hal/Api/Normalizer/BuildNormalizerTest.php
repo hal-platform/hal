@@ -1,26 +1,22 @@
 <?php
-///**
-// * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
-// *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
-// *    is strictly prohibited.
-// */
-//
-//namespace QL\Hal\Api\Normalizer;
-//
-//use Mockery;
-//use PHPUnit_Framework_TestCase;
-//use QL\Hal\Core\Entity\Build;
-//use QL\Hal\Core\Entity\Environment;
-//use QL\Hal\Core\Entity\Repository;
-//use QL\Hal\Core\Entity\User;
-//
-///**
-// * @todo fix this test
-// * @requires function skipthistest
-// */
-//class BuildNormalizerTest extends PHPUnit_Framework_TestCase
-//{
-//    public $api;
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
+
+namespace QL\Hal\Api\Normalizer;
+
+use Mockery;
+use PHPUnit_Framework_TestCase;
+use QL\Hal\Core\Entity\Repository;
+
+/**
+ *
+ */
+class BuildNormalizerTest extends PHPUnit_Framework_TestCase
+{
+//    public $formatter;
 //    public $url;
 //    public $time;
 //    public $envNormalizer;
@@ -29,7 +25,7 @@
 //
 //    public function setUp()
 //    {
-//        $this->api = Mockery::mock('QL\Hal\Helpers\ApiHelper');
+//        $this->formatter = Mockery::mock('QL\Hal\Api\ResponseFormatter');
 //        $this->url = Mockery::mock('QL\Hal\Helpers\UrlHelper');
 //        $this->time = Mockery::mock('QL\Hal\Helpers\TimeHelper');
 //        $this->envNormalizer = Mockery::mock('QL\Hal\Api\EnvironmentNormalizer');
@@ -46,6 +42,78 @@
 //            ->shouldReceive('githubCommitUrl')
 //            ->andReturn('http://git/commit');
 //    }
+
+    public function testLinkNull()
+    {
+        $urlHelper = $this->getMockBuilder('QL\Hal\Helpers\UrlHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $userNormalizer = $this->getMockBuilder('QL\Hal\Api\Normalizer\UserNormalizer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repositoryNormalizer = $this->getMockBuilder('QL\Hal\Api\Normalizer\RepositoryNormalizer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $environmentNormalizer = $this->getMockBuilder('QL\Hal\Api\Normalizer\EnvironmentNormalizer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $normalizer = new BuildNormalizer(
+            $urlHelper,
+            $userNormalizer,
+            $repositoryNormalizer,
+            $environmentNormalizer
+        );
+
+        $this->assertEquals(null, $normalizer->link(null));
+    }
+
+    public function testResourceNull()
+    {
+        $urlHelper = $this->getMockBuilder('QL\Hal\Helpers\UrlHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $userNormalizer = $this->getMockBuilder('QL\Hal\Api\Normalizer\UserNormalizer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repositoryNormalizer = $this->getMockBuilder('QL\Hal\Api\Normalizer\RepositoryNormalizer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $environmentNormalizer = $this->getMockBuilder('QL\Hal\Api\Normalizer\EnvironmentNormalizer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $normalizer = new BuildNormalizer(
+            $urlHelper,
+            $userNormalizer,
+            $repositoryNormalizer,
+            $environmentNormalizer
+        );
+
+        $this->assertEquals(null, $normalizer->link(null));
+    }
+
+//    public function testLink()
+//    {
+//
+//    }
+//
+//
+//
+//    public function testNormalize()
+//    {
+//
+//    }
+
+
+
+//
 //
 //    public function testNormalizationOfLinkedResource()
 //    {
@@ -227,4 +295,4 @@
 //
 //        $this->assertSame($expected, $actual);
 //    }
-//}
+}
