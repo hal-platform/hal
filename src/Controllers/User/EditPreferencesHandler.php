@@ -120,11 +120,15 @@ HELLO;
     }
 
     /**
-     * @param array $preferences
+     * @param array|null $preferences
      * @return null
      */
-    private function saveNavPreferences(array $preferences)
+    private function saveNavPreferences($preferences)
     {
+        if ($preferences === null) {
+            $preferences = [];
+        }
+
         $pref = $this->defaultPreferences;
 
         foreach ($preferences as $preference) {
