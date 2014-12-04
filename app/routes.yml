@@ -605,6 +605,6 @@ parameters:
 
         api.queue.refresh:
             method: 'GET'
-            route: '/api/queue-refresh/:uniqueId'
+            route: '/api/queue-refresh/:jobs'
             stack: ['cachedApi.middleware', 'api.queue.refresh']
-            conditions: {uniqueId: %routes.regex.queue.refresh%}
+            conditions: {jobs: %routes.regex.queue.refresh%}

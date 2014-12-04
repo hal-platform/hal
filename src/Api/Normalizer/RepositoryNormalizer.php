@@ -80,6 +80,9 @@ class RepositoryNormalizer
                 'id' => $repository->getId(),
                 'key' => $repository->getKey(),
                 'title' => $repository->getDescription(),
+
+                // @todo put html urls in _links, with html media type?
+                'url' => $this->url->urlFor('repository', ['id' => $repository->getId()]),
                 'email' => $repository->getEmail(),
                 'githubUser' => [
                     'text' => $repository->getGithubUser(),

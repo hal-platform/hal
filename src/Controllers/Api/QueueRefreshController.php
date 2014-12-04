@@ -85,7 +85,7 @@ class QueueRefreshController
     {
         if (!isset($params['jobs'])) {
             // Need some kind of error messaging
-            throw HttpProblemException::build(400, 'missing-uniqueId');
+            throw HttpProblemException::build(400, 'missing-jobs');
         }
 
         $identifiers = explode(' ', $params['jobs']);

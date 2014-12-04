@@ -18,7 +18,9 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
             var reference = String(build.reference.text);
             var initiator = 'Unknown';
             if (build._links.hasOwnProperty('user')) {
-                initiator = build._links.user.title;
+                if (build._links.user !== null) {
+                    initiator = build._links.user.title;
+                }
             }
 
             var context = {
@@ -30,10 +32,10 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 buildStatus: build.status,
 
                 environmentName: build._links.environment.title,
-                reference: this.determineGitRef(reference),
+                reference: this.determineGitref(reference),
                 referenceUrl: build.commit.url,
 
-                repoName: build._embedded.repository.description,
+                repoName: build._embedded.repository.title,
                 repoStatusUrl: build._embedded.repository.url + '/status',
 
                 initiator: initiator
@@ -46,7 +48,9 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
             var buildId = String(push._embedded.build.id);
             var initiator = 'Unknown';
             if (push._links.hasOwnProperty('user')) {
-                initiator = push._links.user.title;
+                if (push._links.user !== null) {
+                    initiator = push._links.user.title;
+                }
             }
 
             var context = {
@@ -64,7 +68,7 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 environmentName: push._embedded.build._links.environment.title,
                 serverName: push._embedded.deployment._links.server.title,
 
-                repoName: push._embedded.build._embedded.repository.description,
+                repoName: push._embedded.build._embedded.repository.title,
                 repoStatusUrl: push._embedded.build._embedded.repository.url + '/status',
 
                 initiator: initiator
@@ -144,10 +148,10 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
             var formatted = this.formatGitref(gitref),
                 size = 30;
 
-            if (gitref.length <= size + 3) {
-                return gitref;
+            if (formatted.length <= size + 3) {
+                return formatted;
             } else {
-                return gitref.slice(0, size) + '...';
+                return formatted.slice(0, size) + '...';
             }
         },
         formatGitref: function(gitref) {
@@ -190,7 +194,7 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
             var regex = /^p[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$/i,
                 match = null;
 
-            match = regex.exec(buildId);
+            match = regex.exec(pushId);
             if (match !== null && match.length == 1) {
                 return match.pop().slice(6);
             }

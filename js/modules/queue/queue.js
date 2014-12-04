@@ -64,12 +64,15 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
         },
 
         addJobs: function(data) {
-            // required properties: id, type, status
+            // Requires these properties:
+            // - id
+            // - status
             for(var entry in data) {
                 var job = data[entry];
                 var row;
+                var type = this.determineJobType(job.id);
 
-                if (job.type == 'build') {
+                if (type == 'build') {
                     // only load jobs not already loaded
                     if (typeof this.jobs[job.id] == 'undefined') {
                         row = jobUpdater.addBuildJob(job);
@@ -77,7 +80,7 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
                         this.$queue.prepend(row);
                         this.jobs[job.id] = job.status;
                     }
-                } else if (job.type == 'push') {
+                } else if (type == 'push') {
                     // only load jobs not already loaded
                     if (typeof this.jobs[job.id] == 'undefined') {
                         row = jobUpdater.addPushJob(job);
@@ -96,6 +99,39 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
             this.lastRead = this.getUTCTime();
 
             // retrieve jobs created since last read
+
+            // Requires these properties:
+            // - count
+            // - _embedded.jobs
+
+            // Add Job requires these properties:
+            // - _embedded.jobs.[].id
+            // - _embedded.jobs.[].status
+
+            // Add Build Job requires these properties:
+            // - _embedded.jobs.[].id
+            // - _embedded.jobs.[].reference.text
+            // - _embedded.jobs.[].url
+            // - _embedded.jobs.[].status
+            // - _embedded.jobs.[].commit.url
+            // - _embedded.jobs.[]._links.user
+            // - _embedded.jobs.[]._links.user.title
+            // - _embedded.jobs.[]._links.environment.title
+            // - _embedded.jobs.[]._embedded.repository.title
+            // - _embedded.jobs.[]._embedded.repository.url
+
+            // Add Push Job requires these properties:
+            // - _embedded.jobs.[].id
+            // - _embedded.jobs.[].url
+            // - _embedded.jobs.[].status
+            // - _embedded.jobs.[]._links.user
+            // - _embedded.jobs.[]._links.user.title
+            // - _embedded.jobs.[]._embedded.build.id
+            // - _embedded.jobs.[]._embedded.build._links.environment.title
+            // - _embedded.jobs.[]._embedded.build._embedded.repository.title
+            // - _embedded.jobs.[]._embedded.build._embedded.repository.url
+            // - _embedded.jobs.[]._embedded.deployment._links.server.title
+
             $.getJSON(endpoint, function(data) {
                 if (data.count > 0) {
                     $('#js-emptyQueue').remove();
@@ -119,12 +155,26 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
 
             if (jobsToUpdate.length > 0) {
                 // call api and update job rows
-                var endpoint = this.generataUrl(jobsToUpdate.join('+'), 'refresh');
+                var endpoint = this.generateUrl(jobsToUpdate.join('+'), 'refresh');
+
+                // Requires these properties:
+                // - _embedded.jobs
+                // - _embedded.jobs.[].id
+
+                // Update Build Job requires these properties:
+                // - _embedded.jobs.[].id
+                // - _embedded.jobs.[].status
+
+                // Update Push Job requires these properties:
+                // - _embedded.jobs.[].id
+                // - _embedded.jobs.[].status
                 $.getJSON(endpoint, function(data) {
                     for (var entry in data._embedded.jobs) {
-                        if (data._embedded.jobs[entry].type == 'build') {
+                        var type = _this.determineJobType(data._embedded.jobs[entry].id);
+
+                        if (type == 'build') {
                             jobUpdater.updateBuildJob(data._embedded.jobs[entry]);
-                        } else {
+                        } else if (type == 'push') {
                             jobUpdater.updatePushJob(data._embedded.jobs[entry]);
                         }
                     }
@@ -146,7 +196,15 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
                 _this.jobs[uniqueId] = status;
             });
         },
+        determineJobType: function(jobId) {
+            var type = jobId.charAt(0).toUpperCase();
 
+            if (type === 'B') {
+                return 'build';
+            } else if (type === 'P') {
+                return 'push';
+            }
+        },
         getUTCTime: function() {
             var now = new Date();
 
