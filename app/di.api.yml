@@ -50,13 +50,11 @@ services:
     # BUILD CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.build:
         class: 'QL\Hal\Controllers\Api\Build\BuildController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @build.repo
-            - @api.build.normalizer
 
     api.build.logs:
         class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
@@ -66,14 +64,13 @@ services:
             - @normalizer.log.event
             - @normalizer.build
 
-    # @todo NORMALIZER MIGRATION
     api.builds:
         class: 'QL\Hal\Controllers\Api\Build\BuildsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @repository.repo
             - @build.repo
-            - @api.build.normalizer
+            - @normalizer.build
 
     ######################################################################################################################
     # DEPLOYMENT CONTROLLERS

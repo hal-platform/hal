@@ -93,23 +93,25 @@ class BuildNormalizer
             [
                 'id' => $build->getId(),
                 'status' => $build->getStatus(),
+                'url' => $this->urls->urlFor('build', ['build' => $build->getId()]),
                 'created' => $build->getCreated(),
                 'start' => $build->getStart(),
                 'end' => $build->getEnd(),
-                'url' => $this->urls->urlFor('build', ['build' => $build->getId()]),
-                'source' => [
-                    'reference' => $build->getBranch(),
-                    'commit' => $build->getCommit(),
+                'reference' => [
+                    'text' => $build->getBranch(),
+                    'url' => $this->urls->githubReferenceUrl(
+                        $build->getRepository()->getGithubUser(),
+                        $build->getRepository()->getGithubRepo(),
+                        $build->getBranch()
+                    )
+                ],
+                'commit' => [
+                    'text' => $build->getCommit(),
                     'url' => $this->urls->githubCommitUrl(
                         $build->getRepository()->getGithubUser(),
                         $build->getRepository()->getGithubRepo(),
                         $build->getCommit()
-                    ),
-                    'browse' => $this->urls->githubReferenceUrl(
-                        $build->getRepository()->getGithubUser(),
-                        $build->getRepository()->getGithubRepo(),
-                        $build->getBranch()
-                    ),
+                    )
                 ]
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
