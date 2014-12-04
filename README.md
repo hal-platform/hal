@@ -97,7 +97,7 @@ namespace   | Usage                           | Default TTL
 ----------- | ------------------------------- | --------------
 api         | Cached responses for `/api`     | 10 seconds
 github      | Enterprise github api requests  | 60 seconds
-permissions | LDAP user|group lookups         | 10 minutes
+permissions | LDAP user,group lookups         | 10 minutes
 doctrine    | Doctrine cache                  | 5 minutes
 
 #### Example cache keys:
