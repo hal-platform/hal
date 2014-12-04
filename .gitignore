@@ -8,6 +8,7 @@ atlassian-ide-plugin.xml
 # testing
 /.phpunit/
 /phpunit.xml
+/phpunit
 
 # compiled assets
 /.bundle/
