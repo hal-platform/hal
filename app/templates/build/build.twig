@@ -59,6 +59,18 @@
                 <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
                 <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
             </dd>
+            <dt class="split--left__title">
+                Initiator
+            </dt>
+            <dd class="split--left__value">
+                {% if build.user %}
+                    <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
+                {% elseif build.consumer %}
+                    {{ build.consumer.name[:20] }}
+                {% else %}
+                    Unknown
+                {% endif %}
+            </dd>
         </dl>
     </div>
 
@@ -89,20 +101,7 @@
             <dd class="split--left__value js-build-end">
                 {{ build.end|timepoint('M j, Y g:i A') }}
             </dd>
-            <dt class="split--left__title">
-                Initiator
-            </dt>
-            <dd class="split--left__value">
-                {% if build.user %}
-                    <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
-                {% elseif build.consumer %}
-                    {{ build.consumer.name[:20] }}
-                {% else %}
-                    Unknown
-                {% endif %}
-            </dd>
         </dl>
-
     </div>
 
     {% if canUserBuild(currentUser, build.repository.key) %}
