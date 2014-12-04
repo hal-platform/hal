@@ -7,19 +7,23 @@
 
 namespace QL\Hal\Controllers\Api;
 
-use QL\Hal\Api\EventLogNormalizer;
+use QL\Hal\Api\Normalizer\EventLogNormalizer;
+use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\EventLog;
 use QL\Hal\Core\Entity\Repository\EventLogRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+/**
+ *
+ */
 class EventLogController
 {
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type EventLogRepository
@@ -27,18 +31,21 @@ class EventLogController
     private $repository;
 
     /**
-     * @type EventLogNormalizer
+     * @var EventLogNormalizer
      */
     private $normalizer;
 
     /**
-     * @param ApiHelper $api
+     * @param ResponseFormatter $formatter
      * @param EventLogRepository $repository
      * @param EventLogNormalizer $normalizer
      */
-    public function __construct(ApiHelper $api, EventLogRepository $repository, EventLogNormalizer $normalizer)
-    {
-        $this->api = $api;
+    public function __construct(
+        ResponseFormatter $formatter,
+        EventLogRepository $repository,
+        EventLogNormalizer $normalizer
+    ) {
+        $this->formatter = $formatter;
         $this->repository = $repository;
         $this->normalizer = $normalizer;
     }
@@ -47,15 +54,16 @@ class EventLogController
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $log = $this->repository->find($params['id']);
 
         if (!$log instanceof EventLog) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-log');
         }
 
-        $this->api->prepareResponse($response, $this->normalizer->normalize($log));
+        $this->formatter->respond($log);
     }
 }

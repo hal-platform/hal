@@ -58,13 +58,13 @@ services:
             - @build.repo
             - @api.build.normalizer
 
-    # @todo NORMALIZER MIGRATION
     api.build.logs:
         class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @build.repo
-            - @api.eventlog.normalizer
+            - @normalizer.log.event
+            - @normalizer.build
 
     # @todo NORMALIZER MIGRATION
     api.builds:
@@ -166,13 +166,13 @@ services:
             - @push.repo
             - @api.push.normalizer
 
-    # @todo NORMALIZER MIGRATION
     api.push.logs:
         class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @push.repo
-            - @api.eventlog.normalizer
+            - @normalizer.log.event
+            - @normalizer.push
 
     # @todo NORMALIZER MIGRATION
     api.pushes:
@@ -188,13 +188,12 @@ services:
     # EVENT LOG CONTROLLERS
     ######################################################################################################################
 
-    # @todo NORMALIZER MIGRATION
     api.event.log:
         class: 'QL\Hal\Controllers\Api\EventLogController'
         arguments:
-            - @api.helper
+            - @response.formatter
             - @event.log.repo
-            - @api.eventlog.normalizer
+            - @normalizer.log.event
 
     ######################################################################################################################
     # REPOSITORY CONTROLLERS

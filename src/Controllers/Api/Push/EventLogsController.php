@@ -7,19 +7,27 @@
 
 namespace QL\Hal\Controllers\Api\Push;
 
-use QL\Hal\Api\EventLogNormalizer;
+use QL\Hal\Api\Normalizer\EventLogNormalizer;
+use QL\Hal\Api\Normalizer\PushNormalizer;
+use QL\Hal\Api\ResponseFormatter;
+use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\PushRepository;
-use QL\Hal\Helpers\ApiHelper;
+use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+/**
+ *
+ */
 class EventLogsController
 {
+    use HypermediaResourceTrait;
+
     /**
-     * @type ApiHelper
+     * @var ResponseFormatter
      */
-    private $api;
+    private $formatter;
 
     /**
      * @type PushRepository
@@ -27,78 +35,62 @@ class EventLogsController
     private $pushRepo;
 
     /**
-     * @type EventLogNormalizer
+     * @var EventLogNormalizer
      */
-    private $normalizer;
+    private $eventLogNormalizer;
 
     /**
-     * @param ApiHelper $api
-     * @param PushRepository $pushRepo
-     * @param EventLogNormalizer $normalizer
+     * @var PushNormalizer
      */
-    public function __construct(ApiHelper $api, PushRepository $pushRepo, EventLogNormalizer $normalizer)
-    {
-        $this->api = $api;
+    private $pushNormalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
+     * @param PushRepository $pushRepo
+     * @param EventLogNormalizer $eventLogNormalizer
+     * @param PushNormalizer $pushNormalizer
+     */
+    public function __construct(
+        ResponseFormatter $formatter,
+        PushRepository $pushRepo,
+        EventLogNormalizer $eventLogNormalizer,
+        PushNormalizer $pushNormalizer
+    ) {
+        $this->formatter = $formatter;
         $this->pushRepo = $pushRepo;
-        $this->normalizer = $normalizer;
+        $this->eventLogNormalizer = $eventLogNormalizer;
+        $this->pushNormalizer = $pushNormalizer;
     }
 
     /**
      * @param Request $request
      * @param Response $response
      * @param array $params
+     * @throws HttpProblemException
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
         $push = $this->pushRepo->find($params['id']);
 
         if (!$push instanceof Push) {
-            return $response->setStatus(404);
+            throw HttpProblemException::build(404, 'invalid-push');
         }
 
-        $logs = $push->getLogs();
+        $logs = array_map(function ($log) {
+            return $this->eventLogNormalizer->link($log);
+        }, $push->getLogs()->toArray());
 
-        $content = [
-            'count' => count($logs),
-            '_links' => [
-                'self' => $this->api->parseLink(['href' => ['api.push.logs', ['id' => $push->getId()]]]),
-                'push' => $this->api->parseLink(['href' => ['api.push', ['id' => $push->getId()]]])
+        $status = (count($logs) > 0) ? 200 : 404;
+
+        $this->formatter->respond($this->buildResource(
+            [
+                'count' => count($logs)
+            ],
+            [],
+            [
+                'push' => $this->pushNormalizer->link($push),
+                'logs' => $logs
             ]
-        ];
-
-        // If list is empty, return 404
-        if (count($logs) === 0) {
-            $this->api->prepareResponse($response, $content);
-            return $response->setStatus(404);
-        }
-
-        $isResolved = false;
-
-        $content = array_merge_recursive($content, $this->normalizeEventLogs($logs->toArray(), $isResolved));
-        $this->api->prepareResponse($response, $content);
-    }
-
-    /**
-     * @param array $logs
-     * @param boolean $isResolved
-     * @return array
-     */
-    private function normalizeEventLogs(array $logs, $isResolved)
-    {
-        $normalized = array_map(function($log) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($log);
-            }
-
-            return $this->normalizer->linked($log);
-        }, $logs);
-
-
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'logs' => $normalized
-            ]
-        ];
+        ), $status);
     }
 }
