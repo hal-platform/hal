@@ -155,8 +155,8 @@ class AdminAddController
         $name = $request->post('name');
         $email = $request->post('notification_email');
 
-        $user = $request->post('github_user');
-        $repo = $request->post('github_repo');
+        $user = strtolower($request->post('github_user'));
+        $repo = strtolower($request->post('github_repo'));
 
         $repository = new Repository;
         $repository->setKey($identifier);
