@@ -4,11 +4,21 @@
 
 <ul class="list--bare cards--baby">
     {% for push in pushes %}
+        {% set cardStyle = '' %}
+        {% if push.deployment %}
+            {% set cardStyle = ' card--' ~ push.deployment.server.environment.key %}
+        {% endif %}
+
         <li>
-            <article class="card--baby mbn">
+            <article class="card--baby mbn{{ cardStyle }}">
                 <header class="card__header split">
+                    <span class="split__title">
+                        <a href="{{ urlFor('repository.status', {id: push.build.repository.id}) }}">
+                            {{ push.build.repository.description }}
+                        </a>
+                    </span>
+
                     <a href="{{ urlFor('push', {'push': push.id}) }}">
-                        <span class="split__title">{{ push.build.repository.key }} ({{ push.deployment.server.environment.key }})</span>
                         {% if push.status == 'Success' %}
                             <span class="status-before--success">{{ push.status }}</span>
                         {% elseif push.status == 'Error' %}
@@ -24,6 +34,8 @@
                         <li>
                             <span class="split__title">{{ push.created|reldate }}</span>
                             {% if push.deployment %}
+                                <a href="{{ urlFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.key }}</a>
+                                →
                                 <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
                             {% else %}
                                 Unknown

@@ -8,10 +8,15 @@
 <ul class="list--bare cards--baby">
     {% for build in builds %}
         <li>
-            <article class="card--baby mbn">
+            <article class="card--baby mbn card--{{ build.environment.key }}">
                 <header class="card__header split">
+                    <span class="split__title">
+                        <a href="{{ urlFor('repository.status', {id: build.repository.id}) }}">
+                            {{ build.repository.description }}
+                        </a>
+                    </span>
+
                     <a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">
-                        <span class="split__title">{{ build.repository.key }} ({{ build.environment.key }})</span>
                         {% if build.status == 'Success' %}
                             <span class="status-before--success">{{ build.status }}</span>
                         {% elseif build.status in ['Error', 'Removed'] %}

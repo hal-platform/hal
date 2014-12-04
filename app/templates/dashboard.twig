@@ -50,7 +50,7 @@
 
     {# PENDING WORK #}
     {% if isUserAdmin(currentUser) and pending %}
-        <h3>Push and Build Queue</h3>
+        <h3>Build and Push Queue</h3>
         {% include 'partials/pending-table.twig' %}
     {% endif %}
 
