@@ -8,9 +8,22 @@
     <h2>Repository Status for <strong>{{ repo.description }}</strong></h2>
 
     <h3>Server Status</h3>
-    <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
 
     {% set hasPushes = false %}
+    {% set hasServers = false %}
+
+    {# Determine whether repo has servers so we can display an nicer message if this repo cannot be pushed #}
+    {% for statuses in environments %}
+        {% if statuses %}
+            {% set hasServers = true %}
+        {% endif %}
+    {% endfor %}
+
+    {% if hasServers %}
+        <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
+    {% else %}
+        <p>This repository has no deployment relationships and cannot be pushed.</p>
+    {% endif %}
 
     {# example display of servers by environment #}
     {% for env, statuses in environments %}
@@ -19,6 +32,7 @@
             <ul class="list--bare cards cards--{{ env }}">
                 {% for status in statuses %}
 
+                    {# Determine whether repo has been pushed so we can hide the all pushes button if there are no pushes #}
                     {% if status.latest %}
                         {% set hasPushes = true %}
                     {% endif %}
