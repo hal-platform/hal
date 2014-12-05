@@ -28,7 +28,7 @@
             <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a>
         {% endif %}
 
-        {% if isUserAdmin(currentUser) and not deployments and isUserAdmin(currentUser) %}
+        {% if isUserAdmin(currentUser) and not deployment_count and isUserAdmin(currentUser) %}
             <a class="btn--destructive secondary-action" href="{{ urlFor('repository.admin.remove.handle', {id: repository.id}) }}">Remove Repository</a>
         {% endif %}
     </div>
