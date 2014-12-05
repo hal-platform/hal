@@ -60,13 +60,24 @@ class GlobalMessageController
      */
     public function __invoke(Request $request, Response $response)
     {
-        if ($request->isPost() && $request->post('message')) {
+        if ($request->isPost()) {
 
-            $message = $request->post('message');
-            $this->messageService->save($message, (int) $request->post('ttl'));
+            if ($request->post('message')) {
 
-            $this->session->flash('Global Message saved.', 'success');
-            $this->url->redirectFor('admin.super.message');
+                $message = $request->post('message');
+                $this->messageService->save($message, (int) $request->post('ttl'));
+
+                $this->session->flash('Global Message saved.', 'success');
+                $this->url->redirectFor('admin.super.message');
+                return;
+
+            } elseif ($request->post('remove')) {
+                $this->messageService->clear();
+
+                $this->session->flash('Global Message removed.', 'success');
+                $this->url->redirectFor('admin.super.message');
+                return;
+            }
         }
 
         $context = [

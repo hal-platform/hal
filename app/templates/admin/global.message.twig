@@ -18,8 +18,10 @@
                 {% endif %}
             </p>
 
-            <a href="#" class="btn btn--destructive">Remove message</a>
-
+            <form action="" method="post">
+                <input type="hidden" name="remove" value="1">
+                <input class="btn btn--destructive" type="submit" name="submit" value="Remove Message">
+            </form>
         {% else %}
             <p>No message currently set.</p>
         {% endif %}
@@ -44,7 +46,7 @@
                     <input class="text-input t10" type="text" id="ttl" name="ttl">
                 </li>
             </ul>
-            <input class="btn" type="submit" value="Save Message" name="submit">
+            <input class="btn" type="submit" name="submit" value="Save Message" >
         </form>
     </div>
 {% endblock %}
