@@ -17,6 +17,10 @@ pre {
     overflow-x: scroll;
 }
 
+pre.line-wrap {
+    white-space: pre-line;
+}
+
 .pre-ansi pre {
     background: black;
 }

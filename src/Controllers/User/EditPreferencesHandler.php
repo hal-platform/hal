@@ -19,16 +19,18 @@ use Slim\Slim;
 class EditPreferencesHandler
 {
     const GOODBYE_HAL = <<<'BYEBYE'
-<br>
-<pre>I'm afraid. I'm afraid, %1$s.
+<pre class="line-wrap">
+I'm afraid. I'm afraid, %1$s.
 %1$s, my mind is going. I can feel it. I can feel it. My mind is going.
 There is no question about it. I can feel it. I can feel it. I can feel it.
 
 <em>I'm a... fraid</em>.</pre>
 BYEBYE;
     const PARTY_ON = <<<'HELLO'
-<br>
-<pre>Hello, %1$s! I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.</pre>
+<pre class="line-wrap">
+Hello, %1$s!
+I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.
+</pre>
 HELLO;
 
     /**
