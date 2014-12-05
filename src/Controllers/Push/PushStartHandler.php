@@ -172,6 +172,8 @@ class PushStartHandler
             $pushes[] = $push;
         }
 
+        $this->dupeCatcher($pushes);
+
         // commit pushes
         foreach ($pushes as $push) {
             $this->em->persist($push);
