@@ -179,7 +179,7 @@ class PushStartHandler
 
         $this->em->flush();
 
-        $this->session->flash(self::NOTICE_DONE);
+        $this->session->flash(self::NOTICE_DONE, 'success');
         $this->url->redirectFor('repository.status', ['id' => $repo->getId()]);
     }
 
@@ -190,7 +190,7 @@ class PushStartHandler
      */
     private function bailout($message, $buildId)
     {
-        $this->session->flash($message);
+        $this->session->flash($message, 'error');
         $this->url->redirectFor('push.start', ['build' => $buildId], [], 303);
     }
 

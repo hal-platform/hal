@@ -142,13 +142,13 @@ class BuildStartHandler
         }
 
         if (!$env) {
-            $this->session->flash(self::ERR_NO_ENV);
+            $this->session->flash(self::ERR_NO_ENV, 'error');
             $this->url->redirectFor('build.start', ['id' => $repo->getId()], [], 303);
             return;
         }
 
         if (!$this->permissions->allowBuild($this->currentUser, $repo->getKey())) {
-            $this->session->flash(sprintf(self::ERR_NO_PERM, $env->getKey()));
+            $this->session->flash(sprintf(self::ERR_NO_PERM, $env->getKey()), 'error');
             $this->url->redirectFor('build.start', ['id' => $repo->getId()], [], 303);
             return;
         }
@@ -164,7 +164,7 @@ class BuildStartHandler
             : $request->post('reference', null);        // radio button selection from tabs
 
         if (!$result = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
-            $this->session->flash(self::ERR_BAD_REF);
+            $this->session->flash(self::ERR_BAD_REF, 'error');
             $this->url->redirectFor('build.start', ['id' => $repo->getId()], [], 303);
             return;
         }
@@ -188,7 +188,7 @@ class BuildStartHandler
         $this->em->persist($build);
         $this->em->flush();
 
-        $this->session->flash(self::NOT_FINISH);
+        $this->session->flash(self::NOT_FINISH, 'success');
         $this->url->redirectFor('build', ['build' => $id], [], 303);
     }
 
