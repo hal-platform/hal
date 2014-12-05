@@ -44,6 +44,15 @@
                     Unknown
                 {% endif %}
             </dd>
+
+            {% if push.deployment and push.deployment.url %}
+                <dt class="split--left__title">
+                    URL
+                </dt>
+                <dd class="split--left__value">
+                    <a href="{{ push.deployment.url.asString }}">{{ push.deployment.url.asString }}</a>
+                </dd>
+            {% endif %}
         </dl>
     </div>
 
