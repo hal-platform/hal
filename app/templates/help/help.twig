@@ -19,7 +19,7 @@
 
     <a name="permission"></a>
     <h3>Who should I contact for support or permission changes?</h3>
-    <p>You should email <a href="mailto:ITTeamKeyMastersSupp@quickenloans.com">IT Team Keymasters Support</a>.</p>
+    <p>You should email <strong>Team Key Masters</strong> at <a href="mailto:ITTeamKeyMastersSupp@quickenloans.com">ITTeamKeyMastersSupp@quickenloans.com</a>.</p>
 
 
     <a name="bugs"></a>
@@ -28,17 +28,17 @@
         HAL 9000 is developed and maintained by the Web Core team. To report bugs or request a new features, please
         submit an issue in the Github repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
     </p>
-    <p>
-        For general questions or critical errors, you can ask a question in the <strong>[TEAM] CORE</strong>
-        Hipchat room or email <a href="mailto:ITTeamWebCore@quickenloans.com">Web Core</a>.
-    </p>
+
+    <p>For general questions or critical errors, you can contact Web Core through the following methods:</p>
+    <ul>
+        <li><strong>[Application] HAL 9000</strong> (Hipchat)</li>
+        <li><strong>[Team] CORE</strong> (Hipchat)</li>
+        <li><a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a> (email)</li>
+    </ul>
 
     <a name="add-application"></a>
     <h3>I would like to deploy my application with HAL 9000. What do I need to do?</h3>
-    <p>Minimum requirements.</p>
-    <ul>
-        <li>The project files must be on the <a href="http://git">Github Enterprise</a> server.</li>
-    </ul>
+    <p>The project files must be on the <a href="http://git">Github Enterprise</a> server.</p>
     <p>After making sure that your project meets the minimum requirements above, gather the information below.</p>
     <ol>
         <li>
@@ -50,11 +50,11 @@
 
                 <ul>
                     <li>
-                        A nickname with no spaces or special characters. Examples include 'venture', 'servicing', and
-                        'webcore'.
+                        An identifier using numbers, letters, and hyphens. Examples include 'venture', 'servicing', and
+                        'web-core'.
                     </li>
                     <li>
-                        The full name that describes your group. Examples include 'Team Venture', 'Servicing', and 'Web
+                        The full title that describes your group. Examples include 'Team Venture', 'Servicing', and 'Web
                         Core'.
                     </li>
                 </ul>
@@ -62,7 +62,7 @@
         </li>
         <li>
             <strong>Determine the name of your application.</strong>
-            <p>You will need both a short name (lowercase, no spaces) and full name.</p>
+            <p>You will need both an identifier (letters, numbers, hyphens) and full name.</p>
         </li>
         <li>
             <strong>Determine where your application exists within Github.</strong>
@@ -82,7 +82,7 @@
         </li>
         <li>
             <strong>Determine what directory on those servers your application will live in.</strong>
-            <p>Example: /var/www/application</p>
+            <p>Example: <code>/var/www/application</code></p>
         </li>
         <li>
             <strong>Determine what, if any, command should be used to build your application.</strong>
@@ -91,25 +91,11 @@
                 be done prior to pushing your code. Read more about the <a href="{{ urlFor('help.deployment') }}">build scripting environment</a>.
             </p>
         </li>
-        <li>
-            <strong>Determine what, if any, command should be run before deploying your application.</strong>
-            <p>
-                This is called a pre-push command and is commonly used to stop services.
-                Read more about the <a href="{{ urlFor('help.deployment') }}">push scripting environment</a>.
-            </p>
-        </li>
-        <li>
-            <strong>Determine what, if any, command should be run after deploying your application.</strong>
-            <p>
-                This is called a post-push command and is commonly used to restart services or finalize a deployment.
-                Read more about the <a href="{{ urlFor('help.deployment') }}">push scripting environment</a>.
-            </p>
-        </li>
     </ol>
     <p>
         Once your have gathered all of the required information, speak with your team leader and request that the
-        application be added to HAL 9000. If your team leader does not have permission to do this, contact the
-        <a href="mailto:ITTeamKeyMastersSupp@quickenloans.com">Keymasters</a> team to assist you with the process.
+        application be added to HAL 9000. Contact Key Masters at
+        <a href="mailto:ITTeamKeyMastersSupp@quickenloans.com">ITTeamKeyMastersSupp@quickenloans.com</a> to assist you with the process.
     </p>
 
     <a name="training"></a>
