@@ -83,12 +83,17 @@ define(['jquery'], function($) {
         updatePush: function(data, $elem) {
             var $container = $elem.closest('dl');
 
-            $container
-                .children('.js-push-start')
-                .text(data.start.text);
-            $container
-                .children('.js-push-end')
-                .text(data.end.text);
+            if (data.start !== null) {
+                $container
+                    .children('.js-push-start')
+                    .text(data.start.text);
+            }
+
+            if (data.end !== null) {
+                $container
+                    .children('.js-push-end')
+                    .text(data.end.text);
+            }
         },
         updateTable: function(data, $elem) {
             // derp

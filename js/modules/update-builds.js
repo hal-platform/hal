@@ -104,12 +104,17 @@ define(['jquery'], function($) {
                 }
             }
 
-            $container
-                .children('.js-build-start')
-                .text(data.start.text);
-            $container
-                .children('.js-build-end')
-                .text(data.end.text);
+            if (data.start !== null) {
+                $container
+                    .children('.js-build-start')
+                    .text(data.start.text);
+            }
+
+            if (data.end !== null) {
+                $container
+                    .children('.js-build-end')
+                    .text(data.end.text);
+            }
         },
         updateTable: function(data, $elem) {
             var $container = $elem.closest('tr');
