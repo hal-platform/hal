@@ -20,7 +20,9 @@ define(['jquery'], function($) {
 
             this.formEle.on("submit", function(){
                 var txt = _this.searchInput.val();
-                if (!_this.commitRegEx.test(txt) && txt !== ''){
+                var isNotCommit = !_this.commitRegEx.test(txt);
+
+                if (isNotCommit && txt !== '') {
                      _this.searchRadio(txt);
                 }
             });
@@ -154,7 +156,7 @@ define(['jquery'], function($) {
                     currentTab = $(_this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li"),
                     pullSearch = 'PR #' + searchStr;
 
-                if (pullSearch.toLowerCase().indexOf(txt.toLowerCase()) === 0 || searchStr.toLowerCase().indexOf(txt.toLowerCase()) === 0 || labelTxt.toLowerCase().indexOf(txt.toLowerCase()) === 0){
+                if (pullSearch.toLowerCase() === txt.toLowerCase() || searchStr.toLowerCase().indexOf(txt.toLowerCase()) === 0 || labelTxt.toLowerCase().indexOf(txt.toLowerCase()) === 0){
                     // select this radio change to tab
                     $(this).closest("div").show().siblings().hide();
                     currentTab.addClass('active').siblings().removeClass('active');
