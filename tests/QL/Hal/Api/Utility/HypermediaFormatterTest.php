@@ -10,9 +10,25 @@
 //use PHPUnit_Framework_TestCase;
 //
 ///**
-// * @todo
+// *
 // */
 //class HypermediaFormatterTest extends PHPUnit_Framework_TestCase
 //{
+//    /**
+//     * @dataProvider data
+//     */
+//    public function testFormat(array $expected, array $data)
+//    {
+//        $helper = $this->getMockBuilder('QL\Hal\Helpers\UrlHelper')
+//            ->disableOriginalConstructor()
+//            ->setMethods(['url', 'urlFor'])
+//            ->getMock();
 //
+//        $formatter = new HypermediaFormatter($helper);
+//    }
+//
+//    public function data()
+//    {
+//
+//    }
 //}
