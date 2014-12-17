@@ -268,9 +268,14 @@ class PermissionsService
             return true;
         }
 
+        $isKeymaster = $this->isUserInGroup($user, $this->generateDn(self::DN_KEYMASTER));
+        if ($isKeymaster) {
+            return true;
+        }
+
         // Production Exception
         if ($this->isEnvironmentProduction($environment)) {
-            return $this->isUserInGroup($user, $this->generateDn(self::DN_KEYMASTER));
+            return $isKeymaster;
         }
 
         if ($this->userHasRepoPermission($user, $repository, $environment)) {
