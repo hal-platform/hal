@@ -4,18 +4,23 @@ set -e
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
 
+COMPOSER_SHOW_INSTALLED="composer show --installed"
 COMPOSER="composer install --prefer-dist --dev"
 NPM="npm install"
 BUNDLER="bundle install"
 
 # If deploying, use production settings
 if [ -n "$HAL_ENVIRONMENT" ]; then
-    COMPOSER="composer install --prefer-dist --no-interaction --ansi --no-dev --optimize-autoloader"
+    COMPOSER="composer install --prefer-dist --no-dev --no-interaction --ansi --optimize-autoloader --profile"
     NPM="npm install --production --color=always"
     BUNDLER="bundle install --frozen"
 fi
 
 "$DIR/"$COMPOSER
+if [ -n "$HAL_ENVIRONMENT" ]; then
+    "$DIR/"$COMPOSER_SHOW_INSTALLED
+fi
+
 $NPM
 
 gem install bundler
