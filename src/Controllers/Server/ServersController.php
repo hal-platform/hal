@@ -9,12 +9,15 @@ namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class ServersController
 {
+    use SortingHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -74,6 +77,11 @@ class ServersController
             }
 
             $environments[$env][] = $server;
+        }
+
+        $sorter = $this->serverSorter();
+        foreach ($environments as &$env) {
+            usort($env, $sorter);
         }
 
         return $environments;
