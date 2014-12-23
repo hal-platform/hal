@@ -9,12 +9,15 @@ namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class EnvironmentController
 {
+    use SortingHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -57,9 +60,12 @@ class EnvironmentController
             return $notFound();
         }
 
+        $servers = $this->serverRepo->findBy(['environment' => $environment]);
+        usort($servers, $this->serverSorter());
+
         $rendered = $this->template->render([
             'env' => $environment,
-            'servers' => $this->serverRepo->findBy(['environment' => $environment])
+            'servers' => $servers
         ]);
 
         $response->setBody($rendered);

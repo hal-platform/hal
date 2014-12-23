@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\Group;
 
+use QL\Hal\Core\Entity\Group;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -41,9 +43,43 @@ class GroupsController
     public function __invoke(Request $request, Response $response)
     {
         $rendered = $this->template->render([
-            'groups' => $this->groupRepo->findBy([], ['name' => 'ASC'])
+            'groups' => $this->getGroupsWithRepositories()
         ]);
 
         $response->setBody($rendered);
+    }
+
+    /**
+     * @return array
+     */
+    private function getGroupsWithRepositories()
+    {
+        $data = [];
+
+        $groups = $this->groupRepo->findBy([], ['name' => 'ASC']);
+        foreach ($groups as $group) {
+            $data[] = [
+                'group' => $group,
+                'repositories' => $this->sortGroupRepositories($group)
+            ];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param Group $group
+     * @return Repository[]
+     */
+    private function sortGroupRepositories(Group $group)
+    {
+        $repos = $group->getRepositories()->toArray();
+        $sorter = function($a, $b) {
+            return strcasecmp($a->getDescription(), $b->getDescription());
+        };
+
+        usort($repos, $sorter);
+
+        return $repos;
     }
 }

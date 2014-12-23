@@ -18,16 +18,16 @@
             </tr>
         </thead>
         <tbody>
-        {% for group in groups %}
+        {% for meta in groups %}
             <tr>
                 <td>
-                    <a href="{{ urlFor('group', {'id': group.id}) }}">{{ group.name }}</a>
+                    <a href="{{ urlFor('group', {'id': meta.group.id}) }}">{{ meta.group.name }}</a>
                 </td>
 
                 <td>
-                    {% if not group.repositories.isEmpty %}
+                    {% if meta.repositories %}
                         <ul class="inline-list--comma">
-                            {% for repo in group.repositories %}
+                            {% for repo in meta.repositories %}
                                 <li><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.description }}</a></li>
                             {% endfor %}
                         </ul>
