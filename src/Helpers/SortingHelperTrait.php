@@ -14,56 +14,18 @@ trait SortingHelperTrait
      */
     public function deploymentSorter()
     {
-        $regex = '#' .
-            '([a-z]{1,10}[\d]{1,2})' . // some letters followed by numbers. This is the datacenter identifier.
-            '([a-z]{1,10})' . // some letters. This usually identifiers the tier or network
-            '([\d]{1,2})' . // 1-2 digits
-            '#';
+        $serverSorter = $this->serverSorter();
 
-        return function($a, $b) use ($regex) {
-            $serverA = $a->getServer()->getName();
-            $serverB = $b->getServer()->getName();
+        return function($a, $b) use ($serverSorter) {
+            $serverA = $a->getServer();
+            $serverB = $b->getServer();
 
             // same server
-            if ($serverA === $serverB) {
+            if ($serverA->getName() === $serverB->getName()) {
                 return strcmp($a->getPath(), $b->getPath());
             }
 
-            $isA = preg_match($regex, $serverA, $matchesA);
-            $isB = preg_match($regex, $serverB, $matchesB);
-
-            // One does not follow schema, move to bottom
-            if (!$isA || !$isB) {
-                return ($isA) ? 1 : -1;
-            }
-
-            // both match
-            $parsedA = [
-                'datacenter' => $matchesA[1],
-                'tier' => $matchesA[2],
-                'server' => $matchesA[3]
-            ];
-
-            $parsedB = [
-                'datacenter' => $matchesB[1],
-                'tier' => $matchesB[2],
-                'server' => $matchesB[3]
-            ];
-
-            // datacenters different, compare datacenter
-            if ($parsedA['datacenter'] !== $parsedB['datacenter']) {
-                return strcmp($parsedA['datacenter'], $parsedB['datacenter']);
-            }
-
-            // same datacenter, tier different, compare tier
-            if ($parsedA['tier'] !== $parsedB['tier']) {
-                return strcmp($parsedA['tier'], $parsedB['tier']);
-            }
-
-            // same datacenter, same tier, compare server
-            if ($parsedA['server'] !== $parsedB['server']) {
-                return ($parsedA['server'] > $parsedB['server']) ? 1 : -1;
-            }
+            return $serverSorter($serverA, $serverB);
         };
     }
 
@@ -76,6 +38,7 @@ trait SortingHelperTrait
             '([a-z]{1,10}[\d]{1,2})' . // some letters followed by numbers. This is the datacenter identifier.
             '([a-z]{1,10})' . // some letters. This usually identifiers the tier or network
             '([\d]{1,2})' . // 1-2 digits
+            '([a-z]*)' . // random letters, because thats apparently a thing now.
             '#';
 
         return function($a, $b) use ($regex) {
@@ -99,13 +62,15 @@ trait SortingHelperTrait
             $parsedA = [
                 'datacenter' => $matchesA[1],
                 'tier' => $matchesA[2],
-                'server' => $matchesA[3]
+                'server' => $matchesA[3],
+                'suffix' => $matchesA[4]
             ];
 
             $parsedB = [
                 'datacenter' => $matchesB[1],
                 'tier' => $matchesB[2],
-                'server' => $matchesB[3]
+                'server' => $matchesB[3],
+                'suffix' => $matchesA[4]
             ];
 
             // datacenters different, compare datacenter
@@ -122,6 +87,14 @@ trait SortingHelperTrait
             if ($parsedA['server'] !== $parsedB['server']) {
                 return ($parsedA['server'] > $parsedB['server']) ? 1 : -1;
             }
+
+            // same datacenter, same tier, same server, compare bullshit letters at the very end
+            if ($parsedA['suffix'] !== $parsedB['suffix']) {
+                return strcmp($parsedA['suffix'], $parsedB['suffix']);
+            }
+
+            // fall back to just straight comparison
+            return strcmp($serverA, $serverB);
         };
     }
 }
