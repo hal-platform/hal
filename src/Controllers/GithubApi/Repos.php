@@ -11,6 +11,9 @@ use QL\Hal\Services\GithubService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+/**
+ * @deprecated maybe?
+ */
 class Repos
 {
     /**

@@ -8,37 +8,32 @@
     }
 }
 
-.js-error{
-    color: $error-color;
-}
-
-.js-tab-active{
+.js-tab-active {
     display: block;
 }
 
-.js-search-item{
+.js-search-query {
     display: none;
-
-    li.selected{
-      background-color: $highlight-color;
-    }
+}
+.js-search-list .js-search-item {
+    display: none;
 }
 
-.js-search-drop{
+.js-search-drop {
     overflow: auto;
     max-height: 300px;
 }
 
 .js-search-results {
-    li{
+    li {
         padding-left: msem(0);
     }
 
-    li:nth-child(odd){
+    li:nth-child(odd) {
         background-color: lighten($bright-blue, 35%);
     }
 
-    li:hover{
+    li:hover {
         background-color: $highlight-color;
         cursor: pointer;
     }

@@ -51,9 +51,11 @@ services:
     slim.route.parameters:          {parent: panthor.slim.route.parameters}
 
     # utilities
+    url:                            {parent: panthor.url}
     clock:                          {parent: panthor.clock}
     encryption:                     {parent: panthor.encryption}
     encryption.cookie:              {parent: panthor.encryption}
+    json:                           {parent: panthor.json}
 
     # twig
     twig.cache.dir:                 {parent: panthor.twig.cache.dir}
@@ -146,6 +148,9 @@ services:
     panthor.clock:
         class: 'MCP\DataType\Time\Clock'
         arguments: ['now', %panthor.internal.timezone%]
+
+    panthor.json:
+        class: 'QL\Panthor\Utility\Json'
 
     # twig
 

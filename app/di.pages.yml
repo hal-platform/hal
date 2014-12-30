@@ -238,20 +238,24 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/start.twig']]]
 
-    build.start.handle.page:
+    build.start.handler:
         class: 'QL\Hal\Controllers\Build\BuildStartHandler'
         arguments:
-            - @session
             - @build.repo
-            - @repository.repo
-            - @user.repo
-            - @environment.repo
             - @doctrine.em
-            - @url.helper
-            - @currentUser
-            - @permissions
-            - @github
+            - @build.start.validator
+            - @session
+            - @url
             - @utility.id.generator
+            - @twig.context
+    build.start.validator:
+        class: 'QL\Hal\Validator\BuildStartValidator'
+        arguments:
+            - @repository.repo
+            - @environment.repo
+            - @github
+            - @permissions
+            - @currentUser
 
     builds.page:
         class: 'QL\Hal\Controllers\Build\BuildsController'

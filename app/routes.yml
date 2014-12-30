@@ -121,9 +121,9 @@ parameters:
             conditions: {build: %routes.regex.buildId%}
 
         build.start:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/repositories/:id/build'
-            stack: ['login.bouncer', 'build.start.page']
+            stack: ['login.bouncer', 'build.start.handler', 'build.start.page']
             conditions: {id: '[0-9]+'}
 
         build.handle:
@@ -454,6 +454,12 @@ parameters:
             route: '/api/github/users/:username/repositories'
             stack: ['login.bouncer', 'api.github.user.repositories']
             conditions: {username: '[A-Za-z0-9_-]+'}
+
+        api.github.search:
+            method: 'GET'
+            route: '/api/github/repositories/:repository'
+            stack: ['login.bouncer', 'api.github.search']
+            conditions: {repository: '[\d]+'}
 
         ################################################################################################################
         # PUBLIC API ROUTES

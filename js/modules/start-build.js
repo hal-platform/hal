@@ -1,159 +1,188 @@
 define(['jquery'], function($) {
     return {
-        searchList: '.js-search-list',
-        searchListRadio: $('.js-search-list li input'),
-        searchInput: $('.js-search-input'),
-        searchOutput: $('.js-search-drop'),
-        searchResultList: $('.js-search-results'),
-        searchResultItems: $('.js-search-results li'),
-        searchItem: '.js-search-item',
-        searchListItems: $('.js-search-item'),
-        tabsContainer: '.js-tabs',
-        tabsLink: $('.js-tabs li a'),
-        formEle: $('form[name="start-build"]'),
-        commitId: $('.js-commitId'),
+        $validGitRefs: $('.js-search-list li input'),
+        $gitRefSearchListings: $('.js-search-list .js-search-item'),
+
+        searchList: '.js-search-list', // ?
+
+        searchBox: '#js-search-input',
+        searchResults: '.js-search-results',
+        searchQuery: 'span',
+        searchQueryPrimary: '.js-search-primary',
+
+        $searchBox: null,
+        $searchResults: null,
+        $searchContainer: $('.js-search-drop'),
+
+        searchResultItem: '.js-search-item', // ?
+
+        tabAnchorsContainer: '.js-tabs',
+        $tabAnchors: $('.js-tabs li a'),
+
+        // $form: $('form[name="start-build"]'),
+        $error: $('.js-build-error'),
+
         commitRegEx: /^[0-9 A-F a-f]{40,40}$/,
-        errorText: $('.js-error'),
+
         init: function() {
-            var _this = this,
-                queryHash = window.location.hash;
+            var _this = this;
 
-            this.formEle.on("submit", function(){
-                var txt = _this.searchInput.val();
-                var isNotCommit = !_this.commitRegEx.test(txt);
+            this.$searchBox = $(this.searchBox);
+            this.$searchResults = $(this.searchResults);
 
-                if (isNotCommit && txt !== '') {
-                     _this.searchRadio(txt);
-                }
+
+            // build search listings
+            _this.buildSearchResults();
+
+            // make search listings searchable
+            this.$searchResults.searchable({
+                selector      : 'li',
+                childSelector : this.searchQuery,
+                searchField   : this.searchBox,
+                striped       : false,
+                searchType    : 'fuzzy'
             });
 
-            this.searchInput.on({
-                blur: function(){
-                    _this.searchOutput.slideUp("slow");
+            // this.$form.on("submit", function(){
+            //     var txt = _this.$searchBox.val();
+            //     var isNotCommit = !_this.commitRegEx.test(txt);
 
-                    _this.delay(function(){
-                        var txt = _this.searchInput.val();
-                        if (_this.commitRegEx.test(txt)){
-                             _this.commitId.val(txt);
-                        } else {
-                            if (txt !== ''){
-                              _this.searchRadio(txt);
-                            }
-                        }
+            //     if (isNotCommit && txt !== '') {
+            //          _this.selectBySearch(txt);
+            //     }
+            // });
 
-                    }, 100);
-                },
-                focus: function(e){
-                    _this.searchItems();
-                    _this.errorText.text('');
-                },
-                paste: function(){
-                    _this.delay(function(){
-                        var searchTxt = _this.searchInput.val();
-                        if (_this.commitRegEx.test(searchTxt)){
-                            _this.commitId.val(searchTxt);
-                        } else {
-                            _this.searchItems();
-                        }
-                    }, 100);
-                },
-                keyup: function(e){
-                    _this.delay(function(){
-                        var searchTxt = _this.searchInput.val();
-                        if (_this.commitRegEx.test(searchTxt)){
-                             _this.commitId.val(searchTxt);
-                        } else {
-                            _this.searchItems();
-                        }
-                    }, 100);
-                }
+            // this.$searchBox.on('blur', function() {
+            //     _this.$searchContainer.slideUp('slow');
+
+            //     _this.delay(function() {
+            //         var searchTxt = _this.$searchBox.val();
+            //         if (_this.commitRegEx.test(searchTxt)) {
+            //              _this.$selectedGitRef.val(txt);
+            //         } else {
+            //             if (txt !== ''){
+            //               _this.selectBySearch(txt);
+            //             }
+            //         }
+
+            //     }, 100);
+            // });
+
+
+            this.$searchBox.on('focus', function() {
+                _this.showSearchListings();
+                _this.$error.hide();
             });
 
-            if (queryHash){
-                this.queryLookup(queryHash);
+            this.$searchBox.on('blur', function() {
+                _this.hideSearchListings();
+            });
+
+            // this.$searchBox.on('paste', function() {
+            //     _this.delay(function() {
+            //         var searchTxt = _this.$searchBox.val();
+            //         if (_this.commitRegEx.test(searchTxt)) {
+            //             _this.$selectedGitRef.val(searchTxt);
+            //         } else {
+            //             _this.buildSearchResults();
+            //         }
+            //     }, 100);
+            // });
+
+            // this.$searchBox.on('keyup', function() {
+            //     _this.delay(function() {
+            //         var searchTxt = _this.$searchBox.val();
+            //         if (_this.commitRegEx.test(searchTxt)) {
+            //              _this.$selectedGitRef.val(searchTxt);
+            //         } else {
+            //             _this.buildSearchResults();
+            //         }
+            //     }, 100);
+            // });
+
+            if (window.location.hash) {
+                this.searchByFragment(window.location.hash);
             }
 
-            this.searchOutput.width(this.searchInput.width() + 25);
+            // match search listings size to search box size
+            this.$searchContainer.width(this.$searchBox.width() + 25);
 
-            $(window).on("resize", function(){
-                _this.searchOutput.width(_this.searchInput.width() + 25);
+            // resize search listings on window resize
+            $(window).on('resize', function() {
+                _this.$searchContainer.width(_this.$searchBox.width() + 25);
             });
 
-            this.searchListRadio.on("click",function(){
-                if (_this.commitId.val() !== ''){
-                    _this.commitId.val('');
-                }
-
-                if (_this.errorText.text() !== ''){
-                    _this.errorText.text('');
-                }
-                _this.selectRadio(this);
+            // add handler for selecting a ref from a valid radio input
+            this.$validGitRefs.on('click', function() {
+                _this.selectValidGitRef(this);
             });
 
-            this.searchResultList.on("click", this.searchItem, function(){
-                _this.selectItem(this);
+            // add handler for selecting a search result item
+            this.$searchResults.on('click', this.searchResultItem, function() {
+                _this.selectSearchResult(this);
             });
 
-            this.tabsLink.on("click", function(e){
-                _this.tabs(e, this);
+            // add handler for showing/hiding tabs
+            this.$tabAnchors.on('click', function(event) {
+                _this.selectTab(this);
+                event.preventDefault();
             });
         },
-        queryLookup: function(query){
-            query = query.split('pr')[1];
-            this.selectItem($("<li class='js-search-item' data-val='pull/" + query + "'>" + query + "</li>"));
+        searchByFragment: function(fragment) {
+            var searchBy;
+
+            if (fragment.slice(0, 3) === '#pr') {
+                searchBy = 'PR #' + fragment.slice(3);
+            } else {
+                searchBy = fragment.slice(1);
+            }
+
+            this.selectBySearch(searchBy);
         },
-        tabs: function(ev, ele){
-            var currentTab = $(ele).attr('name');
-            //content gets shown or hidden
-            $('.' + currentTab).show().siblings().hide();
-            //tabs turn active
+
+        selectTab: function(ele) {
+            var anchor = $(ele).attr('name');
+
+            // show tab
+            $('#' + anchor).show().siblings().hide();
+
+            // tab anchor turn active
             $(ele).parent('li').addClass('active').siblings().removeClass('active');
-            ev.preventDefault();
         },
-        searchItems: function(){
-            var _this = this,
-                searchVal = this.searchInput.val().toLowerCase(),
-                count = 0;
+        selectSearchResult: function(element) {
+            var $el = $(element),
+                parentId = $el.data('parent'),
+                tabName = $el.data('tab'),
+                cleanedText = $el.children(this.searchQueryPrimary).text().trim(),
+                targetRadio = $('#' + parentId);
 
-            this.searchResultList.html('');
+            // put title in search box
+            this.$searchBox.val(cleanedText);
 
-            this.searchListRadio.each(function(){
-                var itemVal = $(this).val(),
-                    searchTxt = $(this).attr("data-search"),
-                    itemType = $(this).closest('ul').attr("data-type"),
-                    labelTxt = $("label[for='pr" + searchTxt +"'] .js-title").text().toLowerCase(),
-                    svg = _this.setSvg(itemType),
-                    statClass = $(this).attr("data-status"),
-                    displayTxt = _this.displayValue(searchTxt.toLowerCase(), itemType),
-                    pullSearch = ((itemType == 'pull') ? 'PR #' + searchTxt : searchTxt);
+            // switch tabs
+            this.selectTab('a[name="' + tabName + '"]');
 
-                if (pullSearch.toLowerCase().indexOf(searchVal) === 0 || searchTxt.indexOf(searchVal) === 0){
-                    $("<li class='js-search-item' data-val='" + itemVal + "'><span class='icon " + statClass + "'><svg viewBox='0 0 32 32'><use xlink:href='" + svg + "'></use></svg></span> " + displayTxt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
-                }
-
-                if (labelTxt.indexOf(searchVal) === 0 && itemType == 'pull'){
-                    $("<li class='js-search-item' data-val='" + itemVal + "'><span class='icon " + statClass + "'><svg viewBox='0 0 32 32'><use xlink:href='" + svg + "'></use></svg></span> " + labelTxt + "</li>").appendTo(_this.searchResultList).slideDown("fast");
-                }
-
-                count++;
-                // this runs if the list is already present and the user focuses on the input field again
-                _this.searchOutput.show().slideDown("slow");
-            });
-
-            if (count > 12){
-                this.searchOutput.css("max-height", "300px");
-            }
+            // select radio
+            targetRadio.prop('checked', true);
         },
-        searchRadio: function(txt){
+        selectValidGitRef: function(element) {
+            _this.$error.hide();
+            // @todo add flavor text to "Start Build?" button when HAL is cannot validate a ref.
+
+            var searchQuery = $(element).data('search');
+            this.$searchBox.val(searchQuery);
+        },
+
+        selectBySearch: function(txt) {
             var _this = this;
             var found = 0;
 
-            this.searchListRadio.each(function(){
-                var itemType = $(this).closest('ul').attr("data-type"),
-                    searchStr = $(this).attr("data-search"),
+            this.$validGitRefs.each(function(){
+                var itemType = $(this).closest('ul').data('type'),
+                    searchStr = $(this).data('search'),
                     labelTxt = $("label[for='pr" + searchStr + "'] .js-title").text().toLowerCase(),
-                    tabId = $(this).closest("div").attr("data-id"),
-                    currentTab = $(_this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li"),
+                    tabId = $(this).closest("div").attr('id'),
+                    currentTab = $(_this.tabAnchorsContainer + ' a[name="'+ tabId +'"]').closest("li"),
                     pullSearch = 'PR #' + searchStr;
 
                 if (pullSearch.toLowerCase() === txt.toLowerCase() || searchStr.toLowerCase().indexOf(txt.toLowerCase()) === 0 || labelTxt.toLowerCase().indexOf(txt.toLowerCase()) === 0){
@@ -166,45 +195,39 @@ define(['jquery'], function($) {
                 }
             });
 
-            if (found === 0){
-                this.errorText.text("Sorry, Dave. I am afraid I can't do that.");
+            if (found === 0) {
+                _this.$error.show();
             }
         },
-        setSvg: function(itemType){
-            if (itemType == 'branch'){
-               return '#branch';
-            } else if (itemType == 'tag') {
-               return '#tag';
-            } else {
-               return '#pull';
+
+        buildSearchResults: function() {
+            var count = this.$gitRefSearchListings.length;
+            var mover = function(index, el) {
+                $(el).appendTo(this.$searchResults);
+            }.bind(this);
+
+            // move search listings out of tabs and into central search container
+            this.$gitRefSearchListings.each(mover);
+
+            if (count > 12) {
+                this.$searchContainer.css('max-height', '300px');
             }
-
         },
-        displayValue: function(valString, valType){
-            if(valType == 'pull'){
-                valString = 'PR #' + valString;
-            }
-
-            return valString;
+        showSearchListings: function() {
+            this.$searchContainer.show().slideDown('slow');
         },
-        selectItem: function(element){
-            var eleVal = $(element).attr("data-val"),
-                currentRadio = $(this.searchList + ' input[value="' + eleVal + '"]'),
-                tabId = currentRadio.closest("div").attr("data-id"),
-                currentTab = $(this.tabsContainer + ' a[name="'+ tabId +'"]').closest("li"),
-                _this = this;
-
-            this.searchInput.val($.trim($(element).text()));
-            currentRadio.closest("div").show().siblings().hide();
-
-            currentTab.addClass('active').siblings().removeClass('active');
-            currentRadio.prop("checked", true);
+        hideSearchListings: function() {
+            this.$searchContainer.show().slideUp('fast');
         },
-        selectRadio: function(element){
-              var type = $(element).closest('ul').attr("data-type");
 
-              this.searchInput.val(this.displayValue($(element).attr("data-search"), type));
-        },
+        // displayValue: function(valString, valType){
+        //     if(valType == 'pull'){
+        //         valString = 'PR #' + valString;
+        //     }
+
+        //     return valString;
+        // },
+
         delay: function(callback, ms){
             var timer = 0;
             clearTimeout(timer);

@@ -1,30 +1,18 @@
-.pr-selection code {
-    font-size: 75%;
-}
-
-.pr-selection p {
-    margin-bottom: auto;
-}
-
-.pr-selection span {
-    font-style: bold;
-    text-transform: uppercase;
-}
-
-.closed {
+.pr-closed {
     color: #c00000;
 }
 
-.open {
+.pr-open {
     color: #00c92c;
 }
 
-.pr-smtxt{
-  @include adjust-font-size-to(ms(-5));
-  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+.pr-smtxt {
+    @include adjust-font-size-to(ms(-4));
+    font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+    text-transform: uppercase;
 }
 
-.pr-label{
+.pr-label {
     padding: msem(-5);
     background-color: lighten($blue, 55%);
     border-radius: 3px;

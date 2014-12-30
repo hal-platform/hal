@@ -63,12 +63,18 @@ class BuildStartController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        if (!$repo = $this->repoRepo->findOneBy(['id' => $params['id']])) {
+        if (!$repo = $this->repoRepo->find($params['id'])) {
             return call_user_func($notFound);
         }
 
         $context = [
-            'repoId' => $params['id'],
+            'form' => [
+                'environment' => $request->post('environment'),
+                'search' => $request->post('search'),
+                'reference' => $request->post('reference'),
+                'gitref' => $request->post('gitref')
+            ],
+
             'repo' => $repo,
             'branches' => $this->getBranches($repo),
             'tags' => $this->getTags($repo),

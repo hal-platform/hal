@@ -96,12 +96,13 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('isNavOn', [$this, 'isNavigationOn']),
             new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
             new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
+            new Twig_SimpleFunction('hash', [$this, 'hash']),
 
             // other
             new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),
             new Twig_SimpleFunction('getUsersFirstName', [$this->name, 'getUsersFirstName']),
             new Twig_SimpleFunction('getUsersActualName', [$this->name, 'getUsersActualName']),
-            new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName']),
+            new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName'])
         ];
     }
 
@@ -238,6 +239,17 @@ class HalExtension extends Twig_Extension
 
         // object
         return get_class($data);
+    }
+
+    /**
+     * Get a simple hash for a provided value.
+     *
+     * @param mixed $data
+     * @return string
+     */
+    public function hash($data)
+    {
+        return md5($data);
     }
 
     /**

@@ -22,6 +22,10 @@ services:
         class: 'QL\Hal\Controllers\GithubApi\Repos'
         arguments: [@github]
 
+    api.github.search:
+        class: 'QL\Hal\Controllers\GithubApi\RefSearch'
+        arguments: [@github]
+
     ######################################################################################################################
     # QUEUE CONTROLLERS
     ######################################################################################################################
