@@ -98,10 +98,12 @@ class BuildStartController
             if ($a['name'] == 'master') {
                 return -1;
             }
+
             if ($b['name'] == 'master') {
                 return 1;
             }
-            return strcmp($a['name'], $b['name']);
+
+            return strcasecmp($a['name'], $b['name']);
         });
 
         return $branches;
@@ -120,74 +122,34 @@ class BuildStartController
             $repo->getGithubRepo()
         );
 
-//        $tags = [
-//            ['name' => '3.1'],
-//            ['name' => '3.0'],
-//            ['name' => '3.1.2'],
-//            ['name' => '3.1.1'],
-//            ['name' => '4.0-rc1'],
-//            ['name' => '1.0'],
-//            ['name' => '4.5'],
-//            ['name' => '2'],
-//            ['name' => '4.0-rc2'],
-//            ['name' => '2.5'],
-//            ['name' => '4.0-alpha2'],
-//            ['name' => '2.1.2'],
-//            ['name' => '4.0-beta1'],
-//            ['name' => '4.0-alpha1'],
-//            ['name' => 'a'],
-//            ['name' => 'c'],
-//            ['name' => 'v4.5.1'],
-//            ['name' => 'v3.1'],
-//            ['name' => 'b'],
-//            ['name' => '2.1.1.1'],
-//            ['name' => '14.1'],
-//            ['name' => '4.0'],
-//        ];
+       // $tags = [
+       //     ['name' => '3.1'],
+       //     ['name' => '3.0'],
+       //     ['name' => '3.1.2'],
+       //     ['name' => '3.1.1'],
+       //     ['name' => '4.0-rc1'],
+       //     ['name' => '1.0'],
+       //     ['name' => '4.5'],
+       //     ['name' => '2'],
+       //     ['name' => '4.0-rc2'],
+       //     ['name' => '2.5'],
+       //     ['name' => '4.0-alpha2'],
+       //     ['name' => '2.1.2'],
+       //     ['name' => '4.0-beta1'],
+       //     ['name' => '4.0-alpha1'],
+       //     ['name' => 'a'],
+       //     ['name' => 'c'],
+       //     ['name' => 'v4.5.1'],
+       //     ['name' => 'v3.1'],
+       //     ['name' => 'b'],
+       //     ['name' => '2.1.1.1'],
+       //     ['name' => '14.1'],
+       //     ['name' => '4.0'],
+       // ];
 
-        $versioned = [];
-        $named = [];
+        usort($tags, $this->tagSorter());
 
-        // seperate into versioned tags and named tags
-        foreach ($tags as $tag) {
-            if ($this->semver($tag['name']) !== false) {
-                $versioned[] = $tag;
-            } else {
-                $named[] = $tag;
-            }
-        }
-
-        // sort versioned tags according to decreasing version number
-        // we're looking for natural sort here, we'll fake it with php version compare
-        uasort($versioned, function ($a, $b) {
-
-            $matchesA = $this->semver($a['name']);
-            $matchesB = $this->semver($b['name']);
-
-            // special case for when version number is the same (1.0-beta1 vs 1.0-alpha1)
-            if ($matchesA[1] == $matchesB[1]) {
-                $textA = (isset($matchesA[5])) ? $matchesA[5] : '';
-                $textB = (isset($matchesB[5])) ? $matchesB[5] : '';
-                $numA = (isset($matchesA[6])) ? $matchesA[6] : 0;
-                $numB = (isset($matchesB[6])) ? $matchesB[6] : 0;
-
-                // special case when release type is the same (1.0-rc1 vs 1.0-rc2)
-                if ($textA == $textB) {
-                    return strcmp($numB, $numA);
-                }
-
-                return strcmp($textB, $textA);
-            }
-
-            return version_compare($matchesB[1], $matchesA[1]);
-        });
-
-        // sort named tags alphabetically
-        uasort($named, function ($a, $b) {
-            return strcmp($a['name'], $b['name']);
-        });
-
-        return array_merge($versioned, $named);
+        return $tags;
     }
 
     /**
@@ -206,10 +168,56 @@ class BuildStartController
 
         // sort by decreasing pull request number
         usort($pr, function ($a, $b) {
-            return strcmp($b['number'], $a['number']);
+            $a = (int) $a['number'];
+            $b = (int) $b['number'];
+            return ($a > $b) ? -1 : 1;
         });
 
         return $pr;
+    }
+
+    /**
+     * @return callable
+     */
+    public function tagSorter()
+    {
+        return function($a, $b) {
+            $matchesA = $this->semver($a['name']);
+            $matchesB = $this->semver($b['name']);
+
+            // If both are not semver, bump non-semver to bottom
+            if ($matchesA === false xor $matchesB === false) {
+                if ($matchesA === false) {
+                    return 1;
+                }
+
+                return -1;
+            }
+
+            // both non-semver
+            if ($matchesA === false && $matchesB === false) {
+                return strcasecmp($a['name'], $b['name']);
+            }
+
+            // both sem-ver
+
+            // special case for when version number is the same (1.0-beta1 vs 1.0-alpha1)
+            if ($matchesA[1] == $matchesB[1]) {
+                $textA = (isset($matchesA[5])) ? $matchesA[5] : '';
+                $textB = (isset($matchesB[5])) ? $matchesB[5] : '';
+                $numA = (isset($matchesA[6])) ? $matchesA[6] : 0;
+                $numB = (isset($matchesB[6])) ? $matchesB[6] : 0;
+
+                // special case when release type is the same (1.0-rc1 vs 1.0-rc2)
+                if ($textA == $textB) {
+                    return strcasecmp($numB, $numA);
+                }
+
+                return strcasecmp($textB, $textA);
+            }
+
+            return version_compare($matchesB[1], $matchesA[1]);
+        };
     }
 
     /**
