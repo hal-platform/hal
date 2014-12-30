@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Bouncers;
+namespace QL\Hal\Middleware\Bouncer;
 
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;

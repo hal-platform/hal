@@ -5,20 +5,24 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Bouncers;
+namespace QL\Hal\Middleware\Bouncer;
 
+use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
-use QL\Panthor\TemplateInterface;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use QL\Panthor\TemplateInterface;
+use Slim\Route;
+use Slim\Slim;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A bouncer that checks to see if the current user is an admin
+ * A bouncer that checks to see if the current user is a super admin
  */
-class AdminBouncer
+class RepoAdminBouncer
 {
     /**
      * @var ContainerInterface
@@ -33,7 +37,7 @@ class AdminBouncer
     /**
      * @var TemplateInterface
      */
-    private $template;
+    private $twig;
 
     /**
      * @var LoginBouncer
@@ -41,21 +45,42 @@ class AdminBouncer
     private $loginBouncer;
 
     /**
+     * @var Route
+     */
+    private $route;
+
+    /**
+     * @var RepositoryRepository
+     */
+    private $repositories;
+
+    /**
+     * @var Slim
+     */
+    private $slim;
+
+    /**
      * @param ContainerInterface $di
      * @param PermissionsService $permissions
-     * @param TemplateInterface $template
+     * @param TemplateInterface $twig
      * @param LoginBouncer $loginBouncer
      */
     public function __construct(
         ContainerInterface $di,
         PermissionsService $permissions,
-        TemplateInterface $template,
-        LoginBouncer $loginBouncer
+        TemplateInterface $twig,
+        LoginBouncer $loginBouncer,
+        Route $route,
+        RepositoryRepository $repositories,
+        Slim $slim
     ) {
         $this->di = $di;
         $this->permissions = $permissions;
-        $this->template = $template;
+        $this->twig = $twig;
         $this->loginBouncer = $loginBouncer;
+        $this->route = $route;
+        $this->repositories = $repositories;
+        $this->slim = $slim; // only for 404 calls
     }
 
     /**
@@ -73,11 +98,22 @@ class AdminBouncer
 
         $user = $this->di->get('currentUser');
 
-        if ($this->permissions->allowAdmin($user)) {
+        // ASSUMPTION: the repository id will always be named 'repository' in the route
+        // dumb, but we need to look up the repo key here for user permission checks
+
+        $repo = $this->repositories->findOneBy(['id' => $this->route->getParam('repository')]);
+
+        // repo does not exist
+        if (!$repo instanceof Repository) {
+            $this->slim->notFound();
+            throw new Stop;
+        }
+
+        if ($this->permissions->allowRepoAdmin($user, $repo->getKey())) {
             return;
         }
 
-        $rendered = $this->template->render();
+        $rendered = $this->twig->render([]);
         $response->setStatus(403);
         $response->setBody($rendered);
 

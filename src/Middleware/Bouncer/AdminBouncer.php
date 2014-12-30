@@ -5,20 +5,20 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Bouncers;
+namespace QL\Hal\Middleware\Bouncer;
 
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
+use QL\Panthor\TemplateInterface;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use QL\Panthor\TemplateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A bouncer that checks to see if the current user is a super admin
+ * A bouncer that checks to see if the current user is an admin
  */
-class SuperAdminBouncer
+class AdminBouncer
 {
     /**
      * @var ContainerInterface
@@ -31,9 +31,9 @@ class SuperAdminBouncer
     private $permissions;
 
     /**
-     * @var Twig_Template
+     * @var TemplateInterface
      */
-    private $twig;
+    private $template;
 
     /**
      * @var LoginBouncer
@@ -43,18 +43,18 @@ class SuperAdminBouncer
     /**
      * @param ContainerInterface $di
      * @param PermissionsService $permissions
-     * @param TemplateInterface $twig
+     * @param TemplateInterface $template
      * @param LoginBouncer $loginBouncer
      */
     public function __construct(
         ContainerInterface $di,
         PermissionsService $permissions,
-        TemplateInterface $twig,
+        TemplateInterface $template,
         LoginBouncer $loginBouncer
     ) {
         $this->di = $di;
         $this->permissions = $permissions;
-        $this->twig = $twig;
+        $this->template = $template;
         $this->loginBouncer = $loginBouncer;
     }
 
@@ -73,11 +73,11 @@ class SuperAdminBouncer
 
         $user = $this->di->get('currentUser');
 
-        if ($this->permissions->allowSuperAdmin($user)) {
+        if ($this->permissions->allowAdmin($user)) {
             return;
         }
 
-        $rendered = $this->twig->render([]);
+        $rendered = $this->template->render();
         $response->setStatus(403);
         $response->setBody($rendered);
 
