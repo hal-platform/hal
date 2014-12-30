@@ -14,11 +14,11 @@ legend {
 }
 
 .error-list {
-    border: 3px dashed $error-color;
+    background: $error-color;
     margin-left: 0;
     padding: 0 msem(6);
     @include rhythm(0,1,1,1);
-    color: $error-color;
+    color: $white;
 }
 
 select {
