@@ -200,7 +200,8 @@ class BuildStartHandler
     {
         $dupe = $this->buildRepo->findBy(['id' => [$build->getId()]]);
         if ($dupe) {
-            $build->setId('1235');
+            $id = $this->unique->generateBuildId();
+            $build->setId($id);
             $this->dupeCatcher($build);
         }
     }
