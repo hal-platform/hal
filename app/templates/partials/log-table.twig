@@ -19,18 +19,18 @@
                 <td>
                     {% if log.status == 'success' %}
                         <span class="status-block">
-                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg>
+                            <svg class="icon"><use xlink:href="#tick"></use></svg>
                             {{ log.event|formatEvent }}
                         </span>
 
                     {% elseif log.status == 'failure' %}
                         <span class="status-block">
-                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#spam"></use></svg>
+                            <svg class="icon"><use xlink:href="#spam"></use></svg>
                             {{ log.event|formatEvent }}
                         </span>
                     {% else %}
                         <span class="status-block">
-                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#paragraph-justify-2"></use></svg>
+                            <svg class="icon"><use xlink:href="#paragraph-justify-2"></use></svg>
                             {{ log.event|formatEvent }}
                         </span>
                     {% endif %}
@@ -40,7 +40,7 @@
                 <td class="tr">
                     {% if log.data %}
                         <a class="btn btn--tiny" data-expand-btn="{{ log.id }}">
-                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#menu-pull-down"></use></svg>
+                            <svg class="icon"><use xlink:href="#menu-pull-down"></use></svg>
                         </a>
                     {% endif %}
                 </td>

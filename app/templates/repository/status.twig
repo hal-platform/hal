@@ -85,13 +85,13 @@
 
                 {% if deployment.url %}
                     <a class="icon--link" href="{{ deployment.url.asString }}">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#outgoing"></use></svg>
+                        <svg class="icon"><use xlink:href="#outgoing"></use></svg>
                     </a>
                 {% endif %}
 
                 {% if canRollback %}
                     <a class="rollback icon--link" href="{{ urlFor('rollback', {'id': repo.id, 'server': deployment.server.id}) }}" title="Rollback to a successful build">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#revert"></use></svg>
+                        <svg class="icon"><use xlink:href="#revert"></use></svg>
                     </a>
                 {% endif %}
 
@@ -141,7 +141,7 @@
                         <span class="status-before--{{ isCurrent ? 'success' : 'warning' }}">
                             <a href="{{ githubReference(repo.githubUser, repo.githubRepo, active.build.branch) }}">{{ active.build.branch|sliceGitref }}</a>
                         </span>
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
+                        <svg class="icon"><use xlink:href="#fork"></use></svg>
                     {% else %}
                         Unknown
                     {% endif %}
@@ -150,7 +150,7 @@
                     <span class="split__title">Commit:</span>
                     {% if active %}
                         <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
                     {% else %}
                         Unknown
                     {% endif %}

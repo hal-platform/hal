@@ -32,7 +32,7 @@
                         <li>
                             <span class="split__title">{{ build.created|reldate }}</span>
                             <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|sliceGitref }}</a>
-                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
+                            <svg class="icon"><use xlink:href="#fork"></use></svg>
                         </li>
                     </ul>
                 </section>

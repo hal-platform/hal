@@ -28,7 +28,7 @@
                         <td>{{ job.environment.key }}
                         <td>
                             <a href="{{ githubCommit(job.repository.githubUser, job.repository.githubRepo, job.commit) }}">{{ job.branch|sliceGitref }}</a>
-                            <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                            <svg class="icon"><use xlink:href="#github"></use></svg>
                         </td>
                         <td>{{ job.user ? job.user.handle : 'Unknown' }}</td>
                     </tr>

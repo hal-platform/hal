@@ -16,7 +16,7 @@
             <dt class="split--left__title">Github Source</dt>
             <dd class="split--left__value">
                 <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
-                <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                <svg class="icon"><use xlink:href="#github"></use></svg>
             </dd>
         </dl>
 
@@ -45,25 +45,25 @@
     <div class="details-box">
         <dl class="split--left mbn">
             <dt class="split--left__title">
-                <svg class="icon" viewBox="0 0 32 32" title="On build"><use xlink:href="#code"></use></svg>
+                <svg class="icon" title="On build"><use xlink:href="#code"></use></svg>
                 Build Command
             </dt>
             <dd class="split--left__value">{{ repository.buildCmd ?: 'No command entered.' }}</dd>
 
             <dt class="split--left__title">
-                <svg class="icon" viewBox="0 0 32 32" title="On push"><use xlink:href="#swap-2"></use></svg>
+                <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
                 Pre-Push Command
             </dt>
             <dd class="split--left__value">{{ repository.prePushCmd ?: 'No command entered.' }}</dd>
 
             <dt class="split--left__title">
-                <svg class="icon" viewBox="0 0 32 32" title="On push"><use xlink:href="#swap-2"></use></svg>
+                <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
                 Build Transform Command
             </dt>
             <dd class="split--left__value">{{ repository.buildTransformCmd ?: 'No command entered.' }}</dd>
 
             <dt class="split--left__title">
-                <svg class="icon" viewBox="0 0 32 32" title="On push"><use xlink:href="#swap-2"></use></svg>
+                <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
                 Post-Push Command
             </dt>
             <dd class="split--left__value">{{ repository.postPushCmd ?: 'No command entered.' }}</dd>

@@ -19,9 +19,7 @@
             {% for env in envs %}
                 <tr class="env-row-{{ env.key }}">
                     <td>
-                        <svg viewBox="0 0 32 32" class="icon">
-                            <use xlink:href="#menu-2"></use>
-                        </svg>
+                        <svg class="icon"><use xlink:href="#menu-2"></use></svg>
                     </td>
                     <td><input type="text" maxlength="2" required name="env{{ env.id }}" value="{{ env.order }}" class="text-input"></td>
                     <td>{{ env.key }}</td>

@@ -28,11 +28,11 @@
                     <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
                     <td>
                         <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a>
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
+                        <svg class="icon"><use xlink:href="#fork"></use></svg>
                     </td>
                     <td>
                         <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
                     </td>
                     <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)</td>
                     <td>

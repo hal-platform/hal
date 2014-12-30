@@ -13,15 +13,11 @@
         <li class="nav--pagination__prev">
             {% if page > 1 %}
                 <a href="{{ urlFor('push.history', {'id': repo.id, 'page': page-1}) }}">
-                    <svg viewBox="0 0 32 32" class="icon">
-                        <use xlink:href="#caret-left"></use>
-                    </svg>newer
+                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
                 </a>
             {% else %}
                 <span class="disabled">
-                    <svg viewBox="0 0 32 32" class="icon">
-                        <use xlink:href="#caret-left"></use>
-                    </svg>newer
+                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
                 </span>
             {% endif %}
         </li>
@@ -33,15 +29,11 @@
         <li class="nav--pagination__next">
             {% if page < last %}
                 <a href="{{ urlFor('push.history', {'id': repo.id, 'page': page+1}) }}">
-                    older <svg viewBox="0 0 32 32" class="icon mls">
-                        <use xlink:href="#caret-right"></use>
-                    </svg>
+                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
                 </a>
             {% else %}
                 <span class="disabled">
-                    older <svg viewBox="0 0 32 32" class="icon mls">
-                        <use xlink:href="#caret-right"></use>
-                    </svg>
+                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
                 </span>
             {% endif %}
         </li>

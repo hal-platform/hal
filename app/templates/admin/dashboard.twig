@@ -12,22 +12,22 @@
             <ul class="list--bare">
                 <li>
                     <a href="{{ urlFor('groups') }}" class="btn">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Groups
+                        <svg class="icon"><use xlink:href="#tick"></use></svg> Groups
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('repositories') }}" class="btn">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Repositories
+                        <svg class="icon"><use xlink:href="#tick"></use></svg> Repositories
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('servers') }}" class="btn">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Servers
+                        <svg class="icon"><use xlink:href="#tick"></use></svg> Servers
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('environments') }}" class="btn">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Environments
+                        <svg class="icon"><use xlink:href="#tick"></use></svg> Environments
                     </a>
                 </li>
             </ul>
@@ -39,18 +39,18 @@
             <ul class="list--bare">
                 <li>
                     <a href="{{ urlFor('users') }}" class="btn btn--primary">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Users
+                        <svg class="icon"><use xlink:href="#tick"></use></svg> Users
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('logs') }}" class="btn btn--primary">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Audit Logs
+                        <svg class="icon"><use xlink:href="#tick"></use></svg> Audit Logs
                     </a>
                 </li>
                 {% if isUserSuperAdmin(currentUser) %}
                 <li>
                     <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Super Admin Dashboard
+                        <svg class="icon"><use xlink:href="#tick"></use></svg> Super Admin Dashboard
                     </a>
                 </li>
                 {% endif %}

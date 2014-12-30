@@ -40,25 +40,25 @@
       <ul class="nav tabs js-tabs">
           <li class="active">
               <a name="js-tab1">
-                  <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#branch"></use></svg>
+                  <svg class="icon"><use xlink:href="#branch"></use></svg>
                   <span class="tab-text">Branches</span>
               </a>
           </li>
           <li>
               <a name="js-tab2">
-                  <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tag"></use></svg>
+                  <svg class="icon"><use xlink:href="#tag"></use></svg>
                   <span class="tab-text">Tags</span>
               </a>
           </li>
           <li>
               <a name="js-tab3">
-                  <svg class="icon open" viewBox="0 0 32 32"><use xlink:href="#pull"></use></svg>
+                  <svg class="icon open"><use xlink:href="#pull"></use></svg>
                   <span class="tab-text">Open Pull Requests</span>
               </a>
           </li>
           <li>
               <a name="js-tab4">
-                  <svg class="icon closed" viewBox="0 0 32 32"><use xlink:href="#pull"></use></svg>
+                  <svg class="icon closed"><use xlink:href="#pull"></use></svg>
                   <span class="tab-text">Closed Pull Requests</span>
               </a>
           </li>
@@ -71,11 +71,11 @@
             <li>
                 <input id="{{ branch.object.sha }}-{{ branch.name }}" data-search="{{ branch.name }}" type="radio" name="reference" value="{{ branch.name }}">
                 <label for="{{ branch.object.sha }}-{{ branch.name }}" title="{{ branch.name }}">
-                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#branch"></use></svg>
+                    <svg class="icon"><use xlink:href="#branch"></use></svg>
                     {{ branch.name }} <br />
 
                     <a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
-                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                    <svg class="icon"><use xlink:href="#github"></use></svg>
                 </label>
             </li>
         {% else %}
@@ -90,11 +90,11 @@
             <li>
                 <input id="{{ tag.object.sha }}-{{ tag.name }}" data-search="{{ tag.name }}" type="radio" name="reference" value="tag/{{ tag.name }}">
                 <label for="{{ tag.object.sha }}-{{ tag.name }}">
-                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tag"></use></svg>
+                    <svg class="icon"><use xlink:href="#tag"></use></svg>
                     {{ tag.name }} <br />
 
                     <a href="{{ githubRelease(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
-                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                    <svg class="icon"><use xlink:href="#github"></use></svg>
                 </label>
             </li>
         {% else %}
@@ -109,12 +109,12 @@
                 <li class="pr-selection">
                     <input id="pr{{ pull.number }}" data-search="{{ pull.number }}" data-status="{{ pull.state }}" type="radio" name="reference" value="pull/{{ pull.number }}">
                     <label for="pr{{ pull.number }}" title="{{ pull.title }}">
-                        <svg class="icon {{ pull.state }}" viewBox="0 0 32 32"><use xlink:href="#pull"></use></svg>
+                        <svg class="icon {{ pull.state }}"><use xlink:href="#pull"></use></svg>
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
                         <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
                         <br />
 
                         <span class="pr-smtxt">From <span class="pr-label">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />to <span class="pr-label">{{ pull.base.ref }}</span></span>
@@ -132,12 +132,12 @@
                 <li class="pr-selection">
                     <input id="pr{{ pull.number }}" data-search="{{ pull.number }}" data-status="{{ pull.state }}" type="radio" name="reference" value="pull/{{ pull.number }}">
                     <label for="pr{{ pull.number }}" title="{{ pull.title }}">
-                        <svg class="icon {{ pull.state }}" viewBox="0 0 32 32"><use xlink:href="#pull"></use></svg>
+                        <svg class="icon {{ pull.state }}"><use xlink:href="#pull"></use></svg>
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
                         <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
-                        <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
                         <br />
 
                         <span class="pr-smtxt">From <span class="pr-label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />to <span class="pr-label" title="{{ pull.base.ref }}">{{ pull.base.ref }}</span></span>

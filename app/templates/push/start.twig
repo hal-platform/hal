@@ -41,20 +41,14 @@
                         <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
                     </span>
                 {% endif %}
-                <svg viewBox="0 0 32 32" class="icon">
-                    <use xlink:href="#fork"></use>
-                </svg>
+                <svg class="icon"><use xlink:href="#fork"></use></svg>
             </dd>
             <dt class="split--left__title">
                 Commit
             </dt>
             <dd class="split--left__value">
                 <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
-                <span class="icon">
-                  <svg viewBox="0 0 32 32">
-                      <use xlink:href="#github"></use>
-                  </svg>
-                </span>
+                  <svg class="icon"><use xlink:href="#github"></use></svg>
             </dd>
             <dt class="split--left__title">
                 Initiator
@@ -118,12 +112,12 @@
                             <td>
                                 <span class="status-before--{{ isCurrent ? 'success' : 'other' }}">
                                     <a href="{{ githubReference(active.build.repository.githubUser, active.build.repository.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
-                                    <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#fork"></use></svg>
+                                    <svg class="icon"><use xlink:href="#fork"></use></svg>
                                 </span>
                             </td>
                             <td>
                                 <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
-                                <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#github"></use></svg>
+                                <svg class="icon"><use xlink:href="#github"></use></svg>
                             </td>
                             <td>
                                 {% if inProgress %}
