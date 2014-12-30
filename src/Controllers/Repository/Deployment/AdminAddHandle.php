@@ -316,9 +316,6 @@ HTML;
             if ($this->deploymentRepo->findOneBy(['server' => $server, 'path' => $path])) {
                 $this->addInvalidDeployment($hash, 'duplicate');
 
-            } elseif ($this->deploymentRepo->findOneBy(['server' => $server, 'repository' => $repository])) {
-                $this->addInvalidDeployment($hash, 'duplicate');
-
             } else {
                 $uniqueDeployments[] = [$server, $path, $url];
             }
