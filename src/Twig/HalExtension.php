@@ -284,7 +284,6 @@ class HalExtension extends Twig_Extension
             'servers' => false,
             'environments' => false,
             'users' => false,
-            'logs' => false,
 
             'admin' => true,
             'help' => true
