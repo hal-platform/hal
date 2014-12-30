@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
+use QL\Hal\Core\Entity\Type\PushStatusEnumType;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
@@ -57,7 +58,7 @@ class LastPushController
 
         $status = $request->get('status');
 
-        if ($status && !in_array($status, ['Waiting', 'Pushing', 'Error', 'Success'])) {
+        if ($status && !in_array($status, PushStatusEnumType::values())) {
             throw HttpProblemException::build(400, 'invalid-status');
         }
 

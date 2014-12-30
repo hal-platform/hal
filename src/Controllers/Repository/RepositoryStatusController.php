@@ -89,9 +89,11 @@ class RepositoryStatusController
         foreach ($environments as &$deployments) {
             // i am dead inside
             foreach ($deployments as &$deployment) {
-                $deployment = array_merge([
-                    'deploy' => $deployment
-                ], $this->getRecentPushes($deployment));
+                $deployment = [
+                    'deploy' => $deployment,
+                    'latest' => $this->deploymentRepo->getLastPush($deployment),
+                    'success' => $this->deploymentRepo->getLastSuccessfulPush($deployment)
+                ];
             }
         }
 
@@ -102,36 +104,6 @@ class RepositoryStatusController
         ]);
 
         $response->setBody($rendered);
-    }
-
-    /**
-     * Get the latest and most recent successful push for a deployment
-     *
-     * @param Deployment $deployment
-     *
-     * @return array
-     */
-    private function getRecentPushes(Deployment $deployment)
-    {
-        // get last attempted push
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.created DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(1)
-            ->setParameter('deploy', $deployment);
-        $latest = $query->getOneOrNullResult();
-
-        // get last successful push
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.created DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(1)
-            ->setParameter('deploy', $deployment)
-            ->setParameter('status', 'Success');
-        $success = $query->getOneOrNullResult();
-
-        return [
-            'latest' => $latest,
-            'success' => $success
-        ];
     }
 
     /**
