@@ -61,6 +61,15 @@
     margin-bottom: 0;
 }
 
+.card__header p {
+  color: $white;
+  font-size: $small-text;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .card__header .icon--link {
     float: right;
 }
