@@ -47,11 +47,13 @@
                         <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Audit Logs
                     </a>
                 </li>
+                {% if isUserSuperAdmin(currentUser) %}
                 <li>
                     <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
                         <svg class="icon" viewBox="0 0 32 32"><use xlink:href="#tick"></use></svg> Super Admin Dashboard
                     </a>
                 </li>
+                {% endif %}
             </ul>
         </section>
     </div>
