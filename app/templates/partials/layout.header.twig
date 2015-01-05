@@ -37,8 +37,6 @@
                         {{ nav_macros.optionalNavlink('Environments', 'environments', 'leaf') }}
                         {{ nav_macros.optionalNavlink('Users', 'users', 'users') }}
 
-                        {{ nav_macros.optionalNavlink('Logs', 'logs', 'paper-roll') }}
-
                         {% if isUserAdmin(currentUser) %}
                             {{ nav_macros.optionalNavlink('Admin', 'admin', 'watch') }}
                         {% endif %}
