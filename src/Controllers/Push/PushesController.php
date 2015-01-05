@@ -89,10 +89,11 @@ class PushesController
         $last = ceil($total / self::MAX_PER_PAGE);
 
         $rendered = $this->template->render([
-            'repo' => $repo,
-            'pushes' => $pushes,
             'page' => $page,
-            'last' => $last
+            'last' => $last,
+
+            'repo' => $repo,
+            'pushes' => $pushes
         ]);
 
         $response->setBody($rendered);

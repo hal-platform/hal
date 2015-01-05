@@ -7,8 +7,6 @@
 
 namespace QL\Hal\Controllers\Build;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Panthor\TemplateInterface;
@@ -23,11 +21,6 @@ class BuildsController
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type EntityManager
-     */
-    private $em;
 
     /**
      * @type RepositoryRepository
@@ -47,12 +40,10 @@ class BuildsController
      */
     public function __construct(
         TemplateInterface $template,
-        EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo
     ) {
         $this->template = $template;
-        $this->em = $em;
         $this->buildRepo = $buildRepo;
         $this->repoRepo = $repoRepo;
     }
@@ -65,38 +56,45 @@ class BuildsController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $repo = $this->repoRepo->find($params['id']);
-
-        if (!$repo) {
+        if (!$repo = $this->repoRepo->find($params['id'])) {
             return call_user_func($notFound);
         }
 
         $page = (isset($params['page'])) ? $params['page'] : 1;
 
+        // 404, invalid page
         if ($page < 1) {
-            return call_user_func($notFound);
+            return $notFound();
         }
 
-        $dql = 'SELECT b FROM QL\Hal\Core\Entity\Build b WHERE b.repository = :repo ORDER BY b.created DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(self::MAX_PER_PAGE)
-            ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
-            ->setParameter('repo', $repo);
-        $builds = $query->getResult();
+        $builds = $this->buildRepo->getForRepository($repo, self::MAX_PER_PAGE, ($page-1));
 
+        // 404, no builds
         if (count($builds) < 1) {
-            return call_user_func($notFound);
+            return $notFound();
         }
 
-        $paginator = new Paginator($query);
-        $total = count($paginator);
+        // Get current page count
+        // Must manually calculate this, as count() will give MAX RESULTS.
+        $thisPageCount = 0;
+        foreach ($builds as $build) {
+            $thisPageCount++;
+        }
+
+        // 404, no results on this page
+        if ($thisPageCount < 1) {
+            return $notFound();
+        }
+
+        $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);
 
         $rendered = $this->template->render([
-            'repo' => $repo,
-            'builds' => $builds,
             'page' => $page,
-            'last' => $last
+            'last' => $last,
+
+            'repo' => $repo,
+            'builds' => $builds
         ]);
 
         $response->setBody($rendered);

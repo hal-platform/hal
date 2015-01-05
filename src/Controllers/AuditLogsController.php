@@ -7,8 +7,7 @@
 
 namespace QL\Hal\Controllers;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use QL\Hal\Core\Entity\Repository\AuditLogRepository;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -23,18 +22,18 @@ class AuditLogsController
     private $template;
 
     /**
-     * @type EntityManager
+     * @type AuditLogRepository
      */
-    private $em;
+    private $auditRepo;
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManager $em
+     * @param AuditLogRepository $auditRepository
      */
-    public function __construct(TemplateInterface $template, EntityManager $em)
+    public function __construct(TemplateInterface $template, AuditLogRepository $auditRepository)
     {
         $this->template = $template;
-        $this->em = $em;
+        $this->auditRepo = $auditRepository;
     }
 
     /**
@@ -47,23 +46,32 @@ class AuditLogsController
     {
         $page = (isset($params['page'])) ? $params['page'] : 1;
 
+        // 404, invalid page
         if ($page < 1) {
-            return call_user_func($notFound);
+            return $notFound();
         }
 
-        $dql = 'SELECT l FROM QL\Hal\Core\Entity\AuditLog l ORDER BY l.recorded DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(self::MAX_PER_PAGE)
-            ->setFirstResult(self::MAX_PER_PAGE * ($page-1));
-        $logs = $query->getResult();
+        $logs = $this->auditRepo->getPagedResults(self::MAX_PER_PAGE, ($page-1));
 
-        $paginator = new Paginator($query);
-        $total = count($paginator);
+        // 404, no logs
+        if (count($logs) < 1) {
+            return $notFound();
+        }
+
+        // Get current page count
+        // Must manually calculate this, as count() will give MAX RESULTS.
+        $thisPageCount = 0;
+        foreach ($logs as $log) {
+            $thisPageCount++;
+        }
+
+        $total = count($logs);
         $last = ceil($total / self::MAX_PER_PAGE);
 
         $rendered = $this->template->render([
             'page' => $page,
             'last' => $last,
+
             'logs' => $logs
         ]);
 

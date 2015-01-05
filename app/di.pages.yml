@@ -262,7 +262,6 @@ services:
         class: 'QL\Hal\Controllers\Build\BuildsController'
         arguments:
             - @builds.twig
-            - @doctrine.em
             - @repository.repo
             - @build.repo
     builds.twig:
@@ -625,7 +624,7 @@ services:
 
     audit.logs.page:
         class: 'QL\Hal\Controllers\AuditLogsController'
-        arguments: [@audit.logs.twig, @doctrine.em]
+        arguments: [@audit.logs.twig, @audit.log.repo]
     audit.logs.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['audit.logs.twig']]]
