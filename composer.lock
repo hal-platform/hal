@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8e225ef3953cf015de73bd773f215fd3",
+    "hash": "cab09aad7055880adc2690a1c85e516d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -198,7 +198,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -274,7 +274,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -402,7 +402,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -456,7 +456,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -830,30 +830,32 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.4.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "f4c2aa76f375033b070850542618925735f85b85"
+                "reference": "d11d8169b7b394b69866dce0cc0170f017d42148"
             },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.4.0-ea6e77.zip",
-                "reference": "f4c2aa76f375033b070850542618925735f85b85",
-                "shasum": "34e643a89b4543b9e008ce27f471f7e256bdf70b"
+            "archive": {
+                "exclude": [
+                    ".gitignore",
+                    "/bin",
+                    "/phpunit.xml.dist",
+                    "/tests"
+                ]
             },
             "require": {
                 "doctrine/orm": "~2.4",
                 "php-64bit": ">=5.4.0",
                 "ql/mcp-core": "*",
-                "ql/mcp-corp-account": "*@RC",
-                "symfony/yaml": "*"
+                "ql/mcp-corp-account": "0.2.1"
             },
             "require-dev": {
                 "phpunit/phpunit": "*",
-                "squizlabs/php_codesniffer": "*",
+                "robmorgan/phinx": "~0.4",
                 "symfony/config": "*",
-                "symfony/dependency-injection": "*"
+                "symfony/dependency-injection": "*",
+                "symfony/yaml": "*"
             },
             "type": "library",
             "autoload": {
@@ -871,7 +873,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2014-12-02 20:10:14"
+            "time": "2015-01-05 19:46:50"
         },
         {
             "name": "ql/http-problem",
@@ -972,13 +974,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-core.git",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf"
+                "reference": "1.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-core-1.0.1-578aad.zip",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf",
-                "shasum": "4ab925396c0ef4d2adbdfc58716fb6ef536b26a8"
+                "url": "http://composer//dist/ql-mcp-core-1.0.1-d1b76f.zip",
+                "reference": "1.0.1",
+                "shasum": "33c9dd1e298f45d64a2f774c7501c203276d9152"
             },
             "archive": {
                 "exclude": [
@@ -1030,7 +1032,7 @@
         },
         {
             "name": "ql/mcp-corp-account",
-            "version": "0.2.1-RC1",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-corp-account.git",
@@ -1038,9 +1040,9 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-corp-account-0.2.1-RC1-58b4ab.zip",
+                "url": "http://composer/dist/ql-mcp-corp-account-0.2.1-58b4ab.zip",
                 "reference": "7630f05fd71caf515800e9d0a324c75467167576",
-                "shasum": "a07b7383736ae86774d9cb8d102e6a8e35431016"
+                "shasum": "b31e8626bc78329f3a583856fe5adcbaf854ef2e"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -1142,7 +1144,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-logger-1.3.1-60bb9a.zip",
+                "url": "http://composer//dist/ql-mcp-logger-1.3.1-60bb9a.zip",
                 "reference": "ea0e2a331bd92ce0f4f4e3ea4e9eccf861022946",
                 "shasum": "cafd9bace02edd62b04d362189e09359af81adef"
             },
@@ -2761,7 +2763,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/mcp-corp-account": 5
+        "ql/hal-core": 20
     },
     "prefer-stable": false,
     "platform": {
