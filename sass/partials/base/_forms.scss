@@ -16,8 +16,8 @@ legend {
 .error-list {
     background: $error-color;
     margin-left: 0;
-    padding: 0 msem(6);
-    @include rhythm(0,1,1,1);
+    padding: 0 msem(4);
+    @include rhythm(0, .5, .5, .5);
     color: $white;
 }
 
