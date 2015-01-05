@@ -128,8 +128,8 @@ define(['jquery', 'modules/queue/job-updater'], function($, jobUpdater) {
             // - _embedded.jobs.[]._links.user.title
             // - _embedded.jobs.[]._embedded.build.id
             // - _embedded.jobs.[]._embedded.build._links.environment.title
-            // - _embedded.jobs.[]._embedded.build._embedded.repository.title
-            // - _embedded.jobs.[]._embedded.build._embedded.repository.url
+            // - _embedded.jobs.[]._embedded.repository.title
+            // - _embedded.jobs.[]._embedded.repository.url
             // - _embedded.jobs.[]._embedded.deployment._links.server.title
 
             $.getJSON(endpoint, function(data) {

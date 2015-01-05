@@ -13,7 +13,7 @@
                 {% if job is build %}
                     <tr id="build-{{ job.id }}">
                         <td><a href="{{ urlFor('build', {build: job.id}) }}">Build</a></td>
-                        <td><a href="{{ urlFor('repository.status', {id: job.repository.id}) }}">{{ job.repository.key }}</a></td>
+                        <td><a href="{{ urlFor('repository.status', {id: job.repository.id}) }}">{{ job.repository.description }}</a></td>
                         <td>
                             {% if job.status == 'Success' %}
                                 <span class="status-before--success">{{ job.status }}</span>
@@ -35,7 +35,7 @@
                 {% else %}
                     <tr id="push-{{ job.id }}">
                         <td><a href="{{ urlFor('push', {push: job.id}) }}">Push</a></td>
-                        <td><a href="{{ urlFor('repository.status', {id: job.build.repository.id}) }}">{{ job.build.repository.description }}</a></td>
+                        <td><a href="{{ urlFor('repository.status', {id: job.repository.id}) }}">{{ job.repository.description }}</a></td>
                         <td>
                             {% if job.status == 'Success' %}
                                 <span class="status-before--success">{{ job.status }}</span>

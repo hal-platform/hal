@@ -168,6 +168,7 @@ class PushStartHandler
             $push->setUser($user);
             $push->setBuild($build);
             $push->setDeployment($deployment);
+            $push->setRepository($repo);
 
             $pushes[] = $push;
         }

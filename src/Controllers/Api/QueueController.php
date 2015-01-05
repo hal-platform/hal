@@ -125,14 +125,9 @@ class QueueController
     {
         return array_map(function ($item) {
             if ($item instanceof Push) {
-                $normalized = $this->pushNormalizer->resource($item, ['deployment']);
-
-                // i just died a little bit inside
-                unset($normalized['_links']['build']);
-                $normalized['_embedded']['build'] = $this->buildNormalizer->resource($item->getBuild(), ['repository']);
-
-                return $normalized;
+                return $this->pushNormalizer->resource($item, ['build', 'deployment', 'repository']);
             }
+
             if ($item instanceof Build) {
                 return $this->buildNormalizer->resource($item, ['repository']);
             }

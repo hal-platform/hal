@@ -68,8 +68,8 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 environmentName: push._embedded.build._links.environment.title,
                 serverName: push._embedded.deployment._links.server.title,
 
-                repoName: push._embedded.build._embedded.repository.title,
-                repoStatusUrl: push._embedded.build._embedded.repository.url + '/status',
+                repoName: push._embedded.repository.title,
+                repoStatusUrl: push._embedded.repository.url + '/status',
 
                 initiator: initiator
             };
