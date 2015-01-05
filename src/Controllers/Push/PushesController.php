@@ -7,8 +7,6 @@
 
 namespace QL\Hal\Controllers\Push;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Panthor\TemplateInterface;
@@ -25,11 +23,6 @@ class PushesController
     private $template;
 
     /**
-     * @type EntityManager
-     */
-    private $em;
-
-    /**
      * @type RepositoryRepository
      */
     private $repoRepo;
@@ -41,20 +34,17 @@ class PushesController
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param PushRepository $pushRepo
      */
     public function __construct(
         TemplateInterface $template,
-        EntityManager $em,
         RepositoryRepository $repoRepo,
         PushRepository $pushRepo
     ) {
         $this->template = $template;
-        $this->em = $em;
-        $this->pushRepo = $pushRepo;
         $this->repoRepo = $repoRepo;
+        $this->pushRepo = $pushRepo;
     }
 
     /**
@@ -65,33 +55,37 @@ class PushesController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $repo = $this->repoRepo->findOneBy(['id' => $params['id']]);
-
-        if (!$repo) {
+        if (!$repo = $this->repoRepo->find($params['id'])) {
             return call_user_func($notFound);
         }
 
         $page = (isset($params['page'])) ? $params['page'] : 1;
 
+        // 404, invalid page
         if ($page < 1) {
-            call_user_func($notFound);
-            return;
+            return $notFound();
         }
 
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p JOIN p.deployment d WHERE d.repository = :repo ORDER BY p.created DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(self::MAX_PER_PAGE)
-            ->setFirstResult(self::MAX_PER_PAGE * ($page-1))
-            ->setParameter('repo', $repo);
-        $pushes = $query->getResult();
+        $pushes = $this->pushRepo->getForRepository($repo, self::MAX_PER_PAGE, ($page-1));
 
+        // 404, no pushes
         if (count($pushes) < 1) {
-            call_user_func($notFound);
-            return;
+            return $notFound();
         }
 
-        $paginator = new Paginator($query);
-        $total = count($paginator);
+        // Get current page count
+        // Must manually calculate this, as count() will give MAX RESULTS.
+        $thisPageCount = 0;
+        foreach ($pushes as $push) {
+            $thisPageCount++;
+        }
+
+        // 404, no results on this page
+        if ($thisPageCount < 1) {
+            return $notFound();
+        }
+
+        $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
 
         $rendered = $this->template->render([

@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\TemplateInterface;
@@ -49,24 +50,32 @@ class RepositoryStatusController
     private $deploymentRepo;
 
     /**
+     * @type PushRepository
+     */
+    private $pushRepo;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
+     * @param PushRepository $pushRepo
      */
     public function __construct(
         TemplateInterface $template,
         EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
-        DeploymentRepository $deploymentRepo
+        DeploymentRepository $deploymentRepo,
+        PushRepository $pushRepo
     ) {
         $this->template = $template;
         $this->em = $em;
         $this->repoRepo = $repoRepo;
         $this->buildRepo = $buildRepo;
         $this->deploymentRepo = $deploymentRepo;
+        $this->pushRepo = $pushRepo;
     }
 
     /**
@@ -87,12 +96,11 @@ class RepositoryStatusController
         $environments = $this->environmentalizeDeployments($deployments);
 
         foreach ($environments as &$deployments) {
-            // i am dead inside
             foreach ($deployments as &$deployment) {
                 $deployment = [
                     'deploy' => $deployment,
-                    'latest' => $this->deploymentRepo->getLastPush($deployment),
-                    'success' => $this->deploymentRepo->getLastSuccessfulPush($deployment)
+                    'latest' => $this->pushRepo->getMostRecentByDeployment($deployment),
+                    'success' => $this->pushRepo->getMostRecentSuccessByDeployment($deployment)
                 ];
             }
         }

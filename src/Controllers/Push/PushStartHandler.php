@@ -140,7 +140,7 @@ class PushStartHandler
         $pushes = [];
 
         foreach ($deploymentIds as $deploymentId) {
-            $deployment = $this->deployRepo->findOneBy(['id' => $deploymentId]);
+            $deployment = $this->deployRepo->find($deploymentId);
 
             if (!$deployment) {
                 return $this->bailout(self::ERR_BAD_DEP, $build->getId());

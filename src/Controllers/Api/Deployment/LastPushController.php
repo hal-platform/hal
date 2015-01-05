@@ -11,6 +11,7 @@ use QL\Hal\Core\Entity\Type\PushStatusEnumType;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -31,15 +32,23 @@ class LastPushController
     private $deploymentRepo;
 
     /**
+     * @type PushRepository
+     */
+    private $pushRepo;
+
+    /**
      * @param ResponseFormatter $formatter
      * @param DeploymentRepository $deploymentRepo
+     * @param PushRepository $pushRepo
      */
     public function __construct(
         ResponseFormatter $formatter,
-        DeploymentRepository $deploymentRepo
+        DeploymentRepository $deploymentRepo,
+        PushRepository $pushRepo
     ) {
         $this->formatter = $formatter;
         $this->deploymentRepo = $deploymentRepo;
+        $this->pushRepo = $pushRepo;
     }
 
     /**
@@ -63,9 +72,9 @@ class LastPushController
         }
 
         if ($status === 'Success') {
-            $push = $this->deploymentRepo->getLastSuccessfulPush($deployment);
+            $push = $this->pushRepo->getMostRecentSuccessByDeployment($deployment);
         } else {
-            $push = $this->deploymentRepo->getLastPush($deployment);
+            $push = $this->pushRepo->getMostRecentByDeployment($deployment);
         }
 
         if (!$push) {

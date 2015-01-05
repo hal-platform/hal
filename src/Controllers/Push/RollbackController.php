@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Push;
 
-use Doctrine\ORM\EntityManager;
+use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Panthor\TemplateInterface;
@@ -32,26 +32,26 @@ class RollbackController
     private $serverRepo;
 
     /**
-     * @type EntityManager
+     * @type PushRepository
      */
-    private $em;
+    private $pushRepo;
 
     /**
      *  @param TemplateInterface $template
-     *  @param RepositoryRepository $repoRepo
+     *  @param RepositoryRepository $repoRepository
      *  @param ServerRepository $serverRepository
-     *  @param EntityManager $em
+     *  @param PushRepository $pushRepository
      */
     public function __construct(
         TemplateInterface $template,
-        RepositoryRepository $repoRepo,
+        RepositoryRepository $repoRepository,
         ServerRepository $serverRepository,
-        EntityManager $em
+        PushRepository $pushRepository
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
+        $this->repoRepo = $repoRepository;
         $this->serverRepo = $serverRepository;
-        $this->em = $em;
+        $this->pushRepo = $pushRepository;
     }
 
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
@@ -60,18 +60,10 @@ class RollbackController
         $server = $this->serverRepo->find($params['server']);
 
         if (!$repo || !$server) {
-            return call_user_func($notFound);
+            return $notFound();
         }
 
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p
-            JOIN p.deployment d JOIN p.build b WHERE d.server = :server AND d.repository = :repo AND p.status = :status AND b.status = :buildstatus ORDER BY p.end DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(25)
-            ->setParameter('repo', $repo)
-            ->setParameter('server', $server)
-            ->setParameter('status', 'Success')
-            ->setParameter('buildstatus', 'Success');
-        $pushes = $query->getResult();
+        $pushes = $this->pushRepo->getAvailableRollbacks($repo, $server);
 
         $rendered = $this->template->render([
             'repo' => $repo,

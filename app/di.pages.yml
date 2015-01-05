@@ -138,6 +138,7 @@ services:
             - @repository.repo
             - @build.repo
             - @deployment.repo
+            - @push.repo
     repository.status.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/status.twig']]]
@@ -276,10 +277,10 @@ services:
         class: 'QL\Hal\Controllers\Push\PushStartController'
         arguments:
             - @push.start.twig
-            - @doctrine.em
             - @build.repo
             - @deployment.repo
             - @server.repo
+            - @push.repo
     push.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/start.twig']]]
@@ -304,7 +305,7 @@ services:
             - @rollback.twig
             - @repository.repo
             - @server.repo
-            - @doctrine.em
+            - @push.repo
     rollback.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/rollback.twig']]]
@@ -320,7 +321,6 @@ services:
         class: 'QL\Hal\Controllers\Push\PushesController'
         arguments:
             - @pushes.twig
-            - @doctrine.em
             - @repository.repo
             - @push.repo
     pushes.twig:

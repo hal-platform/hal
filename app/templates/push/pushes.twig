@@ -3,7 +3,7 @@
 {% set page_title = repo.description ~ " Push History" %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repo.id}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
     <h2>Push History for <strong>{{ repo.description }}</strong></h2>
 

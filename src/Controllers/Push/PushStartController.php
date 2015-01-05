@@ -7,12 +7,12 @@
 
 namespace QL\Hal\Controllers\Push;
 
-use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -24,11 +24,6 @@ class PushStartController
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type EntityManager
-     */
-    private $em;
 
     /**
      * @type BuildRepository
@@ -46,24 +41,29 @@ class PushStartController
     private $serverRepo;
 
     /**
+     * @type PushRepository
+     */
+    private $pushRepo;
+
+    /**
      * @param TemplateInterface $template
-     * @param EntityManager $em
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
      * @param ServerRepository $serverRepo
+     * @param PushRepository $pushRepo
      */
     public function __construct(
         TemplateInterface $template,
-        EntityManager $em,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
-        ServerRepository $serverRepo
+        ServerRepository $serverRepo,
+        PushRepository $pushRepo
     ) {
         $this->template = $template;
-        $this->em = $em;
         $this->buildRepo = $buildRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->serverRepo = $serverRepo;
+        $this->pushRepo = $pushRepo;
     }
 
     /**
@@ -85,11 +85,11 @@ class PushStartController
         $statuses = [];
         foreach ($deployments as $deployment) {
 
-            $latest = $this->getLastPush($deployment);
+            $latest = $this->pushRepo->getMostRecentByDeployment($deployment);
             if ($latest && $latest->getStatus() === 'Success') {
                 $success = $latest;
             } else {
-                $success = $this->getLastSuccessfulPush($deployment);
+                $success = $this->pushRepo->getMostRecentSuccessByDeployment($deployment);
             }
 
             $statuses[] = [
@@ -127,45 +127,5 @@ class PushStartController
         ];
 
         return $this->deploymentRepo->findBy($criteria, ['server' => 'ASC']);
-    }
-
-    /**
-     * Get the last push for a given deployment.
-     *
-     * @todo Move to repository
-     *
-     * @param Deployment $deployment
-     *
-     * @return Push|null
-     */
-    private function getLastPush(Deployment $deployment)
-    {
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy ORDER BY p.created DESC';
-        $query = $this->em->createQuery($dql)
-            ->setMaxResults(1)
-            ->setParameter('deploy', $deployment);
-
-        return $query->getOneOrNullResult();
-    }
-
-    /**
-     * Get the last successful push for a given deployment.
-     *
-     * @todo Move to repository
-     *
-     * @param Deployment $deployment
-     *
-     * @return Push|null
-     */
-    private function getLastSuccessfulPush(Deployment $deployment)
-    {
-        // get last successful push
-        $dql = 'SELECT p FROM QL\Hal\Core\Entity\Push p WHERE p.deployment = :deploy AND p.status = :status ORDER BY p.created DESC';
-        $query = $this->em->createQuery($dql)
-                          ->setMaxResults(1)
-                          ->setParameter('deploy', $deployment)
-                          ->setParameter('status', 'Success');
-
-        return $query->getOneOrNullResult();
     }
 }
