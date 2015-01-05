@@ -49,7 +49,7 @@ class PushController
      */
     public function __invoke(Request $request, Response $response, array $params = [])
     {
-        $push = $this->pushRepo->findOneBy(['id' => $params['id']]);
+        $push = $this->pushRepo->find($params['id']);
 
         if (!$push instanceof Push) {
             throw HttpProblemException::build(404, 'invalid-push');

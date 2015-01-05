@@ -366,6 +366,7 @@ services:
             - @normalizer.user
             - @normalizer.build
             - @normalizer.deployment
+            - @normalizer.repository
 
     normalizer.repository:
         class: 'QL\Hal\Api\Normalizer\RepositoryNormalizer'

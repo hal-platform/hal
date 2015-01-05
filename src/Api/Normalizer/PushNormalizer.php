@@ -38,6 +38,11 @@ class PushNormalizer
     private $deployments;
 
     /**
+     * @var RepositoryNormalizer
+     */
+    private $repositories;
+
+    /**
      * @var array
      */
     private $embed;
@@ -47,17 +52,20 @@ class PushNormalizer
      * @param UserNormalizer $users
      * @param BuildNormalizer $builds
      * @param DeploymentNormalizer $deployments
+     * @param RepositoryNormalizer $repositories
      */
     public function __construct(
         UrlHelper $urls,
         UserNormalizer $users,
         BuildNormalizer $builds,
-        DeploymentNormalizer $deployments
+        DeploymentNormalizer $deployments,
+        RepositoryNormalizer $repositories
     ) {
         $this->urls = $urls;
         $this->users = $users;
         $this->builds = $builds;
         $this->deployments = $deployments;
+        $this->repositories = $repositories;
 
         $this->embed = [];
     }
@@ -90,7 +98,8 @@ class PushNormalizer
         $properties = [
             'user' => $push->getUser(),
             'build' => $push->getBuild(),
-            'deployment' => $push->getDeployment()
+            'deployment' => $push->getDeployment(),
+            'repository' => $push->getRepository()
         ];
 
         return $this->buildResource(
@@ -108,6 +117,7 @@ class PushNormalizer
                 'user' => $this->users->link($push->getUser()),
                 'build' => $this->builds->link($push->getBuild()),
                 'deployment' => $this->deployments->link($push->getDeployment()),
+                'repository' => $this->repositories->link($push->getRepository()),
                 'logs' => $this->buildLink(['api.push.logs', ['id' => $push->getId()]])
             ]
         );
