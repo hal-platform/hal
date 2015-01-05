@@ -455,12 +455,6 @@ parameters:
             stack: ['login.bouncer', 'api.github.user.repositories']
             conditions: {username: '[A-Za-z0-9_-]+'}
 
-        api.github.search:
-            method: 'GET'
-            route: '/api/github/repositories/:repository'
-            stack: ['login.bouncer', 'api.github.search']
-            conditions: {repository: '[\d]+'}
-
         ################################################################################################################
         # PUBLIC API ROUTES
         ################################################################################################################

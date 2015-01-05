@@ -22,6 +22,18 @@ class BuildStartValidator
     const ERR_UNKNOWN_REF = 'You must select a valid git reference.';
 
     /**
+     * Valid entries:
+     *
+     * - pr#500
+     * - pr 500
+     * - pull 500
+     * - pull #500
+     * - pull request 500
+     * - pull request #500
+     */
+    const REGEX_PULL = '/^(?:pull|pr|pull request)(?: )?(?:#)?([\d]+)$/i';
+
+    /**
      * @type RepositoryRepository
      */
     private $repoRepo;
@@ -79,14 +91,28 @@ class BuildStartValidator
      * @param string $repositoryId
      * @param string $environmentId
      * @param string $gitReference
+     * @param string $gitSearch
      *
      * @return Build|null
      */
-    public function isValid($repositoryId, $environmentId, $gitReference)
+    public function isValid($repositoryId, $environmentId, $gitReference, $gitSearch)
     {
         $this->errors = [];
 
-        if (!$this->sanityCheck($repositoryId, $environmentId, $gitReference)) {
+        // gitref,reference
+            // pull/*       - pull request
+            // tag/*        - tag
+            // *            - branch
+        // search
+            // [a-f]{40}    - commit
+            // pr \d        - pull request, See validator for full pull request regex
+
+        // Git reference cascades through these options:
+        // 1. "reference" - a radio option selected by user
+        // 2. "search" - a search query provided by user
+        $reference = $this->parseSubmittedRef($gitReference, $gitSearch);
+
+        if (!$this->sanityCheck($repositoryId, $environmentId, $reference)) {
             return null;
         }
 
@@ -97,7 +123,7 @@ class BuildStartValidator
         }
 
         // no env
-        if (!$repo = $this->envRepo->findOneBy(['id' => $environmentId])) {
+        if (!$env = $this->envRepo->findOneBy(['id' => $environmentId])) {
             $this->errors[] = self::ERR_NO_ENV;
             return null;
         }
@@ -108,12 +134,15 @@ class BuildStartValidator
             return null;
         }
 
-        if (!$ref = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $gitReference)) {
+        if (!$ref = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
             $this->errors[] = self::ERR_UNKNOWN_REF;
             return null;
         }
 
         list($reference, $commit) = $ref;
+        if ($reference === 'commit') {
+            $reference = $commit;
+        }
 
         $build = new Build;
 
@@ -135,6 +164,32 @@ class BuildStartValidator
     public function errors()
     {
         return $this->errors;
+    }
+
+    /**
+     * @param string $selectedOption
+     * @param string $search
+     *
+     * @return string
+     */
+    private function parseSubmittedRef($selectedOption, $search)
+    {
+        // if user selected a radio, use it
+        if ($selectedOption) {
+            return $selectedOption;
+        }
+
+        // search query is commit sha
+        if (preg_match(GithubService::REGEX_COMMIT, $search) === 1) {
+            return $search;
+        }
+
+        // search query is pull request
+        if (preg_match(self::REGEX_PULL, $search, $matches) === 1) {
+            return sprintf('pull/%d', array_pop($matches));
+        }
+
+        return '';
     }
 
     /**

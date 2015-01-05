@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import _self as page_macros %}
 
 {% set page_title = "Start Build: " ~ repo.description %}
 
@@ -9,7 +10,7 @@
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
 
     {% if errors %}
-        <ul class="error-list">
+        <ul class="error-list js-backend-error">
             {% for error in errors %}
                 <li>{{ error }}</li>
             {% endfor %}
@@ -30,16 +31,6 @@
 
         <h3>Choose what to build:</h3>
 
-        <ul class="error-list js-build-error">
-            <li>
-                {% if isSeriousBusinessMode() %}
-                    A build cannot be started with this search query. Please select a valid git reference.
-                {% else %}
-                    Sorry, Dave. I am afraid I can't do that.
-                {% endif %}
-            </li>
-        </ul>
-
         <ul class="form-fields">
             <li class="mbn">
                 <label for="search">Search for a Branch, Tag, Pull Request, or enter a Commit ID.</label>
@@ -50,10 +41,39 @@
         <div class="drop-down js-search-drop">
             <ul class="list--bare js-search-results">
                 <!-- search results go here -->
+                {% for branch in branches %}
+                    {{ page_macros.search('branch', branch) }}
+                {% endfor %}
+                {% for tag in tags %}
+                    {{ page_macros.search('release', tag) }}
+                {% endfor %}
+                {% for pull in open %}
+                    {{ page_macros.search('pull-request', pull) }}
+                {% endfor %}
+                {% for pull in closed %}
+                    {{ page_macros.search('pull-request-closed', pull) }}
+                {% endfor %}
+
             </ul>
         </div>
 
-        <div class="leader"><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
+        {# Dynamic warning, for when HAL cannot find a matching radio option #}
+        {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}
+        <div class="leader js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
+            <div class="alert-bar--warning">
+                {% if isSeriousBusinessMode() %}
+                    A git reference cannot be found from your search query. HAL will attempt to resolve this reference on the backend.
+                {% else %}
+                    <strong>Just what do you think you're doing, Dave?</strong>
+                    <p class="tl">
+                        I cannot find a git reference for your search query.
+                        However if you attempt build using this query, I will use my enormous intellect to fulfill the mission.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="leader"><input class="btn" type="submit" value="Start Build" name="submit"></div>
 
         <ul class="nav tabs js-tabs">
             <li class="active">
@@ -106,12 +126,6 @@
                             </label>
                         </li>
 
-                        {# This is a search listing generated for the javascript #}
-                        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--branches">
-                            <svg class="icon"><use xlink:href="#branch"></use></svg> {{ branch.name }}
-                            <span class="js-search-query">{{ branch.name }}</span>
-                        </li>
-
                     {% else %}
                         <li class="full">There are no branches.</li>
                     {% endfor %}
@@ -140,12 +154,6 @@
                             </label>
                         </li>
 
-                        {# This is a search listing generated for the javascript #}
-                        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--tags">
-                            <svg class="icon"><use xlink:href="#tag"></use></svg>
-                            <span class="js-search-primary">{{ tag.name }}</span>
-                        </li>
-
                     {% else %}
                         <li class="full">There are no tags.</li>
                     {% endfor %}
@@ -154,7 +162,7 @@
 
             <div id="js-tab--pr-open" class="tab">
                 <ul class="check-list js-search-list radio-grid">
-                    {% for pull in pulls %}
+                    {% for pull in open %}
                         <li>
                             {% set uniqueId = hash('pr' ~ pull.number) %}
 
@@ -181,16 +189,6 @@
                             </label>
                         </li>
 
-                        {# This is a search listing generated for the javascript #}
-                        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-open">
-                            <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
-                            <span class="js-search-primary">PR #{{ pull.number }} : {{ pull.title }}</span>
-
-                            <span class="js-search-query">PR #{{ pull.number }}</span>
-                            <span class="js-search-query">pull request {{ pull.number }}</span>
-                            <span class="js-search-query">{{ pull.title }}</span>
-                        </li>
-
                     {% else %}
                         <li class="full">There are no open pull requests.</li>
                     {% endfor %}
@@ -199,7 +197,7 @@
 
             <div id="js-tab--pr-closed" class="tab">
                 <ul class="check-list js-search-list radio-grid">
-                    {% for pull in closed_pulls %}
+                    {% for pull in closed %}
                         <li>
                             {% set uniqueId = hash('pr' ~ pull.number) %}
 
@@ -224,17 +222,6 @@
                                     to <span class="pr-label" title="{{ pull.base.ref }}">{{ pull.base.ref }}</span>
                                 </span>
                             </label>
-
-                        </li>
-
-                        {# This is a search listing generated for the javascript #}
-                        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
-                            <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
-                            <span class="js-search-primary">PR #{{ pull.number }} : {{ pull.title }}</span>
-
-                            <span class="js-search-query">PR #{{ pull.number }}</span>
-                            <span class="js-search-query">pull request {{ pull.number }}</span>
-                            <span class="js-search-query">{{ pull.title }}</span>
                         </li>
 
                     {% else %}
@@ -245,8 +232,54 @@
 
         </div>
 
-        <input class="btn btn--action" type="submit" value="Start Build" name="submit">
+        <input class="btn" type="submit" value="Start Build" name="submit">
 
     </form>
 
 {% endblock %}
+
+{% macro search(type, ref) %}
+    {# This is a search listing generated for the javascript #}
+
+    {% if type == 'pull-request' %}
+        {% set uniqueId = hash('pr' ~ ref.number) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
+            <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
+            <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
+
+            <span class="js-search-query">PR #{{ ref.number }}</span>
+            <span class="js-search-query">pull request {{ ref.number }}</span>
+            <span class="js-search-query">{{ ref.title }}</span>
+        </li>
+
+    {% elseif type == 'pull-request-closed' %}
+        {% set uniqueId = hash('pr' ~ ref.number) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
+            <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
+            <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
+
+            <span class="js-search-query">PR #{{ ref.number }}</span>
+            <span class="js-search-query">pull request {{ ref.number }}</span>
+            <span class="js-search-query">{{ ref.title }}</span>
+        </li>
+    {% elseif type == 'release' %}
+        {% set uniqueId = hash(ref.object.sha ~ '-' ~ ref.name) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--tags">
+            <svg class="icon"><use xlink:href="#tag"></use></svg>
+            <span class="js-search-primary">{{ ref.name }}</span>
+        </li>
+    {% elseif type == 'branch' %}
+        {% set uniqueId = hash(ref.object.sha ~ '-' ~ ref.name) %}
+
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--branches">
+            <svg class="icon"><use xlink:href="#branch"></use></svg>
+            <span class="js-search-primary">{{ ref.name }}</span>
+        </li>
+    {% endif %}
+
+{% endmacro %}
+
+

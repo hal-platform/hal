@@ -1,4 +1,4 @@
-@keyframes highlight{
+@keyframes highlight {
     0%, 100%{
         background-color: none;
     }
@@ -8,14 +8,18 @@
     }
 }
 
+/**
+ * Build Start Tabs
+ */
 .js-tab-active {
     display: block;
 }
 
-.js-search-query {
-    display: none;
-}
-.js-search-list .js-search-item {
+/**
+ * Build Start Styles
+ */
+.js-search-query,
+.js-build-warning {
     display: none;
 }
 
@@ -39,24 +43,27 @@
     }
 }
 
+/**
+ * Add Repository Github Helpers
+ */
 .js-form-toggle {
     display: block;
 }
-
-.js-hide-box {
-    display: none;
-}
-
 .js-form-error {
     color: red;
     margin-bottom: 0;
 }
 
-.js-sortable-hidden {
-    visibility: hidden;
-    position:absolute;
+/**
+ * Dashboard Quick Select
+ */
+.js-hide-box {
+    display: none;
 }
 
+/**
+ * Environment Re-Order
+ */
 #env-reorder tbody tr {
     cursor: move;
 }

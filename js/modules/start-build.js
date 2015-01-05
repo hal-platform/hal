@@ -1,12 +1,8 @@
 define(['jquery'], function($) {
     return {
-        $validGitRefs: $('.js-search-list li input'),
-        $gitRefSearchListings: $('.js-search-list .js-search-item'),
-
-        searchList: '.js-search-list', // ?
-
         searchBox: '#js-search-input',
         searchResults: '.js-search-results',
+        searchResultItem: '.js-search-item',
         searchQuery: 'span',
         searchQueryPrimary: '.js-search-primary',
 
@@ -14,15 +10,10 @@ define(['jquery'], function($) {
         $searchResults: null,
         $searchContainer: $('.js-search-drop'),
 
-        searchResultItem: '.js-search-item', // ?
-
-        tabAnchorsContainer: '.js-tabs',
+        $validOptions: $('.js-search-list li input'),
         $tabAnchors: $('.js-tabs li a'),
-
-        // $form: $('form[name="start-build"]'),
-        $error: $('.js-build-error'),
-
-        commitRegEx: /^[0-9 A-F a-f]{40,40}$/,
+        $warning: $('.js-build-warning'),
+        $submitButtons: $('form[name="start-build"] input[type="submit"]'),
 
         init: function() {
             var _this = this;
@@ -30,77 +21,28 @@ define(['jquery'], function($) {
             this.$searchBox = $(this.searchBox);
             this.$searchResults = $(this.searchResults);
 
-
             // build search listings
             _this.buildSearchResults();
 
             // make search listings searchable
             this.$searchResults.searchable({
-                selector      : 'li',
-                childSelector : this.searchQuery,
-                searchField   : this.searchBox,
-                striped       : false,
-                searchType    : 'fuzzy'
+                selector       : 'li',
+                childSelector  : this.searchQuery,
+                searchField    : this.searchBox,
+                striped        : false,
+                searchType     : 'fuzzy',
+                onSearchFocus  : function() {
+                    _this.showSearchListings();
+                },
+                onSearchBlur   : function() {
+                    _this.justwhatexactlyareyoutryingtododave();
+                    _this.hideSearchListings();
+                }
             });
 
-            // this.$form.on("submit", function(){
-            //     var txt = _this.$searchBox.val();
-            //     var isNotCommit = !_this.commitRegEx.test(txt);
-
-            //     if (isNotCommit && txt !== '') {
-            //          _this.selectBySearch(txt);
-            //     }
-            // });
-
-            // this.$searchBox.on('blur', function() {
-            //     _this.$searchContainer.slideUp('slow');
-
-            //     _this.delay(function() {
-            //         var searchTxt = _this.$searchBox.val();
-            //         if (_this.commitRegEx.test(searchTxt)) {
-            //              _this.$selectedGitRef.val(txt);
-            //         } else {
-            //             if (txt !== ''){
-            //               _this.selectBySearch(txt);
-            //             }
-            //         }
-
-            //     }, 100);
-            // });
-
-
-            this.$searchBox.on('focus', function() {
-                _this.showSearchListings();
-                _this.$error.hide();
-            });
-
-            this.$searchBox.on('blur', function() {
-                _this.hideSearchListings();
-            });
-
-            // this.$searchBox.on('paste', function() {
-            //     _this.delay(function() {
-            //         var searchTxt = _this.$searchBox.val();
-            //         if (_this.commitRegEx.test(searchTxt)) {
-            //             _this.$selectedGitRef.val(searchTxt);
-            //         } else {
-            //             _this.buildSearchResults();
-            //         }
-            //     }, 100);
-            // });
-
-            // this.$searchBox.on('keyup', function() {
-            //     _this.delay(function() {
-            //         var searchTxt = _this.$searchBox.val();
-            //         if (_this.commitRegEx.test(searchTxt)) {
-            //              _this.$selectedGitRef.val(searchTxt);
-            //         } else {
-            //             _this.buildSearchResults();
-            //         }
-            //     }, 100);
-            // });
-
-            if (window.location.hash) {
+            // if fragment provided, attempt to select by it
+            // only run if search box is empty
+            if (window.location.hash && this.$searchBox.val().length === 0) {
                 this.searchByFragment(window.location.hash);
             }
 
@@ -113,13 +55,15 @@ define(['jquery'], function($) {
             });
 
             // add handler for selecting a ref from a valid radio input
-            this.$validGitRefs.on('click', function() {
-                _this.selectValidGitRef(this);
+            this.$validOptions.on('click', function() {
+                _this.selectOption(this);
+                _this.$searchBox.trigger('change');
             });
 
             // add handler for selecting a search result item
-            this.$searchResults.on('click', this.searchResultItem, function() {
+            this.$searchResults.on('click', this.searchResultItem, function(event) {
                 _this.selectSearchResult(this);
+                _this.$searchBox.trigger('change');
             });
 
             // add handler for showing/hiding tabs
@@ -129,7 +73,8 @@ define(['jquery'], function($) {
             });
         },
         searchByFragment: function(fragment) {
-            var searchBy;
+            var searchBy,
+                $visible;
 
             if (fragment.slice(0, 3) === '#pr') {
                 searchBy = 'PR #' + fragment.slice(3);
@@ -137,23 +82,35 @@ define(['jquery'], function($) {
                 searchBy = fragment.slice(1);
             }
 
-            this.selectBySearch(searchBy);
+            this.$searchBox.val(searchBy);
+            this.$searchBox.trigger('change').focus();
+
+            // if one search result, select it automatically
+            $visible = this.$searchResults.children(':visible');
+            if ($visible.length === 1) {
+                this.selectSearchResult($visible);
+                this.$searchBox.blur();
+            }
         },
 
-        selectTab: function(ele) {
-            var anchor = $(ele).attr('name');
+        selectTab: function(el) {
+            var $el = $(el),
+                anchor = $el.attr('name');
 
             // show tab
             $('#' + anchor).show().siblings().hide();
 
             // tab anchor turn active
-            $(ele).parent('li').addClass('active').siblings().removeClass('active');
+            $el.parent('li')
+                .addClass('active')
+                .siblings()
+                .removeClass('active');
         },
         selectSearchResult: function(element) {
-            var $el = $(element),
-                parentId = $el.data('parent'),
-                tabName = $el.data('tab'),
-                cleanedText = $el.children(this.searchQueryPrimary).text().trim(),
+            var $selected = $(element),
+                parentId = $selected.data('parent'),
+                tabName = $selected.data('tab'),
+                cleanedText = $selected.children(this.searchQueryPrimary).text().trim(),
                 targetRadio = $('#' + parentId);
 
             // put title in search box
@@ -164,74 +121,62 @@ define(['jquery'], function($) {
 
             // select radio
             targetRadio.prop('checked', true);
+            this.hideWarning();
         },
-        selectValidGitRef: function(element) {
-            _this.$error.hide();
-            // @todo add flavor text to "Start Build?" button when HAL is cannot validate a ref.
+        selectOption: function(element) {
+            var parentId = $(element).attr('id'),
+                $selected = $('[data-parent="' + parentId + '"]'),
+                cleanedText = $selected.children(this.searchQueryPrimary).text().trim();
 
-            var searchQuery = $(element).data('search');
-            this.$searchBox.val(searchQuery);
+            this.$searchBox.val(cleanedText);
+            this.hideWarning();
         },
 
-        selectBySearch: function(txt) {
-            var _this = this;
-            var found = 0;
+        justwhatexactlyareyoutryingtododave: function() {
+            if (this.$searchBox.val().length === 0) {
+                return;
+            }
 
-            this.$validGitRefs.each(function(){
-                var itemType = $(this).closest('ul').data('type'),
-                    searchStr = $(this).data('search'),
-                    labelTxt = $("label[for='pr" + searchStr + "'] .js-title").text().toLowerCase(),
-                    tabId = $(this).closest("div").attr('id'),
-                    currentTab = $(_this.tabAnchorsContainer + ' a[name="'+ tabId +'"]').closest("li"),
-                    pullSearch = 'PR #' + searchStr;
+            var $visible = this.$searchResults.children(':visible');
 
-                if (pullSearch.toLowerCase() === txt.toLowerCase() || searchStr.toLowerCase().indexOf(txt.toLowerCase()) === 0 || labelTxt.toLowerCase().indexOf(txt.toLowerCase()) === 0){
-                    // select this radio change to tab
-                    $(this).closest("div").show().siblings().hide();
-                    currentTab.addClass('active').siblings().removeClass('active');
-                    $(this).prop("checked", true);
-                    found = 1;
-                    return false;
-                }
-            });
+            // if no results, display a warning for the user. We will try to resolve it on the backend.
+            if ($visible.length === 0) {
+                this.showWarning();
 
-            if (found === 0) {
-                _this.$error.show();
+                // @todo add flavor text to "Start Build?" button when HAL is cannot validate a ref.
+
+                // deselect previously selected radio
+                this.$validOptions.filter(':checked').prop('checked', false);
+
+            } else if ($visible.length === 1) {
+                // if only 1 result, auto select it
+                this.selectSearchResult($visible);
             }
         },
 
         buildSearchResults: function() {
-            var count = this.$gitRefSearchListings.length;
-            var mover = function(index, el) {
-                $(el).appendTo(this.$searchResults);
-            }.bind(this);
-
-            // move search listings out of tabs and into central search container
-            this.$gitRefSearchListings.each(mover);
-
+            var count = this.$searchResults.children(this.searchResultItem).length;
             if (count > 12) {
                 this.$searchContainer.css('max-height', '300px');
             }
         },
         showSearchListings: function() {
-            this.$searchContainer.show().slideDown('slow');
+            this.$searchContainer.slideDown('fast');
         },
         hideSearchListings: function() {
-            this.$searchContainer.show().slideUp('fast');
+            this.$searchContainer.slideUp('fast');
         },
-
-        // displayValue: function(valString, valType){
-        //     if(valType == 'pull'){
-        //         valString = 'PR #' + valString;
-        //     }
-
-        //     return valString;
-        // },
-
-        delay: function(callback, ms){
-            var timer = 0;
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
+        hideWarning: function() {
+            this.$warning.hide();
+            this.$submitButtons
+                .removeClass('btn--action')
+                .val(this.$warning.data('label'));
+        },
+        showWarning: function() {
+            this.$warning.show();
+            this.$submitButtons
+                .addClass('btn--action')
+                .val(this.$warning.data('label-warning'));
         }
     };
 });

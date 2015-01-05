@@ -78,8 +78,8 @@ class BuildStartController
             'repo' => $repo,
             'branches' => $this->getBranches($repo),
             'tags' => $this->getTags($repo),
-            'pulls' => $this->getPullRequests($repo),
-            'closed_pulls' => $this->getPullRequests($repo, false),
+            'open' => $this->getPullRequests($repo),
+            'closed' => $this->getPullRequests($repo, false),
             'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ];
 

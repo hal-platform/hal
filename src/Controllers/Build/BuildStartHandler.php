@@ -96,21 +96,12 @@ class BuildStartHandler
             return;
         }
 
-        // gitref,reference
-            // pull/*
-            // tag/*
-            // [a-f]{40}
-            // *
-        // search
-            // *
-
-        // Git reference cascades through these options:
-        // 1. "reference" - a radio option selected by user
-        // 2. "search" - a search query provided by user
-
-        $reference = $request->post('reference') ?: $request->post('search');
-
-        $build = $this->validator->isValid($params['id'], $request->post('environment'), $reference);
+        $build = $this->validator->isValid(
+            $params['id'],
+            $request->post('environment'),
+            $request->post('reference'),
+            $request->post('search')
+        );
 
         // if validator didn't create a build, add errors and pass through to controller
         if (!$build) {

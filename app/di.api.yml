@@ -22,10 +22,6 @@ services:
         class: 'QL\Hal\Controllers\GithubApi\Repos'
         arguments: [@github]
 
-    api.github.search:
-        class: 'QL\Hal\Controllers\GithubApi\RefSearch'
-        arguments: [@github]
-
     ######################################################################################################################
     # QUEUE CONTROLLERS
     ######################################################################################################################
@@ -55,9 +51,7 @@ services:
 
     api.build:
         class: 'QL\Hal\Controllers\Api\Build\BuildController'
-        arguments:
-            - @response.formatter
-            - @build.repo
+        arguments: [@response.formatter, @build.repo]
 
     api.build.logs:
         class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
@@ -96,9 +90,7 @@ services:
 
     api.deployment.lastpush:
         class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
-        arguments:
-            - @response.formatter
-            - @deployment.repo
+        arguments: [@response.formatter, @deployment.repo]
 
     ######################################################################################################################
     # ENVIRONMENT CONTROLLERS
@@ -106,9 +98,7 @@ services:
 
     api.environment:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
-        arguments:
-            - @response.formatter
-            - @environment.repo
+        arguments: [@response.formatter, @environment.repo]
 
     api.environments:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
@@ -123,9 +113,7 @@ services:
 
     api.server:
         class: 'QL\Hal\Controllers\Api\Server\ServerController'
-        arguments:
-            - @response.formatter
-            - @server.repo
+        arguments: [@response.formatter, @server.repo]
 
     api.servers:
         class: 'QL\Hal\Controllers\Api\Server\ServersController'
@@ -140,9 +128,7 @@ services:
 
     api.group:
         class: 'QL\Hal\Controllers\Api\Group\GroupController'
-        arguments:
-            - @response.formatter
-            - @group.repo
+        arguments: [@response.formatter, @group.repo]
 
     api.groups:
         class: 'QL\Hal\Controllers\Api\Group\GroupsController'
@@ -157,9 +143,7 @@ services:
 
     api.push:
         class: 'QL\Hal\Controllers\Api\Push\PushController'
-        arguments:
-            - @response.formatter
-            - @push.repo
+        arguments: [@response.formatter, @push.repo]
 
     api.push.logs:
         class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
@@ -195,9 +179,7 @@ services:
 
     api.repository:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
-        arguments:
-            - @response.formatter
-            - @repository.repo
+        arguments: [@response.formatter, @repository.repo]
 
     api.repository.tags:
         class: 'QL\Hal\Controllers\Api\Repository\TagsController'
@@ -239,9 +221,7 @@ services:
 
     api.user:
         class: 'QL\Hal\Controllers\Api\User\UserController'
-        arguments:
-            - @response.formatter
-            - @user.repo
+        arguments: [@response.formatter, @user.repo]
 
     api.users:
         class: 'QL\Hal\Controllers\Api\User\UsersController'
