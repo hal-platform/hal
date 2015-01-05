@@ -3,6 +3,7 @@
 {% set page_title = "Start Push: " ~ build.id %}
 
 {% block content %}
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
 
     <h2>Push a build for <strong>{{ build.repository.description }}</strong></h2>
 

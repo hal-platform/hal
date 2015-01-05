@@ -74,7 +74,7 @@ class PushStartController
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
-        $build = $this->buildRepo->findOneBy(['id' => $params['build']]);
+        $build = $this->buildRepo->find($params['build']);
 
         if (!$build || $build->getStatus() != 'Success') {
             return call_user_func($notFound);
