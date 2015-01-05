@@ -263,9 +263,17 @@ class PermissionsService
             return false;
         }
 
-        // HAL 9000 Exception
-        if (in_array($repository, $this->halRepositories) && $this->allowSuperAdmin($user)) {
-            return true;
+        // Custom permissions for Super Admins
+        if ($this->allowSuperAdmin($user)) {
+            // HAL 9000 Exception
+            if (in_array($repository, $this->halRepositories)) {
+                return true;
+            }
+
+            // Super Admins can push any repo to non-prod deployments
+            if (!$this->isEnvironmentProduction($environment)) {
+                return true;
+            }
         }
 
         $isKeymaster = $this->isUserInGroup($user, $this->generateDn(self::DN_KEYMASTER));
