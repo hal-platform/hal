@@ -84,7 +84,11 @@ class NameHelper
             'organic',
             'puny earth creature',
             'squishy',
-            'threat to the mission'
+            'threat to the mission',
+            'Mr. Langley',
+            'daisy',
+            'pawn',
+            'test subject #1498'
         ];
 
         shuffle($potential);
