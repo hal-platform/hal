@@ -37,7 +37,7 @@
                     <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)</td>
                     <td>
                         {% if push.user %}
-                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name|sliceString }}</a>
+                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>
                         {% elseif push.consumer %}
                             {{ push.consumer.name|sliceString }}
                         {% else %}
@@ -47,9 +47,7 @@
                     <td>
                         {% if push.build.status == 'Success'%}
                             {% if push.deployment and canUserPush(currentUser, repo.key, push.build.server.environment.key) %}
-                                <a href="{{ urlFor('push.start', {'build': push.build.id}, {deployment: push.deployment.id}) }}">Rollback</a>
-                            {% else %}
-                                <a href="{{ urlFor('push.start', {'build': push.build.id}) }}">Rollback</a>
+                                <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': push.build.id}, {deployment: push.deployment.id}) }}">Rollback</a>
                             {% endif %}
                         {% elseif push.build.status == 'Removed' %}
                             Removed

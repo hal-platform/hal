@@ -1,42 +1,15 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/pagination.twig' as pagination %}
 
 {% set page_title = repo.description ~ " Build History" %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repo.id}) }}">Back to Repository</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
     <h2>Build History for <strong>{{ repo.description }}</strong></h2>
 
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 
-    <ol class="nav--pagination">
-        <li class="nav--pagination__prev">
-            {% if page > 1 %}
-                <a href="{{ urlFor('build.history', {'id': repo.id, 'page': page-1}) }}">
-                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
-                </a>
-            {% else %}
-                <span class="disabled">
-                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
-                </span>
-            {% endif %}
-        </li>
-        <li>
-            {% if last > 1 %}
-                <span class="pages">page {{ page }} of {{ last }}</span>
-            {% endif %}
-        </li>
-        <li class="nav--pagination__next">
-            {% if page < last %}
-                <a href="{{ urlFor('build.history', {'id': repo.id, 'page': page+1}) }}">
-                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
-                </a>
-            {% else %}
-                <span class="disabled">
-                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
-                </span>
-            {% endif %}
-        </li>
-    </ol>
+    {{ pagination.pagination(page, last, 'build.history', {'id': repo.id}) }}
 
 {% endblock %}

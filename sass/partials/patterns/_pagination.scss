@@ -1,0 +1,7 @@
+
+// Remove display:block inherited from nav
+.nav--pagination {
+    li {
+        display: inline-block;
+    }
+}

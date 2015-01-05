@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/pagination.twig' as pagination %}
 
 {% set page_title = repo.description ~ " Push History" %}
 
@@ -9,34 +10,6 @@
 
     {% include 'partials/push-table.twig' with {'pushes': pushes} %}
 
-    <ol class="nav--pagination">
-        <li class="nav--pagination__prev">
-            {% if page > 1 %}
-                <a href="{{ urlFor('push.history', {'id': repo.id, 'page': page-1}) }}">
-                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
-                </a>
-            {% else %}
-                <span class="disabled">
-                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
-                </span>
-            {% endif %}
-        </li>
-        <li>
-            {% if last > 1 %}
-                <span class="pages">page {{ page }} of {{ last }}</span>
-            {% endif %}
-        </li>
-        <li class="nav--pagination__next">
-            {% if page < last %}
-                <a href="{{ urlFor('push.history', {'id': repo.id, 'page': page+1}) }}">
-                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
-                </a>
-            {% else %}
-                <span class="disabled">
-                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
-                </span>
-            {% endif %}
-        </li>
-    </ol>
+    {{ pagination.pagination(page, last, 'push.history', {'id': repo.id}) }}
 
 {% endblock %}

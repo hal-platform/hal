@@ -1,0 +1,31 @@
+{% macro pagination(currentPage, lastPage, routeName, routeParameters) %}
+    <ol class="nav--pagination">
+        <li class="nav--pagination__prev">
+            {% if currentPage > 1 %}
+                <a href="{{ urlFor(routeName, routeParameters|merge({'page': currentPage-1})) }}">
+                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
+                </a>
+            {% else %}
+                <span class="disabled">
+                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
+                </span>
+            {% endif %}
+        </li>
+        <li>
+            {% if lastPage > 1 %}
+                <span class="pages">page {{ currentPage }} of {{ lastPage }}</span>
+            {% endif %}
+        </li>
+        <li class="nav--pagination__next">
+            {% if currentPage < lastPage %}
+                <a href="{{ urlFor(routeName, routeParameters|merge({'page': currentPage+1})) }}">
+                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                </a>
+            {% else %}
+                <span class="disabled">
+                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                </span>
+            {% endif %}
+        </li>
+    </ol>
+{% endmacro %}
