@@ -121,7 +121,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
             new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
             new Twig_SimpleFilter('sanitizeToString', [$this, 'sanitizeToString']),
-            new Twig_SimpleFilter('sliceString', [$this, 'sliceString'])
+            new Twig_SimpleFilter('sliceString', [$this, 'sliceString']),
+            new Twig_SimpleFilter('displayUrl', [$this, 'formatUrlForDisplay'])
         ];
     }
 
@@ -280,6 +281,22 @@ class HalExtension extends Twig_Extension
         $cookie = $this->cookies->getCookie('seriousbusiness');
 
         return (bool) $cookie;
+    }
+
+    /**
+     * Format a URL string for display
+     *
+     * @param string $url
+     * @return string
+     */
+    public function formatUrlForDisplay($url)
+    {
+        if (!is_string($url)) {
+            return $url;
+        }
+
+        // pretty dumb atm
+        return rtrim(preg_replace('#^http[s]?://#', '', $url), '/');
     }
 
     /**

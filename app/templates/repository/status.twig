@@ -51,7 +51,7 @@
                         {% set canRollback = false %}
                     {% endif %}
 
-                    <li>{{ macros.pushCard(repo, status.deploy, activePush, canRollback) }}</li>
+                    <li>{{ macros.pushCard(repo, status.deploy, activePush, canRollback, duplicates) }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
@@ -76,14 +76,14 @@
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 {% endblock %}
 
-{% macro pushCard(repo, deployment, active, canRollback) %}
+{% macro pushCard(repo, deployment, active, canRollback, duplicates) %}
 
     <article class="card">
         <header class="card__header">
             <h4 class="mbn">
                 <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ deployment.server.name }}</a>
 
-                {% if deployment.url %}
+                {% if deployment.url and duplicates == false %}
                     <a class="icon--link" href="{{ deployment.url.asString }}">
                         <svg class="icon"><use xlink:href="#outgoing"></use></svg>
                     </a>
@@ -96,7 +96,9 @@
                 {% endif %}
 
             </h4>
-            <p class="mbn"><span title="{{ deployment.path }}">{{ deployment.path }}</span></p>
+            {% if deployment.url and duplicates == true %}
+            <p class="mbn"><span title="{{ deployment.url.asString() }}"><a href="{{ deployment.url.asString() }}">{{ deployment.url.asString()|displayUrl }}</a></span></p>
+            {% endif %}
         </header>
 
         <section class="card__details">

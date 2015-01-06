@@ -83,6 +83,7 @@ class RepositoryStatusController
      * @param Response $response
      * @param array $params
      * @param callable $notFound
+     * @return void|mixed
      */
     public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
     {
@@ -95,12 +96,22 @@ class RepositoryStatusController
         $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
         $environments = $this->environmentalizeDeployments($deployments);
 
+        $dupes = [];
+        $hasDuplicates = false;
+
         foreach ($environments as &$deployments) {
             foreach ($deployments as &$deployment) {
+
+                $key = $deployment->getServer()->getId();
+                if (isset($dupes[$key])) {
+                    $hasDuplicates = true;
+                }
+                $dupes[$key] = true;
+
                 $deployment = [
                     'deploy' => $deployment,
                     'latest' => $this->pushRepo->getMostRecentByDeployment($deployment),
-                    'success' => $this->pushRepo->getMostRecentSuccessByDeployment($deployment)
+                    'success' =>$this->pushRepo->getMostRecentSuccessByDeployment($deployment)
                 ];
             }
         }
@@ -108,7 +119,8 @@ class RepositoryStatusController
         $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
-            'environments' => $environments
+            'environments' => $environments,
+            'duplicates' => $hasDuplicates
         ]);
 
         $response->setBody($rendered);
