@@ -40,7 +40,7 @@
 
 .card, .card--baby {
     @include padding-x(msem(-1));
-    @include rhythm(0,.25,.25,1);
+    @include rhythm(0,.25,0,1);
     box-shadow: 0 0 0 8px $light-grey;
     position: relative;
 }
@@ -54,7 +54,7 @@
 
 .card__details {
     background: $white;
-    @include rhythm(.5,0,0,0);
+    @include rhythm(.5,0,.25,0);
 }
 
 .card__details .split {
