@@ -15,18 +15,14 @@ use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GithubService;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Repository Tags Controller
- */
-class TagsController
+class TagsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -46,9 +42,14 @@ class TagsController
     private $repositoryRepo;
 
     /**
-     * @var RepositoryNormalizer
+     * @type RepositoryNormalizer
      */
     private $repositoryNormalizer;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ResponseFormatter $formatter
@@ -56,30 +57,31 @@ class TagsController
      * @param GithubService $github
      * @param RepositoryRepository $repositoryRepo
      * @param RepositoryNormalizer $repositoryNormalizer
+     * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
         UrlHelper $url,
         GithubService $github,
         RepositoryRepository $repositoryRepo,
-        RepositoryNormalizer $repositoryNormalizer
+        RepositoryNormalizer $repositoryNormalizer,
+        array $parameters
     ) {
         $this->formatter = $formatter;
         $this->url = $url;
         $this->github = $github;
         $this->repositoryRepo = $repositoryRepo;
         $this->repositoryNormalizer = $repositoryNormalizer;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        $repository = $this->repositoryRepo->find($this->parameters['id']);
 
         if (!$repository instanceof Repository) {
             throw HttpProblemException::build(404, 'invalid-repository');

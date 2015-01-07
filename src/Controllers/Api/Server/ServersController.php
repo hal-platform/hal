@@ -11,18 +11,14 @@ use QL\Hal\Api\Normalizer\ServerNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Servers Controller
- */
-class ServersController
+class ServersController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -32,7 +28,7 @@ class ServersController
     private $serverRepo;
 
     /**
-     * @var ServerNormalizer
+     * @type ServerNormalizer
      */
     private $normalizer;
 
@@ -52,10 +48,10 @@ class ServersController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
+     * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $servers = $this->serverRepo->findBy([], ['id' => 'ASC']);
         $status = (count($servers) > 0) ? 200 : 404;

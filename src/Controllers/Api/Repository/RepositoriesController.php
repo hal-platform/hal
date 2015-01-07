@@ -11,13 +11,9 @@ use QL\Hal\Api\Normalizer\RepositoryNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Repositories Controller
- */
-class RepositoriesController
+class RepositoriesController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
@@ -52,10 +48,9 @@ class RepositoriesController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $repos = $this->repositoryRepo->findBy([], ['id' => 'ASC']);
         $status = (count($repos) > 0) ? 200 : 404;

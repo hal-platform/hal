@@ -11,16 +11,12 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Server Controller
- */
-class ServerController
+class ServerController implements ControllerInterface
 {
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -30,26 +26,30 @@ class ServerController
     private $serverRepo;
 
     /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param ResponseFormatter $formatter
      * @param ServerRepository $serverRepo
+     * @param array $parameters
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        ServerRepository $serverRepo
-    ) {
+    public function __construct(ResponseFormatter $formatter, ServerRepository $serverRepo, array $parameters)
+    {
         $this->formatter = $formatter;
         $this->serverRepo = $serverRepo;
+
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $server = $this->serverRepo->findOneBy(['id' => $params['id']]);
+        $server = $this->serverRepo->find($this->parameters['id']);
 
         if (!$server instanceof Server) {
             throw HttpProblemException::build(404, 'invalid-server');

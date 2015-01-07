@@ -133,7 +133,10 @@ services:
 
     api.server:
         class: 'QL\Hal\Controllers\Api\Server\ServerController'
-        arguments: [@response.formatter, @server.repo]
+        arguments:
+            - @response.formatter
+            - @server.repo
+            - @slim.route.parameters
 
     api.servers:
         class: 'QL\Hal\Controllers\Api\Server\ServersController'
@@ -206,7 +209,10 @@ services:
 
     api.repository:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
-        arguments: [@response.formatter, @repository.repo]
+        arguments:
+            - @response.formatter
+            - @repository.repo
+            - @slim.route.parameters
 
     api.repository.tags:
         class: 'QL\Hal\Controllers\Api\Repository\TagsController'
@@ -216,6 +222,7 @@ services:
             - @github
             - @repository.repo
             - @normalizer.repository
+            - @slim.route.parameters
 
     api.repository.branches:
         class: 'QL\Hal\Controllers\Api\Repository\BranchesController'
@@ -225,6 +232,7 @@ services:
             - @github
             - @repository.repo
             - @normalizer.repository
+            - @slim.route.parameters
 
     api.repository.pullrequests:
         class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
@@ -234,6 +242,7 @@ services:
             - @github
             - @repository.repo
             - @normalizer.repository
+            - @slim.route.parameters
 
     api.repositories:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
@@ -248,8 +257,10 @@ services:
 
     api.user:
         class: 'QL\Hal\Controllers\Api\User\UserController'
-        arguments: [@response.formatter, @user.repo]
-
+        arguments:
+            - @response.formatter
+            - @user.repo
+            - @slim.route.parameters
     api.users:
         class: 'QL\Hal\Controllers\Api\User\UsersController'
         arguments:

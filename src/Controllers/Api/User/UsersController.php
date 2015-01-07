@@ -11,18 +11,14 @@ use QL\Hal\Api\Normalizer\UserNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\UserRepository;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Users Controller
- */
-class UsersController
+class UsersController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -32,7 +28,7 @@ class UsersController
     private $userRepo;
 
     /**
-     * @var UserNormalizer
+     * @type UserNormalizer
      */
     private $normalizer;
 
@@ -52,10 +48,9 @@ class UsersController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $users = $this->userRepo->findBy([], ['id' => 'ASC']);
         $status = (count($users) > 0) ? 200 : 404;
