@@ -11,16 +11,12 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Environment Controller
- */
-class EnvironmentController
+class EnvironmentController implements ControllerInterface
 {
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -30,26 +26,29 @@ class EnvironmentController
     private $envRepo;
 
     /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param ResponseFormatter $formatter
      * @param EnvironmentRepository $envRepo
+     * @param array $parameters
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        EnvironmentRepository $envRepo
-    ) {
+    public function __construct(ResponseFormatter $formatter, EnvironmentRepository $envRepo, array $parameters)
+    {
         $this->formatter = $formatter;
         $this->envRepo = $envRepo;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $environment = $this->envRepo->findOneBy(['id' => $params['id']]);
+        $environment = $this->envRepo->find($this->parameters['id']);
 
         if (!$environment instanceof Environment) {
             throw HttpProblemException::build(404, 'invalid-environment');

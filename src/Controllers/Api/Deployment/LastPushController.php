@@ -13,16 +13,20 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
+use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
-/**
- * API Last Dush of Deployment Controller
- */
-class LastPushController
+class LastPushController implements ControllerInterface
 {
+    const FILTER_STATUS = 'status';
+
     /**
-     * @var ResponseFormatter
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -37,35 +41,45 @@ class LastPushController
     private $pushRepo;
 
     /**
-     * @param ResponseFormatter $formatter
-     * @param DeploymentRepository $deploymentRepo
-     * @param PushRepository $pushRepo
+     * @type array
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        DeploymentRepository $deploymentRepo,
-        PushRepository $pushRepo
-    ) {
-        $this->formatter = $formatter;
-        $this->deploymentRepo = $deploymentRepo;
-        $this->pushRepo = $pushRepo;
-    }
+    private $parameters;
 
     /**
      * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * @param ResponseFormatter $formatter
+     * @param DeploymentRepository $deploymentRepo
+     * @param PushRepository $pushRepo
+     * @param array $parameters
+     */
+    public function __construct(
+        Request $request,
+        ResponseFormatter $formatter,
+        DeploymentRepository $deploymentRepo,
+        PushRepository $pushRepo,
+        array $parameters
+    ) {
+        $this->request = $request;
+        $this->formatter = $formatter;
+        $this->deploymentRepo = $deploymentRepo;
+        $this->pushRepo = $pushRepo;
+
+        $this->parameters = $parameters;
+    }
+
+    /**
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $deployment = $this->deploymentRepo->findOneBy(['id' => $params['id']]);
+        $deployment = $this->deploymentRepo->find($this->parameters['id']);
 
         if (!$deployment instanceof Deployment) {
             throw HttpProblemException::build(404, 'invalid-deployment');
         }
 
-        $status = $request->get('status');
+        $status = $this->request->get(self::FILTER_STATUS);
 
         if ($status && !in_array($status, PushStatusEnumType::values())) {
             throw HttpProblemException::build(400, 'invalid-status');

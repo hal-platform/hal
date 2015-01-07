@@ -11,18 +11,14 @@ use QL\Hal\Api\Normalizer\GroupNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Groups Controller
- */
-class GroupsController
+class GroupsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -52,10 +48,9 @@ class GroupsController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $groups = $this->groupRepo->findBy([], ['id' => 'ASC']);
         $status = (count($groups) > 0) ? 200 : 404;

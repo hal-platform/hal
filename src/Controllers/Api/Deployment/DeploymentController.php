@@ -12,25 +12,29 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Deployment Controller
- */
-class DeploymentController
+class DeploymentController implements ControllerInterface
 {
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
-
-    private $normalizer;
 
     /**
      * @type DeploymentRepository
      */
     private $deploymentRepo;
+
+    /**
+     * @type DeploymentNormalizer
+     */
+    private $normalizer;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ResponseFormatter $formatter
@@ -40,22 +44,22 @@ class DeploymentController
     public function __construct(
         ResponseFormatter $formatter,
         DeploymentRepository $deploymentRepo,
-        DeploymentNormalizer $normalizer
+        DeploymentNormalizer $normalizer,
+        array $parameters
     ) {
         $this->formatter = $formatter;
         $this->deploymentRepo = $deploymentRepo;
         $this->normalizer = $normalizer;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $deployment = $this->deploymentRepo->findOneBy(['id' => $params['id']]);
+        $deployment = $this->deploymentRepo->find($this->parameters['id']);
 
         if (!$deployment instanceof Deployment) {
             throw HttpProblemException::build(404, 'invalid-deployment');

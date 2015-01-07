@@ -14,18 +14,14 @@ use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Builds Controller
- */
-class BuildsController
+class BuildsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -40,37 +36,44 @@ class BuildsController
     private $buildRepo;
 
     /**
-     * @var BuildNormalizer
+     * @type BuildNormalizer
      */
     private $normalizer;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ResponseFormatter $formatter
      * @param RepositoryRepository $repositoryRepo
      * @param BuildRepository $buildRepo
      * @param BuildNormalizer $normalizer
+     * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
         RepositoryRepository $repositoryRepo,
         BuildRepository $buildRepo,
-        BuildNormalizer $normalizer
+        BuildNormalizer $normalizer,
+        array $parameters
     ) {
         $this->formatter = $formatter;
         $this->repositoryRepo = $repositoryRepo;
         $this->buildRepo = $buildRepo;
         $this->normalizer = $normalizer;
+
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        $repository = $this->repositoryRepo->find($this->parameters['id']);
 
         if (!$repository instanceof Repository) {
             throw HttpProblemException::build(404, 'invalid-repository');
@@ -92,24 +95,6 @@ class BuildsController
                 'builds' => $builds
             ]
         ), $status);
-//
-//        if (!$builds) {
-//            return $response->setStatus(404);
-//        }
-//
-//        // using this to play with the idea of linked vs embedded resources
-//        $isResolved = false;
-//
-//        $content = [
-//            'count' => count($builds),
-//            '_links' => [
-//                'self' => $this->api->parseLink(['href' => ['api.builds', ['id' => $repository->getId()]]])
-//            ]
-//        ];
-//
-//        $content = array_merge_recursive($content, $this->normalizeBuilds($builds, $isResolved));
-//
-//        $this->api->prepareResponse($response, $content);
     }
 
     /**

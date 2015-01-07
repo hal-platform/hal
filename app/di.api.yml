@@ -56,7 +56,10 @@ services:
 
     api.build:
         class: 'QL\Hal\Controllers\Api\Build\BuildController'
-        arguments: [@response.formatter, @build.repo]
+        arguments:
+            - @response.formatter
+            - @build.repo
+            - @slim.route.parameters
 
     api.build.logs:
         class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
@@ -65,6 +68,7 @@ services:
             - @build.repo
             - @normalizer.log.event
             - @normalizer.build
+            - @slim.route.parameters
 
     api.builds:
         class: 'QL\Hal\Controllers\Api\Build\BuildsController'
@@ -73,6 +77,7 @@ services:
             - @repository.repo
             - @build.repo
             - @normalizer.build
+            - @slim.route.parameters
 
     ######################################################################################################################
     # DEPLOYMENT CONTROLLERS
@@ -84,6 +89,7 @@ services:
             - @response.formatter
             - @deployment.repo
             - @normalizer.deployment
+            - @slim.route.parameters
 
     api.deployments:
         class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
@@ -92,13 +98,16 @@ services:
             - @repository.repo
             - @deployment.repo
             - @normalizer.deployment
+            - @slim.route.parameters
 
     api.deployment.lastpush:
         class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
         arguments:
+            - @slim.request
             - @response.formatter
             - @deployment.repo
             - @push.repo
+            - @slim.route.parameters
 
     ######################################################################################################################
     # ENVIRONMENT CONTROLLERS
@@ -106,7 +115,10 @@ services:
 
     api.environment:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
-        arguments: [@response.formatter, @environment.repo]
+        arguments:
+            - @response.formatter
+            - @environment.repo
+            - @slim.route.parameters
 
     api.environments:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
@@ -136,7 +148,10 @@ services:
 
     api.group:
         class: 'QL\Hal\Controllers\Api\Group\GroupController'
-        arguments: [@response.formatter, @group.repo]
+        arguments:
+            - @response.formatter
+            - @group.repo
+            - @slim.route.parameters
 
     api.groups:
         class: 'QL\Hal\Controllers\Api\Group\GroupsController'

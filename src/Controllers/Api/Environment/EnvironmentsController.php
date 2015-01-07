@@ -10,18 +10,14 @@ use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Environments Controller
- */
-class EnvironmentsController
+class EnvironmentsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -31,7 +27,7 @@ class EnvironmentsController
     private $envRepo;
 
     /**
-     * @var EnvironmentNormalizer
+     * @type EnvironmentNormalizer
      */
     private $normalizer;
 
@@ -51,10 +47,9 @@ class EnvironmentsController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $environments = $this->envRepo->findBy([], ['id' => 'ASC']);
         $status = (count($environments) > 0) ? 200 : 404;

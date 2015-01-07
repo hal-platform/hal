@@ -14,18 +14,14 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- *
- */
-class EventLogsController
+class EventLogsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -35,42 +31,49 @@ class EventLogsController
     private $buildRepo;
 
     /**
-     * @var EventLogNormalizer
+     * @type EventLogNormalizer
      */
     private $eventLogNormalizer;
 
     /**
-     * @var BuildNormalizer
+     * @type BuildNormalizer
      */
     private $buildNormalizer;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ResponseFormatter $formatter
      * @param BuildRepository $buildRepo
      * @param EventLogNormalizer $eventLogNormalizer
      * @param BuildNormalizer $buildNormalizer
+     * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
         BuildRepository $buildRepo,
         EventLogNormalizer $eventLogNormalizer,
-        BuildNormalizer $buildNormalizer
+        BuildNormalizer $buildNormalizer,
+        array $parameters
     ) {
         $this->formatter = $formatter;
         $this->buildRepo = $buildRepo;
         $this->eventLogNormalizer = $eventLogNormalizer;
         $this->buildNormalizer = $buildNormalizer;
+
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $build = $this->buildRepo->find($params['id']);
+        $build = $this->buildRepo->find($this->parameters['id']);
 
         if (!$build instanceof Build) {
             throw HttpProblemException::build(404, 'invalid-build');

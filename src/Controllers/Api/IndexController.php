@@ -11,9 +11,6 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Panthor\ControllerInterface;
 
-/**
- * API Index Controller
- */
 class IndexController implements ControllerInterface
 {
     use HypermediaLinkTrait;
