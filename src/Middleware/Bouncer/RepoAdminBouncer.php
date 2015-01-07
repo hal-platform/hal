@@ -101,7 +101,7 @@ class RepoAdminBouncer
         // ASSUMPTION: the repository id will always be named 'repository' in the route
         // dumb, but we need to look up the repo key here for user permission checks
 
-        $repo = $this->repositories->findOneBy(['id' => $this->route->getParam('repository')]);
+        $repo = $this->repositories->find($this->route->getParam('repository'));
 
         // repo does not exist
         if (!$repo instanceof Repository) {

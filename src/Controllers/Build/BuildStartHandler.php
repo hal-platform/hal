@@ -135,7 +135,7 @@ class BuildStartHandler
      */
     private function dupeCatcher(Build $build)
     {
-        $dupe = $this->buildRepo->findBy(['id' => [$build->getId()]]);
+        $dupe = $this->buildRepo->find($build->getId());
         if ($dupe) {
             $id = $this->unique->generateBuildId();
             $build->setId($id);
