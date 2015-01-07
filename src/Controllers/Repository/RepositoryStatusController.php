@@ -7,7 +7,6 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
@@ -28,11 +27,6 @@ class RepositoryStatusController
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type EntityManager
-     */
-    private $em;
 
     /**
      * @type RepositoryRepository
@@ -56,7 +50,6 @@ class RepositoryStatusController
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
@@ -64,14 +57,12 @@ class RepositoryStatusController
      */
     public function __construct(
         TemplateInterface $template,
-        EntityManager $em,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
         PushRepository $pushRepo
     ) {
         $this->template = $template;
-        $this->em = $em;
         $this->repoRepo = $repoRepo;
         $this->buildRepo = $buildRepo;
         $this->deploymentRepo = $deploymentRepo;

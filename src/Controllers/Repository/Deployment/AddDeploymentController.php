@@ -7,18 +7,16 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\TemplateInterface;
+use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class DeploymentsController
+class AddDeploymentController
 {
     use SortingHelperTrait;
 
@@ -26,11 +24,6 @@ class DeploymentsController
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type EnvironmentRepository
-     */
-    private $environmentRepo;
 
     /**
      * @type ServerRepository
@@ -43,29 +36,27 @@ class DeploymentsController
     private $repoRepo;
 
     /**
-     * @type DeploymentRepository
+     * @type Url
      */
-    private $deploymentRepo;
+    private $url;
 
     /**
      * @param TemplateInterface $template
-     * @param EnvironmentRepository $environmentRepo
      * @param ServerRepository $serverRepo
      * @param RepositoryRepository $repoRepo
-     * @param DeploymentRepository $deploymentRepo
+     * @param Url $url
      */
     public function __construct(
         TemplateInterface $template,
-        EnvironmentRepository $environmentRepo,
         ServerRepository $serverRepo,
         RepositoryRepository $repoRepo,
-        DeploymentRepository $deploymentRepo
+        Url $url
     ) {
         $this->template = $template;
-        $this->environmentRepo = $environmentRepo;
         $this->serverRepo = $serverRepo;
         $this->repoRepo = $repoRepo;
-        $this->deploymentRepo = $deploymentRepo;
+
+        $this->url = $url;
     }
 
     /**
@@ -80,17 +71,21 @@ class DeploymentsController
             return $notFound();
         }
 
-        // Get and sort deployments
-        $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
-        $sorter = $this->deploymentSorter();
-        usort($deployments, $sorter);
+        $servers = $this->serverRepo->findAll();
 
-        $environments = $this->environmentRepo->findBy([], ['order' => 'ASC']);
+        // If no servers, throw back to repo page
+        if (!$servers) {
+            $this->url->redirectFor('repository', ['repository' => $params['repository']]);
+        }
 
         $rendered = $this->template->render([
-            'environments' => $environments,
-            'servers_by_env' => $this->environmentalizeServers($environments, $this->serverRepo->findAll()),
-            'deployments' => $deployments,
+            'form' => [
+                'server' => $request->post('server'),
+                'path' => $request->post('path'),
+                'url' => $request->post('url')
+            ],
+
+            'servers_by_env' => $this->environmentalizeServers($servers),
             'repository' => $repo
         ]);
 
@@ -98,19 +93,17 @@ class DeploymentsController
     }
 
     /**
-     * @param Environment[] $environments
      * @param Server[] $servers
-     *
      * @return array
      */
-    private function environmentalizeServers(array $environments, array $servers)
+    private function environmentalizeServers(array $servers)
     {
-        $env = [];
-        foreach ($environments as $environment) {
-            $env[$environment->getKey()] = [];
-        }
-
-        $environments = $env;
+        $environments = [
+            'dev' => [],
+            'test' => [],
+            'beta' => [],
+            'prod' => []
+        ];
 
         foreach ($servers as $server) {
             $env = $server->getEnvironment()->getKey();

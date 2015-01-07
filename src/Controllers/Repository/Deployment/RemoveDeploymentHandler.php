@@ -14,7 +14,7 @@ use QL\Hal\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminRemoveHandle
+class RemoveDeploymentHandler
 {
     /**
      * @type DeploymentRepository
