@@ -20,3 +20,7 @@ parameters:
     redis.prefix: 'hal9000dev'
 
     encryption.secret: 'ae9c0012b8892afc69140790103f9c7241d0cfe7e4a0c8f9ae9db077a83ccc510c5b3c17dc26efd4192d9e5c6c5a1fc8'
+
+services:
+    cache.doctrine:
+        class: 'Doctrine\Common\Cache\ArrayCache'
