@@ -1,0 +1,58 @@
+{#
+Needs the following parameters:
+- servers_by_env
+- form.server
+- form.path
+- form.url
+- repository
+
+#}
+<form method="post" action="{{ urlFor('repository.deployments.add', {repository: repository.id}) }}">
+    <ul class="form-fields">
+        <li>
+            <label for="server">
+                Server
+            </label>
+            <select class="select-input" name="server" id="server" required>
+                <option></option>
+                {% for environment, servers in servers_by_env %}
+                    <optgroup label="{{ environment }}">
+                        {% for server in servers %}
+                            {% set isSelected = (server.id == form.server) %}
+
+                            <option value="{{ server.id }}"{{ isSelected ? ' selected' : '' }}>{{ server.name }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endfor %}
+            </select>
+        </li>
+        <li>
+            <label for="path">
+                File path
+                <small class="additional">
+                    The absolute path to the file directory on the server.
+                    <br>Paths must begin with a forward slash (/).
+                </small>
+            </label>
+            <input class="text-input" type="text" name="path" id="path" maxlength="255" value="{{ form.path }}" required pattern="^\/[^\n\t]+">
+        </li>
+        <li>
+            <label for="url">
+                URL
+                <small class="additional">
+                    A URL is required to help users find where the code is deployed.
+                    <br>Must be the full URL and begin with <code>http://</code> or <code>https://</code>.
+                </small>
+            </label>
+            <input class="text-input" type="url" name="url" id="url" maxlength="255" value="{{ form.url }}" required>
+        </li>
+    </ul>
+
+    <div>
+        {# primary action #}
+        <input class="btn" type="submit" value="Add Deployment">
+
+        {# secondary actions #}
+        <a class="secondary-action" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Cancel</a>
+    </div>
+</form>

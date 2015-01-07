@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Add Deployment' %}
+
+{% block content %}
+    <h2>Add a new deployment for <b>{{ repository.description }}</b></h2>
+
+    <p>
+        Deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.
+    </p>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% include 'partials/form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': form, 'repository': repository} %}
+    </div>
+
+{% endblock %}

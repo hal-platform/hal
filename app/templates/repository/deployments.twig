@@ -6,31 +6,14 @@
     <h2>Deployment Relationships for <b>{{ repository.description }}</b> </h2>
 
     <p>
-        Deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.
-        Optionally, you can add a URL such as <code>http://test1w1.website.com</code> to help users find where the code is deployed to.
+        Deployment relationships define what servers your application can be deployed to and where on that server the code will be uploaded.
     </p>
-    <p>Paths must be absolute and begin with a forward slash (/).</p>
 
     {% set canEdit = isUserRepoAdmin(currentUser, repository.key) %}
 
     {% if environments %}
-        {% if canEdit %}
-            <form action="{{ urlFor('repository.deployment.admin.add.handle', {repository: repository.id}) }}" method="post">
-        {% endif %}
 
         {% for environment in environments %}
-
-            {# Get servers for only this environment #}
-            {% set envServers = [] %}
-            {% for server in servers if server.environment == environment %}
-                {% set envServers = envServers|merge([server]) %}
-            {% endfor %}
-
-            {# Get deployments for only this environment #}
-            {% set envDeployments = [] %}
-            {% for deployment in deployments if deployment.server.environment == environment %}
-                {% set envDeployments = envDeployments|merge([deployment]) %}
-            {% endfor %}
 
             <h3>{{ environment.key }}</h3>
 
@@ -40,11 +23,11 @@
                     <th class="t15">Hostname</th>
                     <th class="t40">Path</th>
                     <th>URL</th>
-                    <th></th>
+                    <th class="t10"></th>
                 </tr>
                 </thead>
-                <tbody>
-                    {% for deployment in envDeployments %}
+                <tbody class="js-add-deployment--{{ environment.key }}">
+                    {% for deployment in deployments if deployment.server.environment == environment %}
                         <tr>
                             <td>{{ deployment.server.name }}</td>
                             <td>
@@ -52,54 +35,37 @@
                             </td>
                             <td>
                                 {% if deployment.url %}
-                                    {{ deployment.url.asString() }}
+                                    <a href="{{ deployment.url.asString() }}"><code>{{ deployment.url.asString() }}</code></a>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if canEdit %}
-                                    <a class="btn--destructive" href="{{ urlFor('repository.deployment.admin.remove.handle', {repository: deployment.repository.id, id: deployment.id}) }}">Remove</a>
+                                    <a class="btn--destructive btn--tiny" href="{{ urlFor('repository.deployments.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove</a>
                                 {% endif %}
                             </td>
                         </tr>
-                    {% endfor %}
-
-                    {% if not canEdit and not envDeployments %}
-                        <tr>
+                    {% else %}
+                        <tr class="js-add-deployment__empty">
                             <td colspan="4">No deployments found.</td>
                         </tr>
-                    {% elseif envServers %}
-                        <tr>
-                            <td>
-                                <select class="js-newdeployment" name="server[]">
-                                    <option></option>
-                                    {% for server in envServers %}
-                                        <option value="{{ server.id }}">{{ server.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td><input type="text" name="path[]" maxlength="255" class="text-input"></td>
-                            <td><input type="text" name="url[]" maxlength="255" class="text-input"></td>
-                            <td></td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="4">There are no servers assigned to this environment. Deployments cannot be added.</td>
-                        </tr>
-                    {% endif %}
+                    {% endfor %}
                 </tbody>
             </table>
 
         {% endfor %}
 
         {% if canEdit %}
-            <div>
-                {# primary action #}
-                <input class="btn" type="submit" value="Save Deployment Relationships">
 
-                {# secondary actions #}
-                <a class="secondary-action" href="{{ urlFor('repository', {id: repository.id}) }}">Cancel</a>
+            <div class="form-wrapper js-add-deployment__form">
+                <h2>Add Deployment</b></h2>
+
+                {% include 'partials/form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': {}, 'repository': repository} %}
             </div>
-        </form>
+
+            <div class="js-add-deployment__button">
+                {# primary action #}
+                <a class="btn" href="{{ urlFor('repository.deployments.add', {repository: repository.id}) }}">Add Deployment</a>
+            </div>
         {% endif %}
 
     {% else %}

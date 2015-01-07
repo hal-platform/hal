@@ -45,7 +45,7 @@
             "exclude": [ "main" ]
         },
         {
-            "name": "controller/repository-deployment-add",
+            "name": "controller/deployment-add",
             "exclude": [ "main" ]
         },
 

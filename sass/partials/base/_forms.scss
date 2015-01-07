@@ -1,4 +1,6 @@
-.text-input, textarea {
+.text-input,
+.select-input,
+textarea {
     width: 100%;
     @include adjust-font-size-to(ms(1));
     padding: rhythm(.5, ms(1));
