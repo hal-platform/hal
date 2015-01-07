@@ -134,7 +134,6 @@ services:
         class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
         arguments:
             - @repository.status.twig
-            - @doctrine.em
             - @repository.repo
             - @build.repo
             - @deployment.repo
@@ -199,18 +198,44 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/deployments.twig']]]
 
-    repository.deployment.admin.add.handle:
-        class: 'QL\Hal\Controllers\Repository\Deployment\AdminAddHandle'
+    repository.deployments.add.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentController'
         arguments:
+            - @repository.deployments.add.twig
             - @server.repo
             - @repository.repo
-            - @deployment.repo
-            - @doctrine.em
-            - @session
-            - @url.helper
+            - @url
+    repository.deployments.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployments.add.twig']]]
 
-    repository.deployment.admin.remove.handle:
-        class: 'QL\Hal\Controllers\Repository\Deployment\AdminRemoveHandle'
+    repository.deployments.add.handler:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentHandler'
+        arguments: [@repository.deployments.add.handler.form, @repository.deployments.add.handler.json]
+    repository.deployments.add.handler.form:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentFormHandler'
+        arguments:
+            - @doctrine.em
+            - @repository.deployments.add.validator
+            - @session
+            - @url
+            - @twig.context
+    repository.deployments.add.handler.json:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentJsonHandler'
+        arguments:
+            - @doctrine.em
+            - @repository.deployments.add.validator
+            - @slim.halt
+            - @json
+            - @url
+    repository.deployments.add.validator:
+        class: 'QL\Hal\Validator\AddDeploymentValidator'
+        arguments:
+            - @repository.repo
+            - @server.repo
+            - @deployment.repo
+    repository.deployments.remove.handler:
+        class: 'QL\Hal\Controllers\Repository\Deployment\RemoveDeploymentHandler'
         arguments:
             - @deployment.repo
             - @doctrine.em

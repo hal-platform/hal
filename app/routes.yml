@@ -307,12 +307,12 @@ parameters:
         repository.admin.remove.confirm:
             method: 'GET'
             route: '/repositories/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            stack: ['admin.bouncer', 'delete.confirm.page']
             conditions: {id: '[\d]+'}
         repository.admin.remove.handle:
             method: 'POST'
             route: '/repositories/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.remove.handle']
+            stack: ['admin.bouncer', 'repository.admin.remove.handle']
             conditions: {id: '[\d]+'}
 
         ################################################################################################################
@@ -325,16 +325,22 @@ parameters:
             stack: ['login.bouncer', 'repository.deployments.page']
             conditions: {repository: '[\d]+'}
 
-        repository.deployment.admin.add.handle:
-            method: 'POST'
+        repository.deployments.add:
+            method: ['GET', 'POST']
             route: '/repositories/:repository/deployments/add'
-            stack: ['repoadmin.bouncer', 'repository.deployment.admin.add.handle']
+            stack: ['repoadmin.bouncer', 'repository.deployments.add.handler', 'repository.deployments.add.page']
             conditions: {repository: '[\d]+'}
 
-        repository.deployment.admin.remove.handle:
+        repository.deployments.remove.confirm:
             method: 'GET'
             route: '/repositories/:repository/deployments/:id/remove'
-            stack: ['repoadmin.bouncer', 'repository.deployment.admin.remove.handle']
+            stack: ['repoadmin.bouncer', 'delete.confirm.page']
+            conditions: {repository: '[\d]+', id: '[\d]+'}
+
+        repository.deployments.remove:
+            method: 'POST'
+            route: '/repositories/:repository/deployments/:id/remove'
+            stack: ['repoadmin.bouncer', 'repository.deployments.remove.handler']
             conditions: {repository: '[\d]+', id: '[\d]+'}
 
         ################################################################################################################
