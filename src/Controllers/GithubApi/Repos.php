@@ -8,13 +8,13 @@
 namespace QL\Hal\Controllers\GithubApi;
 
 use QL\Hal\Services\GithubService;
-use Slim\Http\Request;
+use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
 
 /**
  * @deprecated maybe?
  */
-class Repos
+class Repos implements ControllerInterface
 {
     /**
      * @var GithubService
@@ -22,40 +22,51 @@ class Repos
     private $github;
 
     /**
-     * @param GithubService $github
+     * @var Response
      */
-    public function __construct(GithubService $github)
+    private $response;
+
+    /**
+     * @var array
+     */
+    private $parameters;
+
+    /**
+     * @param GithubService $github
+     * @param Response $response
+     * @param array $parameters
+     */
+    public function __construct(GithubService $github, Response $response, array $parameters)
     {
         $this->github = $github;
+        $this->response = $response;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $req
-     * @param Response $res
-     * @param array $params
-     * @return null
+     * {@inheritdoc}
      */
-    public function __invoke(Request $req, Response $res, array $params = [])
+    public function __invoke()
     {
-        if (!isset($params['username'])) {
-            $res->setStatus(404);
+        if (!isset($this->parameters['username'])) {
+            $this->response->setStatus(404);
             return;
         }
 
-        if (!$params['username']) {
-            $res->setStatus(400);
+        if (!$this->parameters['username']) {
+            $this->response->setStatus(400);
             return;
         }
 
-        if (!$repos = $this->fetchReposFromService($params['username'])) {
-            $res->setStatus(404);
+        if (!$repos = $this->fetchReposFromService($this->parameters['username'])) {
+            $this->response->setStatus(404);
             return;
         }
 
         $repos = $this->formatRepos($repos);
 
-        $res->header('Content-Type', 'application/json; charset=utf-8');
-        $res->body($repos);
+        $this->response->headers->set('Content-Type', 'application/json; charset=utf-8');
+        $this->response->setBody($repos);
     }
 
     /**

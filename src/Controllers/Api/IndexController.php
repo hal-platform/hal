@@ -9,35 +9,32 @@ namespace QL\Hal\Controllers\Api;
 
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
 /**
  * API Index Controller
  */
-class IndexController
+class IndexController implements ControllerInterface
 {
     use HypermediaLinkTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
     /**
      * @param ResponseFormatter $formatter
      */
-    public function __construct(
-        ResponseFormatter $formatter
-    ) {
+    public function __construct(ResponseFormatter $formatter)
+    {
         $this->formatter = $formatter;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $this->formatter->respond([
             '_links' => [

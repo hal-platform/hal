@@ -1,4 +1,5 @@
 # Application specific endpoints and controllers go here
+# This includes handlers, middleware, or validators dedicated to a single page.
 services:
 
     delete.confirm.page:

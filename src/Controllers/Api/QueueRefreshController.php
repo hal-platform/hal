@@ -18,41 +18,45 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
 /**
  * Get the current status of one or more jobs.
  */
-class QueueRefreshController
+class QueueRefreshController implements ControllerInterface
 {
     use HypermediaResourceTrait;
     use HypermediaLinkTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @var BuildNormalizer
+     * @type BuildNormalizer
      */
     private $buildNormalizer;
 
     /**
-     * @var PushNormalizer
+     * @type PushNormalizer
      */
     private $pushNormalizer;
 
     /**
-     * @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @var PushRepository
+     * @type PushRepository
      */
     private $pushRepo;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ResponseFormatter $formatter
@@ -66,29 +70,29 @@ class QueueRefreshController
         BuildNormalizer $buildNormalizer,
         PushNormalizer $pushNormalizer,
         BuildRepository $buildRepo,
-        PushRepository $pushRepo
+        PushRepository $pushRepo,
+        array $parameters
     ) {
         $this->formatter = $formatter;
         $this->buildNormalizer = $buildNormalizer;
         $this->pushNormalizer = $pushNormalizer;
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        if (!isset($params['jobs'])) {
+        if (!isset($this->parameters['jobs'])) {
             // Need some kind of error messaging
             throw HttpProblemException::build(400, 'missing-jobs');
         }
 
-        $identifiers = explode(' ', $params['jobs']);
+        $identifiers = explode(' ', $this->parameters['jobs']);
 
         $jobs = $this->retrieveJobs($identifiers);
         $status = (count($jobs) > 0) ? 200 : 404;

@@ -16,11 +16,14 @@ services:
 
     api.github.users:
         class: 'QL\Hal\Controllers\GithubApi\Users'
-        arguments: [@github]
+        arguments: [@github, @slim.response]
 
     api.github.user.repositories:
         class: 'QL\Hal\Controllers\GithubApi\Repos'
-        arguments: [@github]
+        arguments:
+            - @github
+            - @slim.response
+            - @slim.route.parameters
 
     ######################################################################################################################
     # QUEUE CONTROLLERS
@@ -29,6 +32,7 @@ services:
     api.queue:
         class: 'QL\Hal\Controllers\Api\QueueController'
         arguments:
+            - @slim.request
             - @response.formatter
             - @normalizer.build
             - @normalizer.push
@@ -44,6 +48,7 @@ services:
             - @normalizer.push
             - @build.repo
             - @push.repo
+            - @slim.route.parameters
 
     ######################################################################################################################
     # BUILD CONTROLLERS
@@ -175,6 +180,7 @@ services:
             - @response.formatter
             - @event.log.repo
             - @normalizer.log.event
+            - @slim.route.parameters
 
     ######################################################################################################################
     # REPOSITORY CONTROLLERS

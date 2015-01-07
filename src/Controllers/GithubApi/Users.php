@@ -8,38 +8,43 @@
 namespace QL\Hal\Controllers\GithubApi;
 
 use QL\Hal\Services\GithubService;
-use Slim\Http\Request;
+use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
 
 /**
  * @deprecated maybe?
  */
-class Users
+class Users implements ControllerInterface
 {
     /**
-     * @var GithubService
+     * @type GithubService
      */
     private $github;
 
     /**
-     * @param GithubService $github
+     * @type Response
      */
-    public function __construct(GithubService $github)
+    private $response;
+
+    /**
+     * @param GithubService $github
+     * @param Response $response
+     */
+    public function __construct(GithubService $github, Response $response)
     {
         $this->github = $github;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $req
-     * @param Response $res
-     * @return null
+     * {@inheritdoc}
      */
-    public function __invoke(Request $req, Response $res)
+    public function __invoke()
     {
         $users = $this->github->users();
 
-        $res->header('Content-Type', 'application/json; charset=utf-8');
-        $res->body($this->formatUsersAndOrganizations($users));
+        $this->response->headers->set('Content-Type', 'application/json; charset=utf-8');
+        $this->response->setBody($this->formatUsersAndOrganizations($users));
     }
 
     /**

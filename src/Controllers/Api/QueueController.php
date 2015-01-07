@@ -21,8 +21,8 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
+use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 /**
  * Get all pushes and builds created after the specified time.
@@ -30,41 +30,47 @@ use Slim\Http\Response;
  * If no time is provided (Get param = "since"), all jobs in the past 20 minutes will be retrieved.
  * @todo change "since" to use some kind of better query filtering.
  */
-class QueueController
+class QueueController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @var BuildNormalizer
+     * @type BuildNormalizer
      */
     private $buildNormalizer;
 
     /**
-     * @var PushNormalizer
+     * @type PushNormalizer
      */
     private $pushNormalizer;
 
     /**
-     * @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @var PushRepository
+     * @type PushRepository
      */
     private $pushRepo;
 
     /**
-     * @var Clock
+     * @type Clock
      */
     private $clock;
 
     /**
+     * @param Request $request
      * @param ResponseFormatter $formatter
      * @param BuildNormalizer $buildNormalizer
      * @param PushNormalizer $pushNormalizer
@@ -73,6 +79,7 @@ class QueueController
      * @param Clock $clock
      */
     public function __construct(
+        Request $request,
         ResponseFormatter $formatter,
         BuildNormalizer $buildNormalizer,
         PushNormalizer $pushNormalizer,
@@ -80,6 +87,7 @@ class QueueController
         PushRepository $pushRepo,
         Clock $clock
     ) {
+        $this->request = $request;
         $this->formatter = $formatter;
         $this->buildNormalizer = $buildNormalizer;
         $this->pushNormalizer = $pushNormalizer;
@@ -89,14 +97,12 @@ class QueueController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $since = $request->get('since');
+        $since = $this->request->get('since');
         $createdAfter = null;
         if ($since && !$createdAfter = $this->parseValidSinceTime($since)) {
             throw HttpProblemException::build(400, 'Malformed Datetime! Dates must be ISO8601 UTC.');
