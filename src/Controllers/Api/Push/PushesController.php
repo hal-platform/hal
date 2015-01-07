@@ -14,18 +14,14 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Pushes Controller
- */
-class PushesController
+class PushesController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -45,38 +41,54 @@ class PushesController
     private $normalizer;
 
     /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param ResponseFormatter $formatter
      * @param RepositoryRepository $repositoryRepo
      * @param PushRepository $pushRepo
      * @param PushNormalizer $normalizer
+     * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
         RepositoryRepository $repositoryRepo,
         PushRepository $pushRepo,
-        PushNormalizer $normalizer
+        PushNormalizer $normalizer,
+        array $parameters
     ) {
         $this->formatter = $formatter;
         $this->repositoryRepo = $repositoryRepo;
         $this->pushRepo = $pushRepo;
         $this->normalizer = $normalizer;
+
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $repository = $this->repositoryRepo->findOneBy(['id' => $params['id']]);
+        $repository = $this->repositoryRepo->find($this->parameters['id']);
 
         if (!$repository instanceof Repository) {
             throw HttpProblemException::build(404, 'invalid-repository');
         }
 
-        $pushes = $this->pushRepo->getForRepository($repository);
+        // get most recent 500 pushes, this is a hard limit.
+        // @todo add paging to api
+        $paginator = $this->pushRepo->getForRepository($repository, 500);
+
+        // turn paginator into array
+        $pushes = [];
+        foreach ($paginator as $push) {
+            $pushes[] = $push;
+        }
+
         $status = (count($pushes) > 0) ? 200 : 404;
 
         $pushes = array_map(function ($push) {

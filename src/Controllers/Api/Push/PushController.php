@@ -11,16 +11,12 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- * API Push Controller
- */
-class PushController
+class PushController implements ControllerInterface
 {
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -30,26 +26,30 @@ class PushController
     private $pushRepo;
 
     /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param ResponseFormatter $formatter
      * @param PushRepository $pushRepo
+     * @param array $parameters
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        PushRepository $pushRepo
-    ) {
+    public function __construct(ResponseFormatter $formatter, PushRepository $pushRepo, array $parameters)
+    {
         $this->formatter = $formatter;
         $this->pushRepo = $pushRepo;
+
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $push = $this->pushRepo->find($params['id']);
+        $push = $this->pushRepo->find($this->parameters['id']);
 
         if (!$push instanceof Push) {
             throw HttpProblemException::build(404, 'invalid-push');

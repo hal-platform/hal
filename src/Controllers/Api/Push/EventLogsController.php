@@ -14,18 +14,14 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-/**
- *
- */
-class EventLogsController
+class EventLogsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
@@ -35,42 +31,49 @@ class EventLogsController
     private $pushRepo;
 
     /**
-     * @var EventLogNormalizer
+     * @type EventLogNormalizer
      */
     private $eventLogNormalizer;
 
     /**
-     * @var PushNormalizer
+     * @type PushNormalizer
      */
     private $pushNormalizer;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ResponseFormatter $formatter
      * @param PushRepository $pushRepo
      * @param EventLogNormalizer $eventLogNormalizer
      * @param PushNormalizer $pushNormalizer
+     * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
         PushRepository $pushRepo,
         EventLogNormalizer $eventLogNormalizer,
-        PushNormalizer $pushNormalizer
+        PushNormalizer $pushNormalizer,
+        array $parameters
     ) {
         $this->formatter = $formatter;
         $this->pushRepo = $pushRepo;
         $this->eventLogNormalizer = $eventLogNormalizer;
         $this->pushNormalizer = $pushNormalizer;
+
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        $push = $this->pushRepo->find($params['id']);
+        $push = $this->pushRepo->find($this->parameters['id']);
 
         if (!$push instanceof Push) {
             throw HttpProblemException::build(404, 'invalid-push');

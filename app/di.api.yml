@@ -166,8 +166,10 @@ services:
 
     api.push:
         class: 'QL\Hal\Controllers\Api\Push\PushController'
-        arguments: [@response.formatter, @push.repo]
-
+        arguments:
+            - @response.formatter
+            - @push.repo
+            - @slim.route.parameters
     api.push.logs:
         class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
         arguments:
@@ -175,6 +177,7 @@ services:
             - @push.repo
             - @normalizer.log.event
             - @normalizer.push
+            - @slim.route.parameters
 
     api.pushes:
         class: 'QL\Hal\Controllers\Api\Push\PushesController'
@@ -183,7 +186,7 @@ services:
             - @repository.repo
             - @push.repo
             - @normalizer.push
-
+            - @slim.route.parameters
 
     ######################################################################################################################
     # EVENT LOG CONTROLLERS
