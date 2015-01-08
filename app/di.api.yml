@@ -214,36 +214,6 @@ services:
             - @repository.repo
             - @slim.route.parameters
 
-    api.repository.tags:
-        class: 'QL\Hal\Controllers\Api\Repository\TagsController'
-        arguments:
-            - @response.formatter
-            - @url.helper
-            - @github
-            - @repository.repo
-            - @normalizer.repository
-            - @slim.route.parameters
-
-    api.repository.branches:
-        class: 'QL\Hal\Controllers\Api\Repository\BranchesController'
-        arguments:
-            - @response.formatter
-            - @url.helper
-            - @github
-            - @repository.repo
-            - @normalizer.repository
-            - @slim.route.parameters
-
-    api.repository.pullrequests:
-        class: 'QL\Hal\Controllers\Api\Repository\PullRequestsController'
-        arguments:
-            - @response.formatter
-            - @url.helper
-            - @github
-            - @repository.repo
-            - @normalizer.repository
-            - @slim.route.parameters
-
     api.repositories:
         class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
         arguments:

@@ -568,24 +568,6 @@ parameters:
             stack: ['cachedApi.middleware', 'api.repository']
             conditions: {id: '[\d]+'}
 
-        api.repository.tags:
-            method: 'GET'
-            route: '/api/repositories/:id/tags'
-            stack: ['cachedApi.middleware', 'api.repository.tags']
-            conditions: {id: '[\d]+'}
-
-        api.repository.branches:
-            method: 'GET'
-            route: '/api/repositories/:id/branches'
-            stack: ['cachedApi.middleware', 'api.repository.branches']
-            conditions: {id: '[\d]+'}
-
-        api.repository.pullrequests:
-            method: 'GET'
-            route: '/api/repositories/:id/pullrequests'
-            stack: ['cachedApi.middleware', 'api.repository.pullrequests']
-            conditions: {id: '[\d]+'}
-
         api.deployments:
             method: 'GET'
             route: '/api/repositories/:id/deployments'

@@ -103,10 +103,7 @@ class RepositoryNormalizer
                 'group' => $this->groups->link($repository->getGroup()),
                 'deployments' => $this->buildLink(['api.deployments', ['id' => $repository->getId()]]),
                 'builds' => $this->buildLink(['api.builds', ['id' => $repository->getId()]]),
-                'pushes' => $this->buildLink(['api.pushes', ['id' => $repository->getId()]]),
-                'tags' => $this->buildLink(['api.repository.tags', ['id' => $repository->getId()]]),
-                'branches' => $this->buildLink(['api.repository.branches', ['id' => $repository->getId()]]),
-                'pullRequests' => $this->buildLink(['api.repository.pullrequests', ['id' => $repository->getId()]])
+                'pushes' => $this->buildLink(['api.pushes', ['id' => $repository->getId()]])
             ]
         );
     }
