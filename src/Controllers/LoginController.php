@@ -7,11 +7,11 @@
 
 namespace QL\Hal\Controllers;
 
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class LoginController
+class LoginController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -19,21 +19,27 @@ class LoginController
     private $template;
 
     /**
-     * @param TemplateInterface $template
+     * @type Response
      */
-    public function __construct(TemplateInterface $template)
+    private $response;
+
+    /**
+     * @param TemplateInterface $template
+     * @param Response $response
+     */
+    public function __construct(TemplateInterface $template, Response $response)
     {
         $this->template = $template;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $rendered = $this->template->render();
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

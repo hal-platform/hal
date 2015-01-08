@@ -3,8 +3,8 @@
 services:
 
     delete.confirm.page:
-        class: 'QL\Hal\Controllers\StaticController'
-        arguments: [@delete.confirm.twig]
+        parent: 'static.controller'
+        arguments: [@delete.confirm.twig, @slim.response]
     delete.confirm.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['delete.confirm.twig']]]
@@ -18,13 +18,14 @@ services:
             - @build.repo
             - @push.repo
             - @user.repo
+            - @slim.response
     dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['dashboard.twig']]]
 
     login.page:
         class: 'QL\Hal\Controllers\LoginController'
-        arguments: [@login.twig]
+        arguments: [@login.twig, @slim.response]
     login.twig:
         parent: 'twig.template'
         arguments: ['login.twig']
@@ -38,6 +39,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
 
     logout.handle:
         class: 'QL\Hal\Controllers\LogoutController'
@@ -49,6 +52,7 @@ services:
             - @queue.twig
             - @build.repo
             - @push.repo
+            - @slim.response
     queue.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue.twig']]]
@@ -555,7 +559,7 @@ services:
 
     admin.dashboard.page:
         class: 'QL\Hal\Controllers\Admin\DashboardController'
-        arguments: [@admin.dashboard.twig]
+        arguments: [@admin.dashboard.twig, @slim.response]
     admin.dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/dashboard.twig']]]
@@ -564,6 +568,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\SuperController'
         arguments:
             - @admin.super.twig
+            - @slim.response
             - %encryption.secret%
             - %session.encryption.secret%
             - @hal.pushfile
@@ -578,6 +583,8 @@ services:
             - @user.repo
             - @ldapService
             - @doctrine.em
+            - @slim.request
+            - @slim.response
     admin.users.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/users.management.twig']]]
@@ -588,6 +595,8 @@ services:
             - @admin.caches.twig
             - @doctrine.config
             - @redis
+            - @slim.request
+            - @slim.response
     admin.caches.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/cache.management.twig']]]
@@ -599,6 +608,8 @@ services:
             - @global.message
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
     admin.message.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/global.message.twig']]]
@@ -609,27 +620,27 @@ services:
 
     help.page:
         parent: 'static.controller'
-        arguments: [@help.twig]
+        arguments: [@help.twig, @slim.response]
     help.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/help.twig']]]
     help.deployment.page:
         parent: 'static.controller'
-        arguments: [@help.deployment.twig]
+        arguments: [@help.deployment.twig, @slim.response]
     help.deployment.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/deployment.twig']]]
 
     # help.api.page:
     #   parent: 'static.controller'
-    #   arguments: [@help.api.twig]
+    #   arguments: [@help.api.twig, @slim.response]
     # help.api.twig:
     #   parent: 'twig.template'
     #   calls: [['setTemplate', ['help/api.twig']]]
 
     help.hal.page:
         parent: 'static.controller'
-        arguments: [@help.hal.twig]
+        arguments: [@help.hal.twig, @slim.response]
     help.hal.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/hal.twig']]]
@@ -643,14 +654,19 @@ services:
 
     denied.page:
         parent: 'static.controller'
-        arguments: [@denied.twig, 403]
+        arguments: [@denied.twig, @slim.response, 403]
     denied.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['denied.twig']]]
 
     audit.logs.page:
         class: 'QL\Hal\Controllers\AuditLogsController'
-        arguments: [@audit.logs.twig, @audit.log.repo]
+        arguments:
+            - @audit.logs.twig
+            - @audit.log.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     audit.logs.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['audit.logs.twig']]]

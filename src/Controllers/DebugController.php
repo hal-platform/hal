@@ -1,23 +1,23 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Controllers;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
 /**
  * Debug Controller
  */
-class DebugController
+class DebugController implements ControllerInterface
 {
     /**
-     *  Run the controller
-     *
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
         // shoosh, nothing to see here
         phpinfo();

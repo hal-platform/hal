@@ -74,6 +74,9 @@ services:
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'
         arguments: [@session.handler, @service_container]
+    slim.not.found:
+        class: 'QL\Hal\Slim\NotFound'
+        arguments: [@slim]
 
     hal.pushfile:
         class: 'dynamic_scalar'

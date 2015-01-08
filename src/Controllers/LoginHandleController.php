@@ -15,11 +15,12 @@ use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class LoginHandleController
+class LoginHandleController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -52,12 +53,24 @@ class LoginHandleController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param LdapService $ldap
      * @param UserRepository $userRepo
      * @param EntityManager $em
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
@@ -65,7 +78,9 @@ class LoginHandleController
         UserRepository $userRepo,
         EntityManager $em,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response
     ) {
         $this->template = $template;
         $this->ldap = $ldap;
@@ -73,27 +88,29 @@ class LoginHandleController
         $this->em = $em;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
-        $username = $request->post('username');
-        $password = $request->post('password');
-        $redirect = $request->get('redirect', null);
+        $username = $this->request->post('username');
+        $password = $this->request->post('password');
+        $redirect = $this->request->get('redirect', null);
 
         // auth empty
         if (!$username || !$password) {
-            $response->setBody($this->bailout('A username and password must be entered.'));
+            $this->response->setBody($this->bailout('A username and password must be entered.'));
             return;
         }
 
         // auth failed
         if (!$account = $this->ldap->authenticate($username, $password)) {
-            $response->setBody($this->bailout('Authentication failed.'));
+            $this->response->setBody($this->bailout('Authentication failed.'));
             return;
         }
 
@@ -101,7 +118,7 @@ class LoginHandleController
 
         // account disabled manually
         if ($user && !$user->isActive()) {
-            $response->setBody($this->bailout('Account disabled.'));
+            $this->response->setBody($this->bailout('Account disabled.'));
             return;
         }
 
@@ -119,7 +136,7 @@ class LoginHandleController
         $this->session->set('is-first-login', $isFirstLogin);
 
         if ($redirect) {
-            $response->redirect($redirect);
+            $this->response->redirect($redirect);
         } else {
             $this->url->redirectFor('dashboard');
         }

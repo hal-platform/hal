@@ -7,19 +7,24 @@
 
 namespace QL\Hal\Controllers;
 
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
  * Render a twig template and do nothing else.
  */
-class StaticController
+class StaticController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
      */
     private $template;
+
+    /**
+     * @type Response
+     */
+    private $response;
 
     /**
      * @type int
@@ -28,23 +33,24 @@ class StaticController
 
     /**
      * @param TemplateInterface $template
+     * @param Response $response
      * @param int $statusCode
      */
-    public function __construct(TemplateInterface $template, $statusCode = 200)
+    public function __construct(TemplateInterface $template, Response $response, $statusCode = 200)
     {
         $this->template = $template;
+        $this->response = $response;
         $this->statusCode = $statusCode;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $rendered = $this->template->render();
 
-        $response->setStatus($this->statusCode);
-        $response->setBody($rendered);
+        $this->response->setStatus($this->statusCode);
+        $this->response->setBody($rendered);
     }
 }

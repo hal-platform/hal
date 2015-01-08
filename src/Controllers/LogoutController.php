@@ -9,10 +9,9 @@ namespace QL\Hal\Controllers;
 
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\ControllerInterface;
 
-class LogoutController
+class LogoutController implements ControllerInterface
 {
     /**
      * @type Session
@@ -35,10 +34,9 @@ class LogoutController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $this->session->clear();
         $this->url->redirectFor('login');

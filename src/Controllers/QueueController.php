@@ -12,11 +12,11 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class QueueController
+class QueueController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -34,29 +34,39 @@ class QueueController
     private $pushRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
+     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, BuildRepository $buildRepo, PushRepository $pushRepo)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        BuildRepository $buildRepo,
+        PushRepository $pushRepo,
+        Response $response
+    ) {
         $this->template = $template;
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
+
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @return null
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $rendered = $this->template->render([
             'pending' => $this->getPendingJobs()
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

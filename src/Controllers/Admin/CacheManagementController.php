@@ -9,11 +9,12 @@ namespace QL\Hal\Controllers\Admin;
 
 use Doctrine\ORM\Configuration;
 use Predis\Client as Predis;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class CacheManagementController
+class CacheManagementController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -31,30 +32,46 @@ class CacheManagementController
     private $predis;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param Configuration $doctrineConfig
      * @param Predis $predis
+     * @param Request $request
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         Configuration $doctrineConfig,
-        Predis $predis
+        Predis $predis,
+        Request $request,
+        Response $response
     ) {
         $this->template = $template;
         $this->doctrineConfig = $doctrineConfig;
         $this->predis = $predis;
+
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $context = [];
 
         # clear doctrine
-        if ($request->get('clear_doctrine')) {
+        if ($this->request->get('clear_doctrine')) {
             $context['doctrine_status'] = [
                 'Query' => $this->clearDoctrine('getQueryCacheImpl'),
                 'Hydration' => $this->clearDoctrine('getHydrationCacheImpl'),
@@ -64,7 +81,7 @@ class CacheManagementController
 
         # clear permissions
         $permissions = $this->getPermissions();
-        if ($request->get('clear_permissions') && $permissions) {
+        if ($this->request->get('clear_permissions') && $permissions) {
             call_user_func_array([$this->predis, 'del'], $permissions);
 
             $context['permission_status'] = array_map(function($v) {
@@ -83,7 +100,7 @@ class CacheManagementController
 
         $rendered = $this->template->render($context);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

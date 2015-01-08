@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User;
 use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -18,7 +19,7 @@ use Slim\Http\Response;
 /**
  * Display all current users in HAL and show their LDAP and HAL status.
  */
-class UserManagementController
+class UserManagementController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -43,28 +44,44 @@ class UserManagementController
     private $entityManager;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param UserRepository $repository
      * @param LdapService $ldap
      * @param EntityManager $entityManager
+     * @param Request $request
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         UserRepository $repository,
         LdapService $ldap,
-        EntityManager $entityManager
+        EntityManager $entityManager,
+        Request $request,
+        Response $response
     ) {
         $this->template = $template;
         $this->repository = $repository;
         $this->ldap = $ldap;
         $this->entityManager = $entityManager;
+
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $users = $this->repository->findBy([], ['isActive' => 'DESC', 'name' => 'ASC']);
 
@@ -82,7 +99,7 @@ class UserManagementController
             'users' => $parsed
         ];
 
-        if ($request->get('prune')) {
+        if ($this->request->get('prune')) {
             if ($prunedUsers = $this->autoPrune($parsed)) {
                 $context['pruned'] = $prunedUsers;
             } else {
@@ -91,7 +108,7 @@ class UserManagementController
         }
 
         $rendered = $this->template->render($context);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

@@ -7,11 +7,11 @@
 
 namespace QL\Hal\Controllers\Admin;
 
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class SuperController
+class SuperController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -34,18 +34,26 @@ class SuperController
     private $halPushFile;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
+     * @param Response $response
      * @param string $encryptionKey
      * @param string $sessionEncryptionKey
      * @param string $halPushFile
      */
     public function __construct(
         TemplateInterface $template,
+        Response $response,
         $encryptionKey,
         $sessionEncryptionKey,
         $halPushFile
     ) {
         $this->template = $template;
+        $this->response = $response;
 
         $this->encryptionKey = $encryptionKey;
         $this->sessionEncryptionKey = $sessionEncryptionKey;
@@ -53,10 +61,9 @@ class SuperController
     }
 
     /**
-     *  @param Request $request
-     *  @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $context = [
             'servername' => gethostname(),
@@ -72,7 +79,7 @@ class SuperController
 
         $rendered = $this->template->render($context);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

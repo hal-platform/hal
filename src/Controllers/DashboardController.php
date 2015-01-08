@@ -15,11 +15,11 @@ use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\PermissionsService;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class DashboardController
+class DashboardController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -52,12 +52,18 @@ class DashboardController
     private $userRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param User $currentUser
      * @param PermissionsService $permissions
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      * @param UserRepository $userRepo
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
@@ -65,7 +71,8 @@ class DashboardController
         PermissionsService $permissions,
         BuildRepository $buildRepo,
         PushRepository $pushRepo,
-        UserRepository $userRepo
+        UserRepository $userRepo,
+        Response $response
     ) {
         $this->template = $template;
         $this->currentUser = $currentUser;
@@ -74,13 +81,14 @@ class DashboardController
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
         $this->userRepo = $userRepo;
+
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $user = $this->userRepo->find($this->currentUser->getId());
 
@@ -99,7 +107,7 @@ class DashboardController
             'pushes' => $recentPushes
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

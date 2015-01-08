@@ -8,11 +8,12 @@
 namespace QL\Hal\Controllers;
 
 use QL\Hal\Core\Entity\Repository\AuditLogRepository;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AuditLogsController
+class AuditLogsController implements ControllerInterface
 {
     const MAX_PER_PAGE = 25;
 
@@ -27,35 +28,59 @@ class AuditLogsController
     private $auditRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param AuditLogRepository $auditRepository
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
-    public function __construct(TemplateInterface $template, AuditLogRepository $auditRepository)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        AuditLogRepository $auditRepository,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
+    ) {
         $this->template = $template;
         $this->auditRepo = $auditRepository;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        $page = (isset($params['page'])) ? $params['page'] : 1;
+        $page = (isset($this->parameters['page'])) ? $this->parameters['page'] : 1;
 
         // 404, invalid page
         if ($page < 1) {
-            return $notFound();
+            return call_user_func($this->notFound);
         }
 
         $logs = $this->auditRepo->getPagedResults(self::MAX_PER_PAGE, ($page-1));
 
         // 404, no logs
         if (count($logs) < 1) {
-            return $notFound();
+            return call_user_func($this->notFound);
         }
 
         // Get current page count
@@ -75,6 +100,6 @@ class AuditLogsController
             'logs' => $logs
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }
