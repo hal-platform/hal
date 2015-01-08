@@ -16,7 +16,6 @@ use QL\Hal\Validator\BuildStartValidator;
 use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class BuildStartHandler
 {
@@ -58,6 +57,16 @@ class BuildStartHandler
     private $context;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param BuildRepository $buildRepo
      * @param EntityManager $em
      * @param BuildStartValidator $validator
@@ -65,6 +74,8 @@ class BuildStartHandler
      * @param Url $url
      * @param JobIdGenerator $unique
      * @param Context $context
+     * @param Request $request
+     * @param array $parameters
      */
     public function __construct(
         BuildRepository $buildRepo,
@@ -73,7 +84,9 @@ class BuildStartHandler
         Session $session,
         Url $url,
         JobIdGenerator $unique,
-        Context $context
+        Context $context,
+        Request $request,
+        array $parameters
     ) {
         $this->buildRepo = $buildRepo;
         $this->em = $em;
@@ -83,24 +96,25 @@ class BuildStartHandler
         $this->url = $url;
         $this->unique = $unique;
         $this->context = $context;
+
+        $this->request = $request;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
-        if (!$request->isPost()) {
+        if (!$this->request->isPost()) {
             return;
         }
 
         $build = $this->validator->isValid(
-            $params['id'],
-            $request->post('environment'),
-            $request->post('reference'),
-            $request->post('search')
+            $this->parameters['id'],
+            $this->request->post('environment'),
+            $this->request->post('reference'),
+            $this->request->post('search')
         );
 
         // if validator didn't create a build, add errors and pass through to controller

@@ -9,11 +9,12 @@ namespace QL\Hal\Controllers\Build;
 
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class BuildsController
+class BuildsController implements ControllerInterface
 {
     const MAX_PER_PAGE = 25;
 
@@ -33,45 +34,67 @@ class BuildsController
     private $buildRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         RepositoryRepository $repoRepo,
-        BuildRepository $buildRepo
+        BuildRepository $buildRepo,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->buildRepo = $buildRepo;
         $this->repoRepo = $repoRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($params['id'])) {
-            return call_user_func($notFound);
+        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
-        $page = (isset($params['page'])) ? $params['page'] : 1;
+        $page = (isset($this->parameters['page'])) ? $this->parameters['page'] : 1;
 
         // 404, invalid page
         if ($page < 1) {
-            return $notFound();
+            return call_user_func($this->notFound);
         }
 
         $builds = $this->buildRepo->getForRepository($repo, self::MAX_PER_PAGE, ($page-1));
 
         // 404, no builds
         if (count($builds) < 1) {
-            return $notFound();
+            return call_user_func($this->notFound);
         }
 
         // Get current page count
@@ -83,7 +106,7 @@ class BuildsController
 
         // 404, no results on this page
         if ($thisPageCount < 1) {
-            return $notFound();
+            return call_user_func($this->notFound);
         }
 
         $total = count($builds);
@@ -97,6 +120,6 @@ class BuildsController
             'builds' => $builds
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

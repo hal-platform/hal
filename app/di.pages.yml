@@ -253,7 +253,12 @@ services:
 
     build.page:
         class: 'QL\Hal\Controllers\Build\BuildController'
-        arguments: [@build.twig, @build.repo]
+        arguments:
+            - @build.twig
+            - @build.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     build.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/build.twig']]]
@@ -265,6 +270,10 @@ services:
             - @repository.repo
             - @environment.repo
             - @github
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     build.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/start.twig']]]
@@ -279,6 +288,8 @@ services:
             - @url
             - @utility.id.generator
             - @twig.context
+            - @slim.request
+            - @slim.route.parameters
     build.start.validator:
         class: 'QL\Hal\Validator\BuildStartValidator'
         arguments:
@@ -294,6 +305,9 @@ services:
             - @builds.twig
             - @repository.repo
             - @build.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     builds.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/builds.twig']]]

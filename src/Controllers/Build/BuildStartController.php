@@ -11,11 +11,13 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Services\GithubService;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class BuildStartController
+class BuildStartController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -38,41 +40,71 @@ class BuildStartController
     private $github;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param RepositoryRepository $repoRepo
      * @param EnvironmentRepository $envRepo
      * @param GithubService $github
+     * @param Request $request
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         RepositoryRepository $repoRepo,
         EnvironmentRepository $envRepo,
-        GithubService $github
+        GithubService $github,
+        Request $request,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->repoRepo = $repoRepo;
         $this->envRepo = $envRepo;
         $this->github = $github;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($params['id'])) {
-            return call_user_func($notFound);
+        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         $context = [
             'form' => [
-                'environment' => $request->post('environment'),
-                'search' => $request->post('search'),
-                'reference' => $request->post('reference'),
-                'gitref' => $request->post('gitref')
+                'environment' => $this->request->post('environment'),
+                'search' => $this->request->post('search'),
+                'reference' => $this->request->post('reference'),
+                'gitref' => $this->request->post('gitref')
             ],
 
             'repo' => $repo,
@@ -83,7 +115,8 @@ class BuildStartController
             'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ];
 
-        $response->setBody($this->template->render($context));
+        $rendered = $this->template->render($context);
+        $this->response->setBody($rendered);
     }
 
     /**
