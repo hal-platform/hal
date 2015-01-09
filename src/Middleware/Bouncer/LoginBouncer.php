@@ -10,66 +10,70 @@ namespace QL\Hal\Middleware\Bouncer;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\MiddlewareInterface;
 use Slim\Exception\Stop;
 use Slim\Http\Request;
-use Slim\Http\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A bouncer that checks to see if the current user is logged in
  */
-class LoginBouncer
+class LoginBouncer implements MiddlewareInterface
 {
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UserRepository
+     * @type UserRepository
      */
     private $repository;
 
     /**
-     * @var ContainerInterface
+     * @type ContainerInterface
      */
     private $container;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
+
+    /**
+     * @type Request
+     */
+    private $request;
 
     /**
      * @param Session $session
      * @param UserRepository $repository
      * @param ContainerInterface $container
      * @param UrlHelper $url
+     * @param Request $request
      */
     public function __construct(
         Session $session,
         UserRepository $repository,
         ContainerInterface $container,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request
     ) {
         $this->session = $session;
         $this->repository = $repository;
         $this->container = $container;
         $this->url = $url;
+        $this->request = $request;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     *
+     * {@inheritdoc}
      * @throws Stop
-     *
-     * @return null
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         if (!$this->session->get('user_id')) {
-            $this->url->redirectFor('login', [], ['redirect' => $request->getPathInfo()]);
+            $this->url->redirectFor('login', [], ['redirect' => $this->request->getPathInfo()]);
             throw new Stop;
         }
 

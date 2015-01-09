@@ -10,103 +10,113 @@ namespace QL\Hal\Middleware\Bouncer;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Services\PermissionsService;
-use QL\Hal\Session;
-use Slim\Exception\Stop;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Route;
-use Slim\Slim;
+use Slim\Exception\Stop;
+use Slim\Http\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A bouncer that checks to see if the current user is a super admin
  */
-class RepoAdminBouncer
+class RepoAdminBouncer implements MiddlewareInterface
 {
     /**
-     * @var ContainerInterface
+     * @type ContainerInterface
      */
     private $di;
 
     /**
-     * @var PermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     * @var TemplateInterface
+     * @type TemplateInterface
      */
     private $twig;
 
     /**
-     * @var LoginBouncer
+     * @type LoginBouncer
      */
     private $loginBouncer;
 
     /**
-     * @var Route
+     * @type Route
      */
     private $route;
 
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repositories;
 
     /**
-     * @var Slim
+     * @type Response
      */
-    private $slim;
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ContainerInterface $di
      * @param PermissionsService $permissions
      * @param TemplateInterface $twig
      * @param LoginBouncer $loginBouncer
+     * @param RepositoryRepository $repositories
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         ContainerInterface $di,
         PermissionsService $permissions,
         TemplateInterface $twig,
         LoginBouncer $loginBouncer,
-        Route $route,
         RepositoryRepository $repositories,
-        Slim $slim
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->di = $di;
         $this->permissions = $permissions;
         $this->twig = $twig;
         $this->loginBouncer = $loginBouncer;
-        $this->route = $route;
         $this->repositories = $repositories;
-        $this->slim = $slim; // only for 404 calls
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     *
+     * {@inheritdoc}
      * @throws Stop
-     *
-     * @return null
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         // Let login bouncer run first
-        call_user_func($this->loginBouncer, $request, $response);
+        call_user_func($this->loginBouncer);
 
         $user = $this->di->get('currentUser');
 
         // ASSUMPTION: the repository id will always be named 'repository' in the route
         // dumb, but we need to look up the repo key here for user permission checks
-
-        $repo = $this->repositories->find($this->route->getParam('repository'));
+        $repositoryId = isset($this->parameters['repository']) ? $this->parameters['repository'] : null;
+        $repo = $this->repositories->find($repositoryId);
 
         // repo does not exist
         if (!$repo instanceof Repository) {
-            $this->slim->notFound();
-            throw new Stop;
+            return call_user_func($this->notFound);
         }
 
         if ($this->permissions->allowRepoAdmin($user, $repo->getKey())) {
@@ -114,8 +124,8 @@ class RepoAdminBouncer
         }
 
         $rendered = $this->twig->render([]);
-        $response->setStatus(403);
-        $response->setBody($rendered);
+        $this->response->setStatus(403);
+        $this->response->setBody($rendered);
 
         throw new Stop;
     }

@@ -8,37 +8,41 @@
 namespace QL\Hal\Middleware;
 
 use QL\Hal\Api\ResponseFormatter;
-use Slim\Http\Request;
+use QL\Panthor\MiddlewareInterface;
 use Slim\Http\Response;
 use Slim\Exception\Stop;
 
 /**
  *  Check if the response is cached and if so, halt processing so the controller is not hit.
  */
-class CachedApiMiddleware
+class CachedApiMiddleware implements MiddlewareInterface
 {
     /**
-     * @var ResponseFormatter
+     * @type ResponseFormatter
      */
     private $formatter;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param ResponseFormatter $formatter
      */
-    public function __construct(
-        ResponseFormatter $formatter
-    ) {
+    public function __construct(ResponseFormatter $formatter, Response $response)
+    {
         $this->formatter = $formatter;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      * @throws Stop
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
-        if ($this->formatter->sendCachedResponse($response)) {
+        if ($this->formatter->sendCachedResponse($this->response)) {
             throw new Stop;
         }
     }

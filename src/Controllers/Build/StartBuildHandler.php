@@ -13,11 +13,12 @@ use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Session;
 use QL\Hal\Validator\BuildStartValidator;
+use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
-class StartBuildHandler
+class StartBuildHandler implements MiddlewareInterface
 {
     const WAIT_FOR_IT = 'Build has been queued for creation.';
 

@@ -12,31 +12,30 @@ use QL\Hal\Core\Entity\Repository\TokenRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\HttpProblem\HttpProblemException;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Panthor\MiddlewareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A bouncer that checks for a valid Authorization header auth token
  */
-class ApiAuthBouncer
+class ApiAuthBouncer implements MiddlewareInterface
 {
     const HEADER = 'Authorization';
     const FORMAT = '#^Token ([0-9a-zA-Z]{40,40})$#';
     const MATCH_POSITION = 1;
 
     /**
-     * @var ContainerInterface
+     * @type ContainerInterface
      */
     private $container;
 
     /**
-     * @var LdapService
+     * @type LdapService
      */
     private $ldap;
 
     /**
-     * @var TokenRepository
+     * @type TokenRepository
      */
     private $tokens;
 
@@ -56,11 +55,10 @@ class ApiAuthBouncer
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      * @throws HttpProblemException
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         // slim is not passing the auth header, get it the hard way
         $headers = getallheaders();
