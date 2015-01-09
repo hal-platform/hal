@@ -8,11 +8,12 @@
 namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminReorderController
+class AdminReorderController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -25,31 +26,47 @@ class AdminReorderController
     private $envRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $envRepo
+     * @param Response $response
+     * @param NotFound $notFound
      */
-    public function __construct(TemplateInterface $template, EnvironmentRepository $envRepo)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        EnvironmentRepository $envRepo,
+        Response $response,
+        NotFound $notFound
+    ) {
         $this->template = $template;
         $this->envRepo = $envRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
         if (!$environments = $this->envRepo->findBy([], ['order' => 'ASC'])) {
-            return $notFound();
+            return call_user_func($this->notFound);
         }
 
         $rendered = $this->template->render([
             'envs' => $environments
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

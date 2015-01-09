@@ -13,38 +13,48 @@ use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\PermissionsService;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 
 /**
  * Allow a user to delete an API token
  */
-class TokenDeleteController
+class TokenDeleteController implements ControllerInterface
 {
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var TokenRepository
+     * @type TokenRepository
      */
     private $tokenRepo;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     * @var PermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     * @var LdapUser
+     * @type LdapUser
      */
     private $currentUser;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param EntityManager $entityManager
@@ -52,33 +62,37 @@ class TokenDeleteController
      * @param UrlHelper $url
      * @param PermissionsService $permissions
      * @param User $currentUser
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         EntityManager $entityManager,
         TokenRepository $tokenRepo,
         UrlHelper $url,
         PermissionsService $permissions,
-        User $currentUser
+        User $currentUser,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->entityManager = $entityManager;
         $this->tokenRepo = $tokenRepo;
         $this->permissions = $permissions;
         $this->url = $url;
         $this->currentUser = $currentUser;
+
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
+    public function __invoke()
     {
-        $token = $this->tokenRepo->findOneBy(['value' => $params['token']]);
+        $token = $this->tokenRepo->findOneBy(['value' => $this->parameters['token']]);
 
         if (!$token instanceof Token) {
-            return call_user_func($notFound);
+            return call_user_func($this->notFound);
         }
 
         if ($this->isUserAllowed($token->getUser())) {

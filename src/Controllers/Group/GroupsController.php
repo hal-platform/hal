@@ -10,11 +10,11 @@ namespace QL\Hal\Controllers\Group;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\GroupRepository;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class GroupsController
+class GroupsController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -27,26 +27,32 @@ class GroupsController
     private $groupRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
+     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, GroupRepository $groupRepo)
+    public function __construct(TemplateInterface $template, GroupRepository $groupRepo, Response $response)
     {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $rendered = $this->template->render([
             'groups' => $this->getGroupsWithRepositories()
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

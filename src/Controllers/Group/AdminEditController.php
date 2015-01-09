@@ -13,11 +13,13 @@ use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController
+class AdminEditController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
@@ -47,59 +49,89 @@ class AdminEditController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         GroupRepository $groupRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$group = $this->groupRepo->find($params['id'])) {
-            return $notFound();
+        if (!$group = $this->groupRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
-        $renderContext = [
+        $context = [
             'form' => [
-                'identifier' => ($request->isPost()) ? $request->post('identifier') : $group->getKey(),
-                'name' => ($request->isPost()) ? $request->post('name') : $group->getName()
+                'identifier' => ($this->request->isPost()) ? $this->request->post('identifier') : $group->getKey(),
+                'name' => ($this->request->isPost()) ? $this->request->post('name') : $group->getName()
             ],
             'group' => $group,
-            'errors' => $this->checkFormErrors($request, $group)
+            'errors' => $this->checkFormErrors($this->request, $group)
         ];
 
-        if ($request->isPost()) {
+        if ($this->request->isPost()) {
 
-            if (!$renderContext['errors']) {
-                $group = $this->handleFormSubmission($request, $group);
+            if (!$context['errors']) {
+                $group = $this->handleFormSubmission($this->request, $group);
 
                 $this->session->flash('Group updated successfully.', 'success');
                 return $this->url->redirectFor('group', ['id' => $group->getId()]);
             }
         }
 
-        $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $rendered = $this->template->render($context);
+        $this->response->setBody($rendered);
     }
 
     /**

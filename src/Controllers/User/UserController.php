@@ -11,11 +11,12 @@ use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\PermissionsService;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class UserController
+class UserController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -38,37 +39,57 @@ class UserController
     private $userRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param LdapService $ldap
      * @param UserRepository $userRepo
      * @param PermissionsService $permissions
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         LdapService $ldap,
         UserRepository $userRepo,
-        PermissionsService $permissions
+        PermissionsService $permissions,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
         $this->permissions = $permissions;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
-     *
-     * @return null
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
+    public function __invoke()
     {
-        $id = $params['id'];
+        $id = $this->parameters['id'];
 
         if (!$user = $this->userRepo->find($id)) {
-            return call_user_func($notFound);
+            return call_user_func($this->notFound);
         }
 
         $rendered = $this->template->render([
@@ -79,6 +100,6 @@ class UserController
             'pushes' => count($user->getPushes())
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

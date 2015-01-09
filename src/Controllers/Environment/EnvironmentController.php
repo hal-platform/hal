@@ -10,11 +10,12 @@ namespace QL\Hal\Controllers\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class EnvironmentController
+class EnvironmentController implements ControllerInterface
 {
     use SortingHelperTrait;
 
@@ -34,30 +35,52 @@ class EnvironmentController
     private $serverRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $envRepo
      * @param ServerRepository $serverRepo
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EnvironmentRepository $envRepo,
-        ServerRepository $serverRepo
+        ServerRepository $serverRepo,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->envRepo = $envRepo;
         $this->serverRepo = $serverRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$environment = $this->envRepo->find($params['id'])) {
-            return $notFound();
+        if (!$environment = $this->envRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         $servers = $this->serverRepo->findBy(['environment' => $environment]);
@@ -68,6 +91,6 @@ class EnvironmentController
             'servers' => $servers
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

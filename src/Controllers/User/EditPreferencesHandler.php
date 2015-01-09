@@ -11,12 +11,12 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\Http\EncryptedCookies;
 use Slim\Http\Request;
-use Slim\Http\Response;
 use Slim\Slim;
 
-class EditPreferencesHandler
+class EditPreferencesHandler implements ControllerInterface
 {
     const GOODBYE_HAL = <<<'BYEBYE'
 <pre class="line-wrap">
@@ -69,6 +69,11 @@ HELLO;
     private $defaultPreferences;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
      * @param EncryptedCookies $cookies
      * @param Session $session
      * @param UrlHelper $url
@@ -76,6 +81,7 @@ HELLO;
      * @param User $currentUser
      * @param string $preferencesExpiry
      * @param array $preferences
+     * @param Request $request
      */
     public function __construct(
         EncryptedCookies $cookies,
@@ -84,7 +90,8 @@ HELLO;
         NameHelper $name,
         User $currentUser,
         $preferencesExpiry,
-        $preferences
+        $preferences,
+        Request $request
     ) {
         $this->cookies = $cookies;
         $this->session = $session;
@@ -93,26 +100,24 @@ HELLO;
         $this->currentUser = $currentUser;
 
         $this->preferencesExpiry = $preferencesExpiry;
+        $this->request = $request;
 
         $this->defaultPreferences = array_fill_keys(array_keys($preferences), false);
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $name = $this->name->getUsersActualName($this->currentUser);
 
-        $this->saveNavPreferences($request->post('navpreferences'));
-        $isChanged = $this->saveBusinessMode($request->post('seriousbusiness'));
+        $this->saveNavPreferences($this->request->post('navpreferences'));
+        $isChanged = $this->saveBusinessMode($this->request->post('seriousbusiness'));
 
         $msg = '<strong>Your preferences have been saved.</strong>';
         if ($isChanged) {
-            $flavor = $request->post('seriousbusiness') ? self::GOODBYE_HAL : self::PARTY_ON;
+            $flavor = $this->request->post('seriousbusiness') ? self::GOODBYE_HAL : self::PARTY_ON;
             $msg .= ' ' . sprintf($flavor, $name);
         }
 

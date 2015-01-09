@@ -11,37 +11,47 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
-use QL\Hal\Session;
 use QL\Hal\Helpers\UrlHelper;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Hal\Session;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 
-class AdminRemoveHandle
+class AdminRemoveHandle implements ControllerInterface
 {
     /**
-     * @var EnvironmentRepository
+     * @type EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param EnvironmentRepository $envRepo
@@ -49,36 +59,41 @@ class AdminRemoveHandle
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         EnvironmentRepository $envRepo,
         ServerRepository $serverRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->envRepo = $envRepo;
         $this->serverRepo = $serverRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
+
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$environment = $this->envRepo->find($params['id'])) {
-            return $notFound();
+        if (!$environment = $this->envRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         if ($servers = $this->serverRepo->findBy(['environment' => $environment])) {
             $this->session->flash('Cannot remove environment. All associated servers must first be removed.', 'error');
-            return $this->url->redirectFor('environment', ['id' => $params['id']]);
+            return $this->url->redirectFor('environment', ['id' => $this->parameters['id']]);
         }
 
         $this->entityManager->remove($environment);

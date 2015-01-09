@@ -13,38 +13,54 @@ use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\PermissionsService;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 /**
  * Allow a user to create an API token
  */
-class TokenCreateController
+class TokenCreateController implements ControllerInterface
 {
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     * @var UserRepository
+     * @type UserRepository
      */
     private $users;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     * @var PermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     * @var User
+     * @type User
      */
     private $currentUser;
+
+    /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param EntityManager $entityManager
@@ -52,13 +68,19 @@ class TokenCreateController
      * @param UrlHelper $url
      * @param PermissionsService $permissions
      * @param User $user
+     * @param Request $request
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         EntityManager $entityManager,
         UserRepository $userRepo,
         UrlHelper $url,
         PermissionsService $permissions,
-        User $currentUser
+        User $currentUser,
+        Request $request,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->entityManager = $entityManager;
         $this->userRepo = $userRepo;
@@ -66,21 +88,22 @@ class TokenCreateController
         $this->permissions = $permissions;
 
         $this->currentUser = $currentUser;
+
+        $this->request = $request;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
+    public function __invoke()
     {
-        $label = $request->post('label', null);
-        $id = $params['id'];
+        $label = $this->request->post('label', null);
+        $id = $this->parameters['id'];
 
         if (!$user = $this->userRepo->find($id)) {
-            return call_user_func($notFound);
+            return call_user_func($this->notFound);
         }
 
         if (!$this->isUserAllowed($user)) {

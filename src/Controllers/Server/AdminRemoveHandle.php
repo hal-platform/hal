@@ -12,35 +12,45 @@ use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 
-class AdminRemoveHandle
+class AdminRemoveHandle implements ControllerInterface
 {
     /**
-     * @var ServerRepository
+     * @type ServerRepository
      */
     private $serverRepo;
 
     /**
-     * @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deployRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ServerRepository $serverRepo
@@ -48,36 +58,40 @@ class AdminRemoveHandle
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         ServerRepository $serverRepo,
         DeploymentRepository $deployRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->serverRepo = $serverRepo;
         $this->deployRepo = $deployRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$server = $this->serverRepo->find($params['id'])) {
-            return $notFound();
+        if (!$server = $this->serverRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         if ($deployments = $this->deployRepo->findBy(['server' => $server])) {
             $this->session->flash('Cannot remove server. All associated deployments must first be removed.', 'error');
-            return $this->url->redirectFor('server', ['id' => $params['id']]);
+            return $this->url->redirectFor('server', ['id' => $this->parameters['id']]);
         }
 
         $this->entityManager->remove($server);

@@ -9,11 +9,12 @@ namespace QL\Hal\Controllers\Group;
 
 use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class GroupController
+class GroupController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -31,30 +32,52 @@ class GroupController
     private $repoRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
      * @param RepositoryRepository $repoRepo
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         GroupRepository $groupRepo,
-        RepositoryRepository $repoRepo
+        RepositoryRepository $repoRepo,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
         $this->repoRepo = $repoRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$group = $this->groupRepo->find($params['id'])) {
-            return $notFound();
+        if (!$group = $this->groupRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         $rendered = $this->template->render([
@@ -62,6 +85,6 @@ class GroupController
             'repos' => $this->repoRepo->findBy(['group' => $group], ['key' => 'ASC'])
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

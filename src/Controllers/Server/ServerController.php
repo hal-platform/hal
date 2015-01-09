@@ -9,11 +9,12 @@ namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class ServerController
+class ServerController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -31,30 +32,52 @@ class ServerController
     private $deployRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
      * @param DeploymentRepository $deployRepo
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         ServerRepository $serverRepo,
-        DeploymentRepository $deployRepo
+        DeploymentRepository $deployRepo,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->serverRepo = $serverRepo;
         $this->deployRepo = $deployRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$server = $this->serverRepo->find($params['id'])) {
-            return $notFound();
+        if (!$server = $this->serverRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         $rendered = $this->template->render([
@@ -62,7 +85,7 @@ class ServerController
             'deployments' => $this->deployRepo->findBy(['server' => $server])
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }
 

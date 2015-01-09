@@ -14,11 +14,12 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminAddController
+class AdminAddController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -51,12 +52,24 @@ class AdminAddController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
@@ -64,7 +77,9 @@ class AdminAddController
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response
     ) {
         $this->template = $template;
         $this->serverRepo = $serverRepo;
@@ -72,15 +87,15 @@ class AdminAddController
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
         if (!$environments = $this->envRepo->findBy([], ['order' => 'ASC'])) {
             $this->session->flash('A server requires an environment. Environments must be added before servers.', 'error');
@@ -89,21 +104,21 @@ class AdminAddController
 
         $renderContext = [
             'form' => [
-                'hostname' => $request->post('hostname'),
-                'environment' => $request->post('environment')
+                'hostname' => $this->request->post('hostname'),
+                'environment' => $this->request->post('environment')
             ],
-            'errors' => $this->checkFormErrors($request),
+            'errors' => $this->checkFormErrors($this->request),
             'environments' => $environments
         ];
 
-        if ($request->isPost()) {
+        if ($this->request->isPost()) {
             // this is kind of crummy
-            if (!$renderContext['errors'] && !$environment = $this->envRepo->find($request->post('environment'))) {
+            if (!$renderContext['errors'] && !$environment = $this->envRepo->find($this->request->post('environment'))) {
                 $renderContext['errors'][] = 'Please select an environment.';
             }
 
             if (!$renderContext['errors']) {
-                $server = $this->handleFormSubmission($request, $environment);
+                $server = $this->handleFormSubmission($this->request, $environment);
 
                 $message = sprintf('Server "%s" added.', $server->getName());
                 $this->session->flash($message, 'success');
@@ -112,7 +127,7 @@ class AdminAddController
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

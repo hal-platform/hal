@@ -10,11 +10,12 @@ namespace QL\Hal\Controllers\Server;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class ServersController
+class ServersController implements ControllerInterface
 {
     use SortingHelperTrait;
 
@@ -29,22 +30,26 @@ class ServersController
     private $serverRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
+     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, ServerRepository $serverRepo)
+    public function __construct(TemplateInterface $template, ServerRepository $serverRepo, Response $response)
     {
         $this->template = $template;
         $this->serverRepo = $serverRepo;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $servers = $this->serverRepo->findBy([], ['name' => 'ASC']);
 
@@ -53,7 +58,7 @@ class ServersController
             'server_count' => count($servers)
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

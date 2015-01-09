@@ -14,11 +14,13 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController
+class AdminEditController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -51,12 +53,36 @@ class AdminEditController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
@@ -64,7 +90,11 @@ class AdminEditController
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->serverRepo = $serverRepo;
@@ -72,38 +102,40 @@ class AdminEditController
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$server = $this->serverRepo->find($params['id'])) {
-            return $notFound();
+        if (!$server = $this->serverRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         $renderContext = [
             'form' => [
-                'hostname' => ($request->isPost()) ? $request->post('hostname') : $server->getName(),
-                'environment' => ($request->isPost()) ? $request->post('environment') : $server->getEnvironment()->getId()
+                'hostname' => ($this->request->isPost()) ? $this->request->post('hostname') : $server->getName(),
+                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->getEnvironment()->getId()
             ],
-            'errors' => $this->checkFormErrors($request, $server),
+            'errors' => $this->checkFormErrors($this->request, $server),
             'server' => $server,
             'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ];
 
-        if ($request->isPost()) {
+        if ($this->request->isPost()) {
             // this is kind of crummy
-            if (!$renderContext['errors'] && !$environment = $this->envRepo->find($request->post('environment'))) {
+            if (!$renderContext['errors'] && !$environment = $this->envRepo->find($this->request->post('environment'))) {
                 $renderContext['errors'][] = 'Please select an environment.';
             }
 
             if (!$renderContext['errors']) {
-                $this->handleFormSubmission($request, $server, $environment);
+                $this->handleFormSubmission($this->request, $server, $environment);
 
                 $this->session->flash('Server updated successfully.', 'success');
                 return $this->url->redirectFor('server', ['id' => $server->getId()]);
@@ -111,7 +143,7 @@ class AdminEditController
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

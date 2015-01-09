@@ -12,11 +12,12 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminAddController
+class AdminAddController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -44,49 +45,64 @@ class AdminAddController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response
     ) {
         $this->template = $template;
         $this->envRepo = $envRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
     }
 
+
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
         $renderContext = [
             'form' => [
-                'name' => $request->post('name')
+                'name' => $this->request->post('name')
             ],
-            'errors' => $this->checkFormErrors($request)
+            'errors' => $this->checkFormErrors($this->request)
         ];
 
-        if ($this->handleFormSubmission($request, $renderContext['errors'])) {
-            $message = sprintf('Environment "%s" added.', $request->post('name'));
+        if ($this->handleFormSubmission($this->request, $renderContext['errors'])) {
+            $message = sprintf('Environment "%s" added.', $this->request->post('name'));
             $this->session->flash($message, 'success');
             return $this->url->redirectFor('environments');
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

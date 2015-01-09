@@ -9,11 +9,12 @@ namespace QL\Hal\Controllers\User;
 
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class SettingsController
+class SettingsController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -31,35 +32,50 @@ class SettingsController
     private $currentUser;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
      * @param TemplateInterface $template
      * @param UserRepository $userRepo
      * @param User $currentUser
+     * @param Response $response
+     * @param NotFound $notFound
      */
-    public function __construct(TemplateInterface $template, UserRepository $userRepo, User $currentUser)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        UserRepository $userRepo,
+        User $currentUser,
+        Response $response,
+        NotFound $notFound
+    ) {
         $this->template = $template;
         $this->userRepo = $userRepo;
         $this->currentUser = $currentUser;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
-     *
-     * @return null
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = null, callable $notFound = null)
+    public function __invoke()
     {
         if (!$user = $this->userRepo->find($this->currentUser->getId())) {
-            return call_user_func($notFound);
+            return call_user_func($this->notFound);
         }
 
         $rendered = $this->template->render([
             'user' => $user
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

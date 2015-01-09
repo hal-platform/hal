@@ -9,65 +9,81 @@ namespace QL\Hal\Controllers\Environment;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Session;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Session;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
-class AdminReorderHandle
+class AdminReorderHandle implements ControllerInterface
 {
     /**
-     *  @var EnvironmentRepository
+     * @type EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     *  @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     *  @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     *  @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
 
     /**
-     *  @param EnvironmentRepository $envRepo
-     *  @param EntityManager $entityManager
-     *  @param Session $session
-     *  @param UrlHelper $url
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @param EnvironmentRepository $envRepo
+     * @param EntityManager $entityManager
+     * @param Session $session
+     * @param UrlHelper $url
+     * @param Request $request
+     * @param NotFound $notFound
      */
     public function __construct(
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        NotFound $notFound
     ) {
         $this->envRepo = $envRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->notFound = $notFound;
     }
 
+
     /**
-     *  @param Request $request
-     *  @param Response $response
-     *  @param array $params
-     *  @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
         if (!$environments = $this->envRepo->findAll()) {
-            return $notFound();
+            return call_user_func($this->notFound);
         }
 
         $ordered = [];
-        foreach ($request->post() as $postKey => $selectedOrder) {
+        foreach ($this->request->post() as $postKey => $selectedOrder) {
             if (substr($postKey, 0, 3) !== 'env') {
                 continue;
             }

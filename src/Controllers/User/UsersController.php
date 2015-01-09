@@ -8,11 +8,11 @@
 namespace QL\Hal\Controllers\User;
 
 use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class UsersController
+class UsersController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -25,20 +25,27 @@ class UsersController
     private $userRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param UserRepository $userRepo
+     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, UserRepository $userRepo)
+    public function __construct(TemplateInterface $template, UserRepository $userRepo, Response $response)
     {
         $this->template = $template;
         $this->userRepo = $userRepo;
+        $this->response = $response;
     }
 
+
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $users = $this->userRepo->findBy([], ['name' => 'ASC']);
 
@@ -59,6 +66,6 @@ class UsersController
         ];
 
         $rendered = $this->template->render($context);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

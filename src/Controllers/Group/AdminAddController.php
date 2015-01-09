@@ -13,11 +13,12 @@ use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminAddController
+class AdminAddController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
@@ -47,44 +48,60 @@ class AdminAddController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         GroupRepository $groupRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response
     ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $renderContext = [
             'form' => [
-                'identifier' => $request->post('identifier'),
-                'name' => $request->post('name')
+                'identifier' => $this->request->post('identifier'),
+                'name' => $this->request->post('name')
             ],
-            'errors' => $this->checkFormErrors($request)
+            'errors' => $this->checkFormErrors($this->request)
         ];
 
-        if ($request->isPost()) {
+        if ($this->request->isPost()) {
 
             if (!$renderContext['errors']) {
-                $group = $this->handleFormSubmission($request);
+                $group = $this->handleFormSubmission($this->request);
 
                 $message = sprintf('Group "%s" added.', $group->getName());
                 $this->session->flash($message, 'success');
@@ -94,7 +111,7 @@ class AdminAddController
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

@@ -12,11 +12,13 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController
+class AdminEditController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -44,53 +46,83 @@ class AdminEditController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->envRepo = $envRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$environment = $this->envRepo->find($params['id'])) {
-            return $notFound();
+        if (!$environment = $this->envRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         $renderContext = [
             'form' => [
-                'name' => ($request->isPost()) ? $request->post('name') : $environment->getKey()
+                'name' => ($this->request->isPost()) ? $this->request->post('name') : $environment->getKey()
             ],
             'env' => $environment,
-            'errors' => $this->checkFormErrors($request)
+            'errors' => $this->checkFormErrors($this->request)
         ];
 
-        if ($this->handleFormSubmission($request, $environment, $renderContext['errors'])) {
+        if ($this->handleFormSubmission($this->request, $environment, $renderContext['errors'])) {
             $this->session->flash('Environment updated successfully.', 'success');
             return $this->url->redirectFor('environment', ['id' => $environment->getId()]);
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

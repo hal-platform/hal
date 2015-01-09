@@ -63,7 +63,10 @@ services:
 
     groups.page:
         class: 'QL\Hal\Controllers\Group\GroupsController'
-        arguments: [@groups.twig, @group.repo]
+        arguments:
+            - @groups.twig
+            - @group.repo
+            - @slim.response
     groups.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['group/groups.twig']]]
@@ -74,6 +77,9 @@ services:
             - @group.twig
             - @group.repo
             - @repository.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     group.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['group/group.twig']]]
@@ -86,6 +92,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
     group.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['group/admin.add.twig']]]
@@ -100,6 +108,10 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     group.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['group/admin.edit.twig']]]
@@ -112,6 +124,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.not.found
+            - @slim.route.parameters
 
     ######################################################################################################################
     # REPOSITORY CONTROLLERS
@@ -119,7 +133,9 @@ services:
 
     repositories.page:
         class: 'QL\Hal\Controllers\Repository\RepositoriesController'
-        arguments: [@repositories.twig, @group.repo]
+        arguments:
+            - @repositories.twig
+            - @group.repo
     repositories.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/repositories.twig']]]
@@ -376,7 +392,11 @@ services:
 
     environments.page:
         class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
-        arguments: [@environments.twig, @environment.repo]
+        arguments:
+            - @environments.twig
+            - @environment.repo
+            - @slim.response
+
     environments.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/environments.twig']]]
@@ -387,13 +407,20 @@ services:
             - @environment.twig
             - @environment.repo
             - @server.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     environment.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/environment.twig']]]
 
     environment.admin.reorder.page:
         class: 'QL\Hal\Controllers\Environment\AdminReorderController'
-        arguments: [@environment.admin.reorder.twig, @environment.repo]
+        arguments:
+            - @environment.admin.reorder.twig
+            - @environment.repo
+            - @slim.response
+            - @slim.not.found
     environment.admin.reorder.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/admin.reorder.twig']]]
@@ -404,6 +431,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.not.found
 
     environment.admin.add.page:
         class: 'QL\Hal\Controllers\Environment\AdminAddController'
@@ -413,6 +442,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
     environment.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/admin.add.twig']]]
@@ -427,6 +458,10 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     environment.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/admin.edit.twig']]]
@@ -441,14 +476,18 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
-
+            - @slim.not.found
+            - @slim.route.parameters
     ######################################################################################################################
     # SERVER CONTROLLERS
     ######################################################################################################################
 
     servers.page:
         class: 'QL\Hal\Controllers\Server\ServersController'
-        arguments: [@servers.twig, @server.repo]
+        arguments:
+            - @servers.twig
+            - @server.repo
+            - @slim.response
     servers.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/servers.twig']]]
@@ -459,6 +498,9 @@ services:
             - @server.twig
             - @server.repo
             - @deployment.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     server.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/server.twig']]]
@@ -472,6 +514,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
     server.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/admin.add.twig']]]
@@ -487,6 +531,10 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     server.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/admin.edit.twig']]]
@@ -501,7 +549,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
-
+            - @slim.not.found
+            - @slim.route.parameters
     ######################################################################################################################
     # USER CONTROLLERS
     ######################################################################################################################
@@ -513,13 +562,19 @@ services:
             - @ldapService
             - @user.repo
             - @permissions
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     user.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/user.twig']]]
 
     users.page:
         class: 'QL\Hal\Controllers\User\UsersController'
-        arguments: [@users.twig, @user.repo]
+        arguments:
+            - @users.twig
+            - @user.repo
+            - @slim.response
     users.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/users.twig']]]
@@ -534,6 +589,7 @@ services:
             - @currentUser
             - %cookie.preferences.ttl%
             - %navigation.list%
+            - @slim.request
 
     user.settings.page:
         class: 'QL\Hal\Controllers\User\SettingsController'
@@ -541,6 +597,8 @@ services:
             - @user.settings.twig
             - @user.repo
             - @currentUser
+            - @slim.response
+            - @slim.not.found
     user.settings.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/settings.twig']]]
@@ -557,6 +615,9 @@ services:
             - @url.helper
             - @permissions
             - @currentUser
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
 
     user.token.delete.handle:
         class: 'QL\Hal\Controllers\User\Token\TokenDeleteController'
@@ -566,7 +627,8 @@ services:
             - @url.helper
             - @permissions
             - @currentUser
-
+            - @slim.not.found
+            - @slim.route.parameters
     ######################################################################################################################
     # ADMIN CONTROLLERS
     ######################################################################################################################

@@ -8,11 +8,11 @@
 namespace QL\Hal\Controllers\Environment;
 
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class EnvironmentsController
+class EnvironmentsController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -25,26 +25,31 @@ class EnvironmentsController
     private $envRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $envRepo
+     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, EnvironmentRepository $envRepo)
+    public function __construct(TemplateInterface $template, EnvironmentRepository $envRepo, Response $response)
     {
         $this->template = $template;
         $this->envRepo = $envRepo;
+        $this->response = $response;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [])
+    public function __invoke()
     {
         $rendered = $this->template->render([
             'envs' => $this->envRepo->findBy([], ['order' => 'ASC'])
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }
