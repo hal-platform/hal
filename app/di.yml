@@ -1,7 +1,6 @@
 imports:
     - resource: di.pages.yml
     - resource: di.api.yml
-    - resource: di.panthor.yml
 
 services:
 
@@ -66,10 +65,13 @@ services:
 
     slim.hook.logger:
         class: 'QL\Hal\Slim\McpLoggerHook'
-        arguments: [@logger.mcp.factory, @slim.environment, @slim.request]
+        arguments: [@logger.mcp.factory]
     slim.hook.errors:
         class: 'QL\Hal\Slim\ErrorHandlerHook'
-        arguments: [@exception.dispatcher, @logger, @error.pages.twig]
+        arguments:
+            - @exception.dispatcher
+            - @logger
+            - @error.pages.twig
 
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'

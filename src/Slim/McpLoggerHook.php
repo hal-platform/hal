@@ -9,8 +9,7 @@ namespace QL\Hal\Slim;
 
 use MCP\DataType\IPv4Address;
 use MCP\Service\Logger\MessageFactoryInterface;
-use Slim\Environment;
-use Slim\Http\Request;
+use Slim\Slim;
 
 /**
  * Set default log message properties.
@@ -20,45 +19,34 @@ use Slim\Http\Request;
 class McpLoggerHook
 {
     /**
-     * @var MessageFactoryInterface
+     * @type MessageFactoryInterface
      */
     private $factory;
 
     /**
-     * @var Environment
-     */
-    private $env;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @param MessageFactoryInterface $factory
-     * @param Environment $env
-     * @param Request $request
      */
-    public function __construct(MessageFactoryInterface $factory, Environment $env, Request $request)
+    public function __construct(MessageFactoryInterface $factory)
     {
         $this->factory = $factory;
-        $this->env = $env;
-        $this->request = $request;
     }
 
     /**
+     * @param Slim $slim
      * @return null
      */
-    public function __invoke()
+    public function __invoke(Slim $slim)
     {
+        $request = $slim->request();
+
         // server
-        $this->factory->setDefaultProperty('machineName', $this->request->getHost());
+        $this->factory->setDefaultProperty('machineName', $request->getHost());
 
         // client
-        $this->factory->setDefaultProperty('Referrer',  $this->request->getReferrer());
-        $this->factory->setDefaultProperty('Url',  $this->request->getUrl() . $this->request->getPathInfo());
-        $this->factory->setDefaultProperty('UserAgentBrowser', $this->request->getUserAgent());
-        $this->factory->setDefaultProperty('UserIPAddress', $this->request->getIp());
+        $this->factory->setDefaultProperty('Referrer',  $request->getReferrer());
+        $this->factory->setDefaultProperty('Url',  $request->getUrl() . $request->getPathInfo());
+        $this->factory->setDefaultProperty('UserAgentBrowser', $request->getUserAgent());
+        $this->factory->setDefaultProperty('UserIPAddress', $request->getIp());
 
         // slim doesn't expose this var
         if (!isset($_SERVER['SERVER_ADDR'])) {
