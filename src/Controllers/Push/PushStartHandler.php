@@ -15,13 +15,14 @@ use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Services\PermissionsService;
 use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
-class PushStartHandler
+class PushStartHandler implements ControllerInterface
 {
     const ERR_NO_DEPS = 'You must select at least one deployment.';
     const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';
@@ -80,6 +81,21 @@ class PushStartHandler
     private $unique;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param Session $session
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
@@ -90,6 +106,9 @@ class PushStartHandler
      * @param User $currentUser
      * @param PermissionsService $permissions
      * @param JobIdGenerator $unique
+     * @param Request $request
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         Session $session,
@@ -101,7 +120,10 @@ class PushStartHandler
         UrlHelper $url,
         User $currentUser,
         PermissionsService $permissions,
-        JobIdGenerator $unique
+        JobIdGenerator $unique,
+        Request $request,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->session = $session;
         $this->buildRepo = $buildRepo;
@@ -113,23 +135,24 @@ class PushStartHandler
         $this->currentUser = $currentUser;
         $this->permissions = $permissions;
         $this->unique = $unique;
+
+        $this->request = $request;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        $build = $this->buildRepo->findOneBy(['id' => $params['build'], 'status' => 'Success']);
+        $build = $this->buildRepo->findOneBy(['id' => $this->parameters['build'], 'status' => 'Success']);
 
         if (!$build) {
-            return call_user_func($notFound);
+            return call_user_func($this->notFound);
         }
 
-        $deploymentIds = $request->post('deployments', []);
+        $deploymentIds = $this->request->post('deployments', []);
 
         if (!is_array($deploymentIds) || count($deploymentIds) == 0) {
             return $this->bailout(self::ERR_NO_DEPS, $build->getId());

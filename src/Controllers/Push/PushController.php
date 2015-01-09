@@ -8,11 +8,12 @@
 namespace QL\Hal\Controllers\Push;
 
 use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class PushController
+class PushController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -25,33 +26,55 @@ class PushController
     private $pushRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param PushRepository $pushRepo
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
-    public function __construct(TemplateInterface $template, PushRepository $pushRepo)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        PushRepository $pushRepo,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
+    ) {
         $this->template = $template;
         $this->pushRepo = $pushRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        $push = $this->pushRepo->findOneBy(['id' => $params['push']]);
-
-        if (!$push) {
-            return call_user_func($notFound);
+        if (!$push = $this->pushRepo->find($this->parameters['push'])) {
+            return call_user_func($this->notFound);
         }
 
         $rendered = $this->template->render([
             'push' => $push
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 }

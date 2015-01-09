@@ -14,11 +14,13 @@ use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class PushStartController
+class PushStartController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -46,38 +48,68 @@ class PushStartController
     private $pushRepo;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
      * @param ServerRepository $serverRepo
      * @param PushRepository $pushRepo
+     * @param Request $request
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
         ServerRepository $serverRepo,
-        PushRepository $pushRepo
+        PushRepository $pushRepo,
+        Request $request,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->buildRepo = $buildRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->serverRepo = $serverRepo;
         $this->pushRepo = $pushRepo;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        $build = $this->buildRepo->find($params['build']);
+        $build = $this->buildRepo->find($this->parameters['build']);
 
         if (!$build || $build->getStatus() != 'Success') {
-            return call_user_func($notFound);
+            return call_user_func($this->notFound);
         }
 
         $deployments = $this->getDeploymentsForBuild($build);
@@ -101,11 +133,11 @@ class PushStartController
 
         $rendered = $this->template->render([
             'build' => $build,
-            'selected' => $request->get('deployment'),
+            'selected' => $this->request->get('deployment'),
             'statuses' => $statuses
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

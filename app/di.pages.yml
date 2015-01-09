@@ -372,6 +372,10 @@ services:
             - @deployment.repo
             - @server.repo
             - @push.repo
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     push.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/start.twig']]]
@@ -389,6 +393,9 @@ services:
             - @currentUser
             - @permissions
             - @utility.id.generator
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
 
     push.rollback.page:
         class: 'QL\Hal\Controllers\Push\RollbackController'
@@ -397,13 +404,21 @@ services:
             - @repository.repo
             - @server.repo
             - @push.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     rollback.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/rollback.twig']]]
 
     push.page:
         class: 'QL\Hal\Controllers\Push\PushController'
-        arguments: [@push.twig, @push.repo]
+        arguments:
+            - @push.twig
+            - @push.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     push.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/push.twig']]]
@@ -414,6 +429,9 @@ services:
             - @pushes.twig
             - @repository.repo
             - @push.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     pushes.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/pushes.twig']]]
