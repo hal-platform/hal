@@ -12,35 +12,45 @@ use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 
-class AdminRemoveHandle
+class AdminRemoveHandle implements ControllerInterface
 {
     /**
-     * @var RepositoryRepository
+     * @type RepositoryRepository
      */
     private $repoRepo;
 
     /**
-     * @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $entityManager;
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var UrlHelper
+     * @type UrlHelper
      */
     private $url;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param RepositoryRepository $repoRepo
@@ -54,25 +64,27 @@ class AdminRemoveHandle
         DeploymentRepository $deploymentRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->repoRepo = $repoRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($params['id'])) {
-            return $notFound();
+        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         if ($deployments = $this->deploymentRepo->findBy(['repository' => $repo])) {

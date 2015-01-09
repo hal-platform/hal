@@ -11,12 +11,14 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AddDeploymentController
+class AddDeploymentController implements ControllerInterface
 {
     use SortingHelperTrait;
 
@@ -41,55 +43,84 @@ class AddDeploymentController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
      * @param RepositoryRepository $repoRepo
      * @param Url $url
+     * @param Request $request
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         ServerRepository $serverRepo,
         RepositoryRepository $repoRepo,
-        Url $url
+        Url $url,
+        Request $request,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->serverRepo = $serverRepo;
         $this->repoRepo = $repoRepo;
-
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($params['repository'])) {
-            return $notFound();
+        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+            return call_user_func($this->notFound);
         }
 
         $servers = $this->serverRepo->findAll();
 
         // If no servers, throw back to repo page
         if (!$servers) {
-            $this->url->redirectFor('repository', ['repository' => $params['repository']]);
+            $this->url->redirectFor('repository', ['repository' => $this->parameters['repository']]);
         }
 
         $rendered = $this->template->render([
             'form' => [
-                'server' => $request->post('server'),
-                'path' => $request->post('path'),
-                'url' => $request->post('url')
+                'server' => $this->request->post('server'),
+                'path' => $this->request->post('path'),
+                'url' => $this->request->post('url')
             ],
 
             'servers_by_env' => $this->environmentalizeServers($servers),
             'repository' => $repo
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

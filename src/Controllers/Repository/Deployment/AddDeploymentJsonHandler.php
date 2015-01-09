@@ -9,13 +9,14 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Validator\AddDeploymentValidator;
+use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Slim\Halt;
 use QL\Panthor\Utility\Json;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AddDeploymentJsonHandler
+class AddDeploymentJsonHandler implements MiddlewareInterface
 {
     const ERR_UNKNOWN = 'An unknown error occured.';
     const ERR_INVALID_JSON = 'Invalid JSON provided.';
@@ -46,18 +47,39 @@ class AddDeploymentJsonHandler
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param EntityManager $em
      * @param AddDeploymentValidator $validator
      * @param Halt $halt
      * @param Json $json
      * @param Url $url
+     * @param Request $request
+     * @param Response $response
+     * @param array $parameters
      */
     public function __construct(
         EntityManager $em,
         AddDeploymentValidator $validator,
         Halt $halt,
         Json $json,
-        Url $url
+        Url $url,
+        Request $request,
+        Response $response,
+        array $parameters
     ) {
         $this->em = $em;
         $this->validator = $validator;
@@ -65,19 +87,21 @@ class AddDeploymentJsonHandler
         $this->halt = $halt;
         $this->json = $json;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, $params = [])
+    public function __invoke()
     {
-        $response->headers->set('Content-Type', 'application/json');
+        $this->response->headers->set('Content-Type', 'application/json');
 
         // deployment always returned, it will blow up if not.
-        $deployment = $this->handleJson($request, $response, $params['repository']);
+        $deployment = $this->handleJson($this->parameters['repository']);
 
         // if validator didn't create a deployment, pass through to controller to handle errors
         if (!$deployment) {
@@ -93,15 +117,13 @@ class AddDeploymentJsonHandler
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
      * @param int $repositoryId
      *
      * @return Deployment|null
      */
-    private function handleJson(Request $request, Response $response, $repositoryId)
+    private function handleJson($repositoryId)
     {
-        $body = $request->getBody();
+        $body = $this->request->getBody();
         $decoded = call_user_func($this->json, $body);
 
         // the json was not in the form we expected

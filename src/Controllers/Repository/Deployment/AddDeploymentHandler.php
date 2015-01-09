@@ -7,11 +7,16 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
+use QL\Panthor\MiddlewareInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
-class AddDeploymentHandler
+class AddDeploymentHandler implements MiddlewareInterface
 {
+    /**
+     * @type Request
+     */
+    private $request;
+
     /**
      * @type AddDeploymentFormHandler
      */
@@ -23,27 +28,30 @@ class AddDeploymentHandler
     private $jsonHandler;
 
     /**
+     * @param Request $request
      * @param AddDeploymentFormHandler $formHandler
      * @param AddDeploymentJsonHandler $jsonHandler
      */
-    public function __construct(AddDeploymentFormHandler $formHandler, AddDeploymentJsonHandler $jsonHandler)
-    {
+    public function __construct(
+        Request $request,
+        AddDeploymentFormHandler $formHandler,
+        AddDeploymentJsonHandler $jsonHandler
+    ) {
+        $this->request = $request;
         $this->formHandler = $formHandler;
         $this->jsonHandler = $jsonHandler;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, $params = [])
+    public function __invoke()
     {
-        if (!$request->isPost()) {
+        if (!$this->request->isPost()) {
             return;
         }
 
-        $isAjax = ($request->getMediaType() === 'application/json');
+        $isAjax = ($this->request->getMediaType() === 'application/json');
 
         // default to form handler
         $handler = $this->formHandler;

@@ -13,12 +13,13 @@ use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Slim\NotFound;
 use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class DeploymentsController
+class DeploymentsController implements ControllerInterface
 {
     use SortingHelperTrait;
 
@@ -48,6 +49,21 @@ class DeploymentsController
     private $deploymentRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $environmentRepo
      * @param ServerRepository $serverRepo
@@ -59,25 +75,29 @@ class DeploymentsController
         EnvironmentRepository $environmentRepo,
         ServerRepository $serverRepo,
         RepositoryRepository $repoRepo,
-        DeploymentRepository $deploymentRepo
+        DeploymentRepository $deploymentRepo,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->environmentRepo = $environmentRepo;
         $this->serverRepo = $serverRepo;
         $this->repoRepo = $repoRepo;
         $this->deploymentRepo = $deploymentRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($params['repository'])) {
-            return $notFound();
+        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+            return call_user_func($this->notFound);
         }
 
         // Get and sort deployments
@@ -94,7 +114,7 @@ class DeploymentsController
             'repository' => $repo
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

@@ -15,11 +15,13 @@ use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController
+class AdminEditController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
@@ -54,6 +56,26 @@ class AdminEditController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * A list of illegal parameters to search for in system commands provided by the user.
      *
      * @type string[]
@@ -69,6 +91,10 @@ class AdminEditController
      * @param GithubService $github
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
@@ -76,7 +102,11 @@ class AdminEditController
         RepositoryRepository $repoRepo,
         EntityManager $entityManager,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
@@ -84,6 +114,11 @@ class AdminEditController
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
 
         $this->invalidCommandParameters = [
             '&&', // operator
@@ -97,40 +132,37 @@ class AdminEditController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($params['repository'])) {
-            return $notFound();
+        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+            return call_user_func($this->notFound);
         }
 
         $renderContext = [
             'form' => [
-                'identifier' => $request->post('identifier') ?: $repo->getKey(),
-                'name' => $request->post('name') ?: $repo->getDescription(),
-                'group' => $request->post('group') ?: $repo->getGroup()->getId(),
-                'notification_email' => $request->post('notification_email') ?: $repo->getEmail(),
+                'identifier' => $this->request->post('identifier') ?: $repo->getKey(),
+                'name' => $this->request->post('name') ?: $repo->getDescription(),
+                'group' => $this->request->post('group') ?: $repo->getGroup()->getId(),
+                'notification_email' => $this->request->post('notification_email') ?: $repo->getEmail(),
 
-                'build_command' => $request->post('build_command') ?: $repo->getBuildCmd(),
-                'post_command' => $request->post('post_command') ?: $repo->getPostPushCmd()
+                'build_command' => $this->request->post('build_command') ?: $repo->getBuildCmd(),
+                'post_command' => $this->request->post('post_command') ?: $repo->getPostPushCmd()
             ],
             'repository' => $repo,
             'groups' => $this->groupRepo->findAll(),
-            'errors' => $this->checkFormErrors($request, $repo)
+            'errors' => $this->checkFormErrors($this->request, $repo)
         ];
 
-        if ($request->isPost()) {
+        if ($this->request->isPost()) {
             // this is kind of crummy
-            if (!$renderContext['errors'] && !$group = $this->groupRepo->find($request->post('group'))) {
+            if (!$renderContext['errors'] && !$group = $this->groupRepo->find($this->request->post('group'))) {
                 $renderContext['errors'][] = 'Please select a group.';
             }
 
             if (!$renderContext['errors']) {
-                $repository = $this->handleFormSubmission($request, $repo, $group);
+                $repository = $this->handleFormSubmission($this->request, $repo, $group);
 
                 $this->session->flash('Repository updated successfully.', 'success');
                 return $this->url->redirectFor('repository', ['id' => $repo->getId()]);
@@ -138,7 +170,7 @@ class AdminEditController
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

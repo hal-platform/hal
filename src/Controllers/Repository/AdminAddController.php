@@ -16,11 +16,12 @@ use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Session;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminAddController
+class AdminAddController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
@@ -60,9 +61,19 @@ class AdminAddController
     private $url;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type Response
+     */
+    private $response;
+
+    /**
      * A list of illegal parameters to search for in system commands provided by the user.
      *
-     * @var string[]
+     * @type string[]
      */
     private $invalidCommandParameters;
 
@@ -74,6 +85,8 @@ class AdminAddController
      * @param GithubService $github
      * @param Session $session
      * @param UrlHelper $url
+     * @param Request $request
+     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
@@ -82,7 +95,9 @@ class AdminAddController
         EntityManager $entityManager,
         GithubService $github,
         Session $session,
-        UrlHelper $url
+        UrlHelper $url,
+        Request $request,
+        Response $response
     ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
@@ -91,6 +106,9 @@ class AdminAddController
         $this->github = $github;
         $this->session = $session;
         $this->url = $url;
+
+        $this->request = $request;
+        $this->response = $response;
 
         $this->invalidCommandParameters = [
             '&&', // operator
@@ -104,35 +122,34 @@ class AdminAddController
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response)
+    public function __invoke()
     {
         $renderContext = [
             'form' => [
-                'identifier' => $request->post('identifier'),
-                'name' => $request->post('name'),
-                'group' => $request->post('group'),
-                'github_user' => $request->post('github_user'),
-                'github_repo' => $request->post('github_repo'),
-                'notification_email' => $request->post('notification_email'),
-                'build_command' => $request->post('build_command'),
-                'pre_command' => $request->post('pre_command'),
-                'post_command' => $request->post('post_command')
+                'identifier' => $this->request->post('identifier'),
+                'name' => $this->request->post('name'),
+                'group' => $this->request->post('group'),
+                'github_user' => $this->request->post('github_user'),
+                'github_repo' => $this->request->post('github_repo'),
+                'notification_email' => $this->request->post('notification_email'),
+                'build_command' => $this->request->post('build_command'),
+                'pre_command' => $this->request->post('pre_command'),
+                'post_command' => $this->request->post('post_command')
             ],
             'groups' => $this->groupRepo->findBy([], ['name' => 'ASC']),
-            'errors' => $this->checkFormErrors($request)
+            'errors' => $this->checkFormErrors($this->request)
         ];
 
-        if ($request->isPost()) {
+        if ($this->request->isPost()) {
             // this is kind of crummy
-            if (!$renderContext['errors'] && !$group = $this->groupRepo->find($request->post('group'))) {
+            if (!$renderContext['errors'] && !$group = $this->groupRepo->find($this->request->post('group'))) {
                 $renderContext['errors'][] = 'Please select a group.';
             }
 
             if (!$renderContext['errors']) {
-                $repository = $this->handleFormSubmission($request, $group);
+                $repository = $this->handleFormSubmission($this->request, $group);
 
                 $message = sprintf('Repository "%s" added.', $repository->getKey());
                 $this->session->flash($message, 'success');
@@ -141,7 +158,7 @@ class AdminAddController
         }
 
         $rendered = $this->template->render($renderContext);
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

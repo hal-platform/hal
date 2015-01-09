@@ -15,11 +15,12 @@ use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Slim\NotFound;
+use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
-class RepositoryStatusController
+class RepositoryStatusController implements ControllerInterface
 {
     use SortingHelperTrait;
 
@@ -49,6 +50,21 @@ class RepositoryStatusController
     private $pushRepo;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type NotFound
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
@@ -60,26 +76,29 @@ class RepositoryStatusController
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
-        PushRepository $pushRepo
+        PushRepository $pushRepo,
+        Response $response,
+        NotFound $notFound,
+        array $parameters
     ) {
         $this->template = $template;
         $this->repoRepo = $repoRepo;
         $this->buildRepo = $buildRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->pushRepo = $pushRepo;
+
+        $this->response = $response;
+        $this->notFound = $notFound;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
-     * @param callable $notFound
-     * @return void|mixed
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, array $params = [], callable $notFound = null)
+    public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($params['id'])) {
-            return call_user_func($notFound);
+        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+            return call_user_func($this->notFound);
         }
 
         $builds = $this->buildRepo->findBy(['repository' => $repo], ['created' => 'DESC'], 10);
@@ -114,7 +133,7 @@ class RepositoryStatusController
             'duplicates' => $hasDuplicates
         ]);
 
-        $response->setBody($rendered);
+        $this->response->setBody($rendered);
     }
 
     /**

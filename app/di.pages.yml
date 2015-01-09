@@ -136,6 +136,7 @@ services:
         arguments:
             - @repositories.twig
             - @group.repo
+            - @slim.response
     repositories.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/repositories.twig']]]
@@ -147,6 +148,9 @@ services:
             - @repository.repo
             - @deployment.repo
             - @permissions
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     repository.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/repository.twig']]]
@@ -159,6 +163,9 @@ services:
             - @build.repo
             - @deployment.repo
             - @push.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     repository.status.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/status.twig']]]
@@ -173,6 +180,8 @@ services:
             - @github
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
     repository.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/admin.add.twig']]]
@@ -188,6 +197,10 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     repository.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/admin.edit.twig']]]
@@ -202,6 +215,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.not.found
+            - @slim.route.parameters
 
     ######################################################################################################################
     # REPOSITORY DEPLOYMENT CONTROLLERS
@@ -215,6 +230,9 @@ services:
             - @server.repo
             - @repository.repo
             - @deployment.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     repository.deployments.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/deployments.twig']]]
@@ -226,13 +244,20 @@ services:
             - @server.repo
             - @repository.repo
             - @url
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
     repository.deployments.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/deployments.add.twig']]]
 
     repository.deployments.add.handler:
         class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentHandler'
-        arguments: [@repository.deployments.add.handler.form, @repository.deployments.add.handler.json]
+        arguments:
+            - @slim.request
+            - @repository.deployments.add.handler.form
+            - @repository.deployments.add.handler.json
     repository.deployments.add.handler.form:
         class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentFormHandler'
         arguments:
@@ -241,6 +266,8 @@ services:
             - @session
             - @url
             - @twig.context
+            - @slim.request
+            - @slim.route.parameters
     repository.deployments.add.handler.json:
         class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentJsonHandler'
         arguments:
@@ -249,6 +276,9 @@ services:
             - @slim.halt
             - @json
             - @url
+            - @slim.request
+            - @slim.response
+            - @slim.route.parameters
     repository.deployments.add.validator:
         class: 'QL\Hal\Validator\AddDeploymentValidator'
         arguments:
@@ -262,6 +292,8 @@ services:
             - @doctrine.em
             - @session
             - @url.helper
+            - @slim.not.found
+            - @slim.route.parameters
 
     ######################################################################################################################
     # BUILD CONTROLLERS

@@ -10,12 +10,12 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Session;
 use QL\Hal\Validator\AddDeploymentValidator;
+use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
-class AddDeploymentFormHandler
+class AddDeploymentFormHandler implements MiddlewareInterface
 {
     const SUCCESS = 'Deployment added.';
 
@@ -45,18 +45,32 @@ class AddDeploymentFormHandler
     private $context;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param EntityManager $em
      * @param AddDeploymentValidator $validator
      * @param Session $session
      * @param Url $url
      * @param Context $context
+     * @param Request $request
+     * @param array $parameters
      */
     public function __construct(
         EntityManager $em,
         AddDeploymentValidator $validator,
         Session $session,
         Url $url,
-        Context $context
+        Context $context,
+        Request $request,
+        array $parameters
     ) {
         $this->em = $em;
         $this->validator = $validator;
@@ -64,20 +78,21 @@ class AddDeploymentFormHandler
         $this->session = $session;
         $this->url = $url;
         $this->context = $context;
+
+        $this->request = $request;
+        $this->parameters = $parameters;
     }
 
     /**
-     * @param Request $request
-     * @param Response $response
-     * @param array $params
+     * {@inheritdoc}
      */
-    public function __invoke(Request $request, Response $response, $params = [])
+    public function __invoke()
     {
         $deployment = $this->validator->isValid(
-            $params['repository'],
-            $request->post('server'),
-            $request->post('path'),
-            $request->post('url')
+            $this->parameters['repository'],
+            $this->request->post('server'),
+            $this->request->post('path'),
+            $this->request->post('url')
         );
 
         // if validator didn't create a deployment, pass through to controller to handle errors
@@ -95,6 +110,6 @@ class AddDeploymentFormHandler
 
         // flash and redirect
         $this->session->flash(self::SUCCESS, 'success');
-        $this->url->redirectFor('repository.deployments', ['repository' => $params['repository']], [], 303);
+        $this->url->redirectFor('repository.deployments', ['repository' => $this->parameters['repository']], [], 303);
     }
 }
