@@ -15,7 +15,7 @@ use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
 
-class AdminReorderHandle implements ControllerInterface
+class ReorderEnvironmentsHandler implements ControllerInterface
 {
     /**
      * @type EnvironmentRepository

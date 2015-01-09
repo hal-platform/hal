@@ -5,27 +5,28 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Server;
+namespace QL\Hal\Controllers\Environment;
 
 use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
-class AdminRemoveHandle implements ControllerInterface
+class RemoveEnvironmentController implements ControllerInterface
 {
+    /**
+     * @type EnvironmentRepository
+     */
+    private $envRepo;
+
     /**
      * @type ServerRepository
      */
     private $serverRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
-    private $deployRepo;
 
     /**
      * @type EntityManager
@@ -53,8 +54,8 @@ class AdminRemoveHandle implements ControllerInterface
     private $parameters;
 
     /**
+     * @param EnvironmentRepository $envRepo
      * @param ServerRepository $serverRepo
-     * @param DeploymentRepository $deployRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
@@ -62,16 +63,16 @@ class AdminRemoveHandle implements ControllerInterface
      * @param array $parameters
      */
     public function __construct(
+        EnvironmentRepository $envRepo,
         ServerRepository $serverRepo,
-        DeploymentRepository $deployRepo,
         EntityManager $entityManager,
         Session $session,
         UrlHelper $url,
         NotFound $notFound,
         array $parameters
     ) {
+        $this->envRepo = $envRepo;
         $this->serverRepo = $serverRepo;
-        $this->deployRepo = $deployRepo;
         $this->entityManager = $entityManager;
         $this->session = $session;
         $this->url = $url;
@@ -80,25 +81,47 @@ class AdminRemoveHandle implements ControllerInterface
         $this->parameters = $parameters;
     }
 
+
     /**
      * {@inheritdoc}
      */
     public function __invoke()
     {
-        if (!$server = $this->serverRepo->find($this->parameters['id'])) {
+        if (!$environment = $this->envRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
-        if ($deployments = $this->deployRepo->findBy(['server' => $server])) {
-            $this->session->flash('Cannot remove server. All associated deployments must first be removed.', 'error');
-            return $this->url->redirectFor('server', ['id' => $this->parameters['id']]);
+        if ($servers = $this->serverRepo->findBy(['environment' => $environment])) {
+            $this->session->flash('Cannot remove environment. All associated servers must first be removed.', 'error');
+            return $this->url->redirectFor('environment', ['id' => $this->parameters['id']]);
         }
 
-        $this->entityManager->remove($server);
+        $this->entityManager->remove($environment);
+        $this->reorderEnvironments($environment);
         $this->entityManager->flush();
 
-        $message = sprintf('Server "%s" removed.', $server->getName());
+        $message = sprintf('Environment "%s" removed.', $environment->getKey());
         $this->session->flash($message, 'success');
-        $this->url->redirectFor('servers');
+        $this->url->redirectFor('environments');
+    }
+
+    /**
+     * @param Environment $removedEnv
+     * @return null
+     */
+    private function reorderEnvironments(Environment $removedEnv)
+    {
+        $order = 1;
+        $envs = $this->envRepo->findBy([], ['order' => 'ASC']);
+
+        foreach ($envs as $env) {
+            // skip the env being removed
+            if ($env->getId() === $removedEnv->getId()) {
+                continue;
+            }
+
+            $env->setOrder($order++);
+            $this->entityManager->merge($env);
+        }
     }
 }

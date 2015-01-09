@@ -14,7 +14,7 @@ use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
-class AdminRemoveHandle implements ControllerInterface
+class RemoveGroupController implements ControllerInterface
 {
     /**
      * @type GroupRepository

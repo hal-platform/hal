@@ -13,13 +13,12 @@ use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
-use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController implements ControllerInterface
+class AddGroupController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
@@ -59,16 +58,6 @@ class AdminEditController implements ControllerInterface
     private $response;
 
     /**
-     * @type NotFound
-     */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
-
-    /**
      * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
      * @param EntityManager $entityManager
@@ -76,8 +65,6 @@ class AdminEditController implements ControllerInterface
      * @param UrlHelper $url
      * @param Request $request
      * @param Response $response
-     * @param NotFound $notFound
-     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
@@ -86,9 +73,7 @@ class AdminEditController implements ControllerInterface
         Session $session,
         UrlHelper $url,
         Request $request,
-        Response $response,
-        NotFound $notFound,
-        array $parameters
+        Response $response
     ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
@@ -98,8 +83,6 @@ class AdminEditController implements ControllerInterface
 
         $this->request = $request;
         $this->response = $response;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
     }
 
     /**
@@ -107,47 +90,44 @@ class AdminEditController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$group = $this->groupRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
-        $context = [
+        $renderContext = [
             'form' => [
-                'identifier' => ($this->request->isPost()) ? $this->request->post('identifier') : $group->getKey(),
-                'name' => ($this->request->isPost()) ? $this->request->post('name') : $group->getName()
+                'identifier' => $this->request->post('identifier'),
+                'name' => $this->request->post('name')
             ],
-            'group' => $group,
-            'errors' => $this->checkFormErrors($this->request, $group)
+            'errors' => $this->checkFormErrors($this->request)
         ];
 
         if ($this->request->isPost()) {
 
-            if (!$context['errors']) {
-                $group = $this->handleFormSubmission($this->request, $group);
+            if (!$renderContext['errors']) {
+                $group = $this->handleFormSubmission($this->request);
 
-                $this->session->flash('Group updated successfully.', 'success');
-                return $this->url->redirectFor('group', ['id' => $group->getId()]);
+                $message = sprintf('Group "%s" added.', $group->getName());
+                $this->session->flash($message, 'success');
+
+                return $this->url->redirectFor('groups');
             }
         }
 
-        $rendered = $this->template->render($context);
+        $rendered = $this->template->render($renderContext);
         $this->response->setBody($rendered);
     }
 
     /**
      * @param Request $request
-     * @param Group $group
      * @return Group
      */
-    private function handleFormSubmission(Request $request, Group $group)
+    private function handleFormSubmission(Request $request)
     {
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
 
+        $group = new Group;
         $group->setKey($identifier);
         $group->setName($name);
 
-        $this->entityManager->merge($group);
+        $this->entityManager->persist($group);
         $this->entityManager->flush();
 
         return $group;
@@ -155,10 +135,9 @@ class AdminEditController implements ControllerInterface
 
     /**
      * @param Request $request
-     * @param Group $group
      * @return array
      */
-    private function checkFormErrors(Request $request, Group $group)
+    private function checkFormErrors(Request $request)
     {
         if (!$request->isPost()) {
             return [];
@@ -170,18 +149,12 @@ class AdminEditController implements ControllerInterface
         $errors = $this->validateSimple($identifier, 'Identifier', 24, true);
         $errors = array_merge($errors, $this->validateText($name, 'Name', 48, true));
 
-        // Only check duplicate nickname if it is being changed
-        if (!$errors && $identifier !== $group->getKey()) {
-            if ($dupeGroup = $this->groupRepo->findOneBy(['key' => $identifier])) {
-                $errors[] = 'A group with this nickname already exists.';
-            }
+        if (!$errors && $group = $this->groupRepo->findOneBy(['key' => $identifier])) {
+            $errors[] = 'A group with this identifier already exists.';
         }
 
-        // Only check duplicate name if it is being changed
-        if (!$errors && $name !== $group->getName()) {
-            if ($dupeGroup = $this->groupRepo->findOneBy(['name' => $name])) {
-                $errors[] = 'A group with this name already exists.';
-            }
+        if (!$errors && $group = $this->groupRepo->findOneBy(['name' => $name])) {
+            $errors[] = 'A group with this name already exists.';
         }
 
         return $errors;

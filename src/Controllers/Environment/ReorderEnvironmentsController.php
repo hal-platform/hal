@@ -13,7 +13,7 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
 
-class AdminReorderController implements ControllerInterface
+class ReorderEnvironmentsController implements ControllerInterface
 {
     /**
      * @type TemplateInterface

@@ -16,7 +16,7 @@ use QL\Panthor\Http\EncryptedCookies;
 use Slim\Http\Request;
 use Slim\Slim;
 
-class EditPreferencesHandler implements ControllerInterface
+class SettingsHandler implements ControllerInterface
 {
     const GOODBYE_HAL = <<<'BYEBYE'
 <pre class="line-wrap">

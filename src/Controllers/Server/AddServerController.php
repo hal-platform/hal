@@ -14,13 +14,12 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
-use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController implements ControllerInterface
+class AddServerController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -63,16 +62,6 @@ class AdminEditController implements ControllerInterface
     private $response;
 
     /**
-     * @type NotFound
-     */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
-
-    /**
      * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
      * @param EnvironmentRepository $envRepo
@@ -81,8 +70,6 @@ class AdminEditController implements ControllerInterface
      * @param UrlHelper $url
      * @param Request $request
      * @param Response $response
-     * @param NotFound $notFound
-     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
@@ -92,9 +79,7 @@ class AdminEditController implements ControllerInterface
         Session $session,
         UrlHelper $url,
         Request $request,
-        Response $response,
-        NotFound $notFound,
-        array $parameters
+        Response $response
     ) {
         $this->template = $template;
         $this->serverRepo = $serverRepo;
@@ -105,8 +90,6 @@ class AdminEditController implements ControllerInterface
 
         $this->request = $request;
         $this->response = $response;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
     }
 
     /**
@@ -114,18 +97,18 @@ class AdminEditController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$server = $this->serverRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
+        if (!$environments = $this->envRepo->findBy([], ['order' => 'ASC'])) {
+            $this->session->flash('A server requires an environment. Environments must be added before servers.', 'error');
+            return $this->url->redirectFor('environment.admin.add');
         }
 
         $renderContext = [
             'form' => [
-                'hostname' => ($this->request->isPost()) ? $this->request->post('hostname') : $server->getName(),
-                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->getEnvironment()->getId()
+                'hostname' => $this->request->post('hostname'),
+                'environment' => $this->request->post('environment')
             ],
-            'errors' => $this->checkFormErrors($this->request, $server),
-            'server' => $server,
-            'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
+            'errors' => $this->checkFormErrors($this->request),
+            'environments' => $environments
         ];
 
         if ($this->request->isPost()) {
@@ -135,10 +118,11 @@ class AdminEditController implements ControllerInterface
             }
 
             if (!$renderContext['errors']) {
-                $this->handleFormSubmission($this->request, $server, $environment);
+                $server = $this->handleFormSubmission($this->request, $environment);
 
-                $this->session->flash('Server updated successfully.', 'success');
-                return $this->url->redirectFor('server', ['id' => $server->getId()]);
+                $message = sprintf('Server "%s" added.', $server->getName());
+                $this->session->flash($message, 'success');
+                return $this->url->redirectFor('servers');
             }
         }
 
@@ -148,18 +132,18 @@ class AdminEditController implements ControllerInterface
 
     /**
      * @param Request $request
-     * @param Server $server
      * @param Environment $environment
      * @return Server
      */
-    private function handleFormSubmission(Request $request, Server $server, Environment $environment)
+    private function handleFormSubmission(Request $request, Environment $environment)
     {
         $hostname = strtolower($request->post('hostname'));
 
+        $server = new Server;
         $server->setName($hostname);
         $server->setEnvironment($environment);
 
-        $this->entityManager->merge($server);
+        $this->entityManager->persist($server);
         $this->entityManager->flush();
 
         return $server;
@@ -167,10 +151,9 @@ class AdminEditController implements ControllerInterface
 
     /**
      * @param Request $request
-     * @param Server $server
      * @return array
      */
-    private function checkFormErrors(Request $request, Server $server)
+    private function checkFormErrors(Request $request)
     {
         if (!$request->isPost()) {
             return [];
@@ -188,11 +171,8 @@ class AdminEditController implements ControllerInterface
             $errors[] = 'Please select an environment.';
         }
 
-        // Only check duplicate hostname if it is being changed
-        if (!$errors && $hostname != $server->getName()) {
-            if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
-                $errors[] = 'A server with this hostname already exists.';
-            }
+        if (!$errors && $server = $this->serverRepo->findOneBy(['name' => $hostname])) {
+            $errors[] = 'A server with this hostname already exists.';
         }
 
         return $errors;

@@ -17,7 +17,7 @@ use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class BuildStartController implements ControllerInterface
+class StartBuildController implements ControllerInterface
 {
     /**
      * @type TemplateInterface

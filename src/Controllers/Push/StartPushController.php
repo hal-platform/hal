@@ -20,7 +20,7 @@ use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class PushStartController implements ControllerInterface
+class StartPushController implements ControllerInterface
 {
     /**
      * @type TemplateInterface

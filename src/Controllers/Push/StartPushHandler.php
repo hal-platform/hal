@@ -22,7 +22,7 @@ use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
 
-class PushStartHandler implements ControllerInterface
+class StartPushHandler implements ControllerInterface
 {
     const ERR_NO_DEPS = 'You must select at least one deployment.';
     const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';

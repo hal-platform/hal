@@ -19,7 +19,7 @@ use QL\Panthor\ControllerInterface;
 /**
  * Allow a user to delete an API token
  */
-class TokenDeleteController implements ControllerInterface
+class RemoveTokenController implements ControllerInterface
 {
     /**
      * @type EntityManager

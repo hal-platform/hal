@@ -227,16 +227,16 @@ parameters:
             route: '/settings'
             stack: ['login.bouncer', 'user.settings.page']
 
+        settings.handler:
+            method: 'POST'
+            route: '/users/:id/preferences'
+            stack: ['login.bouncer', 'user.settings.handler']
+            conditions: {id: '[\d]+'}
+
         users:
             method: 'GET'
             route: '/users'
             stack: ['login.bouncer', 'users.page']
-
-        user.preferences.handle:
-            method: 'POST'
-            route: '/users/:id/preferences'
-            stack: ['login.bouncer', 'user.preferences.handle']
-            conditions: {id: '[\d]+'}
 
         ################################################################################################################
         # USER TOKEN MANAGEMENT ROUTES

@@ -14,14 +14,14 @@ use QL\Hal\Core\Entity\Repository\GroupRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
+use QL\Hal\Services\GithubService;
 use QL\Hal\Session;
-use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController implements ControllerInterface
+class AddRepositoryController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
@@ -46,6 +46,11 @@ class AdminEditController implements ControllerInterface
     private $entityManager;
 
     /**
+     * @type GithubService
+     */
+    private $github;
+
+    /**
      * @type Session
      */
     private $session;
@@ -66,16 +71,6 @@ class AdminEditController implements ControllerInterface
     private $response;
 
     /**
-     * @type NotFound
-     */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
-
-    /**
      * A list of illegal parameters to search for in system commands provided by the user.
      *
      * @type string[]
@@ -84,7 +79,6 @@ class AdminEditController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param Layout $layout
      * @param GroupRepository $groupRepo
      * @param RepositoryRepository $repoRepo
      * @param EntityManager $entityManager
@@ -93,32 +87,28 @@ class AdminEditController implements ControllerInterface
      * @param UrlHelper $url
      * @param Request $request
      * @param Response $response
-     * @param NotFound $notFound
-     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         GroupRepository $groupRepo,
         RepositoryRepository $repoRepo,
         EntityManager $entityManager,
+        GithubService $github,
         Session $session,
         UrlHelper $url,
         Request $request,
-        Response $response,
-        NotFound $notFound,
-        array $parameters
+        Response $response
     ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
         $this->repoRepo = $repoRepo;
         $this->entityManager = $entityManager;
+        $this->github = $github;
         $this->session = $session;
         $this->url = $url;
 
         $this->request = $request;
         $this->response = $response;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
 
         $this->invalidCommandParameters = [
             '&&', // operator
@@ -136,23 +126,20 @@ class AdminEditController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
-            return call_user_func($this->notFound);
-        }
-
         $renderContext = [
             'form' => [
-                'identifier' => $this->request->post('identifier') ?: $repo->getKey(),
-                'name' => $this->request->post('name') ?: $repo->getDescription(),
-                'group' => $this->request->post('group') ?: $repo->getGroup()->getId(),
-                'notification_email' => $this->request->post('notification_email') ?: $repo->getEmail(),
-
-                'build_command' => $this->request->post('build_command') ?: $repo->getBuildCmd(),
-                'post_command' => $this->request->post('post_command') ?: $repo->getPostPushCmd()
+                'identifier' => $this->request->post('identifier'),
+                'name' => $this->request->post('name'),
+                'group' => $this->request->post('group'),
+                'github_user' => $this->request->post('github_user'),
+                'github_repo' => $this->request->post('github_repo'),
+                'notification_email' => $this->request->post('notification_email'),
+                'build_command' => $this->request->post('build_command'),
+                'pre_command' => $this->request->post('pre_command'),
+                'post_command' => $this->request->post('post_command')
             ],
-            'repository' => $repo,
-            'groups' => $this->groupRepo->findAll(),
-            'errors' => $this->checkFormErrors($this->request, $repo)
+            'groups' => $this->groupRepo->findBy([], ['name' => 'ASC']),
+            'errors' => $this->checkFormErrors($this->request)
         ];
 
         if ($this->request->isPost()) {
@@ -162,10 +149,11 @@ class AdminEditController implements ControllerInterface
             }
 
             if (!$renderContext['errors']) {
-                $repository = $this->handleFormSubmission($this->request, $repo, $group);
+                $repository = $this->handleFormSubmission($this->request, $group);
 
-                $this->session->flash('Repository updated successfully.', 'success');
-                return $this->url->redirectFor('repository', ['id' => $repo->getId()]);
+                $message = sprintf('Repository "%s" added.', $repository->getKey());
+                $this->session->flash($message, 'success');
+                return $this->url->redirectFor('repositories');
             }
         }
 
@@ -175,28 +163,32 @@ class AdminEditController implements ControllerInterface
 
     /**
      * @param Request $request
-     * @param Repository $repository
      * @param Group $group
      * @return Repository
      */
-    private function handleFormSubmission(Request $request, Repository $repository, Group $group)
+    private function handleFormSubmission(Request $request, Group $group)
     {
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
         $email = $request->post('notification_email');
 
-        $buildCommand = $request->post('build_command');
-        $postCommand = $request->post('post_command');
+        $user = strtolower($request->post('github_user'));
+        $repo = strtolower($request->post('github_repo'));
 
+        $repository = new Repository;
         $repository->setKey($identifier);
         $repository->setDescription($name);
         $repository->setGroup($group);
         $repository->setEmail($email);
 
-        $repository->setBuildCmd($buildCommand);
-        $repository->setPostPushCmd($postCommand);
+        $repository->setGithubUser($user);
+        $repository->setGithubRepo($repo);
 
-        $this->entityManager->merge($repository);
+        if ($buildCommand = $request->post('build_command')) {
+            $repository->setBuildCmd($buildCommand);
+        }
+
+        $this->entityManager->persist($repository);
         $this->entityManager->flush();
 
         return $repository;
@@ -204,10 +196,9 @@ class AdminEditController implements ControllerInterface
 
     /**
      * @param Request $request
-     * @param Repository $repository
      * @return array
      */
-    private function checkFormErrors(Request $request, Repository $repository)
+    private function checkFormErrors(Request $request)
     {
         if (!$request->isPost()) {
             return [];
@@ -217,9 +208,10 @@ class AdminEditController implements ControllerInterface
             'identifier' => 'Identifier',
             'name' => 'Name',
             'group' => 'Group',
+            'github_user' => 'Github User',
+            'github_repo' => 'Github Repository',
             'notification_email' => 'Notification Email',
-            'build_command' => 'Build Command',
-            'post_command' => 'Post Push Command'
+            'build_command' => 'Build Command'
         ];
 
         $identifier = strtolower($request->post('identifier'));
@@ -229,17 +221,18 @@ class AdminEditController implements ControllerInterface
             $this->validateText($request->post('name'), $human['name'], 64, true),
 
             $this->validateText($request->post('group'), $human['group'], 128, true),
+            $this->validateText($request->post('github_user'), $human['github_user'], 48, true),
+            $this->validateText($request->post('github_repo'), $human['github_repo'], 48, true),
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
 
             $this->validateCommand($request->post('build_command'), $human['build_command']),
-            $this->validateCommand($request->post('post_command'), $human['post_command'])
+
+            $this->validateGithubRepo($request->post('github_user'), $request->post('github_repo'))
         );
 
-        // Only check for duplicate identifier if it is being changed
-        if (!$errors && $identifier != $repository->getKey()) {
-            if ($repo = $this->repoRepo->findOneBy(['key' => $identifier])) {
-                $errors[] = 'A repository with this identifier already exists.';
-            }
+        // check for duplicate nickname
+        if (!$errors && $this->repoRepo->findOneBy(['key' => $identifier])) {
+            $errors[] = 'A repository with this identifier already exists.';
         }
 
         return $errors;
@@ -271,6 +264,27 @@ class AdminEditController implements ControllerInterface
                 // If one illegal parameter is found, just return immediately.
                 return $errors;
             }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @param string $user
+     * @param string $repo
+     *
+     * @return array
+     */
+    private function validateGithubRepo($user, $repo)
+    {
+        $errors = [];
+
+        if (!$this->github->user($user)) {
+            $errors[] = 'Invalid Github Enterprise user/organization';
+
+        // elseif here so we dont bother making 2 github calls if the first one failed
+        } elseif (!$this->github->repository($user, $repo)) {
+            $errors[] = 'Invalid Github Enterprise repository name';
         }
 
         return $errors;

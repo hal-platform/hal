@@ -20,7 +20,7 @@ use Slim\Http\Request;
 /**
  * Allow a user to create an API token
  */
-class TokenCreateController implements ControllerInterface
+class AddTokenController implements ControllerInterface
 {
     /**
      * @type EntityManager

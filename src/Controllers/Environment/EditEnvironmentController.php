@@ -18,7 +18,7 @@ use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class AdminEditController implements ControllerInterface
+class EditEnvironmentController implements ControllerInterface
 {
     /**
      * @type TemplateInterface

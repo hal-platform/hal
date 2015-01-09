@@ -20,7 +20,7 @@ use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class LoginHandleController implements ControllerInterface
+class LoginHandler implements ControllerInterface
 {
     /**
      * @type TemplateInterface

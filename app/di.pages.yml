@@ -31,7 +31,7 @@ services:
         arguments: ['login.twig']
         calls: [['setTemplate', ['login.twig']]]
     login.handle:
-        class: 'QL\Hal\Controllers\LoginHandleController'
+        class: 'QL\Hal\Controllers\LoginHandler'
         arguments:
             - @login.twig
             - @ldapService
@@ -85,7 +85,7 @@ services:
         calls: [['setTemplate', ['group/group.twig']]]
 
     group.admin.add.page:
-        class: 'QL\Hal\Controllers\Group\AdminAddController'
+        class: 'QL\Hal\Controllers\Group\AddGroupController'
         arguments:
             - @group.admin.add.twig
             - @group.repo
@@ -101,7 +101,7 @@ services:
         parent: 'group.admin.add.page'
 
     group.admin.edit.page:
-        class: 'QL\Hal\Controllers\Group\AdminEditController'
+        class: 'QL\Hal\Controllers\Group\EditGroupController'
         arguments:
             - @group.admin.edit.twig
             - @group.repo
@@ -118,7 +118,7 @@ services:
     group.admin.edit.handle:
         parent: 'group.admin.edit.page'
     group.admin.remove.handle:
-        class: 'QL\Hal\Controllers\Group\AdminRemoveHandle'
+        class: 'QL\Hal\Controllers\Group\RemoveGroupController'
         arguments:
             - @group.repo
             - @doctrine.em
@@ -171,7 +171,7 @@ services:
         calls: [['setTemplate', ['repository/status.twig']]]
 
     repository.admin.add.page:
-        class: 'QL\Hal\Controllers\Repository\AdminAddController'
+        class: 'QL\Hal\Controllers\Repository\AddRepositoryController'
         arguments:
             - @repository.admin.add.twig
             - @group.repo
@@ -189,7 +189,7 @@ services:
         parent: 'repository.admin.add.page'
 
     repository.admin.edit.page:
-        class: 'QL\Hal\Controllers\Repository\AdminEditController'
+        class: 'QL\Hal\Controllers\Repository\EditRepositoryController'
         arguments:
             - @repository.admin.edit.twig
             - @group.repo
@@ -208,7 +208,7 @@ services:
         parent: 'repository.admin.edit.page'
 
     repository.admin.remove.handle:
-        class: 'QL\Hal\Controllers\Repository\AdminRemoveHandle'
+        class: 'QL\Hal\Controllers\Repository\RemoveRepositoryController'
         arguments:
             - @repository.repo
             - @deployment.repo
@@ -312,7 +312,7 @@ services:
         calls: [['setTemplate', ['build/build.twig']]]
 
     build.start.page:
-        class: 'QL\Hal\Controllers\Build\BuildStartController'
+        class: 'QL\Hal\Controllers\Build\StartBuildController'
         arguments:
             - @build.start.twig
             - @repository.repo
@@ -327,7 +327,7 @@ services:
         calls: [['setTemplate', ['build/start.twig']]]
 
     build.start.handler:
-        class: 'QL\Hal\Controllers\Build\BuildStartHandler'
+        class: 'QL\Hal\Controllers\Build\StartBuildHandler'
         arguments:
             - @build.repo
             - @doctrine.em
@@ -365,7 +365,7 @@ services:
     ######################################################################################################################
 
     push.start.page:
-        class: 'QL\Hal\Controllers\Push\PushStartController'
+        class: 'QL\Hal\Controllers\Push\StartPushController'
         arguments:
             - @push.start.twig
             - @build.repo
@@ -381,7 +381,7 @@ services:
         calls: [['setTemplate', ['push/start.twig']]]
 
     push.start.handler:
-        class: 'QL\Hal\Controllers\Push\PushStartHandler'
+        class: 'QL\Hal\Controllers\Push\StartPushHandler'
         arguments:
             - @session
             - @build.repo
@@ -465,7 +465,7 @@ services:
         calls: [['setTemplate', ['environment/environment.twig']]]
 
     environment.admin.reorder.page:
-        class: 'QL\Hal\Controllers\Environment\AdminReorderController'
+        class: 'QL\Hal\Controllers\Environment\ReorderEnvironmentsController'
         arguments:
             - @environment.admin.reorder.twig
             - @environment.repo
@@ -475,7 +475,7 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/admin.reorder.twig']]]
     environment.admin.reorder.handle:
-        class: 'QL\Hal\Controllers\Environment\AdminReorderHandle'
+        class: 'QL\Hal\Controllers\Environment\ReorderEnvironmentsHandler'
         arguments:
             - @environment.repo
             - @doctrine.em
@@ -485,7 +485,7 @@ services:
             - @slim.not.found
 
     environment.admin.add.page:
-        class: 'QL\Hal\Controllers\Environment\AdminAddController'
+        class: 'QL\Hal\Controllers\Environment\AddEnvironmentController'
         arguments:
             - @environment.admin.add.twig
             - @environment.repo
@@ -501,7 +501,7 @@ services:
         parent: environment.admin.add.page
 
     environment.admin.edit.page:
-        class: 'QL\Hal\Controllers\Environment\AdminEditController'
+        class: 'QL\Hal\Controllers\Environment\EditEnvironmentController'
         arguments:
             - @environment.admin.edit.twig
             - @environment.repo
@@ -519,7 +519,7 @@ services:
         parent: environment.admin.edit.page
 
     environment.admin.remove.handle:
-        class: 'QL\Hal\Controllers\Environment\AdminRemoveHandle'
+        class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentController'
         arguments:
             - @environment.repo
             - @server.repo
@@ -556,7 +556,7 @@ services:
         calls: [['setTemplate', ['server/server.twig']]]
 
     server.admin.add.page:
-        class: 'QL\Hal\Controllers\Server\AdminAddController'
+        class: 'QL\Hal\Controllers\Server\AddServerController'
         arguments:
             - @server.admin.add.twig
             - @server.repo
@@ -573,7 +573,7 @@ services:
         parent: 'server.admin.add.page'
 
     server.admin.edit.page:
-        class: 'QL\Hal\Controllers\Server\AdminEditController'
+        class: 'QL\Hal\Controllers\Server\EditServerController'
         arguments:
             - @server.admin.edit.twig
             - @server.repo
@@ -592,7 +592,7 @@ services:
         parent: 'server.admin.edit.page'
 
     server.admin.remove.handle:
-        class: 'QL\Hal\Controllers\Server\AdminRemoveHandle'
+        class: 'QL\Hal\Controllers\Server\RemoveServerController'
         arguments:
             - @server.repo
             - @deployment.repo
@@ -629,18 +629,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/users.twig']]]
 
-    user.preferences.handle:
-        class: 'QL\Hal\Controllers\User\EditPreferencesHandler'
-        arguments:
-            - @slim.cookies
-            - @session
-            - @url.helper
-            - @name.helper
-            - @currentUser
-            - %cookie.preferences.ttl%
-            - %navigation.list%
-            - @slim.request
-
     user.settings.page:
         class: 'QL\Hal\Controllers\User\SettingsController'
         arguments:
@@ -653,12 +641,24 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/settings.twig']]]
 
+    user.settings.handler:
+        class: 'QL\Hal\Controllers\User\SettingsHandler'
+        arguments:
+            - @slim.cookies
+            - @session
+            - @url.helper
+            - @name.helper
+            - @currentUser
+            - %cookie.preferences.ttl%
+            - %navigation.list%
+            - @slim.request
+
     ######################################################################################################################
     # USER TOKEN MANAGEMENT CONTROLLERS
     ######################################################################################################################
 
     user.token.create.handle:
-        class: 'QL\Hal\Controllers\User\Token\TokenCreateController'
+        class: 'QL\Hal\Controllers\User\Token\AddTokenController'
         arguments:
             - @doctrine.em
             - @user.repo
@@ -670,7 +670,7 @@ services:
             - @slim.route.parameters
 
     user.token.delete.handle:
-        class: 'QL\Hal\Controllers\User\Token\TokenDeleteController'
+        class: 'QL\Hal\Controllers\User\Token\RemoveTokenController'
         arguments:
             - @doctrine.em
             - @token.repo

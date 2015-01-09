@@ -17,7 +17,7 @@ use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
-class BuildStartHandler
+class StartBuildHandler
 {
     const WAIT_FOR_IT = 'Build has been queued for creation.';
 
