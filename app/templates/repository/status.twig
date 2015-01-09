@@ -38,6 +38,7 @@
                     {% endif %}
 
                     {# Determine the active push #}
+                    {% set activePush = null %}
                     {% if status.latest.status in ['Waiting', 'Pushing'] %}
                         {% set activePush = status.latest %}
                     {% elseif status.success %}
