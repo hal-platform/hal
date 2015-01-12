@@ -117,13 +117,13 @@ class BuildStartValidator
         }
 
         // no repo
-        if (!$repo = $this->repoRepo->findOneBy(['id' => $repositoryId])) {
+        if (!$repo = $this->repoRepo->find($repositoryId)) {
             $this->errors[] = self::ERR_NO_REPO;
             return null;
         }
 
         // no env
-        if (!$env = $this->envRepo->findOneBy(['id' => $environmentId])) {
+        if (!$env = $this->envRepo->find($environmentId)) {
             $this->errors[] = self::ERR_NO_ENV;
             return null;
         }
@@ -189,7 +189,7 @@ class BuildStartValidator
             return sprintf('pull/%d', array_pop($matches));
         }
 
-        return '';
+        return $search;
     }
 
     /**
