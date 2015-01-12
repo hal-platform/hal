@@ -78,8 +78,16 @@
         before selecting which servers you wish to deploy to.
     </p>
 
+    {% if errors %}
+        <ul class="error-list">
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% if statuses %}
-        <form action="{{ urlFor('push.start.handle', {'build': build.id}) }}" method="post">
+        <form method="post">
         <div class="overflow-container">
             <table class="tablesaw tablesaw-stack" data-mode="stack">
                 <thead>

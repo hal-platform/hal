@@ -15,14 +15,14 @@ use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Session;
-use QL\Hal\Slim\NotFound;
-use QL\Panthor\ControllerInterface;
+use QL\Panthor\MiddlewareInterface;
+use QL\Panthor\Twig\Context;
+use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
-class StartPushHandler implements ControllerInterface
+class StartPushHandler implements MiddlewareInterface
 {
     const ERR_NO_DEPS = 'You must select at least one deployment.';
     const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';
@@ -31,52 +31,52 @@ class StartPushHandler implements ControllerInterface
     const NOTICE_DONE = "The build has been queued to be pushed to the requested servers.";
 
     /**
-     * @var Session
+     * @type Session
      */
     private $session;
 
     /**
-     * @var BuildRepository
+     * @type BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @var PushRepository
+     * @type PushRepository
      */
     private $pushRepo;
 
     /**
-     * @var DeploymentRepository
+     * @type DeploymentRepository
      */
     private $deployRepo;
 
     /**
-     * @var UserRepository
+     * @type UserRepository
      */
     private $userRepo;
 
     /**
-     * @var EntityManager
+     * @type EntityManager
      */
     private $em;
 
     /**
-     * @var UrlHelper
+     * @type Url
      */
     private $url;
 
     /**
-     * @var User
+     * @type User
      */
     private $currentUser;
 
     /**
-     * @var PermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     * @var JobIdGenerator
+     * @type JobIdGenerator
      */
     private $unique;
 
@@ -86,9 +86,9 @@ class StartPushHandler implements ControllerInterface
     private $request;
 
     /**
-     * @type NotFound
+     * @type Context
      */
-    private $notFound;
+    private $context;
 
     /**
      * @type array
@@ -102,12 +102,12 @@ class StartPushHandler implements ControllerInterface
      * @param DeploymentRepository $deployRepo
      * @param UserRepository $userRepo
      * @param EntityManager $em
-     * @param UrlHelper $url
+     * @param Url $url
      * @param User $currentUser
      * @param PermissionsService $permissions
      * @param JobIdGenerator $unique
      * @param Request $request
-     * @param NotFound $notFound
+     * @param Context $context
      * @param array $parameters
      */
     public function __construct(
@@ -117,12 +117,12 @@ class StartPushHandler implements ControllerInterface
         DeploymentRepository $deployRepo,
         UserRepository $userRepo,
         EntityManager $em,
-        UrlHelper $url,
+        Url $url,
         User $currentUser,
         PermissionsService $permissions,
         JobIdGenerator $unique,
         Request $request,
-        NotFound $notFound,
+        Context $context,
         array $parameters
     ) {
         $this->session = $session;
@@ -137,7 +137,7 @@ class StartPushHandler implements ControllerInterface
         $this->unique = $unique;
 
         $this->request = $request;
-        $this->notFound = $notFound;
+        $this->context = $context;
         $this->parameters = $parameters;
     }
 
@@ -146,16 +146,20 @@ class StartPushHandler implements ControllerInterface
      */
     public function __invoke()
     {
-        $build = $this->buildRepo->findOneBy(['id' => $this->parameters['build'], 'status' => 'Success']);
+        if (!$this->request->isPost()) {
+            return;
+        }
 
+        $build = $this->buildRepo->findOneBy(['id' => $this->parameters['build'], 'status' => 'Success']);
         if (!$build) {
-            return call_user_func($this->notFound);
+            // fall through to controller
+            return;
         }
 
         $deploymentIds = $this->request->post('deployments', []);
 
         if (!is_array($deploymentIds) || count($deploymentIds) == 0) {
-            return $this->bailout(self::ERR_NO_DEPS, $build->getId());
+            return $this->context->addContext(['errors' => [self::ERR_NO_DEPS]]);
         }
 
         $buildEnv = $build->getEnvironment();
@@ -166,19 +170,21 @@ class StartPushHandler implements ControllerInterface
             $deployment = $this->deployRepo->find($deploymentId);
 
             if (!$deployment) {
-                return $this->bailout(self::ERR_BAD_DEP, $build->getId());
+                return $this->context->addContext(['errors' => [self::ERR_BAD_DEP]]);
             }
 
             $server = $deployment->getServer();
 
             if ($buildEnv->getId() !== $server->getEnvironment()->getId()) {
-                $msg = sprintf(self::ERR_WRONG_ENV, $buildEnv->getKey());
-                return $this->bailout($msg, $build->getId());
+                return $this->context->addContext([
+                    'errors' => [sprintf(self::ERR_WRONG_ENV, $buildEnv->getKey())]
+                ]);
             }
 
             if (!$this->permissions->allowPush($this->currentUser, $repo->getKey(), $buildEnv->getKey())) {
-                $msg = sprintf(self::ERR_NO_PERM, $server->getName());
-                return $this->bailout($msg, $build->getId());
+                return $this->context->addContext([
+                    'errors' => [sprintf(self::ERR_NO_PERM, $server->getName())]
+                ]);
             }
 
             $push = new Push;
@@ -207,17 +213,6 @@ class StartPushHandler implements ControllerInterface
 
         $this->session->flash(self::NOTICE_DONE, 'success');
         $this->url->redirectFor('repository.status', ['id' => $repo->getId()]);
-    }
-
-    /**
-     * @param string $message
-     * @param string $buildId
-     * @return null
-     */
-    private function bailout($message, $buildId)
-    {
-        $this->session->flash($message, 'error');
-        $this->url->redirectFor('push.start', ['build' => $buildId], [], 303);
     }
 
     /**

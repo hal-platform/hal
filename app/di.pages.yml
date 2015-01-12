@@ -380,12 +380,12 @@ services:
             - @deployment.repo
             - @user.repo
             - @doctrine.em
-            - @url.helper
+            - @url
             - @currentUser
             - @permissions
             - @utility.id.generator
             - @slim.request
-            - @slim.not.found
+            - @twig.context
             - @slim.route.parameters
 
     push.rollback.page:
