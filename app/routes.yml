@@ -406,13 +406,9 @@ parameters:
             conditions: {id: '[\d]+'}
 
         environment.admin.reorder:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/environments/reorder'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.page']
-        environment.admin.reorder.handle:
-            method: 'POST'
-            route: '/environments/reorder'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.handle']
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.handler', 'environment.admin.reorder.page']
 
         environment.admin.add:
             method: 'GET'
@@ -428,10 +424,10 @@ parameters:
             route: '/environments/:id/delete'
             stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
             conditions: {id: '[\d]+'}
-        environment.admin.remove.handle:
+        environment.admin.remove:
             method: 'POST'
             route: '/environments/:id/delete'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.remove.handle']
+            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.remove.handler']
             conditions: {id: '[\d]+'}
 
         environment.admin.edit:

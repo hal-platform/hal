@@ -16,7 +16,7 @@ use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
-class RemoveEnvironmentController implements ControllerInterface
+class RemoveEnvironmentHandler implements ControllerInterface
 {
     /**
      * @type EnvironmentRepository

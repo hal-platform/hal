@@ -474,7 +474,7 @@ services:
     environment.admin.reorder.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/admin.reorder.twig']]]
-    environment.admin.reorder.handle:
+    environment.admin.reorder.handler:
         class: 'QL\Hal\Controllers\Environment\ReorderEnvironmentsHandler'
         arguments:
             - @environment.repo
@@ -483,6 +483,7 @@ services:
             - @url.helper
             - @slim.request
             - @slim.not.found
+            - @twig.context
 
     environment.admin.add.page:
         class: 'QL\Hal\Controllers\Environment\AddEnvironmentController'
@@ -518,8 +519,8 @@ services:
     environment.admin.edit.handle:
         parent: environment.admin.edit.page
 
-    environment.admin.remove.handle:
-        class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentController'
+    environment.admin.remove.handler:
+        class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentHandler'
         arguments:
             - @environment.repo
             - @server.repo

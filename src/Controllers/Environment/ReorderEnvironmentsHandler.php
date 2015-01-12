@@ -12,11 +12,14 @@ use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;
-use QL\Panthor\ControllerInterface;
+use QL\Panthor\MiddlewareInterface;
+use QL\Panthor\Twig\Context;
 use Slim\Http\Request;
 
-class ReorderEnvironmentsHandler implements ControllerInterface
+class ReorderEnvironmentsHandler implements MiddlewareInterface
 {
+    const ERR_MISSING = 'An environment is missing from the new ordering.';
+
     /**
      * @type EnvironmentRepository
      */
@@ -48,12 +51,18 @@ class ReorderEnvironmentsHandler implements ControllerInterface
     private $notFound;
 
     /**
+     * @type Context
+     */
+    private $context;
+
+    /**
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
      * @param NotFound $notFound
+     * @param Context $context
      */
     public function __construct(
         EnvironmentRepository $envRepo,
@@ -61,7 +70,8 @@ class ReorderEnvironmentsHandler implements ControllerInterface
         Session $session,
         UrlHelper $url,
         Request $request,
-        NotFound $notFound
+        NotFound $notFound,
+        Context $context
     ) {
         $this->envRepo = $envRepo;
         $this->entityManager = $entityManager;
@@ -70,44 +80,58 @@ class ReorderEnvironmentsHandler implements ControllerInterface
 
         $this->request = $request;
         $this->notFound = $notFound;
+        $this->context = $context;
     }
 
-
     /**
+     * Expected post payload:
+     * [
+     *     "env1": 1,
+     *     "env100": 5,
+     *     "env1234": 2
+     * ]
+     *
      * {@inheritdoc}
      */
     public function __invoke()
     {
+        if (!$this->request->isPost()) {
+            return;
+        }
+
         if (!$environments = $this->envRepo->findAll()) {
             return call_user_func($this->notFound);
         }
 
         $ordered = [];
+
+        // pull out environment order from post body
         foreach ($this->request->post() as $postKey => $selectedOrder) {
-            if (substr($postKey, 0, 3) !== 'env') {
-                continue;
+            if (substr($postKey, 0, 3) === 'env') {
+                $id = (int) substr($postKey, 3);
+                $ordered[$id] = (int) $selectedOrder;
             }
-
-            $id = (int) substr($postKey, 3);
-            if ($id === 0) {
-                continue;
-            }
-
-            $selectedOrder = (int) $selectedOrder;
-            $this->insertIntoOpenPosition($id, $selectedOrder, $ordered);
         }
 
-        // collapse the order in case some positions were skipped, and re-index on 1
+        // Sort by provided order, then grab keys to get a list of ids in sorted order in [$order => $id] format
+        asort($ordered, SORT_NUMERIC);
+        $ordered = array_keys($ordered);
+
+        // re-index on 1, in [$order => $id] format
         $ordered = array_merge(['prefix'], array_values($ordered));
         unset($ordered[0]);
 
-        // save the new orders
+        // flip to [$id => $order] format
         $ordered = array_flip($ordered);
+
+        // save the new orders
         foreach ($environments as $environment) {
             $id = $environment->getId();
             if (!isset($ordered[$id])) {
-                $this->session->flash('An environment is missing from the new ordering.', 'error');
-                return $this->url->redirectFor('environment.admin.reorder');
+                // throw error, continue to controller
+                return $this->context->addContext([
+                    'errors' => [self::ERR_MISSING]
+                ]);
             }
 
             $environment->setOrder($ordered[$id]);
@@ -118,50 +142,5 @@ class ReorderEnvironmentsHandler implements ControllerInterface
         $this->entityManager->flush();
         $this->session->flash('New environment orders saved!', 'success');
         $this->url->redirectFor('environments');
-    }
-
-    /**
-     * @param string $id
-     * @param int $selectedOrder
-     * @param array $data
-     * @return null
-     */
-    private function insertIntoOpenPosition($id, $selectedOrder, &$data)
-    {
-        // take the position
-        if (!isset($data[$selectedOrder])) {
-            $data[$selectedOrder] = $id;
-            return;
-        }
-
-        // the next position is available, so take it
-        $newOrder = $selectedOrder + 1;
-        if (!isset($data[$newOrder])) {
-            $data[$newOrder] = $id;
-            return;
-        }
-
-        // Crap, now we have a non-simple position resolution
-
-        // find the number of elements before the collision
-        $offset = 0;
-        foreach ($data as $order => $k) {
-            $offset++;
-            if ($order === $newOrder) {
-                break;
-            }
-        }
-
-        $size = count($data) - $offset;
-
-        // slice off the back after the collision
-        $sliced = array_slice($data, ($size * -1), null, true);
-        $data = array_slice($data, 0, $offset, true);
-        $data[$newOrder + 1] = $id;
-
-        // insert the post-collisions recursively, so any new collisions can be resolved
-        foreach ($sliced as $order => $k) {
-            $this->insertIntoOpenPosition($k, $order, $data);
-        }
     }
 }
