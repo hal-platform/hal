@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cab09aad7055880adc2690a1c85e516d",
+    "hash": "d249afe5c895454c14001284b42d040f",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -198,7 +198,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -274,7 +274,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -982,13 +982,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-core.git",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf"
+                "reference": "1.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-core-1.0.1-578aad.zip",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf",
-                "shasum": "4ab925396c0ef4d2adbdfc58716fb6ef536b26a8"
+                "url": "http://composer//dist/ql-mcp-core-1.0.1-d1b76f.zip",
+                "reference": "1.0.1",
+                "shasum": "33c9dd1e298f45d64a2f774c7501c203276d9152"
             },
             "archive": {
                 "exclude": [
@@ -1152,7 +1152,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-logger-1.3.1-60bb9a.zip",
+                "url": "http://composer//dist/ql-mcp-logger-1.3.1-60bb9a.zip",
                 "reference": "ea0e2a331bd92ce0f4f4e3ea4e9eccf861022946",
                 "shasum": "cafd9bace02edd62b04d362189e09359af81adef"
             },
@@ -1224,17 +1224,17 @@
         },
         {
             "name": "ql/panthor",
-            "version": "1.1.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "git@git:web-frameworks/panthor.git",
-                "reference": "df19dedee8c62de78831560977c762450b2a9166"
+                "reference": "9b14883c5b6d45ce4b109f3b3ecd9c76b48280b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-panthor-1.1.0-e57d93.zip",
-                "reference": "df19dedee8c62de78831560977c762450b2a9166",
-                "shasum": "65a22f63fdaf3e8f61f55192cb26d5996a73fa0a"
+                "url": "http://composer/dist/ql-panthor-2.0.0-8db527.zip",
+                "reference": "9b14883c5b6d45ce4b109f3b3ecd9c76b48280b1",
+                "shasum": "fcf531656f951eb3d1acbbdb649861c84b11c4bd"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -1262,7 +1262,7 @@
                 "proprietary"
             ],
             "description": "Symfony + Slim = Panthor",
-            "time": "2014-11-03 13:47:39"
+            "time": "2015-01-12 14:03:22"
         },
         {
             "name": "sensiolabs/ansi-to-html",
@@ -2024,7 +2024,7 @@
             ],
             "authors": [
                 {
-                    "name": "Pádraic Brady",
+                    "name": "Padraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -2820,6 +2820,7 @@
         "ql/hal-core": 20
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": {
         "php-64bit": "~5.4"
     },
