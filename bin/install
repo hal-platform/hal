@@ -16,6 +16,11 @@ if [ -n "$HAL_ENVIRONMENT" ]; then
     BUNDLER="bundle install --frozen"
 fi
 
+# download, update composer
+if [ ! -f "$DIR/composer" ]; then
+    curl http://composer/installer | bash -s "$DIR/composer"
+fi
+
 "$DIR/"$COMPOSER
 if [ -n "$HAL_ENVIRONMENT" ]; then
     "$DIR/"$COMPOSER_SHOW_INSTALLED
