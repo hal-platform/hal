@@ -4,9 +4,11 @@
 
 {% block content %}
     <p>Please use your Active Directory credentials to login (ie your "windows password").</p>
-    {% if error %}
+    {% if errors %}
         <ul class="error-list">
-            <li>{{ error }}</li>
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
         </ul>
     {% endif %}
 

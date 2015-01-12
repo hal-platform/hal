@@ -53,7 +53,7 @@
     <h2>Personal Access Tokens</h2>
     <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
 
-    <form action="{{ urlFor('user.token.create.handle', {id: user.id}) }}" method="post">
+    <form action="{{ urlFor('user.token.add', {id: user.id}) }}" method="post">
         <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>
                 <th>Label</th>
@@ -65,7 +65,7 @@
                 <tr>
                     <td>{{ token.label }}</td>
                     <td>{{ token.value }}</td>
-                    <td><a class="btn--destructive" href="{{ urlFor('user.token.delete.confirm', {id: user.id, token: token.value}) }}">Revoke</a></td>
+                    <td><a class="btn--destructive" href="{{ urlFor('user.token.remove', {id: user.id, token: token.value}) }}">Revoke</a></td>
                 </tr>
             {% endfor %}
                 <tr>

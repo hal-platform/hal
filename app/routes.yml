@@ -5,14 +5,9 @@ parameters:
 
     routes:
         login:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/login'
-            stack: ['login.page']
-
-        login.handle:
-            method: 'POST'
-            route: '/login'
-            stack: ['login.handle']
+            stack: ['login.handler', 'login.page']
 
         dashboard:
             method: 'GET'
@@ -22,7 +17,7 @@ parameters:
         logout:
             method: 'GET'
             route: '/logout'
-            stack: ['logout.handle']
+            stack: ['logout.handler']
 
         denied:
             method: 'GET'
@@ -126,12 +121,6 @@ parameters:
             stack: ['login.bouncer', 'build.start.handler', 'build.start.page']
             conditions: {id: '[0-9]+'}
 
-        build.handle:
-            method: 'POST'
-            route: '/repositories/:id/build'
-            stack: ['login.bouncer', 'build.start.handle.page']
-            conditions: {id: '[0-9]+'}
-
         ################################################################################################################
         # PUSH ROUTES
         ################################################################################################################
@@ -182,23 +171,14 @@ parameters:
             conditions: {id: '[\d]+'}
 
         server.admin.add:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/servers/add'
             stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.page']
-        server.admin.add.handle:
-            method: 'POST'
-            route: '/servers/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.handle']
 
         server.admin.edit:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/servers/:id/edit'
             stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.page']
-            conditions: {id: '[\d]+'}
-        server.admin.edit.handle:
-            method: 'POST'
-            route: '/servers/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.handle']
             conditions: {id: '[\d]+'}
 
         server.admin.remove.confirm:
@@ -206,10 +186,10 @@ parameters:
             route: '/servers/:id/remove'
             stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
             conditions: {id: '[\d]+'}
-        server.admin.remove.handle:
+        server.admin.remove:
             method: 'POST'
             route: '/servers/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.remove.handle']
+            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.remove.handler']
             conditions: {id: '[\d]+'}
 
         ################################################################################################################
@@ -242,23 +222,23 @@ parameters:
         # USER TOKEN MANAGEMENT ROUTES
         ################################################################################################################
 
-        user.token.create.handle:
+        user.token.add:
             method: 'POST'
             route: '/users/:id/tokens'
-            stack: ['login.bouncer', 'user.token.create.handle']
+            stack: ['login.bouncer', 'user.token.add.handler']
             conditions: {id: '[\d]+'}
 
-        user.token.delete.confirm:
+        user.token.remove.confirm:
             method: 'GET'
             route: '/users/:id/tokens/:token/revoke'
             stack: ['login.bouncer', 'delete.confirm.page']
             conditions:
                 - id: '[\d]+'
                 - token: '[0-9a-zA-Z]{40,40}'
-        user.token.delete.handle:
+        user.token.remove:
             method: 'POST'
             route: '/users/:id/tokens/:token/revoke'
-            stack: ['login.bouncer', 'user.token.delete.handle']
+            stack: ['login.bouncer', 'user.token.remove.handler']
             conditions:
                 - id: '[\d]+'
                 - token: '[0-9a-zA-Z]{40,40}'
@@ -285,23 +265,14 @@ parameters:
             conditions: {id: '[\d]+'}
 
         repository.admin.add:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/repositories/add'
             stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.add.page']
-        repository.admin.add.handle:
-            method: 'POST'
-            route: '/repositories/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.add.handle']
 
         repository.admin.edit:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/repositories/:repository/edit'
             stack: ['repoadmin.bouncer', 'repository.admin.edit.page']
-            conditions: {repository: '[\d]+'}
-        repository.admin.edit.handle:
-            method: 'POST'
-            route: '/repositories/:repository/edit'
-            stack: ['repoadmin.bouncer', 'repository.admin.edit.handle']
             conditions: {repository: '[\d]+'}
 
         repository.admin.remove.confirm:
@@ -309,10 +280,10 @@ parameters:
             route: '/repositories/:id/remove'
             stack: ['admin.bouncer', 'delete.confirm.page']
             conditions: {id: '[\d]+'}
-        repository.admin.remove.handle:
+        repository.admin.remove:
             method: 'POST'
             route: '/repositories/:id/remove'
-            stack: ['admin.bouncer', 'repository.admin.remove.handle']
+            stack: ['admin.bouncer', 'repository.admin.remove.handler']
             conditions: {id: '[\d]+'}
 
         ################################################################################################################
@@ -359,23 +330,14 @@ parameters:
             conditions: {id: '[\d]+'}
 
         group.admin.add:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/groups/add'
             stack: ['login.bouncer', 'admin.bouncer', 'group.admin.add.page']
-        group.admin.add.handle:
-            method: 'POST'
-            route: '/groups/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.add.handle']
 
         group.admin.edit:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/groups/:id/edit'
             stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.page']
-            conditions: {id: '[\d]+'}
-        group.admin.edit.handle:
-            method: 'POST'
-            route: '/groups/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.handle']
             conditions: {id: '[\d]+'}
 
         group.admin.remove.confirm:
@@ -383,10 +345,10 @@ parameters:
             route: '/groups/:id/remove'
             stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
             conditions: {id: '[\d]+'}
-        group.admin.remove.handle:
+        group.admin.remove:
             method: 'POST'
             route: '/groups/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.remove.handle']
+            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.remove.handler']
             conditions: {id: '[\d]+'}
 
         ################################################################################################################
@@ -411,13 +373,9 @@ parameters:
             stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.handler', 'environment.admin.reorder.page']
 
         environment.admin.add:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/environments/add'
             stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.add.page']
-        environment.admin.add.handle:
-            method: 'POST'
-            route: '/environments/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.add.handle']
 
         environment.admin.remove.confirm:
             method: 'GET'
@@ -431,15 +389,9 @@ parameters:
             conditions: {id: '[\d]+'}
 
         environment.admin.edit:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/environments/:id/edit'
             stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.page']
-            conditions: {id: '[\d]+'}
-
-        environment.admin.edit.handle:
-            method: 'POST'
-            route: '/environments/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.handle']
             conditions: {id: '[\d]+'}
 
         ################################################################################################################

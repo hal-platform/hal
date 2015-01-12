@@ -8,24 +8,26 @@
 namespace QL\Hal\Controllers;
 
 use Doctrine\ORM\EntityManager;
-use MCP\DataType\HttpUrl;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
-use QL\Panthor\ControllerInterface;
-use QL\Panthor\TemplateInterface;
+use QL\Panthor\MiddlewareInterface;
+use QL\Panthor\Twig\Context;
+use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
-class LoginHandler implements ControllerInterface
+class LoginHandler implements MiddlewareInterface
 {
+    const ERR_INVALID = 'A username and password must be entered.';
+    const ERR_AUTH_FAILURE = 'Authentication failed.';
+    const ERR_DISABLED = 'Account disabled.';
+
     /**
-     * @type TemplateInterface
+     * @type Context
      */
-    private $template;
+    private $context;
 
     /**
      * @type LdapService
@@ -48,7 +50,7 @@ class LoginHandler implements ControllerInterface
     private $session;
 
     /**
-     * @type UrlHelper
+     * @type Url
      */
     private $url;
 
@@ -58,31 +60,24 @@ class LoginHandler implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
-     * @param TemplateInterface $template
+     * @param Context $context
      * @param LdapService $ldap
      * @param UserRepository $userRepo
      * @param EntityManager $em
      * @param Session $session
-     * @param UrlHelper $url
+     * @param Url $url
      * @param Request $request
-     * @param Response $response
      */
     public function __construct(
-        TemplateInterface $template,
+        Context $context,
         LdapService $ldap,
         UserRepository $userRepo,
         EntityManager $em,
         Session $session,
-        UrlHelper $url,
-        Request $request,
-        Response $response
+        Url $url,
+        Request $request
     ) {
-        $this->template = $template;
+        $this->context = $context;
         $this->ldap = $ldap;
         $this->userRepo = $userRepo;
         $this->em = $em;
@@ -90,7 +85,6 @@ class LoginHandler implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
     }
 
     /**
@@ -98,28 +92,29 @@ class LoginHandler implements ControllerInterface
      */
     public function __invoke()
     {
+        if (!$this->request->isPost()) {
+            return;
+        }
+
         $username = $this->request->post('username');
         $password = $this->request->post('password');
         $redirect = $this->request->get('redirect', null);
 
         // auth empty
         if (!$username || !$password) {
-            $this->response->setBody($this->bailout('A username and password must be entered.'));
-            return;
+            return $this->context->addContext(['errors' => [self::ERR_INVALID]]);
         }
 
         // auth failed
         if (!$account = $this->ldap->authenticate($username, $password)) {
-            $this->response->setBody($this->bailout('Authentication failed.'));
-            return;
+            return $this->context->addContext(['errors' => [self::ERR_AUTH_FAILURE]]);
         }
 
         $user = $this->userRepo->find($account->commonId());
 
         // account disabled manually
         if ($user && !$user->isActive()) {
-            $this->response->setBody($this->bailout('Account disabled.'));
-            return;
+            return $this->context->addContext(['errors' => [self::ERR_DISABLED]]);
         }
 
         $isFirstLogin = false;
@@ -136,20 +131,10 @@ class LoginHandler implements ControllerInterface
         $this->session->set('is-first-login', $isFirstLogin);
 
         if ($redirect) {
-            $this->response->redirect($redirect);
+            $this->url->redirectForURL($redirect);
         } else {
             $this->url->redirectFor('dashboard');
         }
-    }
-
-    /**
-     * @param string $error
-     *
-     * @return string
-     */
-    private function bailout($error)
-    {
-        return $this->template->render(['error' => $error]);
     }
 
     /**

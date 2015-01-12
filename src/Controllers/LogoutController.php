@@ -7,9 +7,9 @@
 
 namespace QL\Hal\Controllers;
 
-use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Utility\Url;
 
 class LogoutController implements ControllerInterface
 {
@@ -19,15 +19,15 @@ class LogoutController implements ControllerInterface
     private $session;
 
     /**
-     * @type UrlHelper
+     * @type Url
      */
     private $url;
 
     /**
      * @param Session $session
-     * @param UrlHelper $url
+     * @param Url $url
      */
-    public function __construct(Session $session, UrlHelper $url)
+    public function __construct(Session $session, Url $url)
     {
         $this->session = $session;
         $this->url = $url;

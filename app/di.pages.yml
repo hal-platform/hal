@@ -30,21 +30,20 @@ services:
         parent: 'twig.template'
         arguments: ['login.twig']
         calls: [['setTemplate', ['login.twig']]]
-    login.handle:
+    login.handler:
         class: 'QL\Hal\Controllers\LoginHandler'
         arguments:
-            - @login.twig
+            - @twig.context
             - @ldapService
             - @user.repo
             - @doctrine.em
             - @session
-            - @url.helper
+            - @url
             - @slim.request
-            - @slim.response
 
-    logout.handle:
+    logout.handler:
         class: 'QL\Hal\Controllers\LogoutController'
-        arguments: [@session, @url.helper]
+        arguments: [@session, @url]
 
     queue.page:
         class: 'QL\Hal\Controllers\QueueController'
@@ -97,8 +96,6 @@ services:
     group.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['group/admin.add.twig']]]
-    group.admin.add.handle:
-        parent: 'group.admin.add.page'
 
     group.admin.edit.page:
         class: 'QL\Hal\Controllers\Group\EditGroupController'
@@ -115,9 +112,7 @@ services:
     group.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['group/admin.edit.twig']]]
-    group.admin.edit.handle:
-        parent: 'group.admin.edit.page'
-    group.admin.remove.handle:
+    group.admin.remove.handler:
         class: 'QL\Hal\Controllers\Group\RemoveGroupController'
         arguments:
             - @group.repo
@@ -185,8 +180,6 @@ services:
     repository.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/admin.add.twig']]]
-    repository.admin.add.handle:
-        parent: 'repository.admin.add.page'
 
     repository.admin.edit.page:
         class: 'QL\Hal\Controllers\Repository\EditRepositoryController'
@@ -204,10 +197,8 @@ services:
     repository.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/admin.edit.twig']]]
-    repository.admin.edit.handle:
-        parent: 'repository.admin.edit.page'
 
-    repository.admin.remove.handle:
+    repository.admin.remove.handler:
         class: 'QL\Hal\Controllers\Repository\RemoveRepositoryController'
         arguments:
             - @repository.repo
@@ -498,8 +489,6 @@ services:
     environment.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/admin.add.twig']]]
-    environment.admin.add.handle:
-        parent: environment.admin.add.page
 
     environment.admin.edit.page:
         class: 'QL\Hal\Controllers\Environment\EditEnvironmentController'
@@ -516,8 +505,6 @@ services:
     environment.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/admin.edit.twig']]]
-    environment.admin.edit.handle:
-        parent: environment.admin.edit.page
 
     environment.admin.remove.handler:
         class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentHandler'
@@ -570,8 +557,6 @@ services:
     server.admin.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/admin.add.twig']]]
-    server.admin.add.handle:
-        parent: 'server.admin.add.page'
 
     server.admin.edit.page:
         class: 'QL\Hal\Controllers\Server\EditServerController'
@@ -589,10 +574,8 @@ services:
     server.admin.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/admin.edit.twig']]]
-    server.admin.edit.handle:
-        parent: 'server.admin.edit.page'
 
-    server.admin.remove.handle:
+    server.admin.remove.handler:
         class: 'QL\Hal\Controllers\Server\RemoveServerController'
         arguments:
             - @server.repo
@@ -658,7 +641,7 @@ services:
     # USER TOKEN MANAGEMENT CONTROLLERS
     ######################################################################################################################
 
-    user.token.create.handle:
+    user.token.add.handler:
         class: 'QL\Hal\Controllers\User\Token\AddTokenController'
         arguments:
             - @doctrine.em
@@ -670,7 +653,7 @@ services:
             - @slim.not.found
             - @slim.route.parameters
 
-    user.token.delete.handle:
+    user.token.remove.handler:
         class: 'QL\Hal\Controllers\User\Token\RemoveTokenController'
         arguments:
             - @doctrine.em
