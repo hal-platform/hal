@@ -45,6 +45,7 @@ define(['jquery'], function($) {
                         server: $container.find('select[name="server"]').val(),
                         url: $container.find('input[name="url"]').val(),
                         path: $container.find('input[name="path"]').val(),
+                        ebs_environment: $container.find('input[name="ebs_environment"]').val(),
                     },
                     settings = {
                         type: 'POST',
@@ -109,17 +110,25 @@ define(['jquery'], function($) {
             this.$container
                 .find('form').before($alert);
 
-            var hostname = deployment._embedded.server.name,
-                env =      deployment._embedded.server._embedded.environment.key;
+            var server = deployment._embedded.server,
+                hostname = server.name,
+                ebs = deployment['ebs-environment'],
+                path = deployment.path,
+                env = server._embedded.environment.key;
 
-            this.addDeployment(env, deployment.id, hostname, deployment.path, deployment.url);
+            var path_or_ebs = path;
+            if (server.type == 'elasticbeanstalk') {
+                path_or_ebs = ebs;
+            }
+
+            this.addDeployment(env, deployment.id, hostname, path_or_ebs, deployment.url);
         },
-        addDeployment: function(env, id, hostname, path, url) {
+        addDeployment: function(env, id, hostname, path_or_ebs, url) {
             var $list = $(this.envListPrefix + env);
                 $row = $('<tr>')
                 .append('<td>' + hostname + '</td>')
-                .append('<td>' + path + '</td>')
-                .append('<td><a href="' + url + '"><code>' + url + '</code></a></td>')
+                .append('<td><code>' + path_or_ebs + '</code></td>')
+                .append('<td><a href="' + url + '">' + url + '</a></td>')
                 .append('<td></td>');
 
             // add new row, remove empty row if there

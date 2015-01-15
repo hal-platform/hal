@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.build.repository.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.repository.id}) }}">Back to Repository Status</a></p>
 
     <h2>Push Information</h2>
 
@@ -12,43 +12,47 @@
 
     <div class="details-box">
         <dl class="split--left mbn">
-            <dt class="split--left__title">
-                Id
-            </dt>
-            <dd class="split--left__value">
-                {{ push.id }}
-            </dd>
-            <dt class="split--left__title">
-                Short Id
-            </dt>
-            <dd class="split--left__value">
-                {{ push.id|formatPushId }}
-            </dd>
-            <dt class="split--left__title">
-                Server
-            </dt>
+            <dt class="split--left__title">Id</dt>
+            <dd class="split--left__value">{{ push.id }}</dd>
+
+            <dt class="split--left__title">Short Id</dt>
+            <dd class="split--left__value">{{ push.id|formatPushId }}</dd>
+
+            <dt class="split--left__title">Server</dt>
             <dd class="split--left__value">
                 {% if push.deployment %}
-                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
+                    {% set servername = push.deployment.server.name %}
+                    {% if push.deployment.server.type == 'elasticbeanstalk' %}
+                        {% set servername = 'Elastic Beanstalk' %}
+                    {% endif %}
+                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ servername }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
             </dd>
+
             <dt class="split--left__title">
-                Directory
+                {% set pathLabel = 'Directory' %}
+                {% if push.deployment and push.deployment.server.type == 'elasticbeanstalk' %}
+                    {% set pathLabel = 'EBS Environment' %}
+                {% endif %}
+                {{ pathLabel }}
             </dt>
             <dd class="split--left__value">
                 {% if push.deployment %}
-                    <code>{{ push.deployment.path }}</code>
+                    {% set path = push.deployment.path %}
+                    {% if push.deployment.server.type == 'elasticbeanstalk' %}
+                        {% set path = push.deployment.server.name %}
+                    {% endif %}
+
+                    <code>{{ path }}</code>
                 {% else %}
                     Unknown
                 {% endif %}
             </dd>
 
             {% if push.deployment and push.deployment.url %}
-                <dt class="split--left__title">
-                    URL
-                </dt>
+                <dt class="split--left__title">URL</dt>
                 <dd class="split--left__value">
                     <a href="{{ push.deployment.url.asString }}">{{ push.deployment.url.asString }}</a>
                 </dd>
@@ -60,52 +64,39 @@
 
     <div class="details-box">
         <dl class="split--left mbn">
-            <dt class="split--left__title">
-                Build Id
-            </dt>
+            <dt class="split--left__title">Build Id</dt>
             <dd class="split--left__value">
                 <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a>
                 {% if (push.build.status == 'Removed') %}
                     (Removed)
                 {% endif %}
             </dd>
-            <dt class="split--left__title">
-                Repository
-            </dt>
+
+            <dt class="split--left__title">Repository</dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('repository', {'id': push.build.repository.id}) }}">{{ push.build.repository.description }}</a>
+                <a href="{{ urlFor('repository', {'id': push.repository.id}) }}">{{ push.repository.description }}</a>
             </dd>
-            <dt class="split--left__title">
-                Environment
-            </dt>
+
+            <dt class="split--left__title">Environment</dt>
+            <dd class="split--left__value">{{ push.build.environment.key }}</dd>
+
+            <dt class="split--left__title">Reference</dt>
             <dd class="split--left__value">
-                {% if push.deployment %}
-                    {{ push.deployment.server.environment.key }}
-                {% else %}
-                    Unknown
-                {% endif %}
-            </dd>
-            <dt class="split--left__title">
-                Reference
-            </dt>
-            <dd class="split--left__value">
-                {% if githubCommitIsCurrent(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch, push.build.commit) %}
+                {% if githubCommitIsCurrent(push.repository.githubUser, push.repository.githubRepo, push.build.branch, push.build.commit) %}
                     <span class="status-before--success">
-                        <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (latest)
+                        <a href="{{ githubReference(push.repository.githubUser, push.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (latest)
                     </span>
                 {% else %}
                     <span class="status-before--other">
-                        <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (behind or unresolved)
+                        <a href="{{ githubReference(push.repository.githubUser, push.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (behind or unresolved)
                     </span>
                 {% endif %}
                 <svg class="icon"><use xlink:href="#fork"></use></svg>
             </dd>
 
-            <dt class="split--left__title">
-                Commit
-            </dt>
+            <dt class="split--left__title">Commit</dt>
             <dd class="split--left__value">
-                <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
+                <a href="{{ githubCommit(push.repository.githubUser, push.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
                 <svg class="icon"><use xlink:href="#github"></use></svg>
             </dd>
         </dl>
@@ -115,9 +106,7 @@
 
     <div class="details-box">
         <dl class="split--left mbn">
-            <dt class="split--left__title">
-                Status
-            </dt>
+            <dt class="split--left__title">Status</dt>
             <dd class="split--left__value">
                 {% if push.status == 'Success' %}
                     <span class="status-before--success">{{ push.status }}</span>
@@ -128,23 +117,17 @@
                 {% endif %}
             </dd>
 
-            <dt class="split--left__title">
-                Start
-            </dt>
+            <dt class="split--left__title">Start</dt>
             <dd class="split--left__value js-push-start">
                 {{ push.start|timepoint('M j, Y g:i A') }}
             </dd>
 
-            <dt class="split--left__title">
-                End
-            </dt>
+            <dt class="split--left__title">End</dt>
             <dd class="split--left__value js-push-end">
                 {{ push.end|timepoint('M j, Y g:i A') }}
             </dd>
 
-            <dt class="split--left__title">
-                Initiator
-            </dt>
+            <dt class="split--left__title">Initiator</dt>
             <dd class="split--left__value">
                 {% if push.user %}
                     <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name }}</a>

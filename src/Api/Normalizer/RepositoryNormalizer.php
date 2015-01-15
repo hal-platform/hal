@@ -84,18 +84,15 @@ class RepositoryNormalizer
                 // @todo put html urls in _links, with html media type?
                 'url' => $this->url->urlFor('repository', ['id' => $repository->getId()]),
                 'email' => $repository->getEmail(),
-                'githubUser' => [
+                'github-user' => [
                     'text' => $repository->getGithubUser(),
                     'url' => $this->url->githubUserUrl($repository->getGithubUser())
                 ],
-                'githubRepo' => [
+                'github-repository' => [
                     'text' => $repository->getGithubRepo(),
                     'url' => $this->url->githubRepoUrl($repository->getGithubUser(), $repository->getGithubRepo())
                 ],
-                'buildCmd' => $repository->getBuildCmd(),
-                'buildTransformCmd' => $repository->getBuildTransformCmd(),
-                'prePushCmd' => $repository->getPrePushCmd(),
-                'postPushCmd' => $repository->getPostPushCmd()
+                'ebs-name' => $repository->getEbsName()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [

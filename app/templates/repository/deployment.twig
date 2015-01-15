@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Deployment Information' %}
+
+{% block content %}
+    <h2>Deployment Information</h2>
+
+    {% set servertype = 'Unknown' %}
+    {% if deployment.server.type == 'elasticbeanstalk' %}
+        {% set servertype = 'Elastic Beanstalk' %}
+    {% elseif deployment.server.type == 'rsync' %}
+        {% set servertype = 'Internal (Rsync)' %}
+    {% endif %}
+
+    <h3>Type</h3>
+    <p>{{ servertype }}</p>
+
+    <h3>Server</h3>
+    <p><a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment.server.name }}</a></p>
+
+    <h3>Repository</h3>
+    <p><a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.description }}</a></p>
+
+    <h3>File path</h3>
+    <p>
+        {% if deployment.server.type == 'rsync' %}
+            <code>{{ deployment.path }}</code>
+        {% else %}
+            Not Applicable
+        {% endif %}
+    </p>
+
+    <h3>Elastic Beanstalk Environment ID</h3>
+    <p>
+        {% if deployment.server.type == 'elasticbeanstalk' %}
+            <code>{{ deployment.ebsEnvironment }}</code>
+        {% else %}
+            Not Applicable
+        {% endif %}
+    </p>
+
+    <h3>URL</h3>
+    <p>
+        {% if deployment.url %}
+            <a href="{{ deployment.url.asString() }}">{{ deployment.url.asString() }}</a>
+        {% else %}
+            None
+        {% endif %}
+    </p>
+
+    {% set canEdit = isUserRepoAdmin(currentUser, repository.key) %}
+
+    {# secondary actions #}
+    {% if canEdit %}
+        <a class="btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.repository.id, id: deployment.id}) }}">Edit Deployment</a>
+        <a class="btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a>
+    {% endif %}
+
+{% endblock %}

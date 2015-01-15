@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManager;
-use QL\Hal\Validator\AddDeploymentValidator;
+use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Slim\Halt;
 use QL\Panthor\Utility\Json;
@@ -27,7 +27,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
     private $em;
 
     /**
-     * @type AddDeploymentValidator
+     * @type DeploymentValidator
      */
     private $validator;
 
@@ -63,7 +63,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
 
     /**
      * @param EntityManager $em
-     * @param AddDeploymentValidator $validator
+     * @param DeploymentValidator $validator
      * @param Halt $halt
      * @param Json $json
      * @param Url $url
@@ -73,7 +73,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
      */
     public function __construct(
         EntityManager $em,
-        AddDeploymentValidator $validator,
+        DeploymentValidator $validator,
         Halt $halt,
         Json $json,
         Url $url,
@@ -135,6 +135,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
             $repositoryId,
             isset($decoded['server']) ? $decoded['server'] : null,
             isset($decoded['path']) ? $decoded['path'] : null,
+            isset($decoded['ebs_environment']) ? $decoded['ebs_environment'] : null,
             isset($decoded['url']) ? $decoded['url'] : null
         );
 

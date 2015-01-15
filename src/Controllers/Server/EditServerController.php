@@ -12,6 +12,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Entity\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;
@@ -22,6 +23,11 @@ use Slim\Http\Response;
 
 class EditServerController implements ControllerInterface
 {
+    const TYPE_EBS = 'elasticbeanstalk';
+    const TYPE_RSYNC = 'rsync';
+
+    const EBS_NAME = 'Elastic Beanstalk';
+
     /**
      * @type TemplateInterface
      */
@@ -121,7 +127,8 @@ class EditServerController implements ControllerInterface
         $renderContext = [
             'form' => [
                 'hostname' => ($this->request->isPost()) ? $this->request->post('hostname') : $server->getName(),
-                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->getEnvironment()->getId()
+                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->getEnvironment()->getId(),
+                'server_type' => ($this->request->isPost()) ? $this->request->post('server_type') : $server->getType(),
             ],
             'errors' => $this->checkFormErrors($this->request, $server),
             'server' => $server,
@@ -156,8 +163,16 @@ class EditServerController implements ControllerInterface
     {
         $hostname = strtolower($request->post('hostname'));
 
-        $server->setName($hostname);
+        $type = $request->post('server_type');
+        $name = strtolower($request->post('hostname'));
+
+        if ($type === self::TYPE_EBS) {
+            $name = self::EBS_NAME;
+        }
+
+        $server->setType($type);
         $server->setEnvironment($environment);
+        $server->setName($name);
 
         $this->entityManager->merge($server);
         $this->entityManager->flush();
@@ -178,20 +193,41 @@ class EditServerController implements ControllerInterface
 
         $hostname = $request->post('hostname');
         $environmentId = $request->post('environment');
+        $serverType = $request->post('server_type');
 
-        // normalize the hostname
-        $hostname = strtolower($hostname);
+        $errors = [];
 
-        $errors = $this->validateHostName($hostname);
+        if (!in_array($serverType, ServerEnumType::values())) {
+            $errors[] = 'Please select a type.';
+        }
 
         if (!$environmentId) {
             $errors[] = 'Please select an environment.';
         }
 
-        // Only check duplicate hostname if it is being changed
-        if (!$errors && $hostname != $server->getName()) {
-            if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
-                $errors[] = 'A server with this hostname already exists.';
+        // validate hostname if rsync server
+        if ($serverType === self::TYPE_RSYNC && !$errors) {
+            // normalize the hostname
+            $hostname = strtolower($hostname);
+
+            $errors = $this->validateHostname($hostname);
+
+            // Only check duplicate hostname if it is being changed
+            if (!$errors && $hostname != $server->getName()) {
+                if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
+                    $errors[] = 'A server with this hostname already exists.';
+                }
+            }
+
+        // validate servername for ebs server
+        } elseif ($serverType === self::TYPE_EBS && !$errors) {
+
+            // Only check duplicate EBS if it is being changed
+            $hasChanged = ($environmentId != $server->getEnvironment()->getId() || $serverType != $server->getType());
+            if (!$errors && $hasChanged) {
+                if ($server = $this->serverRepo->findOneBy(['type' => self::TYPE_EBS, 'environment' => $environmentId])) {
+                    $errors[] = 'An EBS server for this environment already exists.';
+                }
             }
         }
 
@@ -222,6 +258,10 @@ class EditServerController implements ControllerInterface
     {
         $errors = [];
 
+        if (strlen($hostname) === 0) {
+            $errors[] = 'You must enter a hostname';
+        }
+
         $regex = '@^([0-9a-z]([0-9a-z-]*[0-9a-z])?)(\.[0-9a-z]([0-9a-z-]*[0-9a-z])?)*$@';
         if (!preg_match($regex, $hostname)) {
             $errors[] = 'Hostname must only use numbers, letters, hyphens and periods.';
@@ -229,10 +269,6 @@ class EditServerController implements ControllerInterface
 
         if (strlen($hostname) > 24) {
             $errors[] = 'Hostname must be less than or equal to 32 characters';
-        }
-
-        if (strlen($hostname) === 0) {
-            $errors[] = 'You must enter a hostname';
         }
 
         return $errors;

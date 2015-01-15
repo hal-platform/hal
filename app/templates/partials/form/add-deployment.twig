@@ -20,7 +20,12 @@ Needs the following parameters:
                         {% for server in servers %}
                             {% set isSelected = (server.id == form.server) %}
 
-                            <option value="{{ server.id }}"{{ isSelected ? ' selected' : '' }}>{{ server.name }}</option>
+                            {% set servername = server.name %}
+                            {% if server.type == 'elasticbeanstalk' %}
+                                {% set servername = 'Elastic Beanstalk' %}
+                            {% endif %}
+
+                            <option value="{{ server.id }}"{{ isSelected ? ' selected' : '' }}>{{ servername }}</option>
                         {% endfor %}
                     </optgroup>
                 {% endfor %}
@@ -30,12 +35,24 @@ Needs the following parameters:
             <label for="path">
                 File path
                 <small class="additional">
+                    <strong>Rsync Servers Only</strong><br>
                     The absolute path to the file directory on the server.
                     <br>Paths must begin with a forward slash (/).
                 </small>
             </label>
-            <input class="text-input" type="text" name="path" id="path" maxlength="255" value="{{ form.path }}" required pattern="^\/[^\n\t]+">
+            <input class="text-input" type="text" name="path" id="path" maxlength="255" value="{{ form.path }}" pattern="^\/[^\n\t]+">
         </li>
+
+        <li>
+            <label for="ebs_environment">
+                Elastic Beanstalk Environment ID
+                <small class="additional">
+                    <strong>EBS Servers Only</strong>
+                </small>
+            </label>
+            <input class="text-input" type="text" name="ebs_environment" id="ebs_environment" maxlength="100" value="{{ form.ebs_environment }}" pattern="^[^\n\t]+">
+        </li>
+
         <li>
             <label for="url">
                 URL

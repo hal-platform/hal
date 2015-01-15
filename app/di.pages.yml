@@ -213,6 +213,19 @@ services:
     # REPOSITORY DEPLOYMENT CONTROLLERS
     ######################################################################################################################
 
+    repository.deployment.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentController'
+        arguments:
+            - @repository.deployment.twig
+            - @repository.repo
+            - @deployment.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.deployment.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployment.twig']]]
+
     repository.deployments.page:
         class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentsController'
         arguments:
@@ -253,7 +266,7 @@ services:
         class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentFormHandler'
         arguments:
             - @doctrine.em
-            - @repository.deployments.add.validator
+            - @repository.deployment.validator
             - @session
             - @url
             - @twig.context
@@ -263,19 +276,45 @@ services:
         class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentJsonHandler'
         arguments:
             - @doctrine.em
-            - @repository.deployments.add.validator
+            - @repository.deployment.validator
             - @slim.halt
             - @json
             - @url
             - @slim.request
             - @slim.response
             - @slim.route.parameters
-    repository.deployments.add.validator:
-        class: 'QL\Hal\Validator\AddDeploymentValidator'
+    repository.deployment.validator:
+        class: 'QL\Hal\Validator\DeploymentValidator'
         arguments:
             - @repository.repo
             - @server.repo
             - @deployment.repo
+
+    repository.deployment.edit.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\EditDeploymentController'
+        arguments:
+            - @repository.deployment.edit.twig
+            - @repository.repo
+            - @deployment.repo
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.deployment.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployments.edit.twig']]]
+    repository.deployment.edit.handler:
+        class: 'QL\Hal\Controllers\Repository\Deployment\EditDeploymentHandler'
+        arguments:
+            - @doctrine.em
+            - @deployment.repo
+            - @repository.deployment.validator
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+
     repository.deployments.remove.handler:
         class: 'QL\Hal\Controllers\Repository\Deployment\RemoveDeploymentHandler'
         arguments:

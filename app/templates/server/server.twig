@@ -5,8 +5,23 @@
 {% block content %}
     <h2>Server Information</h2>
 
+    {% set servertype = 'Unknown' %}
+    {% if server.type == 'elasticbeanstalk' %}
+        {% set servertype = 'Elastic Beanstalk' %}
+    {% elseif server.type == 'rsync' %}
+        {% set servertype = 'Internal (Rsync)' %}
+    {% endif %}
+
+    <h3>Type</h3>
+    <p>{{ servertype }}</p>
+
+    {% set servername = server.name %}
+    {% if server.type == 'elasticbeanstalk' %}
+        {% set servername = 'Not applicable' %}
+    {% endif %}
+
     <h3>Hostname</h3>
-    <p>{{ server.name }}</p>
+    <p>{{ servername }}</p>
 
     <h3>Environment</h3>
     <p>{{ server.environment.key }}</p>
@@ -17,8 +32,15 @@
             <thead>
                 <tr>
                     <th>Repository</th>
-                    <th>Path</th>
+                    <th>
+                        {% if server.type == 'elasticbeanstalk' %}
+                            EBS Environment
+                        {% else %}
+                            Path
+                        {% endif %}
+                    </th>
                     <th>URL</th>
+                    <th class="t10"></th>
                 </tr>
             </thead>
             <tbody>
@@ -27,9 +49,18 @@
                     <td>
                         <a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.description }}</a>
                     </td>
-                    <td><code>{{ deployment.path }}</code></td>
+                    <td>
+                        {% if server.type == 'elasticbeanstalk' %}
+                            <code>{{ deployment.ebsEnvironment }}</code>
+                        {% else %}
+                            <code>{{ deployment.path }}</code>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
+                    </td>
+                    <td>
+                        <a class="btn--tiny" href="{{ urlFor('repository.deployments', {repository: deployment.repository.id}) }}">View</a>
                     </td>
                 </tr>
             {% endfor %}

@@ -62,11 +62,6 @@
                     <label for="notification_email">Notification Email Address <small class="additional">Optional. Notifications are sent on push or build completion.</small></label>
                     <input type="email" name="notification_email" id="notification_email" maxlength="128" value="{{ form.notification_email }}" class="text-input">
                 </li>
-                <li>
-                    <label for="build_command">Build Command <small class="additional">Will be run on build server to build application.</small></label>
-                    <input type="text" name="build_command" id="build_command" maxlength="128" value="{{ form.build_command }}" class="text-input">
-                </li>
-                <li>More commands can be entered after the repository is created.</li>
             </ul>
 
             <div>

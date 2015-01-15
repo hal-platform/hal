@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Edit Server: '~server.name %}
+{% set page_title = 'Edit Server: ' ~ server.name %}
 
 {% block content %}
     <h2>Edit Server</h2>
@@ -17,8 +17,21 @@
         <form method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="hostname">Hostname</label>
-                    <input type="text" name="hostname" id="hostname" maxlength="24" required value="{{ form.hostname }}" class="text-input">
+                    <label for="servertype">Type</label>
+                    <ul class="radio-grid--form">
+
+                        {% set checked = form.server_type == 'rsync' ? ' checked' : '' %}
+                        <li>
+                            <input id="server_type-rsync" type="radio" name="server_type" value="rsync"{{ checked }}>
+                            <label for="server_type-rsync">Internal (Rsync)</label>
+                        </li>
+
+                        {% set checked = form.server_type == 'elasticbeanstalk' ? ' checked' : '' %}
+                        <li>
+                            <input id="server_type-elasticbeanstalk" type="radio" name="server_type" value="elasticbeanstalk"{{ checked }}>
+                            <label for="server_type-elasticbeanstalk">Elastic Beanstalk</label>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <p>Environment</p>
@@ -36,6 +49,17 @@
                     {% endfor %}
                     </ul>
                 </li>
+
+                <li>
+                    <label for="hostname">Hostname</label>
+                    <small class="additional">
+                        <strong>Rsync Servers Only</strong>
+                    </small>
+
+                    {% set hostname = form.server_type == 'rsync' ? form.hostname : '' %}
+                    <input type="text" name="hostname" id="hostname" maxlength="24" value="{{ hostname }}" class="text-input">
+                </li>
+
                 <li>
                     {# primary action #}
                     <input class="btn" type="submit" value="Save">

@@ -54,14 +54,10 @@
                     <input type="email" name="notification_email" id="notification_email" maxlength="128" value="{{ form.notification_email }}" class="text-input">
                 </li>
                 <li>
-                    <label for="build_command">Build Command <small class="additional">Will be run on build server to build application.</small></label>
-                    <input type="text" name="build_command" id="build_command" maxlength="128" value="{{ form.build_command }}" class="text-input">
+                    <label for="ebs_name">Amazon Elastic Beanstalk Application Name</label>
+                    <input type="text" name="ebs_name" id="ebs_name" maxlength="255" value="{{ form.ebs_name }}" class="text-input">
+                    <small class="additional">Required to add EBS deployments.</small>
                 </li>
-                <li>
-                    <label for="post_command">Post Push Command <small class="additional">Will be run on remote server after code is pushed.</small></label>
-                    <input type="text" name="post_command" id="post_command" maxlength="128" value="{{ form.post_command }}" class="text-input">
-                </li>
-                <li>Please contact a HAL administrator to use "pre push" or "build transform" commands.</li>
             </ul>
 
             <div>

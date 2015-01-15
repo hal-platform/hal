@@ -8,6 +8,8 @@
 namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManager;
+use MCP\DataType\HttpUrl;
+use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Session;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
@@ -15,14 +17,21 @@ use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
-class AddDeploymentFormHandler implements MiddlewareInterface
+class EditDeploymentHandler implements MiddlewareInterface
 {
-    const SUCCESS = 'Deployment added.';
+    const EDIT_SUCCESS = 'Deployment updated.';
+    const TYPE_RSYNC = 'rsync';
+    const TYPE_EBS = 'elasticbeanstalk';
 
     /**
      * @type EntityManager
      */
     private $em;
+
+    /**
+     * @type DeploymentRepository
+     */
+    private $repository;
 
     /**
      * @type DeploymentValidator
@@ -55,7 +64,13 @@ class AddDeploymentFormHandler implements MiddlewareInterface
     private $parameters;
 
     /**
+     * @type array
+     */
+    private $errors;
+
+    /**
      * @param EntityManager $em
+     * @param DeploymentRepository $repository
      * @param DeploymentValidator $validator
      * @param Session $session
      * @param Url $url
@@ -65,6 +80,7 @@ class AddDeploymentFormHandler implements MiddlewareInterface
      */
     public function __construct(
         EntityManager $em,
+        DeploymentRepository $repository,
         DeploymentValidator $validator,
         Session $session,
         Url $url,
@@ -73,6 +89,7 @@ class AddDeploymentFormHandler implements MiddlewareInterface
         array $parameters
     ) {
         $this->em = $em;
+        $this->repository = $repository;
         $this->validator = $validator;
 
         $this->session = $session;
@@ -81,6 +98,8 @@ class AddDeploymentFormHandler implements MiddlewareInterface
 
         $this->request = $request;
         $this->parameters = $parameters;
+
+        $this->errors = [];
     }
 
     /**
@@ -88,15 +107,21 @@ class AddDeploymentFormHandler implements MiddlewareInterface
      */
     public function __invoke()
     {
-        $deployment = $this->validator->isValid(
-            $this->parameters['repository'],
-            $this->request->post('server'),
-            $this->request->post('path'),
-            $this->request->post('ebs_environment'),
-            $this->request->post('url')
-        );
+        $deployment = $this->repository->find($this->parameters['id']);
+        if (!$deployment) {
+            // fall through to controller
+            return;
+        }
 
-        // if validator didn't create a deployment, pass through to controller to handle errors
+        if (!$this->request->isPost()) {
+            return;
+        }
+
+        $path = $this->request->post('path');
+        $ebsEnvironment = $this->request->post('ebs_environment');
+        $url = $this->request->post('url');
+
+        $deployment = $this->validator->isEditValid($deployment, $path, $ebsEnvironment, $url);
         if (!$deployment) {
             $this->context->addContext([
                 'errors' => $this->validator->errors()
@@ -105,12 +130,25 @@ class AddDeploymentFormHandler implements MiddlewareInterface
             return;
         }
 
+        // Wipe path for EBS servers
+        // Wipe ebs for RSYNC server
+        $serverType = $deployment->getServer()->getType();
+        if ($serverType === self::TYPE_RSYNC) {
+            $ebsEnvironment = null;
+        } else if ($serverType === self::TYPE_EBS) {
+            $path = null;
+        }
+
+        $deployment->setPath($path);
+        $deployment->setEbsEnvironment($ebsEnvironment);
+        $deployment->setUrl(HttpUrl::create($url));
+
         // persist to database
         $this->em->persist($deployment);
         $this->em->flush();
 
         // flash and redirect
-        $this->session->flash(self::SUCCESS, 'success');
-        $this->url->redirectFor('repository.deployments', ['repository' => $this->parameters['repository']], [], 303);
+        $this->session->flash(self::EDIT_SUCCESS, 'success');
+        $this->url->redirectFor('repository.deployments', ['repository' => $this->parameters['repository'], 'id' => $this->parameters['id']], [], 303);
     }
 }

@@ -34,7 +34,7 @@ class ServerNormalizer
     ) {
         $this->environments = $environments;
 
-        $this->embed = ['deployments', 'environment'];
+        $this->embed = ['environment'];
     }
 
     /**
@@ -43,7 +43,7 @@ class ServerNormalizer
      */
     public function link(Server $server = null)
     {
-        return  (is_null($server)) ? null :$this->buildLink(
+        return (is_null($server)) ? null :$this->buildLink(
             ['api.server', ['id' => $server->getId()]],
             [
                 'title' => $server->getName()
@@ -67,15 +67,26 @@ class ServerNormalizer
             'deployments' => $server->getDeployments()->toArray()
         ];
 
+        // shitty, but this is a circular reference so deal with it
+        $deployments = [];
+        foreach ($server->getDeployments() as $deployment) {
+            $deployments[] = $this->buildLink(
+                ['api.deployment', ['id' => $deployment->getId()]],
+                ['title' => $server->getName()]
+            );
+        }
+
         return $this->buildResource(
             [
                 'id' => $server->getId(),
+                'type' => $server->getType(),
                 'name' => $server->getName()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($server),
-                'environment' => $this->environments->link($server->getEnvironment())
+                'environment' => $this->environments->link($server->getEnvironment()),
+                'deployments' => $deployments
             ]
         );
     }

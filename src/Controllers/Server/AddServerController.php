@@ -12,6 +12,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Entity\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
@@ -21,6 +22,11 @@ use Slim\Http\Response;
 
 class AddServerController implements ControllerInterface
 {
+    const TYPE_EBS = 'elasticbeanstalk';
+    const TYPE_RSYNC = 'rsync';
+
+    const EBS_NAME = 'Elastic Beanstalk';
+
     /**
      * @type TemplateInterface
      */
@@ -105,7 +111,8 @@ class AddServerController implements ControllerInterface
         $renderContext = [
             'form' => [
                 'hostname' => $this->request->post('hostname'),
-                'environment' => $this->request->post('environment')
+                'environment' => $this->request->post('environment'),
+                'server_type' => $this->request->post('server_type'),
             ],
             'errors' => $this->checkFormErrors($this->request),
             'environments' => $environments
@@ -120,7 +127,12 @@ class AddServerController implements ControllerInterface
             if (!$renderContext['errors']) {
                 $server = $this->handleFormSubmission($this->request, $environment);
 
-                $message = sprintf('Server "%s" added.', $server->getName());
+                $name = $server->getName();
+                if ($server->getType() === self::TYPE_EBS) {
+                    $name = self::EBS_NAME;
+                }
+
+                $message = sprintf('Server "%s" added.', $name);
                 $this->session->flash($message, 'success');
                 return $this->url->redirectFor('servers');
             }
@@ -137,11 +149,17 @@ class AddServerController implements ControllerInterface
      */
     private function handleFormSubmission(Request $request, Environment $environment)
     {
-        $hostname = strtolower($request->post('hostname'));
+        $type = $request->post('server_type');
+        $name = strtolower($request->post('hostname'));
+
+        if ($type === self::TYPE_EBS) {
+            $name = self::EBS_NAME;
+        }
 
         $server = new Server;
-        $server->setName($hostname);
+        $server->setType($type);
         $server->setEnvironment($environment);
+        $server->setName($name);
 
         $this->entityManager->persist($server);
         $this->entityManager->flush();
@@ -161,18 +179,34 @@ class AddServerController implements ControllerInterface
 
         $hostname = $request->post('hostname');
         $environmentId = $request->post('environment');
+        $serverType = $request->post('server_type');
 
-        // normalize the hostname
-        $hostname = strtolower($hostname);
+        $errors = [];
 
-        $errors = $this->validateHostName($hostname);
+        if (!in_array($serverType, ServerEnumType::values())) {
+            $errors[] = 'Please select a type.';
+        }
 
         if (!$environmentId) {
             $errors[] = 'Please select an environment.';
         }
 
-        if (!$errors && $server = $this->serverRepo->findOneBy(['name' => $hostname])) {
-            $errors[] = 'A server with this hostname already exists.';
+        // validate hostname if rsync server
+        if ($serverType === self::TYPE_RSYNC && !$errors) {
+            // normalize the hostname
+            $hostname = strtolower($hostname);
+
+            $errors = $this->validateHostname($hostname);
+
+            if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
+                $errors[] = 'A server with this hostname already exists.';
+            }
+
+        // validate servername for ebs server
+        } elseif ($serverType === self::TYPE_EBS && !$errors) {
+            if ($server = $this->serverRepo->findOneBy(['type' => self::TYPE_EBS, 'environment' => $environmentId])) {
+                $errors[] = 'An EBS server for this environment already exists.';
+            }
         }
 
         return $errors;
@@ -198,9 +232,13 @@ class AddServerController implements ControllerInterface
      * @param string $hostname
      * @return array
      */
-    private function validateHostName($hostname)
+    private function validateHostname($hostname)
     {
         $errors = [];
+
+        if (strlen($hostname) === 0) {
+            $errors[] = 'You must enter a hostname for internal servers.';
+        }
 
         $regex = '@^([0-9a-z]([0-9a-z-]*[0-9a-z])?)(\.[0-9a-z]([0-9a-z-]*[0-9a-z])?)*$@';
         if (!preg_match($regex, $hostname)) {
@@ -208,11 +246,7 @@ class AddServerController implements ControllerInterface
         }
 
         if (strlen($hostname) > 24) {
-            $errors[] = 'Hostname must be less than or equal to 32 characters';
-        }
-
-        if (strlen($hostname) === 0) {
-            $errors[] = 'You must enter a hostname';
+            $errors[] = 'Hostname must be less than or equal to 24 characters.';
         }
 
         return $errors;

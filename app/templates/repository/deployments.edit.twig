@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Edit Deployment' %}
+
+{% block content %}
+    <h2>Edit Deployment</b></h2>
+
+    {% set servertype = 'Unknown' %}
+    {% if deployment.server.type == 'elasticbeanstalk' %}
+        {% set servertype = 'Elastic Beanstalk' %}
+    {% elseif deployment.server.type == 'rsync' %}
+        {% set servertype = 'Internal (Rsync)' %}
+    {% endif %}
+
+    <h3>Type</h3>
+    <p>{{ servertype }}</p>
+
+    <h3>Server</h3>
+    <p>{{ deployment.server.name }}</p>
+
+    <h3>Repository</h3>
+    <p>{{ deployment.repository.description }}</p>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="post">
+            <ul class="form-fields">
+                <li>
+                     {% set isDisabled = (deployment.server.type == 'rsync') ? '' : ' disabled' %}
+                    <label for="path">
+                        File path
+                        <small class="additional">
+                            <strong>Rsync Servers Only</strong><br>
+                            The absolute path to the file directory on the server.
+                            <br>Paths must begin with a forward slash (/).
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="path" id="path" maxlength="255" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'elasticbeanstalk') ? '' : ' disabled' %}
+                    <label for="ebs_environment">
+                        Elastic Beanstalk Environment ID
+                        <small class="additional">
+                            <strong>EBS Servers Only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="ebs_environment" id="ebs_environment" maxlength="100" value="{{ form.ebs_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                <li>
+                    <label for="url">
+                        URL
+                        <small class="additional">
+                            A URL is required to help users find where the code is deployed.
+                            <br>Must be the full URL and begin with <code>http://</code> or <code>https://</code>.
+                        </small>
+                    </label>
+                    <input class="text-input" type="url" name="url" id="url" maxlength="255" value="{{ form.url }}" required>
+                </li>
+            </ul>
+
+            <div>
+                {# primary action #}
+                <input class="btn" type="submit" value="Edit Deployment">
+
+                {# secondary actions #}
+                <a class="secondary-action" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

@@ -13,11 +13,22 @@
             <dt class="split--left__title">Identifier</dt>
             <dd class="split--left__value">{{ repository.key }}</dd>
 
+            <dt class="split--left__title">Type</dt>
+            <dd class="split--left__value">unix</dd>
+
             <dt class="split--left__title">Github Source</dt>
             <dd class="split--left__value">
                 <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
                 <svg class="icon"><use xlink:href="#github"></use></svg>
             </dd>
+
+            {% if repository.ebsName %}
+                <dt class="split--left__title">Elastic Beanstalk Name</dt>
+                <dd class="split--left__value">{{ repository.ebsName }}</dd>
+            {% else %}
+                <dt class="split--left__title">Elastic Beanstalk</dt>
+                <dd class="split--left__value">Not Enabled</dd>
+            {% endif %}
         </dl>
 
         {# primary action #}
@@ -41,34 +52,48 @@
         </dl>
     </div>
 
-    <h3>Commands</h3>
-    <div class="details-box">
-        <dl class="split--left mbn">
-            <dt class="split--left__title">
-                <svg class="icon" title="On build"><use xlink:href="#code"></use></svg>
-                Build Command
-            </dt>
-            <dd class="split--left__value">{{ repository.buildCmd ?: 'No command entered.' }}</dd>
+    {% if repository.buildCmd or repository.buildTransformCmd or repository.prePushCmd or repository.postPushCmd %}
+        <h3>Commands</h3>
+        <div class="details-box">
+            <dl class="split--left mbn">
+                {% if repository.buildCmd %}
+                    <dt class="split--left__title">
+                        <svg class="icon" title="On build"><use xlink:href="#code"></use></svg>
+                        Build Command
+                    </dt>
+                    <dd class="split--left__value">{{ repository.buildCmd }}</dd>
+                {% endif %}
 
-            <dt class="split--left__title">
-                <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
-                Pre-Push Command
-            </dt>
-            <dd class="split--left__value">{{ repository.prePushCmd ?: 'No command entered.' }}</dd>
+                {% if repository.buildTransformCmd %}
+                    <dt class="split--left__title">
+                        <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
+                        Build Transform Command
+                    </dt>
+                    <dd class="split--left__value">{{ repository.buildTransformCmd }}</dd>
+                {% endif %}
 
-            <dt class="split--left__title">
-                <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
-                Build Transform Command
-            </dt>
-            <dd class="split--left__value">{{ repository.buildTransformCmd ?: 'No command entered.' }}</dd>
+                {% if repository.prePushCmd %}
+                    <dt class="split--left__title">
+                        <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
+                        Pre-Push Command
+                    </dt>
+                    <dd class="split--left__value">{{ repository.prePushCmd }}</dd>
+                {% endif %}
 
-            <dt class="split--left__title">
-                <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
-                Post-Push Command
-            </dt>
-            <dd class="split--left__value">{{ repository.postPushCmd ?: 'No command entered.' }}</dd>
-        </dl>
-    </div>
+                {% if repository.postPushCmd %}
+                    <dt class="split--left__title">
+                        <svg class="icon" title="On push"><use xlink:href="#swap-2"></use></svg>
+                        Post-Push Command
+                    </dt>
+                    <dd class="split--left__value">{{ repository.postPushCmd }}</dd>
+                {% endif %}
+            </dl>
+            <p class="mbn">
+                <strong>Repository commands cannot be changed, and are for legacy projects only.</strong><br>
+                To add, change, or remove commands: a <code>.hal90000.yml</code> must be commited to the project repository.
+            </p>
+        </div>
+    {% endif %}
 
     <h3>Permissions</h3>
 
@@ -116,6 +141,17 @@
                 {% if deployments %}
                     {% set isFirst = true %}
                     {% for deployment in deployments %}
+
+                        {% set servername = deployment.server.name %}
+                        {% if deployment.server.type == 'elasticbeanstalk' %}
+                            {% set servername = 'Elastic Beanstalk' %}
+                        {% endif %}
+
+                        {% set path = deployment.path %}
+                        {% if deployment.server.type == 'elasticbeanstalk' %}
+                            {% set path = deployment.server.name %}
+                        {% endif %}
+
                         <tr>
                             {% if isFirst %}
                                 {% set isFirst = false %}
@@ -124,8 +160,12 @@
                                 <td></td>
                             {% endif %}
 
-                            <td><a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment.server.name }}</a></td>
-                            <td><code>{{ deployment.path }}</code></td>
+                            <td>
+                                <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ servername }}</a>
+                            </td>
+                            <td>
+                                <code>{{ path }}</code>
+                            </td>
                             <td>
                                 <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
                             </td>

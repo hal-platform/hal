@@ -50,6 +50,11 @@ trait SortingHelperTrait
                 return 0;
             }
 
+            // put ebs at bottom
+            if ($a->getType() !== $b->getType()) {
+                return ($a->getType() === 'rsync') ? -1 : 1;
+            }
+
             $isA = preg_match($regex, $serverA, $matchesA);
             $isB = preg_match($regex, $serverB, $matchesB);
 

@@ -76,13 +76,6 @@ class EditRepositoryController implements ControllerInterface
     private $parameters;
 
     /**
-     * A list of illegal parameters to search for in system commands provided by the user.
-     *
-     * @type string[]
-     */
-    private $invalidCommandParameters;
-
-    /**
      * @param TemplateInterface $template
      * @param Layout $layout
      * @param GroupRepository $groupRepo
@@ -119,16 +112,6 @@ class EditRepositoryController implements ControllerInterface
         $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
-
-        $this->invalidCommandParameters = [
-            '&&', // operator
-            '||', // operator
-            '|',  // pipe
-            '>',  // redirect
-            '>>', // redirect
-            '<',  // redirect
-            '<<'  // redirect
-        ];
     }
 
     /**
@@ -146,9 +129,7 @@ class EditRepositoryController implements ControllerInterface
                 'name' => $this->request->post('name') ?: $repo->getDescription(),
                 'group' => $this->request->post('group') ?: $repo->getGroup()->getId(),
                 'notification_email' => $this->request->post('notification_email') ?: $repo->getEmail(),
-
-                'build_command' => $this->request->post('build_command') ?: $repo->getBuildCmd(),
-                'post_command' => $this->request->post('post_command') ?: $repo->getPostPushCmd()
+                'ebs_name' => $this->request->post('ebs_name') ?: $repo->getEbsName()
             ],
             'repository' => $repo,
             'groups' => $this->groupRepo->findAll(),
@@ -184,17 +165,13 @@ class EditRepositoryController implements ControllerInterface
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
         $email = $request->post('notification_email');
-
-        $buildCommand = $request->post('build_command');
-        $postCommand = $request->post('post_command');
+        $ebsName = $request->post('ebs_name');
 
         $repository->setKey($identifier);
         $repository->setDescription($name);
         $repository->setGroup($group);
         $repository->setEmail($email);
-
-        $repository->setBuildCmd($buildCommand);
-        $repository->setPostPushCmd($postCommand);
+        $repository->setEbsName($ebsName);
 
         $this->entityManager->merge($repository);
         $this->entityManager->flush();
@@ -218,8 +195,7 @@ class EditRepositoryController implements ControllerInterface
             'name' => 'Name',
             'group' => 'Group',
             'notification_email' => 'Notification Email',
-            'build_command' => 'Build Command',
-            'post_command' => 'Post Push Command'
+            'ebs_name' => 'Elastic Beanstalk Application Name',
         ];
 
         $identifier = strtolower($request->post('identifier'));
@@ -230,46 +206,13 @@ class EditRepositoryController implements ControllerInterface
 
             $this->validateText($request->post('group'), $human['group'], 128, true),
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
-
-            $this->validateCommand($request->post('build_command'), $human['build_command']),
-            $this->validateCommand($request->post('post_command'), $human['post_command'])
+            $this->validateText($request->post('ebs_name'), $human['ebs_name'], 255, false)
         );
 
         // Only check for duplicate identifier if it is being changed
         if (!$errors && $identifier != $repository->getKey()) {
             if ($repo = $this->repoRepo->findOneBy(['key' => $identifier])) {
                 $errors[] = 'A repository with this identifier already exists.';
-            }
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $value
-     * @param string $friendlyName
-     *
-     * @return array
-     */
-    private function validateCommand($value, $friendlyName)
-    {
-        $errors = $this->validateText($value, $friendlyName, 128, false);
-
-        // Split the command into unique parameters
-        $command = explode(' ', $value);
-        $parameters = array_fill_keys($command, true);
-
-        // We could easily just prevent spaces and shell escape EVERYTHING, but to add at least some flexibility
-        // hal-agent will explode on spaces and shell escape individual arguments so users can pass parameters
-        // to their scripts
-
-        // Search for operators, pipes, and redirects to prevent users from doing complex bash logic directly on the HAL command.
-        foreach ($this->invalidCommandParameters as $param) {
-            if (isset($parameters[$param])) {
-                $errors[] = 'Compound commands are not allowed. If you need complex logic, create a script within the application codebase and call that instead.';
-
-                // If one illegal parameter is found, just return immediately.
-                return $errors;
             }
         }
 

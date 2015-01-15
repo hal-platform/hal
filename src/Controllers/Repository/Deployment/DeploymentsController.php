@@ -69,6 +69,9 @@ class DeploymentsController implements ControllerInterface
      * @param ServerRepository $serverRepo
      * @param RepositoryRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,

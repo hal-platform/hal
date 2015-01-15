@@ -79,6 +79,7 @@ class DeploymentNormalizer
             [
                 'id' => $deployment->getId(),
                 'path' => $deployment->getPath(),
+                'ebs-environment' => $deployment->getEbsEnvironment(),
                 'url' => $deployment->getUrl(),
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
