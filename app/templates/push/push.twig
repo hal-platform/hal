@@ -42,7 +42,7 @@
                 {% if push.deployment %}
                     {% set path = push.deployment.path %}
                     {% if push.deployment.server.type == 'elasticbeanstalk' %}
-                        {% set path = push.deployment.server.name %}
+                        {% set path = push.deployment.ebsEnvironment %}
                     {% endif %}
 
                     <code>{{ path }}</code>
