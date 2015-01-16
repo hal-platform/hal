@@ -53,6 +53,17 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 }
             }
 
+            // kinda shitty way to determine server type but whatever
+            var deployment = push._embedded.deployment,
+                servername_or_whatever = deployment._links.server.title;
+            if (servername_or_whatever.length === 0) {
+                if (deployment['eb-environment'].length !== null) {
+                    servername_or_whatever = 'EB';
+                } else if (deployment['ec2-pool'].length !== null) {
+                    servername_or_whatever = 'EC2';
+                }
+            }
+
             var context = {
                 buildId: buildId,
                 buildIdShort: this.formatBuildId(buildId),
@@ -66,7 +77,7 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 pushStatus: push.status,
 
                 environmentName: push._embedded.build._links.environment.title,
-                serverName: push._embedded.deployment._links.server.title,
+                serverName: servername_or_whatever,
 
                 repoName: push._embedded.repository.title,
                 repoStatusUrl: push._embedded.repository.url + '/status',
