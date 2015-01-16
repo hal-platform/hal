@@ -1,0 +1,17 @@
+
+.search-filter {
+    @include trailer();
+}
+.search-filter .btn {
+    @include leader(.5);
+}
+
+@include breakpoint(60em) {
+    .search-filter {
+        display: flex;
+        flex-direction: row;
+    }
+    .search-filter .btn {
+        margin: 0 0 4px 4px;
+    }
+}

@@ -12,6 +12,7 @@ use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
+use Slim\Http\REquest;
 use Slim\Http\Response;
 
 class BuildsController implements ControllerInterface
@@ -34,6 +35,11 @@ class BuildsController implements ControllerInterface
     private $buildRepo;
 
     /**
+     * @type Request
+     */
+    private $request;
+
+    /**
      * @type Response
      */
     private $response;
@@ -53,6 +59,7 @@ class BuildsController implements ControllerInterface
      * @param EntityManager $em
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
+     * @param Request $request
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
@@ -61,6 +68,7 @@ class BuildsController implements ControllerInterface
         TemplateInterface $template,
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
+        Request $request,
         Response $response,
         NotFound $notFound,
         array $parameters
@@ -69,6 +77,7 @@ class BuildsController implements ControllerInterface
         $this->buildRepo = $buildRepo;
         $this->repoRepo = $repoRepo;
 
+        $this->request = $request;
         $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -84,30 +93,14 @@ class BuildsController implements ControllerInterface
         }
 
         $page = (isset($this->parameters['page'])) ? $this->parameters['page'] : 1;
+        $searchFilter = is_string($this->request->get('search')) ? $this->request->get('search') : '';
 
         // 404, invalid page
         if ($page < 1) {
             return call_user_func($this->notFound);
         }
 
-        $builds = $this->buildRepo->getForRepository($repo, self::MAX_PER_PAGE, ($page-1));
-
-        // 404, no builds
-        if (count($builds) < 1) {
-            return call_user_func($this->notFound);
-        }
-
-        // Get current page count
-        // Must manually calculate this, as count() will give MAX RESULTS.
-        $thisPageCount = 0;
-        foreach ($builds as $build) {
-            $thisPageCount++;
-        }
-
-        // 404, no results on this page
-        if ($thisPageCount < 1) {
-            return call_user_func($this->notFound);
-        }
+        $builds = $this->buildRepo->getForRepository($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
 
         $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -117,7 +110,8 @@ class BuildsController implements ControllerInterface
             'last' => $last,
 
             'repo' => $repo,
-            'builds' => $builds
+            'builds' => $builds,
+            'search_filter' => $searchFilter
         ]);
 
         $this->response->setBody($rendered);

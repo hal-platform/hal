@@ -103,6 +103,11 @@ parameters:
         # BUILD ROUTES
         ################################################################################################################
 
+        build.history.page1:
+            method: 'GET'
+            route: '/repositories/:id/builds'
+            stack: ['login.bouncer', 'builds.page']
+            conditions: {id: '[A-Za-z0-9_-]+'}
         build.history:
             method: 'GET'
             route: '/repositories/:id/builds(/page/:page)'
@@ -137,6 +142,11 @@ parameters:
             stack: ['login.bouncer', 'push.start.handler', 'push.start.page']
             conditions: {build: %routes.regex.buildId%}
 
+        push.history.page1:
+            method: 'GET'
+            route: '/repositories/:id/pushes'
+            stack: ['login.bouncer', 'pushes.page']
+            conditions: {id: '[A-Za-z0-9_-]+'}
         push.history:
             method: 'GET'
             route: '/repositories/:id/pushes(/page/:page)'

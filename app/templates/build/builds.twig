@@ -8,8 +8,29 @@
 
     <h2>Build History for <strong>{{ repo.description }}</strong></h2>
 
+    {{ block('search') }}
+
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 
-    {{ pagination.pagination(page, last, 'build.history', {'id': repo.id}) }}
+    {{ pagination.pagination(page, last, 'build.history', {'id': repo.id}, {search: search_filter}) }}
 
+{% endblock %}
+
+{% block search %}
+    <h3 class="mbn">Search by reference:</h3>
+    <form method="get" class="search-filter">
+        <input
+            class="text-input"
+            type="text"
+            name="search"
+            autocomplete="off"
+            value="{{ search_filter }}"
+            placeholder="Valid search queries: Branch name, commit SHA, pull/#, tag/#">
+
+        <input class="btn" type="submit" value="Filter">
+
+        {% if search_filter %}
+            <a class="btn btn--action" href="{{ urlFor('build.history.page1', {id: repo.id}) }}">Reset</a>
+        {% endif %}
+    </form>
 {% endblock %}
