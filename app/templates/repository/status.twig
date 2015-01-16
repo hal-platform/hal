@@ -20,7 +20,9 @@
 
     {% set hasPushes = false %}
 
-    <h3>Server Status for <strong>{{ selected_environment.key }}</strong></h3>
+    <h3 class="js-overloader-parent">
+        Server Status for <strong>{{ selected_environment.key }}</strong>
+    </h3>
 
     {# example display of servers by environment #}
     {% if deployment_statuses %}
@@ -104,6 +106,7 @@
 
         <section class="card__details">
             <ul class="split">
+                {# push details #}
                 <li>
                     <span class="split__title">Last push:</span>
                     {% if active %}
@@ -121,6 +124,7 @@
                     {% else %}
                         None
                     {% endif %}
+                </li>
                 <li>
                     <span class="split__title">Pushed on:</span>
                     {% if active.created %}
@@ -129,7 +133,9 @@
                         Never
                     {% endif %}
                 </li>
-                <li>
+
+                {# build details #}
+                <li class="js-data-overload">
                     <span class="split__title">Build:</span>
                     {% if active %}
                         <a href="{{ urlFor('build', {'repo': repo.id, 'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
@@ -137,7 +143,7 @@
                         Unknown
                     {% endif %}
                 </li>
-                <li>
+                <li class="js-data-overload">
                     <span class="split__title">Reference:</span>
                     {% if active %}
                         {% set isCurrent = githubCommitIsCurrent(repo.githubUser, repo.githubRepo, active.build.branch, active.build.commit) %}
@@ -149,13 +155,33 @@
                         Unknown
                     {% endif %}
                 </li>
-                <li>
+                <li class="js-data-overload">
                     <span class="split__title">Commit:</span>
                     {% if active %}
                         <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
                         <svg class="icon"><use xlink:href="#github"></use></svg>
                     {% else %}
                         Unknown
+                    {% endif %}
+                </li>
+
+                {# deployment details #}
+
+                {% set deployLabel = 'Path' %}
+                {% if deployment.server.type == 'elasticbeanstalk' %}
+                    {% set deployLabel = 'EB Environment' %}
+                {% elseif deployment.server.type == 'ec2' %}
+                    {% set deployLabel = 'EC2 Pool' %}
+                {% endif %}
+
+                <li class="js-data-overload">
+                    <span class="split__title">{{ deployLabel }}:</span>
+                    {% if deployment.server.type == 'elasticbeanstalk' %}
+                        <code title="{{ deployment.ebEnvironment }}">{{ deployment.ebEnvironment }}</code>
+                    {% elseif deployment.server.type == 'ec2' %}
+                        <code title="{{ deployment.ec2Pool }}">{{ deployment.ec2Pool }}</code>
+                    {% else %}
+                        <code title="{{ deployment.path }}">{{ deployment.path }}</code>
                     {% endif %}
                 </li>
             </ul>

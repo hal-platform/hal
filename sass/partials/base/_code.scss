@@ -4,6 +4,13 @@ code {
     padding: .2em;
 }
 
+// used for fake the look of code, but allow text overflow protection
+.fake-code {
+    color: $red;
+    background: $light-grey;
+    font-family: menlo, monospace, sans-serif;
+}
+
 pre {
     color: $red;
     background: $light-grey;

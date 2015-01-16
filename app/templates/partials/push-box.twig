@@ -29,6 +29,16 @@
                     </a>
                 </header>
 
+                {% if push.deployment %}
+                    {% if push.deployment.server.type == 'elasticbeanstalk' %}
+                        {% set servername = 'EB (' ~ push.deployment.ebEnvironment ~ ')' %}
+                    {% elseif push.deployment.server.type == 'ec2' %}
+                        {% set servername = 'EC2 (' ~ push.deployment.ec2Pool ~ ')' %}
+                    {% else %}
+                        {% set servername = push.deployment.server.name %}
+                    {% endif %}
+                {% endif %}
+
                 <section class="card__details">
                     <ul class="split mbn">
                         <li>
@@ -36,7 +46,7 @@
                             {% if push.deployment %}
                                 <a href="{{ urlFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.key }}</a>
                                 →
-                                <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment.server.name }}</a>
+                                <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ servername }}</a>
                             {% else %}
                                 Unknown
                             {% endif %}

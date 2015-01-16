@@ -57,17 +57,22 @@
     @include rhythm(.5,0,.25,0);
 }
 
-.card__details .split {
-    margin-bottom: 0;
+.card__details li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.card__header p {
-  color: $white;
-  font-size: $small-text;
-  white-space: nowrap;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.js-data-overload {
+    display: none;
+}
+
+.card__details code {
+    padding: 0;
+}
+
+.card__details .split {
+    margin-bottom: 0;
 }
 
 .card__header .icon--link {
