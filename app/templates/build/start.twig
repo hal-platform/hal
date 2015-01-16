@@ -17,225 +17,258 @@
         </ul>
     {% endif %}
 
+
     <form method="post" name="start-build">
 
-        <h3>Choose what environment to build for:</h3>
-        <ul class="check-list radio-grid radio-grid__env">
-            {% for env in environments %}
-                <li>
-                    <input id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ form.environment == env.id ? ' checked' : ''}}>
-                    <label for="env-{{ env.id }}">{{ env.key }}</label>
+        {% block select_environment %}
+            <h3>Choose what environment to build for:</h3>
+
+            {% if environments %}
+                <ul class="check-list radio-grid radio-grid__env">
+                    {% for env in environments %}
+                        <li>
+                            <input id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ form.environment == env.id ? ' checked' : ''}}>
+                            <label for="env-{{ env.id }}">{{ env.key }}</label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="alert-bar--error">There are no buildable environments for this repository. Deployments must added.</p>
+            {% endif %}
+        {% endblock %}
+
+        {% block select_build %}
+            <h3>Choose what to build:</h3>
+
+            <ul class="form-fields">
+                <li class="mbn">
+                    <label for="search">Search for a Branch, Tag, Pull Request, or enter a Commit ID.</label>
+                    <input id="js-search-input" class="text-input" type="text" id="search" name="search" autocomplete="off" value="{{ form.search }}">
                 </li>
-            {% endfor %}
-        </ul>
-
-        <h3>Choose what to build:</h3>
-
-        <ul class="form-fields">
-            <li class="mbn">
-                <label for="search">Search for a Branch, Tag, Pull Request, or enter a Commit ID.</label>
-                <input id="js-search-input" class="text-input" type="text" id="search" name="search" autocomplete="off" value="{{ form.search }}">
-            </li>
-        </ul>
-
-        <div class="drop-down js-search-drop">
-            <ul class="list--bare js-search-results">
-                <!-- search results go here -->
-                {% for branch in branches %}
-                    {{ page_macros.search('branch', branch) }}
-                {% endfor %}
-                {% for tag in tags %}
-                    {{ page_macros.search('release', tag) }}
-                {% endfor %}
-                {% for pull in open %}
-                    {{ page_macros.search('pull-request', pull) }}
-                {% endfor %}
-                {% for pull in closed %}
-                    {{ page_macros.search('pull-request-closed', pull) }}
-                {% endfor %}
-
             </ul>
-        </div>
 
-        {# Dynamic warning, for when HAL cannot find a matching radio option #}
-        {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}
-        <div class="leader js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
-            <div class="alert-bar--warning">
-                {% if isSeriousBusinessMode() %}
-                    A git reference cannot be found from your search query. HAL will attempt to resolve this reference on the backend.
-                {% else %}
-                    <strong>Just what do you think you're doing, Dave?</strong>
-                    <p class="tl">
-                        I cannot find a git reference for your search query.
-                        However if you attempt build using this query, I will use my enormous intellect to fulfill the mission.
-                    </p>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="leader"><input class="btn" type="submit" value="Start Build" name="submit"></div>
-
-        <ul class="nav tabs js-tabs">
-            <li class="active">
-                <a name="js-tab--branches">
-                    <svg class="icon"><use xlink:href="#branch"></use></svg>
-                    <span class="tab-text">Branches</span>
-                </a>
-            </li>
-            <li>
-                <a name="js-tab--tags">
-                    <svg class="icon"><use xlink:href="#tag"></use></svg>
-                    <span class="tab-text">Releases</span>
-                </a>
-            </li>
-            <li>
-                <a name="js-tab--pr-open">
-                    <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
-                    <span class="tab-text">Open Pull Requests</span>
-                </a>
-            </li>
-            <li>
-                <a name="js-tab--pr-closed">
-                    <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
-                    <span class="tab-text">Closed Pull Requests</span>
-                </a>
-            </li>
-        </ul>
-
-        <div class="tab-content js-tab-content">
-
-            <div id="js-tab--branches" class="tab js-tab-active">
-                <ul class="check-list js-search-list radio-grid">
+            <div class="drop-down js-search-drop">
+                <ul class="list--bare js-search-results">
+                    <!-- search results go here -->
                     {% for branch in branches %}
-                        <li>
-                            {% set uniqueId = hash(branch.object.sha ~ '-' ~ branch.name) %}
-
-                            <input
-                                id="{{ uniqueId }}"
-                                type="radio"
-                                name="reference"
-                                value="{{ branch.name }}"
-                            >
-
-                            <label for="{{ uniqueId }}" title="{{ branch.name }}">
-                                <svg class="icon"><use xlink:href="#branch"></use></svg>
-                                {{ branch.name }} <br />
-
-                                <a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
-                                <svg class="icon"><use xlink:href="#github"></use></svg>
-                            </label>
-                        </li>
-
-                    {% else %}
-                        <li class="full">There are no branches.</li>
+                        {{ page_macros.search('branch', branch) }}
                     {% endfor %}
-                </ul>
-            </div>
-
-            <div id="js-tab--tags" class="tab">
-                <ul class="check-list js-search-list radio-grid">
                     {% for tag in tags %}
-                        <li>
-                            {% set uniqueId = hash(tag.object.sha ~ '-' ~ tag.name) %}
-
-                            <input
-                                id="{{ uniqueId }}"
-                                type="radio"
-                                name="reference"
-                                value="tag/{{ tag.name }}"
-                            >
-
-                            <label for="{{ uniqueId }}">
-                                <svg class="icon"><use xlink:href="#tag"></use></svg>
-                                {{ tag.name }} <br />
-
-                                <a href="{{ githubRelease(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
-                                <svg class="icon"><use xlink:href="#github"></use></svg>
-                            </label>
-                        </li>
-
-                    {% else %}
-                        <li class="full">There are no tags.</li>
+                        {{ page_macros.search('release', tag) }}
                     {% endfor %}
-                </ul>
-            </div>
-
-            <div id="js-tab--pr-open" class="tab">
-                <ul class="check-list js-search-list radio-grid">
                     {% for pull in open %}
-                        <li>
-                            {% set uniqueId = hash('pr' ~ pull.number) %}
-
-                            <input
-                                id="{{ uniqueId }}"
-                                type="radio"
-                                name="reference"
-                                value="pull/{{ pull.number }}"
-                            >
-
-                            <label for="{{ uniqueId }}" title="{{ pull.title }}">
-                                <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
-                                <span class="js-title">{{ pull.title }}</span>
-                                <br />
-
-                                <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
-                                <svg class="icon"><use xlink:href="#github"></use></svg>
-                                <br />
-
-                                <span class="pr-smtxt">
-                                    From <span class="pr-label">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />
-                                    to <span class="pr-label">{{ pull.base.ref }}</span>
-                                </span>
-                            </label>
-                        </li>
-
-                    {% else %}
-                        <li class="full">There are no open pull requests.</li>
+                        {{ page_macros.search('pull-request', pull) }}
                     {% endfor %}
-                </ul>
-            </div>
-
-            <div id="js-tab--pr-closed" class="tab">
-                <ul class="check-list js-search-list radio-grid">
                     {% for pull in closed %}
-                        <li>
-                            {% set uniqueId = hash('pr' ~ pull.number) %}
-
-                            <input
-                                id="{{ uniqueId }}"
-                                type="radio"
-                                name="reference"
-                                value="pull/{{ pull.number }}"
-                            >
-
-                            <label for="{{ uniqueId }}" title="{{ pull.title }}">
-                                <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
-                                <span class="js-title">{{ pull.title }}</span>
-                                <br />
-
-                                <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
-                                <svg class="icon"><use xlink:href="#github"></use></svg>
-                                <br />
-
-                                <span class="pr-smtxt">
-                                    From <span class="pr-label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />
-                                    to <span class="pr-label" title="{{ pull.base.ref }}">{{ pull.base.ref }}</span>
-                                </span>
-                            </label>
-                        </li>
-
-                    {% else %}
-                        <li class="full">There are no closed pull requests.</li>
+                        {{ page_macros.search('pull-request-closed', pull) }}
                     {% endfor %}
                 </ul>
             </div>
 
-        </div>
+            {# Dynamic warning, for when HAL cannot find a matching radio option #}
+            {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}
+            <div class="leader js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
+                <div class="alert-bar--warning">
+                    {% if isSeriousBusinessMode() %}
+                        A git reference cannot be found from your search query. HAL will attempt to resolve this reference on the backend.
+                    {% else %}
+                        <strong>Just what do you think you're doing, Dave?</strong>
+                        <p class="tl">
+                            I cannot find a git reference for your search query.
+                            However if you attempt build using this query, I will use my enormous intellect to fulfill the mission.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
 
-        <input class="btn" type="submit" value="Start Build" name="submit">
+            {% if environments %}
+                <div class="leader"><input class="btn" type="submit" value="Start Build" name="submit"></div>
+            {% endif %}
+
+            {{ block('build_tabs') }}
+
+            <div class="tab-content js-tab-content">
+
+                {{ block('build_tabs_branches') }}
+                {{ block('build_tabs_releases') }}
+                {{ block('build_tabs_open') }}
+                {{ block('build_tabs_closed') }}
+
+            </div>
+
+            {% if environments %}
+                <input class="btn" type="submit" value="Start Build" name="submit">
+            {% endif %}
+        {% endblock %}
 
     </form>
 
+{% endblock %}
+
+{% block build_tabs %}
+
+    <ul class="nav tabs js-tabs">
+        <li class="active">
+            <a name="js-tab--branches">
+                <svg class="icon"><use xlink:href="#branch"></use></svg>
+                <span class="tab-text">Branches</span>
+            </a>
+        </li>
+        <li>
+            <a name="js-tab--tags">
+                <svg class="icon"><use xlink:href="#tag"></use></svg>
+                <span class="tab-text">Releases</span>
+            </a>
+        </li>
+        <li>
+            <a name="js-tab--pr-open">
+                <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
+                <span class="tab-text">Open Pull Requests</span>
+            </a>
+        </li>
+        <li>
+            <a name="js-tab--pr-closed">
+                <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
+                <span class="tab-text">Closed Pull Requests</span>
+            </a>
+        </li>
+    </ul>
+
+{% endblock %}
+
+{% block build_tabs_branches %}
+    <div id="js-tab--branches" class="tab js-tab-active">
+        <ul class="check-list js-search-list radio-grid">
+            {% for branch in branches %}
+                <li>
+                    {% set uniqueId = hash(branch.object.sha ~ '-' ~ branch.name) %}
+
+                    <input
+                        id="{{ uniqueId }}"
+                        type="radio"
+                        name="reference"
+                        value="{{ branch.name }}"
+                    >
+
+                    <label for="{{ uniqueId }}" title="{{ branch.name }}">
+                        <svg class="icon"><use xlink:href="#branch"></use></svg>
+                        {{ branch.name }} <br />
+
+                        <a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                    </label>
+                </li>
+
+            {% else %}
+                <li class="full">There are no branches.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block build_tabs_releases %}
+    <div id="js-tab--tags" class="tab">
+        <ul class="check-list js-search-list radio-grid">
+            {% for tag in tags %}
+                <li>
+                    {% set uniqueId = hash(tag.object.sha ~ '-' ~ tag.name) %}
+
+                    <input
+                        id="{{ uniqueId }}"
+                        type="radio"
+                        name="reference"
+                        value="tag/{{ tag.name }}"
+                    >
+
+                    <label for="{{ uniqueId }}">
+                        <svg class="icon"><use xlink:href="#tag"></use></svg>
+                        {{ tag.name }} <br />
+
+                        <a href="{{ githubRelease(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                    </label>
+                </li>
+
+            {% else %}
+                <li class="full">There are no tags.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block build_tabs_open %}
+    <div id="js-tab--pr-open" class="tab">
+        <ul class="check-list js-search-list radio-grid">
+            {% for pull in open %}
+                <li>
+                    {% set uniqueId = hash('pr' ~ pull.number) %}
+
+                    <input
+                        id="{{ uniqueId }}"
+                        type="radio"
+                        name="reference"
+                        value="pull/{{ pull.number }}"
+                    >
+
+                    <label for="{{ uniqueId }}" title="{{ pull.title }}">
+                        <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
+                        <span class="js-title">{{ pull.title }}</span>
+                        <br />
+
+                        <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                        <br />
+
+                        <span class="pr-smtxt">
+                            From <span class="pr-label">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />
+                            to <span class="pr-label">{{ pull.base.ref }}</span>
+                        </span>
+                    </label>
+                </li>
+
+            {% else %}
+                <li class="full">There are no open pull requests.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block build_tabs_closed %}
+    <div id="js-tab--pr-closed" class="tab">
+        <ul class="check-list js-search-list radio-grid">
+            {% for pull in closed %}
+                <li>
+                    {% set uniqueId = hash('pr' ~ pull.number) %}
+
+                    <input
+                        id="{{ uniqueId }}"
+                        type="radio"
+                        name="reference"
+                        value="pull/{{ pull.number }}"
+                    >
+
+                    <label for="{{ uniqueId }}" title="{{ pull.title }}">
+                        <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
+                        <span class="js-title">{{ pull.title }}</span>
+                        <br />
+
+                        <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                        <br />
+
+                        <span class="pr-smtxt">
+                            From <span class="pr-label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />
+                            to <span class="pr-label" title="{{ pull.base.ref }}">{{ pull.base.ref }}</span>
+                        </span>
+                    </label>
+                </li>
+
+            {% else %}
+                <li class="full">There are no closed pull requests.</li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
 
 {% macro search(type, ref) %}

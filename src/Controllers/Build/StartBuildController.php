@@ -112,11 +112,27 @@ class StartBuildController implements ControllerInterface
             'tags' => $this->getTags($repo),
             'open' => $this->getPullRequests($repo),
             'closed' => $this->getPullRequests($repo, false),
-            'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
+            'environments' => $this->getBuildableEnvironments($repo)
         ];
 
         $rendered = $this->template->render($context);
         $this->response->setBody($rendered);
+    }
+
+    /**
+     * @param Repository $repository
+     * @return null
+     */
+    private function getBuildableEnvironments(Repository $repo)
+    {
+        $envs = $this->envRepo->getBuildableEnvironmentsForRepository($repo);
+
+        // if empty, throw them a bone with "test"
+        if (!$envs) {
+            $envs = $this->envRepo->findBy(['key' => 'test']);
+        }
+
+        return $envs;
     }
 
     /**
