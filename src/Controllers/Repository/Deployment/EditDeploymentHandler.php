@@ -141,7 +141,7 @@ class EditDeploymentHandler implements MiddlewareInterface
             $path = $ebEnvironment = null;
 
         } else if ($serverType === ServerEnumType::TYPE_EB) {
-            $path = $ec2Pool = null;
+            $ec2Pool = null;
         }
 
         $deployment->setPath($path);

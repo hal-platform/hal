@@ -38,7 +38,7 @@
 
     <h3>File path</h3>
     <p>
-        {% if deployment.server.type == 'rsync' %}
+        {% if deployment.server.type == 'rsync' or deployment.server.type == 'ec2' %}
             <code>{{ deployment.path }}</code>
         {% else %}
             Not Applicable

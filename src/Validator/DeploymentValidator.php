@@ -113,6 +113,7 @@ class DeploymentValidator
             $this->validateEbConfigRequired($repo);
 
         } elseif ($server->getType() == ServerEnumType::TYPE_EC2) {
+            $this->validatePath($path);
             $this->validateEc2Pool($ec2Pool);
         }
 
@@ -140,7 +141,7 @@ class DeploymentValidator
             $path = $ec2Pool = null;
 
         } else if ($serverType === ServerEnumType::TYPE_EC2) {
-            $path = $ebEnvironment = null;
+            $ebEnvironment = null;
         }
 
         $deployment = new Deployment;
@@ -181,6 +182,7 @@ class DeploymentValidator
             $this->validateEbConfigRequired($deployment->getRepository());
 
         } elseif ($serverType == ServerEnumType::TYPE_EC2) {
+            $this->validatePath($path);
             $this->validateEc2Pool($ec2Pool);
         }
 
