@@ -8,15 +8,30 @@
     {% set servertype = 'Unknown' %}
     {% if deployment.server.type == 'elasticbeanstalk' %}
         {% set servertype = 'Elastic Beanstalk' %}
+
     {% elseif deployment.server.type == 'rsync' %}
         {% set servertype = 'Internal (Rsync)' %}
+
+    {% elseif deployment.server.type == 'ec2' %}
+        {% set servertype = 'EC2 Autoscaling Pool' %}
     {% endif %}
 
     <h3>Type</h3>
     <p>{{ servertype }}</p>
 
+
+    {% set servername = deployment.server.name %}
+    {% if deployment.server.type == 'elasticbeanstalk' %}
+        {% set servername = 'Elastic Beanstalk Server' %}
+
+    {% elseif deployment.server.type == 'ec2' %}
+        {% set servername = 'EC2 Server' %}
+    {% endif %}
+
     <h3>Server</h3>
-    <p><a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment.server.name }}</a></p>
+    <p>
+        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ servername }}</a>
+    </p>
 
     <h3>Repository</h3>
     <p><a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.description }}</a></p>
@@ -33,7 +48,16 @@
     <h3>Elastic Beanstalk Environment ID</h3>
     <p>
         {% if deployment.server.type == 'elasticbeanstalk' %}
-            <code>{{ deployment.ebsEnvironment }}</code>
+            <code>{{ deployment.ebEnvironment }}</code>
+        {% else %}
+            Not Applicable
+        {% endif %}
+    </p>
+
+    <h3>EC2 Pool</h3>
+    <p>
+        {% if deployment.server.type == 'ec2' %}
+            <code>{{ deployment.ec2Pool }}</code>
         {% else %}
             Not Applicable
         {% endif %}

@@ -22,9 +22,9 @@
                 <svg class="icon"><use xlink:href="#github"></use></svg>
             </dd>
 
-            {% if repository.ebsName %}
+            {% if repository.ebName %}
                 <dt class="split--left__title">Elastic Beanstalk Name</dt>
-                <dd class="split--left__value">{{ repository.ebsName }}</dd>
+                <dd class="split--left__value">{{ repository.ebName }}</dd>
             {% else %}
                 <dt class="split--left__title">Elastic Beanstalk</dt>
                 <dd class="split--left__value">Not Enabled</dd>
@@ -132,7 +132,7 @@
                 <tr>
                     <th>Environment</th>
                     <th>Server</th>
-                    <th>Path</th>
+                    <th>Path / EB Environment / EC2 Pool</th>
                     <th>URL</th>
                 </tr>
             </thead>
@@ -143,13 +143,15 @@
                     {% for deployment in deployments %}
 
                         {% set servername = deployment.server.name %}
+                        {% set path_or_whatever = deployment.path %}
+
                         {% if deployment.server.type == 'elasticbeanstalk' %}
                             {% set servername = 'Elastic Beanstalk' %}
-                        {% endif %}
+                            {% set path_or_whatever = deployment.ebEnvironment %}
 
-                        {% set path = deployment.path %}
-                        {% if deployment.server.type == 'elasticbeanstalk' %}
-                            {% set path = deployment.server.name %}
+                        {% elseif deployment.server.type == 'ec2' %}
+                            {% set servername = 'EC2' %}
+                            {% set path_or_whatever = deployment.ec2Pool %}
                         {% endif %}
 
                         <tr>
@@ -164,7 +166,7 @@
                                 <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ servername }}</a>
                             </td>
                             <td>
-                                <code>{{ path }}</code>
+                                <code>{{ path_or_whatever }}</code>
                             </td>
                             <td>
                                 <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>

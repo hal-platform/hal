@@ -23,11 +23,6 @@ use Slim\Http\Response;
 
 class EditServerController implements ControllerInterface
 {
-    const TYPE_EBS = 'elasticbeanstalk';
-    const TYPE_RSYNC = 'rsync';
-
-    const EBS_NAME = 'Elastic Beanstalk';
-
     /**
      * @type TemplateInterface
      */
@@ -166,8 +161,8 @@ class EditServerController implements ControllerInterface
         $type = $request->post('server_type');
         $name = strtolower($request->post('hostname'));
 
-        if ($type === self::TYPE_EBS) {
-            $name = self::EBS_NAME;
+        if ($type !== ServerEnumType::TYPE_RSYNC) {
+            $name = '';
         }
 
         $server->setType($type);
@@ -206,7 +201,7 @@ class EditServerController implements ControllerInterface
         }
 
         // validate hostname if rsync server
-        if ($serverType === self::TYPE_RSYNC && !$errors) {
+        if ($serverType === ServerEnumType::TYPE_RSYNC && !$errors) {
             // normalize the hostname
             $hostname = strtolower($hostname);
 
@@ -219,14 +214,28 @@ class EditServerController implements ControllerInterface
                 }
             }
 
-        // validate servername for ebs server
-        } elseif ($serverType === self::TYPE_EBS && !$errors) {
+        // validate duplicate EB for environment
+        // Only 1 EB "server" per environment
+        } elseif ($serverType === ServerEnumType::TYPE_EB && !$errors) {
 
-            // Only check duplicate EBS if it is being changed
+            // Only check duplicate EB if it is being changed
             $hasChanged = ($environmentId != $server->getEnvironment()->getId() || $serverType != $server->getType());
             if (!$errors && $hasChanged) {
-                if ($server = $this->serverRepo->findOneBy(['type' => self::TYPE_EBS, 'environment' => $environmentId])) {
-                    $errors[] = 'An EBS server for this environment already exists.';
+                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EB, 'environment' => $environmentId])) {
+                    $errors[] = 'An EB server for this environment already exists.';
+                }
+            }
+        }
+
+        // validate duplicate EC2 for environment
+        // Only 1 EC2 "server" per environment
+        } elseif ($serverType === ServerEnumType::TYPE_EC2 && !$errors) {
+
+            // Only check duplicate EC2 if it is being changed
+            $hasChanged = ($environmentId != $server->getEnvironment()->getId() || $serverType != $server->getType());
+            if (!$errors && $hasChanged) {
+                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EC2, 'environment' => $environmentId])) {
+                    $errors[] = 'An EC2 server for this environment already exists.';
                 }
             }
         }

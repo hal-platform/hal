@@ -92,7 +92,8 @@ class AddDeploymentFormHandler implements MiddlewareInterface
             $this->parameters['repository'],
             $this->request->post('server'),
             $this->request->post('path'),
-            $this->request->post('ebs_environment'),
+            $this->request->post('eb_environment'),
+            $this->request->post('ec2_pool'),
             $this->request->post('url')
         );
 

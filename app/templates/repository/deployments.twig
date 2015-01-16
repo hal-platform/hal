@@ -21,26 +21,30 @@
                 <thead>
                 <tr>
                     <th class="t15">Hostname</th>
-                    <th class="t40">Path / EBS Environment</th>
+                    <th class="t40">Path / EB Environment / EC2 Pool</th>
                     <th>URL</th>
-                    <th class="t15"></th>
+                    <th class="t10"></th>
                 </tr>
                 </thead>
                 <tbody class="js-add-deployment--{{ environment.key }}">
                     {% for deployment in deployments if deployment.server.environment == environment %}
 
                         {% set servername = deployment.server.name %}
-                        {% set path = deployment.path %}
+                        {% set path_or_whatever = deployment.path %}
 
                         {% if deployment.server.type == 'elasticbeanstalk' %}
                             {% set servername = 'Elastic Beanstalk' %}
-                            {% set path = deployment.ebsEnvironment %}
+                            {% set path_or_whatever = deployment.ebEnvironment %}
+
+                        {% elseif deployment.server.type == 'ec2' %}
+                            {% set servername = 'EC2' %}
+                            {% set path_or_whatever = deployment.ec2Pool %}
                         {% endif %}
 
                         <tr>
                             <td>{{ servername }}</td>
                             <td>
-                                <code>{{ path }}</code>
+                                <code>{{ path_or_whatever }}</code>
                             </td>
                             <td>
                                 {% if deployment.url %}
@@ -48,12 +52,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if canEdit %}
-                                    <a class="btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
-                                    <a class="btn--destructive btn--tiny" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove</a>
-                                {% else %}
-                                    <a class="btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
-                                {% endif %}
+                                <a class="btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
                             </td>
                         </tr>
                     {% else %}

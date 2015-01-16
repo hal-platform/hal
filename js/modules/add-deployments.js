@@ -46,6 +46,7 @@ define(['jquery'], function($) {
                         url: $container.find('input[name="url"]').val(),
                         path: $container.find('input[name="path"]').val(),
                         ebs_environment: $container.find('input[name="ebs_environment"]').val(),
+                        ec2_pool: $container.find('input[name="ec2_pool"]').val()
                     },
                     settings = {
                         type: 'POST',
@@ -111,23 +112,28 @@ define(['jquery'], function($) {
                 .find('form').before($alert);
 
             var server = deployment._embedded.server,
-                hostname = server.name,
-                ebs = deployment['ebs-environment'],
+                eb = deployment['eb-environment'],
+                ec2 = deployment['ec2-pool'],
                 path = deployment.path,
                 env = server._embedded.environment.key;
 
-            var path_or_ebs = path;
+            var hostname = server.name;
+            var path_or_whatever = path;
             if (server.type == 'elasticbeanstalk') {
-                path_or_ebs = ebs;
+                hostname = 'Elastic Beanstalk';
+                path_or_whatever = eb;
+            } else if (server.type == 'ec2') {
+                hostname = 'EC2';
+                path_or_whatever = ec2;
             }
 
-            this.addDeployment(env, deployment.id, hostname, path_or_ebs, deployment.url);
+            this.addDeployment(env, deployment.id, hostname, path_or_whatever, deployment.url);
         },
-        addDeployment: function(env, id, hostname, path_or_ebs, url) {
+        addDeployment: function(env, id, hostname, path_or_whatever, url) {
             var $list = $(this.envListPrefix + env);
                 $row = $('<tr>')
                 .append('<td>' + hostname + '</td>')
-                .append('<td><code>' + path_or_ebs + '</code></td>')
+                .append('<td><code>' + path_or_whatever + '</code></td>')
                 .append('<td><a href="' + url + '">' + url + '</a></td>')
                 .append('<td></td>');
 
@@ -140,7 +146,9 @@ define(['jquery'], function($) {
             this.$container
                 .find('select[name="server"]').val('').end()
                 .find('input[name="url"]').val('').end()
-                .find('input[name="path"]').val('');
+                .find('input[name="path"]').val('').end()
+                .find('input[name="eb_environment"]').val('').end()
+                .find('input[name="ec2_pool"]').val('');
         },
         resetMessages: function() {
             this.$container

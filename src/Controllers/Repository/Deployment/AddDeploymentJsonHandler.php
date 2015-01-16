@@ -135,7 +135,8 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
             $repositoryId,
             isset($decoded['server']) ? $decoded['server'] : null,
             isset($decoded['path']) ? $decoded['path'] : null,
-            isset($decoded['ebs_environment']) ? $decoded['ebs_environment'] : null,
+            isset($decoded['eb_environment']) ? $decoded['eb_environment'] : null,
+            isset($decoded['ec2_pool']) ? $decoded['ec2_pool'] : null,
             isset($decoded['url']) ? $decoded['url'] : null
         );
 

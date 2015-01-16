@@ -34,7 +34,9 @@
                     <th>Repository</th>
                     <th>
                         {% if server.type == 'elasticbeanstalk' %}
-                            EBS Environment
+                            EB Environment
+                        {% elseif server.type == 'ec2' %}
+                            EC2 Pool
                         {% else %}
                             Path
                         {% endif %}
@@ -51,7 +53,9 @@
                     </td>
                     <td>
                         {% if server.type == 'elasticbeanstalk' %}
-                            <code>{{ deployment.ebsEnvironment }}</code>
+                            <code>{{ deployment.ebEnvironment }}</code>
+                        {% elseif server.type == 'ec2' %}
+                            <code>{{ deployment.ec2Pool }}</code>
                         {% else %}
                             <code>{{ deployment.path }}</code>
                         {% endif %}

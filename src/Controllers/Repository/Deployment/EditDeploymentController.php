@@ -97,7 +97,8 @@ class EditDeploymentController implements ControllerInterface
         $renderContext = [
             'form' => [
                 'path' => $this->request->isPost() ? $this->request->post('path') : $deployment->getPath(),
-                'ebs_environment' => $this->request->isPost() ? $this->request->post('ebs_environment') : $deployment->getEbsEnvironment(),
+                'eb_environment' => $this->request->isPost() ? $this->request->post('eb_environment') : $deployment->getEbEnvironment(),
+                'ec2_pool' => $this->request->isPost() ? $this->request->post('ec2_pool') : $deployment->getEc2Pool(),
                 'url' => $this->request->isPost() ? $this->request->post('url') : $url,
             ],
             'deployment' => $deployment

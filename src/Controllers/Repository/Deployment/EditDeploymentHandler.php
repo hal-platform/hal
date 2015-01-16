@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 use Doctrine\ORM\EntityManager;
 use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Type\ServerEnumType;
 use QL\Hal\Session;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
@@ -20,8 +21,6 @@ use Slim\Http\Request;
 class EditDeploymentHandler implements MiddlewareInterface
 {
     const EDIT_SUCCESS = 'Deployment updated.';
-    const TYPE_RSYNC = 'rsync';
-    const TYPE_EBS = 'elasticbeanstalk';
 
     /**
      * @type EntityManager
@@ -118,10 +117,11 @@ class EditDeploymentHandler implements MiddlewareInterface
         }
 
         $path = $this->request->post('path');
-        $ebsEnvironment = $this->request->post('ebs_environment');
+        $ebEnvironment = $this->request->post('eb_environment');
+        $ec2Pool = $this->request->post('ec2_pool');
         $url = $this->request->post('url');
 
-        $deployment = $this->validator->isEditValid($deployment, $path, $ebsEnvironment, $url);
+        $deployment = $this->validator->isEditValid($deployment, $path, $ebEnvironment, $ec2Pool, $url);
         if (!$deployment) {
             $this->context->addContext([
                 'errors' => $this->validator->errors()
@@ -130,17 +130,23 @@ class EditDeploymentHandler implements MiddlewareInterface
             return;
         }
 
-        // Wipe path for EBS servers
-        // Wipe ebs for RSYNC server
+        // Wipe eb, ec2  for RSYNC server
+        // Wipe path, ec2 for EB servers
+        // Wipe path, eb  for EC2 server
         $serverType = $deployment->getServer()->getType();
-        if ($serverType === self::TYPE_RSYNC) {
-            $ebsEnvironment = null;
-        } else if ($serverType === self::TYPE_EBS) {
-            $path = null;
+        if ($serverType === ServerEnumType::TYPE_RSYNC) {
+            $ebEnvironment = $ec2Pool = null;
+
+        } else if ($serverType === ServerEnumType::TYPE_EC2) {
+            $path = $ebEnvironment = null;
+
+        } else if ($serverType === ServerEnumType::TYPE_EB) {
+            $path = $ec2Pool = null;
         }
 
         $deployment->setPath($path);
-        $deployment->setEbsEnvironment($ebsEnvironment);
+        $deployment->setEbEnvironment($ebEnvironment);
+        $deployment->setEc2Pool($ec2Pool);
         $deployment->setUrl(HttpUrl::create($url));
 
         // persist to database

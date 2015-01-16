@@ -22,11 +22,6 @@ use Slim\Http\Response;
 
 class AddServerController implements ControllerInterface
 {
-    const TYPE_EBS = 'elasticbeanstalk';
-    const TYPE_RSYNC = 'rsync';
-
-    const EBS_NAME = 'Elastic Beanstalk';
-
     /**
      * @type TemplateInterface
      */
@@ -128,8 +123,10 @@ class AddServerController implements ControllerInterface
                 $server = $this->handleFormSubmission($this->request, $environment);
 
                 $name = $server->getName();
-                if ($server->getType() === self::TYPE_EBS) {
-                    $name = self::EBS_NAME;
+                if ($server->getType() === ServerEnumType::TYPE_EB) {
+                    $name = 'Elastic Beanstalk';
+                } elseif ($server->getType() === ServerEnumType::TYPE_EC2) {
+                    $name = 'EC2';
                 }
 
                 $message = sprintf('Server "%s" added.', $name);
@@ -152,8 +149,8 @@ class AddServerController implements ControllerInterface
         $type = $request->post('server_type');
         $name = strtolower($request->post('hostname'));
 
-        if ($type === self::TYPE_EBS) {
-            $name = self::EBS_NAME;
+        if ($type !== ServerEnumType::TYPE_RSYNC) {
+            $name = '';
         }
 
         $server = new Server;
@@ -192,7 +189,7 @@ class AddServerController implements ControllerInterface
         }
 
         // validate hostname if rsync server
-        if ($serverType === self::TYPE_RSYNC && !$errors) {
+        if ($serverType === ServerEnumType::TYPE_RSYNC && !$errors) {
             // normalize the hostname
             $hostname = strtolower($hostname);
 
@@ -202,10 +199,18 @@ class AddServerController implements ControllerInterface
                 $errors[] = 'A server with this hostname already exists.';
             }
 
-        // validate servername for ebs server
-        } elseif ($serverType === self::TYPE_EBS && !$errors) {
-            if ($server = $this->serverRepo->findOneBy(['type' => self::TYPE_EBS, 'environment' => $environmentId])) {
-                $errors[] = 'An EBS server for this environment already exists.';
+        // validate duplicate EB for environment
+        // Only 1 EB "server" per environment
+        } elseif ($serverType === ServerEnumType::TYPE_EB && !$errors) {
+            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EB, 'environment' => $environmentId])) {
+                $errors[] = 'An EB server for this environment already exists.';
+            }
+
+        // validate duplicate EC2 for environment
+        // Only 1 EC2 "server" per environment
+        } elseif ($serverType === ServerEnumType::TYPE_EC2 && !$errors) {
+            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EC2, 'environment' => $environmentId])) {
+                $errors[] = 'An EC2 server for this environment already exists.';
             }
         }
 

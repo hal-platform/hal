@@ -15,8 +15,16 @@
     <h3>Type</h3>
     <p>{{ servertype }}</p>
 
+    {% set servername = deployment.server.name %}
+    {% if deployment.server.type == 'elasticbeanstalk' %}
+        {% set servername = 'Elastic Beanstalk Server' %}
+
+    {% elseif deployment.server.type == 'ec2' %}
+        {% set servername = 'EC2 Server' %}
+    {% endif %}
+
     <h3>Server</h3>
-    <p>{{ deployment.server.name }}</p>
+    <p>{{ servername }}</p>
 
     <h3>Repository</h3>
     <p>{{ deployment.repository.description }}</p>
@@ -47,13 +55,25 @@
 
                 <li>
                     {% set isDisabled = (deployment.server.type == 'elasticbeanstalk') ? '' : ' disabled' %}
-                    <label for="ebs_environment">
+                    <label for="eb_environment">
                         Elastic Beanstalk Environment ID
                         <small class="additional">
-                            <strong>EBS Servers Only</strong>
+                            <strong>EB Servers Only</strong>
                         </small>
                     </label>
-                    <input class="text-input" type="text" name="ebs_environment" id="ebs_environment" maxlength="100" value="{{ form.ebs_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                    <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'ec2') ? '' : ' disabled' %}
+                    <label for="ec2_pool">
+                        EC2 Pool
+                        <small class="additional">
+                            <strong>EC2 Servers Only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
                 <li>

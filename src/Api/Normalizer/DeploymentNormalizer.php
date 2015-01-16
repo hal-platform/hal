@@ -79,7 +79,8 @@ class DeploymentNormalizer
             [
                 'id' => $deployment->getId(),
                 'path' => $deployment->getPath(),
-                'ebs-environment' => $deployment->getEbsEnvironment(),
+                'eb-environment' => $deployment->getEbEnvironment(),
+                'ec2-pool' => $deployment->getEc2Pool(),
                 'url' => $deployment->getUrl(),
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),

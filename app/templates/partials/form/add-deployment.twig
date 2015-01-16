@@ -23,6 +23,8 @@ Needs the following parameters:
                             {% set servername = server.name %}
                             {% if server.type == 'elasticbeanstalk' %}
                                 {% set servername = 'Elastic Beanstalk' %}
+                            {% elseif server.type == 'ec2' %}
+                                {% set servername = 'EC2' %}
                             {% endif %}
 
                             <option value="{{ server.id }}"{{ isSelected ? ' selected' : '' }}>{{ servername }}</option>
@@ -44,13 +46,23 @@ Needs the following parameters:
         </li>
 
         <li>
-            <label for="ebs_environment">
+            <label for="eb_environment">
                 Elastic Beanstalk Environment ID
                 <small class="additional">
-                    <strong>EBS Servers Only</strong>
+                    <strong>EB Servers Only</strong>
                 </small>
             </label>
-            <input class="text-input" type="text" name="ebs_environment" id="ebs_environment" maxlength="100" value="{{ form.ebs_environment }}" pattern="^[^\n\t]+">
+            <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+">
+        </li>
+
+        <li>
+            <label for="ec2_pool">
+                EC2 Pool
+                <small class="additional">
+                    <strong>EC2 Servers Only</strong>
+                </small>
+            </label>
+            <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+">
         </li>
 
         <li>

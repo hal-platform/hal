@@ -92,7 +92,7 @@ class RepositoryNormalizer
                     'text' => $repository->getGithubRepo(),
                     'url' => $this->url->githubRepoUrl($repository->getGithubUser(), $repository->getGithubRepo())
                 ],
-                'ebs-name' => $repository->getEbsName()
+                'eb-name' => $repository->getEbName()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [

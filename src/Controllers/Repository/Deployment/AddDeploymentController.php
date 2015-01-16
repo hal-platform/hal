@@ -114,7 +114,7 @@ class AddDeploymentController implements ControllerInterface
                 'server' => $this->request->post('server'),
                 'path' => $this->request->post('path'),
                 'url' => $this->request->post('url'),
-                'ebs_environment' => $this->request->post('ebs_environment')
+                'eb_environment' => $this->request->post('eb_environment')
             ],
 
             'servers_by_env' => $this->environmentalizeServers($servers),

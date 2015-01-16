@@ -129,7 +129,7 @@ class EditRepositoryController implements ControllerInterface
                 'name' => $this->request->post('name') ?: $repo->getDescription(),
                 'group' => $this->request->post('group') ?: $repo->getGroup()->getId(),
                 'notification_email' => $this->request->post('notification_email') ?: $repo->getEmail(),
-                'ebs_name' => $this->request->post('ebs_name') ?: $repo->getEbsName()
+                'eb_name' => $this->request->post('eb_name') ?: $repo->getEbName()
             ],
             'repository' => $repo,
             'groups' => $this->groupRepo->findAll(),
@@ -165,13 +165,13 @@ class EditRepositoryController implements ControllerInterface
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
         $email = $request->post('notification_email');
-        $ebsName = $request->post('ebs_name');
+        $ebName = $request->post('eb_name');
 
         $repository->setKey($identifier);
         $repository->setDescription($name);
         $repository->setGroup($group);
         $repository->setEmail($email);
-        $repository->setEbsName($ebsName);
+        $repository->setEbName($ebName);
 
         $this->entityManager->merge($repository);
         $this->entityManager->flush();
@@ -195,7 +195,7 @@ class EditRepositoryController implements ControllerInterface
             'name' => 'Name',
             'group' => 'Group',
             'notification_email' => 'Notification Email',
-            'ebs_name' => 'Elastic Beanstalk Application Name',
+            'eb_name' => 'Elastic Beanstalk Application Name',
         ];
 
         $identifier = strtolower($request->post('identifier'));
@@ -206,7 +206,7 @@ class EditRepositoryController implements ControllerInterface
 
             $this->validateText($request->post('group'), $human['group'], 128, true),
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
-            $this->validateText($request->post('ebs_name'), $human['ebs_name'], 255, false)
+            $this->validateText($request->post('eb_name'), $human['eb_name'], 255, false)
         );
 
         // Only check for duplicate identifier if it is being changed
