@@ -12,10 +12,12 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Slim\NotFound;
+use QL\Hal\Services\StickyEnvironmentService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
@@ -50,6 +52,16 @@ class RepositoryStatusController implements ControllerInterface
     private $pushRepo;
 
     /**
+     * @type EnvironmentRepository
+     */
+    private $envRepo;
+
+    /**
+     * @type StickyEnvironmentService
+     */
+    private $stickyService;
+
+    /**
      * @type Response
      */
     private $response;
@@ -66,17 +78,29 @@ class RepositoryStatusController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
+     *
      * @param RepositoryRepository $repoRepo
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
      * @param PushRepository $pushRepo
+     * @param EnvironmentRepository $envRepo
+     *
+     * @param StickyEnvironmentService $stickyService
+     * @param Response $response
+     * @param NotFound $notFound
+     * @param array $parameters
+     *
      */
     public function __construct(
         TemplateInterface $template,
+
         RepositoryRepository $repoRepo,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
         PushRepository $pushRepo,
+        EnvironmentRepository $envRepo,
+
+        StickyEnvironmentService $stickyService,
         Response $response,
         NotFound $notFound,
         array $parameters
@@ -86,7 +110,9 @@ class RepositoryStatusController implements ControllerInterface
         $this->buildRepo = $buildRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->pushRepo = $pushRepo;
+        $this->envRepo = $envRepo;
 
+        $this->stickyService = $stickyService;
         $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -101,69 +127,74 @@ class RepositoryStatusController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $builds = $this->buildRepo->findBy(['repository' => $repo], ['created' => 'DESC'], 10);
+        $selected = $this->stickyService->get($repo->getId());
 
-        $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
-        $environments = $this->environmentalizeDeployments($deployments);
-
-        $dupes = [];
-        $hasDuplicates = false;
-
-        foreach ($environments as &$deployments) {
-            foreach ($deployments as &$deployment) {
-
-                $key = $deployment->getServer()->getId();
-                if (isset($dupes[$key])) {
-                    $hasDuplicates = true;
-                }
-                $dupes[$key] = true;
-
-                $deployment = [
-                    'deploy' => $deployment,
-                    'latest' => $this->pushRepo->getMostRecentByDeployment($deployment),
-                    'success' =>$this->pushRepo->getMostRecentSuccessByDeployment($deployment)
-                ];
-            }
+        $environments = $this->envRepo->getBuildableEnvironmentsForRepository($repo);
+        // if empty, throw them a bone with "test"
+        if (!$environments) {
+            $environments = $this->envRepo->findBy(['key' => 'test']);
         }
+
+        $selectedEnvironment = $this->findSelectedEnvironment($environments, $selected);
+
+        $deployments = [];
+        if ($selectedEnvironment) {
+            $deployments = $this->deploymentRepo->getDeploymentsForRepositoryEnvironment($repo, $selectedEnvironment);
+        }
+
+        usort($deployments, $this->deploymentSorter());
+
+        foreach ($deployments as &$deployment) {
+
+            $latest = $success = $this->pushRepo->getMostRecentByDeployment($deployment);
+
+            // if the latest build is successful, we dont have to make another db query
+            if ($success && $success->getStatus() !== 'Success') {
+                $success = $this->pushRepo->getMostRecentSuccessByDeployment($deployment);
+            }
+
+            $deployment = [
+                'deploy' => $deployment,
+                'latest' => $latest,
+                'success' => $success
+            ];
+        }
+
+        $builds = $this->buildRepo->findBy(['repository' => $repo, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
 
         $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
             'environments' => $environments,
-            'duplicates' => $hasDuplicates
+            'deployment_statuses' => $deployments,
+            'selected_environment' => $selectedEnvironment
         ]);
 
         $this->response->setBody($rendered);
     }
 
     /**
-     * @param Deployment[] $deployments
-     * @return array
+     * @param Environment[] $environments
+     * @param string $selected
+     *
+     *
+     * @return Environment|null
      */
-    private function environmentalizeDeployments(array $deployments)
+    private function findSelectedEnvironment($environments, $selected)
     {
-        $environments = [
-            'dev' => [],
-            'test' => [],
-            'beta' => [],
-            'prod' => []
-        ];
+        // list empty
+        if (!$environments) {
+            return null;
+        }
 
-        foreach ($deployments as $deployment) {
-            $env = $deployment->getServer()->getEnvironment()->getKey();
-
-            if (!array_key_exists($env, $environments)) {
-                $environments[$env] = [];
+        // Find the selected environment
+        foreach ($environments as $environment) {
+            if ($selected == $environment->getId()) {
+                return $environment;
             }
-
-            $environments[$env][] = $deployment;
         }
 
-        $sorter = $this->deploymentSorter();
-        foreach ($environments as &$env) {
-            usort($env, $sorter);
-        }
-
-        return $environments;
+        // Not in the list? Just get the first
+        return $environments[0];
     }
 }

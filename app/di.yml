@@ -301,6 +301,13 @@ services:
         class: 'QL\Hal\Services\GlobalMessageService'
         arguments: [@redis]
 
+    sticky.environment:
+        class: 'QL\Hal\Services\StickyEnvironmentService'
+        arguments:
+            - @slim.cookies
+            - @json
+            - %cookie.preferences.ttl%
+
     redis:
         class: 'Predis\Client'
         arguments:

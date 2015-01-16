@@ -24,9 +24,8 @@
 
     box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($warning-color,20%), 0 4px 2px rgba(0, 0, 0, .5);
 
-    &:hover {
-        background-color: tint($warning-color, 15%);
-    }
+    &:hover { background-color: tint($warning-color, 15%); }
+    &:focus { color: shade($warning-color, 20%); }
 }
 
 .btn--destructive {
@@ -36,9 +35,8 @@
 
     box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($error-color,20%), 0 4px 2px rgba(0, 0, 0, .5);
 
-    &:hover {
-        background-color: tint($error-color, 15%);
-    }
+    &:hover { background-color: tint($error-color, 15%); }
+    &:focus { color: shade($error-color, 20%); }
 }
 
 .btn--disabled {
@@ -49,9 +47,30 @@
     box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($light-grey,20%), 0 4px 2px rgba(0, 0, 0, .5);
     pointer-events: none;
 
-    &:hover {
-        background-color: $light-grey;
-    }
+    &:hover { background-color: tint($light-grey, 15%); }
+    &:focus { color: shade($light-grey, 20%); }
+}
+
+.btn--selected {
+    background-color: $success-color;
+    border: 1px solid shade($success-color, 20%);
+    text-align: center;
+
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($success-color,20%), 0 4px 2px rgba(0, 0, 0, .5);
+
+    &:hover { background-color: tint($success-color, 15%); }
+    &:focus { color: shade($success-color, 20%); }
+}
+
+.btn--not-selected {
+    background-color: $grey;
+    border: 1px solid shade($grey, 20%);
+    text-align: center;
+
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($grey,20%), 0 4px 2px rgba(0, 0, 0, .5);
+
+    &:hover { background-color: tint($grey, 15%); }
+    &:focus { color: shade($grey, 20%); }
 }
 
 .btn--alt {

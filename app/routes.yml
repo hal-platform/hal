@@ -265,7 +265,7 @@ parameters:
         repository.status:
             method: 'GET'
             route: '/repositories/:id/status'
-            stack: ['login.bouncer', 'repository.status.page']
+            stack: ['login.bouncer', 'repository.status.sticky.handler', 'repository.status.page']
             conditions: {id: '[\d]+'}
 
         repository.admin.add:

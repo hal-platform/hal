@@ -7,84 +7,88 @@
 {% block content %}
     <h2>Repository Status for <strong>{{ repo.description }}</strong></h2>
 
-    <h3>Server Status</h3>
-
-    {% set hasPushes = false %}
-    {% set hasServers = false %}
-
-    {# Determine whether repo has servers so we can display an nicer message if this repo cannot be pushed #}
-    {% for statuses in environments %}
-        {% if statuses %}
-            {% set hasServers = true %}
-        {% endif %}
-    {% endfor %}
-
-    {% if hasServers %}
-        <p>These cards show the current status of all servers with deployment relationships to this repository.</p>
-    {% else %}
-        <p>This repository has no deployment relationships and cannot be pushed.</p>
+    {# Only allow environment switching if has multiple env #}
+    {% if environments|length > 1 %}
+        <div class="trailer">
+            <h4>Change environment</h4>
+            {% for environment in environments %}
+                {% set btnSelected = environment.id == selected_environment.id ? ' btn--action' : ' btn--not-selected' %}
+                <a class="btn{{ btnSelected }}" href="{{ urlFor('repository.status', {id: repo.id}, {environment: environment.id}) }}">{{ environment.key }}</a>
+            {% endfor %}
+        </div>
     {% endif %}
 
+    {% set hasPushes = false %}
+
+    <h3>Server Status for <strong>{{ selected_environment.key }}</strong></h3>
+
     {# example display of servers by environment #}
-    {% for env, statuses in environments %}
-        {% if statuses %}
-            <h3>{{ env }}</h3>
-            <ul class="list--bare cards cards--{{ env }}">
-                {% for status in statuses %}
+    {% if deployment_statuses %}
+        <ul class="list--bare cards cards--{{ selected_environment.key }}">
+            {% for status in deployment_statuses %}
 
-                    {# Determine whether repo has been pushed so we can hide the all pushes button if there are no pushes #}
-                    {% if status.latest %}
-                        {% set hasPushes = true %}
-                    {% endif %}
+                {# Determine whether repo has been pushed so we can hide the all pushes button if there are no pushes #}
+                {% if status.latest %}
+                    {% set hasPushes = true %}
+                {% endif %}
 
-                    {# Determine the active push #}
-                    {% set activePush = null %}
-                    {% if status.latest.status in ['Waiting', 'Pushing'] %}
-                        {% set activePush = status.latest %}
-                    {% elseif status.success %}
-                        {% set activePush = status.success %}
-                    {% endif %}
+                {# Determine the active push #}
+                {% set activePush = null %}
+                {% if status.latest.status in ['Waiting', 'Pushing'] %}
+                    {% set activePush = status.latest %}
+                {% elseif status.success %}
+                    {% set activePush = status.success %}
+                {% endif %}
 
-                    {# Determine if the is a history to rollback to, or user is allowed to #}
-                    {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
-                        {% set canRollback = true %}
-                    {% else %}
-                        {% set canRollback = false %}
-                    {% endif %}
+                {# Determine if the is a history to rollback to, or user is allowed to #}
+                {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
+                    {% set canRollback = true %}
+                {% else %}
+                    {% set canRollback = false %}
+                {% endif %}
 
-                    <li>{{ macros.pushCard(repo, status.deploy, activePush, canRollback, duplicates) }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endfor %}
+                <li>{{ macros.pushCard(repo, status.deploy, activePush, canRollback) }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>This repository has no deployment relationships for <strong>{{ selected_environment.key }}</strong> and cannot be pushed.</p>
+    {% endif %}
 
-    <p><a class="btn--toggles" href="{{ urlFor('repository', {id: repo.id}) }}">View Repository Details</a></p>
+    <h3>Recent Builds for <strong>{{ selected_environment.key }}</strong></h3>
+    {% include 'partials/build-table.twig' with {'builds': builds} %}
 
-    <h3>Recent Builds</h3>
     <p>
         {% if canUserBuild(currentUser, repo.key) %}
             <a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
         {% endif %}
 
         {% if builds %}
-            <a class="btn--toggles" href="{{ urlFor('build.history', {'id': repo.id, 'page': 1}) }}">All Builds</a>
+            <a class="btn--toggles" href="{{ urlFor('build.history.page1', {'id': repo.id}) }}">View all Builds</a>
         {% endif %}
 
         {% if hasPushes %}
-            <a class="btn--toggles" href="{{ urlFor('push.history', {'id': repo.id, 'page': 1}) }}">All Pushes</a>
+            <a class="btn--toggles" href="{{ urlFor('push.history.page1', {'id': repo.id}) }}">View all Pushes</a>
         {% endif %}
+
+        <a href="{{ urlFor('repository', {id: repo.id}) }}">View Repository Information</a>
     </p>
-    {% include 'partials/build-table.twig' with {'builds': builds} %}
+
 {% endblock %}
 
-{% macro pushCard(repo, deployment, active, canRollback, duplicates) %}
+{% macro pushCard(repo, deployment, active, canRollback) %}
 
     <article class="card">
         <header class="card__header">
             <h4 class="mbn">
-                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ deployment.server.name }}</a>
+                {% set title = deployment.server.name %}
+                {% if deployment.server.type == 'elasticbeanstalk' %}
+                    {% set title = 'Elastic Beanstalk' %}
+                {% elseif deployment.server.type == 'ec2' %}
+                    {% set title = 'EC2' %}
+                {% endif %}
+                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ title }}</a>
 
-                {% if deployment.url and duplicates == false %}
+                {% if deployment.url %}
                     <a class="icon--link" href="{{ deployment.url.asString }}">
                         <svg class="icon"><use xlink:href="#outgoing"></use></svg>
                     </a>
@@ -95,11 +99,7 @@
                         <svg class="icon"><use xlink:href="#revert"></use></svg>
                     </a>
                 {% endif %}
-
             </h4>
-            {% if deployment.url and duplicates == true %}
-            <p class="mbn"><span title="{{ deployment.url.asString() }}"><a href="{{ deployment.url.asString() }}">{{ deployment.url.asString()|displayUrl }}</a></span></p>
-            {% endif %}
         </header>
 
         <section class="card__details">
