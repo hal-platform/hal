@@ -378,6 +378,7 @@ services:
             - @utility.id.generator
             - @twig.context
             - @slim.request
+            - @sticky.environment
             - @slim.route.parameters
     build.start.validator:
         class: 'QL\Hal\Validator\BuildStartValidator'
@@ -437,6 +438,7 @@ services:
             - @utility.id.generator
             - @slim.request
             - @twig.context
+            - @sticky.environment
             - @slim.route.parameters
 
     push.rollback.page:

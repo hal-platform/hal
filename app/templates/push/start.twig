@@ -108,7 +108,17 @@
                     {% set isSelected = (status.deployment.id == selected) %}
 
                     <tr>
-                        <td><a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment.server.name }}</a></td>
+                        <td>
+                            {% if status.deployment.server.type == 'elasticbeanstalk' %}
+                                {% set servername = 'EB (' ~ status.deployment.ebEnvironment ~ ')' %}
+                            {% elseif status.deployment.server.type == 'ec2' %}
+                                {% set servername = 'EC2 (' ~ status.deployment.ec2Pool ~ ')' %}
+                            {% else %}
+                                {% set servername = status.deployment.server.name %}
+                            {% endif %}
+
+                            <a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ servername }}</a>
+                        </td>
                         {% if inProgress or status.success %}
                             {% set active = inProgress ? status.latest : status.success %}
 

@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
 use QL\Hal\Core\JobIdGenerator;
+use QL\Hal\Services\StickyEnvironmentService;
 use QL\Hal\Session;
 use QL\Hal\Validator\BuildStartValidator;
 use QL\Panthor\MiddlewareInterface;
@@ -63,6 +64,11 @@ class StartBuildHandler implements MiddlewareInterface
     private $request;
 
     /**
+     * @type StickyEnvironmentService
+     */
+    private $stickyService;
+
+    /**
      * @type array
      */
     private $parameters;
@@ -76,6 +82,7 @@ class StartBuildHandler implements MiddlewareInterface
      * @param JobIdGenerator $unique
      * @param Context $context
      * @param Request $request
+     * @param StickyEnvironmentService $stickyService
      * @param array $parameters
      */
     public function __construct(
@@ -87,6 +94,7 @@ class StartBuildHandler implements MiddlewareInterface
         JobIdGenerator $unique,
         Context $context,
         Request $request,
+        StickyEnvironmentService $stickyService,
         array $parameters
     ) {
         $this->buildRepo = $buildRepo;
@@ -99,6 +107,7 @@ class StartBuildHandler implements MiddlewareInterface
         $this->context = $context;
 
         $this->request = $request;
+        $this->stickyService = $stickyService;
         $this->parameters = $parameters;
     }
 
@@ -138,6 +147,9 @@ class StartBuildHandler implements MiddlewareInterface
         // persist to database
         $this->em->persist($build);
         $this->em->flush();
+
+        // override sticky environment
+        $this->stickyService->save($this->parameters['id'], $this->request->post('environment'));
 
         // flash and redirect
         $this->session->flash(self::WAIT_FOR_IT, 'success');

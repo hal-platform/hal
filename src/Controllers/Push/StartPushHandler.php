@@ -16,6 +16,7 @@ use QL\Hal\Core\Entity\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Services\PermissionsService;
+use QL\Hal\Services\StickyEnvironmentService;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
@@ -91,6 +92,11 @@ class StartPushHandler implements MiddlewareInterface
     private $context;
 
     /**
+     * @type StickyEnvironmentService
+     */
+    private $stickyService;
+
+    /**
      * @type array
      */
     private $parameters;
@@ -108,6 +114,7 @@ class StartPushHandler implements MiddlewareInterface
      * @param JobIdGenerator $unique
      * @param Request $request
      * @param Context $context
+     * @param StickyEnvironmentService $stickyService
      * @param array $parameters
      */
     public function __construct(
@@ -123,6 +130,7 @@ class StartPushHandler implements MiddlewareInterface
         JobIdGenerator $unique,
         Request $request,
         Context $context,
+        StickyEnvironmentService $stickyService,
         array $parameters
     ) {
         $this->session = $session;
@@ -138,6 +146,7 @@ class StartPushHandler implements MiddlewareInterface
 
         $this->request = $request;
         $this->context = $context;
+        $this->stickyService = $stickyService;
         $this->parameters = $parameters;
     }
 
@@ -210,6 +219,9 @@ class StartPushHandler implements MiddlewareInterface
         }
 
         $this->em->flush();
+
+        // override sticky environment
+        $this->stickyService->save($repo->getId(), $deployment->getServer()->getEnvironment()->getId());
 
         $this->session->flash(self::NOTICE_DONE, 'success');
         $this->url->redirectFor('repository.status', ['id' => $repo->getId()]);
