@@ -10,7 +10,7 @@
 
     <h3>Server</h3>
     <p>
-        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a>
+        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a> in <strong>{{ deployment.server.environment.key }}</strong>
     </p>
 
     <h3>Repository</h3>
