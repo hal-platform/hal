@@ -97,7 +97,7 @@
                 {% endif %}
 
                 {% if canRollback %}
-                    <a class="rollback icon--link" href="{{ urlFor('rollback', {'id': repo.id, 'server': deployment.server.id}) }}" title="Rollback to a successful build">
+                    <a class="rollback icon--link" href="{{ urlFor('rollback', {'id': repo.id, 'deployment': deployment.id}) }}" title="Rollback to a successful build">
                         <svg class="icon"><use xlink:href="#revert"></use></svg>
                     </a>
                 {% endif %}

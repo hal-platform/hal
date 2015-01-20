@@ -5,13 +5,61 @@
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
-    <h2>Available rollbacks for <strong>{{ repo.description }}</strong> to <strong>{{ server.name }}</strong></h2>
+    {% if deployment.server.type == 'elasticbeanstalk' %}
+        {% set servername = 'Elastic Beanstalk' %}
+    {% elseif deployment.server.type == 'ec2' %}
+        {% set servername = 'EC2' %}
+    {% else %}
+        {% set servername = deployment.server.name %}
+    {% endif %}
+
+    <h2>Rollbacks for <strong>{{ repo.description }}</strong> to <strong>{{ servername }}</strong></h2>
+
+    <h3>Deployment Information</h3>
+    <div class="details-box">
+        <dl class="split--left mbn">
+
+            <dt class="split--left__title">Server</dt>
+            <dd class="split--left__value">
+                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ servername }}</a>
+            </dd>
+
+            <dt class="split--left__title">
+                {% set pathLabel = 'Path' %}
+                {% if deployment.server.type == 'elasticbeanstalk' %}
+                    {% set pathLabel = 'EB Environment' %}
+                {% elseif deployment.server.type == 'ec2' %}
+                    {% set pathLabel = 'EC2 Pool' %}
+                {% endif %}
+                {{ pathLabel }}
+            </dt>
+            <dd class="split--left__value">
+                {% set path = deployment.path %}
+                {% if deployment.server.type == 'elasticbeanstalk' %}
+                    {% set path = deployment.ebEnvironment %}
+
+                {% elseif deployment.server.type == 'ec2' %}
+                    {% set path = deployment.ec2Pool %}
+                {% endif %}
+
+                <code>{{ path }}</code>
+            </dd>
+
+            {% if deployment.url %}
+                <dt class="split--left__title">URL</dt>
+                <dd class="split--left__value">
+                    <a href="{{ deployment.url.asString }}">{{ deployment.url.asString }}</a>
+                </dd>
+            {% endif %}
+        </dl>
+    </div>
 
     <p>
         This table shows all builds that have been successfully pushed to this server and that are still available for rollback to.
         To rollback, simply choose a build, click 'rollback', and you'll be able to initate a new push.
     </p>
 
+    <h3>Available Rollbacks</h3>
     <div class="overflow-container">
         <table>
             <thead>
@@ -20,7 +68,7 @@
                 <th>Commit</th>
                 <th>Pushed</th>
                 <th>Initiator</th>
-                <th></th>
+                <th class="t10"></th>
             </thead>
             <tbody>
                 {% for push in pushes %}
@@ -57,7 +105,7 @@
                 {% else %}
                 <tr>
                     <td colspan="6">
-                        There are no available builds with successful pushes to roll back to for this server.
+                        There are no available rollbacks for this server.
                     </td>
                 </tr>
                 {% endfor %}

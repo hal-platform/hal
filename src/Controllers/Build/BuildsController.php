@@ -100,7 +100,7 @@ class BuildsController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $builds = $this->buildRepo->getForRepository($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        $builds = $this->buildRepo->getByRepository($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
 
         $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);

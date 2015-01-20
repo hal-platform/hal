@@ -99,7 +99,7 @@ class PushesController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getForRepository($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        $pushes = $this->pushRepo->getByRepository($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
 
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);

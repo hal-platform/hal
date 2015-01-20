@@ -446,7 +446,7 @@ services:
         arguments:
             - @rollback.twig
             - @repository.repo
-            - @server.repo
+            - @deployment.repo
             - @push.repo
             - @slim.response
             - @slim.not.found

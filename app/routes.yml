@@ -155,9 +155,9 @@ parameters:
 
         rollback:
             method: 'GET'
-            route: '/repositories/:id/rollback/:server'
+            route: '/repositories/:id/rollback/:deployment'
             stack: ['login.bouncer', 'push.rollback.page']
-            conditions: {id: '[A-Za-z0-9_-]+', server: '[\d]+'}
+            conditions: {id: '[A-Za-z0-9_-]+', deployment: '[\d]+'}
 
         ################################################################################################################
         # SERVER ROUTES

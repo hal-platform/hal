@@ -129,7 +129,7 @@ class RepositoryStatusController implements ControllerInterface
 
         $selected = $this->stickyService->get($repo->getId());
 
-        $environments = $this->envRepo->getBuildableEnvironmentsForRepository($repo);
+        $environments = $this->envRepo->getBuildableEnvironmentsByRepository($repo);
         // if empty, throw them a bone with "test"
         if (!$environments) {
             $environments = $this->envRepo->findBy(['key' => 'test']);
@@ -139,7 +139,7 @@ class RepositoryStatusController implements ControllerInterface
 
         $deployments = [];
         if ($selectedEnvironment) {
-            $deployments = $this->deploymentRepo->getDeploymentsForRepositoryEnvironment($repo, $selectedEnvironment);
+            $deployments = $this->deploymentRepo->getDeploymentsByRepositoryEnvironment($repo, $selectedEnvironment);
         }
 
         usort($deployments, $this->deploymentSorter());

@@ -81,7 +81,7 @@ class PushesController implements ControllerInterface
 
         // get most recent 500 pushes, this is a hard limit.
         // @todo add paging to api
-        $paginator = $this->pushRepo->getForRepository($repository, 500);
+        $paginator = $this->pushRepo->getByRepository($repository, 500);
 
         // turn paginator into array
         $pushes = [];

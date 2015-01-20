@@ -7,9 +7,9 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\PushRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -28,7 +28,7 @@ class RollbackController implements ControllerInterface
     private $repoRepo;
 
     /**
-     * @type ServerRepository
+     * @type DeploymentRepository
      */
     private $serverRepo;
 
@@ -64,7 +64,7 @@ class RollbackController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         RepositoryRepository $repoRepository,
-        ServerRepository $serverRepository,
+        DeploymentRepository $deploymentRepository,
         PushRepository $pushRepository,
         Response $response,
         NotFound $notFound,
@@ -72,7 +72,7 @@ class RollbackController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->repoRepo = $repoRepository;
-        $this->serverRepo = $serverRepository;
+        $this->deploymentRepository = $deploymentRepository;
         $this->pushRepo = $pushRepository;
 
         $this->response = $response;
@@ -86,17 +86,20 @@ class RollbackController implements ControllerInterface
     public function __invoke()
     {
         $repo = $this->repoRepo->find($this->parameters['id']);
-        $server = $this->serverRepo->find($this->parameters['server']);
+        $deployment = $this->deploymentRepository->findOneBy([
+            'id' => $this->parameters['deployment'],
+            'repository' => $repo
+        ]);
 
-        if (!$repo || !$server) {
+        if (!$repo || !$deployment) {
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getAvailableRollbacks($repo, $server);
+        $pushes = $this->pushRepo->getAvailableRollbacksByDeployment($deployment, 50);
 
         $rendered = $this->template->render([
             'repo' => $repo,
-            'server' => $server,
+            'deployment' => $deployment,
             'pushes' => $pushes
         ]);
 
