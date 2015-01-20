@@ -177,7 +177,7 @@ class AddRepositoryController implements ControllerInterface
 
         $repository = new Repository;
         $repository->setKey($identifier);
-        $repository->setDescription($name);
+        $repository->setName($name);
         $repository->setGroup($group);
         $repository->setEmail($email);
 

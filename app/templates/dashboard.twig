@@ -39,7 +39,7 @@
             <div class="col-list">
                 <ul class="list--bare js-filter">
                     {% for repository in repositories %}
-                        <li><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.description }}</a></li>
+                        <li><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.name }}</a></li>
                     {% else %}
                         <li>Looks like you don't have access to anything.</li>
                     {% endfor %}

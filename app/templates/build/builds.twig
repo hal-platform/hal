@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 {% import 'partials/pagination.twig' as pagination %}
 
-{% set page_title = repo.description ~ " Build History" %}
+{% set page_title = repo.name ~ " Build History" %}
 
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
-    <h2>Build History for <strong>{{ repo.description }}</strong></h2>
+    <h2>Build History for <strong>{{ repo.name }}</strong></h2>
 
     {{ block('search') }}
 

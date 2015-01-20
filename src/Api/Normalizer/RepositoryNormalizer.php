@@ -79,7 +79,7 @@ class RepositoryNormalizer
             [
                 'id' => $repository->getId(),
                 'key' => $repository->getKey(),
-                'title' => $repository->getDescription(),
+                'title' => $repository->getName(),
 
                 // @todo put html urls in _links, with html media type?
                 'url' => $this->url->urlFor('repository', ['id' => $repository->getId()]),

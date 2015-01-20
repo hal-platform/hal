@@ -78,7 +78,7 @@
                         <td>
                             <ul class="col-list">
                                 {% for rule in permission %}
-                                    <li><a href="{{ urlFor('repository', {'id': rule.repository.id}) }}">{{ rule.repository.description }}</a></li>
+                                    <li><a href="{{ urlFor('repository', {'id': rule.repository.id}) }}">{{ rule.repository.name }}</a></li>
                                 {% endfor %}
                             </ul>
                         </td>

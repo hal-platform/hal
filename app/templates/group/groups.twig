@@ -28,7 +28,7 @@
                     {% if meta.repositories %}
                         <ul class="inline-list--comma">
                             {% for repo in meta.repositories %}
-                                <li><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.description }}</a></li>
+                                <li><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.name }}</a></li>
                             {% endfor %}
                         </ul>
                     {% else %}

@@ -81,7 +81,7 @@ class GroupsController implements ControllerInterface
     {
         $repos = $group->getRepositories()->toArray();
         $sorter = function($a, $b) {
-            return strcasecmp($a->getDescription(), $b->getDescription());
+            return strcasecmp($a->getName(), $b->getName());
         };
 
         usort($repos, $sorter);

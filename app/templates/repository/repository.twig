@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = repository.description %}
+{% set page_title = repository.name %}
 
 {% block content %}
     <h2>Repository Information</h2>
@@ -8,7 +8,7 @@
     <div class="details-box">
         <dl class="split--left">
             <dt class="split--left__title">Name</dt>
-            <dd class="split--left__value">{{ repository.description }}</dd>
+            <dd class="split--left__value">{{ repository.name }}</dd>
 
             <dt class="split--left__title">Identifier</dt>
             <dd class="split--left__value">{{ repository.key }}</dd>
@@ -98,7 +98,7 @@
     <h3>Permissions</h3>
 
     {% if permissions %}
-        <p>The following users have permission to push <strong>{{ repository.description }}</strong> to the specified environment.</p>
+        <p>The following users have permission to push <strong>{{ repository.name }}</strong> to the specified environment.</p>
         <table class="tablesaw tablesaw-stack" data-mode="stack">
             <thead>
             <tr>

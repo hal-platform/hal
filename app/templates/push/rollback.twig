@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Rollbacks for " ~ repo.description %}
+{% set page_title = "Rollbacks for " ~ repo.name %}
 
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
@@ -9,7 +9,7 @@
     {% set deployment_details = deployment|formatDeploymentDetails %}
     {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
-    <h2>Rollbacks for <strong>{{ repo.description }}</strong> to <strong>{{ server }}</strong></h2>
+    <h2>Rollbacks for <strong>{{ repo.name }}</strong> to <strong>{{ server }}</strong></h2>
 
     <h3>Deployment Information</h3>
     <div class="details-box">

@@ -5,7 +5,7 @@
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
 
-    <h2>Push a build for <strong>{{ build.repository.description }}</strong></h2>
+    <h2>Push a build for <strong>{{ build.repository.name }}</strong></h2>
 
     <p>Please review the below build details before pushing.</p>
 
@@ -21,7 +21,7 @@
                 Repository
             </dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.description }}</a>
+                <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.name }}</a>
             </dd>
             <dt class="split--left__title">
                 Environment

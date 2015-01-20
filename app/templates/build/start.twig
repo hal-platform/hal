@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 {% import _self as page_macros %}
 
-{% set page_title = "Start Build: " ~ repo.description %}
+{% set page_title = "Start Build: " ~ repo.name %}
 
 {% block content %}
 
-    <h2>Create a new build for <strong>{{ repo.description }}</strong></h2>
+    <h2>Create a new build for <strong>{{ repo.name }}</strong></h2>
 
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
 

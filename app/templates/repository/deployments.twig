@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = repository.description ~ ' deployments' %}
+{% set page_title = repository.name ~ ' deployments' %}
 
 {% block content %}
-    <h2>Deployment Relationships for <b>{{ repository.description }}</b> </h2>
+    <h2>Deployment Relationships for <b>{{ repository.name }}</b> </h2>
 
     <p>
         Deployment relationships define what servers your application can be deployed to and where on that server the code will be uploaded.

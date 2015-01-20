@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Status: " ~ repo.description %}
+{% set page_title = "Status: " ~ repo.name %}
 
 {% import _self as macros %}
 
 {% block content %}
-    <h2>Repository Status for <strong>{{ repo.description }}</strong></h2>
+    <h2>Repository Status for <strong>{{ repo.name }}</strong></h2>
 
     {# Only allow environment switching if has multiple env #}
     {% if environments|length > 1 %}

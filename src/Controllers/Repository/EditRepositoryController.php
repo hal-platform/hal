@@ -126,7 +126,7 @@ class EditRepositoryController implements ControllerInterface
         $renderContext = [
             'form' => [
                 'identifier' => $this->request->post('identifier') ?: $repo->getKey(),
-                'name' => $this->request->post('name') ?: $repo->getDescription(),
+                'name' => $this->request->post('name') ?: $repo->getName(),
                 'group' => $this->request->post('group') ?: $repo->getGroup()->getId(),
                 'notification_email' => $this->request->post('notification_email') ?: $repo->getEmail(),
                 'eb_name' => $this->request->post('eb_name') ?: $repo->getEbName()
@@ -168,7 +168,7 @@ class EditRepositoryController implements ControllerInterface
         $ebName = $request->post('eb_name');
 
         $repository->setKey($identifier);
-        $repository->setDescription($name);
+        $repository->setName($name);
         $repository->setGroup($group);
         $repository->setEmail($email);
         $repository->setEbName($ebName);

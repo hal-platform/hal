@@ -38,7 +38,7 @@
             {% for deployment in deployments %}
                 <tr>
                     <td>
-                        <a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.description }}</a>
+                        <a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.name }}</a>
                     </td>
                     <td>
                         {% if server.type == 'elasticbeanstalk' %}
