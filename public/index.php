@@ -25,6 +25,11 @@ if (!$container = @include $root . '/app/bootstrap.php') {
     exit;
 };
 
+// Custom https detection for our weirdo server config
+if (!empty($_SERVER['HTTP_FRONT_END_HTTPS'])) {
+    $_SERVER['HTTPS'] = 'on';
+}
+
 // Application
 $app = $container->get('slim');
 
