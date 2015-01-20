@@ -25,9 +25,12 @@ if (!$container = @include $root . '/app/bootstrap.php') {
     exit;
 };
 
-// Custom https detection for our weirdo server config
+// Custom https,port detection for our weirdo server config
 if (!empty($_SERVER['HTTP_FRONT_END_HTTPS'])) {
     $_SERVER['HTTPS'] = 'on';
+}
+if (!empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
+    $_SERVER['SERVER_PORT'] = (int) $_SERVER['HTTP_X_FORWARDED_PORT'];
 }
 
 // Application
