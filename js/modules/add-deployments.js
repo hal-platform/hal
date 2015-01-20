@@ -45,7 +45,7 @@ define(['jquery'], function($) {
                         server: $container.find('select[name="server"]').val(),
                         url: $container.find('input[name="url"]').val(),
                         path: $container.find('input[name="path"]').val(),
-                        ebs_environment: $container.find('input[name="ebs_environment"]').val(),
+                        eb_environment: $container.find('input[name="eb_environment"]').val(),
                         ec2_pool: $container.find('input[name="ec2_pool"]').val()
                     },
                     settings = {
