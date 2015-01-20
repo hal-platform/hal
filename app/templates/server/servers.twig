@@ -22,14 +22,7 @@
                             <td>
                                 <ul class="col-list">
                                     {% for server in servers %}
-                                        {% set name = server.name %}
-                                        {% if server.type == 'elasticbeanstalk' %}
-                                            {% set name = 'Elastic Beanstalk' %}
-                                        {% elseif server.type == 'ec2' %}
-                                            {% set name = 'EC2' %}
-                                        {% endif %}
-
-                                        <li><a href="{{ urlFor('server', {'id': server.id}) }}">{{ name }}</a></li>
+                                        <li><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a></li>
                                     {% endfor %}
                                 </ul>
                             </td>

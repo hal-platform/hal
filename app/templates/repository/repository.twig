@@ -142,18 +142,6 @@
                     {% set isFirst = true %}
                     {% for deployment in deployments %}
 
-                        {% set servername = deployment.server.name %}
-                        {% set path_or_whatever = deployment.path %}
-
-                        {% if deployment.server.type == 'elasticbeanstalk' %}
-                            {% set servername = 'Elastic Beanstalk' %}
-                            {% set path_or_whatever = deployment.ebEnvironment %}
-
-                        {% elseif deployment.server.type == 'ec2' %}
-                            {% set servername = 'EC2' %}
-                            {% set path_or_whatever = deployment.ec2Pool %}
-                        {% endif %}
-
                         <tr>
                             {% if isFirst %}
                                 {% set isFirst = false %}
@@ -163,10 +151,10 @@
                             {% endif %}
 
                             <td>
-                                <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ servername }}</a>
+                                <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer }}</a>
                             </td>
                             <td>
-                                <code>{{ path_or_whatever }}</code>
+                                <code>{{ deployment|formatDeploymentDetails }}</code>
                             </td>
                             <td>
                                 <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>

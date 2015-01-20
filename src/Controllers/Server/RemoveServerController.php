@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Server;
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Entity\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;
@@ -97,7 +98,14 @@ class RemoveServerController implements ControllerInterface
         $this->entityManager->remove($server);
         $this->entityManager->flush();
 
-        $message = sprintf('Server "%s" removed.', $server->getName());
+        $name = $server->getName();
+        if ($server->getType() === ServerEnumType::TYPE_EB) {
+            $name = 'Elastic Beanstalk';
+        } elseif ($server->getType() === ServerEnumType::TYPE_EC2) {
+            $name = 'EC2';
+        }
+
+        $message = sprintf('Server "%s" removed.', $name);
         $this->session->flash($message, 'success');
         $this->url->redirectFor('servers');
     }

@@ -9,7 +9,9 @@ namespace QL\Hal\Twig;
 
 use QL\Panthor\Http\EncryptedCookies;
 use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
@@ -122,7 +124,13 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
             new Twig_SimpleFilter('sanitizeToString', [$this, 'sanitizeToString']),
             new Twig_SimpleFilter('sliceString', [$this, 'sliceString']),
-            new Twig_SimpleFilter('displayUrl', [$this, 'formatUrlForDisplay'])
+            new Twig_SimpleFilter('displayUrl', [$this, 'formatUrlForDisplay']),
+
+            new Twig_SimpleFilter('formatDeploymentServer', [$this, 'formatDeploymentServer']),
+            new Twig_SimpleFilter('formatDeploymentDetails', [$this, 'formatDeploymentDetails']),
+            new Twig_SimpleFilter('formatDeploymentDetailsLabel', [$this, 'formatDeploymentDetailsLabel']),
+            new Twig_SimpleFilter('formatServer', [$this, 'formatServer']),
+            new Twig_SimpleFilter('formatServerType', [$this, 'formatServerType']),
         ];
     }
 
@@ -297,6 +305,135 @@ class HalExtension extends Twig_Extension
 
         // pretty dumb atm
         return rtrim(preg_replace('#^http[s]?://#', '', $url), '/');
+    }
+
+    /**
+     * Format a deployment server for display
+     *
+     * @param Deployment|null $deployment
+     * @param bool $withDetails
+     *
+     * @return string
+     */
+    public function formatDeploymentServer(Deployment $deployment = null, $withDetails = false)
+    {
+        if (!$deployment) {
+            return 'Unknown';
+        }
+
+        $type = $deployment->getServer()->getType();
+
+        if ($withDetails) {
+            if ($type === 'elasticbeanstalk') {
+                return sprintf('EB (%s)', $deployment->getEbEnvironment());
+
+            } elseif ($type === 'ec2') {
+                return sprintf('EC2 (%s)', $deployment->getEc2Pool());
+            }
+        }
+
+        return $this->formatServer($deployment->getServer());
+    }
+
+    /**
+     * Format a deployment details for display
+     *
+     * @param Deployment|null $deployment
+     *
+     * @return string
+     */
+    public function formatDeploymentDetails(Deployment $deployment = null)
+    {
+        if (!$deployment) {
+            return 'Unknown';
+        }
+
+        $type = $deployment->getServer()->getType();
+
+        if ($type === 'elasticbeanstalk') {
+            return $deployment->getEbEnvironment();
+
+        } elseif ($type === 'ec2') {
+            return $deployment->getEc2Pool();
+        }
+
+        return $deployment->getPath();
+    }
+
+    /**
+     * Format a deployment details label
+     *
+     * @param Deployment|null $deployment
+     *
+     * @return string
+     */
+    public function formatDeploymentDetailsLabel(Deployment $deployment = null)
+    {
+        if (!$deployment) {
+            return 'Path';
+        }
+
+        $type = $deployment->getServer()->getType();
+
+        if ($type === 'elasticbeanstalk') {
+            return 'EB Environment';
+
+        } elseif ($type === 'ec2') {
+            return 'EC2 Pool';
+        }
+
+        return 'Path';
+    }
+
+    /**
+     * Format a server for display
+     *
+     * @param Server|null $server
+     *
+     * @return string
+     */
+    public function formatServer(Server $server = null)
+    {
+        if (!$server) {
+            return 'Unknown';
+        }
+
+        $type = $server->getType();
+
+        if ($type === 'elasticbeanstalk') {
+            return 'Elastic Beanstalk';
+
+        } elseif ($type === 'ec2') {
+            return 'EC2';
+        }
+
+        return $server->getName();
+    }
+
+    /**
+     * Format a server type for display
+     *
+     * @param Server|null $server
+     *
+     * @return string
+     */
+    public function formatServerType(Server $server = null)
+    {
+        if (!$server) {
+            return 'Unknown';
+        }
+
+        $type = $server->getType();
+
+        $serverType = 'Internal (Rsync)';
+        if ($type === 'elasticbeanstalk') {
+            $serverType = 'Elastic Beanstalk';
+
+        } elseif ($type === 'ec2') {
+            $serverType = 'EC2 Autoscaling Pool';
+        }
+
+        return $serverType;
     }
 
     /**

@@ -11,6 +11,10 @@ textarea {
     }
 }
 
+.text-input:disabled {
+    background: $light-grey;
+}
+
 legend {
     @include adjust-font-size-to(ms(4));
 }

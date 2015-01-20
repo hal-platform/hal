@@ -48,16 +48,7 @@
                             {% endif %}
                         </td>
                         {% if job.deployment %}
-
-                            {% if job.deployment.server.type == 'elasticbeanstalk' %}
-                                {% set servername = 'EB (' ~ job.deployment.ebEnvironment ~ ')' %}
-                            {% elseif job.deployment.server.type == 'ec2' %}
-                                {% set servername = 'EC2 (' ~ job.deployment.ec2Pool ~ ')' %}
-                            {% else %}
-                                {% set servername = job.deployment.server.name %}
-                            {% endif %}
-
-                            <td>{{ job.build.environment.key }} → {{ servername }}</td>
+                            <td>{{ job.build.environment.key }} → {{ job.deployment|formatDeploymentServer(true) }}</td>
                         {% else %}
                             <td>{{ job.build.environment.key }} → Unknown</td>
                         {% endif %}

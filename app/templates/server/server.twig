@@ -5,23 +5,12 @@
 {% block content %}
     <h2>Server Information</h2>
 
-    {% set servertype = 'Unknown' %}
-    {% if server.type == 'elasticbeanstalk' %}
-        {% set servertype = 'Elastic Beanstalk' %}
-    {% elseif server.type == 'rsync' %}
-        {% set servertype = 'Internal (Rsync)' %}
-    {% endif %}
-
     <h3>Type</h3>
-    <p>{{ servertype }}</p>
+    <p>{{ server|formatServerType }}</p>
 
-    {% set servername = server.name %}
-    {% if server.type == 'elasticbeanstalk' %}
-        {% set servername = 'Not applicable' %}
-    {% endif %}
-
+    {% set hostname = (server.type == 'rsync') ? server.name : 'Not applicable' %}
     <h3>Hostname</h3>
-    <p>{{ servername }}</p>
+    <p>{{ hostname }}</p>
 
     <h3>Environment</h3>
     <p>{{ server.environment.key }}</p>

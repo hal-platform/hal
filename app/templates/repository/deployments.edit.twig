@@ -5,26 +5,11 @@
 {% block content %}
     <h2>Edit Deployment</b></h2>
 
-    {% set servertype = 'Unknown' %}
-    {% if deployment.server.type == 'elasticbeanstalk' %}
-        {% set servertype = 'Elastic Beanstalk' %}
-    {% elseif deployment.server.type == 'rsync' %}
-        {% set servertype = 'Internal (Rsync)' %}
-    {% endif %}
-
     <h3>Type</h3>
-    <p>{{ servertype }}</p>
-
-    {% set servername = deployment.server.name %}
-    {% if deployment.server.type == 'elasticbeanstalk' %}
-        {% set servername = 'Elastic Beanstalk Server' %}
-
-    {% elseif deployment.server.type == 'ec2' %}
-        {% set servername = 'EC2 Server' %}
-    {% endif %}
+    <p>{{ deployment.server|formatServerType }}</p>
 
     <h3>Server</h3>
-    <p>{{ servername }}</p>
+    <p>{{ deployment.server|formatServer }}</p>
 
     <h3>Repository</h3>
     <p>{{ deployment.repository.description }}</p>
@@ -41,11 +26,11 @@
         <form method="post">
             <ul class="form-fields">
                 <li>
-                     {% set isDisabled = (deployment.server.type == 'rsync') ? '' : ' disabled' %}
+                    {% set isDisabled = (deployment.server.type in ['rsync', 'ec2']) ? '' : ' disabled' %}
                     <label for="path">
                         File path
                         <small class="additional">
-                            <strong>Rsync Servers Only</strong><br>
+                            <strong>Rsync and EC2 Servers Only</strong><br>
                             The absolute path to the file directory on the server.
                             <br>Paths must begin with a forward slash (/).
                         </small>

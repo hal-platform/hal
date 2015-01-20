@@ -5,32 +5,12 @@
 {% block content %}
     <h2>Deployment Information</h2>
 
-    {% set servertype = 'Unknown' %}
-    {% if deployment.server.type == 'elasticbeanstalk' %}
-        {% set servertype = 'Elastic Beanstalk' %}
-
-    {% elseif deployment.server.type == 'rsync' %}
-        {% set servertype = 'Internal (Rsync)' %}
-
-    {% elseif deployment.server.type == 'ec2' %}
-        {% set servertype = 'EC2 Autoscaling Pool' %}
-    {% endif %}
-
     <h3>Type</h3>
-    <p>{{ servertype }}</p>
-
-
-    {% set servername = deployment.server.name %}
-    {% if deployment.server.type == 'elasticbeanstalk' %}
-        {% set servername = 'Elastic Beanstalk Server' %}
-
-    {% elseif deployment.server.type == 'ec2' %}
-        {% set servername = 'EC2 Server' %}
-    {% endif %}
+    <p>{{ deployment.server|formatServerType }}</p>
 
     <h3>Server</h3>
     <p>
-        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ servername }}</a>
+        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a>
     </p>
 
     <h3>Repository</h3>

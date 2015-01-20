@@ -31,6 +31,12 @@
                             <input id="server_type-elasticbeanstalk" type="radio" name="server_type" value="elasticbeanstalk"{{ checked }}>
                             <label for="server_type-elasticbeanstalk">Elastic Beanstalk</label>
                         </li>
+
+                        {% set checked = form.server_type == 'ec2' ? ' checked' : '' %}
+                        <li>
+                            <input id="server_type-ec2" type="radio" name="server_type" value="ec2"{{ checked }}>
+                            <label for="server_type-ec2">EC2</label>
+                        </li>
                     </ul>
                 </li>
                 <li>

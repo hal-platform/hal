@@ -82,13 +82,7 @@
     <article class="card">
         <header class="card__header">
             <h4 class="mbn">
-                {% set title = deployment.server.name %}
-                {% if deployment.server.type == 'elasticbeanstalk' %}
-                    {% set title = 'Elastic Beanstalk' %}
-                {% elseif deployment.server.type == 'ec2' %}
-                    {% set title = 'EC2' %}
-                {% endif %}
-                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ title }}</a>
+                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ deployment|formatDeploymentServer }}</a>
 
                 {% if deployment.url %}
                     <a class="icon--link" href="{{ deployment.url.asString }}">
@@ -167,22 +161,11 @@
 
                 {# deployment details #}
 
-                {% set deployLabel = 'Path' %}
-                {% if deployment.server.type == 'elasticbeanstalk' %}
-                    {% set deployLabel = 'EB Environment' %}
-                {% elseif deployment.server.type == 'ec2' %}
-                    {% set deployLabel = 'EC2 Pool' %}
-                {% endif %}
+                {% set deploymentDetails = deployment|formatDeploymentDetails %}
 
                 <li class="js-data-overload">
-                    <span class="split__title">{{ deployLabel }}:</span>
-                    {% if deployment.server.type == 'elasticbeanstalk' %}
-                        <code title="{{ deployment.ebEnvironment }}">{{ deployment.ebEnvironment }}</code>
-                    {% elseif deployment.server.type == 'ec2' %}
-                        <code title="{{ deployment.ec2Pool }}">{{ deployment.ec2Pool }}</code>
-                    {% else %}
-                        <code title="{{ deployment.path }}">{{ deployment.path }}</code>
-                    {% endif %}
+                    <span class="split__title">{{ deployment|formatDeploymentDetailsLabel }}:</span>
+                    <code title="{{ deploymentDetails }}">{{ deploymentDetails }}</code>
                 </li>
             </ul>
         </section>

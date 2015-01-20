@@ -21,41 +21,17 @@
             <dt class="split--left__title">Server</dt>
             <dd class="split--left__value">
                 {% if push.deployment %}
-                    {% set servername = push.deployment.server.name %}
-                    {% if push.deployment.server.type == 'elasticbeanstalk' %}
-                        {% set servername = 'Elastic Beanstalk' %}
-                    {% elseif push.deployment.server.type == 'ec2' %}
-                        {% set servername = 'EC2' %}
-                    {% endif %}
-                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ servername }}</a>
+                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment|formatDeploymentServer }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
             </dd>
 
             <dt class="split--left__title">
-                {% set pathLabel = 'Path' %}
-                {% if push.deployment and push.deployment.server.type == 'elasticbeanstalk' %}
-                    {% set pathLabel = 'EB Environment' %}
-                {% elseif push.deployment and push.deployment.server.type == 'ec2' %}
-                    {% set pathLabel = 'EC2 Pool' %}
-                {% endif %}
-                {{ pathLabel }}
+                {{ push.deployment|formatDeploymentDetailsLabel }}
             </dt>
             <dd class="split--left__value">
-                {% if push.deployment %}
-                    {% set path = push.deployment.path %}
-                    {% if push.deployment.server.type == 'elasticbeanstalk' %}
-                        {% set path = push.deployment.ebEnvironment %}
-
-                    {% elseif push.deployment.server.type == 'ec2' %}
-                        {% set path = push.deployment.ec2Pool %}
-                    {% endif %}
-
-                    <code>{{ path }}</code>
-                {% else %}
-                    Unknown
-                {% endif %}
+                <code>{{ push.deployment|formatDeploymentDetails }}</code>
             </dd>
 
             {% if push.deployment and push.deployment.url %}

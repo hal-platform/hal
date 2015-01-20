@@ -29,22 +29,10 @@
                 <tbody class="js-add-deployment--{{ environment.key }}">
                     {% for deployment in deployments if deployment.server.environment == environment %}
 
-                        {% set servername = deployment.server.name %}
-                        {% set path_or_whatever = deployment.path %}
-
-                        {% if deployment.server.type == 'elasticbeanstalk' %}
-                            {% set servername = 'Elastic Beanstalk' %}
-                            {% set path_or_whatever = deployment.ebEnvironment %}
-
-                        {% elseif deployment.server.type == 'ec2' %}
-                            {% set servername = 'EC2' %}
-                            {% set path_or_whatever = deployment.ec2Pool %}
-                        {% endif %}
-
                         <tr>
-                            <td>{{ servername }}</td>
+                            <td>{{ deployment|formatDeploymentServer }}</td>
                             <td>
-                                <code>{{ path_or_whatever }}</code>
+                                <code>{{ deployment|formatDeploymentDetails }}</code>
                             </td>
                             <td>
                                 {% if deployment.url %}

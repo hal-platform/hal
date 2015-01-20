@@ -5,15 +5,11 @@
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
-    {% if deployment.server.type == 'elasticbeanstalk' %}
-        {% set servername = 'Elastic Beanstalk' %}
-    {% elseif deployment.server.type == 'ec2' %}
-        {% set servername = 'EC2' %}
-    {% else %}
-        {% set servername = deployment.server.name %}
-    {% endif %}
+    {% set server = deployment|formatDeploymentServer %}
+    {% set deployment_details = deployment|formatDeploymentDetails %}
+    {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
-    <h2>Rollbacks for <strong>{{ repo.description }}</strong> to <strong>{{ servername }}</strong></h2>
+    <h2>Rollbacks for <strong>{{ repo.description }}</strong> to <strong>{{ server }}</strong></h2>
 
     <h3>Deployment Information</h3>
     <div class="details-box">
@@ -21,29 +17,11 @@
 
             <dt class="split--left__title">Server</dt>
             <dd class="split--left__value">
-                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ servername }}</a>
+                <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ server }}</a>
             </dd>
 
-            <dt class="split--left__title">
-                {% set pathLabel = 'Path' %}
-                {% if deployment.server.type == 'elasticbeanstalk' %}
-                    {% set pathLabel = 'EB Environment' %}
-                {% elseif deployment.server.type == 'ec2' %}
-                    {% set pathLabel = 'EC2 Pool' %}
-                {% endif %}
-                {{ pathLabel }}
-            </dt>
-            <dd class="split--left__value">
-                {% set path = deployment.path %}
-                {% if deployment.server.type == 'elasticbeanstalk' %}
-                    {% set path = deployment.ebEnvironment %}
-
-                {% elseif deployment.server.type == 'ec2' %}
-                    {% set path = deployment.ec2Pool %}
-                {% endif %}
-
-                <code>{{ path }}</code>
-            </dd>
+            <dt class="split--left__title">{{ deployment_label }}</dt>
+            <dd class="split--left__value"><code>{{ deployment_details }}</code></dd>
 
             {% if deployment.url %}
                 <dt class="split--left__title">URL</dt>

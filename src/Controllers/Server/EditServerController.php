@@ -225,7 +225,6 @@ class EditServerController implements ControllerInterface
                     $errors[] = 'An EB server for this environment already exists.';
                 }
             }
-        }
 
         // validate duplicate EC2 for environment
         // Only 1 EC2 "server" per environment
