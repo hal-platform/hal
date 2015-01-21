@@ -185,6 +185,8 @@ services:
     twig.extension.ansi:
         class: 'SensioLabs\AnsiConverter\Bridge\Twig\AnsiExtension'
         arguments: [@ansi.converter]
+    twig.extension.status:
+        class: 'QL\Hal\Twig\StatusExtension'
 
     # Twig Environment
     twig.environment:
@@ -195,6 +197,7 @@ services:
             - ['addExtension', [@twig.extension.permissions]]
             - ['addExtension', [@twig.extension.github]]
             - ['addExtension', [@twig.extension.ansi]]
+            - ['addExtension', [@twig.extension.status]]
 
     ansi.converter:
         class: 'SensioLabs\AnsiConverter\AnsiToHtmlConverter'

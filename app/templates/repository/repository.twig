@@ -140,7 +140,9 @@
             {% for env, deployments in deployment_environments %}
                 {% if deployments %}
                     {% set isFirst = true %}
-                    {% for deployment in deployments %}
+                    {% for deployment_pair in deployments %}
+                        {% set deployment = deployment_pair.deployment %}
+                        {% set eb_environment = deployment_pair.eb_environment %}
 
                         <tr>
                             {% if isFirst %}
@@ -152,6 +154,12 @@
 
                             <td>
                                 <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer }}</a>
+                                {% if eb_environment %}
+                                    <small><br>{{ eb_environment|formatEBStatus }}
+                                    {{ eb_environment|formatEBHealth }}
+                                    </small>
+                                {% endif %}
+
                             </td>
                             <td>
                                 <code>{{ deployment|formatDeploymentDetails }}</code>

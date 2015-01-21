@@ -63,6 +63,15 @@
     padding: 4px;
 }
 
+.status-before--unknown, .status-after--unknown {
+    &:before {
+        background-color: $grey;
+    }
+    &:after {
+        background-color: $grey;
+    }
+}
+
 .status-before--success, .status-after--success {
     &:before {
         background-color: $success-color;

@@ -143,6 +143,7 @@ services:
             - @repository.repo
             - @deployment.repo
             - @permissions
+            - @eb
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -230,6 +231,7 @@ services:
             - @repository.deployment.twig
             - @repository.repo
             - @deployment.repo
+            - @eb
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -590,6 +592,7 @@ services:
             - @server.twig
             - @server.repo
             - @deployment.repo
+            - @eb
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters

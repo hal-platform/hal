@@ -9,6 +9,8 @@ namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Entity\Type\ServerEnumType;
+use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -32,6 +34,11 @@ class ServerController implements ControllerInterface
     private $deployRepo;
 
     /**
+     * @type ElasticBeanstalkService
+     */
+    private $ebService;
+
+    /**
      * @type Response
      */
     private $response;
@@ -50,6 +57,7 @@ class ServerController implements ControllerInterface
      * @param TemplateInterface $template
      * @param ServerRepository $serverRepo
      * @param DeploymentRepository $deployRepo
+     * @param ElasticBeanstalkService $ebService
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
@@ -58,6 +66,7 @@ class ServerController implements ControllerInterface
         TemplateInterface $template,
         ServerRepository $serverRepo,
         DeploymentRepository $deployRepo,
+        ElasticBeanstalkService $ebService,
         Response $response,
         NotFound $notFound,
         array $parameters
@@ -65,6 +74,7 @@ class ServerController implements ControllerInterface
         $this->template = $template;
         $this->serverRepo = $serverRepo;
         $this->deployRepo = $deployRepo;
+        $this->ebService = $ebService;
 
         $this->response = $response;
         $this->notFound = $notFound;
@@ -80,12 +90,32 @@ class ServerController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
+        $deployments = $this->deployRepo->findBy(['server' => $server]);
+
+        // Add status of elastic beanstalk environments
+        $ebEnvironments = [];
+        if ($server->getType() === ServerEnumType::TYPE_EB) {
+            $ebEnvironments = $this->ebService->getEnvironmentsByDeployments($deployments);
+        }
+
+        $deployments_with_eb = [];
+        foreach ($deployments as $deployment) {
+            $dep_eb = [
+                'deployment' => $deployment
+            ];
+
+            if (isset($ebEnvironments[$deployment->getId()])) {
+                $dep_eb['eb_environment'] = $ebEnvironments[$deployment->getId()];
+            }
+
+            $deployments_with_eb[] = $dep_eb;
+        }
+
         $rendered = $this->template->render([
             'server' => $server,
-            'deployments' => $this->deployRepo->findBy(['server' => $server])
+            'deployments_with_optional_eb' => $deployments_with_eb
         ]);
 
         $this->response->setBody($rendered);
     }
 }
-

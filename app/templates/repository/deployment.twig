@@ -25,14 +25,34 @@
         {% endif %}
     </p>
 
-    <h3>Elastic Beanstalk Environment ID</h3>
-    <p>
-        {% if deployment.server.type == 'elasticbeanstalk' %}
-            <code>{{ deployment.ebEnvironment }}</code>
-        {% else %}
-            Not Applicable
-        {% endif %}
-    </p>
+    {% if deployment.server.type == 'elasticbeanstalk' and eb_environment %}
+        <h3>Elastic Beanstalk</h3>
+
+        <h5 class="mbn"><strong>EB Application ID</strong></h5>
+        <p>{{ eb_environment.id }}</p>
+
+        <h5 class="mbn"><strong>EB Application Name</strong></h5>
+        <p>{{ eb_environment.name }}</p>
+
+        <h5 class="mbn"><strong>EB Status and Health</strong></h5>
+        <p class="mbn">Status: {{ eb_environment|formatEBStatus }}</p>
+        <p>Health: {{ eb_environment|formatEBHealth }}</p>
+
+        <h5 class="mbn"><strong>EB Solution</strong></h5>
+        <p>{{ eb_environment.solution }}</p>
+
+        <h5 class="mbn"><strong>EB Application URL</strong></h5>
+        <p><a href="http://{{ eb_environment.url }}">{{ eb_environment.url }}</a></p>
+    {% else %}
+        <h3>Elastic Beanstalk Environment ID</h3>
+        <p>
+            {% if deployment.server.type == 'elasticbeanstalk' %}
+                <code>{{ deployment.ebEnvironment }}</code>
+            {% else %}
+                Not Applicable
+            {% endif %}
+        </p>
+    {% endif %}
 
     <h3>EC2 Pool</h3>
     <p>

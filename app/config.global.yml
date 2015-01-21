@@ -45,6 +45,7 @@ parameters:
 
     cache.permissions.ttl: 600
     cache.doctrine.ttl: 600
+    cache.aws.ttl: 20
 
     ############################################################################
     # configuration

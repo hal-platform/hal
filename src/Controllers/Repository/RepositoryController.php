@@ -11,6 +11,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -42,6 +43,11 @@ class RepositoryController implements ControllerInterface
     private $permissions;
 
     /**
+     * @type ElasticBeanstalkService
+     */
+    private $ebService;
+
+    /**
      * @type Response
      */
     private $response;
@@ -61,6 +67,7 @@ class RepositoryController implements ControllerInterface
      * @param RepositoryRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
      * @param PermissionsService $permissions
+     * @param ElasticBeanstalkService $ebService
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
@@ -70,6 +77,7 @@ class RepositoryController implements ControllerInterface
         RepositoryRepository $repoRepo,
         DeploymentRepository $deploymentRepo,
         PermissionsService $permissions,
+        ElasticBeanstalkService $ebService,
         Response $response,
         NotFound $notFound,
         array $parameters
@@ -78,6 +86,7 @@ class RepositoryController implements ControllerInterface
         $this->repoRepo = $repoRepo;
         $this->deploymentRepo = $deploymentRepo;
         $this->permissions = $permissions;
+        $this->ebService = $ebService;
 
         $this->response = $response;
         $this->notFound = $notFound;
@@ -94,10 +103,26 @@ class RepositoryController implements ControllerInterface
         }
 
         $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
+        $environmentalized = $this->environmentalizeDeployments($deployments);
+        $ebEnvironments = $this->ebService->getEnvironmentsByDeployments($deployments);
+
+        foreach ($environmentalized as $env => &$deployments) {
+            foreach ($deployments as &$deployment) {
+                $ebEnv = '';
+                if (isset($ebEnvironments[$deployment->getId()])) {
+                    $ebEnv = $ebEnvironments[$deployment->getId()];
+                }
+
+                $deployment = [
+                    'deployment' => $deployment,
+                    'eb_environment' => $ebEnv
+                ];
+            }
+        }
 
         $rendered = $this->template->render([
             'repository' => $repo,
-            'deployment_environments' => $this->environmentalizeDeployments($deployments),
+            'deployment_environments' => $environmentalized,
             'deployment_count' => count($deployments),
             'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey())
         ]);
@@ -111,6 +136,7 @@ class RepositoryController implements ControllerInterface
      */
     private function environmentalizeDeployments(array $deployments)
     {
+        // should be using server.order instead
         $environments = [
             'dev' => [],
             'test' => [],

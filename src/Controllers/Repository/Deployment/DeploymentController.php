@@ -9,6 +9,7 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 
 use QL\Hal\Core\Entity\Repository\DeploymentRepository;
 use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -32,6 +33,11 @@ class DeploymentController implements ControllerInterface
     private $deploymentRepo;
 
     /**
+     * @type ElasticBeanstalkService
+     */
+    private $ebService;
+
+    /**
      * @type Response
      */
     private $response;
@@ -50,6 +56,7 @@ class DeploymentController implements ControllerInterface
      * @param TemplateInterface $template
      * @param RepositoryRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
+     * @param ElasticBeanstalkService $ebService
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
@@ -58,6 +65,7 @@ class DeploymentController implements ControllerInterface
         TemplateInterface $template,
         RepositoryRepository $repoRepo,
         DeploymentRepository $deploymentRepo,
+        ElasticBeanstalkService $ebService,
         Response $response,
         NotFound $notFound,
         array $parameters
@@ -65,6 +73,7 @@ class DeploymentController implements ControllerInterface
         $this->template = $template;
         $this->repoRepo = $repoRepo;
         $this->deploymentRepo = $deploymentRepo;
+        $this->ebService = $ebService;
 
         $this->response = $response;
         $this->notFound = $notFound;
@@ -84,8 +93,16 @@ class DeploymentController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
+        $ebEnv = null;
+        if ($deployment->getEbEnvironment()) {
+            if ($envs = $this->ebService->getEnvironmentsByDeployments($deployment)) {
+                $ebEnv = array_pop($envs);
+            }
+        }
+
         $rendered = $this->template->render([
-            'deployment' => $deployment
+            'deployment' => $deployment,
+            'eb_environment' => $ebEnv
         ]);
 
         $this->response->setBody($rendered);

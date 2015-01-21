@@ -55,6 +55,17 @@ services:
     # AWS
     ####################################################################################################################
 
+    eb:
+        class: 'QL\Hal\Services\ElasticBeanstalkService'
+        arguments:
+            - @aws.eb
+            - %aws.credentials.key%
+            - %aws.credentials.secret%
+
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.aws.ttl%]]
+
     aws.credentials.cache:
         class: 'Guzzle\Cache\DoctrineCacheAdapter'
         arguments: [@aws.credentials.cache.source]
