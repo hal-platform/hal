@@ -34,7 +34,7 @@ services:
         class: 'QL\Hal\Controllers\LoginHandler'
         arguments:
             - @twig.context
-            - @ldapService
+            - @ldap
             - @user.repo
             - @doctrine.em
             - @session
@@ -647,7 +647,7 @@ services:
         class: 'QL\Hal\Controllers\User\UserController'
         arguments:
             - @user.twig
-            - @ldapService
+            - @ldap
             - @user.repo
             - @permissions
             - @slim.response
@@ -745,7 +745,7 @@ services:
         arguments:
             - @admin.users.twig
             - @user.repo
-            - @ldapService
+            - @ldap
             - @doctrine.em
             - @slim.request
             - @slim.response

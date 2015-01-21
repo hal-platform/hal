@@ -1,4 +1,5 @@
 imports:
+    - resource: di.services.yml
     - resource: di.pages.yml
     - resource: di.api.yml
 
@@ -254,7 +255,7 @@ services:
         class: 'QL\Hal\Middleware\Bouncer\ApiAuthBouncer'
         arguments:
             - @service_container
-            - @ldapService
+            - @ldap
             - @token.repo
 
     cachedApi.middleware:
@@ -263,60 +264,9 @@ services:
             - @response.formatter
             - @slim.response
 
-    ######################################################################################################################
-    # NON-DATABASE SERVICES
-    ######################################################################################################################
-
-    ldapTransport:
-        class: 'Zend\Ldap\Ldap'
-        arguments:
-            -
-                host: %ldap.host%
-                baseDn: %ldap.baseDn%
-                accountDomainNameShort: %ldap.domain%
-
-    ldapService:
-        class: 'MCP\Corp\Account\QLAdService'
-        arguments: [@ldapTransport]
-        calls:
-            - ['authenticate', [%ldap.username%, %ldap.password%, false]]
-
-    permissions:
-        class: 'QL\Hal\Services\PermissionsService'
-        arguments:
-            - @ldapService
-            - @deployment.repo
-            - @repository.repo
-            - @user.repo
-            - @environment.repo
-            - @github
-            - '%debug.godmode%'
-            - %permissions.prod.envs%
-            - %permissions.hal.repos%
-        calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.permissions.ttl%]]
-
-    global.message:
-        class: 'QL\Hal\Services\GlobalMessageService'
-        arguments: [@redis]
-
-    sticky.environment:
-        class: 'QL\Hal\Services\StickyEnvironmentService'
-        arguments:
-            - @slim.cookies
-            - @json
-            - %cookie.preferences.ttl%
-
-    redis:
-        class: 'Predis\Client'
-        arguments:
-            - %redis.server%
-            - {prefix: '%redis.prefix%:'}
-
-    ######################################################################################################################
+    ####################################################################################################################
     # API Helpers
-    ######################################################################################################################
+    ####################################################################################################################
 
     response.formatter:
         class: 'QL\Hal\Api\ResponseFormatter'
@@ -406,68 +356,9 @@ services:
         arguments:
             - @permissions
 
-    ######################################################################################################################
-    # Github API
-    ######################################################################################################################
-
-    github:
-        class: 'QL\Hal\Services\GithubService'
-        arguments:
-            - @github.userService
-            - @github.repoService
-            - @github.refService
-            - @github.pullService
-            - @github.commitService
-            - @github.pager
-            - @github.commitRepo
-
-    github.client:
-        class: 'Github\Client'
-        arguments: [@github.http.client]
-
-    github.http.client:
-        class: 'QL\Hal\Github\CachedHttpClient'
-        arguments:
-            - {base_url: %github.baseurl%}
-        calls:
-            - ['authenticate', [%github.token%, null, 'http_token']]
-            - ['setCache', [@cache.github]]
-
-    github.pager:
-        class: 'Github\ResultPager'
-        arguments: [@github.client]
-
-    github.orgService:
-        class: 'Github\Api\Organization'
-        arguments: [@github.client]
-
-    github.pullService:
-        class: 'Github\Api\PullRequest'
-        arguments: [@github.client]
-
-    github.refService:
-        class: 'Github\Api\GitData\References'
-        arguments: [@github.client]
-
-    github.commitService:
-        class: 'Github\Api\GitData\Commits'
-        arguments: [@github.client]
-
-    github.repoService:
-        class: 'Github\Api\Repo'
-        arguments: [@github.client]
-
-    github.userService:
-        class: 'Github\Api\User'
-        arguments: [@github.client]
-
-    github.commitRepo:
-        class: 'Github\Api\Repository\Commits'
-        arguments: [@github.client]
-
-    ######################################################################################################################
+    ####################################################################################################################
     # SESSION
-    ######################################################################################################################
+    ####################################################################################################################
 
     session:
         class: 'QL\Hal\Session'
@@ -483,37 +374,3 @@ services:
     session.encryption:
         class: 'MCP\Crypto\AES'
         arguments: [%session.encryption.secret%]
-
-    ######################################################################################################################
-    # Logging
-    ######################################################################################################################
-
-    logger:
-        class: 'MCP\Service\Logger\Logger'
-        arguments: [@logger.mcp.service, @logger.mcp.factory]
-
-    logger.mcp.service:
-        class: 'MCP\Service\Logger\Service\GuzzleService'
-        arguments: [@logger.mcp.guzzle, @logger.mcp.renderer, true]
-    logger.mcp.guzzle:
-        class: 'Guzzle\Http\Client'
-        arguments: [%logger.mcp.host%]
-    logger.mcp.renderer:
-        class: 'MCP\Service\Logger\Renderer\XmlRenderer'
-        arguments: [@logger.mcp.writer]
-    logger.mcp.writer:
-        class: 'XMLWriter'
-
-    logger.mcp.factory:
-        class: 'MCP\Service\Logger\Adapter\Psr\MessageFactory'
-        arguments: ['@clock']
-        calls:
-            - ['setDefaultProperty', ['applicationId', %application.id%]]
-            # replaced at runtime, maybe
-            - ['setDefaultProperty', ['machineIPAddress', @logger.mcp.serverIp]]
-            # replaced at runtime
-            - ['setDefaultProperty', ['machineName', 'localhost']]
-    logger.mcp.serverIp:
-        class: 'MCP\DataType\IPv4Address'
-        factory: ['MCP\DataType\IPv4Address', 'create']
-        arguments: ['0.0.0.0']
