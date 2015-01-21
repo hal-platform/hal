@@ -20,7 +20,7 @@
 
     {% set hasPushes = false %}
 
-    <h3 class="js-overloader-parent">
+    <h3 class="{{ (deployment_statuses) ? 'js-overloader-parent' : '' }}">
         Server Status for <strong>{{ selected_environment.key }}</strong>
     </h3>
 
