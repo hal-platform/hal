@@ -175,6 +175,8 @@ class AddRepositoryController implements ControllerInterface
         $user = strtolower($request->post('github_user'));
         $repo = strtolower($request->post('github_repo'));
 
+        $buildCommand = (string) $request->post('build_command');
+
         $repository = new Repository;
         $repository->setKey($identifier);
         $repository->setName($name);
@@ -184,9 +186,13 @@ class AddRepositoryController implements ControllerInterface
         $repository->setGithubUser($user);
         $repository->setGithubRepo($repo);
 
-        if ($buildCommand = $request->post('build_command')) {
-            $repository->setBuildCmd($buildCommand);
-        }
+        $repository->setBuildCmd($buildCommand);
+
+        // Default to blank, not null
+        $repository->setBuildTransformCmd('');
+        $repository->setPrePushCmd('');
+        $repository->setPostPushCmd('');
+        $repository->setEbName('');
 
         $this->entityManager->persist($repository);
         $this->entityManager->flush();
