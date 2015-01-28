@@ -105,6 +105,7 @@ class RepositoryController implements ControllerInterface
         $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
         $environmentalized = $this->environmentalizeDeployments($deployments);
         $ebEnvironments = $this->ebService->getEnvironmentsByDeployments($deployments);
+        $deploymentCount = count($deployments);
 
         foreach ($environmentalized as $env => &$deployments) {
             foreach ($deployments as &$deployment) {
@@ -123,7 +124,7 @@ class RepositoryController implements ControllerInterface
         $rendered = $this->template->render([
             'repository' => $repo,
             'deployment_environments' => $environmentalized,
-            'deployment_count' => count($deployments),
+            'deployment_count' => $deploymentCount,
             'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey())
         ]);
 
