@@ -20,8 +20,12 @@
        {{ block('intro') }}
     {% endif %}
 
-    {# QUICK BUILD #}
+    {# STUCK WORK #}
+    {% if isUserAdmin(currentUser) and stuck %}
+        {% include 'partials/stuck-table.twig' %}
+    {% endif %}
 
+    {# QUICK BUILD #}
     {% if repositories %}
         <button class="btn trailer js-hide-btn">Start a Build</button>
         <div class="js-hide-box">
@@ -49,7 +53,7 @@
     {% endif %}
 
     {# PENDING WORK #}
-    {% if isUserAdmin(currentUser) and pending %}
+    {% if pending %}
         <h3>Build and Push Queue</h3>
         {% include 'partials/pending-table.twig' %}
     {% endif %}

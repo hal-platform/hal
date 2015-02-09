@@ -15,6 +15,7 @@ services:
             - @dashboard.twig
             - @currentUser
             - @permissions
+            - @clock
             - @build.repo
             - @push.repo
             - @user.repo

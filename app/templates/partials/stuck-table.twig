@@ -1,0 +1,64 @@
+{% if forceDisplay or stuck %}
+<h3>Stuck Jobs</h3>
+<p>The following is a list of builds or pushes that have been running for more than 45 minutes. They require intervention from HAL administrators!</p>
+<table class="tablesaw tablesaw-stack stuck-table" data-mode="stack">
+    <thead>
+        <th>Type</th>
+        <th>Repository</th>
+        <th>Status</th>
+        <th>Env → Server</th>
+        <th>Job Start Time</th>
+    </thead>
+    <tbody>
+        {% if stuck %}
+            {% for job in stuck %}
+                {% if job is build %}
+                    <tr>
+                        <td><a href="{{ urlFor('build', {build: job.id}) }}">Build</a></td>
+                        <td><a href="{{ urlFor('repository.status', {id: job.repository.id}) }}">{{ job.repository.name }}</a></td>
+                        <td>
+                            {% if job.status == 'Success' %}
+                                <span class="status-before--success">{{ job.status }}</span>
+                            {% elseif job.status in ['Error', 'Removed'] %}
+                                <span class="status-before--error">{{ job.status }}</span>
+                            {% elseif job.status in ['Waiting', 'Building', 'Pushing'] %}
+                                <span class="status-before--thinking">{{ job.status }}</span>
+                            {% else %}
+                                <span class="status-before--other">{{ job.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ job.environment.key }}
+                        <td>{{ job.created|reldate }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><a href="{{ urlFor('push', {push: job.id}) }}">Push</a></td>
+                        <td><a href="{{ urlFor('repository.status', {id: job.repository.id}) }}">{{ job.repository.name }}</a></td>
+                        <td>
+                            {% if job.status == 'Success' %}
+                                <span class="status-before--success">{{ job.status }}</span>
+                            {% elseif job.status in ['Error', 'Removed'] %}
+                                <span class="status-before--error">{{ job.status }}</span>
+                            {% elseif job.status in ['Waiting', 'Building', 'Pushing'] %}
+                                <span class="status-before--thinking">{{ job.status }}</span>
+                            {% else %}
+                                <span class="status-before--other">{{ job.status }}</span>
+                            {% endif %}
+                        </td>
+                        {% if job.deployment %}
+                            <td>{{ job.build.environment.key }} → {{ job.deployment|formatDeploymentServer(true) }}</td>
+                        {% else %}
+                            <td>{{ job.build.environment.key }} → Unknown</td>
+                        {% endif %}
+                        <td>{{ job.created|reldate }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <tr id="js-emptyQueue">
+                <td colspan="6">There are no stuck jobs!</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}

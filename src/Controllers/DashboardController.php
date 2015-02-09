@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers;
 
 use Doctrine\Common\Collections\Criteria;
+use MCP\DataType\Time\Clock;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Repository\BuildRepository;
@@ -21,6 +22,8 @@ use Slim\Http\Response;
 
 class DashboardController implements ControllerInterface
 {
+    const AGE_OF_STUCK_JOBS = '-45 minutes';
+
     /**
      * @type TemplateInterface
      */
@@ -35,6 +38,11 @@ class DashboardController implements ControllerInterface
      * @type PermissionsService
      */
     private $permissions;
+
+    /**
+     * @type Clock
+     */
+    private $clock;
 
     /**
      * @type BuildRepository
@@ -60,6 +68,7 @@ class DashboardController implements ControllerInterface
      * @param TemplateInterface $template
      * @param User $currentUser
      * @param PermissionsService $permissions
+     * @param Clock $clock
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      * @param UserRepository $userRepo
@@ -69,6 +78,7 @@ class DashboardController implements ControllerInterface
         TemplateInterface $template,
         User $currentUser,
         PermissionsService $permissions,
+        Clock $clock,
         BuildRepository $buildRepo,
         PushRepository $pushRepo,
         UserRepository $userRepo,
@@ -77,6 +87,7 @@ class DashboardController implements ControllerInterface
         $this->template = $template;
         $this->currentUser = $currentUser;
         $this->permissions = $permissions;
+        $this->clock = $clock;
 
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
@@ -95,14 +106,17 @@ class DashboardController implements ControllerInterface
         $recentBuilds = $this->buildRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
         $recentPushes = $this->pushRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
 
-        $pending = [];
-        if ($this->permissions->allowAdmin($user)) {
-            $pending = $this->getAllPendingJobs();
+        $pending = $this->getAllPendingJobs();
+
+        $stuck = [];
+        if ($this->permissions->allowSuperAdmin($user)) {
+            $stuck = $this->getStuckJobs();
         }
 
         $rendered = $this->template->render([
             'repositories' => $this->permissions->userRepositories($this->currentUser),
             'pending' => $pending,
+            'stuck' => $stuck,
             'builds' => $recentBuilds,
             'pushes' => $recentPushes
         ]);
@@ -123,6 +137,36 @@ class DashboardController implements ControllerInterface
         $pushCriteria = (new Criteria)
             ->where(Criteria::expr()->eq('status', 'Waiting'))
             ->orWhere(Criteria::expr()->eq('status', 'Pushing'))
+            ->orderBy(['created' => 'DESC']);
+
+        $builds = $this->buildRepo->matching($buildCriteria);
+        $pushes = $this->pushRepo->matching($pushCriteria);
+
+        $jobs = array_merge($builds->toArray(), $pushes->toArray());
+        usort($jobs, $this->queueSort());
+
+        return $jobs;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getStuckJobs()
+    {
+        $now = $this->clock->read();
+        $thirtyMinutesAgo = $now->modify(self::AGE_OF_STUCK_JOBS);
+
+        $buildCriteria = (new Criteria)
+            ->where(Criteria::expr()->eq('status', 'Waiting'))
+            ->orWhere(Criteria::expr()->eq('status', 'Building'))
+            ->andWhere(Criteria::expr()->lt('created', $thirtyMinutesAgo))
+            ->orderBy(['created' => 'DESC']);
+
+        $pushCriteria = (new Criteria)
+            ->where(Criteria::expr()->eq('status', 'Waiting'))
+            ->orWhere(Criteria::expr()->eq('status', 'Pushing'))
+            ->andWhere(Criteria::expr()->lt('created', $thirtyMinutesAgo))
             ->orderBy(['created' => 'DESC']);
 
         $builds = $this->buildRepo->matching($buildCriteria);
