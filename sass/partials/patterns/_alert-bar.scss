@@ -1,48 +1,60 @@
 [class="alert-bar"], [class^="alert-bar--"] {
-    background-color: $bright-blue;
-    padding: 0 msem(-9);
-    text-align: center;
-    @include rhythm(0,.5,.5,1);
+    text-align: left;
+    padding: msem(-5);
+    margin-bottom: msem(3);
     @extend %clearfix;
 
-    b {
-        color: $text-color;
+    background-color: $bright-blue;
+    color: $white;
+
+    h4 {
+        padding: msem(-9);
+        border: 2px solid #eee;
+        margin: 0;
+
+        background: rgba(255, 255, 255, 0.75);
+        color: $bright-blue;
     }
 
     p {
-        margin-bottom: 0;
+        margin: msem(-9) 0;
     }
+
+    pre {
+        background-color: transparent;
+        color: $text-color;
+        margin-top: msem(-5);
+        margin-bottom: msem(-5);
+    }
+
+    border: 2px solid #ddd;
 }
 
 .alert-bar--error {
     background-color: $error-color;
     color: $white;
+    h4 {
+        color: $error-color;
+    }
 }
 
 .alert-bar--warning {
     background-color: $warning-color;
+    color: $white;
+    h4 {
+        color: $warning-color;
+    }
 }
 
 .alert-bar--success {
     background-color: $success-color;
+    color: $white;
+    h4 {
+        color: $success-color;
+    }
 }
 
-[class="alert-bar"] pre, [class^="alert-bar--"] pre {
-    text-align: left;
-    background-color: transparent;
-    color: $text-color;
-    margin-top: msem(-5);
-    margin-bottom: msem(-5);
-}
-
-.alert-bar__details {
-    background: rgba(255, 255, 255, 0.75);
-    margin: 1em;
-    margin-bottom: 0;
-    padding: 5px;
-    text-align: left;
-}
-
+// event log table
 .status-block {
     @include adjust-font-size-to(ms(1));
     display: block;

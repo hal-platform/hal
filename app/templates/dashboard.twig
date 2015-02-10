@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = 'Dashboard' %}
 
@@ -22,7 +23,12 @@
 
     {# STUCK WORK #}
     {% if isUserAdmin(currentUser) and stuck %}
-        {% include 'partials/stuck-table.twig' %}
+        {% set title = 'There is <strong>' ~ stuck|length ~ '</strong> stuck job!' %}
+        {% if stuck|length > 1 %}
+            {% set title = 'There are <strong>' ~ stuck|length ~ '</strong> stuck jobs!' %}
+        {% endif %}
+
+        {{ macros.alert('error', title, block('stuck_details')) }}
     {% endif %}
 
     {# QUICK BUILD #}
@@ -95,4 +101,9 @@
 
         <p>I look forward to working with you.</p>
     </div>
+{% endblock %}
+
+{% block stuck_details %}
+    Stuck jobs are builds or pushes that have been running for more than 45 minutes.<br>
+    They require intervention from HAL administrators!
 {% endblock %}

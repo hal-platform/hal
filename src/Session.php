@@ -63,13 +63,14 @@ class Session extends Set
     /**
      * @param string $message
      * @param string|null $type
+     * @param string $details
      *
      * @return Flash
      */
-    private function setFlash($message, $type = null)
+    private function setFlash($message, $type = null, $details = '')
     {
         $type = ($type) ? $type : Flash::INFO;
-        $flash = new Flash($message, $type);
+        $flash = new Flash($message, $type, $details);
 
         $flashes = $this->getFlashes();
         $flashes[] = $flash;

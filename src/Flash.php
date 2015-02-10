@@ -19,12 +19,17 @@ class Flash
     /**
      * @type string
      */
+    private $type;
+
+    /**
+     * @type string
+     */
     private $message;
 
     /**
      * @type string
      */
-    private $type;
+    private $details;
 
     private static $validTypes = [
         self::INFO,
@@ -36,15 +41,25 @@ class Flash
     /**
      * @param string $message
      * @param string $type
+     * @param string $details
      */
-    public function __construct($message, $type = self::INFO)
+    public function __construct($message, $type = self::INFO, $details = '')
     {
         $this->message = $message;
         $this->type = $type;
+        $this->details = $details;
 
         if (!in_array($this->type, self::$validTypes)) {
             throw new InvalidArgumentException(sprintf('Invalid type given: %s', $this->type));
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function type()
+    {
+        return $this->type;
     }
 
     /**
@@ -58,9 +73,9 @@ class Flash
     /**
      * @return string
      */
-    public function type()
+    public function details()
     {
-        return $this->type;
+        return $this->details;
     }
 
     /**

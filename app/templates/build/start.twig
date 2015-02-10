@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 {% import _self as page_macros %}
 
 {% set page_title = "Start Build: " ~ repo.name %}
@@ -33,7 +34,8 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                <p class="alert-bar--error">There are no buildable environments for this repository. Deployments must added.</p>
+                {% set alert_message = 'There are no buildable environments for this repository. Deployments must added.' %}
+                {{ macros.alert('error', alert_message) }}
             {% endif %}
         {% endblock %}
 
@@ -68,17 +70,16 @@
             {# Dynamic warning, for when HAL cannot find a matching radio option #}
             {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}
             <div class="leader js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
-                <div class="alert-bar--warning">
-                    {% if isSeriousBusinessMode() %}
-                        A git reference cannot be found from your search query. HAL will attempt to resolve this reference on the backend.
-                    {% else %}
-                        <strong>Just what do you think you're doing, Dave?</strong>
-                        <p class="tl">
-                            I cannot find a git reference for your search query.
-                            However if you attempt build using this query, I will use my enormous intellect to fulfill the mission.
-                        </p>
-                    {% endif %}
-                </div>
+
+                {% if isSeriousBusinessMode() %}
+                    {% set alert_message = 'A git reference cannot be found from your search query. HAL will attempt to resolve this reference on the backend.' %}
+                    {% set alert_details = '' %}
+                {% else %}
+                    {% set alert_message = "Just what do you think you're doing, Dave?" %}
+                    {% set alert_details = 'I cannot find a git reference for your search query.<br>However if you attempt to build using this query, I will use my enormous intellect to fulfill the mission.' %}
+                {% endif %}
+
+                {{ macros.alert('warning', alert_message, alert_details) }}
             </div>
 
             {% if environments %}

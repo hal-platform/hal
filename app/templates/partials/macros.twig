@@ -1,0 +1,18 @@
+{% macro alert(type, title, details, isRaw = false) %}
+    {% set alerttype = 'alert-bar' %}
+    {% if (type == 'error') %}{% set alerttype = 'alert-bar--error' %}{% endif %}
+    {% if (type == 'success') %}{% set alerttype = 'alert-bar--success' %}{% endif %}
+    {% if (type == 'warning') %}{% set alerttype = 'alert-bar--warning' %}{% endif %}
+
+    <div class="{{ alerttype }}">
+        <h4>{{ title|raw }}</h4>
+        {% if details %}
+            {% if isRaw %}
+                {{ details|raw }}
+            {% else %}
+                <p>{{ details|raw }}</p>
+            {% endif %}
+        {% endif %}
+    </div>
+
+{% endmacro %}

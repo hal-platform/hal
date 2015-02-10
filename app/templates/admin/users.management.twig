@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = "User Management" %}
 
 {% block content %}
 
     {% if pruned %}
-        <div class="alert-bar--success">
-            <p>The users <strong>{{ pruned|join(', ') }}</strong> have been disabled.</p>
-        </div>
+        {% set alert_message = 'The users <strong>' ~ pruned|join(', ') ~ '</strong> have been disabled.' %}
+        {{ macros.alert('success', alert_message) }}
+
     {% elseif no_pruned %}
-        <div class="alert-bar">
-            <p>No users were disabled. All inactive users are already disabled in HAL.</p>
-        </div>
+        {% set alert_message = 'No users were disabled. All inactive users are already disabled in HAL.' %}
+        {{ macros.alert('info', alert_message) }}
     {% endif %}
 
     <h2>User Management</h2>

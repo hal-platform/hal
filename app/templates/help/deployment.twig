@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = 'Deployment Help' %}
 
@@ -36,9 +37,8 @@
        Build command are executed from a semi-isolated environment on the build server. Push commands are executed on the server the application code is being pushed to.
        HAL 9000 will consider any command with a non-zero exit code as a failure.
     </p>
-    <p class="alert-bar--warning">
-        The exit code of the command <strong>MUST</strong> be 0.
-    </p>
+
+    {{ macros.alert('warning', 'The exit code of the command <strong>MUST</strong> be 0.') }}
 
     <a name="build-environment"></a>
     <h3>Build Scripting Environment</h3>
@@ -167,9 +167,7 @@ date: ''       # ISO 8601 date
 
     <p>Installing gems or npm dependencies outside of the <strong>$HOME</strong> directory is unsupported and may break without warning. <strong>DO NOT DO THIS</strong>.</p>
 
-    <p class="alert-bar--warning">
-        Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.
-    </p>
+    {{ macros.alert('warning', 'Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.') }}
 
     <h4>Recommended installation commands</h4>
     <table>

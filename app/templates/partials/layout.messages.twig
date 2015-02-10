@@ -1,16 +1,10 @@
 {# FLASH MESSAGES #}
+{% import "partials/macros.twig" as macros %}
+
 {% block flash %}
     {% if session.flash(true) %}
         {% for message in session.flash(false) %}
-
-            {% set alerttype = 'alert-bar' %}
-            {% if (message.type == 'error') %}{% set alerttype = 'alert-bar--error' %}{% endif %}
-            {% if (message.type == 'success') %}{% set alerttype = 'alert-bar--success' %}{% endif %}
-            {% if (message.type == 'warning') %}{% set alerttype = 'alert-bar--warning' %}{% endif %}
-
-            <div class="{{ alerttype }}">
-                {{ message|raw }}
-            </div>
+            {{ macros.alert(message.type, message, message.details) }}
         {% endfor %}
     {% endif %}
 {% endblock %}
@@ -18,8 +12,6 @@
 {# GLOBAL MESSAGE #}
 {% block messages %}
     {% if globalMessage() %}
-        <div class="alert-bar">
-            {{ globalMessage()|raw }}
-        </div>
+        {{ macros.alert('info', 'Alert', globalMessage(), true) }}
     {% endif %}
 {% endblock %}

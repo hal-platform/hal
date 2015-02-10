@@ -115,13 +115,13 @@ HELLO;
         $this->saveNavPreferences($this->request->post('navpreferences'));
         $isChanged = $this->saveBusinessMode($this->request->post('seriousbusiness'));
 
-        $msg = '<strong>Your preferences have been saved.</strong>';
+        $details = '';
         if ($isChanged) {
             $flavor = $this->request->post('seriousbusiness') ? self::GOODBYE_HAL : self::PARTY_ON;
-            $msg .= ' ' . sprintf($flavor, $name);
+            $details = sprintf($flavor, $name);
         }
 
-        $this->session->flash($msg, 'success');
+        $this->session->flash('Your preferences have been saved.', 'success', $details);
 
         $this->url->redirectFor('settings');
     }

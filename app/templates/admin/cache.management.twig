@@ -1,15 +1,16 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Cache Management" %}
 
 {% block content %}
 
     {% if doctrine_status %}
-        <div class="alert-bar--success">Doctrine Caches Cleared!</div>
+        {{ macros.alert('success', 'Doctrine Caches Cleared!') }}
     {% endif %}
 
     {% if permission_status %}
-        <div class="alert-bar--success">Permission Caches Cleared!</div>
+        {{ macros.alert('success', 'Permission Caches Cleared!') }}
     {% endif %}
 
     <h2>Cache Management</h2>

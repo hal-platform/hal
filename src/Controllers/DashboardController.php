@@ -148,7 +148,6 @@ class DashboardController implements ControllerInterface
         return $jobs;
     }
 
-
     /**
      * @return array
      */
@@ -173,7 +172,6 @@ class DashboardController implements ControllerInterface
         $pushes = $this->pushRepo->matching($pushCriteria);
 
         $jobs = array_merge($builds->toArray(), $pushes->toArray());
-        usort($jobs, $this->queueSort());
 
         return $jobs;
     }
