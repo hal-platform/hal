@@ -154,6 +154,9 @@ date: ''       # ISO 8601 date
         <li>Gem (Ruby)</li>
     </ul>
 
+
+    {{ macros.alert('info', 'NPM and Gem are installed globally.<strong> Composer and Bundler are not.</strong>', block('pm_details'), true) }}
+
     <p>
         Each project has its own dedicated <strong>$HOME</strong> directory, and caches and packages will be installed there.
         HAL 9000 automatically sets isolated installation and caching directories for these tools.
@@ -197,4 +200,16 @@ date: ''       # ISO 8601 date
             </tr>
         </tbody>
     </table>
+{% endblock %}
+
+
+{% block pm_details %}
+<p>
+    To use <strong>Composer</strong>, it must be committed and included in your codebase or downloaded manually.
+    <a href="http://composer/">http://composer</a> provides an installer that can download and run Composer on-the-fly.<br><br>
+</p>
+
+<p>
+    <strong>Bundler</strong> must be installed with gem before running <code>bundle install</code>.
+</p>
 {% endblock %}

@@ -6,27 +6,51 @@
     <h2>Help &amp; FAQ</h2>
 
     <ul>
-        <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
-        <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
-        <li><a href="#add-application">I would like to deploy my application with HAL 9000. What do I need to do?</a></li>
-        <li><a href="#training">Are there any training sessions available?</a></li>
-        <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
-        <li><a href="#api">So, I heard there's an API. Is there any documentation?</a></li>
-        {% if not isSeriousBusinessMode() %}
-            <li><a href="#hellodave">My name isn't Dave!</a></li>
-        {% endif %}
+        <li class="trailer">
+            <a href="#help-support"><b>Support</b></a>
+            <ul>
+                <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
+                <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
+                <li><a href="#training">Are there any training sessions available?</a></li>
+            </ul>
+        </li>
+
+        <li class="trailer">
+            <a href="#help-setup"><b>Application Setup</b></a>
+            <ul>
+                <li><a href="#add-application">I would like to deploy my application with HAL 9000. What do I need to do?</a></li>
+                <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
+                <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="#help-misc"><b>Other</b></a>
+            <ul>
+                <li><a href="#api">So, I heard there's an API. Is there any documentation?</a></li>
+                {% if not isSeriousBusinessMode() %}
+                    <li><a href="#hellodave">My name isn't Dave!</a></li>
+                {% endif %}
+            </ul>
+        </li>
     </ul>
 
-    <a name="permission"></a>
-    <h3>Who should I contact for support or permission changes?</h3>
+    <h2 id="help-support">Support</h2>
+
+    <h4 id="permission">Who should I contact for support or permission changes?</h4>
     <p>You should email <strong>Team Key Masters</strong> at <a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a>.</p>
 
 
-    <a name="bugs"></a>
-    <h3>Who should I contact regarding bugs or feature requests?</h3>
+    <h4 id="bugs">Who should I contact regarding bugs or feature requests?</h4>
     <p>
         HAL 9000 is developed and maintained by the Web Core team. To report bugs or request a new features, please
         submit an issue in the Github repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
+    </p>
+
+    <h4 id="training">Are there any training sessions available?</h4>
+    <p>
+        If you would like to train your team on how to use HAL 9000, then contact the <a href="mailto:ITTeamWebCore@quickenloans.com">Web Core</a>
+        team and we'll set up a time to show you how.
     </p>
 
     <p>For general questions or critical errors, you can contact Web Core through the following methods:</p>
@@ -36,8 +60,9 @@
         <li><a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a> (email)</li>
     </ul>
 
-    <a name="add-application"></a>
-    <h3>I would like to deploy my application with HAL 9000. What do I need to do?</h3>
+    <h2 id="help-setup">Application Setup</h2>
+
+    <h4 id="add-application">I would like to deploy my application with HAL 9000. What do I need to do?</h4>
     <p>The project files must be on the <a href="http://git">Github Enterprise</a> server.</p>
     <p>After making sure that your project meets the minimum requirements above, gather the information below.</p>
     <ol>
@@ -98,28 +123,21 @@
         <a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a> to assist you with the process.
     </p>
 
-    <a name="training"></a>
-    <h3>Are there any training sessions available?</h3>
-    <p>
-        If you would like to train your team on how to use HAL 9000, then contact the <a href="mailto:ITTeamWebCore@quickenloans.com">Web Core</a>
-        team and we'll set up a time to show you how.
-    </p>
-
-    <a name="application-deployment"></a>
-    <h3>How do I use a script to build or push my application?</h3>
+    <h4 id="application-deployment">How do I use a script to build or push my application?</h4>
     <p>
         System commands can be used to customize the build and/or push process for an application. Read more about the
         <a href="{{ urlFor('help.deployment') }}">build and push scripting environment</a>.
     </p>
 
-    <a name="api"></a>
-    <h3>So, I heard there's an API. Is there any documentation?</h3>
+
+    <h2 id="help-misc">Other</h2>
+
+    <h4 id="api">So, I heard there's an API. Is there any documentation?</h4>
     <p>There is a read-only hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a></p>
     <p>However, there is no api documentation at this time.</p>
 
     {% if not isSeriousBusinessMode() %}
-        <a name="hellodave"></a>
-        <h3>My name isn't Dave!</h3>
+        <h4 id="hellodave">My name isn't Dave!</h4>
         <p>
             Look Dave, I can see you're really upset about this.
             I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ urlFor('help.hal') }}">think things over</a>.
