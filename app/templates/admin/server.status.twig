@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "Global Server Status" %}
+
+{% block content %}
+    <h2>Global Server Status</h2>
+
+    {% if server_count %}
+
+        {% for env, servers in server_environments %}
+            {% if servers %}
+                <h3>{{ env }}</h3>
+                <ul class="col-list">
+                    {% for server in servers %}
+                        <li class="status-before--unknown" data-server-status="{{ server.id }}">
+                            <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endfor %}
+
+    {% else %}
+        {{ macros.alert('error', 'There are no servers.') }}
+    {% endif %}
+
+{% endblock %}

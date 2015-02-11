@@ -5,6 +5,8 @@ define([], function() {
         { url: "/repositories/add",                 controller: "repository-add" },
         { url: "/repositories/{id}/deployments",    controller: "deployment-add" },
 
+        { url: "/admin/server-status",              controller: "server-status" },
+
         { url: "/repositories/{id}/build",          controller: "build-create" },
         { url: "/builds/{id}/push",                 controller: "push-create" },
 

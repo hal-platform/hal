@@ -721,6 +721,7 @@ services:
             - @currentUser
             - @slim.not.found
             - @slim.route.parameters
+
     ######################################################################################################################
     # ADMIN CONTROLLERS
     ######################################################################################################################
@@ -781,6 +782,27 @@ services:
     admin.message.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/global.message.twig']]]
+
+    admin.server.status.page:
+        class: 'QL\Hal\Controllers\Server\ServersController'
+        arguments:
+            - @admin.server.status.twig
+            - @server.repo
+            - @slim.response
+    admin.server.status.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/server.status.twig']]]
+
+    admin.server.status.handler:
+        class: 'QL\Hal\Controllers\Admin\ServerStatusHandler'
+        arguments:
+            - @slim.response
+            - @server.repo
+            - @slim.route.parameters
+            - %cli.user%
+        # calls:
+        #     - ['setCache', [@cache]]
+        #     - ['setCacheTTL', [%cache.server.ttl%]]
 
     ######################################################################################################################
     # HELP CONTROLLERS

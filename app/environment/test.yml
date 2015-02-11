@@ -24,3 +24,5 @@ parameters:
     aws.region: ''
     aws.credentials.key: ''
     aws.credentials.secret: ''
+
+    cli.user: 'hal9000test'

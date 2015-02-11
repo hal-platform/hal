@@ -25,6 +25,8 @@ parameters:
     aws.credentials.key: ''
     aws.credentials.secret: ''
 
+    cli.user: ''
+
 services:
     cache.doctrine:
         class: 'Doctrine\Common\Cache\ArrayCache'
