@@ -800,9 +800,9 @@ services:
             - @server.repo
             - @slim.route.parameters
             - %cli.user%
-        # calls:
-        #     - ['setCache', [@cache]]
-        #     - ['setCacheTTL', [%cache.server.ttl%]]
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.server.ttl%]]
 
     ######################################################################################################################
     # HELP CONTROLLERS
