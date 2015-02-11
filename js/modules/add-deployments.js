@@ -107,7 +107,13 @@ define(['jquery'], function($) {
             this.resetForm();
 
             // add success alert
-            var $alert = $('<div>').addClass('alert-bar--success').text('Deployment Added.');
+            var $alert = $('<div>')
+                .addClass('alert-bar--success');
+
+            $('<h4>')
+                .text('Deployment Added.')
+                .appendTo($alert);
+
             this.$container
                 .find('form').before($alert);
 
