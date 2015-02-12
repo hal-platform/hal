@@ -1,5 +1,5 @@
 define(
-    ['require', 'crossroads', 'controller/_routes', 'modules/terminal', 'modules/nofunzone', 'underscore'],
+    ['require', 'crossroads', 'controller/_routes', 'modules/util/terminal', 'modules/util/nofunzone', 'underscore'],
     function(require, crossroads, routes, terminal, nofunzone, _) {
         return {
             init: function() {

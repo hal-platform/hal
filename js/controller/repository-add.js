@@ -1,4 +1,4 @@
-define(['modules/add-repository'], function(addRepository) {
+define(['modules/form/add-repository'], function(addRepository) {
     addRepository.users.attach();
     addRepository.repos.attach();
 });

@@ -1,3 +1,3 @@
-define(['modules/add-deployments'], function(addDeployment) {
+define(['modules/form/add-deployments'], function(addDeployment) {
     addDeployment.init();
 });

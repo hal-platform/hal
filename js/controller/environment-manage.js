@@ -1,3 +1,3 @@
-define(['modules/order-environments'], function(orderEnvironments) {
+define(['modules/form/order-environments'], function(orderEnvironments) {
     orderEnvironments.init();
 });
