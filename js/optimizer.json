@@ -52,6 +52,10 @@
             "name": "controller/server-status",
             "exclude": [ "main" ]
         },
+        {
+            "name": "controller/dangerzone",
+            "exclude": [ "main" ]
+        },
 
         // components (controller groups)
         // Combine multiple controllers into components and add "component" to their route

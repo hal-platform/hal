@@ -804,6 +804,16 @@ services:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.server.ttl%]]
 
+    admin.dangerzone.page:
+        class: 'QL\Hal\Controllers\Admin\DangerzoneController'
+        arguments:
+            - @admin.dangerzone.twig
+            - @slim.request
+            - @slim.response
+    admin.dangerzone.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/dangerzone.cli.twig']]]
+
     ######################################################################################################################
     # HELP CONTROLLERS
     ######################################################################################################################

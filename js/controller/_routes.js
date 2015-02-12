@@ -6,6 +6,7 @@ define([], function() {
         { url: "/repositories/{id}/deployments",    controller: "deployment-add" },
 
         { url: "/admin/server-status",              controller: "server-status" },
+        { url: "/superadmin/dangerzone",            controller: "dangerzone" },
 
         { url: "/repositories/{id}/build",          controller: "build-create" },
         { url: "/builds/{id}/push",                 controller: "push-create" },

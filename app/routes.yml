@@ -89,6 +89,11 @@ parameters:
             route: '/superadmin/message'
             stack: ['superadmin.bouncer', 'admin.message.page']
 
+        admin.super.dangerzone:
+            method: ['GET', 'POST']
+            route: '/superadmin/dangerzone'
+            stack: ['superadmin.bouncer', 'admin.dangerzone.page']
+
         ################################################################################################################
         # HELP ROUTES
         ################################################################################################################
