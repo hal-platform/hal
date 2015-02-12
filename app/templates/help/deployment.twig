@@ -6,12 +6,17 @@
 {% block content %}
     <h2>Deployment scripting guide for engineers</h2>
 
+    <p><a class="btn--small btn--back" href="{{ urlFor('help') }}">Back to Help</a></p>
+
     <ul>
+        <li><a href="#shell-commands">Commands</a></li>
+        <li><a href="#configuration-file">.hal9000.yml configuration file</a></li>
         <li><a href="#build-environment">Build scripting environment</a></li>
         <li><a href="#push-environment">Push scripting environment</a></li>
         <li><a href="#package-managers">Supported package managers</a></li>
     </ul>
 
+    <h2 id="shell-commands">Commands</h2>
     <p>An application can specify a command to run in each of these separate steps in the deployment process:</p>
     <ul>
         <li><strong>Build</strong> (Runs on build server)</li>
@@ -20,7 +25,11 @@
         <li><strong>Post-push</strong> (Runs on deployment web server)</li>
     </ul>
 
-    <p>These commands must be executable in a standard shell environment. It is common for applications to create a special bin within the project folder, but any command will do.</p>
+    <p>
+        These commands must be executable in a standard <strong>SSH shell environment</strong>.
+        It is common for applications to create a special bin within the project folder, but any command will do.<br><br>
+        Commands designed to run on the target server (pre-push or post-push) are skipped for EC2 and Elastic Beanstalk deployments
+    </p>
 
     Examples:
     <ul>
@@ -28,6 +37,8 @@
         <li><code>npm install</code></li>
         <li><code>bin/composer install --no-dev</code></li>
         <li><code>bin/deploy</code></li>
+        <li><code>cmd /c build.cmd</code></li>
+        <li><code>bin/compile_my_application --environment $HAL_ENVIRONMENT</code></li>
     </ul>
 
     <p>
@@ -40,10 +51,78 @@
 
     {{ macros.alert('warning', 'The exit code of the command <strong>MUST</strong> be 0.') }}
 
-    <a name="build-environment"></a>
-    <h3>Build Scripting Environment</h3>
-    <p>During the build process, The following environment variables are available to application build scripts:</p>
+    <h2 id="configuration-file">HAL 9000 configuration file</h2>
+    <p>
+        Several deployment options may be configured by committing a <code>.hal9000.yml</code> to the base directory of your project codebase.
+    </p>
 
+    {{ block('configuration_explanation') }}
+
+    <h5>Here is an example with default values:</h5>
+    {{ block('configuration_file') }}
+
+    <p>
+        For applications already using HAL, build and push commands in the database will be used for <strong>old builds</strong>, and when no configuration file has been committed.
+        When present, commands found in the configuration file will be used instead of build and push commands stored in the HAL database.
+    </p>
+
+    <h2 id="build-environment">Build Scripting Environment</h2>
+    <p>During the build process, The following environment variables are available to application build scripts:</p>
+    {{ block('build_vars') }}
+
+    <p>
+        These variables will be available as standard environment variables in a shell scripting environment.
+        If using a PHP-based script, they are available in the <strong>$_SERVER</strong> superglobal.
+    </p>
+
+    <h2 id="push-environment">Push Scripting Environment</h2>
+    <p>During the push process, The following environment variables are available to application pre-push and post-push scripts:</p>
+    {{ block('push_vars') }}
+
+    <p>Upon deployment a yaml file in the following format will be written to the application directory:</p>
+    {{ block('push_file') }}
+
+    <h5 class="mbn"><strong>A note on post-push command failures</strong></h5>
+    <p>
+        Post-push commands run <strong>after</strong> the application code is synced to the target server. For this
+        reason, returning an error state will not stop the push process. If an error occurs, you will need to start
+        a new push and overwrite the failed one.
+    </p>
+
+    <h2 id="package-managers">Supported package managers</h2>
+
+    <p>The following package managers are supported:</p>
+    <ul>
+        <li>Composer (PHP)</li>
+        <li>NPM (Node)</li>
+        <li>Bundler (Ruby)</li>
+        <li>Gem (Ruby)</li>
+        <li>Nuget (Windows build system)</li>
+    </ul>
+
+    {{ macros.alert('info', 'NPM, Gem, and Nuget are installed globally.<strong> Composer and Bundler are not.</strong>', block('pm_details'), true) }}
+
+    <p>
+        Each project has its own dedicated <strong>$HOME</strong> directory, and caches and packages will be installed there.
+        HAL 9000 automatically sets isolated installation and caching directories for these tools.
+    </p>
+
+    <h5 class="mbn"><strong>A note on rubygems and bundler</strong></h5>
+    <p>
+        Rubygems.org is one of the most unreliable package repositories. If you rely on ruby tools to deploy, consider packaging the ruby code and commiting
+        to your codebase.
+    </p>
+
+    <p>Installing gems or npm dependencies outside of the <strong>$HOME</strong> directory is unsupported and may break without warning. <strong>DO NOT DO THIS</strong>.</p>
+
+    {{ macros.alert('warning', 'Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.') }}
+
+    <h4>Recommended installation commands</h4>
+    {{ block('pm_commands') }}
+
+{% endblock %}
+
+{% block build_vars %}
     <table>
         <thead>
             <tr>
@@ -74,16 +153,9 @@
             </tr>
         </tbody>
     </table>
+{% endblock %}
 
-    <p>
-        These variables will be available as standard environment variables in a shell scripting environment.
-        If using a PHP-based script, they are available in the <strong>$_SERVER</strong> superglobal.
-    </p>
-
-    <a name="push-environment"></a>
-    <h3>Push Scripting Environment</h3>
-    <p>During the push process, The following environment variables are available to application pre-push and post-push scripts:</p>
-
+{% block push_vars %}
     <table>
         <thead>
             <tr>
@@ -122,8 +194,9 @@
             </tr>
         </tbody>
     </table>
+{% endblock %}
 
-    <p>Upon deployment the a yaml file in the following format will be written to the application directory:</p>
+{% block push_file %}
     <pre>
 # filename: APPLICATION_ROOT/.hal9000.push.yml
 
@@ -135,44 +208,78 @@ reference: ''  # Git Reference
 commit: ''     # Git commit SHA
 date: ''       # ISO 8601 date
 </pre>
+{% endblock %}
 
-    <h5 class="mbn"><strong>A note on post-push command failures</strong></h5>
-    <p>
-        Post-push commands run <strong>after</strong> the application code is synced to the target server. For this
-        reason, returning an error state will not stop the push process. If an error occurs, you will need to start
-        a new push and overwrite the failed one.
-    </p>
+{% block configuration_explanation %}
+    <table>
+        <thead>
+            <tr>
+                <td>Property</td>
+                <td>Description</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>system</td>
+                <td>Build system. <strong>unix</strong> or <strong>windows</strong>. In the future, Docker containers may be specified.</td>
+            </tr>
+            <tr>
+                <td>dist</td>
+                <td>Relative path to directory to archive. This path must exist and be within the project directory. If a <strong>dist</strong> or compiled binary is built as part of your build process, you can make sure to only archive compiled and deployable files.</td>
+            </tr>
+            <tr>
+                <td>exclude</td>
+                <td>Directories or files to exclude while pushing deployment to target server. If you have caches or assets that must not be removed by HAL, enter them here.</td>
+            </tr>
+            <tr>
+                <td>build</td>
+                <td>A command or list of commands used to build a project. Up to 10 may be entered.</td>
+            </tr>
+            <tr>
+                <td>build_transform</td>
+                <td>A command or list of commands used to transform a build per-server or per-environment during the push process. Up to 10 may be entered.</td>
+            </tr>
+            <tr>
+                <td>pre_push</td>
+                <td>A command or list of commands used to prepare target server for push. Up to 10 may be entered.<strong>Skipped for EC2 and EB deployments.</strong></td>
+            </tr>
+            <tr>
+                <td>post_push</td>
+                <td>A command or list of commands used to clean up target server after push. Up to 10 may be entered.<strong>Skipped for EC2 and EB deployments.</strong></td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
 
-    <a name="package-managers"></a>
-    <h3>Supported package managers</h3>
+{% block configuration_file %}
+    <pre>
+# filename: APPLICATION_ROOT/.hal9000.yml
 
-    <p>The following package managers are supported</p>
-    <ul>
-        <li>Composer (PHP)</li>
-        <li>NPM (Node)</li>
-        <li>Bundler (Ruby)</li>
-        <li>Gem (Ruby)</li>
-    </ul>
+system: unix                 # Build system.
+dist: .                      # Relative file path to use for build archive.
+exclude:                     # Array of directories or files to exclude while pushing to server
+    - config/database.ini
+    - data/
 
+build: []                    # Shell commands to run during build process, on build server
+build_transform: []          # Shell commands to run before push process, on build server
+pre_push: []                 # Shell commands to run before push process, on target deployment server
+post_push: []                # Shell commands to run after push process, on target deployment server
+</pre>
+{% endblock %}
 
-    {{ macros.alert('info', 'NPM and Gem are installed globally.<strong> Composer and Bundler are not.</strong>', block('pm_details'), true) }}
+{% block pm_details %}
+<p>
+    To use <strong>Composer</strong>, it must be committed and included in your codebase or downloaded manually.
+    <a href="http://composer/">http://composer</a> provides an installer that can download and run Composer on-the-fly.<br><br>
+</p>
 
-    <p>
-        Each project has its own dedicated <strong>$HOME</strong> directory, and caches and packages will be installed there.
-        HAL 9000 automatically sets isolated installation and caching directories for these tools.
-    </p>
+<p>
+    <strong>Bundler</strong> must be installed with gem before running <code>bundle install</code>.
+</p>
+{% endblock %}
 
-    <h5 class="mbn"><strong>A note on rubygems and bundler</strong></h5>
-    <p>
-        Rubygems.org is one of the most unreliable package repositories. If you rely on ruby tools to deploy, consider packaging the ruby code and commiting
-        to your codebase.
-    </p>
-
-    <p>Installing gems or npm dependencies outside of the <strong>$HOME</strong> directory is unsupported and may break without warning. <strong>DO NOT DO THIS</strong>.</p>
-
-    {{ macros.alert('warning', 'Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.') }}
-
-    <h4>Recommended installation commands</h4>
+{% block pm_commands %}
     <table>
         <thead>
             <tr>
@@ -200,16 +307,4 @@ date: ''       # ISO 8601 date
             </tr>
         </tbody>
     </table>
-{% endblock %}
-
-
-{% block pm_details %}
-<p>
-    To use <strong>Composer</strong>, it must be committed and included in your codebase or downloaded manually.
-    <a href="http://composer/">http://composer</a> provides an installer that can download and run Composer on-the-fly.<br><br>
-</p>
-
-<p>
-    <strong>Bundler</strong> must be installed with gem before running <code>bundle install</code>.
-</p>
 {% endblock %}

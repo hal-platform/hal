@@ -2,6 +2,9 @@
 
 {% set page_title = 'Help' %}
 
+{% set kmContact = '<a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a>' %}
+{% set wcContact = '<a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a>' %}
+
 {% block content %}
     <h2>Help &amp; FAQ</h2>
 
@@ -18,7 +21,9 @@
         <li class="trailer">
             <a href="#help-setup"><b>Application Setup</b></a>
             <ul>
-                <li><a href="#add-application">I would like to deploy my application with HAL 9000. What do I need to do?</a></li>
+                <li><a href="#add-application">How do I deploy my application with HAL?</a></li>
+                <li><a href="#language-support">Does HAL support .NET applications?</a></li>
+                <li><a href="#service-support">Does HAL support Amazon Cloud Deployments?</a></li>
                 <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
                 <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
             </ul>
@@ -27,7 +32,7 @@
         <li>
             <a href="#help-misc"><b>Other</b></a>
             <ul>
-                <li><a href="#api">So, I heard there's an API. Is there any documentation?</a></li>
+                <li><a href="#api">Does HAL have an API? Is there any documentation?</a></li>
                 {% if not isSeriousBusinessMode() %}
                     <li><a href="#hellodave">My name isn't Dave!</a></li>
                 {% endif %}
@@ -35,10 +40,21 @@
         </li>
     </ul>
 
-    <h2 id="help-support">Support</h2>
 
+    <h2 id="help-support">Support</h2>
+    {{ block('support_questions') }}
+
+    <h2 id="help-setup">Application Setup</h2>
+    {{ block('setup_questions') }}
+
+    <h2 id="help-misc">Other</h2>
+    {{ block('other_questions') }}
+
+{% endblock %}
+
+{% block support_questions %}
     <h4 id="permission">Who should I contact for support or permission changes?</h4>
-    <p>You should email <strong>Team Key Masters</strong> at <a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a>.</p>
+    <p>You should email <strong>Team Key Masters</strong> at {{ kmContact|raw }}.</p>
 
 
     <h4 id="bugs">Who should I contact regarding bugs or feature requests?</h4>
@@ -57,12 +73,12 @@
     <ul>
         <li><strong>[Application] HAL 9000</strong> (Hipchat)</li>
         <li><strong>[Team] CORE</strong> (Hipchat)</li>
-        <li><a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a> (email)</li>
+        <li>{{ wcContact|raw }} (email)</li>
     </ul>
+{% endblock %}
 
-    <h2 id="help-setup">Application Setup</h2>
-
-    <h4 id="add-application">I would like to deploy my application with HAL 9000. What do I need to do?</h4>
+{% block setup_questions %}
+    <h4 id="add-application">How do I deploy my application with HAL?</h4>
     <p>The project files must be on the <a href="http://git">Github Enterprise</a> server.</p>
     <p>After making sure that your project meets the minimum requirements above, gather the information below.</p>
     <ol>
@@ -103,36 +119,65 @@
         </li>
         <li>
             <strong>Determine what environments and servers your application will be deployed to.</strong>
-            <p>Examples: test1www1, test1beta1, etc.</p>
+            <p>Examples: test1www1, test1beta1, EC2, Elastic Beanstalk</p>
         </li>
         <li>
             <strong>Determine what directory on those servers your application will live in.</strong>
             <p>Example: <code>/var/www/application</code></p>
         </li>
         <li>
-            <strong>Determine what, if any, command should be used to build your application.</strong>
+            <strong>Add a <code>.hal9000.yml</code> configuration file to your project.</strong>
             <p>
-                This is commonly a shell script that lives withing your repository and tells HAL 9000 what should
-                be done prior to pushing your code. Read more about the <a href="{{ urlFor('help.deployment') }}">build scripting environment</a>.
+                The hal9000 configuration file is used to tell HAL how to build and deploy your application.
+                Please see <a href="{{ urlFor('help.deployment') }}">deployment scripting guide</a> for full details.
             </p>
         </li>
     </ol>
     <p>
         Once your have gathered all of the required information, speak with your team leader and request that the
-        application be added to HAL 9000. Contact Key Masters at
-        <a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a> to assist you with the process.
+        application be added to HAL 9000. Contact Key Masters at {{ kmContact|raw }} to assist you with the process.
+    </p>
+
+    <h4 id="language-support">Does HAL support .NET applications?</h4>
+    <p>
+        <strong>Yes.</strong> Although window build servers are not currently enabled.<br><br>
+        HAL 9000 has support for windows and unix build servers. This means HAL can compile and build <strong>any</strong> project if the build servers are configured correctly.
+        HAL's windows support was primarily designed for building <strong>.NET Web Publish packages</strong> for AWS Elastic Beanstalk.</p>
+    </p>
+
+    <p>
+        HAL requires no code changes or feature additions to enable windows and cloud functionality. They are deployment options that are currently disabled.
+        If you would like to use any of these features, please contact a member of <strong>Web Core</strong>.
+    </p>
+
+    <p>
+        <strong>Current Status:</strong>
+        <ul>
+            <li>AWS EC2 Deployments: <strong>NOT ENABLED</strong></li>
+            <li>AWS Elastic Beanstalk Deployments: <strong>NOT ENABLED</strong></li>
+            <li>Windows Build Server: <strong>NOT ENABLED</strong></li>
+        </ul>
+    </p>
+
+    <h4 id="service-support">Does HAL support Amazon Cloud Deployments?</h4>
+    <p>
+        <strong>Yes.</strong> Although AWS is not currently configured.<br><br>
+        HAL can deploy any application to Amazon Elastic Beanstalk or EC2.<br><br>
+        In addition, HAL can deploy to autoscaling EC2 instances by finding all active EC2 servers using the AWS API.
     </p>
 
     <h4 id="application-deployment">How do I use a script to build or push my application?</h4>
     <p>
-        System commands can be used to customize the build and/or push process for an application. Read more about the
-        <a href="{{ urlFor('help.deployment') }}">build and push scripting environment</a>.
+        System commands can be used to customize the build and/or push process for an application.
     </p>
 
+    <p>
+        Read more about the <a href="{{ urlFor('help.deployment') }}">build and push scripting environment</a>.
+    </p>
+{% endblock %}
 
-    <h2 id="help-misc">Other</h2>
-
-    <h4 id="api">So, I heard there's an API. Is there any documentation?</h4>
+{% block other_questions %}
+    <h4 id="api">Does HAL have an API? Is there any documentation?</h4>
     <p>There is a read-only hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a></p>
     <p>However, there is no api documentation at this time.</p>
 
@@ -143,5 +188,4 @@
             I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ urlFor('help.hal') }}">think things over</a>.
         </p>
     {% endif %}
-
 {% endblock %}
