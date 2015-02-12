@@ -73,7 +73,8 @@ class SettingsController implements ControllerInterface
         }
 
         $rendered = $this->template->render([
-            'user' => $user
+            'user' => $user,
+            'hasGithubToken' => (strlen($user->getGithubToken()) > 0)
         ]);
 
         $this->response->setBody($rendered);

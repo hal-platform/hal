@@ -148,6 +148,18 @@ services:
             - %unique.alphabet%
             - %unique.size%
 
+    utilty.github.oauth:
+        class: 'QL\Hal\Helpers\GithubOAuthHelper'
+        arguments:
+            - @guzzle
+            - %github.baseurl%
+            - %github.site.baseurl%
+            - %github.app.id%
+            - %github.app.secret%
+
+    guzzle:
+        class: 'GuzzleHttp\Client'
+
     ######################################################################################################################
     # TWIG STUFF
     ######################################################################################################################

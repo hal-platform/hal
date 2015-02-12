@@ -28,10 +28,11 @@ class Session extends Set
      *
      * @param boolean|string|null $message|$keepFlashes
      * @param string|null $flashType
+     * @param string|null $flashDetails
      *
      * @return array|Flash|null
      */
-    public function flash($action = null, $type = null)
+    public function flash($action = null, $type = null, $details = null)
     {
         if (func_num_args() === 1 && is_bool($action)) {
             return call_user_func_array([$this, 'getAndFlush'], func_get_args());

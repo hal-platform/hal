@@ -26,8 +26,6 @@
             {% endfor %}
         </ul>
 
-        <p class="mbn"></p>
-
         <div class="checkbox--pretty">
             <label>
                 <input type="checkbox" name="seriousbusiness" value="1" {{ isSeriousBusinessMode() ? ' checked' : '' }}>
@@ -41,17 +39,35 @@
             <p class="flavor mbn">Flavor text such as <strong>Hello, Dave</strong> and <strong>I'm afraid I can't do that</strong> will be reduced across the application.</p>
         </div>
 
-        <p>
-            <input class="btn" type="submit" value="Save Preferences">
+        <p class="leader">
+            <input class="btn btn--action" type="submit" value="Save Preferences">
         </p>
     </form>
+
+    {{ block('github_token') }}
 
     {# {{ block('access_tokens') }}#}
 {% endblock %}
 
+{% block github_token %}
+    <h2 class="mbn">Github Deployment Updates</h2>
+    <small>Allow HAL to update github repositories you have access to when you build or push.</small>
+
+    <h5 class="leader mbn">Current status:</h5>
+    <p>
+        {% if hasGithubToken %}
+            <strong>ENABLED</strong>
+            <br><a class="btn btn--small btn--destructive" href="{{ urlFor('github.authorization.remove') }}">Disable GitHub updates</a>
+        {% else %}
+            <strong>NOT ENABLED</strong>
+            <br><a class="btn btn--small" href="{{ urlFor('github.authorization') }}">Authorize HAL 9000</a>
+        {% endif %}
+    </p>
+{% endblock %}
+
 {% block access_tokens %}
-    <h2>Personal Access Tokens</h2>
-    <p>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</p>
+    <h2 class="mbn">Personal Access Tokens</h2>
+    <small>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</small>
 
     <form action="{{ urlFor('user.token.add', {id: user.id}) }}" method="post">
         <table class="tablesaw tablesaw-stack" data-mode="stack">

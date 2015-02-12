@@ -804,6 +804,18 @@ services:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.server.ttl%]]
 
+    audit.logs.page:
+        class: 'QL\Hal\Controllers\AuditLogsController'
+        arguments:
+            - @audit.logs.twig
+            - @audit.log.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    audit.logs.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['audit.logs.twig']]]
+
     admin.dangerzone.page:
         class: 'QL\Hal\Controllers\Admin\DangerzoneController'
         arguments:
@@ -845,6 +857,41 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/hal.twig']]]
 
+
+    ######################################################################################################################
+    # GITHUB OAUTH CONTROLLERS
+    ######################################################################################################################
+
+    github.authorization.page:
+        class: 'QL\Hal\Controllers\OAuth\GithubCallbackController'
+        arguments:
+            - @github.authorization.twig
+            - @slim.request
+            - @slim.response
+            - @doctrine.em
+            - @currentUser
+            - @utilty.github.oauth
+            - @session
+            - @url
+    github.authorization.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/github.token.error.twig']]]
+
+    github.authorization.remove.page:
+        class: 'QL\Hal\Controllers\User\RemoveGithubTokenController'
+        arguments:
+            - @github.authorization.remove.twig
+            - @slim.request
+            - @slim.response
+            - @doctrine.em
+            - @currentUser
+            - @utilty.github.oauth
+            - @session
+            - @url
+    github.authorization.remove.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/github.token.remove.twig']]]
+
     ######################################################################################################################
     # GENERAL USE CONTROLLERS
     ######################################################################################################################
@@ -854,22 +901,13 @@ services:
 
     denied.page:
         parent: 'static.controller'
-        arguments: [@denied.twig, @slim.response, 403]
+        arguments:
+            - @denied.twig
+            - @slim.response
+            - 403
     denied.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['denied.twig']]]
-
-    audit.logs.page:
-        class: 'QL\Hal\Controllers\AuditLogsController'
-        arguments:
-            - @audit.logs.twig
-            - @audit.log.repo
-            - @slim.response
-            - @slim.not.found
-            - @slim.route.parameters
-    audit.logs.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['audit.logs.twig']]]
 
     # The twig template for slim errors (404, 500)
     error.pages.twig:

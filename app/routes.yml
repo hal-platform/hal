@@ -45,6 +45,16 @@ parameters:
             route:  '/debug'
             stack:  ['login.bouncer', 'debug.page']
 
+        github.authorization:
+            method: 'GET'
+            route:  '/github-authorization'
+            stack:  ['login.bouncer', 'github.authorization.page']
+
+        github.authorization.remove:
+            method: ['GET', 'POST']
+            route:  '/settings/remove-github-authorization'
+            stack:  ['login.bouncer', 'github.authorization.remove.page']
+
         ################################################################################################################
         # ADMIN ROUTES
         ################################################################################################################
