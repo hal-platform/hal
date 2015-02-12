@@ -13,9 +13,18 @@
                 <h3>{{ env }}</h3>
                 <ul class="col-list">
                     {% for server in servers %}
-                        <li class="status-before--unknown" data-server-status="{{ server.id }}">
-                            <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a>
-                        </li>
+
+                        {% if server.type == 'rsync' %}
+                            <li class="status-before--unknown" title="Updating..." data-server-status="{{ server.id }}">
+                                <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a>
+                            </li>
+                        {% else %}
+
+                            <li class="status-before--warning" title="Server status unavailable for AWS deployments">
+                                <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a>
+                            </li>
+                        {% endif %}
+
                     {% endfor %}
                 </ul>
             {% endif %}

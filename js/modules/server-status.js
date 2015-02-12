@@ -50,12 +50,14 @@ define(['jquery'], function($) {
                 if (data.status == 'up') {
                     $elem
                         .addClass(success)
-                        .removeClass(unknown);
+                        .removeClass(unknown)
+                        .prop('title', 'The server is up!');
 
                 } else if (data.status == 'down') {
                     $elem
                         .addClass(failure)
-                        .removeClass(unknown);
+                        .removeClass(unknown)
+                        .prop('title', 'Cannot connect to server. It may be down.');
                 }
             });
         }
