@@ -1450,17 +1450,17 @@
         },
         {
             "name": "ql/panthor",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "git@git:web-frameworks/panthor.git",
-                "reference": "c5356d0b0ebe3c457285c5b08891c156c0116b23"
+                "reference": "cba79796dc84529c7fc573d90cb7d6b623ea834f"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-panthor-2.0.1-f3766e.zip",
-                "reference": "c5356d0b0ebe3c457285c5b08891c156c0116b23",
-                "shasum": "c5aadcfaea6008f652d7066d91760763006afe4a"
+                "url": "http://composer/dist/ql-panthor-2.0.2-a7349a.zip",
+                "reference": "cba79796dc84529c7fc573d90cb7d6b623ea834f",
+                "shasum": "d4bfdfe0785279499dbc8009ed010e9c19c6bdd4"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -1488,7 +1488,7 @@
                 "proprietary"
             ],
             "description": "Symfony + Slim = Panthor",
-            "time": "2015-01-20 14:46:05"
+            "time": "2015-02-12 20:34:39"
         },
         {
             "name": "react/promise",
