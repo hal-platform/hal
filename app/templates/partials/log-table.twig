@@ -8,32 +8,29 @@
     </thead>
 
     {% for log in logs %}
-        {% set rowColor = 'status-info' %}
+        {% set rowColor = 'event-log--info' %}
         {% if log.status == 'success' %}
-            {% set rowColor = 'status-success' %}
+            {% set rowColor = 'event-log--success' %}
         {% elseif log.status == 'failure' %}
-            {% set rowColor = 'status-error' %}
+            {% set rowColor = 'event-log--error' %}
         {% endif %}
         <tbody>
             <tr class="{{ rowColor }}">
                 <td>
-                    {% if log.status == 'success' %}
-                        <span class="status-block">
+                    <span class="event-log__status">
+                        {% if log.status == 'success' %}
                             <svg class="icon"><use xlink:href="#tick"></use></svg>
                             {{ log.event|formatEvent }}
-                        </span>
 
-                    {% elseif log.status == 'failure' %}
-                        <span class="status-block">
+                        {% elseif log.status == 'failure' %}
                             <svg class="icon"><use xlink:href="#spam"></use></svg>
                             {{ log.event|formatEvent }}
-                        </span>
-                    {% else %}
-                        <span class="status-block">
+
+                        {% else %}
                             <svg class="icon"><use xlink:href="#paragraph-justify-2"></use></svg>
                             {{ log.event|formatEvent }}
-                        </span>
-                    {% endif %}
+                        {% endif %}
+                    </span>
                 </td>
                 <td>{{ log.created|timepoint('M j, Y g:i A') }}</td>
                 <td>{{ log.message }}</td>

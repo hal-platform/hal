@@ -55,22 +55,22 @@
 }
 
 // event log table
-.status-block {
+.event-log__status {
     @include adjust-font-size-to(ms(1));
     display: block;
 }
 
-.status-success {
+.event-log--success {
     color: $white;
     background-color: $success-color;
 }
 
-.status-error {
+.event-log--error {
     color: $white;
     background-color: $error-color;
 }
 
-.status-info {
+.event-log--info {
     color: $white;
     background-color: $grey;
 }
