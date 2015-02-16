@@ -15,7 +15,7 @@ define('MAINTENANCE', false);
 $root = __DIR__ . '/..';
 
 if (MAINTENANCE) {
-    require $root . 'app/templates/maintenance.html';
+    require $root . '/app/templates/maintenance.html';
     exit;
 }
 
