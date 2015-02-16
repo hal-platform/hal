@@ -12,6 +12,7 @@ use QL\Hal\Services\GithubService;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
+use Exception;
 
 class GithubExtension extends Twig_Extension
 {
@@ -86,10 +87,16 @@ class GithubExtension extends Twig_Extension
      */
     public function commitIsCurrent($user, $repo, $reference, $commit)
     {
-        $resolve = $this->github->resolve($user, $repo, $reference);
-        $current = (is_array($resolve)) ? $resolve[1] : null;
+        try {
+            $resolve = $this->github->resolve($user, $repo, $reference);
+            $current = (is_array($resolve)) ? $resolve[1] : null;
 
-        return ($current == $commit) ? true : false;
+            return ($current == $commit) ? true : false;
+
+        // Fuck off weird errors
+        } catch (Exception $ex) {
+            return false;
+        }
     }
 
     /**

@@ -141,9 +141,17 @@ class ErrorHandlerHook
     {
         if ($status >= 500) {
             // Special note: HAL uses error log level. Agent uses critical log level.
-            $this->logger->error($exception->getMessage(), [
+            $context = [
+                'exceptionClass' => get_class($exception),
                 'exceptionData' => $exception->getTraceAsString()
-            ]);
+            ];
+
+            if ($previous = $exception->getPrevious()) {
+                $context['previousExceptionClass'] = get_class($previous);
+                $context['previousExceptionData'] = $previous->getTraceAsString();
+            }
+
+            $this->logger->error($exception->getMessage(), $context);
         }
 
         $context = [
