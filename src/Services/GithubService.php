@@ -10,10 +10,11 @@ namespace QL\Hal\Services;
 use Github\Api\GitData\Commits as CommitApi;
 use Github\Api\GitData\References as ReferenceApi;
 use Github\Api\PullRequest as PullRequestApi;
-use Github\Api\Repository\Commits as CommitRepo;
+use Github\Api\Organization\Members as MembersApi;
+use Github\Api\Repo as RepoApi;
+use Github\Api\Repository\Commits as CommitRepoApi;
 use Github\Api\User as UserApi;
 
-use Github\Api\Repo;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
 
@@ -37,7 +38,7 @@ class GithubService
     private $userApi;
 
     /**
-     * @var Repo
+     * @var RepoApi
      */
     public $repoApi;
 
@@ -52,7 +53,7 @@ class GithubService
     private $pullApi;
 
     /**
-     * @var CommitApi
+     * @var CommitRepoApi
      */
     private $commitApi;
 
@@ -67,22 +68,29 @@ class GithubService
     private $commitRepo;
 
     /**
+     * @var MembersApi
+     */
+    private $membersApi;
+
+    /**
      * @param UserApi $user
-     * @param Repo $repo
+     * @param RepoApi $repo
      * @param ReferenceApi $ref
      * @param PullRequestApi $pull
      * @param CommitApi $commit
      * @param ResultPager $pager
-     * @param CommitRepo $commitRepo
+     * @param CommitRepoApi $commitRepo
+     * @param MembersApi $membersApi
      */
     public function __construct(
         UserApi $user,
-        Repo $repo,
+        RepoApi $repo,
         ReferenceApi $ref,
         PullRequestApi $pull,
         CommitApi $commit,
         ResultPager $pager,
-        CommitRepo $commitRepo
+        CommitRepoApi $commitRepo,
+        MembersApi $membersApi
     ) {
         $this->userApi = $user;
         $this->repoApi = $repo;
@@ -91,6 +99,7 @@ class GithubService
         $this->commitApi = $commit;
         $this->pager = $pager;
         $this->commitRepo = $commitRepo;
+        $this->membersApi = $membersApi;
     }
 
     /**
@@ -274,6 +283,8 @@ class GithubService
     }
 
     /**
+     * @todo delete
+     *
      * @param string $owner
      * @param string $repo
      * @param string $user
@@ -281,9 +292,20 @@ class GithubService
      */
     public function isUserCollaborator($owner, $repo, $user)
     {
+        return $this->isUserOrganizationMember($owner, $user);
+    }
+
+    /**
+     * @param string $organization
+     * @param string $user
+     *
+     * @return boolean
+     */
+    public function isUserOrganizationMember($organization, $user)
+    {
         try {
             // A successful response returns 'null'
-            $this->repoApi->collaborators()->check($owner, $repo, $user);
+            $this->membersApi->check($organization, $user);
         } catch (RuntimeException $e) {
             return false;
         }
