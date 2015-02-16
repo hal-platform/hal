@@ -51,8 +51,18 @@
                 </li>
 
                 <li>
-                    <label for="github_user">GitHub Enterprise User or Organization</label>
-                    <input type="text" name="github_user" id="github_user" maxlength="48" required value="{{ form.github_user }}" class="text-input">
+                    <label for="github_user">GitHub Enterprise Organization</label>
+                    <select name="github_user" id="github_user">
+                        <option value=""></option>
+                        {% for org in github_orgs %}
+                            {% set selected = '' %}
+                            {% if form.github_user == org.login %}
+                                {% set selected = ' selected' %}
+                            {% endif %}
+
+                            <option value="{{ org.login|lower }}"{{ selected }}>{{ org.login }}</option>
+                        {% endfor %}
+                    </select>
                 </li>
                 <li>
                     <label for="github_repo">GitHub Enterprise Repository</label>

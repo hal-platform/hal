@@ -443,11 +443,6 @@ parameters:
         # GITHUB API ROUTES
         ################################################################################################################
 
-        api.github.users:
-            method: 'GET'
-            route: '/api/github/users'
-            stack: ['login.bouncer', 'api.github.users']
-
         api.github.user.repositories:
             method: 'GET'
             route: '/api/github/users/:username/repositories'

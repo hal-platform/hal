@@ -9,19 +9,17 @@ namespace QL\Hal\Services;
 
 use Github\Api\GitData\Commits as CommitApi;
 use Github\Api\GitData\References as ReferenceApi;
+use Github\Api\Organization\Members as OrganizationMembersApi;
 use Github\Api\PullRequest as PullRequestApi;
-use Github\Api\Organization\Members as MembersApi;
 use Github\Api\Repo as RepoApi;
-use Github\Api\Repository\Commits as CommitRepoApi;
+use Github\Api\Repository\Commits as RepoCommitApi;
 use Github\Api\User as UserApi;
-
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
+use QL\Hal\Github\Organization as OrganizationApi;
 
 /**
- * You know whats really annoying? Wrapping every api request in a try/catch.
- *
- * This helps abstract the awfulness of the github api library from the rest of Hal.
+ * Combine all individual github api services into a giant convenience service.
  */
 class GithubService
 {
@@ -33,73 +31,93 @@ class GithubService
     const REGEX_COMMIT = '#^[0-9a-f]{40}$#';
 
     /**
-     * @var UserApi
-     */
-    private $userApi;
-
-    /**
-     * @var RepoApi
+     * @type RepoApi
      */
     public $repoApi;
 
     /**
-     * @var ReferenceApi
+     * @type RepoCommitApi
      */
-    private $refApi;
+    private $repoCommitApi;
 
     /**
-     * @var PullRequestApi
+     * @type ReferenceApi
      */
-    private $pullApi;
+    private $gitReferenceApi;
 
     /**
-     * @var CommitRepoApi
+     * @type CommitRepoApi
      */
-    private $commitApi;
+    private $gitCommitApi;
 
     /**
-     * @var ResultPager
+     * @type PullRequestApi
+     */
+    private $pullRequestApi;
+
+    /**
+     * @type UserApi
+     */
+    private $userApi;
+
+    /**
+     * @type OrganizationApi
+     */
+    private $orgApi;
+
+    /**
+     * @type OrganizationMembersApi
+     */
+    private $orgMembersApi;
+
+    /**
+     * @type ResultPager
      */
     private $pager;
 
     /**
-     * @var CommitRepo
-     */
-    private $commitRepo;
-
-    /**
-     * @var MembersApi
-     */
-    private $membersApi;
-
-    /**
-     * @param UserApi $user
-     * @param RepoApi $repo
-     * @param ReferenceApi $ref
-     * @param PullRequestApi $pull
-     * @param CommitApi $commit
+     * @param RepoApi $repoApi
+     * @param RepoCommitApi $repoCommitApi
+     *
+     * @param ReferenceApi $gitReferenceApi
+     * @param CommitApi $gitCommitApi
+     *
+     * @param PullRequestApi $pullRequestApi
+     *
+     * @param UserApi $userApi
+     * @param OrganizationApi $orgApi
+     * @param OrganizationMembersApi $orgMembersApi
+     *
      * @param ResultPager $pager
-     * @param CommitRepoApi $commitRepo
-     * @param MembersApi $membersApi
      */
     public function __construct(
-        UserApi $user,
-        RepoApi $repo,
-        ReferenceApi $ref,
-        PullRequestApi $pull,
-        CommitApi $commit,
-        ResultPager $pager,
-        CommitRepoApi $commitRepo,
-        MembersApi $membersApi
+        RepoApi $repoApi,
+        RepoCommitApi $repoCommitApi,
+
+        ReferenceApi $gitReferenceApi,
+        CommitApi $gitCommitApi,
+
+        PullRequestApi $pullRequestApi,
+
+        UserApi $userApi,
+        OrganizationApi $orgApi,
+        OrganizationMembersApi $orgMembersApi,
+
+        ResultPager $pager
     ) {
-        $this->userApi = $user;
-        $this->repoApi = $repo;
-        $this->refApi = $ref;
-        $this->pullApi = $pull;
-        $this->commitApi = $commit;
+        $this->repoApi = $repoApi;
+        $this->repoCommitApi = $repoCommitApi;
+
+        $this->gitReferenceApi = $gitReferenceApi;
+        $this->gitCommitApi = $gitCommitApi;
+
+        $this->pullRequestApi = $pullRequestApi;
+
+        $this->userApi = $userApi;
+        $this->orgApi = $orgApi;
+        $this->orgMembersApi = $orgMembersApi;
+
         $this->pager = $pager;
-        $this->commitRepo = $commitRepo;
-        $this->membersApi = $membersApi;
     }
 
     /**
@@ -112,7 +130,7 @@ class GithubService
     public function branches($user, $repo)
     {
         try {
-            $refs = $this->pager->fetchAll($this->refApi, 'branches', [$user, $repo]);
+            $refs = $this->pager->fetchAll($this->gitReferenceApi, 'branches', [$user, $repo]);
         } catch (RuntimeException $e) {
             $refs = [];
         }
@@ -141,9 +159,9 @@ class GithubService
     {
         try {
             if ($getAll) {
-                $pulls = $this->pager->fetchAll($this->pullApi, 'all', [$user, $repo, ['state' => 'closed']]);
+                $pulls = $this->pager->fetchAll($this->pullRequestApi, 'all', [$user, $repo, ['state' => 'closed']]);
             } else {
-                $pulls = $this->pullApi->all($user, $repo, ['state' => 'closed']);
+                $pulls = $this->pullRequestApi->all($user, $repo, ['state' => 'closed']);
             }
         } catch (RuntimeException $e) {
             $pulls = [];
@@ -165,7 +183,7 @@ class GithubService
     public function openPullRequests($user, $repo)
     {
         try {
-            $pulls = $this->pager->fetchAll($this->pullApi, 'all', [$user, $repo]);
+            $pulls = $this->pager->fetchAll($this->pullRequestApi, 'all', [$user, $repo]);
         } catch (RuntimeException $e) {
             $pulls = [];
         }
@@ -184,7 +202,7 @@ class GithubService
     public function pullRequest($user, $repo, $number)
     {
         try {
-            $pull = $this->pullApi->show($user, $repo, $number);
+            $pull = $this->pullRequestApi->show($user, $repo, $number);
         } catch (RuntimeException $e) {
             $pull = null;
         }
@@ -237,7 +255,7 @@ class GithubService
     public function tags($user, $repo)
     {
         try {
-            $refs = $this->pager->fetchAll($this->refApi, 'tags', [$user, $repo]);
+            $refs = $this->pager->fetchAll($this->gitReferenceApi, 'tags', [$user, $repo]);
         } catch (RuntimeException $e) {
             $refs = [];
         }
@@ -250,36 +268,37 @@ class GithubService
     }
 
     /**
-     * Get the extended metadata for a user.
+     * Get the extended metadata for a github organization
      *
-     * @param string $user
+     * @param string $org
+     *
      * @return array|null
      */
-    public function user($user)
+    public function organization($org)
     {
         try {
-            $user = $this->userApi->show($user);
+            $org = $this->orgApi->show($org);
         } catch (RuntimeException $e) {
-            $user = null;
+            $org = null;
         }
 
-        return $user;
+        return $org;
     }
 
     /**
-     * Get the extended metadata for all github users.
+     * Get the extended metadata for all github organizations.
      *
      * @return array
      */
-    public function users()
+    public function organizations()
     {
         try {
-            $users = $this->pager->fetchAll($this->userApi, 'all');
+            $orgs = $this->pager->fetchAll($this->orgApi, 'all');
         } catch (RuntimeException $e) {
-            $users = [];
+            $orgs = [];
         }
 
-        return $users;
+        return $orgs;
     }
 
     /**
@@ -305,7 +324,7 @@ class GithubService
     {
         try {
             // A successful response returns 'null'
-            $this->membersApi->check($organization, $user);
+            $this->orgMembersApi->check($organization, $user);
         } catch (RuntimeException $e) {
             return false;
         }
@@ -324,7 +343,7 @@ class GithubService
      */
     public function diff($user, $repo, $base, $head)
     {
-        return $this->commitRepo->compare($user, $repo, $base, $head);
+        return $this->repoCommitApi->compare($user, $repo, $base, $head);
     }
 
     /**
@@ -428,7 +447,7 @@ class GithubService
         }
 
         try {
-            $result = $this->refApi->show($user, $repo, sprintf('tags/%s', $tag));
+            $result = $this->gitReferenceApi->show($user, $repo, sprintf('tags/%s', $tag));
         } catch (RuntimeException $e) {
             return null;
         }
@@ -451,7 +470,7 @@ class GithubService
         }
 
         try {
-            $result = $this->pullApi->show($user, $repo, $pull);
+            $result = $this->pullRequestApi->show($user, $repo, $pull);
         } catch (RuntimeException $e) {
             return null;
         }
@@ -474,7 +493,7 @@ class GithubService
         }
 
         try {
-            $result = $this->commitApi->show($user, $repo, $commit);
+            $result = $this->gitCommitApi->show($user, $repo, $commit);
         } catch (RuntimeException $e) {
             return null;
         }
@@ -493,7 +512,7 @@ class GithubService
     private function resolveBranch($user, $repo, $branch)
     {
         try {
-            $result = $this->refApi->show($user, $repo, sprintf('heads/%s', $branch));
+            $result = $this->gitReferenceApi->show($user, $repo, sprintf('heads/%s', $branch));
         } catch (RuntimeException $e) {
             return null;
         }

@@ -98,6 +98,7 @@ services:
             - @github.commitService
             - @github.pager
             - @github.commitRepo
+            - @github.members
 
     github.client:
         class: 'Github\Client'
@@ -141,6 +142,10 @@ services:
 
     github.commitRepo:
         class: 'Github\Api\Repository\Commits'
+        arguments: [@github.client]
+
+    github.members:
+        class: 'Github\Api\Organization\Members'
         arguments: [@github.client]
 
     ####################################################################################################################

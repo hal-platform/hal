@@ -109,6 +109,11 @@ class AddRepositoryController implements ControllerInterface
      */
     public function __invoke()
     {
+        $orgs = $this->github->organizations();
+        usort($orgs, function($a, $b) {
+            return strcasecmp($a['login'], $b['login']);
+        });
+
         $renderContext = [
             'form' => [
                 'identifier' => $this->request->post('identifier'),
@@ -119,7 +124,8 @@ class AddRepositoryController implements ControllerInterface
                 'notification_email' => $this->request->post('notification_email')
             ],
             'groups' => $this->groupRepo->findBy([], ['name' => 'ASC']),
-            'errors' => $this->checkFormErrors($this->request)
+            'errors' => $this->checkFormErrors($this->request),
+            'github_orgs' => $orgs
         ];
 
         if ($this->request->isPost()) {
@@ -191,7 +197,7 @@ class AddRepositoryController implements ControllerInterface
             'identifier' => 'Identifier',
             'name' => 'Name',
             'group' => 'Group',
-            'github_user' => 'Github User',
+            'github_user' => 'Github Organization',
             'github_repo' => 'Github Repository',
             'notification_email' => 'Notification Email'
         ];
@@ -219,20 +225,20 @@ class AddRepositoryController implements ControllerInterface
     }
 
     /**
-     * @param string $user
+     * @param string $owner
      * @param string $repo
      *
      * @return array
      */
-    private function validateGithubRepo($user, $repo)
+    private function validateGithubRepo($owner, $repo)
     {
         $errors = [];
 
-        if (!$this->github->user($user)) {
-            $errors[] = 'Invalid Github Enterprise user/organization';
+        if (!$this->github->organization($owner)) {
+            $errors[] = 'Invalid Github Enterprise organization';
 
         // elseif here so we dont bother making 2 github calls if the first one failed
-        } elseif (!$this->github->repository($user, $repo)) {
+        } elseif (!$this->github->repository($owner, $repo)) {
             $errors[] = 'Invalid Github Enterprise repository name';
         }
 

@@ -1,67 +1,5 @@
 define(['jquery'], function($) {
     return {
-        users: {
-            userTarget: '#github_user',
-            dataStore: {},
-            attach: function() {
-                var _this = this;
-
-                var target = $(this.userTarget);
-                if (target.length !== 0) {
-                    return _this.createToggle(target);
-                }
-            },
-            createToggle: function(targetElem) {
-                var _this = this;
-
-                var toggle = $('<a class="js-form-toggle">');
-                toggle.text('Load list from GitHub');
-
-                targetElem.after(toggle);
-                $(toggle).on('click', function(event) {
-                    event.preventDefault();
-
-                    var flash = $('<p>Loading...</p>');
-                    targetElem.after(flash);
-
-                    toggle.remove();
-                    return $.get('/api/github/users', function(data) {
-                        _this.dataStore = data;
-                    })
-                    .done(function() {
-                        _this.replaceField(targetElem);
-                        flash.remove();
-                        targetElem.remove();
-                    });
-                });
-            },
-            replaceField: function(targetElem) {
-                var select = $('<select>');
-                select.attr('id', targetElem.attr('id'));
-                select.attr('name', targetElem.attr('name'));
-
-                targetElem.after(select);
-
-                $('<option>').appendTo(select);
-                this.attachOptions(select, targetElem.val());
-            },
-            attachOptions: function(select, currentSelection) {
-
-                var orgGroup = $('<optgroup label="Organizations">');
-                var userGroup = $('<optgroup label="Users">');
-
-                for(var org in this.dataStore.organizations) {
-                    $('<option>', {value: org, text: this.dataStore.organizations[org]}).appendTo(orgGroup);
-                }
-                for(var user in this.dataStore.users) {
-                    $('<option>', {value: user, text: this.dataStore.users[user]}).appendTo(userGroup);
-                }
-
-                select.append(orgGroup);
-                select.append(userGroup);
-                select.val(currentSelection);
-            }
-        },
         repos: {
             userTarget: '#github_user',
             repoTarget: '#github_repo',
@@ -92,7 +30,7 @@ define(['jquery'], function($) {
 
                     // error checking
                     if (selectedUser.length === 0) {
-                        return _this.attachError('Please enter a valid GitHub User or Organization.');
+                        return _this.attachError('Please select a valid GitHub Organization.');
                     }
 
                     _this.target.siblings('p').remove();

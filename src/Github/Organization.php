@@ -20,8 +20,10 @@ class Organization extends OrganizationApi
      */
     public function all()
     {
-        return $this->get('search/users', [
+        $result = $this->get('search/users', [
             'q' => 'type:organization'
         ]);
+
+        return $result['items'];
     }
 }
