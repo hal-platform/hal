@@ -71,13 +71,6 @@ class AddRepositoryController implements ControllerInterface
     private $response;
 
     /**
-     * A list of illegal parameters to search for in system commands provided by the user.
-     *
-     * @type string[]
-     */
-    private $invalidCommandParameters;
-
-    /**
      * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
      * @param RepositoryRepository $repoRepo
@@ -109,16 +102,6 @@ class AddRepositoryController implements ControllerInterface
 
         $this->request = $request;
         $this->response = $response;
-
-        $this->invalidCommandParameters = [
-            '&&', // operator
-            '||', // operator
-            '|',  // pipe
-            '>',  // redirect
-            '>>', // redirect
-            '<',  // redirect
-            '<<'  // redirect
-        ];
     }
 
     /**
@@ -133,10 +116,7 @@ class AddRepositoryController implements ControllerInterface
                 'group' => $this->request->post('group'),
                 'github_user' => $this->request->post('github_user'),
                 'github_repo' => $this->request->post('github_repo'),
-                'notification_email' => $this->request->post('notification_email'),
-                'build_command' => $this->request->post('build_command'),
-                'pre_command' => $this->request->post('pre_command'),
-                'post_command' => $this->request->post('post_command')
+                'notification_email' => $this->request->post('notification_email')
             ],
             'groups' => $this->groupRepo->findBy([], ['name' => 'ASC']),
             'errors' => $this->checkFormErrors($this->request)
@@ -175,8 +155,6 @@ class AddRepositoryController implements ControllerInterface
         $user = strtolower($request->post('github_user'));
         $repo = strtolower($request->post('github_repo'));
 
-        $buildCommand = (string) $request->post('build_command');
-
         $repository = new Repository;
         $repository->setKey($identifier);
         $repository->setName($name);
@@ -186,9 +164,8 @@ class AddRepositoryController implements ControllerInterface
         $repository->setGithubUser($user);
         $repository->setGithubRepo($repo);
 
-        $repository->setBuildCmd($buildCommand);
-
         // Default to blank, not null
+        $repository->setBuildCmd('');
         $repository->setBuildTransformCmd('');
         $repository->setPrePushCmd('');
         $repository->setPostPushCmd('');
@@ -216,8 +193,7 @@ class AddRepositoryController implements ControllerInterface
             'group' => 'Group',
             'github_user' => 'Github User',
             'github_repo' => 'Github Repository',
-            'notification_email' => 'Notification Email',
-            'build_command' => 'Build Command'
+            'notification_email' => 'Notification Email'
         ];
 
         $identifier = strtolower($request->post('identifier'));
@@ -231,45 +207,12 @@ class AddRepositoryController implements ControllerInterface
             $this->validateText($request->post('github_repo'), $human['github_repo'], 48, true),
             $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
 
-            $this->validateCommand($request->post('build_command'), $human['build_command']),
-
             $this->validateGithubRepo($request->post('github_user'), $request->post('github_repo'))
         );
 
         // check for duplicate nickname
         if (!$errors && $this->repoRepo->findOneBy(['key' => $identifier])) {
             $errors[] = 'A repository with this identifier already exists.';
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param string $value
-     * @param string $friendlyName
-     *
-     * @return array
-     */
-    private function validateCommand($value, $friendlyName)
-    {
-        $errors = $this->validateText($value, $friendlyName, 128, false);
-
-        // Split the command into unique parameters
-        $command = explode(' ', $value);
-        $parameters = array_fill_keys($command, true);
-
-        // We could easily just prevent spaces and shell escape EVERYTHING, but to add at least some flexibility
-        // hal-agent will explode on spaces and shell escape individual arguments so users can pass parameters
-        // to their scripts
-
-        // Search for operators, pipes, and redirects to prevent users from doing complex bash logic directly on the HAL command.
-        foreach ($this->invalidCommandParameters as $param) {
-            if (isset($parameters[$param])) {
-                $errors[] = 'Compound commands are not allowed. If you need complex logic, create a script within the application codebase and call that instead.';
-
-                // If one illegal parameter is found, just return immediately.
-                return $errors;
-            }
         }
 
         return $errors;
