@@ -360,6 +360,22 @@ parameters:
             conditions: {repository: '[\d]+', id: '[\d]+'}
 
         ################################################################################################################
+        # REPOSITORY ENCRYPTED PROPERTIES ROUTES
+        ################################################################################################################
+
+        repository.encrypted:
+            method: 'GET'
+            route: '/repositories/:repository/encrypted-properties'
+            stack: ['login.bouncer', 'repository.encrypted.page']
+            conditions: {repository: '[\d]+'}
+
+        repository.encrypted.add:
+            method: ['GET', 'POST']
+            route: '/repositories/:repository/encrypted-properties/add'
+            stack: ['repoadmin.bouncer', 'repository.encrypted.add.page']
+            conditions: {repository: '[\d]+'}
+
+        ################################################################################################################
         # GROUP ROUTES
         ################################################################################################################
 

@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Encrypted Properties : ' ~ repository.name %}
+
+{% block content %}
+    <h2>Encrypted Properties for <strong>{{ repository.name }}</strong></h2>
+
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+
+    {% if encrypted %}
+        <table class="tablesaw tablesaw-stack" data-mode="stack">
+            <thead>
+                <tr>
+                    <th>Property Name</th>
+                    <th>Environment</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for property in encrypted %}
+                <tr>
+                    <td>
+                        <code>{{ property.name|upper }}</code>
+                    </td>
+                    <td>
+                        {% if property.environment %}
+                            {{ property.environment.key }}
+                        {% else %}
+                            ALL
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p>Encrypted properties are immutable. To change the value of a property: Remove it then add it again.</p>
+    {% else %}
+        <p>There are no encrypted properties for this repository.</p>
+    {% endif %}
+
+    {% if isUserRepoAdmin(currentUser, repository.key) %}
+        <p>
+            <a class="btn --action" href="{{ urlFor('repository.encrypted.add', {repository: repository.id}) }}">Add Encrypted Property</a>
+        </p>
+    {% endif %}
+
+{% endblock %}

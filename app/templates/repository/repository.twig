@@ -2,6 +2,8 @@
 
 {% set page_title = repository.name %}
 
+{% set isRepoAdmin = isUserRepoAdmin(currentUser, repository.key) %}
+
 {% block content %}
     <h2>Repository Information</h2>
 
@@ -30,9 +32,10 @@
 
         {# primary action #}
         <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
+        <a class="btn secondary-action" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Manage Encrypted Properties</a>
 
         {# secondary actions #}
-        {% if isUserRepoAdmin(currentUser, repository.key) %}
+        {% if isRepoAdmin %}
             <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a>
         {% endif %}
 
@@ -174,7 +177,7 @@
         <p>There are no deployments associated with this repository.</p>
     {% endif %}
 
-    {% if isUserRepoAdmin(currentUser, repository.key) %}
+    {% if isRepoAdmin %}
         <a class="btn" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a>
     {% endif %}
 

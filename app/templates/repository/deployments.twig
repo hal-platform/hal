@@ -5,6 +5,8 @@
 {% block content %}
     <h2>Deployment Relationships for <b>{{ repository.name }}</b> </h2>
 
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+
     <p>
         Deployment relationships define what servers your application can be deployed to and where on that server the code will be uploaded.
     </p>

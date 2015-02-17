@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Add Encrypted Property' %}
+
+{% block content %}
+    <h2>Add Encrypted Property for <strong>{{ repository.name }}</strong></h2>
+
+    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="name">
+                        Property Name
+                        <small class="additional">
+                            This will be uppercased and prepended with "ENCRYPTED_" at runtime.
+                        </small>
+                    </label>
+                    <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
+                </li>
+
+                <li>
+                    <label for="decrypted">
+                        Value
+                        <small class="additional">This will be encrypted once saved, and only unencrypted during project build.</small>
+                    </label>
+                    <input name="decrypted" id="decrypted" maxlength="200" required value="{{ form.decrypted }}" class="text-input">
+                </li>
+
+                <li>
+                    <label>Environment</label>
+                    <ul class="radio-grid--form">
+                        {% for environment in environments %}
+                            {% set checked = '' %}
+                            {% if form.environment == environment.id %}
+                                {% set checked = ' checked' %}
+                            {% endif %}
+
+                            <li>
+                                <input id="environment-{{ environment.id }}" type="radio" name="environment" value="{{ environment.id }}"{{ checked }}>
+                                <label for="environment-{{ environment.id }}">{{ environment.key }}</label>
+                            </li>
+                        {% endfor %}
+
+                        {% set checked = '' %}
+                        {% if form.environment == 'all' %}
+                            {% set checked = ' checked' %}
+                        {% endif %}
+                        <li>
+                            <input id="environment-all" type="radio" name="environment" value="all"{{ checked }}>
+                            <label for="environment-all">All</label>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div>
+                {# primary action #}
+                <input class="btn" type="submit" value="Add Encrypted Property">
+
+                {# secondary actions #}
+                <a class="secondary-action" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

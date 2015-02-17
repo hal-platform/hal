@@ -1068,7 +1068,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "fb4a05df245e3f36ba1e956d9d031ff00cacf6df"
+                "reference": "e82840385d12cfa4787fc8251a7ba4edf4ce4dcd"
             },
             "archive": {
                 "exclude": [
@@ -1080,6 +1080,7 @@
             },
             "require": {
                 "doctrine/orm": "~2.4",
+                "ext-openssl": "*",
                 "php-64bit": ">=5.4.0",
                 "ql/mcp-core": "*",
                 "ql/mcp-corp-account": "0.2.1"
@@ -1107,7 +1108,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-02-12 18:29:02"
+            "time": "2015-02-17 20:12:13"
         },
         {
             "name": "ql/http-problem",

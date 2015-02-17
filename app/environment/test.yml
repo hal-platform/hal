@@ -27,3 +27,11 @@ parameters:
     aws.credentials.secret: ''
 
     cli.user: 'hal9000test'
+
+    encrypter.publickey: |
+        -----BEGIN PUBLIC KEY-----
+        MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/+DAi+yqs4TLAYGISlrs3ZfY0
+        tfEyIWm+hwxdhiXST8UvGgfymjGLn05JZvsAAo4bI5VizLaVmdFTMilLnVXDNrXY
+        jrwd8t4mrGavecMmhQWbiyTJDXE6unuV+/2qTwkuj5PJDfHQI1Ys39CkSTWiwi8Z
+        pLR/1o2u8njj+v/AaQIDAQAB
+        -----END PUBLIC KEY-----

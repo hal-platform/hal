@@ -28,6 +28,14 @@ parameters:
 
     cli.user: ''
 
+    encrypter.publickey: |
+        -----BEGIN PUBLIC KEY-----
+        MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuK++qGa9d7ErrsqqR4JdAlJ28
+        KVzQWERYbqcDWRMp1EI3bZES0KLpkub2nGDlCa1HC7/4oZzDzJkeWnkq0ChSwBuw
+        4yNSLgEIySGrLd9sbIOcYEeDKrQRhXShejF4qWrr4cXrfTEm7/lI/Vo4QRC5SWCg
+        fViScOUIuz9FnbkWLQIDAQAB
+        -----END PUBLIC KEY-----
+
 services:
     cache.doctrine:
         class: 'Doctrine\Common\Cache\ArrayCache'
