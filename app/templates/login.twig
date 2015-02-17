@@ -3,7 +3,10 @@
 {% set page_title = "Login" %}
 
 {% block content %}
-    <p>Please use your Active Directory credentials to login (ie your "windows password").</p>
+
+    <h2 class="mbn">HAL 9000 Deployment System</h2>
+    <p>It deploys code to other, less capable machines.</p>
+
     {% if errors %}
         <ul class="error-list">
             {% for error in errors %}
@@ -12,21 +15,48 @@
         </ul>
     {% endif %}
 
-    <div class="form-wrapper">
-        <form action="" method="post">
-            <ul class="form-fields">
+
+    <div class="dash-box-wrapper" style="background: transparent">
+
+        <div class="dash-box">
+
+            <div class="form-wrapper">
+                <form action="" method="post">
+                    <ul class="form-fields">
+                        <li>
+                            <label for="username">Username</label>
+                            <input class="text-input" type="text" id="username" name="username" autofocus>
+                        </li>
+                        <li>
+                            <label for="password">Password</label>
+                            <input class="text-input" type="password" id="password" name="password">
+                        </li>
+                        <li>
+                            <p><small>Please use your Active Directory credentials to login (your "windows password").</small></p>
+
+                            <input class="btn" type="submit" value="Log In" name="submit">
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+
+        <div class="dash-box">
+            <h4>## Today</h4>
+            <ul>
                 <li>
-                    <label for="username">Username</label>
-                    <input class="text-input" type="text" id="username" name="username" autofocus>
+                    <strong>8</strong> Builds
                 </li>
                 <li>
-                    <label for="password">Password</label>
-                    <input class="text-input" type="password" id="password" name="password">
+                    <strong>2</strong> Pushes
                 </li>
                 <li>
-                    <input class="btn" type="submit" value="Log In" name="submit">
+                    <strong>18</strong> Active Users
+                </li>
+                <li>
+                    <strong>5</strong> Active Projects
                 </li>
             </ul>
-        </form>
+        </div>
     </div>
 {% endblock %}
