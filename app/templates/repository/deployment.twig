@@ -77,7 +77,7 @@
     {# secondary actions #}
     {% if canEdit %}
         <a class="btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.repository.id, id: deployment.id}) }}">Edit Deployment</a>
-        <a class="btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a>
+        <a class="btn--destructive secondary-action" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a>
     {% endif %}
 
 {% endblock %}

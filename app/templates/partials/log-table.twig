@@ -1,23 +1,26 @@
 <!-- <table class="tablesaw tablesaw-stack" data-mode="stack" style="width: 100%;"> -->
 <table>
     <thead>
-        <th>Event</th>
+        <th class="t20">Event</th>
         <th>Time</th>
         <th>Message</th>
         <th class="t10"></th>
     </thead>
 
     {% for log in logs %}
-        {% set rowColor = 'event-log--info' %}
-        {% if log.status == 'success' %}
-            {% set rowColor = 'event-log--success' %}
-        {% elseif log.status == 'failure' %}
-            {% set rowColor = 'event-log--error' %}
-        {% endif %}
         <tbody>
+
+            {% set rowColor = log.status == 'failure' ? 'event-log--error' : '' %}
+            {% set blockColor = 'event-log__status--info' %}
+            {% if log.status == 'success' %}
+                {% set blockColor = 'event-log__status--success' %}
+            {% elseif log.status == 'failure' %}
+                {% set blockColor = 'event-log__status--error' %}
+            {% endif %}
+
             <tr class="{{ rowColor }}">
                 <td>
-                    <span class="event-log__status">
+                    <span class="event-log__status {{ blockColor }}">
                         {% if log.status == 'success' %}
                             <svg class="icon"><use xlink:href="#tick"></use></svg>
                             {{ log.event|formatEvent }}

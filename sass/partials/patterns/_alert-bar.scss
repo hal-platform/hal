@@ -55,23 +55,27 @@
 }
 
 // event log table
-.event-log__status {
-    @include adjust-font-size-to(ms(1));
-    display: block;
-}
-
-.event-log--success {
-    color: $white;
-    background-color: $success-color;
-}
-
 .event-log--error {
     color: $white;
     background-color: $error-color;
 }
 
-.event-log--info {
+.event-log__status {
+    @include adjust-font-size-to(ms(1));
     color: $white;
+    padding: .40em;
+}
+
+.event-log__status--success {
+    background-color: $success-color;
+}
+
+.event-log__status--info {
     background-color: $grey;
+
+}
+
+.event-log__status--error {
+    background-color: $error-color;
 }
 
