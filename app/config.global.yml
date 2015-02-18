@@ -92,6 +92,7 @@ parameters:
     permissions.hal.repos:
         - 'hal9000'
         - 'hal9000-agent'
+        - 'eternia-cloud'
 
     ############################################################################
     # aws
