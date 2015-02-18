@@ -15,30 +15,37 @@
         </ul>
     {% endif %}
 
+    {{ block('login_form') }}
 
+{% endblock %}
+
+{% block login_form %}
+    <div class="form-wrapper">
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="username">Username</label>
+                    <input class="text-input" type="text" id="username" name="username" autofocus>
+                </li>
+                <li>
+                    <label for="password">Password</label>
+                    <input class="text-input" type="password" id="password" name="password">
+                </li>
+                <li>
+                    <p><small>Please use your Active Directory credentials to login (your "windows password").</small></p>
+
+                    <input class="btn" type="submit" value="Log In" name="submit">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}
+
+{% block dual_page %}
     <div class="dash-box-wrapper" style="background: transparent">
 
         <div class="dash-box">
-
-            <div class="form-wrapper">
-                <form action="" method="post">
-                    <ul class="form-fields">
-                        <li>
-                            <label for="username">Username</label>
-                            <input class="text-input" type="text" id="username" name="username" autofocus>
-                        </li>
-                        <li>
-                            <label for="password">Password</label>
-                            <input class="text-input" type="password" id="password" name="password">
-                        </li>
-                        <li>
-                            <p><small>Please use your Active Directory credentials to login (your "windows password").</small></p>
-
-                            <input class="btn" type="submit" value="Log In" name="submit">
-                        </li>
-                    </ul>
-                </form>
-            </div>
+            {{ block('login_form') }}
         </div>
 
         <div class="dash-box">
