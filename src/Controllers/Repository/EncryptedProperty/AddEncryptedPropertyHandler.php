@@ -200,7 +200,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 
         $env = null;
         // verify environment
-        if (!$errors && $environmentId !== 'all') {
+        if (!$errors && $environmentId !== 'global') {
             if (!$env = $this->envRepo->find($environmentId)) {
                 $errors[] = self::ERR_NO_ENVIRONMENT;
             }

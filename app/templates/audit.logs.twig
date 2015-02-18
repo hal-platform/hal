@@ -15,16 +15,17 @@
             <th>User</th>
             <th>Action</th>
             <th>Object</th>
-            <th>Changeset</th>
         </thead>
         <tbody>
         {% for log in logs %}
             <tr>
                 <td>{{ log.recorded|timepoint('M j, Y g:i A') }}</td>
-                <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.name }}</a></td>
+                <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.handle }}</a></td>
                 <td><b>{{ log.action }}</b></td>
-                <td>{{ log.entity }}</td>
-                <td>
+                <td>{{ log.entity|replace({':': ' : '}) }}</td>
+            </tr>
+            <tr>
+                <td colspan="4">
                     <div class="pre-wrapper">
                         <pre>{{ log.data|jsonPretty|raw }}</pre>
                     </div>

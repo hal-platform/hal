@@ -81,6 +81,7 @@ class EncryptedPropertiesController implements ControllerInterface
         }
 
         $encrypted = $this->encryptedRepo->findBy(['repository' => $repo]);
+        usort($encrypted, $this->sortByEnv());
 
         $rendered = $this->template->render([
             'repository' => $repo,
@@ -88,5 +89,30 @@ class EncryptedPropertiesController implements ControllerInterface
         ]);
 
         $this->response->setBody($rendered);
+    }
+
+    private function sortByEnv()
+    {
+        return function($prop1, $prop2) {
+
+            // global to bottom
+            if ($prop1->getEnvironment() xor $prop2->getEnvironment()) {
+                return $prop1->getEnvironment() ? -1 : 1;
+            }
+
+            if ($prop1->getEnvironment() === $prop2->getEnvironment()) {
+                // same env, compare name
+                return strcasecmp($prop1->getName(), $prop2->getName());
+            }
+
+            $order1 = $prop1->getEnvironment()->getOrder();
+            $order2 = $prop2->getEnvironment()->getOrder();
+            if ($order1 === $order2) {
+                return 0;
+            }
+
+            // compare env order
+            return ($order1 < $order2) ? -1 : 1;
+        };
     }
 }
