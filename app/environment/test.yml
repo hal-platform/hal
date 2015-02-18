@@ -22,7 +22,7 @@ parameters:
 
     encryption.secret: 'cc9218d4ecf369fe50dd9f00beae36cff3eb0e7b095f1491eeeae75fca7c37d176e831cff3635fb3f636b700906513f0'
 
-    aws.region: ''
+    aws.region: 'us-west-2'
     aws.credentials.key: ''
     aws.credentials.secret: ''
 
