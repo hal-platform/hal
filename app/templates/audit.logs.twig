@@ -24,7 +24,11 @@
                 <td><a href="{{ urlFor('user', {'id': log.user.id}) }}">{{ log.user.name }}</a></td>
                 <td><b>{{ log.action }}</b></td>
                 <td>{{ log.entity }}</td>
-                <td><pre>{{ log.data|jsonPretty|raw }}</pre></td>
+                <td>
+                    <div class="pre-wrapper">
+                        <pre>{{ log.data|jsonPretty|raw }}</pre>
+                    </div>
+                </td>
             </tr>
         {% else %}
             <tr>
