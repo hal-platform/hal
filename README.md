@@ -21,9 +21,9 @@ username  | `root`
 
 These can be changed in your `config.env.yml`.
 
-The schema is located in the `hal-core` package which contains doctrine repositories and models for all hal deployments. Run the queries in the schema file: `hal-core/config/initial.mysql`.
+The schema is located in the `hal-core` package which contains doctrine repositories and models for all hal deployments. Run the phinx migrations included with `hal-core`.
 
-Sometimes the schema changes between releases. Make sure to run the migration queries in the release notes to stay up to date.
+Sometimes the schema changes between releases. Make sure to run the migrations included with `hal-core` in the release notes to stay up to date.
 
 #### Server
 
@@ -62,7 +62,7 @@ GitHub collaborators and HAL Admins can push any repository in non-prod environm
 
 #### Database
 
-Sometimes the schema changes between releases. Make sure to run the migration queries in the release notes to stay up to date. Changes may also be made between commits while a release is being developed.
+Sometimes the schema changes between releases. Make sure to run the migrations included with `hal-core` to stay up to date. Changes may also be made between commits while a release is being developed.
 
 If your database schema seems out of date, talk to another developer and find out the necessary steps to update your local schema.
 
