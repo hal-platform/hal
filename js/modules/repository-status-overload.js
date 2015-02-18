@@ -7,8 +7,8 @@ define(['jquery'], function($) {
         $overloader: null,
         status: false,
 
-        expandText: 'Expand deployment details',
-        collapseText: 'Collapse deployment details',
+        expandText: 'Expand deployments',
+        collapseText: 'Collapse deployments',
 
         init: function() {
 
