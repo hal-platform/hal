@@ -36,10 +36,11 @@
 
         {# secondary actions #}
         {% if isRepoAdmin %}
+            <a class="btn  secondary-action" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a>
             <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a>
         {% endif %}
 
-        {% if isUserAdmin(currentUser) and not deployment_count and isUserAdmin(currentUser) %}
+        {% if isUserAdmin(currentUser) and not deployment_count %}
             <a class="btn--destructive secondary-action" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Repository</a>
         {% endif %}
     </div>
@@ -175,10 +176,6 @@
         </table>
     {% else %}
         <p>There are no deployments associated with this repository.</p>
-    {% endif %}
-
-    {% if isRepoAdmin %}
-        <a class="btn" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a>
     {% endif %}
 
 {% endblock %}
