@@ -32,7 +32,7 @@
 
         {# primary action #}
         <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
-        <a class="btn secondary-action" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Manage Encrypted Properties</a>
+        <a class="btn secondary-action" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a>
 
         {# secondary actions #}
         {% if isRepoAdmin %}

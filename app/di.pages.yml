@@ -369,6 +369,29 @@ services:
     repository.encrypted.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['repository/encrypted/add.encrypted.property.twig']]]
+    repository.encrypted.add.handler:
+        class: 'QL\Hal\Controllers\Repository\EncryptedProperty\AddEncryptedPropertyHandler'
+        arguments:
+            - @doctrine.em
+            - @encrypted.repo
+            - @repository.repo
+            - @environment.repo
+            - @encrypter
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+    repository.encrypted.remove.handler:
+        class: 'QL\Hal\Controllers\Repository\EncryptedProperty\RemoveEncryptedPropertyHandler'
+        arguments:
+            - @doctrine.em
+            - @encrypted.repo
+            - @session
+            - @url
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
 
     ####################################################################################################################
     # BUILD CONTROLLERS

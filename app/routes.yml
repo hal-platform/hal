@@ -372,8 +372,19 @@ parameters:
         repository.encrypted.add:
             method: ['GET', 'POST']
             route: '/repositories/:repository/encrypted-properties/add'
-            stack: ['repoadmin.bouncer', 'repository.encrypted.add.page']
+            stack: ['repoadmin.bouncer', 'repository.encrypted.add.handler', 'repository.encrypted.add.page']
             conditions: {repository: '[\d]+'}
+
+        repository.encrypted.remove.confirm:
+            method: 'GET'
+            route: '/repositories/:repository/encrypted-properties/:id/remove'
+            stack: ['repoadmin.bouncer', 'delete.confirm.page']
+            conditions: {repository: '[\d]+', id: '[a-zA-Z0-9]+'}
+        repository.encrypted.remove:
+            method: ['POST']
+            route: '/repositories/:repository/encrypted-properties/:id/remove'
+            stack: ['repoadmin.bouncer', 'repository.encrypted.remove.handler']
+            conditions: {repository: '[\d]+', id: '[a-zA-Z0-9]+'}
 
         ################################################################################################################
         # GROUP ROUTES

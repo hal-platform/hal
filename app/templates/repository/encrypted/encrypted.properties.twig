@@ -2,6 +2,8 @@
 
 {% set page_title = 'Encrypted Properties : ' ~ repository.name %}
 
+{% set isRepoAdmin = isUserRepoAdmin(currentUser, repository.key) %}
+
 {% block content %}
     <h2>Encrypted Properties for <strong>{{ repository.name }}</strong></h2>
 
@@ -13,6 +15,9 @@
                 <tr>
                     <th>Property Name</th>
                     <th>Environment</th>
+                    {% if isRepoAdmin %}
+                        <th></th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -28,16 +33,26 @@
                             ALL
                         {% endif %}
                     </td>
+                    {% if isRepoAdmin %}
+                        <td>
+                            <a class="btn btn--tiny btn--destructive" href="{{ urlFor('repository.encrypted.remove', {'repository': repository.id, 'id': property.id}) }}">Remove</a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        <p>Encrypted properties are immutable. To change the value of a property: Remove it then add it again.</p>
+        <p>
+            Encrypted properties are immutable. To change the value of a property: Remove it then add it again.<br><br>
+
+            If a property is set for both <strong>ALL</strong> environments and a specific environment, the environment-specific
+            property will override the <strong>ALL</strong> environment property.
+        </p>
     {% else %}
         <p>There are no encrypted properties for this repository.</p>
     {% endif %}
 
-    {% if isUserRepoAdmin(currentUser, repository.key) %}
+    {% if isRepoAdmin %}
         <p>
             <a class="btn --action" href="{{ urlFor('repository.encrypted.add', {repository: repository.id}) }}">Add Encrypted Property</a>
         </p>
