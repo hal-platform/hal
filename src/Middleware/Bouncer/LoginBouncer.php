@@ -73,7 +73,12 @@ class LoginBouncer implements MiddlewareInterface
     public function __invoke()
     {
         if (!$this->session->get('user_id')) {
-            $this->url->redirectFor('login', [], ['redirect' => $this->request->getPathInfo()]);
+            $query = [];
+            if ($this->request->getPathInfo() !== '/') {
+                $query = ['redirect' => $this->request->getPathInfo()];
+            }
+
+            $this->url->redirectFor('login', [], $query);
             throw new Stop;
         }
 
