@@ -67,7 +67,6 @@ parameters:
     navigation.list:
         dashboard: 'Dashboard'
         queue: 'Queue'
-        groups: 'Groups'
         repositories: 'Repositories'
         servers: 'Servers'
         environments: 'Environments'

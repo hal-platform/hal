@@ -393,7 +393,7 @@ parameters:
         groups:
             method: 'GET'
             route: '/groups'
-            stack: ['login.bouncer', 'groups.page']
+            stack: ['login.bouncer', 'repositories.page']
 
         group:
             method: 'GET'

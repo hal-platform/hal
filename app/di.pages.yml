@@ -61,16 +61,6 @@ services:
     # GROUP CONTROLLERS
     ####################################################################################################################
 
-    groups.page:
-        class: 'QL\Hal\Controllers\Group\GroupsController'
-        arguments:
-            - @groups.twig
-            - @group.repo
-            - @slim.response
-    groups.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['group/groups.twig']]]
-
     group.page:
         class: 'QL\Hal\Controllers\Group\GroupController'
         arguments:

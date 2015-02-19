@@ -11,11 +11,25 @@ tbody tr {
     @include adjust-font-size-to(ms(-1));
 }
 
+.table-breathe::before
+{
+    content: '';
+    display: block;
+    height: 1em;
+}
+
 th.table-mid-header {
     @include adjust-font-size-to(ms(2));
 
     background: $bright-blue;
+    border: 3px solid #357793;
+
     color: white;
     font-weight: bold;
     padding: 0 5px;
+    margin : 5px;
+
+    .icon--link {
+        float: right;
+    }
 }

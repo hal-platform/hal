@@ -444,9 +444,10 @@ class HalExtension extends Twig_Extension
         return [
             'dashboard' => true,
             'queue' => true,
-            'groups' => true,
+            'repositories' => true,
 
-            'repositories' => false,
+            // 'groups' => true,
+
             'servers' => false,
             'environments' => false,
             'users' => false,

@@ -11,18 +11,23 @@
                 <th>Repository</th>
                 <th>Github Source</th>
                 <th>Notification Email</th>
-                <th></th>
+                <th class="t5"></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="table-breathe">
         {% set hasRepos = false %}
         {% for group in groups %}
+            <tr>
+                <th colspan="4" class="table-mid-header">
+                    {{ group.name }}
+                    <a class="icon--link" href="{{ urlFor('group', {id: group.id}) }}">
+                        <svg class="icon"><use xlink:href="#outgoing"></use></svg>
+                    </a>
+                </th>
+            </tr>
 
             {% if not group.getRepositories.isEmpty %}
                 {% set hasRepos = true %}
-                <tr>
-                    <th colspan="4" class="table-mid-header">{{ group.name }} repositories</th>
-                </tr>
 
                 {% for repo in group.getRepositories %}
                     <tr>
@@ -37,12 +42,16 @@
                         </td>
                     </tr>
                 {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No repositories found.</td>
+                </tr>
             {% endif %}
         {% endfor %}
 
         {% if not hasRepos %}
             <tr>
-                <td colspan="4">There are no repositories.</td>
+                <td colspan="4">There are no groups.</td>
             </tr>
         {% endif %}
         </tbody>
@@ -51,5 +60,6 @@
     {# primary action #}
     {% if isUserAdmin(currentUser) %}
         <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
+        <a class="btn secondary-action" href="{{ urlFor('group.admin.add') }}">Add Group</a>
     {% endif %}
 {% endblock %}

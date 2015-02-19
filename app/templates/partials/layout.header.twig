@@ -30,8 +30,12 @@
                         {{ nav_macros.optionalNavlink('Dashboard', 'dashboard', 'dashboard') }}
                         {{ nav_macros.optionalNavlink('Queue', 'queue', 'in') }}
 
-                        {{ nav_macros.optionalNavlink('Groups', 'groups', 'list') }}
-                        {{ nav_macros.optionalNavlink('Repositories', 'repositories', 'repo') }}
+                        {# todo, remove this. groups page is no longer supported. #}
+                        {% if not isNavOn('repositories') %}
+                            {{ nav_macros.optionalNavlink('Repositories', 'groups', 'list') }}
+                        {% endif %}
+
+                        {{ nav_macros.optionalNavlink('Repositories', 'repositories', 'list') }}
 
                         {{ nav_macros.optionalNavlink('Servers', 'servers', 'server') }}
                         {{ nav_macros.optionalNavlink('Environments', 'environments', 'leaf') }}

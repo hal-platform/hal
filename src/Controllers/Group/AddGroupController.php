@@ -106,7 +106,7 @@ class AddGroupController implements ControllerInterface
                 $message = sprintf('Group "%s" added.', $group->getName());
                 $this->session->flash($message, 'success');
 
-                return $this->url->redirectFor('groups');
+                return $this->url->redirectFor('repositories');
             }
         }
 
