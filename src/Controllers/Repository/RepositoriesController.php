@@ -46,10 +46,32 @@ class RepositoriesController implements ControllerInterface
      */
     public function __invoke()
     {
+        $groups = $this->groupRepo->findBy([], ['name' => 'ASC']);
+
+        $repositories = [];
+        $repoSort = $this->repoSorter();
+
+        foreach ($groups as $group) {
+            $repos = $group->getRepositories()->toArray();
+            usort($repos, $repoSort);
+            $repositories[$group->getId()] = $repos;
+        }
+
         $rendered = $this->template->render([
-            'groups' => $this->groupRepo->findBy([], ['name' => 'ASC'])
+            'groups' => $groups,
+            'repositories' => $repositories
         ]);
 
         $this->response->setBody($rendered);
+    }
+
+    /**
+     * @return Closure
+     */
+    private function repoSorter()
+    {
+        return function($a, $b) {
+            return strcasecmp($a->getName(), $b->getName());
+        };
     }
 }

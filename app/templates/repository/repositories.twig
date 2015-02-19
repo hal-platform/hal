@@ -26,10 +26,9 @@
                 </th>
             </tr>
 
-            {% if not group.getRepositories.isEmpty %}
+            {% if repositories[group.id] %}
                 {% set hasRepos = true %}
-
-                {% for repo in group.getRepositories %}
+                {% for repo in repositories[group.id] %}
                     <tr>
                         <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.name }}</a></td>
                         <td>
