@@ -25,6 +25,7 @@
                 <li><a href="#language-support">Does HAL support .NET applications?</a></li>
                 <li><a href="#service-support">Does HAL support Amazon Cloud Deployments?</a></li>
                 <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
+                <li><a href="#encrypted-configuration">Does HAL support encrypted configuration?</a></li>
                 <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
             </ul>
         </li>
@@ -171,9 +172,18 @@
         System commands can be used to customize the build and/or push process for an application.
     </p>
 
+    <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
+
+    <h4 id="encrypted-configuration">Does HAL support encrypted configuration?</h4>
     <p>
-        Read more about the <a href="{{ urlFor('help.deployment') }}">build and push scripting environment</a>.
+        <strong>Yes.</strong><br>
+        HAL 9000 can store sensitive information such as passwords or API keys. This data is encrypted when it is store in the database, and only decrypted during the build process.
     </p>
+    <p>
+        Administrators and Project Leads can add encrypted properties from the Repository Information page. Values can be stored for individual environments, or globally so they can be used in every environment.
+    </p>
+    <p>See in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a> for more details on how to read these values when they are decrypted during the build process.</p>
+
 {% endblock %}
 
 {% block other_questions %}

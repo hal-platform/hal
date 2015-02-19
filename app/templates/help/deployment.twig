@@ -14,6 +14,7 @@
         <li><a href="#build-environment">Build scripting environment</a></li>
         <li><a href="#push-environment">Push scripting environment</a></li>
         <li><a href="#package-managers">Supported package managers</a></li>
+        <li><a href="#encrypted-configuration">Encrypted Properties</a></li>
     </ul>
 
     <h2 id="shell-commands">Commands</h2>
@@ -119,6 +120,25 @@
 
     <h4>Recommended installation commands</h4>
     {{ block('pm_commands') }}
+
+    <h2 id="encrypted-configuration">Encrypted Properties</h2>
+
+    <p>
+        From the frontend HAL interface, administrators and project leads can add encrypted properties. Encrypted Properties
+        are sensitive information such as passwords or API keys. During <strong>build</strong> and <strong>build_transform</strong>,
+        encrypted properties will be decrypted and set as environment variables.
+    </p>
+    <p>
+        Decrypted environment variables will be prefixed with <code>ENCRYPTED_</code>. If a value such as "MY_SECRET_PASS" is stored,
+        it will be available to build scripts at the <code>ENCRYPTED_MY_SECRET_PASS</code> environment variable.
+    </p>
+
+    {{ macros.alert('warning', 'Never dump environment variables to STDOUT!', 'Do not run commands such as "printenv" or "set". This can expose sensitive information which may be viewed by unauthorized users.') }}
+
+    <p>
+        If your application requires specific properties to run, it is a good idea to check if they are set and fail your build if they are empty or missing.<br><br>
+        HAL 9000 will automatically fail builds when decryption fails, but this does not protect against required configuration being deleted from the encrypted property store.
+    </p>
 
 {% endblock %}
 
