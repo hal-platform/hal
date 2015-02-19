@@ -1068,7 +1068,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "3e3b5c70e26429bbba7656cd3cb8176e8b1fdb9e"
+                "reference": "1e29f71bd6c51d15342a1114ee61f7080fd304a9"
             },
             "archive": {
                 "exclude": [
@@ -1108,7 +1108,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-02-18 14:21:02"
+            "time": "2015-02-19 15:09:53"
         },
         {
             "name": "ql/http-problem",
