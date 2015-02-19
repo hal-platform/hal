@@ -12,6 +12,6 @@
 {# GLOBAL MESSAGE #}
 {% block messages %}
     {% if globalMessage() %}
-        {{ macros.alert('info', 'Alert', globalMessage(), true) }}
+        {{ globalMessage()|raw }}
     {% endif %}
 {% endblock %}

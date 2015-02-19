@@ -28,6 +28,10 @@
     </div>
 
     <h3>New Message</h3>
+
+    <p>Note that the message is not wrapped in any html! Use the following as a template if you wish to create an alert.</p>
+    <pre>{{ block('sample_message')|escape }}</pre>
+
     <div class="trailer">
         <form action="" method="post">
             <ul class="form-fields">
@@ -49,4 +53,11 @@
             <input class="btn" type="submit" name="submit" value="Save Message" >
         </form>
     </div>
+{% endblock %}
+
+{% block sample_message %}
+<div class="alert-bar--error|alert-bar--success|alert-bar--info">
+    <h4>Title.</h4>
+    <p>Optional. More info</p>
+</div>
 {% endblock %}
