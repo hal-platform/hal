@@ -22,7 +22,7 @@ th.table-mid-header {
     @include adjust-font-size-to(ms(2));
 
     background: $bright-blue;
-    border: 3px solid #357793;
+    border: 3px solid $slightly-less-bright-blue;
 
     color: white;
     font-weight: bold;
