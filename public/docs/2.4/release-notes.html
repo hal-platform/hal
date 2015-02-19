@@ -1,0 +1,415 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        body {
+            font-family: Helvetica, sans-serif;
+            margin: 1em;
+        }
+        blockquote {
+            border-left: 4px solid #ddd;
+            color: #777;
+            font-size: .9em;
+            margin-left: .5em;
+            padding: 0 15px;
+        }
+        code {
+            background: #e5e5e5;
+            color: #d63620;
+            font-family: monospace;
+            padding: .2em;
+        }
+
+        h2 {
+            background: #cc6300;
+            color: white;
+            margin: 1em 0;
+            padding: .5em;
+        }
+        h3 {
+            border-bottom: 4px solid #357793;
+            color: #236298;
+            margin-top: 1em;
+            padding-bottom: .25em;
+        }
+        h5 {
+            font-size: 1em;
+            margin: .5em 0;
+        }
+
+        blockquote ul {
+            list-style-type: square;
+            padding-left: .75em;
+        }
+
+        blockquote ul > li {
+            line-height: 120%;
+            margin: .25em 0;
+        }
+
+        .biggie-size {
+            border: 2px solid #aaa;
+            background: #efefef;
+            color: #555;
+            display: inline-block;
+            margin: .5em;
+            text-decoration: none;
+            width: 400px;
+        }
+
+        .biggie-size img {
+            display: block;
+            margin: auto;
+        }
+        .biggie-size span {
+            display: block;
+            text-align: center;
+            margin-bottom: .25em;
+        }
+
+        .task-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .task-list li {
+            margin: .25em 0;
+        }
+
+        i {
+            color: #0F7832;
+            font-style: normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>HAL 9000 - Version 2.4</h1>
+
+    <p>Greetings! The web core team has pushed an update to HAL 9000. This is version 2.4.</p>
+
+    <h3>What is HAL 9000?</h3>
+    <p>
+        HAL 9000 is the deployment system we use to deploy many of our client-facing websites, including
+        MyQL, Rocket Mortgage, QLMS, ORMS, Agent Insight, QuickenLoans.com and more!
+    </p>
+
+    <h3>New Features</h3>
+    <ul>
+        <li>
+            <h5>HAL can now deploy to Amazon Elastic Beanstalk.</h5>
+        </li>
+
+        <li>
+            <h5>HAL can now deploy to Amazon EC2.</h5>
+        </li>
+
+        <li>
+            <h5>HAL now supports windows-based build servers.</h5>
+
+            <blockquote>
+                <p>This feature is not currently active, as HAL does not have access to a windows build server. The Web Core team is working on getting a dedicated windows build server.</p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>HAL can store encrypted configuration that is available to build scripts.</h5>
+        </li>
+
+        <li>
+            <h5>HAL builds and pushes can now be configured from a <code>.hal9000.yml</code> file within the project codebase.</h5>
+
+            <blockquote>
+                <p><b>This file enables several new features:</b></p>
+                <ul>
+                    <li>Custom dist directories</li>
+                    <li>Custom excluded sync directories</li>
+                    <li>Up to 10 commands may be provided for <strong>build</strong>, <strong>build_transform</strong>, <strong>pre_push</strong> and <strong>post_push</strong></li>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h2>
+        Changelog
+    </h2>
+
+    <h3>User Experience (UX) Enhancements</h3>
+    <ul>
+        <li>
+            <h5>The <i>Groups</i> page has been replaced by the easier to read <i>Repositories</i> page.</h5>
+
+            <blockquote>
+                <p>As a reminder, the nav menu is customizable through the <i>Settings</i> page.</p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5><i>Repository Status</i> page</h5>
+            <blockquote>
+                <ul>
+                    <li>Only one environment is displayed at a time. This will allow users to more easily find deployment information for the environment they are currently working in.</li>
+                    <li>Less information for each server deployment is displayed by default. This allows users to more easily see the status of each deployment.</li>
+                </ul>
+            </blockquote>
+
+            <a class="biggie-size" href="repo_collapsed.png" target="_blank"><img src="repo_collapsed.400.png"><span>Environment switching and collapsed servers</span></a>
+            <a class="biggie-size" href="repo_expanded.png" target="_blank"><img src="repo_expanded.400.png"><span>Expanded server details</span></a>
+        </li>
+
+        <li>
+            <h5><i>Start Build</i> page</h5>
+            <blockquote>
+                <ul>
+                    <li>HAL can now build from any pull request, not just the ones listed.</li>
+                    <li>Environments that a project has no valid deployments for will not be displayed.</li>
+                    <li>HAL will attempt to correctly resolve build search queries such as "pull/100", "tag/2.0.0", SHA hashes, and more.</li>
+                    <li>The fuzzy search on the "Start Build" page has been rebuilt to be smarter and faster.</li>
+                </ul>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>The <i>Deployment Management</i> page has been rebuilt <em>again</em> and is easier to use.</h5>
+        </li>
+
+        <li>
+            <h5>The <i>Help</i> page has been reformatted slightly to make it easier to find answers.</h5>
+        </li>
+
+        <li>
+            <h5>When viewing <i>All Pushes</i> or <i>All Builds</i> for a project, results can be filtered by git reference.</h5>
+
+            <blockquote>
+                <p>This is useful if you would like to see all pushes for a specific branch or pull request, for example.</p>
+            </blockquote>
+
+            <a class="biggie-size" href="filter_history.png" target="_blank"><img src="filter_history.400.png"><span>Filtering build or push history by reference</span></a>
+        </li>
+
+        <li>
+            <h5>The queue was added to the <i>Dashboard</i> of every user, not just administrators.</h5>
+        </li>
+    </ul>
+
+    <h3>Developer Experience (DX) Enhancements</h3>
+    <ul>
+        <li>
+            <h5>Encrypted Properties are available as environment variables for build and build_transform commands.</h5>
+
+            <blockquote>
+                <p>See <a href="http://hal9000/help/deployment">Deployment scripting guide</a> for more details.</p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>Added support for <code>.hal9000.yml</code> configuration file.</h5>
+
+            <blockquote>
+                <p>This file is in YAML format, and similar to many CI services like Travis or Scrutinizer, can be used to customize the way HAL builds and deploys your project.</p>
+            </blockquote>
+
+            <a class="biggie-size" href="hal9000_yml.png" target="_blank"><img src="hal9000_yml.400.png"><span>Example .hal9000.yml</span></a>
+        </li>
+
+        <li>
+            <h5>The distribution directory HAL 9000 uses to archive builds can now be customized.</h5>
+
+            <blockquote>
+                <p>The default is "current directory".</p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>The file and directory list HAL excludes from file syncs on push can be customized.</h5>
+
+            <blockquote>
+                <p>The default is "config/database.ini" and "data/". Skeletor applications should always exclude these.</p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>Multiple commands can now be specified to be run for build, build-transform, pre-push and post-push.</h5>
+        </li>
+    </ul>
+
+    <h3>Bugs</h3>
+    <ul>
+        <li>
+            <h5>HAL will no longer attempt to select a matching branch or release automatically if a user did not select one from the <i>Start Build</i> ref selector.</h5>
+
+            <blockquote>
+                <p>This would sometimes select the wrong git reference to build when releases and branches both started with numeric characters.</p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>Build archives will be worked on/copied locally before transferring to/from the tremendously slow build storage.</h5>
+
+            <blockquote>
+                <p>This may or may not fix the issue where uncompressing the build would cause pushes to fail periodically.</p>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h3>Changes</h3>
+
+    <ul>
+        <li>
+            <h5>HAL now only supports organization-owned github repositories.</h5>
+        </li>
+
+        <li>
+            <h5>When adding deployment relationships, URL is now required.</h5>
+        </li>
+
+        <li>
+            <h5>Build and push commands can no longer be edited from within the application.</h5>
+        </li>
+
+        <li>
+            <h5>For HAL Administrators, a <i>Global Server Status</i> page was added for checking whether HAL can communicate with application servers.</h5>
+        </li>
+    </ul>
+
+    <h3>API Changes</h3>
+    <ul>
+        <li>
+            <h5>Repository</h5>
+
+            <blockquote>
+                <ul>
+                    <li>Links to Pull requests, branches, and tags were removed.</li>
+                    <li>
+                        <code>eb-name</code> added.
+                    </li>
+                    <li>
+                        <code>githubUser</code> changed to <code>github-user</code>.
+                    </li>
+                    <li>
+                        <code>githubRepo</code> changed to <code>github-repository</code>.
+                    </li>
+                    <li>
+                        <code>buildCmd</code> removed.
+                    </li>
+                    <li>
+                        <code>buildTransformCmd</code> removed.
+                    </li>
+                    <li>
+                        <code>prePushCmd</code> removed.
+                    </li>
+                    <li>
+                        <code>postPushCmd</code> removed.
+                    </li>
+                </ul>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>Deployment</h5>
+
+            <blockquote>
+                <ul>
+                    <li>
+                        <code>eb-environment</code> added.
+                    </li>
+                    <li>
+                        <code>ec2-pool</code> added.
+                    </li>
+                </ul>
+            </blockquote>
+        </li>
+        <li>
+            <h5>Server</h5>
+
+            <blockquote>
+                <ul>
+                    <li>
+                        <code>type</code> added.
+                    </li>
+                </ul>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h3>Technical</h3>
+    <ul>
+        <li>
+            <h5>HAL has been upgraded to Panthor 2.0.</h5>
+        </li>
+        <li>
+            <h5>HAL now uses <a href="http://phinx.org/">phinx</a> to enable better database migrations between versions.</h5>
+        </li>
+        <li>
+            <h5>Dependencies</h5>
+
+            <blockquote>
+                <p><b>The following components MUST go with this release:</b></p>
+                <ul>
+                    <li>HAL 2.4</li>
+                    <li>HAL Core 2.5</li>
+                    <li>HAL Agent 2.2</li>
+                </ul>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h2>Need Help?</h2>
+    <p>If you find any bugs or want to request a feature, drop us a line in the hipchat room <strong>[Application] HAL 9000</strong>, or <a href="mailto:itteamwebcore@quickenloans.com">send us an email</a>.</p>
+
+    <h2>JIRA Tasklist</h2>
+
+    <p>
+        <a href="https://fringedivision.atlassian.net/browse/HAL/fixforversion/10303/?selectedTab=com.atlassian.jira.plugins.jira-development-integration-plugin:release-report-tabpanel">JIRA Release page for HAL 9000 2.4</a>
+    </p>
+
+    <h3>Bug</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-129">HAL-129</a>] - Refactor, Improve how HAL resolves to a ref on the build start page</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-145">HAL-145</a>] - Attempt to prevent tar/untar timeout issues</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-145">HAL-166</a>] - Prevent Commit Status checks from crashing twig template</li>
+    </ul>
+
+    <h3>Improvement</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-27">HAL-27</a>] - Error handling is inconsistent</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-33">HAL-33</a>] - Create build from any pull request</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-92">HAL-92</a>] - Port HAL to Panthor: Part 2 Electric Boogaloo</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-108">HAL-108</a>] - Refactor server boxes on repo status</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-128">HAL-128</a>] - Add repository reference on Push entity</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-136">HAL-136</a>] - Add the deployment URL to status display</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-138">HAL-138</a>] - Rebuild Add Deployment page.</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-142">HAL-142</a>] - Add phinx migration for initial db schema</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-144">HAL-144</a>] - Stop tar/untarring directly on /builds storage</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-150">HAL-150</a>] - Update help pages with docs for new features</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-152">HAL-152</a>] - Dont show environments on build page that the repo does not have a deployment for.</li>
+    </ul>
+
+    <h3>New Feature</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-48">HAL-48</a>] - Add ability to filter repository status by environment</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-105">HAL-105</a>] - Use hal9000.yml config file for deployment options</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-132">HAL-132</a>] - Add phinx migrations to hal-core</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-139">HAL-139</a>] - Add Github Deployment API support</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-140">HAL-140</a>] - Add ability to deploy to AWS (EB)</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-143">HAL-143</a>] - Add ability to filter push/build history by git ref</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-149">HAL-149</a>] - Add ability to deploy .NET</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-151">HAL-151</a>] - Add EB health status for EB deployments</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-153">HAL-153</a>] - Add ability to deploy to AWS (Autoscaling EC2)</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-158">HAL-158</a>] - Add a simple display for stuck builds/pushes on homepage for super admins</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-159">HAL-159</a>] - Add a server connection test page</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-161">HAL-161</a>] - Add encrypted properties for repositories</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-170">HAL-170</a>] - Release HAL 2.4</li>
+    </ul>
+
+    <h3>Task</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-155">HAL-155</a>] - Run build transform commands on windows server during push</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-157">HAL-157</a>] - Make sure nuget works</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-117">HAL-117</a>] - Move all queries into core repositories</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-146">HAL-146</a>] - Update UX for EBS/.hal9000.yml changes</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-148">HAL-148</a>] - Update email templates for deployment types</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-154">HAL-154</a>] - Remove old builds</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-163">HAL-163</a>] - Update Key Masters contact</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-164">HAL-164</a>] - Update all event log message text and context during build/push.</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-165">HAL-165</a>] - Prevent non-organization repo owners from being used</li>
+    </ul>
+</body>
+</html>
