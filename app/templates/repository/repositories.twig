@@ -10,7 +10,6 @@
             <tr>
                 <th>Repository</th>
                 <th>Github Source</th>
-                <th>Notification Email</th>
                 <th class="t5"></th>
             </tr>
         </thead>
@@ -35,7 +34,6 @@
                             <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
                             <svg class="icon"><use xlink:href="#github"></use></svg>
                         </td>
-                        <td>{{ repo.email }}</td>
                         <td>
                             <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
                         </td>
