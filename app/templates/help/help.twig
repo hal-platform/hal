@@ -37,6 +37,7 @@
                 {% if not isSeriousBusinessMode() %}
                     <li><a href="#hellodave">My name isn't Dave!</a></li>
                 {% endif %}
+                <li><a href="#release-notes">Release Notes</a></li>
             </ul>
         </li>
     </ul>
@@ -198,4 +199,12 @@
             I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ urlFor('help.hal') }}">think things over</a>.
         </p>
     {% endif %}
+
+
+    <h4 id="release-notes">Release Notes</h4>
+    <ul>
+        <li>
+            <a href="/docs/2.4/release-notes.html">Release 2.4</a>
+        </li>
+    </ul>
 {% endblock %}
