@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = 'Help' %}
 
@@ -42,7 +43,6 @@
         </li>
     </ul>
 
-
     <h2 id="help-support">Support</h2>
     {{ block('support_questions') }}
 
@@ -57,6 +57,16 @@
 {% block support_questions %}
     <h4 id="permission">Who should I contact for support or permission changes?</h4>
     <p>You should email <strong>Team Key Masters</strong> at {{ kmContact|raw }}.</p>
+
+    <h6 class="mbn"><strong>How are permissions determined?</strong></h6>
+    <p>
+        HAL grants non-prod build and push permissions to engineers that are <b>public</b> members of the Github organization that owns the project.
+    </p>
+    <p>
+        For non-engineers, users must be added to special Active Directory groups.
+    </p>
+
+    {{ macros.alert('info', 'The way HAL determines Github permissions has recently changed.', block('github_permission_changes')) }}
 
 
     <h4 id="bugs">Who should I contact regarding bugs or feature requests?</h4>
@@ -88,36 +98,42 @@
             <strong>Determine what group your application should exist in within HAL 9000.</strong>
             <p>
                 This is commonly a team or business area name. You can see the ones that already exist by looking
-                at the <a href="{{ urlFor('repositories') }}">Repositories Page</a>. If you need to create a new group, you'll
-                need the following information.
-
-                <ul>
-                    <li>
-                        An identifier using numbers, letters, and hyphens. Examples include 'venture', 'servicing', and
-                        'web-core'.
-                    </li>
-                    <li>
-                        The full title that describes your group. Examples include 'Team Venture', 'Servicing', and 'Web
-                        Core'.
-                    </li>
-                </ul>
+                at the <a href="{{ urlFor('repositories') }}">Repositories Page</a>.
             </p>
+
+            <p class="mbn">If you need to create a new group, you'll need the following information.</p>
+            <ul class="trailer">
+                <li>
+                    An identifier using numbers, letters, and hyphens. Examples: <b>venture</b>, <b>servicing</b>, and <b>web-core</b>.
+                </li>
+                <li>
+                    The full name that describes your group. Examples: <b>Team Venture</b>, <b>Servicing</b>, and <b>Web Core</b>.
+                </li>
+            </ul>
         </li>
         <li>
             <strong>Determine the name of your application.</strong>
-            <p>You will need both an identifier (letters, numbers, hyphens) and full name.</p>
+            <p class="mbn">You will need both an identifier (letters, numbers, hyphens) and full name.</p>
+            <ul class="trailer">
+                <li>
+                    Identifier examples: <b>hal9000-agent</b>, <b>myql-servicing-api</b>, <b>rocket</b>
+                </li>
+                <li>
+                    Full name examples: <b>HAL 9000 Agent</b>, <b>MyQL Servicing API</b>, <b>Rocket Mortgage</b>
+                </li>
+            </ul>
         </li>
         <li>
             <strong>Determine where your application exists within Github.</strong>
-            <p>Please provide the Github username or organization and the repository name.</p>
+            <p>Please provide the Github organization and the repository name.</p>
         </li>
         <li>
             <strong>Determine who should be able to build and push your application.</strong>
             <p>
                 By default, HAL 9000 will grant build &amp; push permissions for non-production environments to all
-                users who are collaborators on the Github repository. If additional people need to be able to build and
-                push, you will need to request that LDAP permissions be created.
+                users who are members of the Github organization that owns the project repository.</p>
             </p>
+            <p>If non-engineers need to be able to build and push, you will need to request that LDAP permissions be created.</p>
         </li>
         <li>
             <strong>Determine what environments and servers your application will be deployed to.</strong>
@@ -200,11 +216,19 @@
         </p>
     {% endif %}
 
-
     <h4 id="release-notes">Release Notes</h4>
     <ul>
         <li>
             <a href="/docs/2.4/release-notes.html">Release 2.4</a>
         </li>
     </ul>
+{% endblock %}
+
+{% block github_permission_changes %}
+With Github Enterprise 2.1, features that HAL relied on to determine engineer permissions were removed.
+
+Previously, HAL could check whether users were repository collaborators, but must now check if users are <b>public</b>
+members of the organization that owns the repository.
+
+Please see <a href="https://fringedivision.atlassian.net/wiki/pages/worddav/preview.action?fileName=github_permission_change.pdf&pageId=23625747">these instructions (PDF)</a> for how to make your github organizational status public.
 {% endblock %}
