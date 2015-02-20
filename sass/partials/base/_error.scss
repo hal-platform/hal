@@ -19,7 +19,6 @@ $terminal-text: #bd1c1c;
 $terminal-shadow: #ff0000;
 $terminal-background: #2A0707;
 $terminal-inset: rgba(100, 30, 30, 0.5);
-$terminal-header-faded: #030303;
 
 $scanline-dark: rgba(43, 29, 29, 0.25);
 $scanline-light: rgba(187, 145, 145, 0.25);
@@ -67,13 +66,11 @@ $scanline-light: rgba(187, 145, 145, 0.25);
 
     /* At full site width - Make the header more prominent */
     @include breakpoint(42.1875em) {
-        color: $terminal-text;
-        text-shadow: $terminal-shadow 0 0 35px;
         animation: fadedblink 2s infinite;
     }
 
-    color: $terminal-header-faded;
-    text-shadow: $terminal-header-faded 0 0 35px;
+    color: $terminal-text;
+    text-shadow: $terminal-shadow 0 0 35px;
 
     font-size: 3em;
     line-height: 1em;
