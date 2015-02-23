@@ -24,7 +24,7 @@ HELP;
 
 $group = array_shift($argv);
 
-$ldap = $container->get('ldapService');
+$ldap = $container->get('ldap');
 $dn = Dn::fromString(sprintf('CN=%s,DC=mi,DC=corp', $group));
 $users = $ldap->usersInGroup($dn);
 
