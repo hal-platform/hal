@@ -123,6 +123,11 @@ parameters:
             route: '/help/hal'
             stack: ['help.hal.page']
 
+        help.githubpermissions:
+            method: 'GET'
+            route: '/help/githubpermissions'
+            stack: ['help.githubpermissions.page']
+
         # help.api:
         #     method: 'GET'
         #     route: '/help/api'

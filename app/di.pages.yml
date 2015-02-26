@@ -901,6 +901,13 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/hal.twig']]]
 
+    help.githubpermissions.page:
+        parent: 'static.controller'
+        arguments: [@help.githubpermissions.twig, @slim.response]
+    help.githubpermissions.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['help/githubpermissions.twig']]]
+
 
     ####################################################################################################################
     # GITHUB OAUTH CONTROLLERS
