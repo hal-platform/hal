@@ -1,4 +1,9 @@
-.help-step {
-  margin-bottom: 1em;
-  border: 1px solid black;
+.help-walkthrough {
+    @include trailer(2);
+}
+
+.help-walkthrough img {
+    border: .25em solid $light-grey;
+    padding: .25em;
+    box-shadow: 5px 8px 10px $grey;
 }

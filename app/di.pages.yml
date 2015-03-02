@@ -906,7 +906,7 @@ services:
         arguments: [@help.githubpermissions.twig, @slim.response]
     help.githubpermissions.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['help/githubpermissions.twig']]]
+        calls: [['setTemplate', ['help/github-permissions.twig']]]
 
 
     ####################################################################################################################
