@@ -305,7 +305,7 @@ parameters:
         repository.admin.add:
             method: ['GET', 'POST']
             route: '/repositories/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'repository.admin.add.page']
+            stack: ['login.bouncer', 'repository.admin.add.page']
 
         repository.admin.edit:
             method: ['GET', 'POST']
@@ -409,7 +409,7 @@ parameters:
         group.admin.add:
             method: ['GET', 'POST']
             route: '/groups/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.add.page']
+            stack: ['login.bouncer', 'group.admin.add.page']
 
         group.admin.edit:
             method: ['GET', 'POST']

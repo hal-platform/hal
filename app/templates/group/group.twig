@@ -46,21 +46,21 @@
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    {% if isUserAdmin(currentUser) %}
-        <ul class="choice-list--flush">
-            <li class="choice-list__choice">
-                <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
-            </li>
+    <ul class="choice-list--flush">
+        <li class="choice-list__choice">
+            <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
+        </li>
+        {% if isUserAdmin(currentUser) %}
             <li class="choice-list__choice">
                 <a class="btn--action secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a></p>
             </li>
 
             {% if not repos and isUserAdmin(currentUser) %}
-            <li class="choice-list__choice">
-                <a class="btn--destructive secondary-action" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a>
-            </li>
+                <li class="choice-list__choice">
+                    <a class="btn--destructive secondary-action" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a>
+                </li>
             {% endif %}
-        </ul>
-    {% endif %}
+        {% endif %}
+    </ul>
 
 {% endblock %}
