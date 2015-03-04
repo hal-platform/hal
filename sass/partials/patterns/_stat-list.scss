@@ -1,0 +1,9 @@
+.stat-list {
+    margin-left: 1em;
+    list-style-type: none;
+}
+
+.stat-list > li {
+    @include trailer(.5);
+}
+
