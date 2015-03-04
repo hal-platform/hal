@@ -15,7 +15,7 @@
         </ul>
     {% endif %}
 
-    {{ block('login_form') }}
+    {{ block('dual_page') }}
 
 {% endblock %}
 
@@ -49,19 +49,30 @@
         </div>
 
         <div class="dash-box">
-            <h4>## Today</h4>
-            <ul>
+            <h3 class="mbn">Today</h3>
+            <ul class="stat-list">
                 <li>
-                    <strong>8</strong> Builds
+                    <strong>{{ stats.active_repos }}</strong> Active projects
                 </li>
                 <li>
-                    <strong>2</strong> Pushes
+                    <strong>{{ stats.builds }}</strong> Builds
+                    {% if stats.builds %}
+                        <ul class="stat-list">
+                            <li>
+                                <strong>{{ stats.prod_builds }}</strong> for production
+                            </li>
+                        </ul>
+                    {% endif %}
                 </li>
                 <li>
-                    <strong>18</strong> Active Users
-                </li>
-                <li>
-                    <strong>5</strong> Active Projects
+                    <strong>{{ stats.pushes }}</strong> Pushes
+                    {% if stats.pushes %}
+                        <ul class="stat-list">
+                            <li>
+                                <strong>{{ stats.prod_pushes }}</strong> for production
+                            </li>
+                        </ul>
+                    {% endif %}
                 </li>
             </ul>
         </div>

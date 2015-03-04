@@ -26,7 +26,10 @@ services:
 
     login.page:
         class: 'QL\Hal\Controllers\LoginController'
-        arguments: [@login.twig, @slim.response]
+        arguments:
+            - @login.twig
+            - @slim.response
+            - @stats
     login.twig:
         parent: 'twig.template'
         arguments: ['login.twig']

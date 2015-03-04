@@ -47,6 +47,7 @@ parameters:
     cache.doctrine.ttl: 600
     cache.aws.ttl: 20
     cache.server.ttl: 300
+    cache.stats.ttl: 900
 
     ############################################################################
     # configuration

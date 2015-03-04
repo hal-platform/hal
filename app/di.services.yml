@@ -45,6 +45,16 @@ services:
             - @json
             - %cookie.preferences.ttl%
 
+    stats:
+        class: 'QL\Hal\Services\StatsService'
+        arguments:
+            - @build.repo
+            - @push.repo
+            - @clock
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.stats.ttl%]]
+
     redis:
         class: 'Predis\Client'
         arguments:
