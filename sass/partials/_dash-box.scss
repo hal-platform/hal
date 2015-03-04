@@ -19,17 +19,16 @@
 
 .dash-box {
     @include breakpoint(40em) {
-        &:nth-child(odd){
+        &:nth-child(odd) {
             @include grid-span(1,1, $grid: 2, $gutter: .08);
             clear: left;
         }
 
-        &:nth-child(even){
+        &:nth-child(even) {
             @include grid-span(1, 2, $grid: 2, $gutter: .08);
             clear: right;
         }
     }
-
 }
 
 .flex-box-wrapper {
@@ -53,7 +52,6 @@
         &:nth-child(even) {
             margin-left: 1em;
         }
-
     }
 }
 
