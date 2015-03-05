@@ -84,15 +84,17 @@ define(['jquery'], function($) {
             var $container = $elem.closest('dl');
 
             if (data.start !== null) {
-                $container
-                    .children('.js-push-start')
-                    .text(data.start.text);
+                var $start = $container.children('.js-push-start');
+                if ($start.length > 0 && $start.children('time').length === 0) {
+                    $start.html('<time datetime="' + data.start.datetime + '"></time>');
+                }
             }
 
             if (data.end !== null) {
-                $container
-                    .children('.js-push-end')
-                    .text(data.end.text);
+                var $end = $container.children('.js-push-end');
+                if ($end.length > 0 && $end.children('time').length === 0) {
+                    $end.html('<time datetime="' + data.end.datetime + '"></time>');
+                }
             }
         },
         updateTable: function(data, $elem) {

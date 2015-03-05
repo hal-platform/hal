@@ -1,20 +1,14 @@
 define(['jquery', 'moment'], function($, moment) {
     return {
-        $times: null,
         interval: 5,
 
         init: function() {
-            this.$times = $('time[datetime]');
-
-            if (this.$times.length > 0) {
-                var refresher = this.refreshTimes.bind(this);
-                this.refreshTimes();
-
-                window.setInterval(refresher, this.interval * 1000);
-            }
+            // we cannot cache the times $elements to update because they can be added later by push/push updaters.
+            window.setInterval(this.refreshTimes, this.interval * 1000);
         },
         refreshTimes: function() {
-            this.$times.each(function() {
+            $times = $('time[datetime]');
+            $times.each(function() {
                 var $this = $(this),
                     time = $this.attr('datetime');
 

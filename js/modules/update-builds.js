@@ -105,15 +105,17 @@ define(['jquery'], function($) {
             }
 
             if (data.start !== null) {
-                $container
-                    .children('.js-build-start')
-                    .text(data.start.text);
+                var $start = $container.children('.js-build-start');
+                if ($start.length > 0 && $start.children('time').length === 0) {
+                    $start.html('<time datetime="' + data.start.datetime + '"></time>');
+                }
             }
 
             if (data.end !== null) {
-                $container
-                    .children('.js-build-end')
-                    .text(data.end.text);
+                var $end = $container.children('.js-build-end');
+                if ($end.length > 0 && $end.children('time').length === 0) {
+                    $end.html('<time datetime="' + data.end.datetime + '"></time>');
+                }
             }
         },
         updateTable: function(data, $elem) {
