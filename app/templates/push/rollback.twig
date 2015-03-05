@@ -46,7 +46,7 @@
     {% set canRollback = canUserPush(currentUser, repo.key, deployment.server.environment.key) %}
 
     <h3>Push History</h3>
-    <table class="tablesaw tablesaw-stack" data-mode="stack">
+    <table data-tablesaw-mode="stack">
         <thead>
             <th>Build</th>
             <th>Status</th>

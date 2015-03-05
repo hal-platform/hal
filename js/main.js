@@ -10,7 +10,7 @@ require.config({
         "jquery": "vendor/jquery-2.min",
         "jquerySearchable": "vendor/jquery.searchable",
         "jquerySortable": "vendor/jquery.sortable.min",
-        "jqueryTablesaw": "vendor/jquery.tablesaw",
+        "jqueryTablesaw": "vendor/jquery.tablesaw-1.0.4",
         "nunjucks": "vendor/nunjucks.min",
         "signals": "vendor/signals.min",
         "tablesaw": "vendor/tablesaw.min",

@@ -70,7 +70,7 @@
     <small>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</small>
 
     <form action="{{ urlFor('user.token.add', {id: user.id}) }}" method="post">
-        <table class="tablesaw tablesaw-stack" data-mode="stack">
+        <table data-tablesaw-mode="stack">
             <thead>
                 <th>Label</th>
                 <th>Token</th>

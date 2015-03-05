@@ -88,8 +88,7 @@
 
     {% if statuses %}
         <form method="post">
-        <div class="overflow-container">
-            <table class="tablesaw tablesaw-stack" data-mode="stack">
+            <table data-tablesaw-mode="stack">
                 <thead>
                 <tr>
                     <th>Server</th>
@@ -165,10 +164,10 @@
                 {% endfor %}
                 </tbody>
             </table>
-        </div>
-        {% if allowSubmit %}
-            <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
-        {% endif %}
+
+            {% if allowSubmit %}
+                <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
+            {% endif %}
         </form>
     {% else %}
         <p>There are no servers to deploy to.</p>

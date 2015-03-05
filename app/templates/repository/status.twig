@@ -84,7 +84,7 @@
                 {% endif %}
 
                 {% if hasHistory %}
-                    <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'id': repo.id, 'deployment': deployment.id}) }}" title="View history or rollback to a successful build">
+                    <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'id': repo.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
                         <svg class="icon"><use xlink:href="#revert"></use></svg>
                     </a>
                 {% endif %}
