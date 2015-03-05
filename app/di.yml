@@ -125,6 +125,7 @@ services:
 
     time.helper:
         class: 'QL\Hal\Helpers\TimeHelper'
+        arguments: [@clock, %date.timezone%]
 
     name.helper:
         class: 'QL\Hal\Helpers\NameHelper'

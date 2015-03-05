@@ -91,13 +91,13 @@
                 Start
             </dt>
             <dd class="split--left__value js-build-start">
-                {{ build.start|reldate }}
+                {{ build.start|html5date }}
             </dd>
             <dt class="split--left__title">
                 End
             </dt>
             <dd class="split--left__value js-build-end">
-                {{ build.end|timepoint('M j, Y g:i A') }}
+                {{ build.end|html5date }}
             </dd>
         </dl>
     </div>

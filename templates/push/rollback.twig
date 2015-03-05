@@ -82,7 +82,7 @@
                     <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
                     <svg class="icon"><use xlink:href="#github"></use></svg>
                 </td>
-                <td>{{ push.end|reldate }}</td>
+                <td>{{ push.end|html5date }}</td>
                 <td>
                     {% if push.user %}
                         <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>

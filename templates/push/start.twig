@@ -67,7 +67,7 @@
                 Completed
             </dt>
             <dd class="split--left__value">
-                {{ build.end|reldate }}
+                {{ build.end|html5date }}
             </dd>
 
         </dl>
@@ -133,7 +133,7 @@
                                 {% if inProgress %}
                                     Now
                                 {% else %}
-                                    {{ active.created|reldate }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                                    {{ active.created|html5date }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
                                 {% endif %}
                             </td>
                             <td>

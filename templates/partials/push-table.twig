@@ -35,7 +35,7 @@
                     Unknown
                 {% endif %}
             </td>
-            <td>{{ push.created|reldate }}</td>
+            <td>{{ push.created|html5date }}</td>
         </tr>
     {% else %}
         <tr>

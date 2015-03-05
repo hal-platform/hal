@@ -37,15 +37,22 @@ class StatsService
     private $clock;
 
     /**
+     * @type string
+     */
+    private $timezone;
+
+    /**
      * @param BuildRepository $buildRepo
      * @param PushRepository $pushRepo
      * @param Clock $clock
+     * @param string $timezone
      */
-    public function __construct(BuildRepository $buildRepo, PushRepository $pushRepo, Clock $clock)
+    public function __construct(BuildRepository $buildRepo, PushRepository $pushRepo, Clock $clock, $timezone)
     {
         $this->buildRepo = $buildRepo;
         $this->pushRepo = $pushRepo;
         $this->clock = $clock;
+        $this->timezone = $timezone;
     }
 
     /**
@@ -54,12 +61,12 @@ class StatsService
     public function getStatsForToday()
     {
         $now = $this->clock->read();
-        $y = $now->format('Y', 'UTC');
-        $m = $now->format('m', 'UTC');
-        $d = $now->format('d', 'UTC');
+        $y = $now->format('Y', $this->timezone);
+        $m = $now->format('m', $this->timezone);
+        $d = $now->format('d', $this->timezone);
 
-        $from = new TimePoint($y, $m, $d, 0, 0, 0, 'UTC');
-        $to = new TimePoint($y, $m, $d, 23, 59, 59, 'UTC');
+        $from = new TimePoint($y, $m, $d, 0, 0, 0, $this->timezone);
+        $to = new TimePoint($y, $m, $d, 23, 59, 59, $this->timezone);
 
         return $this->getStatsForRange($from, $to);
     }
@@ -72,7 +79,7 @@ class StatsService
      */
     public function getStatsForRange(TimePoint $from, TimePoint $to)
     {
-        $hash = md5($from->format('U', 'UTC') . $from->format('U', 'UTC'));
+        $hash = md5($from->format('U', $this->timezone) . $from->format('U', $this->timezone));
 
         $key = sprintf(self::KEY_STATS, $hash);
 

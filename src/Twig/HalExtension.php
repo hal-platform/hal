@@ -77,9 +77,9 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     *  Get the extension name
+     * Get the extension name
      *
-     *  @return string
+     * @return string
      */
     public function getName()
     {
@@ -87,9 +87,9 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     *  Get an array of Twig Functions
+     * Get an array of Twig Functions
      *
-     *  @return array
+     * @return array
      */
     public function getFunctions()
     {
@@ -109,14 +109,16 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     *  Get an array of Twig Filters
+     * Get an array of Twig Filters
      *
-     *  @return array
+     * @return array
      */
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('reldate', [$this->time, 'relative'], ['is_safe' => ['html']]),
+            new Twig_SimpleFilter('reldate', [$this->time, 'relative']),
+            new Twig_SimpleFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
+
             new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty']),
 
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),

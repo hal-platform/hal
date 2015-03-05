@@ -1,11 +1,12 @@
 define(
-    ['require', 'crossroads', 'controller/_routes', 'modules/util/terminal', 'modules/util/nofunzone', 'underscore'],
-    function(require, crossroads, routes, terminal, nofunzone, _) {
+    ['require', 'crossroads', 'controller/_routes', 'modules/util/terminal', 'modules/util/nofunzone', 'modules/util/relative-time','underscore'],
+    function(require, crossroads, routes, terminal, nofunzone, reltime, _) {
         return {
             init: function() {
                 this.runRouter();
                 terminal.init();
                 nofunzone.init();
+                reltime.init();
             },
             getPath: function() {
                 var a, path;

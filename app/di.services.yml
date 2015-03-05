@@ -51,6 +51,7 @@ services:
             - @build.repo
             - @push.repo
             - @clock
+            - %date.timezone%
         calls:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.stats.ttl%]]

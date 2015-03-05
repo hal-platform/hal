@@ -115,7 +115,7 @@
                 <li>
                     <span class="split__title">Pushed on:</span>
                     {% if active.created %}
-                        {{ active.created|reldate }}
+                        {{ active.created|html5date }}
                     {% else %}
                         Never
                     {% endif %}

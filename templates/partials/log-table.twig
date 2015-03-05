@@ -34,7 +34,7 @@
                         {% endif %}
                     </span>
                 </td>
-                <td>{{ log.created|timepoint('M j, Y g:i A') }}</td>
+                <td>{{ log.created|html5date }}</td>
                 <td>{{ log.message }}</td>
                 <td class="tr">
                     {% if log.data %}

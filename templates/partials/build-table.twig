@@ -34,7 +34,7 @@
                     Unknown
                 {% endif %}
             </td>
-            <td>{{ build.created|reldate }}</td>
+            <td>{{ build.created|html5date }}</td>
 
             {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
             {% set canPush = false %}

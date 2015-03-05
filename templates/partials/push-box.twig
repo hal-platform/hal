@@ -32,7 +32,7 @@
                 <section class="card__details">
                     <ul class="split mbn">
                         <li>
-                            <span class="split__title">{{ push.created|reldate }}</span>
+                            <span class="split__title">{{ push.created|html5date }}</span>
                             {% if push.deployment %}
                                 <a href="{{ urlFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.key }}</a>
                                 →

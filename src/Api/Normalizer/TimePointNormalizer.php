@@ -31,8 +31,8 @@ class TimePointNormalizer
     public function normalize(TimePoint $time = null)
     {
         return (is_null($time)) ? null : [
-            'text' => $this->time->relative($time, false),
-            'datetime' => $this->time->format($time, false, 'c')
+            'text' => $this->time->relative($time),
+            'datetime' => $this->time->format($time, 'c')
         ];
     }
 }
