@@ -22,34 +22,22 @@ services:
     # DOCTRINE CONFIGURATION
     ######################################################################################################################
 
-    doctrine.config:
-        class: 'Doctrine\ORM\Configuration'
-        factory: ['Doctrine\ORM\Tools\Setup', 'createAnnotationMetadataConfiguration']
-        arguments:
-            - ['@doctrine.mapping']
-            - %doctrine.devmode%
-            - @doctrine.proxy.dir
-            - @cache.doctrine
-
     doctrine.proxy.dir:
         class: 'NOTHING_TO_SEE_HERE'
         factory: [@directory.helper, 'fullPath']
         arguments: ['.doctrine']
 
-    doctrine.events:
+    doctrine.em.events:
         class: 'Doctrine\Common\EventManager'
         calls:
-            - ['addEventListener', [['onFlush'], @doctrine.logger]]
-            - ['addEventListener', [['prePersist'], @doctrine.persist.listener]]
+            - ['addEventListener', [['onFlush'], @doctrine.listener.logger]]
+            - ['addEventListener', [['prePersist'], @doctrine.listener.persist]]
 
-    doctrine.logger:
+    doctrine.listener.logger:
         class: 'QL\Hal\Doctrine\EntityChangeLogger'
         arguments: [@user.helper]
 
-    doctrine.random.id:
-        class: 'QL\Hal\Core\RandomGenerator'
-
-    doctrine.persist.listener:
+    doctrine.listener.persist:
         class: 'QL\Hal\Core\Entity\Listener\EntityPersistListener'
         arguments: [@clock, @doctrine.random.id]
 
