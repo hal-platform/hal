@@ -59,7 +59,6 @@ parameters:
     unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
     unique.size: 4
     date.timezone: 'America/Detroit'
-    twig.template.dir: 'app/templates'
 
     ############################################################################
     # cookie
