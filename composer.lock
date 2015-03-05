@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "94f89b442e91a37cd7aec64208b48106",
+    "hash": "fa51d434ea1fc340633c55285279569d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1064,17 +1064,11 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.5.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "1e29f71bd6c51d15342a1114ee61f7080fd304a9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.5.0-878946.zip",
-                "reference": "1e29f71bd6c51d15342a1114ee61f7080fd304a9",
-                "shasum": "6233c83b3982f537b4c4650b81d242c3e81a041d"
+                "reference": "e604bfd4d3bd839744e0c8d49ecd987f8cbb11c7"
             },
             "archive": {
                 "exclude": [
@@ -1114,7 +1108,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-02-19 15:09:53"
+            "time": "2015-03-05 12:47:44"
         },
         {
             "name": "ql/http-problem",
@@ -3257,7 +3251,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ql/hal-core": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

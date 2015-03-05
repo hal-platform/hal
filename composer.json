@@ -16,6 +16,10 @@
     },
     "repositories": [
         {
+            "type": "vcs",
+            "url": "git@git:web-core/hal-core.git"
+        },
+        {
             "type": "composer",
             "url": "http://composer/"
         }
@@ -29,7 +33,7 @@
         "predis/predis": "~1.0",
         "psr/log": "*",
         "ql/exception-toolkit": "~0.1",
-        "ql/hal-core": "2.5.*",
+        "ql/hal-core": "dev-master",
         "ql/http-problem": "~1.0",
         "ql/mcp-cache": "~2.2",
         "ql/mcp-core": "1.*",
