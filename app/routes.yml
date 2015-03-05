@@ -1,4 +1,8 @@
 parameters:
+    routes.regex.alphanum: '[A-Za-z0-9]+'
+    routes.regex.digit: '[0-9]+'
+    routes.regex.token: '[0-9a-zA-Z]{40,40}'
+
     routes.regex.buildId: '[A-Za-z0-9\_\-\.]+'
     routes.regex.pushId: %routes.regex.buildId%
     routes.regex.queue.refresh: '[A-Za-z0-9\+\-\.]+'
@@ -33,7 +37,7 @@ parameters:
             method: 'GET'
             route: '/logs/page/:page'
             stack: ['admin.bouncer', 'audit.logs.page']
-            conditions: {page: '[0-9]+'}
+            conditions: {page: %routes.regex.digit%}
 
         queue:
             method: 'GET'
@@ -78,7 +82,7 @@ parameters:
             method: 'GET'
             route: '/admin/server-status/:id'
             stack: ['admin.bouncer', 'admin.server.status.handler']
-            conditions: {id: '[0-9]+'}
+            conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
         # SUPER ADMIN ROUTES
@@ -141,12 +145,14 @@ parameters:
             method: 'GET'
             route: '/repositories/:id/builds'
             stack: ['login.bouncer', 'builds.page']
-            conditions: {id: '[A-Za-z0-9_-]+'}
+            conditions: {id: %routes.regex.digit%}
         build.history:
             method: 'GET'
             route: '/repositories/:id/builds(/page/:page)'
             stack: ['login.bouncer', 'builds.page']
-            conditions: {id: '[0-9]+', page: '[0-9]+'}
+            conditions:
+                - id: %routes.regex.digit%
+                - page: %routes.regex.digit%
 
         build:
             method: 'GET'
@@ -158,7 +164,7 @@ parameters:
             method: ['GET', 'POST']
             route: '/repositories/:id/build'
             stack: ['login.bouncer', 'build.start.handler', 'build.start.page']
-            conditions: {id: '[0-9]+'}
+            conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
         # PUSH ROUTES
@@ -180,18 +186,30 @@ parameters:
             method: 'GET'
             route: '/repositories/:id/pushes'
             stack: ['login.bouncer', 'pushes.page']
-            conditions: {id: '[A-Za-z0-9_-]+'}
+            conditions: {id: %routes.regex.digit%}
         push.history:
             method: 'GET'
             route: '/repositories/:id/pushes(/page/:page)'
             stack: ['login.bouncer', 'pushes.page']
-            conditions: {id: '[A-Za-z0-9_-]+', page: '[\d]+'}
+            conditions:
+                - id: %routes.regex.digit%
+                - page: %routes.regex.digit%
+
+        rollback.page1:
+            method: 'GET'
+            route: '/repositories/:id/deployments/:deployment/pushes'
+            stack: ['login.bouncer', 'push.rollback.page']
+            conditions:
+                - id: %routes.regex.digit%
+                - deployment: %routes.regex.digit%
 
         rollback:
             method: 'GET'
-            route: '/repositories/:id/rollback/:deployment'
+            route: '/repositories/:id/deployments/:deployment/pushes(/page/:page)'
             stack: ['login.bouncer', 'push.rollback.page']
-            conditions: {id: '[A-Za-z0-9_-]+', deployment: '[\d]+'}
+            conditions:
+                - id: %routes.regex.digit%
+                - deployment: %routes.regex.digit%
 
         ################################################################################################################
         # SERVER ROUTES
@@ -206,7 +224,7 @@ parameters:
             method: 'GET'
             route: '/servers/:id'
             stack: ['login.bouncer', 'server.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         server.admin.add:
             method: ['GET', 'POST']
@@ -217,18 +235,18 @@ parameters:
             method: ['GET', 'POST']
             route: '/servers/:id/edit'
             stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         server.admin.remove.confirm:
             method: 'GET'
             route: '/servers/:id/remove'
             stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
         server.admin.remove:
             method: 'POST'
             route: '/servers/:id/remove'
             stack: ['login.bouncer', 'admin.bouncer', 'server.admin.remove.handler']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
         # USER ROUTES
@@ -238,7 +256,7 @@ parameters:
             method: 'GET'
             route: '/users/:id'
             stack: ['login.bouncer', 'user.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         settings:
             method: 'GET'
@@ -249,7 +267,7 @@ parameters:
             method: 'POST'
             route: '/users/:id/preferences'
             stack: ['login.bouncer', 'user.settings.handler']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         users:
             method: 'GET'
@@ -264,22 +282,22 @@ parameters:
             method: 'POST'
             route: '/users/:id/tokens'
             stack: ['login.bouncer', 'user.token.add.handler']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         user.token.remove.confirm:
             method: 'GET'
             route: '/users/:id/tokens/:token/revoke'
             stack: ['login.bouncer', 'delete.confirm.page']
             conditions:
-                - id: '[\d]+'
-                - token: '[0-9a-zA-Z]{40,40}'
+                - id: %routes.regex.digit%
+                - token: %routes.regex.token%
         user.token.remove:
             method: 'POST'
             route: '/users/:id/tokens/:token/revoke'
             stack: ['login.bouncer', 'user.token.remove.handler']
             conditions:
-                - id: '[\d]+'
-                - token: '[0-9a-zA-Z]{40,40}'
+                - id: %routes.regex.digit%
+                - token: %routes.regex.token%
 
         ################################################################################################################
         # REPOSITORY ROUTES
@@ -294,13 +312,13 @@ parameters:
             method: 'GET'
             route: '/repositories/:id'
             stack: ['login.bouncer', 'repository.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         repository.status:
             method: 'GET'
             route: '/repositories/:id/status'
             stack: ['login.bouncer', 'repository.status.sticky.handler', 'repository.status.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         repository.admin.add:
             method: ['GET', 'POST']
@@ -311,18 +329,18 @@ parameters:
             method: ['GET', 'POST']
             route: '/repositories/:repository/edit'
             stack: ['repoadmin.bouncer', 'repository.admin.edit.page']
-            conditions: {repository: '[\d]+'}
+            conditions: {repository: %routes.regex.digit%}
 
         repository.admin.remove.confirm:
             method: 'GET'
             route: '/repositories/:id/remove'
             stack: ['admin.bouncer', 'delete.confirm.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
         repository.admin.remove:
             method: 'POST'
             route: '/repositories/:id/remove'
             stack: ['admin.bouncer', 'repository.admin.remove.handler']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
         # REPOSITORY DEPLOYMENT ROUTES
@@ -332,37 +350,45 @@ parameters:
             method: 'GET'
             route: '/repositories/:repository/deployments/:id'
             stack: ['login.bouncer', 'repository.deployment.page']
-            conditions: {repository: '[\d]+', id: '[\d]+'}
+            conditions:
+                - repository: %routes.regex.digit%
+                - id: %routes.regex.digit%
 
         repository.deployments:
             method: 'GET'
             route: '/repositories/:repository/deployments'
             stack: ['login.bouncer', 'repository.deployments.page']
-            conditions: {repository: '[\d]+'}
+            conditions: {repository: %routes.regex.digit%}
 
         repository.deployments.add:
             method: ['GET', 'POST']
             route: '/repositories/:repository/deployments/add'
             stack: ['repoadmin.bouncer', 'repository.deployments.add.handler', 'repository.deployments.add.page']
-            conditions: {repository: '[\d]+'}
+            conditions: {repository: %routes.regex.digit%}
 
         repository.deployment.edit:
             method: ['GET', 'POST']
             route: '/repositories/:repository/deployments/:id/edit'
             stack: ['repoadmin.bouncer', 'repository.deployment.edit.handler', 'repository.deployment.edit.page']
-            conditions: {repository: '[\d]+', id: '[\d]+'}
+            conditions:
+                - repository: %routes.regex.digit%
+                - id: %routes.regex.digit%
 
         repository.deployment.remove.confirm:
             method: 'GET'
             route: '/repositories/:repository/deployments/:id/remove'
             stack: ['repoadmin.bouncer', 'delete.confirm.page']
-            conditions: {repository: '[\d]+', id: '[\d]+'}
+            conditions:
+                - repository: %routes.regex.digit%
+                - id: %routes.regex.digit%
 
         repository.deployment.remove:
             method: 'POST'
             route: '/repositories/:repository/deployments/:id/remove'
             stack: ['repoadmin.bouncer', 'repository.deployments.remove.handler']
-            conditions: {repository: '[\d]+', id: '[\d]+'}
+            conditions:
+                - repository: %routes.regex.digit%
+                - id: %routes.regex.digit%
 
         ################################################################################################################
         # REPOSITORY ENCRYPTED PROPERTIES ROUTES
@@ -372,24 +398,28 @@ parameters:
             method: 'GET'
             route: '/repositories/:repository/encrypted-properties'
             stack: ['login.bouncer', 'repository.encrypted.page']
-            conditions: {repository: '[\d]+'}
+            conditions: {repository: %routes.regex.digit%}
 
         repository.encrypted.add:
             method: ['GET', 'POST']
             route: '/repositories/:repository/encrypted-properties/add'
             stack: ['repoadmin.bouncer', 'repository.encrypted.add.handler', 'repository.encrypted.add.page']
-            conditions: {repository: '[\d]+'}
+            conditions: {repository: %routes.regex.digit%}
 
         repository.encrypted.remove.confirm:
             method: 'GET'
             route: '/repositories/:repository/encrypted-properties/:id/remove'
             stack: ['repoadmin.bouncer', 'delete.confirm.page']
-            conditions: {repository: '[\d]+', id: '[a-zA-Z0-9]+'}
+            conditions:
+                - repository: %routes.regex.digit%
+                - id: %routes.regex.alphanum%
         repository.encrypted.remove:
             method: ['POST']
             route: '/repositories/:repository/encrypted-properties/:id/remove'
             stack: ['repoadmin.bouncer', 'repository.encrypted.remove.handler']
-            conditions: {repository: '[\d]+', id: '[a-zA-Z0-9]+'}
+            conditions:
+                - repository: %routes.regex.digit%
+                - id: %routes.regex.alphanum%
 
         ################################################################################################################
         # GROUP ROUTES
@@ -404,7 +434,7 @@ parameters:
             method: 'GET'
             route: '/groups/:id'
             stack: ['login.bouncer', 'group.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         group.admin.add:
             method: ['GET', 'POST']
@@ -415,18 +445,18 @@ parameters:
             method: ['GET', 'POST']
             route: '/groups/:id/edit'
             stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         group.admin.remove.confirm:
             method: 'GET'
             route: '/groups/:id/remove'
             stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
         group.admin.remove:
             method: 'POST'
             route: '/groups/:id/remove'
             stack: ['login.bouncer', 'admin.bouncer', 'group.admin.remove.handler']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
         # ENVIRONMENT ROUTES
@@ -436,13 +466,13 @@ parameters:
             method: 'GET'
             route: '/environments'
             stack: ['login.bouncer', 'environments.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         environment:
             method: 'GET'
             route: '/environments/:id'
             stack: ['login.bouncer', 'environment.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         environment.admin.reorder:
             method: ['GET', 'POST']
@@ -458,18 +488,18 @@ parameters:
             method: 'GET'
             route: '/environments/:id/delete'
             stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
         environment.admin.remove:
             method: 'POST'
             route: '/environments/:id/delete'
             stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.remove.handler']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         environment.admin.edit:
             method: ['GET', 'POST']
             route: '/environments/:id/edit'
             stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.page']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
         # GITHUB API ROUTES
@@ -479,7 +509,7 @@ parameters:
             method: 'GET'
             route: '/api/github/users/:username/repositories'
             stack: ['login.bouncer', 'api.github.user.repositories']
-            conditions: {username: '[A-Za-z0-9_-]+'}
+            conditions: {username: %routes.regex.alphanum%}
 
         ################################################################################################################
         # PUBLIC API ROUTES
@@ -499,7 +529,7 @@ parameters:
             method: 'GET'
             route: '/api/environments/:id'
             stack: ['cachedApi.middleware', 'api.environment']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.servers:
             method: 'GET'
@@ -510,7 +540,7 @@ parameters:
             method: 'GET'
             route: '/api/servers/:id'
             stack: ['cachedApi.middleware', 'api.server']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.groups:
             method: 'GET'
@@ -521,7 +551,7 @@ parameters:
             method: 'GET'
             route: '/api/groups/:id'
             stack: ['cachedApi.middleware', 'api.group']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.users:
             method: 'GET'
@@ -532,20 +562,20 @@ parameters:
             method: 'GET'
             route: '/api/users/:id'
             stack: ['cachedApi.middleware', 'api.user']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.deployment:
             method: 'GET'
             route: '/api/deployment/:id'
             stack: ['cachedApi.middleware', 'api.deployment']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         # @todo change this url because it is terrible
         api.deployment.lastpush:
             method: 'GET'
             route: '/api/deployment/:id/last-push'
             stack: ['cachedApi.middleware', 'api.deployment.lastpush']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.build:
             method: 'GET'
@@ -575,7 +605,7 @@ parameters:
             method: 'GET'
             route: '/api/eventlogs/:id'
             stack: ['cachedApi.middleware', 'api.event.log']
-            conditions: {id: '[a-zA-Z0-9]+'}
+            conditions: {id: %routes.regex.alphanum%}
 
         api.repositories:
             method: 'GET'
@@ -586,25 +616,25 @@ parameters:
             method: 'GET'
             route: '/api/repositories/:id'
             stack: ['cachedApi.middleware', 'api.repository']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.deployments:
             method: 'GET'
             route: '/api/repositories/:id/deployments'
             stack: ['cachedApi.middleware', 'api.deployments']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.builds:
             method: 'GET'
             route: '/api/repositories/:id/builds'
             stack: ['cachedApi.middleware', 'api.builds']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.pushes:
             method: 'GET'
             route: '/api/repositories/:id/pushes'
             stack: ['cachedApi.middleware', 'api.pushes']
-            conditions: {id: '[\d]+'}
+            conditions: {id: %routes.regex.digit%}
 
         api.queue:
             method: 'GET'

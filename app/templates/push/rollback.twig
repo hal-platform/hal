@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/pagination.twig' as pagination %}
 
-{% set page_title = "Rollbacks for " ~ repo.name %}
+{% set page_title = "Push history for " ~ repo.name %}
 
 {% block content %}
     <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
@@ -9,11 +10,16 @@
     {% set deployment_details = deployment|formatDeploymentDetails %}
     {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
-    <h2>Rollbacks for <strong>{{ repo.name }}</strong> to <strong>{{ server }}</strong></h2>
+    <h2>Push history for <strong>{{ repo.name }}</strong> to <strong>{{ server }}</strong></h2>
 
     <h3>Deployment Information</h3>
     <div class="details-box">
         <dl class="split--left mbn">
+
+            <dt class="split--left__title">Environment</dt>
+            <dd class="split--left__value">
+                <a href="{{ urlFor('environment', {'id': deployment.server.environment.id}) }}">{{ deployment.server.environment.key }}</a>
+            </dd>
 
             <dt class="split--left__title">Server</dt>
             <dd class="split--left__value">
@@ -33,62 +39,78 @@
     </div>
 
     <p>
-        This table shows all builds that have been successfully pushed to this server and that are still available for rollback to.
-        To rollback, simply choose a build, click 'rollback', and you'll be able to initate a new push.
+        This table shows the push history for this deployment.
+        To rollback, simply choose a build, click <strong>rollback</strong>, and you'll be able to initate a new push.
     </p>
 
-    <h3>Available Rollbacks</h3>
-    <div class="overflow-container">
-        <table>
-            <thead>
-                <th>Build</th>
-                <th>Reference</th>
-                <th>Commit</th>
-                <th>Pushed</th>
-                <th>Initiator</th>
+    {% set canRollback = canUserPush(currentUser, repo.key, deployment.server.environment.key) %}
+
+    <h3>Push History</h3>
+    <table class="tablesaw tablesaw-stack" data-mode="stack">
+        <thead>
+            <th>Build</th>
+            <th>Status</th>
+            <th>Reference</th>
+            <th>Commit</th>
+            <th>Pushed</th>
+            <th>Initiator</th>
+            {% if canRollback %}
                 <th class="t10"></th>
-            </thead>
-            <tbody>
-                {% for push in pushes %}
-                <tr>
-                    <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
+            {% endif %}
+        </thead>
+        <tbody>
+            {% for push in pushes %}
+            <tr>
+                <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
+                <td>
+                    {% if push.status == 'Success' %}
+                        <span class="status-before--success">{{ push.status }}</span>
+                    {% elseif push.status == 'Error' %}
+                        <span class="status-before--error">{{ push.status }}</span>
+                    {% else %}
+                        <span class="status-before--other">{{ push.status }}</span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a>
+                    <svg class="icon"><use xlink:href="#fork"></use></svg>
+                </td>
+                <td>
+                    <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
+                    <svg class="icon"><use xlink:href="#github"></use></svg>
+                </td>
+                <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)</td>
+                <td>
+                    {% if push.user %}
+                        <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>
+                    {% elseif push.consumer %}
+                        {{ push.consumer.name|sliceString }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </td>
+
+                {% if canRollback %}
                     <td>
-                        <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a>
-                        <svg class="icon"><use xlink:href="#fork"></use></svg>
-                    </td>
-                    <td>
-                        <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
-                        <svg class="icon"><use xlink:href="#github"></use></svg>
-                    </td>
-                    <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)</td>
-                    <td>
-                        {% if push.user %}
-                            <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>
-                        {% elseif push.consumer %}
-                            {{ push.consumer.name|sliceString }}
-                        {% else %}
-                            Unknown
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if push.build.status == 'Success'%}
-                            {% if push.deployment and canUserPush(currentUser, repo.key, push.build.server.environment.key) %}
-                                <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': push.build.id}, {deployment: push.deployment.id}) }}">Rollback</a>
-                            {% endif %}
-                        {% elseif push.build.status == 'Removed' %}
+                        {% if push.build.status == 'Removed' %}
                             Removed
+                        {% elseif push.status == 'Success'%}
+                            <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': push.build.id}, {deployment: deployment.id}) }}">Rollback</a>
                         {% endif %}
                     </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="6">
-                        There are no available rollbacks for this server.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                {% endif %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="{{ canRollback ? 6 : 5 }}">
+                    There is no push history for this deployment.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {{ pagination.pagination(page, last, 'rollback', {'id': repo.id, 'deployment': deployment.id}) }}
 
 {% endblock %}

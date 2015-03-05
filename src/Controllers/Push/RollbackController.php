@@ -17,6 +17,8 @@ use Slim\Http\Response;
 
 class RollbackController implements ControllerInterface
 {
+    const MAX_PER_PAGE = 10;
+
     /**
      * @type TemplateInterface
      */
@@ -95,9 +97,22 @@ class RollbackController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getAvailableRollbacksByDeployment($deployment, 50);
+        $page = (isset($this->parameters['page'])) ? $this->parameters['page'] : 1;
+
+        // 404, invalid page
+        if ($page < 1) {
+            return call_user_func($this->notFound);
+        }
+
+        $pushes = $this->pushRepo->getByDeployment($deployment, self::MAX_PER_PAGE, ($page-1));
+
+        $total = count($pushes);
+        $last = ceil($total / self::MAX_PER_PAGE);
 
         $rendered = $this->template->render([
+            'page' => $page,
+            'last' => $last,
+
             'repo' => $repo,
             'deployment' => $deployment,
             'pushes' => $pushes

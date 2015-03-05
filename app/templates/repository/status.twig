@@ -42,14 +42,7 @@
                     {% set activePush = status.success %}
                 {% endif %}
 
-                {# Determine if the is a history to rollback to, or user is allowed to #}
-                {% if status.success and canUserPush(currentUser, repo.key, status.deploy.server.environment.key) %}
-                    {% set canRollback = true %}
-                {% else %}
-                    {% set canRollback = false %}
-                {% endif %}
-
-                <li>{{ macros.pushCard(repo, status.deploy, activePush, canRollback) }}</li>
+                <li>{{ macros.pushCard(repo, status.deploy, activePush, status.success) }}</li>
             {% endfor %}
         </ul>
     {% else %}
@@ -77,7 +70,7 @@
 
 {% endblock %}
 
-{% macro pushCard(repo, deployment, active, canRollback) %}
+{% macro pushCard(repo, deployment, active, hasHistory) %}
 
     <article class="card">
         <header class="card__header">
@@ -90,8 +83,8 @@
                     </a>
                 {% endif %}
 
-                {% if canRollback %}
-                    <a class="rollback icon--link" href="{{ urlFor('rollback', {'id': repo.id, 'deployment': deployment.id}) }}" title="Rollback to a successful build">
+                {% if hasHistory %}
+                    <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'id': repo.id, 'deployment': deployment.id}) }}" title="View history or rollback to a successful build">
                         <svg class="icon"><use xlink:href="#revert"></use></svg>
                     </a>
                 {% endif %}
