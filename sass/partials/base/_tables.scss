@@ -33,3 +33,30 @@ th.table-mid-header {
         float: right;
     }
 }
+
+.tablesaw-stack {
+    .table-priority-45 {
+        @include breakpoint(40em) {
+            display: none;
+        }
+        @include breakpoint(45em) {
+            display: table-cell;
+        }
+    }
+    .table-priority-50 {
+        @include breakpoint(40em) {
+            display: none;
+        }
+        @include breakpoint(50em) {
+            display: table-cell;
+        }
+    }
+    .table-priority-55 {
+        @include breakpoint(40em) {
+            display: none;
+        }
+        @include breakpoint(55em) {
+            display: table-cell;
+        }
+    }
+}

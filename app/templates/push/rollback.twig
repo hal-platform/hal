@@ -49,9 +49,9 @@
     <table data-tablesaw-mode="stack">
         <thead>
             <th>Build</th>
-            <th>Status</th>
-            <th>Reference</th>
-            <th>Commit</th>
+            <th>Push</th>
+            <th class="table-priority-45">Reference</th>
+            <th class="table-priority-50">Commit</th>
             <th>Pushed</th>
             <th>Initiator</th>
             {% if canRollback %}
@@ -63,24 +63,26 @@
             <tr>
                 <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
                 <td>
+                    {% set statusClass = 'status-before--other' %}
                     {% if push.status == 'Success' %}
-                        <span class="status-before--success">{{ push.status }}</span>
+                        {% set statusClass = 'status-before--success' %}
                     {% elseif push.status == 'Error' %}
-                        <span class="status-before--error">{{ push.status }}</span>
-                    {% else %}
-                        <span class="status-before--other">{{ push.status }}</span>
+                        {% set statusClass = 'status-before--error' %}
                     {% endif %}
+                    <span class="{{ statusClass }}">
+                        Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>
+                    </span>
                 </td>
 
-                <td>
+                <td class="table-priority-45">
                     <a href="{{ githubReference(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a>
                     <svg class="icon"><use xlink:href="#fork"></use></svg>
                 </td>
-                <td>
+                <td class="table-priority-50">
                     <a href="{{ githubCommit(push.build.repository.githubUser, push.build.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
                     <svg class="icon"><use xlink:href="#github"></use></svg>
                 </td>
-                <td>{{ push.end|reldate }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)</td>
+                <td>{{ push.end|reldate }}</td>
                 <td>
                     {% if push.user %}
                         <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>
