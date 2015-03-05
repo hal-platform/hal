@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/pagination.twig' as pagination %}
+
+{% set page_title = "Build and Push History" %}
+
+{% block content %}
+    <h2>Build and Push History</h2>
+
+    {% include 'partials/pending-table.twig' %}
+
+    {{ pagination.pagination(page, last, 'admin.queue', {}) }}
+
+{% endblock %}

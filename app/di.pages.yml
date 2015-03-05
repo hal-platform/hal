@@ -851,17 +851,28 @@ services:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.server.ttl%]]
 
-    audit.logs.page:
-        class: 'QL\Hal\Controllers\AuditLogsController'
+    admin.audit.logs.page:
+        class: 'QL\Hal\Controllers\Admin\AuditLogsController'
         arguments:
-            - @audit.logs.twig
+            - @admin.audit.logs.twig
             - @audit.log.repo
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
-    audit.logs.twig:
+    admin.audit.logs.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['audit.logs.twig']]]
+        calls: [['setTemplate', ['admin/audit.logs.twig']]]
+
+    admin.queue.page:
+        class: 'QL\Hal\Controllers\Admin\QueueHistoryController'
+        arguments:
+            - @admin.queue.twig
+            - @doctrine.em
+            - @slim.response
+            - @slim.route.parameters
+    admin.queue.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/queue.history.twig']]]
 
     admin.dangerzone.page:
         class: 'QL\Hal\Controllers\Admin\DangerzoneController'

@@ -28,17 +28,6 @@ parameters:
             route: '/denied'
             stack: ['denied.page']
 
-        logs:
-            method: 'GET'
-            route: '/logs'
-            stack: ['admin.bouncer', 'audit.logs.page']
-
-        logs.page:
-            method: 'GET'
-            route: '/logs/page/:page'
-            stack: ['admin.bouncer', 'audit.logs.page']
-            conditions: {page: %routes.regex.digit%}
-
         queue:
             method: 'GET'
             route: '/queue'
@@ -83,6 +72,28 @@ parameters:
             route: '/admin/server-status/:id'
             stack: ['admin.bouncer', 'admin.server.status.handler']
             conditions: {id: %routes.regex.digit%}
+
+        admin.queue.page1:
+            method: 'GET'
+            route: '/admin/queue-history'
+            stack: ['admin.bouncer', 'admin.queue.page']
+
+        admin.queue:
+            method: 'GET'
+            route: '/admin/queue-history/page/:page'
+            stack: ['admin.bouncer', 'admin.queue.page']
+            conditions: {page: %routes.regex.digit%}
+
+        admin.audit.logs.page1:
+            method: 'GET'
+            route: '/admin/audit-logs'
+            stack: ['admin.bouncer', 'admin.audit.logs.page']
+
+        admin.audit.logs:
+            method: 'GET'
+            route: '/admin/audit-logs/page/:page'
+            stack: ['admin.bouncer', 'admin.audit.logs.page']
+            conditions: {page: %routes.regex.digit%}
 
         ################################################################################################################
         # SUPER ADMIN ROUTES

@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers;
+namespace QL\Hal\Controllers\Admin;
 
 use QL\Hal\Core\Entity\Repository\AuditLogRepository;
 use QL\Hal\Slim\NotFound;
