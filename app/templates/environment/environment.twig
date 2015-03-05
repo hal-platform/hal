@@ -8,9 +8,9 @@
     <p><b>Name:</b> {{ env.key }}</p>
 
     <h3>Servers</h3>
-    <ul>
+    <ul class="col-list">
         {% for server in servers %}
-            <li><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server.name }}</a></li>
+            <li><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a></li>
         {% else %}
             <li>There are no servers associated with this environment.</li>
         {% endfor %}
