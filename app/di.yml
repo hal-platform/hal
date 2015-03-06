@@ -38,7 +38,7 @@ services:
         arguments: [@user.helper]
 
     doctrine.listener.persist:
-        class: 'QL\Hal\Core\Entity\Listener\EntityPersistListener'
+        class: 'QL\Hal\Core\DoctrinePersistListener'
         arguments: [@clock, @doctrine.random.id]
 
     ######################################################################################################################

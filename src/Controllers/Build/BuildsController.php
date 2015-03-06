@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Build;
 
-use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\BuildRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

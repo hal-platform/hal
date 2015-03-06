@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Api;
 use QL\Hal\Api\Normalizer\EventLogNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\EventLog;
-use QL\Hal\Core\Entity\Repository\EventLogRepository;
+use QL\Hal\Core\Repository\EventLogRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 

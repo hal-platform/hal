@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;

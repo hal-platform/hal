@@ -15,8 +15,8 @@ use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Core\Repository\BuildRepository;
+use QL\Hal\Core\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 

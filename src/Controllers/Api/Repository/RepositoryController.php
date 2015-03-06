@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Api\Repository;
 
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 

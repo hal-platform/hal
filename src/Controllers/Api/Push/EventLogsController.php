@@ -12,7 +12,7 @@ use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Core\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 

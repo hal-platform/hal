@@ -12,8 +12,8 @@ use MCP\Cache\CachingTrait;
 use MCP\DataType\Time\Clock;
 use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Core\Repository\BuildRepository;
+use QL\Hal\Core\Repository\PushRepository;
 
 class StatsService
 {

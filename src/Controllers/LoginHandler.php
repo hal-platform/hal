@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers;
 use Doctrine\ORM\EntityManager;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;

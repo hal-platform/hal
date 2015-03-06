@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Admin;
 
-use QL\Hal\Core\Entity\Repository\AuditLogRepository;
+use QL\Hal\Core\Repository\AuditLogRepository;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

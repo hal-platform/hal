@@ -8,8 +8,8 @@
 namespace QL\Hal\Controllers\Repository;
 
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Services\PermissionsService;

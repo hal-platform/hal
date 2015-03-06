@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Middleware\Bouncer;
 
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;

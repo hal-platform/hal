@@ -8,8 +8,8 @@
 namespace QL\Hal\Controllers\Repository\Deployment;
 
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;

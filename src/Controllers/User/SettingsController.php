@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\User;
 
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;

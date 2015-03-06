@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Api\Deployment;
 use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 

@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\Api\User;
 
 use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;

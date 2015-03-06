@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\Admin;
 
 use MCP\Cache\CachingTrait;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Repository\ServerRepository;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
 

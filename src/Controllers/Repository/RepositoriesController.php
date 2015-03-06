@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use QL\Hal\Core\Entity\Repository\GroupRepository;
+use QL\Hal\Core\Repository\GroupRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;

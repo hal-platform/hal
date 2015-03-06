@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\User;
 
 use MCP\Corp\Account\LdapService;
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Slim\NotFound;

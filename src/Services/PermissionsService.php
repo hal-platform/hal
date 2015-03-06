@@ -11,10 +11,10 @@ use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
 use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User as EntityUser;
 use Zend\Ldap\Dn;
 

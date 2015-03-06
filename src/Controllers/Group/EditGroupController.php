@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Group;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Repository\GroupRepository;
+use QL\Hal\Core\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;

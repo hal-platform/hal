@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;

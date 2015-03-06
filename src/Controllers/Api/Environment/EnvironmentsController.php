@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Api\Environment;
 use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\ControllerInterface;
 
 class EnvironmentsController implements ControllerInterface

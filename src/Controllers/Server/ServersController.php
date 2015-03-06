@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Server;
 
-use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;

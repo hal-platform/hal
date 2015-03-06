@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\Api\Server;
 
 use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;

@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Twig;
 
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use Slim\Http\Request;

@@ -8,7 +8,7 @@
 namespace QL\Hal\Middleware\Bouncer;
 
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Services\PermissionsService;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;

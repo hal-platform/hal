@@ -11,9 +11,9 @@ use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\ServerRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Type\ServerEnumType;
 
 class DeploymentValidator

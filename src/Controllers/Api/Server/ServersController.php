@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Api\Server;
 use QL\Hal\Api\Normalizer\ServerNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Repository\ServerRepository;
 use QL\Panthor\ControllerInterface;
 
 class ServersController implements ControllerInterface

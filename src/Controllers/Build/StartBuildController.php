@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Build;
 
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Slim\NotFound;

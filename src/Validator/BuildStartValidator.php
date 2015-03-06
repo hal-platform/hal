@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Validator;
 
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\GithubService;

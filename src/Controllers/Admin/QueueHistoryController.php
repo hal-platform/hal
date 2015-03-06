@@ -13,14 +13,11 @@ use DateTimeZone;
 use Doctrine\Common\Collections\Criteria;
 use MCP\DataType\Time\Clock;
 use MCP\DataType\Time\TimePoint;
-use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Core\Entity\Repository\PushRepository;
+use QL\Hal\Core\Repository\BuildRepository;
+use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
-
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Push;
 
 class QueueHistoryController implements ControllerInterface
 {

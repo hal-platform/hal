@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Slim\NotFound;

@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Api\Group;
 
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Repository\GroupRepository;
+use QL\Hal\Core\Repository\GroupRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 

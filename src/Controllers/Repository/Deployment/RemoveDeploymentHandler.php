@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;

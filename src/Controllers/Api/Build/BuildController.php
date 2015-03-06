@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Api\Build;
 
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Repository\BuildRepository;
+use QL\Hal\Core\Repository\BuildRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 

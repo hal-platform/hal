@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Environment;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository\EnvironmentRepository;
-use QL\Hal\Core\Entity\Repository\ServerRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;

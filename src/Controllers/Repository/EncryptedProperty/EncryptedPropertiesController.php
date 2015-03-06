@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 
-use QL\Hal\Core\Entity\Repository\EncryptedPropertyRepository;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\EncryptedPropertyRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

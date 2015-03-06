@@ -8,7 +8,7 @@
 namespace QL\Hal\Middleware\Bouncer;
 
 use MCP\Corp\Account\LdapService;
-use QL\Hal\Core\Entity\Repository\TokenRepository;
+use QL\Hal\Core\Repository\TokenRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\HttpProblem\HttpProblemException;

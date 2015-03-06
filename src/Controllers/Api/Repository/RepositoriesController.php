@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Api\Repository;
 use QL\Hal\Api\Normalizer\RepositoryNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Entity\Repository\RepositoryRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Panthor\ControllerInterface;
 
 class RepositoriesController implements ControllerInterface

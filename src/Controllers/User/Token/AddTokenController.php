@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\User\Token;
 
 use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;

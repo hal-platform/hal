@@ -9,10 +9,10 @@ namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Repository\BuildRepository;
-use QL\Hal\Core\Entity\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Repository\PushRepository;
-use QL\Hal\Core\Entity\Repository\UserRepository;
+use QL\Hal\Core\Repository\BuildRepository;
+use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Repository\PushRepository;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Services\PermissionsService;

@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Repository\BuildRepository;
+use QL\Hal\Core\Repository\BuildRepository;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Hal\Session;
