@@ -56,7 +56,7 @@
         {% set ref = resolved|last %}
 
         <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">
-            Commit {{ ref|commit }}
+            {{ ref|commit }}
         </a>
         <svg class="icon"><use xlink:href="#commit"></use></svg>
 
