@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/macros.twig' as macros %}
 
 {% set page_title = "Push Information" %}
 
@@ -67,20 +68,18 @@
             <dd class="split--left__value">
                 {% if githubCommitIsCurrent(push.repository.githubUser, push.repository.githubRepo, push.build.branch, push.build.commit) %}
                     <span class="status-before--success">
-                        <a href="{{ githubReference(push.repository.githubUser, push.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (latest)
+                        {{ macros.gitref(push.build) }} (latest)
                     </span>
                 {% else %}
                     <span class="status-before--other">
-                        <a href="{{ githubReference(push.repository.githubUser, push.repository.githubRepo, push.build.branch) }}">{{ push.build.branch|gitref }}</a> (behind or unresolved)
+                        {{ macros.gitref(push.build) }} (behind)
                     </span>
                 {% endif %}
-                <svg class="icon"><use xlink:href="#fork"></use></svg>
             </dd>
 
             <dt class="split--left__title">Commit</dt>
             <dd class="split--left__value">
-                <a href="{{ githubCommit(push.repository.githubUser, push.repository.githubRepo, push.build.commit) }}">{{ push.build.commit|commit }}</a>
-                <svg class="icon"><use xlink:href="#github"></use></svg>
+                {{ macros.gitcommit(push.build) }}
             </dd>
         </dl>
     </div>

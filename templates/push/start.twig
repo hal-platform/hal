@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/macros.twig' as macros %}
 
 {% set page_title = "Start Push: " ~ build.id %}
 
@@ -35,21 +36,19 @@
             <dd class="split--left__value">
                 {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
                     <span class="status-before--success">
-                        <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
+                        {{ macros.gitref(build.branch) }}
                     </span>
                 {% else %}
                     <span class="status-before--other">
-                        <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|gitref }}</a>
+                        {{ macros.gitref(build.branch) }}
                     </span>
                 {% endif %}
-                <svg class="icon"><use xlink:href="#fork"></use></svg>
             </dd>
             <dt class="split--left__title">
                 Commit
             </dt>
             <dd class="split--left__value">
-                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
-                  <svg class="icon"><use xlink:href="#github"></use></svg>
+                {{ macros.gitcommit(build.branch) }}
             </dd>
             <dt class="split--left__title">
                 Initiator
@@ -121,13 +120,11 @@
 
                             <td>
                                 <span class="status-before--{{ isCurrent ? 'success' : 'other' }}">
-                                    <a href="{{ githubReference(active.build.repository.githubUser, active.build.repository.githubRepo, active.build.branch) }}">{{ active.build.branch|gitref }}</a>
-                                    <svg class="icon"><use xlink:href="#fork"></use></svg>
+                                    {{ macros.gitref(active.build, true) }}
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
-                                <svg class="icon"><use xlink:href="#github"></use></svg>
+                                {{ macros.gitcommit(active.build) }}
                             </td>
                             <td>
                                 {% if inProgress %}

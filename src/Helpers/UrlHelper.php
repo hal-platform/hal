@@ -262,40 +262,6 @@ class UrlHelper
     }
 
     /**
-     * Format an arbitrary git reference for display
-     *
-     * @param $reference
-     * @return string
-     */
-    public function formatGitReference($reference)
-    {
-        if ($tag = $this->github->parseRefAsTag($reference)) {
-            return "Tag ".$tag;
-        }
-
-        if ($pull = $this->github->parseRefAsPull($reference)) {
-            return "Pull Request ".$pull;
-        }
-
-        if ($commit = $this->github->parseRefAsCommit($reference)) {
-            return "Commit ".$this->formatGitCommit($commit);
-        }
-
-        return ucfirst(strtolower($reference))." Branch";
-    }
-
-    /**
-     * Format a git commit hash for output
-     *
-     * @param $reference
-     * @return string
-     */
-    public function formatGitCommit($reference)
-    {
-        return substr($reference, 0, 7);
-    }
-
-    /**
      * @param string $url
      * @param array $query
      *

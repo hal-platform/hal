@@ -69,9 +69,8 @@ class GithubExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('gitref', [$this->url, 'formatGitReference']),
-            new Twig_SimpleFilter('sliceGitref', [$this, 'sliceGitReference']),
-            new Twig_SimpleFilter('commit', [$this->url, 'formatGitCommit'])
+            new Twig_SimpleFilter('gitref', [$this, 'resolveGitReference']),
+            new Twig_SimpleFilter('commit', [$this, 'formatGitCommit'])
         ];
     }
 
@@ -100,18 +99,37 @@ class GithubExtension extends Twig_Extension
     }
 
     /**
-     * @param string $gitref
-     * @param int $size
+     * Format a git commit hash for output
+     *
+     * @param $reference
      * @return string
      */
-    public function sliceGitReference($gitref, $size = 30)
+    public function formatGitCommit($reference)
     {
-        $value =  $this->url->formatGitReference($gitref);
+        return substr($reference, 0, 7);
+    }
 
-        if (mb_strlen($value) <= $size + 3) {
-            return $value;
-        } else {
-            return substr($value, 0, $size) . '...';
+    /**
+     * Format an arbitrary git reference for display
+     *
+     * @param $reference
+     *
+     * @return array
+     */
+    public function resolveGitReference($reference)
+    {
+        if ($tag = $this->github->parseRefAsTag($reference)) {
+            return ['tag', $tag];
         }
+
+        if ($pull = $this->github->parseRefAsPull($reference)) {
+            return ['pull', $pull];
+        }
+
+        if ($commit = $this->github->parseRefAsCommit($reference)) {
+            return ['commit', $commit];
+        }
+
+        return ['branch', $reference];
     }
 }

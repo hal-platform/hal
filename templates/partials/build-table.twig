@@ -1,3 +1,5 @@
+{% import "partials/macros.twig" as macros %}
+
 <table data-tablesaw-mode="stack">
     <thead>
         <th>Build</th>
@@ -24,8 +26,7 @@
             </td>
             <td>{{ build.environment.key }}</td>
             <td>
-                <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|sliceGitref }}</a>
-                <svg class="icon"><use xlink:href="#fork"></use></svg>
+                {{ macros.gitref(build, true) }}
             </td>
             <td>
                 {% if build.user %}

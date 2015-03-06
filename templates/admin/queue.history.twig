@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 {% import 'partials/pagination.twig' as pagination %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Build and Push History" %}
 {% set paginationblock = pagination.time_pagination(selected_date, 'admin.queue') %}
@@ -61,8 +62,7 @@
 
                         <td>
                             {% if job is build %}
-                                <a href="{{ githubCommit(job.repository.githubUser, job.repository.githubRepo, job.commit) }}">{{ job.branch|sliceGitref }}</a>
-                                <svg class="icon"><use xlink:href="#github"></use></svg>
+                                {{ macros.gitref(job, true) }}
                             {% else %}
                                 Build <a href="{{ urlFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a>
                             {% endif %}

@@ -23,6 +23,7 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 }
             }
 
+            var humanReference = this.determineGitref(reference);
             var context = {
                 buildId: buildId,
                 buildIdShort: this.formatBuildId(buildId),
@@ -32,7 +33,8 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 buildStatus: build.status,
 
                 environmentName: build._links.environment.title,
-                reference: this.determineGitref(reference),
+                reference: humanReference,
+                referenceType: this.determineGitrefType(humanReference),
                 referenceUrl: build.commit.url,
 
                 repoName: build._embedded.repository.title,
@@ -165,20 +167,35 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
                 return formatted.slice(0, size) + '...';
             }
         },
+        determineGitrefType: function(gitref) {
+            if (gitref.indexOf('Release') === 0) {
+                return 'tag';
+            }
+
+            if (gitref.indexOf('Pull Request') === 0) {
+                return 'pull';
+            }
+
+            if (gitref.indexOf('Commit') === 0) {
+                return 'commit';
+            }
+
+            return 'branch';
+        },
         formatGitref: function(gitref) {
             var prRegex = /^pull\/([\d]+)$/i,
                 tagRegex = /^tag\/([\x21-\x7E]+)$/i,
-                commitRegex = /^[a-f]{40}$/i,
+                commitRegex = /^[a-f0-9]{40}$/i,
                 match = null;
 
             match = prRegex.exec(gitref);
             if (match !== null && match.length > 0) {
-                return 'Pull Request #' + match.pop();
+                return 'Pull Request ' + match.pop();
             }
 
             match = tagRegex.exec(gitref);
             if (match !== null && match.length > 0) {
-                return 'Tag ' + match.pop();
+                return 'Release ' + match.pop();
             }
 
             match = commitRegex.exec(gitref);
@@ -187,8 +204,7 @@ define(['jquery', 'nunjucks'], function($, nunjucks) {
             }
 
             // Must be a branch
-            var refFirst = gitref.charAt(0).toUpperCase();
-            return refFirst + gitref.substr(1) + ' Branch';
+            return gitref;
         },
         formatBuildId: function (buildId) {
             var regex = /^b[a-zA-Z0-9]{1}.[a-zA-Z0-9]{7}$/i,

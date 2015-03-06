@@ -1,3 +1,5 @@
+{% import "partials/macros.twig" as macros %}
+
 {% if initiator is not defined %}
     {% set initiator = true %}
 {% endif %}
@@ -31,8 +33,7 @@
                     <ul class="split mbn">
                         <li>
                             <span class="split__title">{{ build.created|html5date }}</span>
-                            <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">{{ build.branch|sliceGitref }}</a>
-                            <svg class="icon"><use xlink:href="#fork"></use></svg>
+                            {{ macros.gitref(build, true) }}
                         </li>
                     </ul>
                 </section>

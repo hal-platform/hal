@@ -1,3 +1,5 @@
+{% import "partials/macros.twig" as macros %}
+
 <table id="js-queue" data-tablesaw-mode="stack">
     <thead>
         <th>Type</th>
@@ -27,8 +29,7 @@
                         </td>
                         <td>{{ job.environment.key }}
                         <td>
-                            <a href="{{ githubCommit(job.repository.githubUser, job.repository.githubRepo, job.commit) }}">{{ job.branch|sliceGitref }}</a>
-                            <svg class="icon"><use xlink:href="#github"></use></svg>
+                            {{ macros.gitref(job, true) }}
                         </td>
                         <td>{{ job.user ? job.user.handle : 'Unknown' }}</td>
                     </tr>

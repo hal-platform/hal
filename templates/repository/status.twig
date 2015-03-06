@@ -2,7 +2,7 @@
 
 {% set page_title = "Status: " ~ repo.name %}
 
-{% import _self as macros %}
+{% import _self as page_macros %}
 
 {% block content %}
     <h2>Repository Status for <strong>{{ repo.name }}</strong></h2>
@@ -42,7 +42,7 @@
                     {% set activePush = status.success %}
                 {% endif %}
 
-                <li>{{ macros.pushCard(repo, status.deploy, activePush, status.success) }}</li>
+                <li>{{ page_macros.pushCard(repo, status.deploy, activePush, status.success) }}</li>
             {% endfor %}
         </ul>
     {% else %}
@@ -71,6 +71,7 @@
 {% endblock %}
 
 {% macro pushCard(repo, deployment, active, hasHistory) %}
+    {% import 'partials/macros.twig' as macros %}
 
     <article class="card">
         <header class="card__header">
@@ -135,9 +136,9 @@
                     {% if active %}
                         {% set isCurrent = githubCommitIsCurrent(repo.githubUser, repo.githubRepo, active.build.branch, active.build.commit) %}
                         <span class="status-before--{{ isCurrent ? 'success' : 'warning' }}">
-                            <a href="{{ githubReference(repo.githubUser, repo.githubRepo, active.build.branch) }}">{{ active.build.branch|sliceGitref }}</a>
+                            {{ macros.gitref(active.build, true) }}
                         </span>
-                        <svg class="icon"><use xlink:href="#fork"></use></svg>
+
                     {% else %}
                         Unknown
                     {% endif %}
@@ -145,8 +146,7 @@
                 <li class="js-data-overload">
                     <span class="split__title">Commit:</span>
                     {% if active %}
-                        <a href="{{ githubCommit(repo.githubUser, repo.githubRepo, active.build.commit) }}">{{ active.build.commit|commit }}</a>
-                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                        {{ macros.gitcommit(active.build) }}
                     {% else %}
                         Unknown
                     {% endif %}

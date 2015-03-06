@@ -72,7 +72,6 @@ class GithubCallbackController implements ControllerInterface
      */
     private $url;
 
-
     /**
      * @param TemplateInterface $template
      * @param Request $request
