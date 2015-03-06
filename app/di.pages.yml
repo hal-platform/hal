@@ -867,9 +867,12 @@ services:
         class: 'QL\Hal\Controllers\Admin\QueueHistoryController'
         arguments:
             - @admin.queue.twig
-            - @doctrine.em
+            - @build.repo
+            - @push.repo
             - @slim.response
+            - @clock
             - @slim.route.parameters
+            - %date.timezone%
     admin.queue.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/queue.history.twig']]]

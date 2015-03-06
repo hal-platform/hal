@@ -32,3 +32,38 @@
         </li>
     </ol>
 {% endmacro %}
+
+{% macro time_pagination(selectedDate, routeName, routeParameters, queryParameters) %}
+
+    {% set routeParameters = routeParameters|default({}) %}
+    {% set queryParameters = queryParameters|default({}) %}
+
+    {% set prevday = selectedDate.modify('-1 day') %}
+    {% set nextday = selectedDate.modify('+1 day') %}
+
+    {% set nextdayFormatted = nextday|timepoint('Y-m-d') %}
+    {% set now = timepoint() %}
+    {% set nowFormatted = now|timepoint('Y-m-d') %}
+
+    <ol class="nav--pagination">
+        <li class="nav--pagination__prev">
+            <a href="{{ urlFor(routeName, routeParameters|merge({'date': prevday|timepoint('Y-m-d')}), queryParameters) }}">
+                <svg class="icon"><use xlink:href="#caret-left"></use></svg>older
+            </a>
+        </li>
+        <li>
+            <span class="pages">{{ selectedDate|timepoint('F j, Y') }}</span>
+        </li>
+        <li class="nav--pagination__next">
+            {% if nextdayFormatted == nowFormatted or (nextdayFormatted != nowFormatted and nextday.compare(now) == -1) %}
+                <a href="{{ urlFor(routeName, routeParameters|merge({'date': nextdayFormatted}), queryParameters) }}">
+                    newer <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                </a>
+            {% else %}
+                <span class="disabled">
+                    newer <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                </span>
+            {% endif %}
+        </li>
+    </ol>
+{% endmacro %}

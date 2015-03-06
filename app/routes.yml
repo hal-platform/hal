@@ -80,9 +80,9 @@ parameters:
 
         admin.queue:
             method: 'GET'
-            route: '/admin/queue-history/page/:page'
+            route: '/admin/queue-history/date/:date'
             stack: ['admin.bouncer', 'admin.queue.page']
-            conditions: {page: %routes.regex.digit%}
+            conditions: {date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'}
 
         admin.audit.logs.page1:
             method: 'GET'

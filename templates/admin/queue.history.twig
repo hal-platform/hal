@@ -2,12 +2,86 @@
 {% import 'partials/pagination.twig' as pagination %}
 
 {% set page_title = "Build and Push History" %}
+{% set paginationblock = pagination.time_pagination(selected_date, 'admin.queue') %}
 
 {% block content %}
     <h2>Build and Push History</h2>
 
-    {% include 'partials/pending-table.twig' %}
+    {{ paginationblock }}
 
-    {{ pagination.pagination(page, last, 'admin.queue', {}) }}
+    {{ block('queuehistory') }}
 
+    {{ paginationblock }}
+
+{% endblock %}
+
+{% block queuehistory %}
+    <table data-tablesaw-mode="stack">
+        <thead>
+            <th>Type</th>
+            <th>Repository</th>
+            <th>Env → Server</th>
+            <th>Reference</th>
+            <th class="table-priority-55">Initiator</th>
+            <th class="table-priority-50">Time</th>
+        </thead>
+        <tbody>
+                {% for job in pending %}
+                    <tr>
+                        <td>
+                            {% set statusClass = 'status-before--other' %}
+                            {% if job.status == 'Success' %}
+                                {% set statusClass = 'status-before--success' %}
+                            {% elseif job.status in ['Error', 'Removed'] %}
+                                {% set statusClass = 'status-before--error' %}
+                            {% endif %}
+
+                            <span class="{{ statusClass }}">
+                                {% if job is build %}
+                                    <a href="{{ urlFor('build', {build: job.id}) }}">Build</a>
+                                {% else %}
+                                   <a href="{{ urlFor('push', {push: job.id}) }}">Push</a>
+                                {% endif %}
+                            </span>
+                        </td>
+
+                        <td>
+                            <a href="{{ urlFor('repository.status', {id: job.repository.id}) }}">{{ job.repository.name }}</a>
+                        </td>
+
+                        <td>
+                            {% if job is build %}
+                                {{ job.environment.key }}
+                            {% elseif job.deployment %}
+                                {{ job.build.environment.key }} → {{ job.deployment|formatDeploymentServer(true) }}
+                            {% else %}
+                                {{ job.build.environment.key }} → Unknown
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if job is build %}
+                                <a href="{{ githubCommit(job.repository.githubUser, job.repository.githubRepo, job.commit) }}">{{ job.branch|sliceGitref }}</a>
+                                <svg class="icon"><use xlink:href="#github"></use></svg>
+                            {% else %}
+                                Build <a href="{{ urlFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a>
+                            {% endif %}
+                        </td>
+
+                        <td class="table-priority-55">
+                            {{ job.user ? job.user.handle : 'Unknown' }}
+                        </td>
+
+                        <td class="table-priority-50">
+                            {{ job.created|timepoint('h:i:s A') }}
+                        </td>
+
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">There is no queue history for this date.</td>
+                    </tr>
+                {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
