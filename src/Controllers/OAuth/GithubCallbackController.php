@@ -24,7 +24,7 @@ class GithubCallbackController implements ControllerInterface
     const ERR_TOKEN_FLAVOR = 'Tokens are immutable. Please remove the token and then re-authorize HAL 9000.';
 
     const SUCCESS_TOKEN_GRANTED = 'GitHub token saved.';
-    const SUCCESS_TOKEN_FLAVOR = 'HAL now has the keys to your castle. Be careful what you wish for.';
+    const SUCCESS_TOKEN_FLAVOR = 'HAL will now attempt to notify github when you push to a project you have github write access for.';
 
     const ERR_INVALID_STATE = "Pesky human. HAL 9000 is infallible and has prevented your attack.";
 
