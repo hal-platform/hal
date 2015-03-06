@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Helpers;
 
-use QL\Hal\Core\Entity\Type\ServerEnumType;
+use QL\Hal\Core\Type\ServerEnumType;
 
 trait SortingHelperTrait
 {

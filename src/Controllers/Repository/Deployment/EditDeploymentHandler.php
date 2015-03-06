@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 use Doctrine\ORM\EntityManager;
 use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Entity\Type\ServerEnumType;
+use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Session;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;

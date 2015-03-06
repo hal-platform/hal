@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Server;
 
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\ServerRepository;
-use QL\Hal\Core\Entity\Type\ServerEnumType;
+use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Slim\NotFound;
 use QL\Panthor\ControllerInterface;

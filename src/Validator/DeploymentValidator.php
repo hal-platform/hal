@@ -14,7 +14,7 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\RepositoryRepository;
-use QL\Hal\Core\Entity\Type\ServerEnumType;
+use QL\Hal\Core\Type\ServerEnumType;
 
 class DeploymentValidator
 {

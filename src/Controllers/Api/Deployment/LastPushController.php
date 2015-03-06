@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
-use QL\Hal\Core\Entity\Type\PushStatusEnumType;
+use QL\Hal\Core\Type\PushStatusEnumType;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Repository\DeploymentRepository;

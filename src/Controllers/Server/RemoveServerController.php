@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Server;
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\ServerRepository;
-use QL\Hal\Core\Entity\Type\ServerEnumType;
+use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Hal\Slim\NotFound;
