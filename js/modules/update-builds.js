@@ -125,7 +125,7 @@ define(['jquery'], function($) {
                 // Add push link if present
                 $container
                     .children('.js-build-push')
-                    .html('<a href="' + this.generateUrl(data.id, 'push') + '">Push</a>');
+                    .html('<a class="btn btn--tiny" href="' + this.generateUrl(data.id, 'push') + '">Push</a>');
             }
         }
     };
