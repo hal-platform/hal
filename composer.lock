@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fa51d434ea1fc340633c55285279569d",
+    "hash": "696edfd29b2ca4717bf328d3b7c876d0",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1064,11 +1064,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "dev-master",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
                 "reference": "50577227a66533185af24db211bb7c6609152f71"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-hal-core-2.6.0-3383c2.zip",
+                "reference": "50577227a66533185af24db211bb7c6609152f71",
+                "shasum": "bd761a3f9aa0461af3451b3daeede5285887915d"
             },
             "archive": {
                 "exclude": [
@@ -3251,9 +3257,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ql/hal-core": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
