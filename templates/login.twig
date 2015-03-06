@@ -52,10 +52,10 @@
             <h3 class="mbn">Today</h3>
             <ul class="stat-list">
                 <li>
-                    <strong>{{ stats.active_repos }}</strong> Active projects
+                    <strong>{{ stats.active_repos }}</strong> Active project{{ stats.active_repos != 1 ? 's' : '' }}
                 </li>
                 <li>
-                    <strong>{{ stats.builds }}</strong> Builds
+                    <strong>{{ stats.builds }}</strong> Build{{ stats.builds != 1 ? 's' : '' }}
                     {% if stats.builds %}
                         <ul class="stat-list">
                             <li>
@@ -65,7 +65,7 @@
                     {% endif %}
                 </li>
                 <li>
-                    <strong>{{ stats.pushes }}</strong> Pushes
+                    <strong>{{ stats.pushes }}</strong> Push{{ stats.builds != 1 ? 'es' : '' }}
                     {% if stats.pushes %}
                         <ul class="stat-list">
                             <li>
