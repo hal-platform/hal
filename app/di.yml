@@ -172,6 +172,7 @@ services:
         calls:
             - ['addGlobal', ['applicationTitle', %application.title%]]
             - ['addGlobal', ['applicationSha', %application.sha%]]
+            - ['addGlobal', ['applicationVersion', %application.major.version%]]
             - ['addGlobal', ['navItems', %navigation.list%]]
             - ['addGlobal', ['session', @session]]
 

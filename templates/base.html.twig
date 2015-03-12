@@ -29,6 +29,7 @@
     </head>
 
     <body>
+        <span class="sticky-version">Version {{ applicationVersion }}.X, {{ applicationSha|default('dev') }}</span>
         {% block body %}
 
             {% include 'partials/layout.icons.twig' %}

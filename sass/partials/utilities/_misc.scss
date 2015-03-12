@@ -4,3 +4,13 @@
 .tr {
     text-align: right;
 }
+
+.sticky-version {
+    color: transparent;
+    font-size: 50%;
+    line-height: 100%;
+
+    left: 0;
+    top: 0;
+    position: absolute;
+}
