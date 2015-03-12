@@ -1,0 +1,200 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        body {
+            font-family: Helvetica, sans-serif;
+            margin: 1em;
+        }
+        blockquote {
+            border-left: 4px solid #ddd;
+            color: #777;
+            font-size: .9em;
+            margin-left: .5em;
+            padding: 0 15px;
+        }
+        code {
+            background: #e5e5e5;
+            color: #d63620;
+            font-family: monospace;
+            padding: .2em;
+        }
+
+        h2 {
+            background: #cc6300;
+            color: white;
+            margin: 1em 0;
+            padding: .5em;
+        }
+        h3 {
+            border-bottom: 4px solid #357793;
+            color: #236298;
+            margin-top: 1em;
+            padding-bottom: .25em;
+        }
+        h5 {
+            font-size: 1em;
+            margin: .5em 0;
+        }
+
+        blockquote ul {
+            list-style-type: square;
+            padding-left: .75em;
+        }
+
+        blockquote ul > li {
+            line-height: 120%;
+            margin: .25em 0;
+        }
+
+        .biggie-size {
+            border: 2px solid #aaa;
+            background: #efefef;
+            color: #555;
+            display: inline-block;
+            margin: .5em;
+            text-decoration: none;
+            width: 400px;
+        }
+
+        .biggie-size img {
+            display: block;
+            margin: auto;
+        }
+        .biggie-size span {
+            display: block;
+            text-align: center;
+            margin-bottom: .25em;
+        }
+
+        .task-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .task-list li {
+            margin: .25em 0;
+        }
+
+        i {
+            color: #0F7832;
+            font-style: normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>HAL 9000 - Version 2.4.1</h1>
+
+    <p>Greetings! The web core team has pushed an update to HAL 9000. This is version 2.4.1.</p>
+
+    <h3>What is HAL 9000?</h3>
+    <p>
+        HAL 9000 is the deployment system we use to deploy many of our client-facing websites, including
+        MyQL, Rocket Mortgage, QLMS, ORMS, Agent Insight, QuickenLoans.com and more!
+    </p>
+
+    <h3>New Features</h3>
+    <ul>
+        <li>
+            <h5>Add daily stats to login page.</h5>
+        </li>
+    </ul>
+
+    <h2>
+        Changelog
+    </h2>
+
+    <h3>User Experience (UX) Enhancements</h3>
+    <ul>
+        <li>
+            <h5>All users can now add groups or repositories.</h5>
+
+            <blockquote>
+                <p>Previously, only administrators could do this.</p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>Restore <i>Rollback page</i> for all users.</h5>
+            <blockquote>
+                <p>
+                    The rollback page has been changed to a complete deployment history> and lists all previous pushes
+                    for a deployment. It is available to all users by clicking the rollback icon on the titlebar of a push status box.
+                </p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>Add ability to view all pushes and builds for a particular date.</h5>
+            <blockquote>
+                <p>
+                    Available through the administration dashboard, administrators can view all pushes or builds that occured on a particular date.
+                </p>
+            </blockquote>
+        </li>
+
+        <li>
+            <h5>Relative times are now handled by javascript.</h5>
+            <blockquote>
+                <p>
+                    Relative times will be updated on-the-fly, so times displayed in the UI will be more accurate. This is will also result in correct times for users not in EST.
+                </p>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h3>Bugs</h3>
+    <ul>
+        <li>
+            <h5>HAL can now deploy repositories of any size.</h5>
+            <blockquote>
+                <p>Previously, HAL was limited to what it could download into memory before writing to disk.</p>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h3>Technical</h3>
+    <ul>
+        <li>
+            <h5>HAL now uses YAML configuration for Doctrine mapping, rather than annotations.</h5>
+        </li>
+        <li>
+            <h5>Dependencies</h5>
+
+            <blockquote>
+                <p><b>The following components MUST go with this release:</b></p>
+                <ul>
+                    <li>HAL 2.4.1</li>
+                    <li>HAL Core 2.6</li>
+                </ul>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h2>Need Help?</h2>
+    <p>If you find any bugs or want to request a feature, drop us a line in the hipchat room <strong>[Application] HAL 9000</strong>, or <a href="mailto:itteamwebcore@quickenloans.com">send us an email</a>.</p>
+
+    <h2>JIRA Tasklist</h2>
+
+    <p>
+        <a href="https://fringedivision.atlassian.net/projects/HAL/versions/12103">JIRA Release page for HAL 9000 2.4</a>
+    </p>
+
+    <h3>Bug</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-82">HAL-82</a>] - Allow hal to download repos larger than the available memory</li>
+    </ul>
+
+    <h3>Improvement</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-176">HAL-176</a>] - Change relative dates to be handled by javascript only.</li>
+    </ul>
+
+    <h3>New Feature</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-169">HAL-169</a>] - Add some stats to make the login page less lonely</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-171">HAL-171</a>] - Restore rollback page for all users</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-173">HAL-173</a>] - Allow all users to create a group and/or repo</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-175">HAL-175</a>] - Add admin page for a history of all pushes/builds</li>
+    </ul>
+</body>
+</html>
