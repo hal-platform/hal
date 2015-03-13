@@ -1064,17 +1064,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.6.0",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "50577227a66533185af24db211bb7c6609152f71"
+                "reference": "6963d8bc1f331e3307ebededfe5bf93706a3ec27"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.6.0-3383c2.zip",
-                "reference": "50577227a66533185af24db211bb7c6609152f71",
-                "shasum": "bd761a3f9aa0461af3451b3daeede5285887915d"
+                "url": "http://composer/dist/ql-hal-core-2.6.1-f57dae.zip",
+                "reference": "6963d8bc1f331e3307ebededfe5bf93706a3ec27",
+                "shasum": "66e2492bf8c0761ff5648799882ba640e250fa36"
             },
             "archive": {
                 "exclude": [
@@ -1114,7 +1114,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-03-06 13:59:20"
+            "time": "2015-03-13 12:54:37"
         },
         {
             "name": "ql/http-problem",
