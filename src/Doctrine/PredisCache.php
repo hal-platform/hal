@@ -8,6 +8,7 @@
 namespace QL\Hal\Doctrine;
 
 use Predis\Client as Predis;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 
 class PredisCache extends CacheProvider
