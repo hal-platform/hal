@@ -36,11 +36,11 @@
             <dd class="split--left__value">
                 {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
                     <span class="status-before--success">
-                        {{ macros.gitref(build.branch) }}
+                        {{ macros.gitref(build) }}
                     </span>
                 {% else %}
                     <span class="status-before--other">
-                        {{ macros.gitref(build.branch) }}
+                        {{ macros.gitref(build) }}
                     </span>
                 {% endif %}
             </dd>
@@ -48,7 +48,7 @@
                 Commit
             </dt>
             <dd class="split--left__value">
-                {{ macros.gitcommit(build.branch) }}
+                {{ macros.gitcommit(build) }}
             </dd>
             <dt class="split--left__title">
                 Initiator
