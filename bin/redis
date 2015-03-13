@@ -21,3 +21,23 @@ $keys = $redis->keys('*');
 
 sort($keys);
 print_r($keys);
+
+
+// For emergency clearing of doctrine metadata
+// $keys = $redis->keys('doctrine:*');
+// $delete = true;
+// if ($delete) {
+//     foreach ($keys as $k) {
+//         $k = str_replace('hal9000:', '', $k);
+//         echo sprintf("\n Delete %s", $k);
+//         $redis->del($k);
+//     }
+
+//     // List keys in the hal namespace
+//     $keys = $redis->keys('doctrine:*');
+//     sort($keys);
+//     print_r($keys);
+// }
+
+
+echo "\n";
