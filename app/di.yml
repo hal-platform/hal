@@ -35,7 +35,7 @@ services:
 
     doctrine.listener.logger:
         class: 'QL\Hal\Doctrine\EntityChangeLogger'
-        arguments: [@user.helper]
+        arguments: [@user.helper, @clock]
 
     doctrine.listener.persist:
         class: 'QL\Hal\Core\DoctrinePersistListener'
