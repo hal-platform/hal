@@ -1,0 +1,4 @@
+system: unix
+build: 'bin/deploy'
+
+exclude: []
