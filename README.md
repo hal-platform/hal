@@ -87,6 +87,35 @@ Run `bin/gulp --deploy` to delete `public/js`, `public/img`, `public/css` and re
 
 The `deploy` flag will perform further minifying and compressing that are not done in the standard dev compilation.
 
+## Server setup
+
+HAL 9000 requires the following environment:
+
+#### PHP 5.6+
+
+The following extensions must be installed:
+
+- `ext-apc`
+- `ext-curl`
+- `ext-json`
+- `ext-intl`
+- `ext-mbstring`
+- `ext-mcrypt`
+- `ext-openssl`
+- `ext-PDO`
+- `ext-pcntl`
+- `ext-pdo_mysql`
+- `ext-pdo_sqlite`
+- `ext-SimpleXML`
+- `ext-xmlwriter`
+- `ext-zip`
+
+#### NGINX/FPM or Apache
+
+#### MySQL Database
+
+#### Redis server for caching
+
 ## Redis caching
 
 Some data is cached to redis. Most caching is done through `MCP\Cache` and can be disabled easily through configuration.
