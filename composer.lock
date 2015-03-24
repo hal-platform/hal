@@ -266,7 +266,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -342,7 +342,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -774,16 +774,16 @@
         },
         {
             "name": "guzzlehttp/ringphp",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/RingPHP.git",
-                "reference": "a903f51b692427318bc813217c0e6505287e79a4"
+                "reference": "f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/a903f51b692427318bc813217c0e6505287e79a4",
-                "reference": "a903f51b692427318bc813217c0e6505287e79a4",
+                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4",
+                "reference": "f43ab34aad69ca0ba04172cf2c3cd5c12fc0e5a4",
                 "shasum": ""
             },
             "require": {
@@ -820,7 +820,8 @@
                     "homepage": "https://github.com/mtdowling"
                 }
             ],
-            "time": "2014-12-11 05:50:32"
+            "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
+            "time": "2015-02-26 20:43:09"
         },
         {
             "name": "guzzlehttp/streams",
@@ -1031,7 +1032,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-exception-toolkit-0.1.2-e8ade7.zip",
+                "url": "http://composer/dist/ql-exception-toolkit-0.1.2-e8ade7.zip",
                 "reference": "27056e3989703a85288101d73dbaf041b336e5e3",
                 "shasum": "d09581d882ffcabd5d4b338b25f88cbae7bea360"
             },
@@ -1126,7 +1127,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-http-problem-1.0.0-53e9e1.zip",
+                "url": "http://composer/dist/ql-http-problem-1.0.0-53e9e1.zip",
                 "reference": "5c5444f87cece1e3b9f81e655cee02e3041183db",
                 "shasum": "3c4bace26a69071247fcc4b730e03980fa68d0c0"
             },
@@ -1215,13 +1216,13 @@
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-core.git",
-                "reference": "1.0.1"
+                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-core-1.0.1-d1b76f.zip",
-                "reference": "1.0.1",
-                "shasum": "33c9dd1e298f45d64a2f774c7501c203276d9152"
+                "url": "http://composer/dist/ql-mcp-core-1.0.1-578aad.zip",
+                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf",
+                "shasum": "4ab925396c0ef4d2adbdfc58716fb6ef536b26a8"
             },
             "archive": {
                 "exclude": [
@@ -1385,7 +1386,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer//dist/ql-mcp-logger-1.3.1-60bb9a.zip",
+                "url": "http://composer/dist/ql-mcp-logger-1.3.1-60bb9a.zip",
                 "reference": "ea0e2a331bd92ce0f4f4e3ea4e9eccf861022946",
                 "shasum": "cafd9bace02edd62b04d362189e09359af81adef"
             },
@@ -1457,23 +1458,23 @@
         },
         {
             "name": "ql/panthor",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "git@git:web-frameworks/panthor.git",
-                "reference": "cba79796dc84529c7fc573d90cb7d6b623ea834f"
+                "reference": "f1bc81298addaae5347682abbe9d2fbda33ea32a"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-panthor-2.0.2-a7349a.zip",
-                "reference": "cba79796dc84529c7fc573d90cb7d6b623ea834f",
-                "shasum": "d4bfdfe0785279499dbc8009ed010e9c19c6bdd4"
+                "url": "http://composer/dist/ql-panthor-2.0.3-d4d4b5.zip",
+                "reference": "f1bc81298addaae5347682abbe9d2fbda33ea32a",
+                "shasum": "470dacbf664e400b0171d3e391d4504077cea105"
             },
             "require": {
                 "php": ">=5.4.0",
                 "slim/slim": ">=2.4",
                 "symfony/config": ">=2.5",
-                "symfony/dependency-injection": ">=2.5",
+                "symfony/dependency-injection": ">=2.6.3",
                 "symfony/yaml": ">=2.5"
             },
             "require-dev": {
@@ -1495,7 +1496,7 @@
                 "proprietary"
             ],
             "description": "Symfony + Slim = Panthor",
-            "time": "2015-02-12 20:34:39"
+            "time": "2015-03-24 12:32:58"
         },
         {
             "name": "react/promise",
@@ -1590,12 +1591,12 @@
             "version": "2.4.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/codeguy/Slim.git",
+                "url": "https://github.com/slimphp/Slim.git",
                 "reference": "4906b77a07c7bd6ff1a99aea903e940a2d4fa106"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codeguy/Slim/zipball/4906b77a07c7bd6ff1a99aea903e940a2d4fa106",
+                "url": "https://api.github.com/repos/slimphp/Slim/zipball/4906b77a07c7bd6ff1a99aea903e940a2d4fa106",
                 "reference": "4906b77a07c7bd6ff1a99aea903e940a2d4fa106",
                 "shasum": ""
             },
@@ -1681,17 +1682,17 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.6.4",
+            "version": "v2.6.5",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "e44154bfe3e41e8267d7a3794cd9da9a51cfac34"
+                "reference": "53f86497ccd01677e22435cfb7262599450a90d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/e44154bfe3e41e8267d7a3794cd9da9a51cfac34",
-                "reference": "e44154bfe3e41e8267d7a3794cd9da9a51cfac34",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/53f86497ccd01677e22435cfb7262599450a90d1",
+                "reference": "53f86497ccd01677e22435cfb7262599450a90d1",
                 "shasum": ""
             },
             "require": {
@@ -1700,6 +1701,7 @@
             "require-dev": {
                 "psr/log": "~1.0",
                 "symfony/event-dispatcher": "~2.1",
+                "symfony/phpunit-bridge": "~2.7",
                 "symfony/process": "~2.1"
             },
             "suggest": {
@@ -1734,7 +1736,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2015-01-25 04:39:26"
+            "time": "2015-03-13 17:37:22"
         },
         {
             "name": "symfony/debug",
@@ -1858,17 +1860,17 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.6.4",
+            "version": "v2.6.5",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "f75989f3ab2743a82fe0b03ded2598a2b1546813"
+                "reference": "70f7c8478739ad21e3deef0d977b38c77f1fb284"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/f75989f3ab2743a82fe0b03ded2598a2b1546813",
-                "reference": "f75989f3ab2743a82fe0b03ded2598a2b1546813",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/70f7c8478739ad21e3deef0d977b38c77f1fb284",
+                "reference": "70f7c8478739ad21e3deef0d977b38c77f1fb284",
                 "shasum": ""
             },
             "require": {
@@ -1879,6 +1881,7 @@
                 "symfony/config": "~2.0,>=2.0.5",
                 "symfony/dependency-injection": "~2.6",
                 "symfony/expression-language": "~2.6",
+                "symfony/phpunit-bridge": "~2.7",
                 "symfony/stopwatch": "~2.3"
             },
             "suggest": {
@@ -1912,25 +1915,28 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
-            "time": "2015-02-01 16:10:57"
+            "time": "2015-03-13 17:37:22"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.6.4",
+            "version": "v2.6.5",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "a1f566d1f92e142fa1593f4555d6d89e3044a9b7"
+                "reference": "fdc5f151bc2db066b51870d5bea3773d915ced0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/a1f566d1f92e142fa1593f4555d6d89e3044a9b7",
-                "reference": "a1f566d1f92e142fa1593f4555d6d89e3044a9b7",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/fdc5f151bc2db066b51870d5bea3773d915ced0b",
+                "reference": "fdc5f151bc2db066b51870d5bea3773d915ced0b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "~2.7"
             },
             "type": "library",
             "extra": {
@@ -1959,7 +1965,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2015-01-03 21:13:09"
+            "time": "2015-03-12 10:28:44"
         },
         {
             "name": "symfony/finder",
@@ -2114,17 +2120,17 @@
         },
         {
             "name": "zendframework/zend-ldap",
-            "version": "2.3.4",
+            "version": "2.3.7",
             "target-dir": "Zend/Ldap",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/Component_ZendLdap.git",
-                "reference": "0b2b8d7e266741c74eb259330977ac4050f58458"
+                "reference": "81dd696254adc20e017cfae776961014d385035f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendLdap/zipball/0b2b8d7e266741c74eb259330977ac4050f58458",
-                "reference": "0b2b8d7e266741c74eb259330977ac4050f58458",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendLdap/zipball/81dd696254adc20e017cfae776961014d385035f",
+                "reference": "81dd696254adc20e017cfae776961014d385035f",
                 "shasum": ""
             },
             "require": {
@@ -2159,21 +2165,21 @@
                 "ldap",
                 "zf2"
             ],
-            "time": "2015-01-14 16:44:17"
+            "time": "2015-03-12 16:55:53"
         },
         {
             "name": "zendframework/zend-stdlib",
-            "version": "2.3.4",
+            "version": "2.3.7",
             "target-dir": "Zend/Stdlib",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/Component_ZendStdlib.git",
-                "reference": "280e4ee6a8fea96b3de00a39174758b4002a7358"
+                "reference": "3f6e2416183d4879a983680e1165f14164b262f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/280e4ee6a8fea96b3de00a39174758b4002a7358",
-                "reference": "280e4ee6a8fea96b3de00a39174758b4002a7358",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/3f6e2416183d4879a983680e1165f14164b262f4",
+                "reference": "3f6e2416183d4879a983680e1165f14164b262f4",
                 "shasum": ""
             },
             "require": {
@@ -2212,7 +2218,7 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2015-01-14 16:44:17"
+            "time": "2015-03-12 16:55:53"
         }
     ],
     "packages-dev": [
@@ -2310,7 +2316,7 @@
             ],
             "authors": [
                 {
-                    "name": "Padraic Brady",
+                    "name": "Pádraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
