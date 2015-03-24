@@ -9,6 +9,7 @@ namespace QL\Hal\Helpers;
 
 use QL\Hal\Core\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\IntrospectableContainerInterface;
 
 class LazyUserHelper
 {
@@ -30,6 +31,14 @@ class LazyUserHelper
      */
     public function getUser()
     {
+        if ($this->container instanceof IntrospectableContainerInterface && !$this->container->initialized('currentUser')) {
+            return;
+        }
+
+        if (!$this->container->has('currentUser')) {
+            return;
+        }
+
         return $this->container->get('currentUser', ContainerInterface::NULL_ON_INVALID_REFERENCE);
     }
 }
