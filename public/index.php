@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Deadzone;
+namespace QL\Hal\Bootstrap;
 
 use Exception;
 use Symfony\Component\Debug\ErrorHandler;
@@ -15,11 +15,11 @@ define('MAINTENANCE', false);
 $root = __DIR__ . '/..';
 
 if (MAINTENANCE) {
-    require $root . '/app/templates/maintenance.html';
+    require $root . '/templates/maintenance.html';
     exit;
 }
 
-if (!$container = @include $root . '/app/bootstrap.php') {
+if (!$container = @include $root . '/configuration/bootstrap.php') {
     http_response_code(500);
     echo "Boom goes the dynamite.\n";
     exit;

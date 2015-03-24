@@ -8,7 +8,6 @@ atlassian-ide-plugin.xml
 # testing
 /.phpunit/
 /phpunit.xml
-/phpunit
 
 # compiled assets
 /.bundle/
@@ -18,7 +17,6 @@ atlassian-ide-plugin.xml
 /public/img/
 /public/js/
 npm-debug.log
-public/style.css
 
 # package installation
 /bin/composer
@@ -27,7 +25,7 @@ public/style.css
 /vendor/
 
 # compiled configuration
-/app/config.env.yml
+/configuration/config.env.yml
 /src/CachedContainer.php
 
 # deployment caches

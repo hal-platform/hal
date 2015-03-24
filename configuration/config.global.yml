@@ -12,7 +12,7 @@ parameters:
 
     # slim
     slim.configuration:
-        debug: '%debug%'
+        debug: %debug%
 
     ############################################################################
     # ldap
@@ -29,6 +29,13 @@ parameters:
     ############################################################################
 
     doctrine.devmode: false
+
+    doctrine.connection:
+        driver: pdo_mysql
+        host: %database.server%
+        user: %database.username%
+        password: %database.password%
+        dbname: %database.database%
 
     ############################################################################
     # caching

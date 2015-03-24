@@ -47,8 +47,8 @@ services:
 
     slim:
         parent: 'panthor.slim'
-        arguments:
-            - %slim.configuration%
+        # arguments:
+            # - %slim.configuration%
         calls:
             - ['add', [@slim.session]]
 

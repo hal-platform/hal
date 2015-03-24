@@ -2,6 +2,11 @@
 
 # functions
 function loadTitles() {
+    read -r -d '' TITLE_ENCRYPTED <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ VERIFY ENCRYPTED PROPERTIES                                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
     read -r -d '' TITLE_INSTALL <<OUTOUT
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ COMPOSER / NPM / BUNDLER INSTALLATION                                        ┃
@@ -64,6 +69,10 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 loadTitles
 
 set -e
+
+# install and configure
+echo "$TITLE_ENCRYPTED"
+"$DIR"/verify-encrypted
 
 # install and configure
 echo "$TITLE_INSTALL"

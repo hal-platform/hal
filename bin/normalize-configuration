@@ -12,11 +12,11 @@ CONFIG="$NORMALIZED_ENV.yml"
 echo "Current environment: $HAL_ENVIRONMENT"
 echo "Normalized environment: $NORMALIZED_ENV"
 
-EXISTS=$(test -e $DIR/../app/environment/$CONFIG && echo 1 || echo 0)
+EXISTS=$(test -e $DIR/../configuration/environment/$CONFIG && echo 1 || echo 0)
 if [[ $EXISTS -eq "1" ]]; then
     echo "Configuration found: $CONFIG"
     echo "Overwriting $TARGET_CONFIG"
-    cat "$DIR/../app/environment/$CONFIG" > "$DIR/../app/config.env.yml"
+    cat "$DIR/../configuration/environment/$CONFIG" > "$DIR/../configuration/config.env.yml"
 else
     echo "Configuration not found: $CONFIG"
 fi

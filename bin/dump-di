@@ -6,21 +6,24 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Deadzone;
+namespace QL\Hal\Bin;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+use QL\Hal\Application\EnvConfigLoader;
+use QL\Panthor\Bootstrap\Di;
 
 $root = __DIR__ . '/../';
 $file = $root . 'src/CachedContainer.php';
 $class = 'QL\Hal\CachedContainer';
 
-if (!$container = @include $root . '/app/bootstrap.php') {
+if (!$container = @include $root . '/configuration/bootstrap.php') {
     echo "An error occured while attempting to dump the DI Container.\n";
     exit(1);
 };
 
-file_put_contents($file, dumpDi($container, $class));
+$modifier = [new EnvConfigLoader, 'load'];
+$container = Di::buildDi($root, $modifier);
+
+file_put_contents($file, Di::dumpDi($container, $class));
 
 echo <<<OUTPUT
 Dumping DI Container cache:
@@ -28,13 +31,3 @@ File: $file
 Class: $class
 
 OUTPUT;
-
-function dumpDi(ContainerInterface $container, $class) {
-    $exploded = explode('\\', $class);
-    $config = [
-        'class' => array_pop($exploded),
-        'namespace' => implode('\\', $exploded)
-    ];
-
-    return (new PhpDumper($container))->dump($config);
-}

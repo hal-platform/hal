@@ -4,12 +4,10 @@ parameters:
 
 
 
-    doctrine.connection:
-        driver:         pdo_mysql
-        host:           prod.example.com
-        user:           placeholder
-        password:       placeholder
-        dbname:         hal9000
+    database.username: 'placeholder'
+    # database.password: ''
+    database.database: 'hal9000'
+    database.server: 'prod.example.com'
 
     github.token: ''
     github.app.id: ''

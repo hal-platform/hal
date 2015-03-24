@@ -6,10 +6,10 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Bootstrap;
+namespace QL\Hal\Bin;
 
 $root = __DIR__ . '/..';
-if (!$container = @include $root . '/app/bootstrap.php') {
+if (!$container = @include $root . '/configuration/bootstrap.php') {
     echo "The application failed to start.\n";
     exit(1);
 }

@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+
+# configure
+set -e
+
+# declare variables
+p_ENCRYPTED_VARS=(
+    "ENCRYPTED_HAL_DB_PASS"
+)
+
+# script
+echo "Validating encrypted properties"
+
+for i in ${p_ENCRYPTED_VARS[@]}
+do
+    if [ -z  "${!i}" ] ; then
+        echo "Required encrypted property is missing: $i"
+        exit 1
+    else
+        echo "Required encrypted property found: $i"
+    fi
+done

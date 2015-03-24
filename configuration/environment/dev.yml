@@ -4,12 +4,10 @@ parameters:
     debug: true
     twig.debug: true
 
-    doctrine.connection:
-        driver:         pdo_mysql
-        host:           localhost
-        user:           root
-        password:
-        dbname:         hal
+    database.username: 'root'
+    database.password: ''
+    database.database: 'hal'
+    database.server: 'localhost'
 
     github.token: ''
     github.app.id: ''
