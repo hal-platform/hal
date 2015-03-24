@@ -26,6 +26,11 @@ class EnvConfigLoader
             $container->setParameter('database.password', $property);
         }
 
+        // Save LDAP password from encrypted properties on HAL 9000 deployment
+        if (false !== ($property = getenv('ENCRYPTED_LDAP_PASS'))) {
+            $container->setParameter('ldap.password', $property);
+        }
+
         // Save commit SHA on HAL 9000 deployment
         if (false !== ($property = getenv('HAL_COMMIT'))) {
             $container->setParameter('application.sha', $property);

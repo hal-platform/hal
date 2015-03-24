@@ -3,6 +3,13 @@ parameters:
     application.title: 'HAL 9000'
 
     ############################################################################
+    # Encrypted Properties - Replaced at deploy time
+    ############################################################################
+
+    ldap.password: ''
+    database.password: ''
+
+    ############################################################################
     # debug
     ############################################################################
 
@@ -22,13 +29,17 @@ parameters:
     ldap.domain: 'MI'
     ldap.baseDn: 'DC=mi,DC=corp'
     ldap.username: ''
-    ldap.password: ''
 
     ############################################################################
     # doctrine
     ############################################################################
 
     doctrine.devmode: false
+
+    # Replaced by env
+    database.username: ''
+    database.server: ''
+    database.database: ''
 
     doctrine.connection:
         driver: pdo_mysql
