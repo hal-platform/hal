@@ -99,6 +99,7 @@ The following extensions must be installed:
 - `ext-curl`
 - `ext-json`
 - `ext-intl`
+- `ext-ldap`
 - `ext-mbstring`
 - `ext-mcrypt`
 - `ext-openssl`
