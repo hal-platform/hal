@@ -16,7 +16,7 @@ use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
-use QL\Hal\Slim\NotFound;
+use QL\Panthor\Slim\NotFound;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

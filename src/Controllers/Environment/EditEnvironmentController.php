@@ -12,7 +12,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
-use QL\Hal\Slim\NotFound;
+use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;

@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
-use QL\Hal\Slim\NotFound;
+use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
 class RemoveGroupController implements ControllerInterface

@@ -11,7 +11,7 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
-use QL\Hal\Slim\NotFound;
+use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;

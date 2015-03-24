@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Repository\EncryptedPropertyRepository;
 use QL\Hal\Session;
-use QL\Hal\Slim\NotFound;
+use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;

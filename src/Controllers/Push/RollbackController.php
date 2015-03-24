@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Push;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Core\Repository\RepositoryRepository;
-use QL\Hal\Slim\NotFound;
+use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;

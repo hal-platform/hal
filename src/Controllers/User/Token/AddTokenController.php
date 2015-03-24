@@ -13,7 +13,7 @@ use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\PermissionsService;
-use QL\Hal\Slim\NotFound;
+use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
 
