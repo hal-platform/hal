@@ -2,6 +2,7 @@ parameters:
     routes.regex.alphanum: '[A-Za-z0-9]+'
     routes.regex.digit: '[0-9]+'
     routes.regex.token: '[0-9a-zA-Z]{40,40}'
+    routes.regex.githubname: '[A-Za-z0-9\.\-]+'
 
     routes.regex.buildId: '[A-Za-z0-9\_\-\.]+'
     routes.regex.pushId: %routes.regex.buildId%
@@ -520,7 +521,7 @@ parameters:
             method: 'GET'
             route: '/api/github/users/:username/repositories'
             stack: ['login.bouncer', 'api.github.user.repositories']
-            conditions: {username: %routes.regex.alphanum%}
+            conditions: {username: %routes.regex.githubname%}
 
         ################################################################################################################
         # PUBLIC API ROUTES
