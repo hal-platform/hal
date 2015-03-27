@@ -3,7 +3,7 @@
 
 namespace QL\Hal\Bin;
 
-use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use QL\Hal\Application\DoctrineProxyGenerator;
 
 $root = __DIR__ . '/..';
 if (!$container = @include $root . '/configuration/bootstrap.php') {
@@ -12,5 +12,8 @@ if (!$container = @include $root . '/configuration/bootstrap.php') {
     exit;
 };
 
-$helperSet = ConsoleRunner::createHelperSet($container->get('doctrine.em'));
-ConsoleRunner::run($helperSet, []);
+$generator = new DoctrineProxyGenerator($container);
+
+if (!$generator()) {
+    exit(1);
+}

@@ -91,7 +91,7 @@ echo "$TITLE_TWIG"
 "$DIR/"compile-templates
 
 echo "$TITLE_DOCTRINE"
-"$DIR"/doctrine orm:generate:proxies
+"$DIR"/generate-doctrine-proxies
 
 echo "$TITLE_GULP"
 "$DIR"/gulp --deploy
