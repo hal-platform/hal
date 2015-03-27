@@ -93,7 +93,7 @@ parameters:
         help: 'Help'
 
     session.cookie.configuration:
-        lifetime: '1 day'
+        lifetime: '5 days'
     cookie.preferences.ttl: '5 years'
 
     ############################################################################
