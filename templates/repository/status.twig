@@ -34,15 +34,7 @@
                     {% set hasPushes = true %}
                 {% endif %}
 
-                {# Determine the active push #}
-                {% set activePush = null %}
-                {% if status.latest.status in ['Waiting', 'Pushing'] %}
-                    {% set activePush = status.latest %}
-                {% elseif status.success %}
-                    {% set activePush = status.success %}
-                {% endif %}
-
-                <li>{{ page_macros.pushCard(repo, status.deploy, activePush, status.success) }}</li>
+                <li>{{ page_macros.pushCard(repo, status.deploy, status.latest) }}</li>
             {% endfor %}
         </ul>
     {% else %}
@@ -70,7 +62,7 @@
 
 {% endblock %}
 
-{% macro pushCard(repo, deployment, active, hasHistory) %}
+{% macro pushCard(repo, deployment, active) %}
     {% import 'partials/macros.twig' as macros %}
 
     <article class="card">
@@ -84,7 +76,7 @@
                     </a>
                 {% endif %}
 
-                {% if hasHistory %}
+                {% if active %}
                     <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'id': repo.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
                         <svg class="icon"><use xlink:href="#revert"></use></svg>
                     </a>

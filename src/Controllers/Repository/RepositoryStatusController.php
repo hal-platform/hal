@@ -145,18 +145,9 @@ class RepositoryStatusController implements ControllerInterface
         usort($deployments, $this->deploymentSorter());
 
         foreach ($deployments as &$deployment) {
-
-            $latest = $success = $this->pushRepo->getMostRecentByDeployment($deployment);
-
-            // if the latest build is successful, we dont have to make another db query
-            if ($success && $success->getStatus() !== 'Success') {
-                $success = $this->pushRepo->getMostRecentSuccessByDeployment($deployment);
-            }
-
             $deployment = [
                 'deploy' => $deployment,
-                'latest' => $latest,
-                'success' => $success
+                'latest' => $this->pushRepo->getMostRecentByDeployment($deployment)
             ];
         }
 
