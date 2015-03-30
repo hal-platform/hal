@@ -5,7 +5,6 @@ parameters:
 
 
     database.username: 'placeholder'
-    # database.password: ''
     database.database: 'hal9000'
     database.server: 'prod.example.com'
 
