@@ -4,6 +4,8 @@ parameters:
     debug: true
     twig.debug: true
 
+    ldap.password: ''
+
     database.username: 'root'
     database.password: ''
     database.database: 'hal'
