@@ -23,10 +23,10 @@
         <li class="trailer">
             <a href="#help-setup"><b>Application Setup</b></a>
             <ul>
-                <li><a href="#add-application">How do I deploy my application with HAL?</a></li>
-                <li><a href="#language-support">Does HAL support .NET applications?</a></li>
-                <li><a href="#service-support">Does HAL support Amazon Cloud Deployments?</a></li>
+                <li><a href="#add-application">How do I add my application to HAL?</a></li>
+                <li><a href="#deploy-application">How do I deploy my application with HAL?</a></li>
                 <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
+                <li><a href="#env-support">Does HAL support .NET or AWS applications?</a></li>
                 <li><a href="#encrypted-configuration">Does HAL support encrypted configuration?</a></li>
                 <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
             </ul>
@@ -91,58 +91,22 @@
 {% endblock %}
 
 {% block setup_questions %}
-    <h4 id="add-application">How do I deploy my application with HAL?</h4>
-    <p>The project files must be on the <a href="http://git">Github Enterprise</a> server.</p>
-    <p>After making sure that your project meets the minimum requirements above, gather the information below.</p>
+    <h4 id="add-application">How do I add my application to HAL?</h4>
+    <p>
+        Any project can be added to HAL 9000. Doing so will allow you to create builds in the standard HAL environment. However, to deploy to servers please see <a href="#deploy-application">deployment instructions</a>.
+    </p>
     <ol>
         <li>
-            <strong>Determine what group your application should exist in within HAL 9000.</strong>
+            <strong>Projects belong to groups. Determine what group your application should be part of, or create a new group.</strong>
             <p>
-                This is commonly a team or business area name. You can see the ones that already exist by looking
-                at the <a href="{{ urlFor('repositories') }}">Repositories Page</a>.
+                Projects are often grouped by team or business area. You can see the ones that already exist by viewing the <a href="{{ urlFor('repositories') }}">Repositories page</a>.
             </p>
-
-            <p class="mbn">If you need to create a new group, you'll need the following information.</p>
-            <ul class="trailer">
-                <li>
-                    An identifier using numbers, letters, and hyphens. Examples: <b>venture</b>, <b>servicing</b>, and <b>web-core</b>.
-                </li>
-                <li>
-                    The full name that describes your group. Examples: <b>Team Venture</b>, <b>Servicing</b>, and <b>Web Core</b>.
-                </li>
-            </ul>
         </li>
         <li>
-            <strong>Determine the name of your application.</strong>
-            <p class="mbn">You will need both an identifier (letters, numbers, hyphens) and full name.</p>
-            <ul class="trailer">
-                <li>
-                    Identifier examples: <b>hal9000-agent</b>, <b>myql-servicing-api</b>, <b>rocket</b>
-                </li>
-                <li>
-                    Full name examples: <b>HAL 9000 Agent</b>, <b>MyQL Servicing API</b>, <b>Rocket Mortgage</b>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <strong>Determine where your application exists within Github.</strong>
-            <p>Please provide the Github organization and the repository name.</p>
-        </li>
-        <li>
-            <strong>Determine who should be able to build and push your application.</strong>
+            <strong>Project code must be hosted on GitHub and belong to an organization</strong>
             <p>
-                By default, HAL 9000 will grant build &amp; push permissions for non-production environments to all
-                users who are members of the Github organization that owns the project repository.</p>
+                The project code must be hosted on the internal <a href="http://git">GitHub Enterprise</a> server. Only repositories belonging to a GitHub organization may be used.
             </p>
-            <p>If non-engineers need to be able to build and push, you will need to request that LDAP permissions be created.</p>
-        </li>
-        <li>
-            <strong>Determine what environments and servers your application will be deployed to.</strong>
-            <p>Examples: test1www1, test1beta1, EC2, Elastic Beanstalk</p>
-        </li>
-        <li>
-            <strong>Determine what directory on those servers your application will live in.</strong>
-            <p>Example: <code>/var/www/application</code></p>
         </li>
         <li>
             <strong>Add a <code>.hal9000.yml</code> configuration file to your project.</strong>
@@ -151,38 +115,66 @@
                 Please see <a href="{{ urlFor('help.deployment') }}">deployment scripting guide</a> for full details.
             </p>
         </li>
+        <li>
+            <strong>Determine who should be able to build and push your application.</strong>
+            <p>
+                By default, HAL 9000 will grant build &amp; push permissions for non-production environments to all
+                users who are members of the GitHub organization that owns the project repository.</p>
+            </p>
+            <p>If non-engineers need to be able to build and push, you will need to request that active directory permissions be created.</p>
+        </li>
     </ol>
+
+    <h4 id="deploy-application">How do I deploy my application with HAL?</h4>
     <p>
-        Once your have gathered all of the required information, speak with your team leader and request that the
-        application be added to HAL 9000. Contact Key Masters at {{ kmContact|raw }} to assist you with the process.
+        Once a project has been added to HAL 9000, servers must be added and assigned to start deployments.
     </p>
 
-    <h4 id="language-support">Does HAL support .NET applications?</h4>
-    <p>
-        <strong>Yes.</strong> Although window build servers are not currently enabled.<br><br>
-        HAL 9000 has support for windows and unix build servers. This means HAL can compile and build <strong>any</strong> project if the build servers are configured correctly.
-        HAL's windows support was primarily designed for building <strong>.NET Web Publish packages</strong> for AWS Elastic Beanstalk.</p>
-    </p>
+    <p>You will need help from the <strong>unix team</strong> during this process.</p>
+
+    <ol>
+        <li>
+            <strong>What environments and servers will your application be deployed to?</strong>
+            <p>Examples: <code>test1www1</code>, <code>dev1iweb</code>, <code>prod1srvwww1</code></p>
+        </li>
+        <li>
+            <strong>Where on those servers will your application be hosted?</strong>
+            <p>
+                This should be the full path to the directory that code is pushed to.
+                <br>Example: <code>/var/www/application</code>
+            </p>
+        </li>
+        <li>
+            <strong>Determine the URL for each environment or server.</strong>
+            <p>
+                When a server is added for your application to deploy to, you'll also need to add the URL where the service or site is available from.
+                <br>Examples: <code>http://test.application.com</code>, <code>http://test1w1.application.com</code>
+            </p>
+        </li>
+        <li>
+            <strong>Make sure permissions are correct on each server.</strong>
+            <p>
+                For HAL to be able to push code to these servers, the user <code>codexfer</code> must have access to each server.
+                In addition, the directory to be deployed to must be owned by <code>codexfer</code> and typically belong to the <code>apache</code> or <code>nginx</code> groups.
+            </p>
+        </li>
+    </ol>
+
+    <h6 class="mbn">
+        <strong>Example data</strong>
+    </h6>
+
+    <pre>
+dir: /var/www/application
+test
+    test1www1           http://test1w1.application.com
+    test2www1           http://test1w2.application.com
+beta
+    beta1www1           http://beta.application.com
+    beta2www1           http://beta.application.com</pre>
 
     <p>
-        HAL requires no code changes or feature additions to enable windows and cloud functionality. They are deployment options that are currently disabled.
-        If you would like to use any of these features, please contact a member of <strong>Web Core</strong>.
-    </p>
-
-    <p>
-        <strong>Current Status:</strong>
-        <ul>
-            <li>AWS EC2 Deployments: <strong>NOT ENABLED</strong></li>
-            <li>AWS Elastic Beanstalk Deployments: <strong>NOT ENABLED</strong></li>
-            <li>Windows Build Server: <strong>NOT ENABLED</strong></li>
-        </ul>
-    </p>
-
-    <h4 id="service-support">Does HAL support Amazon Cloud Deployments?</h4>
-    <p>
-        <strong>Yes.</strong> Although AWS is not currently configured.<br><br>
-        HAL can deploy any application to Amazon Elastic Beanstalk or EC2.<br><br>
-        In addition, HAL can deploy to autoscaling EC2 instances by finding all active EC2 servers using the AWS API.
+        Once you have gathered all of the required information, Contact the Key Masters at {{ kmContact|raw }} to request that the deployment information be added to HAL 9000.
     </p>
 
     <h4 id="application-deployment">How do I use a script to build or push my application?</h4>
@@ -191,6 +183,10 @@
     </p>
 
     <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
+
+    <h4 id="env-support">Does HAL support .NET or AWS applications?</h4>
+    <p>HAL 9000 supports building windows projects and deploying to Amazon Elastic Beanstalk or Amazon EC2.</p>
+    <p>However, these features will not be enabled.</p>
 
     <h4 id="encrypted-configuration">Does HAL support encrypted configuration?</h4>
     <p>
