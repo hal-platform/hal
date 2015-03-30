@@ -7,9 +7,8 @@ use QL\Hal\Application\DoctrineProxyGenerator;
 
 $root = __DIR__ . '/..';
 if (!$container = @include $root . '/configuration/bootstrap.php') {
-    http_response_code(500);
-    echo "Boom goes the dynamite.\n";
-    exit;
+    echo "An error occured while attempting to generate doctrine proxies.\n";
+    exit(1);
 };
 
 $generator = new DoctrineProxyGenerator($container);
