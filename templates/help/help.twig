@@ -221,6 +221,9 @@ beta
         <li>
             <a href="/docs/2.4.1/release-notes.html">2.4.1</a>
         </li>
+        <li>
+            <a href="/docs/2.4.2/release-notes.html">2.4.2</a>
+        </li>
     </ul>
 {% endblock %}
 
@@ -230,5 +233,5 @@ With Github Enterprise 2.1, features that HAL relied on to determine engineer pe
 Previously, HAL could check whether users were repository collaborators, but must now check if users are <b>public</b>
 members of the organization that owns the repository.
 
-Please see <a href="https://fringedivision.atlassian.net/wiki/pages/worddav/preview.action?fileName=github_permission_change.pdf&pageId=23625747">these instructions (PDF)</a> for how to make your github organizational status public.
+Please see <a href="{{ urlFor('help.githubpermissions') }}">these instructions </a> for how to make your github organizational status public.
 {% endblock %}
