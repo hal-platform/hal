@@ -23,7 +23,7 @@
                 <thead>
                 <tr>
                     <th class="t15">Hostname</th>
-                    <th class="t40">Path / EB Environment / EC2 Pool</th>
+                    <th class="t40">Path</th>
                     <th>URL</th>
                     <th class="t10"></th>
                 </tr>
@@ -60,7 +60,7 @@
             <div class="form-wrapper js-add-deployment__form">
                 <h2>Add Deployment</b></h2>
 
-                {% include 'partials/form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': {}, 'repository': repository} %}
+                {% include 'partials/form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': {}, 'repository': repository, rsync_only: true} %}
             </div>
 
             <div class="js-add-deployment__button">

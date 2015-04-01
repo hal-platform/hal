@@ -5,6 +5,7 @@ Needs the following parameters:
 - form.path
 - form.url
 - repository
+- rsync_only
 
 #}
 <form method="post" action="{{ urlFor('repository.deployments.add', {repository: repository.id}) }}">
@@ -17,7 +18,7 @@ Needs the following parameters:
                 <option></option>
                 {% for environment, servers in servers_by_env %}
                     <optgroup label="{{ environment }}">
-                        {% for server in servers %}
+                        {% for server in servers if not rsync_only or server.type == 'rsync' %}
                             {% set isSelected = (server.id == form.server) %}
 
                             {% set servername = server.name %}
@@ -32,12 +33,17 @@ Needs the following parameters:
                     </optgroup>
                 {% endfor %}
             </select>
+            <small class="additional">
+                Server not listed? <a href="{{ urlFor('server.admin.add') }}">Add a new server</a>
+            </small>
         </li>
         <li>
             <label for="path">
                 File path
                 <small class="additional">
-                    <strong>Rsync and EC2 Servers Only</strong><br>
+                    {% if not rsync_only %}
+                        <strong>Rsync and EC2 Servers Only</strong><br>
+                    {% endif %}
                     The absolute path to the file directory on the server.
                     <br>Paths must begin with a forward slash (/).
                 </small>
@@ -45,25 +51,27 @@ Needs the following parameters:
             <input class="text-input" type="text" name="path" id="path" maxlength="255" value="{{ form.path }}" pattern="^\/[^\n\t]+">
         </li>
 
-        <li>
-            <label for="eb_environment">
-                Elastic Beanstalk Environment ID
-                <small class="additional">
-                    <strong>EB Servers Only</strong>
-                </small>
-            </label>
-            <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+">
-        </li>
+        {% if not rsync_only %}
+            <li>
+                <label for="eb_environment">
+                    Elastic Beanstalk Environment ID
+                    <small class="additional">
+                        <strong>EB Servers Only</strong>
+                    </small>
+                </label>
+                <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+">
+            </li>
 
-        <li>
-            <label for="ec2_pool">
-                EC2 Pool
-                <small class="additional">
-                    <strong>EC2 Servers Only</strong>
-                </small>
-            </label>
-            <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+">
-        </li>
+            <li>
+                <label for="ec2_pool">
+                    EC2 Pool
+                    <small class="additional">
+                        <strong>EC2 Servers Only</strong>
+                    </small>
+                </label>
+                <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+">
+            </li>
+        {% endif %}
 
         <li>
             <label for="url">
