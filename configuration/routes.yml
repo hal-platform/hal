@@ -163,8 +163,8 @@ parameters:
             route: '/repositories/:id/builds(/page/:page)'
             stack: ['login.bouncer', 'builds.page']
             conditions:
-                - id: %routes.regex.digit%
-                - page: %routes.regex.digit%
+                id: %routes.regex.digit%
+                page: %routes.regex.digit%
 
         build:
             method: 'GET'
@@ -204,24 +204,24 @@ parameters:
             route: '/repositories/:id/pushes(/page/:page)'
             stack: ['login.bouncer', 'pushes.page']
             conditions:
-                - id: %routes.regex.digit%
-                - page: %routes.regex.digit%
+                id: %routes.regex.digit%
+                page: %routes.regex.digit%
 
         rollback.page1:
             method: 'GET'
             route: '/repositories/:id/deployments/:deployment/pushes'
             stack: ['login.bouncer', 'push.rollback.page']
             conditions:
-                - id: %routes.regex.digit%
-                - deployment: %routes.regex.digit%
+                id: %routes.regex.digit%
+                deployment: %routes.regex.digit%
 
         rollback:
             method: 'GET'
             route: '/repositories/:id/deployments/:deployment/pushes(/page/:page)'
             stack: ['login.bouncer', 'push.rollback.page']
             conditions:
-                - id: %routes.regex.digit%
-                - deployment: %routes.regex.digit%
+                id: %routes.regex.digit%
+                deployment: %routes.regex.digit%
 
         ################################################################################################################
         # SERVER ROUTES
@@ -301,15 +301,15 @@ parameters:
             route: '/users/:id/tokens/:token/revoke'
             stack: ['login.bouncer', 'delete.confirm.page']
             conditions:
-                - id: %routes.regex.digit%
-                - token: %routes.regex.token%
+                id: %routes.regex.digit%
+                token: %routes.regex.token%
         user.token.remove:
             method: 'POST'
             route: '/users/:id/tokens/:token/revoke'
             stack: ['login.bouncer', 'user.token.remove.handler']
             conditions:
-                - id: %routes.regex.digit%
-                - token: %routes.regex.token%
+                id: %routes.regex.digit%
+                token: %routes.regex.token%
 
         ################################################################################################################
         # REPOSITORY ROUTES
@@ -363,8 +363,8 @@ parameters:
             route: '/repositories/:repository/deployments/:id'
             stack: ['login.bouncer', 'repository.deployment.page']
             conditions:
-                - repository: %routes.regex.digit%
-                - id: %routes.regex.digit%
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
 
         repository.deployments:
             method: 'GET'
@@ -383,24 +383,24 @@ parameters:
             route: '/repositories/:repository/deployments/:id/edit'
             stack: ['repoadmin.bouncer', 'repository.deployment.edit.handler', 'repository.deployment.edit.page']
             conditions:
-                - repository: %routes.regex.digit%
-                - id: %routes.regex.digit%
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
 
         repository.deployment.remove.confirm:
             method: 'GET'
             route: '/repositories/:repository/deployments/:id/remove'
             stack: ['repoadmin.bouncer', 'delete.confirm.page']
             conditions:
-                - repository: %routes.regex.digit%
-                - id: %routes.regex.digit%
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
 
         repository.deployment.remove:
             method: 'POST'
             route: '/repositories/:repository/deployments/:id/remove'
             stack: ['repoadmin.bouncer', 'repository.deployments.remove.handler']
             conditions:
-                - repository: %routes.regex.digit%
-                - id: %routes.regex.digit%
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
 
         ################################################################################################################
         # REPOSITORY ENCRYPTED PROPERTIES ROUTES
@@ -423,15 +423,15 @@ parameters:
             route: '/repositories/:repository/encrypted-properties/:id/remove'
             stack: ['repoadmin.bouncer', 'delete.confirm.page']
             conditions:
-                - repository: %routes.regex.digit%
-                - id: %routes.regex.alphanum%
+                repository: %routes.regex.digit%
+                id: %routes.regex.alphanum%
         repository.encrypted.remove:
             method: ['POST']
             route: '/repositories/:repository/encrypted-properties/:id/remove'
             stack: ['repoadmin.bouncer', 'repository.encrypted.remove.handler']
             conditions:
-                - repository: %routes.regex.digit%
-                - id: %routes.regex.alphanum%
+                repository: %routes.regex.digit%
+                id: %routes.regex.alphanum%
 
         ################################################################################################################
         # GROUP ROUTES
