@@ -7,11 +7,9 @@
 
 namespace QL\Hal\Controllers\Admin;
 
-use Doctrine\ORM\Configuration;
 use Predis\Client as Predis;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 use Slim\Http\Response;
 
 class CacheManagementController implements ControllerInterface
@@ -22,19 +20,9 @@ class CacheManagementController implements ControllerInterface
     private $template;
 
     /**
-     * @type Configuration
-     */
-    private $doctrineConfig;
-
-    /**
      * @type Predis
      */
     private $predis;
-
-    /**
-     * @type Request
-     */
-    private $request;
 
     /**
      * @type Response
@@ -42,25 +30,27 @@ class CacheManagementController implements ControllerInterface
     private $response;
 
     /**
+     * @type string
+     */
+    private $root;
+
+    /**
      * @param TemplateInterface $template
-     * @param Configuration $doctrineConfig
      * @param Predis $predis
-     * @param Request $request
      * @param Response $response
+     * @param string $root
      */
     public function __construct(
         TemplateInterface $template,
-        Configuration $doctrineConfig,
         Predis $predis,
-        Request $request,
-        Response $response
+        Response $response,
+        $root
     ) {
         $this->template = $template;
-        $this->doctrineConfig = $doctrineConfig;
         $this->predis = $predis;
 
-        $this->request = $request;
         $this->response = $response;
+        $this->root = $root;
     }
 
     /**
@@ -68,54 +58,16 @@ class CacheManagementController implements ControllerInterface
      */
     public function __invoke()
     {
-        $context = [];
-
-        # clear doctrine
-        if ($this->request->get('clear_doctrine')) {
-            $context['doctrine_status'] = [
-                'Query' => $this->clearDoctrine('getQueryCacheImpl'),
-                'Hydration' => $this->clearDoctrine('getHydrationCacheImpl'),
-                'Metadata' => $this->clearDoctrine('getMetadataCacheImpl')
-            ];
-        }
-
-        # clear permissions
         $permissions = $this->getPermissions();
-        if ($this->request->get('clear_permissions') && $permissions) {
-            call_user_func_array([$this->predis, 'del'], $permissions);
 
-            $context['permission_status'] = array_map(function($v) {
-                $key = stristr($v, 'mcp-cache:permissions:');
-                if (0 === strpos($key, 'mcp-cache:permissions:')) {
-                    $key = substr($key, 22);
-                }
-
-                return $key;
-            }, $permissions);
-
-        } else {
-            # list permissions and ttl
-            $context['permissions'] = $this->getPermissionTTLs($permissions);
-        }
+        $context = [
+            'permissions' => $this->getPermissionTTLs($permissions),
+            'opcache' => $this->getOpcacheData(),
+        ];
 
         $rendered = $this->template->render($context);
 
         $this->response->setBody($rendered);
-    }
-
-    /**
-     * @param string $accessor
-     *
-     * @return string
-     */
-    private function clearDoctrine($accessor)
-    {
-        if (!$cache = $this->doctrineConfig->$accessor()) {
-            return 'Cache missing.';
-        }
-
-        $cache->deleteAll();
-        return sprintf('"%s" reset.', get_class($cache));
     }
 
     /**
@@ -155,5 +107,119 @@ class CacheManagementController implements ControllerInterface
         }
 
         return $permissionTTLs;
+    }
+
+    /**
+     * @return array|null
+     */
+    private function getOpcacheData()
+    {
+        if (!extension_loaded('Zend OPcache')) {
+            return null;
+        }
+
+        $configuration = opcache_get_configuration();
+        $status = opcache_get_status();
+
+        $context = [
+            'version' => $configuration['version']['version'],
+            'configuration' => $this->formatConfig($configuration['directives']),
+            'scripts' => $this->formatScripts($status['scripts']),
+
+            'enabled' => $status['opcache_enabled'],
+            'cache_full' => $status['cache_full'],
+
+            'used_memory' => $this->formatSize($status['memory_usage']['used_memory']),
+            'total_memory' => $this->formatSize($configuration['directives']['opcache.memory_consumption']),
+
+            'used_buffer' => $this->formatSize($status['interned_strings_usage']['used_memory']),
+            'total_buffer' => $this->formatSize($status['interned_strings_usage']['buffer_size']),
+            'count_buffer' => $status['interned_strings_usage']['number_of_strings'],
+
+            'hits' => $status['opcache_statistics']['hits'],
+            'misses' => $status['opcache_statistics']['misses'],
+            'opcache_hit_rate' => round($status['opcache_statistics']['opcache_hit_rate'], 2),
+
+            'cached_scripts' => $status['opcache_statistics']['num_cached_scripts'],
+            'cached_keys' => $status['opcache_statistics']['num_cached_keys'],
+            'cached_keys_max' => $status['opcache_statistics']['max_cached_keys'],
+        ];
+
+        return $context;
+        // $status['opcache_statistics']['start_time']
+        // $status['opcache_statistics']['last_restart_time']
+    }
+
+    /**
+     * @param array $directives
+     *
+     * @return array
+     */
+    private function formatConfig(array $directives)
+    {
+        return array_map(function($v) {
+            return var_export($v, true);
+        }, $directives);
+    }
+
+    /**
+     * @param array $scripts
+     *
+     * @return array
+     */
+    private function formatScripts(array $scripts)
+    {
+        $formatted = [];
+
+        // descending order
+        usort($scripts, function($a, $b) {
+            $a = $a['hits'];
+            $b = $b['hits'];
+
+            if ($a > $b) {
+                return -1;
+            } elseif ($a < $b) {
+                return 11;
+            }
+
+            return 0;
+        });
+
+        $root = realpath($this->root);
+        $rootlen = strlen($root);
+
+        foreach ($scripts as $script) {
+
+            $path = $script['full_path'];
+            if (stripos($path, $root) === 0) {
+                $path = substr($path, $rootlen + 1);
+            }
+
+            $formatted[] = [
+                'path' => $path,
+                'hits' => $script['hits'],
+                'memory_consumption' => $this->formatSize($script['memory_consumption']),
+            ];
+        }
+
+        return $formatted;
+    }
+
+    /**
+     * @param int $bytes
+     *
+     * @return string
+     */
+    private function formatSize($bytes)
+    {
+        if ($bytes > 1048576) {
+            return sprintf('%.2f mb', $bytes / 1048576);
+        }
+
+        if ($bytes > 1024) {
+            return sprintf('%.2f kb', $bytes / 1024);
+        }
+
+        return sprintf('%d bytes', $bytes);
     }
 }

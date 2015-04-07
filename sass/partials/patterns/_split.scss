@@ -24,3 +24,11 @@
         line-height: 1.9;
     }
 }
+
+.details-box--wide {
+    .split--left__title {
+        @include breakpoint(41.125em) {
+            width: 25em;
+        }
+    }
+}

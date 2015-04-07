@@ -809,13 +809,22 @@ services:
         class: 'QL\Hal\Controllers\Admin\CacheManagementController'
         arguments:
             - @admin.caches.twig
-            - @doctrine.config
             - @redis
-            - @slim.request
             - @slim.response
+            - @root
     admin.caches.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/cache.management.twig']]]
+
+    admin.caches.handler:
+        class: 'QL\Hal\Controllers\Admin\CacheManagementHandler'
+        arguments:
+            - @slim.request
+            - @slim.response
+            - @session
+            - @url
+            - @doctrine.config
+            - @redis
 
     admin.message.page:
         class: 'QL\Hal\Controllers\Admin\GlobalMessageController'

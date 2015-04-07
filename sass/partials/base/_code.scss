@@ -4,13 +4,6 @@ code {
     padding: .2em;
 }
 
-// used for fake the look of code, but allow text overflow protection
-.fake-code {
-    color: $red;
-    background: $light-grey;
-    font-family: menlo, monospace, sans-serif;
-}
-
 pre {
     color: $red;
     background: $light-grey;
@@ -44,4 +37,15 @@ pre.line-wrap {
 
     margin: 0;
     padding: 0;
+}
+
+// This allows for dynamically overflowed <code>. Must be wrapped in a block-type element
+.code_fixed {
+    direction: rtl;
+    overflow: hidden;
+}
+
+.code_fixed code {
+    position: relative;
+    white-space: nowrap;
 }

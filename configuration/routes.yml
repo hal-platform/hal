@@ -101,9 +101,9 @@ parameters:
         ################################################################################################################
 
         admin.super.caches:
-            method: 'GET'
+            method: ['GET', 'POST']
             route: '/superadmin/caches'
-            stack: ['superadmin.bouncer', 'admin.caches.page']
+            stack: ['superadmin.bouncer', 'admin.caches.handler', 'admin.caches.page']
 
         admin.super.users:
             method: 'GET'

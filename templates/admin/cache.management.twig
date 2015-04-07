@@ -5,55 +5,140 @@
 
 {% block content %}
 
-    {% if doctrine_status %}
-        {{ macros.alert('success', 'Doctrine Caches Cleared!') }}
-    {% endif %}
-
-    {% if permission_status %}
-        {{ macros.alert('success', 'Permission Caches Cleared!') }}
-    {% endif %}
-
     <h2>Cache Management</h2>
 
-    <h3>Doctrine Cache</h3>
     <section class="trailer">
-        {% if doctrine_status %}
-            {% for type, message in doctrine_status %}
-                <p class="mbn"><strong>{{ type }}:</strong> {{ message }}</p>
-            {% endfor %}
-        {% else %}
-            <a href="{{ urlFor('admin.super.caches', {}, {clear_doctrine: 1}) }}" class="btn">Clear doctrine cache</a>
-        {% endif %}
+
+        <form method="post">
+            <input name="cache_type" type="hidden" value="doctrine">
+            <input type="submit" class="btn" value="Clear doctrine cache">
+        </form>
+
+        <form method="post">
+            <input name="cache_type" type="hidden" value="permissions">
+            <input type="submit" class="btn" value="Clear permissions cache">
+        </form>
+
+        <form method="post">
+            <input name="cache_type" type="hidden" value="opcache">
+            <input type="submit" class="btn" value="Clear OP cache">
+        </form>
+
     </section>
 
     <h3>Permissions Cache</h3>
     <section class="trailer">
 
-        <table>
-            <thead>
-                <th>Key</th>
-                <th>TTL</th>
-            </thead>
-            <tbody>
-                {% if permission_status %}
-                    {% for key in permission_status %}
+        <div class="details-box scrollable-box">
+            <div class="scrolly-container">
+                <table data-tablesaw-mode="stack">
+                    <thead>
                         <tr>
-                            <td>{{ key }}</td>
-                            <td><strong>Deleted</strong></td>
+                            <th class="t70">Key</th>
+                            <th>TTL</th>
                         </tr>
-                    {% endfor %}
-                {% else %}
-                    {% for key, ttl in permissions %}
-                        <tr>
-                            <td>{{ key }}</td>
-                            <td>{{ ttl }} seconds</td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        {% for key, ttl in permissions %}
+                            <tr>
+                                <td>
+                                    <div class="code_fixed">
+                                        <code>{{ key }}</code>
+                                    </div>
+                                </td>
+                                <td>{{ ttl }} seconds</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        <a href="{{ urlFor('admin.super.caches', {}, {clear_permissions: 1}) }}" class="btn">Clear permissions cache</a>
+    </section>
+
+    <h3>OP Cache {{ opcache.version }}</h3>
+    <section class="trailer">
+        {% if not opcache %}
+            <p>Zend OP Cache is not installed.</p>
+        {% else %}
+
+            <div class="details-box">
+                <dl class="split--left mbn">
+                    <dt class="split--left__title">Status</dt>
+                    <dd class="split--left__value">
+
+                        {% set opcEnabledColor = opcache.enabled ? 'event-log__status--success' : 'event-log__status--error' %}
+                        {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
+                        {% set opcEnabledIcon = opcache.enabled ? 'tick' : 'cross' %}
+
+                        {% set opcFullColor = opcache.cache_full ? 'event-log__status--error' : 'event-log__status--success' %}
+                        {% set opcFullText = opcache.cache_full ? 'Cache Full' : 'Cache Not Full' %}
+                        {% set opcFullIcon = opcache.cache_full ? 'cross' : 'tick' %}
+
+                        <span class="event-log__status {{ opcEnabledColor }}" style="font-size:75%;margin:auto .2em">
+                            {{ macros.icon(opcEnabledIcon) }} {{ opcEnabledText }}
+                        </span>
+
+                        <span class="event-log__status {{ opcFullColor }}" style="font-size:75%;margin:auto .2em">
+                            {{ macros.icon(opcFullIcon) }} {{ opcFullText }}
+                        </span>
+
+                    </dd>
+                    <dt class="split--left__title">Hits</dt>
+                    <dd class="split--left__value"><b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses</dd>
+                    <dt class="split--left__title">Hit Rate</dt>
+                    <dd class="split--left__value">{{ opcache.opcache_hit_rate }}%</dd>
+
+                    <dt class="split--left__title">Memory</dt>
+                    <dd class="split--left__value">{{ opcache.used_memory }} / {{ opcache.total_memory }}</dd>
+
+                    <dt class="split--left__title">Buffer</dt>
+                    <dd class="split--left__value">{{ opcache.used_buffer }} / {{ opcache.total_buffer }}</dd>
+
+                    <dt class="split--left__title">Cached</dt>
+                    <dd class="split--left__value">{{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys</dd>
+
+                </dl>
+            </div>
+
+            <h4 class="mbn">Configuration</h4>
+            <div class="details-box details-box--wide scrollable-box">
+                <dl class="split--left mbn">
+                    {% for key, data in opcache.configuration %}
+                        <dt class="split--left__title">{{ key }}</dt>
+                        <dd class="split--left__value"><code>{{ data|e }}</code></dd>
+                    {% endfor %}
+                </dl>
+            </div>
+
+            <h4 class="mbn">Cached Scripts</h4>
+            <div class="details-box scrollable-box">
+                <div class="scrolly-container">
+                    <table data-tablesaw-mode="stack">
+                        <thead>
+                            <tr>
+                                <th class="t70">File</th>
+                                <th class="t15">Hits</th>
+                                <th>Memory</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for script in opcache.scripts %}
+                                <tr>
+                                    <td>
+                                        <div class="code_fixed">
+                                            <code title="{{ script.path }}">{{ script.path }}</code>
+                                        </div>
+                                    </td>
+                                    <td>{{ script.hits }}</td>
+                                    <td>{{ script.memory_consumption }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
     </section>
 
 {% endblock %}
