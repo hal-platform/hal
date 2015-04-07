@@ -1,10 +1,6 @@
 <!DOCTYPE html>
-{% set html_id_display = html_id ? ' id="' ~ html_id ~ '"' : '' %}
 {% set buster = applicationSha[:4] ?: 'dev' ~ 'now'|date('U') %}
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"{{ html_id_display|raw }}> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"{{ html_id_display|raw }}> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"{{ html_id_display|raw }}> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"{{ html_id_display|raw }}> <!--<![endif]-->
+<html class="no-js" id="{{ html_id ?: '' }}">
     <head>
         <meta charset="utf-8">
         {% block head %}
@@ -21,6 +17,7 @@
             {% endblock %}
             {% block meta %}
                 <meta name="format-detection" content="telephone=no">
+                <meta http-equiv="X-UA-Compatible" content="IE=Edge">
             {% endblock %}
             {% block style %}
                 <link rel="stylesheet" href="/css/style.css?v={{ buster }}">

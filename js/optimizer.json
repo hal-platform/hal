@@ -15,7 +15,8 @@
                 "jquerySearchable",
                 "jquerySortable",
                 "jqueryTablesaw",
-                "json!require-config.json"
+                "json!require-config.json",
+                "svg4everybody"
             ]
         },
 
@@ -104,6 +105,7 @@
         "tablesaw": "vendor/tablesaw.min",
         "underscore": "vendor/underscore.min",
         "json": "vendor/requirejs-plugins/json",
-        "text": "vendor/requirejs-plugins/text"
+        "text": "vendor/requirejs-plugins/text",
+        "svg4everybody": "vendor/svg4everybody-1.0.0"
     }
 }

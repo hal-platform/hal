@@ -17,7 +17,8 @@ require.config({
         "tablesaw": "vendor/tablesaw.min",
         "underscore": "vendor/underscore.min",
         "json": "vendor/requirejs-plugins/json",
-        "text": "vendor/requirejs-plugins/text"
+        "text": "vendor/requirejs-plugins/text",
+        "svg4everybody": "vendor/svg4everybody-1.0.0"
     }
 });
 
