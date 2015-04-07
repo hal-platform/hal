@@ -39,22 +39,22 @@
                 <td>
                     {% if user.hal_active %}
                         <span class="icon--success">
-                            <svg class="icon"><use xlink:href="#tick"></use></svg> Active
+                            {{ macros.icon('tick') }} Active
                         </span>
                     {% else %}
                         <span class="icon--error-inverse">
-                            <svg class="icon"><use xlink:href="#nope"></use></svg> Inactive
+                            {{ macros.icon('nope') }} Inactive
                         </span>
                     {% endif %}
                 </td>
                 <td>
                     {% if user.ldap_active %}
                         <span class="icon--success">
-                            <svg class="icon"><use xlink:href="#tick"></use></svg> Active
+                            {{ macros.icon('tick') }} Active
                         </span>
                     {% else %}
                         <span class="icon--error-inverse">
-                            <svg class="icon"><use xlink:href="#remove"></use></svg> Removed
+                            {{ macros.icon('remove') }} Removed
                         </span>
                     {% endif %}
                 </td>

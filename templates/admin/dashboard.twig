@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Admin Dashboard" %}
 
@@ -12,22 +13,22 @@
             <ul class="list--bare">
                 <li>
                     <a href="{{ urlFor('repositories') }}" class="btn">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Repositories
+                        {{ macros.icon('list') }} Repositories
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('servers') }}" class="btn">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Servers
+                        {{ macros.icon('server') }} Servers
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('environments') }}" class="btn">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Environments
+                        {{ macros.icon('leaf') }} Environments
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('admin.queue.page1') }}" class="btn">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Queue History
+                        {{ macros.icon('in') }} Queue History
                     </a>
                 </li>
             </ul>
@@ -39,23 +40,23 @@
             <ul class="list--bare">
                 <li>
                     <a href="{{ urlFor('users') }}" class="btn btn--primary">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Users
+                        {{ macros.icon('users') }} Users
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('admin.audit.logs.page1') }}" class="btn btn--primary">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Audit Logs
+                        {{ macros.icon('watch') }} Audit Logs
                     </a>
                 </li>
                 <li>
                     <a href="{{ urlFor('admin.server.status') }}" class="btn btn--primary">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Global Server Status
+                        {{ macros.icon('server') }} Global Server Status
                     </a>
                 </li>
                 {% if isUserSuperAdmin(currentUser) %}
                 <li>
                     <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
-                        <svg class="icon"><use xlink:href="#tick"></use></svg> Super Admin Dashboard
+                        {{ macros.icon('dashboard') }} Super Admin Dashboard
                     </a>
                 </li>
                 {% endif %}

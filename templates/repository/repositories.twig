@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Repositories" %}
 
@@ -20,7 +21,7 @@
                 <th colspan="4" class="table-mid-header">
                     {{ group.name }}
                     <a class="icon--link" href="{{ urlFor('group', {id: group.id}) }}">
-                        <svg class="icon"><use xlink:href="#outgoing"></use></svg>
+                        {{ macros.icon('outgoing') }}
                     </a>
                 </th>
             </tr>
@@ -32,7 +33,7 @@
                         <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.name }}</a></td>
                         <td>
                             <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
-                            <svg class="icon"><use xlink:href="#github"></use></svg>
+                            {{ macros.icon('github') }}
                         </td>
                         <td>
                             <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>

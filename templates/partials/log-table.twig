@@ -1,3 +1,5 @@
+{% import "partials/macros.twig" as macros %}
+
 <table data-tablesaw-mode="stack">
     <thead>
         <th class="t20">Event</th>
@@ -21,15 +23,15 @@
                 <td>
                     <span class="event-log__status {{ blockColor }}">
                         {% if log.status == 'success' %}
-                            <svg class="icon"><use xlink:href="#tick"></use></svg>
+                            {{ macros.icon('tick') }}
                             {{ log.event|formatEvent }}
 
                         {% elseif log.status == 'failure' %}
-                            <svg class="icon"><use xlink:href="#spam"></use></svg>
+                            {{ macros.icon('spam') }}
                             {{ log.event|formatEvent }}
 
                         {% else %}
-                            <svg class="icon"><use xlink:href="#paragraph-justify-2"></use></svg>
+                            {{ macros.icon('paragraph-justify-2') }}
                             {{ log.event|formatEvent }}
                         {% endif %}
                     </span>
@@ -39,7 +41,7 @@
                 <td class="tr">
                     {% if log.data %}
                         <a class="btn btn--tiny" data-expand-btn="{{ log.id }}">
-                            <svg class="icon"><use xlink:href="#menu-pull-down"></use></svg>
+                            {{ macros.icon('menu-pull-down') }}
                         </a>
                     {% endif %}
                 </td>

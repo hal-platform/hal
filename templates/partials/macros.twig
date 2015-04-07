@@ -1,4 +1,6 @@
-{% macro alert(type, title, details, isRaw = false) %}
+{% macro alert(type, title, details, isRaw) %}
+    {% set isRaw = isRaw|default(false) %}
+
     {% set alerttype = 'alert-bar' %}
     {% if (type == 'error') %}{% set alerttype = 'alert-bar--error' %}{% endif %}
     {% if (type == 'success') %}{% set alerttype = 'alert-bar--success' %}{% endif %}
@@ -17,7 +19,10 @@
 
 {% endmacro %}
 
-{% macro gitref(build, sliced = false) %}
+{% macro gitref(build, sliced) %}
+    {% import _self as self_macros %}
+
+    {% set sliced = sliced|default(false) %}
 
     {% set resolved = build.branch|gitref %}
     {% if resolved %}
@@ -44,13 +49,15 @@
                 {{ ref }}
             {% endif %}
         </a>
-        <svg class="icon"><use xlink:href="#{{ icontype }}"></use></svg>
+        {{ self_macros.icon(icontype) }}
 
     {% endif %}
 
 {% endmacro %}
 
 {% macro gitcommit(build) %}
+    {% import _self as self_macros %}
+
     {% set resolved = build.commit|gitref %}
     {% if resolved %}
         {% set ref = resolved|last %}
@@ -58,8 +65,21 @@
         <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">
             {{ ref|commit }}
         </a>
-        <svg class="icon"><use xlink:href="#commit"></use></svg>
+        {{ self_macros.icon('commit') }}
 
     {% endif %}
 
 {% endmacro %}
+
+{% macro icon(icon, class, title) %}
+    {% set class = class|default('') %}
+    {% set title = title|default('') %}
+
+    {% if title %}
+        <svg class="icon{{ class ? ' ' ~ class : ''}}" title="{{ title }}"><use xlink:href="/icons.svg#{{ icon }}"></use></svg>
+    {% else %}
+        <svg class="icon{{ class ? ' ' ~ class : ''}}"><use xlink:href="/icons.svg#{{ icon }}"></use></svg>
+    {% endif %}
+
+{% endmacro %}
+

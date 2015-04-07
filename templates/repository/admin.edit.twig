@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = 'Edit Repository: ' ~ repository.name %}
 
@@ -46,7 +47,7 @@
                 <li>
                     <h3 class="zeta label">Github Source</h3>
                     <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
-                    <svg class="icon"><use xlink:href="#github"></use></svg>
+                    {{ macros.icon('github') }}
                     <small class="additional">Please contact a HAL administrator to change this setting.</small>
                 </li>
 

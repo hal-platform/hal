@@ -1,3 +1,5 @@
+{% import "partials/macros.twig" as macros %}
+
 {% macro pagination(currentPage, lastPage, routeName, routeParameters, queryParameters) %}
 
     {% set queryParameters = queryParameters|default({}) %}
@@ -6,11 +8,11 @@
         <li class="nav--pagination__prev">
             {% if currentPage > 1 %}
                 <a href="{{ urlFor(routeName, routeParameters|merge({'page': currentPage-1}), queryParameters) }}">
-                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
+                    {{ macros.icon('caret-left') }}newer
                 </a>
             {% else %}
                 <span class="disabled">
-                    <svg class="icon"><use xlink:href="#caret-left"></use></svg>newer
+                    {{ macros.icon('caret-left') }}newer
                 </span>
             {% endif %}
         </li>
@@ -22,11 +24,11 @@
         <li class="nav--pagination__next">
             {% if currentPage < lastPage %}
                 <a href="{{ urlFor(routeName, routeParameters|merge({'page': currentPage+1}), queryParameters) }}">
-                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                    older {{ macros.icon('caret-right') }}
                 </a>
             {% else %}
                 <span class="disabled">
-                    older <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                    older {{ macros.icon('caret-right') }}
                 </span>
             {% endif %}
         </li>
@@ -48,7 +50,7 @@
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
             <a href="{{ urlFor(routeName, routeParameters|merge({'date': prevday|timepoint('Y-m-d')}), queryParameters) }}">
-                <svg class="icon"><use xlink:href="#caret-left"></use></svg>older
+                {{ macros.icon('caret-left') }}older
             </a>
         </li>
         <li>
@@ -57,11 +59,11 @@
         <li class="nav--pagination__next">
             {% if nextdayFormatted == nowFormatted or (nextdayFormatted != nowFormatted and nextday.compare(now) == -1) %}
                 <a href="{{ urlFor(routeName, routeParameters|merge({'date': nextdayFormatted}), queryParameters) }}">
-                    newer <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                    newer {{ macros.icon('caret-right', 'mls') }}
                 </a>
             {% else %}
                 <span class="disabled">
-                    newer <svg class="icon mls"><use xlink:href="#caret-right"></use></svg>
+                    newer {{ macros.icon('caret-right', 'mls') }}
                 </span>
             {% endif %}
         </li>

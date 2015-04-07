@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Reorder Environments" %}
 
@@ -26,9 +27,7 @@
             <tbody>
             {% for env in envs %}
                 <tr class="env-row-{{ env.key }}">
-                    <td>
-                        <svg class="icon"><use xlink:href="#menu-2"></use></svg>
-                    </td>
+                    <td>{{ macros.icon('menu-2') }}</td>
                     <td><input type="text" maxlength="2" required name="env{{ env.id }}" value="{{ env.order }}" class="text-input"></td>
                     <td>{{ env.key }}</td>
                 </tr>

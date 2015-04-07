@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = 'Settings' %}
 
@@ -17,8 +18,8 @@
                     <label>
                         <input type="checkbox" name="navpreferences[]" value="{{ item }}" {{ isNavOn(item) ? ' checked' : '' }}>
 
-                        <svg class="icon pref-on"><use xlink:href="#tick"></use></svg>
-                        <svg class="icon pref-off"><use xlink:href="#cross"></use></svg>
+                        {{ macros.icon('tick', 'pref-on') }}
+                        {{ macros.icon('cross', 'pref-off') }}
 
                         {{ description }}
                     </label>
@@ -30,8 +31,8 @@
             <label>
                 <input type="checkbox" name="seriousbusiness" value="1" {{ isSeriousBusinessMode() ? ' checked' : '' }}>
 
-                <svg class="icon checkbox__on"><use xlink:href="#tick"></use></svg>
-                <svg class="icon checkbox__off"><use xlink:href="#cross"></use></svg>
+                {{ macros.icon('tick', 'checkbox__on') }}
+                {{ macros.icon('cross', 'checkbox__off') }}
 
                 Use <strong>Serious Business&#8482;</strong> mode
             </label>

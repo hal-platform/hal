@@ -60,10 +60,9 @@
 </header>
 
 {% macro navlink(title, key, icon) %}
+    {% import "partials/macros.twig" as macros %}
     <a href="{{ urlFor(key) }}" title="{{ title }}">
-        <svg class="icon">
-            <use xlink:href="#{{ icon }}"></use>
-        </svg>
+        {{ macros.icon(icon) }}
         {{ title }}
     </a>
 {% endmacro %}

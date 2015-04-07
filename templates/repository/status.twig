@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
+{% import _self as page_macros %}
 
 {% set page_title = "Status: " ~ repo.name %}
-
-{% import _self as page_macros %}
 
 {% block content %}
     <h2>Repository Status for <strong>{{ repo.name }}</strong></h2>
@@ -72,13 +72,13 @@
 
                 {% if deployment.url %}
                     <a class="icon--link" href="{{ deployment.url.asString }}">
-                        <svg class="icon"><use xlink:href="#outgoing"></use></svg>
+                        {{ macros.icon('outgoing') }}
                     </a>
                 {% endif %}
 
                 {% if active %}
                     <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'id': repo.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
-                        <svg class="icon"><use xlink:href="#revert"></use></svg>
+                        {{ macros.icon('revert') }}
                     </a>
                 {% endif %}
             </h4>

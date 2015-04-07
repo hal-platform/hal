@@ -111,25 +111,25 @@
     <ul class="nav tabs js-tabs">
         <li class="active">
             <a name="js-tab--branches">
-                <svg class="icon"><use xlink:href="#branch"></use></svg>
+                {{ macros.icon('branch') }}
                 <span class="tab-text">Branches</span>
             </a>
         </li>
         <li>
             <a name="js-tab--tags">
-                <svg class="icon"><use xlink:href="#tag"></use></svg>
+                {{ macros.icon('tag') }}
                 <span class="tab-text">Releases</span>
             </a>
         </li>
         <li>
             <a name="js-tab--pr-open">
-                <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
+                {{ macros.icon('pull', 'pr-open') }}
                 <span class="tab-text">Open Pull Requests</span>
             </a>
         </li>
         <li>
             <a name="js-tab--pr-closed">
-                <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
+                {{ macros.icon('pull', 'pr-closed') }}
                 <span class="tab-text">Closed Pull Requests</span>
             </a>
         </li>
@@ -152,11 +152,11 @@
                     >
 
                     <label for="{{ uniqueId }}" title="{{ branch.name }}">
-                        <svg class="icon"><use xlink:href="#branch"></use></svg>
+                        {{ macros.icon('branch') }}
                         {{ branch.name }} <br />
 
                         <a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
-                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                        {{ macros.icon('github') }}
                     </label>
                 </li>
 
@@ -183,11 +183,11 @@
                     >
 
                     <label for="{{ uniqueId }}">
-                        <svg class="icon"><use xlink:href="#tag"></use></svg>
+                        {{ macros.icon('tag') }}
                         {{ tag.name }} <br />
 
                         <a href="{{ githubRelease(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
-                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                        {{ macros.icon('github') }}
                     </label>
                 </li>
 
@@ -213,12 +213,12 @@
                     >
 
                     <label for="{{ uniqueId }}" title="{{ pull.title }}">
-                        <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
+                        {{ macros.icon('pull', 'pr-open') }}
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
                         <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
-                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                        {{ macros.icon('github') }}
                         <br />
 
                         <span class="pr-smtxt">
@@ -250,12 +250,12 @@
                     >
 
                     <label for="{{ uniqueId }}" title="{{ pull.title }}">
-                        <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
+                        {{ macros.icon('pull', 'pr-closed') }}
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
                         <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
-                        <svg class="icon"><use xlink:href="#github"></use></svg>
+                        {{ macros.icon('github') }}
                         <br />
 
                         <span class="pr-smtxt">
@@ -273,13 +273,15 @@
 {% endblock %}
 
 {% macro search(type, ref) %}
+    {% import "partials/macros.twig" as macros %}
+
     {# This is a search listing generated for the javascript #}
 
     {% if type == 'pull-request' %}
         {% set uniqueId = hash('pr' ~ ref.number) %}
 
         <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
-            <svg class="icon pr-open"><use xlink:href="#pull"></use></svg>
+            {{ macros.icon('pull', 'pr-open') }}
             <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
 
             <span class="js-search-query">PR #{{ ref.number }}</span>
@@ -291,7 +293,7 @@
         {% set uniqueId = hash('pr' ~ ref.number) %}
 
         <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
-            <svg class="icon pr-closed"><use xlink:href="#pull"></use></svg>
+            {{ macros.icon('pull', 'pr-closed') }}
             <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
 
             <span class="js-search-query">PR #{{ ref.number }}</span>
@@ -302,14 +304,14 @@
         {% set uniqueId = hash(ref.object.sha ~ '-' ~ ref.name) %}
 
         <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--tags">
-            <svg class="icon"><use xlink:href="#tag"></use></svg>
+            {{ macros.icon('tag') }}
             <span class="js-search-primary">{{ ref.name }}</span>
         </li>
     {% elseif type == 'branch' %}
         {% set uniqueId = hash(ref.object.sha ~ '-' ~ ref.name) %}
 
         <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--branches">
-            <svg class="icon"><use xlink:href="#branch"></use></svg>
+            {{ macros.icon('branch') }}
             <span class="js-search-primary">{{ ref.name }}</span>
         </li>
     {% endif %}
