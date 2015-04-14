@@ -241,23 +241,23 @@ parameters:
         server.admin.add:
             method: ['GET', 'POST']
             route: '/servers/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.add.page']
+            stack: ['admin.bouncer', 'server.admin.add.page']
 
         server.admin.edit:
             method: ['GET', 'POST']
             route: '/servers/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.edit.page']
+            stack: ['admin.bouncer', 'server.admin.edit.page']
             conditions: {id: %routes.regex.digit%}
 
         server.admin.remove.confirm:
             method: 'GET'
             route: '/servers/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            stack: ['admin.bouncer', 'delete.confirm.page']
             conditions: {id: %routes.regex.digit%}
         server.admin.remove:
             method: 'POST'
             route: '/servers/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'server.admin.remove.handler']
+            stack: ['admin.bouncer', 'server.admin.remove.handler']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
@@ -456,18 +456,18 @@ parameters:
         group.admin.edit:
             method: ['GET', 'POST']
             route: '/groups/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.edit.page']
+            stack: ['admin.bouncer', 'group.admin.edit.page']
             conditions: {id: %routes.regex.digit%}
 
         group.admin.remove.confirm:
             method: 'GET'
             route: '/groups/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            stack: ['admin.bouncer', 'delete.confirm.page']
             conditions: {id: %routes.regex.digit%}
         group.admin.remove:
             method: 'POST'
             route: '/groups/:id/remove'
-            stack: ['login.bouncer', 'admin.bouncer', 'group.admin.remove.handler']
+            stack: ['admin.bouncer', 'group.admin.remove.handler']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
@@ -489,28 +489,28 @@ parameters:
         environment.admin.reorder:
             method: ['GET', 'POST']
             route: '/environments/reorder'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.reorder.handler', 'environment.admin.reorder.page']
+            stack: ['admin.bouncer', 'environment.admin.reorder.handler', 'environment.admin.reorder.page']
 
         environment.admin.add:
             method: ['GET', 'POST']
             route: '/environments/add'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.add.page']
+            stack: ['admin.bouncer', 'environment.admin.add.page']
 
         environment.admin.remove.confirm:
             method: 'GET'
             route: '/environments/:id/delete'
-            stack: ['login.bouncer', 'admin.bouncer', 'delete.confirm.page']
+            stack: ['admin.bouncer', 'delete.confirm.page']
             conditions: {id: %routes.regex.digit%}
         environment.admin.remove:
             method: 'POST'
             route: '/environments/:id/delete'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.remove.handler']
+            stack: ['admin.bouncer', 'environment.admin.remove.handler']
             conditions: {id: %routes.regex.digit%}
 
         environment.admin.edit:
             method: ['GET', 'POST']
             route: '/environments/:id/edit'
-            stack: ['login.bouncer', 'admin.bouncer', 'environment.admin.edit.page']
+            stack: ['admin.bouncer', 'environment.admin.edit.page']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
