@@ -21,12 +21,12 @@
 
             <table data-tablesaw-mode="stack">
                 <thead>
-                <tr>
-                    <th class="t15">Hostname</th>
-                    <th class="t40">Path</th>
-                    <th>URL</th>
-                    <th class="t10"></th>
-                </tr>
+                    <tr>
+                        <th class="t15">Hostname</th>
+                        <th class="t40">Path</th>
+                        <th>URL</th>
+                        <th class="t10"></th>
+                    </tr>
                 </thead>
                 <tbody class="js-add-deployment--{{ environment.key }}">
                     {% for deployment in deployments if deployment.server.environment == environment %}

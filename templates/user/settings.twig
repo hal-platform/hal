@@ -73,9 +73,11 @@
     <form action="{{ urlFor('user.token.add', {id: user.id}) }}" method="post">
         <table data-tablesaw-mode="stack">
             <thead>
-                <th>Label</th>
-                <th>Token</th>
-                <th></th>
+                <tr>
+                    <th>Label</th>
+                    <th>Token</th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
             {% for token in user.tokens %}

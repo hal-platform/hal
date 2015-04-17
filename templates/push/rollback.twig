@@ -49,15 +49,17 @@
     <h3>Push History</h3>
     <table data-tablesaw-mode="stack">
         <thead>
-            <th>Build</th>
-            <th>Push</th>
-            <th class="table-priority-45">Reference</th>
-            <th class="table-priority-50">Commit</th>
-            <th>Pushed</th>
-            <th>Initiator</th>
-            {% if canRollback %}
-                <th class="t10"></th>
-            {% endif %}
+            <tr>
+                <th>Build</th>
+                <th>Push</th>
+                <th class="table-priority-45">Reference</th>
+                <th class="table-priority-50">Commit</th>
+                <th>Pushed</th>
+                <th>Initiator</th>
+                {% if canRollback %}
+                    <th class="t10"></th>
+                {% endif %}
+            </tr>
         </thead>
         <tbody>
             {% for push in pushes %}

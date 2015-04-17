@@ -103,10 +103,10 @@
         <p>The following users have permission to push <strong>{{ repository.name }}</strong> to the specified environment.</p>
         <table data-tablesaw-mode="stack">
             <thead>
-            <tr>
-                <th>Environment</th>
-                <th>Users</th>
-            </tr>
+                <tr>
+                    <th>Environment</th>
+                    <th>Users</th>
+                </tr>
             </thead>
             <tbody>
             {% for env, permission in permissions %}

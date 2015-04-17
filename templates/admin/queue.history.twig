@@ -19,12 +19,14 @@
 {% block queuehistory %}
     <table data-tablesaw-mode="stack">
         <thead>
-            <th>Type</th>
-            <th>Repository</th>
-            <th>Env → Server</th>
-            <th>Reference</th>
-            <th class="table-priority-55">Initiator</th>
-            <th class="table-priority-50">Time</th>
+            <tr>
+                <th>Type</th>
+                <th>Repository</th>
+                <th>Env → Server</th>
+                <th>Reference</th>
+                <th class="table-priority-55">Initiator</th>
+                <th class="table-priority-50">Time</th>
+            </tr>
         </thead>
         <tbody>
                 {% for job in pending %}
