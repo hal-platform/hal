@@ -1,0 +1,136 @@
+# Application specific endpoints and controllers go here
+# This includes handlers, middleware, or validators dedicated to a single page.
+services:
+
+    kraken.entity:
+        synthetic: true
+
+    ####################################################################################################################
+    # SERVICES
+    ####################################################################################################################
+
+    # override the default orm driver
+    doctrine.config.driver:
+        class: 'Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver'
+        arguments: [@doctrine.mapping.dirs]
+        calls:
+            - ['setGlobalBasename', ['global']]
+
+    doctrine.mapping.dirs:
+        class: 'stdClass'
+        factory: ['QL\Kraken\Utility\DiArrayUtil', 'associative']
+        arguments:
+            -
+                key: @doctrine.mapping.dir
+                value: 'QL\Hal\Core\Entity'
+            -
+                key: @doctrine.mapping.dir.kraken
+                value: 'QL\Kraken\Entity'
+
+    doctrine.mapping.dir.kraken:
+        class: 'stdClass'
+        factory: [@directory.helper, 'fullPath']
+        arguments: ['configuration/kraken']
+
+    ####################################################################################################################
+    # CONTROLLERS
+    ####################################################################################################################
+
+    kraken.page:
+        class: 'QL\Kraken\Controller\IndexController'
+        arguments:
+            - @slim.request
+            - @kraken.twig
+            - @doctrine.em
+    kraken.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/index.twig']]]
+
+    kraken.applications.page:
+        class: 'QL\Kraken\Controller\ApplicationsController'
+        arguments:
+            - @slim.request
+            - @kraken.applications.twig
+            - @doctrine.em
+            - @url
+            - @session
+    kraken.applications.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/applications.twig']]]
+
+    kraken.environments.page:
+        class: 'QL\Kraken\Controller\EnvironmentsController'
+        arguments:
+            - @slim.request
+            - @kraken.environments.twig
+            - @doctrine.em
+            - @url
+            - @session
+    kraken.environments.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/environments.twig']]]
+
+    kraken.application.page:
+        class: 'QL\Kraken\Controller\ApplicationController'
+        arguments:
+            - @kraken.application.twig
+            - @kraken.entity
+            - @doctrine.em
+    kraken.application.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application.twig']]]
+
+    ####################################################################################################################
+    # CRUD CONTROLLERS
+    ####################################################################################################################
+
+    kraken.application.environment.page:
+        class: 'QL\Kraken\Controller\Application\LinkEnvironmentController'
+        arguments:
+            - @slim.request
+            - @kraken.application.environment.twig
+            - @kraken.entity
+            - @doctrine.em
+            - @url
+            - @session
+    kraken.application.environment.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/link-environment.twig']]]
+
+    kraken.application.schema.page:
+        class: 'QL\Kraken\Controller\Application\AddSchemaController'
+        arguments:
+            - @slim.request
+            - @kraken.application.schema.twig
+            - @kraken.entity
+            - @doctrine.em
+            - @url
+            - @session
+    kraken.application.schema.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/add-schema.twig']]]
+
+    ####################################################################################################################
+    # UTIL
+    ####################################################################################################################
+
+    kraken.template:
+        parent: 'twig.template'
+        class: 'QL\Kraken\Application\AutoRenderingTemplate'
+        calls: [['setResponse', [@slim.response]]]
+
+    kraken.twig.extension:
+        class: 'QL\Kraken\Application\KrakenTwigExtension'
+
+    ####################################################################################################################
+    # MIDDLEWARE
+    ####################################################################################################################
+
+    kraken.middleware.require.application:
+        class: 'QL\Kraken\Middleware\RequireEntityMiddleware'
+        arguments:
+            - @service_container
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+            - 'Application'

@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Add Property" %}
+
+{% block content %}
+    <h2>
+        Add Property to Configuration Schema
+        <sub><a href="{{ urlFor('kraken.application', {id: application.id}) }}">back</a></sub>
+    </h2>
+
+    <h3>Application ID</h3>
+    <p>{{ application.id }}</p>
+
+    {{ block('add_property') }}
+
+{% endblock %}
+
+{% block add_property %}
+    <h2>Add Property</h2>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="prop-key">Property Key</label>
+                    <input type="text" name="key" id="prop-key" maxlength="250" required value="{{ form.key }}" class="text-input">
+                </li>
+
+                <li>
+                    <label for="prop-desc">Description</label>
+                    <input type="text" name="description" id="prop-desc" maxlength="250" value="{{ form.description }}" class="text-input">
+                </li>
+
+                <li>
+                    <label for="prop-type">Type</label>
+                    <select class="select-input" name="type" id="prop-type" required>
+                        <option></option>
+                        {% for type, name in property_types %}
+                            {% set isSelected = (type == form.type) %}
+
+                            <option value="{{ type }}"{{ isSelected ? ' selected' : '' }}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+
+                <li>
+                    {% set isChecked = ('1' == form.secure) %}
+                    <label for="prop-secure">
+                        <input type="checkbox" name="secure" id="prop-secure" value="1"{{ isChecked ? ' checked' : '' }}> Secure?
+                    </label>
+                    <small class="additional">Select if the value should be hidden from the UI once saved. Use this for sensitive values such as passwords and API keys.</small>
+                </li>
+
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Add Property">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}

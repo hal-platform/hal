@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Link Environment" %}
+
+{% block content %}
+    <h2>
+        Link Environment
+        <sub><a href="{{ urlFor('kraken.application', {id: application.id}) }}">back</a></sub>
+    </h2>
+
+    <h3>Application ID</h3>
+    <p>{{ application.id }}</p>
+
+    {{ block('link_environment') }}
+
+{% endblock %}
+
+{% block link_environment %}
+    <h2>Link an environment</h2>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="enc-key">Encryption Key</label>
+                    <input type="text" name="key" id="enc-key" maxlength="200" required value="{{ form.key }}" class="text-input">
+                </li>
+
+                <li>
+                    <label for="enc-env">Environment</label>
+                    <select class="select-input" name="env" id="enc-env" required>
+                        <option></option>
+                        {% for env in environments %}
+                            {% set isSelected = (env.id == form.env) %}
+
+                            <option value="{{ env.id }}"{{ isSelected ? ' selected' : '' }}>{{ env.name }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Link Environment">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}

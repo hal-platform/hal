@@ -1,0 +1,24 @@
+QL\Kraken\Entity\Environment:
+    type: entity
+    table: kraken_environment
+
+    id:
+        id:
+            column: id
+            type: string
+            length: 40
+
+    fields:
+
+        name:
+            column: name
+            type: string
+            length: 40
+        consulServer:
+            column: consul_server
+            type: string
+            length: 200
+        consulToken:
+            column: consul_token
+            type: string
+            length: 200

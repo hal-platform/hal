@@ -1,0 +1,9 @@
+QL\Kraken\Entity\Application:
+    type: entity
+    table: kraken_application
+
+    id:
+        id:
+            column: id
+            type: string
+            length: 40

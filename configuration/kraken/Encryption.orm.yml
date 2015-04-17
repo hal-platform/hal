@@ -1,0 +1,30 @@
+QL\Kraken\Entity\Encryption:
+    type: entity
+    table: kraken_encryption
+
+    id:
+        id:
+            column: id
+            type: string
+            length: 40
+
+    fields:
+
+        key:
+            column: encryption_key
+            type: string
+            length: 200
+
+    manyToOne:
+
+        environment:
+            targetEntity: Environment
+            joinColumn:
+                name: environment_id
+                referencedColumnName: id
+
+        application:
+            targetEntity: Application
+            joinColumn:
+                name: application_id
+                referencedColumnName: id

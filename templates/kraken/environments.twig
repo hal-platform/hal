@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Environments" %}
+
+{% block content %}
+    <h2>
+        Environments
+        <sub><a href="{{ urlFor('kraken') }}">back</a></sub>
+    </h2>
+
+    {% if environments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Consul Server</th>
+                    {# <th>Consul Token</th> #}
+                </tr>
+            </thead>
+            <tbody>
+                {% for environment in environments %}
+                    <tr>
+                        <td>{{ environment.id[:7] }}</td>
+                        <td>{{ environment.name }}</td>
+                        <td><code>{{ environment.consulServer }}</code></td>
+                        {# <td><code>{{ environment.consulToken }}</code></td> #}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no configuration environments defined.</p>
+    {% endif %}
+
+    {{ block('add_environment') }}
+{% endblock %}
+
+{% block add_environment %}
+    <h2>Add a new environment</h2>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="env-name">Name</label>
+                    <input type="text" name="name" id="env-name" maxlength="40" required value="{{ form.name }}" class="text-input t50">
+                </li>
+                <li>
+                    <label for="env-server">Consul Server</label>
+                    <input type="text" name="server" id="env-server" maxlength="200" required value="{{ form.server }}" class="text-input">
+                </li>
+                <li>
+                    <label for="env-token">Consul Token</label>
+                    <input type="text" name="token" id="env-token" maxlength="200" value="{{ form.token }}" class="text-input" autocomplete="off">
+                </li>
+            </ul>
+
+            {# primary action #}
+            <input class="btn" type="submit" value="Add Environment">
+        </form>
+    </div>
+{% endblock %}

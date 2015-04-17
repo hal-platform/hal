@@ -1,0 +1,36 @@
+QL\Kraken\Entity\Property:
+    type: entity
+    table: KrakenProperty
+
+    id:
+        id:
+            column: id
+            type: string
+            length: 40
+
+    fields:
+
+        value:
+            column: value
+            type: string
+            length: 4000
+
+    manyToOne:
+
+        propertySchema:
+            targetEntity: PropertySchema
+            joinColumn:
+                name: property_schema_id
+                referencedColumnName: id
+
+        environment:
+            targetEntity: Environment
+            joinColumn:
+                name: environment_id
+                referencedColumnName: id
+
+        application:
+            targetEntity: Application
+            joinColumn:
+                name: application_id
+                referencedColumnName: id

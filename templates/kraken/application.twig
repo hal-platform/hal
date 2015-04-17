@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "Application" %}
+
+{% block content %}
+    <h2>
+        Application
+        <sub><a href="{{ urlFor('kraken.applications') }}">back</a></sub>
+    </h2>
+
+    <h3>ID</h3>
+    <p>{{ application.id }}</p>
+
+    <h3>Linked Environments</h3>
+    {% if linked_environments %}
+        <ul>
+            {% for encrypt in linked_environments %}
+                <li>{{ encrypt.environment.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no environments linked to this application.</p>
+    {% endif %}
+
+    {% if environments %}
+        <p><a href="{{ urlFor('kraken.application.environments', {id: application.id}) }}">Add Environment</a></p>
+    {% endif %}
+
+    <h3 class="mbn">Configuration Schema</h3>
+    <p><a href="{{ urlFor('kraken.application.schema', {id: application.id}) }}">Add Property</a></p>
+    {{ block('configuration_schema') }}
+
+{% endblock %}
+
+{% block configuration_schema %}
+
+    {% if schema %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prop in schema %}
+                    <tr>
+                        <td><code>{{ prop.key }}</code></td>
+                        <td>
+                            {{ prop.isSecure ? macros.icon('locked') : '' }}
+                            {{ prop|formatSchemaType }}
+                        </td>
+                        <td>{{ prop.description }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        </ul>
+    {% else %}
+        <p>There is no schema defined for this application.</p>
+    {% endif %}
+
+{% endblock %}

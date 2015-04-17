@@ -2,6 +2,7 @@ imports:
     - resource: di.services.yml
     - resource: di.pages.yml
     - resource: di.api.yml
+    - resource: di.kraken.yml
 
 services:
 
@@ -197,6 +198,7 @@ services:
             - ['addExtension', [@twig.extension.github]]
             - ['addExtension', [@twig.extension.ansi]]
             - ['addExtension', [@twig.extension.status]]
+            - ['addExtension', [@kraken.twig.extension]]
 
     ansi.converter:
         class: 'SensioLabs\AnsiConverter\AnsiToHtmlConverter'

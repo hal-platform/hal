@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = "Applications" %}
+
+{% block content %}
+    <h2>
+        Applications
+        <sub><a href="{{ urlFor('kraken') }}">back</a></sub>
+    </h2>
+
+    {% if applications %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                    <tr>
+                        <td>{{ app.id }}</td>
+                        <td><a href="{{ urlFor('kraken.application', {id: app.id}) }}">Manage</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no applications defined.</p>
+    {% endif %}
+
+    {{ block('add_application') }}
+
+{% endblock %}
+
+{% block add_application %}
+    <h2>Add a new application</h2>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="app-id">ID</label>
+                    <input type="text" name="id" id="app-id" maxlength="40" required value="{{ form.id }}" class="text-input">
+                </li>
+
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Add Application">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}

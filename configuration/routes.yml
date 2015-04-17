@@ -513,6 +513,38 @@ parameters:
             stack: ['admin.bouncer', 'environment.admin.edit.page']
             conditions: {id: %routes.regex.digit%}
 
+
+        ################################################################################################################
+        # KRAKEN ROUTES
+        ################################################################################################################
+
+        kraken:
+            route: '/kraken'
+            stack: ['admin.bouncer', 'kraken.page']
+
+        kraken.applications:
+            route: '/kraken/applications'
+            stack: ['admin.bouncer', 'kraken.applications.page']
+
+        kraken.environments:
+            route: '/kraken/environments'
+            stack: ['admin.bouncer', 'kraken.environments.page']
+
+        kraken.application:
+            route: '/kraken/applications/:id'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.page']
+            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+
+        kraken.application.environments:
+            route: '/kraken/applications/:id/environments'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.environment.page']
+            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+
+        kraken.application.schema:
+            route: '/kraken/applications/:id/schema'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.schema.page']
+            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+
         ################################################################################################################
         # GITHUB API ROUTES
         ################################################################################################################

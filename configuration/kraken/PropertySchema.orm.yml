@@ -1,0 +1,35 @@
+QL\Kraken\Entity\PropertySchema:
+    type: entity
+    table: kraken_property_schema
+
+    id:
+        id:
+            column: id
+            type: string
+            length: 40
+
+    fields:
+
+        key:
+            column: property_key
+            type: string
+            length: 250
+        isSecure:
+            column: secure
+            type: boolean
+        dataType:
+            column: data_type
+            type: string
+            length: 10
+        description:
+            column: description
+            type: string
+            length: 250
+
+    manyToOne:
+
+        application:
+            targetEntity: Application
+            joinColumn:
+                name: application_id
+                referencedColumnName: id

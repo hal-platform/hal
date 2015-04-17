@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Kraken' %}
+
+{% block content %}
+
+    <h1>Kraken</h1>
+
+    <ul>
+        <li><a href="{{ urlFor('kraken.applications') }}">Applications</a></li>
+        <li><a href="{{ urlFor('kraken.environments') }}">Environments</a></li>
+    </ul>
+
+    {% for item in test %}
+        <pre>{{ item|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+    {% endfor %}
+
+{% endblock %}
