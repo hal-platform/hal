@@ -19,7 +19,7 @@ use QL\Panthor\Utility\Url;
 use QL\Hal\Session;
 use Slim\Http\Request;
 
-class LinkEnvironmentController implements ControllerInterface
+class AddEnvironmentController implements ControllerInterface
 {
     const SUCCESS = 'Environment added.';
     const ERR_INVALID_KEY = 'Invalid Key. Encryption Keys must be alphanumeric.';
@@ -73,7 +73,6 @@ class LinkEnvironmentController implements ControllerInterface
      *
      * @param Url $url
      * @param Session $session
-     * @param NotFound $notFound
      */
     public function __construct(
         Request $request,

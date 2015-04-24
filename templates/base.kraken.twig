@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    {% embed 'partials/layout.header.twig' with {showNavigation: true} %}
+        {% block banner %}
+            <div class="hal">
+                <a href="{{ urlFor('kraken') }}" class="wrapper">
+
+                    <h1 class="kraken-label">
+                        <span>KRAKEN</span>
+                    </h1>
+
+                    <div class="kraken-logo circular"></div>
+                </a>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

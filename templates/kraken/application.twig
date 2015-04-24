@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Application" %}
@@ -9,14 +9,17 @@
         <sub><a href="{{ urlFor('kraken.applications') }}">back</a></sub>
     </h2>
 
-    <h3>ID</h3>
+    <h3 class="mbn">ID</h3>
     <p>{{ application.id }}</p>
 
     <h3>Linked Environments</h3>
     {% if linked_environments %}
         <ul>
             {% for encrypt in linked_environments %}
-                <li>{{ encrypt.environment.name }}</li>
+                <li>
+                    <b>{{ encrypt.environment.name }}</b>
+                    <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">Manage</a>
+                </li>
             {% endfor %}
         </ul>
     {% else %}
@@ -24,11 +27,11 @@
     {% endif %}
 
     {% if environments %}
-        <p><a href="{{ urlFor('kraken.application.environments', {id: application.id}) }}">Add Environment</a></p>
+        <p><a href="{{ urlFor('kraken.application.add_environment', {id: application.id}) }}">Add Environment</a></p>
     {% endif %}
 
     <h3 class="mbn">Configuration Schema</h3>
-    <p><a href="{{ urlFor('kraken.application.schema', {id: application.id}) }}">Add Property</a></p>
+    <p><a href="{{ urlFor('kraken.application.add_schema', {id: application.id}) }}">Add Property</a></p>
     {{ block('configuration_schema') }}
 
 {% endblock %}

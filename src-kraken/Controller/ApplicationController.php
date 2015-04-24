@@ -66,7 +66,10 @@ class ApplicationController implements ControllerInterface
     public function __invoke()
     {
         $links = $this->encRepository->findBy(['application' => $this->application]);
-        $schema = $this->schemaRepository->findBy(['application' => $this->application]);
+
+        $schema = $this->schemaRepository->findBy([
+            'application' => $this->application
+        ], ['key' => 'ASC']);
 
         $context = [
             'application' => $this->application,

@@ -1,0 +1,87 @@
+// header
+
+.kraken-logo {
+    background-image: url(/img/kraken.png);
+    background-size: contain;
+
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15px 5px rgba(0, 0, 0, 0.3);
+    height: 6em;
+    margin: 0 auto;
+    position: relative;
+    width: 6em;
+}
+
+// rgb(229, 23, 29)
+// rgb(145, 20, 22) dark
+
+$kraken-red: rgb(229, 23, 29);
+$kraken-red-dark: rgb(145, 20, 22);
+.kraken-label {
+
+    span {
+
+        border: 6px solid $kraken-red-dark;
+
+        background-image: linear-gradient($kraken-red, $kraken-red-dark);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        color: $kraken-red-dark;
+        display: block;
+        font-weight: bold;
+
+        padding: .15em .25em 0 .25em;
+        margin: 2px;
+    }
+
+    background-color: $text-color;
+    border: 2px solid $kraken-red;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4) inset;
+    font-size: 3em;
+    line-height: normal;
+    margin: 0 auto;
+
+    @include trailer(.5);
+    @include breakpoint(42.1875em) {
+        margin-bottom: 0;
+    }
+}
+
+// Add Configuration Property Form
+#kraken__add-property .config-description {
+    display: none;
+}
+
+#kraken__explicit-values {
+    display: none;
+
+    li {
+        display: none;
+    }
+
+    .config-strings-container {
+        position: relative;
+    }
+
+    .config-strings__icon,
+    .config-strings__icon--add {
+        color: $grey;
+        cursor: pointer;
+        font-size: 150%;
+        margin-top: .45em;
+        right: -1.25em;
+        position: absolute;
+        top: 0;
+    }
+
+    .config-strings__icon:focus,
+    .config-strings__icon:hover {
+        color: $error-color;
+    }
+
+    .config-strings__icon--add:focus,
+    .config-strings__icon--add:hover {
+        color: $success-color;
+    }
+}

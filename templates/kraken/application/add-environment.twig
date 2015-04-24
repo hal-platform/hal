@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.kraken.twig' %}
 
 {% set page_title = "Link Environment" %}
 
@@ -8,7 +8,7 @@
         <sub><a href="{{ urlFor('kraken.application', {id: application.id}) }}">back</a></sub>
     </h2>
 
-    <h3>Application ID</h3>
+    <h3 class="mbn">Application ID</h3>
     <p>{{ application.id }}</p>
 
     {{ block('link_environment') }}

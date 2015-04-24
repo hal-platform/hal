@@ -72,7 +72,6 @@ class AddSchemaController implements ControllerInterface
      *
      * @param Url $url
      * @param Session $session
-     * @param NotFound $notFound
      */
     public function __construct(
         Request $request,

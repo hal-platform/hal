@@ -144,11 +144,8 @@ class Property implements JsonSerializable
     {
         $json = [
             'id' => $this->id(),
-            'key' => $this->key(),
-            'dataType' => $this->dataType(),
-            'description' => $this->description(),
-
-            'isSecure' => $this->isSecure(),
+            'value' => $this->value(),
+            'schema' => $this->propertySchema(),
 
             'application' => $this->application(),
             'environment' => $this->environment()

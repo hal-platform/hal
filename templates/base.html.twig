@@ -33,7 +33,8 @@
                 {% if showNavigation is not defined %}
                     {% set showNavigation = true %}
                 {% endif %}
-                {% include 'partials/layout.header.twig' with {showNavigation: showNavigation} %}
+                {% embed 'partials/layout.header.twig' with {showNavigation: showNavigation} %}
+                {% endembed %}
             {% endblock %}
 
             {% block main %}

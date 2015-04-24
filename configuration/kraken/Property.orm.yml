@@ -1,6 +1,6 @@
 QL\Kraken\Entity\Property:
     type: entity
-    table: KrakenProperty
+    table: kraken_property
 
     id:
         id:

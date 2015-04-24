@@ -535,14 +535,31 @@ parameters:
             stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.page']
             conditions: {id: '[0-9a-zA-Z]{2,40}'}
 
-        kraken.application.environments:
-            route: '/kraken/applications/:id/environments'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.environment.page']
+        kraken.property:
+            route: '/kraken/applications/:id/properties/:property'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.property.page']
+            conditions:
+                id: '[0-9a-zA-Z]{2,40}'
+                property: '[0-9a-zA-Z]{2,40}'
+
+        # add schema
+        kraken.application.add_schema:
+            route: '/kraken/applications/:id/schema'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.add_schema.page']
             conditions: {id: '[0-9a-zA-Z]{2,40}'}
 
-        kraken.application.schema:
-            route: '/kraken/applications/:id/schema'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.schema.page']
+        # view configuration, add property
+        kraken.application.environment:
+            route: '/kraken/applications/:id/environments/:environment'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.environment.page']
+            conditions:
+                id: '[0-9a-zA-Z]{2,40}'
+                environment: '[0-9a-zA-Z]{2,40}'
+
+        # add environment to application
+        kraken.application.add_environment:
+            route: '/kraken/applications/:id/environments'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.add_environment.page']
             conditions: {id: '[0-9a-zA-Z]{2,40}'}
 
         ################################################################################################################

@@ -1,0 +1,31 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "View Configuration Property" %}
+
+{% block content %}
+    <h2>
+        Configuration Property for <strong>{{ application.id }}</strong>
+        <sub><a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: environment.id}) }}">back</a></sub>
+    </h2>
+
+    <h3 class="mbn">Application</h3>
+    <p>{{ application.id }}</p>
+
+    <h3 class="mbn">Environment Name</h3>
+    <p>{{ environment.name }}</p>
+
+    <h2>Property</h2>
+
+    <h3 class="mbn">Type</h3>
+    <p>{{ property.propertySchema|formatSchemaType }}</p>
+
+    <h3 class="mbn">Description</h3>
+    <p>{{ property.propertyScheme.description ?: 'None' }}</p>
+
+    <h3 class="mbn">Value</h3>
+    <div class="pre-wrapper">
+        <pre>{{ property|formatPropertyValue(0) }}</pre>
+    </div>
+
+{% endblock %}

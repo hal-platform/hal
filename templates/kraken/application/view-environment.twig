@@ -1,0 +1,176 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "View Environment Configuration" %}
+
+{% block content %}
+    <h2>
+        Configuration for <strong>{{ environment.name }}</strong>
+        <sub><a href="{{ urlFor('kraken.application', {id: application.id}) }}">back</a></sub>
+    </h2>
+
+    <h3 class="mbn">Application</h3>
+    <p>{{ application.id }}</p>
+
+    <h3 class="mbn">Environment Name</h3>
+    <p>{{ environment.name }}</p>
+
+    {{ block('environment_configuration') }}
+
+    {% if missing_schema %}
+        {{ block('add_configuration') }}
+    {% endif %}
+
+{% endblock %}
+
+{% block environment_configuration %}
+    <h3 class="mbn">Configuration Properties</h3>
+
+    {% if configuration %}
+        <table class="table--top-aligned" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Property</th>
+                    <th class="t15">Type</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prop in configuration %}
+                    <tr>
+                        {% if prop is property %}
+                            {% set formatted = prop|formatPropertyValue(0) %}
+                            <td>
+                                <a href="{{ urlFor('kraken.property', {id: application.id, property: prop.id}) }}">
+                                    {{ macros.icon('list') }}
+                                    <span class="tablesaw-collapse">View Configuration Property</span>
+                                </a>
+                            </td>
+                            <td><code>{{ prop.propertySchema.key }}</code></td>
+                            <td>{{ prop.propertySchema|formatSchemaType }}</td>
+
+                            <td>
+                                {% if formatted is null %}
+                                    {{ macros.icon('locked') }} Secure
+                                {% else %}
+                                    <div class="pre-wrapper">
+                                        <pre>{{ formatted }}</pre>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        {% else %}
+                            <td></td>
+                            <td><code>{{ prop.key }}</code></td>
+                            <td>{{ prop|formatSchemaType }}</td>
+
+                            <td>
+                                <span class="event-log__status event-log__status--error">
+                                    {{ macros.icon('spam-2') }} Missing
+                                </span>
+                            </td>
+                        {% endif %}
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p>There is no schema defined for this application.</p>
+    {% endif %}
+
+{% endblock %}
+
+{% block add_configuration %}
+
+    <h2>Add Property</h2>
+
+    <div class="form-wrapper">
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form id="kraken__add-property" action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="config-prop">Property</label>
+                    <select class="select-input" name="prop" id="config-prop" required>
+                        <option></option>
+                        {% for schema in missing_schema %}
+                            {% set isSelected = (schema.id == form.prop) %}
+
+                            <option value="{{ schema.id }}" data-type="{{ schema.dataType }}" {{ isSelected ? ' selected' : '' }}>
+                                {{ schema.key }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </li>
+
+                {% for schema in missing_schema %}
+                    {% if schema.description %}
+                        <li class="config-description" data-schema="{{ schema.id }}">
+                            <strong>Description</strong>
+                            <p>{{ schema.description }}</p>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {# default free text for js-less clients #}
+                <li>
+                    <label for="config-value">Value</label>
+                    <input type="text" name="value" id="config-value" value="{{ form.value }}" class="text-input" autocomplete="off">
+                </li>
+
+                {# ENHANCE! #}
+                <li id="kraken__explicit-values">
+                    <ul class="form-fields">
+                        <li>
+                            <label for="config-string">{{ 'string'|formatSchemaType }}</label>
+                            <input type="text" name="value_string" id="config-string" value="{{ form.value_string }}" class="text-input" autocomplete="off">
+                        </li>
+
+                        <li>
+                            <label for="config-strings">{{ 'strings'|formatSchemaType }}</label>
+                            <p class="config-strings-container">
+                                <input type="text" name="value_strings[]" id="config-strings" value="{{ form.value_strings[0] }}" class="text-input" autocomplete="off">
+                            </p>
+                            {% for value in form.value_strings|slice(1) %}
+                                <p class="config-strings-container">
+                                    <input type="text" name="value_strings[]" value="{{ value }}" class="text-input" autocomplete="off">
+                                </p>
+                            {% endfor %}
+                        </li>
+
+                        <li>
+                            <label for="config-bool">{{ 'bool'|formatSchemaType }}</label>
+                            <select class="select-input" name="value_bool" id="config-bool">
+                                <option></option>
+
+                                {% set isSelected = false %}
+                                <option value="true"{{ isSelected ? ' selected' : '' }}>true</option>
+                                <option value="false"{{ isSelected ? ' selected' : '' }}>false</option>
+                            </select>
+                        </li>
+                       <li>
+                            <label for="config-int">{{ 'int'|formatSchemaType }}</label>
+                            <input type="number" name="value_int" id="config-int" value="{{ form.value_int }}" class="text-input" autocomplete="off" step="1">
+                        </li>
+                       <li>
+                            <label for="config-float">{{ 'float'|formatSchemaType }}</label>
+                            <input type="number" name="value_float" id="config-float" value="{{ form.value_float }}" class="text-input" autocomplete="off" step="0.01">
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p>
+                <input class="btn" type="submit" value="Add Property">
+            </p>
+        </form>
+    </div>
+{% endblock %}

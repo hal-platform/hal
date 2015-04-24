@@ -11,7 +11,7 @@ textarea {
     }
 }
 
-.text-input:disabled {
+.text-input:disabled, .text-input:read-only {
     background: $light-grey;
 }
 

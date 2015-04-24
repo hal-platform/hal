@@ -18,6 +18,8 @@ define([], function() {
         { url: "/builds/{id}",                      controller: "build",                        component: "job-updater" },
         { url: "/pushes/{id}",                      controller: "push",                         component: "job-updater" },
         { url: "/repositories/{id}/builds/:page*:", controller: "builds",                       component: "job-updater" },
-        { url: "/repositories/{id}/pushes/:page*:", controller: "pushes",                       component: "job-updater" }
+        { url: "/repositories/{id}/pushes/:page*:", controller: "pushes",                       component: "job-updater" },
+
+        { url: "/kraken/applications/{id}/environments/{env}", controller: "kraken" }
     ];
 });

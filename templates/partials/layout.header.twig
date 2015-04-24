@@ -1,27 +1,29 @@
 {% import _self as nav_macros %}
 
 <header role="banner">
-    <div class="hal">
-        <a href="/" class="wrapper">
+    {% block banner %}
+        <div class="hal">
+            <a href="/" class="wrapper">
 
-            <h1 class="hal-label">
-                <span class="hal-label__name">HAL</span>
-                <span class="hal-label__version">9000</span>
-            </h1>
+                <h1 class="hal-label">
+                    <span class="hal-label__name">HAL</span>
+                    <span class="hal-label__version">9000</span>
+                </h1>
 
-            <div class="hal-eye circular">
-                <div class="ring circular"></div>
-                <div class="oculus circular">
-                    <div class="iris circular narrow"></div>
-                    <div class="iris circular wide"></div>
-                    <div class="highlight alpha"></div>
-                    <div class="highlight"></div>
-                    <div class="highlight beta"></div>
+                <div class="hal-eye circular">
+                    <div class="ring circular"></div>
+                    <div class="oculus circular">
+                        <div class="iris circular narrow"></div>
+                        <div class="iris circular wide"></div>
+                        <div class="highlight alpha"></div>
+                        <div class="highlight"></div>
+                        <div class="highlight beta"></div>
+                    </div>
                 </div>
-            </div>
+            </a>
+        </div>
+    {% endblock %}
 
-        </a>
-    </div>
     {% block navigation %}
         {% if showNavigation %}
             <nav role="navigation">

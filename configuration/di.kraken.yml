@@ -80,12 +80,8 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application.twig']]]
 
-    ####################################################################################################################
-    # CRUD CONTROLLERS
-    ####################################################################################################################
-
     kraken.application.environment.page:
-        class: 'QL\Kraken\Controller\Application\LinkEnvironmentController'
+        class: 'QL\Kraken\Controller\Application\ViewEnvironmentController'
         arguments:
             - @slim.request
             - @kraken.application.environment.twig
@@ -93,20 +89,51 @@ services:
             - @doctrine.em
             - @url
             - @session
+            - @slim.not.found
+            - @slim.route.parameters
     kraken.application.environment.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/link-environment.twig']]]
+        calls: [['setTemplate', ['kraken/application/view-environment.twig']]]
 
-    kraken.application.schema.page:
-        class: 'QL\Kraken\Controller\Application\AddSchemaController'
+    kraken.application.property.page:
+        class: 'QL\Kraken\Controller\Application\ViewPropertyController'
+        arguments:
+            - @kraken.application.property.twig
+            - @kraken.entity
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+    kraken.application.property.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/view-property.twig']]]
+
+    ####################################################################################################################
+    # CRUD CONTROLLERS
+    ####################################################################################################################
+
+    kraken.application.add_environment.page:
+        class: 'QL\Kraken\Controller\Application\AddEnvironmentController'
         arguments:
             - @slim.request
-            - @kraken.application.schema.twig
+            - @kraken.application.add_environment.twig
             - @kraken.entity
             - @doctrine.em
             - @url
             - @session
-    kraken.application.schema.twig:
+    kraken.application.add_environment.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/add-environment.twig']]]
+
+    kraken.application.add_schema.page:
+        class: 'QL\Kraken\Controller\Application\AddSchemaController'
+        arguments:
+            - @slim.request
+            - @kraken.application.add_schema.twig
+            - @kraken.entity
+            - @doctrine.em
+            - @url
+            - @session
+    kraken.application.add_schema.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/add-schema.twig']]]
 
