@@ -51,7 +51,9 @@
         {% endblock %}
 
         {% block script %}
-            <script data-main="/js/main.js?v={{ buster }}" src="/js/vendor/require-2.1.11.min.js"></script>
+            <script src="/js/vendor.bundle.js?v={{ buster }}"></script>
+            <script src="/js/app.js?v={{ buster }}"></script>
+
             {% block pageScript %}{% endblock %}
             {% if showAnalytics(currentUser) %}
                 <script>
