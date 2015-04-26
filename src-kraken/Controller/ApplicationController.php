@@ -65,7 +65,7 @@ class ApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $links = $this->encRepository->findBy(['application' => $this->application]);
+        $assigned = $this->encRepository->findBy(['application' => $this->application]);
 
         $schema = $this->schemaRepository->findBy([
             'application' => $this->application
@@ -73,12 +73,12 @@ class ApplicationController implements ControllerInterface
 
         $context = [
             'application' => $this->application,
-            'linked_environments' => $links,
+            'assigned_environment' => $assigned,
             'schema' => $schema
         ];
 
         $context['environments'] = $this->filterLinkedEnvironments(
-            $links,
+            $assigned,
             $this->envRepository->findBy([], ['name' => 'ASC'])
         );
 
@@ -86,15 +86,15 @@ class ApplicationController implements ControllerInterface
     }
 
     /**
-     * @param Encryption[] $links
+     * @param Encryption[] $assigned
      * @param Environment[] $environments
      *
      * @return Environment[]
      */
-    private function filterLinkedEnvironments($links, $environments)
+    private function filterLinkedEnvironments($assigned, $environments)
     {
         $linked = [];
-        foreach ($links as $link) {
+        foreach ($assigned as $link) {
             $linked[$link->environment()->id()] = true;
         }
 

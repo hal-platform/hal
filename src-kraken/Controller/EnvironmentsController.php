@@ -28,7 +28,7 @@ class EnvironmentsController implements ControllerInterface
     const ERR_DUPLICATE_NAME = 'An environment with this name already exists.';
 
     const VALIDATE_NAME_REGEX = '/^[a-zA-Z0-9]{2,40}$/';
-    const VALIDATE_TOKEN_REGEX = '/^[a-zA-Z0-9\-\=\.\+\/]{2,40}$/';
+    const VALIDATE_TOKEN_REGEX = '/^[a-zA-Z0-9\-\=\.\+\/]{0,40}$/';
 
     /**
      * @type Request

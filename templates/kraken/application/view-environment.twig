@@ -4,10 +4,9 @@
 {% set page_title = "View Environment Configuration" %}
 
 {% block content %}
-    <h2>
-        Configuration for <strong>{{ environment.name }}</strong>
-        <sub><a href="{{ urlFor('kraken.application', {id: application.id}) }}">back</a></sub>
-    </h2>
+
+    <a href="{{ urlFor('kraken.application', {id: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <h2>Configuration for <strong>{{ environment.name }}</strong></h2>
 
     <h3 class="mbn">Application</h3>
     <p>{{ application.id }}</p>

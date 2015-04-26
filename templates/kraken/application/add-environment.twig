@@ -3,10 +3,9 @@
 {% set page_title = "Link Environment" %}
 
 {% block content %}
-    <h2>
-        Link Environment
-        <sub><a href="{{ urlFor('kraken.application', {id: application.id}) }}">back</a></sub>
-    </h2>
+
+    <a href="{{ urlFor('kraken.application', {id: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <h2>Assign Environment to Application</h2>
 
     <h3 class="mbn">Application ID</h3>
     <p>{{ application.id }}</p>
@@ -16,8 +15,6 @@
 {% endblock %}
 
 {% block link_environment %}
-    <h2>Link an environment</h2>
-
     <div class="form-wrapper">
         {% if errors %}
             <ul class="error-list">
@@ -29,26 +26,34 @@
 
         <form action="" method="post">
             <ul class="form-fields">
+
                 <li>
-                    <label for="enc-key">Encryption Key</label>
+                    <label for="enc-env">Environment</label>
+                    <ul class="check-list radio-grid radio-grid__env">
+                        {% for env in environments %}
+                            {% set isSelected = (env.id == form.env) %}
+                            <li>
+                                <input id="env-{{ env.id }}" type="radio" name="env" value="{{ env.id }}"{{ isSelected ? ' checked' : ''}}>
+                                <label for="env-{{ env.id }}">{{ env.name }}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li>
+                    <label for="enc-key">
+                        Encryption Key Identifier
+                        <small class="additional">
+                            Specify the identifier used to retrieve the encryption key from the encryption service.
+                            Configuration data is encrypted with the key returned by this service.
+                        </small>
+                    </label>
                     <input type="text" name="key" id="enc-key" maxlength="200" required value="{{ form.key }}" class="text-input">
                 </li>
 
                 <li>
-                    <label for="enc-env">Environment</label>
-                    <select class="select-input" name="env" id="enc-env" required>
-                        <option></option>
-                        {% for env in environments %}
-                            {% set isSelected = (env.id == form.env) %}
-
-                            <option value="{{ env.id }}"{{ isSelected ? ' selected' : '' }}>{{ env.name }}</option>
-                        {% endfor %}
-                    </select>
-                </li>
-
-                <li>
                     {# primary action #}
-                    <input class="btn" type="submit" value="Link Environment">
+                    <input class="btn" type="submit" value="Assign Environment">
                 </li>
             </ul>
         </form>

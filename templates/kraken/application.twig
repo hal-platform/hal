@@ -4,24 +4,36 @@
 {% set page_title = "Application" %}
 
 {% block content %}
-    <h2>
-        Application
-        <sub><a href="{{ urlFor('kraken.applications') }}">back</a></sub>
-    </h2>
+
+    <a href="{{ urlFor('kraken.applications') }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <h2>Application</h2>
 
     <h3 class="mbn">ID</h3>
     <p>{{ application.id }}</p>
 
-    <h3>Linked Environments</h3>
-    {% if linked_environments %}
-        <ul>
-            {% for encrypt in linked_environments %}
-                <li>
-                    <b>{{ encrypt.environment.name }}</b>
-                    <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">Manage</a>
-                </li>
-            {% endfor %}
-        </ul>
+    <h3 class="mbn">Environments</h3>
+    {% if assigned_environment %}
+        <p><a href="{{ urlFor('kraken.status', {id: application.id}) }}">Configuration Status</a></p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for encrypt in assigned_environment %}
+                    <tr>
+                        <td>{{ encrypt.environment.name }}</td>
+                        <td>
+                            <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">Manage</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     {% else %}
         <p>There are no environments linked to this application.</p>
     {% endif %}
@@ -60,8 +72,6 @@
                 {% endfor %}
             </tbody>
         </table>
-
-        </ul>
     {% else %}
         <p>There is no schema defined for this application.</p>
     {% endif %}

@@ -88,7 +88,7 @@ class Environment implements JsonSerializable
      */
     public function withConsulServer($server)
     {
-        $this->server = $server;
+        $this->consulServer = $server;
         return $this;
     }
 
@@ -99,7 +99,7 @@ class Environment implements JsonSerializable
      */
     public function withConsulToken($token)
     {
-        $this->token = $token;
+        $this->consulToken = $token;
         return $this;
     }
 

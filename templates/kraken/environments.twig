@@ -3,10 +3,8 @@
 {% set page_title = "Environments" %}
 
 {% block content %}
-    <h2>
-        Environments
-        <sub><a href="{{ urlFor('kraken') }}">back</a></sub>
-    </h2>
+    <a href="{{ urlFor('kraken') }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <h2>Environments</h2>
 
     {% if environments %}
         <table>

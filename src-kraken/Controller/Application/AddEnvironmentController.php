@@ -105,13 +105,19 @@ class AddEnvironmentController implements ControllerInterface
             $this->handleForm();
         }
 
+        $environments = $this->filterLinkedEnvironments(
+            $this->encRepository->findBy(['application' => $this->application]),
+            $this->envRepository->findBy([], ['name' => 'ASC'])
+        );
+
+        if (!$environments) {
+            $this->url->redirectFor('kraken.application', ['id' => $this->application->id()]);
+        }
+
         $context = [
             'application' => $this->application,
 
-            'environments' => $this->filterLinkedEnvironments(
-                $this->encRepository->findBy(['application' => $this->application]),
-                $this->envRepository->findBy([], ['name' => 'ASC'])
-            ),
+            'environments' => $environments,
 
             'errors' => $this->errors,
             'form' => [
