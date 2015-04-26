@@ -542,6 +542,11 @@ parameters:
                 id: '[0-9a-zA-Z]{2,40}'
                 property: '[0-9a-zA-Z]{2,40}'
 
+        kraken.status:
+            route: '/kraken/applications/:id/status'
+            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.status.page']
+            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+
         # add schema
         kraken.application.add_schema:
             route: '/kraken/applications/:id/schema'

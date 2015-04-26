@@ -107,6 +107,17 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/view-property.twig']]]
 
+    kraken.application.status.page:
+        class: 'QL\Kraken\Controller\Application\ApplicationStatusController'
+        arguments:
+            - @kraken.application.status.twig
+            - @kraken.entity
+            - @doctrine.em
+            - @slim.not.found
+    kraken.application.status.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/status.twig']]]
+
     ####################################################################################################################
     # CRUD CONTROLLERS
     ####################################################################################################################
