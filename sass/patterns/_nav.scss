@@ -1,8 +1,6 @@
 [role="navigation"] {
     background-color: $text-color;
     box-shadow: 0px 5px 5px tint($grey, 50%);
-    padding-bottom: 6em;
-    padding-top: .75em;
 }
 
 .nav--main {
@@ -15,9 +13,9 @@
 .nav--main li a,
 .nav--preferences li label {
     border-bottom: 1px solid $text-color;
-    // @include padding-leader(.25);
-    // @include padding-trailer(.25);
-    padding-left: ms(0);
+    @include padding-leader(.25);
+    @include padding-trailer(.25);
+    padding-left: msem(0);
     color: $white;
     background-color: $text-color;
 
@@ -26,7 +24,7 @@
         background-color: $highlight-color;
         color: $text-color;
         border-bottom: 1px solid $highlight-color;
-        padding-right: ms(5);
+        padding-right: msem(5);
     }
 }
 
@@ -35,11 +33,11 @@
 }
 
 .nav--main li a .icon {
-    margin-right: ms(-3);
+    margin-right: msem(-3);
 }
 
 .nav--main li:first-child a {
-    // @include padding-leader(.25);
+    @include padding-leader(.25);
     border-top: 1px solid $white;
 }
 
@@ -93,14 +91,14 @@
     .nav--main li a,
     .nav--preferences li label {
         text-align: center;
-        // @include padding-trailer(.25);
-        padding-left: ms(-1);
-        padding-right: ms(-1);
-        font-size: ms(-1);
+        @include padding-trailer(.25);
+        padding-left: msem(-1);
+        padding-right: msem(-1);
+        @include adjust-font-size-to(ms(-1));
 
         &:hover {
-            // @include padding-trailer(.25);
-            padding-right: ms(-1);
+            @include padding-trailer(.25);
+            padding-right: msem(-1);
         }
     }
 
@@ -110,7 +108,7 @@
 
     .nav--main li a .icon,
     .nav--preferences .icon {
-        margin: 0 auto ms(-3);
+        margin: 0 auto msem(-3);
         width: 32px;
         height: 32px;
     }
@@ -129,8 +127,8 @@
 
 @include breakpoint(42.1875em) {
     [role="navigation"] {
-        // @include padding-trailer(4);
-        // @include padding-leader(.5);
+        @include padding-trailer(4);
+        @include padding-leader(.5);
     }
 
     [class*="nav"] {
@@ -157,6 +155,6 @@
 }
 
 .pages {
-    padding-right: ms(-1);
-    padding-left: ms(-1);
+    padding-right: msem(-1);
+    padding-left: msem(-1);
 }

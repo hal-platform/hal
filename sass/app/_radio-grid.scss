@@ -17,12 +17,12 @@
 
     @include breakpoint(40em) {
         &:nth-child(odd) {
-            // @include grid-span(1, 1, $grid: 2, $gutter: .1);
+            @include grid-span(1, 1, $grid: 2, $gutter: .1);
             clear: left;
         }
 
         &:nth-child(even) {
-            // @include grid-span(1, 2, $grid: 2, $gutter: .1);
+            @include grid-span(1, 2, $grid: 2, $gutter: .1);
             clear:right;
         }
     }
@@ -31,20 +31,20 @@
 .radio-grid > li {
     @include breakpoint(60em) {
         &:nth-child(4n+1) {
-            // @include grid-span(1, 1, $grid: 4, $gutter: .1);
+            @include grid-span(1, 1, $grid: 4, $gutter: .1);
             clear: left;
         }
 
         &:nth-child(4n+2) {
-            // @include grid-span(1, 2, $grid: 4, $gutter: .1);
+            @include grid-span(1, 2, $grid: 4, $gutter: .1);
         }
 
         &:nth-child(4n+3) {
-            // @include grid-span(1, 3, $grid: 4, $gutter: .1);
+            @include grid-span(1, 3, $grid: 4, $gutter: .1);
         }
 
         &:nth-child(4n+4){
-            // @include grid-span(1, 4, $grid: 4, $gutter: .1);
+            @include grid-span(1, 4, $grid: 4, $gutter: .1);
         }
     }
 }
@@ -62,7 +62,7 @@
     label {
         border: 1px solid $light-grey;
         transition: background-color 1s ease;
-        padding: ms(-4);
+        padding: msem(-4);
         width: 100%;
         white-space: nowrap;
         overflow: hidden;
@@ -74,5 +74,5 @@
     }
 }
 .radio-grid--form li {
-    margin-bottom: ms(1);
+    margin-bottom: msem(1);
 }

@@ -1,6 +1,6 @@
 .hal {
-    padding: ms(1);
-
+    @include rhythm(0,1,1,0);
+    @include padding-x(msem(1));
     background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px, linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px, linear-gradient(27deg, #222222 5px, transparent 5px) 0px 10px, linear-gradient(207deg, #222222 5px, transparent 5px) 10px 5px, linear-gradient(90deg, #1b1b1b 10px, transparent 10px), linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
     background-color: #131313;
     background-size: 20px 20px;
@@ -11,7 +11,7 @@
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
-        width: ms(22);
+        width: msem(22);
         margin: 0 auto;
     }
 
@@ -141,39 +141,4 @@
   margin-left: 0;
   top: 30%;
   transform: rotate(-60deg);
-}
-
-.hal-label {
-    font-size: ms(4);
-    line-height: 1.6em;
-
-    background-color: $text-color;
-    border: 2px solid $light-grey;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4) inset;
-    color: $white;
-    margin: 0 auto;
-    @include trailer(.5);
-    width: ms(15);
-    overflow: hidden;
-    background-image: linear-gradient(to right, $bright-blue 50%, $text-color 50%);
-
-    @include breakpoint(42.1875em) {
-        margin-bottom: 0;
-    }
-}
-
-.hal-label > span {
-  display: block;
-  float: left;
-  @include rhythm(0,.1,.1,0);
-  @include padding-x(ms(-10));
-  width: 50%;
-}
-
-.hal-label__name {
-  text-align: right;
-}
-
-.hal-label__version {
-  text-align: left;
 }

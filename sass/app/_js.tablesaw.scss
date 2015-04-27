@@ -56,7 +56,7 @@ table.tablesaw {
     display: block;
     min-width: 40%;
     display: inline-block;
-    font-size: ms(1);
+    @include adjust-font-size-to(ms(1));
   }
 
   /* For grouped headers, have a different style to visually separate the levels by classing the first label in each col group */

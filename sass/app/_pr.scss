@@ -7,13 +7,13 @@
 }
 
 .pr-smtxt {
-    font-size: ms(-4);
+    @include adjust-font-size-to(ms(-4));
     font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
     text-transform: uppercase;
 }
 
 .pr-label {
-    padding: ms(-5);
+    padding: msem(-5);
     background-color: lighten($blue, 55%);
     border-radius: 3px;
 }

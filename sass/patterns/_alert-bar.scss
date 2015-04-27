@@ -1,14 +1,14 @@
 [class="alert-bar"], [class^="alert-bar--"] {
     text-align: left;
-    padding: ms(-5);
-    margin-bottom: ms(3);
+    padding: msem(-5);
+    margin-bottom: msem(3);
     @extend %clearfix;
 
     background-color: $bright-blue;
     color: $white;
 
     h4 {
-        padding: ms(-9);
+        padding: msem(-9);
         border: 2px solid #eee;
         margin: 0;
 
@@ -17,14 +17,14 @@
     }
 
     p {
-        margin: ms(-9) 0;
+        margin: msem(-9) 0;
     }
 
     pre {
         background-color: transparent;
         color: $text-color;
-        margin-top: ms(-5);
-        margin-bottom: ms(-5);
+        margin-top: msem(-5);
+        margin-bottom: msem(-5);
     }
 
     border: 2px solid #ddd;
@@ -61,7 +61,7 @@
 }
 
 .event-log__status {
-    font-size: ms(1);
+    @include adjust-font-size-to(ms(1));
     color: $white;
     padding: .40em;
 }

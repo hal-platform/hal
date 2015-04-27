@@ -1,5 +1,5 @@
 .scrollable-box {
-    font-size: ms(-1);
+    @include adjust-font-size-to(ms(-1));
 
     table {
         .code_fixed {

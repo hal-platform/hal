@@ -1,12 +1,12 @@
 .details-box {
     border: 8px solid $light-grey;
-    padding: ms(1);
+    padding: msem(1);
     @include trailer(1);
 
     .split--left__title {
         font-weight: bold;
         width: 100%;
-        font-size: ms(1);
+        @include adjust-font-size-to(ms(1));
         line-height: 1.9;
 
         @include breakpoint(41.125em) {

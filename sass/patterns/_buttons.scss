@@ -78,13 +78,13 @@
 }
 
 .btn--toggles {
-    padding-right: ms(-1);
-    padding-left: ms(-1);
+    padding-right: msem(-1);
+    padding-left: msem(-1);
 }
 
 .btn--tiny {
     margin: 0;
-    padding: 0 ms(-1);
+    padding: 0 msem(-1);
 }
 
 /* Ensure that svg icons within buttons are clickable */

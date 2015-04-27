@@ -2,7 +2,7 @@
 .select-input,
 textarea {
     width: 100%;
-    font-size: ms(1);
+    @include adjust-font-size-to(ms(1));
     padding: rhythm(.5, ms(1));
     background: #fff;
     box-shadow: inset 0 2px 0 $grey, inset 2px 0px 0 $grey, inset -2px 0px 0 $grey, inset 0px -2px 0 $grey;
@@ -16,13 +16,13 @@ textarea {
 }
 
 legend {
-    font-size: ms(4);
+    @include adjust-font-size-to(ms(4));
 }
 
 .error-list {
     background: $error-color;
     margin-left: 0;
-    padding: 0 ms(4);
+    padding: 0 msem(4);
     @include rhythm(0, .5, .5, .5);
     color: $white;
 }
@@ -43,7 +43,7 @@ select {
 }
 
 .checkbox--pretty .flavor {
-    font-size: ms(-1);
+    @include adjust-font-size-to(ms(-1));
 }
 
 .checkbox--pretty input {

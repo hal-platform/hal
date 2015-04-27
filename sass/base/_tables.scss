@@ -8,7 +8,7 @@ thead {
 
 tbody tr {
     border-bottom: 1px dotted $light-grey;
-    font-size: ms(-1);
+    @include adjust-font-size-to(ms(-1));
 }
 
 .table--top-aligned {
@@ -25,7 +25,7 @@ tbody tr {
 }
 
 th.table-mid-header {
-    font-size: ms(2);
+    @include adjust-font-size-to(ms(2));
 
     background: $bright-blue;
     border: 3px solid $slightly-less-bright-blue;

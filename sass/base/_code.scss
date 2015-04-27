@@ -10,7 +10,7 @@ pre {
     margin: 0;
     padding: .2em;
 
-    font-size: ms(-2);
+    @include adjust-font-size-to(ms(-2));
     text-align: left;
 
     white-space: pre;
