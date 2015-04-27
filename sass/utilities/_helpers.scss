@@ -1,16 +1,9 @@
-.mbn {
-    margin-bottom: 0 !important;
-}
-
-.mls {
-    margin-left: 5px;
-}
-
-.trailer{
+// Helpers
+.trailer {
     @include trailer();
 }
 
-.leader{
+.leader {
     @include leader();
 }
 

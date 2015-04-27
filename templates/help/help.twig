@@ -9,10 +9,10 @@
 {% block content %}
     <h2>Help &amp; FAQ</h2>
 
-    <ul>
+    <ul class="list--bare">
         <li class="trailer">
             <a href="#help-support"><b>Support</b></a>
-            <ul>
+            <ul class="list--bullet">
                 <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
                 <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
                 <li><a href="#training">Are there any training sessions available?</a></li>
@@ -22,7 +22,7 @@
 
         <li class="trailer">
             <a href="#help-setup"><b>Application Setup</b></a>
-            <ul>
+            <ul class="list--bullet">
                 <li><a href="#add-application">How do I add my application to HAL?</a></li>
                 <li><a href="#deploy-application">How do I deploy my application with HAL?</a></li>
                 <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
@@ -34,7 +34,7 @@
 
         <li>
             <a href="#help-misc"><b>Other</b></a>
-            <ul>
+            <ul class="list--bullet">
                 <li><a href="#api">Does HAL have an API? Is there any documentation?</a></li>
                 {% if not isSeriousBusinessMode() %}
                     <li><a href="#hellodave">My name isn't Dave!</a></li>
@@ -214,7 +214,7 @@ beta
     {% endif %}
 
     <h4 id="release-notes">Release Notes</h4>
-    <ul>
+    <ul class="list--bullet">
         <li>
             <a href="/docs/2.4/release-notes.html">2.4</a>
         </li>

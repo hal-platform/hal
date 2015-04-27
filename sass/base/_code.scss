@@ -1,3 +1,11 @@
+pre {
+    @include trailer;
+}
+
+pre, code {
+    font-family: menlo, monospace, sans-serif;
+}
+
 code {
     color: $red;
     background: $light-grey;

@@ -3,7 +3,7 @@
     width: 1em;
     height: 1em;
     display: inline-block;
-    top: 3px;
+    // top: 3px;
 }
 
 .icon:after {
@@ -22,6 +22,15 @@
     height: 1em;
     border-radius: 50%;
     margin-right: .25em;
+}
+
+@mixin status-bg($color) {
+    &:before {
+        background-color: $color;
+    }
+    &:after {
+        background-color: $color;
+    }
 }
 
 [class*="status-before--"] {
@@ -64,39 +73,19 @@
 }
 
 .status-before--unknown, .status-after--unknown {
-    &:before {
-        background-color: $grey;
-    }
-    &:after {
-        background-color: $grey;
-    }
+    @include status-bg($grey);
 }
 
 .status-before--success, .status-after--success {
-    &:before {
-        background-color: $success-color;
-    }
-    &:after {
-        background-color: $success-color;
-    }
+    @include status-bg($success-color);
 }
 
 .status-before--error, .status-after--error {
-    &:before {
-        background-color: $error-color;
-    }
-    &:after {
-        background-color: $error-color;
-    }
+    @include status-bg($error-color);
 }
 
 .status-before--warning, .status-after--warning, .status-before--other, .status-after--other {
-    &:before {
-        background-color: $warning-color;
-    }
-    &:after {
-        background-color: $warning-color;
-    }
+    @include status-bg($warning-color);
 }
 
 .status-before--thinking, .status-after--thinking {

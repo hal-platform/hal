@@ -5,16 +5,30 @@
 {% block content %}
     <h2>Environment Information</h2>
 
-    <p><b>Name:</b> {{ env.key }}</p>
+    <h3>Name</h3>
+    <p>{{ env.key }}</p>
 
     <h3>Servers</h3>
-    <ul class="col-list">
-        {% for server in servers %}
-            <li><a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a></li>
-        {% else %}
-            <li>There are no servers associated with this environment.</li>
-        {% endfor %}
-    </ul>
+    {% if servers %}
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for server in servers %}
+                    <tr>
+                        <td>
+                            <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no servers associated with this environment.</p>
+    {% endif %}
 
     {% if isUserAdmin(currentUser) and servers %}
         <p><strong>Note:</strong> All associated servers must be removed or transferred to remove this environment.</p>
@@ -24,7 +38,7 @@
         {% if isUserAdmin(currentUser) %}
             <a class="btn--action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a>
             {% if not servers and isUserAdmin(currentUser) %}
-                <a class="btn--destructive secondary-action" href="{{ urlFor('environment.admin.remove', {id: env.id}) }}">Remove Environment</a>
+                <a class="btn--destructive" href="{{ urlFor('environment.admin.remove', {id: env.id}) }}">Remove Environment</a>
             {% endif %}
         {% endif %}
     </div>

@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Deployment Relationships for <b>{{ repository.name }}</b> </h2>
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
 
     <p>
         Deployment relationships define what servers your application can be deployed to and where on that server the code will be uploaded.
@@ -19,7 +19,7 @@
 
             <h3>{{ environment.key }}</h3>
 
-            <table data-tablesaw-mode="stack">
+            <table class="table--spacing-medium" data-tablesaw-mode="stack">
                 <thead>
                     <tr>
                         <th class="t15">Hostname</th>
@@ -42,7 +42,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a class="btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
+                                <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
                             </td>
                         </tr>
                     {% else %}

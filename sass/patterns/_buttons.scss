@@ -1,22 +1,33 @@
-[class*="btn"] {
-    position: relative;
-    color: $white;
-    background: $blue;
+.btn {
     border: 1px solid shade($blue,20%);
-    border-radius: 0px;
     box-shadow: 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 shade($blue,20%), 0 4px 2px rgba(0, 0, 0, .5);
+
+    // Ensure that svg icons within buttons are clickable
+    svg {
+        pointer-events: none;
+    }
 }
 
-[class*="btn"]:active {
-    top: 5px;
-    box-shadow: none;
+// Basic button modifiers
+.btn--tiny {
+    margin: 0;
+    margin-top: -5px;
+    padding: 0 ms(-8);
 }
 
-[class*="btn"]:hover {
-    color: $white;
-    background: tint($blue, 10%);
+.btn--small { font-size: ms(-2); }
+.btn--large { font-size: ms(3); }
+
+.btn--full {
+    display: block;
+    text-align: center;
+    // The following is so that .btn-full works properly on <input> as well as <a>.
+    padding-right: 0;
+    padding-left: 0;
+    width: 100%;
 }
 
+// Button types
 .btn--action {
     background-color: $warning-color;
     border: 1px solid shade($warning-color, 20%);
@@ -72,23 +83,3 @@
     &:hover { background-color: tint($grey, 15%); }
     &:focus { color: shade($grey, 20%); }
 }
-
-.btn--alt {
-    float: right;
-}
-
-.btn--toggles {
-    padding-right: msem(-1);
-    padding-left: msem(-1);
-}
-
-.btn--tiny {
-    margin: 0;
-    padding: 0 msem(-1);
-}
-
-/* Ensure that svg icons within buttons are clickable */
-.btn svg {
-    pointer-events: none;
-}
-

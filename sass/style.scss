@@ -1,55 +1,60 @@
 @charset "UTF-8";
 
 // vendor bullshit
-@import "../bower_components/compass-mixins/lib/_compass.scss";
+@import "../bower_components/compass-mixins/lib/compass";
 @import "../bower_components/modular-scale/stylesheets/modular-scale";
 @import "../bower_components/breakpoint-sass/stylesheets/breakpoint";
-@import "../bower_components/singularitygs/stylesheets/_singularitygs.scss";
+@import "../bower_components/singularitygs/stylesheets/singularitygs";
 
-
-// Import your variables and Scales.
-@import "settings";
+// Settings, variables
 @import "settings-colors";
+@import "settings";
 @import "scales";
 
-// App bullshit
+// Utilities
+@import "utilities/functions";
+@import "utilities/helpers";
 @import "utilities/mixins";
 @import "utilities/misc";
-// @import "utilities/fuck-compass";
+@import "utilities/placeholders";
 
-@import "app/spacing";
-@import "app/grid";
+// Base
+@import "base/global";
+
+@import "base/code";
+@import "base/error";
+@import "base/forms";
+@import "base/headings";
+@import "base/links";
+@import "base/list";
+@import "base/tables";
+@import "base/video";
+
+// App
 @import "app/global";
-@import "app/icons";
-@import "app/images";
+
 @import "app/cards";
-@import "app/halheader";
-@import "app/drop-down";
-@import "app/tabs";
-@import "app/js";
-@import "app/js.tablesaw";
 @import "app/dash-box";
+@import "app/grid";
+@import "app/hal-header";
+@import "app/help";
+@import "app/icons";
 @import "app/pr";
 @import "app/radio-grid";
 @import "app/search";
+@import "app/tabs";
+
 @import "app/kraken";
 
-@import "base/code";
-@import "base/headings";
-@import "base/forms";
-@import "base/tables";
-@import "base/error";
-@import "base/lists";
-@import "base/video";
-
-@import "patterns/nav";
-@import "patterns/buttons";
-@import "patterns/block-list";
+// Components
 @import "patterns/alert-bar";
-@import "patterns/choice-list";
-@import "patterns/col-list";
-@import "patterns/split";
-@import "patterns/inline-list";
+@import "patterns/buttons";
+@import "patterns/list";
+@import "patterns/nav";
 @import "patterns/pagination";
-@import "patterns/stat-list";
 @import "patterns/scroll-thing";
+@import "patterns/split";
+
+// must go last!
+@import "app/js";
+@import "app/js.tablesaw";

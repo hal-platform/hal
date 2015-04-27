@@ -18,7 +18,7 @@
 
     <h3>Repository deployments</h3>
     {% if deployments_with_optional_eb %}
-        <table data-tablesaw-mode="stack">
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Repository</th>
@@ -84,7 +84,7 @@
         {% if isUserAdmin(currentUser) %}
             <a class="btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
             {% if not deployments and isUserAdmin(currentUser) %}
-                <a class="btn--destructive secondary-action" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a>
+                <a class="btn--destructive" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a>
             {% endif %}
         {% endif %}
     </div>

@@ -1,6 +1,6 @@
-{% import "partials/macros.twig" as macros %}
 
 {% macro pagination(currentPage, lastPage, routeName, routeParameters, queryParameters) %}
+    {% import "partials/macros.twig" as macros %}
 
     {% set queryParameters = queryParameters|default({}) %}
 
@@ -36,6 +36,7 @@
 {% endmacro %}
 
 {% macro time_pagination(selectedDate, routeName, routeParameters, queryParameters) %}
+    {% import "partials/macros.twig" as macros %}
 
     {% set routeParameters = routeParameters|default({}) %}
     {% set queryParameters = queryParameters|default({}) %}

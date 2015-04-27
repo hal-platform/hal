@@ -4,36 +4,29 @@
 {% set page_title = "Start Push: " ~ build.id %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
 
     <h2>Push a build for <strong>{{ build.repository.name }}</strong></h2>
 
     <p>Please review the below build details before pushing.</p>
 
     <div class="details-box">
-        <dl class="split--left mbn">
-            <dt class="split--left__title">
-                Build Id
-            </dt>
-            <dd class="split--left__value">
+        <dl class="split mbn">
+            <dt class="split__title">Build Id</dt>
+            <dd>
                 <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
             </dd>
-            <dt class="split--left__title">
-                Repository
-            </dt>
-            <dd class="split--left__value">
+
+            <dt class="split__title">Repository</dt>
+            <dd>
                 <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.name }}</a>
             </dd>
-            <dt class="split--left__title">
-                Environment
-            </dt>
-            <dd class="split--left__value">
-                {{ build.environment.key }}
-            </dd>
-            <dt class="split--left__title">
-                Reference
-            </dt>
-            <dd class="split--left__value">
+
+            <dt class="split__title">Environment</dt>
+            <dd>{{ build.environment.key }}</dd>
+
+            <dt class="split__title">Reference</dt>
+            <dd>
                 {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
                     <span class="status-before--success">
                         {{ macros.gitref(build) }}
@@ -44,16 +37,12 @@
                     </span>
                 {% endif %}
             </dd>
-            <dt class="split--left__title">
-                Commit
-            </dt>
-            <dd class="split--left__value">
-                {{ macros.gitcommit(build) }}
-            </dd>
-            <dt class="split--left__title">
-                Initiator
-            </dt>
-            <dd class="split--left__value">
+
+            <dt class="split__title">Commit</dt>
+            <dd>{{ macros.gitcommit(build) }}</dd>
+
+            <dt class="split__title">Initiator</dt>
+            <dd>
                 {% if build.user %}
                     <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
                 {% elseif build.consumer %}
@@ -62,12 +51,9 @@
                     Unknown
                 {% endif %}
             </dd>
-            <dt class="split--left__title">
-                Completed
-            </dt>
-            <dd class="split--left__value">
-                {{ build.end|html5date }}
-            </dd>
+
+            <dt class="split__title">Completed</dt>
+            <dd>{{ build.end|html5date }}</dd>
 
         </dl>
     </div>
@@ -87,7 +73,7 @@
 
     {% if statuses %}
         <form method="post">
-            <table data-tablesaw-mode="stack">
+            <table class="table--spacing-medium" data-tablesaw-mode="stack">
                 <thead>
                     <tr>
                         <th>Server</th>
@@ -163,7 +149,7 @@
             </table>
 
             {% if allowSubmit %}
-                <input class="btn--alt" type="submit" value="Push To Selected Servers" name="submit">
+                <input class="btn" type="submit" value="Push To Selected Servers" name="submit">
             {% endif %}
         </form>
     {% else %}

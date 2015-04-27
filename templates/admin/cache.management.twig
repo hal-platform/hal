@@ -31,7 +31,7 @@
 
         <div class="details-box scrollable-box">
             <div class="scrolly-container">
-                <table data-tablesaw-mode="stack">
+                <table class="table--spacing-small" data-tablesaw-mode="stack">
                     <thead>
                         <tr>
                             <th class="t70">Key</th>
@@ -63,9 +63,9 @@
         {% else %}
 
             <div class="details-box">
-                <dl class="split--left mbn">
-                    <dt class="split--left__title">Status</dt>
-                    <dd class="split--left__value">
+                <dl class="split mbn">
+                    <dt class="split__title">Status</dt>
+                    <dd>
 
                         {% set opcEnabledColor = opcache.enabled ? 'event-log__status--success' : 'event-log__status--error' %}
                         {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
@@ -84,34 +84,34 @@
                         </span>
 
                     </dd>
-                    <dt class="split--left__title">Hits</dt>
-                    <dd class="split--left__value"><b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses</dd>
-                    <dt class="split--left__title">Hit Rate</dt>
-                    <dd class="split--left__value">{{ opcache.opcache_hit_rate }}%</dd>
+                    <dt class="split__title">Hits</dt>
+                    <dd><b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses</dd>
+                    <dt class="split__title">Hit Rate</dt>
+                    <dd>{{ opcache.opcache_hit_rate }}%</dd>
 
-                    <dt class="split--left__title">Memory</dt>
-                    <dd class="split--left__value">{{ opcache.used_memory }} / {{ opcache.total_memory }}</dd>
+                    <dt class="split__title">Memory</dt>
+                    <dd>{{ opcache.used_memory }} / {{ opcache.total_memory }}</dd>
 
-                    <dt class="split--left__title">Buffer</dt>
-                    <dd class="split--left__value">{{ opcache.used_buffer }} / {{ opcache.total_buffer }}</dd>
+                    <dt class="split__title">Buffer</dt>
+                    <dd>{{ opcache.used_buffer }} / {{ opcache.total_buffer }}</dd>
 
-                    <dt class="split--left__title">Cached</dt>
-                    <dd class="split--left__value">{{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys</dd>
+                    <dt class="split__title">Cached</dt>
+                    <dd>{{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys</dd>
 
                 </dl>
             </div>
 
-            <h4 class="mbn">Configuration</h4>
+            <h4>Configuration</h4>
             <div class="details-box details-box--wide scrollable-box">
-                <dl class="split--left mbn">
+                <dl class="split mbn">
                     {% for key, data in opcache.configuration %}
-                        <dt class="split--left__title">{{ key }}</dt>
-                        <dd class="split--left__value"><code>{{ data|e }}</code></dd>
+                        <dt class="split__title">{{ key }}</dt>
+                        <dd><code>{{ data|e }}</code></dd>
                     {% endfor %}
                 </dl>
             </div>
 
-            <h4 class="mbn">Cached Scripts</h4>
+            <h4>Cached Scripts</h4>
             <div class="details-box scrollable-box">
                 <div class="scrolly-container">
                     <table data-tablesaw-mode="stack">

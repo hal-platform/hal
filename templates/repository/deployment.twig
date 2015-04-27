@@ -5,18 +5,18 @@
 {% block content %}
     <h2>Deployment Information</h2>
 
-    <h3>Type</h3>
+    <h4>Type</h4>
     <p>{{ deployment.server|formatServerType }}</p>
 
-    <h3>Server</h3>
+    <h4>Server</h4>
     <p>
         <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a> in <strong>{{ deployment.server.environment.key }}</strong>
     </p>
 
-    <h3>Repository</h3>
+    <h4>Repository</h4>
     <p><a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.name }}</a></p>
 
-    <h3>File path</h3>
+    <h4>File path</h4>
     <p>
         {% if deployment.server.type == 'rsync' or deployment.server.type == 'ec2' %}
             <code>{{ deployment.path }}</code>
@@ -26,7 +26,7 @@
     </p>
 
     {% if deployment.server.type == 'elasticbeanstalk' and eb_environment %}
-        <h3>Elastic Beanstalk</h3>
+        <h4>Elastic Beanstalk</h4>
 
         <h5 class="mbn"><strong>EB Application ID</strong></h5>
         <p>{{ eb_environment.id }}</p>
@@ -44,7 +44,7 @@
         <h5 class="mbn"><strong>EB Application URL</strong></h5>
         <p><a href="http://{{ eb_environment.url }}">{{ eb_environment.url }}</a></p>
     {% else %}
-        <h3>Elastic Beanstalk Environment ID</h3>
+        <h4>Elastic Beanstalk Environment ID</h4>
         <p>
             {% if deployment.server.type == 'elasticbeanstalk' %}
                 <code>{{ deployment.ebEnvironment }}</code>
@@ -54,7 +54,7 @@
         </p>
     {% endif %}
 
-    <h3>EC2 Pool</h3>
+    <h4>EC2 Pool</h4>
     <p>
         {% if deployment.server.type == 'ec2' %}
             <code>{{ deployment.ec2Pool }}</code>
@@ -63,7 +63,7 @@
         {% endif %}
     </p>
 
-    <h3>URL</h3>
+    <h4>URL</h4>
     <p>
         {% if deployment.url %}
             <a href="{{ deployment.url.asString() }}">{{ deployment.url.asString() }}</a>
@@ -76,8 +76,8 @@
 
     {# secondary actions #}
     {% if canEdit %}
-        <a class="btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.repository.id, id: deployment.id}) }}">Edit Deployment</a>
-        <a class="btn--destructive secondary-action" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a>
+        <a class="btn btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.repository.id, id: deployment.id}) }}">Edit Deployment</a>
+        <a class="btn btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a>
     {% endif %}
 
 {% endblock %}

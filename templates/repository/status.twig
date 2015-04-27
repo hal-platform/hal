@@ -46,15 +46,15 @@
 
     <p>
         {% if canUserBuild(currentUser, repo.key) %}
-            <a class="btn--toggles btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
+            <a class="btn btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
         {% endif %}
 
         {% if builds %}
-            <a class="btn--toggles" href="{{ urlFor('build.history.page1', {'id': repo.id}) }}">View all Builds</a>
+            <a class="btn" href="{{ urlFor('build.history.page1', {'id': repo.id}) }}">View all Builds</a>
         {% endif %}
 
         {% if hasPushes %}
-            <a class="btn--toggles" href="{{ urlFor('push.history.page1', {'id': repo.id}) }}">View all Pushes</a>
+            <a class="btn" href="{{ urlFor('push.history.page1', {'id': repo.id}) }}">View all Pushes</a>
         {% endif %}
 
         <a href="{{ urlFor('repository', {id: repo.id}) }}">View Repository Information</a>
@@ -67,7 +67,7 @@
 
     <article class="card">
         <header class="card__header">
-            <h4 class="mbn">
+            <h4>
                 <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ deployment|formatDeploymentServer }}</a>
 
                 {% if deployment.url %}

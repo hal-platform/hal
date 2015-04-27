@@ -5,7 +5,7 @@
 {% set page_title = "Push history for " ~ repo.name %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
     {% set server = deployment|formatDeploymentServer %}
     {% set deployment_details = deployment|formatDeploymentDetails %}
@@ -15,24 +15,24 @@
 
     <h3>Deployment Information</h3>
     <div class="details-box">
-        <dl class="split--left mbn">
+        <dl class="split mbn">
 
-            <dt class="split--left__title">Environment</dt>
-            <dd class="split--left__value">
+            <dt class="split__title">Environment</dt>
+            <dd>
                 <a href="{{ urlFor('environment', {'id': deployment.server.environment.id}) }}">{{ deployment.server.environment.key }}</a>
             </dd>
 
-            <dt class="split--left__title">Server</dt>
-            <dd class="split--left__value">
+            <dt class="split__title">Server</dt>
+            <dd>
                 <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ server }}</a>
             </dd>
 
-            <dt class="split--left__title">{{ deployment_label }}</dt>
-            <dd class="split--left__value"><code>{{ deployment_details }}</code></dd>
+            <dt class="split__title">{{ deployment_label }}</dt>
+            <dd><code>{{ deployment_details }}</code></dd>
 
             {% if deployment.url %}
-                <dt class="split--left__title">URL</dt>
-                <dd class="split--left__value">
+                <dt class="split__title">URL</dt>
+                <dd>
                     <a href="{{ deployment.url.asString }}">{{ deployment.url.asString }}</a>
                 </dd>
             {% endif %}
@@ -47,7 +47,7 @@
     {% set canRollback = canUserPush(currentUser, repo.key, deployment.server.environment.key) %}
 
     <h3>Push History</h3>
-    <table data-tablesaw-mode="stack">
+    <table class="table--spacing-medium" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>Build</th>

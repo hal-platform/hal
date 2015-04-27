@@ -6,9 +6,9 @@
 {% block content %}
     <h2>Deployment scripting guide for engineers</h2>
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('help') }}">Back to Help</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('help') }}">Back to Help</a></p>
 
-    <ul>
+    <ul class="list--bullet">
         <li><a href="#shell-commands">Commands</a></li>
         <li><a href="#configuration-file">.hal9000.yml configuration file</a></li>
         <li><a href="#build-environment">Build scripting environment</a></li>
@@ -19,7 +19,7 @@
 
     <h2 id="shell-commands">Commands</h2>
     <p>An application can specify a command to run in each of these separate steps in the deployment process:</p>
-    <ul>
+    <ul class="list--bullet">
         <li><strong>Build</strong> (Runs on build server)</li>
         <li><strong>Pre-push Build Transform</strong> (Runs on build server)</li>
         <li><strong>Pre-push</strong> (Runs on deployment web server)</li>
@@ -33,7 +33,7 @@
     </p>
 
     Examples:
-    <ul>
+    <ul class="list--bullet">
         <li><code>env</code></li>
         <li><code>npm install</code></li>
         <li><code>bin/composer install --no-dev</code></li>
@@ -59,7 +59,7 @@
 
     {{ block('configuration_explanation') }}
 
-    <h5>Here is an example with default values:</h5>
+    <h4>Here is an example with default values:</h4>
     {{ block('configuration_file') }}
 
     <p>
@@ -93,7 +93,7 @@
     <h2 id="package-managers">Supported package managers</h2>
 
     <p>The following package managers are supported:</p>
-    <ul>
+    <ul class="list--bullet">
         <li>Composer (PHP)</li>
         <li>NPM (Node)</li>
         <li>Bundler (Ruby)</li>
@@ -143,7 +143,7 @@
 {% endblock %}
 
 {% block build_vars %}
-    <table>
+    <table class="table--spacing-medium">
         <thead>
             <tr>
                 <td>Variable</td>
@@ -176,7 +176,7 @@
 {% endblock %}
 
 {% block push_vars %}
-    <table>
+    <table class="table--spacing-medium">
         <thead>
             <tr>
                 <td>Variable</td>
@@ -231,7 +231,7 @@ date: ''       # ISO 8601 date
 {% endblock %}
 
 {% block configuration_explanation %}
-    <table>
+    <table class="table--spacing-medium">
         <thead>
             <tr>
                 <td>Property</td>
@@ -300,7 +300,7 @@ post_push: []                # Shell commands to run after push process, on targ
 {% endblock %}
 
 {% block pm_commands %}
-    <table>
+    <table class="table--spacing-medium">
         <thead>
             <tr>
                 <td>Manager</td>

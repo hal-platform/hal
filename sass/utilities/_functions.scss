@@ -1,0 +1,3 @@
+@function msem($val) {
+  @return (ms($val) / 1px) / ($base-font-size / 1px) * 1em;
+}

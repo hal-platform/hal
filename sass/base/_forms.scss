@@ -1,3 +1,67 @@
+// Forms
+
+// Use an unordered list to mark up your groups of form fields.
+//
+// <ul class="form-fields">
+//     <li>
+//         <label />
+//         <input />
+//     </li>
+//     <li>
+//         <label />
+//         <select />
+//     </li>
+//     <li>
+//         <label />
+//         <input />
+//     </li>
+// </ul>
+.form-fields {
+    list-style: none;
+    margin: 0;
+}
+
+.form-fields > li {
+    @include trailer;
+}
+
+
+// Labels
+// The ".label" class can be used to make an element look like a label if an actual label isn't suitable.
+label, .label {
+    display: block;
+    margin-bottom: 0;
+}
+
+// Extra help text in labels.
+// <label>Username <small class="additional">No special characters</small></label>
+.additional {
+    display: block;
+    font-weight: normal;
+}
+
+// Groups of checkboxes and radios.
+//
+// <li>
+//     <ul class="check-list">
+//         <li>
+//             <input /> <label />
+//         </li>
+//         <li>
+//             <input /> <label />
+//         </li>
+//     </ul>
+// </li>
+.check-list {
+    @extend .form-fields;
+}
+
+// Labels in check-lists.
+.check-list label,
+.check-list .label {
+    display: inline-block;
+}
+
 .text-input,
 .select-input,
 textarea {
@@ -38,36 +102,38 @@ select {
     }
 }
 
+.form-inline {
+    display: inline-block;
+}
+
 .checkbox--pretty {
     @include trailer();
-}
 
-.checkbox--pretty .flavor {
-    @include adjust-font-size-to(ms(-1));
-}
+    .flavor {
+        @include adjust-font-size-to(ms(-1));
+    }
 
-.checkbox--pretty input {
-    display: none;
-}
+    input {
+        display: none;
+    }
 
-.checkbox--pretty .checkbox__on {
-    color: $success-color;
-    top: 2px;
-}
+    .checkbox__on {
+        color: $success-color;
+    }
 
-.checkbox--pretty .checkbox__off {
-    color: $error-color;
-    top: 2px;
-}
+    .checkbox__off {
+        color: $error-color;
+    }
 
-.checkbox--pretty .checkbox__off,
-.checkbox--pretty input:checked ~ .checkbox__on {
-    display: inline;
-}
+    .checkbox__off,
+    input:checked ~ .checkbox__on {
+        display: inline;
+    }
 
-.checkbox--pretty .checkbox__on,
-.checkbox--pretty input:checked ~ .checkbox__off {
-    display: none;
+    .checkbox__on,
+    input:checked ~ .checkbox__off {
+        display: none;
+    }
 }
 
 .deployment-form {

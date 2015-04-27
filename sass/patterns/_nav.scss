@@ -8,6 +8,17 @@
     margin: 0 auto;
     background-color: $text-color;
     height: 100%;
+
+    li {
+        a .icon {
+            margin-right: msem(-3);
+        }
+
+        &:first-child a {
+            @include padding-leader(.25);
+            border-top: 1px solid $white;
+        }
+    }
 }
 
 .nav--main li a,
@@ -18,6 +29,7 @@
     padding-left: msem(0);
     color: $white;
     background-color: $text-color;
+    display: block;
 
     &:hover {
         text-decoration: none;
@@ -28,51 +40,48 @@
     }
 }
 
-.nav--preferences li label:hover {
-    border-bottom: none;
-}
-
-.nav--main li a .icon {
-    margin-right: msem(-3);
-}
-
-.nav--main li:first-child a {
-    @include padding-leader(.25);
-    border-top: 1px solid $white;
-}
-
 .nav--preferences {
     background-color: transparent;
     @include trailer();
-}
 
-.nav--preferences li label {
-    color: black;
-    background-color: transparent;
-    border: none;
-}
+    li label {
+        color: black;
+        background-color: transparent;
+        border: none;
 
-.nav--preferences .pref-off {
-    color: $error-color;
-    display: inline;
-}
-.nav--preferences .pref-on {
-    color: $success-color;
-    display: none;
-}
+        &:hover {
+            border-bottom: none;
+        }
+    }
 
-.nav--preferences input {
-    display: none;
-}
-.nav--preferences input:checked ~ .pref-on {
-    display: inline;
-}
-.nav--preferences input:checked ~ .pref-off {
-    display: none;
+    .pref-off {
+        color: $error-color;
+        display: inline;
+    }
+
+    .pref-on {
+        color: $success-color;
+        display: none;
+    }
+
+    input {
+        display: none;
+    }
+
+    input:checked ~ .pref-on {
+        display: inline;
+    }
+
+    input:checked ~ .pref-off {
+        display: none;
+    }
 }
 
 @include breakpoint(30.0625em) {
-    [class*="nav"] {
+    .nav--main {
+        display: flex;
+        flex-wrap: wrap;
+
         > li {
 
             &,
@@ -81,11 +90,6 @@
                 display: block;
             }
         }
-    }
-
-    .nav--main {
-        display: flex;
-        flex-wrap: wrap;
     }
 
     .nav--main li a,
@@ -127,11 +131,13 @@
 
 @include breakpoint(42.1875em) {
     [role="navigation"] {
-        @include padding-trailer(4);
+        @include padding-trailer(5);
         @include padding-leader(.5);
     }
 
-    [class*="nav"] {
+    .nav--main {
+        flex-wrap: nowrap;
+
         > li {
 
             &,
@@ -143,10 +149,6 @@
         > li.signed-out {
             flex-grow: 0;
         }
-    }
-
-    .nav--main {
-        flex-wrap: nowrap;
     }
 }
 

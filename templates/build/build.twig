@@ -9,37 +9,25 @@
 
     <h2>Build Information</h2>
 
-    <h3 class="mbn">Build Details</h3>
+    <h4>Build Details</h4>
     <div class="details-box">
-        <dl class="split--left mbn">
-            <dt class="split--left__title">
-                Id
-            </dt>
-            <dd class="split--left__value">
-                {{ build.id }}
-            </dd>
-            <dt class="split--left__title">
-                Short Id
-            </dt>
-            <dd class="split--left__value">
-                {{ build.id|formatBuildId }}
-            </dd>
-            <dt class="split--left__title">
-                Repository
-            </dt>
-            <dd class="split--left__value">
+        <dl class="split mbn">
+            <dt class="split__title">Id</dt>
+            <dd>{{ build.id }}</dd>
+
+            <dt class="split__title">Short Id</dt>
+            <dd>{{ build.id|formatBuildId }}</dd>
+
+            <dt class="split__title">Repository</dt>
+            <dd>
                 <a href="{{ urlFor('repository', {'id': build.repository.id}) }}">{{ build.repository.name }}</a>
             </dd>
-            <dt class="split--left__title">
-                Environment
-            </dt>
-            <dd class="split--left__value">
-                {{ build.environment.key }}
-            </dd>
-            <dt class="split--left__title">
-                Reference
-            </dt>
-            <dd class="split--left__value">
+
+            <dt class="split__title">Environment</dt>
+            <dd>{{ build.environment.key }}</dd>
+
+            <dt class="split__title">Reference</dt>
+            <dd>
                 {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
                     <span class="status-before--success">
                         {{ macros.gitref(build) }} (latest)
@@ -50,17 +38,15 @@
                     </span>
                 {% endif %}
             </dd>
-            <dt class="split--left__title">
-                Commit
-            </dt>
-            <dd class="split--left__value">
+
+            <dt class="split__title">Commit</dt>
+            <dd>
                 <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
                 {{ macros.icon('github') }}
             </dd>
-            <dt class="split--left__title">
-                Initiator
-            </dt>
-            <dd class="split--left__value">
+
+            <dt class="split__title">Initiator</dt>
+            <dd>
                 {% if build.user %}
                     <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
                 {% elseif build.consumer %}
@@ -72,13 +58,11 @@
         </dl>
     </div>
 
-    <h3 class="mbn">Build Status</h3>
+    <h4>Build Status</h4>
     <div class="details-box">
-        <dl class="split--left mbn">
-            <dt class="split--left__title">
-                Status
-            </dt>
-            <dd class="split--left__value">
+        <dl class="split mbn">
+            <dt class="split__title">Status</dt>
+            <dd>
                 {% if build.status == 'Success' %}
                     <span class="status-before--success">{{ build.status }}</span>
                 {% elseif build.status in ['Error', 'Removed'] %}
@@ -87,18 +71,12 @@
                     <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
                 {% endif %}
             </dd>
-            <dt class="split--left__title">
-                Start
-            </dt>
-            <dd class="split--left__value js-build-start">
-                {{ build.start|html5date }}
-            </dd>
-            <dt class="split--left__title">
-                End
-            </dt>
-            <dd class="split--left__value js-build-end">
-                {{ build.end|html5date }}
-            </dd>
+
+            <dt class="split__title">Start</dt>
+            <dd class="js-build-start">{{ build.start|html5date }}</dd>
+
+            <dt class="split__title">End</dt>
+            <dd class="js-build-end">{{ build.end|html5date }}</dd>
         </dl>
     </div>
 
@@ -120,7 +98,7 @@
         {% endif %}
     {% endif %}
 
-    <h3 class="mbn">Event Log</h3>
+    <h4>Event Log</h4>
     {% if build.logs.isEmpty %}
         <p>No build events found.</p>
     {% else %}

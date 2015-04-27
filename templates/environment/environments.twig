@@ -5,22 +5,40 @@
 {% block content %}
     <h2>Environments</h2>
 
-    <ul class="block-list block-list--limit">
-        {% for env in envs %}
-        <li><a href="{{ urlFor('environment', {'id': env.id}) }}">{{ env.key }}</a></li>
-        {% else %}
-        <li>There are no environments.</li>
-        {% endfor %}
-    </ul>
+    <table class="table--spacing-medium">
+        <thead>
+            <tr class="tl">
+                <th>Environment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if envs %}
+
+                {% for env in envs %}
+                    <tr>
+                        <td>
+                            <a href="{{ urlFor('environment', {'id': env.id}) }}">{{ env.key }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            {% else %}
+                <tr>
+                    <td>There are no environments.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
 
     <div>
         {# primary action #}
         {% if isUserAdmin(currentUser) %}
             <a class="btn" href="{{ urlFor('environment.admin.add') }}">Add Environment</a>
         {% endif %}
+
         {% if envs %}
             {# secondary actions #}
-            <a class="btn--action secondary-action" href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
+            <a class="btn btn--action" href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
         {% endif %}
     </div>
 {% endblock %}

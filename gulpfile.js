@@ -42,9 +42,7 @@ gulp.task('scripts', ['js-hint'], function() {
 // css
 gulp.task('styles', function() {
     return gulp.src('sass/**/*.scss')
-        // handle errors so watch doesn't choke
-        .pipe(plugins.plumber())
-        .pipe(plugins.sass())
+        .pipe(plugins.sass({errLogToConsole: true}))
         .pipe(plugins.autoprefixer({browsers: ['last 5 versions', '> 1%']}))
         .pipe(gulp.dest('public/css'));
 });

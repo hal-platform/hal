@@ -9,85 +9,87 @@
     <h2>Repository Information</h2>
 
     <div class="details-box">
-        <dl class="split--left">
-            <dt class="split--left__title">Name</dt>
-            <dd class="split--left__value">{{ repository.name }}</dd>
+        <dl class="split trailer">
+            <dt class="split__title">Name</dt>
+            <dd>{{ repository.name }}</dd>
 
-            <dt class="split--left__title">Identifier</dt>
-            <dd class="split--left__value">{{ repository.key }}</dd>
+            <dt class="split__title">Identifier</dt>
+            <dd>{{ repository.key }}</dd>
 
-            <dt class="split--left__title">Github Source</dt>
-            <dd class="split--left__value">
+            <dt class="split__title">Github Source</dt>
+            <dd>
                 <a href="{{ githubRepo(repository.githubUser, repository.githubRepo) }}">{{ repository.githubUser }}/{{ repository.githubRepo }}</a>
                 {{ macros.icon('github') }}
             </dd>
 
             {% if repository.ebName %}
-                <dt class="split--left__title">Elastic Beanstalk Name</dt>
-                <dd class="split--left__value">{{ repository.ebName }}</dd>
+                <dt class="split__title">Elastic Beanstalk Name</dt>
+                <dd>{{ repository.ebName }}</dd>
             {% else %}
-                <dt class="split--left__title">Elastic Beanstalk</dt>
-                <dd class="split--left__value">Not Enabled</dd>
+                <dt class="split__title">Elastic Beanstalk</dt>
+                <dd>Not Enabled</dd>
             {% endif %}
         </dl>
 
-        {# primary action #}
-        <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
-        <a class="btn secondary-action" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a>
+        <div>
+            {# primary action #}
+            <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
+            <a class="btn" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a>
 
-        {# secondary actions #}
-        {% if isRepoAdmin %}
-            <a class="btn  secondary-action" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a>
-            <a class="btn--action secondary-action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a>
-        {% endif %}
+            {# secondary actions #}
+            {% if isRepoAdmin %}
+                <a class="btn" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a>
+                <a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a>
+            {% endif %}
 
-        {% if isUserAdmin(currentUser) and not deployment_count %}
-            <a class="btn--destructive secondary-action" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Repository</a>
-        {% endif %}
+            {% if isUserAdmin(currentUser) and not deployment_count %}
+                <a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Repository</a>
+            {% endif %}
+        </div>
     </div>
 
     <h3>Notifications</h3>
     <div class="details-box">
-        <dl class="split--left mbn">
-            <dt class="split--left__title">Email</dt>
-            <dd class="split--left__value">{{ repository.email ?: 'None' }}</dd>
+        <dl class="split mbn">
+            <dt class="split__title">Email</dt>
+            <dd>{{ repository.email ?: 'None' }}</dd>
         </dl>
     </div>
 
     {% if repository.buildCmd or repository.buildTransformCmd or repository.prePushCmd or repository.postPushCmd %}
         <h3>Commands</h3>
         <div class="details-box">
-            <dl class="split--left mbn">
+            <dl class="split trailer">
                 {% if repository.buildCmd %}
-                    <dt class="split--left__title">
+                    <dt class="split__title">
                         {{ macros.icon('code', '', 'On build') }}
                         Build Command
                     </dt>
-                    <dd class="split--left__value">{{ repository.buildCmd }}</dd>
+                    <dd>{{ repository.buildCmd }}</dd>
                 {% endif %}
 
                 {% if repository.buildTransformCmd %}
-                    <dt class="split--left__title">
+                    <dt class="split__title">
                         {{ macros.icon('swap-2', '', 'On push') }}
                         Build Transform Command
                     </dt>
-                    <dd class="split--left__value">{{ repository.buildTransformCmd }}</dd>
+                    <dd>{{ repository.buildTransformCmd }}</dd>
                 {% endif %}
 
                 {% if repository.prePushCmd %}
-                    <dt class="split--left__title">
+                    <dt class="split__title">
                         {{ macros.icon('swap-2', '', 'On push') }}
                         Pre-Push Command
                     </dt>
-                    <dd class="split--left__value">{{ repository.prePushCmd }}</dd>
+                    <dd>{{ repository.prePushCmd }}</dd>
                 {% endif %}
 
                 {% if repository.postPushCmd %}
-                    <dt class="split--left__title">
+                    <dt class="split__title">
                         {{ macros.icon('swap-2', '', 'On push') }}
                         Post-Push Command
                     </dt>
-                    <dd class="split--left__value">{{ repository.postPushCmd }}</dd>
+                    <dd>{{ repository.postPushCmd }}</dd>
                 {% endif %}
             </dl>
             <p class="mbn">
@@ -101,7 +103,7 @@
 
     {% if permissions %}
         <p>The following users have permission to push <strong>{{ repository.name }}</strong> to the specified environment.</p>
-        <table data-tablesaw-mode="stack">
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Environment</th>
@@ -129,7 +131,7 @@
 
     <h3>Server Deployments</h3>
     {% if deployment_count %}
-        <table data-tablesaw-mode="stack">
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Environment</th>

@@ -4,7 +4,7 @@
 {% set page_title = repo.name ~ " Build History" %}
 
 {% block content %}
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
 
     <h2>Build History for <strong>{{ repo.name }}</strong></h2>
 
@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block search %}
-    <h3 class="mbn">Search by reference:</h3>
+    <h4>Search by reference:</h4>
     <form method="get" class="search-filter">
         <input
             class="text-input"

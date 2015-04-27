@@ -4,9 +4,17 @@ $ms-ratio: $fourth;
 
 // Typography
 $font-unit: 1em;
-$base-font-size: 18px;
-$base-line-height: 27px;
+$base-font-size: 1.1em;
+$base-line-height: 1.4em;
 $heading-font-stack: helvetica, arial, sans-serif;
+
+$min-line-padding: .1em;
+
+// Scales - buttons
+$btn-text-color: $white;
+$btn-background-color: $blue;
+$btn-hover-background-color: tint($blue, 10%);
+$btn-hover-text-color: $white;
 
 // Headings
 $h1-size: ms(5);

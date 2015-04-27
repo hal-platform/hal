@@ -9,34 +9,34 @@
     {# Server Stats #}
     <h3>Server Information</h3>
     <div class="details-box">
-        <dl class="split--left mbn">
+        <dl class="split mbn">
             <dl>
-                <dt class="split--left__title"><strong>Hostname</strong></dt>
-                <dd class="split--left__value">
+                <dt class="split__title"><strong>Hostname</strong></dt>
+                <dd>
                     <div class="pre-wrapper">
                         <pre>{{ servername }}</pre>
                     </div>
                 </dd>
             </dl>
             <dl>
-                <dt class="split--left__title"><strong>Encryption key</strong></dt>
-                <dd class="split--left__value">
+                <dt class="split__title"><strong>Encryption key</strong></dt>
+                <dd>
                     <div class="pre-wrapper">
                         <pre>{{ encryption_key }}</pre>
                     </div>
                 </dd>
             </dl>
             <dl>
-                <dt class="split--left__title"><strong>Session Encryption key</strong></dt>
-                <dd class="split--left__value">
+                <dt class="split__title"><strong>Session Encryption key</strong></dt>
+                <dd>
                     <div class="pre-wrapper">
                         <pre>{{ session_encryption_key }}</pre>
                     </div>
                 </dd>
             </dl>
             <dl>
-                <dt class="split--left__title"><strong>HAL 9000 Push File</strong></dt>
-                <dd class="split--left__value">
+                <dt class="split__title"><strong>HAL 9000 Push File</strong></dt>
+                <dd>
                     <div class="pre-wrapper">
                         {% if pushfile %}
                             <pre>{{ pushfile }}</pre>
@@ -47,8 +47,8 @@
                 </dd>
             </dl>
             <dl>
-                <dt class="split--left__title"><strong>{{ isSeriousBusinessMode() ? 'Free space' : 'Spaaace' }}</strong></dt>
-                <dd class="split--left__value">
+                <dt class="split__title"><strong>{{ isSeriousBusinessMode() ? 'Free space' : 'Spaaace' }}</strong></dt>
+                <dd>
                     <div class="pre-wrapper">
                         <pre>{{ freespace }}</pre>
                     </div>

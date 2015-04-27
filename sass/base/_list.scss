@@ -1,0 +1,18 @@
+ul, ol {
+    @include trailer;
+}
+
+// Remove vertical spacing from nested lists.
+li {
+    > ul,
+    > ol {
+         margin-bottom: 0;
+     }
+}
+
+.list--bare {
+    > li {
+        @include trailer(.5);
+    }
+}
+

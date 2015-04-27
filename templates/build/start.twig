@@ -8,7 +8,7 @@
 
     <h2>Create a new build for <strong>{{ repo.name }}</strong></h2>
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
 
     {% if errors %}
         <ul class="error-list js-backend-error">
@@ -49,7 +49,7 @@
                 </li>
             </ul>
 
-            <div class="drop-down js-search-drop">
+            <div class="js-search-drop">
                 <ul class="list--bare js-search-results">
                     <!-- search results go here -->
                     {% for branch in branches %}
@@ -108,7 +108,7 @@
 
 {% block build_tabs %}
 
-    <ul class="nav tabs js-tabs">
+    <ul class="list--bare tabs js-tabs">
         <li class="active">
             <a name="js-tab--branches">
                 {{ macros.icon('branch') }}

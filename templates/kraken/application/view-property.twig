@@ -8,21 +8,21 @@
     <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: environment.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
     <h2>Configuration Property for <strong>{{ application.id }}</strong></h2>
 
-    <h3 class="mbn">Application</h3>
+    <h4>Application</h4>
     <p>{{ application.id }}</p>
 
-    <h3 class="mbn">Environment Name</h3>
+    <h4>Environment Name</h4>
     <p>{{ environment.name }}</p>
 
     <h2>Property</h2>
 
-    <h3 class="mbn">Type</h3>
+    <h4>Type</h4>
     <p>{{ property.propertySchema|formatSchemaType }}</p>
 
-    <h3 class="mbn">Description</h3>
+    <h4>Description</h4>
     <p>{{ property.propertyScheme.description ?: 'None' }}</p>
 
-    <h3 class="mbn">Value</h3>
+    <h4>Value</h4>
     <div class="pre-wrapper">
         <pre>{{ property|formatPropertyValue(0) }}</pre>
     </div>

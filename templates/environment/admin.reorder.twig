@@ -15,7 +15,7 @@
         </ul>
     {% endif %}
 
-    <form method="post">
+    <form class="table--spacing-medium" method="post">
         <table id="env-reorder">
             <thead>
                 <tr>
@@ -44,7 +44,7 @@
             <input class="btn" type="submit" value="Save Order">
 
             {# secondary actions #}
-            <a class="secondary-action" href="{{ urlFor('environments') }}">Cancel</a>
+            <a href="{{ urlFor('environments') }}">Cancel</a>
         </div>
     </form>
 {% endblock %}

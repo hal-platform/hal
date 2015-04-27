@@ -5,13 +5,13 @@
 {% block content %}
     <h2>Edit Deployment</b></h2>
 
-    <h3>Type</h3>
+    <h4>Type</h4>
     <p>{{ deployment.server|formatServerType }}</p>
 
-    <h3>Server</h3>
+    <h4>Server</h4>
     <p>{{ deployment.server|formatServer }}</p>
 
-    <h3>Repository</h3>
+    <h4>Repository</h4>
     <p>{{ deployment.repository.name }}</p>
 
     <div class="form-wrapper">
@@ -78,7 +78,7 @@
                 <input class="btn" type="submit" value="Edit Deployment">
 
                 {# secondary actions #}
-                <a class="secondary-action" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">Cancel</a>
+                <a href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">Cancel</a>
             </div>
         </form>
     </div>

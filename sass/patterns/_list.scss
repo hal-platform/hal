@@ -1,0 +1,42 @@
+// Col list
+.col-list {
+    @include columns(8em 3);
+    @include rhythm(0,.25,.25,1);
+}
+
+// Inline list
+[class="inline-list"], [class^="inline-list--"] {
+    margin-left: 0;
+    display: inline;
+    list-style-type: none;
+}
+
+[class="inline-list"] > li, [class^="inline-list--"] > li {
+    display: inline;
+}
+
+.inline-list--comma > li::after {
+    content: ", ";
+}
+
+.inline-list--comma > li:last-child::after {
+    content: "";
+}
+
+// Stat list
+.stat-list {
+    margin-left: 1em;
+    list-style-type: none;
+}
+
+.stat-list > li {
+    @include trailer(.5);
+}
+
+.list--bullet {
+    margin-left: 1.5em;
+    list-style-type: disc;
+    li {
+        @include trailer(.1);
+    }
+}

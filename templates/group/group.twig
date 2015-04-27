@@ -6,20 +6,21 @@
 {% block content %}
     <h2>Group Information</h2>
 
-    <p><b>Name:</b> {{ group.name }}</p>
-    <p><b>Identifier:</b> {{ group.key }}</p>
+    <h4>Name</h4>
+    <p>{{ group.name }}</p>
 
-    <h3>Repositories</h3>
+    <h4>Identifier</h4>
+    <p>{{ group.key }}</p>
 
+    <h4>Repositories</h4>
     {% if repos %}
 
-        <table data-tablesaw-mode="stack">
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
-                    <th>Repo Status</th>
+                    <th>Repository</th>
                     <th>Github Source</th>
-                    <th>Notification Email</th>
-                    <th>Repo Details</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +31,6 @@
                         <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
                         {{ macros.icon('github') }}
                     </td>
-                    <td>{{ repo.email }}</td>
                     <td>
                         <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
                     </td>
@@ -47,21 +47,15 @@
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    <ul class="choice-list--flush">
-        <li class="choice-list__choice">
-            <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
-        </li>
+    <div>
+        <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
         {% if isUserAdmin(currentUser) %}
-            <li class="choice-list__choice">
-                <a class="btn--action secondary-action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a></p>
-            </li>
+            <a class="btn btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a>
 
             {% if not repos and isUserAdmin(currentUser) %}
-                <li class="choice-list__choice">
-                    <a class="btn--destructive secondary-action" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a>
-                </li>
+                <a class="btn btn--destructive" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a>
             {% endif %}
         {% endif %}
-    </ul>
+    </div>
 
 {% endblock %}

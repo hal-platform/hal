@@ -6,7 +6,7 @@
 {% block content %}
     <h2>Repositories</h2>
 
-    <table data-tablesaw-mode="stack">
+    <table class="table--spacing-medium" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>Repository</th>
@@ -57,6 +57,6 @@
 
     <p>
         <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
-        <a class="btn secondary-action" href="{{ urlFor('group.admin.add') }}">Add Group</a>
+        <a class="btn" href="{{ urlFor('group.admin.add') }}">Add Group</a>
     </p>
 {% endblock %}
