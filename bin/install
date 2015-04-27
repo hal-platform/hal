@@ -8,6 +8,7 @@ COMPOSER_SHOW_INSTALLED="composer show --installed"
 COMPOSER="composer install --prefer-dist"
 NPM="npm install"
 BUNDLER="bundle install"
+BOWER="node_modules/.bin/bower install"
 
 # If deploying, use production settings
 if [ -n "$HAL_ENVIRONMENT" ]; then
@@ -30,3 +31,5 @@ $NPM
 
 gem install bundler
 $BUNDLER
+
+$BOWER

@@ -1,21 +1,23 @@
 {
-  "name": "hal",
-  "version": "0.0.0",
-  "authors": [
-    "Dave Gillhespy <yodasw16@gmail.com>"
-  ],
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "devDependencies": {
-    "jquery": "~2.0.3",
-    "crossroads": "~0.12.0",
-    "underscore": "~1.6.0",
-    "signals": "~1.0.0"
-  }
+    "name": "HAL 9000",
+    "version": "2.4.2",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components"
+    ],
+    "dependencies": {
+        "crossroads": "0.12.0",
+        "jquery": "2.1.3",
+        "jquery-searchable": "1.1.0",
+        "html5sortable": "*",
+        "tablesaw": "1.0.4",
+        "moment": "2.9.0",
+        "nunjucks": "1.3.3",
+        "js-signals": "1.0.0",
+        "svg4everybody": "1.0.0",
+        "typed.js": "v1.1",
+        "underscore": "1.8.3"
+    }
 }
+

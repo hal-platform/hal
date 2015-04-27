@@ -4,7 +4,7 @@ var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
 
 var root = __dirname + '/js';
-var vendorRoot = root + '/vendor';
+var vendorRoot = __dirname + '/bower_components';
 
 module.exports = {
     context: root,
@@ -28,18 +28,19 @@ module.exports = {
 
     resolve: {
         alias: {
-            'jquery':               vendorRoot + '/jquery-2.1.3.js',
-            'jquery.searchable':    vendorRoot + '/jquery.searchable.js',
-            'jquery.sortable':      vendorRoot + '/jquery.sortable.min.js',
-            'jquery.tablesaw':      vendorRoot + '/jquery.tablesaw-1.0.4.js',
 
-            'crossroads':           vendorRoot + '/crossroads-0.12.0.js',
-            'moment':               vendorRoot + '/moment-2.9.0.js',
-            'nunjucks':             vendorRoot + '/nunjucks-1.3.3.js',
-            'signals':              vendorRoot + '/signals-1.0.0.js',
-            'svg4everybody':        vendorRoot + '/svg4everybody-1.0.0.js',
-            'typed':                vendorRoot + '/typed.js',
-            'underscore':           vendorRoot + '/underscore-1.8.3.js',
+            'jquery':               vendorRoot + '/jquery/dist/jquery.js',
+            'jquery.searchable':    vendorRoot + '/jquery-searchable/jquery.searchable.js',
+            'jquery.sortable':      vendorRoot + '/html5sortable/jquery.sortable.js',
+            'jquery.tablesaw':      vendorRoot + '/tablesaw/dist/stackonly/tablesaw.stackonly.js',
+
+            'crossroads':           vendorRoot + '/crossroads/dist/crossroads.js',
+            'moment':               vendorRoot + '/moment/moment.js',
+            'nunjucks':             vendorRoot + '/nunjucks/browser/nunjucks.js',
+            'signals':              vendorRoot + '/js-signals/dist/signals.js',
+            'svg4everybody':        vendorRoot + '/svg4everybody/svg4everybody.js',
+            'typed':                vendorRoot + '/typed.js/js/typed.js',
+            'underscore':           vendorRoot + '/underscore/underscore.js'
         }
     },
     output: {

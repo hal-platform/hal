@@ -12,7 +12,6 @@ atlassian-ide-plugin.xml
 # compiled assets
 /.bundle/
 /.sass-cache/
-/js/require-config.json
 /public/css/
 /public/img/
 /public/js/

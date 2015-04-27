@@ -62,6 +62,8 @@ gulp.task('images', function() {
         .pipe(gulp.dest('public/img'));
 });
 
+
+// core
 gulp.task('watch', function() {
     gulp.watch('sass/**/*.scss', ['styles']);
     gulp.watch('js/**/*.js', ['scripts']);
