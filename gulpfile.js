@@ -1,8 +1,45 @@
 var gulp = require('gulp'),
-    open = require('open'),
     plugins = require('gulp-load-plugins')(),
+    webpack = require('gulp-webpack-build'),
     isDeploy = process.argv.indexOf('--deploy') > -1,
     exec = require('child_process').exec;
+
+// javascript
+gulp.task('js-hint', function() {
+    return gulp.src(['js/app/*.js'])
+        .pipe(plugins.jshint())
+        .pipe(plugins.jshint.reporter('default'));
+});
+
+gulp.task('js-clean', function() {
+    return gulp.src(['public/js'], { read: false })
+        .pipe(plugins.clean());
+});
+
+gulp.task('js-webpack', ['js-clean'], function() {
+    var webpackOptions = {
+        debug: isDeploy ? false : true,
+        devtool: isDeploy ? '' : '#source-map',
+        watchDelay: 200
+    },
+    webpackConfig = {
+        useMemoryFs: true
+    };
+
+    return gulp.src('./webpack.config.js')
+        .pipe(webpack.configure(webpackConfig))
+        .pipe(webpack.overrides(webpackOptions))
+        .pipe(webpack.compile())
+        .pipe(webpack.format({ version: false, timings: true }))
+        .pipe(webpack.failAfter({ errors: true, warnings: false }))
+        .pipe(gulp.dest('public/js/'));
+});
+
+gulp.task('scripts', ['js-hint'], function() {
+    gulp.start('js-webpack');
+});
+
+// css
 
 gulp.task('styles', function() {
     return gulp.src('sass/**/*.scss')
@@ -19,24 +56,7 @@ gulp.task('styles', function() {
         .pipe(gulp.dest('public'));
 });
 
-gulp.task('webpack', ['cleanJS'], function() {
-    return gulp.src('js/app.js')
-        .pipe(plugins.webpack(
-            require('./webpack.config.js')
-        ))
-        .pipe(gulp.dest('public/js/'));
-});
-
-gulp.task('scripts', ['jshint'], function() {
-    gulp.start('webpack');
-});
-
-gulp.task('jshint', function() {
-    return gulp.src(['js/app/*.js'])
-        .pipe(plugins.jshint())
-        .pipe(plugins.jshint.reporter('default'));
-});
-
+// assets
 gulp.task('images', function() {
     return gulp.src('img/**/*')
         .pipe(gulp.dest('public/img'));
@@ -52,11 +72,6 @@ gulp.task('build', ['styles', 'scripts', 'images']);
 
 gulp.task('clean', function() {
     return gulp.src(['public/js', 'public/img', 'public/css'], { read: false })
-        .pipe(plugins.clean());
-});
-
-gulp.task('cleanJS', function() {
-    return gulp.src(['public/js'], { read: false })
         .pipe(plugins.clean());
 });
 
