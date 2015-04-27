@@ -18,7 +18,7 @@ function clean() {
     # Remove files
     for i in ${DELFILES[@]}
     do
-        FILE="$DIR/../$i"
+        FILE="$DIR/../../$i"
         EXISTS=$(test -e $FILE && echo 1 || echo 0)
         if [[ $EXISTS -eq "1" ]]; then
             echo "Removing $FILE"

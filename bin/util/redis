@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php
+
+namespace QL\Hal\Bin;
+
+$root = __DIR__ . '/../..';
+if (!$container = @include $root . '/configuration/bootstrap.php') {
+    echo "The application failed to start.\n";
+    exit(1);
+}
+
+$redis = $container->get('redis');
+$namespace = $container->getParameter('redis.prefix');
+// $namespace = 'hal9000';
+
+$list = true;
+$delete = false;
+$get = false;
+$key = '';
+
+// List keys in the hal namespace
+if ($list) {
+    echo "\nLISTING DOCTRINE KEYS...\n";
+    $keys = $redis->keys('*');
+
+    sort($keys);
+    print_r($keys);
+}
+
+// For emergency clearing of doctrine metadata
+if ($delete) {
+    echo "\nDELETING DOCTRINE KEYS...\n";
+
+    $keys = $redis->keys('doctrine:*');
+    foreach ($keys as $k) {
+        $k = str_replace(sprintf('%s:', $namespace), '', $k);
+        echo sprintf("\n Delete %s", $k);
+        $redis->del($k);
+    }
+
+    // List keys in the hal namespace
+    $keys = $redis->keys('doctrine:*');
+    sort($keys);
+    print_r($keys);
+}
+
+// For emergency clearing of doctrine metadata
+if ($get) {
+    echo "\nGETTING KEY...\n";
+
+    $key = str_replace(sprintf('%s:', $namespace), '', $key);
+    $d = $redis->get($key);
+    // var_export($d);
+
+    $d = unserialize($d);
+    print_r($d);
+
+    echo "\n";
+}
+
+echo "\n";

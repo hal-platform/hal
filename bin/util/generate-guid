@@ -5,6 +5,6 @@ namespace QL\Hal\Bin;
 
 use MCP\DataType\GUID;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 echo strtolower(GUID::create()->asHex()) . "\n";

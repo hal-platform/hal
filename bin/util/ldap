@@ -5,7 +5,7 @@ namespace QL\Hal\Bin;
 
 use Zend\Ldap\Dn;
 
-$root = __DIR__ . '/../';
+$root = __DIR__ . '/../../';
 if (!$container = @include $root . '/configuration/bootstrap.php') {
     echo "Boom goes the dynamite.\n";
     return;
