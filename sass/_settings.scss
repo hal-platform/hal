@@ -1,0 +1,17 @@
+// Modular Scale
+$ms-base: 1em 1.5em;
+$ms-ratio: $fourth;
+
+// Typography
+$font-unit: 1em;
+$base-font-size: 18px;
+$base-line-height: 27px;
+$heading-font-stack: helvetica, arial, sans-serif;
+
+// Headings
+$h1-size: ms(5);
+$h2-size: ms(4);
+$h3-size: ms(3);
+$h4-size: ms(2);
+$h5-size: ms(1);
+$h6-size: ms(0);

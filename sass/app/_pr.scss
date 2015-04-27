@@ -1,0 +1,19 @@
+.pr-closed {
+    color: #c00000;
+}
+
+.pr-open {
+    color: #00c92c;
+}
+
+.pr-smtxt {
+    font-size: ms(-4);
+    font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+    text-transform: uppercase;
+}
+
+.pr-label {
+    padding: ms(-5);
+    background-color: lighten($blue, 55%);
+    border-radius: 3px;
+}

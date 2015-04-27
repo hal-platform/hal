@@ -40,20 +40,13 @@ gulp.task('scripts', ['js-hint'], function() {
 });
 
 // css
-
 gulp.task('styles', function() {
     return gulp.src('sass/**/*.scss')
         // handle errors so watch doesn't choke
         .pipe(plugins.plumber())
-        .pipe(plugins.compass({
-            css: 'public/css',
-            sass: 'sass',
-            style: isDeploy ? 'compressed' : 'compact',
-            require: ['modular-scale', 'breakpoint', 'singularitygs'],
-            bundle_exec: true
-        }))
+        .pipe(plugins.sass())
         .pipe(plugins.autoprefixer({browsers: ['last 5 versions', '> 1%']}))
-        .pipe(gulp.dest('public'));
+        .pipe(gulp.dest('public/css'));
 });
 
 // assets

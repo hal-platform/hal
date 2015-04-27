@@ -1,0 +1,76 @@
+@keyframes highlight {
+    0%, 100%{
+        background-color: none;
+    }
+
+    100%{
+        background-color: $bright-blue;
+    }
+}
+
+/**
+ * Build Start Tabs
+ */
+.js-tab-active {
+    display: block;
+}
+
+/**
+ * Build Start Styles
+ */
+.js-search-query,
+.js-build-warning {
+    display: none;
+}
+
+.js-search-drop {
+    overflow: auto;
+    max-height: 300px;
+}
+
+.js-search-results {
+    li {
+        padding-left: ms(0);
+    }
+
+    li:nth-child(odd) {
+        background-color: lighten($bright-blue, 35%);
+    }
+
+    li:hover {
+        background-color: $highlight-color;
+        cursor: pointer;
+    }
+}
+
+/**
+ * Add Repository Github Helpers
+ */
+.js-form-toggle {
+    display: block;
+}
+.js-form-error {
+    color: red;
+    margin-bottom: 0;
+}
+
+/**
+ * Add Deployments
+ */
+.js-add-deployment__form {
+    display: none;
+}
+
+/**
+ * Dashboard Quick Select
+ */
+.js-hide-box {
+    display: none;
+}
+
+/**
+ * Environment Re-Order
+ */
+#env-reorder tbody tr {
+    cursor: move;
+}

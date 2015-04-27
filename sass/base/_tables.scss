@@ -1,0 +1,75 @@
+table {
+    min-width: 17em;
+}
+
+thead {
+    border-bottom: 5px solid $dark-blue;
+}
+
+tbody tr {
+    border-bottom: 1px dotted $light-grey;
+    font-size: ms(-1);
+}
+
+.table--top-aligned {
+    td {
+        vertical-align: top;
+    }
+}
+
+.table-breathe::before
+{
+    content: '';
+    display: block;
+    height: 1em;
+}
+
+th.table-mid-header {
+    font-size: ms(2);
+
+    background: $bright-blue;
+    border: 3px solid $slightly-less-bright-blue;
+
+    color: white;
+    font-weight: bold;
+    padding: 0 5px;
+    margin : 5px;
+
+    .icon--link {
+        float: right;
+    }
+}
+
+.tablesaw-stack {
+
+    .tablesaw-collapse {
+        @include breakpoint(40em) {
+            display: none;
+        }
+    }
+
+    .table-priority-45 {
+        @include breakpoint(40em) {
+            display: none;
+        }
+        @include breakpoint(45em) {
+            display: table-cell;
+        }
+    }
+    .table-priority-50 {
+        @include breakpoint(40em) {
+            display: none;
+        }
+        @include breakpoint(50em) {
+            display: table-cell;
+        }
+    }
+    .table-priority-55 {
+        @include breakpoint(40em) {
+            display: none;
+        }
+        @include breakpoint(55em) {
+            display: table-cell;
+        }
+    }
+}

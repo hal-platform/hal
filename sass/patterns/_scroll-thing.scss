@@ -1,0 +1,30 @@
+.scrollable-box {
+    font-size: ms(-1);
+
+    table {
+        .code_fixed {
+            width: 300px;
+        }
+    }
+
+    @include breakpoint(41.125em) {
+        dl {
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+        .scrolly-container {
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+
+        table {
+            // display: block;
+            table-layout: fixed;
+
+
+            .code_fixed {
+                width: auto;
+            }
+        }
+    }
+}

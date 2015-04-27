@@ -1,0 +1,47 @@
+html {
+    background-color: tint($light-grey, 50%);
+}
+
+svg {
+    fill: currentColor;
+}
+
+[role="main"] {
+    max-width: 60em;
+    margin: 0 auto;
+    padding: ms(2);
+
+    background-color: $white;
+    @extend %clearfix;
+    position: relative;
+
+    @include breakpoint(32em) {
+        padding: ms(4);
+        border-radius: 5px;
+
+    }
+
+    @include breakpoint(42.1875em) {
+        margin-top: -5em;
+    }
+}
+
+main > p {
+    max-width: 40em;
+    @include trailer(1);
+}
+
+[role="contentinfo"] {
+    font-size: ms(-1);
+    max-width: 77.2em;
+    margin: 0 auto;
+    padding: 0 ms(-2);
+    color: $white;
+    background-color: $text-color;
+    @include rhythm(0,1,.05,0);
+
+    @include breakpoint(32em) {
+        padding: 0 ms(1);
+        @include rhythm(0,1,.05,0);
+    }
+}

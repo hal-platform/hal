@@ -1,80 +1,55 @@
 @charset "UTF-8";
 
-// ==========================================================================
-// Your project!
-// ========================================================================== //
-//
-// Don't write any css in here, just import your partials.
-// This will compile to css/style.css
-///
-
-//
-// Import Compass and Compass plugins.
-///
-@import "compass";
-@import "modular-scale";
-@import "breakpoint";
-@import "singularitygs";
+// vendor bullshit
+// @import "../bower_components/compass-mixins/lib/_compass.scss";
+@import "../bower_components/modular-scale/stylesheets/modular-scale";
+@import "../bower_components/breakpoint-sass/stylesheets/breakpoint";
+// @import "../bower_components/singularitygs/stylesheets/_singularitygs.scss";
 
 
-//
 // Import your variables and Scales.
-///
-@import "vars";
-@import "scales/scales";
+@import "settings";
+@import "settings-colors";
+@import "scales";
 
+// App bullshit
+@import "utilities/mixins";
+@import "utilities/misc";
+@import "utilities/fuck-compass";
 
-//
-// A background image for making sure your elements line up to you baseline.
-//
-// Comment out to hide before going to production.
-///
-// $grid-background-baseline-color: pink;
-// html{@include debug-vertical-alignment();}
+@import "app/spacing";
+@import "app/grid";
+@import "app/global";
+@import "app/icons";
+@import "app/images";
+@import "app/cards";
+@import "app/halheader";
+@import "app/drop-down";
+@import "app/tabs";
+@import "app/js";
+@import "app/js.tablesaw";
+@import "app/dash-box";
+@import "app/pr";
+@import "app/radio-grid";
+@import "app/search";
+@import "app/kraken";
 
+@import "base/code";
+@import "base/headings";
+@import "base/forms";
+@import "base/tables";
+@import "base/error";
+@import "base/lists";
+@import "base/video";
 
-//
-// This is where you start importing all of your partials.
-//
-// If you are styling objects from Scales, I recommend creating a partial with the same name
-// as the one in Scales and importing it here.
-//
-// Example: use @import "partials/nav" if you are adding style to the nav object.
-///
-@import "partials/utilities/mixins";
-@import "partials/utilities/misc";
-@import "partials/spacing";
-@import "partials/grid";
-@import "partials/global";
-@import "partials/icons";
-@import "partials/images";
-@import "partials/cards";
-@import "partials/halheader";
-@import "partials/drop-down";
-@import "partials/tabs";
-@import "partials/js";
-@import "partials/dash-box";
-@import "partials/pr";
-@import "partials/radio-grid";
-@import "partials/search";
-@import "partials/kraken";
-
-@import "partials/base/code";
-@import "partials/base/headings";
-@import "partials/base/forms";
-@import "partials/base/tables";
-@import "partials/base/error";
-@import "partials/base/lists";
-@import "partials/base/video";
-
-@import "partials/patterns/nav";
-@import "partials/patterns/buttons";
-@import "partials/patterns/block-list";
-@import "partials/patterns/alert-bar";
-@import "partials/patterns/choice-list";
-@import "partials/patterns/col-list";
-@import "partials/patterns/split";
-@import "partials/patterns/inline-list";
-@import "partials/patterns/pagination";
-@import "partials/patterns/stat-list";
-@import "partials/patterns/scroll-thing";
+@import "patterns/nav";
+@import "patterns/buttons";
+@import "patterns/block-list";
+@import "patterns/alert-bar";
+@import "patterns/choice-list";
+@import "patterns/col-list";
+@import "patterns/split";
+@import "patterns/inline-list";
+@import "patterns/pagination";
+@import "patterns/stat-list";
+@import "patterns/scroll-thing";

@@ -1,5 +1,5 @@
 {
-    "name": "HAL 9000",
+    "name": "HAL-9000",
     "version": "2.4.2",
     "ignore": [
         "**/.*",
@@ -17,7 +17,13 @@
         "js-signals": "1.0.0",
         "svg4everybody": "1.0.0",
         "typed.js": "v1.1",
-        "underscore": "1.8.3"
+        "underscore": "1.8.3",
+
+        "modular-scale": "2.0.7",
+        "breakpoint-sass": "2.4.2",
+        "singularitygs": "1.6.2",
+        "compass-mixins": "0.12.6",
+        "scales": "2.1.2"
     }
 }
 

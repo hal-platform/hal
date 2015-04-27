@@ -1,0 +1,127 @@
+[class*="cards"] {
+    @extend %clearfix;
+}
+
+.cards--baby > li {
+    width: 100%;
+    font-size: ms(-1);
+    @include trailer(2);
+}
+
+.cards > li {
+    @include breakpoint(40em) {
+        &:nth-child(odd) {
+            // @include grid-span(1, 1, $grid: 2, $gutter: .1);
+            clear: left;
+        }
+
+        &:nth-child(even) {
+            // @include grid-span(1, 2, $grid: 2, $gutter: .1);
+            clear:right;
+        }
+    }
+
+    @include breakpoint(60em) {
+        &:nth-child(3n+1) {
+            // @include grid-span(1, 1, $grid: 3, $gutter: .1);
+            clear: left;
+        }
+
+        &:nth-child(3n+2) {
+            // @include grid-span(1, 2, $grid: 3, $gutter: .1);
+        }
+
+        &:nth-child(3n+3) {
+            // @include grid-span(1, 3, $grid: 3, $gutter: .1);
+            clear: right;
+        }
+    }
+}
+
+.card, .card--baby {
+    @include padding-x(ms(-1));
+    @include rhythm(0,.25,0,1);
+    box-shadow: 0 0 0 8px $light-grey;
+    position: relative;
+}
+
+.card__header {
+    background-color: $light-grey;
+    margin: -.375em -.77778em 0 -.77778em;
+    @include padding-x(ms(-1));
+    padding-bottom: ms(-3);
+}
+
+.card__details {
+    background: $white;
+    @include rhythm(.5,0,.25,0);
+}
+
+.card__details li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.js-data-overload {
+    display: none;
+}
+
+.card__details code {
+    padding: 0;
+}
+
+.card__details .split {
+    margin-bottom: 0;
+}
+
+.card__header .icon--link {
+    float: right;
+}
+
+.card__header .icon--link + .rollback {
+    padding: 0 .4em;
+}
+
+.rollback {
+    float: right;
+}
+
+.rollback .icon {
+    transition: all .9s ease;
+}
+
+.rollback:hover .icon {
+    transform: rotate(-360deg);
+}
+
+/* env specific colors for push cards and push/build boxes */
+.cards--test .card,
+.card--test {
+    box-shadow: 0 0 0 8px $hal-blue;
+}
+.cards--test .card__header,
+.card--test .card__header {
+    background-color: $hal-blue;
+    a { color: $white }
+}
+
+.cards--beta .card,
+.card--beta {
+    box-shadow: 0 0 0 8px $hal-cyan;
+}
+.cards--beta .card__header,
+.card--beta .card__header {
+    background-color: $hal-cyan;
+    a { color: $white }
+}
+
+.cards--prod .card,
+.card--prod {
+    box-shadow: 0 0 0 8px $hal-red;
+}
+.cards--prod .card__header,
+.card--prod .card__header {
+    background-color: $hal-red;
+    a { color: $white }
+}
