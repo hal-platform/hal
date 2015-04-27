@@ -2,7 +2,7 @@ var gulp = require('gulp'),
     plugins = require('gulp-load-plugins')(),
     webpack = require('gulp-webpack-build'),
     isDeploy = process.argv.indexOf('--deploy') > -1,
-    exec = require('child_process').exec;
+    del = require('del');
 
 // javascript
 gulp.task('js-hint', function() {
@@ -11,9 +11,8 @@ gulp.task('js-hint', function() {
         .pipe(plugins.jshint.reporter('default'));
 });
 
-gulp.task('js-clean', function() {
-    return gulp.src(['public/js'], { read: false })
-        .pipe(plugins.clean());
+gulp.task('js-clean', function(cb) {
+    del('public/js', cb);
 });
 
 gulp.task('js-webpack', ['js-clean'], function() {
@@ -47,25 +46,20 @@ gulp.task('styles', function() {
         .pipe(gulp.dest('public/css'));
 });
 
-// assets
-gulp.task('images', function() {
-    return gulp.src('img/**/*')
-        .pipe(gulp.dest('public/img'));
-});
-
-
 // core
 gulp.task('watch', function() {
     gulp.watch('sass/**/*.scss', ['styles']);
     gulp.watch('js/**/*.js', ['scripts']);
-    gulp.watch('img/**/*', ['images']);
 });
 
-gulp.task('build', ['styles', 'scripts', 'images']);
+gulp.task('build', ['styles', 'scripts']);
 
-gulp.task('clean', function() {
-    return gulp.src(['public/js', 'public/img', 'public/css'], { read: false })
-        .pipe(plugins.clean());
+gulp.task('clean', function(cb) {
+    del([
+        'public/js',
+        'public/css'
+
+    ], cb);
 });
 
 gulp.task('default', ['clean'], function() {
