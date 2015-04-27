@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\Repository;
 
 use QL\Hal\Core\Repository\GroupRepository;
+use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
@@ -25,6 +26,11 @@ class RepositoriesController implements ControllerInterface
     private $groupRepo;
 
     /**
+     * @type RepositoryRepository
+     */
+    private $repoRepo;
+
+    /**
      * @type Response
      */
     private $response;
@@ -32,12 +38,18 @@ class RepositoriesController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param GroupRepository $groupRepo
+     * @param RepositoryRepository $repoRepo
      * @param Response $response
      */
-    public function __construct(TemplateInterface $template, GroupRepository $groupRepo, Response $response)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        GroupRepository $groupRepo,
+        RepositoryRepository $repoRepo,
+        Response $response
+    ) {
         $this->template = $template;
         $this->groupRepo = $groupRepo;
+        $this->repoRepo = $repoRepo;
         $this->response = $response;
     }
 
@@ -47,14 +59,18 @@ class RepositoriesController implements ControllerInterface
     public function __invoke()
     {
         $groups = $this->groupRepo->findBy([], ['name' => 'ASC']);
+        $repos = $this->repoRepo->findBy([], ['name' => 'ASC']);
+        usort($repos, $this->repoSorter());
 
         $repositories = [];
-        $repoSort = $this->repoSorter();
 
-        foreach ($groups as $group) {
-            $repos = $group->getRepositories()->toArray();
-            usort($repos, $repoSort);
-            $repositories[$group->getId()] = $repos;
+        foreach ($repos as $repo) {
+            $id = $repo->getGroup()->getId();
+            if (!isset($repositories[$id])) {
+                $repositories[$id] = [];
+            }
+
+            $repositories[$id][] = $repo;
         }
 
         $rendered = $this->template->render([

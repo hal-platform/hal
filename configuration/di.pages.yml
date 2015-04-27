@@ -110,6 +110,7 @@ services:
         class: 'QL\Hal\Controllers\Group\RemoveGroupController'
         arguments:
             - @group.repo
+            - @repository.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -125,6 +126,7 @@ services:
         arguments:
             - @repositories.twig
             - @group.repo
+            - @repository.repo
             - @slim.response
     repositories.twig:
         parent: 'twig.template'
