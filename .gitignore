@@ -13,7 +13,6 @@ atlassian-ide-plugin.xml
 /.bundle/
 /.sass-cache/
 /public/css/
-/public/img/
 /public/js/
 npm-debug.log
 
@@ -30,6 +29,3 @@ npm-debug.log
 # deployment caches
 /.doctrine/
 /.twig/
-
-# misc
-/.vagrant
