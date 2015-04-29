@@ -15,27 +15,27 @@
     <h2>Environments</h2>
 
     <ul class="list--bare cards">
-    {% for encrypt in assigned_environments %}
-        <li>
-            <article class="card">
-                <header class="card__header">
-                    <h4>{{ encrypt.environment.name }}</h4>
-                    <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">View Configuration</a>
-                </header>
+        {% for encrypt in assigned_environments %}
+            <li>
+                <article class="card">
+                    <header class="card__header">
+                        <h4>{{ encrypt.environment.name }}</h4>
+                        <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">View Configuration</a>
+                    </header>
 
-                <section class="card__details">
-                    <ul class="split">
-                        <li>
-                            <span class="split__title">Deployed on:</span> << timestamp >>
-                        </li>
-                        <li>
-                            <span class="split__title">Deployed Config:</span> << none >>
-                        </li>
-                    </ul>
-                </section>
-            </article>
-        </li>
-    {% endfor %}
+                    <section class="card__details">
+                        <ul class="split">
+                            <li>
+                                <span class="split__title">Deployed on:</span> << timestamp >>
+                            </li>
+                            <li>
+                                <span class="split__title">Deployed Config:</span> << none >>
+                            </li>
+                        </ul>
+                    </section>
+                </article>
+            </li>
+        {% endfor %}
     </ul>
 
 {% endblock %}

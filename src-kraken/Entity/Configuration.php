@@ -9,37 +9,20 @@ namespace QL\Kraken\Entity;
 
 use JsonSerializable;
 
-class Encryption implements JsonSerializable
+class Configuration implements JsonSerializable
 {
     /**
      * @type string
      */
     protected $id;
-    protected $key;
-
-    /**
-     * @type Application
-     */
     protected $application;
-
-    /**
-     * @type Environment
-     */
     protected $environment;
-
-    /**
-     * @type Configuration
-     */
-    protected $configuration;
 
     public function __construct()
     {
         $this->id = '';
-        $this->key = '';
-
         $this->application = null;
         $this->environment = null;
-        $this->configuration = null;
     }
 
     /**
@@ -48,14 +31,6 @@ class Encryption implements JsonSerializable
     public function id()
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function key()
-    {
-        return $this->key;
     }
 
     /**
@@ -75,14 +50,6 @@ class Encryption implements JsonSerializable
     }
 
     /**
-     * @return Configuration
-     */
-    public function configuration()
-    {
-        return $this->configuration;
-    }
-
-    /**
      * @param string $id
      *
      * @return self
@@ -90,17 +57,6 @@ class Encryption implements JsonSerializable
     public function withId($id)
     {
         $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return self
-     */
-    public function withKey($key)
-    {
-        $this->key = $key;
         return $this;
     }
 
@@ -126,18 +82,6 @@ class Encryption implements JsonSerializable
         return $this;
     }
 
-
-    /**
-     * @param Configuration $configuration
-     *
-     * @return self
-     */
-    public function withConfiguration()
-    {
-        $this->configuration = $configuration;
-        return $this;
-    }
-
     /**
      * @return array
      */
@@ -146,8 +90,7 @@ class Encryption implements JsonSerializable
         $json = [
             'id' => $this->id(),
             'application' => $this->application(),
-            'environment' => $this->environment(),
-            'configuration' => $this->configuration()
+            'environment' => $this->environment()
         ];
 
         return $json;
