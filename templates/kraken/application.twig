@@ -6,16 +6,16 @@
 {% block content %}
 
     <a href="{{ urlFor('kraken.applications') }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h2>Application</h2>
+    <h1>Application</h1>
 
     <h4>ID</h4>
     <p>{{ application.id }}</p>
 
-    <h4>Environments</h4>
+    <h2>Environments</h2>
     {% if assigned_environment %}
         <p><a href="{{ urlFor('kraken.status', {id: application.id}) }}">Configuration Status</a></p>
 
-        <table>
+        <table class="table--spacing-medium">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -42,7 +42,7 @@
         <p><a href="{{ urlFor('kraken.application.add_environment', {id: application.id}) }}">Add Environment</a></p>
     {% endif %}
 
-    <h4>Configuration Schema</h4>
+    <h2>Configuration Schema</h2>
     <p><a href="{{ urlFor('kraken.application.add_schema', {id: application.id}) }}">Add Property</a></p>
     {{ block('configuration_schema') }}
 
@@ -51,7 +51,7 @@
 {% block configuration_schema %}
 
     {% if schema %}
-        <table>
+        <table class="table--spacing-medium">
             <thead>
                 <tr>
                     <th>Key</th>

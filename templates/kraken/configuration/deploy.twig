@@ -1,0 +1,23 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "Generate Configuration" %}
+
+{% block content %}
+
+    <a href="{{ urlFor('kraken.application', {id: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <h1>Deploy Configuration for <strong>{{ application.id }}</strong></h1>
+
+    <h4>Application</h4>
+    <p>{{ application.id }}</p>
+
+
+    <h2>Environments</h2>
+    {% for encrypt in assigned_environments %}
+        <h4>{{ encrypt.environment.name }}</h4>
+        <p>
+            <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">View Configuration for this environment</a>
+        </p>
+    {% endfor %}
+
+{% endblock %}
