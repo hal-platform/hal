@@ -1,11 +1,15 @@
-.dash-box-wrapper, .flex-box-wrapper {
+.dash-box-wrapper,
+.flex-box-wrapper {
     background-color: tint($light-grey, 50%);
-    @include margin-x(-0.8em);
-    margin-bottom: -1em;
     overflow: hidden;
 
+    // Must inverse the padding on the containing element
+    @include margin-x(ms(2) * -1);
+    margin-bottom: ms(-2) * -1;
+
     @include breakpoint(33em) {
-       @include margin-x(-1.09em);
+       @include margin-x(ms(3) * -1);
+        margin-bottom: ms(3) * -1;
     }
 }
 

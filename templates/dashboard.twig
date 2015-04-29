@@ -49,7 +49,7 @@
             <div class="col-list">
                 <ul class="list--bare js-filter">
                     {% for repository in repositories %}
-                        <li><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.name }}</a></li>
+                        <li class="mbn"><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.name }}</a></li>
                     {% else %}
                         <li>Looks like you don't have access to anything.</li>
                     {% endfor %}
@@ -69,14 +69,14 @@
         <div class="dash-box">
               {# RECENT USER BUILD ACTIVITY #}
 
-              <h3>Your Recent Builds</h3>
+              <h3 class="trailer">Your Recent Builds</h3>
               {% include 'partials/build-box.twig' with {'builds': builds, 'initiator': false} %}
         </div>
 
         <div class="dash-box">
               {# RECENT USER PUSH ACTIVITY #}
 
-              <h3>Your Recent Pushes</h3>
+              <h3 class="trailer">Your Recent Pushes</h3>
               {% include 'partials/push-box.twig' with {'pushes': pushes, 'initiator': false} %}
         </div>
     </div>

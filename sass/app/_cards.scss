@@ -2,6 +2,11 @@
     @extend %clearfix;
 }
 
+.cards {
+    @include leader;
+    @include trailer;
+}
+
 .cards--baby > li {
     width: 100%;
     @include adjust-font-size-to(ms(-1));
@@ -39,28 +44,33 @@
 }
 
 .card, .card--baby {
-    @include padding-x(msem(-1));
-    @include rhythm(0,.25,0,1);
+    margin-bottom: ms(1);
     box-shadow: 0 0 0 8px $light-grey;
     position: relative;
 }
 
 .card__header {
+    h4 {
+        margin: 0;
+        padding: ms(-10);
+    }
+
+    padding: ms(-5) 0;
+    padding-top: 0;
+
     background-color: $light-grey;
-    margin: -.375em -.77778em 0 -.77778em;
-    @include padding-x(msem(-1));
-    padding-bottom: msem(-3);
 }
 
 .card__details {
     background: $white;
-    @include rhythm(.5,0,.25,0);
+    padding: ms(-8) ms(-5);
 }
 
 .card__details li {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: ms(3);
 }
 
 .js-data-overload {

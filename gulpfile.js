@@ -41,7 +41,11 @@ gulp.task('scripts', ['js-hint'], function() {
 // css
 gulp.task('styles', function() {
     return gulp.src('sass/**/*.scss')
-        .pipe(plugins.sass({errLogToConsole: true}))
+        .pipe(plugins.sass({
+            errLogToConsole: true,
+            outputStyle: isDeploy ? 'compressed' : 'compact',
+            precision: 2
+        }))
         .pipe(plugins.autoprefixer({browsers: ['last 5 versions', '> 1%']}))
         .pipe(gulp.dest('public/css'));
 });
