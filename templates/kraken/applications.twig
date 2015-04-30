@@ -19,7 +19,7 @@
                 {% for app in applications %}
                     <tr>
                         <td>{{ app.id }}</td>
-                        <td><a href="{{ urlFor('kraken.application', {id: app.id}) }}">Manage</a></td>
+                        <td><a href="{{ urlFor('kraken.application', {application: app.id}) }}">Manage</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

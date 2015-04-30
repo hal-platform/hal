@@ -11,17 +11,17 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
 use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Encryption;
 use QL\Kraken\Entity\Environment;
+use QL\Kraken\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
 use QL\Hal\Session;
 use Slim\Http\Request;
 
-class AddEnvironmentController implements ControllerInterface
+class AddTargetController implements ControllerInterface
 {
-    const SUCCESS = 'Environment added.';
+    const SUCCESS = 'Target added.';
     const ERR_INVALID_KEY = 'Invalid Key. Encryption Keys must be alphanumeric.';
     const ERR_DUPLICATE_ENV = 'This environment is already linked to this application.';
     const ERR_MISSING_ENV = 'Please select an environment.';
@@ -47,7 +47,7 @@ class AddEnvironmentController implements ControllerInterface
      * @type EntityRepository
      */
     private $envRepository;
-    private $encRepository;
+    private $tarRepository;
 
     /**
      * @type Url
@@ -87,7 +87,7 @@ class AddEnvironmentController implements ControllerInterface
         $this->application = $application;
 
         $this->em = $em;
-        $this->encRepository = $this->em->getRepository(Encryption::CLASS);
+        $this->tarRepository = $this->em->getRepository(Target::CLASS);
         $this->envRepository = $this->em->getRepository(Environment::CLASS);
 
         $this->url = $url;
@@ -105,8 +105,8 @@ class AddEnvironmentController implements ControllerInterface
             $this->handleForm();
         }
 
-        $environments = $this->filterLinkedEnvironments(
-            $this->encRepository->findBy(['application' => $this->application]),
+        $environments = $this->filterTargets(
+            $this->tarRepository->findBy(['application' => $this->application]),
             $this->envRepository->findBy([], ['name' => 'ASC'])
         );
 
@@ -130,16 +130,16 @@ class AddEnvironmentController implements ControllerInterface
     }
 
     /**
-     * @param Encryption[] $links
+     * @param Target[] $targets
      * @param Environment[] $environments
      *
      * @return Environment[]
      */
-    private function filterLinkedEnvironments($links, $environments)
+    private function filterTargets($targets, $environments)
     {
         $linked = [];
-        foreach ($links as $link) {
-            $linked[$link->environment()->id()] = true;
+        foreach ($targets as $target) {
+            $linked[$target->environment()->id()] = true;
         }
 
         return array_filter($environments, function($env) use ($linked) {
@@ -171,7 +171,7 @@ class AddEnvironmentController implements ControllerInterface
 
         // dupe check
         if (!$this->errors) {
-            $dupe = $this->encRepository->findOneBy([
+            $dupe = $this->tarRepository->findOneBy([
                 'application' => $this->application,
                 'environment' => $env
             ]);
@@ -185,7 +185,7 @@ class AddEnvironmentController implements ControllerInterface
             return null;
         }
 
-        $this->saveEncryption($env, $key);
+        $this->saveTarget($env, $key);
     }
 
     /**
@@ -194,12 +194,12 @@ class AddEnvironmentController implements ControllerInterface
      *
      * @return void
      */
-    private function saveEncryption(Environment $env, $key)
+    private function saveTarget(Environment $env, $key)
     {
         $uniq = GUID::create()->asHex();
         $uniq = strtolower($uniq);
 
-        $encryption = (new Encryption)
+        $encryption = (new Target)
             ->withId($uniq)
             ->withKey($key)
             ->withApplication($this->application)

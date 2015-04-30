@@ -1,0 +1,45 @@
+QL\Kraken\Entity\ConfigurationProperty:
+    type: entity
+    table: kraken_configuration_property
+
+    id:
+        id:
+            column: id
+            type: string
+            length: 40
+
+    fields:
+
+        key:
+            column: property_key
+            type: string
+            length: 250
+        dataType:
+            column: data_type
+            type: string
+            length: 10
+        isSecure:
+            column: secure
+            type: boolean
+        value:
+            column: value
+            type: string
+            length: 4000
+
+    manyToOne:
+
+        configuration:
+            targetEntity: Configuration
+            joinColumn:
+                name: configuration_id
+                referencedColumnName: id
+        property:
+            targetEntity: Property
+            joinColumn:
+                name: property_id
+                referencedColumnName: id
+        schema:
+            targetEntity: Schema
+            joinColumn:
+                name: schema_id
+                referencedColumnName: id

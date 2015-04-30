@@ -5,17 +5,15 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Application;
+namespace QL\Kraken\Controller\Schema;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Encryption;
+use QL\Kraken\Entity\Property;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\NotFound;
 
-class ApplicationStatusController implements ControllerInterface
+class PropertyController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -23,14 +21,14 @@ class ApplicationStatusController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManager
+     * @type Application
      */
-    private $em;
+    private $application;
 
     /**
-     * @type EntityRepository
+     * @type Property
      */
-    private $encRepository;
+    private $property;
 
     /**
      * @type NotFound
@@ -40,22 +38,19 @@ class ApplicationStatusController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param Application $application
-     *
-     * @param $em
+     * @param Property $property
      *
      * @param NotFound $notFound
      */
     public function __construct(
         TemplateInterface $template,
         Application $application,
-        $em,
+        Property $property,
         NotFound $notFound
     ) {
         $this->template = $template;
         $this->application = $application;
-
-        $this->em = $em;
-        $this->encRepository = $this->em->getRepository(Encryption::CLASS);
+        $this->property = $property;
 
         $this->notFound = $notFound;
     }
@@ -65,17 +60,14 @@ class ApplicationStatusController implements ControllerInterface
      */
     public function __invoke()
     {
-        $assigned = $this->encRepository->findBy(['application' => $this->application]);
-
-        if (!$assigned) {
+        if ($this->property->application() !== $this->application) {
             return call_user_func($this->notFound);
         }
 
-        // Cross reference checksum of current value in Consul with checksum of "active" configuration in DB
-
         $context = [
             'application' => $this->application,
-            'assigned_environments' => $assigned
+            'environment' => $this->property->environment(),
+            'property' => $this->property
         ];
 
         $this->template->render($context);

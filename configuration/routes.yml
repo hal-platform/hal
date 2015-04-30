@@ -531,41 +531,60 @@ parameters:
             stack: ['admin.bouncer', 'kraken.environments.page']
 
         kraken.application:
-            route: '/kraken/applications/:id'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.page']
-            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+            route: '/kraken/applications/:application'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.page']
+            conditions: {application: '[0-9a-zA-Z]{2,40}'}
 
         kraken.property:
-            route: '/kraken/applications/:id/properties/:property'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.property.page']
+            route: '/kraken/applications/:application/properties/:property'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.property.page']
             conditions:
-                id: '[0-9a-zA-Z]{2,40}'
+                application: '[0-9a-zA-Z]{2,40}'
                 property: '[0-9a-zA-Z]{2,40}'
 
         kraken.status:
-            route: '/kraken/applications/:id/status'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.status.page']
-            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+            route: '/kraken/applications/:application/status'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.status.page']
+            conditions: {application: '[0-9a-zA-Z]{2,40}'}
+
+        kraken.configuration:
+            route: '/kraken/applications/:application/configurations/:configuration'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.configuration.page']
+            conditions:
+                application: '[0-9a-zA-Z]{2,40}'
+                configuration: '[0-9a-zA-Z]{2,40}'
 
         # add schema
         kraken.application.add_schema:
-            route: '/kraken/applications/:id/schema'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.add_schema.page']
-            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+            route: '/kraken/applications/:application/schema'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_schema.page']
+            conditions: {application: '[0-9a-zA-Z]{2,40}'}
 
         # view configuration, add property
-        kraken.application.environment:
-            route: '/kraken/applications/:id/environments/:environment'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.environment.page']
+        kraken.application.target:
+            route: '/kraken/applications/:application/environments/:environment'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.target.page']
             conditions:
-                id: '[0-9a-zA-Z]{2,40}'
+                application: '[0-9a-zA-Z]{2,40}'
                 environment: '[0-9a-zA-Z]{2,40}'
 
         # add environment to application
-        kraken.application.add_environment:
-            route: '/kraken/applications/:id/environments'
-            stack: ['admin.bouncer', 'kraken.middleware.require.application', 'kraken.application.add_environment.page']
-            conditions: {id: '[0-9a-zA-Z]{2,40}'}
+        kraken.application.add_target:
+            route: '/kraken/applications/:application/environments'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_target.page']
+            conditions: {application: '[0-9a-zA-Z]{2,40}'}
+
+        # deploy configuration to target
+        kraken.deploy:
+            method: ['GET']
+            route: '/kraken/targets/:target/deploy'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.page']
+            conditions: {target: '[0-9a-zA-Z]{2,40}'}
+        kraken.deploy.handler:
+            method: ['POST']
+            route: '/kraken/targets/:target/deploy'
+            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.handler']
+            conditions: {target: '[0-9a-zA-Z]{2,40}'}
 
         ################################################################################################################
         # GITHUB API ROUTES

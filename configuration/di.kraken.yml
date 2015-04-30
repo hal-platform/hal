@@ -2,8 +2,11 @@
 # This includes handlers, middleware, or validators dedicated to a single page.
 services:
 
-    kraken.entity:
-        synthetic: true
+    kraken.application:     { synthetic: true }
+    kraken.environment:     { synthetic: true }
+    kraken.property:        { synthetic: true }
+    kraken.configuration:   { synthetic: true }
+    kraken.target:          { synthetic: true }
 
     ####################################################################################################################
     # SERVICES
@@ -74,79 +77,108 @@ services:
         class: 'QL\Kraken\Controller\ApplicationController'
         arguments:
             - @kraken.application.twig
-            - @kraken.entity
+            - @kraken.application
             - @doctrine.em
     kraken.application.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application.twig']]]
 
-    kraken.application.environment.page:
-        class: 'QL\Kraken\Controller\Application\ViewEnvironmentController'
+    kraken.application.target.page:
+        class: 'QL\Kraken\Controller\Application\TargetController'
         arguments:
             - @slim.request
-            - @kraken.application.environment.twig
-            - @kraken.entity
+            - @kraken.application.target.twig
+            - @kraken.application
+            - @kraken.environment
             - @doctrine.em
             - @url
             - @session
             - @slim.not.found
-            - @slim.route.parameters
-    kraken.application.environment.twig:
+    kraken.application.target.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/view-environment.twig']]]
+        calls: [['setTemplate', ['kraken/application/target.twig']]]
 
     kraken.application.property.page:
-        class: 'QL\Kraken\Controller\Application\ViewPropertyController'
+        class: 'QL\Kraken\Controller\Schema\PropertyController'
         arguments:
             - @kraken.application.property.twig
-            - @kraken.entity
-            - @doctrine.em
+            - @kraken.application
+            - @kraken.property
             - @slim.not.found
-            - @slim.route.parameters
     kraken.application.property.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/view-property.twig']]]
+        calls: [['setTemplate', ['kraken/schema/property.twig']]]
 
     kraken.application.status.page:
-        class: 'QL\Kraken\Controller\Application\ApplicationStatusController'
+        class: 'QL\Kraken\Controller\Application\StatusController'
         arguments:
             - @kraken.application.status.twig
-            - @kraken.entity
+            - @kraken.application
             - @doctrine.em
             - @slim.not.found
     kraken.application.status.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/status.twig']]]
 
+    kraken.application.configuration.page:
+        class: 'QL\Kraken\Controller\Configuration\ConfigurationController'
+        arguments:
+            - @kraken.application.configuration.twig
+            - @kraken.application
+            - @kraken.configuration
+            - @doctrine.em
+    kraken.application.configuration.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/configuration.twig']]]
+
     ####################################################################################################################
     # CRUD CONTROLLERS
     ####################################################################################################################
 
-    kraken.application.add_environment.page:
-        class: 'QL\Kraken\Controller\Application\AddEnvironmentController'
+    kraken.application.add_target.page:
+        class: 'QL\Kraken\Controller\Application\AddTargetController'
         arguments:
             - @slim.request
-            - @kraken.application.add_environment.twig
-            - @kraken.entity
+            - @kraken.application.add_target.twig
+            - @kraken.application
             - @doctrine.em
             - @url
             - @session
-    kraken.application.add_environment.twig:
+    kraken.application.add_target.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/add-environment.twig']]]
+        calls: [['setTemplate', ['kraken/application/add-target.twig']]]
 
     kraken.application.add_schema.page:
-        class: 'QL\Kraken\Controller\Application\AddSchemaController'
+        class: 'QL\Kraken\Controller\Schema\AddSchemaController'
         arguments:
             - @slim.request
             - @kraken.application.add_schema.twig
-            - @kraken.entity
+            - @kraken.application
             - @doctrine.em
             - @url
             - @session
     kraken.application.add_schema.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/add-schema.twig']]]
+        calls: [['setTemplate', ['kraken/schema/add-schema.twig']]]
+
+    kraken.deploy.page:
+        class: 'QL\Kraken\Controller\Configuration\DeployController'
+        arguments:
+            - @kraken.deploy.twig
+            - @kraken.target
+            - @doctrine.em
+    kraken.deploy.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/deploy.twig']]]
+
+    kraken.deploy.handler:
+        class: 'QL\Kraken\Controller\Configuration\DeployHandler'
+        arguments:
+            - @kraken.target
+            - @kraken.json
+            - @session.flashfire
+            - @doctrine.em
+            - @kraken.consul
 
     ####################################################################################################################
     # UTIL
@@ -160,15 +192,24 @@ services:
     kraken.twig.extension:
         class: 'QL\Kraken\Application\KrakenTwigExtension'
 
+    kraken.json:
+        class: 'QL\Panthor\Utility\Json'
+
+    kraken.guzzle:
+        class: 'GuzzleHttp\Client'
+
+    kraken.consul:
+        class: 'QL\Kraken\ConsulService'
+        arguments: [@kraken.guzzle]
+
     ####################################################################################################################
     # MIDDLEWARE
     ####################################################################################################################
 
-    kraken.middleware.require.application:
+    kraken.middleware.require.entity:
         class: 'QL\Kraken\Middleware\RequireEntityMiddleware'
         arguments:
             - @service_container
             - @doctrine.em
             - @slim.not.found
             - @slim.route.parameters
-            - 'Application'

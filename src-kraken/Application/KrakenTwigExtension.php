@@ -7,8 +7,9 @@
 
 namespace QL\Kraken\Application;
 
+use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\PropertySchema;
+use QL\Kraken\Entity\Schema;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleTest;
@@ -33,7 +34,7 @@ class KrakenTwigExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('formatSchemaType', [$this, 'formatPropertySchemaType']),
+            new Twig_SimpleFilter('formatSchemaType', [$this, 'formatSchemaType']),
             new Twig_SimpleFilter('formatPropertyValue', [$this, 'formatPropertyValue'])
         ];
     }
@@ -56,7 +57,7 @@ class KrakenTwigExtension extends Twig_Extension
                 return $entity instanceof Property;
             }),
             new Twig_SimpleTest('schema', function ($entity) {
-                return $entity instanceof PropertySchema;
+                return $entity instanceof Schema;
             })
         ];
     }
@@ -64,18 +65,18 @@ class KrakenTwigExtension extends Twig_Extension
     /**
      * Format a property schema data type for display
      *
-     * @param PropertySchema|string|null $schema
+     * @param Schema|string|null $schema
      *
      * @return string
      */
-    public function formatPropertySchemaType($schema = null)
+    public function formatSchemaType($schema = null)
     {
-        if ($schema instanceof PropertySchema) {
+        if ($schema instanceof Schema || $schema instanceof ConfigurationProperty) {
             $schema = $schema->dataType();
         }
 
         if ($schema) {
-            $types = PropertySchema::$dataTypes;
+            $types = Schema::$dataTypes;
 
             if (isset($types[$schema])) {
                 return $types[$schema];
@@ -88,20 +89,24 @@ class KrakenTwigExtension extends Twig_Extension
     /**
      * Format a property value for display
      *
-     * @param Property|null $schema
+     * @param ConfigurationProperty|Property|null $schema
      * @param int $maxLength
      *
      * @return string|null
      */
-    public function formatPropertyValue(Property $property = null, $maxLength = 100)
+    public function formatPropertyValue($property, $maxLength = 100)
     {
         $maxLength = (int) $maxLength;
 
-        if ($property === null) {
+        if (!$property instanceof Property && !$property instanceof ConfigurationProperty) {
             return '';
         }
 
-        if ($property->propertySchema()->isSecure()) {
+        if ($property instanceof Property && $property->schema()->isSecure()) {
+            return null;
+        }
+
+        if ($property instanceof ConfigurationProperty && $property->isSecure()) {
             return null;
         }
 

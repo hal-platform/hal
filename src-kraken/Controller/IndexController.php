@@ -46,15 +46,8 @@ class IndexController implements ControllerInterface
      */
     public function __invoke()
     {
-        $apps = $this->em->getRepository('QL\Kraken\Entity\Application');
-        $envs = $this->em->getRepository('QL\Kraken\Entity\Environment');
-        $schemas = $this->em->getRepository('QL\Kraken\Entity\PropertySchema');
 
         $items = [];
-
-        $items[] = $apps->find('abcd');
-        $items[] = $envs->find('b9c41c888d6c48cc8a11877b2c8e7fa7');
-        $items[] = $schemas->find('test1');
 
         $context = [
             'test' => $items

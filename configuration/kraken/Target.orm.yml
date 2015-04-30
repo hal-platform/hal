@@ -1,6 +1,6 @@
-QL\Kraken\Entity\Encryption:
+QL\Kraken\Entity\Target:
     type: entity
-    table: kraken_encryption
+    table: kraken_target
 
     id:
         id:

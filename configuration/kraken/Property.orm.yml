@@ -17,10 +17,10 @@ QL\Kraken\Entity\Property:
 
     manyToOne:
 
-        propertySchema:
-            targetEntity: PropertySchema
+        schema:
+            targetEntity: Schema
             joinColumn:
-                name: property_schema_id
+                name: schema_id
                 referencedColumnName: id
 
         environment:

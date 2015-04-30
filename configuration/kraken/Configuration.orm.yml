@@ -8,6 +8,17 @@ QL\Kraken\Entity\Configuration:
             type: string
             length: 40
 
+    fields:
+
+        configuration:
+            column: configuration
+            type: string
+
+        checksum:
+            column: checksum
+            type: string
+            length: 500
+
     manyToOne:
 
         environment:

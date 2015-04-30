@@ -5,13 +5,13 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Application;
+namespace QL\Kraken\Controller\Schema;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
 use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\PropertySchema;
+use QL\Kraken\Entity\Schema;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
@@ -86,7 +86,7 @@ class AddSchemaController implements ControllerInterface
         $this->application = $application;
 
         $this->em = $em;
-        $this->schemaRepository = $this->em->getRepository(PropertySchema::CLASS);
+        $this->schemaRepository = $this->em->getRepository(Schema::CLASS);
 
         $this->url = $url;
         $this->session = $session;
@@ -105,7 +105,7 @@ class AddSchemaController implements ControllerInterface
 
         $context = [
             'application' => $this->application,
-            'property_types' => PropertySchema::$dataTypes,
+            'property_types' => Schema::$dataTypes,
 
             'errors' => $this->errors,
             'form' => [
@@ -139,7 +139,7 @@ class AddSchemaController implements ControllerInterface
             $this->errors[] = self::ERR_INVALID_KEY;
         }
 
-        if (!isset(PropertySchema::$dataTypes[$type])) {
+        if (!isset(Schema::$dataTypes[$type])) {
             $this->errors[] = self::ERR_INVALID_TYPE;
         }
 
@@ -175,7 +175,7 @@ class AddSchemaController implements ControllerInterface
         $uniq = GUID::create()->asHex();
         $uniq = strtolower($uniq);
 
-        $schema = (new PropertySchema)
+        $schema = (new Schema)
             ->withId($uniq)
             ->withKey($key)
             ->withDataType($type)

@@ -9,7 +9,7 @@ namespace QL\Kraken\Entity;
 
 use JsonSerializable;
 
-class Encryption implements JsonSerializable
+class Target implements JsonSerializable
 {
     /**
      * @type string
@@ -132,7 +132,7 @@ class Encryption implements JsonSerializable
      *
      * @return self
      */
-    public function withConfiguration()
+    public function withConfiguration(Configuration $configuration)
     {
         $this->configuration = $configuration;
         return $this;

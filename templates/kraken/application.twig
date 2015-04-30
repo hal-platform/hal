@@ -12,8 +12,8 @@
     <p>{{ application.id }}</p>
 
     <h2>Environments</h2>
-    {% if assigned_environment %}
-        <p><a href="{{ urlFor('kraken.status', {id: application.id}) }}">Configuration Status</a></p>
+    {% if targets %}
+        <p><a href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration Status</a></p>
 
         <table class="table--spacing-medium">
             <thead>
@@ -23,11 +23,11 @@
                 </tr>
             </thead>
             <tbody>
-                {% for encrypt in assigned_environment %}
+                {% for target in targets %}
                     <tr>
-                        <td>{{ encrypt.environment.name }}</td>
+                        <td>{{ target.environment.name }}</td>
                         <td>
-                            <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">Manage</a>
+                            <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">Manage</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -39,11 +39,11 @@
     {% endif %}
 
     {% if environments %}
-        <p><a href="{{ urlFor('kraken.application.add_environment', {id: application.id}) }}">Add Environment</a></p>
+        <p><a href="{{ urlFor('kraken.application.add_target', {application: application.id}) }}">Add Target</a></p>
     {% endif %}
 
     <h2>Configuration Schema</h2>
-    <p><a href="{{ urlFor('kraken.application.add_schema', {id: application.id}) }}">Add Property</a></p>
+    <p><a href="{{ urlFor('kraken.application.add_schema', {application: application.id}) }}">Add Property</a></p>
     {{ block('configuration_schema') }}
 
 {% endblock %}

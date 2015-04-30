@@ -364,6 +364,10 @@ services:
     # SESSION
     ####################################################################################################################
 
+    session.flashfire:
+        class: 'QL\Hal\FlashFire'
+        arguments: [@session, @url]
+
     session:
         class: 'QL\Hal\Session'
         factory: [@session.handler, 'load']

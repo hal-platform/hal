@@ -10,9 +10,9 @@ namespace QL\Kraken\Controller;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Encryption;
 use QL\Kraken\Entity\Environment;
-use QL\Kraken\Entity\PropertySchema;
+use QL\Kraken\Entity\Schema;
+use QL\Kraken\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -37,7 +37,7 @@ class ApplicationController implements ControllerInterface
      * @type EntityRepository
      */
     private $envRepository;
-    private $encRepository;
+    private $tarRepository;
     private $schemaRepository;
 
     /**
@@ -55,9 +55,9 @@ class ApplicationController implements ControllerInterface
         $this->application = $application;
 
         $this->em = $em;
-        $this->encRepository = $this->em->getRepository(Encryption::CLASS);
+        $this->tarRepository = $this->em->getRepository(Target::CLASS);
         $this->envRepository = $this->em->getRepository(Environment::CLASS);
-        $this->schemaRepository = $this->em->getRepository(PropertySchema::CLASS);
+        $this->schemaRepository = $this->em->getRepository(Schema::CLASS);
     }
 
     /**
@@ -65,7 +65,7 @@ class ApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $assigned = $this->encRepository->findBy(['application' => $this->application]);
+        $targets = $this->tarRepository->findBy(['application' => $this->application]);
 
         $schema = $this->schemaRepository->findBy([
             'application' => $this->application
@@ -73,12 +73,12 @@ class ApplicationController implements ControllerInterface
 
         $context = [
             'application' => $this->application,
-            'assigned_environment' => $assigned,
+            'targets' => $targets,
             'schema' => $schema
         ];
 
-        $context['environments'] = $this->filterLinkedEnvironments(
-            $assigned,
+        $context['environments'] = $this->filterTargets(
+            $targets,
             $this->envRepository->findBy([], ['name' => 'ASC'])
         );
 
@@ -86,16 +86,16 @@ class ApplicationController implements ControllerInterface
     }
 
     /**
-     * @param Encryption[] $assigned
+     * @param Target[] $assigned
      * @param Environment[] $environments
      *
      * @return Environment[]
      */
-    private function filterLinkedEnvironments($assigned, $environments)
+    private function filterTargets($targets, $environments)
     {
         $linked = [];
-        foreach ($assigned as $link) {
-            $linked[$link->environment()->id()] = true;
+        foreach ($targets as $target) {
+            $linked[$target->environment()->id()] = true;
         }
 
         return array_filter($environments, function($env) use ($linked) {

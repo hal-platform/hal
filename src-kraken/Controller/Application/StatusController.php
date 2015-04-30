@@ -10,12 +10,12 @@ namespace QL\Kraken\Controller\Application;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Property;
+use QL\Kraken\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\NotFound;
 
-class ViewPropertyController implements ControllerInterface
+class StatusController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -30,17 +30,12 @@ class ViewPropertyController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $propRepository;
+    private $tarRepository;
 
     /**
      * @type NotFound
      */
     private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
 
     /**
      * @param TemplateInterface $template
@@ -49,23 +44,20 @@ class ViewPropertyController implements ControllerInterface
      * @param $em
      *
      * @param NotFound $notFound
-     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         Application $application,
         $em,
-        NotFound $notFound,
-        array $parameters
+        NotFound $notFound
     ) {
         $this->template = $template;
         $this->application = $application;
 
         $this->em = $em;
-        $this->propRepository = $this->em->getRepository(Property::CLASS);
+        $this->tarRepository = $this->em->getRepository(Target::CLASS);
 
         $this->notFound = $notFound;
-        $this->parameters = $parameters;
     }
 
     /**
@@ -73,19 +65,17 @@ class ViewPropertyController implements ControllerInterface
      */
     public function __invoke()
     {
-        $property = $this->propRepository->findOneBy([
-            'id' => $this->parameters['property'],
-            'application' => $this->application,
-        ]);
+        $targets = $this->tarRepository->findBy(['application' => $this->application]);
 
-        if (!$property) {
+        if (!$targets) {
             return call_user_func($this->notFound);
         }
 
+        // Cross reference checksum of current value in Consul with checksum of "active" configuration in DB
+
         $context = [
             'application' => $this->application,
-            'environment' => $property->environment(),
-            'property' => $property
+            'targets' => $targets
         ];
 
         $this->template->render($context);

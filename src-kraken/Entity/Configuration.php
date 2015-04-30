@@ -15,12 +15,25 @@ class Configuration implements JsonSerializable
      * @type string
      */
     protected $id;
+    protected $configuration;
+    protected $checksum;
+
+    /**
+     * @type Application
+     */
     protected $application;
+
+    /**
+     * @type Environment
+     */
     protected $environment;
 
     public function __construct()
     {
         $this->id = '';
+        $this->configuration = '';
+        $this->checksum = '';
+
         $this->application = null;
         $this->environment = null;
     }
@@ -31,6 +44,22 @@ class Configuration implements JsonSerializable
     public function id()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function configuration()
+    {
+        return $this->configuration;
+    }
+
+    /**
+     * @return string
+     */
+    public function checksum()
+    {
+        return $this->checksum;
     }
 
     /**
@@ -57,6 +86,28 @@ class Configuration implements JsonSerializable
     public function withId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @param string $configuration
+     *
+     * @return self
+     */
+    public function withConfiguration($configuration)
+    {
+        $this->configuration = $configuration;
+        return $this;
+    }
+
+    /**
+     * @param string $checksum
+     *
+     * @return self
+     */
+    public function withChecksum($checksum)
+    {
+        $this->checksum = $checksum;
         return $this;
     }
 
@@ -89,6 +140,9 @@ class Configuration implements JsonSerializable
     {
         $json = [
             'id' => $this->id(),
+            'configuration' => $this->configuration(),
+            'checksum' => $this->checksum(),
+
             'application' => $this->application(),
             'environment' => $this->environment()
         ];

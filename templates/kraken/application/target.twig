@@ -5,8 +5,8 @@
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.application', {id: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h1>Configuration for <strong>{{ environment.name }}</strong></h1>
+    <a href="{{ urlFor('kraken.application', {application: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <h1>Current Configuration for <strong>{{ environment.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.id }}</p>
@@ -39,17 +39,18 @@
                 {% for prop in configuration %}
                     <tr>
                         {% if prop is property %}
-                            {% set formatted = prop|formatPropertyValue(0) %}
+
                             <td>
-                                <a href="{{ urlFor('kraken.property', {id: application.id, property: prop.id}) }}">
+                                <a href="{{ urlFor('kraken.property', {application: application.id, property: prop.id}) }}">
                                     {{ macros.icon('list') }}
                                     <span class="tablesaw-collapse">View Configuration Property</span>
                                 </a>
                             </td>
-                            <td><code>{{ prop.propertySchema.key }}</code></td>
-                            <td>{{ prop.propertySchema|formatSchemaType }}</td>
+                            <td><code>{{ prop.schema.key }}</code></td>
+                            <td>{{ prop.schema|formatSchemaType }}</td>
 
                             <td>
+                                {% set formatted = prop|formatPropertyValue(0) %}
                                 {% if formatted is null %}
                                     {{ macros.icon('locked') }} Secure
                                 {% else %}
@@ -58,6 +59,7 @@
                                     </div>
                                 {% endif %}
                             </td>
+
                         {% else %}
                             <td></td>
                             <td><code>{{ prop.key }}</code></td>

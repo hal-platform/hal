@@ -1,6 +1,6 @@
-QL\Kraken\Entity\PropertySchema:
+QL\Kraken\Entity\Schema:
     type: entity
-    table: kraken_property_schema
+    table: kraken_schema
 
     id:
         id:
@@ -14,13 +14,13 @@ QL\Kraken\Entity\PropertySchema:
             column: property_key
             type: string
             length: 250
-        isSecure:
-            column: secure
-            type: boolean
         dataType:
             column: data_type
             type: string
             length: 10
+        isSecure:
+            column: secure
+            type: boolean
         description:
             column: description
             type: string

@@ -1,23 +1,99 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 
-{% set page_title = "Generate Configuration" %}
+{% set page_title = "Deploy Configuration" %}
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.application', {id: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h1>Deploy Configuration for <strong>{{ application.id }}</strong></h1>
+    <a href="{{ urlFor('kraken.status', {application: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <h1>Deploy Configuration</h1>
 
     <h4>Application</h4>
     <p>{{ application.id }}</p>
 
+    <h4>Environment</h4>
+    <p>{{ environment.name }}</p>
 
-    <h2>Environments</h2>
-    {% for encrypt in assigned_environments %}
-        <h4>{{ encrypt.environment.name }}</h4>
-        <p>
-            <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: encrypt.environment.id})}}">View Configuration for this environment</a>
-        </p>
-    {% endfor %}
+    <h2>Verify Deployment</h2>
+    {{ block('deploy_comparison') }}
 
+{% endblock %}
+
+{% block missing_icon %}
+    <span class="event-log__status event-log__status--error">
+        {{ macros.icon('spam-2') }} Missing
+    </span>
+{% endblock %}
+
+{% block deploy_comparison %}
+
+    {% if configuration %}
+        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th class="t40">Current</th>
+                    <th class="t40">New</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for config in configuration %}
+                    <tr>
+                        <td>
+                            {% if config.schema %}
+                                <code>{{ config.schema.key }}</code>
+                            {% elseif config.current %}
+                                <code>{{ config.current.key }}</code>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if config.current %}
+
+                                {% set formatted = config.current|formatPropertyValue(0) %}
+                                {% if formatted is null %}
+                                    {{ macros.icon('locked') }} Secure
+                                {% else %}
+                                    <div class="pre-wrapper">
+                                        <pre>{{ formatted }}</pre>
+                                    </div>
+                                {% endif %}
+
+                            {% else %}
+                                {{ block('missing_icon') }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if not config.changed %}
+
+                                No change
+
+                            {% elseif config.property %}
+
+                                {% set formatted = config.property|formatPropertyValue(0) %}
+                                {% if formatted is null %}
+                                    {{ macros.icon('locked') }} Secure
+                                {% else %}
+                                    <div class="pre-wrapper">
+                                        <pre>{{ formatted }}</pre>
+                                    </div>
+                                {% endif %}
+
+                            {% else %}
+                                {{ block('missing_icon') }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p>There is no schema defined for this application.</p>
+        <p>An empty configuration will be deployed.</p>
+    {% endif %}
+    <form method="post">
+        <input type="submit" class="btn btn--action btn--large" href="{{ urlFor('kraken.deploy', {target: target.id}) }}" value="Deploy Configuration">
+    </form>
 {% endblock %}

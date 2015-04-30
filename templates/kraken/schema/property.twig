@@ -5,7 +5,7 @@
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.application.environment', {id: application.id, environment: environment.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
+    <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: environment.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
     <h1>Configuration Property for <strong>{{ application.id }}</strong></h1>
 
     <h4>Application</h4>

@@ -11,10 +11,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
 use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Encryption;
 use QL\Kraken\Entity\Environment;
+use QL\Kraken\Entity\Target;
 use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\PropertySchema;
+use QL\Kraken\Entity\Schema;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
@@ -22,7 +22,7 @@ use QL\Panthor\Slim\NotFound;
 use QL\Hal\Session;
 use Slim\Http\Request;
 
-class ViewEnvironmentController implements ControllerInterface
+class TargetController implements ControllerInterface
 {
     const SUCCESS = 'Property "%s" added.';
     const ERR_VALUE_REQUIRED = 'Please enter a value.';
@@ -45,6 +45,16 @@ class ViewEnvironmentController implements ControllerInterface
     private $template;
 
     /**
+     * @type Application
+     */
+    private $application;
+
+    /**
+     * @type Environment
+     */
+    private $environment;
+
+    /**
      * @type EntityManager
      */
     private $em;
@@ -54,6 +64,7 @@ class ViewEnvironmentController implements ControllerInterface
      */
     private $encRepository;
     private $propRepository;
+    private $tarRepository;
 
     /**
      * @type Url
@@ -73,48 +84,43 @@ class ViewEnvironmentController implements ControllerInterface
     /**
      * @type array
      */
-    private $parameters;
-
-    /**
-     * @type array
-     */
     private $errors;
 
     /**
      * @param Request $request
      * @param TemplateInterface $template
      * @param Application $application
+     * @param Environment $environment
      *
      * @param $em
      *
      * @param Url $url
      * @param Session $session
      * @param NotFound $notFound
-     * @param array $parameters
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
         Application $application,
+        Environment $environment,
         $em,
         Url $url,
         Session $session,
-        NotFound $notFound,
-        array $parameters
+        NotFound $notFound
     ) {
         $this->request = $request;
         $this->template = $template;
         $this->application = $application;
+        $this->environment = $environment;
 
         $this->em = $em;
-        $this->encRepository = $this->em->getRepository(Encryption::CLASS);
-        $this->schemaRepository = $this->em->getRepository(PropertySchema::CLASS);
+        $this->tarRepository = $this->em->getRepository(Target::CLASS);
+        $this->schemaRepository = $this->em->getRepository(Schema::CLASS);
         $this->propRepository = $this->em->getRepository(Property::CLASS);
 
         $this->url = $url;
         $this->session = $session;
         $this->notFound = $notFound;
-        $this->parameters = $parameters;
 
         $this->errors = [];
     }
@@ -124,26 +130,26 @@ class ViewEnvironmentController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$environment = $this->getEnvironment()) {
+        if (!$target = $this->tarRepository->findOneBy(['application' => $this->application, 'environment' => $this->environment])) {
             return call_user_func($this->notFound);
         }
 
         if ($this->request->isPost()) {
-            $this->handleForm($environment);
+            $this->handleForm();
         }
 
-        $configuration = $this->buildConfiguration($environment);
+        $configuration = $this->buildConfiguration();
 
         $schema = [];
         foreach ($configuration as $config) {
-            if ($config instanceof PropertySchema) {
+            if ($config instanceof Schema) {
                 $schema[] = $config;
             }
         }
 
         $context = [
             'application' => $this->application,
-            'environment' => $environment,
+            'environment' => $this->environment,
             'configuration' => $configuration,
 
             'missing_schema' => $schema,
@@ -166,28 +172,11 @@ class ViewEnvironmentController implements ControllerInterface
     }
 
     /**
-     * @return Environment|null
-     */
-    private function getEnvironment()
-    {
-        $encryption = $this->encRepository->findOneBy([
-            'environment' => $this->parameters['environment'],
-            'application' => $this->application,
-        ]);
-
-        if ($encryption) {
-            return $encryption->environment();
-        }
-    }
-
-    /**
      * @todo this should be cached heavily
      *
-     * @param Environment $environment
-     *
-     * @return Property|PropertySchema[]
+     * @return Property|Schema[]
      */
-    private function buildConfiguration($environment)
+    private function buildConfiguration()
     {
         $configuration = [];
 
@@ -197,7 +186,7 @@ class ViewEnvironmentController implements ControllerInterface
 
         $properties = $this->propRepository->findBy([
             'application' => $this->application,
-            'environment' => $environment
+            'environment' => $this->environment
         ]);
 
         foreach ($schema as $schema) {
@@ -205,18 +194,16 @@ class ViewEnvironmentController implements ControllerInterface
         }
 
         foreach ($properties as $property) {
-            $configuration[$property->propertySchema()->id()] = $property;
+            $configuration[$property->schema()->id()] = $property;
         }
 
         return $configuration;
     }
 
     /**
-     * @param Environment $environment
-     *
      * @return void
      */
-    private function handleForm(Environment $environment)
+    private function handleForm()
     {
         $propertyId = $this->request->post('prop');
 
@@ -231,21 +218,21 @@ class ViewEnvironmentController implements ControllerInterface
         if ($this->errors) return; // bomb
 
         // dupe check
-        if ($dupe = $this->propRepository->findOneBy(['propertySchema' => $schema, 'environment' => $environment])) {
+        if ($dupe = $this->propRepository->findOneBy(['schema' => $schema, 'environment' => $this->environment])) {
             $this->errors[] = self::ERR_DUPLICATE_PROPERTY;
         }
 
         if ($this->errors) return; // bomb
 
-        $this->saveProperty($environment, $schema, $value);
+        $this->saveProperty($schema, $value);
     }
 
     /**
-     * @param PropertySchema $schema
+     * @param Schema $schema
      *
      * @return string|string[]
      */
-    private function validateValue(PropertySchema $schema)
+    private function validateValue(Schema $schema)
     {
         $value = $this->request->post('value');
 
@@ -286,13 +273,12 @@ class ViewEnvironmentController implements ControllerInterface
     }
 
     /**
-     * @param Environment $env
-     * @param PropertySchema $schema
+     * @param Schema $schema
      * @param string $value
      *
      * @return void
      */
-    private function saveProperty(Environment $env, PropertySchema $schema, $value)
+    private function saveProperty(Schema $schema, $value)
     {
         $uniq = GUID::create()->asHex();
         $uniq = strtolower($uniq);
@@ -302,9 +288,9 @@ class ViewEnvironmentController implements ControllerInterface
         $property = (new Property)
             ->withId($uniq)
             ->withValue($encoded)
-            ->withPropertySchema($schema)
+            ->withSchema($schema)
             ->withApplication($this->application)
-            ->withEnvironment($env);
+            ->withEnvironment($this->environment);
 
         // persist to database
         $this->em->persist($property);
@@ -312,19 +298,19 @@ class ViewEnvironmentController implements ControllerInterface
 
         // flash and redirect
         $this->session->flash(sprintf(self::SUCCESS, $schema->key()), 'success');
-        $this->url->redirectFor('kraken.application.environment', [
-            'id' => $this->application->id(),
-            'environment' => $env->id()
+        $this->url->redirectFor('kraken.application.target', [
+            'application' => $this->application->id(),
+            'environment' => $this->environment->id()
         ]);
     }
 
     /**
-     * @param PropertySchema $schema
+     * @param Schema $schema
      * @param string $value
      *
      * @return string
      */
-    private function encode(PropertySchema $schema, $value)
+    private function encode(Schema $schema, $value)
     {
         if ($schema->dataType() === 'integer') {
             $value = (int) $value;

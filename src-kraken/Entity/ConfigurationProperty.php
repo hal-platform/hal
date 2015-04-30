@@ -9,25 +9,15 @@ namespace QL\Kraken\Entity;
 
 use JsonSerializable;
 
-class PropertySchema implements JsonSerializable
+class ConfigurationProperty implements JsonSerializable
 {
-    const DEFAULT_IS_SECURE = true;
-
-    public static $dataTypes = [
-        'string' => 'Text',
-        'strings' => 'List (text)',
-        'bool' => 'Flag',
-        'int' => 'Number (integer)',
-        'float' => 'Number (decimal)'
-    ];
-
     /**
      * @type string
      */
     protected $id;
+    protected $value;
     protected $key;
     protected $dataType;
-    protected $description;
 
     /**
      * @type bool
@@ -35,20 +25,32 @@ class PropertySchema implements JsonSerializable
     protected $isSecure;
 
     /**
-     * @type Application
+     * @type Configuration
      */
-    protected $application;
+    protected $configuration;
+
+    /**
+     * @type Property|null
+     */
+    protected $property;
+
+    /**
+     * @type Schema|null
+     */
+    protected $schema;
 
     public function __construct()
     {
         $this->id = '';
+        $this->value = '';
         $this->key = '';
-
         $this->dataType = '';
-        $this->description = '';
-        $this->isSecure = static::DEFAULT_IS_SECURE;
 
-        $this->application = null;
+        $this->isSecure = Schema::DEFAULT_IS_SECURE;
+
+        $this->configuration = null;
+        $this->property = null;
+        $this->schema = null;
     }
 
     /**
@@ -57,6 +59,14 @@ class PropertySchema implements JsonSerializable
     public function id()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function value()
+    {
+        return $this->value;
     }
 
     /**
@@ -76,14 +86,6 @@ class PropertySchema implements JsonSerializable
     }
 
     /**
-     * @return string
-     */
-    public function description()
-    {
-        return $this->description;
-    }
-
-    /**
      * @return bool
      */
     public function isSecure()
@@ -92,11 +94,27 @@ class PropertySchema implements JsonSerializable
     }
 
     /**
-     * @return Application
+     * @return Configuration
      */
-    public function application()
+    public function configuration()
     {
-        return $this->application;
+        return $this->configuration;
+    }
+
+    /**
+     * @return Property|null
+     */
+    public function property()
+    {
+        return $this->property;
+    }
+
+    /**
+     * @return Schema|null
+     */
+    public function schema()
+    {
+        return $this->schema;
     }
 
     /**
@@ -107,6 +125,17 @@ class PropertySchema implements JsonSerializable
     public function withId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return self
+     */
+    public function withValue($value)
+    {
+        $this->value = $value;
         return $this;
     }
 
@@ -133,17 +162,6 @@ class PropertySchema implements JsonSerializable
     }
 
     /**
-     * @param string $description
-     *
-     * @return self
-     */
-    public function withDescription($description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
      * @param bool $isSecure
      *
      * @return self
@@ -155,13 +173,35 @@ class PropertySchema implements JsonSerializable
     }
 
     /**
-     * @param Application $application
+     * @param Configuration $configuration
      *
      * @return self
      */
-    public function withApplication(Application $application)
+    public function withConfiguration(Configuration $configuration)
     {
-        $this->application = $application;
+        $this->configuration = $configuration;
+        return $this;
+    }
+
+    /**
+     * @param Property $property
+     *
+     * @return self
+     */
+    public function withProperty(Property $property)
+    {
+        $this->property = $property;
+        return $this;
+    }
+
+    /**
+     * @param Schema $schema
+     *
+     * @return self
+     */
+    public function withSchema(Schema $schema)
+    {
+        $this->schema = $schema;
         return $this;
     }
 
@@ -174,11 +214,13 @@ class PropertySchema implements JsonSerializable
             'id' => $this->id(),
             'key' => $this->key(),
             'dataType' => $this->dataType(),
-            'description' => $this->description(),
+            'value' => $this->value(),
 
             'isSecure' => $this->isSecure(),
 
-            'application' => $this->application()
+            'configuration' => $this->configuration(),
+            'property' => $this->property(),
+            'schema' => $this->schema()
         ];
 
         return $json;

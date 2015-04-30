@@ -18,9 +18,9 @@ class Property implements JsonSerializable
     protected $value;
 
     /**
-     * @type PropertySchema
+     * @type Schema
      */
-    protected $propertySchema;
+    protected $schema;
 
     /**
      * @type Application
@@ -37,7 +37,7 @@ class Property implements JsonSerializable
         $this->id = '';
         $this->value = '';
 
-        $this->propertySchema = null;
+        $this->schema = null;
         $this->application = null;
         $this->environment = null;
     }
@@ -59,11 +59,11 @@ class Property implements JsonSerializable
     }
 
     /**
-     * @return PropertySchema
+     * @return Schema
      */
-    public function propertySchema()
+    public function schema()
     {
-        return $this->propertySchema;
+        return $this->schema;
     }
 
     /**
@@ -105,13 +105,13 @@ class Property implements JsonSerializable
     }
 
     /**
-     * @param PropertySchema $propertySchema
+     * @param Schema $schema
      *
      * @return self
      */
-    public function withPropertySchema(PropertySchema $propertySchema)
+    public function withSchema(Schema $schema)
     {
-        $this->propertySchema = $propertySchema;
+        $this->schema = $schema;
         return $this;
     }
 
@@ -145,7 +145,7 @@ class Property implements JsonSerializable
         $json = [
             'id' => $this->id(),
             'value' => $this->value(),
-            'schema' => $this->propertySchema(),
+            'schema' => $this->schema(),
 
             'application' => $this->application(),
             'environment' => $this->environment()
