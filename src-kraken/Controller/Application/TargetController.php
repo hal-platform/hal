@@ -329,6 +329,7 @@ class TargetController implements ControllerInterface
             $value = (string) $value;
         }
 
+        // @todo JSON_PRESERVE_ZERO_FRACTION - PHP 5.6.6
         $encoded = json_encode($value);
 
         if (false) {
