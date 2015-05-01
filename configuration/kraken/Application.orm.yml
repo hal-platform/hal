@@ -7,3 +7,23 @@ QL\Kraken\Entity\Application:
             column: id
             type: string
             length: 40
+
+    fields:
+
+        coreId:
+            column: core_id
+            type: string
+            length: 64
+
+        name:
+            column: name
+            type: string
+            length: 64
+
+    manyToOne:
+
+        halRepository:
+            targetEntity: QL\Hal\Core\Entity\Repository
+            joinColumn:
+                name: hal_repository_id
+                referencedColumnName: RepositoryId

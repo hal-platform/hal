@@ -40,13 +40,10 @@ services:
     ####################################################################################################################
 
     kraken.page:
-        class: 'QL\Kraken\Controller\IndexController'
-        arguments:
-            - @slim.request
-            - @kraken.twig
-            - @doctrine.em
+        parent: 'static.controller'
+        arguments: [@kraken.twig, @slim.response]
     kraken.twig:
-        parent: 'kraken.template'
+        parent: 'twig.template'
         calls: [['setTemplate', ['kraken/index.twig']]]
 
     kraken.applications.page:
@@ -135,6 +132,19 @@ services:
     # CRUD CONTROLLERS
     ####################################################################################################################
 
+    kraken.add_application.page:
+        class: 'QL\Kraken\Controller\Application\AddApplicationController'
+        arguments:
+            - @slim.request
+            - @kraken.add_application.twig
+            - @session.flashfire
+            - @doctrine.em
+            - @repository.repo
+            - @kraken.random
+    kraken.add_application.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/add-application.twig']]]
+
     kraken.application.add_target.page:
         class: 'QL\Kraken\Controller\Application\AddTargetController'
         arguments:
@@ -201,6 +211,9 @@ services:
     kraken.consul:
         class: 'QL\Kraken\ConsulService'
         arguments: [@kraken.guzzle]
+
+    kraken.random:
+        class: 'QL\Hal\Core\RandomGenerator'
 
     ####################################################################################################################
     # MIDDLEWARE

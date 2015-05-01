@@ -8,6 +8,7 @@
 namespace QL\Kraken\Entity;
 
 use JsonSerializable;
+use QL\Hal\Core\Entity\Repository;
 
 class Application implements JsonSerializable
 {
@@ -15,10 +16,21 @@ class Application implements JsonSerializable
      * @type string
      */
     protected $id;
+    protected $name;
+    protected $coreId;
+
+    /**
+     * @type Repository|null
+     */
+    protected $halRepository;
 
     public function __construct()
     {
         $this->id = '';
+        $this->name = '';
+        $this->coreId = '';
+
+        $this->halRepository = null;
     }
 
     /**
@@ -27,6 +39,30 @@ class Application implements JsonSerializable
     public function id()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function name()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function coreId()
+    {
+        return $this->coreId;
+    }
+
+    /**
+     * @return string
+     */
+    public function halRepository()
+    {
+        return $this->halRepository;
     }
 
     /**
@@ -41,12 +77,49 @@ class Application implements JsonSerializable
     }
 
     /**
+     * @param string $name
+     *
+     * @return self
+     */
+    public function withName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @param string $coreId
+     *
+     * @return self
+     */
+    public function withCoreId($coreId)
+    {
+        $this->coreId = $coreId;
+        return $this;
+    }
+
+    /**
+     * @param string $repository
+     *
+     * @return self
+     */
+    public function withHalRepository(Repository $repository)
+    {
+        $this->halRepository = $repository;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
     {
         $json = [
-            'id' => $this->id()
+            'id' => $this->id(),
+            'name' => $this->name(),
+            'coreId' => $this->coreId(),
+
+            'halRepository' => $this->halRepository() ? $this->halRepository()->getId() : null
         ];
 
         return $json;

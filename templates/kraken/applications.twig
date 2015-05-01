@@ -4,22 +4,37 @@
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken') }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
     <h1>Applications</h1>
 
     {% if applications %}
         <table class="table--spacing-medium">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Core ID</th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for app in applications %}
                     <tr>
-                        <td>{{ app.id }}</td>
-                        <td><a href="{{ urlFor('kraken.application', {application: app.id}) }}">Manage</a></td>
+                        <td>{{ app.name }}</td>
+                        <td>
+                            {{ app.coreId }}
+                        </td>
+                        <td>
+                            <a href="http://core/app/{{ app.coreId }}">Core Website</a>
+                        </td>
+                        <td>
+                            {% if app.halRepository %}
+                                <a href="{{ urlFor('repository.status', {id: app.halRepository.id})}}">HAL Status</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn" href="{{ urlFor('kraken.application', {application: app.id}) }}">Manage</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -28,34 +43,6 @@
         <p>There are no applications defined.</p>
     {% endif %}
 
-    {{ block('add_application') }}
+    <a class="btn" href="{{ urlFor('kraken.add_application') }}">Add Application</a>
 
-{% endblock %}
-
-{% block add_application %}
-    <h2>Add a new application</h2>
-
-    <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
-        <form action="" method="post">
-            <ul class="form-fields">
-                <li>
-                    <label for="app-id">ID</label>
-                    <input type="text" name="id" id="app-id" maxlength="40" required value="{{ form.id }}" class="text-input">
-                </li>
-
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Add Application">
-                </li>
-            </ul>
-        </form>
-    </div>
 {% endblock %}

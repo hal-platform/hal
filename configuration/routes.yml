@@ -8,6 +8,8 @@ parameters:
     routes.regex.pushId: %routes.regex.buildId%
     routes.regex.queue.refresh: '[A-Za-z0-9\+\-\.]+'
 
+    routes.regex.hex: '[0-9a-fA-F]{32}'
+
     routes:
         login:
             method: ['GET', 'POST']
@@ -520,71 +522,76 @@ parameters:
 
         kraken:
             route: '/kraken'
-            stack: ['admin.bouncer', 'kraken.page']
+            stack: ['kraken.page']
 
         kraken.applications:
             route: '/kraken/applications'
-            stack: ['admin.bouncer', 'kraken.applications.page']
+            stack: ['kraken.applications.page']
 
         kraken.environments:
             route: '/kraken/environments'
-            stack: ['admin.bouncer', 'kraken.environments.page']
+            stack: ['kraken.environments.page']
 
         kraken.application:
             route: '/kraken/applications/:application'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.page']
-            conditions: {application: '[0-9a-zA-Z]{2,40}'}
+            stack: ['kraken.middleware.require.entity', 'kraken.application.page']
+            conditions: {application: %routes.regex.hex%}
 
         kraken.property:
             route: '/kraken/applications/:application/properties/:property'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.property.page']
+            stack: ['kraken.middleware.require.entity', 'kraken.application.property.page']
             conditions:
-                application: '[0-9a-zA-Z]{2,40}'
-                property: '[0-9a-zA-Z]{2,40}'
+                application: %routes.regex.hex%
+                property: %routes.regex.hex%
 
         kraken.status:
             route: '/kraken/applications/:application/status'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.status.page']
-            conditions: {application: '[0-9a-zA-Z]{2,40}'}
+            stack: ['kraken.middleware.require.entity', 'kraken.application.status.page']
+            conditions: {application: %routes.regex.hex%}
 
         kraken.configuration:
             route: '/kraken/applications/:application/configurations/:configuration'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.configuration.page']
+            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.page']
             conditions:
-                application: '[0-9a-zA-Z]{2,40}'
-                configuration: '[0-9a-zA-Z]{2,40}'
+                application: %routes.regex.hex%
+                configuration: %routes.regex.hex%
+
+        # add application
+        kraken.add_application:
+            route: '/kraken/applications/add'
+            stack: ['kraken.add_application.page']
 
         # add schema
         kraken.application.add_schema:
             route: '/kraken/applications/:application/schema'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_schema.page']
-            conditions: {application: '[0-9a-zA-Z]{2,40}'}
+            stack: ['kraken.middleware.require.entity', 'kraken.application.add_schema.page']
+            conditions: {application: %routes.regex.hex%}
 
         # view configuration, add property
         kraken.application.target:
             route: '/kraken/applications/:application/environments/:environment'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.target.page']
+            stack: ['kraken.middleware.require.entity', 'kraken.application.target.page']
             conditions:
-                application: '[0-9a-zA-Z]{2,40}'
-                environment: '[0-9a-zA-Z]{2,40}'
+                application: %routes.regex.hex%
+                environment: %routes.regex.hex%
 
         # add environment to application
         kraken.application.add_target:
             route: '/kraken/applications/:application/environments'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_target.page']
-            conditions: {application: '[0-9a-zA-Z]{2,40}'}
+            stack: ['kraken.middleware.require.entity', 'kraken.application.add_target.page']
+            conditions: {application: %routes.regex.hex%}
 
         # deploy configuration to target
         kraken.deploy:
             method: ['GET']
             route: '/kraken/targets/:target/deploy'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.page']
-            conditions: {target: '[0-9a-zA-Z]{2,40}'}
+            stack: ['kraken.middleware.require.entity', 'kraken.deploy.page']
+            conditions: {target: %routes.regex.hex%}
         kraken.deploy.handler:
             method: ['POST']
             route: '/kraken/targets/:target/deploy'
-            stack: ['admin.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.handler']
-            conditions: {target: '[0-9a-zA-Z]{2,40}'}
+            stack: ['kraken.middleware.require.entity', 'kraken.deploy.handler']
+            conditions: {target: %routes.regex.hex%}
 
         ################################################################################################################
         # GITHUB API ROUTES

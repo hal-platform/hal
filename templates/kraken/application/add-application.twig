@@ -1,0 +1,61 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/form/macros.twig" as form_macros %}
+
+{% set page_title = "Add Application" %}
+
+{% block content %}
+
+    <h1>Add Application</h1>
+
+    <div class="form-wrapper">
+
+        {{ form_macros.formErrors(errors) }}
+
+        <form action="" method="post">
+            <ul class="form-fields">
+
+                <li>
+                    <label for="app-coreid">CORE Application ID</label>
+                    <input type="numeric" name="core_id" id="app-coreid" maxlength="64" required value="{{ form.core_id }}" class="text-input">
+                </li>
+
+                {% if available %}
+                <li>
+                    <label for="app-repo">
+                        HAL Repository
+                        <small class="additional">
+                            Link a HAL repository to this Kraken application. Recommended for applications already using HAL 9000.
+                        </small>
+                    </label>
+
+                    <select class="select-input" name="hal_repo" id="app-repo">
+                        <option></option>
+                        {% for id, repository_name in available %}
+                            {% set isSelected = (id == form.hal_repo) %}
+
+                            <option value="{{ id }}" {{ isSelected ? ' selected' : '' }}>
+                                {{ repository_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </li>
+                {% endif %}
+
+                <li>
+                    <label for="app-name">
+                        Name
+                        <small class="additional">
+                            Optional when linking to a HAL repository.
+                        </small>
+                    </label>
+                    <input type="text" name="name" id="app-name" maxlength="64" value="{{ form.name }}" class="text-input">
+                </li>
+
+                <li>
+                    {# primary action #}
+                    <input class="btn" type="submit" value="Add Application">
+                </li>
+            </ul>
+        </form>
+    </div>
+{% endblock %}
