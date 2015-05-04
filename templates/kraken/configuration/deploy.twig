@@ -5,11 +5,10 @@
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.status', {application: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
     <h1>Deploy Configuration</h1>
 
     <h4>Application</h4>
-    <p>{{ application.id }}</p>
+    <p>{{ application.name }}</p>
 
     <h4>Environment</h4>
     <p>{{ environment.name }}</p>
@@ -19,16 +18,10 @@
 
 {% endblock %}
 
-{% block missing_icon %}
-    <span class="event-log__status event-log__status--error">
-        {{ macros.icon('spam-2') }} Missing
-    </span>
-{% endblock %}
-
 {% block deploy_comparison %}
 
     {% if configuration %}
-        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
+        <table class="table--spacing-medium table--top-aligned trailer" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Property</th>
@@ -60,7 +53,7 @@
                                 {% endif %}
 
                             {% else %}
-                                {{ block('missing_icon') }}
+                                {{ macros.status('Missing', 'error', 'spam-2') }}
                             {% endif %}
                         </td>
 
@@ -81,7 +74,7 @@
                                 {% endif %}
 
                             {% else %}
-                                {{ block('missing_icon') }}
+                                {{ macros.status('Missing', 'error', 'spam-2') }}
                             {% endif %}
                         </td>
                     </tr>
@@ -90,10 +83,17 @@
         </table>
 
     {% else %}
-        <p>There is no schema defined for this application.</p>
-        <p>An empty configuration will be deployed.</p>
+        <p>There is no schema defined for this application. An empty configuration will be deployed.</p>
     {% endif %}
-    <form method="post">
-        <input type="submit" class="btn btn--action btn--large" href="{{ urlFor('kraken.deploy', {target: target.id}) }}" value="Deploy Configuration">
-    </form>
+
+    <div class="leader">
+        <form method="post">
+            <input type="submit" class="btn btn--action" href="{{ urlFor('kraken.deploy', {target: target.id}) }}" value="Deploy Configuration">
+
+            <p class="leader">
+                <a href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a>
+            <p>
+        </form>
+    </div>
+
 {% endblock %}

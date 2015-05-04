@@ -66,9 +66,7 @@
                             <td>{{ prop|formatSchemaType }}</td>
 
                             <td>
-                                <span class="event-log__status event-log__status--error">
-                                    {{ macros.icon('spam-2') }} Missing
-                                </span>
+                                {{ macros.status('Missing', 'error', 'spam-2') }}
                             </td>
                         {% endif %}
 

@@ -1,0 +1,36 @@
+{% import "partials/macros.twig" as macros %}
+
+{% if properties %}
+    <table class="table--spacing-medium">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th class="t15">Type</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for property in properties %}
+                <tr>
+                    <td><code>{{ property.key }}</code></td>
+                    <td>
+                        {{ property.isSecure ? macros.icon('locked') : '' }}
+                        {{ property|formatSchemaType }}
+                    </td>
+                    <td>
+                        {% set formatted = property|formatPropertyValue(0) %}
+                        {% if formatted is null %}
+                            {{ macros.icon('locked') }} Secure
+                        {% else %}
+                            <div class="pre-wrapper">
+                                <pre>{{ formatted }}</pre>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>This configuration has no properties.</p>
+{% endif %}

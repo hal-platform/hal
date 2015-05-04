@@ -43,19 +43,33 @@
                             <ul class="split">
                                 <li>
                                     <span class="split__title">Deployed on:</span>
-                                    << timestamp >>
+                                    {% if target.configuration.created %}
+                                        {{ target.configuration.created|html5date }}
+                                    {% else %}
+                                        Never
+                                    {% endif %}
                                 </li>
                                 <li>
                                     <span class="split__title">Deployed Config:</span>
                                     {% if target.configuration %}
                                         <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: target.configuration.id})}}">{{ target.configuration.id[:7] }}</a>
                                     {% else %}
-                                        << none >>
+                                        None
                                     {% endif %}
                                 </li>
                                 <li>
                                     <span class="split__title">Consul Status:</span>
-                                    << verified >>
+                                    {% if target.configuration %}
+
+                                        {% if checksum_status[target.configuration.id] %}
+                                            Confirmed
+                                        {% else %}
+                                            Out of Sync
+                                        {% endif %}
+
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
                                 </li>
                             </ul>
 
