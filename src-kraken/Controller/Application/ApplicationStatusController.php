@@ -10,12 +10,12 @@ namespace QL\Kraken\Controller\Application;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
+use QL\Kraken\Entity\Schema;
 use QL\Kraken\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Slim\NotFound;
 
-class StatusController implements ControllerInterface
+class ApplicationStatusController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -23,41 +23,26 @@ class StatusController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManager
-     */
-    private $em;
-
-    /**
      * @type EntityRepository
      */
     private $tarRepository;
-
-    /**
-     * @type NotFound
-     */
-    private $notFound;
+    private $schemaRepository;
 
     /**
      * @param TemplateInterface $template
      * @param Application $application
-     *
-     * @param $em
-     *
-     * @param NotFound $notFound
+     * @param EntityManager $em
      */
     public function __construct(
         TemplateInterface $template,
         Application $application,
-        $em,
-        NotFound $notFound
+        $em
     ) {
         $this->template = $template;
         $this->application = $application;
 
-        $this->em = $em;
-        $this->tarRepository = $this->em->getRepository(Target::CLASS);
-
-        $this->notFound = $notFound;
+        $this->tarRepository = $em->getRepository(Target::CLASS);
+        $this->schemaRepository = $em->getRepository(Schema::CLASS);
     }
 
     /**
@@ -67,15 +52,16 @@ class StatusController implements ControllerInterface
     {
         $targets = $this->tarRepository->findBy(['application' => $this->application]);
 
-        if (!$targets) {
-            return call_user_func($this->notFound);
-        }
+        $schema = $this->schemaRepository->findBy([
+            'application' => $this->application
+        ], ['key' => 'ASC']);
 
         // Cross reference checksum of current value in Consul with checksum of "active" configuration in DB
 
         $context = [
             'application' => $this->application,
-            'targets' => $targets
+            'targets' => $targets,
+            'schema' => $schema
         ];
 
         $this->template->render($context);

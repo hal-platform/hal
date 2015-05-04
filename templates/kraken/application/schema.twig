@@ -1,14 +1,14 @@
 {% extends 'base.kraken.twig' %}
 
-{% set page_title = "Add Property" %}
+{% set page_title = "Application Configuration Schema" %}
 
 {% block content %}
 
     <a href="{{ urlFor('kraken.application', {application: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h1>Add Property to Configuration Schema</h1>
+    <h1>Configuration Schema for <strong>{{ application.name }}</strong></h1>
 
     <h4>Application</h4>
-    <p>{{ application.id }}</p>
+    <p>{{ application.name }}</p>
 
     {{ block('add_property') }}
 

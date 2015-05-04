@@ -1,4 +1,5 @@
 {% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Applications" %}
 
@@ -25,15 +26,15 @@
                             {{ app.coreId }}
                         </td>
                         <td>
-                            <a href="http://core/app/{{ app.coreId }}">Core Website</a>
+                            <a href="http://core/app/{{ app.coreId }}">{{ macros.icon('spinner') }} Core Website</a>
                         </td>
                         <td>
                             {% if app.halRepository %}
-                                <a href="{{ urlFor('repository.status', {id: app.halRepository.id})}}">HAL Status</a>
+                                <a href="{{ urlFor('repository.status', {id: app.halRepository.id})}}">{{ macros.icon('spinner-3') }} HAL Status</a>
                             {% endif %}
                         </td>
-                        <td>
-                            <a class="btn" href="{{ urlFor('kraken.application', {application: app.id}) }}">Manage</a>
+                        <td class="tr">
+                            <a class="btn" href="{{ urlFor('kraken.status', {application: app.id}) }}">Status</a>
                         </td>
                     </tr>
                 {% endfor %}

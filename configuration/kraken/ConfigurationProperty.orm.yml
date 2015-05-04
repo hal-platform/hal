@@ -16,8 +16,7 @@ QL\Kraken\Entity\ConfigurationProperty:
             length: 250
         dataType:
             column: data_type
-            type: string
-            length: 10
+            type: propertyenum
         isSecure:
             column: secure
             type: boolean

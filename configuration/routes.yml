@@ -536,6 +536,10 @@ parameters:
             route: '/kraken/applications/:application'
             stack: ['kraken.middleware.require.entity', 'kraken.application.page']
             conditions: {application: %routes.regex.hex%}
+        kraken.status:
+            route: '/kraken/applications/:application/status'
+            stack: ['kraken.middleware.require.entity', 'kraken.status.page']
+            conditions: {application: %routes.regex.hex%}
 
         kraken.property:
             route: '/kraken/applications/:application/properties/:property'
@@ -543,11 +547,6 @@ parameters:
             conditions:
                 application: %routes.regex.hex%
                 property: %routes.regex.hex%
-
-        kraken.status:
-            route: '/kraken/applications/:application/status'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.status.page']
-            conditions: {application: %routes.regex.hex%}
 
         kraken.configuration:
             route: '/kraken/applications/:application/configurations/:configuration'
@@ -562,9 +561,9 @@ parameters:
             stack: ['kraken.add_application.page']
 
         # add schema
-        kraken.application.add_schema:
+        kraken.application.schema:
             route: '/kraken/applications/:application/schema'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.add_schema.page']
+            stack: ['kraken.middleware.require.entity', 'kraken.application.schema.page']
             conditions: {application: %routes.regex.hex%}
 
         # view configuration, add property

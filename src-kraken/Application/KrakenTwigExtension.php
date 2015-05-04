@@ -10,6 +10,8 @@ namespace QL\Kraken\Application;
 use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
+use QL\Kraken\Entity\Target;
+use QL\Kraken\Doctrine\PropertyEnumType;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleTest;
@@ -58,6 +60,9 @@ class KrakenTwigExtension extends Twig_Extension
             }),
             new Twig_SimpleTest('schema', function ($entity) {
                 return $entity instanceof Schema;
+            }),
+            new Twig_SimpleTest('target', function ($entity) {
+                return $entity instanceof Target;
             })
         ];
     }
@@ -76,7 +81,7 @@ class KrakenTwigExtension extends Twig_Extension
         }
 
         if ($schema) {
-            $types = Schema::$dataTypes;
+            $types = PropertyEnumType::map();
 
             if (isset($types[$schema])) {
                 return $types[$schema];

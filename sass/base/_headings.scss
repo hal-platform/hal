@@ -1,4 +1,7 @@
-// Spacing
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 100%;
+}
 
 // Page header
 h1 {
@@ -30,9 +33,4 @@ h4 {
 h3, h5, h6 {
     @include leader(.75);
     @include trailer(.25);
-}
-
-.header--sub {
-    margin: 0;
-    font-size: .75em;
 }

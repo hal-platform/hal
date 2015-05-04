@@ -113,7 +113,7 @@
 .cards--test .card__header,
 .card--test .card__header {
     background-color: $hal-blue;
-    a { color: $white }
+    a, h4 { color: $white }
 }
 
 .cards--beta .card,
@@ -123,7 +123,7 @@
 .cards--beta .card__header,
 .card--beta .card__header {
     background-color: $hal-cyan;
-    a { color: $white }
+    a, h4 { color: $white }
 }
 
 .cards--prod .card,
@@ -133,5 +133,5 @@
 .cards--prod .card__header,
 .card--prod .card__header {
     background-color: $hal-red;
-    a { color: $white }
+    a, h4 { color: $white }
 }

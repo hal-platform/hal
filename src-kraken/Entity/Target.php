@@ -145,6 +145,7 @@ class Target implements JsonSerializable
     {
         $json = [
             'id' => $this->id(),
+            'key' => $this->key(),
             'application' => $this->application(),
             'environment' => $this->environment(),
             'configuration' => $this->configuration()

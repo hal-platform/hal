@@ -1,0 +1,88 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "Application" %}
+
+{% block content %}
+
+    <h1>Manage Application <strong>{{ application.name }}</strong></h1>
+
+    {{ block('meta') }}
+
+    <div>
+        {% if not admin %}
+            <a class="btn" href="{{ urlFor('kraken.application.schema', {application: application.id}) }}">Manage Configuration Schema</a>
+        {% endif %}
+
+        <a href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Status</a>
+
+    </div>
+
+    <h2 class="leader">Environments</h2>
+    {{ block('application_targets') }}
+
+    <h2>Configuration Schema</h2>
+    {% include 'kraken/partial/schema.twig' with {'schema': schema} %}
+
+{% endblock %}
+
+{% block meta %}
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
+
+    <h4>Core ID</h4>
+    <p>
+        {{ application.coreId }} <a href="http://core/app/{{ application.coreId }}">{{ macros.icon('spinner') }} Core</a>
+    </p>
+
+    <h4>HAL Application</h4>
+    <p>
+        {% if application.halRepository %}
+            <a href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000 Status</a>
+        {% else %}
+            Not Linked
+        {% endif %}
+    </p>
+{% endblock %}
+
+{% block application_targets %}
+
+    {% if targets %}
+        <table class="table--spacing-medium">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Encryption Key</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for target in targets %}
+                    <tr>
+                        {% if target is target %}
+
+                            <td>{{ target.environment.name }}</td>
+                            <td><code>{{ target.key }}</code></td>
+                            <td class="tr">
+                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">View Configuration</a>
+                            </td>
+
+                        {% else %}
+                            <td>{{ target.name }}</td>
+                            <td>Environment is not assigned.</td>
+                            <td class="tr">
+                                <a class="btn btn--small" href="{{ urlFor('kraken.application.add_target', {application: application.id}) }}">Assign environment</a>
+                            </td>
+
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p>There are no environments assigned for this application.</p>
+    {% endif %}
+
+{% endblock %}
+

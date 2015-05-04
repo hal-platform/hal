@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller;
+namespace QL\Kraken\Controller\Application;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -16,7 +16,7 @@ use QL\Kraken\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class ApplicationController implements ControllerInterface
+class ManageApplicationController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -29,35 +29,28 @@ class ApplicationController implements ControllerInterface
     private $application;
 
     /**
-     * @type EntityManager
-     */
-    private $em;
-
-    /**
      * @type EntityRepository
      */
-    private $envRepository;
-    private $tarRepository;
-    private $schemaRepository;
+    private $environmentRepo;
+    private $targetRepo;
+    private $schemaRepo;
 
     /**
      * @param TemplateInterface $template
      * @param Application $application
-     *
-     * @param $em
+     * @param EntityManager $em
      */
     public function __construct(
         TemplateInterface $template,
         Application $application,
-        $em
+        EntityManager $em
     ) {
         $this->template = $template;
         $this->application = $application;
 
-        $this->em = $em;
-        $this->tarRepository = $this->em->getRepository(Target::CLASS);
-        $this->envRepository = $this->em->getRepository(Environment::CLASS);
-        $this->schemaRepository = $this->em->getRepository(Schema::CLASS);
+        $this->targetRepo = $em->getRepository(Target::CLASS);
+        $this->environmentRepo = $em->getRepository(Environment::CLASS);
+        $this->schemaRepo = $em->getRepository(Schema::CLASS);
     }
 
     /**
@@ -65,41 +58,46 @@ class ApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $targets = $this->tarRepository->findBy(['application' => $this->application]);
-
-        $schema = $this->schemaRepository->findBy([
+        $schema = $this->schemaRepo->findBy([
             'application' => $this->application
         ], ['key' => 'ASC']);
 
         $context = [
             'application' => $this->application,
-            'targets' => $targets,
+            'targets' => $this->getEnvironmentsAndTargets(),
             'schema' => $schema
         ];
-
-        $context['environments'] = $this->filterTargets(
-            $targets,
-            $this->envRepository->findBy([], ['name' => 'ASC'])
-        );
 
         $this->template->render($context);
     }
 
     /**
-     * @param Target[] $assigned
-     * @param Environment[] $environments
-     *
-     * @return Environment[]
+     * @return Environment|Target[]
      */
-    private function filterTargets($targets, $environments)
+    private function getEnvironmentsAndTargets()
     {
-        $linked = [];
-        foreach ($targets as $target) {
-            $linked[$target->environment()->id()] = true;
+        $environments = $this->environmentRepo->findBy([], ['name' => 'ASC']);
+        if (!$environments) {
+            return [];
         }
 
-        return array_filter($environments, function($env) use ($linked) {
-            return !isset($linked[$env->id()]);
-        });
+        $targets = $this->targetRepo->findBy(['application' => $this->application]);
+        if (!$targets) {
+            return $environments;
+        }
+
+        $combined = [];
+        foreach ($environments as $env) {
+            $combined[$env->id()] = $env;
+        }
+
+        foreach ($targets as $target) {
+            $linkedId = $target->environment()->id();
+            if (isset($combined[$linkedId]) && $combined[$linkedId] === $target->environment()) {
+                $combined[$linkedId] = $target;
+            }
+        }
+
+        return $combined;
     }
 }

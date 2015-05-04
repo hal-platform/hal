@@ -3,11 +3,11 @@
 <html class="no-js" id="{{ html_id ?: '' }}">
     <head>
         <meta charset="utf-8">
-        {% block head %}
+        {% block page_head %}
             <title>
                 {% if page_title %}{{ page_title }} - {% endif %}{{ applicationTitle }}
             </title>
-            {% block icon %}
+            {% block page_icon %}
                 <link type="image/x-icon" rel="shortcut icon" href="/hal.ico"> <!-- for ie -->
                 <link type="image/png" rel="apple-touch-icon-precomposed" sizes="57x57" href="/hal-57px.png"> <!-- for apple -->
                 <link type="image/png" rel="apple-touch-icon-precomposed" sizes="72x72" href="/hal-72px.png"> <!-- for apple -->
@@ -15,7 +15,7 @@
                 <link type="image/png" rel="apple-touch-icon-precomposed" sizes="144x144" href="/hal-144px.png"> <!-- for apple -->
                 <link type="image/png" rel="icon" href="/hal.png"> <!-- for the rest of the world -->
             {% endblock %}
-            {% block meta %}
+            {% block page_meta %}
                 <meta name="format-detection" content="telephone=no">
                 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
             {% endblock %}
@@ -27,9 +27,9 @@
 
     <body>
         <span class="sticky-version">Version {{ applicationVersion }}.X, {{ applicationSha|default('dev') }}</span>
-        {% block body %}
+        {% block page_body %}
 
-            {% block header %}
+            {% block page_header %}
                 {% if showNavigation is not defined %}
                     {% set showNavigation = true %}
                 {% endif %}
@@ -37,7 +37,7 @@
                 {% endembed %}
             {% endblock %}
 
-            {% block main %}
+            {% block page_main %}
             <main role="main">
                 {% include 'partials/layout.messages.twig' %}
 
@@ -46,15 +46,14 @@
             </main>
             {% endblock %}
 
-            {% block footer %}{% endblock %}
+            {% block page_footer %}{% endblock %}
 
         {% endblock %}
 
-        {% block script %}
+        {% block page_script %}
             <script src="/js/vendor.bundle.js?v={{ buster }}"></script>
             <script src="/js/app.js?v={{ buster }}"></script>
 
-            {% block pageScript %}{% endblock %}
             {% if showAnalytics(currentUser) %}
                 <script>
                     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

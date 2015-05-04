@@ -1,28 +1,22 @@
 {% extends 'base.kraken.twig' %}
+{% import "partials/form/macros.twig" as form_macros %}
 
-{% set page_title = "Link Environment" %}
+{% set page_title = "Assign Environment" %}
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.application', {application: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h1>Assign Environment to Application</h1>
+    <h1>Assign Environment to <strong>{{ application.name }}</strong></h1>
 
-    <h4>Application ID</h4>
-    <p>{{ application.id }}</p>
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
 
-    {{ block('link_environment') }}
+    {{ block('assign_environment') }}
 
 {% endblock %}
 
-{% block link_environment %}
+{% block assign_environment %}
     <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ form_macros.formErrors(errors) }}
 
         <form action="" method="post">
             <ul class="form-fields">
@@ -52,8 +46,9 @@
                 </li>
 
                 <li>
-                    {# primary action #}
                     <input class="btn" type="submit" value="Assign Environment">
+
+                    <a href="{{ urlFor('kraken.application', {application: application.id}) }}">Cancel</a>
                 </li>
             </ul>
         </form>

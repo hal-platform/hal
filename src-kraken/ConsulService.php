@@ -68,6 +68,38 @@ class ConsulService
     }
 
     /**
+     * @param Configuration $configuration
+     * @param Target $target
+     *
+     * @return string|null
+     */
+    public function getChecksum(Configuration $configuration, Target $target)
+    {
+        $endpoint = $this->buildEndpoint($target->application(), $target->environment());
+        if (!$endpoint) {
+            return null;
+        }
+
+        if ($token = $target->environment()->consulToken()) {
+            $options['query'] = ['token' => $token];
+        }
+
+        try {
+            $response = $this->client->get($endpoint, $options);
+
+        } catch (RequestException $ex) {
+            return null;
+        }
+
+        $body = (string) $response->getBody();
+        $checksum = sha1($body);
+
+        // @todo cache here
+
+        return $checksum;
+    }
+
+    /**
      * @param Application $application
      * @param Environment $environment
      *

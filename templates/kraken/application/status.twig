@@ -1,54 +1,74 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 
-{% set page_title = "View Configuration Status" %}
+{% set page_title = "Application Status" %}
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.application', {application: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h1>Configuration Status for <strong>{{ application.id }}</strong></h1>
-
-    <h4>Application</h4>
-    <p>{{ application.id }}</p>
+    <h1>Configuration Status for <strong>{{ application.name }}</strong></h1>
 
     <h2>Environments</h2>
+    {{ block('environment_targets') }}
 
-    <ul class="list--bare cards">
-        {% for target in targets %}
-            <li>
-                <article class="card">
-                    <header class="card__header">
-                        <h4>{{ target.environment.name }}</h4>
-                        <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">View Configuration</a>
-                    </header>
+    <h2>Configuration Schema</h2>
+    {% include 'kraken/partial/schema.twig' with {'schema': schema} %}
 
-                    <section class="card__details">
-                        <ul class="split">
-                            <li>
-                                <span class="split__title">Deployed on:</span>
-                                << timestamp >>
-                            </li>
-                            <li>
-                                <span class="split__title">Deployed Config:</span>
-                                {% if target.configuration %}
-                                    <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: target.configuration.id})}}">{{ target.configuration.id[:7] }}</a>
-                                {% else %}
-                                    << none >>
-                                {% endif %}
-                            </li>
-                            <li>
-                                <span class="split__title">Consul Status:</span>
-                                << verified >>
-                            </li>
-                        </ul>
+    <div>
+        {% if not admin %}
+            <a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Manage application</a>
+        {% endif %}
 
-                        <p>
-                            <a class="btn btn--small" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy</a>
-                        </p>
-                    </section>
-                </article>
-            </li>
-        {% endfor %}
-    </ul>
+        {% if application.halRepository %}
+            <a href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">HAL 9000 Status</a>
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block environment_targets %}
+    {% if targets %}
+        <ul class="list--bare cards">
+            {% for target in targets %}
+                <li>
+                    <article class="card card--{{ target.environment.name }}">
+                        <header class="card__header">
+                            {% if not admin %}
+                                <a class="icon--link btn btn--small btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy</a>
+                            {% endif %}
+
+                            <h4>{{ target.environment.name }}</h4>
+                        </header>
+
+                        <section class="card__details">
+                            <ul class="split">
+                                <li>
+                                    <span class="split__title">Deployed on:</span>
+                                    << timestamp >>
+                                </li>
+                                <li>
+                                    <span class="split__title">Deployed Config:</span>
+                                    {% if target.configuration %}
+                                        <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: target.configuration.id})}}">{{ target.configuration.id[:7] }}</a>
+                                    {% else %}
+                                        << none >>
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    <span class="split__title">Consul Status:</span>
+                                    << verified >>
+                                </li>
+                            </ul>
+
+                            <p class="mbn">
+                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">View Latest Configuration</a>
+                            </p>
+                        </section>
+                    </article>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no environments added yet for this application.</p>
+    {% endif %}
 
 {% endblock %}

@@ -13,14 +13,6 @@ class Schema implements JsonSerializable
 {
     const DEFAULT_IS_SECURE = true;
 
-    public static $dataTypes = [
-        'string' => 'Text',
-        'strings' => 'List (text)',
-        'bool' => 'Flag',
-        'int' => 'Number (integer)',
-        'float' => 'Number (decimal)'
-    ];
-
     /**
      * @type string
      */

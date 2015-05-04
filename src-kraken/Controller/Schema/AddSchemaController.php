@@ -10,6 +10,7 @@ namespace QL\Kraken\Controller\Schema;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
+use QL\Kraken\DataType\PropertyEnumType;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Schema;
 use QL\Panthor\ControllerInterface;
@@ -105,7 +106,7 @@ class AddSchemaController implements ControllerInterface
 
         $context = [
             'application' => $this->application,
-            'property_types' => Schema::$dataTypes,
+            'property_types' => PropertyEnumType::map(),
 
             'errors' => $this->errors,
             'form' => [
@@ -139,7 +140,8 @@ class AddSchemaController implements ControllerInterface
             $this->errors[] = self::ERR_INVALID_KEY;
         }
 
-        if (!isset(Schema::$dataTypes[$type])) {
+        $map = PropertyEnumType::map();
+        if (!isset($map[$type])) {
             $this->errors[] = self::ERR_INVALID_TYPE;
         }
 

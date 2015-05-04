@@ -35,6 +35,9 @@ services:
         factory: [@directory.helper, 'fullPath']
         arguments: ['configuration/kraken']
 
+    doctrine.em.configurator:
+        class: 'QL\Kraken\Doctrine\DoctrineConfigurator'
+
     ####################################################################################################################
     # CONTROLLERS
     ####################################################################################################################
@@ -70,15 +73,25 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/environments.twig']]]
 
+    kraken.status.page:
+        class: 'QL\Kraken\Controller\Application\ApplicationStatusController'
+        arguments:
+            - @kraken.status.twig
+            - @kraken.application
+            - @doctrine.em
+    kraken.status.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/status.twig']]]
+
     kraken.application.page:
-        class: 'QL\Kraken\Controller\ApplicationController'
+        class: 'QL\Kraken\Controller\Application\ManageApplicationController'
         arguments:
             - @kraken.application.twig
             - @kraken.application
             - @doctrine.em
     kraken.application.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application.twig']]]
+        calls: [['setTemplate', ['kraken/application/application.twig']]]
 
     kraken.application.target.page:
         class: 'QL\Kraken\Controller\Application\TargetController'
@@ -105,17 +118,6 @@ services:
     kraken.application.property.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/schema/property.twig']]]
-
-    kraken.application.status.page:
-        class: 'QL\Kraken\Controller\Application\StatusController'
-        arguments:
-            - @kraken.application.status.twig
-            - @kraken.application
-            - @doctrine.em
-            - @slim.not.found
-    kraken.application.status.twig:
-        parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/status.twig']]]
 
     kraken.application.configuration.page:
         class: 'QL\Kraken\Controller\Configuration\ConfigurationController'
@@ -158,18 +160,18 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/add-target.twig']]]
 
-    kraken.application.add_schema.page:
+    kraken.application.schema.page:
         class: 'QL\Kraken\Controller\Schema\AddSchemaController'
         arguments:
             - @slim.request
-            - @kraken.application.add_schema.twig
+            - @kraken.application.schema.twig
             - @kraken.application
             - @doctrine.em
             - @url
             - @session
-    kraken.application.add_schema.twig:
+    kraken.application.schema.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/schema/add-schema.twig']]]
+        calls: [['setTemplate', ['kraken/application/schema.twig']]]
 
     kraken.deploy.page:
         class: 'QL\Kraken\Controller\Configuration\DeployController'
