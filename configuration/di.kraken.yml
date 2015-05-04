@@ -78,6 +78,7 @@ services:
         arguments:
             - @kraken.status.twig
             - @kraken.application
+            - @kraken.consul
             - @doctrine.em
     kraken.status.twig:
         parent: 'kraken.template'

@@ -35,15 +35,14 @@ class ConfigurationController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $targetRepository;
-    private $propRepository;
+    private $targetRepo;
+    private $propertyRepo;
 
     /**
      * @param TemplateInterface $template
      * @param Application $application
      * @param Configuration $configuration
-     *
-     * @param $em
+     * @param EntityManager $em
      */
     public function __construct(
         TemplateInterface $template,
@@ -55,8 +54,8 @@ class ConfigurationController implements ControllerInterface
         $this->application = $application;
         $this->configuration = $configuration;
 
-        $this->targetRepository = $em->getRepository(Target::CLASS);
-        $this->propRepository = $em->getRepository(ConfigurationProperty::CLASS);
+        $this->targetRepo = $em->getRepository(Target::CLASS);
+        $this->propertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
     }
 
     /**
@@ -64,9 +63,9 @@ class ConfigurationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $target = $this->targetRepository->findOneBy(['configuration' => $this->configuration]);
+        $target = $this->targetRepo->findOneBy(['configuration' => $this->configuration]);
 
-        $properties = $this->propRepository->findBy([
+        $properties = $this->propertyRepo->findBy([
             'configuration' => $this->configuration
         ], ['key' => 'ASC']);
 

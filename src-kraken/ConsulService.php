@@ -8,6 +8,7 @@
 namespace QL\Kraken;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Configuration;
@@ -86,13 +87,21 @@ class ConsulService
 
         try {
             $response = $this->client->get($endpoint, $options);
+            $json = $response->json();
+
+        } catch (ParseException $ex) {
+            return null;
 
         } catch (RequestException $ex) {
             return null;
         }
 
-        $body = (string) $response->getBody();
-        $checksum = sha1($body);
+        if (!isset($json[0]) && !isset($json[0]['Value'])) {
+            return null;
+        }
+
+        $value = base64_decode($json[0]['Value']);
+        $checksum = sha1($value);
 
         // @todo cache here
 
@@ -107,7 +116,7 @@ class ConsulService
      */
     private function buildEndpoint(Application $application, Environment $environment)
     {
-        $applicationId = $application->id();
+        $applicationId = $application->coreId();
         $host = $environment->consulServer();
 
         if (!$applicationId || !$host) {

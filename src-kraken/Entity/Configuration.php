@@ -7,7 +7,9 @@
 
 namespace QL\Kraken\Entity;
 
+use DateTime;
 use JsonSerializable;
+use MCP\DataType\Time\TimePoint;
 
 class Configuration implements JsonSerializable
 {
@@ -17,6 +19,11 @@ class Configuration implements JsonSerializable
     protected $id;
     protected $configuration;
     protected $checksum;
+
+    /**
+     * @type Timepoint|null
+     */
+    protected $created;
 
     /**
      * @type Application
@@ -33,6 +40,7 @@ class Configuration implements JsonSerializable
         $this->id = '';
         $this->configuration = '';
         $this->checksum = '';
+        $this->created = null;
 
         $this->application = null;
         $this->environment = null;
@@ -60,6 +68,14 @@ class Configuration implements JsonSerializable
     public function checksum()
     {
         return $this->checksum;
+    }
+
+    /**
+     * @return Timepoint|null
+     */
+    public function created()
+    {
+        return $this->created;
     }
 
     /**
@@ -112,6 +128,17 @@ class Configuration implements JsonSerializable
     }
 
     /**
+     * @param Timepoint $created
+     *
+     * @return self
+     */
+    public function withCreated(Timepoint $created)
+    {
+        $this->created = $created;
+        return $this;
+    }
+
+    /**
      * @param Application $application
      *
      * @return self
@@ -142,6 +169,7 @@ class Configuration implements JsonSerializable
             'id' => $this->id(),
             'configuration' => $this->configuration(),
             'checksum' => $this->checksum(),
+            'created' => $this->created() ? $this->created()->format(DateTime::RFC3339, 'UTC') : null,
 
             'application' => $this->application(),
             'environment' => $this->environment()

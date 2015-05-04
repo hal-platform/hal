@@ -19,6 +19,11 @@ QL\Kraken\Entity\Configuration:
             type: string
             length: 500
 
+        created:
+            column: created_time
+            type: timepoint
+            nullable: true
+
     manyToOne:
 
         environment:
