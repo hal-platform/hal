@@ -67,21 +67,16 @@
                     <dt class="split__title">Status</dt>
                     <dd>
 
-                        {% set opcEnabledColor = opcache.enabled ? 'event-log__status--success' : 'event-log__status--error' %}
+                        {% set opcEnabledStatus = opcache.enabled ? 'success' : 'error' %}
                         {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
                         {% set opcEnabledIcon = opcache.enabled ? 'tick' : 'cross' %}
 
-                        {% set opcFullColor = opcache.cache_full ? 'event-log__status--error' : 'event-log__status--success' %}
+                        {% set opcFullStatus = opcache.cache_full ? 'error' : 'success' %}
                         {% set opcFullText = opcache.cache_full ? 'Cache Full' : 'Cache Not Full' %}
                         {% set opcFullIcon = opcache.cache_full ? 'cross' : 'tick' %}
 
-                        <span class="event-log__status {{ opcEnabledColor }}" style="font-size:75%;margin:auto .2em">
-                            {{ macros.icon(opcEnabledIcon) }} {{ opcEnabledText }}
-                        </span>
-
-                        <span class="event-log__status {{ opcFullColor }}" style="font-size:75%;margin:auto .2em">
-                            {{ macros.icon(opcFullIcon) }} {{ opcFullText }}
-                        </span>
+                        {{ macros.status(opcEnabledText, opcEnabledStatus, opcEnabledIcon) }}
+                        {{ macros.status(opcFullText, opcFullStatus, opcFullIcon) }}
 
                     </dd>
                     <dt class="split__title">Hits</dt>

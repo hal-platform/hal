@@ -7,6 +7,10 @@
     @include leader();
 }
 
+.leader--napolean {
+    @include leader(.5);
+}
+
 .fixed-size-label {
     display: inline-block;
     min-width: 10em;

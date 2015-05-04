@@ -1,0 +1,23 @@
+
+.status-block,
+.status-block--success,
+.status-block--info,
+.status-block--error, {
+    color: $white;
+    @include adjust-font-size-to(ms(1));
+    line-height: ms(6);
+    padding: ms(-6);
+    white-space: nowrap;
+}
+
+.status-block--success {
+    background-color: $success-color;
+}
+
+.status-block--info {
+    background-color: $grey;
+}
+
+.status-block--error {
+    background-color: $error-color;
+}

@@ -13,30 +13,17 @@
     {% for log in logs %}
         <tbody>
 
-            {% set rowColor = log.status == 'failure' ? 'event-log--error' : '' %}
-            {% set blockColor = 'event-log__status--info' %}
-            {% if log.status == 'success' %}
-                {% set blockColor = 'event-log__status--success' %}
-            {% elseif log.status == 'failure' %}
-                {% set blockColor = 'event-log__status--error' %}
-            {% endif %}
-
-            <tr class="{{ rowColor }}">
+            <tr class="{{ log.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>
-                    <span class="event-log__status {{ blockColor }}">
-                        {% if log.status == 'success' %}
-                            {{ macros.icon('tick') }}
-                            {{ log.event|formatEvent }}
+                    {% if log.status == 'success' %}
+                        {{ macros.status(log.event|formatEvent, 'success', 'tick') }}
 
-                        {% elseif log.status == 'failure' %}
-                            {{ macros.icon('spam') }}
-                            {{ log.event|formatEvent }}
+                    {% elseif log.status == 'failure' %}
+                        {{ macros.status(log.event|formatEvent, 'error', 'spam') }}
 
-                        {% else %}
-                            {{ macros.icon('paragraph-justify-2') }}
-                            {{ log.event|formatEvent }}
-                        {% endif %}
-                    </span>
+                    {% else %}
+                        {{ macros.status(log.event|formatEvent, 'info', 'paragraph-justify-2') }}
+                    {% endif %}
                 </td>
                 <td>{{ log.created|html5date }}</td>
                 <td>{{ log.message }}</td>

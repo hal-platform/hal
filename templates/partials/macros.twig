@@ -83,3 +83,20 @@
 
 {% endmacro %}
 
+{% macro status(msg, type, icon) %}
+    {% import _self as self_macros %}
+
+    {% set icon = icon|default('spam-2') %}
+
+    {% set typeClass = 'status-block--info' %}
+    {% if type == 'success' %}
+        {% set typeClass = 'status-block--success' %}
+    {% elseif type == 'error' %}
+        {% set typeClass = 'status-block--error' %}
+    {% endif %}
+
+    <span class="{{ typeClass }}">
+        {{ self_macros.icon(icon) }}{{ msg }}
+    </span>
+
+{% endmacro %}
