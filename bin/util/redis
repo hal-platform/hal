@@ -20,7 +20,7 @@ $key = '';
 
 // List keys in the hal namespace
 if ($list) {
-    echo "\nLISTING DOCTRINE KEYS...\n";
+    echo "\nLISTING REDIS KEYS...\n";
     $keys = $redis->keys('*');
 
     sort($keys);
