@@ -1,82 +1,23 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 
-{% set page_title = "View Environment Configuration" %}
+{% set page_title = "Latest Configuration" %}
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.application', {application: application.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h1>Current Configuration for <strong>{{ environment.name }}</strong></h1>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Status</a></p>
 
-    <h4>Application</h4>
-    <p>{{ application.id }}</p>
+    <h1>Latest Configuration for <strong>{{ application.name }}</strong></h1>
 
-    <h4>Environment Name</h4>
+    <h4>Environment</h4>
     <p>{{ environment.name }}</p>
 
-    {{ block('environment_configuration') }}
+
+    <h2>Configuration Properties</h2>
+    {% include 'kraken/partial/configuration.twig' with {'properties': configuration, dualmode: true} %}
 
     {% if missing_schema %}
         {{ block('add_configuration') }}
-    {% endif %}
-
-{% endblock %}
-
-{% block environment_configuration %}
-    <h2>Configuration Properties</h2>
-
-    {% if configuration %}
-        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Property</th>
-                    <th class="t15">Type</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for prop in configuration %}
-                    <tr>
-                        {% if prop is property %}
-
-                            <td>
-                                <a href="{{ urlFor('kraken.property', {application: application.id, property: prop.id}) }}">
-                                    {{ macros.icon('list') }}
-                                    <span class="tablesaw-collapse">View Configuration Property</span>
-                                </a>
-                            </td>
-                            <td><code>{{ prop.schema.key }}</code></td>
-                            <td>{{ prop.schema|formatSchemaType }}</td>
-
-                            <td>
-                                {% set formatted = prop|formatPropertyValue(0) %}
-                                {% if formatted is null %}
-                                    {{ macros.icon('locked') }} Secure
-                                {% else %}
-                                    <div class="pre-wrapper">
-                                        <pre>{{ formatted }}</pre>
-                                    </div>
-                                {% endif %}
-                            </td>
-
-                        {% else %}
-                            <td></td>
-                            <td><code>{{ prop.key }}</code></td>
-                            <td>{{ prop|formatSchemaType }}</td>
-
-                            <td>
-                                {{ macros.status('Missing', 'error', 'spam-2') }}
-                            </td>
-                        {% endif %}
-
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-    {% else %}
-        <p>There is no schema defined for this application.</p>
     {% endif %}
 
 {% endblock %}

@@ -5,27 +5,25 @@
 
 {% block content %}
 
-    <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: environment.id}) }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
-    <h1>Configuration Property for <strong>{{ application.id }}</strong></h1>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.application.target', {application: application.id, environment: environment.id}) }}">Back to Configuration</a></p>
 
-    <h4>Application</h4>
-    <p>{{ application.id }}</p>
+    <h1>Configuration Property for <strong>{{ application.name }}</strong></h1>
 
-    <h4>Environment Name</h4>
+    <h4>Environment</h4>
     <p>{{ environment.name }}</p>
 
     <h2>Schema</h2>
 
     <h4>Type</h4>
-    <p>{{ property.propertySchema|formatSchemaType }}</p>
+    <p>{{ property.schema|formatSchemaType }}</p>
 
     <h4>Description</h4>
-    <p>{{ property.propertyScheme.description ?: 'None' }}</p>
+    <p>{{ property.schema.description ?: 'None' }}</p>
 
     <h2>Property</h2>
 
     <h4>Key</h4>
-    <p><code>{{ property.propertySchema.key }}</code></p>
+    <p><code>{{ property.schema.key }}</code></p>
 
     <h4>Value</h4>
     <div class="pre-wrapper">

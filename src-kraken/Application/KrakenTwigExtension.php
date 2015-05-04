@@ -63,6 +63,9 @@ class KrakenTwigExtension extends Twig_Extension
             }),
             new Twig_SimpleTest('target', function ($entity) {
                 return $entity instanceof Target;
+            }),
+            new Twig_SimpleTest('configurationProperty', function ($entity) {
+                return $entity instanceof ConfigurationProperty;
             })
         ];
     }
