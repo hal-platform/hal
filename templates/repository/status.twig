@@ -44,7 +44,7 @@
     <h3>Recent Builds for <strong>{{ selected_environment.key }}</strong></h3>
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 
-    <ul class="button-list button-list--half">
+    <ul class="button-list">
         {% if canUserBuild(currentUser, repo.key) %}
             <li><a class="btn btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a></li>
         {% endif %}
@@ -57,7 +57,7 @@
             <li><a class="btn" href="{{ urlFor('push.history.page1', {'id': repo.id}) }}">All Pushes</a></li>
         {% endif %}
 
-        <li><a href="{{ urlFor('repository', {id: repo.id}) }}">Repository Information</a></li>
+        <li><a class="btn btn--secondary" href="{{ urlFor('repository', {id: repo.id}) }}">Repository Information</a></li>
     </ul>
 
 {% endblock %}

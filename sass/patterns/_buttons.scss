@@ -67,6 +67,10 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 .btn--large { font-size: ms(3); }
 
 // Button types
+.btn--secondary {
+    @include btn-color(tint($hal-cyan, 50%));
+}
+
 .btn--action {
     @include btn-color($warning-color);
 }
@@ -77,6 +81,10 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 
 .btn--disabled {
     @include btn-color($light-grey, false);
+    color: shade($light-grey, 30%);
+    &:hover {
+        color: shade($light-grey, 30%);
+    }
 }
 
 .btn--selected {

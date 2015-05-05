@@ -39,7 +39,7 @@
                 {% set canPush = true %}
             {% endif %}
 
-            <td{% if canPush %} class="js-build-push"{% endif %}>
+            <td class="tr{{ canPush ? ' js-build-push' : '' }}">
                 {% if build.status == 'Success' %}
                     {% if canUserPush(currentUser, build.repository.key, build.environment.key) %}
                         <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': build.id}) }}">Push</a>

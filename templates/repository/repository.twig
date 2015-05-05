@@ -32,17 +32,18 @@
         </dl>
 
         <ul class="button-list">
-            <li><a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">Repository status</a></li>
-            <li><a class="btn" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a></li>
+            <li><a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">Repository Status</a></li>
 
             {% if isRepoAdmin %}
-                <li><a class="btn" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a></li>
-                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a></li>
+                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit Repository</a></li>
             {% endif %}
 
             {% if isUserAdmin(currentUser) and not deployment_count %}
                 <li><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Repository</a></li>
             {% endif %}
+
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a></li>
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Server Deployments</a></li>
         </ul>
     </div>
 
@@ -100,7 +101,7 @@
     <h3>Permissions</h3>
 
     {% if permissions %}
-        <p>The following users have permission to push <strong>{{ repository.name }}</strong> to the specified environment.</p>
+        <p>The following users have permission to push to the specified environment.</p>
         <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>

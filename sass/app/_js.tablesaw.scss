@@ -133,3 +133,16 @@ table.tablesaw {
     display: none !important;
   }
 }
+
+
+/*
+CUSTOM OVERRIDES
+ */
+@media (min-width: 40em) {
+    .tablesaw-stack td.tr {
+        text-align: right;
+    }
+    .tablesaw-stack td.tl {
+        text-align: left;
+    }
+}
