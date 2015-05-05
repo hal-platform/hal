@@ -1,0 +1,68 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+{% import "kraken/partial/macros.twig" as kraken_macros %}
+
+{% set page_title = "View Configuration Property" %}
+
+{% block content %}
+
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.application.target', {application: application.id, environment: environment.id}) }}">Back to Configuration</a></p>
+
+    <h1>Configuration Property for <strong>{{ application.name }}</strong></h1>
+
+    <h4>Environment</h4>
+    <p>{{ environment.name }}</p>
+
+    <h2>Schema</h2>
+
+    <h4>Type</h4>
+    <p>{{ property.schema|formatSchemaType }}</p>
+
+    <h4>Description</h4>
+    <p>{{ property.schema.description ?: 'None' }}</p>
+
+    <h2>Property</h2>
+
+    <h4>Key</h4>
+    <p><code>{{ property.schema.key }}</code></p>
+
+    <h4>Value</h4>
+    {{ kraken_macros.renderProperty(property) }}
+
+    <h2 class="mbn">History</h2>
+    <h5 class="mtn">10 most recent values</h5>
+    {{ block('property_history') }}
+
+{% endblock %}
+
+{% block property_history %}
+
+    {% if history %}
+        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="t15">Time</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for previous_property in history %}
+                    <tr>
+                        <td>
+                            <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: previous_property.configuration.id}) }}">
+                                {{ macros.icon('list') }}
+                                <span class="tablesaw-collapse">View Configuration</span>
+                            </a>
+                        </td>
+                        <td>{{ previous_property.created|html5date }}</td>
+                        <td>{{ kraken_macros.renderProperty(previous_property) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no previous values for this property.</p>
+    {% endif %}
+
+{% endblock %}

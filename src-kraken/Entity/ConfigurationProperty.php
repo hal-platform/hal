@@ -25,6 +25,11 @@ class ConfigurationProperty implements JsonSerializable
     protected $isSecure;
 
     /**
+     * @type Timepoint|null
+     */
+    protected $created;
+
+    /**
      * @type Configuration
      */
     protected $configuration;
@@ -48,6 +53,7 @@ class ConfigurationProperty implements JsonSerializable
 
         $this->isSecure = Schema::DEFAULT_IS_SECURE;
 
+        $this->created = null;
         $this->configuration = null;
         $this->property = null;
         $this->schema = null;
@@ -91,6 +97,14 @@ class ConfigurationProperty implements JsonSerializable
     public function isSecure()
     {
         return $this->isSecure;
+    }
+
+    /**
+     * @return Timepoint|null
+     */
+    public function created()
+    {
+        return $this->created;
     }
 
     /**
@@ -173,6 +187,17 @@ class ConfigurationProperty implements JsonSerializable
     }
 
     /**
+     * @param Timepoint $created
+     *
+     * @return self
+     */
+    public function withCreated(Timepoint $created)
+    {
+        $this->created = $created;
+        return $this;
+    }
+
+    /**
      * @param Configuration $configuration
      *
      * @return self
@@ -217,6 +242,8 @@ class ConfigurationProperty implements JsonSerializable
             'value' => $this->value(),
 
             'isSecure' => $this->isSecure(),
+
+            'created' => $this->created() ? $this->created()->format(DateTime::RFC3339, 'UTC') : null,
 
             'configuration' => $this->configuration(),
             'property' => $this->property(),

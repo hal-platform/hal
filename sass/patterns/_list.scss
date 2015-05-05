@@ -4,6 +4,15 @@
     @include rhythm(0,.25,.25,1);
 }
 
+// Normal-ass bulleted list
+.list--bullet {
+    margin-left: 1.5em;
+    list-style-type: disc;
+    li {
+        @include trailer(.1);
+    }
+}
+
 // Inline list
 [class="inline-list"], [class^="inline-list--"] {
     margin-left: 0;
@@ -33,10 +42,9 @@
     @include trailer(.5);
 }
 
-.list--bullet {
-    margin-left: 1.5em;
-    list-style-type: disc;
-    li {
-        @include trailer(.1);
-    }
+// List of code or preformatted
+.code-list {
+    list-style-type: square;
+    margin-bottom: 0;
+    margin-left: 1em;
 }

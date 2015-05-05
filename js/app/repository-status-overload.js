@@ -24,7 +24,7 @@ exports.module = {
 
         this.$overloader = $('<a href="#">' + this.expandText + '</a>');
 
-        var $wrapper = $('<p class="header--sub"></p>');
+        var $wrapper = $('<p></p>');
         $wrapper.append(this.$overloader);
         $parent.append($wrapper);
 

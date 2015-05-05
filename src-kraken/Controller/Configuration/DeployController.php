@@ -71,13 +71,13 @@ class DeployController implements ControllerInterface
     {
         $configuration = $this->buildConfiguration($this->target->application(), $this->target->environment());
 
-        // Add "Current" configuration
+        // Add "Deployed" configuration
         if ($this->target->configuration()) {
             // @todo verify checksum against consul checksum
 
-            $currents = $this->configPropRepository->findBy(['configuration' => $this->target->configuration()]);
-            foreach ($currents as $current) {
-                $this->appendCurrentConfiguration($configuration, $current);
+            $deployeds = $this->configPropRepository->findBy(['configuration' => $this->target->configuration()]);
+            foreach ($deployeds as $deployed) {
+                $this->appendDeployedConfiguration($configuration, $deployed);
             }
         }
 
@@ -138,7 +138,7 @@ class DeployController implements ControllerInterface
         $partial = [
             'schema' => null,
             'property' => null,
-            'current' => null,
+            'deployed' => null,
             'changed' => false
         ];
 
@@ -192,13 +192,13 @@ class DeployController implements ControllerInterface
      *
      * @return void
      */
-    private function appendCurrentConfiguration(array &$configuration, ConfigurationProperty $property)
+    private function appendDeployedConfiguration(array &$configuration, ConfigurationProperty $property)
     {
         $key = $property->key();
 
         // Add Property
         $partial = $this->preparePartial($configuration, $key);
-        $partial['current'] = $property;
+        $partial['deployed'] = $property;
 
         $configuration[$key] = $partial;
     }
@@ -210,22 +210,18 @@ class DeployController implements ControllerInterface
      */
     private function determineChange(array $partial)
     {
-        // current and new value are missing: no change
-        if (!$partial['current'] && !$partial['property']) {
+        // deployed and new value are missing: no change
+        if (!$partial['deployed'] && !$partial['property']) {
             return false;
 
         // one missing: change
-        } elseif ($partial['current'] xor $partial['property']) {
+        } elseif ($partial['deployed'] xor $partial['property']) {
             return true;
         }
 
-        // Property is parent of current value (NO CHANGE)
         if ($partial['property']) {
-            if ($partial['property'] === $partial['current']->property()) {
-                return false;
-
             // @todo make better
-            } elseif ($partial['property']->value() === $partial['current']->value()) {
+            if ($partial['property']->value() === $partial['deployed']->value()) {
                 return false;
             }
         }

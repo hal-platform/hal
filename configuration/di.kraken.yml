@@ -110,15 +110,16 @@ services:
         calls: [['setTemplate', ['kraken/configuration/latest.twig']]]
 
     kraken.application.property.page:
-        class: 'QL\Kraken\Controller\Schema\PropertyController'
+        class: 'QL\Kraken\Controller\Configuration\PropertyController'
         arguments:
             - @kraken.application.property.twig
             - @kraken.application
             - @kraken.property
+            - @doctrine.em
             - @slim.not.found
     kraken.application.property.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/schema/property.twig']]]
+        calls: [['setTemplate', ['kraken/configuration/property.twig']]]
 
     kraken.application.configuration.page:
         class: 'QL\Kraken\Controller\Configuration\ConfigurationController'

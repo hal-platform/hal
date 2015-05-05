@@ -13,12 +13,10 @@ QL\Kraken\Entity\Configuration:
         configuration:
             column: configuration
             type: string
-
         checksum:
             column: checksum
             type: string
             length: 500
-
         created:
             column: created_time
             type: timepoint

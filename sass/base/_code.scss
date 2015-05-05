@@ -1,33 +1,22 @@
-pre {
-    @include trailer;
-}
-
 pre, code {
+    @include adjust-font-size-to(ms(-1));
     font-family: menlo, monospace, sans-serif;
-}
 
-code {
-    color: $red;
-    background: $light-grey;
-    padding: .2em;
-}
-
-pre {
     color: $red;
     background: $light-grey;
     margin: 0;
-    padding: .2em;
-
-    @include adjust-font-size-to(ms(-2));
+    padding: ms(-11);
     text-align: left;
+}
 
+code {
+    padding: ms(-9);
+}
+
+pre {
     white-space: pre;
     word-wrap: normal;
     overflow-x: scroll;
-}
-
-pre.line-wrap {
-    white-space: pre-line;
 }
 
 .pre-ansi pre {
@@ -37,9 +26,9 @@ pre.line-wrap {
     background: #073642;
 }
 
-// this is stupid
+// this is stupid, but will allow auto-overflowing of contained pre's without mangling its whitespace
 .pre-wrapper {
-    display: table;
+    display: inline-table;
     table-layout: fixed;
 
     width: 100%;

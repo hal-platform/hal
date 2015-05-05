@@ -1,0 +1,30 @@
+{% macro renderProperty(property, maxlength) %}
+    {% import "partials/macros.twig" as hal_macros %}
+
+    {% set slice = maxlength|default(0) %}
+    {% set formatted = property|formatPropertyValue(slice) %}
+
+    {% if formatted is null %}
+        {{ hal_macros.icon('locked') }} Secure
+    {% else %}
+        {% if formatted is iterable %}
+            <ul class="code-list">
+                {% for list_item in formatted %}
+                    <li>
+                        <div class="pre-wrapper">
+                            <pre>{{ list_item }}</pre>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+
+        {% else %}
+            <div class="pre-wrapper">
+                <pre>{{ formatted }}</pre>
+            </div>
+        {% endif %}
+    {% endif %}
+
+{% endmacro %}
+
+

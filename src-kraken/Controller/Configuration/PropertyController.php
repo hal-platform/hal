@@ -5,9 +5,12 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Schema;
+namespace QL\Kraken\Controller\Configuration;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
+use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Property;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -31,6 +34,11 @@ class PropertyController implements ControllerInterface
     private $property;
 
     /**
+     * @type EntityRepository
+     */
+    private $propertyRepo;
+
+    /**
      * @type NotFound
      */
     private $notFound;
@@ -39,18 +47,21 @@ class PropertyController implements ControllerInterface
      * @param TemplateInterface $template
      * @param Application $application
      * @param Property $property
-     *
+     * @param EntityManagerInterface $em
      * @param NotFound $notFound
      */
     public function __construct(
         TemplateInterface $template,
         Application $application,
         Property $property,
+        EntityManagerInterface $em,
         NotFound $notFound
     ) {
         $this->template = $template;
         $this->application = $application;
         $this->property = $property;
+
+        $this->propertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
 
         $this->notFound = $notFound;
     }
@@ -64,10 +75,13 @@ class PropertyController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
+        $history10 = $this->propertyRepo->findBy(['property' => $this->property], ['created' => 'DESC'], 10);
+
         $context = [
             'application' => $this->application,
             'environment' => $this->property->environment(),
-            'property' => $this->property
+            'property' => $this->property,
+            'history' => $history10
         ];
 
         $this->template->render($context);

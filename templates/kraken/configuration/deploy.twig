@@ -1,5 +1,6 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
+{% import "kraken/partial/macros.twig" as kraken_macros %}
 
 {% set page_title = "Deploy Configuration" %}
 
@@ -25,8 +26,8 @@
             <thead>
                 <tr>
                     <th>Property</th>
-                    <th class="t40">Current</th>
-                    <th class="t40">New</th>
+                    <th class="t40">Deployed</th>
+                    <th class="t40">Latest</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,23 +36,14 @@
                         <td>
                             {% if config.schema %}
                                 <code>{{ config.schema.key }}</code>
-                            {% elseif config.current %}
-                                <code>{{ config.current.key }}</code>
+                            {% elseif config.deployed %}
+                                <code>{{ config.deployed.key }}</code>
                             {% endif %}
                         </td>
 
                         <td>
-                            {% if config.current %}
-
-                                {% set formatted = config.current|formatPropertyValue(0) %}
-                                {% if formatted is null %}
-                                    {{ macros.icon('locked') }} Secure
-                                {% else %}
-                                    <div class="pre-wrapper">
-                                        <pre>{{ formatted }}</pre>
-                                    </div>
-                                {% endif %}
-
+                            {% if config.deployed %}
+                                {{ kraken_macros.renderProperty(config.deployed) }}
                             {% else %}
                                 {{ macros.status('Missing', 'error', 'spam-2') }}
                             {% endif %}
@@ -59,19 +51,10 @@
 
                         <td>
                             {% if not config.changed %}
-
                                 No change
 
                             {% elseif config.property %}
-
-                                {% set formatted = config.property|formatPropertyValue(0) %}
-                                {% if formatted is null %}
-                                    {{ macros.icon('locked') }} Secure
-                                {% else %}
-                                    <div class="pre-wrapper">
-                                        <pre>{{ formatted }}</pre>
-                                    </div>
-                                {% endif %}
+                                {{ kraken_macros.renderProperty(config.property) }}
 
                             {% else %}
                                 {{ macros.status('Missing', 'error', 'spam-2') }}

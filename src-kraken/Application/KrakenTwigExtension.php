@@ -141,7 +141,7 @@ class KrakenTwigExtension extends Twig_Extension
             }
 
             SKIP_NORMALIZE:
-            return json_encode($normalized, JSON_PRETTY_PRINT);
+            return $normalized;
 
         } elseif (is_string($value)) {
             if ($maxLength > 0) {

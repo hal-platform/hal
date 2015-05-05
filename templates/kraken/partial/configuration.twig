@@ -1,4 +1,5 @@
 {% import "partials/macros.twig" as macros %}
+{% import "kraken/partial/macros.twig" as kraken_macros %}
 
 {% if properties %}
     <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
@@ -29,16 +30,7 @@
                         <td><code>{{ property.schema.key }}</code></td>
                         <td>{{ property.schema|formatSchemaType }}</td>
 
-                        <td>
-                            {% set formatted = property|formatPropertyValue(0) %}
-                            {% if formatted is null %}
-                                {{ macros.icon('locked') }} Secure
-                            {% else %}
-                                <div class="pre-wrapper">
-                                    <pre>{{ formatted }}</pre>
-                                </div>
-                            {% endif %}
-                        </td>
+                        <td>{{ kraken_macros.renderProperty(property) }}</td>
 
                     {% else %}
                         {% if dualmode %}

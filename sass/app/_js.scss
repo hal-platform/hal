@@ -1,13 +1,9 @@
-/**
- * Build Start Tabs
- */
+// Build Start Tabs
 .js-tab-active {
     display: block;
 }
 
-/**
- * Build Start Styles
- */
+// Build Start Styles
 .js-search-query,
 .js-build-warning {
     display: none;
@@ -39,9 +35,7 @@
     }
 }
 
-/**
- * Add Repository Github Helpers
- */
+// Add Repository Github Helpers
 .js-form-toggle {
     display: block;
 }
@@ -50,23 +44,23 @@
     margin-bottom: 0;
 }
 
-/**
- * Add Deployments
- */
+// Add Deployments
 .js-add-deployment__form {
     display: none;
 }
 
-/**
- * Dashboard Quick Select
- */
+// Dashboard Quick Select
 .js-hide-box {
     display: none;
 }
 
-/**
- * Environment Re-Order
- */
+// Environment Re-Order
 #env-reorder tbody tr {
     cursor: move;
+}
+
+// Server card - extra data toggle
+.js-overloader-parent p {
+    margin: 0;
+    font-size: ms(-3);
 }
