@@ -11,7 +11,6 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 
     @if $hover {
         &:hover {
-            color: tint($color, 80%);
             background-color: tint($color, 20%);
             box-shadow:
                 0 -1px 0 0 $btn-color-transparent inset,
@@ -19,7 +18,8 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
         }
 
         &:focus {
-            color: shade($color, 20%);
+            color: tint($color, 20%);
+            background-color: shade($color, 20%);
         }
     }
     @else {
@@ -46,8 +46,8 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
     }
 
     &:hover {
-        margin-top:3px;
-        margin-bottom: -3px;
+        margin-top: 2px;
+        margin-bottom: -2px;
     }
 }
 

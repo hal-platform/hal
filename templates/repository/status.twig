@@ -44,21 +44,21 @@
     <h3>Recent Builds for <strong>{{ selected_environment.key }}</strong></h3>
     {% include 'partials/build-table.twig' with {'builds': builds} %}
 
-    <p>
+    <ul class="button-list button-list--half">
         {% if canUserBuild(currentUser, repo.key) %}
-            <a class="btn btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a>
+            <li><a class="btn btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a></li>
         {% endif %}
 
         {% if builds %}
-            <a class="btn" href="{{ urlFor('build.history.page1', {'id': repo.id}) }}">View all Builds</a>
+            <li><a class="btn" href="{{ urlFor('build.history.page1', {'id': repo.id}) }}">All Builds</a></li>
         {% endif %}
 
         {% if hasPushes %}
-            <a class="btn" href="{{ urlFor('push.history.page1', {'id': repo.id}) }}">View all Pushes</a>
+            <li><a class="btn" href="{{ urlFor('push.history.page1', {'id': repo.id}) }}">All Pushes</a></li>
         {% endif %}
 
-        <a href="{{ urlFor('repository', {id: repo.id}) }}">Repository Information</a>
-    </p>
+        <li><a href="{{ urlFor('repository', {id: repo.id}) }}">Repository Information</a></li>
+    </ul>
 
 {% endblock %}
 

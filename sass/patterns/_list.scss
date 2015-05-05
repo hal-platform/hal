@@ -48,3 +48,37 @@
     margin-bottom: 0;
     margin-left: 1em;
 }
+
+
+// A list of buttons... and other page nav type things.
+.button-list {
+    list-style-type: none;
+    margin-bottom: 0;
+
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+
+    li {
+        flex: 1 0 auto;
+        margin: ms(-9) 0;
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    @include breakpoint(40em) {
+        li {
+            margin: ms(-9);
+            width: auto;
+        }
+    }
+}
+
+.button-list--half {
+    @include breakpoint(40em) {
+        max-width: 30em;
+    }
+}
