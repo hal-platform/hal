@@ -1,3 +1,5 @@
+{% import "partials/macros.twig" as macros %}
+
 {% if initiator is not defined %}
     {% set initiator = true %}
 {% endif %}
@@ -19,13 +21,7 @@
                     </span>
 
                     <a href="{{ urlFor('push', {'push': push.id}) }}">
-                        {% if push.status == 'Success' %}
-                            <span class="status-before--success">{{ push.status }}</span>
-                        {% elseif push.status == 'Error' %}
-                            <span class="status-before--error">{{ push.status }}</span>
-                        {% else %}
-                            <span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
-                        {% endif %}
+                        {{ macros.job_status(push) }}
                     </a>
                 </header>
 

@@ -15,36 +15,6 @@
     height: 100%;
 }
 
-@mixin status {
-    content: '';
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    margin-right: .25em;
-}
-
-@mixin status-bg($color) {
-    &:before {
-        background-color: $color;
-    }
-    &:after {
-        background-color: $color;
-    }
-}
-
-[class*="status-before--"] {
-    &:before {
-        @include status;
-    }
-}
-
-[class*="status-after--"] {
-    &:after {
-        @include status;
-    }
-}
-
 .icon--success {
     color: $success-color;
 }
@@ -70,38 +40,4 @@
     color: $white;
     background: $info-color;
     padding: 4px;
-}
-
-.status-before--unknown, .status-after--unknown {
-    @include status-bg($grey);
-}
-
-.status-before--success, .status-after--success {
-    @include status-bg($success-color);
-}
-
-.status-before--error, .status-after--error {
-    @include status-bg($error-color);
-}
-
-.status-before--warning, .status-after--warning, .status-before--other, .status-after--other {
-    @include status-bg($warning-color);
-}
-
-.status-before--thinking, .status-after--thinking {
-    &:before {
-        background: linear-gradient(90deg, $success-color 50%, $error-color 50%);
-        animation:spin 2s infinite;
-
-    }
-    &:after {
-        background: linear-gradient(90deg, $success-color 50%, $error-color 50%);
-        animation:spin 2s infinite;
-    }
-}
-
-
-@keyframes spin {
-    from {transform:rotate(0deg);}
-    to {transform:rotate(360deg);}
 }

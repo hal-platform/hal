@@ -1,12 +1,12 @@
 {% macro alert(type, title, details, isRaw) %}
     {% set isRaw = isRaw|default(false) %}
 
-    {% set alerttype = 'alert-bar' %}
-    {% if (type == 'error') %}{% set alerttype = 'alert-bar--error' %}{% endif %}
-    {% if (type == 'success') %}{% set alerttype = 'alert-bar--success' %}{% endif %}
-    {% if (type == 'warning') %}{% set alerttype = 'alert-bar--warning' %}{% endif %}
+    {% set typeClass = 'alert-bar' %}
+    {% if (type == 'error') %}{% set typeClass = 'alert-bar--error' %}{% endif %}
+    {% if (type == 'success') %}{% set typeClass = 'alert-bar--success' %}{% endif %}
+    {% if (type == 'warning') %}{% set typeClass = 'alert-bar--warning' %}{% endif %}
 
-    <div class="{{ alerttype }}">
+    <div class="{{ typeClass }}">
         <h4>{{ title|raw }}</h4>
         {% if details %}
             {% if isRaw %}
@@ -71,6 +71,7 @@
 
 {% endmacro %}
 
+{# Icon #}
 {% macro icon(icon, class, title) %}
     {% set class = class|default('') %}
     {% set title = title|default('') %}
@@ -83,20 +84,75 @@
 
 {% endmacro %}
 
+{# Status Block - Colorize message with icon #}
 {% macro status(msg, type, icon) %}
     {% import _self as self_macros %}
 
     {% set icon = icon|default('spam-2') %}
-
     {% set typeClass = 'status-block--info' %}
+
     {% if type == 'success' %}
         {% set typeClass = 'status-block--success' %}
+
     {% elseif type == 'error' %}
         {% set typeClass = 'status-block--error' %}
+
     {% endif %}
 
     <span class="{{ typeClass }}">
         {{ self_macros.icon(icon) }}{{ msg }}
     </span>
+
+{% endmacro %}
+
+{# Status Icon - icon prefix for a message #}
+{% macro status_icon(contents, type, extra_attributes) %}
+    {% set type = type|default('other') %}
+    {% set extra = extra_attributes|default({}) %}
+    {% set typeClass = 'status-icon--other' %}
+
+    {% if type == 'unknown' %}
+        {% set typeClass = 'status-icon--unknown' %}
+
+    {% elseif type == 'success' %}
+        {% set typeClass = 'status-icon--success' %}
+
+    {% elseif type == 'error' %}
+        {% set typeClass = 'status-icon--error' %}
+
+    {% elseif type == 'other' %}
+        {% set typeClass = 'status-icon--other' %}
+
+    {% elseif type == 'warning' %}
+        {% set typeClass = 'status-icon--warning' %}
+
+    {% elseif type == 'thinking' %}
+        {% set typeClass = 'status-icon--thinking' %}
+    {% endif %}
+
+    <span class="{{ typeClass }}"{% for attr, val in extra %} {{ attr }}="{{ val }}"{% endfor %}>{{ contents|raw }}</span>
+
+{% endmacro %}
+
+{% macro job_status(job, allowUpdates) %}
+    {% import _self as self_macros %}
+    {% set allowUpdates = allowUpdates|default(false) %}
+
+    {% if job.status == 'Success' %}
+        {{ self_macros.status_icon(job.status, 'success') }}
+
+    {% elseif job.status in ['Error', 'Removed'] %}
+        {{ self_macros.status_icon(job.status, 'error') }}
+
+    {% elseif allowUpdates %}
+        {% if job is push %}
+            {{ self_macros.status_icon(job.status, 'thinking', {'data-push': job.id}) }}
+        {% else %}
+            {{ self_macros.status_icon(job.status, 'thinking', {'data-build': job.id}) }}
+        {% endif %}
+
+    {% else %}
+        {{ self_macros.status_icon(job.status, 'other') }}
+    {% endif %}
 
 {% endmacro %}

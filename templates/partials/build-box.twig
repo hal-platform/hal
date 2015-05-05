@@ -19,13 +19,7 @@
                     </span>
 
                     <a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">
-                        {% if build.status == 'Success' %}
-                            <span class="status-before--success">{{ build.status }}</span>
-                        {% elseif build.status in ['Error', 'Removed'] %}
-                            <span class="status-before--error">{{ build.status }}</span>
-                        {% else %}
-                            <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
-                        {% endif %}
+                        {{ macros.job_status(build) }}
                     </a>
                 </header>
 

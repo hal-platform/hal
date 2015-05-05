@@ -29,13 +29,9 @@
             <dt class="split__title">Reference</dt>
             <dd>
                 {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
-                    <span class="status-before--success">
-                        {{ macros.gitref(build) }} (latest)
-                    </span>
+                    {{ macros.status_icon(macros.gitref(build) ~ ' (latest)', 'success') }}
                 {% else %}
-                    <span class="status-before--other">
-                        {{ macros.gitref(build) }} (behind)
-                    </span>
+                    {{ macros.status_icon(macros.gitref(build) ~ ' (behind)', 'other') }}
                 {% endif %}
             </dd>
 
@@ -62,15 +58,7 @@
     <div class="details-box">
         <dl class="split mbn">
             <dt class="split__title">Status</dt>
-            <dd>
-                {% if build.status == 'Success' %}
-                    <span class="status-before--success">{{ build.status }}</span>
-                {% elseif build.status in ['Error', 'Removed'] %}
-                    <span class="status-before--error">{{ build.status }}</span>
-                {% else %}
-                    <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
-                {% endif %}
-            </dd>
+            <dd>{{ macros.job_status(build, true) }}</dd>
 
             <dt class="split__title">Start</dt>
             <dd class="js-build-start">{{ build.start|html5date }}</dd>

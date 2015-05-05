@@ -32,20 +32,22 @@
                 {% for job in pending %}
                     <tr>
                         <td>
-                            {% set statusClass = 'status-before--other' %}
+                            {% set statusType = 'other' %}
+
                             {% if job.status == 'Success' %}
-                                {% set statusClass = 'status-before--success' %}
+                                {% set statusType = 'success' %}
+
                             {% elseif job.status in ['Error', 'Removed'] %}
-                                {% set statusClass = 'status-before--error' %}
+                                {% set statusType = 'error' %}
                             {% endif %}
 
-                            <span class="{{ statusClass }}">
-                                {% if job is build %}
-                                    <a href="{{ urlFor('build', {build: job.id}) }}">Build</a>
-                                {% else %}
-                                   <a href="{{ urlFor('push', {push: job.id}) }}">Push</a>
-                                {% endif %}
-                            </span>
+                            {% if job is build %}
+                                {% set link = '<a href="' ~ urlFor('build', {build: job.id}) ~ '">Build</a>' %}
+                            {% else %}
+                                {% set link = '<a href="' ~ urlFor('push', {push: job.id}) ~ '">Push</a>' %}
+                            {% endif %}
+
+                            {{ macros.status_icon(link, statusType) }}
                         </td>
 
                         <td>

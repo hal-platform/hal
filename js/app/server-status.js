@@ -3,9 +3,9 @@ var $ = require('jquery');
 exports.module = {
     target: '[data-server-status]',
 
-    successClass: 'status-before--success',
-    failureClass: 'status-before--error',
-    unknownClass: 'status-before--unknown',
+    successClass: 'status-icon--success',
+    failureClass: 'status-icon--error',
+    unknownClass: 'status-icon--unknown',
 
     $servers: null,
 

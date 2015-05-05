@@ -1,3 +1,5 @@
+{% import "partials/macros.twig" as macros %}
+
 <table class="table--spacing-medium" data-tablesaw-mode="stack">
     <thead>
         <tr>
@@ -14,13 +16,7 @@
         <tr>
             <td><a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a></td>
             <td>
-                {% if push.status == 'Success' %}
-                    <span class="status-before--success">{{ push.status }}</span>
-                {% elseif push.status == 'Error' %}
-                    <span class="status-before--error">{{ push.status }}</span>
-                {% else %}
-                    <span class="status-before--other" data-push="{{ push.id }}">{{ push.status }}</span>
-                {% endif %}
+                {{ macros.job_status(push) }}
             </td>
             <td>
                 {% if push.deployment %}

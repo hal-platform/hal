@@ -57,7 +57,7 @@
             <a class="btn" href="{{ urlFor('push.history.page1', {'id': repo.id}) }}">View all Pushes</a>
         {% endif %}
 
-        <a href="{{ urlFor('repository', {id: repo.id}) }}">View Repository Information</a>
+        <a href="{{ urlFor('repository', {id: repo.id}) }}">Repository Information</a>
     </p>
 
 {% endblock %}
@@ -90,16 +90,7 @@
                 <li>
                     <span class="split__title">Last push:</span>
                     {% if active %}
-                        {% if active.status in ['Success', 'Error'] %}
-                            <span class="status-before--{{ active.status == 'Success' ? 'success' : 'error' }}">
-                                {{ active.status }}
-                            </span>
-                        {% else %}
-                            <span class="status-before--other" data-push="{{ active.id }}">
-                                {{ active.status }}
-                            </span>
-                        {% endif %}
-
+                        {{ macros.job_status(active, true) }}
                         (<a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
                     {% else %}
                         None
@@ -127,9 +118,7 @@
                     <span class="split__title">Reference:</span>
                     {% if active %}
                         {% set isCurrent = githubCommitIsCurrent(repo.githubUser, repo.githubRepo, active.build.branch, active.build.commit) %}
-                        <span class="status-before--{{ isCurrent ? 'success' : 'warning' }}">
-                            {{ macros.gitref(active.build, true) }}
-                        </span>
+                        {{ macros.status_icon(macros.gitref(active.build, true), isCurrent ? 'success' : 'warning') }}
 
                     {% else %}
                         Unknown

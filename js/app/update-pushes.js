@@ -3,10 +3,10 @@ var $ = require('jquery');
 exports.module = {
     interval: 5,
     mode: 'table', // "table" for global push table, "grid" for global push grid, "push" for individual push status page
-    pendingClass: 'status-before--other',
-    thinkingClass: 'status-before--thinking',
-    successClass: 'status-before--success',
-    failureClass: 'status-before--error',
+    pendingClass: 'status-icon--other',
+    thinkingClass: 'status-icon--thinking',
+    successClass: 'status-icon--success',
+    failureClass: 'status-icon--error',
     pushTarget: '[data-push]',
 
     init: function() {

@@ -13,6 +13,9 @@ $min-line-padding: .1em;
 // Scales - buttons
 $btn-text-color: $white;
 $btn-background-color: $blue;
+$btn-border-color: shade($blue, 20%);
+$btn-border-width: 1px;
+
 $btn-hover-background-color: tint($blue, 10%);
 $btn-hover-text-color: $white;
 

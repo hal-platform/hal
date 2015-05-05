@@ -31,21 +31,19 @@
             {% endif %}
         </dl>
 
-        <div>
-            {# primary action #}
-            <a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">View repository status</a>
-            <a class="btn" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a>
+        <ul class="button-list">
+            <li><a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">Repository status</a></li>
+            <li><a class="btn" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a></li>
 
-            {# secondary actions #}
             {% if isRepoAdmin %}
-                <a class="btn" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a>
-                <a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a>
+                <li><a class="btn" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Manage Deployment Relationships</a></li>
+                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit details</a></li>
             {% endif %}
 
             {% if isUserAdmin(currentUser) and not deployment_count %}
-                <a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Repository</a>
+                <li><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Repository</a></li>
             {% endif %}
-        </div>
+        </ul>
     </div>
 
     <h3>Notifications</h3>

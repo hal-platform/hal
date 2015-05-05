@@ -18,13 +18,7 @@
 
             <td><a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">{{ build.id|formatBuildId }}</a></td>
             <td>
-                {% if build.status == 'Success' %}
-                    <span class="status-before--success">{{ build.status }}</span>
-                {% elseif build.status in ['Error', 'Removed'] %}
-                    <span class="status-before--error">{{ build.status }}</span>
-                {% else %}
-                    <span class="status-before--other" data-build="{{ build.id }}">{{ build.status }}</span>
-                {% endif %}
+                {{ macros.job_status(build, true) }}
             </td>
             <td>{{ build.environment.key }}</td>
             <td>
@@ -45,7 +39,7 @@
                 {% set canPush = true %}
             {% endif %}
 
-            <td{{ canPush ? ' class="js-build-push"' }}>
+            <td{% if canPush %} class="js-build-push"{% endif %}>
                 {% if build.status == 'Success' %}
                     {% if canUserPush(currentUser, build.repository.key, build.environment.key) %}
                         <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': build.id}) }}">Push</a>
@@ -55,7 +49,7 @@
         </tr>
     {% else %}
         <tr>
-            <td colspan="8">No builds found.</td>
+            <td colspan="7">No builds found.</td>
         </tr>
     {% endfor %}
     </tbody>

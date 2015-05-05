@@ -1,0 +1,83 @@
+
+// Status blocks
+.status-block,
+.status-block--success,
+.status-block--info,
+.status-block--error, {
+    color: $white;
+    @include adjust-font-size-to(ms(1));
+    line-height: ms(6);
+    padding: ms(-6);
+    white-space: nowrap;
+}
+
+.status-block--success {
+    background-color: $success-color;
+}
+
+.status-block--info {
+    background-color: $grey;
+}
+
+.status-block--error {
+    background-color: $error-color;
+}
+
+// Status icons
+@mixin status {
+    content: '';
+    display: inline-block;
+    width: .8em;
+    height: .8em;
+    border-radius: 50%;
+    margin-right: .25em;
+}
+
+@mixin status-bg($color) {
+    &:before {
+        background-color: $color;
+    }
+}
+
+.status-icon--unknown,
+.status-icon--success,
+.status-icon--error,
+.status-icon--other,
+.status-icon--thinking,
+.status-icon--warning {
+    &:before {
+        @include status;
+    }
+}
+
+.status-icon--unknown {
+    @include status-bg($grey);
+}
+
+.status-icon--success {
+    @include status-bg($success-color);
+}
+
+.status-icon--error {
+    @include status-bg($error-color);
+}
+
+.status-icon--warning,
+.status-icon--other {
+    @include status-bg($warning-color);
+}
+
+.status-icon--thinking {
+    transform: translateZ(0);
+    &:before {
+        animation:spin 1s infinite linear;
+        background: white;
+        border: .18em solid $success-color;
+        border-left-color: $error-color;
+    }
+}
+
+@keyframes spin {
+    0% {transform:rotate(0deg);}
+    100% {transform:rotate(360deg);}
+}

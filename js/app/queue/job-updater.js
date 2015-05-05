@@ -5,10 +5,10 @@ exports.module = {
     buildTemplate: null,
     pushTemplate: null,
 
-    pendingClass: 'status-before--other',
-    thinkingClass: 'status-before--thinking',
-    successClass: 'status-before--success',
-    failureClass: 'status-before--error',
+    pendingClass: 'status-icon--other',
+    thinkingClass: 'status-icon--thinking',
+    successClass: 'status-icon--success',
+    failureClass: 'status-icon--error',
 
     init: function() {
         nunjucks.configure('views');
