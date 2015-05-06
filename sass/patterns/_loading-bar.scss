@@ -1,0 +1,148 @@
+
+/*
+To wrap the whole screen:
+    <div class="loading-bar__bottom"></div>
+    <div class="loading-bar__top"></div>
+    <div class="loading-bar__left"></div>
+    <div class="loading-bar__right"></div>
+
+Single horizontal bar:
+    <div class="loading-bar"></div>
+*/
+$loading-color: #00BFE0;
+
+@mixin loadingBar($direction, $animation, $time: 2s) {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    @if $direction == horizontal {
+        height: 3px;
+    }
+    @else {
+        width: 3px;
+    }
+
+    // animation: $animation 2s ease-in-out infinite;
+    animation: $animation $time ease-in-out infinite;
+}
+
+.loading-bar,
+[class*="loading-bar__"] {
+    z-index: 800;
+    position: fixed;
+
+    background: $loading-color;
+    transform: translateX(100%);
+}
+
+.loading-bar {
+    @include loadingBar(horizontal, single-shift-right, 2s);
+    top: auto;
+}
+
+.loading-bar__bottom {
+    @include loadingBar(horizontal, shift-left);
+    top: auto;
+}
+
+.loading-bar__top {
+    @include loadingBar(horizontal, shift-right);
+    bottom: auto;
+}
+
+.loading-bar__left {
+    @include loadingBar(vertical, shift-up);
+    right: auto;
+}
+
+.loading-bar__right {
+    @include loadingBar(vertical, shift-down);
+    left: auto;
+}
+
+// @keyframes shift-right {
+//     0% { transform: translate(-100%, 0); }
+//     100% { transform: translate(100%, 0); }
+
+//     40% { transform: translate(0%, 0); }
+//     60% { transform: translate(0%, 0); }
+// }
+
+// @keyframes shift-left {
+//     0% { transform: translate(100%, 0); }
+//     100% { transform: translate(-100%, 0); }
+
+//     40% { transform: translate(0%, 0); }
+//     60% { transform: translate(0%, 0); }
+// }
+
+// @keyframes shift-up {
+//     0% { transform: translate(0, 100%); }
+//     100% { transform: translate(0, -100%); }
+
+//     40% { transform: translate(0, 0%); }
+//     60% { transform: translate(0, 0%); }
+// }
+
+// @keyframes shift-down {
+//     0% { transform: translate(0, -100%); }
+//     100% { transform: translate(0, 100%); }
+
+//     40% { transform: translate(0, 0%); }
+//     60% { transform: translate(0, 0%); }
+// }
+
+// 0
+@keyframes single-shift-right {
+    0% { transform: translate(-100%, 0); }
+    100% { transform: translate(100%, 0); }
+
+    40% { transform: translate(0%, 0); }
+    60% { transform: translate(0%, 0); }
+}
+
+// 1
+@keyframes shift-right {
+    0% { transform: translate(-100%, 0); } // start
+    10% { transform: translate(0%, 0); }
+    15% { transform: translate(0%, 0); }
+    25% { transform: translate(100%, 0); } // stop
+
+    100% { transform: translate(100%, 0); }
+}
+
+// 3
+@keyframes shift-left {
+    0% { transform: translate(100%, 0); }
+
+    50% { transform: translate(100%, 0); } // start
+    60% { transform: translate(0%, 0); }
+    65% { transform: translate(0%, 0); }
+    75% { transform: translate(-100%, 0); } // stop
+
+    100% { transform: translate(-100%, 0); }
+}
+
+// 4
+@keyframes shift-up {
+    0% { transform: translate(0, 100%); }
+
+    75% { transform: translate(0, 100%); } // start
+    85% { transform: translate(0, 0%); }
+    90% { transform: translate(0, 0%); }
+    100% { transform: translate(0, -100%); } // stop
+}
+
+// 2
+@keyframes shift-down {
+    0% { transform: translate(0, -100%); }
+
+    25% { transform: translate(0, -100%); } // start
+    35% { transform: translate(0, 0%); }
+    40% { transform: translate(0, 0%); }
+    50% { transform: translate(0, 100%); } // stop
+
+    100% { transform: translate(0, 100%); }
+}
