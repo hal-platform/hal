@@ -7,12 +7,16 @@
 
 namespace QL\Hal\Controllers\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Services\PermissionsService;
+use QL\Kraken\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -43,6 +47,11 @@ class RepositoryController implements ControllerInterface
     private $permissions;
 
     /**
+     * @type EntityRepository
+     */
+    private $krakenRepo;
+
+    /**
      * @type ElasticBeanstalkService
      */
     private $ebService;
@@ -64,8 +73,7 @@ class RepositoryController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param RepositoryRepository $repoRepo
-     * @param DeploymentRepository $deploymentRepo
+     * @param EntityManagerInterface $em,
      * @param PermissionsService $permissions
      * @param ElasticBeanstalkService $ebService
      * @param Response $response
@@ -74,8 +82,7 @@ class RepositoryController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        RepositoryRepository $repoRepo,
-        DeploymentRepository $deploymentRepo,
+        EntityManagerInterface $em,
         PermissionsService $permissions,
         ElasticBeanstalkService $ebService,
         Response $response,
@@ -83,8 +90,11 @@ class RepositoryController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
-        $this->deploymentRepo = $deploymentRepo;
+
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
+
         $this->permissions = $permissions;
         $this->ebService = $ebService;
 
@@ -101,6 +111,8 @@ class RepositoryController implements ControllerInterface
         if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
+
+        $krakenApp = $this->krakenRepo->findOneBy(['halRepository' => $repo]);
 
         $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
         $environmentalized = $this->environmentalizeDeployments($deployments);
@@ -125,7 +137,8 @@ class RepositoryController implements ControllerInterface
             'repository' => $repo,
             'deployment_environments' => $environmentalized,
             'deployment_count' => $deploymentCount,
-            'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey())
+            'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey()),
+            'kraken' => $krakenApp
         ]);
 
         $this->response->setBody($rendered);

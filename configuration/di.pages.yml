@@ -136,8 +136,7 @@ services:
         class: 'QL\Hal\Controllers\Repository\RepositoryController'
         arguments:
             - @repository.twig
-            - @repository.repo
-            - @deployment.repo
+            - @doctrine.em
             - @permissions
             - @eb
             - @slim.response

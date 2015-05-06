@@ -7,7 +7,27 @@
 
 {% block content %}
     <h2>Repository Information</h2>
+    {{ block('meta') }}
 
+    <h3>Notifications</h3>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Email</dt>
+            <dd>{{ repository.email ?: 'None' }}</dd>
+        </dl>
+    </div>
+
+    {{ block('legacy_commands') }}
+
+    <h3>Permissions</h3>
+    {{ block('permissions') }}
+
+    <h3>Server Deployments</h3>
+    {{ block('server_deployments') }}
+
+{% endblock %}
+
+{% block meta %}
     <div class="details-box">
         <dl class="split trailer">
             <dt class="split__title">Name</dt>
@@ -44,17 +64,15 @@
 
             <li><a class="btn btn--secondary" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a></li>
             <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Server Deployments</a></li>
+
+            {% if kraken %}
+                <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">Kraken Configuration</a></li>
+            {% endif %}
         </ul>
     </div>
+{% endblock %}
 
-    <h3>Notifications</h3>
-    <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Email</dt>
-            <dd>{{ repository.email ?: 'None' }}</dd>
-        </dl>
-    </div>
-
+{% block legacy_commands %}
     {% if repository.buildCmd or repository.buildTransformCmd or repository.prePushCmd or repository.postPushCmd %}
         <h3>Commands</h3>
         <div class="details-box">
@@ -97,9 +115,9 @@
             </p>
         </div>
     {% endif %}
+{% endblock %}
 
-    <h3>Permissions</h3>
-
+{% block permissions %}
     {% if permissions %}
         <p>The following users have permission to push to the specified environment.</p>
         <table class="table--spacing-medium" data-tablesaw-mode="stack">
@@ -127,8 +145,9 @@
     {% else %}
         <p>No users can push this repository.</p>
     {% endif %}
+{% endblock %}
 
-    <h3>Server Deployments</h3>
+{% block server_deployments %}
     {% if deployment_count %}
         <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
@@ -179,5 +198,5 @@
     {% else %}
         <p>There are no deployments associated with this repository.</p>
     {% endif %}
-
 {% endblock %}
+
