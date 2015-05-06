@@ -2,6 +2,7 @@
 {% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Configuration Status" %}
+{% set isAdmin = true %}
 
 {% block content %}
 
@@ -30,7 +31,7 @@
                 <li>
                     <article class="card card--{{ target.environment.name }}">
                         <header class="card__header">
-                            {% if not admin %}
+                            {% if isAdmin %}
                                 <a class="icon--link btn btn--small btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy</a>
                             {% endif %}
 

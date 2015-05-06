@@ -2,6 +2,7 @@
 {% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Application" %}
+{% set isAdmin = true %}
 
 {% block content %}
 
@@ -12,7 +13,7 @@
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration Status</a></li>
 
-        {% if not admin %}
+        {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.application.schema', {application: application.id}) }}">Manage Schema</a></li>
         {% endif %}
 
@@ -67,14 +68,16 @@
                             <td>{{ target.environment.name }}</td>
                             <td><code>{{ target.key }}</code></td>
                             <td class="tr">
-                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">View Configuration</a>
+                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </td>
 
                         {% else %}
                             <td>{{ target.name }}</td>
                             <td>Environment is not assigned.</td>
                             <td class="tr">
-                                <a class="btn btn--small" href="{{ urlFor('kraken.application.add_target', {application: application.id}) }}">Assign environment</a>
+                                {% if isAdmin %}
+                                    <a class="btn btn--small" href="{{ urlFor('kraken.application.add_target', {application: application.id}) }}">Assign environment</a>
+                                {% endif %}
                             </td>
 
                         {% endif %}
@@ -88,4 +91,3 @@
     {% endif %}
 
 {% endblock %}
-
