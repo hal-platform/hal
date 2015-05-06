@@ -1,7 +1,7 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 
-{% set page_title = "Application Status" %}
+{% set page_title = "Configuration Status" %}
 
 {% block content %}
 
@@ -13,15 +13,13 @@
     <h2>Configuration Schema</h2>
     {% include 'kraken/partial/schema.twig' with {'schema': schema} %}
 
-    <div>
-        {% if not admin %}
-            <a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Manage application</a>
-        {% endif %}
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application Information</a></li>
 
         {% if application.halRepository %}
-            <a href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">HAL 9000 Status</a>
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000 Repository</a></li>
         {% endif %}
-    </div>
+    </ul>
 
 {% endblock %}
 

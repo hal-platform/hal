@@ -1,11 +1,12 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 
-{% set page_title = "View Configuration" %}
+{% set is_deployed = target.configuration.id == configuration.id %}
+{% set page_title = is_deployed ? 'Deployed Configuration' : 'Configuration' %}
 
 {% block content %}
 
-    <h1>Deployed Configuration</h1>
+    <h1>{{ is_deployed ? 'Deployed Configuration' : 'Configuration' }} for <strong>{{ target.environment.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -15,7 +16,7 @@
 
     <h4>Status</h4>
     <p>
-        {% if target.configuration.id == configuration.id %}
+        {% if is_deployed %}
             {{ macros.status('Currently Deployed', 'success', 'tick') }}
         {% else %}
             Not Active
@@ -25,10 +26,10 @@
     <h2>Configuration</h2>
     {% include 'kraken/partial/configuration.twig' with {'properties': properties} %}
 
-    <div>
-        <a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Status</a>
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Status</a></li>
 
-        <a href="{{ urlFor('kraken.configuration.compare', {application: application.id}) }}">Compare to latest configuration</a>
-    </div>
+        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.compare', {application: application.id, configuration: configuration.id}) }}">Compare to latest configuration</a></li>
+    </ul>
 
 {% endblock %}

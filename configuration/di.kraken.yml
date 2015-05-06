@@ -63,12 +63,7 @@ services:
 
     kraken.environments.page:
         class: 'QL\Kraken\Controller\EnvironmentsController'
-        arguments:
-            - @slim.request
-            - @kraken.environments.twig
-            - @doctrine.em
-            - @url
-            - @session
+        arguments: [@kraken.environments.twig, @doctrine.em]
     kraken.environments.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/environments.twig']]]
@@ -148,6 +143,18 @@ services:
     kraken.add_application.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/add-application.twig']]]
+
+    kraken.add_environment.page:
+        class: 'QL\Kraken\Controller\Environment\AddEnvironmentController'
+        arguments:
+            - @slim.request
+            - @kraken.add_environment.twig
+            - @session.flashfire
+            - @doctrine.em
+            - @kraken.random
+    kraken.add_environment.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/environment/add-environment.twig']]]
 
     kraken.application.add_target.page:
         class: 'QL\Kraken\Controller\Application\AddTargetController'

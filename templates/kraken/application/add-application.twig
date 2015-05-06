@@ -50,12 +50,13 @@
                     </label>
                     <input type="text" name="name" id="app-name" maxlength="64" value="{{ form.name }}" class="text-input">
                 </li>
-
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Add Application">
-                </li>
             </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Application"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.applications') }}">Cancel</a></li>
+            </ul>
+
         </form>
     </div>
 {% endblock %}

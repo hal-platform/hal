@@ -56,7 +56,7 @@
     margin-bottom: 0;
 
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: column wrap;
     align-items: flex-end;
 
     li {
@@ -65,11 +65,16 @@
         width: 100%;
     }
 
+    .button-list__fixed {
+        flex: 0 0 auto;
+    }
+
     .btn {
         width: 100%;
     }
 
     @include breakpoint(40em) {
+        flex-flow: row wrap;
         li {
             margin: ms(-9);
             width: auto;

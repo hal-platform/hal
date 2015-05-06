@@ -44,6 +44,12 @@
         <p>There are no applications defined.</p>
     {% endif %}
 
-    <a class="btn" href="{{ urlFor('kraken.add_application') }}">Add Application</a>
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('kraken.environments') }}">Kraken Environments</a></li>
+
+        {% if not admin %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.add_application') }}">Add Application</a></li>
+        {% endif %}
+    </ul>
 
 {% endblock %}

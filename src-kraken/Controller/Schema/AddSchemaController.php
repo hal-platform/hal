@@ -10,7 +10,7 @@ namespace QL\Kraken\Controller\Schema;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
-use QL\Kraken\DataType\PropertyEnumType;
+use QL\Kraken\Doctrine\PropertyEnumType;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Schema;
 use QL\Panthor\ControllerInterface;

@@ -3,7 +3,6 @@
 {% set page_title = "Environments" %}
 
 {% block content %}
-    <a href="{{ urlFor('kraken') }}" class="btn" style="position:absolute; right:20px;top:20px !important;">back</a>
     <h1>Environments</h1>
 
     {% if environments %}
@@ -31,39 +30,12 @@
         <p>There are no configuration environments defined.</p>
     {% endif %}
 
-    {{ block('add_environment') }}
-{% endblock %}
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('kraken.applications') }}">Kraken Applications</a></li>
 
-{% block add_environment %}
-    <h2>Add a new environment</h2>
-
-    <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
+        {% if not admin %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.add_environment') }}">Add Environment</a></li>
         {% endif %}
-
-        <form action="" method="post">
-            <ul class="form-fields">
-                <li>
-                    <label for="env-name">Name</label>
-                    <input type="text" name="name" id="env-name" maxlength="40" required value="{{ form.name }}" class="text-input t50">
-                </li>
-                <li>
-                    <label for="env-server">Consul Server</label>
-                    <input type="text" name="server" id="env-server" maxlength="200" required value="{{ form.server }}" class="text-input">
-                </li>
-                <li>
-                    <label for="env-token">Consul Token</label>
-                    <input type="text" name="token" id="env-token" maxlength="200" value="{{ form.token }}" class="text-input" autocomplete="off">
-                </li>
-            </ul>
-
-            {# primary action #}
-            <input class="btn" type="submit" value="Add Environment">
-        </form>
-    </div>
+    </ul>
 {% endblock %}
+

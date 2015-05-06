@@ -67,6 +67,7 @@
 
             {% if kraken %}
                 <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">Kraken Configuration</a></li>
+                <li><a class="btn btn--secondary" href="http://core/app/{{ kraken.coreId }}">{{ macros.icon('spinner') }} Core Website</a></li>
             {% endif %}
         </ul>
     </div>

@@ -9,13 +9,19 @@
 
     {{ block('meta') }}
 
-    <div>
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration Status</a></li>
+
         {% if not admin %}
-            <a class="btn" href="{{ urlFor('kraken.application.schema', {application: application.id}) }}">Manage Configuration Schema</a>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.application.schema', {application: application.id}) }}">Manage Schema</a></li>
         {% endif %}
 
-        <a href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Status</a>
-    </div>
+        {% if application.halRepository %}
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000 Repository</a></li>
+        {% endif %}
+
+        <li><a class="btn btn--secondary" href="http://core/app/{{ application.coreId }}">{{ macros.icon('spinner') }} Core Website</a></li>
+    </ul>
 
     <h2 class="leader">Environments</h2>
     {{ block('application_targets') }}
@@ -30,14 +36,12 @@
     <p>{{ application.name }}</p>
 
     <h4>Core ID</h4>
-    <p>
-        {{ application.coreId }} <a href="http://core/app/{{ application.coreId }}">{{ macros.icon('spinner') }} Core</a>
-    </p>
+    <p>{{ application.coreId }}</p>
 
     <h4>HAL Application</h4>
     <p>
         {% if application.halRepository %}
-            <a href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000 Status</a>
+            {{ application.halRepository.name }}
         {% else %}
             Not Linked
         {% endif %}

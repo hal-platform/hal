@@ -567,6 +567,10 @@ parameters:
             route: '/kraken/applications/add'
             stack: ['kraken.add_application.page']
 
+        kraken.add_environment:
+            route: '/kraken/environments/add'
+            stack: ['kraken.add_environment.page']
+
         # add schema
         kraken.application.schema:
             route: '/kraken/applications/:application/schema'

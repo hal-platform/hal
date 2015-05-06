@@ -7,11 +7,13 @@
 
     <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Status</a></p>
 
-    <h1>Latest Configuration for <strong>{{ application.name }}</strong></h1>
+    <h1>Latest Configuration for <strong>{{ environment.name }}</strong></h1>
+
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
 
     <h4>Environment</h4>
     <p>{{ environment.name }}</p>
-
 
     <h2>Configuration Properties</h2>
     {% include 'kraken/partial/configuration.twig' with {'properties': configuration, dualmode: true} %}
