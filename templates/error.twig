@@ -7,24 +7,27 @@
 {# remove nav #}
 {% set showNavigation = false %}
 
-{% block main %}
-<div class="terminal--border">
-    <div class="terminal--border-inner">
-        <div class="terminal">
-            <div class="terminal__return"><a href="javascript:history.go(-1);">BACK</a></div>
-            <div class="terminal__header">{{ status == 404 ? 'PAGE NOT FOUND' : 'USER ERROR DETECTED'}}</div>
-            <span class="terminal__entry"></span>
+{% block page_main %}
+
+    <div class="error-header"></div>
+
+    <div class="terminal">
+        <div class="terminal--border">
+            <div class="terminal--border-inner">
+                <div class="terminal__screen">
+                    <div class="terminal__return"><a href="javascript:history.go(-1);">BACK</a></div>
+                    <div class="terminal__header">{{ status == 404 ? 'PAGE NOT FOUND' : 'USER ERROR DETECTED'}}</div>
+                    <span class="terminal__entry"></span>
+                </div>
+            </div>
         </div>
+
+        <div class="terminal__footer">
+            <div class="terminal__footer__inner">HAL 9000 SERIES TERMINAL</div>
+        </div>
+
+        <div class="terminal__text">{{ isSeriousBusinessMode() ? block('nofunzone') : block('error_message') }}</div>
     </div>
-</div>
-
-<div class="terminal__footer--border">
-    <div class="terminal__footer">HAL 9000 SERIES TERMINAL</div>
-</div>
-
-<div class="terminal__text">
-{{ isSeriousBusinessMode() ? block('nofunzone') : block('error_message') }}
-</div>
 {% endblock %}
 
 {% block nofunzone %}

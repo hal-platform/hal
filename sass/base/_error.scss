@@ -1,15 +1,15 @@
 
-#error-page,
-#error-page body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+.error-header {
+    background-image: url(/img/spaaace.jpg);
+    background-size: cover 100%;
+    height: 12em;
+    box-shadow: 0px 5px 5px #c3c3c3;
+    animation: bgslide 60s infinite linear;
 }
 
-#error-page body {
-    display: flex;
-    flex-direction: column;
+@keyframes bgslide {
+    0% { background-position: 0 0% }
+    100% { background-position: 0 100% }
 }
 
 $borderSize: 5px;
@@ -23,11 +23,24 @@ $terminal-inset: rgba(100, 30, 30, 0.5);
 $scanline-dark: rgba(43, 29, 29, 0.25);
 $scanline-light: rgba(187, 145, 145, 0.25);
 
+.terminal {
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: 0 10px 6px -6px #777;
+    margin: 0 auto;
+    height: 25em;
+    max-width: 45em;
+
+    @include breakpoint(40em) {
+        margin-top: -5em;
+    }
+}
+
 .terminal--border {
     background-image: linear-gradient(#a9a9a9, #ffffff 20%, #595959 40%, #b3b3b3 65%, #666666);
     padding: $borderSize;
 
-    /* flex */
     flex: 1;
     position: relative;
 }
@@ -40,7 +53,7 @@ $scanline-light: rgba(187, 145, 145, 0.25);
     width: calc(100% - #{$borderSize * 2});
 }
 
-.terminal {
+.terminal__screen {
     border: 1px solid #888888;
     box-shadow: inset 0 0 18px 10px $terminal-inset;
     font-family: monospace;
@@ -132,11 +145,11 @@ $scanline-light: rgba(187, 145, 145, 0.25);
 }
 
 /* footer  */
-.terminal__footer--border {
+.terminal__footer {
     background-image: linear-gradient(#a9a9a9, #ffffff 20%, #595959 40%, #b3b3b3 65%, #666666);
     padding: $borderSize;
 }
-.terminal__footer {
+.terminal__footer__inner {
     background: black;
     border: 1px solid #888888;
     color: #999999;
