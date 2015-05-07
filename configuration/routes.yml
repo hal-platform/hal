@@ -562,6 +562,18 @@ parameters:
                 application: %routes.regex.hex%
                 configuration: %routes.regex.hex%
 
+        kraken.configuration.history.page1:
+            route: '/kraken/applications/:application/configurations'
+            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.history.page']
+            conditions:
+                application: %routes.regex.hex%
+        kraken.configuration.history:
+            route: '/kraken/applications/:application/configurations/page/:page'
+            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.history.page']
+            conditions:
+                application: %routes.regex.hex%
+                page: %routes.regex.digit%
+
         # add application
         kraken.add_application:
             route: '/kraken/applications/add'

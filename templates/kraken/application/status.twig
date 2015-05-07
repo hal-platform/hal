@@ -17,6 +17,8 @@
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application Information</a></li>
 
+        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id})}}">Configuration History</a></li>
+
         {% if application.halRepository %}
             <li><a class="btn btn--secondary" href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000 Repository</a></li>
         {% endif %}
@@ -26,6 +28,7 @@
 
 {% block environment_targets %}
     {% if targets %}
+
         <ul class="list--bare cards">
             {% for target in targets %}
                 <li>
@@ -73,13 +76,14 @@
                             </ul>
 
                             <p class="mbn">
-                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">View Latest Configuration</a>
+                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </p>
                         </section>
                     </article>
                 </li>
             {% endfor %}
         </ul>
+
     {% else %}
         <p>There are no environments added yet for this application.</p>
     {% endif %}

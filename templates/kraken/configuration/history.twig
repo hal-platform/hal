@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/pagination.twig' as pagination %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = application.name ~ " Configuration History" %}
+
+{% block content %}
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Status</a></p>
+
+    <h2>Configuration History for <strong>{{ application.name }}</strong></h2>
+
+    {{ block('configuration_table') }}
+
+    {{ pagination.pagination(page, last, 'kraken.configuration.history', {application: application.id, environment: environment.id}) }}
+
+{% endblock %}
+
+{% block configuration_table %}
+
+    <table class="table--spacing-medium" data-tablesaw-mode="stack">
+        <thead>
+            <tr>
+                <th>Configuration</th>
+                <th>Env</th>
+                <th>User</th>
+                <th>Time</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for configuration in configurations %}
+                <tr>
+                    <td><a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: configuration.id}) }}">{{ configuration.id[:7] }}</a></td>
+                    <td>{{ configuration.environment.name }}</td>
+                    <td>
+                        {% if configuration.user %}
+                            <a href="{{ urlFor('user', {id: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+                    <td>{{ configuration.created|html5date }}</td>
+                    <td class="tr">
+                        {% if deployed[configuration.id] %}
+                            {{ macros.status('Active', 'success', 'tick') }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No configurations found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

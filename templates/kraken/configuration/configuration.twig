@@ -6,13 +6,13 @@
 
 {% block content %}
 
-    <h1>{{ is_deployed ? 'Deployed Configuration' : 'Configuration' }} for <strong>{{ target.environment.name }}</strong></h1>
+    <h1>{{ is_deployed ? 'Deployed Configuration' : 'Previous Configuration' }} for <strong>{{ configuration.environment.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
 
     <h4>Environment</h4>
-    <p>{{ target.environment.name }}</p>
+    <p>{{ configuration.environment.name }}</p>
 
     <h4>Status</h4>
     <p>

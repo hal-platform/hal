@@ -127,6 +127,18 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/configuration.twig']]]
 
+    kraken.application.configuration.history.page:
+        class: 'QL\Kraken\Controller\Configuration\ConfigurationHistoryController'
+        arguments:
+            - @kraken.application.configuration.history.twig
+            - @kraken.application
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+    kraken.application.configuration.history.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/history.twig']]]
+
     ####################################################################################################################
     # CRUD CONTROLLERS
     ####################################################################################################################
