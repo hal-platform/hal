@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <h1>Configuration Status for <strong>{{ application.name }}</strong></h1>
+    <h1>Application Configuration for <strong>{{ application.name }}</strong></h1>
 
     <h2>Environments</h2>
     {{ block('environment_targets') }}
@@ -76,7 +76,7 @@
                             </ul>
 
                             <p class="mbn">
-                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
+                                <a href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </p>
                         </section>
                     </article>

@@ -1,0 +1,29 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "Latest Configuration" %}
+{% set isAdmin = true %}
+
+{% block content %}
+
+    <h1>Latest Configuration for <strong>{{ environment.name }}</strong></h1>
+
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
+
+    <h4>Environment</h4>
+    <p>{{ environment.name }}</p>
+
+    <h2>Configuration Properties</h2>
+    {% include 'kraken/partial/configuration.twig' with {'properties': configuration, show_property_link: true} %}
+
+    <ul class="button-list">
+        {% if isAdmin and is_missing_properties %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.application.add_property', {application: application.id, environment: environment.id}) }}">Add Property</a></li>
+        {% endif %}
+
+        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
+        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Configuration Schema</a></li>
+    </ul>
+
+{% endblock %}

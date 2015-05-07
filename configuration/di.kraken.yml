@@ -89,33 +89,6 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/application.twig']]]
 
-    kraken.application.target.page:
-        class: 'QL\Kraken\Controller\Application\TargetController'
-        arguments:
-            - @slim.request
-            - @kraken.application.target.twig
-            - @kraken.application
-            - @kraken.environment
-            - @doctrine.em
-            - @url
-            - @session
-            - @slim.not.found
-    kraken.application.target.twig:
-        parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/configuration/latest.twig']]]
-
-    kraken.application.property.page:
-        class: 'QL\Kraken\Controller\Configuration\PropertyController'
-        arguments:
-            - @kraken.application.property.twig
-            - @kraken.application
-            - @kraken.property
-            - @doctrine.em
-            - @slim.not.found
-    kraken.application.property.twig:
-        parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/configuration/property.twig']]]
-
     kraken.application.configuration.page:
         class: 'QL\Kraken\Controller\Configuration\ConfigurationController'
         arguments:
@@ -126,6 +99,32 @@ services:
     kraken.application.configuration.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/configuration.twig']]]
+
+    kraken.configuration.latest.page:
+        class: 'QL\Kraken\Controller\Configuration\Latest\LatestConfigurationController'
+        arguments:
+            - @kraken.configuration.latest.twig
+            - @kraken.application
+            - @kraken.environment
+            - @doctrine.em
+            - @kraken.diff
+            - @slim.not.found
+    kraken.configuration.latest.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/latest/configuration.twig']]]
+
+
+    kraken.application.property.page:
+        class: 'QL\Kraken\Controller\Configuration\Latest\PropertyController'
+        arguments:
+            - @kraken.application.property.twig
+            - @kraken.application
+            - @kraken.property
+            - @doctrine.em
+            - @slim.not.found
+    kraken.application.property.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/property.twig']]]
 
     kraken.application.configuration.history.page:
         class: 'QL\Kraken\Controller\Configuration\ConfigurationHistoryController'
@@ -138,6 +137,18 @@ services:
     kraken.application.configuration.history.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/history.twig']]]
+
+    kraken.application.configuration.compare.page:
+        class: 'QL\Kraken\Controller\Configuration\CompareConfigurationController'
+        arguments:
+            - @kraken.application.configuration.compare.twig
+            - @kraken.application
+            - @kraken.configuration
+            - @doctrine.em
+            - @kraken.diff
+    kraken.application.configuration.compare.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/compare.twig']]]
 
     ####################################################################################################################
     # CRUD CONTROLLERS
@@ -181,6 +192,21 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/add-target.twig']]]
 
+    kraken.application.add_property.page:
+        class: 'QL\Kraken\Controller\Configuration\Latest\AddPropertyController'
+        arguments:
+            - @slim.request
+            - @kraken.application.add_property.twig
+            - @kraken.application
+            - @kraken.environment
+            - @doctrine.em
+            - @session.flashfire
+            - @kraken.diff
+            - @slim.not.found
+    kraken.application.add_property.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/latest/add-property.twig']]]
+
     kraken.application.schema.page:
         class: 'QL\Kraken\Controller\Schema\AddSchemaController'
         arguments:
@@ -199,7 +225,7 @@ services:
         arguments:
             - @kraken.deploy.twig
             - @kraken.target
-            - @doctrine.em
+            - @kraken.diff
     kraken.deploy.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/deploy.twig']]]
@@ -234,6 +260,10 @@ services:
     kraken.consul:
         class: 'QL\Kraken\ConsulService'
         arguments: [@kraken.guzzle]
+
+    kraken.diff:
+        class: 'QL\Kraken\ConfigurationDiffService'
+        arguments: [@doctrine.em]
 
     kraken.random:
         class: 'QL\Hal\Core\RandomGenerator'

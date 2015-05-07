@@ -557,7 +557,7 @@ parameters:
 
         kraken.configuration.compare:
             route: '/kraken/applications/:application/configurations/:configuration/compare'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.page']
+            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.compare.page']
             conditions:
                 application: %routes.regex.hex%
                 configuration: %routes.regex.hex%
@@ -579,6 +579,7 @@ parameters:
             route: '/kraken/applications/add'
             stack: ['kraken.add_application.page']
 
+        # add environment
         kraken.add_environment:
             route: '/kraken/environments/add'
             stack: ['kraken.add_environment.page']
@@ -590,9 +591,16 @@ parameters:
             conditions: {application: %routes.regex.hex%}
 
         # view configuration, add property
-        kraken.application.target:
+        kraken.configuration.latest:
             route: '/kraken/applications/:application/environments/:environment'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.target.page']
+            stack: ['kraken.middleware.require.entity', 'kraken.configuration.latest.page']
+            conditions:
+                application: %routes.regex.hex%
+                environment: %routes.regex.hex%
+
+        kraken.application.add_property:
+            route: '/kraken/applications/:application/environments/:environment/add'
+            stack: ['kraken.middleware.require.entity', 'kraken.application.add_property.page']
             conditions:
                 application: %routes.regex.hex%
                 environment: %routes.regex.hex%

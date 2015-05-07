@@ -5,7 +5,7 @@
 {% set page_title = application.name ~ " Configuration History" %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Configuration</a></p>
 
     <h2>Configuration History for <strong>{{ application.name }}</strong></h2>
 
@@ -48,7 +48,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">No configurations found.</td>
+                    <td colspan="5">No configurations found.</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -68,7 +68,7 @@
                             <td>{{ target.environment.name }}</td>
                             <td><code>{{ target.key }}</code></td>
                             <td class="tr">
-                                <a href="{{ urlFor('kraken.application.target', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
+                                <a href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </td>
 
                         {% else %}

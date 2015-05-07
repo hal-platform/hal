@@ -23,12 +23,14 @@
         {% endif %}
     </p>
 
+    <h4>Time Deployed</h4>
+    <p>{{ configuration.created|html5date }}</p>
+
     <h2>Configuration</h2>
     {% include 'kraken/partial/configuration.twig' with {'properties': properties} %}
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Status</a></li>
-
+        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.compare', {application: application.id, configuration: configuration.id}) }}">Compare to latest configuration</a></li>
     </ul>
 

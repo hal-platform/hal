@@ -5,26 +5,26 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Application;
+namespace QL\Kraken\Controller\Configuration\Latest;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
+use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Entity\Target;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
+use QL\Hal\FlashFire;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Utility\Url;
 use QL\Panthor\Slim\NotFound;
-use QL\Hal\Session;
 use Slim\Http\Request;
 
-class TargetController implements ControllerInterface
+class AddPropertyController implements ControllerInterface
 {
-    const SUCCESS = 'Property "%s" added.';
+    const SUCCESS = 'Property "%s" set.';
     const ERR_VALUE_REQUIRED = 'Please enter a value.';
     const ERR_MISSING_SCHEMA = 'Please select a property.';
     const ERR_DUPLICATE_PROPERTY = 'This property is already set for this environment.';
@@ -62,19 +62,19 @@ class TargetController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $encRepository;
-    private $propRepository;
-    private $tarRepository;
+    private $schemaRepo;
+    private $propertyRepo;
+    private $targetRepo;
 
     /**
-     * @type Url
+     * @type FlashFire
      */
-    private $url;
+    private $flashFire;
 
     /**
-     * @type Session
+     * @type ConfigurationDiffService
      */
-    private $session;
+    private $diffService;
 
     /**
      * @type NotFound
@@ -92,10 +92,9 @@ class TargetController implements ControllerInterface
      * @param Application $application
      * @param Environment $environment
      *
-     * @param $em
-     *
-     * @param Url $url
-     * @param Session $session
+     * @param EntityManagerInterface $em
+     * @param FlashFire $flashFire
+     * @param ConfigurationDiffService $diffService
      * @param NotFound $notFound
      */
     public function __construct(
@@ -103,9 +102,9 @@ class TargetController implements ControllerInterface
         TemplateInterface $template,
         Application $application,
         Environment $environment,
-        $em,
-        Url $url,
-        Session $session,
+        EntityManagerInterface $em,
+        FlashFire $flashFire,
+        ConfigurationDiffService $diffService,
         NotFound $notFound
     ) {
         $this->request = $request;
@@ -114,12 +113,12 @@ class TargetController implements ControllerInterface
         $this->environment = $environment;
 
         $this->em = $em;
-        $this->tarRepository = $this->em->getRepository(Target::CLASS);
-        $this->schemaRepository = $this->em->getRepository(Schema::CLASS);
-        $this->propRepository = $this->em->getRepository(Property::CLASS);
+        $this->targetRepo = $this->em->getRepository(Target::CLASS);
+        $this->schemaRepo = $this->em->getRepository(Schema::CLASS);
+        $this->propertyRepo = $this->em->getRepository(Property::CLASS);
 
-        $this->url = $url;
-        $this->session = $session;
+        $this->flashFire = $flashFire;
+        $this->diffService = $diffService;
         $this->notFound = $notFound;
 
         $this->errors = [];
@@ -130,29 +129,28 @@ class TargetController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$target = $this->tarRepository->findOneBy(['application' => $this->application, 'environment' => $this->environment])) {
+        if (!$target = $this->targetRepo->findOneBy(['application' => $this->application, 'environment' => $this->environment])) {
             return call_user_func($this->notFound);
         }
 
         if ($this->request->isPost()) {
-            $this->handleForm();
-        }
-
-        $configuration = $this->buildConfiguration();
-
-        $schema = [];
-        foreach ($configuration as $config) {
-            if ($config instanceof Schema) {
-                $schema[] = $config;
+            if ($property = $this->handleForm()) {
+                // flash and redirect
+                $this->flashFire->fire(sprintf(self::SUCCESS, $property->schema()->key()), 'kraken.configuration.latest', 'success', [
+                    'application' => $this->application->id(),
+                    'environment' => $this->environment->id()
+                ]);
             }
         }
+
+        $latest = $this->diffService->resolveLatestConfiguration($target->application(), $target->environment());
+        $missing = $this->getMissingProperties($latest);
 
         $context = [
             'application' => $this->application,
             'environment' => $this->environment,
-            'configuration' => $configuration,
 
-            'missing_schema' => $schema,
+            'missing_schema' => $missing,
 
             'errors' => $this->errors,
             'form' => [
@@ -172,42 +170,31 @@ class TargetController implements ControllerInterface
     }
 
     /**
-     * @todo this should be cached heavily
+     * @param Diff[] $latest
      *
-     * @return Property|Schema[]
+     * @return Schema[]
      */
-    private function buildConfiguration()
+    private function getMissingProperties(array $latest)
     {
-        $configuration = [];
+        $schema = [];
 
-        $schema = $this->schemaRepository->findBy([
-            'application' => $this->application
-        ], ['key' => 'ASC']);
-
-        $properties = $this->propRepository->findBy([
-            'application' => $this->application,
-            'environment' => $this->environment
-        ]);
-
-        foreach ($schema as $schema) {
-            $configuration[$schema->id()] = $schema;
+        foreach ($latest as $diff) {
+            if (!$diff->property()) {
+                $schema[] = $diff->schema();
+            }
         }
 
-        foreach ($properties as $property) {
-            $configuration[$property->schema()->id()] = $property;
-        }
-
-        return $configuration;
+        return $schema;
     }
 
     /**
-     * @return void
+     * @return Property|null
      */
     private function handleForm()
     {
         $propertyId = $this->request->post('prop');
 
-        if (!$schema = $this->schemaRepository->find($propertyId)) {
+        if (!$schema = $this->schemaRepo->find($propertyId)) {
             $this->errors[] = self::ERR_MISSING_SCHEMA;
         }
 
@@ -218,13 +205,13 @@ class TargetController implements ControllerInterface
         if ($this->errors) return; // bomb
 
         // dupe check
-        if ($dupe = $this->propRepository->findOneBy(['schema' => $schema, 'environment' => $this->environment])) {
+        if ($dupe = $this->propertyRepo->findOneBy(['schema' => $schema, 'environment' => $this->environment])) {
             $this->errors[] = self::ERR_DUPLICATE_PROPERTY;
         }
 
         if ($this->errors) return; // bomb
 
-        $this->saveProperty($schema, $value);
+        return $this->saveProperty($schema, $value);
     }
 
     /**
@@ -276,7 +263,7 @@ class TargetController implements ControllerInterface
      * @param Schema $schema
      * @param string $value
      *
-     * @return void
+     * @return Property
      */
     private function saveProperty(Schema $schema, $value)
     {
@@ -296,12 +283,7 @@ class TargetController implements ControllerInterface
         $this->em->persist($property);
         $this->em->flush();
 
-        // flash and redirect
-        $this->session->flash(sprintf(self::SUCCESS, $schema->key()), 'success');
-        $this->url->redirectFor('kraken.application.target', [
-            'application' => $this->application->id(),
-            'environment' => $this->environment->id()
-        ]);
+        return $property;
     }
 
     /**

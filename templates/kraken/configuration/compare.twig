@@ -2,24 +2,43 @@
 {% import "partials/macros.twig" as macros %}
 {% import "kraken/partial/macros.twig" as kraken_macros %}
 
-{% set page_title = "Deploy Configuration" %}
+{% set page_title = "Compare Configuration" %}
 
 {% block content %}
 
-    <h1>Deploy Configuration</h1>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Configuration</a></p>
+
+    <h1>Compare Latest to {{ is_deployed ? 'Deployed Configuration' : 'Previous Configuration' }}</h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
 
     <h4>Environment</h4>
-    <p>{{ environment.name }}</p>
+    <p>{{ configuration.environment.name }}</p>
 
-    <h2>Verify Deployment</h2>
-    {{ block('deploy_comparison') }}
+    <h4>Status</h4>
+    <p>
+        {% if is_deployed %}
+            {{ macros.status('Currently Deployed', 'success', 'tick') }}
+        {% else %}
+            Not Active
+        {% endif %}
+    </p>
+
+    <h4>Time Deployed</h4>
+    <p>{{ configuration.created|html5date }}</p>
+
+    <h2>Configuration Comparison</h2>
+    {% if target %}
+        {{ block('comparison') }}
+    {% else %}
+        <p>There is no active environment set up for this application.</p>
+    {% endif %}
 
 {% endblock %}
 
-{% block deploy_comparison %}
+
+{% block comparison %}
 
     {% if diffs %}
         <table class="table--spacing-medium table--top-aligned trailer" data-tablesaw-mode="stack">
@@ -66,14 +85,7 @@
         </table>
 
     {% else %}
-        <p>There is no schema defined for this application. An empty configuration will be deployed.</p>
+        <p>There is no schema defined for this application.</p>
     {% endif %}
-
-    <form method="post">
-        <ul class="button-list">
-            <li><input type="submit" class="btn btn--action" value="Deploy Configuration"></li>
-            <li class="button-list"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
-        </ul>
-    </form>
 
 {% endblock %}

@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Configuration;
+namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;

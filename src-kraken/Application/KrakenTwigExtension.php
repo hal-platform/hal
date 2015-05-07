@@ -7,6 +7,7 @@
 
 namespace QL\Kraken\Application;
 
+use QL\Kraken\Diff;
 use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
@@ -66,6 +67,9 @@ class KrakenTwigExtension extends Twig_Extension
             }),
             new Twig_SimpleTest('configurationProperty', function ($entity) {
                 return $entity instanceof ConfigurationProperty;
+            }),
+            new Twig_SimpleTest('diff', function ($entity) {
+                return $entity instanceof Diff;
             })
         ];
     }
@@ -73,14 +77,20 @@ class KrakenTwigExtension extends Twig_Extension
     /**
      * Format a property schema data type for display
      *
-     * @param Schema|string|null $schema
+     * @param SchemaConfigurationProperty|Diff||string|null $schema
      *
      * @return string
      */
     public function formatSchemaType($schema = null)
     {
+        if ($schema instanceof Diff) {
+            $schema = $schema->schema();
+        }
+
         if ($schema instanceof Schema || $schema instanceof ConfigurationProperty) {
             $schema = $schema->dataType();
+        } elseif (!is_string($schema)) {
+            $schema = '???';
         }
 
         if ($schema) {
@@ -97,7 +107,7 @@ class KrakenTwigExtension extends Twig_Extension
     /**
      * Format a property value for display
      *
-     * @param ConfigurationProperty|Property|null $schema
+     * @param ConfigurationProperty|Property|Diff|null $schema
      * @param int $maxLength
      *
      * @return string|null
@@ -105,6 +115,10 @@ class KrakenTwigExtension extends Twig_Extension
     public function formatPropertyValue($property, $maxLength = 100)
     {
         $maxLength = (int) $maxLength;
+
+        if ($property instanceof Diff) {
+            $property = $property->property();
+        }
 
         if (!$property instanceof Property && !$property instanceof ConfigurationProperty) {
             return '';

@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.application.target', {application: application.id, environment: environment.id}) }}">Back to Configuration</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: environment.id}) }}">Back to Latest Configuration</a></p>
 
     <h1>Configuration Property for <strong>{{ application.name }}</strong></h1>
 

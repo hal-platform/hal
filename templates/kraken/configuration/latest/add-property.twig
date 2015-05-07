@@ -1,13 +1,12 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
+{% import "partials/form/macros.twig" as form_macros %}
 
-{% set page_title = "Latest Configuration" %}
+{% set page_title = "Add Property" %}
 
 {% block content %}
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Status</a></p>
-
-    <h1>Latest Configuration for <strong>{{ environment.name }}</strong></h1>
+    <h1>Add Property for <strong>{{ environment.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -15,29 +14,17 @@
     <h4>Environment</h4>
     <p>{{ environment.name }}</p>
 
-    <h2>Configuration Properties</h2>
-    {% include 'kraken/partial/configuration.twig' with {'properties': configuration, dualmode: true} %}
+    <h2>Add Property</h2>
 
-    {% if missing_schema %}
-        {{ block('add_configuration') }}
-    {% endif %}
-
+    {{ block('add_configuration') }}
 {% endblock %}
 
 {% block add_configuration %}
 
-    <h2>Add Property</h2>
-
     <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ form_macros.formErrors(errors) }}
 
-        <form id="kraken__add-property" action="" method="post">
+        <form id="kraken__add-property" method="post">
             <ul class="form-fields">
                 <li>
                     <label for="config-prop">Property</label>
@@ -110,9 +97,11 @@
                 </li>
             </ul>
 
-            <p>
-                <input class="btn" type="submit" value="Add Property">
-            </p>
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Property"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: environment.id}) }}">Cancel</a></li>
+            </ul>
+
         </form>
     </div>
 {% endblock %}
