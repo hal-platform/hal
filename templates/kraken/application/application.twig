@@ -11,7 +11,7 @@
     {{ block('meta') }}
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration Status</a></li>
+        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
 
         {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.application.schema', {application: application.id}) }}">Manage Schema</a></li>

@@ -124,7 +124,7 @@ services:
             - @slim.not.found
     kraken.application.property.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/configuration/property.twig']]]
+        calls: [['setTemplate', ['kraken/configuration/latest/property.twig']]]
 
     kraken.application.configuration.history.page:
         class: 'QL\Kraken\Controller\Configuration\ConfigurationHistoryController'
@@ -218,7 +218,7 @@ services:
             - @session
     kraken.application.schema.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/schema.twig']]]
+        calls: [['setTemplate', ['kraken/application/add-schema.twig']]]
 
     kraken.deploy.page:
         class: 'QL\Kraken\Controller\Configuration\DeployController'
