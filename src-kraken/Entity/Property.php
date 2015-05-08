@@ -8,6 +8,7 @@
 namespace QL\Kraken\Entity;
 
 use JsonSerializable;
+use QL\Hal\Core\Entity\User;
 
 class Property implements JsonSerializable
 {
@@ -32,6 +33,11 @@ class Property implements JsonSerializable
      */
     protected $environment;
 
+    /**
+     * @type User|null
+     */
+    protected $user;
+
     public function __construct()
     {
         $this->id = '';
@@ -40,6 +46,7 @@ class Property implements JsonSerializable
         $this->schema = null;
         $this->application = null;
         $this->environment = null;
+        $this->user = null;
     }
 
     /**
@@ -80,6 +87,14 @@ class Property implements JsonSerializable
     public function environment()
     {
         return $this->environment;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function user()
+    {
+        return $this->user;
     }
 
     /**
@@ -138,6 +153,17 @@ class Property implements JsonSerializable
     }
 
     /**
+     * @param User $user
+     *
+     * @return self
+     */
+    public function withUser(User $user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
@@ -148,7 +174,8 @@ class Property implements JsonSerializable
             'schema' => $this->schema(),
 
             'application' => $this->application(),
-            'environment' => $this->environment()
+            'environment' => $this->environment(),
+            'user' => $this->user()
         ];
 
         return $json;

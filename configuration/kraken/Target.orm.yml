@@ -22,13 +22,11 @@ QL\Kraken\Entity\Target:
             joinColumn:
                 name: environment_id
                 referencedColumnName: id
-
         application:
             targetEntity: Application
             joinColumn:
                 name: application_id
                 referencedColumnName: id
-
         configuration:
             targetEntity: Configuration
             joinColumn:

@@ -10,13 +10,14 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\FlashFire;
 use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Entity\Target;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
-use QL\Hal\FlashFire;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\NotFound;
@@ -55,7 +56,12 @@ class AddPropertyController implements ControllerInterface
     private $environment;
 
     /**
-     * @type EntityManager
+     * @type User
+     */
+    private $currentUser;
+
+    /**
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -91,6 +97,7 @@ class AddPropertyController implements ControllerInterface
      * @param TemplateInterface $template
      * @param Application $application
      * @param Environment $environment
+     * @param User $currentUser
      *
      * @param EntityManagerInterface $em
      * @param FlashFire $flashFire
@@ -102,6 +109,7 @@ class AddPropertyController implements ControllerInterface
         TemplateInterface $template,
         Application $application,
         Environment $environment,
+        User $currentUser,
         EntityManagerInterface $em,
         FlashFire $flashFire,
         ConfigurationDiffService $diffService,
@@ -111,6 +119,7 @@ class AddPropertyController implements ControllerInterface
         $this->template = $template;
         $this->application = $application;
         $this->environment = $environment;
+        $this->currentUser = $currentUser;
 
         $this->em = $em;
         $this->targetRepo = $this->em->getRepository(Target::CLASS);
@@ -277,7 +286,8 @@ class AddPropertyController implements ControllerInterface
             ->withValue($encoded)
             ->withSchema($schema)
             ->withApplication($this->application)
-            ->withEnvironment($this->environment);
+            ->withEnvironment($this->environment)
+            ->withUser($this->currentUser);
 
         // persist to database
         $this->em->persist($property);

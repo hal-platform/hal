@@ -8,6 +8,7 @@
 namespace QL\Kraken\Entity;
 
 use JsonSerializable;
+use QL\Hal\Core\Entity\User;
 
 class Schema implements JsonSerializable
 {
@@ -31,6 +32,11 @@ class Schema implements JsonSerializable
      */
     protected $application;
 
+    /**
+     * @type User|null
+     */
+    protected $user;
+
     public function __construct()
     {
         $this->id = '';
@@ -41,6 +47,7 @@ class Schema implements JsonSerializable
         $this->isSecure = static::DEFAULT_IS_SECURE;
 
         $this->application = null;
+        $this->user = null;
     }
 
     /**
@@ -89,6 +96,14 @@ class Schema implements JsonSerializable
     public function application()
     {
         return $this->application;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function user()
+    {
+        return $this->user;
     }
 
     /**
@@ -158,6 +173,17 @@ class Schema implements JsonSerializable
     }
 
     /**
+     * @param User $user
+     *
+     * @return self
+     */
+    public function withUser(User $user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
@@ -170,7 +196,8 @@ class Schema implements JsonSerializable
 
             'isSecure' => $this->isSecure(),
 
-            'application' => $this->application()
+            'application' => $this->application(),
+            'user' => $this->user()
         ];
 
         return $json;

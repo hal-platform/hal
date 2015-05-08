@@ -44,6 +44,14 @@
                         <section class="card__details">
                             <ul class="split">
                                 <li>
+                                    <span class="split__title">Config:</span>
+                                    {% if target.configuration %}
+                                        <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: target.configuration.id})}}">{{ target.configuration.id[:7] }}</a>
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                </li>
+                                <li>
                                     <span class="split__title">Deployed on:</span>
                                     {% if target.configuration.created %}
                                         {{ target.configuration.created|html5date }}
@@ -52,11 +60,11 @@
                                     {% endif %}
                                 </li>
                                 <li>
-                                    <span class="split__title">Deployed Config:</span>
-                                    {% if target.configuration %}
-                                        <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: target.configuration.id})}}">{{ target.configuration.id[:7] }}</a>
+                                    <span class="split__title">Deployed by:</span>
+                                    {% if configuration.user %}
+                                        <a href="{{ urlFor('user', {id: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
                                     {% else %}
-                                        None
+                                        Unknown
                                     {% endif %}
                                 </li>
                                 <li>

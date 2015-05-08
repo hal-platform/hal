@@ -26,6 +26,15 @@
     <h4>Time Deployed</h4>
     <p>{{ configuration.created|html5date }}</p>
 
+    <h4>Deployed By</h4>
+    <p>
+        {% if configuration.user %}
+            <a href="{{ urlFor('user', {id: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
+        {% else %}
+            Unknown
+        {% endif %}
+    </p>
+
     <h2>Configuration</h2>
     {% include 'kraken/partial/configuration.twig' with {'properties': properties} %}
 

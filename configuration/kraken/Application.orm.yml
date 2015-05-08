@@ -14,7 +14,6 @@ QL\Kraken\Entity\Application:
             column: core_id
             type: string
             length: 64
-
         name:
             column: name
             type: string

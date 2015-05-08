@@ -5,18 +5,19 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Schema;
+namespace QL\Kraken\Controller\Application;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\FlashFire;
 use QL\Kraken\Doctrine\PropertyEnumType;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Schema;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
-use QL\Hal\Session;
 use Slim\Http\Request;
 
 class AddSchemaController implements ControllerInterface
@@ -40,7 +41,17 @@ class AddSchemaController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManager
+     * @type Application
+     */
+    private $application;
+
+    /**
+     * @type User
+     */
+    private $currentUser;
+
+    /**
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -50,14 +61,14 @@ class AddSchemaController implements ControllerInterface
     private $schemaRepository;
 
     /**
-     * @type Url
+     * @type FlashFire
      */
-    private $url;
+    private $flashFire;
 
     /**
-     * @type Session
+     * @type callable
      */
-    private $session;
+    private $random;
 
     /**
      * @type array
@@ -68,29 +79,31 @@ class AddSchemaController implements ControllerInterface
      * @param Request $request
      * @param TemplateInterface $template
      * @param Application $application
+     * @param User $currentUser
      *
-     * @param $em
-     *
-     * @param Url $url
-     * @param Session $session
+     * @param EntityManagerInterface$em
+     * @param FlashFire $flashFire
+     * @param callable $random
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
         Application $application,
-        $em,
-        Url $url,
-        Session $session
+        User $currentUser,
+        EntityManagerInterface $em,
+        FlashFire $flashFire,
+        callable $random
     ) {
         $this->request = $request;
         $this->template = $template;
         $this->application = $application;
+        $this->currentUser = $currentUser;
 
         $this->em = $em;
         $this->schemaRepository = $this->em->getRepository(Schema::CLASS);
 
-        $this->url = $url;
-        $this->session = $session;
+        $this->flashFire = $flashFire;
+        $this->random = $random;
 
         $this->errors = [];
     }
@@ -101,7 +114,9 @@ class AddSchemaController implements ControllerInterface
     public function __invoke()
     {
         if ($this->request->isPost()) {
-            $this->handleForm();
+            if ($schema = $this->handleForm()) {
+                $this->flashFire->fire(sprintf(self::SUCCESS, $schema->key()), 'kraken.applications', 'success', ['id' => $this->application->id()]);
+            }
         }
 
         $context = [
@@ -121,7 +136,7 @@ class AddSchemaController implements ControllerInterface
     }
 
     /**
-     * @return void
+     * @return Schema|null
      */
     private function handleForm()
     {
@@ -161,7 +176,7 @@ class AddSchemaController implements ControllerInterface
             return null;
         }
 
-        $this->saveSchema($key, $type, $description, $isSecure);
+        return $this->saveSchema($key, $type, $description, $isSecure);
     }
 
     /**
@@ -170,27 +185,25 @@ class AddSchemaController implements ControllerInterface
      * @param string $description
      * @param bool $isSecure
      *
-     * @return void
+     * @return Schema
      */
     private function saveSchema($key, $type, $description, $isSecure)
     {
-        $uniq = GUID::create()->asHex();
-        $uniq = strtolower($uniq);
+        $id = call_user_func($this->random);
 
         $schema = (new Schema)
-            ->withId($uniq)
+            ->withId($id)
             ->withKey($key)
             ->withDataType($type)
             ->withDescription($description)
             ->withIsSecure($isSecure)
-            ->withApplication($this->application);
+            ->withApplication($this->application)
+            ->withUser($this->currentUser);
 
         // persist to database
         $this->em->persist($schema);
         $this->em->flush();
 
-        // flash and redirect
-        $this->session->flash(sprintf(self::SUCCESS, $key), 'success');
-        $this->url->redirectFor('kraken.application', ['id' => $this->application->id()]);
+        return $schema;
     }
 }

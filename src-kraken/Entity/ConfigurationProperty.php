@@ -8,6 +8,7 @@
 namespace QL\Kraken\Entity;
 
 use JsonSerializable;
+use QL\Hal\Core\Entity\User;
 
 class ConfigurationProperty implements JsonSerializable
 {
@@ -44,6 +45,11 @@ class ConfigurationProperty implements JsonSerializable
      */
     protected $schema;
 
+    /**
+     * @type User|null
+     */
+    protected $user;
+
     public function __construct()
     {
         $this->id = '';
@@ -57,6 +63,7 @@ class ConfigurationProperty implements JsonSerializable
         $this->configuration = null;
         $this->property = null;
         $this->schema = null;
+        $this->user = null;
     }
 
     /**
@@ -129,6 +136,14 @@ class ConfigurationProperty implements JsonSerializable
     public function schema()
     {
         return $this->schema;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function user()
+    {
+        return $this->user;
     }
 
     /**
@@ -231,6 +246,17 @@ class ConfigurationProperty implements JsonSerializable
     }
 
     /**
+     * @param User $user
+     *
+     * @return self
+     */
+    public function withUser(User $user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
@@ -247,7 +273,8 @@ class ConfigurationProperty implements JsonSerializable
 
             'configuration' => $this->configuration(),
             'property' => $this->property(),
-            'schema' => $this->schema()
+            'schema' => $this->schema(),
+            'user' => $this->user()
         ];
 
         return $json;

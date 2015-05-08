@@ -28,16 +28,29 @@
                         </small>
                     </label>
 
-                    <select class="select-input" name="hal_repo" id="app-repo">
-                        <option></option>
-                        {% for id, repository_name in available %}
-                            {% set isSelected = (id == form.hal_repo) %}
 
-                            <option value="{{ id }}" {{ isSelected ? ' selected' : '' }}>
-                                {{ repository_name }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                    {% if available|length > 10 %}
+                        <select class="select-input" name="hal_repo" id="app-repo">
+                            <option></option>
+                            {% for id, repository_name in available %}
+                                {% set isSelected = (id == form.hal_repo) %}
+
+                                <option value="{{ id }}" {{ isSelected ? ' selected' : '' }}>
+                                    {{ repository_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <ul class="radio-grid--form">
+                            {% for id, repository_name in available %}
+                                {% set isSelected = (id == form.hal_repo) %}
+                                <li>
+                                    <input id="app-hal_repo-{{ id }}" type="radio" name="hal_repo" value="{{ id }}"{{ isSelected ? ' checked' : ''}}>
+                                    <label for="app-hal_repo-{{ id }}">{{ repository_name }}</label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </li>
                 {% endif %}
 

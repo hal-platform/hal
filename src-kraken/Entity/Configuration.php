@@ -10,6 +10,7 @@ namespace QL\Kraken\Entity;
 use DateTime;
 use JsonSerializable;
 use MCP\DataType\Time\TimePoint;
+use QL\Hal\Core\Entity\User;
 
 class Configuration implements JsonSerializable
 {
@@ -35,6 +36,11 @@ class Configuration implements JsonSerializable
      */
     protected $environment;
 
+    /**
+     * @type User|null
+     */
+    protected $user;
+
     public function __construct()
     {
         $this->id = '';
@@ -44,6 +50,7 @@ class Configuration implements JsonSerializable
 
         $this->application = null;
         $this->environment = null;
+        $this->user = null;
     }
 
     /**
@@ -92,6 +99,14 @@ class Configuration implements JsonSerializable
     public function environment()
     {
         return $this->environment;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function user()
+    {
+        return $this->user;
     }
 
     /**
@@ -161,6 +176,17 @@ class Configuration implements JsonSerializable
     }
 
     /**
+     * @param User $user
+     *
+     * @return self
+     */
+    public function withUser(User $user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
@@ -172,7 +198,8 @@ class Configuration implements JsonSerializable
             'created' => $this->created() ? $this->created()->format(DateTime::RFC3339, 'UTC') : null,
 
             'application' => $this->application(),
-            'environment' => $this->environment()
+            'environment' => $this->environment(),
+            'user' => $this->user()
         ];
 
         return $json;

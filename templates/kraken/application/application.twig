@@ -14,7 +14,7 @@
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
 
         {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.application.schema', {application: application.id}) }}">Manage Schema</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.application.add_schema', {application: application.id}) }}">Manage Schema</a></li>
         {% endif %}
 
         {% if application.halRepository %}

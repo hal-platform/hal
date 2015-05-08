@@ -23,7 +23,7 @@
 
                 <li>
                     <label for="enc-env">Environment</label>
-                    <ul class="check-list radio-grid radio-grid__env">
+                    <ul class="radio-grid--form">
                         {% for env in environments %}
                             {% set isSelected = (env.id == form.env) %}
                             <li>
@@ -44,13 +44,13 @@
                     </label>
                     <input type="text" name="key" id="enc-key" maxlength="200" required value="{{ form.key }}" class="text-input">
                 </li>
-
-                <li>
-                    <input class="btn" type="submit" value="Assign Environment">
-
-                    <a href="{{ urlFor('kraken.application', {application: application.id}) }}">Cancel</a>
-                </li>
             </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Assign Environment"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Cancel</a></li>
+            </ul>
+
         </form>
     </div>
 {% endblock %}

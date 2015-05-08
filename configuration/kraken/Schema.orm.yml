@@ -32,3 +32,9 @@ QL\Kraken\Entity\Schema:
             joinColumn:
                 name: application_id
                 referencedColumnName: id
+        user:
+            cache: {usage : READ_ONLY}
+            targetEntity: QL\Hal\Core\Entity\User
+            joinColumn:
+                name: user_id
+                referencedColumnName: UserId

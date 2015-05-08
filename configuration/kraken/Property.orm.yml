@@ -22,15 +22,19 @@ QL\Kraken\Entity\Property:
             joinColumn:
                 name: schema_id
                 referencedColumnName: id
-
         environment:
             targetEntity: Environment
             joinColumn:
                 name: environment_id
                 referencedColumnName: id
-
         application:
             targetEntity: Application
             joinColumn:
                 name: application_id
                 referencedColumnName: id
+        user:
+            cache: {usage : READ_ONLY}
+            targetEntity: QL\Hal\Core\Entity\User
+            joinColumn:
+                name: user_id
+                referencedColumnName: UserId

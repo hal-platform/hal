@@ -522,54 +522,54 @@ parameters:
 
         kraken:
             route: '/kraken'
-            stack: ['kraken.page']
+            stack: ['login.bouncer', 'kraken.page']
 
         kraken.applications:
             route: '/kraken/applications'
-            stack: ['kraken.applications.page']
+            stack: ['login.bouncer', 'kraken.applications.page']
 
         kraken.environments:
             route: '/kraken/environments'
-            stack: ['kraken.environments.page']
+            stack: ['login.bouncer', 'kraken.environments.page']
 
         kraken.application:
             route: '/kraken/applications/:application'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.page']
             conditions: {application: %routes.regex.hex%}
         kraken.status:
             route: '/kraken/applications/:application/status'
-            stack: ['kraken.middleware.require.entity', 'kraken.status.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.status.page']
             conditions: {application: %routes.regex.hex%}
 
         kraken.property:
             route: '/kraken/applications/:application/properties/:property'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.property.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.property.page']
             conditions:
                 application: %routes.regex.hex%
                 property: %routes.regex.hex%
 
         kraken.configuration:
             route: '/kraken/applications/:application/configurations/:configuration'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.configuration.page']
             conditions:
                 application: %routes.regex.hex%
                 configuration: %routes.regex.hex%
 
         kraken.configuration.compare:
             route: '/kraken/applications/:application/configurations/:configuration/compare'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.compare.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.configuration.compare.page']
             conditions:
                 application: %routes.regex.hex%
                 configuration: %routes.regex.hex%
 
         kraken.configuration.history.page1:
             route: '/kraken/applications/:application/configurations'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.history.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.configuration.history.page']
             conditions:
                 application: %routes.regex.hex%
         kraken.configuration.history:
             route: '/kraken/applications/:application/configurations/page/:page'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.configuration.history.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.configuration.history.page']
             conditions:
                 application: %routes.regex.hex%
                 page: %routes.regex.digit%
@@ -577,30 +577,30 @@ parameters:
         # add application
         kraken.add_application:
             route: '/kraken/applications/add'
-            stack: ['kraken.add_application.page']
+            stack: ['login.bouncer', 'kraken.add_application.page']
 
         # add environment
         kraken.add_environment:
             route: '/kraken/environments/add'
-            stack: ['kraken.add_environment.page']
-
-        # add schema
-        kraken.application.schema:
-            route: '/kraken/applications/:application/schema'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.schema.page']
-            conditions: {application: %routes.regex.hex%}
+            stack: ['login.bouncer', 'kraken.add_environment.page']
 
         # view configuration, add property
         kraken.configuration.latest:
             route: '/kraken/applications/:application/environments/:environment'
-            stack: ['kraken.middleware.require.entity', 'kraken.configuration.latest.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.latest.page']
             conditions:
                 application: %routes.regex.hex%
                 environment: %routes.regex.hex%
 
+        # add schema
+        kraken.application.add_schema:
+            route: '/kraken/applications/:application/schema'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_schema.page']
+            conditions: {application: %routes.regex.hex%}
+
         kraken.application.add_property:
             route: '/kraken/applications/:application/environments/:environment/add'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.add_property.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_property.page']
             conditions:
                 application: %routes.regex.hex%
                 environment: %routes.regex.hex%
@@ -608,19 +608,19 @@ parameters:
         # add environment to application
         kraken.application.add_target:
             route: '/kraken/applications/:application/environments'
-            stack: ['kraken.middleware.require.entity', 'kraken.application.add_target.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_target.page']
             conditions: {application: %routes.regex.hex%}
 
         # deploy configuration to target
         kraken.deploy:
             method: ['GET']
             route: '/kraken/targets/:target/deploy'
-            stack: ['kraken.middleware.require.entity', 'kraken.deploy.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.page']
             conditions: {target: %routes.regex.hex%}
         kraken.deploy.handler:
             method: ['POST']
             route: '/kraken/targets/:target/deploy'
-            stack: ['kraken.middleware.require.entity', 'kraken.deploy.handler']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.handler']
             conditions: {target: %routes.regex.hex%}
 
         ################################################################################################################

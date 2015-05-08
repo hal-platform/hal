@@ -7,9 +7,9 @@
 
 namespace QL\Kraken\Controller\Configuration;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\GUID;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\FlashFire;
 use QL\Kraken\ConsulService;
 use QL\Kraken\Entity\Application;
@@ -23,12 +23,19 @@ use QL\Panthor\Utility\Json;
 
 class DeployHandler implements ControllerInterface
 {
+    const SUCCESS = 'Configuration successfully deployed to %s';
+    const ERR_CONSUL_FAILURE = 'An error occured while updating Consul.';
     const ERR_JSON_DECODE = 'Invalid Property "%s": %s';
 
     /**
      * @type Target
      */
     private $target;
+
+    /**
+     * @type User
+     */
+    private $currentUser;
 
     /**
      * @type Json
@@ -46,37 +53,48 @@ class DeployHandler implements ControllerInterface
     private $consul;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
     /**
      * @type EntityRepository
      */
-    private $propRepository;
+    private $propertyRepo;
+
+    /**
+     * @type callable
+     */
+    private $random;
 
     /**
      * @param Target $target
+     * @param User $currentUser
      * @param Json $json
      * @param FlashFire $flashFire
+     * @param EntityManagerInterface $em
      * @param ConsulService $consul
-     *
-     * @param $em
+     * @param callable $random
      */
     public function __construct(
         Target $target,
+        User $currentUser,
         Json $json,
         FlashFire $flashFire,
-        $em,
-        ConsulService $consul
+        EntityManagerInterface $em,
+        ConsulService $consul,
+        callable $random
     ) {
         $this->target = $target;
+        $this->currentUser = $currentUser;
+
         $this->json = $json;
         $this->flashFire = $flashFire;
         $this->consul = $consul;
+        $this->random = $random;
 
         $this->em = $em;
-        $this->propRepository = $this->em->getRepository(Property::CLASS);
+        $this->propertyRepo = $this->em->getRepository(Property::CLASS);
     }
 
     /**
@@ -119,15 +137,23 @@ class DeployHandler implements ControllerInterface
         $this->em->flush();
 
         // 6. Save to Consul
-        $this->sendToConsul($configuration, $this->target);
+        $success = $this->sendToConsul($configuration, $this->target);
+
+        if (!$success) {
+            $this->flashFire->fire(self::ERR_CONSUL_FAILURE, 'kraken.deploy', 'error', [
+                'target' => $this->target->id()
+            ]);
+        }
 
         // 7. Update target to new configuration
         $this->target->withConfiguration($configuration);
         $this->em->persist($this->target);
         $this->em->flush();
 
-        $msg = 'Configuration successfully deployed to ' . $this->target->environment()->name();
-        $this->flashFire->fire($msg, 'kraken.status', 'success', ['application' => $this->target->application()->id()]);
+        $msg = sprintf(self::SUCCESS, $this->target->environment()->name());
+        $this->flashFire->fire($msg, 'kraken.status', 'success', [
+            'application' => $this->target->application()->id()
+        ]);
     }
 
     /**
@@ -138,13 +164,12 @@ class DeployHandler implements ControllerInterface
      */
     private function buildConfiguration(Application $application, Environment $environment)
     {
-        $uniq = GUID::create()->asHex();
-        $uniq = strtolower($uniq);
-
+        $id = call_user_func($this->random);
         $config = (new Configuration)
-            ->withId($uniq)
+            ->withId($id)
             ->withApplication($application)
-            ->withEnvironment($environment);
+            ->withEnvironment($environment)
+            ->withUser($this->currentUser);
 
         return $config;
     }
@@ -158,7 +183,7 @@ class DeployHandler implements ControllerInterface
     {
         $newconfig = [];
 
-        $properties = $this->propRepository->findBy([
+        $properties = $this->propertyRepo->findBy([
             'application' => $configuration->application(),
             'environment' => $configuration->environment()
         ]);
@@ -166,11 +191,10 @@ class DeployHandler implements ControllerInterface
         foreach ($properties as $property) {
             $schema = $property->schema();
 
-            $uniq = GUID::create()->asHex();
-            $uniq = strtolower($uniq);
+            $id = call_user_func($this->random);
 
             $cf = (new ConfigurationProperty)
-                ->withId($uniq)
+                ->withId($id)
                 ->withKey($schema->key())
                 ->withDataType($schema->dataType())
                 ->withIsSecure($schema->isSecure())
@@ -178,7 +202,8 @@ class DeployHandler implements ControllerInterface
 
                 ->withConfiguration($configuration)
                 ->withProperty($property)
-                ->withSchema($schema);
+                ->withSchema($schema)
+                ->withUser($this->currentUser);
 
             $newconfig[$cf->key()] = $cf;
         }

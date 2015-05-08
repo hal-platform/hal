@@ -17,7 +17,7 @@ use QL\Kraken\Entity\Target;
 
 class ConsulService
 {
-    const KV_ENDPOINT = '/{version}/kv/{application}/configuration';
+    const KV_ENDPOINT = '/{version}/kv/{application}';
 
     /**
      * @type Client
@@ -61,6 +61,7 @@ class ConsulService
         }
 
         $body = (string) $response->getBody();
+
         if ($body === 'true') {
             return true;
         }
@@ -123,8 +124,12 @@ class ConsulService
             return null;
         }
 
+        $endpoint = rtrim($host, '/') . self::KV_ENDPOINT;
+
+        // @todo debug
+        $endpoint .= '/' . $environment->name() . '/configuration';
         return [
-            rtrim($host, '/') . self::KV_ENDPOINT,
+            $endpoint,
             [
                 'version' => 'v1',
                 'application' => $applicationId

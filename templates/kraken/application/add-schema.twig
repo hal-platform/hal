@@ -31,15 +31,16 @@
                 </li>
 
                 <li>
-                    <label for="prop-type">Type</label>
-                    <select class="select-input" name="type" id="prop-type" required>
-                        <option></option>
+                    <label>Type</label>
+                    <ul class="radio-grid--form">
                         {% for type, name in property_types %}
                             {% set isSelected = (type == form.type) %}
-
-                            <option value="{{ type }}"{{ isSelected ? ' selected' : '' }}>{{ name }}</option>
+                            <li>
+                                <input id="prop-type-{{ type }}" type="radio" name="type" value="{{ type }}"{{ isSelected ? ' checked' : ''}}>
+                                <label for="prop-type-{{ type }}">{{ name }}</label>
+                            </li>
                         {% endfor %}
-                    </select>
+                    </ul>
                 </li>
 
                 <li>

@@ -199,6 +199,7 @@ services:
             - @kraken.application.add_property.twig
             - @kraken.application
             - @kraken.environment
+            - @currentUser
             - @doctrine.em
             - @session.flashfire
             - @kraken.diff
@@ -207,16 +208,17 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/latest/add-property.twig']]]
 
-    kraken.application.schema.page:
-        class: 'QL\Kraken\Controller\Schema\AddSchemaController'
+    kraken.application.add_schema.page:
+        class: 'QL\Kraken\Controller\Application\AddSchemaController'
         arguments:
             - @slim.request
-            - @kraken.application.schema.twig
+            - @kraken.application.add_schema.twig
             - @kraken.application
+            - @currentUser
             - @doctrine.em
-            - @url
-            - @session
-    kraken.application.schema.twig:
+            - @session.flashfire
+            - @kraken.random
+    kraken.application.add_schema.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/add-schema.twig']]]
 
@@ -234,10 +236,12 @@ services:
         class: 'QL\Kraken\Controller\Configuration\DeployHandler'
         arguments:
             - @kraken.target
+            - @currentUser
             - @kraken.json
             - @session.flashfire
             - @doctrine.em
             - @kraken.consul
+            - @kraken.random
 
     ####################################################################################################################
     # UTIL
