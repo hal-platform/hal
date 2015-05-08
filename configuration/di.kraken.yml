@@ -207,6 +207,7 @@ services:
             - @doctrine.em
             - @session.flashfire
             - @kraken.diff
+            - @kraken.crypto.encrypter
             - @slim.not.found
     kraken.application.add_property.twig:
         parent: 'kraken.template'
@@ -245,6 +246,7 @@ services:
             - @session.flashfire
             - @doctrine.em
             - @kraken.consul
+            - @kraken.crypto.decrypter
             - @kraken.random
 
     ####################################################################################################################
@@ -287,3 +289,18 @@ services:
             - @doctrine.em
             - @slim.not.found
             - @slim.route.parameters
+
+    ####################################################################################################################
+    # encryption
+    ####################################################################################################################
+
+    kraken.crypto.factory:
+        class: 'QL\Kraken\Utility\SymmetricCryptoFactory'
+        arguments: [%encrypter.symmetricKeyPath%]
+
+    kraken.crypto.encrypter:
+        class: 'QL\Hal\Core\Crypto\SymmetricEncrypter'
+        factory: [@kraken.crypto.factory, 'getSymmetricEncrypter']
+    kraken.crypto.decrypter:
+        class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
+        factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']

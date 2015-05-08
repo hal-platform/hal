@@ -9,6 +9,8 @@ namespace QL\Kraken\Controller\Configuration;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Crypto\CryptoException;
+use QL\Hal\Core\Crypto\SymmetricDecrypter;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\FlashFire;
 use QL\Kraken\ConsulService;
@@ -25,7 +27,8 @@ class DeployHandler implements ControllerInterface
 {
     const SUCCESS = 'Configuration successfully deployed to %s';
     const ERR_CONSUL_FAILURE = 'An error occured while updating Consul.';
-    const ERR_JSON_DECODE = 'Invalid Property "%s": %s';
+    const ERR_JSON_DECODE = 'Invalid property "%s": %s';
+    const ERR_DECRYPT = 'Could not decrypt secure property "%s"';
 
     /**
      * @type Target
@@ -53,6 +56,11 @@ class DeployHandler implements ControllerInterface
     private $consul;
 
     /**
+     * @type SymmetricDecrypter
+     */
+    private $decrypter;
+
+    /**
      * @type EntityManagerInterface
      */
     private $em;
@@ -74,6 +82,7 @@ class DeployHandler implements ControllerInterface
      * @param FlashFire $flashFire
      * @param EntityManagerInterface $em
      * @param ConsulService $consul
+     * @param SymmetricDecrypter $decrypter
      * @param callable $random
      */
     public function __construct(
@@ -83,6 +92,7 @@ class DeployHandler implements ControllerInterface
         FlashFire $flashFire,
         EntityManagerInterface $em,
         ConsulService $consul,
+        SymmetricDecrypter $decrypter,
         callable $random
     ) {
         $this->target = $target;
@@ -91,6 +101,7 @@ class DeployHandler implements ControllerInterface
         $this->json = $json;
         $this->flashFire = $flashFire;
         $this->consul = $consul;
+        $this->decrypter = $decrypter;
         $this->random = $random;
 
         $this->em = $em;
@@ -221,13 +232,20 @@ class DeployHandler implements ControllerInterface
         $jsonable  = [];
 
         foreach ($properties as $prop) {
+
+            $value = $prop->value();
+
             if ($prop->isSecure()) {
-                $value = '"**ENCRYPTED**"';
+                $value = $this->decrypt($value);
+                if (!is_string($value)) {
+                    $msg = sprintf(self::ERR_DECRYPT, $prop->key());
+                    throw new InvalidPropertyException($msg);
+                }
             }
 
             // db values are json, so must be first decoded
             // This decoded/reencode step allows us to offload some validation to the json process
-            $value = $this->json->decode($prop->value());
+            $value = $this->json->decode($value);
 
             if ($value === null) {
                 $msg = sprintf(self::ERR_JSON_DECODE, $prop->key(), $this->json->lastJsonErrorMessage());
@@ -250,5 +268,21 @@ class DeployHandler implements ControllerInterface
     private function sendToConsul(Configuration $configuration, Target $target)
     {
         return $this->consul->sendConfiguration($configuration, $target);
+    }
+
+    /**
+     * @param string $encrypted
+     *
+     * @return string|null
+     */
+    private function decrypt($encrypted)
+    {
+        try {
+            $value = $this->decrypter->decrypt($encrypted);
+        } catch (CryptoException $ex) {
+            $value = null;
+        }
+
+        return $value;
     }
 }

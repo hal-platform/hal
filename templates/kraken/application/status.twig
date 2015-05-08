@@ -31,6 +31,7 @@
 
         <ul class="list--bare cards">
             {% for target in targets %}
+                {% set deployed = target.configuration %}
                 <li>
                     <article class="card card--{{ target.environment.name }}">
                         <header class="card__header">
@@ -45,33 +46,33 @@
                             <ul class="split">
                                 <li>
                                     <span class="split__title">Config:</span>
-                                    {% if target.configuration %}
-                                        <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: target.configuration.id})}}">{{ target.configuration.id[:7] }}</a>
+                                    {% if deployed %}
+                                        <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: deployed.id})}}">{{ deployed.id[:7] }}</a>
                                     {% else %}
                                         None
                                     {% endif %}
                                 </li>
                                 <li>
                                     <span class="split__title">Deployed on:</span>
-                                    {% if target.configuration.created %}
-                                        {{ target.configuration.created|html5date }}
+                                    {% if deployed.created %}
+                                        {{ deployed.created|html5date }}
                                     {% else %}
                                         Never
                                     {% endif %}
                                 </li>
                                 <li>
                                     <span class="split__title">Deployed by:</span>
-                                    {% if configuration.user %}
-                                        <a href="{{ urlFor('user', {id: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
+                                    {% if deployed.user %}
+                                        <a href="{{ urlFor('user', {id: deployed.user.id}) }}">{{ deployed.user.handle }}</a>
                                     {% else %}
                                         Unknown
                                     {% endif %}
                                 </li>
                                 <li>
                                     <span class="split__title">Consul Status:</span>
-                                    {% if target.configuration %}
+                                    {% if deployed %}
 
-                                        {% if checksum_status[target.configuration.id] %}
+                                        {% if checksum_status[deployed.id] %}
                                             Confirmed
                                         {% else %}
                                             Out of Sync

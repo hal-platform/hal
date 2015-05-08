@@ -10,6 +10,7 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\GUID;
+use QL\Hal\Core\Crypto\SymmetricEncrypter;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\FlashFire;
 use QL\Kraken\ConfigurationDiffService;
@@ -83,6 +84,11 @@ class AddPropertyController implements ControllerInterface
     private $diffService;
 
     /**
+     * @type SymmetricEncrypter
+     */
+    private $encrypter;
+
+    /**
      * @type NotFound
      */
     private $notFound;
@@ -102,6 +108,7 @@ class AddPropertyController implements ControllerInterface
      * @param EntityManagerInterface $em
      * @param FlashFire $flashFire
      * @param ConfigurationDiffService $diffService
+     * @param SymmetricEncrypter $encrypter
      * @param NotFound $notFound
      */
     public function __construct(
@@ -113,6 +120,7 @@ class AddPropertyController implements ControllerInterface
         EntityManagerInterface $em,
         FlashFire $flashFire,
         ConfigurationDiffService $diffService,
+        SymmetricEncrypter $encrypter,
         NotFound $notFound
     ) {
         $this->request = $request;
@@ -128,6 +136,7 @@ class AddPropertyController implements ControllerInterface
 
         $this->flashFire = $flashFire;
         $this->diffService = $diffService;
+        $this->encrypter = $encrypter;
         $this->notFound = $notFound;
 
         $this->errors = [];
@@ -324,8 +333,8 @@ class AddPropertyController implements ControllerInterface
         // @todo JSON_PRESERVE_ZERO_FRACTION - PHP 5.6.6
         $encoded = json_encode($value);
 
-        if (false) {
-            // @todo encrypt
+        if ($schema->isSecure()) {
+            $encoded = $this->encrypter->encrypt($encoded);
         }
 
         return $encoded;

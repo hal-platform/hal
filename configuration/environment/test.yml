@@ -25,6 +25,7 @@ parameters:
 
     cli.user: 'hal9000test'
 
+    encrypter.symmetricKeyPath: '/home/hal9000test/.ssh/hal.encrypter.pass'
     encrypter.publickey: |
         -----BEGIN PUBLIC KEY-----
         MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/+DAi+yqs4TLAYGISlrs3ZfY0
