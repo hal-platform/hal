@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Error' %}
+{% set page_title = status == 404 ? 'Not Found' : 'Error' %}
 {% set html_id = 'error-page' %}
 {% set name = getUsersActualName(currentUser) %}
 

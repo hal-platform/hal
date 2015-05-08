@@ -1,10 +1,15 @@
 
 .error-header {
     background-image: url(/img/spaaace.jpg);
-    background-size: cover 100%;
+    background-size: contains;
+    background-repeat: no-repeat;
     height: 12em;
     box-shadow: 0px 5px 5px #c3c3c3;
     animation: bgslide 60s infinite linear;
+
+    @include breakpoint(90em) {
+        background-size: cover;
+    }
 }
 
 @keyframes bgslide {
