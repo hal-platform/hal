@@ -7,7 +7,9 @@
 
 namespace QL\Kraken\Entity;
 
+use DateTime;
 use JsonSerializable;
+use MCP\DataType\Time\Timepoint;
 use QL\Hal\Core\Entity\User;
 
 class Schema implements JsonSerializable
@@ -21,6 +23,11 @@ class Schema implements JsonSerializable
     protected $key;
     protected $dataType;
     protected $description;
+
+    /**
+     * @type Timepoint|null
+     */
+    protected $created;
 
     /**
      * @type bool
@@ -46,6 +53,7 @@ class Schema implements JsonSerializable
         $this->description = '';
         $this->isSecure = static::DEFAULT_IS_SECURE;
 
+        $this->created = null;
         $this->application = null;
         $this->user = null;
     }
@@ -88,6 +96,14 @@ class Schema implements JsonSerializable
     public function isSecure()
     {
         return $this->isSecure;
+    }
+
+    /**
+     * @return Timepoint|null
+     */
+    public function created()
+    {
+        return $this->created;
     }
 
     /**
@@ -162,6 +178,17 @@ class Schema implements JsonSerializable
     }
 
     /**
+     * @param Timepoint $created
+     *
+     * @return self
+     */
+    public function withCreated(Timepoint $created)
+    {
+        $this->created = $created;
+        return $this;
+    }
+
+    /**
      * @param Application $application
      *
      * @return self
@@ -195,6 +222,8 @@ class Schema implements JsonSerializable
             'description' => $this->description(),
 
             'isSecure' => $this->isSecure(),
+
+            'created' => $this->created() ? $this->created()->format(DateTime::RFC3339, 'UTC') : null,
 
             'application' => $this->application(),
             'user' => $this->user()

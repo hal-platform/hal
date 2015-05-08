@@ -7,7 +7,9 @@
 
 namespace QL\Kraken\Entity;
 
+use DateTime;
 use JsonSerializable;
+use MCP\DataType\Time\Timepoint;
 use QL\Hal\Core\Entity\User;
 
 class Property implements JsonSerializable
@@ -17,6 +19,11 @@ class Property implements JsonSerializable
      */
     protected $id;
     protected $value;
+
+    /**
+     * @type Timepoint|null
+     */
+    protected $created;
 
     /**
      * @type Schema
@@ -43,6 +50,7 @@ class Property implements JsonSerializable
         $this->id = '';
         $this->value = '';
 
+        $this->created = null;
         $this->schema = null;
         $this->application = null;
         $this->environment = null;
@@ -63,6 +71,14 @@ class Property implements JsonSerializable
     public function value()
     {
         return $this->value;
+    }
+
+    /**
+     * @return Timepoint|null
+     */
+    public function created()
+    {
+        return $this->created;
     }
 
     /**
@@ -120,6 +136,17 @@ class Property implements JsonSerializable
     }
 
     /**
+     * @param Timepoint $created
+     *
+     * @return self
+     */
+    public function withCreated(Timepoint $created)
+    {
+        $this->created = $created;
+        return $this;
+    }
+
+    /**
      * @param Schema $schema
      *
      * @return self
@@ -172,6 +199,8 @@ class Property implements JsonSerializable
             'id' => $this->id(),
             'value' => $this->value(),
             'schema' => $this->schema(),
+
+            'created' => $this->created() ? $this->created()->format(DateTime::RFC3339, 'UTC') : null,
 
             'application' => $this->application(),
             'environment' => $this->environment(),

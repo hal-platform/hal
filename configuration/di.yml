@@ -33,6 +33,7 @@ services:
         calls:
             - ['addEventListener', [['onFlush'], @doctrine.listener.logger]]
             - ['addEventListener', [['prePersist'], @doctrine.listener.persist]]
+            - ['addEventListener', [['prePersist'], @doctrine.listener.kraken.persist]]
 
     doctrine.listener.logger:
         class: 'QL\Hal\Doctrine\EntityChangeLogger'

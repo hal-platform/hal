@@ -7,7 +7,9 @@
 
 namespace QL\Kraken\Entity;
 
+use DateTime;
 use JsonSerializable;
+use MCP\DataType\Time\Timepoint;
 use QL\Hal\Core\Entity\User;
 
 class ConfigurationProperty implements JsonSerializable

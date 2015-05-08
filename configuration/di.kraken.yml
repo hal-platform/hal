@@ -38,6 +38,10 @@ services:
     doctrine.em.configurator:
         class: 'QL\Kraken\Doctrine\DoctrineConfigurator'
 
+    doctrine.listener.kraken.persist:
+        class: 'QL\Kraken\Doctrine\DoctrinePersistListener'
+        arguments: [@clock]
+
     ####################################################################################################################
     # CONTROLLERS
     ####################################################################################################################
