@@ -7,7 +7,7 @@ exports.module = {
     init: function() {
         this.refreshTimes();
 
-        // we cannot cache the times $elements to update because they can be added later by push/push updaters.
+        // we cannot cache the times $elements to update because they can be added later by build/push updaters.
         window.setInterval(this.refreshTimes, this.interval * 1000);
     },
     refreshTimes: function() {
