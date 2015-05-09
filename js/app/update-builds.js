@@ -89,7 +89,7 @@ exports.module = {
         if (data.status == 'Success') {
             // Add push link if present
             $('.js-build-push')
-                .html('<a class="btn--action" href="' + this.generateUrl(data.id, 'push') + '">Push Build</a>');
+                .html('<a class="btn btn--action" href="' + this.generateUrl(data.id, 'push') + '">Push Build</a>');
 
             // Replace success messaging
             $hdr = $('[data-success]');
