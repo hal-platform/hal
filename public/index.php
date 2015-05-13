@@ -38,6 +38,7 @@ $app = $container->get('slim');
 
 // Custom application logic here
 ini_set('session.use_cookies', '0');
+ini_set('memory_limit','384M');
 
 # convert errors to exceptions
 ErrorHandler::register();
