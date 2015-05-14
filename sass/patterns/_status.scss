@@ -72,12 +72,12 @@
     &:before {
         animation:spin 1s infinite linear;
         background: white;
-        border: .18em solid $success-color;
-        border-left-color: $error-color;
+        border: .18em solid $grey;
+        border-left-color: $warning-color;
     }
 }
 
 @keyframes spin {
-    0% {transform:rotate(0deg);}
-    100% {transform:rotate(360deg);}
+    0% { transform:rotate(0deg); }
+    100% { transform:rotate(360deg); }
 }
