@@ -55,7 +55,7 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 .btn--tiny {
     margin: 0;
     margin-top: -5px;
-    padding: 0 ms(-8);
+    padding: ms(-12) ms(-8);
 
     &:hover {
         margin-top:-3px;
