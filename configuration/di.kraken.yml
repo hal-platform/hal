@@ -209,6 +209,7 @@ services:
             - @kraken.diff
             - @kraken.crypto.encrypter
             - @json
+            - @kraken.random
             - @slim.not.found
     kraken.application.add_property.twig:
         parent: 'kraken.template'

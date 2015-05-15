@@ -141,6 +141,7 @@ class AddPropertyController implements ControllerInterface
         ConfigurationDiffService $diffService,
         SymmetricEncrypter $encrypter,
         Json $json,
+        callable $random,
         NotFound $notFound
     ) {
         $this->request = $request;
@@ -158,6 +159,7 @@ class AddPropertyController implements ControllerInterface
         $this->diffService = $diffService;
         $this->encrypter = $encrypter;
         $this->json = $json;
+        $this->random = $random;
         $this->notFound = $notFound;
 
         $this->errors = [];
@@ -311,13 +313,12 @@ class AddPropertyController implements ControllerInterface
      */
     private function saveProperty(Schema $schema, $value)
     {
-        $uniq = GUID::create()->asHex();
-        $uniq = strtolower($uniq);
+        $id = call_user_func($this->random);
 
         $encoded = $this->encode($schema, $value);
 
         $property = (new Property)
-            ->withId($uniq)
+            ->withId($id)
             ->withValue($encoded)
             ->withSchema($schema)
             ->withApplication($this->application)
