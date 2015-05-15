@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Add Encrypted Property for <strong>{{ repository.name }}</strong></h2>
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
 
     <div class="form-wrapper">
         {% if errors %}

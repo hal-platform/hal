@@ -7,7 +7,7 @@
 {% block content %}
     <h2>Encrypted Properties for <strong>{{ repository.name }}</strong></h2>
 
-    <p><a class="btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
 
     {% if encrypted %}
         <table class="table--spacing-medium" data-tablesaw-mode="stack">
