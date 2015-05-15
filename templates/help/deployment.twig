@@ -13,7 +13,8 @@
         <li><a href="#configuration-file">.hal9000.yml configuration file</a></li>
         <li><a href="#build-environment">Build scripting environment</a></li>
         <li><a href="#push-environment">Push scripting environment</a></li>
-        <li><a href="#package-managers">Supported package managers</a></li>
+        <li><a href="#docker">Docker</a></li>
+        <li><a href="#package-managers">Package Managers</a></li>
         <li><a href="#encrypted-configuration">Encrypted Properties</a></li>
     </ul>
 
@@ -90,35 +91,10 @@
         a new push and overwrite the failed one.
     </p>
 
-    <h2 id="package-managers">Supported package managers</h2>
+    <h2 id="docker">Docker</h2>
+    {{ block('docker_info') }}
 
-    <p>The following package managers are supported:</p>
-    <ul class="list--bullet">
-        <li>Composer (PHP)</li>
-        <li>NPM (Node)</li>
-        <li>Bundler (Ruby)</li>
-        <li>Gem (Ruby)</li>
-        <li>Nuget (Windows build system)</li>
-    </ul>
-
-    {{ macros.alert('info', 'NPM, Gem, and Nuget are installed globally.<strong> Composer and Bundler are not.</strong>', block('pm_details'), true) }}
-
-    <p>
-        Each project has its own dedicated <strong>$HOME</strong> directory, and caches and packages will be installed there.
-        HAL 9000 automatically sets isolated installation and caching directories for these tools.
-    </p>
-
-    <h5 class="mbn"><strong>A note on rubygems and bundler</strong></h5>
-    <p>
-        Rubygems.org is one of the most unreliable package repositories. If you rely on ruby tools to deploy, consider packaging the ruby code and commiting
-        to your codebase.
-    </p>
-
-    <p>Installing gems or npm dependencies outside of the <strong>$HOME</strong> directory is unsupported and may break without warning. <strong>DO NOT DO THIS</strong>.</p>
-
-    {{ macros.alert('warning', 'Do not change the default <strong>$HOME</strong>, caching, or installation directories of your package managers.') }}
-
-    <h4>Recommended installation commands</h4>
+    <h2 id="package-managers">Package Managers - Recommended installation commands</h2>
     {{ block('pm_commands') }}
 
     <h2 id="encrypted-configuration">Encrypted Properties</h2>
@@ -275,7 +251,7 @@ date: ''       # ISO 8601 date
     <pre>
 # filename: APPLICATION_ROOT/.hal9000.yml
 
-system: unix                 # Build system.
+system: docker:legacy        # Build container.
 dist: .                      # Relative file path to use for build archive.
 exclude:                     # Array of directories or files to exclude while pushing to server
     - config/database.ini
@@ -288,15 +264,40 @@ post_push: []                # Shell commands to run after push process, on targ
 </pre>
 {% endblock %}
 
-{% block pm_details %}
-<p>
-    To use <strong>Composer</strong>, it must be committed and included in your codebase or downloaded manually.
-    <a href="http://composer/">http://composer</a> provides an installer that can download and run Composer on-the-fly.<br><br>
-</p>
+{% block docker_info %}
+    <p>
+        Each build is run in a new, isolated docker container.The <strong>entire</strong> build container is at your disposal. You may install anything, anywhere.
+    </p>
+    <p>
+        A custom docker container can be specified with <code>system</code> in your <code>.hal9000.yml</code>.
+    </p>
 
-<p>
-    <strong>Bundler</strong> must be installed with gem before running <code>bundle install</code>.
-</p>
+    <h4>Examples:</h4>
+    <ul class="list--bare">
+        <li><code>system: 'docker:legacy'</code></li>
+        <li><code>system: 'docker:php5.5'</code></li>
+        <li><code>system: 'docker:erlang17.5'</code></li>
+    </ul>
+
+    <p>
+        If no docker container is specified, the <strong>legacy</strong> container is used, which shares a similiar configuration to the old push servers.
+    </p>
+
+    <p>
+        We recommend switching to a different container as soon as possible. If no current container fits your application needs, contact a member of the Web Core team.
+        We can help you find a container that fits your needs or write a custom dockerfile for your usage.<br><br>
+
+        Please see <a href="http://git/skluck/docker-images">skluck/docker-images</a>{{ macros.icon('github') }} for currently available containers.
+    </p>
+
+    <p>
+        <strong>Please Note:</strong><br>
+        No data is cached between builds. This feature will be introduced in a later version.<br><br>
+
+        This means no NPM, Composer, Ruby, etc packages or dependencies will be cached. As a result builds may be slightly slower than before.<br><br>
+
+        You can mitigate this additional time by building a custom docker image with your package manager dependencies <strong>pre-installed</strong>.
+    </p>
 {% endblock %}
 
 {% block pm_commands %}

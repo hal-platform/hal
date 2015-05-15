@@ -27,6 +27,7 @@
                 <li><a href="#deploy-application">How do I deploy my application with HAL?</a></li>
                 <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
                 <li><a href="#env-support">Does HAL support .NET or AWS applications?</a></li>
+                <li><a href="#docker-support">Does HAL support Docker?</a></li>
                 <li><a href="#encrypted-configuration">Does HAL support encrypted configuration?</a></li>
                 <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
             </ul>
@@ -187,6 +188,14 @@ beta
     <h4 id="env-support">Does HAL support .NET or AWS applications?</h4>
     <p>HAL 9000 supports building windows projects and deploying to Amazon Elastic Beanstalk or Amazon EC2.</p>
     <p>However, these features will not be enabled.</p>
+
+    <h4 id="docker-support">Does HAL support Docker?</h4>
+    <p>All unix-based applications are built in isolated Docker containers.</p>
+    <p>
+        This ensures reproducible builds by having a fresh container with consistent system configuration for every build.
+        Applications can even use a custom, dedicated container if needed.
+    </p>
+    <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
 
     <h4 id="encrypted-configuration">Does HAL support encrypted configuration?</h4>
     <p>
