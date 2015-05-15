@@ -4,8 +4,12 @@
     {% set slice = maxlength|default(0) %}
     {% set formatted = property|formatPropertyValue(slice) %}
 
-    {% if formatted is null %}
+    {% if formatted is invalidProperty %}
+        {{ hal_macros.status('Error - Decoding Failure', 'error', 'spam-2') }}
+
+    {% elseif formatted is null %}
         {{ hal_macros.icon('locked') }} Secure
+
     {% else %}
         {% if formatted is iterable %}
             <ul class="code-list">

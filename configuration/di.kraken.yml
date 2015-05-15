@@ -208,6 +208,7 @@ services:
             - @session.flashfire
             - @kraken.diff
             - @kraken.crypto.encrypter
+            - @json
             - @slim.not.found
     kraken.application.add_property.twig:
         parent: 'kraken.template'
@@ -260,6 +261,7 @@ services:
 
     kraken.twig.extension:
         class: 'QL\Kraken\Application\KrakenTwigExtension'
+        arguments: [@json]
 
     kraken.json:
         class: 'QL\Panthor\Utility\Json'

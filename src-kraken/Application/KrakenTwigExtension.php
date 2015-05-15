@@ -13,6 +13,7 @@ use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
 use QL\Kraken\Entity\Target;
 use QL\Kraken\Doctrine\PropertyEnumType;
+use QL\Panthor\Utility\Json;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleTest;
@@ -20,6 +21,20 @@ use Twig_SimpleTest;
 class KrakenTwigExtension extends Twig_Extension
 {
     const NAME = 'kraken';
+    const INVALID_DECODED_PROPERTY = 0xA9E1B2E76;
+
+    /**
+     * @type Json
+     */
+    private $json;
+
+    /**
+     * @param Json $json
+     */
+    public function __construct(Json $json)
+    {
+        $this->json = $json;
+    }
 
     /**
      * Get the extension name
@@ -70,6 +85,9 @@ class KrakenTwigExtension extends Twig_Extension
             }),
             new Twig_SimpleTest('diff', function ($entity) {
                 return $entity instanceof Diff;
+            }),
+            new Twig_SimpleTest('invalidProperty', function ($value) {
+                return $value === self::INVALID_DECODED_PROPERTY;
             })
         ];
     }
@@ -132,7 +150,10 @@ class KrakenTwigExtension extends Twig_Extension
             return null;
         }
 
-        $value = json_decode($property->value());
+        $value = $this->json->decode($property->value());
+        if ($value === null) {
+            return self::INVALID_DECODED_PROPERTY;
+        }
 
         if (is_array($value)) {
             # W. T. F. - Handle "strings"
