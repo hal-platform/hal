@@ -24,6 +24,10 @@ QL\Kraken\Entity\Schema:
             column: description
             type: string
             length: 250
+        created:
+            column: created_time
+            type: timepoint
+            nullable: true
 
     manyToOne:
 

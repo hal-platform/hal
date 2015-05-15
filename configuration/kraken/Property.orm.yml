@@ -14,6 +14,10 @@ QL\Kraken\Entity\Property:
             column: value
             type: string
             length: 4000
+        created:
+            column: created_time
+            type: timepoint
+            nullable: true
 
     manyToOne:
 
