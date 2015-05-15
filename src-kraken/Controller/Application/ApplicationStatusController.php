@@ -13,11 +13,14 @@ use QL\Kraken\ConsulService;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Schema;
 use QL\Kraken\Entity\Target;
+use QL\Kraken\Utility\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class ApplicationStatusController implements ControllerInterface
 {
+    use SortingHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -60,6 +63,8 @@ class ApplicationStatusController implements ControllerInterface
     public function __invoke()
     {
         $targets = $this->targetRepo->findBy(['application' => $this->application]);
+
+        usort($targets, $this->targetSorter());
 
         $schema = $this->schemaRepo->findBy([
             'application' => $this->application

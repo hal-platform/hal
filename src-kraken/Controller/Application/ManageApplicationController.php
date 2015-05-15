@@ -13,11 +13,14 @@ use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Entity\Schema;
 use QL\Kraken\Entity\Target;
+use QL\Kraken\Utility\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class ManageApplicationController implements ControllerInterface
 {
+    use SortingHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -80,6 +83,8 @@ class ManageApplicationController implements ControllerInterface
         if (!$environments) {
             return [];
         }
+
+        usort($environments, $this->environmentSorter());
 
         $targets = $this->targetRepo->findBy(['application' => $this->application]);
         if (!$targets) {
