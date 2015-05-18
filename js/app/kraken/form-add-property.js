@@ -6,6 +6,7 @@ exports.module = {
     genericTarget: '#kraken__add-property #config-value',
     explicitTarget: '#kraken__explicit-values li',
     listParentTarget: '#kraken__explicit-values li #config-strings',
+    stringTarget: '#kraken__explicit-values li #config-string',
 
     removalAnchor: '<a class="config-strings__icon"><svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#cross"></use></svg></a>',
     appendAnchor: '<a class="config-strings__icon--add"><svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#add"></use></svg></a>',
@@ -30,6 +31,9 @@ exports.module = {
 
             // Fire off once to start
             regenerator();
+
+            // Add textarea handle to string input
+            this.attachTextareaModifier($(this.stringTarget));
         }
     },
     regenerate: function($select, $labels, $explicit) {
@@ -95,5 +99,40 @@ exports.module = {
     removeFromList: function(event) {
         $(this).parent().remove();
         event.preventDefault();
+    },
+
+    attachTextareaModifier: function($parentInput) {
+        var changeHandler = this.changeInputToTextarea.bind(this);
+
+        if ($parentInput.prop('type') === 'text') {
+            var $changer = $('<a>')
+                .text('Expand')
+                .on('click', changeHandler);
+
+            $parentInput.after($changer);
+        }
+    },
+    changeInputToTextarea: function() {
+        var $input = $(this.stringTarget);
+
+        var $newput = $('<textarea>')
+            .addClass('text-input')
+            .prop('name', 'value_string')
+            .prop('id', 'config-string')
+            .prop('rows', '4');
+
+        // kinda shitty
+        var $newput_indicator = $('<input>')
+            .prop('type', 'hidden')
+            .prop('name', 'value_string_xl')
+            .val(1);
+
+        $newput.val($input.val());
+
+        $input
+            .siblings('a').remove().end()
+            .replaceWith($newput);
+
+        $newput.after($newput_indicator);
     }
 };

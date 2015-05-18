@@ -1,7 +1,9 @@
 var gulp = require('gulp'),
     plugins = require('gulp-load-plugins')(),
     webpack = require('gulp-webpack-build'),
+    path = require('path'),
     isDeploy = process.argv.indexOf('--deploy') > -1,
+    isWatch = process.argv.indexOf('--watch') > -1,
     del = require('del');
 
 // javascript
@@ -25,13 +27,30 @@ gulp.task('js-webpack', ['js-clean'], function() {
         useMemoryFs: true
     };
 
-    return gulp.src('./webpack.config.js')
-        .pipe(webpack.configure(webpackConfig))
-        .pipe(webpack.overrides(webpackOptions))
-        .pipe(webpack.compile())
-        .pipe(webpack.format({ version: false, timings: true }))
-        .pipe(webpack.failAfter({ errors: true, warnings: false }))
-        .pipe(gulp.dest('public/js/'));
+    if (isWatch) {
+        gulp.watch('js/**/*.js').on('change', function(event) {
+            if (event.type === 'changed') {
+                gulp.src(event.path, { base: path.resolve('js') })
+                    .pipe(webpack.closest('webpack.config.js'))
+                    .pipe(webpack.configure(webpackConfig))
+                    .pipe(webpack.overrides(webpackOptions))
+                    .pipe(webpack.watch(function(err, stats) {
+                        gulp.src(this.path)
+                            .pipe(webpack.proxy(err, stats))
+                            .pipe(webpack.format({ version: false, timings: true }))
+                            .pipe(gulp.dest('public/js/'));
+                    }));
+            }
+        });
+    } else {
+        return gulp.src('./webpack.config.js')
+            .pipe(webpack.configure(webpackConfig))
+            .pipe(webpack.overrides(webpackOptions))
+            .pipe(webpack.compile())
+            .pipe(webpack.format({ version: false, timings: true }))
+            .pipe(webpack.failAfter({ errors: true, warnings: false }))
+            .pipe(gulp.dest('public/js/'));
+    }
 });
 
 gulp.task('scripts', ['js-hint'], function() {

@@ -60,7 +60,12 @@
                     <ul class="form-fields">
                         <li>
                             <label for="config-string">{{ 'string'|formatSchemaType }}</label>
-                            <input type="text" name="value_string" id="config-string" value="{{ form.value_string }}" class="text-input" autocomplete="off">
+                            {% if form.use_xl_string %}
+                                <textarea name="value_string" id="config-string" class="text-input" rows="4">{{ form.value_string }}</textarea>
+                                <input type="hidden" name="value_string_xl" value="1">
+                            {% else %}
+                                <input type="text" name="value_string" id="config-string" value="{{ form.value_string }}" class="text-input" autocomplete="off">
+                            {% endif %}
                         </li>
 
                         <li>

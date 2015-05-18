@@ -53,6 +53,7 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 
 // Basic button modifiers
 .btn--tiny {
+    font-size: ms(-2);
     margin: 0;
     margin-top: -5px;
     padding: ms(-12) ms(-8);

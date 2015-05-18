@@ -197,6 +197,7 @@ class AddPropertyController implements ControllerInterface
             'form' => [
                 'prop' => $this->request->post('prop'),
                 'value' => $this->request->post('value'),
+                'use_xl_string' => ($this->request->post('value_string_xl') === '1'),
 
                 // explicit
                 'value_string' => $this->request->post('value_string'),

@@ -131,6 +131,7 @@ exports.routes = [
         }
     },
 
+    // Kraken
     {
         url: "/kraken/applications/{id}/environments/{env}/add",
         loader: function() {
