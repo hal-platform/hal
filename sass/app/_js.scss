@@ -19,6 +19,13 @@
     max-height: 300px;
 }
 
+.js-search-item {
+    display: none;
+}
+.js-search-item + .js-search-item-display {
+    display: block;
+}
+
 .js-search-results {
     > li {
         margin-bottom: 0;
@@ -33,6 +40,7 @@
         background-color: $highlight-color;
         cursor: pointer;
     }
+    margin-bottom: 0;
 }
 
 // Add Repository Github Helpers

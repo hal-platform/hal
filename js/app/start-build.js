@@ -6,6 +6,7 @@ exports.module = {
     searchResultItem: '.js-search-item',
     searchQuery: 'span',
     searchQueryPrimary: '.js-search-primary',
+    searchQueryShowClass: 'js-search-item-display',
 
     $searchBox: null,
     $searchResults: null,
@@ -38,6 +39,12 @@ exports.module = {
             onSearchBlur   : function() {
                 _this.justwhatexactlyareyoutryingtododave();
                 _this.hideSearchListings();
+            },
+            hide           : function(row) {
+                row.removeClass(_this.searchQueryShowClass);
+            },
+            show           : function(row) {
+                row.addClass(_this.searchQueryShowClass);
             }
         });
 
@@ -72,6 +79,11 @@ exports.module = {
             _this.selectTab(this);
             event.preventDefault();
         });
+
+        // Auto select a ref it there is only one visible
+        this.$searchBox.trigger('change');
+        this.justwhatexactlyareyoutryingtododave();
+
     },
     searchByFragment: function(fragment) {
         var searchBy,
@@ -84,14 +96,8 @@ exports.module = {
         }
 
         this.$searchBox.val(searchBy);
-        this.$searchBox.trigger('change').focus();
-
-        // if one search result, select it automatically
-        $visible = this.$searchResults.children(':visible');
-        if ($visible.length === 1) {
-            this.selectSearchResult($visible);
-            this.$searchBox.blur();
-        }
+        this.$searchBox.trigger('change');
+        this.justwhatexactlyareyoutryingtododave();
     },
 
     selectTab: function(el) {
@@ -138,13 +144,11 @@ exports.module = {
             return;
         }
 
-        var $visible = this.$searchResults.children(':visible');
+        var $visible = this.$searchResults.children('.' + this.searchQueryShowClass);
 
         // if no results, display a warning for the user. We will try to resolve it on the backend.
         if ($visible.length === 0) {
             this.showWarning();
-
-            // @todo add flavor text to "Start Build?" button when HAL is cannot validate a ref.
 
             // deselect previously selected radio
             this.$validOptions.filter(':checked').prop('checked', false);
