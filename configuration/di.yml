@@ -63,6 +63,10 @@ services:
             - @logger
             - @error.pages.twig
 
+    slim.hook.routes.api:
+        class: 'QL\Panthor\Slim\RouteLoaderHook'
+        arguments: [@service_container, %routes.api%]
+
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'
         arguments: [@session.handler, @service_container]

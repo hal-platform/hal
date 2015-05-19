@@ -36,9 +36,9 @@
 
     <div>
         {% if isUserAdmin(currentUser) %}
-            <a class="btn--action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a>
+            <a class="btn btn--action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit</a>
             {% if not servers and isUserAdmin(currentUser) %}
-                <a class="btn--destructive" href="{{ urlFor('environment.admin.remove', {id: env.id}) }}">Remove Environment</a>
+                <a class="btn btn--destructive" href="{{ urlFor('environment.admin.remove', {id: env.id}) }}">Remove Environment</a>
             {% endif %}
         {% endif %}
     </div>

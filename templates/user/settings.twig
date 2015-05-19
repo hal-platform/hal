@@ -5,12 +5,28 @@
 
 {% block content %}
 
-    <h2>Settings</h2>
+    <h1>User Settings</h1>
+
+    <section class="leader--andre">
+        <h2 class="mbn">HAL Preferences</h2>
+        {{ block('navigation_pref') }}
+    </section>
+
+    <section class="leader--andre">
+        <h2 class="mbn">Personal Access Tokens</h2>
+        {{ block('access_tokens') }}
+    </section>
+
+    <section class="leader--andre">
+        <h2 class="mbn">Github Deployment Updates</h2>
+        {{ block('github_token') }}
+    </section>
+{% endblock %}
+
+{% block navigation_pref %}
+    <small>Customize the items on the navigation menu</small>
 
     <form action="{{ urlFor('settings.handler', {id: user.id}) }}" method="post">
-
-        <h3>HAL Preferences</h3>
-        <p class="mbn">Customize the items on the navigation menu</p>
 
         <ul class="nav--main nav--preferences">
             {% for item, description in navItems %}
@@ -34,44 +50,44 @@
                 {{ macros.icon('tick', 'checkbox__on') }}
                 {{ macros.icon('cross', 'checkbox__off') }}
 
-                Use <strong>Serious Business&#8482;</strong> mode
+                Use <strong>Serious Business&trade;</strong> mode
             </label>
 
             <p class="flavor mbn">Flavor text such as <strong>Hello, Dave</strong> and <strong>I'm afraid I can't do that</strong> will be reduced across the application.</p>
         </div>
 
         <p class="leader">
-            <input class="btn btn--action" type="submit" value="Save Preferences">
+            <input class="btn btn--action btn--small" type="submit" value="Save Preferences">
         </p>
     </form>
-
-    {{ block('github_token') }}
-
-    {# {{ block('access_tokens') }}#}
 {% endblock %}
 
 {% block github_token %}
-    <h2 class="mbn">Github Deployment Updates</h2>
     <small>Allow HAL to update github repositories you have access to when you build or push.</small>
 
     <h5 class="leader mbn">Current status:</h5>
     <p>
         {% if hasGithubToken %}
             <strong>ENABLED</strong>
-            <br><a class="btn btn--small btn--destructive" href="{{ urlFor('github.authorization.remove') }}">Disable GitHub updates</a>
+
+            <p class="leader">
+                <a class="btn btn--small btn--destructive" href="{{ urlFor('github.authorization.remove') }}">Disable GitHub updates</a>
+            </p>
         {% else %}
             <strong>NOT ENABLED</strong>
-            <br><a class="btn btn--small" href="{{ urlFor('github.authorization') }}">Authorize HAL 9000</a>
+
+            <p class="leader">
+                <a class="btn btn--small btn--action" href="{{ urlFor('github.authorization') }}">Authorize HAL 9000</a>
+            </p>
         {% endif %}
     </p>
 {% endblock %}
 
 {% block access_tokens %}
-    <h2 class="mbn">Personal Access Tokens</h2>
-    <small>Tokens you have created that can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</small>
+    <small>Personal Access Tokens can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</small>
 
-    <form action="{{ urlFor('user.token.add', {id: user.id}) }}" method="post">
-        <table data-tablesaw-mode="stack">
+    {% if user.tokens %}
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Label</th>
@@ -80,20 +96,35 @@
                 </tr>
             </thead>
             <tbody>
-            {% for token in user.tokens %}
-                <tr>
-                    <td>{{ token.label }}</td>
-                    <td>{{ token.value }}</td>
-                    <td><a class="btn--destructive" href="{{ urlFor('user.token.remove', {id: user.id, token: token.value}) }}">Revoke</a></td>
-                </tr>
-            {% endfor %}
-                <tr>
-                    <td colspan="2">
-                        <input type="text" name="label" maxlength="50" class="text-input t50" placeholder="Token name or label..." required>
-                    </td>
-                    <td><input class="btn" type="submit" value="Generate"></td>
-                </tr>
+                {% for token in user.tokens %}
+                    <tr>
+                        <td>{{ token.label }}</td>
+                        <td>{{ token.value }}</td>
+                        <td class="tr">
+                            <a class="btn btn--tiny btn--destructive" href="{{ urlFor('user.token.remove', {id: user.id, token: token.id}) }}">
+                                Revoke <span class="tablesaw-collapse">Access Token</span>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p>You have no personal access tokens saved.</p>
+    {% endif %}
+
+    <form action="{{ urlFor('user.token.add', {id: user.id}) }}" method="post">
+        <h3>Add new personal access token</h3>
+
+        <div class="form-wrapper">
+            <label for="token-label">Token Label</label>
+            <input type="text" name="label" id="token-label" maxlength="50" class="text-input" required>
+
+            <p class="leader">
+                <input class="btn btn--action btn--small" type="submit" value="Generate Token">
+            </p>
+
+        </div>
     </form>
+
 {% endblock %}

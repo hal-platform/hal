@@ -1,0 +1,156 @@
+parameters:
+    routes.regex.alphanum: '[A-Za-z0-9]+'
+    routes.regex.digit: '[0-9]+'
+    routes.regex.githubname: '[A-Za-z0-9\.\-]+'
+
+    routes.regex.buildId: '[A-Za-z0-9\_\-\.]+'
+    routes.regex.pushId: %routes.regex.buildId%
+    routes.regex.queue.refresh: '[A-Za-z0-9\+\-\.]+'
+
+    routes.api:
+
+        ################################################################################################################
+        # INTERNAL API ROUTES (for use by local javascript)
+        ################################################################################################################
+
+        api.github.user.repositories:
+            method: 'GET'
+            route: '/api/github/users/:username/repositories'
+            stack: ['login.bouncer', 'api.github.user.repositories']
+            conditions: {username: %routes.regex.githubname%}
+
+        ################################################################################################################
+        # PUBLIC API ROUTES
+        ################################################################################################################
+
+        api.index:
+            method: 'GET'
+            route: '/api'
+            stack: ['cachedApi.middleware', 'api.index']
+
+        api.environments:
+            method: 'GET'
+            route: '/api/environments'
+            stack: ['cachedApi.middleware', 'api.environments']
+
+        api.environment:
+            method: 'GET'
+            route: '/api/environments/:id'
+            stack: ['cachedApi.middleware', 'api.environment']
+            conditions: {id: %routes.regex.digit%}
+
+        api.servers:
+            method: 'GET'
+            route: '/api/servers'
+            stack: ['cachedApi.middleware', 'api.servers']
+
+        api.server:
+            method: 'GET'
+            route: '/api/servers/:id'
+            stack: ['cachedApi.middleware', 'api.server']
+            conditions: {id: %routes.regex.digit%}
+
+        api.groups:
+            method: 'GET'
+            route: '/api/groups'
+            stack: ['cachedApi.middleware', 'api.groups']
+
+        api.group:
+            method: 'GET'
+            route: '/api/groups/:id'
+            stack: ['cachedApi.middleware', 'api.group']
+            conditions: {id: %routes.regex.digit%}
+
+        api.users:
+            method: 'GET'
+            route: '/api/users'
+            stack: ['cachedApi.middleware', 'api.users']
+
+        api.user:
+            method: 'GET'
+            route: '/api/users/:id'
+            stack: ['cachedApi.middleware', 'api.user']
+            conditions: {id: %routes.regex.digit%}
+
+        api.deployment:
+            method: 'GET'
+            route: '/api/deployment/:id'
+            stack: ['cachedApi.middleware', 'api.deployment']
+            conditions: {id: %routes.regex.digit%}
+
+        # @todo change this url because it is terrible
+        api.deployment.lastpush:
+            method: 'GET'
+            route: '/api/deployment/:id/last-push'
+            stack: ['cachedApi.middleware', 'api.deployment.lastpush']
+            conditions: {id: %routes.regex.digit%}
+
+        api.build:
+            method: 'GET'
+            route: '/api/builds/:id'
+            stack: ['cachedApi.middleware', 'api.build']
+            conditions: {id: %routes.regex.buildId%}
+
+        api.build.logs:
+            method: 'GET'
+            route: '/api/builds/:id/logs'
+            stack: ['cachedApi.middleware', 'api.build.logs']
+            conditions: {id: %routes.regex.buildId%}
+
+        api.push:
+            method: 'GET'
+            route: '/api/pushes/:id'
+            stack: ['cachedApi.middleware', 'api.push']
+            conditions: {id: %routes.regex.pushId%}
+
+        api.push.logs:
+            method: 'GET'
+            route: '/api/pushes/:id/logs'
+            stack: ['cachedApi.middleware', 'api.push.logs']
+            conditions: {id: %routes.regex.pushId%}
+
+        api.event.log:
+            method: 'GET'
+            route: '/api/eventlogs/:id'
+            stack: ['cachedApi.middleware', 'api.event.log']
+            conditions: {id: %routes.regex.alphanum%}
+
+        api.repositories:
+            method: 'GET'
+            route: '/api/repositories'
+            stack: ['cachedApi.middleware', 'api.repositories']
+
+        api.repository:
+            method: 'GET'
+            route: '/api/repositories/:id'
+            stack: ['cachedApi.middleware', 'api.repository']
+            conditions: {id: %routes.regex.digit%}
+
+        api.deployments:
+            method: 'GET'
+            route: '/api/repositories/:id/deployments'
+            stack: ['cachedApi.middleware', 'api.deployments']
+            conditions: {id: %routes.regex.digit%}
+
+        api.builds:
+            method: 'GET'
+            route: '/api/repositories/:id/builds'
+            stack: ['cachedApi.middleware', 'api.builds']
+            conditions: {id: %routes.regex.digit%}
+
+        api.pushes:
+            method: 'GET'
+            route: '/api/repositories/:id/pushes'
+            stack: ['cachedApi.middleware', 'api.pushes']
+            conditions: {id: %routes.regex.digit%}
+
+        api.queue:
+            method: 'GET'
+            route: '/api/queue'
+            stack: ['cachedApi.middleware', 'api.queue']
+
+        api.queue.refresh:
+            method: 'GET'
+            route: '/api/queue-refresh/:jobs'
+            stack: ['cachedApi.middleware', 'api.queue.refresh']
+            conditions: {jobs: %routes.regex.queue.refresh%}

@@ -5,6 +5,7 @@ imports:
     - resource: config.global.yml
     - resource: config.env.yml
     - resource: routes.yml
+    - resource: routes.api.yml
     - resource: kraken/kraken.yml
 
 parameters:
@@ -22,4 +23,5 @@ parameters:
             - 'slim.hook.errors'
         slim.before.router:
             - 'slim.hook.routes'
+            - 'slim.hook.routes.api'
             - 'slim.hook.kraken.routes'

@@ -11,6 +11,10 @@
     @include leader(.5);
 }
 
+.leader--andre {
+    @include leader(2);
+}
+
 .fixed-size-label {
     display: inline-block;
     min-width: 10em;

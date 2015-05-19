@@ -42,6 +42,7 @@
 
 .nav--preferences {
     background-color: transparent;
+    @include leader();
     @include trailer();
 
     li label {

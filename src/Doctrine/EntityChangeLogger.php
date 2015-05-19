@@ -112,7 +112,6 @@ class EntityChangeLogger
 
         $log = new AuditLog;
         $log->setUser($user);
-        $log->setRecorded($this->clock->read());
         $log->setEntity($object);
         $log->setAction($action);
         $log->setData(json_encode($entity));

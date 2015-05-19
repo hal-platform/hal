@@ -11,17 +11,18 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\FlashFire;
 use QL\Hal\Services\PermissionsService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
 
-/**
- * Allow a user to create an API token
- */
 class AddTokenController implements ControllerInterface
 {
+    const SUCCESS = 'Token "%s" created successfully.';
+    const ERR_DENIED = 'You do not have permission to perform this action.';
+    const ERR_LABEL_REQUIRED = 'Token label is required to create a token.';
+
     /**
      * @type EntityManager
      */
@@ -33,9 +34,9 @@ class AddTokenController implements ControllerInterface
     private $users;
 
     /**
-     * @type UrlHelper
+     * @type FlashFire
      */
-    private $url;
+    private $flashFire;
 
     /**
      * @type PermissionsService
@@ -58,6 +59,11 @@ class AddTokenController implements ControllerInterface
     private $notFound;
 
     /**
+     * @type callable
+     */
+    private $random;
+
+    /**
      * @type array
      */
     private $parameters;
@@ -65,32 +71,42 @@ class AddTokenController implements ControllerInterface
     /**
      * @param EntityManager $entityManager
      * @param UserRepository $userRepo
-     * @param UrlHelper $url
      * @param PermissionsService $permissions
+     *
      * @param User $user
+     * @param FlashFire $flashFire
+     *
      * @param Request $request
      * @param NotFound $notFound
+     * @param callable $random
+     *
      * @param array $parameters
      */
     public function __construct(
         EntityManager $entityManager,
         UserRepository $userRepo,
-        UrlHelper $url,
         PermissionsService $permissions,
+
         User $currentUser,
+        FlashFire $flashFire,
+
         Request $request,
         NotFound $notFound,
+        callable $random,
+
         array $parameters
     ) {
         $this->entityManager = $entityManager;
         $this->userRepo = $userRepo;
-        $this->url = $url;
         $this->permissions = $permissions;
 
         $this->currentUser = $currentUser;
+        $this->flashFire = $flashFire;
 
         $this->request = $request;
         $this->notFound = $notFound;
+        $this->random = $random;
+
         $this->parameters = $parameters;
     }
 
@@ -99,7 +115,7 @@ class AddTokenController implements ControllerInterface
      */
     public function __invoke()
     {
-        $label = $this->request->post('label', null);
+        $label = $this->request->post('label');
         $id = $this->parameters['id'];
 
         if (!$user = $this->userRepo->find($id)) {
@@ -107,14 +123,15 @@ class AddTokenController implements ControllerInterface
         }
 
         if (!$this->isUserAllowed($user)) {
-            return $this->url->redirectFor('denied');
+            return $this->flashFire->fire(self::ERR_DENIED, 'settings', 'error');
         }
 
-        if ($label) {
-            $token = $this->generateToken($user, $label);
+        if (!$label) {
+            return $this->flashFire->fire(self::ERR_LABEL_REQUIRED, 'settings', 'error');
         }
 
-        $this->url->redirectFor('settings');
+        $token = $this->generateToken($user, $label);
+        $this->flashFire->fire(sprintf(self::SUCCESS, $token->getLabel()), 'settings', 'success');
     }
 
     /**
@@ -125,7 +142,7 @@ class AddTokenController implements ControllerInterface
      */
     private function generateToken(User $user, $label)
     {
-        $hash = sha1(mt_rand());
+        $hash = sha1(call_user_func($this->random));
 
         $token = new Token;
         $token->setValue($hash);

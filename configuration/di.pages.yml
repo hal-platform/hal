@@ -752,11 +752,12 @@ services:
         arguments:
             - @doctrine.em
             - @user.repo
-            - @url.helper
             - @permissions
             - @currentUser
+            - @session.flashfire
             - @slim.request
             - @slim.not.found
+            - @doctrine.random.id
             - @slim.route.parameters
 
     user.token.remove.handler:
@@ -764,9 +765,9 @@ services:
         arguments:
             - @doctrine.em
             - @token.repo
-            - @url.helper
             - @permissions
             - @currentUser
+            - @session.flashfire
             - @slim.not.found
             - @slim.route.parameters
 

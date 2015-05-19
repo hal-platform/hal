@@ -66,7 +66,7 @@
                         <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
                     </td>
                     <td>
-                        <a class="btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
+                        <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -82,9 +82,9 @@
 
     <div>
         {% if isUserAdmin(currentUser) %}
-            <a class="btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
+            <a class="btn btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
             {% if not deployments and isUserAdmin(currentUser) %}
-                <a class="btn--destructive" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a>
+                <a class="btn btn--destructive" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a>
             {% endif %}
         {% endif %}
     </div>
