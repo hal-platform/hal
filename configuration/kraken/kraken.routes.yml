@@ -108,13 +108,28 @@ parameters:
             conditions: {application: %routes.kraken.regex.hex%}
 
         kraken.schema.add:
-            route: '/kraken/applications/:application/add-schema'
+            route: '/kraken/applications/:application/schema/add'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.add.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         kraken.schema.edit:
             route: '/kraken/applications/:application/schema/:schema/edit'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.edit.page']
+            conditions:
+                application: %routes.kraken.regex.hex%
+                schema: %routes.kraken.regex.hex%
+
+        kraken.schema.remove.confirm:
+            method: 'GET'
+            route: '/kraken/applications/:application/:schema/remove'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.remove.page']
+            conditions:
+                application: %routes.kraken.regex.hex%
+                schema: %routes.kraken.regex.hex%
+        kraken.schema.remove:
+            method: 'POST'
+            route: '/kraken/applications/:application/:schema/remove'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.remove.handler']
             conditions:
                 application: %routes.kraken.regex.hex%
                 schema: %routes.kraken.regex.hex%

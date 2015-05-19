@@ -9,7 +9,7 @@ namespace QL\Hal;
 
 use QL\Panthor\Utility\Url;
 
-class FlashFire
+class Flasher
 {
     /**
      * @type Session
@@ -32,13 +32,31 @@ class FlashFire
     }
 
     /**
-     * @deprecated
+     * @param string $route
+     * @param string $parameters
+     *
+     * @throws Redirect Exception
      *
      * @return void
      */
-    public function fire($flashMessage, $route, $flashType = null, array $routeParameters = [])
+    public function load($route, $parameters)
     {
-        $this->session->flash($flashMessage, $flashType);
+        $this->url->redirectFor($route, $parameters);
+    }
+
+    /**
+     * @param string $message
+     * @param string $type
+     * @param string $details
+     *
+     * @return self
+     */
+    public function withFlash($message, $type = null, $details = null)
+    {
+        call_user_func_array([$this->session, 'flash'], func_get_args());
+
+        return $this;
+
         $this->url->redirectFor($route, $routeParameters);
     }
 }

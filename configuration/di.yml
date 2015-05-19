@@ -372,6 +372,10 @@ services:
         class: 'QL\Hal\FlashFire'
         arguments: [@session, @url]
 
+    session.flasher:
+        class: 'QL\Hal\Flasher'
+        arguments: [@session, @url]
+
     session:
         class: 'QL\Hal\Session'
         factory: [@session.handler, 'load']

@@ -9,7 +9,7 @@ namespace QL\Kraken\Controller\Application\Schema;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\FlashFire;
+use QL\Hal\Flasher;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
@@ -56,9 +56,9 @@ class EditSchemaController implements ControllerInterface
     private $propertyRepo;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type NotFound
@@ -77,7 +77,7 @@ class EditSchemaController implements ControllerInterface
      * @param Schema $schema
      *
      * @param EntityManagerInterface$em
-     * @param FlashFire $flashFire
+     * @param Flasher $flasher
      * @param NotFound $notFound
      */
     public function __construct(
@@ -86,7 +86,7 @@ class EditSchemaController implements ControllerInterface
         Application $application,
         Schema $schema,
         EntityManagerInterface $em,
-        FlashFire $flashFire,
+        Flasher $flasher,
         NotFound $notFound
     ) {
         $this->request = $request;
@@ -97,7 +97,7 @@ class EditSchemaController implements ControllerInterface
         $this->em = $em;
         $this->propertyRepo = $this->em->getRepository(Property::CLASS);
 
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
         $this->notFound = $notFound;
 
         $this->errors = [];
@@ -120,7 +120,9 @@ class EditSchemaController implements ControllerInterface
             $form['description'] = $this->request->post('description');
 
             if ($schema = $this->handleForm()) {
-                $this->flashFire->fire(sprintf(self::SUCCESS, $schema->key()), 'kraken.schema', 'success', ['application' => $this->application->id()]);
+                $this->flasher
+                    ->withFlash(sprintf(self::SUCCESS, $schema->key()), 'success')
+                    ->load('kraken.schema', ['application' => $this->application->id()]);
             }
         }
 

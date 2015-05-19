@@ -2,13 +2,13 @@
 {% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Edit Configuration Schema" %}
+{% set isAdmin = true %}
 
 {% block content %}
-    <h1>Edit Configuration Schema for <strong>{{ application.name }}</strong></h1>
+    <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
-
 
     <h2>Schema</h2>
     {{ block('form') }}
@@ -67,9 +67,8 @@
     {% endif %}
 
     {% if isAdmin %}
-        <ul class="button-list">
-            <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.schema', {application: application.id, schema: schema.id}) }}">Cancel</a></li>
-        </ul>
+        <p>
+            <a class="btn btn--destructive" href="{{ urlFor('kraken.schema.remove', {application: application.id, schema: schema.id}) }}">Remove property from schema</a></li>
+        </p>
     {% endif %}
 {% endblock %}

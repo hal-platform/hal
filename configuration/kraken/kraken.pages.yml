@@ -197,12 +197,30 @@ services:
             - @kraken.application
             - @kraken.schema
             - @doctrine.em
-            - @session.flashfire
+            - @session.flasher
             - @slim.not.found
     kraken.schema.edit.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/schema/schema.edit.twig']]]
 
+    kraken.schema.remove.page:
+        class: 'QL\Kraken\Controller\Application\Schema\RemoveSchemaController'
+        arguments:
+            - @kraken.schema.remove.twig
+            - @kraken.application
+            - @kraken.schema
+            - @doctrine.em
+    kraken.schema.remove.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/schema/schema.remove.twig']]]
+
+    kraken.schema.remove.handler:
+        class: 'QL\Kraken\Controller\Application\Schema\RemoveSchemaHandler'
+        arguments:
+            - @kraken.application
+            - @kraken.schema
+            - @doctrine.em
+            - @session.flasher
     ####################################################################################################################
     # CRUD - CONFIGURATION
     ####################################################################################################################
