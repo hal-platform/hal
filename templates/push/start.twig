@@ -41,8 +41,6 @@
             <dd>
                 {% if build.user %}
                     <a href="{{ urlFor('user', {'id': build.user.id}) }}">{{ build.user.name }}</a>
-                {% elseif build.consumer %}
-                    {{ build.consumer.name[:20] }}
                 {% else %}
                     Unknown
                 {% endif %}
@@ -114,8 +112,6 @@
                             <td>
                                 {% if active.user %}
                                     <a href="{{ urlFor('user', {'id': active.user.id}) }}">{{ active.user.name }}</a>
-                                {% elseif active.consumer %}
-                                    {{ active.consumer.name[:20] }}
                                 {% else %}
                                     Unknown
                                 {% endif %}

@@ -101,8 +101,6 @@
             <dd>
                 {% if push.user %}
                     <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name }}</a>
-                {% elseif push.consumer %}
-                    {{ push.consumer.name[:20] }}
                 {% else %}
                     Unknown
                 {% endif %}
