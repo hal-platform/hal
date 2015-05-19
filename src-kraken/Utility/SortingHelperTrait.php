@@ -8,21 +8,24 @@
 namespace QL\Kraken\Utility;
 
 use QL\Kraken\Entity\Environment;
+use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Target;
 
 trait SortingHelperTrait
 {
+    private $sortingHelperEnvironmentOrder = [
+        'dev' => 0,
+        'test' => 1,
+        'beta' => 2,
+        'prod' => 3
+    ];
+
     /**
      * @return callable
      */
     public function environmentSorter()
     {
-        $order = [
-            'dev' => 0,
-            'test' => 1,
-            'beta' => 2,
-            'prod' => 3
-        ];
+        $order = $this->sortingHelperEnvironmentOrder;
 
         return function(Environment $a, Environment $b) use ($order) {
 
@@ -45,14 +48,32 @@ trait SortingHelperTrait
      */
     public function targetSorter()
     {
-        $order = [
-            'dev' => 0,
-            'test' => 1,
-            'beta' => 2,
-            'prod' => 3
-        ];
+        $order = $this->sortingHelperEnvironmentOrder;
 
         return function(Target $a, Target $b) use ($order) {
+
+            $aName = strtolower($a->environment()->name());
+            $bName = strtolower($b->environment()->name());
+
+            $aOrder = isset($order[$aName]) ? $order[$aName] : 999;
+            $bOrder = isset($order[$bName]) ? $order[$bName] : 999;
+
+            if ($aOrder === $bOrder) {
+                return 0;
+            }
+
+            return ($aOrder > $bOrder);
+        };
+    }
+
+    /**
+     * @return callable
+     */
+    public function sorterPropertyByEnvironment()
+    {
+        $order = $this->sortingHelperEnvironmentOrder;
+
+        return function(Property $a, Property $b) use ($order) {
 
             $aName = strtolower($a->environment()->name());
             $bName = strtolower($b->environment()->name());

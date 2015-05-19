@@ -12,6 +12,7 @@ use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Configuration;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Entity\Property;
+use QL\Kraken\Entity\Schema;
 use QL\Kraken\Entity\Target;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
@@ -75,6 +76,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
             'environment' => Environment::CLASS,
             'property' => Property::CLASS,
             'configuration' => Configuration::CLASS,
+            'schema' => Schema::CLASS,
             'target' => Target::CLASS,
         ];
     }
