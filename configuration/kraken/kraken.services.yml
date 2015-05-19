@@ -1,0 +1,105 @@
+# Application specific endpoints and controllers go here
+# This includes handlers, middleware, or validators dedicated to a single page.
+services:
+
+    kraken.application:     { synthetic: true }
+    kraken.environment:     { synthetic: true }
+    kraken.property:        { synthetic: true }
+    kraken.configuration:   { synthetic: true }
+    kraken.schema:          { synthetic: true }
+    kraken.target:          { synthetic: true }
+
+    ####################################################################################################################
+    # ATTACHMENTS - Attach Kraken-specific routes and doctrine entities
+    ####################################################################################################################
+
+    slim.hook.kraken.routes:
+        class: 'QL\Panthor\Slim\RouteLoaderHook'
+        arguments: [@service_container, %kraken.routes%]
+
+    # override the default orm driver
+    doctrine.config.driver:
+        class: 'Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver'
+        arguments: [@doctrine.mapping.dirs]
+        calls:
+            - ['setGlobalBasename', ['global']]
+
+    doctrine.mapping.dirs:
+        class: 'stdClass'
+        factory: ['QL\Kraken\Utility\DiArrayUtil', 'associative']
+        arguments:
+            -
+                key: @doctrine.mapping.dir
+                value: 'QL\Hal\Core\Entity'
+            -
+                key: @doctrine.mapping.dir.kraken
+                value: 'QL\Kraken\Entity'
+
+    doctrine.mapping.dir.kraken:
+        class: 'stdClass'
+        factory: [@directory.helper, 'fullPath']
+        arguments: ['configuration/kraken/doctrine']
+
+    doctrine.em.configurator:
+        class: 'QL\Kraken\Doctrine\DoctrineConfigurator'
+
+    doctrine.listener.kraken.persist:
+        class: 'QL\Kraken\Doctrine\DoctrinePersistListener'
+        arguments: [@clock]
+
+    ####################################################################################################################
+    # UTIL
+    ####################################################################################################################
+
+    kraken.template:
+        parent: 'twig.template'
+        class: 'QL\Kraken\Application\AutoRenderingTemplate'
+        calls: [['setResponse', [@slim.response]]]
+
+    kraken.twig.extension:
+        class: 'QL\Kraken\Application\KrakenTwigExtension'
+        arguments: [@json]
+
+    kraken.json:
+        class: 'QL\Panthor\Utility\Json'
+
+    kraken.guzzle:
+        class: 'GuzzleHttp\Client'
+
+    kraken.consul:
+        class: 'QL\Kraken\ConsulService'
+        arguments: [@kraken.guzzle]
+
+    kraken.diff:
+        class: 'QL\Kraken\ConfigurationDiffService'
+        arguments: [@doctrine.em]
+
+    kraken.random:
+        class: 'QL\Hal\Core\RandomGenerator'
+
+    ####################################################################################################################
+    # MIDDLEWARE
+    ####################################################################################################################
+
+    kraken.middleware.require.entity:
+        class: 'QL\Kraken\Middleware\RequireEntityMiddleware'
+        arguments:
+            - @service_container
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+
+    ####################################################################################################################
+    # encryption
+    ####################################################################################################################
+
+    kraken.crypto.factory:
+        class: 'QL\Kraken\Utility\SymmetricCryptoFactory'
+        arguments: [%encrypter.symmetricKeyPath%]
+
+    kraken.crypto.encrypter:
+        class: 'QL\Hal\Core\Crypto\SymmetricEncrypter'
+        factory: [@kraken.crypto.factory, 'getSymmetricEncrypter']
+    kraken.crypto.decrypter:
+        class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
+        factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']

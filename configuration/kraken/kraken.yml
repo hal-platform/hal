@@ -1,0 +1,4 @@
+imports:
+    - resource: kraken.routes.yml
+    - resource: kraken.services.yml
+    - resource: kraken.pages.yml

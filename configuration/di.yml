@@ -2,7 +2,6 @@ imports:
     - resource: di.services.yml
     - resource: di.pages.yml
     - resource: di.api.yml
-    - resource: di.kraken.yml
 
 services:
 

@@ -1,49 +1,7 @@
-# Application specific endpoints and controllers go here
-# This includes handlers, middleware, or validators dedicated to a single page.
 services:
 
-    kraken.application:     { synthetic: true }
-    kraken.environment:     { synthetic: true }
-    kraken.property:        { synthetic: true }
-    kraken.configuration:   { synthetic: true }
-    kraken.target:          { synthetic: true }
-
     ####################################################################################################################
-    # SERVICES
-    ####################################################################################################################
-
-    # override the default orm driver
-    doctrine.config.driver:
-        class: 'Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver'
-        arguments: [@doctrine.mapping.dirs]
-        calls:
-            - ['setGlobalBasename', ['global']]
-
-    doctrine.mapping.dirs:
-        class: 'stdClass'
-        factory: ['QL\Kraken\Utility\DiArrayUtil', 'associative']
-        arguments:
-            -
-                key: @doctrine.mapping.dir
-                value: 'QL\Hal\Core\Entity'
-            -
-                key: @doctrine.mapping.dir.kraken
-                value: 'QL\Kraken\Entity'
-
-    doctrine.mapping.dir.kraken:
-        class: 'stdClass'
-        factory: [@directory.helper, 'fullPath']
-        arguments: ['configuration/kraken']
-
-    doctrine.em.configurator:
-        class: 'QL\Kraken\Doctrine\DoctrineConfigurator'
-
-    doctrine.listener.kraken.persist:
-        class: 'QL\Kraken\Doctrine\DoctrinePersistListener'
-        arguments: [@clock]
-
-    ####################################################################################################################
-    # CONTROLLERS
+    # CORE PAGES
     ####################################################################################################################
 
     kraken.page:
@@ -72,6 +30,10 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/environments.twig']]]
 
+    ####################################################################################################################
+    # APPLICATION
+    ####################################################################################################################
+
     kraken.status.page:
         class: 'QL\Kraken\Controller\Application\ApplicationStatusController'
         arguments:
@@ -93,8 +55,22 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/application.twig']]]
 
-    kraken.application.configuration.page:
-        class: 'QL\Kraken\Controller\Configuration\ConfigurationController'
+    kraken.application.schema.page:
+        class: 'QL\Kraken\Controller\Application\Schema\ManageSchemaController'
+        arguments:
+            - @kraken.application.schema.twig
+            - @kraken.application
+            - @doctrine.em
+    kraken.application.schema.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/schema/schema.twig']]]
+
+    ####################################################################################################################
+    # CONFIGURATION
+    ####################################################################################################################
+
+    kraken.application.configuration.deployed.page:
+        class: 'QL\Kraken\Controller\Configuration\DeployedConfigurationController'
         arguments:
             - @kraken.application.configuration.twig
             - @kraken.application
@@ -102,7 +78,7 @@ services:
             - @doctrine.em
     kraken.application.configuration.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/configuration/configuration.twig']]]
+        calls: [['setTemplate', ['kraken/configuration/deployed-configuration.twig']]]
 
     kraken.configuration.latest.page:
         class: 'QL\Kraken\Controller\Configuration\Latest\LatestConfigurationController'
@@ -117,45 +93,44 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/latest/configuration.twig']]]
 
-
-    kraken.application.property.page:
-        class: 'QL\Kraken\Controller\Configuration\Latest\PropertyController'
-        arguments:
-            - @kraken.application.property.twig
-            - @kraken.application
-            - @kraken.property
-            - @doctrine.em
-            - @slim.not.found
-    kraken.application.property.twig:
-        parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/configuration/latest/property.twig']]]
-
-    kraken.application.configuration.history.page:
+    kraken.configuration.history.page:
         class: 'QL\Kraken\Controller\Configuration\ConfigurationHistoryController'
         arguments:
-            - @kraken.application.configuration.history.twig
+            - @kraken.configuration.history.twig
             - @kraken.application
             - @doctrine.em
             - @slim.not.found
             - @slim.route.parameters
-    kraken.application.configuration.history.twig:
+    kraken.configuration.history.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/history.twig']]]
 
-    kraken.application.configuration.compare.page:
+    kraken.configuration.compare.page:
         class: 'QL\Kraken\Controller\Configuration\CompareConfigurationController'
         arguments:
-            - @kraken.application.configuration.compare.twig
+            - @kraken.configuration.compare.twig
             - @kraken.application
             - @kraken.configuration
             - @doctrine.em
             - @kraken.diff
-    kraken.application.configuration.compare.twig:
+    kraken.configuration.compare.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/compare.twig']]]
 
+    kraken.configuration.property.page:
+        class: 'QL\Kraken\Controller\Configuration\Latest\PropertyController'
+        arguments:
+            - @kraken.configuration.property.twig
+            - @kraken.application
+            - @kraken.property
+            - @doctrine.em
+            - @slim.not.found
+    kraken.configuration.property.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/latest/property.twig']]]
+
     ####################################################################################################################
-    # CRUD CONTROLLERS
+    # CRUD
     ####################################################################################################################
 
     kraken.add_application.page:
@@ -183,6 +158,10 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/environment/add-environment.twig']]]
 
+    ####################################################################################################################
+    # CRUD - APPLICATION
+    ####################################################################################################################
+
     kraken.application.add_target.page:
         class: 'QL\Kraken\Controller\Application\AddTargetController'
         arguments:
@@ -196,11 +175,43 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/add-target.twig']]]
 
-    kraken.application.add_property.page:
+    kraken.schema.add.page:
+        class: 'QL\Kraken\Controller\Application\Schema\AddSchemaController'
+        arguments:
+            - @slim.request
+            - @kraken.schema.add.twig
+            - @kraken.application
+            - @currentUser
+            - @doctrine.em
+            - @session.flashfire
+            - @kraken.random
+    kraken.schema.add.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/schema/schema.add.twig']]]
+
+    kraken.schema.edit.page:
+        class: 'QL\Kraken\Controller\Application\Schema\EditSchemaController'
+        arguments:
+            - @slim.request
+            - @kraken.schema.edit.twig
+            - @kraken.application
+            - @kraken.schema
+            - @doctrine.em
+            - @session.flashfire
+            - @slim.not.found
+    kraken.schema.edit.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/schema/schema.edit.twig']]]
+
+    ####################################################################################################################
+    # CRUD - CONFIGURATION
+    ####################################################################################################################
+
+    kraken.configuration.add_property.page:
         class: 'QL\Kraken\Controller\Configuration\Latest\AddPropertyController'
         arguments:
             - @slim.request
-            - @kraken.application.add_property.twig
+            - @kraken.configuration.add_property.twig
             - @kraken.application
             - @kraken.environment
             - @currentUser
@@ -211,23 +222,13 @@ services:
             - @json
             - @kraken.random
             - @slim.not.found
-    kraken.application.add_property.twig:
+    kraken.configuration.add_property.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/latest/add-property.twig']]]
 
-    kraken.application.add_schema.page:
-        class: 'QL\Kraken\Controller\Application\AddSchemaController'
-        arguments:
-            - @slim.request
-            - @kraken.application.add_schema.twig
-            - @kraken.application
-            - @currentUser
-            - @doctrine.em
-            - @session.flashfire
-            - @kraken.random
-    kraken.application.add_schema.twig:
-        parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/add-schema.twig']]]
+    ####################################################################################################################
+    # DEPLOY
+    ####################################################################################################################
 
     kraken.deploy.page:
         class: 'QL\Kraken\Controller\Configuration\DeployController'
@@ -250,60 +251,3 @@ services:
             - @kraken.consul
             - @kraken.crypto.decrypter
             - @kraken.random
-
-    ####################################################################################################################
-    # UTIL
-    ####################################################################################################################
-
-    kraken.template:
-        parent: 'twig.template'
-        class: 'QL\Kraken\Application\AutoRenderingTemplate'
-        calls: [['setResponse', [@slim.response]]]
-
-    kraken.twig.extension:
-        class: 'QL\Kraken\Application\KrakenTwigExtension'
-        arguments: [@json]
-
-    kraken.json:
-        class: 'QL\Panthor\Utility\Json'
-
-    kraken.guzzle:
-        class: 'GuzzleHttp\Client'
-
-    kraken.consul:
-        class: 'QL\Kraken\ConsulService'
-        arguments: [@kraken.guzzle]
-
-    kraken.diff:
-        class: 'QL\Kraken\ConfigurationDiffService'
-        arguments: [@doctrine.em]
-
-    kraken.random:
-        class: 'QL\Hal\Core\RandomGenerator'
-
-    ####################################################################################################################
-    # MIDDLEWARE
-    ####################################################################################################################
-
-    kraken.middleware.require.entity:
-        class: 'QL\Kraken\Middleware\RequireEntityMiddleware'
-        arguments:
-            - @service_container
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
-
-    ####################################################################################################################
-    # encryption
-    ####################################################################################################################
-
-    kraken.crypto.factory:
-        class: 'QL\Kraken\Utility\SymmetricCryptoFactory'
-        arguments: [%encrypter.symmetricKeyPath%]
-
-    kraken.crypto.encrypter:
-        class: 'QL\Hal\Core\Crypto\SymmetricEncrypter'
-        factory: [@kraken.crypto.factory, 'getSymmetricEncrypter']
-    kraken.crypto.decrypter:
-        class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
-        factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']
