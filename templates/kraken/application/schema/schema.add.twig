@@ -26,11 +26,6 @@
                 </li>
 
                 <li>
-                    <label for="prop-desc">Description</label>
-                    <input type="text" name="description" id="prop-desc" maxlength="250" value="{{ form.description }}" class="text-input">
-                </li>
-
-                <li>
                     <label>Type</label>
                     <ul class="radio-grid--form">
                         {% for type, name in property_types %}
@@ -49,6 +44,11 @@
                         <input type="checkbox" name="secure" id="prop-secure" value="1"{{ isChecked ? ' checked' : '' }}> Secure?
                     </label>
                     <small class="additional">Select if the value should be hidden from the UI once saved. Use this for sensitive values such as passwords and API keys.</small>
+                </li>
+
+                <li>
+                    <label for="prop-desc">Description</label>
+                    <input type="text" name="description" id="prop-desc" maxlength="250" value="{{ form.description }}" class="text-input">
                 </li>
             </ul>
 

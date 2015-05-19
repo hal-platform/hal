@@ -1,0 +1,77 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "Application" %}
+{% set isAdmin = true %}
+
+{% block content %}
+
+    <h1>Manage Configuration Schema for <strong>{{ application.name }}</strong></h1>
+
+    {{ block('meta') }}
+
+    <h2>Configuration Schema</h2>
+    {{ block('configuration') }}
+
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application Information</a></li>
+
+        {% if isAdmin %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.schema.add', {application: application.id}) }}">Add Property to Schema</a></li>
+        {% endif %}
+    </ul>
+
+{% endblock %}
+
+{% block meta %}
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
+
+{% endblock %}
+
+{% block configuration %}
+    {% if configuration_schema %}
+        <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th class="t15">Type</th>
+                    <th>Value</th>
+                    {% if isAdmin %}
+                        <th></th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for schema in configuration_schema %}
+                    <tr>
+                        <td><code class="code_clear">{{ schema.key }}</code></td>
+                        <td>
+                            {{ schema.isSecure ? macros.icon('locked') : '' }}
+                            {{ schema|formatSchemaType }}
+                        </td>
+                        <td>{{ schema.description }}</td>
+
+                        {% if isAdmin %}
+                            <td class="tr">
+                                <a href="{{ urlFor('kraken.schema.edit', {application: application.id, schema: schema.id}) }}">
+                                    Edit <span class="tablesaw-collapse">Property Schema</span>
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>
+            No schema is defined.
+            {% if isAdmin %}
+                Add properties to the schema by clicking <b>Add Property</b> below.
+            {% else %}
+                An administrator must add properties to the schema.
+            {% endif %}
+        </p>
+    {% endif %}
+{% endblock %}
+

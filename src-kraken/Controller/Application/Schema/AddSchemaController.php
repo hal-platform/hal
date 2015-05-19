@@ -5,11 +5,10 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Application;
+namespace QL\Kraken\Controller\Application\Schema;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\GUID;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\FlashFire;
 use QL\Kraken\Doctrine\PropertyEnumType;
@@ -17,7 +16,6 @@ use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Schema;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
 class AddSchemaController implements ControllerInterface
@@ -58,7 +56,7 @@ class AddSchemaController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $schemaRepository;
+    private $schemaRepo;
 
     /**
      * @type FlashFire
@@ -100,7 +98,7 @@ class AddSchemaController implements ControllerInterface
         $this->currentUser = $currentUser;
 
         $this->em = $em;
-        $this->schemaRepository = $this->em->getRepository(Schema::CLASS);
+        $this->schemaRepo = $this->em->getRepository(Schema::CLASS);
 
         $this->flashFire = $flashFire;
         $this->random = $random;
@@ -162,7 +160,7 @@ class AddSchemaController implements ControllerInterface
 
         // dupe check
         if (!$this->errors) {
-            $dupe = $this->schemaRepository->findOneBy([
+            $dupe = $this->schemaRepo->findOneBy([
                 'application' => $this->application,
                 'key' => $key
             ]);

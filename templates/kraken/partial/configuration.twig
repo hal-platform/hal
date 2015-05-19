@@ -25,9 +25,9 @@
 
                         {% if show_property_link %}
                             <td>
-                                <a href="{{ urlFor('kraken.property', {application: application.id, property: property.id}) }}">
+                                <a class="btn btn--small btn--action" href="{{ urlFor('kraken.schema.edit', {application: application.id, property: property.id}) }}">
                                     {{ macros.icon('list') }}
-                                    <span class="tablesaw-collapse">View Configuration Property</span>
+                                    <span class="tablesaw-collxapse">Manage Property Schema</span>
                                 </a>
                             </td>
                         {% endif %}

@@ -5,17 +5,17 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Configuration;
+namespace QL\Kraken\Controller\Application\Schema;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Configuration;
-use QL\Kraken\Entity\ConfigurationProperty;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Entity\Property;
+use QL\Kraken\Entity\Schema;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class ConfigurationController implements ControllerInterface
+class ManageSchemaController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -28,34 +28,26 @@ class ConfigurationController implements ControllerInterface
     private $application;
 
     /**
-     * @type Configuration
-     */
-    private $configuration;
-
-    /**
      * @type EntityRepository
      */
-    private $targetRepo;
     private $propertyRepo;
+    private $schemaRepo;
 
     /**
      * @param TemplateInterface $template
      * @param Application $application
-     * @param Configuration $configuration
      * @param EntityManager $em
      */
     public function __construct(
         TemplateInterface $template,
         Application $application,
-        Configuration $configuration,
-        $em
+        EntityManager $em
     ) {
         $this->template = $template;
         $this->application = $application;
-        $this->configuration = $configuration;
 
-        $this->targetRepo = $em->getRepository(Target::CLASS);
-        $this->propertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
+        $this->propertyRepo = $em->getRepository(Property::CLASS);
+        $this->schemaRepo = $em->getRepository(Schema::CLASS);
     }
 
     /**
@@ -63,17 +55,13 @@ class ConfigurationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $target = $this->targetRepo->findOneBy(['configuration' => $this->configuration]);
-
-        $properties = $this->propertyRepo->findBy([
-            'configuration' => $this->configuration
+        $schemas = $this->schemaRepo->findBy([
+            'application' => $this->application
         ], ['key' => 'ASC']);
 
         $context = [
             'application' => $this->application,
-            'configuration' => $this->configuration,
-            'properties' => $properties,
-            'target' => $target
+            'configuration_schema' => $schemas
         ];
 
         $this->template->render($context);

@@ -14,7 +14,7 @@
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
 
         {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.application.add_schema', {application: application.id}) }}">Manage Schema</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.schema.add', {application: application.id}) }}">Manage Schema</a></li>
         {% endif %}
 
         {% if application.halRepository %}
@@ -68,7 +68,7 @@
                             <td>{{ target.environment.name }}</td>
                             <td><code>{{ target.key }}</code></td>
                             <td class="tr">
-                                <a href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
+                                <a class="btn btn--small" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </td>
 
                         {% else %}
@@ -76,7 +76,7 @@
                             <td>Environment is not assigned.</td>
                             <td class="tr">
                                 {% if isAdmin %}
-                                    <a class="btn btn--small" href="{{ urlFor('kraken.application.add_target', {application: application.id}) }}">Assign environment</a>
+                                    <a class="btn btn--small btn--action" href="{{ urlFor('kraken.application.add_target', {application: application.id}) }}">Assign environment</a>
                                 {% endif %}
                             </td>
 
