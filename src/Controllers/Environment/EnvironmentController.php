@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Environment;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -30,7 +30,7 @@ class EnvironmentController implements ControllerInterface
     private $envRepo;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -52,7 +52,7 @@ class EnvironmentController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $envRepo
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
@@ -60,7 +60,7 @@ class EnvironmentController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EnvironmentRepository $envRepo,
-        ServerRepository $serverRepo,
+        EntityRepository $serverRepo,
         Response $response,
         NotFound $notFound,
         array $parameters

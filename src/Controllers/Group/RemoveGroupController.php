@@ -7,9 +7,8 @@
 
 namespace QL\Hal\Controllers\Group;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Repository\GroupRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -18,12 +17,12 @@ use QL\Panthor\ControllerInterface;
 class RemoveGroupController implements ControllerInterface
 {
     /**
-     * @type GroupRepository
+     * @type EntityRepository
      */
     private $groupRepo;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -53,8 +52,8 @@ class RemoveGroupController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param GroupRepository $groupRepo
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $groupRepo
+     * @param EntityRepository $repoRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
@@ -62,8 +61,8 @@ class RemoveGroupController implements ControllerInterface
      * @param array $parameters
      */
     public function __construct(
-        GroupRepository $groupRepo,
-        RepositoryRepository $repoRepo,
+        EntityRepository $groupRepo,
+        EntityRepository $repoRepo,
         EntityManager $entityManager,
         Session $session,
         UrlHelper $url,

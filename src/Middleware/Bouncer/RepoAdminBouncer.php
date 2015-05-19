@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Middleware\Bouncer;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Services\PermissionsService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
@@ -48,7 +48,7 @@ class RepoAdminBouncer implements MiddlewareInterface
     private $route;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repositories;
 
@@ -72,7 +72,7 @@ class RepoAdminBouncer implements MiddlewareInterface
      * @param PermissionsService $permissions
      * @param TemplateInterface $twig
      * @param LoginBouncer $loginBouncer
-     * @param RepositoryRepository $repositories
+     * @param EntityRepository $repositories
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
@@ -82,7 +82,7 @@ class RepoAdminBouncer implements MiddlewareInterface
         PermissionsService $permissions,
         TemplateInterface $twig,
         LoginBouncer $loginBouncer,
-        RepositoryRepository $repositories,
+        EntityRepository $repositories,
         Response $response,
         NotFound $notFound,
         array $parameters

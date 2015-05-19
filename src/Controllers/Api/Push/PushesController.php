@@ -7,12 +7,12 @@
 
 namespace QL\Hal\Controllers\Api\Push;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -26,7 +26,7 @@ class PushesController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repositoryRepo;
 
@@ -47,14 +47,14 @@ class PushesController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param RepositoryRepository $repositoryRepo
+     * @param EntityRepository $repositoryRepo
      * @param PushRepository $pushRepo
      * @param PushNormalizer $normalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        RepositoryRepository $repositoryRepo,
+        EntityRepository $repositoryRepo,
         PushRepository $pushRepo,
         PushNormalizer $normalizer,
         array $parameters

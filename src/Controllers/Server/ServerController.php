@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Server;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Panthor\Slim\NotFound;
@@ -24,7 +24,7 @@ class ServerController implements ControllerInterface
     private $template;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -55,7 +55,7 @@ class ServerController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param DeploymentRepository $deployRepo
      * @param ElasticBeanstalkService $ebService
      * @param Response $response
@@ -64,7 +64,7 @@ class ServerController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        ServerRepository $serverRepo,
+        EntityRepository $serverRepo,
         DeploymentRepository $deployRepo,
         ElasticBeanstalkService $ebService,
         Response $response,

@@ -7,13 +7,13 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\BuildRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -38,7 +38,7 @@ class StartPushController implements ControllerInterface
     private $deploymentRepo;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -71,7 +71,7 @@ class StartPushController implements ControllerInterface
      * @param TemplateInterface $template
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param PushRepository $pushRepo
      * @param Request $request
      * @param Response $response
@@ -82,7 +82,7 @@ class StartPushController implements ControllerInterface
         TemplateInterface $template,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
-        ServerRepository $serverRepo,
+        EntityRepository $serverRepo,
         PushRepository $pushRepo,
         Request $request,
         Response $response,

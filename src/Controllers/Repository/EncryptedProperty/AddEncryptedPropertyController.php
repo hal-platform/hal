@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -23,7 +23,7 @@ class AddEncryptedPropertyController implements ControllerInterface
     private $template;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -55,7 +55,7 @@ class AddEncryptedPropertyController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      *
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $repoRepo
      * @param EnvironmentRepository $envRepo
      *
      * @param Request $request
@@ -65,7 +65,7 @@ class AddEncryptedPropertyController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        RepositoryRepository $repoRepo,
+        EntityRepository $repoRepo,
         EnvironmentRepository $envRepo,
         Request $request,
         Response $response,

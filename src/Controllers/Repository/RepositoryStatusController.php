@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
@@ -14,7 +15,6 @@ use QL\Hal\Core\Repository\BuildRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Hal\Services\StickyEnvironmentService;
@@ -32,7 +32,7 @@ class RepositoryStatusController implements ControllerInterface
     private $template;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -79,7 +79,7 @@ class RepositoryStatusController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      *
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $repoRepo
      * @param BuildRepository $buildRepo
      * @param DeploymentRepository $deploymentRepo
      * @param PushRepository $pushRepo
@@ -94,7 +94,7 @@ class RepositoryStatusController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
 
-        RepositoryRepository $repoRepo,
+        EntityRepository $repoRepo,
         BuildRepository $buildRepo,
         DeploymentRepository $deploymentRepo,
         PushRepository $pushRepo,

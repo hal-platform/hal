@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Repository;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\RepositoryNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Panthor\ControllerInterface;
 
 class RepositoriesController implements ControllerInterface
@@ -23,7 +23,7 @@ class RepositoriesController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repositoryRepo;
 
@@ -34,12 +34,12 @@ class RepositoriesController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param RepositoryRepository $repositoryRepo
+     * @param EntityRepository $repositoryRepo
      * @param RepositoryNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
-        RepositoryRepository $repositoryRepo,
+        EntityRepository $repositoryRepo,
         RepositoryNormalizer $normalizer
     ) {
         $this->formatter = $formatter;

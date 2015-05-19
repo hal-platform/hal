@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -23,7 +23,7 @@ class DeploymentController implements ControllerInterface
     private $template;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -54,7 +54,7 @@ class DeploymentController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
      * @param ElasticBeanstalkService $ebService
      * @param Response $response
@@ -63,7 +63,7 @@ class DeploymentController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        RepositoryRepository $repoRepo,
+        EntityRepository $repoRepo,
         DeploymentRepository $deploymentRepo,
         ElasticBeanstalkService $ebService,
         Response $response,

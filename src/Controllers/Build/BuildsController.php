@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Build;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -25,7 +25,7 @@ class BuildsController implements ControllerInterface
     private $template;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -57,7 +57,7 @@ class BuildsController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManager $em
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $repoRepo
      * @param BuildRepository $buildRepo
      * @param Request $request
      * @param Response $response
@@ -66,7 +66,7 @@ class BuildsController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        RepositoryRepository $repoRepo,
+        EntityRepository $repoRepo,
         BuildRepository $buildRepo,
         Request $request,
         Response $response,

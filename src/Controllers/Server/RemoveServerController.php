@@ -8,8 +8,8 @@
 namespace QL\Hal\Controllers\Server;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -19,7 +19,7 @@ use QL\Panthor\ControllerInterface;
 class RemoveServerController implements ControllerInterface
 {
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -54,7 +54,7 @@ class RemoveServerController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param DeploymentRepository $deployRepo
      * @param EntityManager $entityManager
      * @param Session $session
@@ -63,7 +63,7 @@ class RemoveServerController implements ControllerInterface
      * @param array $parameters
      */
     public function __construct(
-        ServerRepository $serverRepo,
+        EntityRepository $serverRepo,
         DeploymentRepository $deployRepo,
         EntityManager $entityManager,
         Session $session,

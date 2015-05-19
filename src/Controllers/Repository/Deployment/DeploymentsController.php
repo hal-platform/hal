@@ -7,10 +7,9 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Panthor\Slim\NotFound;
@@ -34,12 +33,12 @@ class DeploymentsController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -66,8 +65,8 @@ class DeploymentsController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EnvironmentRepository $environmentRepo
-     * @param ServerRepository $serverRepo
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $serverRepo
+     * @param EntityRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
      * @param Response $response
      * @param NotFound $notFound
@@ -76,8 +75,8 @@ class DeploymentsController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EnvironmentRepository $environmentRepo,
-        ServerRepository $serverRepo,
-        RepositoryRepository $repoRepo,
+        EntityRepository $serverRepo,
+        EntityRepository $repoRepo,
         DeploymentRepository $deploymentRepo,
         Response $response,
         NotFound $notFound,

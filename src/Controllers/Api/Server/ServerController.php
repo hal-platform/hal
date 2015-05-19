@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Api\Server;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Entity\Server;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
@@ -21,7 +21,7 @@ class ServerController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -32,10 +32,10 @@ class ServerController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param array $parameters
      */
-    public function __construct(ResponseFormatter $formatter, ServerRepository $serverRepo, array $parameters)
+    public function __construct(ResponseFormatter $formatter, EntityRepository $serverRepo, array $parameters)
     {
         $this->formatter = $formatter;
         $this->serverRepo = $serverRepo;

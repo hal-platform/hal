@@ -7,13 +7,13 @@
 
 namespace QL\Hal\Services;
 
+use Doctrine\ORM\EntityRepository;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
 use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User as EntityUser;
 use Zend\Ldap\Dn;
@@ -59,7 +59,7 @@ class PermissionsService
     private $deployments;
 
     /**
-     * @var RepositoryRepository
+     * @var EntityRepository
      */
     private $repositories;
 
@@ -98,7 +98,7 @@ class PermissionsService
     /**
      * @param LdapService $ldap
      * @param DeploymentRepository $deployments
-     * @param RepositoryRepository $repositories
+     * @param EntityRepository $repositories
      * @param UserRepository $users
      * @param EnvironmentRepository $environments
      * @param GithubService $github
@@ -107,7 +107,7 @@ class PermissionsService
     public function __construct(
         LdapService $ldap,
         DeploymentRepository $deployments,
-        RepositoryRepository $repositories,
+        EntityRepository $repositories,
         UserRepository $users,
         EnvironmentRepository $environments,
         GithubService $github,

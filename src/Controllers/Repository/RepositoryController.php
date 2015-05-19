@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Services\PermissionsService;
@@ -32,7 +31,7 @@ class RepositoryController implements ControllerInterface
     private $template;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 

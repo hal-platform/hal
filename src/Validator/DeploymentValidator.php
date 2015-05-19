@@ -7,13 +7,12 @@
 
 namespace QL\Hal\Validator;
 
+use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Type\ServerEnumType;
 
 class DeploymentValidator
@@ -33,12 +32,12 @@ class DeploymentValidator
     const ERR_DUPLICATE_EC2 = 'A deployment already exists for this EC2 Pool.';
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -53,14 +52,14 @@ class DeploymentValidator
     private $errors;
 
     /**
-     * @param RepositoryRepository $repoRepo
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $repoRepo
+     * @param EntityRepository $serverRepo
      * @param DeploymentRepository $deploymentRepo
      * @param User $currentUser
      */
     public function __construct(
-        RepositoryRepository $repoRepo,
-        ServerRepository $serverRepo,
+        EntityRepository $repoRepo,
+        EntityRepository $serverRepo,
         DeploymentRepository $deploymentRepo
     ) {
         $this->repoRepo = $repoRepo;

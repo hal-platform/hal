@@ -7,9 +7,8 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\RepositoryRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -28,12 +27,12 @@ class AddDeploymentController implements ControllerInterface
     private $template;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -64,8 +63,8 @@ class AddDeploymentController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param ServerRepository $serverRepo
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $serverRepo
+     * @param EntityRepository $repoRepo
      * @param Url $url
      * @param Request $request
      * @param Response $response
@@ -74,8 +73,8 @@ class AddDeploymentController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        ServerRepository $serverRepo,
-        RepositoryRepository $repoRepo,
+        EntityRepository $serverRepo,
+        EntityRepository $repoRepo,
         Url $url,
         Request $request,
         Response $response,

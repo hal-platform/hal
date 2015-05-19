@@ -7,13 +7,13 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -27,7 +27,7 @@ class DeploymentsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repositoryRepo;
 
@@ -48,14 +48,14 @@ class DeploymentsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param RepositoryRepository $repositoryRepo
+     * @param EntityRepository $repositoryRepo
      * @param DeploymentRepository $deploymentRepo
      * @param DeploymentNormalizer $normalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        RepositoryRepository $repositoryRepo,
+        EntityRepository $repositoryRepo,
         DeploymentRepository $deploymentRepo,
         DeploymentNormalizer $normalizer,
         array $parameters

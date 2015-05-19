@@ -7,8 +7,7 @@
 
 namespace QL\Hal\Controllers\Group;
 
-use QL\Hal\Core\Repository\GroupRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
+use Doctrine\ORM\EntityRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -22,12 +21,12 @@ class GroupController implements ControllerInterface
     private $template;
 
     /**
-     * @type GroupRepository
+     * @type EntityRepository
      */
     private $groupRepo;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -48,16 +47,16 @@ class GroupController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param GroupRepository $groupRepo
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $groupRepo
+     * @param EntityRepository $repoRepo
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
-        GroupRepository $groupRepo,
-        RepositoryRepository $repoRepo,
+        EntityRepository $groupRepo,
+        EntityRepository $repoRepo,
         Response $response,
         NotFound $notFound,
         array $parameters

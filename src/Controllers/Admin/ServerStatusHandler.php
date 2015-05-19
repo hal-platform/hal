@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Admin;
 
+use Doctrine\ORM\EntityRepository;
 use MCP\Cache\CachingTrait;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
 
@@ -27,7 +27,7 @@ class ServerStatusHandler implements ControllerInterface
     private $response;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -43,13 +43,13 @@ class ServerStatusHandler implements ControllerInterface
 
     /**
      * @param Response $response
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param array $routeParameters
      * @param string $cliUser
      */
     public function __construct(
         Response $response,
-        ServerRepository $serverRepo,
+        EntityRepository $serverRepo,
         array $routeParameters,
         $cliUser
     ) {

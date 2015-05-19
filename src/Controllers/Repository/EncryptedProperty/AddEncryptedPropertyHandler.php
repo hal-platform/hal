@@ -8,14 +8,13 @@
 namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Session;
 use QL\Hal\Core\Crypto\Encrypter;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Repository\EncryptedPropertyRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
@@ -41,12 +40,12 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     private $em;
 
     /**
-     * @type EncryptedPropertyRepository
+     * @type EntityRepository
      */
     private $encryptedRepo;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -92,8 +91,8 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 
     /**
      * @param EntityManager $em
-     * @param EncryptedPropertyRepository $encryptedRepo
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $encryptedRepo
+     * @param EntityRepository $repoRepo
      * @param EnvironmentRepository $envRepo
      * @param Encrypter $encrypter
      *
@@ -105,8 +104,8 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      */
     public function __construct(
         EntityManager $em,
-        EncryptedPropertyRepository $encryptedRepo,
-        RepositoryRepository $repoRepo,
+        EntityRepository $encryptedRepo,
+        EntityRepository $repoRepo,
         EnvironmentRepository $envRepo,
         Encrypter $encrypter,
         Session $session,

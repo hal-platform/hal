@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Validator;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\GithubService;
@@ -34,7 +34,7 @@ class BuildStartValidator
     const REGEX_PULL = '/^(?:pull|pr|pull request)(?: )?(?:#)?([\d]+)$/i';
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -64,14 +64,14 @@ class BuildStartValidator
     private $errors;
 
     /**
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $repoRepo
      * @param EnvironmentRepository $envRepo
      * @param GithubService $github
      * @param PermissionsService $permissions
      * @param User $currentUser
      */
     public function __construct(
-        RepositoryRepository $repoRepo,
+        EntityRepository $repoRepo,
         EnvironmentRepository $envRepo,
         GithubService $github,
         PermissionsService $permissions,

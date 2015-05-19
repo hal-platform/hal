@@ -8,10 +8,10 @@
 namespace QL\Hal\Controllers\Server;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -28,7 +28,7 @@ class AddServerController implements ControllerInterface
     private $template;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -64,7 +64,7 @@ class AddServerController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param EnvironmentRepository $envRepo
      * @param EntityManager $entityManager
      * @param Session $session
@@ -74,7 +74,7 @@ class AddServerController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        ServerRepository $serverRepo,
+        EntityRepository $serverRepo,
         EnvironmentRepository $envRepo,
         EntityManager $entityManager,
         Session $session,

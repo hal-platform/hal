@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -25,7 +25,7 @@ class PushesController implements ControllerInterface
     private $template;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -56,7 +56,7 @@ class PushesController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $repoRepo
      * @param PushRepository $pushRepo
      * @param Request $request
      * @param Response $response
@@ -65,7 +65,7 @@ class PushesController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        RepositoryRepository $repoRepo,
+        EntityRepository $repoRepo,
         PushRepository $pushRepo,
         Request $request,
         Response $response,

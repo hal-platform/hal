@@ -8,8 +8,8 @@
 namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -18,7 +18,7 @@ use QL\Panthor\ControllerInterface;
 class RemoveRepositoryController implements ControllerInterface
 {
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -53,14 +53,14 @@ class RemoveRepositoryController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $repoRepo
      * @param DeploymentRepository $deploymentRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
      */
     public function __construct(
-        RepositoryRepository $repoRepo,
+        EntityRepository $repoRepo,
         DeploymentRepository $deploymentRepo,
         EntityManager $entityManager,
         Session $session,

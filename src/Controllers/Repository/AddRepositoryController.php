@@ -8,10 +8,9 @@
 namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Repository\GroupRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Services\GithubService;
@@ -31,12 +30,12 @@ class AddRepositoryController implements ControllerInterface
     private $template;
 
     /**
-     * @type GroupRepository
+     * @type EntityRepository
      */
     private $groupRepo;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -72,8 +71,8 @@ class AddRepositoryController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param GroupRepository $groupRepo
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $groupRepo
+     * @param EntityRepository $repoRepo
      * @param EntityManager $entityManager
      * @param GithubService $github
      * @param Session $session
@@ -83,8 +82,8 @@ class AddRepositoryController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        GroupRepository $groupRepo,
-        RepositoryRepository $repoRepo,
+        EntityRepository $groupRepo,
+        EntityRepository $repoRepo,
         EntityManager $entityManager,
         GithubService $github,
         Session $session,

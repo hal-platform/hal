@@ -8,9 +8,9 @@
 namespace QL\Hal\Controllers\Environment;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\ServerRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -24,7 +24,7 @@ class RemoveEnvironmentHandler implements ControllerInterface
     private $envRepo;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -55,7 +55,7 @@ class RemoveEnvironmentHandler implements ControllerInterface
 
     /**
      * @param EnvironmentRepository $envRepo
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param EntityManager $entityManager
      * @param Session $session
      * @param UrlHelper $url
@@ -64,7 +64,7 @@ class RemoveEnvironmentHandler implements ControllerInterface
      */
     public function __construct(
         EnvironmentRepository $envRepo,
-        ServerRepository $serverRepo,
+        EntityRepository $serverRepo,
         EntityManager $entityManager,
         Session $session,
         UrlHelper $url,

@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Server;
 
-use QL\Hal\Core\Repository\ServerRepository;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
@@ -25,7 +25,7 @@ class ServersController implements ControllerInterface
     private $template;
 
     /**
-     * @type ServerRepository
+     * @type EntityRepository
      */
     private $serverRepo;
 
@@ -36,10 +36,10 @@ class ServersController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param ServerRepository $serverRepo
+     * @param EntityRepository $serverRepo
      * @param Response $response
      */
-    public function __construct(TemplateInterface $template, ServerRepository $serverRepo, Response $response)
+    public function __construct(TemplateInterface $template, EntityRepository $serverRepo, Response $response)
     {
         $this->template = $template;
         $this->serverRepo = $serverRepo;

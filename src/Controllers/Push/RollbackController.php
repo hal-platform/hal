@@ -7,9 +7,9 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -25,7 +25,7 @@ class RollbackController implements ControllerInterface
     private $template;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -56,8 +56,8 @@ class RollbackController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param RepositoryRepository $repoRepository
-     * @param ServerRepository $serverRepository
+     * @param EntityRepository $repoRepository
+     * @param DeploymentRepository $deploymentRepository
      * @param PushRepository $pushRepository
      * @param Response $response
      * @param NotFound $notFound
@@ -65,7 +65,7 @@ class RollbackController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        RepositoryRepository $repoRepository,
+        EntityRepository $repoRepository,
         DeploymentRepository $deploymentRepository,
         PushRepository $pushRepository,
         Response $response,

@@ -7,11 +7,11 @@
 
 namespace QL\Hal\Controllers\Api\Build;
 
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
@@ -26,7 +26,7 @@ class BuildsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repositoryRepo;
 
@@ -47,14 +47,14 @@ class BuildsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param RepositoryRepository $repositoryRepo
+     * @param EntityRepository $repositoryRepo
      * @param BuildRepository $buildRepo
      * @param BuildNormalizer $normalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        RepositoryRepository $repositoryRepo,
+        EntityRepository $repositoryRepo,
         BuildRepository $buildRepo,
         BuildNormalizer $normalizer,
         array $parameters

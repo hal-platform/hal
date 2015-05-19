@@ -7,8 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use QL\Hal\Core\Repository\GroupRepository;
-use QL\Hal\Core\Repository\RepositoryRepository;
+use Doctrine\ORM\EntityRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
@@ -21,12 +20,12 @@ class RepositoriesController implements ControllerInterface
     private $template;
 
     /**
-     * @type GroupRepository
+     * @type EntityRepository
      */
     private $groupRepo;
 
     /**
-     * @type RepositoryRepository
+     * @type EntityRepository
      */
     private $repoRepo;
 
@@ -37,14 +36,14 @@ class RepositoriesController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param GroupRepository $groupRepo
-     * @param RepositoryRepository $repoRepo
+     * @param EntityRepository $groupRepo
+     * @param EntityRepository $repoRepo
      * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
-        GroupRepository $groupRepo,
-        RepositoryRepository $repoRepo,
+        EntityRepository $groupRepo,
+        EntityRepository $repoRepo,
         Response $response
     ) {
         $this->template = $template;
