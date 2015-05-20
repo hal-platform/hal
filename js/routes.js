@@ -133,7 +133,14 @@ exports.routes = [
 
     // Kraken
     {
-        url: "/kraken/applications/{id}/environments/{env}/add",
+        url: "/kraken/application/{id}/environment/{env}/add",
+        loader: function() {
+            var propertyForm = require('./app/kraken/form-add-property').module;
+            propertyForm.init();
+        }
+    },
+    {
+        url: "/kraken/property/{id}/edit",
         loader: function() {
             var propertyForm = require('./app/kraken/form-add-property').module;
             propertyForm.init();

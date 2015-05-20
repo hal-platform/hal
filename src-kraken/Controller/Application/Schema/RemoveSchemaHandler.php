@@ -10,7 +10,6 @@ namespace QL\Kraken\Controller\Application\Schema;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
-use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
 use QL\Kraken\Utility\SortingHelperTrait;
@@ -23,11 +22,6 @@ class RemoveSchemaHandler implements ControllerInterface
     const SUCCESS = 'Property Schema "%s" has been removed from configuration.';
     const REMOVED_ENV = 'The property has also been removed from the following environment: <b>%s</b>';
     const REMOVED_ENVS = 'The property has also been removed from the following environments: <b>%s</b>';
-
-    /**
-     * @type Application
-     */
-    private $application;
 
     /**
      * @type Schema
@@ -50,21 +44,16 @@ class RemoveSchemaHandler implements ControllerInterface
     private $propertyRepo;
 
     /**
-     * @param Application $application
      * @param Schema $schema
-     *
      * @param EntityManagerInterface $em
      * @param Flasher $flasher
      */
     public function __construct(
-        Application $application,
         Schema $schema,
         EntityManagerInterface $em,
         Flasher $flasher
     ) {
-        $this->application = $application;
         $this->schema = $schema;
-
         $this->flasher = $flasher;
 
         $this->em = $em;
@@ -76,13 +65,8 @@ class RemoveSchemaHandler implements ControllerInterface
      */
     public function __invoke()
     {
-        // @todo permissions would be handled per app/env
-        // if ($this->schema->application() !== $this->application) {
-        //     return call_user_func($this->notFound);
-        // }
-
+        $application = $this->schema->application();
         $key = $this->schema->key();
-
 
         $removedPropertiesMessage = $this->removePropertiesInAllEnv();
 
@@ -91,7 +75,7 @@ class RemoveSchemaHandler implements ControllerInterface
 
         $this->flasher
             ->withFlash(sprintf(self::SUCCESS, $key), 'success', $removedPropertiesMessage)
-            ->load('kraken.schema', ['application' => $this->application->id()]);
+            ->load('kraken.schema', ['application' => $application->id()]);
     }
 
     /**

@@ -8,6 +8,9 @@ exports.module = {
     listParentTarget: '#kraken__explicit-values li #config-strings',
     stringTarget: '#kraken__explicit-values li #config-string',
 
+    // For edit mode
+    staticModeTypeTarget: '#kraken__add-property #config-type',
+
     removalAnchor: '<a class="config-strings__icon"><svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#cross"></use></svg></a>',
     appendAnchor: '<a class="config-strings__icon--add"><svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#add"></use></svg></a>',
     listContainer: '<p class="config-strings-container"></p>',
@@ -16,7 +19,8 @@ exports.module = {
         var $select = $(this.selectTarget),
             $labels = $(this.labelTarget),
             $explicit = $(this.explicitTarget),
-            $listParent = $(this.listParentTarget);
+            $listParent = $(this.listParentTarget),
+            $staticTypeTarget = $(this.staticModeTypeTarget);
 
         if ($select.length) {
 
@@ -31,6 +35,21 @@ exports.module = {
 
             // Fire off once to start
             regenerator();
+
+            // Add textarea handle to string input
+            this.attachTextareaModifier($(this.stringTarget));
+
+        } else if ($staticTypeTarget.length) {
+
+            // nuke it
+            $(this.genericTarget).parent().remove();
+            $('#kraken__explicit-values').show();
+            this.attachAddToList($listParent);
+            this.attachRemoveFromList($listParent);
+
+            var dataType = $staticTypeTarget.val();
+
+            $('#kraken__explicit-values li #config-' + dataType).closest('li').show();
 
             // Add textarea handle to string input
             this.attachTextareaModifier($(this.stringTarget));

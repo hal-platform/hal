@@ -9,12 +9,10 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Property;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Slim\NotFound;
 
 class PropertyController implements ControllerInterface
 {
@@ -24,11 +22,6 @@ class PropertyController implements ControllerInterface
     private $template;
 
     /**
-     * @type Application
-     */
-    private $application;
-
-    /**
      * @type Property
      */
     private $property;
@@ -36,34 +29,23 @@ class PropertyController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $propertyRepo;
-
-    /**
-     * @type NotFound
-     */
-    private $notFound;
+    private $configPropertyRepo;
 
     /**
      * @param TemplateInterface $template
-     * @param Application $application
      * @param Property $property
      * @param EntityManagerInterface $em
      * @param NotFound $notFound
      */
     public function __construct(
         TemplateInterface $template,
-        Application $application,
         Property $property,
-        EntityManagerInterface $em,
-        NotFound $notFound
+        EntityManagerInterface $em
     ) {
         $this->template = $template;
-        $this->application = $application;
         $this->property = $property;
 
-        $this->propertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
-
-        $this->notFound = $notFound;
+        $this->configPropertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
     }
 
     /**
@@ -71,14 +53,10 @@ class PropertyController implements ControllerInterface
      */
     public function __invoke()
     {
-        if ($this->property->application() !== $this->application) {
-            return call_user_func($this->notFound);
-        }
-
-        $history10 = $this->propertyRepo->findBy(['property' => $this->property], ['created' => 'DESC'], 10);
+        $history10 = $this->configPropertyRepo->findBy(['property' => $this->property], ['created' => 'DESC'], 10);
 
         $context = [
-            'application' => $this->application,
+            'application' => $this->property->application(),
             'environment' => $this->property->environment(),
             'property' => $this->property,
             'history' => $history10

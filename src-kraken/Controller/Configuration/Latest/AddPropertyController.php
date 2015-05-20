@@ -9,46 +9,23 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\GUID;
-use QL\Hal\Core\Crypto\SymmetricEncrypter;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\FlashFire;
+use QL\Hal\Flasher;
 use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Entity\Target;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
+use QL\Kraken\Validator\PropertyValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Utility\Json;
 use QL\Panthor\Slim\NotFound;
 use Slim\Http\Request;
 
 class AddPropertyController implements ControllerInterface
 {
     const SUCCESS = 'Property "%s" set.';
-    const ERR_VALUE_REQUIRED = 'Please enter a value.';
-    const ERR_MISSING_SCHEMA = 'Please select a property.';
-    const ERR_DUPLICATE_PROPERTY = 'This property is already set for this environment.';
-    const ERR_TOO_BIG = 'This value is too large. Properties stored in Kraken must be smaller than %skb.';
-
-    const ERR_INTEGER = 'Please enter a valid integer number.';
-    const ERR_FLOAT = 'Please enter a valid number (must include decimal).';
-    const ERR_BOOLEAN = 'Please enter a valid boolean flag value.';
-    const ERR_LIST = 'Please enter a list of values.';
-
-    /**
-     * Technically this is the max size storeable by Consul (512kb) after being json encoded, encrypted, and base64ed.
-     */
-    const MAX_VALUE_SIZE_BYTES_CONSUL = 330000;
-
-    /**
-     * Artifically limit the value of each value to 20k.
-     *
-     * The encrypted values are about 50% efficient (binary->hexed), and the column type is 64kbytes.
-     */
-    const MAX_VALUE_SIZE_BYTES = 20000;
 
     /**
      * @type Request
@@ -83,14 +60,12 @@ class AddPropertyController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $schemaRepo;
-    private $propertyRepo;
     private $targetRepo;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type ConfigurationDiffService
@@ -98,24 +73,14 @@ class AddPropertyController implements ControllerInterface
     private $diffService;
 
     /**
-     * @type SymmetricEncrypter
+     * @type PropertyValidator
      */
-    private $encrypter;
-
-    /**
-     * @type Json
-     */
-    private $json;
+    private $validator;
 
     /**
      * @type NotFound
      */
     private $notFound;
-
-    /**
-     * @type array
-     */
-    private $errors;
 
     /**
      * @param Request $request
@@ -125,9 +90,9 @@ class AddPropertyController implements ControllerInterface
      * @param User $currentUser
      *
      * @param EntityManagerInterface $em
-     * @param FlashFire $flashFire
+     * @param Flasher $flasher
      * @param ConfigurationDiffService $diffService
-     * @param SymmetricEncrypter $encrypter
+     * @param PropertyValidator $validator
      * @param NotFound $notFound
      */
     public function __construct(
@@ -136,12 +101,11 @@ class AddPropertyController implements ControllerInterface
         Application $application,
         Environment $environment,
         User $currentUser,
+
         EntityManagerInterface $em,
-        FlashFire $flashFire,
+        Flasher $flasher,
         ConfigurationDiffService $diffService,
-        SymmetricEncrypter $encrypter,
-        Json $json,
-        callable $random,
+        PropertyValidator $validator,
         NotFound $notFound
     ) {
         $this->request = $request;
@@ -152,17 +116,11 @@ class AddPropertyController implements ControllerInterface
 
         $this->em = $em;
         $this->targetRepo = $this->em->getRepository(Target::CLASS);
-        $this->schemaRepo = $this->em->getRepository(Schema::CLASS);
-        $this->propertyRepo = $this->em->getRepository(Property::CLASS);
 
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
         $this->diffService = $diffService;
-        $this->encrypter = $encrypter;
-        $this->json = $json;
-        $this->random = $random;
+        $this->validator = $validator;
         $this->notFound = $notFound;
-
-        $this->errors = [];
     }
 
     /**
@@ -177,10 +135,12 @@ class AddPropertyController implements ControllerInterface
         if ($this->request->isPost()) {
             if ($property = $this->handleForm()) {
                 // flash and redirect
-                $this->flashFire->fire(sprintf(self::SUCCESS, $property->schema()->key()), 'kraken.configuration.latest', 'success', [
-                    'application' => $this->application->id(),
-                    'environment' => $this->environment->id()
-                ]);
+                $this->flasher
+                    ->withFlash(sprintf(self::SUCCESS, $property->schema()->key()), 'success')
+                    ->load('kraken.configuration.latest', [
+                        'application' => $this->application->id(),
+                        'environment' => $this->environment->id()
+                    ]);
             }
         }
 
@@ -193,7 +153,7 @@ class AddPropertyController implements ControllerInterface
 
             'missing_schema' => $missing,
 
-            'errors' => $this->errors,
+            'errors' => $this->validator->errors(),
             'form' => [
                 'prop' => $this->request->post('prop'),
                 'value' => $this->request->post('value'),
@@ -234,160 +194,18 @@ class AddPropertyController implements ControllerInterface
      */
     private function handleForm()
     {
-        $propertyId = $this->request->post('prop');
+        $schemaId = $this->request->post('prop');
 
-        if (!$schema = $this->schemaRepo->find($propertyId)) {
-            $this->errors[] = self::ERR_MISSING_SCHEMA;
+        if ($property = $this->validator->isValid($this->environment, $this->request, $schemaId)) {
+            $property->withUser($this->currentUser);
+
+            // persist to database
+            $this->em->persist($property);
+            $this->em->flush();
+
+            return $property;
         }
 
-        if ($this->errors) return; // bomb
-
-        $value = $this->validateValue($schema);
-
-        if ($this->errors) return; // bomb
-
-        // dupe check
-        if ($dupe = $this->propertyRepo->findOneBy(['schema' => $schema, 'environment' => $this->environment])) {
-            $this->errors[] = self::ERR_DUPLICATE_PROPERTY;
-        }
-
-        if ($this->errors) return; // bomb
-
-        return $this->saveProperty($schema, $value);
-    }
-
-    /**
-     * @param Schema $schema
-     *
-     * @return string|string[]
-     */
-    private function validateValue(Schema $schema)
-    {
-        $value = $this->request->post('value');
-
-        // get explicit input if generic was not passed
-        if ($value === null) {
-            $value = $this->request->post('value_' . $schema->dataType());
-        }
-
-        if ($schema->dataType() === 'integer') {
-            $value = str_replace(',', '', $value);
-
-            if (preg_match('/^[\-]?[\d]+$/', $value) !== 1) {
-                $this->errors[] = self::ERR_INTEGER;
-            }
-
-        } elseif ($schema->dataType() === 'float') {
-            $value = str_replace(',', '', $value);
-
-            if (preg_match('/^[\-]?[\d]+[\.][\d]+$/', $value) !== 1) {
-                $this->errors[] = self::ERR_FLOAT;
-            }
-
-        } elseif ($schema->dataType() === 'bool') {
-            if (!in_array($value, ['true', 'false'], true)) {
-                $this->errors[] = self::ERR_BOOLEAN;
-            }
-
-        } elseif ($schema->dataType() === 'strings') {
-            if (!is_array($value)) {
-                $this->errors[] = self::ERR_LIST;
-            }
-
-        } else {
-            // "string"
-        }
-
-        $size = strlen($this->json->encode($value));
-        if (strlen($size) > self::MAX_VALUE_SIZE_BYTES) {
-            $this->errors[] = sprintf(self::ERR_TOO_BIG, (self::MAX_VALUE_SIZE_BYTES/1000));
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param Schema $schema
-     * @param string $value
-     *
-     * @return Property
-     */
-    private function saveProperty(Schema $schema, $value)
-    {
-        $id = call_user_func($this->random);
-
-        $encoded = $this->encode($schema, $value);
-
-        $property = (new Property)
-            ->withId($id)
-            ->withValue($encoded)
-            ->withSchema($schema)
-            ->withApplication($this->application)
-            ->withEnvironment($this->environment)
-            ->withUser($this->currentUser);
-
-        // persist to database
-        $this->em->persist($property);
-        $this->em->flush();
-
-        return $property;
-    }
-
-    /**
-     * @param Schema $schema
-     * @param string $value
-     *
-     * @return string
-     */
-    private function encode(Schema $schema, $value)
-    {
-        if ($schema->dataType() === 'integer') {
-            $value = (int) $value;
-
-        } elseif ($schema->dataType() === 'float') {
-            $value = (float) $value;
-
-        } elseif ($schema->dataType() === 'bool') {
-            $value = (bool) $value;
-
-        } elseif ($schema->dataType() === 'strings') {
-            // @todo
-
-        } else {
-            // "string"
-            $value = (string) $value;
-        }
-
-        // @todo JSON_PRESERVE_ZERO_FRACTION - PHP 5.6.6
-        $encoded = $this->json->encode($value);
-
-        if ($schema->isSecure()) {
-            $encoded = $this->encrypter->encrypt($encoded);
-        }
-
-        return $encoded;
-    }
-
-    /**
-     * Not used at runtime, was just used to get static max size.
-     *
-     * @return int
-     */
-    private function getMaxSizeInBytes()
-    {
-        $maxBytes = 512000;
-        $receipients = 2;
-        $sodiumPadding = ($receipients * 56) + 34;
-
-        // Reverse base64
-        $debase64 = ($maxBytes * 3) / 4;
-
-        // Encryption padding
-        $decrypted = $debase64 - $sodiumPadding;
-
-        // Fudge it a bit for json encoding and whatnot
-        $jsonFudge = $decrypted * .9;
-
-        return floor($jsonFudge * 1000);
+        return null;
     }
 }

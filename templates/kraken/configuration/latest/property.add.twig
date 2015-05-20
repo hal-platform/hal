@@ -1,0 +1,21 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+{% import "partials/form/macros.twig" as form_macros %}
+
+{% set page_title = "Add Property" %}
+
+{% block content %}
+
+    <h1>{{ page_title }} for <strong>{{ environment.name }}</strong></h1>
+
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
+
+    <h4>Environment</h4>
+    <p>{{ environment.name }}</p>
+
+    <h2>Add Property</h2>
+    {% embed "kraken/partial/form/property.twig" %}
+    {% endembed %}
+
+{% endblock %}

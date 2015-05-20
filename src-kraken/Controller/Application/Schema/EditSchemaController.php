@@ -36,11 +36,6 @@ class EditSchemaController implements ControllerInterface
     private $template;
 
     /**
-     * @type Application
-     */
-    private $application;
-
-    /**
      * @type Schema
      */
     private $schema;
@@ -73,7 +68,6 @@ class EditSchemaController implements ControllerInterface
     /**
      * @param Request $request
      * @param TemplateInterface $template
-     * @param Application $application
      * @param Schema $schema
      *
      * @param EntityManagerInterface$em
@@ -83,22 +77,18 @@ class EditSchemaController implements ControllerInterface
     public function __construct(
         Request $request,
         TemplateInterface $template,
-        Application $application,
         Schema $schema,
         EntityManagerInterface $em,
-        Flasher $flasher,
-        NotFound $notFound
+        Flasher $flasher
     ) {
         $this->request = $request;
         $this->template = $template;
-        $this->application = $application;
         $this->schema = $schema;
 
         $this->em = $em;
         $this->propertyRepo = $this->em->getRepository(Property::CLASS);
 
         $this->flasher = $flasher;
-        $this->notFound = $notFound;
 
         $this->errors = [];
     }
@@ -108,9 +98,7 @@ class EditSchemaController implements ControllerInterface
      */
     public function __invoke()
     {
-        if ($this->schema->application() !== $this->application) {
-            return call_user_func($this->notFound);
-        }
+        $application = $this->schema->application();
 
         $form = [
             'description' => $this->schema->description()
@@ -122,7 +110,7 @@ class EditSchemaController implements ControllerInterface
             if ($schema = $this->handleForm()) {
                 $this->flasher
                     ->withFlash(sprintf(self::SUCCESS, $schema->key()), 'success')
-                    ->load('kraken.schema', ['application' => $this->application->id()]);
+                    ->load('kraken.schema', ['application' => $application->id()]);
             }
         }
 
@@ -130,7 +118,7 @@ class EditSchemaController implements ControllerInterface
         usort($properties, $this->sorterPropertyByEnvironment());
 
         $context = [
-            'application' => $this->application,
+            'application' => $application,
             'schema' => $this->schema,
             'properties' => $properties,
 

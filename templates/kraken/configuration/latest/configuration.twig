@@ -19,7 +19,7 @@
 
     <ul class="button-list">
         {% if isAdmin and is_missing_properties %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.configuration.add_property', {application: application.id, environment: environment.id}) }}">Add Property</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.property.add', {application: application.id, environment: environment.id}) }}">Add Property</a></li>
         {% endif %}
 
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>

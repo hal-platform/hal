@@ -151,6 +151,7 @@ class KrakenTwigExtension extends Twig_Extension
         }
 
         $value = $this->json->decode($property->value());
+
         if ($value === null) {
             return self::INVALID_DECODED_PROPERTY;
         }
@@ -186,8 +187,11 @@ class KrakenTwigExtension extends Twig_Extension
                 }
             }
 
+        } elseif (is_bool($value)) {
+            return ($value) ? 'true' : 'false';
+
         } elseif (is_scalar($value)) {
-            return var_export($value, true);
+            return (string) $value;
         }
 
         return $value;

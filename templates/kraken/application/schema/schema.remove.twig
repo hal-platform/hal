@@ -29,7 +29,7 @@
             {% for property in properties %}
                 <li>
                     {{ property.environment.name }}
-                    (<a href="{{ urlFor('kraken.property', {application: application.id, property: property.id}) }}">View Latest Configuration</a>)
+                    (<a href="{{ urlFor('kraken.property', {property: property.id}) }}">View Latest Configuration</a>)
                 </li>
             {% endfor %}
         </ul>
@@ -42,7 +42,7 @@
 
             <ul class="button-list">
                 <li><input class="btn btn--destructive" type="submit" value="Remove property from schema"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.schema', {application: application.id, schema: schema.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.schema', {application: application.id}) }}">Cancel</a></li>
             </ul>
 
         </form>

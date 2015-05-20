@@ -1,0 +1,64 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+{% import "kraken/partial/macros.twig" as kraken_macros %}
+
+{% set page_title = "Edit Property" %}
+
+{% block content %}
+    <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
+
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
+
+    <h4>Environment</h4>
+    <p>{{ environment.name }}</p>
+
+    <h2>Schema</h2>
+
+    <h4>Type</h4>
+    <p>{{ property.schema|formatSchemaType }}</p>
+
+    <h4>Description</h4>
+    <p>{{ property.schema.description ?: 'None' }}</p>
+
+    <h2>Property</h2>
+
+    <h4>Key</h4>
+    <p><code>{{ property.schema.key }}</code></p>
+
+    {% embed "kraken/partial/form/property.twig" %}
+        {% block form_add_property %}
+            <input type="hidden" id="config-type" value="{{ property.schema.dataType }}">
+        {% endblock %}
+        {% block form_add_property_buttons %}
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.property', {property: property.id}) }}">Cancel</a></li>
+            </ul>
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}
+
+{% block form %}
+
+    <div class="form-wrapper">
+        {{ form_macros.formErrors(errors) }}
+
+        <form action="" method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="prop-desc">Description</label>
+                    <input type="text" name="description" id="prop-desc" maxlength="250" value="{{ form.description }}" class="text-input">
+                </li>
+            </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.property', {property: property.id}) }}">Cancel</a></li>
+            </ul>
+
+        </form>
+    </div>
+
+{% endblock %}

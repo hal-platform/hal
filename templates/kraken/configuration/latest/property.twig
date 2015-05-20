@@ -2,10 +2,14 @@
 {% import "partials/macros.twig" as macros %}
 {% import "kraken/partial/macros.twig" as kraken_macros %}
 
-{% set page_title = "View Configuration Property" %}
+{% set page_title = "Property" %}
+{% set isAdmin = true %}
 
 {% block content %}
-    <h1>Configuration Property for <strong>{{ application.name }}</strong></h1>
+    <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
+
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
 
     <h4>Environment</h4>
     <p>{{ environment.name }}</p>
@@ -31,6 +35,9 @@
     {{ block('property_history') }}
 
     <ul class="button-list">
+        {% if isAdmin %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.property.edit', {property: property.id}) }}">Edit Property</a></li>
+        {% endif %}
         <li><a class="btn" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: environment.id}) }}">Latest Configuration</a></li>
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application Configuration</a></li>
     </ul>
