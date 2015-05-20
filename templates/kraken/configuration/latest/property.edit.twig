@@ -29,6 +29,11 @@
     {% embed "kraken/partial/form/property.twig" %}
         {% block form_add_property %}
             <input type="hidden" id="config-type" value="{{ property.schema.dataType }}">
+            {% if property.schema.isSecure %}
+                <p>
+                    <small><strong>Please note:</strong><br>This property is marked as secure and its current value is not displayed.</small>
+                </p>
+            {% endif %}
         {% endblock %}
         {% block form_add_property_buttons %}
             <ul class="button-list">
