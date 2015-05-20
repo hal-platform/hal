@@ -29,6 +29,7 @@
                 <li><a href="#env-support">Does HAL support .NET or AWS applications?</a></li>
                 <li><a href="#docker-support">Does HAL support Docker?</a></li>
                 <li><a href="#encrypted-configuration">Does HAL support encrypted configuration?</a></li>
+                <li><a href="#app-dependencies">My application needs a specific library or software installed to build. What do I do?</a></li>
                 <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
             </ul>
         </li>
@@ -207,6 +208,17 @@ beta
     </p>
     <p>See in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a> for more details on how to read these values when they are decrypted during the build process.</p>
 
+    <h4 id="app-dependencies">My application needs a specific library or software installed to build. What do I do?</h4>
+    <p>
+        HAL builds within docker containers. Docker allows us to have completely isolated, custom build environments for any application that needs it.
+    </p>
+    <p>
+        <strong>Do not contact the UNIX team about installing software on the HAL 9000 servers, it will not help your application.</strong><br>
+    </p>
+    <p>
+        To enable a library, it must be installed either by your build scripts directly, or in a docker image.
+        Please see <a href="http://git/skluck/docker-images">skluck/docker-images</a>{{ macros.icon('github') }} for currently available containers.
+    </p>
 {% endblock %}
 
 {% block other_questions %}
