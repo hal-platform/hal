@@ -16,7 +16,7 @@
                 {% for list_item in formatted %}
                     <li>
                         <div class="pre-wrapper">
-                            <pre>{{ list_item }}</pre>
+                            <pre class="code_clear">{{ list_item }}</pre>
                         </div>
                     </li>
                 {% endfor %}
@@ -24,7 +24,7 @@
 
         {% else %}
             <div class="pre-wrapper">
-                <pre>{{ formatted }}</pre>
+                <pre class="code_clear">{{ formatted }}</pre>
             </div>
         {% endif %}
     {% endif %}

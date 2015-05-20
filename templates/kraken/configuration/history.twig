@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.kraken.twig' %}
 {% import 'partials/pagination.twig' as pagination %}
 {% import "partials/macros.twig" as macros %}
 
@@ -17,7 +17,7 @@
 
 {% block configuration_table %}
 
-    <table class="table--spacing-medium" data-tablesaw-mode="stack">
+    <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>Configuration</th>

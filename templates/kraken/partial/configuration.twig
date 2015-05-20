@@ -2,7 +2,7 @@
 {% import "kraken/partial/macros.twig" as kraken_macros %}
 
 {% if properties %}
-    <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
+    <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 {% if show_property_link %}
@@ -21,7 +21,7 @@
                 {% endif %}
 
                 <tr>
-                    {% if property is property or property is configurationProperty %}
+                    {% if property is property %}
 
                         {% if show_property_link %}
                             <td>
@@ -32,8 +32,19 @@
                             </td>
                         {% endif %}
 
-                        <td><code>{{ property.schema.key }}</code></td>
+                        <td><code class="code_clear">{{ property.schema.key }}</code></td>
                         <td>{{ property.schema|formatSchemaType }}</td>
+
+                        <td>{{ kraken_macros.renderProperty(property) }}</td>
+
+                    {% elseif property is configurationProperty %}
+
+                        {% if show_property_link %}
+                            <td></td>
+                        {% endif %}
+
+                        <td><code class="code_clear">{{ property.key }}</code></td>
+                        <td>{{ property|formatSchemaType }}</td>
 
                         <td>{{ kraken_macros.renderProperty(property) }}</td>
 
@@ -42,7 +53,7 @@
                             <td></td>
                         {% endif %}
 
-                        <td><code>{{ property.key }}</code></td>
+                        <td><code class="code_clear">{{ property.key }}</code></td>
                         <td>{{ property|formatSchemaType }}</td>
 
                         <td>

@@ -1,7 +1,7 @@
 {% import "partials/macros.twig" as macros %}
 
 {% if schema %}
-    <table class="table--spacing-medium">
+    <table class="table--spacing-medium table--striped">
         <thead>
             <tr>
                 <th>Key</th>
@@ -12,7 +12,7 @@
         <tbody>
             {% for property in schema %}
                 <tr>
-                    <td><code>{{ property.key }}</code></td>
+                    <td><code class="code_clear">{{ property.key }}</code></td>
                     <td>
                         {{ property.isSecure ? macros.icon('locked') : '' }}
                         {{ property|formatSchemaType }}
