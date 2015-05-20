@@ -117,13 +117,13 @@ parameters:
 
         kraken.schema.remove.confirm:
             method: 'GET'
-            route: '/kraken/:schema/remove'
+            route: '/kraken/schema/:schema/remove'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.remove.page']
             conditions:
                 schema: %routes.kraken.regex.hex%
         kraken.schema.remove:
             method: 'POST'
-            route: '/kraken/:schema/remove'
+            route: '/kraken/schema/:schema/remove'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.remove.handler']
             conditions:
                 schema: %routes.kraken.regex.hex%
@@ -148,6 +148,19 @@ parameters:
         kraken.property.edit:
             route: '/kraken/property/:property/edit'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.edit.page']
+            conditions:
+                property: %routes.kraken.regex.hex%
+
+        kraken.property.remove.confirm:
+            method: 'GET'
+            route: '/kraken/property/:property/remove'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.remove.page']
+            conditions:
+                property: %routes.kraken.regex.hex%
+        kraken.property.remove:
+            method: 'POST'
+            route: '/kraken/property/:property/remove'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.remove.handler']
             conditions:
                 property: %routes.kraken.regex.hex%
 

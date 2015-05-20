@@ -1,0 +1,54 @@
+{% extends 'base.kraken.twig' %}
+{% import "partials/macros.twig" as macros %}
+
+{% set page_title = "Confirm Removal of Property" %}
+
+{% block content %}
+    <h1>{{ page_title }} from <strong>{{ environment.name }}</strong></h1>
+
+    <h4>Application</h4>
+    <p>{{ application.name }}</p>
+
+    <h4>Environment</h4>
+    <p>{{ environment.name }}</p>
+
+    <h2>Property</h2>
+
+    <h4>Property Key</h4>
+    <p><code>{{ property.schema.key }}</code></p>
+
+    <h2>Deployment status</h2>
+    {{ block('deployment_status') }}
+
+    <form action="" method="post" class="leader form-wrapper">
+
+        <ul class="button-list">
+            <li><input class="btn btn--destructive" type="submit" value="Remove property from configuration"></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.property', {property: property.id}) }}">Cancel</a></li>
+        </ul>
+
+    </form>
+
+{% endblock %}
+
+{% block deployment_status %}
+    {% if deployed %}
+        <p class="additional">This property is actively deployed.</p>
+        <p>
+            <strong>Warning!</strong>
+            If you remove this property from the configuration, the property will be missing from future
+            configuration deployments. However, the property will still be present in rollbacks.
+        </p>
+
+        <ul class="list--bullet">
+            {% for property in properties %}
+                <li>
+                    {{ property.environment.name }}
+                    (<a href="{{ urlFor('kraken.property', {property: property.id}) }}">View Latest Configuration</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>This property is not currently deployed and is safe to remove.</p>
+    {% endif %}
+{% endblock %}

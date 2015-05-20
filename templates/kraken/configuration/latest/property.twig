@@ -14,32 +14,38 @@
     <h4>Environment</h4>
     <p>{{ environment.name }}</p>
 
-    <h2>Schema</h2>
+    <section class="leader--andre">
+        <h2>Schema</h2>
 
-    <h4>Type</h4>
-    <p>{{ property.schema|formatSchemaType }}</p>
+        <h4>Type</h4>
+        <p>{{ property.schema|formatSchemaType }}</p>
 
-    <h4>Description</h4>
-    <p>{{ property.schema.description ?: 'None' }}</p>
+        <h4>Description</h4>
+        <p>{{ property.schema.description ?: 'None' }}</p>
+    </section>
 
-    <h2>Property</h2>
+    <section class="leader--andre">
+        <h2>Property</h2>
 
-    <h4>Key</h4>
-    <p><code>{{ property.schema.key }}</code></p>
+        <h4>Key</h4>
+        <p><code>{{ property.schema.key }}</code></p>
 
-    <h4>Current Value</h4>
-    {{ kraken_macros.renderProperty(property) }}
+        <h4>Current Value</h4>
+        {{ kraken_macros.renderProperty(property) }}
+    </section>
 
-    <h2 class="mbn">Deployment History</h2>
-    <h5 class="mts">Most recent values</h5>
-    {{ block('property_history') }}
+    <section class="leader--andre">
+        <h2 class="mbn">Deployment History</h2>
+        <p class="additional">Most recent values deployed to this environment.</p>
+        {{ block('property_history') }}
+    </section>
 
     <ul class="button-list">
         {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.property.edit', {property: property.id}) }}">Edit Property</a></li>
         {% endif %}
         <li><a class="btn" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: environment.id}) }}">Latest Configuration</a></li>
-        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application Configuration</a></li>
+        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application</a></li>
     </ul>
 {% endblock %}
 

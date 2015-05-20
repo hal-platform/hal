@@ -3,7 +3,7 @@
 {% import "kraken/partial/macros.twig" as kraken_macros %}
 
 {% set page_title = "Edit Property" %}
-
+{% set isAdmin = true %}
 {% block content %}
     <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
 
@@ -13,35 +13,49 @@
     <h4>Environment</h4>
     <p>{{ environment.name }}</p>
 
-    <h2>Schema</h2>
+    <section class="leader--andre">
+        <h2>Schema</h2>
 
-    <h4>Type</h4>
-    <p>{{ property.schema|formatSchemaType }}</p>
+        <h4>Type</h4>
+        <p>{{ property.schema|formatSchemaType }}</p>
 
-    <h4>Description</h4>
-    <p>{{ property.schema.description ?: 'None' }}</p>
+        <h4>Description</h4>
+        <p>{{ property.schema.description ?: 'None' }}</p>
+    </section>
 
-    <h2>Property</h2>
+    <section class="leader--andre">
+        <h2>Property</h2>
 
-    <h4>Key</h4>
-    <p><code>{{ property.schema.key }}</code></p>
+        <h4>Key</h4>
+        <p><code>{{ property.schema.key }}</code></p>
 
-    {% embed "kraken/partial/form/property.twig" %}
-        {% block form_add_property %}
-            <input type="hidden" id="config-type" value="{{ property.schema.dataType }}">
-            {% if property.schema.isSecure %}
-                <p>
-                    <small><strong>Please note:</strong><br>This property is marked as secure and its current value is not displayed.</small>
-                </p>
-            {% endif %}
-        {% endblock %}
-        {% block form_add_property_buttons %}
-            <ul class="button-list">
-                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.property', {property: property.id}) }}">Cancel</a></li>
-            </ul>
-        {% endblock %}
-    {% endembed %}
+        {% embed "kraken/partial/form/property.twig" %}
+            {% block form_add_property %}
+                <input type="hidden" id="config-type" value="{{ property.schema.dataType }}">
+                {% if property.schema.isSecure %}
+                    <p>
+                        <small><strong>Please note:</strong><br>This property is marked as secure and its current value is not displayed.</small>
+                    </p>
+                {% endif %}
+            {% endblock %}
+            {% block form_add_property_buttons %}
+                <ul class="button-list">
+                    <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                    <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.property', {property: property.id}) }}">Cancel</a></li>
+                </ul>
+            {% endblock %}
+        {% endembed %}
+    </section>
+
+    {% if isAdmin %}
+        <section class="leader--andre">
+            <h2>Remove Property</h2>
+
+            <p>
+                <a class="btn btn--destructive" href="{{ urlFor('kraken.property.remove', {property: property.id}) }}">Remove property from environment</a></li>
+            </p>
+        </section>
+    {% endif %}
 
 {% endblock %}
 

@@ -255,6 +255,23 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/latest/property.edit.twig']]]
 
+    kraken.property.remove.page:
+        class: 'QL\Kraken\Controller\Configuration\Latest\RemovePropertyController'
+        arguments:
+            - @kraken.property.remove.twig
+            - @kraken.property
+            - @doctrine.em
+    kraken.property.remove.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/latest/property.remove.twig']]]
+
+    kraken.property.remove.handler:
+        class: 'QL\Kraken\Controller\Configuration\Latest\RemovePropertyHandler'
+        arguments:
+            - @kraken.property
+            - @doctrine.em
+            - @session.flasher
+
     ####################################################################################################################
     # DEPLOY
     ####################################################################################################################

@@ -14,7 +14,7 @@
     {{ block('configuration') }}
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application Information</a></li>
+        <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application</a></li>
 
         {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.schema.add', {application: application.id}) }}">Add Property to Schema</a></li>

@@ -2,7 +2,6 @@
 {% import "partials/macros.twig" as macros %}
 
 {% set page_title = "Confirm Removal of Configuration Schema" %}
-{% set isAdmin = true %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>
@@ -17,6 +16,15 @@
 
     <h2>Environments</h2>
     {{ block('properties') }}
+
+    <form action="" method="post" class="leader form-wrapper">
+
+        <ul class="button-list">
+            <li><input class="btn btn--destructive" type="submit" value="Remove property from schema"></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.schema', {application: application.id}) }}">Cancel</a></li>
+        </ul>
+
+    </form>
 
 {% endblock %}
 
@@ -35,16 +43,5 @@
         </ul>
     {% else %}
         <p>This property has no values for any environment, and is safe to remove.</p>
-    {% endif %}
-
-    {% if isAdmin %}
-        <form action="" method="post" class="form-wrapper">
-
-            <ul class="button-list">
-                <li><input class="btn btn--destructive" type="submit" value="Remove property from schema"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.schema', {application: application.id}) }}">Cancel</a></li>
-            </ul>
-
-        </form>
     {% endif %}
 {% endblock %}
