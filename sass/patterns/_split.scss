@@ -1,21 +1,12 @@
 // Split
 
-[class*="split"] {
-    // text-align: right;
-    // list-style: none;
-    // margin-left: 0;
-    // @extend %clearfix;
-}
-
 .split {
-    // text-align: left;
     @extend %clearfix;
 }
 
 .split__title + dd {
-    // text-align: left;
-    // float: left;
-    // clear: left;
+    text-align: left;
+    float: left;
 }
 
 .details-box {
