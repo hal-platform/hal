@@ -292,7 +292,7 @@ services:
             - @kraken.target
             - @currentUser
             - @kraken.json
-            - @session.flashfire
+            - @session.flasher
             - @doctrine.em
             - @kraken.consul
             - @kraken.crypto.decrypter

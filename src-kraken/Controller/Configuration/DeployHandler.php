@@ -12,8 +12,9 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Crypto\CryptoException;
 use QL\Hal\Core\Crypto\SymmetricDecrypter;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\FlashFire;
-use QL\Kraken\ConsulService;
+use QL\Hal\Flasher;
+use QL\Kraken\Service\ConsulService;
+use QL\Kraken\Service\MixedUpdateException;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Configuration;
 use QL\Kraken\Entity\ConfigurationProperty;
@@ -26,9 +27,12 @@ use QL\Panthor\Utility\Json;
 class DeployHandler implements ControllerInterface
 {
     const SUCCESS = 'Configuration successfully deployed to %s';
-    const ERR_CONSUL_FAILURE = 'An error occured while updating Consul.';
     const ERR_JSON_DECODE = 'Invalid property "%s": %s';
     const ERR_DECRYPT = 'Could not decrypt secure property "%s"';
+
+    const ERR_CONSUL_CONNECTION_FAILURE = 'Update failed. Consul could not be contacted.';
+    const ERR_THIS_IS_SUPER_BAD = 'A serious error has occured. Consul was partially updated.';
+    const ERR_CONSUL_FAILURE = 'Errors occured while updating Consul. No updates were made.';
 
     /**
      * @type Target
@@ -46,9 +50,9 @@ class DeployHandler implements ControllerInterface
     private $json;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type ConsulService
@@ -79,7 +83,7 @@ class DeployHandler implements ControllerInterface
      * @param Target $target
      * @param User $currentUser
      * @param Json $json
-     * @param FlashFire $flashFire
+     * @param Flasher $flasher
      * @param EntityManagerInterface $em
      * @param ConsulService $consul
      * @param SymmetricDecrypter $decrypter
@@ -89,7 +93,7 @@ class DeployHandler implements ControllerInterface
         Target $target,
         User $currentUser,
         Json $json,
-        FlashFire $flashFire,
+        Flasher $flasher,
         EntityManagerInterface $em,
         ConsulService $consul,
         SymmetricDecrypter $decrypter,
@@ -99,7 +103,7 @@ class DeployHandler implements ControllerInterface
         $this->currentUser = $currentUser;
 
         $this->json = $json;
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
         $this->consul = $consul;
         $this->decrypter = $decrypter;
         $this->random = $random;
@@ -120,51 +124,25 @@ class DeployHandler implements ControllerInterface
         $properties = $this->buildProperties($configuration);
 
         // 3. Generate a json payload with these values
-        try {
-            $json = $this->generateJson($properties);
-
-        } catch (InvalidPropertyException $ex) {
-            $json = null;
-
-            // handle error
-            $msg = $ex->getMessage();
-            $this->flashFire->fire($msg, 'kraken.predeploy', 'error', ['target' => $this->target->id()]);
-        }
+        // ???
 
         // 4. Encrypt it
+        $encrypted = $this->encryptProperties($properties);
 
-            # ????
-
-        // 5. Save to DB
-        $configuration
-            ->withConfiguration($json)
-            ->withChecksum(sha1($json));
-
-        $this->em->persist($configuration);
-        foreach ($properties as $prop) {
-            $this->em->persist($prop);
-        }
-
-        $this->em->flush();
+        // 5. Save to DB. Just in case consul blows up
+        $this->saveProperties($configuration, $properties);
 
         // 6. Save to Consul
-        $success = $this->sendToConsul($configuration, $this->target);
+        $updates = $this->consul->syncConfiguration($this->target, $encrypted);
 
-        if (!$success) {
-            $this->flashFire->fire(self::ERR_CONSUL_FAILURE, 'kraken.deploy', 'error', [
-                'target' => $this->target->id()
-            ]);
-        }
+        // Connection error to consul
+        $this->handleConnectionFailure($configuration, $updates);
 
-        // 7. Update target to new configuration
-        $this->target->withConfiguration($configuration);
-        $this->em->persist($this->target);
-        $this->em->flush();
+        // Analyze other response types
+        $status = $this->handleResponses($configuration, $updates);
 
-        $msg = sprintf(self::SUCCESS, $this->target->environment()->name());
-        $this->flashFire->fire($msg, 'kraken.status', 'success', [
-            'application' => $this->target->application()->id()
-        ]);
+        // And finally, go away.
+        $this->redirect($status);
     }
 
     /**
@@ -213,8 +191,7 @@ class DeployHandler implements ControllerInterface
 
                 ->withConfiguration($configuration)
                 ->withProperty($property)
-                ->withSchema($schema)
-                ->withUser($this->currentUser);
+                ->withSchema($schema);
 
             $newconfig[$cf->key()] = $cf;
         }
@@ -223,51 +200,172 @@ class DeployHandler implements ControllerInterface
     }
 
     /**
+     * Pass in an array of denormalized properties. They will be encrypted, base64 and returned in an assoc array.
+     * The checksum will be added to the Property.
+     *
+     * Example input:
+     *     test.key: ConfigurationProperty
+     *     test.key2: ConfigurationProperty
+     *
+     *
+     * Example ouput:
+     *     test.key: 'base64_and_encrypted'
+     *     test.key2: 'base64_and_encrypted'
+     *
      * @param ConfigurationProperty[] $properties
      *
-     * @return string
+     * @return string[]
      */
-    private function generateJson(array $properties)
+    private function encryptProperties(array $properties)
     {
-        $jsonable  = [];
+        $encrypted = [];
 
         foreach ($properties as $prop) {
 
-            $value = $prop->value();
+            // @todo actually encrypt
+            $key = $prop->key();
+            $encrypt = $prop->value();
 
-            if ($prop->isSecure()) {
-                $value = $this->decrypt($value);
-                if (!is_string($value)) {
-                    $msg = sprintf(self::ERR_DECRYPT, $prop->key());
-                    throw new InvalidPropertyException($msg);
-                }
-            }
+            // encode
+            $encoded = base64_encode($encrypt);
 
-            // db values are json, so must be first decoded
-            // This decoded/reencode step allows us to offload some validation to the json process
-            $value = $this->json->decode($value);
+            // save checksum
+            $prop->withChecksum(sha1($encoded));
 
-            if ($value === null) {
-                $msg = sprintf(self::ERR_JSON_DECODE, $prop->key(), $this->json->lastJsonErrorMessage());
-                throw new InvalidPropertyException($msg);
-            }
-
-            $jsonable[$prop->key()] = $value;
+            $encrypted[$key] = $encoded;
         }
 
-        $this->json->setEncodingOptions(JSON_PRETTY_PRINT);
-        return $this->json->encode($jsonable);
+        return $encrypted;
     }
 
     /**
      * @param Configuration $configuration
-     * @param Target $target
+     * @param ConfigurationProperty[] $properties
+     *
+     * @return void
+     */
+    private function saveProperties(Configuration $configuration, array $properties)
+    {
+        $this->em->persist($configuration);
+
+        foreach ($properties as $prop) {
+            $this->em->persist($prop);
+        }
+
+        $this->em->flush();
+    }
+
+    /**
+     * @param ConsulResponse[] $responses
+     *
+     * @throws MixedUpdateException
      *
      * @return bool
      */
-    private function sendToConsul(Configuration $configuration, Target $target)
+    private function parseConsulResponses(array $responses)
     {
-        return $this->consul->sendConfiguration($configuration, $target);
+        // Nothing was there, and nothing was updated. Success!
+        if (count($responses) === 0) {
+            return true;
+        }
+
+        $hasSuccesses = $hasFailures = false;
+        foreach ($responses as $update) {
+            $hasSuccesses = $hasSuccesses || $update->isSuccess();
+            $hasFailures = $hasFailures || !$update->isSuccess();
+        }
+
+        // All Success!
+        if ($hasSuccesses && !$hasFailures) {
+            return true;
+        }
+
+        // All failures
+        if (!$hasSuccesses && $hasFailures) {
+            return false;
+        }
+
+        // mixed updated. This is super bad.
+        throw new MixedUpdateException(self::ERR_THIS_IS_SUPER_BAD);
+    }
+
+    /**
+     * @param Configuration $configuration
+     * @param ConsulResponse[] $responses
+     *
+     * @throws Stop Exception
+     *
+     * @return void
+     */
+    private function handleConnectionFailure(Configuration $configuration, array $responses)
+    {
+        if ($responses !== null) {
+            return;
+        }
+
+        $configuration->withAudit($this->json->encode($responses));
+        $this->em->persist($configuration);
+        $this->em->flush();
+
+        $this->flasher
+            ->withFlash(self::ERR_CONSUL_CONNECTION_FAILURE, 'error')
+            ->load('kraken.deploy', ['target' => $this->target->id()]);
+    }
+
+    /**
+     * @param Configuration $configuration
+     * @param ConsulResponse[] $responses
+     *
+     * @return bool|null
+     */
+    private function handleResponses(Configuration $configuration, array $responses)
+    {
+        try {
+            $success = $this->parseConsulResponses($responses);
+        } catch (MixedUpdateException $ex) {
+            $success = null;
+
+        } finally {
+
+            $configuration
+                ->withAudit($this->json->encode($responses))
+                ->withIsSuccess($success);
+
+            $this->target->withConfiguration($configuration);
+
+            $this->em->persist($configuration);
+            $this->em->persist($this->target);
+
+            $this->em->flush();
+        }
+
+        return $success;
+    }
+
+    /**
+     * @param bool|null $status
+     *
+     * @throws Stop Exception
+     *
+     * @return void
+     */
+    private function redirect($status)
+    {
+        if ($status === null) {
+            // Mixed update. BAD!
+            $this->flasher->withFlash(self::ERR_THIS_IS_SUPER_BAD, 'error');
+
+        } elseif (!$status) {
+            // True failure.
+            $this->flasher->withFlash(self::ERR_CONSUL_FAILURE, 'error');
+
+        } else {
+            // Success
+            $this->flasher->withFlash(sprintf(self::SUCCESS, $this->target->environment()->name()), 'success');
+        }
+
+        // byebye
+        $this->flasher->load('kraken.status', ['application' => $this->target->application()->id()]);
     }
 
     /**

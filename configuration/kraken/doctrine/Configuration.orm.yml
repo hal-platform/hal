@@ -10,13 +10,13 @@ QL\Kraken\Entity\Configuration:
 
     fields:
 
-        configuration:
-            column: configuration
-            type: string
-        checksum:
-            column: checksum
-            type: string
-            length: 500
+        isSuccess:
+            column: success
+            type: boolean
+        audit:
+            column: audit
+            type: text
+            length: 65535
         created:
             column: created_time
             type: timepoint

@@ -67,7 +67,7 @@ services:
         class: 'GuzzleHttp\Client'
 
     kraken.consul:
-        class: 'QL\Kraken\ConsulService'
+        class: 'QL\Kraken\Service\ConsulService'
         arguments: [@kraken.guzzle]
 
     kraken.diff:

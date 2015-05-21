@@ -9,7 +9,7 @@ namespace QL\Kraken\Controller\Application;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\ConsulService;
+use QL\Kraken\Service\ConsulService;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Schema;
 use QL\Kraken\Entity\Target;
@@ -95,11 +95,12 @@ class ApplicationStatusController implements ControllerInterface
             }
 
             $id = $target->configuration()->id();
-            $knownChecksum = $target->configuration()->checksum();
+            // $knownChecksum = $target->configuration()->checksum();
 
-            $actualChecksum = $this->consul->getChecksum($target->configuration(), $target);
+            // $actualChecksum = $this->consul->getChecksum($target->configuration(), $target);
 
-            $checksums[$id] = ($actualChecksum === $knownChecksum);
+            // $checksums[$id] = ($actualChecksum === $knownChecksum);
+            $checksums[$id] = false;
         }
 
         return $checksums;

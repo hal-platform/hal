@@ -12,15 +12,22 @@ use JsonSerializable;
 use MCP\DataType\Time\Timepoint;
 use QL\Hal\Core\Entity\User;
 
+/**
+ * This is a denormalized combination of the Schema + Property.
+ *
+ * This allows us to verify what is currently deployed (with checksums), or
+ * redeploy/rollback an previous configuration. Even if the schema was changed.
+ */
 class ConfigurationProperty implements JsonSerializable
 {
     /**
      * @type string
      */
     protected $id;
-    protected $value;
     protected $key;
+    protected $value;
     protected $dataType;
+    protected $checksum;
 
     /**
      * @type bool
@@ -47,17 +54,13 @@ class ConfigurationProperty implements JsonSerializable
      */
     protected $schema;
 
-    /**
-     * @type User|null
-     */
-    protected $user;
-
     public function __construct()
     {
         $this->id = '';
-        $this->value = '';
         $this->key = '';
+        $this->value = '';
         $this->dataType = '';
+        $this->checksum = '';
 
         $this->isSecure = Schema::DEFAULT_IS_SECURE;
 
@@ -65,7 +68,6 @@ class ConfigurationProperty implements JsonSerializable
         $this->configuration = null;
         $this->property = null;
         $this->schema = null;
-        $this->user = null;
     }
 
     /**
@@ -79,14 +81,6 @@ class ConfigurationProperty implements JsonSerializable
     /**
      * @return string
      */
-    public function value()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return string
-     */
     public function key()
     {
         return $this->key;
@@ -95,9 +89,25 @@ class ConfigurationProperty implements JsonSerializable
     /**
      * @return string
      */
+    public function value()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return string
+     */
     public function dataType()
     {
         return $this->dataType;
+    }
+
+    /**
+     * @return string
+     */
+    public function checksum()
+    {
+        return $this->checksum;
     }
 
     /**
@@ -141,14 +151,6 @@ class ConfigurationProperty implements JsonSerializable
     }
 
     /**
-     * @return User|null
-     */
-    public function user()
-    {
-        return $this->user;
-    }
-
-    /**
      * @param string $id
      *
      * @return self
@@ -156,17 +158,6 @@ class ConfigurationProperty implements JsonSerializable
     public function withId($id)
     {
         $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return self
-     */
-    public function withValue($value)
-    {
-        $this->value = $value;
         return $this;
     }
 
@@ -182,6 +173,17 @@ class ConfigurationProperty implements JsonSerializable
     }
 
     /**
+     * @param string $value
+     *
+     * @return self
+     */
+    public function withValue($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    /**
      * @param string $dataType
      *
      * @return self
@@ -189,6 +191,17 @@ class ConfigurationProperty implements JsonSerializable
     public function withDataType($dataType)
     {
         $this->dataType = $dataType;
+        return $this;
+    }
+
+    /**
+     * @param string $checksum
+     *
+     * @return self
+     */
+    public function withChecksum($checksum)
+    {
+        $this->checksum = $checksum;
         return $this;
     }
 
@@ -248,17 +261,6 @@ class ConfigurationProperty implements JsonSerializable
     }
 
     /**
-     * @param User $user
-     *
-     * @return self
-     */
-    public function withUser(User $user)
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function jsonSerialize()
@@ -266,8 +268,9 @@ class ConfigurationProperty implements JsonSerializable
         $json = [
             'id' => $this->id(),
             'key' => $this->key(),
-            'dataType' => $this->dataType(),
             'value' => $this->value(),
+            'dataType' => $this->dataType(),
+            'checksum' => $this->checksum(),
 
             'isSecure' => $this->isSecure(),
 
@@ -275,8 +278,7 @@ class ConfigurationProperty implements JsonSerializable
 
             'configuration' => $this->configuration(),
             'property' => $this->property(),
-            'schema' => $this->schema(),
-            'user' => $this->user()
+            'schema' => $this->schema()
         ];
 
         return $json;

@@ -12,8 +12,8 @@ QL\Kraken\Entity\Property:
 
         value:
             column: value
-            type: string
-            length: 4000
+            type: text
+            length: 65535
         created:
             column: created_time
             type: timepoint

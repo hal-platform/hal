@@ -18,8 +18,12 @@ class Configuration implements JsonSerializable
      * @type string
      */
     protected $id;
-    protected $configuration;
-    protected $checksum;
+    protected $audit;
+
+    /**
+     * @type bool
+     */
+    protected $isSuccess;
 
     /**
      * @type Timepoint|null
@@ -44,9 +48,10 @@ class Configuration implements JsonSerializable
     public function __construct()
     {
         $this->id = '';
-        $this->configuration = '';
-        $this->checksum = '';
+        $this->audit = '';
         $this->created = null;
+
+        $this->isSuccess = false;
 
         $this->application = null;
         $this->environment = null;
@@ -62,19 +67,19 @@ class Configuration implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function configuration()
+    public function isSuccess()
     {
-        return $this->configuration;
+        return $this->isSuccess;
     }
 
     /**
      * @return string
      */
-    public function checksum()
+    public function audit()
     {
-        return $this->checksum;
+        return $this->audit;
     }
 
     /**
@@ -121,24 +126,24 @@ class Configuration implements JsonSerializable
     }
 
     /**
-     * @param string $configuration
+     * @param bool $isSuccess
      *
      * @return self
      */
-    public function withConfiguration($configuration)
+    public function withIsSuccess($isSuccess)
     {
-        $this->configuration = $configuration;
+        $this->isSuccess = (bool) $isSuccess;
         return $this;
     }
 
     /**
-     * @param string $checksum
+     * @param string $auditData
      *
      * @return self
      */
-    public function withChecksum($checksum)
+    public function withAudit($auditData)
     {
-        $this->checksum = $checksum;
+        $this->audit = $auditData;
         return $this;
     }
 
@@ -193,8 +198,8 @@ class Configuration implements JsonSerializable
     {
         $json = [
             'id' => $this->id(),
-            'configuration' => $this->configuration(),
-            'checksum' => $this->checksum(),
+            'isSuccess' => $this->isSuccess(),
+            'audit' => $this->audit(),
             'created' => $this->created() ? $this->created()->format(DateTime::RFC3339, 'UTC') : null,
 
             'application' => $this->application(),

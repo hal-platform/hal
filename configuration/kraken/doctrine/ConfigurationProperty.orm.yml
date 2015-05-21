@@ -22,8 +22,12 @@ QL\Kraken\Entity\ConfigurationProperty:
             type: boolean
         value:
             column: value
+            type: text
+            length: 65535
+        checksum:
+            column: checksum
             type: string
-            length: 4000
+            length: 40
         created:
             column: created_time
             type: timepoint
@@ -46,9 +50,3 @@ QL\Kraken\Entity\ConfigurationProperty:
             joinColumn:
                 name: schema_id
                 referencedColumnName: id
-        user:
-            cache: {usage : READ_ONLY}
-            targetEntity: QL\Hal\Core\Entity\User
-            joinColumn:
-                name: user_id
-                referencedColumnName: UserId
