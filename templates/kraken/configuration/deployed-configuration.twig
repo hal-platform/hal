@@ -14,33 +14,18 @@
     <h4>Environment</h4>
     <p>{{ configuration.environment.name }}</p>
 
-    <h4>Status</h4>
-    <p>
-        {% if is_deployed %}
-            {{ macros.status('Currently Deployed', 'success', 'tick') }}
-        {% else %}
-            Not Active
-        {% endif %}
-    </p>
-
-    <h4>Time Deployed</h4>
-    <p>{{ configuration.created|html5date }}</p>
-
-    <h4>Deployed By</h4>
-    <p>
-        {% if configuration.user %}
-            <a href="{{ urlFor('user', {id: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
-        {% else %}
-            Unknown
-        {% endif %}
-    </p>
-
-    <h2>Configuration</h2>
-    {% include 'kraken/partial/configuration.twig' with {'properties': properties} %}
+    <h4>Configuration ID</h4>
+    <p>{{ configuration.id }}</p>
 
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
-        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.compare', {application: application.id, configuration: configuration.id}) }}">Compare to latest configuration</a></li>
+        <li><a class="btn" href="{{ urlFor('kraken.configuration.compare', {application: application.id, configuration: configuration.id}) }}">Compare to latest configuration</a></li>
+        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id}) }}">Configuration History</a></li>
     </ul>
+
+    {% include 'kraken/partial/configuration.status.twig' %}
+
+    <h2>Configuration</h2>
+    {% include 'kraken/partial/configuration.twig' with {'properties': properties} %}
 
 {% endblock %}

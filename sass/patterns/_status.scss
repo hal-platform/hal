@@ -5,7 +5,7 @@
 .status-block--info,
 .status-block--error, {
     color: $white;
-    @include adjust-font-size-to(ms(1));
+    font-size: 75%;
     line-height: ms(6);
     padding: ms(-6);
     white-space: nowrap;

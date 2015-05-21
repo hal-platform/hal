@@ -130,7 +130,7 @@ class TimeFormatter
 
         // // 8 hrs - 72 hrs
         } else if ($hours > 8) {
-            if ($time->format('l') === $from->format('l')) {
+            if ($time->format('l', 'UTC') === $from->format('l', 'UTC')) {
                 return $time->format('g:i A', $this->timezone);
             } else {
                 return $time->format('l, g:i A', $this->timezone);

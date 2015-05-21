@@ -1,0 +1,36 @@
+{% import "partials/macros.twig" as macros %}
+
+<h2>Configuration Status</h2>
+<div class="details-box">
+    <dl class="split mbn">
+        <dt class="split__title">Status</dt>
+        <dd>
+            {% if configuration.isSuccess %}
+                {{ macros.status_icon('Success', 'success') }}
+            {% else %}
+                {{ macros.status_icon('Failed', 'error') }}
+            {% endif %}
+        </dd>
+
+        <dt class="split__title">Consul Status</dt>
+        <dd>
+            {% if is_deployed %}
+                {{ macros.status('Currently Deployed', 'success', 'tick') }}
+            {% else %}
+                Not Active
+            {% endif %}
+        </dd>
+
+        <dt class="split__title">Time</dt>
+        <dd>{{ configuration.created|html5date }}</dd>
+
+        <dt class="split__title">Initiator</dt>
+        <dd class="js-build-duration">
+            {% if configuration.user %}
+                <a href="{{ urlFor('user', {id: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
+            {% else %}
+                Unknown
+            {% endif %}
+        </dd>
+    </dl>
+</div>
