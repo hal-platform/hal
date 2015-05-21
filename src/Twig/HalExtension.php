@@ -13,9 +13,9 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\NameHelper;
-use QL\Hal\Helpers\TimeHelper;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GlobalMessageService;
+use QL\Hal\Utility\TimeFormatter;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -41,7 +41,7 @@ class HalExtension extends Twig_Extension
     private $url;
 
     /**
-     * @type TimeHelper
+     * @type TimeFormatter
      */
     private $time;
 
@@ -59,14 +59,14 @@ class HalExtension extends Twig_Extension
      * @param EncryptedCookies $cookies
      * @param GlobalMessageService $messageService
      * @param UrlHelper $url
-     * @param TimeHelper $time
+     * @param TimeFormatter $time
      * @param NameHelper $name
      */
     public function __construct(
         EncryptedCookies $cookies,
         GlobalMessageService $messageService,
         UrlHelper $url,
-        TimeHelper $time,
+        TimeFormatter $time,
         NameHelper $name
     ) {
         $this->cookies = $cookies;
@@ -99,6 +99,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
             new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
             new Twig_SimpleFunction('hash', [$this, 'hash']),
+
+            new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
 
             // other
             new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),

@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var moment = require('moment');
 
 exports.module = {
     interval: 5,
@@ -105,17 +106,25 @@ exports.module = {
             }
         }
 
-        if (data.start !== null) {
+        if (data.start) {
             var $start = $container.children('.js-build-start');
             if ($start.length > 0 && $start.children('time').length === 0) {
-                $start.html('<time datetime="' + data.start.datetime + '"></time>');
+                var formatted = this.formatTime(data.start);
+                $start.html('<time datetime="' + data.start + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>');
             }
         }
 
-        if (data.end !== null) {
+        if (data.end) {
             var $end = $container.children('.js-build-end');
             if ($end.length > 0 && $end.children('time').length === 0) {
-                $end.html('<time datetime="' + data.end.datetime + '"></time>');
+                var formatted = this.formatTime(data.end);
+                $end.html('<time datetime="' + data.end + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>');
+            }
+
+            var $duration = $container.children('.js-build-duration');
+            if ($duration.length > 0 && $duration.children('time').length === 0) {
+                var formatted = this.formatDuration(data.start, data.end);
+                $duration.html('<time datetime="' + formatted.iso + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>');
             }
         }
     },
@@ -128,5 +137,32 @@ exports.module = {
                 .children('.js-build-push')
                 .html('<a class="btn btn--tiny" href="' + this.generateUrl(data.id, 'push') + '">Push</a>');
         }
+    },
+    formatTime: function(time) {
+        time = moment(time);
+
+        return {
+            absolute: time.format('MMM D, YYYY h:mm A'),
+            relative: time.fromNow()
+        };
+    },
+    formatDuration: function(start, end) {
+        var start = moment(start),
+            end = moment(end),
+            stupidduration = end.diff(start, 'seconds');
+
+        var minutes = stupidduration / 60,
+            seconds = stupidduration % 60;
+
+        var iso = "PT" + minutes + "M" + seconds + "S",
+            duration = moment.duration(iso),
+            relative = duration.humanize(),
+            absolute = duration.minutes() + " minutes, " + duration.seconds() + " seconds";
+
+        return {
+            iso: iso,
+            absolute: absolute,
+            relative: relative
+        };
     }
 };

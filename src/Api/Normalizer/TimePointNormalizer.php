@@ -1,38 +1,57 @@
 <?php
+/**
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api\Normalizer;
 
+use DateTime;
 use MCP\DataType\Time\TimePoint;
-use QL\Hal\Helpers\TimeHelper;
 
-/**
- * TimePoint Object Normalizer
- */
 class TimePointNormalizer
 {
-    /**
-     * @var TimeHelper
-     */
-    private $time;
+    const DEFAULT_FORMAT = 'c';
+    const DEFAULT_TIMEZONE = 'UTC';
 
     /**
-     * @param TimeHelper $time
+     * @type string
      */
-    public function __construct(
-        TimeHelper $time
-    ) {
-        $this->time = $time;
+    private $fomat;
+
+    /**
+     * @type string
+     */
+    private $timezone;
+
+    /**
+     * @param string $format
+     * @param string $timezone
+     */
+    public function __construct($format = '', $timezone = self::DEFAULT_TIMEZONE)
+    {
+        if (!$format) {
+            $format = DateTime::ISO8601;
+        }
+
+        $this->format = $format;
+        $this->timezone = $timezone;
     }
 
     /**
-     * @param TimePoint $time
-     * @return array
+     * @param TimePoint|null $time
+     *
+     * @return string|null
      */
     public function normalize(TimePoint $time = null)
     {
-        return (is_null($time)) ? null : [
-            'text' => $this->time->relative($time),
-            'datetime' => $this->time->format($time, 'c')
-        ];
+        if (!$time) {
+            return null;
+        }
+
+        $formatted = $time->format($this->format, $this->timezone);
+
+        return str_replace('+0000', 'Z', $formatted);
     }
 }

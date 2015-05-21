@@ -97,6 +97,13 @@
                 {{ push.end|html5date }}
             </dd>
 
+            <dt class="split__title">Duration</dt>
+            <dd class="js-push-duration">
+                {% if push.start and push.end %}
+                    {{ html5duration(push.start, push.end) }}
+                {% endif %}
+            </dd>
+
             <dt class="split__title">Initiator</dt>
             <dd>
                 {% if push.user %}

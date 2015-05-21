@@ -125,10 +125,6 @@ services:
         calls:
             - ['setCache', [@cache]]
 
-    time.helper:
-        class: 'QL\Hal\Helpers\TimeHelper'
-        arguments: [@clock, %date.timezone%]
-
     name.helper:
         class: 'QL\Hal\Helpers\NameHelper'
 
@@ -148,6 +144,10 @@ services:
             - %github.app.id%
             - %github.app.secret%
 
+    utility.time.formatter:
+        class: 'QL\Hal\Utility\TimeFormatter'
+        arguments: [@clock, %date.timezone%]
+
     guzzle:
         class: 'GuzzleHttp\Client'
 
@@ -161,7 +161,7 @@ services:
             - @slim.cookies
             - @global.message
             - @url.helper
-            - @time.helper
+            - @utility.time.formatter
             - @name.helper
 
     twig.extension.hal.global:
@@ -356,8 +356,6 @@ services:
 
     normalizer.timepoint:
         class: 'QL\Hal\Api\Normalizer\TimePointNormalizer'
-        arguments:
-            - @time.helper
 
     normalizer.user:
         class: 'QL\Hal\Api\Normalizer\UserNormalizer'

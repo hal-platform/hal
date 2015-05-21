@@ -2,7 +2,7 @@ var $ = require('jquery');
 var moment = require('moment');
 
 exports.module = {
-    interval: 5,
+    interval: 10,
 
     init: function() {
         this.refreshTimes();
@@ -16,12 +16,22 @@ exports.module = {
             var $this = $(this),
                 time = $this.attr('datetime');
 
-            time = moment(time);
-            var reltime = time.fromNow(),
-                formattedtime = time.format('MMM D, YYYY h:mm A');
+            if (time.charAt(0) === 'P') {
 
-            $this.text(reltime);
-            $this.attr('title', formattedtime);
+                var duration = moment.duration(time),
+                    relative = duration.humanize(),
+                    absolute = duration.minutes() + " minutes, " + duration.seconds() + " seconds";
+
+            } else {
+
+                var momenttime = moment(time),
+                    relative = momenttime.fromNow(),
+                    absolute = momenttime.format('MMM D, YYYY h:mm A');
+
+            }
+
+            $this.text(relative);
+            $this.attr('title', absolute);
         });
     }
 };

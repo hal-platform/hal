@@ -63,19 +63,26 @@
 
             <dt class="split__title">End</dt>
             <dd class="js-build-end">{{ build.end|html5date }}</dd>
+
+            <dt class="split__title">Duration</dt>
+            <dd class="js-build-duration">
+                {% if build.start and build.end %}
+                    {{ html5duration(build.start, build.end) }}
+                {% endif %}
+            </dd>
         </dl>
     </div>
 
     {% if canUserBuild(currentUser, build.repository.key) %}
         {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
-        {% set unpushableMessage = 'Your build cannot be pushed.' %}
+        {% set unpushableMessage = 'The build cannot be pushed.' %}
 
         {% if build.status == 'Success' %}
             <h3>{{ pushableMessage }}</h3>
             <p><a class="btn btn--action" href="{{ urlFor('push.start', {'build': build.id}) }}">Push Build</a></p>
         {% elseif build.status in ['Waiting', 'Building'] %}
             <h3 data-success="{{ pushableMessage }}" data-failure="{{ unpushableMessage }}">
-                Your build is still pending. Please wait to push it.
+                The build is still pending. Please wait to push it.
             </h3>
             <p class="js-build-push"><span class="btn btn--disabled js-build-push">Push Build</span></p>
         {% else %}
