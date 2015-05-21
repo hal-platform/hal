@@ -1,5 +1,5 @@
 var $ = require('jquery');
-var moment = require('moment');
+var formatter = require('./time-formatter').module;
 
 exports.module = {
     interval: 10,
@@ -14,24 +14,19 @@ exports.module = {
         $times = $('time[datetime]');
         $times.each(function() {
             var $this = $(this),
-                time = $this.attr('datetime');
+                time = $this.attr('datetime'),
+                formatted;
 
             if (time.charAt(0) === 'P') {
-
-                var duration = moment.duration(time),
-                    relative = duration.humanize(),
-                    absolute = duration.minutes() + " minutes, " + duration.seconds() + " seconds";
+                formatted = formatter.formatDuration(time);
 
             } else {
-
-                var momenttime = moment(time),
-                    relative = momenttime.fromNow(),
-                    absolute = momenttime.format('MMM D, YYYY h:mm A');
-
+                formatted = formatter.formatTime(time);
             }
 
-            $this.text(relative);
-            $this.attr('title', absolute);
+            $this.text(formatted.relative);
+            $this.attr('title', formatted.absolute);
+
         });
     }
 };

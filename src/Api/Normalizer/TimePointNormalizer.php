@@ -12,7 +12,6 @@ use MCP\DataType\Time\TimePoint;
 
 class TimePointNormalizer
 {
-    const DEFAULT_FORMAT = 'c';
     const DEFAULT_TIMEZONE = 'UTC';
 
     /**

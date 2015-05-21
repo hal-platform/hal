@@ -52,10 +52,15 @@ class TimeFormatter
             return '';
         }
 
+        $absolute = $time->format(DateTime::ISO8601, 'UTC');
+        $absolute = str_replace('+0000', 'Z', $absolute);
+
+        $relative = $this->relative($time);
+
         return sprintf(
             '<time datetime="%s">%s</time>',
-            $time->format(DateTime::RFC3339, 'UTC'),
-            $time->format(self::OUTPUT_FORMAT_DATE, $this->timezone)
+            $absolute,
+            $relative
         );
     }
 
@@ -95,4 +100,63 @@ class TimeFormatter
         );
     }
 
+    /**
+     * @param TimePoint $time
+     * @param TimePoint|null $from
+     *
+     * @return string
+     */
+    private function relative(TimePoint $time, TimePoint $from = null)
+    {
+        if (!$from) {
+            $from = $this->clock->read();
+        }
+
+        $interval = $time->diff($from);
+        $days = $interval->format('%a');
+        $hours = $interval->format('%h');
+
+        // > 6 months
+        if ($days > 180) {
+            return $time->format('M j, Y', $this->timezone);
+
+        // 2 weeks - 6 months
+        } elseif ($days > 14) {
+            return $time->format('F j', $this->timezone);
+
+        // // 3 day - 1 week
+        } elseif ($days > 3) {
+            return $time->format('M j, g:i A', $this->timezone);
+
+        // // 8 hrs - 72 hrs
+        } else if ($hours > 8) {
+            if ($time->format('l') === $from->format('l')) {
+                return $time->format('g:i A', $this->timezone);
+            } else {
+                return $time->format('l, g:i A', $this->timezone);
+            }
+
+        // // 4 hrs - 8 hrs
+        } else if ($hours > 4) {
+            return sprintf('%d hours ago', $hours);
+
+        // // 1 hr - 4 hr
+        } else if ($hours > 1) {
+
+            $human = sprintf('%d hours', $hours);
+            if ($minutes = $interval->format('%i')) {
+                $human .= sprintf(', %d minutes' , $minutes);
+            }
+
+            return sprintf('%s ago', $human);
+        }
+
+        // less than 1 hr, seconds
+        $human = sprintf('%d seconds', $interval->format('%s'));
+        if ($minutes = $interval->format('%i')) {
+            $human = sprintf('%d minutes, ' , $minutes) . $human;
+        }
+
+        return sprintf('%s ago', $human);
+    }
 }

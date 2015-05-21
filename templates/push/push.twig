@@ -87,15 +87,8 @@
             <dt class="split__title">Status</dt>
             <dd>{{ macros.job_status(push, true) }}</dd>
 
-            <dt class="split__title">Start</dt>
-            <dd class="js-push-start">
-                {{ push.start|html5date }}
-            </dd>
-
-            <dt class="split__title">End</dt>
-            <dd class="js-push-end">
-                {{ push.end|html5date }}
-            </dd>
+            <dt class="split__title">Time</dt>
+            <dd class="js-push-start">{{ push.start|html5date }}</dd>
 
             <dt class="split__title">Duration</dt>
             <dd class="js-push-duration">

@@ -17,9 +17,9 @@ module.exports = {
             'jquery.tablesaw',
 
             'crossroads',
-            'moment',
             'nunjucks',
             'signals',
+            'sugarjs-date',
             'svg4everybody',
             'typed',
             'underscore'
@@ -35,9 +35,9 @@ module.exports = {
             'jquery.tablesaw':      vendorRoot + '/tablesaw/dist/stackonly/tablesaw.stackonly.js',
 
             'crossroads':           vendorRoot + '/crossroads/dist/crossroads.js',
-            'moment':               vendorRoot + '/moment/moment.js',
             'nunjucks':             vendorRoot + '/nunjucks/browser/nunjucks.js',
             'signals':              vendorRoot + '/js-signals/dist/signals.js',
+            'sugarjs-date':         vendorRoot + '/sugarjs-date/sugar-date.js',
             'svg4everybody':        vendorRoot + '/svg4everybody/svg4everybody.js',
             'typed':                vendorRoot + '/typed.js/js/typed.js',
             'underscore':           vendorRoot + '/underscore/underscore.js'

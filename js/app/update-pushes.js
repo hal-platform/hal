@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var formatter = require('./util/time-formatter').module;
 
 exports.module = {
     interval: 5,
@@ -87,22 +88,14 @@ exports.module = {
         if (data.start) {
             var $start = $container.children('.js-push-start');
             if ($start.length > 0 && $start.children('time').length === 0) {
-                var formatted = this.formatTime(data.start);
-                $start.html('<time datetime="' + data.start + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>');
+                $start.html(this.createTimeElement(data.start));
             }
         }
 
         if (data.end) {
-            var $end = $container.children('.js-push-end');
-            if ($end.length > 0 && $end.children('time').length === 0) {
-                var formatted = this.formatTime(data.end);
-                $end.html('<time datetime="' + data.end + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>');
-            }
-
             var $duration = $container.children('.js-push-duration');
             if ($duration.length > 0 && $duration.children('time').length === 0) {
-                var formatted = this.formatDuration(data.start, data.end);
-                $duration.html('<time datetime="' + formatted.iso + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>');
+                $duration.html(this.createTimeDuration(data.start, data.end));
             }
         }
     },
@@ -120,31 +113,32 @@ exports.module = {
             relative: time.fromNow()
         };
     },
-    formatTime: function(time) {
-        time = moment(time);
-
-        return {
-            absolute: time.format('MMM D, YYYY h:mm A'),
-            relative: time.fromNow()
-        };
+    createTimeElement: function(time) {
+        var formatted = formatter.formatTime(time);
+        return '<time datetime="' + time + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>';
     },
-    formatDuration: function(start, end) {
-        var start = moment(start),
-            end = moment(end),
-            stupidduration = end.diff(start, 'seconds');
+    createTimeDuration: function(start, end) {
+        var duration = formatter.calculateDuration(start, end),
+            formatted = formatter.formatDuration(duration);
+        return '<time datetime="' + duration + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>';
+    },
+    // formatDuration: function(start, end) {
+    //     var start = moment(start),
+    //         end = moment(end),
+    //         stupidduration = end.diff(start, 'seconds');
 
-        var minutes = stupidduration / 60,
-            seconds = stupidduration % 60;
+    //     var minutes = stupidduration / 60,
+    //         seconds = stupidduration % 60;
 
-        var iso = "PT" + minutes + "M" + seconds + "S",
-            duration = moment.duration(iso),
-            relative = duration.humanize(),
-            absolute = duration.minutes() + " minutes, " + duration.seconds() + " seconds";
+    //     var iso = "PT" + minutes + "M" + seconds + "S",
+    //         duration = moment.duration(iso),
+    //         relative = duration.humanize(),
+    //         absolute = duration.minutes() + " minutes, " + duration.seconds() + " seconds";
 
-        return {
-            iso: iso,
-            absolute: absolute,
-            relative: relative
-        };
-    }
+    //     return {
+    //         iso: iso,
+    //         absolute: absolute,
+    //         relative: relative
+    //     };
+    // }
 };
