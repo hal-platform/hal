@@ -65,6 +65,7 @@ services:
             - @kraken.configuration
             - @kraken.consul
             - @doctrine.em
+            - @json
     kraken.configuration.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/snapshot.twig']]]

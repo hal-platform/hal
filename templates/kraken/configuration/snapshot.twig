@@ -27,4 +27,51 @@
     <h2>Configuration</h2>
     {% include 'kraken/partial/configuration.twig' with {'properties': properties} %}
 
+    <h2>Deployment Audit Log</h2>
+    {% if audits %}
+        <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th class="t15">Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in audits %}
+                    <tr>
+                        <td><code class="code_clear">{{ log.key }}</code></td>
+                        <td>
+                            {{ log.type == 'update' ? 'Update' : 'Removal' }}
+                        </td>
+                        <td>
+                            {% if log.isSuccess %}
+                                <span class="tooltipped tooltipped-n" aria-label="The property was updated successfully">
+                                    {{ macros.status_icon('Success', 'success') }}
+                                </span>
+
+                            {% elseif log.detail is same as(false) %}
+                                <span class="tooltipped tooltipped-n" aria-label="The property was not updated. The system failed to obtain a lock.">
+                                    {{ macros.status_icon('Consul Error', 'error') }}
+                                </span>
+
+                            {% elseif log.detail is same as(null) %}
+                                <span class="tooltipped tooltipped-n" aria-label="The property was not updated. An unexpected error occured.">
+                                    {{ macros.status_icon('Unknown Error', 'error') }}
+                                </span>
+                            {% else %}
+                                <span class="tooltipped tooltipped-n" aria-label="The property was not updated. A service error occured.">
+                                    {{ macros.status_icon('Error: ' ~ log.detail, 'error') }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            <tbody>
+        </table>
+    {% else %}
+        <p>There is no deployment log.</p>
+    {% endif %}
+
 {% endblock %}
