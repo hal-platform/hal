@@ -7,15 +7,17 @@
 
 namespace QL\Kraken\Controller\Configuration;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Configuration;
 use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Target;
+use QL\Kraken\Service\ConsulService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class DeployedConfigurationController implements ControllerInterface
+class SnapshotController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -33,29 +35,37 @@ class DeployedConfigurationController implements ControllerInterface
     private $configuration;
 
     /**
+     * @type ConsulService
+     */
+    private $consul;
+
+    /**
      * @type EntityRepository
      */
     private $targetRepo;
-    private $propertyRepo;
+    private $configurationPropertyRepo;
 
     /**
      * @param TemplateInterface $template
      * @param Application $application
      * @param Configuration $configuration
-     * @param EntityManager $em
+     * @param ConsulService $consul
+     * @param EntityManagerInterface $em
      */
     public function __construct(
         TemplateInterface $template,
         Application $application,
         Configuration $configuration,
-        $em
+        ConsulService $consul,
+        EntityManagerInterface $em
     ) {
         $this->template = $template;
         $this->application = $application;
         $this->configuration = $configuration;
 
+        $this->consul = $consul;
         $this->targetRepo = $em->getRepository(Target::CLASS);
-        $this->propertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
+        $this->configurationPropertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
     }
 
     /**
@@ -65,17 +75,41 @@ class DeployedConfigurationController implements ControllerInterface
     {
         $target = $this->targetRepo->findOneBy(['configuration' => $this->configuration]);
 
-        $properties = $this->propertyRepo->findBy([
+        $properties = $this->configurationPropertyRepo->findBy([
             'configuration' => $this->configuration
         ], ['key' => 'ASC']);
+
+        $isDeployed = ($target->configuration()->id() === $this->configuration->id());
+
+        $checksums = ($isDeployed) ? $this->getChecksums($target) : [];
 
         $context = [
             'application' => $this->application,
             'configuration' => $this->configuration,
+
             'properties' => $properties,
-            'target' => $target
+            'target' => $target,
+
+            'is_deployed' => $isDeployed,
+            'checksums' => $checksums
         ];
 
         $this->template->render($context);
+    }
+
+    /**
+     * @param Target $target
+     *
+     * @return array
+     */
+    private function getChecksums(Target $target)
+    {
+        $checksums = $this->consul->getChecksums($target);
+
+        if ($checksums === null) {
+            return [];
+        }
+
+        return $checksums;
     }
 }

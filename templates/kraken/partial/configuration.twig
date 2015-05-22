@@ -5,7 +5,7 @@
     <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
         <thead>
             <tr>
-                {% if show_property_link %}
+                {% if show_property_link or is_deployed %}
                     <th></th>
                 {% endif %}
                 <th>Property</th>
@@ -30,6 +30,7 @@
                                     <span class="tablesaw-collapse">Manage Property Schema</span>
                                 </a>
                             </td>
+
                         {% endif %}
 
                         <td><code class="code_clear">{{ property.schema.key }}</code></td>
@@ -39,8 +40,16 @@
 
                     {% elseif property is configurationProperty %}
 
-                        {% if show_property_link %}
-                            <td></td>
+                        {% if show_property_link or is_deployed %}
+                            <td>
+                                {% if checksums[property.key] == property.checksum %}
+                                    {{ macros.status_icon('', 'success', {title: 'Verified'}) }}
+                                    <span class="tablesaw-collapse">Verified</span>
+                                {% else %}
+                                    {{ macros.status_icon('', 'error', {title: 'Missing or different from consul backend'}) }}
+                                    <span class="tablesaw-collapse">Missing or different from consul backend</span>
+                                {% endif %}
+                            </td>
                         {% endif %}
 
                         <td><code class="code_clear">{{ property.key }}</code></td>

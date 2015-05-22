@@ -1,7 +1,6 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 
-{% set is_deployed = target.configuration.id == configuration.id %}
 {% set page_title = is_deployed ? 'Deployed Snapshot' : 'Snapshot' %}
 
 {% block content %}

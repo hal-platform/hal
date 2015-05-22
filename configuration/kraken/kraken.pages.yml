@@ -39,7 +39,6 @@ services:
         arguments:
             - @kraken.status.twig
             - @kraken.application
-            - @kraken.consul
             - @doctrine.em
     kraken.status.twig:
         parent: 'kraken.template'
@@ -59,16 +58,17 @@ services:
     # CONFIGURATION
     ####################################################################################################################
 
-    kraken.application.configuration.deployed.page:
-        class: 'QL\Kraken\Controller\Configuration\DeployedConfigurationController'
+    kraken.configuration.page:
+        class: 'QL\Kraken\Controller\Configuration\SnapshotController'
         arguments:
-            - @kraken.application.configuration.twig
+            - @kraken.configuration.twig
             - @kraken.application
             - @kraken.configuration
+            - @kraken.consul
             - @doctrine.em
-    kraken.application.configuration.twig:
+    kraken.configuration.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/configuration/deployed-configuration.twig']]]
+        calls: [['setTemplate', ['kraken/configuration/snapshot.twig']]]
 
     kraken.configuration.latest.page:
         class: 'QL\Kraken\Controller\Configuration\Latest\LatestConfigurationController'

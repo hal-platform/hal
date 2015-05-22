@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Utils;
+use MCP\Cache\CachingTrait;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Entity\Target;
@@ -19,9 +20,12 @@ use QL\Kraken\Service\ConsulBatchTrait;
 
 class ConsulService
 {
+    use CachingTrait;
     use ConsulBatchTrait;
 
     const KV_ENDPOINT = '/{version}/kv/{application}/';
+    const CACHE_CHECKSUMS = 'consul:%s:checksums';
+    const CACHE_CHECKSUMS_TTL = 'consul:%s:checksums';
 
     /**
      * @type Client
@@ -148,6 +152,10 @@ class ConsulService
             $requests[$key] = $this->createRequest('DELETE', $url, ['query' => array_merge($query, $requestQuery)]);
         }
 
+        // clear checksum cache
+        $key = sprintf(self::CACHE_CHECKSUMS, $target->application()->id());
+        $this->setToCache($key, null, 1);
+
         // This could take a while...
         $updates = $this->handleBatch($requests);
 
@@ -159,44 +167,31 @@ class ConsulService
         return $updates;
     }
 
-    // /**
-    //  * @param Configuration $configuration
-    //  * @param Target $target
-    //  *
-    //  * @return string|null
-    //  */
-    // public function getChecksum(Configuration $configuration, Target $target)
-    // {
-    //     if (!$endpoint = $this->buildEndpoint($target->application(), $target->environment())) {
-    //         return null;
-    //     }
+    /**
+     * @param Target $target
+     *
+     * @return string[]|null
+     */
+    public function getChecksums(Target $target)
+    {
+        $key = sprintf(self::CACHE_CHECKSUMS, $target->application()->id());
+        if (null !== ($data = $this->getFromCache($key))) {
+            return json_decode($key);
+        }
 
-    //     if ($token = $target->environment()->consulToken()) {
-    //         $options['query'] = ['token' => $token];
-    //     }
+        $current = $this->getDeployedConfiguration($target, true);
 
-    //     try {
-    //         $response = $this->guzzle->get($endpoint, $options);
-    //         $json = $response->json();
+        if ($current === null) {
+            return null;
+        }
 
-    //     } catch (ParseException $ex) {
-    //         return null;
+        array_walk($current, function(&$v, $k) {
+            $v = sha1($v['value']);
+        });
 
-    //     } catch (RequestException $ex) {
-    //         return null;
-    //     }
-
-    //     if (!isset($json[0]) && !isset($json[0]['Value'])) {
-    //         return null;
-    //     }
-
-    //     $value = base64_decode($json[0]['Value']);
-    //     $checksum = sha1($value);
-
-    //     // @todo cache here
-
-    //     return $checksum;
-    // }
+        $this->setToCache($key, json_encode($current), self::CACHE_CHECKSUMS_TTL);
+        return $current;
+    }
 
     /**
      * @param Application $application
