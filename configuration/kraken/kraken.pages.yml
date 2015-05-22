@@ -111,7 +111,7 @@ services:
     ####################################################################################################################
 
     kraken.application.add.page:
-        class: 'QL\Kraken\Controller\Application\AddApplicationController'
+        class: 'QL\Kraken\Controller\AddApplicationController'
         arguments:
             - @slim.request
             - @kraken.application.add.twig

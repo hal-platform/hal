@@ -9,11 +9,14 @@ namespace QL\Kraken\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Kraken\Entity\Environment;
+use QL\Kraken\Utility\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class EnvironmentsController implements ControllerInterface
 {
+    use SortingHelperTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -41,8 +44,11 @@ class EnvironmentsController implements ControllerInterface
      */
     public function __invoke()
     {
+        $environments = $this->repository->findAll();
+        usort($environments, $this->environmentSorter());
+
         $context = [
-            'environments' => $this->repository->findBy([], ['name' => 'ASC'])
+            'environments' => $environments
         ];
 
         $this->template->render($context);

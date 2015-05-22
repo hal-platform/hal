@@ -31,11 +31,12 @@
     {% endif %}
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.applications') }}">Kraken Applications</a></li>
-
         {% if not admin %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.add_environment') }}">Add Environment</a></li>
         {% endif %}
+
+        <li><a class="btn" href="{{ urlFor('kraken.applications') }}">Applications</a></li>
+
     </ul>
 {% endblock %}
 

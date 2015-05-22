@@ -36,10 +36,10 @@
 
                 <li>
                     <label for="enc-key">
-                        Encryption Key Identifier
+                        QKS Identifier
                         <small class="additional">
-                            Specify the identifier used to retrieve the encryption key from the encryption service.
-                            Configuration data is encrypted with the key returned by this service.
+                            Specify the QKS identifier for this application and environment.
+                            Configuration data is encrypted with the key returned by QKS.
                         </small>
                     </label>
                     <input type="text" name="key" id="enc-key" maxlength="200" required value="{{ form.key }}" class="text-input">

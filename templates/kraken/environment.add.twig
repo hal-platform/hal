@@ -18,14 +18,23 @@
             <ul class="form-fields">
                 <li>
                     <label for="env-name">Name</label>
+                    <small class="additional">The name of the environment such as <b>test</b> or <b>prod</b>.</small>
+
                     <input type="text" name="name" id="env-name" maxlength="40" required value="{{ form.name }}" class="text-input t50">
                 </li>
                 <li>
                     <label for="env-server">Consul Server</label>
+                    <small class="additional">
+                        The consul server associated with this environment.
+                        <br>Must be the full URL and begin with <code>http://</code> or <code>https://</code>.
+                    </small>
+
                     <input type="text" name="server" id="env-server" maxlength="200" required value="{{ form.server }}" class="text-input">
                 </li>
                 <li>
                     <label for="env-token">Consul Token</label>
+                    <small class="additional">Access token for consul. Optional.</small>
+
                     <input type="text" name="token" id="env-token" maxlength="200" value="{{ form.token }}" class="text-input" autocomplete="off">
                 </li>
             </ul>

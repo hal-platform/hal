@@ -8,13 +8,13 @@
     <h1>Applications</h1>
 
     {% if applications %}
-        <table class="table--spacing-medium">
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Core ID</th>
-                    <th></th>
-                    <th></th>
+                    <th><span class="tablesaw-collapse">Core Website</span></th>
+                    <th><span class="tablesaw-collapse">HAL 9000</span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -30,11 +30,11 @@
                         </td>
                         <td>
                             {% if app.halRepository %}
-                                <a href="{{ urlFor('repository.status', {id: app.halRepository.id})}}">{{ macros.icon('spinner-3') }} HAL Status</a>
+                                <a href="{{ urlFor('repository.status', {id: app.halRepository.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
                             {% endif %}
                         </td>
                         <td class="tr">
-                            <a class="btn" href="{{ urlFor('kraken.status', {application: app.id}) }}">Status</a>
+                            <a class="btn" href="{{ urlFor('kraken.status', {application: app.id}) }}">Configuration</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -45,11 +45,11 @@
     {% endif %}
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.environments') }}">Kraken Environments</a></li>
-
         {% if not admin %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.add_application') }}">Add Application</a></li>
         {% endif %}
+
+        <li><a class="btn" href="{{ urlFor('kraken.environments') }}">Environments</a></li>
     </ul>
 
 {% endblock %}

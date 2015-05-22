@@ -138,11 +138,30 @@ table.tablesaw {
 /*
 CUSTOM OVERRIDES
  */
-@media (min-width: 40em) {
-    .tablesaw-stack td.tr {
-        text-align: right;
+
+@media (max-width: 39.9375em) {
+    .tablesaw-stack thead {
+        display: none;
     }
-    .tablesaw-stack td.tl {
-        text-align: left;
+
+    .tablesaw-stack tbody tr {
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        td:first-child {
+            margin-top: 2.5em;
+        }
+    }
+}
+
+@media (min-width: 40em) {
+    .tablesaw-stack {
+        td.tr {
+            text-align: right;
+        }
+        td.tl {
+            text-align: left;
+        }
     }
 }

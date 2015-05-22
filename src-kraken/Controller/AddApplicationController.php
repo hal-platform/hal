@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Application;
+namespace QL\Kraken\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
