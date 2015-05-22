@@ -18,7 +18,7 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\NotFound;
 
-class LatestConfigurationController implements ControllerInterface
+class ConfigurationController implements ControllerInterface
 {
     /**
      * @type TemplateInterface

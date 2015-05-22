@@ -14,7 +14,7 @@
                 <tr>
                     <td><code class="code_clear">{{ property.key }}</code></td>
                     <td>
-                        {{ property.isSecure ? macros.icon('locked') : '' }}
+                        {{ property.isSecure ? macros.icon('locked', '', 'This value is sensitive') : '' }}
                         {{ property|formatSchemaType }}
                     </td>
                     <td>{{ property.description }}</td>

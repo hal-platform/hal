@@ -17,8 +17,7 @@ services:
             - @slim.request
             - @kraken.applications.twig
             - @doctrine.em
-            - @url
-            - @session
+            - @session.flasher
     kraken.applications.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/applications.twig']]]
@@ -71,7 +70,7 @@ services:
         calls: [['setTemplate', ['kraken/configuration/snapshot.twig']]]
 
     kraken.configuration.latest.page:
-        class: 'QL\Kraken\Controller\Configuration\Latest\LatestConfigurationController'
+        class: 'QL\Kraken\Controller\Configuration\Latest\ConfigurationController'
         arguments:
             - @kraken.configuration.latest.twig
             - @kraken.application
@@ -111,28 +110,28 @@ services:
     # CRUD
     ####################################################################################################################
 
-    kraken.add_application.page:
+    kraken.application.add.page:
         class: 'QL\Kraken\Controller\Application\AddApplicationController'
         arguments:
             - @slim.request
-            - @kraken.add_application.twig
-            - @session.flashfire
+            - @kraken.application.add.twig
+            - @session.flasher
             - @doctrine.em
             - @repository.repo
             - @kraken.random
-    kraken.add_application.twig:
+    kraken.application.add.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application.add.twig']]]
 
-    kraken.add_environment.page:
-        class: 'QL\Kraken\Controller\Environment\AddEnvironmentController'
+    kraken.environment.add.page:
+        class: 'QL\Kraken\Controller\AddEnvironmentController'
         arguments:
             - @slim.request
-            - @kraken.add_environment.twig
-            - @session.flashfire
+            - @kraken.environment.add.twig
+            - @session.flasher
             - @doctrine.em
             - @kraken.random
-    kraken.add_environment.twig:
+    kraken.environment.add.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/environment.add.twig']]]
 
@@ -140,16 +139,16 @@ services:
     # CRUD - APPLICATION
     ####################################################################################################################
 
-    kraken.application.add_target.page:
+    kraken.application.target.add.page:
         class: 'QL\Kraken\Controller\Application\AddTargetController'
         arguments:
             - @slim.request
-            - @kraken.application.add_target.twig
+            - @kraken.application.target.add.twig
             - @kraken.application
             - @doctrine.em
-            - @url
-            - @session
-    kraken.application.add_target.twig:
+            - @session.flasher
+            - @kraken.random
+    kraken.application.target.add.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/target.add.twig']]]
 
@@ -175,7 +174,7 @@ services:
             - @kraken.application
             - @currentUser
             - @doctrine.em
-            - @session.flashfire
+            - @session.flasher
             - @kraken.random
     kraken.schema.add.twig:
         parent: 'kraken.template'

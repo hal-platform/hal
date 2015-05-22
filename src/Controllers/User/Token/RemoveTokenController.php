@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\FlashFire;
+use QL\Hal\Flasher;
 use QL\Hal\Services\PermissionsService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -32,9 +32,9 @@ class RemoveTokenController implements ControllerInterface
     private $tokenRepo;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type PermissionsService
@@ -61,7 +61,7 @@ class RemoveTokenController implements ControllerInterface
      * @param EntityRepository $tokenRepo
      * @param PermissionsService $permissions
      * @param User $currentUser
-     * @param FlashFire $flashFire
+     * @param Flasher $flasher
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -70,7 +70,7 @@ class RemoveTokenController implements ControllerInterface
         EntityRepository $tokenRepo,
         PermissionsService $permissions,
         User $currentUser,
-        FlashFire $flashFire,
+        Flasher $flasher,
         NotFound $notFound,
         array $parameters
     ) {
@@ -79,7 +79,7 @@ class RemoveTokenController implements ControllerInterface
         $this->permissions = $permissions;
 
         $this->currentUser = $currentUser;
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
 
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -97,7 +97,9 @@ class RemoveTokenController implements ControllerInterface
         }
 
         if (!$this->isUserAllowed($token->getUser())) {
-            return $this->flashFire->fire(self::ERR_DENIED, 'settings', 'error');
+            return $this->flasher
+                ->withFlash(self::ERR_DENIED, 'error')
+                ->load('settings');
         }
 
         $label = $token->getLabel();
@@ -105,7 +107,9 @@ class RemoveTokenController implements ControllerInterface
         $this->entityManager->remove($token);
         $this->entityManager->flush();
 
-        $this->flashFire->fire(sprintf(self::SUCCESS, $label), 'settings', 'success');
+        $this->flasher
+            ->withFlash(sprintf(self::SUCCESS, $label), 'success');
+            ->load('settings');
     }
 
     /**

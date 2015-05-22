@@ -8,13 +8,13 @@
 namespace QL\Kraken\Controller\Application;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Hal\Core\Entity\Repository as HalRepository;
-use QL\Hal\FlashFire;
+use QL\Hal\Flasher;
 use Slim\Http\Request;
 
 class AddApplicationController implements ControllerInterface
@@ -41,7 +41,7 @@ class AddApplicationController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -52,9 +52,9 @@ class AddApplicationController implements ControllerInterface
     private $halRepo;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type callable
@@ -69,22 +69,22 @@ class AddApplicationController implements ControllerInterface
     /**
      * @param Request $request
      * @param TemplateInterface $template
-     * @param FlashFire $flashFire
-     * @param EntityManager $em
+     * @param Flasher $flasher
+     * @param EntityManagerInterface $em
      * @param EntityRepository $halRepo
      * @param callable $random
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
-        FlashFire $flashFire,
-        EntityManager $em,
+        Flasher $flasher,
+        EntityManagerInterface $em,
         EntityRepository $halRepo,
         callable $random
     ) {
         $this->request = $request;
         $this->template = $template;
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
         $this->random = $random;
 
         $this->em = $em;
@@ -105,7 +105,9 @@ class AddApplicationController implements ControllerInterface
 
             if ($application = $this->handleForm()) {
                 // flash and redirect
-                $this->flashFire->fire(sprintf(self::SUCCESS, $application->name()), 'kraken.applications', 'success');
+                $this->flasher
+                    ->withFlash(sprintf(self::SUCCESS, $application->name()), 'success')
+                    ->load('kraken.applications');
             }
 
             $context = [

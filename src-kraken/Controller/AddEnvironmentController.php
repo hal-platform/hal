@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller\Environment;
+namespace QL\Kraken\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -13,7 +13,7 @@ use MCP\DataType\HttpUrl;
 use QL\Kraken\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Hal\FlashFire;
+use QL\Hal\Flasher;
 use Slim\Http\Request;
 
 class AddEnvironmentController implements ControllerInterface
@@ -50,9 +50,9 @@ class AddEnvironmentController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type array
@@ -62,7 +62,7 @@ class AddEnvironmentController implements ControllerInterface
     /**
      * @param Request $request
      * @param TemplateInterface $template
-     * @param FlashFire $flashFire
+     * @param Flasher $flasher
      * @param EntityManagerInterface $em
      * @param EntityRepository $halRepo
      * @param callable $random
@@ -70,13 +70,13 @@ class AddEnvironmentController implements ControllerInterface
     public function __construct(
         Request $request,
         TemplateInterface $template,
-        FlashFire $flashFire,
+        Flasher $flasher,
         EntityManagerInterface $em,
         callable $random
     ) {
         $this->request = $request;
         $this->template = $template;
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
         $this->random = $random;
 
         $this->em = $em;
@@ -93,8 +93,9 @@ class AddEnvironmentController implements ControllerInterface
         $context = [];
 
         if ($this->request->isPost() && $environment = $this->handleForm()) {
-            // flash and redirect
-            $this->flashFire->fire(sprintf(self::SUCCESS, $environment->name()), 'kraken.environments', 'success');
+            return $this->flasher
+                ->withFlash(sprintf(self::SUCCESS, $environment->name()), 'success')
+                ->load('kraken.environments');
         }
 
         $context = [
@@ -110,7 +111,7 @@ class AddEnvironmentController implements ControllerInterface
     }
 
     /**
-     * @return void
+     * @return Environment|null
      */
     private function handleForm()
     {
@@ -152,6 +153,7 @@ class AddEnvironmentController implements ControllerInterface
     private function saveEnvironment($name, $server, $token)
     {
         $id = call_user_func($this->random);
+
         $environment = (new Environment)
             ->withId($id)
             ->withName($name)

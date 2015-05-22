@@ -754,7 +754,7 @@ services:
             - @user.repo
             - @permissions
             - @currentUser
-            - @session.flashfire
+            - @session.flasher
             - @slim.request
             - @slim.not.found
             - @doctrine.random.id
@@ -767,7 +767,7 @@ services:
             - @token.repo
             - @permissions
             - @currentUser
-            - @session.flashfire
+            - @session.flasher
             - @slim.not.found
             - @slim.route.parameters
 

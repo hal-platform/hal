@@ -7,13 +7,12 @@
 
 namespace QL\Kraken\Controller;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Entity\Application;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Utility\Url;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use Slim\Http\Request;
 
 class ApplicationsController implements ControllerInterface
@@ -35,7 +34,7 @@ class ApplicationsController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -45,14 +44,9 @@ class ApplicationsController implements ControllerInterface
     private $repository;
 
     /**
-     * @type Url
+     * @type Flasher
      */
-    private $url;
-
-    /**
-     * @type Session
-     */
-    private $session;
+    private $flasher;
 
     /**
      * @type array
@@ -63,17 +57,14 @@ class ApplicationsController implements ControllerInterface
      * @param Request $request
      * @param Response $response
      * @param TemplateInterface $template
-     * @param Url $url
-     * @param Session $session
-     * @param $em
+     * @param EntityManagerInterface $em
+     * @param Flasher $flasher
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
-        $em,
-
-        Url $url,
-        Session $session
+        EntityManagerInterface $em,
+        Flasher $flasher
     ) {
         $this->request = $request;
         $this->template = $template;
@@ -81,8 +72,7 @@ class ApplicationsController implements ControllerInterface
         $this->em = $em;
         $this->repository = $this->em->getRepository(Application::CLASS);
 
-        $this->url = $url;
-        $this->session = $session;
+        $this->flasher = $flasher;
 
         $this->errors = [];
     }
@@ -95,7 +85,12 @@ class ApplicationsController implements ControllerInterface
         $context = [];
 
         if ($this->request->isPost()) {
-            $this->handleForm();
+            if ($application = $this->handleForm()) {
+                return $this->flasher
+                    ->withFlash(self::SUCCESS, 'success')
+                    ->load('kraken.applications');
+            }
+
             $context = [
                 'errors' => $this->errors,
                 'form' => [
@@ -112,7 +107,7 @@ class ApplicationsController implements ControllerInterface
     }
 
     /**
-     * @return void
+     * @return Application|null
      */
     private function handleForm()
     {
@@ -131,13 +126,13 @@ class ApplicationsController implements ControllerInterface
             return null;
         }
 
-        $this->saveApplication($id);
+        return $this->saveApplication($id);
     }
 
     /**
      * @param string $id
      *
-     * @return void
+     * @return Application
      */
     private function saveApplication($id)
     {
@@ -148,8 +143,6 @@ class ApplicationsController implements ControllerInterface
         $this->em->persist($application);
         $this->em->flush();
 
-        // flash and redirect
-        $this->session->flash(self::SUCCESS, 'success');
-        $this->url->redirectFor('kraken.applications');
+        return $application;
     }
 }

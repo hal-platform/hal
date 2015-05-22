@@ -366,10 +366,6 @@ services:
     # SESSION
     ####################################################################################################################
 
-    session.flashfire:
-        class: 'QL\Hal\FlashFire'
-        arguments: [@session, @url]
-
     session.flasher:
         class: 'QL\Hal\Flasher'
         arguments: [@session, @url]

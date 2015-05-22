@@ -7,16 +7,14 @@
 
 namespace QL\Kraken\Controller\Application;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\GUID;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Utility\Url;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use Slim\Http\Request;
 
 class AddTargetController implements ControllerInterface
@@ -39,7 +37,7 @@ class AddTargetController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -50,14 +48,14 @@ class AddTargetController implements ControllerInterface
     private $tarRepository;
 
     /**
-     * @type Url
+     * @type callable
      */
-    private $url;
+    private $random;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
+    private $flasher;
 
     /**
      * @type array
@@ -69,18 +67,17 @@ class AddTargetController implements ControllerInterface
      * @param TemplateInterface $template
      * @param Application $application
      *
-     * @param $em
-     *
-     * @param Url $url
-     * @param Session $session
+     * @param EntityManagerInterface $em
+     * @param Flasher $flasher
+     * @param callable $random
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
         Application $application,
-        $em,
-        Url $url,
-        Session $session
+        EntityManagerInterface $em,
+        Flasher $flasher,
+        callable $random
     ) {
         $this->request = $request;
         $this->template = $template;
@@ -90,8 +87,8 @@ class AddTargetController implements ControllerInterface
         $this->tarRepository = $this->em->getRepository(Target::CLASS);
         $this->envRepository = $this->em->getRepository(Environment::CLASS);
 
-        $this->url = $url;
-        $this->session = $session;
+        $this->flasher = $flasher;
+        $this->random = $random;
 
         $this->errors = [];
     }
@@ -102,7 +99,11 @@ class AddTargetController implements ControllerInterface
     public function __invoke()
     {
         if ($this->request->isPost()) {
-            $this->handleForm();
+            if ($target = $this->handleForm()) {
+                $this->flasher
+                    ->withFlash(self::SUCCESS, 'success')
+                    ->load('kraken.application', ['id' => $this->application->id()]);
+            }
         }
 
         $environments = $this->filterTargets(
@@ -111,7 +112,9 @@ class AddTargetController implements ControllerInterface
         );
 
         if (!$environments) {
-            $this->url->redirectFor('kraken.application', ['id' => $this->application->id()]);
+            $this->flasher
+                ->withFlash('No environments found.')
+                ->load('kraken.application', ['id' => $this->application->id()]);
         }
 
         $context = [
@@ -185,32 +188,29 @@ class AddTargetController implements ControllerInterface
             return null;
         }
 
-        $this->saveTarget($env, $key);
+        return $this->saveTarget($env, $key);
     }
 
     /**
      * @param Environment $env
      * @param string $key
      *
-     * @return void
+     * @return Target
      */
     private function saveTarget(Environment $env, $key)
     {
-        $uniq = GUID::create()->asHex();
-        $uniq = strtolower($uniq);
+        $id = call_user_func($this->random);
 
-        $encryption = (new Target)
+        $target = (new Target)
             ->withId($uniq)
             ->withKey($key)
             ->withApplication($this->application)
             ->withEnvironment($env);
 
         // persist to database
-        $this->em->persist($encryption);
+        $this->em->persist($target);
         $this->em->flush();
 
-        // flash and redirect
-        $this->session->flash(self::SUCCESS, 'success');
-        $this->url->redirectFor('kraken.application', ['id' => $this->application->id()]);
+        return $target;
     }
 }

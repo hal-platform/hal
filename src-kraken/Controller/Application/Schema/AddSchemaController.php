@@ -10,7 +10,7 @@ namespace QL\Kraken\Controller\Application\Schema;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\FlashFire;
+use QL\Hal\Flasher;
 use QL\Kraken\Doctrine\PropertyEnumType;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Schema;
@@ -59,9 +59,9 @@ class AddSchemaController implements ControllerInterface
     private $schemaRepo;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type callable
@@ -80,7 +80,7 @@ class AddSchemaController implements ControllerInterface
      * @param User $currentUser
      *
      * @param EntityManagerInterface$em
-     * @param FlashFire $flashFire
+     * @param Flasher $flasher
      * @param callable $random
      */
     public function __construct(
@@ -89,7 +89,7 @@ class AddSchemaController implements ControllerInterface
         Application $application,
         User $currentUser,
         EntityManagerInterface $em,
-        FlashFire $flashFire,
+        Flasher $flasher,
         callable $random
     ) {
         $this->request = $request;
@@ -100,7 +100,7 @@ class AddSchemaController implements ControllerInterface
         $this->em = $em;
         $this->schemaRepo = $this->em->getRepository(Schema::CLASS);
 
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
         $this->random = $random;
 
         $this->errors = [];
@@ -113,7 +113,9 @@ class AddSchemaController implements ControllerInterface
     {
         if ($this->request->isPost()) {
             if ($schema = $this->handleForm()) {
-                $this->flashFire->fire(sprintf(self::SUCCESS, $schema->key()), 'kraken.application', 'success', ['application' => $this->application->id()]);
+                return $this->flasher
+                    ->fire(sprintf(self::SUCCESS, $schema->key()), 'success')
+                    ->load('kraken.application', ['application' => $this->application->id()]);
             }
         }
 

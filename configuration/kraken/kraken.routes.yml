@@ -77,12 +77,12 @@ parameters:
         # add application
         kraken.add_application:
             route: '/kraken/applications/add'
-            stack: ['login.bouncer', 'kraken.add_application.page']
+            stack: ['login.bouncer', 'kraken.application.add.page']
 
         # add environment
         kraken.add_environment:
             route: '/kraken/environments/add'
-            stack: ['login.bouncer', 'kraken.add_environment.page']
+            stack: ['login.bouncer', 'kraken.environment.add.page']
 
         ################################################################################################################
         # CRUD - APPLICATION
@@ -91,7 +91,7 @@ parameters:
         # add environment to application
         kraken.application.add_target:
             route: '/kraken/applications/:application/environments'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.add_target.page']
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.target.add.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         ################################################################################################################

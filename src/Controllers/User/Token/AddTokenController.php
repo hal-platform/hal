@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\FlashFire;
+use QL\Hal\Flasher;
 use QL\Hal\Services\PermissionsService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -34,9 +34,9 @@ class AddTokenController implements ControllerInterface
     private $users;
 
     /**
-     * @type FlashFire
+     * @type Flasher
      */
-    private $flashFire;
+    private $flasher;
 
     /**
      * @type PermissionsService
@@ -74,7 +74,7 @@ class AddTokenController implements ControllerInterface
      * @param PermissionsService $permissions
      *
      * @param User $user
-     * @param FlashFire $flashFire
+     * @param Flasher $flasher
      *
      * @param Request $request
      * @param NotFound $notFound
@@ -88,7 +88,7 @@ class AddTokenController implements ControllerInterface
         PermissionsService $permissions,
 
         User $currentUser,
-        FlashFire $flashFire,
+        Flasher $flasher,
 
         Request $request,
         NotFound $notFound,
@@ -101,7 +101,7 @@ class AddTokenController implements ControllerInterface
         $this->permissions = $permissions;
 
         $this->currentUser = $currentUser;
-        $this->flashFire = $flashFire;
+        $this->flasher = $flasher;
 
         $this->request = $request;
         $this->notFound = $notFound;
@@ -123,15 +123,21 @@ class AddTokenController implements ControllerInterface
         }
 
         if (!$this->isUserAllowed($user)) {
-            return $this->flashFire->fire(self::ERR_DENIED, 'settings', 'error');
+            return $this->flasher
+                ->withFlash(self::ERR_DENIED, 'error')
+                ->load('settings');
         }
 
         if (!$label) {
-            return $this->flashFire->fire(self::ERR_LABEL_REQUIRED, 'settings', 'error');
+            return $this->flasher
+                ->withFlash(self::ERR_LABEL_REQUIRED, 'error')
+                ->load('settings');
         }
 
         $token = $this->generateToken($user, $label);
-        $this->flashFire->fire(sprintf(self::SUCCESS, $token->getLabel()), 'settings', 'success');
+        $this->flasher
+            ->withFlash(sprintf(self::SUCCESS, $token->getLabel()), 'success')
+            ->load('settings');
     }
 
     /**
