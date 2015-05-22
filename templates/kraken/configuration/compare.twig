@@ -2,11 +2,11 @@
 {% import "partials/macros.twig" as macros %}
 {% import "kraken/partial/macros.twig" as kraken_macros %}
 
-{% set page_title = "Compare Configuration" %}
+{% set page_title = "Compare Configurations" %}
 
 {% block content %}
 
-    <h1>Compare Latest to {{ is_deployed ? 'Deployed Configuration' : 'Previous Configuration' }}</h1>
+    <h1>{{ page_title }}</h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -41,7 +41,7 @@
             <thead>
                 <tr>
                     <th>Property</th>
-                    <th class="t40">Deployed</th>
+                    <th class="t40">Deployed Snapshot</th>
                     <th class="t40">Latest</th>
                 </tr>
             </thead>

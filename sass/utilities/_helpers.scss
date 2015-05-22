@@ -1,19 +1,11 @@
 // Helpers
-.trailer {
-    @include trailer();
-}
+.trailer { @include trailer(); }
+.trailer--napolean { @include trailer(.5); }
+.trailer--andre { @include trailer(2); }
 
-.leader {
-    @include leader();
-}
-
-.leader--napolean {
-    @include leader(.5);
-}
-
-.leader--andre {
-    @include leader(2);
-}
+.leader { @include leader(); }
+.leader--napolean { @include leader(.5); }
+.leader--andre { @include leader(2); }
 
 .fixed-size-label {
     display: inline-block;

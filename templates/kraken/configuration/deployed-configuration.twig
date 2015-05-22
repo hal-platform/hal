@@ -2,11 +2,11 @@
 {% import "partials/macros.twig" as macros %}
 
 {% set is_deployed = target.configuration.id == configuration.id %}
-{% set page_title = is_deployed ? 'Deployed Configuration' : 'Configuration' %}
+{% set page_title = is_deployed ? 'Deployed Snapshot' : 'Snapshot' %}
 
 {% block content %}
 
-    <h1>{{ is_deployed ? 'Deployed Configuration' : 'Previous Configuration' }} for <strong>{{ configuration.environment.name }}</strong></h1>
+    <h1>{{ page_title }} for <strong>{{ configuration.environment.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>

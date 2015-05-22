@@ -122,7 +122,7 @@ services:
             - @kraken.random
     kraken.add_application.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/add-application.twig']]]
+        calls: [['setTemplate', ['kraken/application.add.twig']]]
 
     kraken.add_environment.page:
         class: 'QL\Kraken\Controller\Environment\AddEnvironmentController'
@@ -134,7 +134,7 @@ services:
             - @kraken.random
     kraken.add_environment.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/environment/add-environment.twig']]]
+        calls: [['setTemplate', ['kraken/environment.add.twig']]]
 
     ####################################################################################################################
     # CRUD - APPLICATION
@@ -151,7 +151,7 @@ services:
             - @session
     kraken.application.add_target.twig:
         parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/application/add-target.twig']]]
+        calls: [['setTemplate', ['kraken/application/target.add.twig']]]
 
     ####################################################################################################################
     # CRUD - SCHEMA
