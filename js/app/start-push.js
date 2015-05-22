@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     target: '.js-toggle-container',
     checkTarget: '.js-pushable-deployment',
     toggled: false,

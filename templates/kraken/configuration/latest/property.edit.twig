@@ -1,9 +1,11 @@
 {% extends 'base.kraken.twig' %}
 {% import "partials/macros.twig" as macros %}
 {% import "kraken/partial/macros.twig" as kraken_macros %}
+{% set js_components = ["kraken.property"] %}
 
 {% set page_title = "Edit Property" %}
 {% set isAdmin = true %}
+
 {% block content %}
     <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
 

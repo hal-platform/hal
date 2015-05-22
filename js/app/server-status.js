@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     target: '[data-server-status]',
 
     successClass: 'status-icon--success',

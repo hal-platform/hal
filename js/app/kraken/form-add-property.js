@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     selectTarget: '#kraken__add-property #config-prop',
     labelTarget: '#kraken__add-property .config-description',
     genericTarget: '#kraken__add-property #config-value',

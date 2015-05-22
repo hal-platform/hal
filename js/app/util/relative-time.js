@@ -1,7 +1,7 @@
 var $ = require('jquery');
-var formatter = require('./time-formatter').module;
+var formatter = require('./time-formatter');
 
-exports.module = {
+module.exports = {
     interval: 10,
 
     init: function() {

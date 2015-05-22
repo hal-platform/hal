@@ -1,7 +1,7 @@
 var $ = require('jquery');
-var jobUpdater = require('./job-updater').module;
+var jobUpdater = require('./job-updater');
 
-exports.module = {
+module.exports = {
     pollingTimer: null,
     interval: 10,
 

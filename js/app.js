@@ -1,40 +1,36 @@
-var crossroads = require('crossroads');
-var routes = require('./routes').routes;
-var _ = require('underscore');
-
-var terminal = require('./app/util/terminal').module;
-var nofunzone = require('./app/util/nofunzone').module;
-var reltime = require('./app/util/relative-time').module;
+var components = require('./components');
+var terminal = require('./app/util/terminal');
+var nofunzone = require('./app/util/nofunzone');
+var reltime = require('./app/util/relative-time');
 
 var app = {
-    initialize: function() {
-        var router = crossroads.create();
+    componentsAttr: "jsComponents",
+    init: function() {
 
-        this.attachRoutes(router, routes);
-        router.parse(this.getPath());
-    },
+        var headData = document.querySelector('head').dataset,
+            requestedComponents;
 
-    getPath: function() {
-        var a, path;
+        if (headData.hasOwnProperty(this.componentsAttr)) {
+            requestedComponents = headData[this.componentsAttr];
 
-        a = document.createElement('a');
-        a.href = location.href;
-        path = a.pathname;
+            // Load components
+            requestedComponents.split(' ').map(function(component) {
+                if (components.hasOwnProperty(component)) {
+                    component = components[component];
+                    component();
+                } else {
+                    console.log("Component not found: " + component);
+                }
 
-        if (_.first(path) !== "/") {
-            path = "/" + path;
+            });
         }
-
-        return path;
     },
-    attachRoutes: function(router, routes) {
-        routes.forEach(function(route) {
-            router.addRoute(route.url, route.loader);
-        });
+    globals: function() {
+        terminal.init();
+        nofunzone.init();
+        reltime.init();
     }
 };
 
-app.initialize();
-terminal.init();
-nofunzone.init();
-reltime.init();
+app.init();
+app.globals();

@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     target: '#env-reorder',
     $currentTarget: null,
     init: function() {

@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     target: '.js-add-deployment__form',
     badButton: '.js-add-deployment__button a',
     envListPrefix: '.js-add-deployment--',

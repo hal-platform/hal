@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var typed = require('typed');
 
-exports.module = {
+module.exports = {
     target: '[data-nofunzone]',
     initialAttr: 'initial',
     givenAttr: 'nofunzone',

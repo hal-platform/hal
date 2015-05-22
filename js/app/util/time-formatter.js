@@ -1,7 +1,7 @@
 var sugar = require('sugarjs-date');
 var duration = require('./time-duration');
 
-exports.module = {
+module.exports = {
     threshold_6mo: (180).day(),
     threshold_2week: (14).day(),
     threshold_3day: (3).day(),

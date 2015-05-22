@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     target: '[data-expand-btn]',
     rowTarget: '[data-expand-target]',
 

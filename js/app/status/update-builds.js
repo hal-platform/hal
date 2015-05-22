@@ -1,24 +1,24 @@
 var $ = require('jquery');
-var formatter = require('./util/time-formatter').module;
+var formatter = require('../util/time-formatter');
 
-exports.module = {
+module.exports = {
     interval: 5,
-    mode: 'table', // "table" for global push table, "grid" for global push grid, "push" for individual push status page
+    mode: 'table', // "table" for global build table, "build" for individual build status page
     pendingClass: 'status-icon--other',
     thinkingClass: 'status-icon--thinking',
     successClass: 'status-icon--success',
     failureClass: 'status-icon--error',
-    pushTarget: '[data-push]',
+    buildTarget: '[data-build]',
 
     init: function() {
         var _this = this;
 
-        var $pushes = $(this.pushTarget);
-        $pushes.each(function(index, item) {
+        var $builds = $(this.buildTarget);
+        $builds.each(function(index, item) {
             var $item = $(item);
             var status = $item.text().trim();
 
-            if (status == 'Waiting' || status == 'Pushing') {
+            if (status == 'Waiting' || status == 'Building') {
                 $item
                     .removeClass(_this.pendingClass)
                     .addClass(_this.thinkingClass);
@@ -27,16 +27,19 @@ exports.module = {
             }
         });
 
-        return $pushes;
+        return $builds;
     },
-    generateUrl: function(pushId, type) {
+    generateUrl: function(buildId, type) {
         if (type === 'api-update') {
-            return '/api/pushes/' + pushId;
+            return '/api/builds/' + buildId;
+
+        } else if (type === 'push') {
+            return '/builds/' + buildId + '/push';
         }
     },
     checkStatus: function($elem) {
         var _this = this;
-        var id = $elem.data('push');
+        var id = $elem.data('build');
         var endpoint = this.generateUrl(id, 'api-update');
         console.log(endpoint);
 
@@ -49,9 +52,9 @@ exports.module = {
             var currentStatus = data.status;
             $elem.text(currentStatus);
 
-            // console.log('Push ' + id + ' status: ' + currentStatus);
+            // console.log('Build ' + id + ' status: ' + currentStatus);
 
-            if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
+            if (currentStatus == 'Waiting' || currentStatus == 'Building') {
                 // If still pending, fire up a countdown for the next callback in the chain.
                 _this.startUpdateTimer($elem);
 
@@ -66,12 +69,10 @@ exports.module = {
                     .addClass(_this.failureClass);
             }
 
-            if (_this.mode == 'push') {
-                _this.updatePush(data, $elem);
-            } else if (_this.mode == 'table') {
+            if (_this.mode == 'table') {
                 _this.updateTable(data, $elem);
-            } else if (_this.mode == 'grid') {
-                _this.updateGrid(data, $elem);
+            } else {
+                _this.updateBuild(data, $elem);
             }
         });
     },
@@ -82,36 +83,52 @@ exports.module = {
             _this.checkStatus($elem);
         }, _this.interval * 1000);
     },
-    updatePush: function(data, $elem) {
+    updateBuild: function(data, $elem) {
         var $container = $elem.closest('dl');
+        var $hdr;
+
+        if (data.status == 'Success') {
+            // Add push link if present
+            $('.js-build-push')
+                .html('<a class="btn btn--action" href="' + this.generateUrl(data.id, 'push') + '">Push Build</a>');
+
+            // Replace success messaging
+            $hdr = $('[data-success]');
+            if ($hdr.length == 1) {
+                $hdr.text($hdr.data('success'));
+            }
+
+        } else if (data.status == 'Error') {
+            // Replace success messaging
+            $hdr = $('[data-failure]');
+            if ($hdr.length == 1) {
+                $hdr.text($hdr.data('failure'));
+            }
+        }
 
         if (data.start) {
-            var $start = $container.children('.js-push-start');
+            var $start = $container.children('.js-build-start');
             if ($start.length > 0 && $start.children('time').length === 0) {
                 $start.html(this.createTimeElement(data.start));
             }
         }
 
         if (data.end) {
-            var $duration = $container.children('.js-push-duration');
+            var $duration = $container.children('.js-build-duration');
             if ($duration.length > 0 && $duration.children('time').length === 0) {
                 $duration.html(this.createTimeDuration(data.start, data.end));
             }
         }
     },
     updateTable: function(data, $elem) {
-        // derp
-    },
-    updateGrid: function(data, $elem) {
-        // derp
-    },
-    formatTime: function(time) {
-        var time = moment(time);
+        var $container = $elem.closest('tr');
 
-        return {
-            absolute: time.format('MMM D, YYYY h:mm A'),
-            relative: time.fromNow()
-        };
+        if (data.status == 'Success') {
+            // Add push link if present
+            $container
+                .children('.js-build-push')
+                .html('<a class="btn btn--tiny" href="' + this.generateUrl(data.id, 'push') + '">Push</a>');
+        }
     },
     createTimeElement: function(time) {
         var formatted = formatter.formatTime(time);

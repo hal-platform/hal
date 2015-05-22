@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     parent: '.js-overloader-parent',
     overloaded: '.js-data-overload',
 

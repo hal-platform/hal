@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var nunjucks = require('nunjucks');
 
-exports.module = {
+module.exports = {
     buildTemplate: null,
     pushTemplate: null,
 

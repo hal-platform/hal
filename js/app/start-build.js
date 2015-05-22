@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     searchBox: '#js-search-input',
     searchResults: '.js-search-results',
     searchResultItem: '.js-search-item',

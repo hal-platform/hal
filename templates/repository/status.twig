@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 {% import "partials/macros.twig" as macros %}
 {% import _self as page_macros %}
+{% set js_components = ["status"] %}
 
 {% set page_title = "Status: " ~ repo.name %}
 

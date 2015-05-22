@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     repos: {
         userTarget: '#github_user',
         repoTarget: '#github_repo',

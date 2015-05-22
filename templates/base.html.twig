@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 {% set buster = applicationSha[:4] ?: 'dev' ~ 'now'|date('U') %}
 <html class="no-js" id="{{ html_id ?: '' }}">
-    <head>
+
+    {% if js_components %}
+        <head data-js-components="{{ js_components|join(' ') }}">
+    {% else %}
+        <head>
+    {% endif %}
         <meta charset="utf-8">
         {% block page_head %}
             <title>
@@ -45,8 +50,6 @@
                 {% block content %}{% endblock %}
             </main>
             {% endblock %}
-
-            {% block page_footer %}{% endblock %}
 
         {% endblock %}
 

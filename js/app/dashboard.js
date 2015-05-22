@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
-exports.module = {
+module.exports = {
     filter: '.js-filter',
     inputTarget: '.js-filter__input',
 
