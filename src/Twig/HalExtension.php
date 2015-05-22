@@ -450,14 +450,13 @@ class HalExtension extends Twig_Extension
             'queue' => true,
             'repositories' => true,
 
-            // 'groups' => true,
-
             'servers' => false,
             'environments' => false,
             'users' => false,
 
             'admin' => true,
-            'help' => true
+            'help' => true,
+            'kraken' => true
         ];
     }
 }

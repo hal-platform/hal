@@ -6,7 +6,7 @@
 {% set isRepoAdmin = isUserRepoAdmin(currentUser, repository.key) %}
 
 {% block content %}
-    <h2>Repository Information</h2>
+    <h2>Application</h2>
     {{ block('meta') }}
 
     <h3>Notifications</h3>
@@ -22,7 +22,7 @@
     <h3>Permissions</h3>
     {{ block('permissions') }}
 
-    <h3>Server Deployments</h3>
+    <h3>Deployment Targets</h3>
     {{ block('server_deployments') }}
 
 {% endblock %}
@@ -52,22 +52,21 @@
         </dl>
 
         <ul class="button-list">
-            <li><a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">Repository Status</a></li>
+            <li><a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">Application Status</a></li>
 
             {% if isRepoAdmin %}
-                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit Repository</a></li>
+                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit Application</a></li>
             {% endif %}
 
             {% if isUserAdmin(currentUser) and not deployment_count %}
-                <li><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Repository</a></li>
+                <li><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Application</a></li>
             {% endif %}
 
             <li><a class="btn btn--secondary" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Encrypted Properties</a></li>
-            <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Server Deployments</a></li>
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Deployment Targets</a></li>
 
             {% if kraken %}
-                <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">Kraken Configuration</a></li>
-                <li><a class="btn btn--secondary" href="http://core/app/{{ kraken.coreId }}">{{ macros.icon('spinner') }} Core Website</a></li>
+                <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('asterisk') }} Kraken Configuration</a></li>
             {% endif %}
         </ul>
     </div>

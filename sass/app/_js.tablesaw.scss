@@ -153,6 +153,12 @@ CUSTOM OVERRIDES
             margin-top: 2.5em;
         }
     }
+
+    .tablesaw-stack.table--striped {
+        tbody tr:nth-of-type(odd) {
+            background-color: transparent;
+        }
+    }
 }
 
 @media (min-width: 40em) {

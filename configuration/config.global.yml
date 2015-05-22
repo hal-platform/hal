@@ -85,12 +85,13 @@ parameters:
     navigation.list:
         dashboard: 'Dashboard'
         queue: 'Queue'
-        repositories: 'Repositories'
+        repositories: 'Applications'
         servers: 'Servers'
         environments: 'Environments'
         users: 'Users'
         admin: 'Admin'
         help: 'Help'
+        kraken: 'Kraken'
 
     session.cookie.configuration:
         lifetime: '5 days'

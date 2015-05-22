@@ -150,11 +150,7 @@ services:
         class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
         arguments:
             - @repository.status.twig
-            - @repository.repo
-            - @build.repo
-            - @deployment.repo
-            - @push.repo
-            - @environment.repo
+            - @doctrine.em
             - @sticky.environment
             - @slim.response
             - @slim.not.found

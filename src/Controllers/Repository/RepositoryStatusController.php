@@ -7,15 +7,19 @@
 
 namespace QL\Hal\Controllers\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\BuildRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Kraken\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Panthor\ControllerInterface;
@@ -35,6 +39,7 @@ class RepositoryStatusController implements ControllerInterface
      * @type EntityRepository
      */
     private $repoRepo;
+    private $krakenRepo;
 
     /**
      * @type BuildRepository
@@ -78,12 +83,7 @@ class RepositoryStatusController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     *
-     * @param EntityRepository $repoRepo
-     * @param BuildRepository $buildRepo
-     * @param DeploymentRepository $deploymentRepo
-     * @param PushRepository $pushRepo
-     * @param EnvironmentRepository $envRepo
+     * @param EntityMangerInterface $em
      *
      * @param StickyEnvironmentService $stickyService
      * @param Response $response
@@ -93,12 +93,7 @@ class RepositoryStatusController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-
-        EntityRepository $repoRepo,
-        BuildRepository $buildRepo,
-        DeploymentRepository $deploymentRepo,
-        PushRepository $pushRepo,
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
 
         StickyEnvironmentService $stickyService,
         Response $response,
@@ -106,11 +101,15 @@ class RepositoryStatusController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
-        $this->buildRepo = $buildRepo;
-        $this->deploymentRepo = $deploymentRepo;
-        $this->pushRepo = $pushRepo;
-        $this->envRepo = $envRepo;
+
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->envRepo = $em->getRepository(Environment::CLASS);
+
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
+
+        $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
 
         $this->stickyService = $stickyService;
         $this->response = $response;
@@ -153,12 +152,16 @@ class RepositoryStatusController implements ControllerInterface
 
         $builds = $this->buildRepo->findBy(['repository' => $repo, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
 
+        $krakenApp = $this->krakenRepo->findOneBy(['halRepository' => $repo]);
+
         $rendered = $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
             'environments' => $environments,
             'deployment_statuses' => $deployments,
-            'selected_environment' => $selectedEnvironment
+            'selected_environment' => $selectedEnvironment,
+
+            'kraken' => $krakenApp
         ]);
 
         $this->response->setBody($rendered);
