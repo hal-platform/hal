@@ -39,7 +39,7 @@ class Flasher
      *
      * @return void
      */
-    public function load($route, $parameters)
+    public function load($route, $parameters = [])
     {
         $this->url->redirectFor($route, $parameters);
     }
