@@ -90,7 +90,9 @@ class ConfigurationController implements ControllerInterface
             'application' => $this->application,
             'environment' => $this->environment,
             'configuration' => $latest,
-            'is_missing_properties' => $this->isMissingProperties($latest)
+
+            'is_missing_properties' => $this->isMissingProperties($latest),
+            'deployed' => $target->configuration()
         ];
 
         $this->template->render($context);
