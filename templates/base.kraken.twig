@@ -26,11 +26,11 @@
                         <li>{{ nav_macros.navlink('Applications', 'kraken.applications', 'list') }}</li>
                         <li>{{ nav_macros.navlink('Environments', 'kraken.environments', 'leaf') }}</li>
 
-                        <li>{{ nav_macros.navlink('Kraken Help', 'help', 'question') }}</li>
+                        <li>{{ nav_macros.navlink('Help', 'kraken.help', 'question') }}</li>
                         <li>{{ nav_macros.navlink('Logout', 'logout', 'sign-out') }}</li>
 
                     {% else %}
-                        <li class="signed-out">{{ nav_macros.navlink('Help', 'help', 'question') }}</li>
+                        <li class="signed-out">{{ nav_macros.navlink('Help', 'kraken.help', 'question') }}</li>
                         <li class="signed-out">{{ nav_macros.navlink('Login', 'login', 'sign-in') }}</li>
                     {% endif %}
                 </ul>

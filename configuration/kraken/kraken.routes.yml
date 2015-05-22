@@ -179,3 +179,12 @@ parameters:
             route: '/kraken/targets/:target/deploy'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.handler']
             conditions: {target: %routes.kraken.regex.hex%}
+
+        ################################################################################################################
+        # HELP ROUTES
+        ################################################################################################################
+
+        kraken.help:
+            method: 'GET'
+            route: '/kraken/help'
+            stack: ['kraken.help.page']

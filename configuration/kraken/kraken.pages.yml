@@ -296,3 +296,16 @@ services:
             - @kraken.consul
             - @kraken.crypto.decrypter
             - @kraken.random
+
+
+    ####################################################################################################################
+    # GENERAL USE
+    ####################################################################################################################
+
+    kraken.help.page:
+        parent: 'static.controller'
+        arguments: [@kraken.help.twig, @slim.response]
+    kraken.help.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['kraken/help.twig']]]
+
