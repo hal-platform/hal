@@ -9,6 +9,7 @@ namespace QL\Kraken\Controller\Configuration;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Flasher;
 use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Entity\Configuration;
 use QL\Kraken\Entity\Target;
@@ -33,6 +34,11 @@ class RollbackController implements ControllerInterface
     private $diffService;
 
     /**
+     * @type Flasher
+     */
+    private $flasher;
+
+    /**
      * @type EntityRepository
      */
     private $targetRepo;
@@ -41,17 +47,20 @@ class RollbackController implements ControllerInterface
      * @param TemplateInterface $template
      * @param Configuration $configuration
      * @param ConfigurationDiffService $diffService
+     * @param Flasher $flasher
      * @param EntityManagerInterface $em
      */
     public function __construct(
         TemplateInterface $template,
         Configuration $configuration,
         ConfigurationDiffService $diffService,
+        Flasher $flasher,
         EntityManagerInterface $em
     ) {
         $this->template = $template;
         $this->configuration = $configuration;
         $this->diffService = $diffService;
+        $this->flasher = $flasher;
 
         $this->targetRepo = $em->getRepository(Target::CLASS);
     }
@@ -61,19 +70,26 @@ class RollbackController implements ControllerInterface
      */
     public function __invoke()
     {
-        // $diffs = $this->diffService->resolveLatestConfiguration($this->target->application(), $this->target->environment());
+        $target = $this->targetRepo->findOneBy([
+            'application' => $this->configuration->application(),
+            'environment' => $this->configuration->environment()
+        ]);
 
-        // // Add "Deployed" configuration
-        // if ($this->target->configuration()) {
-        //     // @todo verify checksum against consul checksum
-        //     $diffs = $this->diffService->diff($this->target->configuration(), $diffs);
-        // }
+        if (!$target) {
+            return $this->flasher
+                ->withFlash('Cannot rollback to this configuration. The deployment target seems to have been removed.', 'error')
+                ->load('kraken.configuration', ['configuration' => $this->configuration->id()]);
+        }
+
+        $latest = $this->diffService->resolveLatestConfiguration($target->application(), $target->environment());
+        $diffs = $this->diffService->diff($this->configuration, $latest);
 
         $context = [
             'configuration' => $this->configuration,
-            // 'application' => $this->target->application(),
-            // 'environment' => $this->target->environment(),
-            // 'diffs' => $diffs
+            'application' => $this->configuration->application(),
+            'environment' => $this->configuration->environment(),
+            'target' => $target,
+            'diffs' => $diffs,
         ];
 
         $this->template->render($context);

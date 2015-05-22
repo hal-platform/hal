@@ -302,6 +302,7 @@ services:
             - @kraken.rollback.twig
             - @kraken.configuration
             - @kraken.diff
+            - @session.flasher
             - @doctrine.em
     kraken.rollback.twig:
         parent: 'kraken.template'
