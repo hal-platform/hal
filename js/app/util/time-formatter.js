@@ -8,6 +8,8 @@ exports.module = {
     threshold_8hr: (8).hour(),
     threshold_4hr: (4).hour(),
     threshold_1hr: (1).hour(),
+    threshold_10min: (10).minute(),
+    threshold_1min: (1).minute(),
 
     formatTime: function(iso8601) {
         var time = Date.create(iso8601),
@@ -92,11 +94,11 @@ exports.module = {
                 if (time.isToday()) {
                     return '{h}:{mm} {TT}';
                 } else {
-                    return '{Weekday}, {h}:{mm} {TT}';
+                    return '{Dow}, {h}:{mm} {TT}';
                 }
             // 4 hrs - 8 hrs
             } else if (ms > that.threshold_4hr) {
-                return false;
+                return time.hoursAgo() + ' hr  ago';
 
             // 1 hr - 4 hr
             } else if (ms > that.threshold_1hr) {
@@ -104,7 +106,22 @@ exports.module = {
                     hours = Math.floor(minutes / 60),
                     minutes = minutes % 60;
 
-                return hours + ' hours, ' + minutes + ' minutes ago';
+                return hours + ' hr, ' + minutes + ' min ago';
+
+            // 10 min - 1 hr
+            } else if (ms > that.threshold_10min) {
+                return time.minutesAgo() + ' min  ago';
+
+            // 1 min - 10 min
+            } else if (ms > that.threshold_1min) {
+                var seconds = time.secondsAgo(),
+                    minutes = Math.floor(seconds / 60),
+                    seconds = seconds % 60;
+                return minutes + ' min, ' + seconds + ' sec ago';
+
+            // 0 - 1 min
+            } else if (ms > 0) {
+                return time.secondsAgo() + ' sec  ago';
             }
         };
     }

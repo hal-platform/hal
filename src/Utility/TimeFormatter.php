@@ -115,6 +115,8 @@ class TimeFormatter
         $interval = $time->diff($from);
         $days = $interval->format('%a');
         $hours = $interval->format('%h');
+        $minutes = $interval->format('%i');
+        $seconds = $interval->format('%s');
 
         // > 6 months
         if ($days > 180) {
@@ -133,30 +135,31 @@ class TimeFormatter
             if ($time->format('l', 'UTC') === $from->format('l', 'UTC')) {
                 return $time->format('g:i A', $this->timezone);
             } else {
-                return $time->format('l, g:i A', $this->timezone);
+                return $time->format('D, g:i A', $this->timezone);
             }
 
         // // 4 hrs - 8 hrs
         } else if ($hours > 4) {
-            return sprintf('%d hours ago', $hours);
+            return sprintf('%d hr ago', $hours);
 
         // // 1 hr - 4 hr
         } else if ($hours > 1) {
+            return sprintf('%d hr, %d min ago', $hours, $minutes);
 
-            $human = sprintf('%d hours', $hours);
-            if ($minutes = $interval->format('%i')) {
-                $human .= sprintf(', %d minutes' , $minutes);
-            }
+        // 10 min - 1 hr
+        } else if ($minutes > 10) {
+            return sprintf('%d min ago', $minutes);
 
-            return sprintf('%s ago', $human);
+        // 1 min - 10 min
+        } else if ($minutes > 1) {
+            return sprintf('%d min, %d sec ago', $minutes, $seconds);
+
+        // 0 - 1 min
+        } else if ($seconds > 0) {
+            return sprintf('%d sec ago', $seconds);
         }
 
-        // less than 1 hr, seconds
-        $human = sprintf('%d seconds', $interval->format('%s'));
-        if ($minutes = $interval->format('%i')) {
-            $human = sprintf('%d minutes, ' , $minutes) . $human;
-        }
-
-        return sprintf('%s ago', $human);
+        // To the future!
+        return $time->format('g:i A', $this->timezone);
     }
 }
