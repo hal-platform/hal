@@ -19,6 +19,8 @@
         "typed.js": "v1.1",
         "underscore": "1.8.3",
 
+        "primer-css": "2.1.0",
+
         "modular-scale": "2.0.7",
         "breakpoint-sass": "2.4.2",
         "singularitygs": "1.6.2",

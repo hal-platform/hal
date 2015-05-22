@@ -55,7 +55,8 @@
         <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
             <thead>
                 <tr>
-                    <th class="t20">Deployed Config</th>
+                    <th class="t15">Configuration</th>
+                    <th class="t10">Status</th>
                     <th class="t15">Time</th>
                     <th>Value</th>
                 </tr>
@@ -67,6 +68,13 @@
                             <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: previous_property.configuration.id}) }}">
                                 {{ macros.icon('list') }} {{ previous_property.configuration.id[:7] }}
                             </a>
+                        </td>
+                        <td>
+                            {% if previous_property.configuration.isSuccess %}
+                                {{ macros.status_icon('Success', 'success') }}
+                            {% else %}
+                                {{ macros.status_icon('Failed', 'error') }}
+                            {% endif %}
                         </td>
                         <td>{{ previous_property.created|html5date }}</td>
                         <td>{{ kraken_macros.renderProperty(previous_property) }}</td>

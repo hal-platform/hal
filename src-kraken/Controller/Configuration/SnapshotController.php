@@ -79,7 +79,7 @@ class SnapshotController implements ControllerInterface
             'configuration' => $this->configuration
         ], ['key' => 'ASC']);
 
-        $isDeployed = ($target->configuration()->id() === $this->configuration->id());
+        $isDeployed = ($target && $target->configuration()->id() === $this->configuration->id());
 
         $checksums = ($isDeployed) ? $this->getChecksums($target) : [];
 

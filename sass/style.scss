@@ -11,9 +11,10 @@
 @import "settings";
 @import "scales";
 
+@import "../bower_components/primer-css/scss/tooltips";
+
 // Utilities
 @import "utilities/functions";
-@import "utilities/helpers";
 @import "utilities/mixins";
 @import "utilities/misc";
 @import "utilities/placeholders";

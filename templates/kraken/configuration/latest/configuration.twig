@@ -15,7 +15,7 @@
     <p>{{ environment.name }}</p>
 
     <h2>Configuration Properties</h2>
-    {% include 'kraken/partial/configuration.twig' with {'properties': configuration, show_property_link: true} %}
+    {% include 'kraken/partial/configuration.twig' with {'properties': configuration} %}
 
     <ul class="button-list">
         {% if isAdmin and is_missing_properties %}

@@ -14,3 +14,20 @@
     top: 0;
     position: absolute;
 }
+
+.trailer { @include trailer(); }
+.trailer--napolean { @include trailer(.5); }
+.trailer--andre { @include trailer(2); }
+
+.leader { @include leader(); }
+.leader--napolean { @include leader(.5); }
+.leader--andre { @include leader(2); }
+
+.fixed-size-label {
+    display: inline-block;
+    min-width: 10em;
+}
+
+.fixed-nobreak {
+    white-space: nowrap;
+}
