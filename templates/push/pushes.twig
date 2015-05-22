@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% import 'partials/pagination.twig' as pagination %}
+{% import '_partial/pagination.twig' as pagination %}
 {% set js_components = ["job.updater"] %}
 
 {% set page_title = repo.name ~ " Push History" %}
@@ -11,7 +11,7 @@
 
     {{ block('search') }}
 
-    {% include 'partials/push-table.twig' with {'pushes': pushes} %}
+    {% include '_partial-job/push-table.twig' with {'pushes': pushes} %}
 
     {{ pagination.pagination(page, last, 'push.history', {'id': repo.id}, {search: search_filter}) }}
 

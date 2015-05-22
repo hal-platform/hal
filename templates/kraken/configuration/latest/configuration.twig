@@ -1,5 +1,5 @@
 {% extends 'base.kraken.twig' %}
-{% import "partials/macros.twig" as macros %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Latest Configuration" %}
 {% set isAdmin = true %}
@@ -15,7 +15,7 @@
     <p>{{ environment.name }}</p>
 
     <h2>Configuration Properties</h2>
-    {% include 'kraken/partial/configuration.twig' with {'properties': configuration} %}
+    {% include 'kraken/_partial/configuration.twig' with {'properties': configuration} %}
 
     <ul class="button-list">
         {% if isAdmin and is_missing_properties %}

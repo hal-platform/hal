@@ -1,6 +1,6 @@
 {% extends 'base.kraken.twig' %}
-{% import "partials/macros.twig" as macros %}
-{% import "kraken/partial/macros.twig" as kraken_macros %}
+{% import "_partial/macros.twig" as macros %}
+{% import "kraken/_partial/macros.twig" as kraken_macros %}
 {% set js_components = ["kraken.property"] %}
 
 {% set page_title = "Edit Property" %}
@@ -31,7 +31,7 @@
         <h4>Key</h4>
         <p><code>{{ property.schema.key }}</code></p>
 
-        {% embed "kraken/partial/form/property.twig" %}
+        {% embed "kraken/_partial-form/property.twig" %}
             {% block form_add_property %}
                 <input type="hidden" id="config-type" value="{{ property.schema.dataType }}">
                 {% if property.schema.isSecure %}

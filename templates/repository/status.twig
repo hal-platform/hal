@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% import "partials/macros.twig" as macros %}
+{% import "_partial/macros.twig" as macros %}
 {% import _self as page_macros %}
 {% set js_components = ["status"] %}
 
@@ -43,7 +43,7 @@
     {% endif %}
 
     <h3>Recent Builds for <strong>{{ selected_environment.key }}</strong></h3>
-    {% include 'partials/build-table.twig' with {'builds': builds} %}
+    {% include '_partial-job/build-table.twig' with {'builds': builds} %}
 
     <ul class="button-list">
         {% if canUserBuild(currentUser, repo.key) %}
@@ -68,7 +68,7 @@
 {% endblock %}
 
 {% macro pushCard(repo, deployment, active) %}
-    {% import 'partials/macros.twig' as macros %}
+    {% import '_partial/macros.twig' as macros %}
 
     <article class="card">
         <header class="card__header">

@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% import 'partials/macros.twig' as macros %}
+{% import '_partial/macros.twig' as macros %}
 {% set js_components = ["build.info"] %}
 
 {% set page_title = "Build Information" %}
@@ -93,7 +93,7 @@
     {% if build.logs.isEmpty %}
         <p>No build events found.</p>
     {% else %}
-        {% include 'partials/log-table.twig' with {'logs': build.logs} %}
+        {% include '_partial/log-table.twig' with {'logs': build.logs} %}
     {% endif %}
 
 {% endblock %}

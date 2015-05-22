@@ -58,7 +58,7 @@
 </header>
 
 {% macro navlink(title, key, icon) %}
-    {% import "partials/macros.twig" as macros %}
+    {% import "_partial/macros.twig" as macros %}
     <a href="{{ urlFor(key) }}" title="{{ title }}">
         {{ macros.icon(icon) }}
         {{ title }}

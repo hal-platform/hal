@@ -1,0 +1,50 @@
+{% import "_partial/macros.twig" as macros %}
+{% import "kraken/_partial/macros.twig" as kraken_macros %}
+
+{% if diffs %}
+    <table class="table--spacing-medium table--striped table--top-aligned trailer" data-tablesaw-mode="stack">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th class="t40">Snapshot</th>
+                <th class="t40">Latest</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for diff in diffs %}
+                <tr>
+                    <td>
+                        {% if diff.schema %}
+                            <code class="code_clear">{{ diff.schema.key }}</code>
+                        {% elseif diff.configuration %}
+                            <code class="code_clear">{{ diff.configuration.key }}</code>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if diff.configuration %}
+                            {{ kraken_macros.renderProperty(diff.configuration) }}
+                        {% else %}
+                            {{ macros.status('Missing', 'error', 'spam-2') }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if not diff.isChanged %}
+                            No change
+
+                        {% elseif diff.property %}
+                            {{ kraken_macros.renderProperty(diff.property) }}
+
+                        {% else %}
+                            {{ macros.status('Missing', 'error', 'spam-2') }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <p>There is no schema defined for this application.</p>
+{% endif %}

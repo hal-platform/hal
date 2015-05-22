@@ -1,5 +1,5 @@
 {% extends 'base.kraken.twig' %}
-{% import "partials/macros.twig" as macros %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Application Configuration" %}
 {% set isAdmin = true %}
@@ -12,7 +12,7 @@
     {{ block('environment_targets') }}
 
     <h2>Configuration Schema</h2>
-    {% include 'kraken/partial/schema.twig' with {'schema': schema} %}
+    {% include 'kraken/_partial/schema.twig' with {'schema': schema} %}
 
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application</a></li>

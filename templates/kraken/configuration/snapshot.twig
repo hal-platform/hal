@@ -1,5 +1,5 @@
 {% extends 'base.kraken.twig' %}
-{% import "partials/macros.twig" as macros %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = is_deployed ? 'Deployed Snapshot' : 'Snapshot' %}
 
@@ -22,10 +22,10 @@
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id}) }}">Configuration History</a></li>
     </ul>
 
-    {% include 'kraken/partial/configuration.status.twig' %}
+    {% include 'kraken/_partial/configuration.status.twig' %}
 
     <h2>Configuration</h2>
-    {% include 'kraken/partial/configuration.twig' with {'properties': properties} %}
+    {% include 'kraken/_partial/configuration.twig' with {'properties': properties} %}
 
     <h2>Deployment Audit Log</h2>
     {% if audits %}

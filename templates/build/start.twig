@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% import "partials/macros.twig" as macros %}
+{% import "_partial/macros.twig" as macros %}
 {% import _self as page_macros %}
 {% set js_components = ["build.start"] %}
 
@@ -274,7 +274,7 @@
 {% endblock %}
 
 {% macro search(type, ref) %}
-    {% import "partials/macros.twig" as macros %}
+    {% import "_partial/macros.twig" as macros %}
 
     {# This is a search listing generated for the javascript #}
 

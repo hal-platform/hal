@@ -1,5 +1,5 @@
 {% macro renderProperty(property, maxlength) %}
-    {% import "partials/macros.twig" as hal_macros %}
+    {% import "_partial/macros.twig" as hal_macros %}
 
     {% set slice = maxlength|default(0) %}
     {% set formatted = property|formatPropertyValue(slice) %}

@@ -1,6 +1,6 @@
 {% extends 'base.kraken.twig' %}
-{% import "partials/macros.twig" as macros %}
-{% import "kraken/partial/macros.twig" as kraken_macros %}
+{% import "_partial/macros.twig" as macros %}
+{% import "kraken/_partial/macros.twig" as kraken_macros %}
 
 {% set page_title = "Compare Configurations" %}
 
@@ -26,65 +26,13 @@
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id}) }}">Configuration History</a></li>
     </ul>
 
-    {% include 'kraken/partial/configuration.status.twig' %}
+    {% include 'kraken/_partial/configuration.status.twig' %}
 
     <h2>Configuration Comparison</h2>
     {% if target %}
-        {{ block('comparison') }}
+        {% include 'kraken/_partial/configuration.comparison.twig' %}
     {% else %}
         <p>There is no active environment set up for this application.</p>
-    {% endif %}
-
-{% endblock %}
-
-{% block comparison %}
-
-    {% if diffs %}
-        <table class="table--spacing-medium table--striped table--top-aligned trailer" data-tablesaw-mode="stack">
-            <thead>
-                <tr>
-                    <th>Property</th>
-                    <th class="t40">Snapshot</th>
-                    <th class="t40">Latest</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for diff in diffs %}
-                    <tr>
-                        <td>
-                            {% if diff.schema %}
-                                <code class="code_clear">{{ diff.schema.key }}</code>
-                            {% elseif diff.configuration %}
-                                <code class="code_clear">{{ diff.configuration.key }}</code>
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            {% if diff.configuration %}
-                                {{ kraken_macros.renderProperty(diff.configuration) }}
-                            {% else %}
-                                {{ macros.status('Missing', 'error', 'spam-2') }}
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            {% if not diff.isChanged %}
-                                No change
-
-                            {% elseif diff.property %}
-                                {{ kraken_macros.renderProperty(diff.property) }}
-
-                            {% else %}
-                                {{ macros.status('Missing', 'error', 'spam-2') }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-    {% else %}
-        <p>There is no schema defined for this application.</p>
     {% endif %}
 
 {% endblock %}

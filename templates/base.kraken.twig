@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
-{% import 'partials/layout.header.twig' as nav_macros %}
+{% import '_partial/layout.header.twig' as nav_macros %}
 
 {% block page_header %}
-    {% embed 'partials/layout.header.twig' %}
+    {% embed '_partial/layout.header.twig' %}
         {% block banner %}
             <div class="hal">
                 <a href="{{ urlFor('kraken') }}" class="wrapper">

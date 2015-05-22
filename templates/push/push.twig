@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% import 'partials/macros.twig' as macros %}
+{% import '_partial/macros.twig' as macros %}
 {% set js_components = ["push.info"] %}
 
 {% set page_title = "Push Information" %}
@@ -113,7 +113,7 @@
     {% if push.logs.isEmpty %}
         <p>No push events found.</p>
     {% else %}
-        {% include 'partials/log-table.twig' with {'logs': push.logs} %}
+        {% include '_partial/log-table.twig' with {'logs': push.logs} %}
     {% endif %}
 
 {% endblock %}

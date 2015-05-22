@@ -38,13 +38,13 @@
                 {% if showNavigation is not defined %}
                     {% set showNavigation = true %}
                 {% endif %}
-                {% embed 'partials/layout.header.twig' with {showNavigation: showNavigation} %}
+                {% embed '_partial/layout.header.twig' with {showNavigation: showNavigation} %}
                 {% endembed %}
             {% endblock %}
 
             {% block page_main %}
             <main role="main">
-                {% include 'partials/layout.messages.twig' %}
+                {% include '_partial/layout.messages.twig' %}
 
                 {# main page content #}
                 {% block content %}{% endblock %}

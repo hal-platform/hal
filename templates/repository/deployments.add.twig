@@ -19,7 +19,7 @@
             </ul>
         {% endif %}
 
-        {% include 'partials/form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': form, 'repository': repository} %}
+        {% include '_partial-form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': form, 'repository': repository} %}
     </div>
 
 {% endblock %}

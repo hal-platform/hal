@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% import "partials/macros.twig" as macros %}
+{% import "_partial/macros.twig" as macros %}
 {% set js_components = ["dashboard", "queue"] %}
 
 {% set page_title = 'Dashboard' %}
@@ -62,7 +62,7 @@
     {# PENDING WORK #}
     {% if pending %}
         <h3>Build and Push Queue</h3>
-        {% include 'partials/pending-table.twig' %}
+        {% include '_partial-job/pending-table.twig' %}
     {% endif %}
 
     <div class="dash-box-wrapper">
@@ -71,14 +71,14 @@
               {# RECENT USER BUILD ACTIVITY #}
 
               <h3 class="trailer">Your Recent Builds</h3>
-              {% include 'partials/build-box.twig' with {'builds': builds, 'initiator': false} %}
+              {% include '_partial-job/build-box.twig' with {'builds': builds, 'initiator': false} %}
         </div>
 
         <div class="dash-box">
               {# RECENT USER PUSH ACTIVITY #}
 
               <h3 class="trailer">Your Recent Pushes</h3>
-              {% include 'partials/push-box.twig' with {'pushes': pushes, 'initiator': false} %}
+              {% include '_partial-job/push-box.twig' with {'pushes': pushes, 'initiator': false} %}
         </div>
     </div>
 
