@@ -38,18 +38,14 @@ parameters:
         ################################################################################################################
 
         kraken.configuration:
-            route: '/kraken/applications/:application/configurations/:configuration'
+            route: '/kraken/configurations/:configuration'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.page']
-            conditions:
-                application: %routes.kraken.regex.hex%
-                configuration: %routes.kraken.regex.hex%
+            conditions: {configuration: %routes.kraken.regex.hex%}
 
         kraken.configuration.compare:
-            route: '/kraken/applications/:application/configurations/:configuration/compare'
+            route: '/kraken/configurations/:configuration/compare'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.compare.page']
-            conditions:
-                application: %routes.kraken.regex.hex%
-                configuration: %routes.kraken.regex.hex%
+            conditions: {configuration: %routes.kraken.regex.hex%}
 
         kraken.configuration.history.page1:
             route: '/kraken/applications/:application/configurations'
@@ -179,6 +175,13 @@ parameters:
             route: '/kraken/targets/:target/deploy'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.handler']
             conditions: {target: %routes.kraken.regex.hex%}
+
+        # rollback previous or failed configuration to target
+        kraken.rollback:
+            method: ['GET']
+            route: '/kraken/configurations/:configuration/rollback'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.rollback.page']
+            conditions: {configuration: %routes.kraken.regex.hex%}
 
         ################################################################################################################
         # HELP ROUTES

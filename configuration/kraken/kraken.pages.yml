@@ -61,7 +61,6 @@ services:
         class: 'QL\Kraken\Controller\Configuration\SnapshotController'
         arguments:
             - @kraken.configuration.twig
-            - @kraken.application
             - @kraken.configuration
             - @kraken.consul
             - @doctrine.em
@@ -99,7 +98,6 @@ services:
         class: 'QL\Kraken\Controller\Configuration\CompareConfigurationController'
         arguments:
             - @kraken.configuration.compare.twig
-            - @kraken.application
             - @kraken.configuration
             - @doctrine.em
             - @kraken.diff
@@ -298,6 +296,16 @@ services:
             - @kraken.crypto.decrypter
             - @kraken.random
 
+    kraken.rollback.page:
+        class: 'QL\Kraken\Controller\Configuration\RollbackController'
+        arguments:
+            - @kraken.rollback.twig
+            - @kraken.configuration
+            - @kraken.diff
+            - @doctrine.em
+    kraken.rollback.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/configuration/rollback.twig']]]
 
     ####################################################################################################################
     # GENERAL USE

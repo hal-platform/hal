@@ -2,7 +2,7 @@
 {% import "partials/macros.twig" as macros %}
 {% import "kraken/partial/macros.twig" as kraken_macros %}
 
-{% set page_title = "Compare Configurations" %}
+{% set page_title = "Rollback Configuration" %}
 
 {% block content %}
 
@@ -12,39 +12,21 @@
     <p>{{ application.name }}</p>
 
     <h4>Environment</h4>
-    <p>{{ configuration.environment.name }}</p>
+    <p>{{ environment.name }}</p>
 
-    <h4>Configuration ID</h4>
-    <p>{{ configuration.id }}</p>
-
-    <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
-        <li><a class="btn" href="{{ urlFor('kraken.configuration', {configuration: configuration.id}) }}">Configuration {{ configuration.id[:7] }}</a></li>
-
-        <li><a class="btn" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: configuration.environment.id}) }}">Latest Configuration</a></li>
-
-        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id}) }}">Configuration History</a></li>
-    </ul>
-
-    {% include 'kraken/partial/configuration.status.twig' %}
-
-    <h2>Configuration Comparison</h2>
-    {% if target %}
-        {{ block('comparison') }}
-    {% else %}
-        <p>There is no active environment set up for this application.</p>
-    {% endif %}
+    <h2>Verify Deployment</h2>
+    {{ block('deploy_comparison') }}
 
 {% endblock %}
 
-{% block comparison %}
+{% block deploy_comparison %}
 
     {% if diffs %}
         <table class="table--spacing-medium table--striped table--top-aligned trailer" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Property</th>
-                    <th class="t40">Snapshot</th>
+                    <th class="t40">Deployed</th>
                     <th class="t40">Latest</th>
                 </tr>
             </thead>
@@ -84,7 +66,14 @@
         </table>
 
     {% else %}
-        <p>There is no schema defined for this application.</p>
+        <p>There is no schema defined for this application. An empty configuration will be deployed.</p>
     {% endif %}
+
+    <form method="post">
+        <ul class="button-list">
+            <li><input type="submit" class="btn btn--action" value="Deploy Configuration"></li>
+            <li class="button-list"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
+        </ul>
+    </form>
 
 {% endblock %}

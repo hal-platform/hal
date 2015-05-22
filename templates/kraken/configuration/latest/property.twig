@@ -65,7 +65,7 @@
                 {% for previous_property in history %}
                     <tr>
                         <td>
-                            <a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: previous_property.configuration.id}) }}">
+                            <a href="{{ urlFor('kraken.configuration', {configuration: previous_property.configuration.id}) }}">
                                 {{ macros.icon('list') }} {{ previous_property.configuration.id[:7] }}
                             </a>
                         </td>

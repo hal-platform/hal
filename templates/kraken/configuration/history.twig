@@ -30,7 +30,7 @@
         <tbody>
             {% for configuration in configurations %}
                 <tr>
-                    <td><a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: configuration.id}) }}">{{ configuration.id[:7] }}</a></td>
+                    <td><a href="{{ urlFor('kraken.configuration', {configuration: configuration.id}) }}">{{ configuration.id[:7] }}</a></td>
                     <td>{{ configuration.environment.name }}</td>
                     <td>
                         {% if configuration.user %}

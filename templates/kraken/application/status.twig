@@ -52,7 +52,7 @@
                                         {% else %}
                                             {{ macros.status_icon('Error', 'error') }}
                                         {% endif %}
-                                        (<a href="{{ urlFor('kraken.configuration', {application: application.id, configuration: deployed.id})}}">{{ deployed.id[:7] }}</a>)
+                                        (<a href="{{ urlFor('kraken.configuration', {configuration: deployed.id})}}">{{ deployed.id[:7] }}</a>)
                                     {% else %}
                                         None
                                     {% endif %}

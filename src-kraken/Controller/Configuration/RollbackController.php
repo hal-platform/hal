@@ -11,12 +11,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Entity\Configuration;
-use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class CompareConfigurationController implements ControllerInterface
+class RollbackController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -29,32 +28,31 @@ class CompareConfigurationController implements ControllerInterface
     private $configuration;
 
     /**
-     * @type EntityRepository
-     */
-    private $targetRepo;
-    private $propertyRepo;
-
-    /**
      * @type ConfigurationDiffService
      */
     private $diffService;
 
     /**
+     * @type EntityRepository
+     */
+    private $targetRepo;
+
+    /**
      * @param TemplateInterface $template
      * @param Configuration $configuration
-     * @param EntityManagerInterface $em
      * @param ConfigurationDiffService $diffService
+     * @param EntityManagerInterface $em
      */
     public function __construct(
         TemplateInterface $template,
         Configuration $configuration,
-        EntityManagerInterface $em,
-        ConfigurationDiffService $diffService
+        ConfigurationDiffService $diffService,
+        EntityManagerInterface $em
     ) {
         $this->template = $template;
         $this->configuration = $configuration;
-
         $this->diffService = $diffService;
+
         $this->targetRepo = $em->getRepository(Target::CLASS);
     }
 
@@ -63,28 +61,19 @@ class CompareConfigurationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $target = $this->targetRepo->findOneBy([
-            'application' => $this->configuration->application(),
-            'environment' => $this->configuration->environment()
-        ]);
+        // $diffs = $this->diffService->resolveLatestConfiguration($this->target->application(), $this->target->environment());
 
-        $diffs = [];
-        if ($target) {
-            $latest = $this->diffService->resolveLatestConfiguration($target->application(), $target->environment());
-            $diffs = $this->diffService->diff($this->configuration, $latest);
-        }
-
-        $isDeployed = false;
-        if ($target && $target->configuration() === $this->configuration) {
-            $isDeployed = true;
-        }
+        // // Add "Deployed" configuration
+        // if ($this->target->configuration()) {
+        //     // @todo verify checksum against consul checksum
+        //     $diffs = $this->diffService->diff($this->target->configuration(), $diffs);
+        // }
 
         $context = [
-            'application' => $this->configuration->application(),
             'configuration' => $this->configuration,
-            'target' => $target,
-            'diffs' => $diffs,
-            'is_deployed' => $isDeployed
+            // 'application' => $this->target->application(),
+            // 'environment' => $this->target->environment(),
+            // 'diffs' => $diffs
         ];
 
         $this->template->render($context);

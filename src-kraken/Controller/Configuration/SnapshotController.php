@@ -9,7 +9,6 @@ namespace QL\Kraken\Controller\Configuration;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Configuration;
 use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Target;
@@ -25,11 +24,6 @@ class SnapshotController implements ControllerInterface
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type Application
-     */
-    private $application;
 
     /**
      * @type Configuration
@@ -54,7 +48,6 @@ class SnapshotController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param Application $application
      * @param Configuration $configuration
      * @param ConsulService $consul
      * @param EntityManagerInterface $em
@@ -62,14 +55,12 @@ class SnapshotController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        Application $application,
         Configuration $configuration,
         ConsulService $consul,
         EntityManagerInterface $em,
         Json $json
     ) {
         $this->template = $template;
-        $this->application = $application;
         $this->configuration = $configuration;
 
         $this->consul = $consul;
@@ -95,7 +86,7 @@ class SnapshotController implements ControllerInterface
         $checksums = ($isDeployed) ? $this->getChecksums($target) : [];
 
         $context = [
-            'application' => $this->application,
+            'application' => $this->configuration->application(),
             'configuration' => $this->configuration,
 
             'properties' => $properties,

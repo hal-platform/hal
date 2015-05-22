@@ -26,7 +26,7 @@
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Configuration Schema</a></li>
 
         {% if deployed %}
-            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.compare', {application: application.id, configuration: deployed.id}) }}">Compare to deployed configuration</a></li>
+            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.compare', {configuration: deployed.id}) }}">Compare to deployed configuration</a></li>
         {% endif %}
 
     </ul>
