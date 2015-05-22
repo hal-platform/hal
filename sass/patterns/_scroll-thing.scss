@@ -7,7 +7,7 @@
         }
     }
 
-    @include breakpoint(41.125em) {
+    @include breakpoint(40em) {
         dl {
             max-height: 400px;
             overflow-y: scroll;
