@@ -17,7 +17,7 @@
     {% include 'kraken/_partial/configuration.status.twig' %}
 
     <h2>Verify Rollback</h2>
-    {% include 'kraken/_partial/configuration.comparison.twig' %}
+    {% include 'kraken/_partial/configuration.comparison.twig' with({diff_left: 'Active', diff_right: 'Previous Snapshot'}) %}
 
     {{ block('lets_do_this') }}
 {% endblock %}
@@ -26,8 +26,9 @@
 
     <form method="post">
         <ul class="button-list">
-            <li><input type="submit" class="btn btn--action" value="Deploy Configuration"></li>
-            <li class="button-list"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
+            <li><input type="submit" class="btn btn--action" value="Rollback Configuration"></li>
+            <li><a class="btn" href="{{ urlFor('kraken.configuration', {application: application.id}) }}">Application Configuration</a></li>
+            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration', {application: application.id}) }}">Cancel</a></li>
         </ul>
     </form>
 

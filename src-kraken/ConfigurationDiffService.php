@@ -37,10 +37,97 @@ class ConfigurationDiffService
     }
 
     /**
+     * Read property/schema for this application/environment and return a list of Diffs
+     *
+     * Used to compare a snapshot to the latest configuration.
+     *
+     * @todo this should be cached heavily
+     *
+     * @param Application $application
+     * @param Environment $environment
+     *
+     * @return Diff[]
+     */
+    public function resolveLatestConfiguration(Application $application, Environment $environment)
+    {
+        $configuration = [];
+
+        $schema = $this->schemaRepo->findBy([
+            'application' => $application
+        ]);
+
+        $properties = $this->propertyRepo->findBy([
+            'application' => $application,
+            'environment' => $environment
+        ]);
+
+        foreach ($schema as $schema) {
+            $diff = $this->diffSchema($configuration, $schema);
+            $configuration[$diff->key()] = $diff;
+        }
+
+        foreach ($properties as $property) {
+            $diff = $this->diffProperty($configuration, $property);
+            $configuration[$diff->key()] = $diff;
+        }
+
+        uasort($configuration, function($a, $b) {
+            return strcasecmp($a->key(), $b->key());
+        });
+
+        return $configuration;
+    }
+
+    /**
+     * Build a list of Diffs from a snapshot.
+     *
+     * Used to compare two snapshots.
+     *
+     * @param Configuration $snapshot
+     *
+     * @return Diff[]
+     */
+    public function resolveConfiguration(Configuration $snapshot)
+    {
+        $configuration = [];
+
+        // Add properties from configuration
+        $properties = $this->configurationPropertyRepo->findBy(['configuration' => $snapshot]);
+
+        foreach ($properties as $property) {
+            if (!$schema = $property->schema()) {
+                $schema = (new Schema)
+                    ->withKey($property->key())
+                    ->withDataType($property->dataType())
+                    ->withIsSecure($property->isSecure())
+                    ->withApplication($snapshot->application());
+            }
+
+            $property = (new Property)
+                ->withValue($property->value())
+                ->withSchema($schema)
+                ->withApplication($snapshot->application())
+                ->withEnvironment($snapshot->environment());
+
+            $diff = $this->diffProperty($configuration, $property);
+
+            $configuration[$diff->key()] = $diff;
+        }
+
+        uasort($configuration, function($a, $b) {
+            return strcasecmp($a->key(), $b->key());
+        });
+
+        return $configuration;
+    }
+
+    /**
+     * Compare a deployed configuration snapshot to a list of Diffs
+     *
      * @param Configuration $configuration
      * @param Diff[] $latestConfiguration
      *
-     * @return array
+     * @return Diff[]
      */
     public function diff(Configuration $configuration, array $latestConfiguration = [])
     {
@@ -58,40 +145,6 @@ class ConfigurationDiffService
         }
 
         return $diffed;
-    }
-
-    /**
-     * @todo this should be cached heavily
-     *
-     * @param Application $application
-     * @param Environment $environment
-     *
-     * @return Diff[]
-     */
-    public function resolveLatestConfiguration(Application $application, Environment $environment)
-    {
-        $configuration = [];
-
-        $schema = $this->schemaRepo->findBy([
-            'application' => $application
-        ], ['key' => 'ASC']);
-
-        $properties = $this->propertyRepo->findBy([
-            'application' => $application,
-            'environment' => $environment
-        ]);
-
-        foreach ($schema as $schema) {
-            $diff = $this->diffSchema($configuration, $schema);
-            $configuration[$diff->key()] = $diff;
-        }
-
-        foreach ($properties as $property) {
-            $diff = $this->diffProperty($configuration, $property);
-            $configuration[$diff->key()] = $diff;
-        }
-
-        return $configuration;
     }
 
     /**

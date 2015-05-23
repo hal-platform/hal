@@ -2,6 +2,7 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = is_deployed ? 'Deployed Snapshot' : 'Snapshot' %}
+{% set isAdmin = true %}
 
 {% block content %}
 
@@ -24,10 +25,22 @@
 
     {% include 'kraken/_partial/configuration.status.twig' %}
 
+    {% if isAdmin %}
+        {% set deploy_title = is_deployed or not configuration.isSuccess ? 'Redeploy' : 'Rollback' %}
+
+        <h3>{{ deploy_title }}</h3>
+        <p class="trailer--andre"><a class="btn btn--action" href="{{ urlFor('kraken.rollback', {configuration: configuration.id}) }}">{{ deploy_title }} this Snapshot</a></p>
+    {% endif %}
+
     <h2>Configuration</h2>
     {% include 'kraken/_partial/configuration.twig' with {'properties': properties} %}
 
     <h2>Deployment Audit Log</h2>
+    {{ block('audit_log') }}
+
+{% endblock %}
+
+{% block audit_log %}
     {% if audits %}
         <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
             <thead>
@@ -73,5 +86,4 @@
     {% else %}
         <p>There is no deployment log.</p>
     {% endif %}
-
 {% endblock %}

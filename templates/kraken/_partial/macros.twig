@@ -8,7 +8,7 @@
         {{ hal_macros.status('Error - Decoding Failure', 'error', 'spam-2') }}
 
     {% elseif formatted is null %}
-        {{ hal_macros.icon('locked') }} Secure
+        {{ hal_macros.status('Secure', 'info', 'locked') }}
 
     {% else %}
         {% if formatted is iterable %}

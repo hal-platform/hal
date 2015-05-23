@@ -21,7 +21,8 @@
         <thead>
             <tr>
                 <th>Snapshot</th>
-                <th>Env</th>
+                <th>Status</th>
+                <th>Environment</th>
                 <th>User</th>
                 <th>Time</th>
                 <th></th>
@@ -31,6 +32,13 @@
             {% for configuration in configurations %}
                 <tr>
                     <td><a href="{{ urlFor('kraken.configuration', {configuration: configuration.id}) }}">{{ configuration.id[:7] }}</a></td>
+                    <td>
+                        {% if configuration.isSuccess %}
+                            {{ macros.status_icon('Success', 'success') }}
+                        {% else %}
+                            {{ macros.status_icon('Failed', 'error') }}
+                        {% endif %}
+                    </td>
                     <td>{{ configuration.environment.name }}</td>
                     <td>
                         {% if configuration.user %}

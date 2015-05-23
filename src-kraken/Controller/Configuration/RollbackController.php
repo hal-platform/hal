@@ -81,8 +81,14 @@ class RollbackController implements ControllerInterface
                 ->load('kraken.configuration', ['configuration' => $this->configuration->id()]);
         }
 
-        $latest = $this->diffService->resolveLatestConfiguration($target->application(), $target->environment());
-        $diffs = $this->diffService->diff($this->configuration, $latest);
+        // Build up the Diffs from the old snapshot
+        $diffs = $this->diffService->resolveConfiguration($this->configuration);
+
+        // Compare old snapshot to active configuration
+        // Only if there is an active configuration, and its not the same as what we're trying to redeploy
+        if ($target->configuration() && $target->configuration() !== $this->configuration) {
+            $diffs = $this->diffService->diff($target->configuration(), $diffs);
+        }
 
         $context = [
             'configuration' => $this->configuration,

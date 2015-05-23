@@ -33,4 +33,24 @@
             {% endif %}
         </dd>
     </dl>
+
+    <p class="leader--napolean trailer--napolean">
+        <small>
+        {% if is_deployed %}
+            {% if configuration.isSuccess %}
+                This snapshot is currently actively deployed.
+            {% else %}
+                This snapshot is currently actively deployed, but an error occured in the process. It should be redeployed.
+            {% endif %}
+
+        {% else %}
+            {% if configuration.isSuccess %}
+                This snapshot was previously successfully deployed.
+            {% else %}
+                An error occured while attempting to deploy this configuration. However the snapshot was saved, and it may be redeployed.
+            {% endif %}
+
+        {% endif %}
+        </small>
+    </p>
 </div>

@@ -1,13 +1,17 @@
 {% import "_partial/macros.twig" as macros %}
 {% import "kraken/_partial/macros.twig" as kraken_macros %}
 
+
+{% set diff_left = diff_left|default('Snapshot') %}
+{% set diff_right = diff_right|default('Latest') %}
+
 {% if diffs %}
     <table class="table--spacing-medium table--striped table--top-aligned trailer" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>Property</th>
-                <th class="t40">Snapshot</th>
-                <th class="t40">Latest</th>
+                <th class="t40">{{ diff_left }}</th>
+                <th class="t40">{{ diff_right }}</th>
             </tr>
         </thead>
         <tbody>
