@@ -1,0 +1,106 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="/docs/release-notes.css">
+</head>
+<body>
+<h1>HAL 9000 - Version 2.5</h1>
+    <p>Greetings! The web core team has deployed an update to HAL 9000. This is version 2.5.</p>
+
+    <h3>What is HAL 9000?</h3>
+    <p>HAL 9000 is the deployment system we use to deploy many of our client-facing websites, including MyQL, Rocket Mortgage, QLMS, ORMS, Agent Insight, QuickenLoans.com and more!</p>
+
+    <h2>Changelog</h2>
+
+    <h3>Developer Experience (DX) Enhancements</h3>
+    <ul>
+        <li>
+            <h5>All builds now run within Docker containers.</h5>
+
+            <blockquote>
+                <p>See <a href="https://localhost.hal/help/deployment#docker">Deployment scripting guide</a> for more details.</p>
+            </blockquote>
+        </li>
+        <li>
+            <h5>The following projects have been tested and verified to build successfully in the legacy container.</h5>
+
+            <blockquote>
+                <ul>
+                    <li>agent-insight</li>
+                    <li>myql-common</li>
+                    <li>myql-origination</li>
+                    <li>myql-servicing</li>
+                    <li>phoenix</li>
+                    <li>qlms</li>
+                    <li>qlms-html</li>
+                    <li>qlms-portal</li>
+                    <li>Q4</li>
+                    <li>rocket-web</li>
+                </ul>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h3>Technical</h3>
+    <ul>
+        <li>
+            <h5>HAL Agent now runs on a new dedicated server.</h5>
+            <blockquote>
+                <p>It has more <b>power</b>!</p>
+                <p>It is more <b>secure</b>!</p>
+                <p>However, currently there is only one. Previously HAL jobs ran on two separate servers.</p>
+            </blockquote>
+        </li>
+        <li>
+            <h5>Added <code>docker:status</code> command to get system information and docker status information.</h5>
+            <blockquote>
+                This data is pushed to redis so it may be read from the frontend.
+            </blockquote>
+        </li>
+        <li>
+            <h5>Added <code>server:connections</code> command to test ability to connect to deployment servers.</h5>
+            <blockquote>
+                This data is pushed to redis so it may be read from the frontend.
+            </blockquote>
+        </li>
+        <li>
+            <h5>Added <code>docker:refresh</code> command to push dockerfiles to build server.</h5>
+            <blockquote>
+                An audit log is recorded when this command is run.
+            </blockquote>
+        </li>
+    </ul>
+
+    <h2>Need Help?</h2>
+    <p>If you find any bugs or want to request a feature, drop us a line in the hipchat room <strong>[Application] HAL 9000</strong>, or <a href="mailto:itteamwebcore@quickenloans.com">send us an email</a>.</p>
+
+    <h2>JIRA Tasklist</h2>
+
+    <p>
+        <a href="https://fringedivision.atlassian.net/projects/HAL/versions/11900">JIRA Release page for HAL 9000 2.5</a>
+    </p>
+
+    <h3>Improvement</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-174">HAL-174</a>] - Add support for remote unix build server</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-226">HAL-226</a>] - Push server:connections and docker:status data to redis</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-227">HAL-227</a>] - Enable crons for server:connections and docker:status</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-230">HAL-230</a>] - Push audit data to HAL when docker images are refreshed</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-231">HAL-231</a>] - Switch from fork() to process builder</li>
+    </ul>
+
+    <h3>New Feature</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-219">HAL-219</a>] - Run hal builds within Docker containers on dedicated build server</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-220">HAL-220</a>] - Add hal-specific docker images</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-221">HAL-221</a>] - Add server:connections command to agent</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-225">HAL-225</a>] - Add docker:status command</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-232">HAL-232</a>] - Push event logs to redis</li>
+    </ul>
+
+    <h3>Tasks</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-224">HAL-224</a>] - Ruby sucks</li>
+    </ul>
+</body>
+</html>
