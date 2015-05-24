@@ -85,6 +85,10 @@ services:
     kraken.random:
         class: 'QL\Hal\Core\RandomGenerator'
 
+    kraken.template.skeletor:
+        class: 'QL\Kraken\Application\SkeletorConfigurationTemplate'
+        arguments: [@clock, @kraken.random]
+
     ####################################################################################################################
     # VALIDATORS
     ####################################################################################################################
