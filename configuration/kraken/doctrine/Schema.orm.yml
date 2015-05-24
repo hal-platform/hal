@@ -13,7 +13,7 @@ QL\Kraken\Entity\Schema:
         key:
             column: property_key
             type: string
-            length: 250
+            length: 150
         dataType:
             column: data_type
             type: propertyenum

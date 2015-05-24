@@ -6,7 +6,7 @@
 {% set page_title = "Status: " ~ repo.name %}
 
 {% block content %}
-    <h2>Application Status for <strong>{{ repo.name }}</strong></h2>
+    <h1>Application Status for <strong>{{ repo.name }}</strong></h1>
 
     {# Only allow environment switching if has multiple env #}
     {% if environments|length > 1 %}
@@ -61,7 +61,7 @@
         <li><a class="btn btn--secondary" href="{{ urlFor('repository', {id: repo.id}) }}">Application</a></li>
 
         {% if kraken %}
-            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('asterisk') }} Kraken</a></li>
+            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: kraken.id}) }}">{{ macros.icon('asterisk') }} Kraken</a></li>
         {% endif %}
     </ul>
 

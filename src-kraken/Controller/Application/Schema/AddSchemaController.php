@@ -21,12 +21,12 @@ use Slim\Http\Request;
 class AddSchemaController implements ControllerInterface
 {
     const SUCCESS = 'Property "%s" added.';
-    const ERR_INVALID_KEY = 'Property Keys must be alphanumeric, optionally with separators (._-)';
+    const ERR_INVALID_KEY = 'Property Keys must be alphanumeric, optionally with separators (._-). Please use less than 150 characters.';
     const ERR_MISSING_KEY = 'You must enter a property key';
     const ERR_INVALID_TYPE = 'Please select a type for this property.';
     const ERR_DUPLICATE = 'This property key already exists.';
 
-    const VALIDATE_KEY_REGEX = '/^[a-zA-Z0-9\_\.\-]{1,250}$/';
+    const VALIDATE_KEY_REGEX = '/^[a-zA-Z0-9\_\.\-]{1,150}$/';
 
     /**
      * @type Request
@@ -114,7 +114,7 @@ class AddSchemaController implements ControllerInterface
         if ($this->request->isPost()) {
             if ($schema = $this->handleForm()) {
                 return $this->flasher
-                    ->fire(sprintf(self::SUCCESS, $schema->key()), 'success')
+                    ->withFlash(sprintf(self::SUCCESS, $schema->key()), 'success')
                     ->load('kraken.application', ['application' => $this->application->id()]);
             }
         }
