@@ -57,7 +57,7 @@
                         <td>
                             {{ log.type == 'update' ? 'Update' : 'Removal' }}
                         </td>
-                        <td>
+                        <td class="fixed-nobreak">
                             {% if log.isSuccess %}
                                 <span class="tooltipped tooltipped-n" aria-label="The property was updated successfully">
                                     {{ macros.status_icon('Success', 'success') }}

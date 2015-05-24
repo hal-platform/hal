@@ -115,7 +115,7 @@ class AddSchemaController implements ControllerInterface
             if ($schema = $this->handleForm()) {
                 return $this->flasher
                     ->withFlash(sprintf(self::SUCCESS, $schema->key()), 'success')
-                    ->load('kraken.application', ['application' => $this->application->id()]);
+                    ->load('kraken.schema', ['application' => $this->application->id()]);
             }
         }
 
