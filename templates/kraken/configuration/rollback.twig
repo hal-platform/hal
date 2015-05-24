@@ -17,7 +17,7 @@
     {% include 'kraken/_partial/configuration.status.twig' %}
 
     <h2>Verify Rollback</h2>
-    {% include 'kraken/_partial/configuration.comparison.twig' with({diff_left: 'Active', diff_right: 'Previous Snapshot'}) %}
+    {% include 'kraken/_partial/configuration.comparison.twig' with({diff_left: 'Active', diff_right: 'Rollback'}) %}
 
     {{ block('lets_do_this') }}
 {% endblock %}

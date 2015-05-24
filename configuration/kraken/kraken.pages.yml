@@ -287,13 +287,11 @@ services:
     kraken.deploy.handler:
         class: 'QL\Kraken\Controller\Configuration\DeployHandler'
         arguments:
+            - @doctrine.em
+            - @kraken.deploy
             - @kraken.target
             - @currentUser
-            - @kraken.json
             - @session.flasher
-            - @doctrine.em
-            - @kraken.consul
-            - @kraken.crypto.decrypter
             - @kraken.random
 
     kraken.rollback.page:
@@ -307,6 +305,16 @@ services:
     kraken.rollback.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/rollback.twig']]]
+
+    kraken.rollback.handler:
+        class: 'QL\Kraken\Controller\Configuration\RollbackHandler'
+        arguments:
+            - @doctrine.em
+            - @kraken.deploy
+            - @kraken.configuration
+            - @currentUser
+            - @session.flasher
+            - @kraken.random
 
     ####################################################################################################################
     # GENERAL USE

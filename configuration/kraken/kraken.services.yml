@@ -70,6 +70,14 @@ services:
         class: 'QL\Kraken\Service\ConsulService'
         arguments: [@kraken.guzzle]
 
+    kraken.deploy:
+        class: 'QL\Kraken\Service\DeploymentService'
+        arguments:
+            - @doctrine.em
+            - @kraken.consul
+            - @kraken.crypto.decrypter
+            - @json
+
     kraken.diff:
         class: 'QL\Kraken\ConfigurationDiffService'
         arguments: [@doctrine.em]

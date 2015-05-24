@@ -183,6 +183,12 @@ parameters:
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.rollback.page']
             conditions: {configuration: %routes.kraken.regex.hex%}
 
+        kraken.rollback.handler:
+            method: ['POST']
+            route: '/kraken/configurations/:configuration/rollback'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.rollback.handler']
+            conditions: {configuration: %routes.kraken.regex.hex%}
+
         ################################################################################################################
         # HELP ROUTES
         ################################################################################################################

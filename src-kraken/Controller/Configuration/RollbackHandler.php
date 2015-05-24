@@ -11,17 +11,17 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
-use QL\Kraken\Service\ConsulConnectionException;
-use QL\Kraken\Service\DeploymentService;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Configuration;
 use QL\Kraken\Entity\ConfigurationProperty;
 use QL\Kraken\Entity\Environment;
-use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Target;
+use QL\Kraken\Service\ConsulConnectionException;
+use QL\Kraken\Service\DeploymentService;
 use QL\Panthor\ControllerInterface;
+use Slim\Exception\Stop as StopException;
 
-class DeployHandler implements ControllerInterface
+class RollbackHandler implements ControllerInterface
 {
     const SUCCESS = 'Configuration successfully deployed to %s';
 
@@ -29,14 +29,19 @@ class DeployHandler implements ControllerInterface
     const ERR_CONSUL_FAILURE = 'Errors occured while updating Consul. No updates were made.';
 
     /**
+     * @type EntityManagerInterface
+     */
+    private $em;
+
+    /**
      * @type DeploymentService
      */
     private $deployer;
 
     /**
-     * @type Target
+     * @type Configuration
      */
-    private $target;
+    private $configuration;
 
     /**
      * @type User
@@ -56,13 +61,14 @@ class DeployHandler implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $propertyRepo;
+    private $targetRepo;
+    private $configurationPropertyRepo;
 
     /**
      * @param EntityManagerInterface $em
      * @param DeploymentService $deployer
      *
-     * @param Target $target
+     * @param Configuration $configuration
      * @param User $currentUser
      *
      * @param Flasher $flasher
@@ -72,21 +78,23 @@ class DeployHandler implements ControllerInterface
         EntityManagerInterface $em,
         DeploymentService $deployer,
 
-        Target $target,
+        Configuration $configuration,
         User $currentUser,
 
         Flasher $flasher,
         callable $random
     ) {
         $this->deployer = $deployer;
+        $this->flasher = $flasher;
 
-        $this->target = $target;
+        $this->configuration = $configuration;
         $this->currentUser = $currentUser;
 
-        $this->flasher = $flasher;
         $this->random = $random;
 
-        $this->propertyRepo = $em->getRepository(Property::CLASS);
+        $this->em = $em;
+        $this->targetRepo = $this->em->getRepository(Target::CLASS);
+        $this->configurationPropertyRepo = $this->em->getRepository(ConfigurationProperty::CLASS);
     }
 
     /**
@@ -94,24 +102,30 @@ class DeployHandler implements ControllerInterface
      */
     public function __invoke()
     {
-        // 1. Create a configuration for this environment
-        $configuration = $this->buildConfiguration($this->target->application(), $this->target->environment());
+        // 1. Find target
+        $target = $this->targetRepo->findOneBy([
+            'application' => $this->configuration->application(),
+            'environment' => $this->configuration->environment()
+        ]);
 
-        // 2. Get all property/schema pairs for environment
-        $properties = $this->buildProperties($configuration);
+        // 1. Create a configuration for this environment
+        $configuration = $this->buildConfiguration($target->application(), $target->environment());
+
+        // 2. Create new properties from old properties
+        $properties = $this->buildProperties($this->configuration, $configuration);
 
         // 3. Deploy
         try {
-            $status = $this->deployer->deploy($this->target, $configuration, $properties);
+            $status = $this->deployer->deploy($target, $configuration, $properties);
 
         } catch (ConsulConnectionException $ex) {
             return $this->flasher
                 ->withFlash($ex->getMessage(), 'error')
-                ->load('kraken.deploy', ['target' => $this->target->id()]);
+                ->load('kraken.deploy', ['target' => $target->id()]);
         }
 
-        // And finally, go away.
-        $this->redirect($this->target, $status);
+        // 4. And finally, go away.
+        $this->redirect($target, $status);
     }
 
     /**
@@ -133,39 +147,33 @@ class DeployHandler implements ControllerInterface
     }
 
     /**
-     * @param Configuration $configuration
+     * @param Configuration $source
+     * @param Configuration $new
      *
      * @return ConfigurationProperty[]
      */
-    private function buildProperties(Configuration $configuration)
+    private function buildProperties(Configuration $source, Configuration $new)
     {
-        $newconfig = [];
+        $configuration = [];
 
-        $properties = $this->propertyRepo->findBy([
-            'application' => $configuration->application(),
-            'environment' => $configuration->environment()
+        $properties = $this->configurationPropertyRepo->findBy([
+            'configuration' => $source,
         ]);
 
-        foreach ($properties as $property) {
-            $schema = $property->schema();
+        foreach ($properties as $oldProperty) {
+            $property = clone $oldProperty;
 
             $id = call_user_func($this->random);
 
-            $cf = (new ConfigurationProperty)
+            $property
                 ->withId($id)
-                ->withKey($schema->key())
-                ->withDataType($schema->dataType())
-                ->withIsSecure($schema->isSecure())
-                ->withValue($property->value())
+                ->withChecksum('')
+                ->withConfiguration($new);
 
-                ->withConfiguration($configuration)
-                ->withProperty($property)
-                ->withSchema($schema);
-
-            $newconfig[$cf->key()] = $cf;
+            $configuration[$property->key()] = $property;
         }
 
-        return $newconfig;
+        return $configuration;
     }
 
     /**
