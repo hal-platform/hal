@@ -10,16 +10,9 @@ namespace QL\Kraken\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Crypto\SymmetricEncrypter;
-// use QL\Hal\Core\Entity\User;
-// use QL\Hal\Flasher;
-// use QL\Kraken\ConfigurationDiffService;
-// use QL\Kraken\Entity\Application;
 use QL\Kraken\Entity\Environment;
-// use QL\Kraken\Entity\Target;
 use QL\Kraken\Entity\Property;
 use QL\Kraken\Entity\Schema;
-// use QL\Panthor\ControllerInterface;
-// use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Json;
 use Slim\Http\Request;
 

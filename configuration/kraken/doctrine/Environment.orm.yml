@@ -22,3 +22,6 @@ QL\Kraken\Entity\Environment:
             column: consul_token
             type: string
             length: 200
+        isProduction:
+            column: production
+            type: boolean

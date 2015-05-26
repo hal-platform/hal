@@ -106,7 +106,7 @@ services:
         calls: [['setTemplate', ['kraken/configuration/compare.twig']]]
 
     ####################################################################################################################
-    # CRUD
+    # CRUD - APPLICATION
     ####################################################################################################################
 
     kraken.application.add.page:
@@ -122,22 +122,6 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application.add.twig']]]
 
-    kraken.environment.add.page:
-        class: 'QL\Kraken\Controller\AddEnvironmentController'
-        arguments:
-            - @slim.request
-            - @kraken.environment.add.twig
-            - @session.flasher
-            - @doctrine.em
-            - @kraken.random
-    kraken.environment.add.twig:
-        parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/environment.add.twig']]]
-
-    ####################################################################################################################
-    # CRUD - APPLICATION
-    ####################################################################################################################
-
     kraken.application.target.add.page:
         class: 'QL\Kraken\Controller\Application\AddTargetController'
         arguments:
@@ -150,6 +134,35 @@ services:
     kraken.application.target.add.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/target.add.twig']]]
+
+    ####################################################################################################################
+    # CRUD - ENVIRONMENT
+    ####################################################################################################################
+
+    kraken.environment.add.page:
+        class: 'QL\Kraken\Controller\AddEnvironmentController'
+        arguments:
+            - @slim.request
+            - @kraken.environment.add.twig
+            - @session.flasher
+            - @doctrine.em
+            - @kraken.validator.environment
+    kraken.environment.add.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/environment.add.twig']]]
+
+    kraken.environment.edit.page:
+        class: 'QL\Kraken\Controller\Environment\EditEnvironmentController'
+        arguments:
+            - @slim.request
+            - @kraken.environment.edit.twig
+            - @kraken.environment
+            - @session.flasher
+            - @kraken.validator.environment
+            - @doctrine.em
+    kraken.environment.edit.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/environment/environment.edit.twig']]]
 
     ####################################################################################################################
     # CRUD - SCHEMA

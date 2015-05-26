@@ -1,10 +1,11 @@
 {% extends 'base.kraken.twig' %}
+{% import "_partial/macros.twig" as macros %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
-{% set page_title = "Add Environment" %}
+{% set page_title = "Edit Environment: " ~ environment.name %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <h1>Edit <strong>{{ environment.name }}</strong> Environment</h1>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
@@ -12,10 +13,13 @@
         <form action="" method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="env-name">Name</label>
-                    <small class="additional">The name of the environment such as <b>test</b> or <b>prod</b>.</small>
-
-                    <input type="text" name="name" id="env-name" maxlength="40" required value="{{ form.name }}" class="text-input t50">
+                    <h4>Name</h4>
+                    <p>
+                        {{ environment.name }}
+                        {% if environment.isProduction %}
+                            {{ macros.status('Production', 'info', 'key') }}
+                        {% endif %}
+                    </p>
                 </li>
                 <li>
                     <label for="env-server">Consul Server</label>
@@ -32,27 +36,10 @@
 
                     <input type="text" name="token" id="env-token" maxlength="200" value="{{ form.token }}" class="text-input" autocomplete="off">
                 </li>
-                <li>
-                    <label>Is this a production environment?</label>
-
-                    <ul class="radio-grid--form">
-                        <li>
-                            {% set isSelected = form.is_prod is same as('true') ? true : false %}
-                            <input id="env-is_prod-1" type="radio" name="is_prod" value="true"{{ isSelected ? ' checked' : '' }}>
-                            <label for="env-is_prod-1">Yes</label>
-                        </li>
-
-                        <li>
-                            {% set isSelected = form.is_prod is same as('false') ? true : false %}
-                            <input id="env-is_prod-0"  type="radio" name="is_prod" value="false"{{ isSelected ? ' checked' : '' }}>
-                            <label for="env-is_prod-0">No</label>
-                        </li>
-                    </ul>
-                </li>
             </ul>
 
             <ul class="button-list">
-                <li><input class="btn btn--action" type="submit" value="Add Environment"></li>
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
                 <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.environments') }}">Cancel</a></li>
             </ul>
 

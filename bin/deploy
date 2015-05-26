@@ -9,7 +9,7 @@ function loadTitles() {
 OUTOUT
     read -r -d '' TITLE_INSTALL <<OUTOUT
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ COMPOSER / NPM / BUNDLER INSTALLATION                                        ┃
+┃ COMPOSER / NPM / INSTALLATION                                                ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
     read -r -d '' TITLE_CONFIG <<OUTOUT

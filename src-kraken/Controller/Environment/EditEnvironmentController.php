@@ -5,20 +5,20 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller;
+namespace QL\Kraken\Controller\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Flasher;
 use QL\Kraken\Entity\Environment;
 use QL\Kraken\Validator\EnvironmentValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
+use QL\Hal\Flasher;
 use Slim\Http\Request;
 
-class AddEnvironmentController implements ControllerInterface
+class EditEnvironmentController implements ControllerInterface
 {
-    const SUCCESS = 'Environment "%s" added.';
+    const SUCCESS = 'Environment updated.';
 
     /**
      * @type Request
@@ -31,14 +31,9 @@ class AddEnvironmentController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManager
+     * @type Environment
      */
-    private $em;
-
-    /**
-     * @type EntityManagerInterface
-     */
-    private $environmentRepo;
+    private $environment;
 
     /**
      * @type Flasher
@@ -51,54 +46,70 @@ class AddEnvironmentController implements ControllerInterface
     private $validator;
 
     /**
-     * @type array
+     * @type EntityManagerInterface
      */
-    private $errors;
+    private $em;
+
+    /**
+     * @type EntityRepository
+     */
+    private $environmentRepo;
 
     /**
      * @param Request $request
      * @param TemplateInterface $template
+     * @param Environment $environment
      * @param Flasher $flasher
-     * @param EntityManagerInterface $em
      * @param EnvironmentValidator $validator
+     * @param EntityManagerInterface $em
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
+        Environment $environment,
         Flasher $flasher,
-        EntityManagerInterface $em,
-        EnvironmentValidator $validator
+        EnvironmentValidator $validator,
+        EntityManagerInterface $em
     ) {
         $this->request = $request;
         $this->template = $template;
+        $this->environment = $environment;
         $this->flasher = $flasher;
         $this->validator = $validator;
 
         $this->em = $em;
-        $this->environmentRepo = $this->em->getRepository(Environment::CLASS);
+        $this->environmentRepo = $em->getRepository(Environment::CLASS);
 
         $this->errors = [];
     }
 
     /**
-     * @return null
+     * @return void
      */
     public function __invoke()
     {
-        if ($this->request->isPost() && $environment = $this->handleForm()) {
-            return $this->flasher
-                ->withFlash(sprintf(self::SUCCESS, $environment->name()), 'success')
-                ->load('kraken.environments');
+        $form = [
+            'server' => $this->environment->consulServer(),
+            'token' => $this->environment->consulToken()
+        ];
+
+        if ($this->request->isPost()) {
+
+            $form['server'] = $this->request->post('server');
+            $form['token'] = $this->request->post('token');
+
+            if ($environment = $this->handleForm()) {
+                // flash and redirect
+                $this->flasher
+                    ->withFlash(sprintf(self::SUCCESS, $environment->name()), 'success')
+                    ->load('kraken.environments');
+            }
         }
 
         $context = [
+            'environment' => $this->environment,
             'errors' => $this->validator->errors(),
-            'form' => [
-                'name' => $this->request->post('name'),
-                'server' => $this->request->post('server'),
-                'token' => $this->request->post('token'),
-                'is_prod' => $this->request->post('is_prod')
-            ]
+            'form' => $form
         ];
 
         $this->template->render($context);
@@ -109,16 +120,13 @@ class AddEnvironmentController implements ControllerInterface
      */
     private function handleForm()
     {
-        $name = $this->request->post('name');
         $server = $this->request->post('server');
         $token = $this->request->post('token');
-        $isProd = $this->request->post('is_prod');
 
-        $environment = $this->validator->isValid($name, $server, $token, $isProd);
+        if ($environment = $this->validator->isEditValid($this->environment, $server, $token)) {
 
-        if ($environment) {
             // persist to database
-            $this->em->persist($environment);
+            $this->em->merge($environment);
             $this->em->flush();
         }
 

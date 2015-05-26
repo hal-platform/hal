@@ -19,12 +19,19 @@ class Environment implements JsonSerializable
     protected $consulServer;
     protected $consulToken;
 
+    /**
+     * @type string
+     */
+    protected $isProduction;
+
     public function __construct()
     {
         $this->id = '';
         $this->name = '';
         $this->consulServer = '';
         $this->consulToken = '';
+
+        $this->isProduction = false;
     }
 
     /**
@@ -41,6 +48,14 @@ class Environment implements JsonSerializable
     public function name()
     {
         return $this->name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProduction()
+    {
+        return $this->isProduction;
     }
 
     /**
@@ -82,6 +97,17 @@ class Environment implements JsonSerializable
     }
 
     /**
+     * @param bool $isProduction
+     *
+     * @return self
+     */
+    public function withIsProduction($isProduction)
+    {
+        $this->isProduction = $isProduction;
+        return $this;
+    }
+
+    /**
      * @param string $server
      *
      * @return self
@@ -111,6 +137,7 @@ class Environment implements JsonSerializable
         $json = [
             'id' => $this->id(),
             'name' => $this->name(),
+            'isProduction' => $this->isProduction(),
 
             'consulServer' => $this->consulServer(),
             'consulToken' => $this->consulToken()

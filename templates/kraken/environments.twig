@@ -1,37 +1,54 @@
 {% extends 'base.kraken.twig' %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Environments" %}
+{% set isAdmin = true %}
 
 {% block content %}
     <h1>Environments</h1>
 
     {% if environments %}
-        <table class="table--spacing-medium">
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
                     <th>Consul Server</th>
-                    {# <th>Consul Token</th> #}
+                    {% if isAdmin %}
+                        <th></th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for environment in environments %}
                     <tr>
                         <td>{{ environment.id[:7] }}</td>
-                        <td>{{ environment.name }}</td>
-                        <td><code>{{ environment.consulServer }}</code></td>
-                        {# <td><code>{{ environment.consulToken }}</code></td> #}
+                        <td>
+                            {% if environment.isProduction %}
+                                {{ macros.status(environment.name, 'info', 'key') }}
+                            {% else %}
+                                {{ environment.name }}
+                            {% endif %}
+                        </td>
+                        <td><code>{{ environment.consulServer|trim('/') }}</code></td>
+
+                        {% if isAdmin %}
+                            <td class="tr">
+                                <a href="{{ urlFor('kraken.environment.edit', {environment: environment.id}) }}">
+                                    Edit <span class="tablesaw-collapse">Configuration</span>
+                                </a>
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>There are no configuration environments defined.</p>
+        <p>There are no environments defined.</p>
     {% endif %}
 
     <ul class="button-list">
-        {% if not admin %}
+        {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.add_environment') }}">Add Environment</a></li>
         {% endif %}
 

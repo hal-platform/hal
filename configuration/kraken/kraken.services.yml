@@ -101,6 +101,10 @@ services:
             - @kraken.crypto.encrypter
             - @kraken.random
 
+    kraken.validator.environment:
+        class: 'QL\Kraken\Validator\EnvironmentValidator'
+        arguments: [@doctrine.em, @kraken.random]
+
     ####################################################################################################################
     # MIDDLEWARE
     ####################################################################################################################

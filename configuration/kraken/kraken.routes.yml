@@ -34,6 +34,15 @@ parameters:
             conditions: {application: %routes.kraken.regex.hex%}
 
         ################################################################################################################
+        # ENVIRONMENT
+        ################################################################################################################
+
+        kraken.environment.edit:
+            route: '/kraken/environments/:environment/edit'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.environment.edit.page']
+            conditions: {environment: %routes.kraken.regex.hex%}
+
+        ################################################################################################################
         # CONFIGURATION
         ################################################################################################################
 
