@@ -208,6 +208,15 @@ services:
             - @doctrine.em
             - @session.flasher
 
+    kraken.schema.skeletor.handler:
+        class: 'QL\Kraken\Controller\Application\Schema\PrimeSkeletorSchemaController'
+        arguments:
+            - @kraken.application
+            - @currentUser
+            - @doctrine.em
+            - @session.flasher
+            - @kraken.template.skeletor
+
     ####################################################################################################################
     # CRUD - PROPERTY
     ####################################################################################################################

@@ -44,8 +44,8 @@ class AddTargetController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $envRepository;
-    private $tarRepository;
+    private $environmentRepo;
+    private $targetRepo;
 
     /**
      * @type callable
@@ -84,8 +84,8 @@ class AddTargetController implements ControllerInterface
         $this->application = $application;
 
         $this->em = $em;
-        $this->tarRepository = $this->em->getRepository(Target::CLASS);
-        $this->envRepository = $this->em->getRepository(Environment::CLASS);
+        $this->targetRepo = $this->em->getRepository(Target::CLASS);
+        $this->environmentRepo = $this->em->getRepository(Environment::CLASS);
 
         $this->flasher = $flasher;
         $this->random = $random;
@@ -102,19 +102,19 @@ class AddTargetController implements ControllerInterface
             if ($target = $this->handleForm()) {
                 $this->flasher
                     ->withFlash(self::SUCCESS, 'success')
-                    ->load('kraken.application', ['id' => $this->application->id()]);
+                    ->load('kraken.application', ['application' => $this->application->id()]);
             }
         }
 
         $environments = $this->filterTargets(
-            $this->tarRepository->findBy(['application' => $this->application]),
-            $this->envRepository->findBy([], ['name' => 'ASC'])
+            $this->targetRepo->findBy(['application' => $this->application]),
+            $this->environmentRepo->findBy([], ['name' => 'ASC'])
         );
 
         if (!$environments) {
             $this->flasher
                 ->withFlash('No environments found.')
-                ->load('kraken.application', ['id' => $this->application->id()]);
+                ->load('kraken.application', ['application' => $this->application->id()]);
         }
 
         $context = [
@@ -167,14 +167,14 @@ class AddTargetController implements ControllerInterface
         }
 
         if (!$this->errors) {
-            if (!$env = $this->envRepository->find($envId)) {
+            if (!$env = $this->environmentRepo->find($envId)) {
                 $this->errors[] = self::ERR_MISSING_ENV;
             }
         }
 
         // dupe check
         if (!$this->errors) {
-            $dupe = $this->tarRepository->findOneBy([
+            $dupe = $this->targetRepo->findOneBy([
                 'application' => $this->application,
                 'environment' => $env
             ]);

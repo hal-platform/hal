@@ -25,10 +25,10 @@ class SkeletorConfigurationTemplate
     private $random;
 
     /**
-     * @type Clock $random
-     * @type callable $random
+     * @param Clock $clock
+     * @param callable $random
      */
-    public function(Clock $clock, callable $random)
+    public function __construct(Clock $clock, callable $random)
     {
         $this->clock = $clock;
         $this->random = $random;
@@ -47,8 +47,8 @@ class SkeletorConfigurationTemplate
 
         $schema = [];
         foreach ($template as $prop) {
-            $description = array_key_exists('description', $prop)) ? $prop['description'] : '';
-            $isSecure = array_key_exists('isSecure', $prop)) ? $prop['isSecure'] : false;
+            $description = array_key_exists('description', $prop) ? $prop['description'] : '';
+            $isSecure = array_key_exists('isSecure', $prop) ? $prop['isSecure'] : false;
             $id = call_user_func($this->random);
 
             $schema[] = (new Schema)
@@ -79,19 +79,19 @@ class SkeletorConfigurationTemplate
                 'description' => 'Cache eternia data between requests?'
             ],
             [
-                'key' => 'eternia.cache-ttl',
+                'key' => 'eternia.cache_ttl',
                 'dataType' => 'int',
                 'description' => 'Time in seconds to cache Eternia data'
             ],
             [
-                'key' => 'eternia.redis-servers',
+                'key' => 'eternia.redis_servers',
                 'dataType' => 'strings',
                 'description' => 'Redis servers for Eternia previews'
             ],
 
             // Logging
             [
-                'key' => 'log.core-endpoint',
+                'key' => 'log.core_endpoint',
                 'dataType' => 'string',
                 'description' => 'Full URL to Sonic endpoint for core logger (Only affects Core logger handler)'
             ],
@@ -106,19 +106,19 @@ class SkeletorConfigurationTemplate
                 'description' => 'Fully qualified class names of log handlers'
             ],
             [
-                'key' => 'log.minimum-level',
+                'key' => 'log.minimum_level',
                 'dataType' => 'string',
                 'description' => 'Minimum level to log a message'
             ],
             [
-                'key' => 'log.sensitive-keys',
+                'key' => 'log.sensitive_keys',
                 'dataType' => 'strings',
                 'description' => 'POST and GET keys to be excluded from log context data'
             ],
 
             // skeletor
             [
-                'key' => 'skeletor.cookie.encryption-key',
+                'key' => 'skeletor.cookie.encryption_key',
                 'dataType' => 'string',
                 'description' => 'Encryption key for cookies'
             ],
@@ -138,7 +138,7 @@ class SkeletorConfigurationTemplate
                 'description' => 'Disable memcache caching?'
             ],
             [
-                'key' => 'skeletor.memcached.log-errors',
+                'key' => 'skeletor.memcached.log_errors',
                 'dataType' => 'bool',
                 'description' => 'Log an error when a memcached server fails to connect?'
             ],
@@ -153,7 +153,7 @@ class SkeletorConfigurationTemplate
                 'description' => 'Fully qualified class name of the session handler'
             ],
             [
-                'key' => 'skeletor.session.redis-servers',
+                'key' => 'skeletor.session.redis_servers',
                 'dataType' => 'strings',
                 'description' => 'Redis servers for session storage'
             ],
@@ -163,7 +163,7 @@ class SkeletorConfigurationTemplate
                 'description' => '2 character site-code, used by Eternia and Metrics'
             ],
             [
-                'key' => 'skeletor.site.core-id',
+                'key' => 'skeletor.site.core_id',
                 'dataType' => 'string',
                 'description' => 'Core Application ID'
             ],
@@ -175,7 +175,7 @@ class SkeletorConfigurationTemplate
 
             // skeletor - database
             [
-                'key' => 'skeletor.database-persistence.eternia',
+                'key' => 'skeletor.database_persistence.eternia',
                 'dataType' => 'bool',
                 'description' => 'Enable connection persistence for this database'
             ],
@@ -188,7 +188,7 @@ class SkeletorConfigurationTemplate
 
             // Metrics
             [
-                'key' => 'metrics.encryption-key',
+                'key' => 'metrics.encryption_key',
                 'dataType' => 'string',
                 'description' => 'Encryption key for metrics',
                 'isSecure' => true

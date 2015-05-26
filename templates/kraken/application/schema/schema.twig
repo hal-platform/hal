@@ -73,6 +73,19 @@
                 An administrator must add properties to the schema.
             {% endif %}
         </p>
+
+        {% if isAdmin %}
+            <div class="trailer">
+                <p>
+                    Is this a skeletor application? Prime this application with skeletor configuration schema.
+                </p>
+
+                <form action="{{ urlFor('kraken.schema.skeletor', {application:application.id}) }}" method="POST">
+                    <input class="btn btn--action" type="submit" value="Pre-populate skeletor schema"/>
+                </form>
+            </div>
+            {% endif %}
+
     {% endif %}
 {% endblock %}
 

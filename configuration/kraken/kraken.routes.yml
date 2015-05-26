@@ -124,6 +124,13 @@ parameters:
             conditions:
                 schema: %routes.kraken.regex.hex%
 
+        kraken.schema.skeletor:
+            method: 'POST'
+            route: '/kraken/applications/:application/schemas/prime-skeletor'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.skeletor.handler']
+            conditions:
+                application: %routes.kraken.regex.hex%
+
         ################################################################################################################
         # CRUD - PROPERTY
         ################################################################################################################

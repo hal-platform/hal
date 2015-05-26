@@ -208,13 +208,13 @@ class DeploymentService
     /**
      * @param Target $target
      * @param Configuration $configuration
-     * @param ConsulResponse[] $responses
+     * @param ConsulResponse[]|null $responses
      *
      * @throws ConsulConnectionException
      *
      * @return void
      */
-    private function handleConnectionFailure(Target $target, Configuration $configuration, array $responses)
+    private function handleConnectionFailure(Target $target, Configuration $configuration, $responses)
     {
         if ($responses !== null) {
             return;
