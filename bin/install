@@ -20,10 +20,10 @@ OUTOUT
 
 # setup
 
-set -e
 loadTitles
-
 DIR=$( cd "$( dirname "$0" )" && pwd )
+
+set -e
 
 # run
 
