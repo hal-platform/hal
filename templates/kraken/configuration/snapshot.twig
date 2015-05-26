@@ -45,6 +45,7 @@
         <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
             <thead>
                 <tr>
+                    <th class="tf1"></th>
                     <th>Property</th>
                     <th class="t15">Type</th>
                     <th>Status</th>
@@ -53,29 +54,49 @@
             <tbody>
                 {% for log in audits %}
                     <tr>
+                        <td>
+                            {% if log.isSuccess %}
+                                <span class="tooltipped" aria-label="The property was updated successfully">
+                                    {{ macros.status_icon('', 'success') }}
+                                </span>
+                                <span class="tablesaw-collapse">The property was updated successfully</span>
+
+                            {% elseif log.detail is same as(false) %}
+                                <span class="tooltipped" aria-label="The property was not updated. The system failed to obtain a lock.">
+                                    {{ macros.status_icon('', 'error') }}
+                                </span>
+                                <span class="tablesaw-collapse">The property was not updated. The system failed to obtain a lock.</span>
+
+                            {% elseif log.detail is same as(null) %}
+                                <span class="tooltipped" aria-label="The property was not updated. An unexpected error occured.">
+                                    {{ macros.status_icon('', 'error') }}
+                                </span>
+                                <span class="tablesaw-collapse">The property was not updated. An unexpected error occured.</span>
+
+                            {% else %}
+                                <span class="tooltipped" aria-label="The property was not updated. A service error occured.">
+                                    {{ macros.status_icon('', 'error') }}
+                                </span>
+                                <span class="tablesaw-collapse">The property was not updated. A service error occured.</span>
+
+                            {% endif %}
+                        </td>
                         <td><code class="code_clear">{{ log.key }}</code></td>
                         <td>
                             {{ log.type == 'update' ? 'Update' : 'Removal' }}
                         </td>
-                        <td class="fixed-nobreak">
+                        <td>
                             {% if log.isSuccess %}
-                                <span class="tooltipped tooltipped-n" aria-label="The property was updated successfully">
-                                    {{ macros.status_icon('Success', 'success') }}
-                                </span>
+                                Success
 
                             {% elseif log.detail is same as(false) %}
-                                <span class="tooltipped tooltipped-n" aria-label="The property was not updated. The system failed to obtain a lock.">
-                                    {{ macros.status_icon('Consul Error', 'error') }}
-                                </span>
+                                Consul Error
 
                             {% elseif log.detail is same as(null) %}
-                                <span class="tooltipped tooltipped-n" aria-label="The property was not updated. An unexpected error occured.">
-                                    {{ macros.status_icon('Unknown Error', 'error') }}
-                                </span>
+                                Unknown Error
+
                             {% else %}
-                                <span class="tooltipped tooltipped-n" aria-label="The property was not updated. A service error occured.">
-                                    {{ macros.status_icon('Error: ' ~ log.detail, 'error') }}
-                                </span>
+                                {{ log.detail }}
                             {% endif %}
                         </td>
 

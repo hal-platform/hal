@@ -54,6 +54,11 @@ td {
 .t90    { width:90% !important }
 .t95    { width:95% !important }
 
+@include breakpoint(40em) {
+    .tf1    { width: 1em !important }
+    .tf2    { width: 2em !important }
+}
+
 .table--top-aligned {
     td {
         vertical-align: top;
