@@ -27,6 +27,10 @@ class ConsulService
     const CACHE_CHECKSUMS = 'consul:%s:checksums';
     const CACHE_CHECKSUMS_TTL = 'consul:%s:checksums';
 
+    const ERR_TARGET_FAILURE = 'Update failed. Application target is misconfigured.';
+    const ERR_CONSUL_CONNECTION_FAILURE = 'Update failed. Consul could not be contacted.';
+    const ERR_BAD_CONSUL_RESPONSE = 'Update failed. Unexpected response from Consul.';
+
     /**
      * @type Client
      */
@@ -58,12 +62,14 @@ class ConsulService
      * @param Target $target
      * @param bool $withData
      *
+     * @throws ConsulConnectionException
+     *
      * @return string[]|null
      */
     public function getDeployedConfiguration(Target $target, $withData = false)
     {
         if (!$endpoint = $this->buildEndpoint($target->application(), $target->environment())) {
-            return null;
+            throw new ConsulConnectionException(self::ERR_TARGET_FAILURE);
         }
 
         $query = ['recurse' => 1];
@@ -81,10 +87,11 @@ class ConsulService
             $json = $response->json();
 
         } catch (ParseException $ex) {
-            return null;
+            throw new ConsulConnectionException(self::ERR_BAD_CONSUL_RESPONSE);
 
         } catch (RequestException $ex) {
-            return ($ex->getCode() === 404) ? [] : null;
+            if ($ex->getCode() === 404) return [];
+            throw new ConsulConnectionException(self::ERR_CONSUL_CONNECTION_FAILURE);
         }
 
         $keyPrefix = explode('/kv/', $endpoint);
@@ -98,21 +105,19 @@ class ConsulService
      * @param Target $target
      * @param string[] $properties
      *
-     * @return ConsulResponse[]|null
+     * @throws ConsulConnectionException
+     *
+     * @return ConsulResponse[]
      *     array: A list of statuses. The update worked. Probably? MAY be empty!
-     *     null: Something bad happened.
      */
     public function syncConfiguration(Target $target, array $properties = [])
     {
         if (!$endpoint = $this->buildEndpoint($target->application(), $target->environment())) {
-            return null;
+            throw new ConsulConnectionException(self::ERR_TARGET_FAILURE);
         }
 
         // Get what is currently deployed in consul kv
         $deployed = $this->getDeployedConfiguration($target, true);
-        if ($deployed === null) {
-            return null;
-        }
 
         // cross reference new properties, to check which props need to be deleted
         $deletes = [];
@@ -170,7 +175,7 @@ class ConsulService
     /**
      * @param Target $target
      *
-     * @return string[]|null
+     * @return string[]
      */
     public function getChecksums(Target $target)
     {
@@ -179,10 +184,10 @@ class ConsulService
             return json_decode($key);
         }
 
-        $current = $this->getDeployedConfiguration($target, true);
-
-        if ($current === null) {
-            return null;
+        try {
+            $current = $this->getDeployedConfiguration($target, true);
+        } catch (ConsulConnectionException $ex) {
+            return [];
         }
 
         array_walk($current, function(&$v, $k) {

@@ -83,7 +83,7 @@ class SnapshotController implements ControllerInterface
 
         $isDeployed = ($target && $target->configuration()->id() === $this->configuration->id());
 
-        $checksums = ($isDeployed) ? $this->getChecksums($target) : [];
+        $checksums = ($isDeployed) ? $this->consul->getChecksums($target) : [];
 
         $context = [
             'application' => $this->configuration->application(),
@@ -98,22 +98,6 @@ class SnapshotController implements ControllerInterface
         ];
 
         $this->template->render($context);
-    }
-
-    /**
-     * @param Target $target
-     *
-     * @return array
-     */
-    private function getChecksums(Target $target)
-    {
-        $checksums = $this->consul->getChecksums($target);
-
-        if ($checksums === null) {
-            return [];
-        }
-
-        return $checksums;
     }
 
     /**

@@ -121,7 +121,7 @@ class RollbackHandler implements ControllerInterface
         } catch (ConsulConnectionException $ex) {
             return $this->flasher
                 ->withFlash($ex->getMessage(), 'error')
-                ->load('kraken.deploy', ['target' => $target->id()]);
+                ->load('kraken.rollback', ['configuration' => $this->configuration->id()]);
         }
 
         // 4. And finally, go away.

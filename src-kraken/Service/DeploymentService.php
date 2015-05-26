@@ -71,14 +71,11 @@ class DeploymentService
         // 1.. Encrypt it
         $encrypted = $this->encryptProperties($properties);
 
-        // 2. Save to DB. Just in case consul blows up
-        $this->saveProperties($configuration, $properties);
-
-        // 3. Save to Consul
+        // 2. Save to Consul
         $updates = $this->consul->syncConfiguration($target, $encrypted);
 
-        // 4. Connection error to consul
-        $this->handleConnectionFailure($target, $configuration, $updates);
+        // 3. Save DB
+        $this->saveProperties($configuration, $properties, $updates);
 
         // 5. Analyze response types
         return $this->handleResponses($target, $configuration, $updates);
@@ -126,11 +123,13 @@ class DeploymentService
     /**
      * @param Configuration $configuration
      * @param ConfigurationProperty[] $properties
+     * @param ConsulResponse[] $updates
      *
      * @return void
      */
-    private function saveProperties(Configuration $configuration, array $properties)
+    private function saveProperties(Configuration $configuration, array $properties, array $updates)
     {
+        $configuration->withAudit($this->json->encode($updates));
         $this->em->persist($configuration);
 
         foreach ($properties as $prop) {
@@ -203,28 +202,6 @@ class DeploymentService
 
         // mixed updated. This is super bad.
         throw new MixedUpdateException(self::ERR_THIS_IS_SUPER_BAD);
-    }
-
-    /**
-     * @param Target $target
-     * @param Configuration $configuration
-     * @param ConsulResponse[]|null $responses
-     *
-     * @throws ConsulConnectionException
-     *
-     * @return void
-     */
-    private function handleConnectionFailure(Target $target, Configuration $configuration, $responses)
-    {
-        if ($responses !== null) {
-            return;
-        }
-
-        $configuration->withAudit($this->json->encode($responses));
-        $this->em->persist($configuration);
-        $this->em->flush();
-
-        throw new ConsulConnectionException(self::ERR_CONSUL_CONNECTION_FAILURE);
     }
 
     /**
