@@ -18,9 +18,9 @@ if (!$container = @include $root . '/configuration/bootstrap.php') {
 }
 
 // start slim to prime twig extension and inject synthetic services
-Environment::mock(['PATH_INFO' => '/derpderp']);
-$slim = $container->get('slim');
-$slim->call();
+// Environment::mock(['PATH_INFO' => '/derpderp']);
+// $slim = $container->get('slim');
+// $slim->call();
 
 // find and attempt to load the templates
 $twigCache = $container->get('twig.template.dir');
