@@ -1,8 +1,31 @@
 #!/usr/bin/env bash
 
+function loadTitles() {
+    read -r -d '' TITLE_COMPOSER <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ COMPOSER INSTALLATION                                                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_NPM <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ NPM INSTALLATION                                                             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_BOWER <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ BOWER INSTALLATION                                                           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+}
+
+# setup
+
 set -e
+loadTitles
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
+
+# run
 
 COMPOSER_SHOW_INSTALLED="composer show --installed"
 COMPOSER="composer install --prefer-dist"
@@ -17,14 +40,19 @@ fi
 
 # download, update composer
 if [ ! -f "$DIR/composer" ]; then
+    echo "Downloading composer from http://composer..."
     curl http://composer/installer | bash -s "$DIR/composer"
+    echo
 fi
 
+echo "$TITLE_COMPOSER"
 "$DIR/"$COMPOSER
 if [ -n "$HAL_ENVIRONMENT" ]; then
     "$DIR/"$COMPOSER_SHOW_INSTALLED
 fi
 
+echo "$TITLE_NPM"
 $NPM
 
+echo "$TITLE_BOWER"
 $BOWER
