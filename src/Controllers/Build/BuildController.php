@@ -7,7 +7,9 @@
 
 namespace QL\Hal\Controllers\Build;
 
-use QL\Hal\Core\Repository\BuildRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Build;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -21,7 +23,7 @@ class BuildController implements ControllerInterface
     private $template;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
 
@@ -42,20 +44,20 @@ class BuildController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param BuildRepository $buildRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
-        BuildRepository $buildRepo,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->buildRepo = $buildRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;

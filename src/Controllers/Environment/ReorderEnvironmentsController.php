@@ -7,7 +7,9 @@
 
 namespace QL\Hal\Controllers\Environment;
 
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -21,7 +23,7 @@ class ReorderEnvironmentsController implements ControllerInterface
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $envRepo;
 
@@ -37,18 +39,18 @@ class ReorderEnvironmentsController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      */
     public function __construct(
         TemplateInterface $template,
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound
     ) {
         $this->template = $template;
-        $this->envRepo = $envRepo;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;

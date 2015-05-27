@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Environment;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -19,19 +20,15 @@ use QL\Panthor\ControllerInterface;
 class RemoveEnvironmentHandler implements ControllerInterface
 {
     /**
-     * @type EnvironmentRepository
-     */
-    private $envRepo;
-
-    /**
      * @type EntityRepository
      */
+    private $envRepo;
     private $serverRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -54,26 +51,23 @@ class RemoveEnvironmentHandler implements ControllerInterface
     private $parameters;
 
     /**
-     * @param EnvironmentRepository $envRepo
-     * @param EntityRepository $serverRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
-        EnvironmentRepository $envRepo,
-        EntityRepository $serverRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         NotFound $notFound,
         array $parameters
     ) {
-        $this->envRepo = $envRepo;
-        $this->serverRepo = $serverRepo;
-        $this->entityManager = $entityManager;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
+        $this->serverRepo = $em->getRepository(Server::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -96,9 +90,9 @@ class RemoveEnvironmentHandler implements ControllerInterface
             return $this->url->redirectFor('environment', ['id' => $this->parameters['id']]);
         }
 
-        $this->entityManager->remove($environment);
+        $this->em->remove($environment);
         $this->reorderEnvironments($environment);
-        $this->entityManager->flush();
+        $this->em->flush();
 
         $message = sprintf('Environment "%s" removed.', $environment->getKey());
         $this->session->flash($message, 'success');
@@ -121,7 +115,7 @@ class RemoveEnvironmentHandler implements ControllerInterface
             }
 
             $env->setOrder($order++);
-            $this->entityManager->merge($env);
+            $this->em->merge($env);
         }
     }
 }

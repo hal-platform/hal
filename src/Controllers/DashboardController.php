@@ -8,12 +8,11 @@
 namespace QL\Hal\Controllers;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use MCP\DataType\Time\Clock;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\PermissionsService;
 use QL\Panthor\ControllerInterface;
@@ -48,15 +47,7 @@ class DashboardController implements ControllerInterface
      * @type BuildRepository
      */
     private $buildRepo;
-
-    /**
-     * @type PushRepository
-     */
     private $pushRepo;
-
-    /**
-     * @type UserRepository
-     */
     private $userRepo;
 
     /**
@@ -69,9 +60,7 @@ class DashboardController implements ControllerInterface
      * @param User $currentUser
      * @param PermissionsService $permissions
      * @param Clock $clock
-     * @param BuildRepository $buildRepo
-     * @param PushRepository $pushRepo
-     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      */
     public function __construct(
@@ -79,9 +68,7 @@ class DashboardController implements ControllerInterface
         User $currentUser,
         PermissionsService $permissions,
         Clock $clock,
-        BuildRepository $buildRepo,
-        PushRepository $pushRepo,
-        UserRepository $userRepo,
+        EntityManagerInterface $em,
         Response $response
     ) {
         $this->template = $template;
@@ -89,9 +76,9 @@ class DashboardController implements ControllerInterface
         $this->permissions = $permissions;
         $this->clock = $clock;
 
-        $this->buildRepo = $buildRepo;
-        $this->pushRepo = $pushRepo;
-        $this->userRepo = $userRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
+        $this->userRepo = $em->getRepository(User::CLASS);
 
         $this->response = $response;
     }

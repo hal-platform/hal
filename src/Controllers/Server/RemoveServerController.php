@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Server;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -22,16 +23,12 @@ class RemoveServerController implements ControllerInterface
      * @type EntityRepository
      */
     private $serverRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deployRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -54,26 +51,23 @@ class RemoveServerController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param EntityRepository $serverRepo
-     * @param DeploymentRepository $deployRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
-        EntityRepository $serverRepo,
-        DeploymentRepository $deployRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         NotFound $notFound,
         array $parameters
     ) {
-        $this->serverRepo = $serverRepo;
-        $this->deployRepo = $deployRepo;
-        $this->entityManager = $entityManager;
+        $this->serverRepo = $em->getRepository(Server::CLASS);
+        $this->deployRepo = $em->getRepository(Deployment::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -95,8 +89,8 @@ class RemoveServerController implements ControllerInterface
             return $this->url->redirectFor('server', ['id' => $this->parameters['id']]);
         }
 
-        $this->entityManager->remove($server);
-        $this->entityManager->flush();
+        $this->em->remove($server);
+        $this->em->flush();
 
         $name = $server->getName();
         if ($server->getType() === ServerEnumType::TYPE_EB) {

@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Controllers\User\Token;
 
-use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
@@ -24,14 +24,14 @@ class AddTokenController implements ControllerInterface
     const ERR_LABEL_REQUIRED = 'Token label is required to create a token.';
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type UserRepository
+     * @type EntityRepository
      */
-    private $users;
+    private $userRepo;
 
     /**
      * @type Flasher
@@ -69,8 +69,7 @@ class AddTokenController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param EntityManager $entityManager
-     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $em
      * @param PermissionsService $permissions
      *
      * @param User $user
@@ -83,8 +82,7 @@ class AddTokenController implements ControllerInterface
      * @param array $parameters
      */
     public function __construct(
-        EntityManager $entityManager,
-        UserRepository $userRepo,
+        EntityManagerInterface $em,
         PermissionsService $permissions,
 
         User $currentUser,
@@ -96,8 +94,9 @@ class AddTokenController implements ControllerInterface
 
         array $parameters
     ) {
-        $this->entityManager = $entityManager;
-        $this->userRepo = $userRepo;
+        $this->em = $em;
+        $this->userRepo = $em->getRepository(User::CLASS);
+
         $this->permissions = $permissions;
 
         $this->currentUser = $currentUser;
@@ -155,8 +154,8 @@ class AddTokenController implements ControllerInterface
         $token->setUser($user);
         $token->setLabel($label);
 
-        $this->entityManager->persist($token);
-        $this->entityManager->flush();
+        $this->em->persist($token);
+        $this->em->flush();
 
         return $token;
     }

@@ -7,12 +7,11 @@
 
 namespace QL\Hal\Controllers\Push;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Repository\UserRepository;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Services\PermissionsService;
@@ -37,27 +36,15 @@ class StartPushHandler implements MiddlewareInterface
     private $session;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
-
-    /**
-     * @type PushRepository
-     */
     private $pushRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deployRepo;
-
-    /**
-     * @type UserRepository
-     */
     private $userRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -103,11 +90,7 @@ class StartPushHandler implements MiddlewareInterface
 
     /**
      * @param Session $session
-     * @param BuildRepository $buildRepo
-     * @param PushRepository $pushRepo
-     * @param DeploymentRepository $deployRepo
-     * @param UserRepository $userRepo
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      * @param Url $url
      * @param User $currentUser
      * @param PermissionsService $permissions
@@ -119,11 +102,7 @@ class StartPushHandler implements MiddlewareInterface
      */
     public function __construct(
         Session $session,
-        BuildRepository $buildRepo,
-        PushRepository $pushRepo,
-        DeploymentRepository $deployRepo,
-        UserRepository $userRepo,
-        EntityManager $em,
+        EntityManagerInterface $em,
         Url $url,
         User $currentUser,
         PermissionsService $permissions,
@@ -134,11 +113,13 @@ class StartPushHandler implements MiddlewareInterface
         array $parameters
     ) {
         $this->session = $session;
-        $this->buildRepo = $buildRepo;
-        $this->pushRepo = $pushRepo;
-        $this->deployRepo = $deployRepo;
-        $this->userRepo = $userRepo;
+
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
+        $this->deployRepo = $em->getRepository(Deployment::CLASS);
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->em = $em;
+
         $this->url = $url;
         $this->currentUser = $currentUser;
         $this->permissions = $permissions;

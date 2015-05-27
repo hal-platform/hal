@@ -7,9 +7,11 @@
 
 namespace QL\Hal\Controllers\Build;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Services\GithubService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -61,8 +63,7 @@ class StartBuildController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityRepository $repoRepo
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param GithubService $github
      * @param Request $request
      * @param Response $response
@@ -71,8 +72,7 @@ class StartBuildController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $repoRepo,
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
         GithubService $github,
         Request $request,
         Response $response,
@@ -80,8 +80,8 @@ class StartBuildController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
-        $this->envRepo = $envRepo;
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->github = $github;
 
         $this->request = $request;

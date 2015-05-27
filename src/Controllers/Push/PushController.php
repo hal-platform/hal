@@ -7,6 +7,9 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -21,7 +24,7 @@ class PushController implements ControllerInterface
     private $template;
 
     /**
-     * @type PushRepository
+     * @type EntityRepository
      */
     private $pushRepo;
 
@@ -42,20 +45,20 @@ class PushController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
-        PushRepository $pushRepo,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->pushRepo = $pushRepo;
+        $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;

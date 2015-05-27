@@ -7,7 +7,9 @@
 
 namespace QL\Hal\Controllers\Environment;
 
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
@@ -20,7 +22,7 @@ class EnvironmentsController implements ControllerInterface
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $envRepo;
 
@@ -31,13 +33,13 @@ class EnvironmentsController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      */
-    public function __construct(TemplateInterface $template, EnvironmentRepository $envRepo, Response $response)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em, Response $response)
     {
         $this->template = $template;
-        $this->envRepo = $envRepo;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->response = $response;
     }
 

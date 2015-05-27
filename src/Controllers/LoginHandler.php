@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Controllers;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
-use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
@@ -40,7 +40,7 @@ class LoginHandler implements MiddlewareInterface
     private $userRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -62,8 +62,7 @@ class LoginHandler implements MiddlewareInterface
     /**
      * @param Context $context
      * @param LdapService $ldap
-     * @param UserRepository $userRepo
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param Url $url
      * @param Request $request
@@ -71,15 +70,14 @@ class LoginHandler implements MiddlewareInterface
     public function __construct(
         Context $context,
         LdapService $ldap,
-        UserRepository $userRepo,
-        EntityManager $em,
+        EntityManagerInterface $em,
         Session $session,
         Url $url,
         Request $request
     ) {
         $this->context = $context;
         $this->ldap = $ldap;
-        $this->userRepo = $userRepo;
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->em = $em;
         $this->session = $session;
         $this->url = $url;

@@ -7,8 +7,10 @@
 
 namespace QL\Hal\Controllers\Environment;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -25,13 +27,9 @@ class EnvironmentController implements ControllerInterface
     private $template;
 
     /**
-     * @type EnvironmentRepository
-     */
-    private $envRepo;
-
-    /**
      * @type EntityRepository
      */
+    private $envRepo;
     private $serverRepo;
 
     /**
@@ -51,23 +49,21 @@ class EnvironmentController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EnvironmentRepository $envRepo
-     * @param EntityRepository $serverRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
-        EnvironmentRepository $envRepo,
-        EntityRepository $serverRepo,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->envRepo = $envRepo;
-        $this->serverRepo = $serverRepo;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
+        $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;

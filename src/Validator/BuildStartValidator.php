@@ -7,9 +7,11 @@
 
 namespace QL\Hal\Validator;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Services\GithubService;
 use QL\Hal\Services\PermissionsService;
@@ -37,10 +39,6 @@ class BuildStartValidator
      * @type EntityRepository
      */
     private $repoRepo;
-
-    /**
-     * @type EnvironmentRepository
-     */
     private $envRepo;
 
     /**
@@ -64,21 +62,19 @@ class BuildStartValidator
     private $errors;
 
     /**
-     * @param EntityRepository $repoRepo
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param GithubService $github
      * @param PermissionsService $permissions
      * @param User $currentUser
      */
     public function __construct(
-        EntityRepository $repoRepo,
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
         GithubService $github,
         PermissionsService $permissions,
         User $currentUser
     ) {
-        $this->repoRepo = $repoRepo;
-        $this->envRepo = $envRepo;
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->envRepo = $em->getRepository(Environment::CLASS);
 
         $this->github = $github;
         $this->permissions = $permissions;

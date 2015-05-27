@@ -7,8 +7,10 @@
 
 namespace QL\Hal\Controllers\Group;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManager;
+use QL\Hal\Core\Entity\Group;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -20,14 +22,10 @@ class RemoveGroupController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-
-    /**
-     * @type EntityRepository
-     */
     private $repoRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $entityManager;
 
@@ -52,26 +50,23 @@ class RemoveGroupController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param EntityRepository $groupRepo
-     * @param EntityRepository $repoRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
-        EntityRepository $groupRepo,
-        EntityRepository $repoRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         NotFound $notFound,
         array $parameters
     ) {
-        $this->groupRepo = $groupRepo;
-        $this->repoRepo = $repoRepo;
-        $this->entityManager = $entityManager;
+        $this->groupRepo = $em->getRepository(Group::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -93,8 +88,8 @@ class RemoveGroupController implements ControllerInterface
             return $this->url->redirectFor('groups', ['id' => $group->getId()]);
         }
 
-        $this->entityManager->remove($group);
-        $this->entityManager->flush();
+        $this->em->remove($group);
+        $this->em->flush();
 
         $message = sprintf('Group "%s" removed.', $group->getName());
         $this->session->flash($message, 'success');

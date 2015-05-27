@@ -7,7 +7,8 @@
 
 namespace QL\Hal\Controllers\User;
 
-use QL\Hal\Core\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -22,7 +23,7 @@ class SettingsController implements ControllerInterface
     private $template;
 
     /**
-     * @type UserRepository
+     * @type EntityRepository
      */
     private $userRepo;
 
@@ -43,20 +44,20 @@ class SettingsController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $em
      * @param User $currentUser
      * @param Response $response
      * @param NotFound $notFound
      */
     public function __construct(
         TemplateInterface $template,
-        UserRepository $userRepo,
+        EntityManagerInterface $em,
         User $currentUser,
         Response $response,
         NotFound $notFound
     ) {
         $this->template = $template;
-        $this->userRepo = $userRepo;
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->currentUser = $currentUser;
 
         $this->response = $response;

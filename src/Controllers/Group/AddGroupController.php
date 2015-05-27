@@ -7,9 +7,9 @@
 
 namespace QL\Hal\Controllers\Group;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Repository\GroupRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
@@ -28,14 +28,14 @@ class AddGroupController implements ControllerInterface
     private $template;
 
     /**
-     * @type GroupRepository
+     * @type EntityRepository
      */
     private $groupRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -59,8 +59,7 @@ class AddGroupController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param GroupRepository $groupRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
@@ -68,16 +67,17 @@ class AddGroupController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        GroupRepository $groupRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         Request $request,
         Response $response
     ) {
         $this->template = $template;
-        $this->groupRepo = $groupRepo;
-        $this->entityManager = $entityManager;
+
+        $this->groupRepo = $em->getRepository(Group::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -127,8 +127,8 @@ class AddGroupController implements ControllerInterface
         $group->setKey($identifier);
         $group->setName($name);
 
-        $this->entityManager->persist($group);
-        $this->entityManager->flush();
+        $this->em->persist($group);
+        $this->em->flush();
 
         return $group;
     }

@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\User\Token;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
@@ -22,9 +22,9 @@ class RemoveTokenController implements ControllerInterface
     const ERR_DENIED = 'You do not have permission to perform this action.';
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type EntityRepository
@@ -57,8 +57,7 @@ class RemoveTokenController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param EntityManager $entityManager
-     * @param EntityRepository $tokenRepo
+     * @param EntityManagerInterface $em
      * @param PermissionsService $permissions
      * @param User $currentUser
      * @param Flasher $flasher
@@ -66,16 +65,16 @@ class RemoveTokenController implements ControllerInterface
      * @param array $parameters
      */
     public function __construct(
-        EntityManager $entityManager,
-        EntityRepository $tokenRepo,
+        EntityManagerInterface $em,
         PermissionsService $permissions,
         User $currentUser,
         Flasher $flasher,
         NotFound $notFound,
         array $parameters
     ) {
-        $this->entityManager = $entityManager;
-        $this->tokenRepo = $tokenRepo;
+        $this->em = $em;
+        $this->tokenRepo = $em->getRepository(Token::CLASS);
+
         $this->permissions = $permissions;
 
         $this->currentUser = $currentUser;
@@ -104,8 +103,8 @@ class RemoveTokenController implements ControllerInterface
 
         $label = $token->getLabel();
 
-        $this->entityManager->remove($token);
-        $this->entityManager->flush();
+        $this->em->remove($token);
+        $this->em->flush();
 
         $this->flasher
             ->withFlash(sprintf(self::SUCCESS, $label), 'success');

@@ -7,12 +7,12 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -28,18 +28,10 @@ class StartPushController implements ControllerInterface
     private $template;
 
     /**
-     * @type BuildRepository
-     */
-    private $buildRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
-    private $deploymentRepo;
-
-    /**
      * @type EntityRepository
      */
+    private $buildRepo;
+    private $deploymentRepo;
     private $serverRepo;
 
     /**
@@ -69,10 +61,7 @@ class StartPushController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param BuildRepository $buildRepo
-     * @param DeploymentRepository $deploymentRepo
-     * @param EntityRepository $serverRepo
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param Request $request
      * @param Response $response
      * @param NotFound $notFound
@@ -80,20 +69,18 @@ class StartPushController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        BuildRepository $buildRepo,
-        DeploymentRepository $deploymentRepo,
-        EntityRepository $serverRepo,
-        PushRepository $pushRepo,
+        EntityManagerInterface $em,
         Request $request,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->buildRepo = $buildRepo;
-        $this->deploymentRepo = $deploymentRepo;
-        $this->serverRepo = $serverRepo;
-        $this->pushRepo = $pushRepo;
+
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
+        $this->deployRepo = $em->getRepository(Deployment::CLASS);
+        $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->request = $request;
         $this->response = $response;

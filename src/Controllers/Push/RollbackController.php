@@ -7,8 +7,11 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -28,11 +31,7 @@ class RollbackController implements ControllerInterface
      * @type EntityRepository
      */
     private $repoRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
-    private $serverRepo;
+    private $deploymentRepository;
 
     /**
      * @type PushRepository
@@ -56,26 +55,23 @@ class RollbackController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityRepository $repoRepository
-     * @param DeploymentRepository $deploymentRepository
-     * @param PushRepository $pushRepository
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $repoRepository,
-        DeploymentRepository $deploymentRepository,
-        PushRepository $pushRepository,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepository;
-        $this->deploymentRepository = $deploymentRepository;
-        $this->pushRepo = $pushRepository;
+
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepository = $em->getRepository(Deployment::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;

@@ -7,11 +7,10 @@
 
 namespace QL\Hal\Controllers\Server;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -31,16 +30,12 @@ class AddServerController implements ControllerInterface
      * @type EntityRepository
      */
     private $serverRepo;
-
-    /**
-     * @type EnvironmentRepository
-     */
     private $envRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -64,9 +59,7 @@ class AddServerController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityRepository $serverRepo
-     * @param EnvironmentRepository $envRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
@@ -74,18 +67,18 @@ class AddServerController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $serverRepo,
-        EnvironmentRepository $envRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         Request $request,
         Response $response
     ) {
         $this->template = $template;
-        $this->serverRepo = $serverRepo;
-        $this->envRepo = $envRepo;
-        $this->entityManager = $entityManager;
+
+        $this->serverRepo = $em->getRepository(Server::CLASS);
+        $this->envRepo = $em->getRepository(Environment::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -158,8 +151,8 @@ class AddServerController implements ControllerInterface
         $server->setEnvironment($environment);
         $server->setName($name);
 
-        $this->entityManager->persist($server);
-        $this->entityManager->flush();
+        $this->em->persist($server);
+        $this->em->flush();
 
         return $server;
     }

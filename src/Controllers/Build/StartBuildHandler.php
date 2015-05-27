@@ -7,9 +7,9 @@
 
 namespace QL\Hal\Controllers\Build;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Repository\BuildRepository;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Hal\Session;
@@ -24,14 +24,14 @@ class StartBuildHandler implements MiddlewareInterface
     const WAIT_FOR_IT = 'Build has been queued for creation.';
 
     /**
-     * @type BuildRepository
-     */
-    private $buildRepo;
-
-    /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
+
+    /**
+     * @type EntityRepository
+     */
+    private $buildRepo;
 
     /**
      * @type BuildStartValidator
@@ -74,8 +74,7 @@ class StartBuildHandler implements MiddlewareInterface
     private $parameters;
 
     /**
-     * @param BuildRepository $buildRepo
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      * @param BuildStartValidator $validator
      * @param Session $session
      * @param Url $url
@@ -86,8 +85,7 @@ class StartBuildHandler implements MiddlewareInterface
      * @param array $parameters
      */
     public function __construct(
-        BuildRepository $buildRepo,
-        EntityManager $em,
+        EntityManagerInterface $em,
         BuildStartValidator $validator,
         Session $session,
         Url $url,
@@ -97,8 +95,8 @@ class StartBuildHandler implements MiddlewareInterface
         StickyEnvironmentService $stickyService,
         array $parameters
     ) {
-        $this->buildRepo = $buildRepo;
         $this->em = $em;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->validator = $validator;
 
         $this->session = $session;

@@ -7,9 +7,9 @@
 
 namespace QL\Hal\Controllers\Environment;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -26,14 +26,14 @@ class EditEnvironmentController implements ControllerInterface
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $envRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -67,8 +67,7 @@ class EditEnvironmentController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EnvironmentRepository $envRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
@@ -78,8 +77,7 @@ class EditEnvironmentController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EnvironmentRepository $envRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         Request $request,
@@ -88,8 +86,10 @@ class EditEnvironmentController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->envRepo = $envRepo;
-        $this->entityManager = $entityManager;
+
+        $this->envRepo = $em->getRepository(Environment::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -140,8 +140,8 @@ class EditEnvironmentController implements ControllerInterface
         }
 
         $environment->setKey($request->post('name'));
-        $this->entityManager->merge($environment);
-        $this->entityManager->flush();
+        $this->em->merge($environment);
+        $this->em->flush();
 
         return true;
     }

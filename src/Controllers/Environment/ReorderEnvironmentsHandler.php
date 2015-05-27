@@ -7,8 +7,9 @@
 
 namespace QL\Hal\Controllers\Environment;
 
-use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -21,14 +22,14 @@ class ReorderEnvironmentsHandler implements MiddlewareInterface
     const ERR_MISSING = 'An environment is missing from the new ordering.';
 
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $envRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -56,8 +57,7 @@ class ReorderEnvironmentsHandler implements MiddlewareInterface
     private $context;
 
     /**
-     * @param EnvironmentRepository $envRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
@@ -65,16 +65,16 @@ class ReorderEnvironmentsHandler implements MiddlewareInterface
      * @param Context $context
      */
     public function __construct(
-        EnvironmentRepository $envRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         Request $request,
         NotFound $notFound,
         Context $context
     ) {
-        $this->envRepo = $envRepo;
-        $this->entityManager = $entityManager;
+        $this->em = $em;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
+
         $this->session = $session;
         $this->url = $url;
 
@@ -135,11 +135,11 @@ class ReorderEnvironmentsHandler implements MiddlewareInterface
             }
 
             $environment->setOrder($ordered[$id]);
-            $this->entityManager->merge($environment);
+            $this->em->merge($environment);
         }
 
         // persist and redirect
-        $this->entityManager->flush();
+        $this->em->flush();
         $this->session->flash('New environment orders saved!', 'success');
         $this->url->redirectFor('environments');
     }

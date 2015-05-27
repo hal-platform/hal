@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Controllers\User;
 
+use Doctrine\ORM\EntityManagerInterface;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
@@ -56,7 +57,7 @@ class UserController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param LdapService $ldap
-     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $em
      * @param PermissionsService $permissions
      * @param Response $response
      * @param NotFound $notFound
@@ -65,7 +66,7 @@ class UserController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         LdapService $ldap,
-        UserRepository $userRepo,
+        EntityManagerInterface $em,
         PermissionsService $permissions,
         Response $response,
         NotFound $notFound,
@@ -73,7 +74,7 @@ class UserController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->ldap = $ldap;
-        $this->userRepo = $userRepo;
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->permissions = $permissions;
 
         $this->response = $response;

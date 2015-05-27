@@ -17,9 +17,7 @@ services:
             - @currentUser
             - @permissions
             - @clock
-            - @build.repo
-            - @push.repo
-            - @user.repo
+            - @doctrine.em
             - @slim.response
     dashboard.twig:
         parent: 'twig.template'
@@ -40,7 +38,6 @@ services:
         arguments:
             - @twig.context
             - @ldap
-            - @user.repo
             - @doctrine.em
             - @session
             - @url
@@ -54,8 +51,7 @@ services:
         class: 'QL\Hal\Controllers\QueueController'
         arguments:
             - @queue.twig
-            - @build.repo
-            - @push.repo
+            - @doctrine.em
             - @slim.response
     queue.twig:
         parent: 'twig.template'
@@ -69,8 +65,7 @@ services:
         class: 'QL\Hal\Controllers\Group\GroupController'
         arguments:
             - @group.twig
-            - @group.repo
-            - @repository.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -82,7 +77,6 @@ services:
         class: 'QL\Hal\Controllers\Group\AddGroupController'
         arguments:
             - @group.admin.add.twig
-            - @group.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -96,7 +90,6 @@ services:
         class: 'QL\Hal\Controllers\Group\EditGroupController'
         arguments:
             - @group.admin.edit.twig
-            - @group.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -110,8 +103,6 @@ services:
     group.admin.remove.handler:
         class: 'QL\Hal\Controllers\Group\RemoveGroupController'
         arguments:
-            - @group.repo
-            - @repository.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -126,7 +117,7 @@ services:
         class: 'QL\Hal\Controllers\Build\BuildController'
         arguments:
             - @build.twig
-            - @build.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -138,8 +129,7 @@ services:
         class: 'QL\Hal\Controllers\Build\StartBuildController'
         arguments:
             - @build.start.twig
-            - @repository.repo
-            - @environment.repo
+            - @doctrine.em
             - @github
             - @slim.request
             - @slim.response
@@ -152,7 +142,6 @@ services:
     build.start.handler:
         class: 'QL\Hal\Controllers\Build\StartBuildHandler'
         arguments:
-            - @build.repo
             - @doctrine.em
             - @build.start.validator
             - @session
@@ -165,8 +154,7 @@ services:
     build.start.validator:
         class: 'QL\Hal\Validator\BuildStartValidator'
         arguments:
-            - @repository.repo
-            - @environment.repo
+            - @doctrine.em
             - @github
             - @permissions
             - @currentUser
@@ -175,8 +163,7 @@ services:
         class: 'QL\Hal\Controllers\Build\BuildsController'
         arguments:
             - @builds.twig
-            - @repository.repo
-            - @build.repo
+            - @doctrine.em
             - @slim.request
             - @slim.response
             - @slim.not.found
@@ -193,10 +180,7 @@ services:
         class: 'QL\Hal\Controllers\Push\StartPushController'
         arguments:
             - @push.start.twig
-            - @build.repo
-            - @deployment.repo
-            - @server.repo
-            - @push.repo
+            - @doctrine.em
             - @slim.request
             - @slim.response
             - @slim.not.found
@@ -209,10 +193,6 @@ services:
         class: 'QL\Hal\Controllers\Push\StartPushHandler'
         arguments:
             - @session
-            - @build.repo
-            - @push.repo
-            - @deployment.repo
-            - @user.repo
             - @doctrine.em
             - @url
             - @currentUser
@@ -227,9 +207,7 @@ services:
         class: 'QL\Hal\Controllers\Push\RollbackController'
         arguments:
             - @rollback.twig
-            - @repository.repo
-            - @deployment.repo
-            - @push.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -241,7 +219,7 @@ services:
         class: 'QL\Hal\Controllers\Push\PushController'
         arguments:
             - @push.twig
-            - @push.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -253,8 +231,7 @@ services:
         class: 'QL\Hal\Controllers\Push\PushesController'
         arguments:
             - @pushes.twig
-            - @repository.repo
-            - @push.repo
+            - @doctrine.em
             - @slim.request
             - @slim.response
             - @slim.not.found
@@ -271,7 +248,7 @@ services:
         class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
         arguments:
             - @environments.twig
-            - @environment.repo
+            - @doctrine.em
             - @slim.response
 
     environments.twig:
@@ -282,8 +259,7 @@ services:
         class: 'QL\Hal\Controllers\Environment\EnvironmentController'
         arguments:
             - @environment.twig
-            - @environment.repo
-            - @server.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -295,7 +271,7 @@ services:
         class: 'QL\Hal\Controllers\Environment\ReorderEnvironmentsController'
         arguments:
             - @environment.admin.reorder.twig
-            - @environment.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
     environment.admin.reorder.twig:
@@ -304,7 +280,6 @@ services:
     environment.admin.reorder.handler:
         class: 'QL\Hal\Controllers\Environment\ReorderEnvironmentsHandler'
         arguments:
-            - @environment.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -316,7 +291,6 @@ services:
         class: 'QL\Hal\Controllers\Environment\AddEnvironmentController'
         arguments:
             - @environment.admin.add.twig
-            - @environment.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -330,7 +304,6 @@ services:
         class: 'QL\Hal\Controllers\Environment\EditEnvironmentController'
         arguments:
             - @environment.admin.edit.twig
-            - @environment.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -345,8 +318,6 @@ services:
     environment.admin.remove.handler:
         class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentHandler'
         arguments:
-            - @environment.repo
-            - @server.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -360,7 +331,7 @@ services:
         class: 'QL\Hal\Controllers\Server\ServersController'
         arguments:
             - @servers.twig
-            - @server.repo
+            - @doctrine.em
             - @slim.response
     servers.twig:
         parent: 'twig.template'
@@ -370,8 +341,7 @@ services:
         class: 'QL\Hal\Controllers\Server\ServerController'
         arguments:
             - @server.twig
-            - @server.repo
-            - @deployment.repo
+            - @doctrine.em
             - @eb
             - @slim.response
             - @slim.not.found
@@ -384,8 +354,6 @@ services:
         class: 'QL\Hal\Controllers\Server\AddServerController'
         arguments:
             - @server.admin.add.twig
-            - @server.repo
-            - @environment.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -399,8 +367,6 @@ services:
         class: 'QL\Hal\Controllers\Server\EditServerController'
         arguments:
             - @server.admin.edit.twig
-            - @server.repo
-            - @environment.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -415,8 +381,6 @@ services:
     server.admin.remove.handler:
         class: 'QL\Hal\Controllers\Server\RemoveServerController'
         arguments:
-            - @server.repo
-            - @deployment.repo
             - @doctrine.em
             - @session
             - @url.helper
@@ -431,7 +395,7 @@ services:
         arguments:
             - @user.twig
             - @ldap
-            - @user.repo
+            - @doctrine.em
             - @permissions
             - @slim.response
             - @slim.not.found
@@ -444,7 +408,7 @@ services:
         class: 'QL\Hal\Controllers\User\UsersController'
         arguments:
             - @users.twig
-            - @user.repo
+            - @doctrine.em
             - @slim.response
     users.twig:
         parent: 'twig.template'
@@ -454,7 +418,7 @@ services:
         class: 'QL\Hal\Controllers\User\SettingsController'
         arguments:
             - @user.settings.twig
-            - @user.repo
+            - @doctrine.em
             - @currentUser
             - @slim.response
             - @slim.not.found
@@ -482,7 +446,6 @@ services:
         class: 'QL\Hal\Controllers\User\Token\AddTokenController'
         arguments:
             - @doctrine.em
-            - @user.repo
             - @permissions
             - @currentUser
             - @session.flasher
@@ -495,7 +458,6 @@ services:
         class: 'QL\Hal\Controllers\User\Token\RemoveTokenController'
         arguments:
             - @doctrine.em
-            - @token.repo
             - @permissions
             - @currentUser
             - @session.flasher

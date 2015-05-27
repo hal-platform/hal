@@ -8,10 +8,10 @@
 namespace QL\Hal\Controllers;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
@@ -24,13 +24,9 @@ class QueueController implements ControllerInterface
     private $template;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
-
-    /**
-     * @type PushRepository
-     */
     private $pushRepo;
 
     /**
@@ -40,19 +36,17 @@ class QueueController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param BuildRepository $buildRepo
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
-        BuildRepository $buildRepo,
-        PushRepository $pushRepo,
+        EntityManagerInterface $em,
         Response $response
     ) {
         $this->template = $template;
-        $this->buildRepo = $buildRepo;
-        $this->pushRepo = $pushRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->response = $response;
     }

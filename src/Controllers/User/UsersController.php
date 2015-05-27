@@ -7,6 +7,9 @@
 
 namespace QL\Hal\Controllers\User;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -20,7 +23,7 @@ class UsersController implements ControllerInterface
     private $template;
 
     /**
-     * @type UserRepository
+     * @type EntityRepository
      */
     private $userRepo;
 
@@ -31,16 +34,15 @@ class UsersController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      */
-    public function __construct(TemplateInterface $template, UserRepository $userRepo, Response $response)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em, Response $response)
     {
         $this->template = $template;
-        $this->userRepo = $userRepo;
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->response = $response;
     }
-
 
     /**
      * {@inheritdoc}
