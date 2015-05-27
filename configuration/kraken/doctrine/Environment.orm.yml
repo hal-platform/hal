@@ -6,7 +6,8 @@ QL\Kraken\Entity\Environment:
         id:
             column: id
             type: string
-            length: 40
+            length: 32
+            options: {fixed: true}
 
     fields:
 
