@@ -9,6 +9,8 @@ namespace QL\Hal\Controllers\Api;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use MCP\DataType\Time\Clock;
 use MCP\DataType\Time\TimePoint;
@@ -18,8 +20,6 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
@@ -55,13 +55,9 @@ class QueueController implements ControllerInterface
     private $pushNormalizer;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
-
-    /**
-     * @type PushRepository
-     */
     private $pushRepo;
 
     /**
@@ -74,8 +70,7 @@ class QueueController implements ControllerInterface
      * @param ResponseFormatter $formatter
      * @param BuildNormalizer $buildNormalizer
      * @param PushNormalizer $pushNormalizer
-     * @param BuildRepository $buildRepo
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param Clock $clock
      */
     public function __construct(
@@ -83,16 +78,15 @@ class QueueController implements ControllerInterface
         ResponseFormatter $formatter,
         BuildNormalizer $buildNormalizer,
         PushNormalizer $pushNormalizer,
-        BuildRepository $buildRepo,
-        PushRepository $pushRepo,
+        EntityManagerInterface $em,
         Clock $clock
     ) {
         $this->request = $request;
         $this->formatter = $formatter;
         $this->buildNormalizer = $buildNormalizer;
         $this->pushNormalizer = $pushNormalizer;
-        $this->buildRepo = $buildRepo;
-        $this->pushRepo = $pushRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->clock = $clock;
     }
 

@@ -7,11 +7,12 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Type\PushStatusEnumType;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\PushRepository;
+use QL\Hal\Core\Entity\Push;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
@@ -31,13 +32,9 @@ class LastPushController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type DeploymentRepository
+     * @type EntityRepository
      */
     private $deploymentRepo;
-
-    /**
-     * @type PushRepository
-     */
     private $pushRepo;
 
     /**
@@ -48,21 +45,20 @@ class LastPushController implements ControllerInterface
     /**
      * @param Request $request
      * @param ResponseFormatter $formatter
-     * @param DeploymentRepository $deploymentRepo
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param array $parameters
      */
     public function __construct(
         Request $request,
         ResponseFormatter $formatter,
-        DeploymentRepository $deploymentRepo,
-        PushRepository $pushRepo,
+        EntityManagerInterface $em,
         array $parameters
     ) {
         $this->request = $request;
         $this->formatter = $formatter;
-        $this->deploymentRepo = $deploymentRepo;
-        $this->pushRepo = $pushRepo;
+
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->parameters = $parameters;
     }

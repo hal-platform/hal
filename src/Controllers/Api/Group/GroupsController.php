@@ -7,10 +7,11 @@
 
 namespace QL\Hal\Controllers\Api\Group;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\GroupNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Repository\GroupRepository;
 use QL\Panthor\ControllerInterface;
 
 class GroupsController implements ControllerInterface
@@ -23,7 +24,7 @@ class GroupsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type GroupRepository
+     * @type EntityRepository
      */
     private $groupRepo;
 
@@ -34,16 +35,16 @@ class GroupsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param GroupRepository $groupRepo
+     * @param EntityManagerInterface $em
      * @param GroupNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
-        GroupRepository $groupRepo,
+        EntityManagerInterface $em,
         GroupNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
-        $this->groupRepo = $groupRepo;
+        $this->groupRepo = $em->getRepository(Group::CLASS);
         $this->normalizer = $normalizer;
     }
 

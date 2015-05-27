@@ -7,10 +7,11 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\EventLogNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\EventLog;
-use QL\Hal\Core\Repository\EventLogRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -22,7 +23,7 @@ class EventLogController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type EventLogRepository
+     * @type EntityRepository
      */
     private $repository;
 
@@ -38,18 +39,18 @@ class EventLogController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EventLogRepository $repository
+     * @param EntityManagerInterface $em
      * @param EventLogNormalizer $normalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        EventLogRepository $repository,
+        EntityManagerInterface $em,
         EventLogNormalizer $normalizer,
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->repository = $repository;
+        $this->repository = $em->getRepository(EventLog::CLASS);
         $this->normalizer = $normalizer;
 
         $this->parameters = $parameters;

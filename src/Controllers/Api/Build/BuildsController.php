@@ -7,11 +7,12 @@
 
 namespace QL\Hal\Controllers\Api\Build;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Repository\BuildRepository;
+use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Repository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
@@ -29,10 +30,6 @@ class BuildsController implements ControllerInterface
      * @type EntityRepository
      */
     private $repositoryRepo;
-
-    /**
-     * @type BuildRepository
-     */
     private $buildRepo;
 
     /**
@@ -47,21 +44,19 @@ class BuildsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EntityRepository $repositoryRepo
-     * @param BuildRepository $buildRepo
+     * @param EntityManagerInterface $em
      * @param BuildNormalizer $normalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        EntityRepository $repositoryRepo,
-        BuildRepository $buildRepo,
+        EntityManagerInterface $em,
         BuildNormalizer $normalizer,
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->repositoryRepo = $repositoryRepo;
-        $this->buildRepo = $buildRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->repositoryRepo = $em->getRepository(Repository::CLASS);
         $this->normalizer = $normalizer;
 
         $this->parameters = $parameters;

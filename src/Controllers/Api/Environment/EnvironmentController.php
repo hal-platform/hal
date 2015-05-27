@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Environment;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -21,7 +22,7 @@ class EnvironmentController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $envRepo;
 
@@ -32,13 +33,13 @@ class EnvironmentController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param array $parameters
      */
-    public function __construct(ResponseFormatter $formatter, EnvironmentRepository $envRepo, array $parameters)
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em, array $parameters)
     {
         $this->formatter = $formatter;
-        $this->envRepo = $envRepo;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->parameters = $parameters;
     }
 

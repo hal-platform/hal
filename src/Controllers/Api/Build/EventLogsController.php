@@ -7,12 +7,13 @@
 
 namespace QL\Hal\Controllers\Api\Build;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\Normalizer\EventLogNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Repository\BuildRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -26,7 +27,7 @@ class EventLogsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
 
@@ -47,20 +48,20 @@ class EventLogsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param BuildRepository $buildRepo
+     * @param EntityManagerInterface $em
      * @param EventLogNormalizer $eventLogNormalizer
      * @param BuildNormalizer $buildNormalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        BuildRepository $buildRepo,
+        EntityManagerInterface $em,
         EventLogNormalizer $eventLogNormalizer,
         BuildNormalizer $buildNormalizer,
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->buildRepo = $buildRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->eventLogNormalizer = $eventLogNormalizer;
         $this->buildNormalizer = $buildNormalizer;
 

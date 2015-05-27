@@ -6,10 +6,11 @@
  */
 namespace QL\Hal\Controllers\Api\Environment;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\ControllerInterface;
 
 class EnvironmentsController implements ControllerInterface
@@ -22,7 +23,7 @@ class EnvironmentsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $envRepo;
 
@@ -33,16 +34,16 @@ class EnvironmentsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param EnvironmentNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
         EnvironmentNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
-        $this->envRepo = $envRepo;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->normalizer = $normalizer;
     }
 

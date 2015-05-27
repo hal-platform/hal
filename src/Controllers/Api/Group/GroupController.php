@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Group;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Repository\GroupRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -21,7 +22,7 @@ class GroupController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type GroupRepository
+     * @type EntityRepository
      */
     private $groupRepo;
 
@@ -32,13 +33,13 @@ class GroupController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param GroupRepository $groupRepo
+     * @param EntityManagerInterface $em
      * @param array $parameters
      */
-    public function __construct(ResponseFormatter $formatter, GroupRepository $groupRepo, array $parameters)
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em, array $parameters)
     {
         $this->formatter = $formatter;
-        $this->groupRepo = $groupRepo;
+        $this->groupRepo = $em->getRepository(Group::CLASS);
         $this->parameters = $parameters;
     }
 

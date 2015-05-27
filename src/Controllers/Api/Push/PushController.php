@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\Api\Push;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
@@ -21,7 +23,7 @@ class PushController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type PushRepository
+     * @type EntityRepository
      */
     private $pushRepo;
 
@@ -32,13 +34,13 @@ class PushController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param array $parameters
      */
-    public function __construct(ResponseFormatter $formatter, PushRepository $pushRepo, array $parameters)
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em, array $parameters)
     {
         $this->formatter = $formatter;
-        $this->pushRepo = $pushRepo;
+        $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->parameters = $parameters;
     }

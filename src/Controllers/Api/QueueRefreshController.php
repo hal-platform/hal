@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
@@ -15,8 +17,6 @@ use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -44,13 +44,9 @@ class QueueRefreshController implements ControllerInterface
     private $pushNormalizer;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
-
-    /**
-     * @type PushRepository
-     */
     private $pushRepo;
 
     /**
@@ -62,22 +58,21 @@ class QueueRefreshController implements ControllerInterface
      * @param ResponseFormatter $formatter
      * @param BuildNormalizer $buildNormalizer
      * @param PushNormalizer $pushNormalizer
-     * @param BuildRepository $buildRepo
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
+     * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
         BuildNormalizer $buildNormalizer,
         PushNormalizer $pushNormalizer,
-        BuildRepository $buildRepo,
-        PushRepository $pushRepo,
+        EntityManagerInterface $em,
         array $parameters
     ) {
         $this->formatter = $formatter;
         $this->buildNormalizer = $buildNormalizer;
         $this->pushNormalizer = $pushNormalizer;
-        $this->buildRepo = $buildRepo;
-        $this->pushRepo = $pushRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->parameters = $parameters;
     }
 

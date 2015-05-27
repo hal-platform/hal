@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\Api\Push;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\EventLogNormalizer;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
@@ -26,7 +28,7 @@ class EventLogsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type PushRepository
+     * @type EntityRepository
      */
     private $pushRepo;
 
@@ -47,20 +49,20 @@ class EventLogsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param EventLogNormalizer $eventLogNormalizer
      * @param PushNormalizer $pushNormalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        PushRepository $pushRepo,
+        EntityManagerInterface $em,
         EventLogNormalizer $eventLogNormalizer,
         PushNormalizer $pushNormalizer,
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->pushRepo = $pushRepo;
+        $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->eventLogNormalizer = $eventLogNormalizer;
         $this->pushNormalizer = $pushNormalizer;
 

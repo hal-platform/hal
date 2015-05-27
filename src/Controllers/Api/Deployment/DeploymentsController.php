@@ -7,13 +7,13 @@
 
 namespace QL\Hal\Controllers\Api\Deployment;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -30,10 +30,6 @@ class DeploymentsController implements ControllerInterface
      * @type EntityRepository
      */
     private $repositoryRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deploymentRepo;
 
     /**
@@ -48,21 +44,21 @@ class DeploymentsController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EntityRepository $repositoryRepo
-     * @param DeploymentRepository $deploymentRepo
+     * @param EntityManagerInterface $em
      * @param DeploymentNormalizer $normalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
-        EntityRepository $repositoryRepo,
-        DeploymentRepository $deploymentRepo,
+        EntityManagerInterface $em,
         DeploymentNormalizer $normalizer,
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->repositoryRepo = $repositoryRepo;
-        $this->deploymentRepo = $deploymentRepo;
+
+        $this->repositoryRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+
         $this->normalizer = $normalizer;
 
         $this->parameters = $parameters;

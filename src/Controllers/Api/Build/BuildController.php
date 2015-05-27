@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Api\Build;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Repository\BuildRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -21,7 +22,7 @@ class BuildController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
 
@@ -32,13 +33,13 @@ class BuildController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param BuildRepository $buildRepo
+     * @param EntityManagerInterface $em
      * @param array $parameters
      */
-    public function __construct(ResponseFormatter $formatter, BuildRepository $buildRepo, array $parameters)
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em, array $parameters)
     {
         $this->formatter = $formatter;
-        $this->buildRepo = $buildRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
 
         $this->parameters = $parameters;
     }

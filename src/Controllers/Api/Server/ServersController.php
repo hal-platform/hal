@@ -7,7 +7,9 @@
 
 namespace QL\Hal\Controllers\Api\Server;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Api\Normalizer\ServerNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
@@ -34,16 +36,16 @@ class ServersController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param EntityRepository $serverRepo
+     * @param EntityManagerInterface $em
      * @param ServerNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
-        EntityRepository $serverRepo,
+        EntityManagerInterface $em,
         ServerNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
-        $this->serverRepo = $serverRepo;
+        $this->serverRepo = $em->getRepository(Server::CLASS);
         $this->normalizer = $normalizer;
     }
 

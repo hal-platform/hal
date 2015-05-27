@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\Api\User;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
@@ -21,7 +23,7 @@ class UserController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type UserRepository
+     * @type EntityRepository
      */
     private $userRepo;
 
@@ -32,13 +34,13 @@ class UserController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $em
      * @param array $parameters
      */
-    public function __construct(ResponseFormatter $formatter, UserRepository $userRepo, array $parameters)
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em, array $parameters)
     {
         $this->formatter = $formatter;
-        $this->userRepo = $userRepo;
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->parameters = $parameters;
     }
 

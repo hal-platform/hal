@@ -7,6 +7,8 @@
 
 namespace QL\Hal\Controllers\Api\User;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\UserNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
@@ -23,7 +25,7 @@ class UsersController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type UserRepository
+     * @type EntityRepository
      */
     private $userRepo;
 
@@ -34,16 +36,16 @@ class UsersController implements ControllerInterface
 
     /**
      * @param ResponseFormatter $formatter
-     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $em
      * @param UserNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
-        UserRepository $userRepo,
+        EntityManagerInterface $em,
         UserNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
-        $this->userRepo = $userRepo;
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->normalizer = $normalizer;
     }
 
