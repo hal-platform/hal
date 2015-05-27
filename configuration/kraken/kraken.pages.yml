@@ -116,7 +116,6 @@ services:
             - @kraken.application.add.twig
             - @session.flasher
             - @doctrine.em
-            - @repository.repo
             - @kraken.validator.application
     kraken.application.add.twig:
         parent: 'kraken.template'

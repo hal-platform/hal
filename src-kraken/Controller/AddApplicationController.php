@@ -57,7 +57,6 @@ class AddApplicationController implements ControllerInterface
      * @param TemplateInterface $template
      * @param Flasher $flasher
      * @param EntityManagerInterface $em
-     * @param EntityRepository $halRepo
      * @param ApplicationValidator $validator
      */
     public function __construct(
@@ -65,7 +64,6 @@ class AddApplicationController implements ControllerInterface
         TemplateInterface $template,
         Flasher $flasher,
         EntityManagerInterface $em,
-        EntityRepository $halRepo,
         ApplicationValidator $validator
     ) {
         $this->request = $request;
@@ -74,8 +72,8 @@ class AddApplicationController implements ControllerInterface
         $this->validator = $validator;
 
         $this->em = $em;
-        $this->halRepo = $halRepo;
         $this->applicationRepo = $this->em->getRepository(Application::CLASS);
+        $this->halRepo = $this->em->getRepository(HalApplication::CLASS);
     }
 
     /**
