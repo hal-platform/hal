@@ -1,9 +1,11 @@
 imports:
-    - resource: di.services.yml
-    - resource: di.services.api.yml
-    - resource: di.services.middleware.yml
-    - resource: di.pages.yml
-    - resource: di.api.yml
+    - resource: di/services.yml
+    - resource: di/services.api.yml
+    - resource: di/services.middleware.yml
+    - resource: di/controllers.yml
+    - resource: di/controllers.admin.yml
+    - resource: di/controllers.repository.yml
+    - resource: di/controllers.api.yml
 
 services:
 

@@ -1,0 +1,266 @@
+services:
+    ####################################################################################################################
+    # REPOSITORY CONTROLLERS
+    ####################################################################################################################
+
+    repositories.page:
+        class: 'QL\Hal\Controllers\Repository\RepositoriesController'
+        arguments:
+            - @repositories.twig
+            - @group.repo
+            - @repository.repo
+            - @slim.response
+    repositories.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/repositories.twig']]]
+
+    repository.page:
+        class: 'QL\Hal\Controllers\Repository\RepositoryController'
+        arguments:
+            - @repository.twig
+            - @doctrine.em
+            - @permissions
+            - @eb
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/repository.twig']]]
+
+    repository.status.page:
+        class: 'QL\Hal\Controllers\Repository\RepositoryStatusController'
+        arguments:
+            - @repository.status.twig
+            - @doctrine.em
+            - @sticky.environment
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.status.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/status.twig']]]
+
+    repository.status.sticky.handler:
+        class: 'QL\Hal\Controllers\Repository\RepositoryStatusEnvironmentSaveHandler'
+        arguments:
+            - @environment.repo
+            - @slim.request
+            - @url
+            - @sticky.environment
+            - @slim.route.parameters
+
+    repository.admin.add.page:
+        class: 'QL\Hal\Controllers\Repository\AddRepositoryController'
+        arguments:
+            - @repository.admin.add.twig
+            - @group.repo
+            - @repository.repo
+            - @doctrine.em
+            - @github
+            - @session
+            - @url.helper
+            - @slim.request
+            - @slim.response
+    repository.admin.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/admin.add.twig']]]
+
+    repository.admin.edit.page:
+        class: 'QL\Hal\Controllers\Repository\EditRepositoryController'
+        arguments:
+            - @repository.admin.edit.twig
+            - @group.repo
+            - @repository.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.admin.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/admin.edit.twig']]]
+
+    repository.admin.remove.handler:
+        class: 'QL\Hal\Controllers\Repository\RemoveRepositoryController'
+        arguments:
+            - @repository.repo
+            - @deployment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+            - @slim.not.found
+            - @slim.route.parameters
+
+    ####################################################################################################################
+    # REPOSITORY DEPLOYMENT CONTROLLERS
+    ####################################################################################################################
+
+    repository.deployment.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentController'
+        arguments:
+            - @repository.deployment.twig
+            - @repository.repo
+            - @deployment.repo
+            - @eb
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.deployment.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployment.twig']]]
+
+    repository.deployments.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\DeploymentsController'
+        arguments:
+            - @repository.deployments.twig
+            - @environment.repo
+            - @server.repo
+            - @repository.repo
+            - @deployment.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.deployments.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployments.twig']]]
+
+    repository.deployments.add.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentController'
+        arguments:
+            - @repository.deployments.add.twig
+            - @server.repo
+            - @repository.repo
+            - @url
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.deployments.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployments.add.twig']]]
+
+    repository.deployments.add.handler:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentHandler'
+        arguments:
+            - @slim.request
+            - @repository.deployments.add.handler.form
+            - @repository.deployments.add.handler.json
+    repository.deployments.add.handler.form:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentFormHandler'
+        arguments:
+            - @doctrine.em
+            - @repository.deployment.validator
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+    repository.deployments.add.handler.json:
+        class: 'QL\Hal\Controllers\Repository\Deployment\AddDeploymentJsonHandler'
+        arguments:
+            - @doctrine.em
+            - @repository.deployment.validator
+            - @slim.halt
+            - @json
+            - @url
+            - @slim.request
+            - @slim.response
+            - @slim.route.parameters
+    repository.deployment.validator:
+        class: 'QL\Hal\Validator\DeploymentValidator'
+        arguments:
+            - @repository.repo
+            - @server.repo
+            - @deployment.repo
+
+    repository.deployment.edit.page:
+        class: 'QL\Hal\Controllers\Repository\Deployment\EditDeploymentController'
+        arguments:
+            - @repository.deployment.edit.twig
+            - @repository.repo
+            - @deployment.repo
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.deployment.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/deployments.edit.twig']]]
+    repository.deployment.edit.handler:
+        class: 'QL\Hal\Controllers\Repository\Deployment\EditDeploymentHandler'
+        arguments:
+            - @doctrine.em
+            - @deployment.repo
+            - @repository.deployment.validator
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+
+    repository.deployments.remove.handler:
+        class: 'QL\Hal\Controllers\Repository\Deployment\RemoveDeploymentHandler'
+        arguments:
+            - @deployment.repo
+            - @doctrine.em
+            - @session
+            - @url.helper
+            - @slim.not.found
+            - @slim.route.parameters
+
+    ####################################################################################################################
+    # REPOSITORY ENCRYPTED PROPERTIES CONTROLLERS
+    ####################################################################################################################
+
+    repository.encrypted.page:
+        class: 'QL\Hal\Controllers\Repository\EncryptedProperty\EncryptedPropertiesController'
+        arguments:
+            - @repository.encrypted.twig
+            - @encrypted.repo
+            - @repository.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.encrypted.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/encrypted/encrypted.properties.twig']]]
+
+    repository.encrypted.add.page:
+        class: 'QL\Hal\Controllers\Repository\EncryptedProperty\AddEncryptedPropertyController'
+        arguments:
+            - @repository.encrypted.add.twig
+            - @repository.repo
+            - @environment.repo
+            - @slim.request
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+    repository.encrypted.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['repository/encrypted/add.encrypted.property.twig']]]
+    repository.encrypted.add.handler:
+        class: 'QL\Hal\Controllers\Repository\EncryptedProperty\AddEncryptedPropertyHandler'
+        arguments:
+            - @doctrine.em
+            - @encrypted.repo
+            - @repository.repo
+            - @environment.repo
+            - @encrypter
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+    repository.encrypted.remove.handler:
+        class: 'QL\Hal\Controllers\Repository\EncryptedProperty\RemoveEncryptedPropertyHandler'
+        arguments:
+            - @doctrine.em
+            - @encrypted.repo
+            - @session
+            - @url
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
