@@ -17,32 +17,6 @@ services:
         class: 'QL\Panthor\Slim\RouteLoaderHook'
         arguments: [@service_container, %kraken.routes%]
 
-    # override the default orm driver
-    doctrine.config.driver:
-        class: 'Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver'
-        arguments: [@doctrine.mapping.dirs]
-        calls:
-            - ['setGlobalBasename', ['global']]
-
-    doctrine.mapping.dirs:
-        class: 'stdClass'
-        factory: ['QL\Kraken\Utility\DiArrayUtil', 'associative']
-        arguments:
-            -
-                key: @doctrine.mapping.dir
-                value: 'QL\Hal\Core\Entity'
-            -
-                key: @doctrine.mapping.dir.kraken
-                value: 'QL\Kraken\Entity'
-
-    doctrine.mapping.dir.kraken:
-        class: 'stdClass'
-        factory: [@directory.helper, 'fullPath']
-        arguments: ['configuration/kraken/doctrine']
-
-    doctrine.em.configurator:
-        class: 'QL\Kraken\Doctrine\DoctrineConfigurator'
-
     doctrine.listener.kraken.persist:
         class: 'QL\Kraken\Doctrine\DoctrinePersistListener'
         arguments: [@clock]

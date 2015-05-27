@@ -1120,7 +1120,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git/web-core/hal-core",
-                "reference": "e0496244c02a4aff2fed1f3607ece0e51f9be4a2"
+                "reference": "8542e9c152499ec231b9732abe8cfe3323c7156b"
             },
             "archive": {
                 "exclude": [
@@ -1147,7 +1147,8 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "QL\\Hal\\Core\\": "src/"
+                    "QL\\Hal\\Core\\": "src/",
+                    "QL\\Kraken\\Core\\": "src-kraken/"
                 }
             },
             "license": [
@@ -1160,7 +1161,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-05-27 13:53:30"
+            "time": "2015-05-27 15:17:57"
         },
         {
             "name": "ql/http-problem",
