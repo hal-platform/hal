@@ -103,6 +103,66 @@ services:
                 key: %aws.credentials.key%
                 secret: %aws.credentials.secret%
 
+    ######################################################################################################################
+    # TWIG STUFF
+    ######################################################################################################################
+
+    twig.extension.hal:
+        class: 'QL\Hal\Twig\HalExtension'
+        arguments:
+            - @slim.cookies
+            - @global.message
+            - @url.helper
+            - @utility.time.formatter
+            - @name.helper
+
+    twig.extension.hal.global:
+        class: 'QL\Hal\Twig\GlobalExtension'
+        arguments:
+            - @service_container
+            - @slim.request
+            - @session
+            - @doctrine.em
+        calls:
+            - ['addGlobal', ['applicationTitle', %application.title%]]
+            - ['addGlobal', ['applicationSha', %application.sha%]]
+            - ['addGlobal', ['applicationVersion', %application.major.version%]]
+            - ['addGlobal', ['navItems', %navigation.list%]]
+            - ['addGlobal', ['session', @session]]
+
+    twig.extension.permissions:
+        class: 'QL\Hal\Twig\PermissionExtension'
+        arguments: [@permissions]
+
+    twig.extension.github:
+        class: 'QL\Hal\Twig\GithubExtension'
+        arguments: [@url.helper, @github]
+
+    twig.extension.ansi:
+        class: 'SensioLabs\AnsiConverter\Bridge\Twig\AnsiExtension'
+        arguments: [@ansi.converter]
+    twig.extension.status:
+        class: 'QL\Hal\Twig\StatusExtension'
+
+    # Twig Environment
+    twig.environment:
+        parent: 'panthor.twig.environment'
+        calls:
+            - ['addExtension', [@twig.extension.hal]]
+            - ['addExtension', [@twig.extension.hal.global]]
+            - ['addExtension', [@twig.extension.permissions]]
+            - ['addExtension', [@twig.extension.github]]
+            - ['addExtension', [@twig.extension.ansi]]
+            - ['addExtension', [@twig.extension.status]]
+            - ['addExtension', [@kraken.twig.extension]]
+
+    ansi.converter:
+        class: 'SensioLabs\AnsiConverter\AnsiToHtmlConverter'
+        arguments: [@ansi.convert.theme, true]
+
+    ansi.convert.theme:
+        class: 'SensioLabs\AnsiConverter\Theme\Theme'
+
     ####################################################################################################################
     # GitHub
     ####################################################################################################################
