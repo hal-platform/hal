@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Type\ServerEnumType;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
@@ -116,9 +116,9 @@ class AddServerController implements ControllerInterface
                 $server = $this->handleFormSubmission($this->request, $environment);
 
                 $name = $server->getName();
-                if ($server->getType() === ServerEnumType::TYPE_EB) {
+                if ($server->getType() === ServerEnum::TYPE_EB) {
                     $name = 'Elastic Beanstalk';
-                } elseif ($server->getType() === ServerEnumType::TYPE_EC2) {
+                } elseif ($server->getType() === ServerEnum::TYPE_EC2) {
                     $name = 'EC2';
                 }
 
@@ -142,7 +142,7 @@ class AddServerController implements ControllerInterface
         $type = $request->post('server_type');
         $name = strtolower($request->post('hostname'));
 
-        if ($type !== ServerEnumType::TYPE_RSYNC) {
+        if ($type !== ServerEnum::TYPE_RSYNC) {
             $name = '';
         }
 
@@ -173,7 +173,7 @@ class AddServerController implements ControllerInterface
 
         $errors = [];
 
-        if (!in_array($serverType, ServerEnumType::values())) {
+        if (!in_array($serverType, ServerEnum::values())) {
             $errors[] = 'Please select a type.';
         }
 
@@ -182,7 +182,7 @@ class AddServerController implements ControllerInterface
         }
 
         // validate hostname if rsync server
-        if ($serverType === ServerEnumType::TYPE_RSYNC && !$errors) {
+        if ($serverType === ServerEnum::TYPE_RSYNC && !$errors) {
             // normalize the hostname
             $hostname = strtolower($hostname);
 
@@ -194,15 +194,15 @@ class AddServerController implements ControllerInterface
 
         // validate duplicate EB for environment
         // Only 1 EB "server" per environment
-        } elseif ($serverType === ServerEnumType::TYPE_EB && !$errors) {
-            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EB, 'environment' => $environmentId])) {
+        } elseif ($serverType === ServerEnum::TYPE_EB && !$errors) {
+            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'environment' => $environmentId])) {
                 $errors[] = 'An EB server for this environment already exists.';
             }
 
         // validate duplicate EC2 for environment
         // Only 1 EC2 "server" per environment
-        } elseif ($serverType === ServerEnumType::TYPE_EC2 && !$errors) {
-            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EC2, 'environment' => $environmentId])) {
+        } elseif ($serverType === ServerEnum::TYPE_EC2 && !$errors) {
+            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'environment' => $environmentId])) {
                 $errors[] = 'An EC2 server for this environment already exists.';
             }
         }

@@ -14,7 +14,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Type\ServerEnumType;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 
 class DeploymentValidator
 {
@@ -91,14 +91,14 @@ class DeploymentValidator
             return null;
         }
 
-        if ($server->getType() == ServerEnumType::TYPE_RSYNC) {
+        if ($server->getType() == ServerEnum::TYPE_RSYNC) {
             $this->validatePath($path);
 
-        } elseif ($server->getType() == ServerEnumType::TYPE_EB) {
+        } elseif ($server->getType() == ServerEnum::TYPE_EB) {
             $this->validateEbEnvironment($ebEnvironment);
             $this->validateEbConfigRequired($repo);
 
-        } elseif ($server->getType() == ServerEnumType::TYPE_EC2) {
+        } elseif ($server->getType() == ServerEnum::TYPE_EC2) {
             $this->validatePath($path);
             $this->validateEc2Pool($ec2Pool);
         }
@@ -120,13 +120,13 @@ class DeploymentValidator
         // Wipe path, ec2 for EB servers
         // Wipe path, eb  for EC2 server
         $serverType = $server->getType();
-        if ($serverType === ServerEnumType::TYPE_RSYNC) {
+        if ($serverType === ServerEnum::TYPE_RSYNC) {
             $ebEnvironment = $ec2Pool = null;
 
-        } else if ($serverType === ServerEnumType::TYPE_EB) {
+        } else if ($serverType === ServerEnum::TYPE_EB) {
             $path = $ec2Pool = null;
 
-        } else if ($serverType === ServerEnumType::TYPE_EC2) {
+        } else if ($serverType === ServerEnum::TYPE_EC2) {
             $ebEnvironment = null;
         }
 
@@ -160,14 +160,14 @@ class DeploymentValidator
 
         $this->validateUrl($url);
 
-        if ($serverType == ServerEnumType::TYPE_RSYNC) {
+        if ($serverType == ServerEnum::TYPE_RSYNC) {
             $this->validatePath($path);
 
-        } elseif ($serverType == ServerEnumType::TYPE_EB) {
+        } elseif ($serverType == ServerEnum::TYPE_EB) {
             $this->validateEbEnvironment($ebEnvironment);
             $this->validateEbConfigRequired($deployment->getRepository());
 
-        } elseif ($serverType == ServerEnumType::TYPE_EC2) {
+        } elseif ($serverType == ServerEnum::TYPE_EC2) {
             $this->validatePath($path);
             $this->validateEc2Pool($ec2Pool);
         }
@@ -206,7 +206,7 @@ class DeploymentValidator
         $server = $deployment->getServer();
         $serverType = $server->getType();
 
-        if ($serverType == ServerEnumType::TYPE_RSYNC) {
+        if ($serverType == ServerEnum::TYPE_RSYNC) {
 
             // rsync path did not change, skip dupe check
             if ($deployment->getPath() == $path) {
@@ -218,7 +218,7 @@ class DeploymentValidator
                 $errors[] = self::ERR_DUPLICATE_RSYNC;
             }
 
-        } elseif ($serverType == ServerEnumType::TYPE_EB) {
+        } elseif ($serverType == ServerEnum::TYPE_EB) {
 
             // EB did not change, skip dupe check
             if ($deployment->getEbEnvironment() == $ebEnvironment) {
@@ -230,7 +230,7 @@ class DeploymentValidator
                 $errors[] = self::ERR_DUPLICATE_EB;
             }
 
-        } elseif ($serverType == ServerEnumType::TYPE_EC2) {
+        } elseif ($serverType == ServerEnum::TYPE_EC2) {
 
             // EC2 did not change, skip dupe check
             if ($deployment->getEc2Pool() == $ec2Pool) {
@@ -262,20 +262,20 @@ class DeploymentValidator
     {
         $errors = [];
 
-        if ($server->getType() == ServerEnumType::TYPE_RSYNC) {
+        if ($server->getType() == ServerEnum::TYPE_RSYNC) {
             $deployment = $this->deploymentRepo->findOneBy(['server' => $server, 'path' => $path]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_RSYNC;
             }
 
-        } elseif ($server->getType() == ServerEnumType::TYPE_EB) {
+        } elseif ($server->getType() == ServerEnum::TYPE_EB) {
             $this->validateEbEnvironment($ebEnvironment);
             $deployment = $this->deploymentRepo->findOneBy(['ebEnvironment' => $ebEnvironment]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EB;
             }
 
-        } elseif ($server->getType() == ServerEnumType::TYPE_EC2) {
+        } elseif ($server->getType() == ServerEnum::TYPE_EC2) {
             $this->validateEc2Pool($ec2Pool);
             $deployment = $this->deploymentRepo->findOneBy(['ec2Pool' => $ec2Pool]);
             if ($deployment) {

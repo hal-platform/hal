@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Api\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Type\PushStatusEnumType;
+use QL\Hal\Core\Type\EnumType\PushStatusEnum;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
@@ -77,7 +77,7 @@ class LastPushController implements ControllerInterface
 
         $status = $this->request->get(self::FILTER_STATUS);
 
-        if ($status && !in_array($status, PushStatusEnumType::values())) {
+        if ($status && !in_array($status, PushStatusEnum::values())) {
             throw HttpProblemException::build(400, 'invalid-status');
         }
 

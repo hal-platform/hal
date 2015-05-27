@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Type\ServerEnumType;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -93,9 +93,9 @@ class RemoveServerController implements ControllerInterface
         $this->em->flush();
 
         $name = $server->getName();
-        if ($server->getType() === ServerEnumType::TYPE_EB) {
+        if ($server->getType() === ServerEnum::TYPE_EB) {
             $name = 'Elastic Beanstalk';
-        } elseif ($server->getType() === ServerEnumType::TYPE_EC2) {
+        } elseif ($server->getType() === ServerEnum::TYPE_EC2) {
             $name = 'EC2';
         }
 

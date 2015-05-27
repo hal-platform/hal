@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Helpers;
 
-use QL\Hal\Core\Type\ServerEnumType;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 
 trait SortingHelperTrait
 {
@@ -53,13 +53,13 @@ trait SortingHelperTrait
             }
 
             // put rsync at top
-            if ($a->getType() === ServerEnumType::TYPE_RSYNC xor $b->getType() === ServerEnumType::TYPE_RSYNC) {
-                return ($a->getType() === ServerEnumType::TYPE_RSYNC) ? -1 : 1;
+            if ($a->getType() === ServerEnum::TYPE_RSYNC xor $b->getType() === ServerEnum::TYPE_RSYNC) {
+                return ($a->getType() === ServerEnum::TYPE_RSYNC) ? -1 : 1;
             }
 
             // put eb above ec2
-            if ($a->getType() !== ServerEnumType::TYPE_RSYNC && $b->getType() !== ServerEnumType::TYPE_RSYNC) {
-                return ($a->getType() === ServerEnumType::TYPE_EB) ? -1 : 1;
+            if ($a->getType() !== ServerEnum::TYPE_RSYNC && $b->getType() !== ServerEnum::TYPE_RSYNC) {
+                return ($a->getType() === ServerEnum::TYPE_EB) ? -1 : 1;
             }
 
             $isA = preg_match($regex, $serverA, $matchesA);

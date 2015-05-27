@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Type\ServerEnumType;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -154,7 +154,7 @@ class EditServerController implements ControllerInterface
         $type = $request->post('server_type');
         $name = strtolower($request->post('hostname'));
 
-        if ($type !== ServerEnumType::TYPE_RSYNC) {
+        if ($type !== ServerEnum::TYPE_RSYNC) {
             $name = '';
         }
 
@@ -185,7 +185,7 @@ class EditServerController implements ControllerInterface
 
         $errors = [];
 
-        if (!in_array($serverType, ServerEnumType::values())) {
+        if (!in_array($serverType, ServerEnum::values())) {
             $errors[] = 'Please select a type.';
         }
 
@@ -194,7 +194,7 @@ class EditServerController implements ControllerInterface
         }
 
         // validate hostname if rsync server
-        if ($serverType === ServerEnumType::TYPE_RSYNC && !$errors) {
+        if ($serverType === ServerEnum::TYPE_RSYNC && !$errors) {
             // normalize the hostname
             $hostname = strtolower($hostname);
 
@@ -209,24 +209,24 @@ class EditServerController implements ControllerInterface
 
         // validate duplicate EB for environment
         // Only 1 EB "server" per environment
-        } elseif ($serverType === ServerEnumType::TYPE_EB && !$errors) {
+        } elseif ($serverType === ServerEnum::TYPE_EB && !$errors) {
 
             // Only check duplicate EB if it is being changed
             $hasChanged = ($environmentId != $server->getEnvironment()->getId() || $serverType != $server->getType());
             if (!$errors && $hasChanged) {
-                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EB, 'environment' => $environmentId])) {
+                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'environment' => $environmentId])) {
                     $errors[] = 'An EB server for this environment already exists.';
                 }
             }
 
         // validate duplicate EC2 for environment
         // Only 1 EC2 "server" per environment
-        } elseif ($serverType === ServerEnumType::TYPE_EC2 && !$errors) {
+        } elseif ($serverType === ServerEnum::TYPE_EC2 && !$errors) {
 
             // Only check duplicate EC2 if it is being changed
             $hasChanged = ($environmentId != $server->getEnvironment()->getId() || $serverType != $server->getType());
             if (!$errors && $hasChanged) {
-                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnumType::TYPE_EC2, 'environment' => $environmentId])) {
+                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'environment' => $environmentId])) {
                     $errors[] = 'An EC2 server for this environment already exists.';
                 }
             }

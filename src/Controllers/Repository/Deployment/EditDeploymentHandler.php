@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Type\ServerEnumType;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Session;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
@@ -133,13 +133,13 @@ class EditDeploymentHandler implements MiddlewareInterface
         // Wipe path, ec2 for EB servers
         // Wipe path, eb  for EC2 server
         $serverType = $deployment->getServer()->getType();
-        if ($serverType === ServerEnumType::TYPE_RSYNC) {
+        if ($serverType === ServerEnum::TYPE_RSYNC) {
             $ebEnvironment = $ec2Pool = null;
 
-        } else if ($serverType === ServerEnumType::TYPE_EC2) {
+        } else if ($serverType === ServerEnum::TYPE_EC2) {
             $path = $ebEnvironment = null;
 
-        } else if ($serverType === ServerEnumType::TYPE_EB) {
+        } else if ($serverType === ServerEnum::TYPE_EB) {
             $ec2Pool = null;
         }
 

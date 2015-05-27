@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Type\ServerEnumType;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -92,7 +92,7 @@ class ServerController implements ControllerInterface
 
         // Add status of elastic beanstalk environments
         $ebEnvironments = [];
-        if ($server->getType() === ServerEnumType::TYPE_EB) {
+        if ($server->getType() === ServerEnum::TYPE_EB) {
             $ebEnvironments = $this->ebService->getEnvironmentsByDeployments($deployments);
         }
 
