@@ -4,7 +4,7 @@ var formatter = require('../util/time-formatter');
 module.exports = {
     interval: 5,
     mode: 'table', // "table" for global build table, "build" for individual build status page
-    pendingClass: 'status-icon--other',
+    pendingClass: 'status-icon--warning',
     thinkingClass: 'status-icon--thinking',
     successClass: 'status-icon--success',
     failureClass: 'status-icon--error',

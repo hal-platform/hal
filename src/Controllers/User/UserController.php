@@ -8,9 +8,11 @@
 namespace QL\Hal\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Services\PermissionsService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -38,6 +40,11 @@ class UserController implements ControllerInterface
      * @type UserRepository
      */
     private $userRepo;
+
+    /**
+     * @type EntityRepository
+     */
+    private $userTypesRepo;
 
     /**
      * @type Response
@@ -74,7 +81,10 @@ class UserController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->ldap = $ldap;
+
         $this->userRepo = $em->getRepository(User::CLASS);
+        $this->userTypesRepo = $em->getRepository(UserType::CLASS);
+
         $this->permissions = $permissions;
 
         $this->response = $response;
@@ -87,20 +97,62 @@ class UserController implements ControllerInterface
      */
     public function __invoke()
     {
-        $id = $this->parameters['id'];
-
-        if (!$user = $this->userRepo->find($id)) {
+        if (!$user = $this->userRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
         $rendered = $this->template->render([
             'user' => $user,
             'ldapUser' => $this->ldap->getUserByCommonId($user->getId()),
+
             'permissions' => $this->permissions->userPushPermissionPairs($user->getHandle()),
             'builds' => $this->userRepo->getBuildCount($user),
             'pushes' => $this->userRepo->getPushCount($user),
+
+            'types' => $this->getUserTypes($user)
         ]);
 
         $this->response->setBody($rendered);
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return array
+     */
+    private function getUserTypes(User $user)
+    {
+        $userTypes = $this->userTypesRepo->findBy(['user' => $user]);
+
+        $types = [
+            'hasType' => (count($userTypes) > 0),
+
+            'isPleb' => false,
+            'isLead' => false,
+            'isButtonPusher' => false,
+            'isSuper' => false,
+            'projects' => []
+        ];
+
+        foreach ($userTypes as $t) {
+            if ($t->type() === 'lead') {
+                $types['isLead'] = true;
+
+                if ($t->application()) {
+                    $types['applications'][$t->application()->getId()] = $t->application();
+                }
+
+            } elseif ($t->type() === 'btn_pusher') {
+                $types['isButtonPusher'] = true;
+
+            } elseif ($t->type() === 'super') {
+                $types['isSuper'] = true;
+
+            } elseif ($t->type() === 'pleb') {
+                $types['isPleb'] = true;
+            }
+        }
+
+        return $types;
     }
 }

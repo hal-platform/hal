@@ -5,7 +5,7 @@ module.exports = {
 
     successClass: 'status-icon--success',
     failureClass: 'status-icon--error',
-    unknownClass: 'status-icon--unknown',
+    infoClass: 'status-icon--info',
 
     $servers: null,
 
@@ -43,7 +43,7 @@ module.exports = {
             endpoint = '/admin/server-status/' + id,
             failure = this.failureClass,
             success = this.successClass,
-            unknown = this.unknownClass;
+            info = this.infoClass;
 
         $.getJSON(endpoint, function(data) {
             console.log('server: ' + data.id + ', status: ' + data.status);
@@ -51,13 +51,13 @@ module.exports = {
             if (data.status == 'up') {
                 $elem
                     .addClass(success)
-                    .removeClass(unknown)
+                    .removeClass(info)
                     .prop('title', 'The server is up!');
 
             } else if (data.status == 'down') {
                 $elem
                     .addClass(failure)
-                    .removeClass(unknown)
+                    .removeClass(info)
                     .prop('title', 'Cannot connect to server. It may be down.');
             }
         });

@@ -9,19 +9,20 @@
 
 {% block content %}
 
-    <h2>
+    <h1>
         {% if isSeriousBusinessMode() %}
-            <h2>{{ displayName }}</h2>
+            {{ displayName }}
         {% else %}
             <span
                 data-initial="{{ getUsersActualName(currentUser) }}"
                 data-nofunzone="{{ name }}"
             >{{ displayName }}</span>
         {% endif %}
-    </h2>
+    </h1>
 
     {% if ldapUser %}
-        <p>{{ ldapUser.title }} ({{ ldapUser.teamName }})</p>
+        <h4>{{ ldapUser.teamName }}</h4>
+        <p>{{ ldapUser.title }}</p>
     {% endif %}
 
     <p>
@@ -33,39 +34,93 @@
         {% endif %}
     </p>
 
-    <h3>Contact</h3>
-    <ul>
-        <li>Email: <a href="mailto:{{ user.Email }}">{{ user.Email }}</a></li>
-        {% if ldapUser %}
-            <li>Phone: {{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})</li>
-            <li>Mobile: {{ ldapUser.mobilePhone }}</li>
-            <li><a href="http://quniverse/profiles/Person.aspx?accountname=MI%5c{{ user.handle }}">Rockword Profile</a></li>
-        {% endif %}
-    </ul>
+    <h2>Contact</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Email</dt>
+            <dd><a href="mailto:{{ user.Email }}">{{ user.Email }}</a></dd>
 
-    <h3>Status</h3>
-    <ul>
-        <li><b>HAL:</b> {{ user.isActive ? 'Active' : 'Inactive' }}</li>
-        <li><b>LDAP:</b> {{ ldapUser ? 'Active' : 'Inactive' }}</li>
-    </ul>
+            <dt class="split__title">Phone</dt>
+            <dd>{{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})</dd>
 
-    <h3>Activity</h3>
-    <ul>
-        <li><b>Total Builds:</b> {{ builds }}</li>
-        <li><b>Total Pushes:</b> {{ pushes }}</li>
-        <li>
-            <b>Github Page:</b> <a href="http://git/{{ user.handle }}">http://git/{{ user.handle }}</a>
-            {{ macros.icon('github') }}
-        </li>
-    </ul>
+            <dt class="split__title">Mobile</dt>
+            <dd>{{ ldapUser.mobilePhone }}</dd>
 
+            <dt class="split__title">Rockworld Profile</dt>
+            <dd><a href="http://quniverse/profiles/Person.aspx?accountname=MI%5c{{ user.handle }}">Rockword Profile</a></dd>
+        </dl>
+    </div>
 
-    <h3>Permissions</h3>
+    <h2>Status</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">HAL</dt>
+            <dd>
+                {% if user.isActive %}
+                    {{ macros.status('Active', 'success', 'tick') }}
+                {% else %}
+                    {{ macros.status('Inactive', 'error', 'nope') }}
+                {% endif %}
+            </dd>
 
+            <dt class="split__title">Active Directory</dt>
+            <dd>
+                {% if ldapUser %}
+                    {{ macros.status('Active', 'success', 'tick') }}
+                {% else %}
+                    {{ macros.status('Inactive', 'error', 'nope') }}
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">User Types</dt>
+            <dd>
+                {% if types.hasType %}
+                    <ul class="inline-list--space">
+                        {% if types.isLead %}
+                            <li>{{ macros.status('Lead', 'notice') }}</li>
+                        {% endif %}
+                        {% if types.isButtonPusher %}
+                            <li>{{ macros.status('Admin', 'warning') }}</li>
+                        {% endif %}
+                        {% if types.isSuper %}
+                            <li>{{ macros.status('Super', 'error') }}</li>
+                        {% endif %}
+                    </ul>
+                {% else %}
+                    Standard
+                {% endif %}
+            </dd>
+
+            {% if types.isLead and types.applications %}
+                <dt class="split__title">Lead Applications</dt>
+                <dd>
+                    <ul class="inline-list--comma">
+                        {% for app in types.applications %}
+                            <li><a href="{{ urlFor('repository', {repository: app.id}) }}">{{ app.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            {% endif %}
+        </dl>
+    </div>
+
+    <h2>Activity</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Total Builds</dt>
+            <dd>{{ builds }}</dd>
+
+            <dt class="split__title">Total Pushes</dt>
+            <dd>{{ pushes }}</dd>
+
+            <dt class="split__title">Github Profile</dt>
+            <dd><a href="http://git/{{ user.handle }}">http://git/{{ user.handle }}</a> {{ macros.icon('github') }}</dd>
+        </dl>
+    </div>
+
+    <h2>Deployment Permissions</h2>
     {% if permissions %}
-        <p><strong>{{ displayName }}</strong> can push the following repositories to the specified environments.</p>
-
-        <table data-tablesaw-mode="stack">
+        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
             <thead>
             <tr>
                 <th>Environment</th>
@@ -88,7 +143,7 @@
             </tbody>
         </table>
     {% else %}
-        <p><strong>{{ name }}</strong> has no permissions.</p>
+        <p><strong>{{ name }}</strong> has no deployment permissions.</p>
     {% endif %}
 
 {% endblock %}

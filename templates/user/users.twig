@@ -1,32 +1,39 @@
 {% extends 'base.html.twig' %}
+{% import _self as page_macros %}
 
 {% set page_title = "Users" %}
 
-{% import _self as macros %}
-
 {% block content %}
-    <h2>Users</h2>
-    {{ macros.userTable(users) }}
+    <h1>{{ page_title }}</h1>
+
+    {{ page_macros.userTable(users, true) }}
 
     {% if isUserAdmin(currentUser) and inactiveUsers %}
         <h2>Inactive Users</h2>
-        {{ macros.userTable(inactiveUsers) }}
+        {{ page_macros.userTable(inactiveUsers, false) }}
     {% endif %}
 {% endblock %}
 
+{% macro userTable(users, showtypes) %}
+    {% import "_partial/macros.twig" as macros %}
 
-{% macro userTable(users) %}
-    <table data-tablesaw-mode="stack">
+    <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>User ID</th>
                 <th>Username</th>
                 <th>Display Name</th>
                 <th>E-mail</th>
+                {% if showtypes %}
+                    <th></th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
         {% for user in users %}
+            {% set user_types = user.type %}
+            {% set user = user.user %}
+
             <tr>
                 <td><a href="{{ urlFor('user', {'id': user.id}) }}">{{ user.id }}</a></td>
                 <td>{{ user.handle }}</td>
@@ -38,6 +45,25 @@
                     {% endif %}
                 </td>
                 <td>{{ user.email }}</td>
+
+                {% if showtypes %}
+                    <td class="tr">
+                        {% if user_types.hasType %}
+                            <ul class="inline-list--space">
+                                {% if user_types.isLead %}
+                                    <li>{{ macros.status('Lead', 'info') }}</li>
+                                {% endif %}
+                                {% if user_types.isButtonPusher %}
+                                    <li>{{ macros.status('Admin', 'warning') }}</li>
+                                {% endif %}
+                                {% if user_types.isSuper %}
+                                    <li>{{ macros.status('Super', 'error') }}</li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+                    </td>
+                {% endif %}
+
             </tr>
         {% else %}
             <tr>

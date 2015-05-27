@@ -16,7 +16,7 @@
                     {% for server in servers %}
                         <li>
                             {% if server.type == 'rsync' %}
-                                <span class="status-icon--unknown" title="Updating..." data-server-status="{{ server.id }}">
+                                <span class="status-icon--info" title="Updating..." data-server-status="{{ server.id }}">
                                     <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a>
                                 </span>
                             {% else %}

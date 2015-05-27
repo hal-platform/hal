@@ -66,7 +66,7 @@
             <tr>
                 <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
                 <td>
-                    {% set statusClass = 'status-icon--other' %}
+                    {% set statusClass = 'status-icon--warning' %}
                     {% if push.status == 'Success' %}
                         {% set statusClass = 'status-icon--success' %}
                     {% elseif push.status == 'Error' %}

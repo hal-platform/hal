@@ -5,7 +5,7 @@ module.exports = {
     buildTemplate: null,
     pushTemplate: null,
 
-    pendingClass: 'status-icon--other',
+    pendingClass: 'status-icon--warning',
     thinkingClass: 'status-icon--thinking',
     successClass: 'status-icon--success',
     failureClass: 'status-icon--error',
@@ -150,14 +150,16 @@ module.exports = {
 
     determineStatusStyle: function(status) {
         if (status == 'Success') {
-            return 'success';
+            return this.successClass;
+
         } else if (status == 'Error') {
-            return 'error';
+            return this.errorClass;
+
         } else if (status == 'Waiting' || status == 'Building' || status == 'Pushing') {
-            return 'thinking';
+            return this.thinkingClass;
         }
 
-        return 'other';
+        return this.pendingClass;
     },
     determineGitref: function(gitref) {
         var formatted = this.formatGitref(gitref),
