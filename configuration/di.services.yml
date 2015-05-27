@@ -22,10 +22,7 @@ services:
         class: 'QL\Hal\Services\PermissionsService'
         arguments:
             - @ldap
-            - @deployment.repo
-            - @repository.repo
-            - @user.repo
-            - @environment.repo
+            - @doctrine.em
             - @github
             - '%debug.godmode%'
             - %permissions.prod.envs%
@@ -48,8 +45,7 @@ services:
     stats:
         class: 'QL\Hal\Services\StatsService'
         arguments:
-            - @build.repo
-            - @push.repo
+            - @doctrine.em
             - @clock
             - %date.timezone%
         calls:

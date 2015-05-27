@@ -7,15 +7,15 @@
 
 namespace QL\Hal\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
 use MCP\Cache\CachingTrait;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\UserRepository;
-use QL\Hal\Core\Entity\User as EntityUser;
+use QL\Hal\Core\Entity\User;
 use Zend\Ldap\Dn;
 
 class PermissionsService
@@ -54,36 +54,17 @@ class PermissionsService
     private $ldap;
 
     /**
-     * @var DeploymentRepository
-     */
-    private $deployments;
-
-    /**
      * @var EntityRepository
      */
-    private $repositories;
-
-    /**
-     * @var UserRepository
-     */
-    private $users;
-
-    /**
-     * @var EnvironmentRepository
-     */
-    private $environments;
+    private $deploymentRepo;
+    private $repoRepo;
+    private $userRepo;
+    private $environmentRepo;
 
     /**
      * @var GithubService
      */
     private $github;
-
-    /**
-     * The common ID of a user that will be granted Super Admin status. Used for testing only.
-     *
-     * @var string
-     */
-    private $god;
 
     /**
      * @var array
@@ -97,31 +78,25 @@ class PermissionsService
 
     /**
      * @param LdapService $ldap
-     * @param DeploymentRepository $deployments
-     * @param EntityRepository $repositories
-     * @param UserRepository $users
-     * @param EnvironmentRepository $environments
+     * @param EntityManagerInterface $em
      * @param GithubService $github
      * @param string $god
      */
     public function __construct(
         LdapService $ldap,
-        DeploymentRepository $deployments,
-        EntityRepository $repositories,
-        UserRepository $users,
-        EnvironmentRepository $environments,
+        EntityManagerInterface $em,
         GithubService $github,
-        $god,
         array $productionEnvironments,
         array $halRepositories
     ) {
         $this->ldap = $ldap;
-        $this->deployments = $deployments;
-        $this->repositories = $repositories;
-        $this->users = $users;
-        $this->environments = $environments;
+
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->userRepo = $em->getRepository(User::CLASS);
+        $this->environmentRepo = $em->getRepository(Environment::CLASS);
+
         $this->github = $github;
-        $this->god = $god;
         $this->productionEnvironments = $productionEnvironments;
         $this->halRepositories = $halRepositories;
     }
@@ -148,11 +123,6 @@ class PermissionsService
 
         // Super Admin LDAP Group
         if ($this->isUserInGroup($user, $this->generateDn(self::DN_SUPER_ADMIN))) {
-            return true;
-        }
-
-        // God Mode Override
-        if ($user->commonId() == $this->god) {
             return true;
         }
 
@@ -336,7 +306,7 @@ class PermissionsService
 
         $repositories = [];
 
-        foreach ($this->repositories->findBy([], ['key' => 'ASC']) as $repo) {
+        foreach ($this->repoRepo->findBy([], ['key' => 'ASC']) as $repo) {
             if ($this->allowBuild($user, $repo->getKey())) {
                 $repositories[] = $repo;
             }
@@ -403,8 +373,8 @@ class PermissionsService
      */
     public function repositoryPermissionPairs($repository)
     {
-        $repository = $this->repositories->findOneBy(['key' => $repository]);
-        $users = $this->users->findBy(['isActive' => true], ['name' => 'ASC']);
+        $repository = $this->repoRepo->findOneBy(['key' => $repository]);
+        $users = $this->userRepo->findBy(['isActive' => true], ['name' => 'ASC']);
 
         $permissions = [];
 
@@ -452,7 +422,7 @@ class PermissionsService
         } else {
 
             // Any LDAP Repository Group
-            foreach ($this->environments->findAll() as $environment) {
+            foreach ($this->environmentRepo->findAll() as $environment) {
                 if ($this->allowPush($user, $repo, $environment->getKey())) {
                     return true;
                 }
@@ -474,9 +444,9 @@ class PermissionsService
     private function getPermissionPairs(Repository $repository = null)
     {
         if ($repository) {
-            $deployments = $this->deployments->findBy(['repository' => $repository]);
+            $deployments = $this->deploymentRepo->findBy(['repository' => $repository]);
         } else {
-            $deployments = $this->deployments->findAll();
+            $deployments = $this->deploymentRepo->findAll();
         }
 
         $pairs = [];
@@ -523,7 +493,7 @@ class PermissionsService
             return $result;
         }
 
-        $repository = $this->repositories->findOneBy(['key' => $repository]);
+        $repository = $this->repoRepo->findOneBy(['key' => $repository]);
 
         $result = $this->github->isUserCollaborator(
             $repository->getGithubUser(),
@@ -542,7 +512,7 @@ class PermissionsService
     /**
      * Get an LDAP user by Windows Username
      *
-     * @param string|LdapUser|EntityUser $user
+     * @param string|LdapUser|User $user
      * @return LdapUser|null
      */
     private function getUser($user)
@@ -555,7 +525,7 @@ class PermissionsService
             return $user;
         }
 
-        if ($user instanceof EntityUser) {
+        if ($user instanceof User) {
             $user = $user->getHandle();
         }
 

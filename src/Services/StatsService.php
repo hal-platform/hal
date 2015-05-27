@@ -8,12 +8,14 @@
 namespace QL\Hal\Services;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Entity\Environment;
 use MCP\Cache\CachingTrait;
 use MCP\DataType\Time\Clock;
 use MCP\DataType\Time\TimePoint;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\PushRepository;
 
 class StatsService
 {
@@ -22,13 +24,9 @@ class StatsService
     const KEY_STATS = 'stats:totals.%s';
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
-
-    /**
-     * @type PushRepository
-     */
     private $pushRepo;
 
     /**
@@ -42,15 +40,14 @@ class StatsService
     private $timezone;
 
     /**
-     * @param BuildRepository $buildRepo
-     * @param PushRepository $pushRepo
+     * @param EntityManagerInterface $em
      * @param Clock $clock
      * @param string $timezone
      */
-    public function __construct(BuildRepository $buildRepo, PushRepository $pushRepo, Clock $clock, $timezone)
+    public function __construct(EntityManagerInterface $em, Clock $clock, $timezone)
     {
-        $this->buildRepo = $buildRepo;
-        $this->pushRepo = $pushRepo;
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->clock = $clock;
         $this->timezone = $timezone;
     }
