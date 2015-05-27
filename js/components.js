@@ -22,15 +22,6 @@ module.exports = {
         require('./app/form/add-deployments').init();
     },
 
-    // admin
-    "admin.servers": function() {
-        require('./app/server-status').init();
-    },
-
-    "admin.dangerzone": function() {
-        require('./app/util/dangerzone').init();
-    },
-
     // jobs - start
     "build.start": function() {
         require('./app/start-build').init();

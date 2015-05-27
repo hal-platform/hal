@@ -61,17 +61,6 @@ parameters:
             route: '/superadmin'
             stack: ['superadmin.bouncer', 'admin.super.page']
 
-        admin.server.status:
-            method: 'GET'
-            route: '/admin/server-status'
-            stack: ['admin.bouncer', 'admin.server.status.page']
-
-        admin.server.status.handler:
-            method: 'GET'
-            route: '/admin/server-status/:id'
-            stack: ['admin.bouncer', 'admin.server.status.handler']
-            conditions: {id: %routes.regex.digit%}
-
         admin.queue.page1:
             method: 'GET'
             route: '/admin/queue-history'
@@ -112,11 +101,6 @@ parameters:
             method: ['GET', 'POST']
             route: '/superadmin/message'
             stack: ['superadmin.bouncer', 'admin.message.page']
-
-        admin.super.dangerzone:
-            method: ['GET', 'POST']
-            route: '/superadmin/dangerzone'
-            stack: ['superadmin.bouncer', 'admin.dangerzone.page']
 
         ################################################################################################################
         # HELP ROUTES

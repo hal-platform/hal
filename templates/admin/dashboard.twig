@@ -48,17 +48,13 @@
                         {{ macros.icon('watch') }} Audit Logs
                     </a>
                 </li>
-                <li>
-                    <a href="{{ urlFor('admin.server.status') }}" class="btn btn--primary">
-                        {{ macros.icon('server') }} Global Server Status
-                    </a>
-                </li>
+
                 {% if isUserSuperAdmin(currentUser) %}
-                <li>
-                    <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
-                        {{ macros.icon('dashboard') }} Super Admin Dashboard
-                    </a>
-                </li>
+                    <li>
+                        <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
+                            {{ macros.icon('dashboard') }} Super Admin Dashboard
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </section>
