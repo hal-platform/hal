@@ -1,55 +1,63 @@
 #!/usr/bin/env php
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
 
 namespace QL\Hal\Bin;
 
+use QL\Panthor\Bootstrap\Di;
 use Slim\Environment;
 use Symfony\Component\Finder\Finder;
 
 $root = __DIR__ . '/..';
-if (!$container = @include $root . '/configuration/bootstrap.php') {
-    echo "The application failed to start.\n";
-    exit(1);
-}
+require_once $root . '/vendor/autoload.php';
+
+// Before the container is compiled, switch out the doctrine driver to fake sqlite.
+$di = Di::getDi($root, 'Who\Cares', function($container) use ($root) {
+    $container->setParameter('doctrine.connection', ['driver' => 'pdo_sqlite', 'memory' => true]);
+});
 
 // start slim to prime twig extension and inject synthetic services
-// Environment::mock(['PATH_INFO' => '/derpderp']);
-// $slim = $container->get('slim');
-// $slim->call();
+Environment::mock(['PATH_INFO' => '/derpderp']);
+$slim = $di->get('slim');
+$slim->call();
+
+$twig = $di->get('twig.environment');
+$twigDir = $di->get('twig.template.dir');
+$twigCacheDir = $di->get('twig.cache.dir');
 
 // find and attempt to load the templates
-$twigCache = $container->get('twig.template.dir');
-$output = 'No templates found';
-
 $files = (new Finder)
     ->files()
     ->name('*.twig')
-    ->in($twigCache);
-
-if ($files) {
-    // Always create twig cache if not found
-    if (!file_exists($twigCache)) {
-        mkdir($twigCache);
-    }
-
-    $output = "Templates:\n";
-    $env = $container->get('twig.environment');
-
-    foreach ($files as $file) {
-        $output .= $file->getRelativePathname() . "\n";
-        $template = $env->loadTemplate($file->getRelativePathname());
-        $template->render([]);
-    }
-}
+    ->in($twigDir);
 
 echo <<<OUTPUT
 
 Compiling twig templates
-Target: $twigCache
-$output
+Source: $twigDir
+Target: $twigCacheDir
+
+
 OUTPUT;
+
+if (!$files) {
+    echo "No templates found.\n";
+    exit(0);
+}
+
+// Always create twig cache if not found
+if (!file_exists($twigCacheDir)) {
+    mkdir($twigCacheDir);
+}
+
+echo "Templates:\n";
+
+foreach ($files as $file) {
+    echo $file->getRelativePathname() . "\n";
+    $template = $twig->loadTemplate($file->getRelativePathname());
+    $template->render([]);
+}

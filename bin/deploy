@@ -75,14 +75,14 @@ export HAL_ENCRYPTION_SECRET=$("$DIR/../vendor/bin/symmetric-keygen")
 echo "$TITLE_CONFIG"
 "$DIR"/normalize-configuration
 
-echo "$TITLE_DUMP"
-"$DIR"/dump-di
-
 echo "$TITLE_TWIG"
 "$DIR/"compile-templates
 
 echo "$TITLE_DOCTRINE"
 "$DIR"/generate-doctrine-proxies
+
+echo "$TITLE_DUMP"
+"$DIR"/dump-di
 
 echo "$TITLE_GULP"
 "$DIR"/gulp --deploy

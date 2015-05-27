@@ -22,6 +22,16 @@ class DoctrineProxyGenerator
      */
     public function __construct(ContainerInterface $container)
     {
+        $this->em = self::mockEntityManager($container);
+    }
+
+    /**
+     * @param ContainerInterface $container
+     *
+     * @return EntityManager
+     */
+    public static function mockEntityManager(ContainerInterface $container)
+    {
         $fakeConn = [
             'driver' => 'pdo_sqlite',
             'memory' => true
@@ -35,7 +45,7 @@ class DoctrineProxyGenerator
 
         $container->get('doctrine.em.configurator')->configure($em);
 
-        $this->em = $em;
+        return $em;
     }
 
     /**
