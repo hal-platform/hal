@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Admin;
+namespace QL\Hal\Controllers\Admin\Super;
 
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Services\GlobalMessageService;

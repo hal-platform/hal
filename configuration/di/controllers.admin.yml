@@ -10,64 +10,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/dashboard.twig']]]
 
-    admin.super.page:
-        class: 'QL\Hal\Controllers\Admin\SuperController'
-        arguments:
-            - @admin.super.twig
-            - @slim.response
-            - %encryption.secret%
-            - %session.encryption.secret%
-            - @hal.pushfile
-    admin.super.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.twig']]]
-
-    admin.users.page:
-        class: 'QL\Hal\Controllers\Admin\UserManagementController'
-        arguments:
-            - @admin.users.twig
-            - @ldap
-            - @doctrine.em
-            - @slim.request
-            - @slim.response
-    admin.users.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/users.management.twig']]]
-
-    admin.caches.page:
-        class: 'QL\Hal\Controllers\Admin\CacheManagementController'
-        arguments:
-            - @admin.caches.twig
-            - @redis
-            - @slim.response
-            - @root
-    admin.caches.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/cache.management.twig']]]
-
-    admin.caches.handler:
-        class: 'QL\Hal\Controllers\Admin\CacheManagementHandler'
-        arguments:
-            - @slim.request
-            - @slim.response
-            - @session
-            - @url
-            - @doctrine.config
-            - @redis
-
-    admin.message.page:
-        class: 'QL\Hal\Controllers\Admin\GlobalMessageController'
-        arguments:
-            - @admin.message.twig
-            - @global.message
-            - @session
-            - @url.helper
-            - @slim.request
-            - @slim.response
-    admin.message.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/global.message.twig']]]
-
     admin.server.status.page:
         class: 'QL\Hal\Controllers\Server\ServersController'
         arguments:
@@ -114,8 +56,70 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/queue.history.twig']]]
 
+    ####################################################################################################################
+    # SUPER ADMIN CONTROLLERS
+    ####################################################################################################################
+
+    admin.super.page:
+        class: 'QL\Hal\Controllers\Admin\Super\SuperController'
+        arguments:
+            - @admin.super.twig
+            - @slim.response
+            - %encryption.secret%
+            - %session.encryption.secret%
+            - @hal.pushfile
+    admin.super.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/super.twig']]]
+
+    admin.users.page:
+        class: 'QL\Hal\Controllers\Admin\Super\UserManagementController'
+        arguments:
+            - @admin.users.twig
+            - @ldap
+            - @doctrine.em
+            - @slim.request
+            - @slim.response
+    admin.users.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/users.management.twig']]]
+
+    admin.caches.page:
+        class: 'QL\Hal\Controllers\Admin\Super\CacheManagementController'
+        arguments:
+            - @admin.caches.twig
+            - @redis
+            - @slim.response
+            - @root
+    admin.caches.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/cache.management.twig']]]
+
+    admin.caches.handler:
+        class: 'QL\Hal\Controllers\Admin\Super\CacheManagementHandler'
+        arguments:
+            - @slim.request
+            - @slim.response
+            - @session
+            - @url
+            - @doctrine.config
+            - @redis
+
+    admin.message.page:
+        class: 'QL\Hal\Controllers\Admin\Super\GlobalMessageController'
+        arguments:
+            - @admin.message.twig
+            - @global.message
+            - @session
+            - @url.helper
+            - @slim.request
+            - @slim.response
+    admin.message.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/global.message.twig']]]
+
     admin.dangerzone.page:
-        class: 'QL\Hal\Controllers\Admin\DangerzoneController'
+        class: 'QL\Hal\Controllers\Admin\Super\DangerzoneController'
         arguments:
             - @admin.dangerzone.twig
             - @slim.request

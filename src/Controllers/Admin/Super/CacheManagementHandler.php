@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Admin;
+namespace QL\Hal\Controllers\Admin\Super;
 
 use Doctrine\ORM\Configuration;
 use Predis\Client as Predis;

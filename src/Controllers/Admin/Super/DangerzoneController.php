@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Admin;
+namespace QL\Hal\Controllers\Admin\Super;
 
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
