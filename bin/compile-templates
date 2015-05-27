@@ -36,7 +36,6 @@ $files = (new Finder)
     ->in($twigDir);
 
 echo <<<OUTPUT
-
 Compiling twig templates
 Source: $twigDir
 Target: $twigCacheDir

@@ -32,6 +32,11 @@ OUTOUT
 ┃ RUNNING GULP DEPLOY                                                          ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
+    read -r -d '' TITLE_CLEANUP <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ CLEAN UP                                                                     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
 }
 
 function removeArtifacts() {
@@ -87,9 +92,8 @@ echo "$TITLE_DUMP"
 echo "$TITLE_GULP"
 "$DIR"/gulp --deploy
 
-# Remove artifacts from deployment - keep your builds tidy!
-
 # Remove unneeded files if deploying from HAL
 if [ -n "$HAL_ENVIRONMENT" ]; then
+    echo "$TITLE_CLEANUP"
     removeArtifacts
 fi
