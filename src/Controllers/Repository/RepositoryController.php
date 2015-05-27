@@ -111,7 +111,7 @@ class RepositoryController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $krakenApp = $this->krakenRepo->findOneBy(['halRepository' => $repo]);
+        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $repo]);
 
         $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
         $environmentalized = $this->environmentalizeDeployments($deployments);

@@ -105,6 +105,10 @@ services:
         class: 'QL\Kraken\Validator\EnvironmentValidator'
         arguments: [@doctrine.em, @kraken.random]
 
+    kraken.validator.application:
+        class: 'QL\Kraken\Validator\ApplicationValidator'
+        arguments: [@doctrine.em, @kraken.random]
+
     ####################################################################################################################
     # MIDDLEWARE
     ####################################################################################################################

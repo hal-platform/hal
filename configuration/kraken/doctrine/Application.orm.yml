@@ -21,7 +21,7 @@ QL\Kraken\Entity\Application:
 
     manyToOne:
 
-        halRepository:
+        halApplication:
             targetEntity: QL\Hal\Core\Entity\Repository
             joinColumn:
                 name: hal_id

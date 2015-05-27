@@ -1,11 +1,10 @@
 {% extends 'base.kraken.twig' %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
-{% set page_title = "Add Application" %}
+{% set page_title = "Edit Environment: " ~ application.name %}
 
 {% block content %}
-
-    <h1>{{ page_title }}</h1>
+    <h1>Edit <strong>{{ application.name }}</strong> Application</h1>
 
     <div class="form-wrapper">
 
@@ -15,7 +14,12 @@
             <ul class="form-fields">
 
                 <li>
-                    <label for="app-coreid">CORE Application ID</label>
+                    <label for="app-coreid">
+                        CORE Application ID
+                        <small class="additional">
+                            <b>Warning!</b> Changing the CORE ID will also change where data is stored in Consul. This should not be done if any configuration have already been deployed.
+                        </small>
+                    </label>
                     <input type="numeric" name="core_id" id="app-coreid" maxlength="64" required value="{{ form.core_id }}" class="text-input">
                 </li>
 
@@ -27,7 +31,6 @@
                             Link a HAL application to this Kraken application. Recommended for applications already using HAL 9000.
                         </small>
                     </label>
-
 
                     {% if available|length > 10 %}
                         <select class="select-input" name="hal_app" id="app-repo">
@@ -66,8 +69,8 @@
             </ul>
 
             <ul class="button-list">
-                <li><input class="btn btn--action" type="submit" value="Add Application"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.applications') }}">Cancel</a></li>
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Cancel</a></li>
             </ul>
 
         </form>

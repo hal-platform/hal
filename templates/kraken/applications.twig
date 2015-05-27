@@ -29,8 +29,8 @@
                             <a href="http://core/app/{{ app.coreId }}">{{ macros.icon('spinner') }} Core Website</a>
                         </td>
                         <td>
-                            {% if app.halRepository %}
-                                <a href="{{ urlFor('repository.status', {id: app.halRepository.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
+                            {% if app.halApplication %}
+                                <a href="{{ urlFor('repository.status', {id: app.halApplication.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
                             {% endif %}
                         </td>
                         <td class="tr">

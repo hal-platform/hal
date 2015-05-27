@@ -8,7 +8,7 @@
 namespace QL\Kraken\Entity;
 
 use JsonSerializable;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Repository as HalApplication;
 
 class Application implements JsonSerializable
 {
@@ -20,9 +20,9 @@ class Application implements JsonSerializable
     protected $coreId;
 
     /**
-     * @type Repository|null
+     * @type HalApplication|null
      */
-    protected $halRepository;
+    protected $halApplication;
 
     public function __construct()
     {
@@ -30,7 +30,7 @@ class Application implements JsonSerializable
         $this->name = '';
         $this->coreId = '';
 
-        $this->halRepository = null;
+        $this->halApplication = null;
     }
 
     /**
@@ -58,11 +58,11 @@ class Application implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return HalApplication|null
      */
-    public function halRepository()
+    public function halApplication()
     {
-        return $this->halRepository;
+        return $this->halApplication;
     }
 
     /**
@@ -99,13 +99,13 @@ class Application implements JsonSerializable
     }
 
     /**
-     * @param string $repository
+     * @param HalApplication|null $application
      *
      * @return self
      */
-    public function withHalRepository(Repository $repository)
+    public function withHalApplication(HalApplication $application = null)
     {
-        $this->halRepository = $repository;
+        $this->halApplication = $application;
         return $this;
     }
 
@@ -119,7 +119,7 @@ class Application implements JsonSerializable
             'name' => $this->name(),
             'coreId' => $this->coreId(),
 
-            'halRepository' => $this->halRepository() ? $this->halRepository()->getId() : null
+            'halApplication' => $this->halApplication() ? $this->halApplication()->getId() : null
         ];
 
         return $json;

@@ -10,8 +10,6 @@
 
     {{ block('meta') }}
 
-
-
     <h2 class="leader">Environments</h2>
     {{ block('application_targets') }}
 
@@ -34,8 +32,8 @@
 
             <dt class="split__title">HAL 9000 Application</dt>
             <dd>
-                {% if application.halRepository %}
-                    {{ application.halRepository.name }}
+                {% if application.halApplication %}
+                    {{ application.halApplication.name }}
                 {% else %}
                     Not Linked
                 {% endif %}
@@ -46,11 +44,12 @@
             <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
 
             {% if isAdmin %}
-                <li><a class="btn btn--action" href="{{ urlFor('kraken.schema', {application: application.id}) }}">Manage Schema</a></li>
+                <li><a class="btn" href="{{ urlFor('kraken.schema', {application: application.id}) }}">Manage Schema</a></li>
+                <li><a class="btn btn--action" href="{{ urlFor('kraken.application.edit', {application: application.id}) }}">Edit Application</a></li>
             {% endif %}
 
-            {% if application.halRepository %}
-                <li><a class="btn btn--secondary" href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000</a></li>
+            {% if application.halApplication %}
+                <li><a class="btn btn--secondary" href="{{ urlFor('repository.status', {id: application.halApplication.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000</a></li>
             {% endif %}
 
             <li><a class="btn btn--secondary" href="http://core/app/{{ application.coreId }}">{{ macros.icon('spinner') }} Core Website</a></li>

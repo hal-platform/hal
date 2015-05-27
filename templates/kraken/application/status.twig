@@ -17,8 +17,8 @@
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application</a></li>
 
-        {% if application.halRepository %}
-            <li><a class="btn btn--secondary" href="{{ urlFor('repository.status', {id: application.halRepository.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000</a></li>
+        {% if application.halApplication %}
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.status', {id: application.halApplication.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000</a></li>
         {% endif %}
 
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id})}}">Configuration History</a></li>

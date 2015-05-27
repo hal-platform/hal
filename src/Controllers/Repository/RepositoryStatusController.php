@@ -152,7 +152,7 @@ class RepositoryStatusController implements ControllerInterface
 
         $builds = $this->buildRepo->findBy(['repository' => $repo, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
 
-        $krakenApp = $this->krakenRepo->findOneBy(['halRepository' => $repo]);
+        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $repo]);
 
         $rendered = $this->template->render([
             'repo' => $repo,

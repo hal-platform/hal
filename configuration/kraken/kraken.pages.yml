@@ -117,7 +117,7 @@ services:
             - @session.flasher
             - @doctrine.em
             - @repository.repo
-            - @kraken.random
+            - @kraken.validator.application
     kraken.application.add.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application.add.twig']]]
@@ -134,6 +134,19 @@ services:
     kraken.application.target.add.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/target.add.twig']]]
+
+    kraken.application.edit.page:
+        class: 'QL\Kraken\Controller\Application\EditApplicationController'
+        arguments:
+            - @slim.request
+            - @kraken.application.edit.twig
+            - @kraken.application
+            - @session.flasher
+            - @kraken.validator.application
+            - @doctrine.em
+    kraken.application.edit.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/application/application.edit.twig']]]
 
     ####################################################################################################################
     # CRUD - ENVIRONMENT

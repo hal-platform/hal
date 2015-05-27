@@ -28,9 +28,15 @@ parameters:
             route: '/kraken/applications/:application'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.page']
             conditions: {application: %routes.kraken.regex.hex%}
+
         kraken.status:
             route: '/kraken/applications/:application/status'
             stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.status.page']
+            conditions: {application: %routes.kraken.regex.hex%}
+
+        kraken.application.edit:
+            route: '/kraken/applications/:application/edit'
+            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.edit.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         ################################################################################################################

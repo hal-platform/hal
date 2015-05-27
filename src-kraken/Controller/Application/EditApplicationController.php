@@ -5,21 +5,21 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Controller;
+namespace QL\Kraken\Controller\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Repository as HalApplication;
 use QL\Kraken\Entity\Application;
 use QL\Kraken\Validator\ApplicationValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Hal\Core\Entity\Repository as HalApplication;
 use QL\Hal\Flasher;
 use Slim\Http\Request;
 
-class AddApplicationController implements ControllerInterface
+class EditApplicationController implements ControllerInterface
 {
-    const SUCCESS = 'Application "%s" added.';
+    const SUCCESS = 'Application updated.';
 
     /**
      * @type Request
@@ -32,15 +32,9 @@ class AddApplicationController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityManagerInterface
+     * @type Application
      */
-    private $em;
-
-    /**
-     * @type EntityRepository
-     */
-    private $applicationRepo;
-    private $halRepo;
+    private $application;
 
     /**
      * @type Flasher
@@ -53,29 +47,43 @@ class AddApplicationController implements ControllerInterface
     private $validator;
 
     /**
+     * @type EntityManagerInterface
+     */
+    private $em;
+
+    /**
+     * @type EntityRepository
+     */
+    private $environmentRepo;
+    private $halRepo;
+
+    /**
      * @param Request $request
      * @param TemplateInterface $template
+     * @param Application $application
      * @param Flasher $flasher
-     * @param EntityManagerInterface $em
-     * @param EntityRepository $halRepo
      * @param ApplicationValidator $validator
+     * @param EntityManagerInterface $em
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
+        Application $application,
         Flasher $flasher,
-        EntityManagerInterface $em,
-        EntityRepository $halRepo,
-        ApplicationValidator $validator
+        ApplicationValidator $validator,
+        EntityManagerInterface $em
     ) {
         $this->request = $request;
         $this->template = $template;
+        $this->application = $application;
         $this->flasher = $flasher;
         $this->validator = $validator;
 
         $this->em = $em;
-        $this->halRepo = $halRepo;
-        $this->applicationRepo = $this->em->getRepository(Application::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
+        $this->halRepo = $em->getRepository(HalApplication::CLASS);
+
+        $this->errors = [];
     }
 
     /**
@@ -83,31 +91,60 @@ class AddApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $form = [];
+        $form = [
+            'core_id' => $this->application->coreId(),
+            'name' => $this->application->name(),
+            'hal_app' => $this->application->halApplication() ? $this->application->halApplication()->getId() : null
+        ];
 
         if ($this->request->isPost()) {
+
+            $form['core_id'] = $this->request->post('core_id');
+            $form['name'] = $this->request->post('name');
+            $form['hal_app'] = $this->request->post('hal_app');
 
             if ($application = $this->handleForm()) {
                 // flash and redirect
                 $this->flasher
                     ->withFlash(sprintf(self::SUCCESS, $application->name()), 'success')
-                    ->load('kraken.applications');
+                    ->load('kraken.application', ['application' => $application->id()]);
             }
+        }
 
-            $form = [
-                'hal_app' => $this->request->post('hal_app'),
-                'name' => $this->request->post('name'),
-                'core_id' => $this->request->post('core_id')
-            ];
+        $available = $this->getAvailableRepositories();
+        if ($this->application->halApplication()) {
+            $id = $this->application->halApplication()->getId();
+            $name = $this->application->halApplication()->getName();
+            $available = [$id => $name] + $available;
         }
 
         $context = [
-            'form' => $form,
+            'application' => $this->application,
             'errors' => $this->validator->errors(),
-            'available' => $this->getAvailableRepositories()
+            'form' => $form,
+            'available' => $available
         ];
 
         $this->template->render($context);
+    }
+
+    /**
+     * @return Application|null
+     */
+    private function handleForm()
+    {
+        $coreId = $this->request->post('core_id');
+        $name = $this->request->post('name');
+        $halApp = $this->request->post('hal_app');
+
+        if ($application = $this->validator->isEditValid($this->application, $coreId, $halApp, $name)) {
+
+            // persist to database
+            $this->em->merge($application);
+            $this->em->flush();
+        }
+
+        return $application;
     }
 
     /**
@@ -134,25 +171,5 @@ class AddApplicationController implements ControllerInterface
         }
 
         return $available;
-    }
-
-    /**
-     * @return Application|null
-     */
-    private function handleForm()
-    {
-        $name = $this->request->post('name');
-        $coreId = $this->request->post('core_id');
-        $halApp = $this->request->post('hal_app');
-
-        $application = $this->validator->isValid($coreId, $halApp, $name);
-
-        if ($application) {
-            // persist to database
-            $this->em->persist($application);
-            $this->em->flush();
-        }
-
-        return $application;
     }
 }
