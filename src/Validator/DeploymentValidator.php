@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Validator;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Deployment;
@@ -35,15 +36,7 @@ class DeploymentValidator
      * @type EntityRepository
      */
     private $repoRepo;
-
-    /**
-     * @type EntityRepository
-     */
     private $serverRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deploymentRepo;
 
     /**
@@ -52,19 +45,13 @@ class DeploymentValidator
     private $errors;
 
     /**
-     * @param EntityRepository $repoRepo
-     * @param EntityRepository $serverRepo
-     * @param DeploymentRepository $deploymentRepo
-     * @param User $currentUser
+     * @param EntityManagerInterface $em
      */
-    public function __construct(
-        EntityRepository $repoRepo,
-        EntityRepository $serverRepo,
-        DeploymentRepository $deploymentRepo
-    ) {
-        $this->repoRepo = $repoRepo;
-        $this->serverRepo = $serverRepo;
-        $this->deploymentRepo = $deploymentRepo;
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->serverRepo = $em->getRepository(Server::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->errors = [];
     }

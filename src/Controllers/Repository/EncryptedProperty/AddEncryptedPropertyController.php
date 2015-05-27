@@ -7,8 +7,10 @@
 
 namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -26,10 +28,6 @@ class AddEncryptedPropertyController implements ControllerInterface
      * @type EntityRepository
      */
     private $repoRepo;
-
-    /**
-     * @type EnvironmentRepository
-     */
     private $envRepo;
 
     /**
@@ -55,8 +53,7 @@ class AddEncryptedPropertyController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      *
-     * @param EntityRepository $repoRepo
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      *
      * @param Request $request
      * @param Response $response
@@ -65,16 +62,15 @@ class AddEncryptedPropertyController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $repoRepo,
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
         Request $request,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
-        $this->envRepo = $envRepo;
+        $this->repoRepo = $em->getRepository(Environment::CLASS);
+        $this->envRepo = $em->getRepository(Repository::CLASS);
 
         $this->request = $request;
         $this->response = $response;

@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository;
@@ -33,16 +33,12 @@ class EditRepositoryController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-
-    /**
-     * @type EntityRepository
-     */
     private $repoRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -77,9 +73,7 @@ class EditRepositoryController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param Layout $layout
-     * @param EntityRepository $groupRepo
-     * @param EntityRepository $repoRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param GithubService $github
      * @param Session $session
      * @param UrlHelper $url
@@ -90,9 +84,7 @@ class EditRepositoryController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $groupRepo,
-        EntityRepository $repoRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         Request $request,
@@ -101,9 +93,11 @@ class EditRepositoryController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->groupRepo = $groupRepo;
-        $this->repoRepo = $repoRepo;
-        $this->entityManager = $entityManager;
+
+        $this->groupRepo = $em->getRepository(Group::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -172,8 +166,8 @@ class EditRepositoryController implements ControllerInterface
         $repository->setEmail($email);
         $repository->setEbName($ebName);
 
-        $this->entityManager->merge($repository);
-        $this->entityManager->flush();
+        $this->em->merge($repository);
+        $this->em->flush();
 
         return $repository;
     }

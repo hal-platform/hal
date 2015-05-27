@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Type\ServerEnumType;
 use QL\Hal\Session;
 use QL\Hal\Validator\DeploymentValidator;
@@ -23,14 +24,14 @@ class EditDeploymentHandler implements MiddlewareInterface
     const EDIT_SUCCESS = 'Deployment updated.';
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type DeploymentRepository
+     * @type EntityRepository
      */
-    private $repository;
+    private $deploymentRepo;
 
     /**
      * @type DeploymentValidator
@@ -68,8 +69,7 @@ class EditDeploymentHandler implements MiddlewareInterface
     private $errors;
 
     /**
-     * @param EntityManager $em
-     * @param DeploymentRepository $repository
+     * @param EntityManagerInterface $em
      * @param DeploymentValidator $validator
      * @param Session $session
      * @param Url $url
@@ -78,8 +78,7 @@ class EditDeploymentHandler implements MiddlewareInterface
      * @param array $parameters
      */
     public function __construct(
-        EntityManager $em,
-        DeploymentRepository $repository,
+        EntityManagerInterface $em,
         DeploymentValidator $validator,
         Session $session,
         Url $url,
@@ -88,7 +87,7 @@ class EditDeploymentHandler implements MiddlewareInterface
         array $parameters
     ) {
         $this->em = $em;
-        $this->repository = $repository;
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->validator = $validator;
 
         $this->session = $session;
@@ -106,7 +105,7 @@ class EditDeploymentHandler implements MiddlewareInterface
      */
     public function __invoke()
     {
-        $deployment = $this->repository->find($this->parameters['id']);
+        $deployment = $this->deploymentRepo->find($this->parameters['id']);
         if (!$deployment) {
             // fall through to controller
             return;

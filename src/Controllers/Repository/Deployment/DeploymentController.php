@@ -7,8 +7,10 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -26,10 +28,6 @@ class DeploymentController implements ControllerInterface
      * @type EntityRepository
      */
     private $repoRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deploymentRepo;
 
     /**
@@ -54,8 +52,7 @@ class DeploymentController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityRepository $repoRepo
-     * @param DeploymentRepository $deploymentRepo
+     * @param EntityManagerInterface $em
      * @param ElasticBeanstalkService $ebService
      * @param Response $response
      * @param NotFound $notFound
@@ -63,16 +60,15 @@ class DeploymentController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $repoRepo,
-        DeploymentRepository $deploymentRepo,
+        EntityManagerInterface $em,
         ElasticBeanstalkService $ebService,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
-        $this->deploymentRepo = $deploymentRepo;
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->ebService = $ebService;
 
         $this->response = $response;

@@ -7,10 +7,11 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Panthor\Slim\NotFound;
 use QL\Hal\Helpers\SortingHelperTrait;
@@ -28,23 +29,11 @@ class DeploymentsController implements ControllerInterface
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $environmentRepo;
-
-    /**
-     * @type EntityRepository
-     */
     private $serverRepo;
-
-    /**
-     * @type EntityRepository
-     */
     private $repoRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deploymentRepo;
 
     /**
@@ -64,29 +53,23 @@ class DeploymentsController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EnvironmentRepository $environmentRepo
-     * @param EntityRepository $serverRepo
-     * @param EntityRepository $repoRepo
-     * @param DeploymentRepository $deploymentRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
-        EnvironmentRepository $environmentRepo,
-        EntityRepository $serverRepo,
-        EntityRepository $repoRepo,
-        DeploymentRepository $deploymentRepo,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->environmentRepo = $environmentRepo;
-        $this->serverRepo = $serverRepo;
-        $this->repoRepo = $repoRepo;
-        $this->deploymentRepo = $deploymentRepo;
+        $this->environmentRepo = $em->getRepository(Environment::CLASS);
+        $this->serverRepo = $em->getRepository(Server::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;

@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -23,10 +24,6 @@ class RepositoriesController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-
-    /**
-     * @type EntityRepository
-     */
     private $repoRepo;
 
     /**
@@ -36,19 +33,17 @@ class RepositoriesController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityRepository $groupRepo
-     * @param EntityRepository $repoRepo
+     * @param EntityManagerInterface $em
      * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $groupRepo,
-        EntityRepository $repoRepo,
+        EntityManagerInterface $em,
         Response $response
     ) {
         $this->template = $template;
-        $this->groupRepo = $groupRepo;
-        $this->repoRepo = $repoRepo;
+        $this->groupRepo = $em->getRepository(Group::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
         $this->response = $response;
     }
 

@@ -7,8 +7,9 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
-use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -17,14 +18,14 @@ use QL\Panthor\ControllerInterface;
 class RemoveDeploymentHandler implements ControllerInterface
 {
     /**
-     * @type DeploymentRepository
+     * @type EntityRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -47,23 +48,21 @@ class RemoveDeploymentHandler implements ControllerInterface
     private $parameters;
 
     /**
-     * @param DeploymentRepository $deploymentRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
-        DeploymentRepository $deploymentRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         NotFound $notFound,
         array $parameters
     ) {
-        $this->deploymentRepo = $deploymentRepo;
-        $this->entityManager = $entityManager;
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->em = $em;
         $this->session = $session;
         $this->url = $url;
 
@@ -80,8 +79,8 @@ class RemoveDeploymentHandler implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $this->entityManager->remove($deployment);
-        $this->entityManager->flush();
+        $this->em->remove($deployment);
+        $this->em->flush();
 
         $this->session->flash('Deployment removed.', 'success');
         $this->url->redirectFor('repository.deployments', ['repository' => $this->parameters['repository']]);

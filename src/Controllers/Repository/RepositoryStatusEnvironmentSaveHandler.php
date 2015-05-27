@@ -7,7 +7,9 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;
@@ -16,7 +18,7 @@ use Slim\Http\Request;
 class RepositoryStatusEnvironmentSaveHandler implements MiddlewareInterface
 {
     /**
-     * @type EnvironmentRepository
+     * @type EntityRepository
      */
     private $envRepo;
 
@@ -41,20 +43,20 @@ class RepositoryStatusEnvironmentSaveHandler implements MiddlewareInterface
     private $parameters;
 
     /**
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param Request $request
      * @param Url $url
      * @param StickyEnvironmentService $service
      * @param array $parameters
      */
     public function __construct(
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
         Request $request,
         Url $url,
         StickyEnvironmentService $service,
         array $parameters
     ) {
-        $this->envRepo = $envRepo;
+        $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->request = $request;
         $this->url = $url;
         $this->service = $service;
@@ -82,5 +84,4 @@ class RepositoryStatusEnvironmentSaveHandler implements MiddlewareInterface
 
         $this->url->redirectFor('repository.status', ['id' => $repoId]);
     }
-
 }

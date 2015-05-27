@@ -7,8 +7,10 @@
 
 namespace QL\Hal\Controllers\Repository\Deployment;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -26,10 +28,6 @@ class EditDeploymentController implements ControllerInterface
      * @type EntityRepository
      */
     private $repoRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deploymentRepo;
 
     /**
@@ -54,8 +52,7 @@ class EditDeploymentController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityRepository $repoRepo
-     * @param DeploymentRepo $deploymentRepo
+     * @param EntityManagerInterface $em
      * @param Request $request
      * @param Response $response
      * @param NotFound $notFound
@@ -63,16 +60,15 @@ class EditDeploymentController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EntityRepository $repoRepo,
-        DeploymentRepository $deploymentRepo,
+        EntityManagerInterface $em,
         Request $request,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $repoRepo;
-        $this->deploymentRepo = $deploymentRepo;
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->request = $request;
         $this->response = $response;

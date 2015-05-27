@@ -7,9 +7,9 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Collections\Criteria;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\Normalizer\PushNormalizer;

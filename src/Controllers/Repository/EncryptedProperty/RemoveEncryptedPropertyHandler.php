@@ -7,8 +7,9 @@
 
 namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 
-use Doctrine\ORM\EntityManager;
-use QL\Hal\Core\Repository\EncryptedPropertyRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
@@ -20,12 +21,12 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
     const SUCCESS = '';
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EncryptedPropertyRepository
+     * @type EntityRepository
      */
     private $encryptedRepo;
 
@@ -55,8 +56,7 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
     private $parameters;
 
     /**
-     * @param EntityManager $em
-     * @param EncryptedPropertyRepository $encryptedRepo
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param Url $url
      * @param Request $request
@@ -64,8 +64,7 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
      * @param array $parameters
      */
     public function __construct(
-        EntityManager $em,
-        EncryptedPropertyRepository $encryptedRepo,
+        EntityManagerInterface $em,
         Session $session,
         Url $url,
         Request $request,
@@ -73,7 +72,7 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
         array $parameters
     ) {
         $this->em = $em;
-        $this->encryptedRepo = $encryptedRepo;
+        $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
 
         $this->session = $session;
         $this->url = $url;

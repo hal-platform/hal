@@ -7,9 +7,10 @@
 
 namespace QL\Hal\Controllers\Repository;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -21,16 +22,12 @@ class RemoveRepositoryController implements ControllerInterface
      * @type EntityRepository
      */
     private $repoRepo;
-
-    /**
-     * @type DeploymentRepository
-     */
     private $deploymentRepo;
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
 
     /**
      * @type Session
@@ -53,24 +50,21 @@ class RemoveRepositoryController implements ControllerInterface
     private $parameters;
 
     /**
-     * @param EntityRepository $repoRepo
-     * @param DeploymentRepository $deploymentRepo
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      */
     public function __construct(
-        EntityRepository $repoRepo,
-        DeploymentRepository $deploymentRepo,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
         NotFound $notFound,
         array $parameters
     ) {
-        $this->repoRepo = $repoRepo;
-        $this->deploymentRepo = $deploymentRepo;
-        $this->entityManager = $entityManager;
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->em = $em;
+
         $this->session = $session;
         $this->url = $url;
 
@@ -92,8 +86,8 @@ class RemoveRepositoryController implements ControllerInterface
             return $this->url->redirectFor('repository'. ['id' => $repo->getId()]);
         }
 
-        $this->entityManager->remove($repo);
-        $this->entityManager->flush();
+        $this->em->remove($repo);
+        $this->em->flush();
 
         $message = sprintf('Repository "%s" removed.', $repo->getKey());
         $this->session->flash($message, 'success');

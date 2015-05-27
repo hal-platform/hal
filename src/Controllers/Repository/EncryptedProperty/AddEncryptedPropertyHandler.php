@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Session;
 use QL\Hal\Core\Crypto\Encrypter;
@@ -35,7 +35,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     const ERR_INVALID_DATA = 'Data must not have newlines or tabs.';
 
     /**
-     * @type EntityManager
+     * @type EntityManagerInterface
      */
     private $em;
 
@@ -43,15 +43,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      * @type EntityRepository
      */
     private $encryptedRepo;
-
-    /**
-     * @type EntityRepository
-     */
     private $repoRepo;
-
-    /**
-     * @type EnvironmentRepository
-     */
     private $envRepo;
 
     /**
@@ -90,10 +82,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     private $errors;
 
     /**
-     * @param EntityManager $em
-     * @param EntityRepository $encryptedRepo
-     * @param EntityRepository $repoRepo
-     * @param EnvironmentRepository $envRepo
+     * @param EntityManagerInterface $em
      * @param Encrypter $encrypter
      *
      * @param Session $session
@@ -103,10 +92,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      * @param array $parameters
      */
     public function __construct(
-        EntityManager $em,
-        EntityRepository $encryptedRepo,
-        EntityRepository $repoRepo,
-        EnvironmentRepository $envRepo,
+        EntityManagerInterface $em,
         Encrypter $encrypter,
         Session $session,
         Url $url,
@@ -115,9 +101,9 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
         array $parameters
     ) {
         $this->em = $em;
-        $this->encryptedRepo = $encryptedRepo;
-        $this->repoRepo = $repoRepo;
-        $this->envRepo = $envRepo;
+        $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->encrypter = $encrypter;
 
         $this->session = $session;
