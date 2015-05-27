@@ -7,8 +7,9 @@
 
 namespace QL\Hal\Middleware\Bouncer;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use MCP\Corp\Account\LdapService;
-use QL\Hal\Core\Repository\TokenRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\HttpProblem\HttpProblemException;
@@ -35,23 +36,23 @@ class ApiAuthBouncer implements MiddlewareInterface
     private $ldap;
 
     /**
-     * @type TokenRepository
+     * @type EntityRepository
      */
-    private $tokens;
+    private $tokenRepo;
 
     /**
      * @param ContainerInterface $container
      * @param LdapService $ldap
-     * @param TokenRepository $tokens
+     * @param EntityManagerInterface $em
      */
     public function __construct(
         ContainerInterface $container,
         LdapService $ldap,
-        TokenRepository $tokens
+        EntityManagerInterface $em
     ) {
         $this->container = $container;
         $this->ldap = $ldap;
-        $this->tokens = $tokens;
+        $this->tokenRepo = $em->getRepository(Token::CLASS);
     }
 
     /**
@@ -75,7 +76,7 @@ class ApiAuthBouncer implements MiddlewareInterface
             throw HttpProblemException::build(403, sprintf('Access denied. Invalid %s header format.', self::HEADER));
         }
 
-        $token = $this->tokens->findOneBy(['value' => $matches[self::MATCH_POSITION]]);
+        $token = $this->tokenRepo->findOneBy(['value' => $matches[self::MATCH_POSITION]]);
 
         if (!$token instanceof Token) {
             throw HttpProblemException::build(403, sprintf('Access denied. Invalid token.', self::HEADER));

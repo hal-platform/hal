@@ -7,7 +7,9 @@
 
 namespace QL\Hal\Middleware\Bouncer;
 
-use QL\Hal\Core\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
@@ -26,9 +28,9 @@ class LoginBouncer implements MiddlewareInterface
     private $session;
 
     /**
-     * @type UserRepository
+     * @type EntityRepository
      */
-    private $repository;
+    private $userRepo;
 
     /**
      * @type ContainerInterface
@@ -47,20 +49,20 @@ class LoginBouncer implements MiddlewareInterface
 
     /**
      * @param Session $session
-     * @param UserRepository $repository
+     * @param EntityManagerInterface $em
      * @param ContainerInterface $container
      * @param UrlHelper $url
      * @param Request $request
      */
     public function __construct(
         Session $session,
-        UserRepository $repository,
+        EntityManagerInterface $em,
         ContainerInterface $container,
         UrlHelper $url,
         Request $request
     ) {
         $this->session = $session;
-        $this->repository = $repository;
+        $this->userRepo = $em->getRepository(User::CLASS);
         $this->container = $container;
         $this->url = $url;
         $this->request = $request;
@@ -82,7 +84,7 @@ class LoginBouncer implements MiddlewareInterface
             throw new Stop;
         }
 
-        if (!$user = $this->repository->find($this->session->get('user_id'))) {
+        if (!$user = $this->userRepo->find($this->session->get('user_id'))) {
             // log user out if not found
             $this->url->redirectFor('logout');
             throw new Stop;

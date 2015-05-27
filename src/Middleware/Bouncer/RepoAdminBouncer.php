@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Middleware\Bouncer;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Services\PermissionsService;
@@ -50,7 +51,7 @@ class RepoAdminBouncer implements MiddlewareInterface
     /**
      * @type EntityRepository
      */
-    private $repositories;
+    private $repoRepo;
 
     /**
      * @type Response
@@ -72,7 +73,7 @@ class RepoAdminBouncer implements MiddlewareInterface
      * @param PermissionsService $permissions
      * @param TemplateInterface $twig
      * @param LoginBouncer $loginBouncer
-     * @param EntityRepository $repositories
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
@@ -82,7 +83,7 @@ class RepoAdminBouncer implements MiddlewareInterface
         PermissionsService $permissions,
         TemplateInterface $twig,
         LoginBouncer $loginBouncer,
-        EntityRepository $repositories,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound,
         array $parameters
@@ -91,7 +92,7 @@ class RepoAdminBouncer implements MiddlewareInterface
         $this->permissions = $permissions;
         $this->twig = $twig;
         $this->loginBouncer = $loginBouncer;
-        $this->repositories = $repositories;
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;
@@ -112,10 +113,9 @@ class RepoAdminBouncer implements MiddlewareInterface
         // ASSUMPTION: the repository id will always be named 'repository' in the route
         // dumb, but we need to look up the repo key here for user permission checks
         $repositoryId = isset($this->parameters['repository']) ? $this->parameters['repository'] : null;
-        $repo = $this->repositories->find($repositoryId);
 
         // repo does not exist
-        if (!$repo instanceof Repository) {
+        if (!$repo = $this->repoRepo->find($repositoryId)) {
             return call_user_func($this->notFound);
         }
 

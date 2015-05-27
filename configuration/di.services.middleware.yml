@@ -8,7 +8,7 @@ services:
         class: 'QL\Hal\Middleware\Bouncer\LoginBouncer'
         arguments:
             - @session
-            - @user.repo
+            - @doctrine.em
             - @service_container
             - @url.helper
             - @slim.request
@@ -41,7 +41,7 @@ services:
             - @permissions
             - @denied.twig
             - @login.bouncer
-            - @repository.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -52,7 +52,7 @@ services:
         arguments:
             - @service_container
             - @ldap
-            - @token.repo
+            - @doctrine.em
 
     cachedApi.middleware:
         class: 'QL\Hal\Middleware\CachedApiMiddleware'
