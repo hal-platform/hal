@@ -7,6 +7,9 @@
 
 namespace QL\Hal\Controllers\Admin;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\AuditLog;
 use QL\Hal\Core\Repository\AuditLogRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -44,20 +47,20 @@ class AuditLogsController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param AuditLogRepository $auditRepository
+     * @param EntityManagerInterface $em
      * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
-        AuditLogRepository $auditRepository,
+        EntityManagerInterface $em,
         Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->auditRepo = $auditRepository;
+        $this->auditRepo = $em->getRepository(AuditLog::CLASS);
 
         $this->response = $response;
         $this->notFound = $notFound;

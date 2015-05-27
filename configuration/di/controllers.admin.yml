@@ -26,7 +26,6 @@ services:
         class: 'QL\Hal\Controllers\Admin\UserManagementController'
         arguments:
             - @admin.users.twig
-            - @user.repo
             - @ldap
             - @doctrine.em
             - @slim.request
@@ -73,7 +72,7 @@ services:
         class: 'QL\Hal\Controllers\Server\ServersController'
         arguments:
             - @admin.server.status.twig
-            - @server.repo
+            - @doctrine.em
             - @slim.response
     admin.server.status.twig:
         parent: 'twig.template'
@@ -83,7 +82,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\ServerStatusHandler'
         arguments:
             - @slim.response
-            - @server.repo
+            - @doctrine.em
             - @slim.route.parameters
             - %cli.user%
         calls:
@@ -94,7 +93,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\AuditLogsController'
         arguments:
             - @admin.audit.logs.twig
-            - @audit.log.repo
+            - @doctrine.em
             - @slim.response
             - @slim.not.found
             - @slim.route.parameters
@@ -106,8 +105,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\QueueHistoryController'
         arguments:
             - @admin.queue.twig
-            - @build.repo
-            - @push.repo
+            - @doctrine.em
             - @slim.response
             - @clock
             - @slim.route.parameters
