@@ -7,7 +7,8 @@
 
 namespace QL\Hal\Twig;
 
-use QL\Hal\Core\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use Slim\Http\Request;
@@ -37,26 +38,26 @@ class GlobalExtension extends Twig_Extension
     private $session;
 
     /**
-     * @type UserRepository
+     * @type EntityRepository
      */
-    private $repository;
+    private $userRepo;
 
     /**
      * @param IntrospectableContainerInterface $di
      * @param Request $request
      * @param Session $session
-     * @param UserRepository $repository
+     * @param EntityManagerInterface $em
      */
     public function __construct(
         IntrospectableContainerInterface $di,
         Request $request,
         Session $session,
-        UserRepository $repository
+        EntityManagerInterface $em
     ) {
         $this->di = $di;
         $this->request = $request;
         $this->session = $session;
-        $this->repository = $repository;
+        $this->userRepo = $em->getRepository(User::CLASS);
 
         $this->globals = [];
     }
@@ -107,7 +108,7 @@ class GlobalExtension extends Twig_Extension
 
         // read from db if session is set
         } elseif ($userId = $this->session->get('user_id')) {
-            $user = $this->repository->find($userId);
+            $user = $this->userRepo->find($userId);
         }
 
         return $user;

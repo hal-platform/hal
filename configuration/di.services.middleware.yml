@@ -1,0 +1,61 @@
+services:
+    ######################################################################################################################
+    # MIDDLEWARE
+    ######################################################################################################################
+
+    # Bounce unauthenticated users
+    login.bouncer:
+        class: 'QL\Hal\Middleware\Bouncer\LoginBouncer'
+        arguments:
+            - @session
+            - @user.repo
+            - @service_container
+            - @url.helper
+            - @slim.request
+
+    # Bounce non-admins
+    admin.bouncer:
+        class: 'QL\Hal\Middleware\Bouncer\AdminBouncer'
+        arguments:
+            - @service_container
+            - @permissions
+            - @denied.twig
+            - @login.bouncer
+            - @slim.response
+
+    # Bounce non-super-admins
+    superadmin.bouncer:
+        class: 'QL\Hal\Middleware\Bouncer\SuperAdminBouncer'
+        arguments:
+            - @service_container
+            - @permissions
+            - @denied.twig
+            - @login.bouncer
+            - @slim.response
+
+    # Bounce users who don't have access to modify a repository
+    repoadmin.bouncer:
+        class: 'QL\Hal\Middleware\Bouncer\RepoAdminBouncer'
+        arguments:
+            - @service_container
+            - @permissions
+            - @denied.twig
+            - @login.bouncer
+            - @repository.repo
+            - @slim.response
+            - @slim.not.found
+            - @slim.route.parameters
+
+    # Bounce unauthenticated api clients
+    api.auth.bouncer:
+        class: 'QL\Hal\Middleware\Bouncer\ApiAuthBouncer'
+        arguments:
+            - @service_container
+            - @ldap
+            - @token.repo
+
+    cachedApi.middleware:
+        class: 'QL\Hal\Middleware\CachedApiMiddleware'
+        arguments:
+            - @response.formatter
+            - @slim.response
