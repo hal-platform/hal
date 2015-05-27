@@ -11,9 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
-use QL\Kraken\Doctrine\PropertyEnumType;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Schema;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Schema;
+use QL\Kraken\Core\Type\EnumType\PropertyEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -121,7 +121,7 @@ class AddSchemaController implements ControllerInterface
 
         $context = [
             'application' => $this->application,
-            'property_types' => PropertyEnumType::map(),
+            'property_types' => PropertyEnum::map(),
 
             'errors' => $this->errors,
             'form' => [
@@ -155,7 +155,7 @@ class AddSchemaController implements ControllerInterface
             $this->errors[] = self::ERR_INVALID_KEY;
         }
 
-        $map = PropertyEnumType::map();
+        $map = PropertyEnum::map();
         if (!isset($map[$type])) {
             $this->errors[] = self::ERR_INVALID_TYPE;
         }

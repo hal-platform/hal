@@ -19,7 +19,7 @@ use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
-use QL\Kraken\Entity\Application as KrakenApplication;
+use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Panthor\ControllerInterface;

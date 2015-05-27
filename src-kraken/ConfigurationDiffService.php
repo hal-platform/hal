@@ -9,13 +9,13 @@ namespace QL\Kraken;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Configuration;
-use QL\Kraken\Entity\ConfigurationProperty;
-use QL\Kraken\Entity\Environment;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Schema;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Configuration;
+use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Schema;
+use QL\Kraken\Core\Entity\Target;
 
 class ConfigurationDiffService
 {

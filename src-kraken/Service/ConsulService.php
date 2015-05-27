@@ -13,9 +13,9 @@ use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Utils;
 use MCP\Cache\CachingTrait;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Environment;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulBatchTrait;
 
 class ConsulService

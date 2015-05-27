@@ -7,9 +7,9 @@
 
 namespace QL\Kraken\Utility;
 
-use QL\Kraken\Entity\Environment;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Target;
 
 trait SortingHelperTrait
 {

@@ -11,8 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
 use QL\Kraken\ConfigurationDiffService;
-use QL\Kraken\Entity\Configuration;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Configuration;
+use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

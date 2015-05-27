@@ -8,11 +8,11 @@
 namespace QL\Kraken\Application;
 
 use QL\Kraken\Diff;
-use QL\Kraken\Entity\ConfigurationProperty;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Schema;
-use QL\Kraken\Entity\Target;
-use QL\Kraken\Doctrine\PropertyEnumType;
+use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Schema;
+use QL\Kraken\Core\Entity\Target;
+use QL\Kraken\Core\Type\EnumType\PropertyEnum;
 use QL\Panthor\Utility\Json;
 use Twig_Extension;
 use Twig_SimpleFilter;
@@ -112,7 +112,7 @@ class KrakenTwigExtension extends Twig_Extension
         }
 
         if ($schema) {
-            $types = PropertyEnumType::map();
+            $types = PropertyEnum::map();
 
             if (isset($types[$schema])) {
                 return $types[$schema];

@@ -10,8 +10,8 @@ namespace QL\Kraken\Controller\Application\Schema;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Schema;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Schema;
 use QL\Kraken\Utility\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 

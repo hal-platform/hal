@@ -8,12 +8,12 @@
 namespace QL\Kraken\Middleware;
 
 use Doctrine\ORM\EntityManager;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Configuration;
-use QL\Kraken\Entity\Environment;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Schema;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Configuration;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Schema;
+use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

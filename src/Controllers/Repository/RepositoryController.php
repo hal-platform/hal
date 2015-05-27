@@ -15,7 +15,7 @@ use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Hal\Services\PermissionsService;
-use QL\Kraken\Entity\Application as KrakenApplication;
+use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

@@ -9,12 +9,12 @@ namespace QL\Kraken\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Application;
+use QL\Hal\Core\Entity\Repository as HalApplication;
+use QL\Hal\Flasher;
+use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Validator\ApplicationValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Hal\Core\Entity\Repository as HalApplication;
-use QL\Hal\Flasher;
 use Slim\Http\Request;
 
 class AddApplicationController implements ControllerInterface

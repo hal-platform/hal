@@ -10,7 +10,7 @@ namespace QL\Kraken\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
-use QL\Kraken\Entity\Environment;
+use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Validator\EnvironmentValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

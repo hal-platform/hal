@@ -9,10 +9,10 @@ namespace QL\Kraken\Controller\Application;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Environment;
-use QL\Kraken\Entity\Schema;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Core\Entity\Schema;
+use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Utility\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

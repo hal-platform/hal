@@ -10,8 +10,8 @@ namespace QL\Kraken\Controller\Configuration;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -22,14 +22,14 @@ class ConfigurationHistoryController implements ControllerInterface
 
     const DQL_GET_CONFIGURATIONS = <<<SQL
    SELECT c
-     FROM QL\Kraken\Entity\Configuration c
+     FROM QL\Kraken\Core\Entity\Configuration c
     WHERE c.application = :application
  ORDER BY c.created DESC
 SQL;
 
     const DQL_GET_CONFIGURATIONS_FOR_ENV = <<<SQL
    SELECT c
-     FROM QL\Kraken\Entity\Configuration c
+     FROM QL\Kraken\Core\Entity\Configuration c
     WHERE c.application = :application
       AND c.environment = :environment
  ORDER BY c.created DESC

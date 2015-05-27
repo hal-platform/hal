@@ -10,9 +10,9 @@ namespace QL\Kraken\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Crypto\CryptoException;
 use QL\Hal\Core\Crypto\SymmetricDecrypter;
-use QL\Kraken\Entity\Configuration;
-use QL\Kraken\Entity\ConfigurationProperty;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Configuration;
+use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\Utility\Json;
 
 class DeploymentService

@@ -7,9 +7,9 @@
 
 namespace QL\Kraken;
 
-use QL\Kraken\Entity\ConfigurationProperty;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Schema;
+use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Schema;
 
 class Diff
 {

@@ -9,7 +9,7 @@ namespace QL\Kraken\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Environment;
+use QL\Kraken\Core\Entity\Environment;
 use MCP\DataType\HttpUrl;
 
 class EnvironmentValidator

@@ -8,7 +8,7 @@
 namespace QL\Kraken\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use QL\Kraken\Entity\Environment;
+use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Utility\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

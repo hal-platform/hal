@@ -9,10 +9,10 @@ namespace QL\Kraken\Doctrine;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use MCP\DataType\Time\Clock;
-use QL\Kraken\Entity\Configuration;
-use QL\Kraken\Entity\ConfigurationProperty;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Schema;
+use QL\Kraken\Core\Entity\Configuration;
+use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Schema;
 
 /**
  * A doctrine event listener for:

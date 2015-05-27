@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Repository as HalApplication;
-use QL\Kraken\Entity\Application;
+use QL\Kraken\Core\Entity\Application;
 
 class ApplicationValidator
 {

@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
 use QL\Kraken\Application\SkeletorConfigurationTemplate;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Schema;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Schema;
 use QL\Panthor\ControllerInterface;
 
 class PrimeSkeletorSchemaController implements ControllerInterface

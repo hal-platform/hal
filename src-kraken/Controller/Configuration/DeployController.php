@@ -8,7 +8,7 @@
 namespace QL\Kraken\Controller\Configuration;
 
 use QL\Kraken\ConfigurationDiffService;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

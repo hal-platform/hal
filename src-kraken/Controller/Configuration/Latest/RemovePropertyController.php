@@ -9,9 +9,9 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\ConfigurationProperty;
-use QL\Kraken\Entity\Property;
-use QL\Kraken\Entity\Target;
+use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

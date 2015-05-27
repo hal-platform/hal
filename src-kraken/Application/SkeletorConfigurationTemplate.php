@@ -8,8 +8,8 @@
 namespace QL\Kraken\Application;
 
 use MCP\DataType\Time\Clock;
-use QL\Kraken\Entity\Application;
-use QL\Kraken\Entity\Schema;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Schema;
 use QL\Hal\Core\Entity\User;
 
 class SkeletorConfigurationTemplate

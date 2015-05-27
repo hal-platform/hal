@@ -9,7 +9,7 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Flasher;
-use QL\Kraken\Entity\Property;
+use QL\Kraken\Core\Entity\Property;
 use QL\Panthor\ControllerInterface;
 
 class RemovePropertyHandler implements ControllerInterface

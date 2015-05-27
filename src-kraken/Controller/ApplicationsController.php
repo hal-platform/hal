@@ -9,10 +9,10 @@ namespace QL\Kraken\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Entity\Application;
+use QL\Hal\Flasher;
+use QL\Kraken\Core\Entity\Application;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Hal\Flasher;
 use Slim\Http\Request;
 
 class ApplicationsController implements ControllerInterface
