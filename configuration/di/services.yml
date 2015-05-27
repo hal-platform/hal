@@ -24,7 +24,6 @@ services:
             - @ldap
             - @doctrine.em
             - @github
-            - '%debug.godmode%'
             - %permissions.prod.envs%
             - %permissions.hal.repos%
         calls:

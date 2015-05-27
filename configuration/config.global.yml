@@ -15,7 +15,6 @@ parameters:
 
     debug: false
     twig.debug: false
-    debug.godmode: 0
 
     # slim
     slim.configuration:
