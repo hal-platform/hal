@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -31,6 +32,10 @@ class EditServerController implements ControllerInterface
      * @type EntityRepository
      */
     private $serverRepo;
+
+    /**
+     * @type EnvironmentRepository
+     */
     private $envRepo;
 
     /**
@@ -120,7 +125,7 @@ class EditServerController implements ControllerInterface
             ],
             'errors' => $this->checkFormErrors($this->request, $server),
             'server' => $server,
-            'environments' => $this->envRepo->findBy([], ['order' => 'ASC'])
+            'environments' => $this->envRepo->getAllEnvironmentsSorted()
         ];
 
         if ($this->request->isPost()) {

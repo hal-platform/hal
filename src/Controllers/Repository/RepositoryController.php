@@ -149,7 +149,6 @@ class RepositoryController implements ControllerInterface
      */
     private function environmentalizeDeployments(array $deployments)
     {
-        // should be using server.order instead
         $environments = [
             'dev' => [],
             'test' => [],

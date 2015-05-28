@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -28,6 +29,10 @@ class AddEncryptedPropertyController implements ControllerInterface
      * @type EntityRepository
      */
     private $repoRepo;
+
+    /**
+     * @type EnvironmentRepository
+     */
     private $envRepo;
 
     /**
@@ -87,7 +92,7 @@ class AddEncryptedPropertyController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        if (!$environments = $this->envRepo->findBy([], ['order' => 'ASC'])) {
+        if (!$environments = $this->envRepo->getAllEnvironmentsSorted()) {
             // who cares. I dont really want to deal with redirecting
             return call_user_func($this->notFound);
         }

@@ -8,8 +8,8 @@
 namespace QL\Hal\Controllers\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Response;
@@ -22,7 +22,7 @@ class EnvironmentsController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityRepository
+     * @type EnvironmentRepository
      */
     private $envRepo;
 
@@ -49,7 +49,7 @@ class EnvironmentsController implements ControllerInterface
     public function __invoke()
     {
         $rendered = $this->template->render([
-            'envs' => $this->envRepo->findBy([], ['order' => 'ASC'])
+            'envs' => $this->envRepo->getAllEnvironmentsSorted()
         ]);
 
         $this->response->setBody($rendered);

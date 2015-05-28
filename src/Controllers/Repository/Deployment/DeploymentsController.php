@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
@@ -31,10 +32,14 @@ class DeploymentsController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $environmentRepo;
     private $serverRepo;
     private $repoRepo;
     private $deploymentRepo;
+
+    /**
+     * @type EnvironmentRepository
+     */
+    private $environmentRepo;
 
     /**
      * @type Response
@@ -90,7 +95,7 @@ class DeploymentsController implements ControllerInterface
         $sorter = $this->deploymentSorter();
         usort($deployments, $sorter);
 
-        $environments = $this->environmentRepo->findBy([], ['order' => 'ASC']);
+        $environments = $this->environmentRepo->getAllEnvironmentsSorted();
 
         $rendered = $this->template->render([
             'environments' => $environments,

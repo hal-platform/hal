@@ -91,31 +91,10 @@ class RemoveEnvironmentHandler implements ControllerInterface
         }
 
         $this->em->remove($environment);
-        $this->reorderEnvironments($environment);
         $this->em->flush();
 
         $message = sprintf('Environment "%s" removed.', $environment->getKey());
         $this->session->flash($message, 'success');
         $this->url->redirectFor('environments');
-    }
-
-    /**
-     * @param Environment $removedEnv
-     * @return null
-     */
-    private function reorderEnvironments(Environment $removedEnv)
-    {
-        $order = 1;
-        $envs = $this->envRepo->findBy([], ['order' => 'ASC']);
-
-        foreach ($envs as $env) {
-            // skip the env being removed
-            if ($env->getId() === $removedEnv->getId()) {
-                continue;
-            }
-
-            $env->setOrder($order++);
-            $this->em->merge($env);
-        }
     }
 }

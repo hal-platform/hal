@@ -18,7 +18,7 @@
                 {% for environment in envs %}
                     <tr>
                         <td>
-                            {% if environment.key == 'prod' %}
+                            {% if environment.isProduction %}
                                 {{ macros.status(environment.key, 'info', 'key') }}
                             {% else %}
                                 {{ environment.key }}

@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
@@ -30,6 +31,10 @@ class AddServerController implements ControllerInterface
      * @type EntityRepository
      */
     private $serverRepo;
+
+    /**
+     * @type EnvironmentRepository
+     */
     private $envRepo;
 
     /**
@@ -91,7 +96,7 @@ class AddServerController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$environments = $this->envRepo->findBy([], ['order' => 'ASC'])) {
+        if (!$environments = $this->envRepo->getAllEnvironmentsSorted()) {
             $this->session->flash('A server requires an environment. Environments must be added before servers.', 'error');
             return $this->url->redirectFor('environment.admin.add');
         }

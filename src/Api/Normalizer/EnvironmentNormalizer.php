@@ -42,7 +42,7 @@ class EnvironmentNormalizer
             [
                 'id' => $environment->getId(),
                 'key' => $environment->getKey(),
-                'order' => $environment->getOrder()
+                'isProduction' => $environment->getIsProduction()
             ],
             [],
             [

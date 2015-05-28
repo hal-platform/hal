@@ -89,7 +89,14 @@ class EncryptedPropertiesController implements ControllerInterface
 
     private function sortByEnv()
     {
-        return function($prop1, $prop2) {
+        $order = [
+            'dev' => 0,
+            'test' => 1,
+            'beta' => 2,
+            'prod' => 3
+        ];
+
+        return function($prop1, $prop2) use ($order) {
 
             // global to bottom
             if ($prop1->getEnvironment() xor $prop2->getEnvironment()) {
@@ -101,14 +108,18 @@ class EncryptedPropertiesController implements ControllerInterface
                 return strcasecmp($prop1->getName(), $prop2->getName());
             }
 
-            $order1 = $prop1->getEnvironment()->getOrder();
-            $order2 = $prop2->getEnvironment()->getOrder();
-            if ($order1 === $order2) {
+            $aName = strtolower($prop1->getEnvironment()->name());
+            $bName = strtolower($prop2->getEnvironment()->name());
+
+            $aOrder = isset($order[$aName]) ? $order[$aName] : 999;
+            $bOrder = isset($order[$bName]) ? $order[$bName] : 999;
+
+            if ($aOrder === $bOrder) {
                 return 0;
             }
 
             // compare env order
-            return ($order1 < $order2) ? -1 : 1;
+            return ($aOrder < $bOrder) ? -1 : 1;
         };
     }
 }

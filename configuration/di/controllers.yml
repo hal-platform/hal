@@ -284,26 +284,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['environment/environment.twig']]]
 
-    environment.admin.reorder.page:
-        class: 'QL\Hal\Controllers\Environment\ReorderEnvironmentsController'
-        arguments:
-            - @environment.admin.reorder.twig
-            - @doctrine.em
-            - @slim.response
-            - @slim.not.found
-    environment.admin.reorder.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['environment/admin.reorder.twig']]]
-    environment.admin.reorder.handler:
-        class: 'QL\Hal\Controllers\Environment\ReorderEnvironmentsHandler'
-        arguments:
-            - @doctrine.em
-            - @session
-            - @url.helper
-            - @slim.request
-            - @slim.not.found
-            - @twig.context
-
     environment.admin.add.page:
         class: 'QL\Hal\Controllers\Environment\AddEnvironmentController'
         arguments:

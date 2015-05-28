@@ -7,10 +7,41 @@
 
 namespace QL\Hal\Helpers;
 
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 
 trait SortingHelperTrait
 {
+    private $sortingHelperEnvironmentOrder = [
+        'dev' => 0,
+        'test' => 1,
+        'beta' => 2,
+        'prod' => 3
+    ];
+
+    /**
+     * @return callable
+     */
+    public function environmentSorter()
+    {
+        $order = $this->sortingHelperEnvironmentOrder;
+
+        return function(Environment $a, Environment $b) use ($order) {
+
+            $aName = strtolower($a->name());
+            $bName = strtolower($b->name());
+
+            $aOrder = isset($order[$aName]) ? $order[$aName] : 999;
+            $bOrder = isset($order[$bName]) ? $order[$bName] : 999;
+
+            if ($aOrder === $bOrder) {
+                return 0;
+            }
+
+            return ($aOrder > $bOrder);
+        };
+    }
+
     /**
      * @return callable
      */

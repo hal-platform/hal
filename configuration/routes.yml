@@ -510,11 +510,6 @@ parameters:
         # ENVIRONMENT ROUTES - ADMIN
         ################################################################################################################
 
-        environment.admin.reorder:
-            method: ['GET', 'POST']
-            route: '/environments/reorder'
-            stack: ['middleware.admin', 'environment.admin.reorder.handler', 'environment.admin.reorder.page']
-
         environment.admin.add:
             method: ['GET', 'POST']
             route: '/environments/add'

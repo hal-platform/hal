@@ -118,15 +118,9 @@ class AddEnvironmentController implements ControllerInterface
             return false;
         }
 
-        $nextOrder = 1;
-        if ($maxEnvironment = $this->envRepo->findBy([], ['order' => 'DESC'], 1)) {
-            $maxEnvironment = array_pop($maxEnvironment);
-            $nextOrder = $maxEnvironment->getOrder() + 1;
-        }
-
         $environment = new Environment;
         $environment->setKey($request->post('name'));
-        $environment->setOrder($nextOrder);
+        $environment->setIsProduction(false);
 
         $this->em->persist($environment);
         $this->em->flush();
