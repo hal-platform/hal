@@ -25,7 +25,8 @@ HELP;
 $group = array_shift($argv);
 
 $ldap = $container->get('ldap');
-$dn = Dn::fromString(sprintf('CN=%s,DC=mi,DC=corp', $group));
+$query = sprintf('CN=%s,DC=mi,DC=corp', $group);
+$dn = Dn::fromString($query);
 $users = $ldap->usersInGroup($dn);
 
 if (count($users) == 0) {
