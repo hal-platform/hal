@@ -3,7 +3,7 @@
 {% set page_title = 'Add Environment' %}
 
 {% block content %}
-    <h2>Add a new environment</h2>
+    <h1>{{ page_title }}</h1>
 
     <div class="form-wrapper">
         {% if errors %}
@@ -20,14 +20,13 @@
                     <label for="name">Name</label>
                     <input type="text" name="name" id="envname" maxlength="24" required value="{{ form.name }}" class="text-input">
                 </li>
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Add Environment">
-
-                    {# secondary actions #}
-                    <a href="{{ urlFor('environments') }}">Cancel</a>
-                </li>
             </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Environment"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('environments') }}">Cancel</a></li>
+            </ul>
+
         </form>
     </div>
 {% endblock %}

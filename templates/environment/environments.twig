@@ -3,42 +3,37 @@
 {% set page_title = "Environments" %}
 
 {% block content %}
-    <h2>Environments</h2>
+    <h1>{{ page_title }}</h1>
 
-    <table class="table--spacing-medium">
-        <thead>
-            <tr class="tl">
-                <th>Environment</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if envs %}
-
+    {% if envs %}
+        <table class="table--spacing-medium table--striped">
+            <thead>
+                <tr>
+                    <th>Environment</th>
+                    <th>Is Production</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for env in envs %}
                     <tr>
                         <td>
                             <a href="{{ urlFor('environment', {'id': env.id}) }}">{{ env.key }}</a>
                         </td>
+                        <td>Maybe?</td>
                     </tr>
                 {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no environments.</p>
+    {% endif %}
 
-            {% else %}
-                <tr>
-                    <td>There are no environments.</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('repositories') }}">Applications</a></li>
 
-    <div>
-        {# primary action #}
         {% if isUserAdmin(currentUser) %}
-            <a class="btn" href="{{ urlFor('environment.admin.add') }}">Add Environment</a>
+            <li><a class="btn btn--action" href="{{ urlFor('environment.admin.add') }}">Add Environment</a></li>
         {% endif %}
+    </ul>
 
-        {% if envs %}
-            {# secondary actions #}
-            <a class="btn btn--action" href="{{ urlFor('environment.admin.reorder') }}">Re-order Environments</a>
-        {% endif %}
-    </div>
 {% endblock %}

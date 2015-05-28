@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Edit Environment: '~env.key %}
+{% set page_title = 'Edit Environment : ' ~ env.key %}
 
 {% block content %}
-    <h2>Edit <strong>{{ env.key }}</strong> environment</h2>
+    <h1>Edit Environment - <strong>{{ env.key }}</strong></h1>
 
     <div class="form-wrapper">
         {% if errors %}
@@ -20,14 +20,13 @@
                     <label for="name">Name</label>
                     <input type="text" name="name" id="envname" maxlength="24" required value="{{ form.name }}" class="text-input">
                 </li>
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Save">
-
-                    {# secondary actions #}
-                    <a href="{{ urlFor('environment', {id: env.id}) }}">Cancel</a>
-                </li>
             </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('environment', {id: env.id}) }}">Cancel</a></li>
+            </ul>
+
         </form>
     </div>
 {% endblock %}
