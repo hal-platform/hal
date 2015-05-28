@@ -62,20 +62,20 @@ class StatusExtension extends Twig_Extension
      */
     public function stylizeBuildStatus($build)
     {
-        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--unknown', 'Unknown');
+        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--info', 'Unknown');
 
         if (!$build instanceof Build) {
             return $default;
         }
 
         if ($build->getStatus() === 'Success') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--success', $build->getStatus());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $build->getStatus());
 
         } elseif (in_array($build->getStatus(), ['Error', 'Removed'], true)) {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--error', $build->getStatus());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $build->getStatus());
 
         } elseif ($build->getStatus()) {
-            return sprintf('<span class="%s" data-build="%s">%s</span>', 'status-before--other', $build->getId(), $build->getStatus());
+            return sprintf('<span class="%s" data-build="%s">%s</span>', 'status-icon--warning', $build->getId(), $build->getStatus());
         }
 
         return $default;
@@ -88,20 +88,20 @@ class StatusExtension extends Twig_Extension
      */
     public function stylizePushStatus($push)
     {
-        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--unknown', 'Unknown');
+        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--info', 'Unknown');
 
         if (!$push instanceof Push) {
             return $default;
         }
 
         if ($push->getStatus() === 'Success') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--success', $push->getStatus());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $push->getStatus());
 
         } elseif ($push->getStatus() === 'Error') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--error', $push->getStatus());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $push->getStatus());
 
         } elseif ($push->getStatus()) {
-            return sprintf('<span class="%s" data-push="%s">%s</span>', 'status-before--other', $push->getId(), $push->getStatus());
+            return sprintf('<span class="%s" data-push="%s">%s</span>', 'status-icon--warning', $push->getId(), $push->getStatus());
         }
 
         return $default;
@@ -114,20 +114,20 @@ class StatusExtension extends Twig_Extension
      */
     public function stylizeEBHealth($environment)
     {
-        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--unknown', 'Unknown');
+        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--info', 'Unknown');
 
         if (!$environment instanceof EBEnvironment) {
             return $default;
         }
 
         if ($environment->health() === 'Green') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--success', $environment->health());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $environment->health());
 
         } elseif ($environment->health() === 'Red') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--error', $environment->health());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $environment->health());
 
         } elseif ($environment->health() === 'Yellow') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--other', $environment->health());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--other', $environment->health());
         }
 
         return $default;
@@ -140,20 +140,20 @@ class StatusExtension extends Twig_Extension
      */
     public function stylizeEBStatus($environment)
     {
-        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--unknown', 'Unknown');
+        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--info', 'Unknown');
 
         if (!$environment instanceof EBEnvironment) {
             return $default;
         }
 
         if ($environment->status() === 'Ready') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--success', $environment->status());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $environment->status());
 
         } elseif (in_array($environment->status(), ['Terminating', 'Terminated'], true)) {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--error', $environment->status());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $environment->status());
 
         } elseif (in_array($environment->status(), ['Launching', 'Updating'], true)) {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-before--other', $environment->status());
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--warning', $environment->status());
         }
 
         return $default;

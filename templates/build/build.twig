@@ -6,9 +6,9 @@
 
 {% block content %}
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Application Status</a></p>
 
-    <h2>Build Information</h2>
+    <h1>{{ page_title }}</h1>
 
     <h4>Build Details</h4>
     <div class="details-box">

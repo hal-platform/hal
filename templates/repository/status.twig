@@ -6,7 +6,7 @@
 {% set page_title = "Status: " ~ repo.name %}
 
 {% block content %}
-    <h1>Application Status for <strong>{{ repo.name }}</strong></h1>
+    <h1>Application Status - <strong>{{ repo.name }}</strong></h1>
 
     {# Only allow environment switching if has multiple env #}
     {% if environments|length > 1 %}

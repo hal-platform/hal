@@ -5,9 +5,7 @@
 {% set isRepoAdmin = isUserRepoAdmin(currentUser, repository.key) %}
 
 {% block content %}
-    <h2>Encrypted Properties for <strong>{{ repository.name }}</strong></h2>
-
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+    <h1>Encrypted Properties - <strong>{{ repository.name }}</strong></h1>
 
     {% if encrypted %}
         <table class="table--spacing-medium" data-tablesaw-mode="stack">
@@ -34,7 +32,7 @@
                         {% endif %}
                     </td>
                     {% if isRepoAdmin %}
-                        <td>
+                        <td class="tr">
                             <a class="btn btn--tiny btn--destructive" href="{{ urlFor('repository.encrypted.remove', {'repository': repository.id, 'id': property.id}) }}">Remove</a>
                         </td>
                     {% endif %}
@@ -55,10 +53,16 @@
         <p>There are no encrypted properties for this repository.</p>
     {% endif %}
 
-    {% if isRepoAdmin %}
-        <p>
-            <a class="btn --action" href="{{ urlFor('repository.encrypted.add', {repository: repository.id}) }}">Add Encrypted Property</a>
-        </p>
-    {% endif %}
+
+    <ul class="button-list">
+        {% if isRepoAdmin %}
+            <li><a class="btn btn--action" href="{{ urlFor('repository.encrypted.add', {repository: repository.id}) }}">Add Encrypted Property</a></li>
+        {% endif %}
+        <li><a class="btn" href="{{ urlFor('repository', {'id': repository.id}) }}">Application</a></li>
+
+    </ul>
+
+
+
 
 {% endblock %}

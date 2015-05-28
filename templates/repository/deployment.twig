@@ -3,7 +3,7 @@
 {% set page_title = 'Deployment Information' %}
 
 {% block content %}
-    <h2>Deployment Information</h2>
+    <h1>{{ page_title }}</h1>
 
     <h4>Type</h4>
     <p>{{ deployment.server|formatServerType }}</p>
@@ -74,10 +74,16 @@
 
     {% set canEdit = isUserRepoAdmin(currentUser, repository.key) %}
 
-    {# secondary actions #}
-    {% if canEdit %}
-        <a class="btn btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.repository.id, id: deployment.id}) }}">Edit Deployment</a>
-        <a class="btn btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a>
-    {% endif %}
+
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('repository.deployments', {repository: deployment.repository.id}) }}">Deployment Targets</a></li>
+        {% if canEdit %}
+            <li><a class="btn btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.repository.id, id: deployment.id}) }}">Edit Deployment</a></li>
+            <li><a class="btn btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a></li>
+        {% endif %}
+
+    </ul>
+
+
 
 {% endblock %}

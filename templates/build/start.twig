@@ -3,13 +3,13 @@
 {% import _self as page_macros %}
 {% set js_components = ["build.start"] %}
 
-{% set page_title = "Start Build: " ~ repo.name %}
+{% set page_title = "Start Build : " ~ repo.name %}
 
 {% block content %}
 
-    <h2>Create a new build for <strong>{{ repo.name }}</strong></h2>
+    <h1>Start Build - <strong>{{ repo.name }}</strong></h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Application Status</a></p>
 
     {% if errors %}
         <ul class="error-list js-backend-error">

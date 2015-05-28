@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Add Group' %}
+{% set page_title = 'Add Application Group' %}
 
 {% block content %}
-    <h2>Add a new group</h2>
+    <h1>{{ page_title }}</h1>
 
     <div class="form-wrapper">
         {% if errors %}
@@ -36,13 +36,10 @@
                 </li>
             </ul>
 
-            <div>
-                {# primary action #}
-                <input class="btn" type="submit" value="Add Group">
-
-                {# secondary actions #}
-                <a href="{{ urlFor('repositories') }}">Cancel</a>
-            </div>
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Group"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repositories') }}">Cancel</a></li>
+            </ul>
         </form>
     </div>
 {% endblock %}

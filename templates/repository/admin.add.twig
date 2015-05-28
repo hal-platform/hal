@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 {% set js_components = ["repository.add"] %}
 
-{% set page_title = 'Add Repository' %}
+{% set page_title = 'Add Application' %}
 
 {% block content %}
-    <h2>Add a new repository</h2>
+    <h1>{{ page_title }}</h1>
 
     <div class="form-wrapper">
         {% if errors %}
@@ -75,13 +75,11 @@
                 </li>
             </ul>
 
-            <div>
-                {# primary action #}
-                <input class="btn" type="submit" value="Add Repository">
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Application"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repositories') }}">Cancel</a></li>
+            </ul>
 
-                {# secondary actions #}
-                <a href="{{ urlFor('repositories') }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}

@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = repository.name %}
+{% set page_title = 'Application' ~ repository.name %}
 
 {% set isRepoAdmin = isUserRepoAdmin(currentUser, repository.key) %}
 
 {% block content %}
-    <h2>Application</h2>
+    <h1>Application - <strong>{{ repository.name }}</strong></h1>
     {{ block('meta') }}
 
-    <h3>Notifications</h3>
+    <h2>Notifications</h2>
     <div class="details-box">
         <dl class="split mbn">
             <dt class="split__title">Email</dt>
@@ -19,10 +19,10 @@
 
     {{ block('legacy_commands') }}
 
-    <h3>Permissions</h3>
+    <h2>Permissions</h2>
     {{ block('permissions') }}
 
-    <h3>Deployment Targets</h3>
+    <h2>Deployment Targets</h2>
     {{ block('server_deployments') }}
 
 {% endblock %}
@@ -74,7 +74,7 @@
 
 {% block legacy_commands %}
     {% if repository.buildCmd or repository.buildTransformCmd or repository.prePushCmd or repository.postPushCmd %}
-        <h3>Commands</h3>
+        <h2>Commands</h2>
         <div class="details-box">
             <dl class="split trailer">
                 {% if repository.buildCmd %}

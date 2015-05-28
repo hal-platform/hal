@@ -3,9 +3,7 @@
 {% set page_title = 'Add Encrypted Property' %}
 
 {% block content %}
-    <h2>Add Encrypted Property for <strong>{{ repository.name }}</strong></h2>
-
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository', {'id': repository.id}) }}">Back to Repository</a></p>
+    <h1>{{ page_title }} - <strong>{{ repository.name }}</strong></h1>
 
     <div class="form-wrapper">
         {% if errors %}
@@ -63,13 +61,10 @@
                 </li>
             </ul>
 
-            <div>
-                {# primary action #}
-                <input class="btn" type="submit" value="Add Encrypted Property">
-
-                {# secondary actions #}
-                <a href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Cancel</a>
-            </div>
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Encrypted Property"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repository.encrypted', {repository: repository.id}) }}">Cancel</a></li>
+            </ul>
         </form>
     </div>
 

@@ -69,8 +69,8 @@ class AddEncryptedPropertyController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $em->getRepository(Environment::CLASS);
-        $this->envRepo = $em->getRepository(Repository::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->envRepo = $em->getRepository(Environment::CLASS);
 
         $this->request = $request;
         $this->response = $response;

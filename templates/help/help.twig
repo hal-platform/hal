@@ -7,7 +7,7 @@
 {% set wcContact = '<a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a>' %}
 
 {% block content %}
-    <h2>Help &amp; FAQ</h2>
+    <h1>Help &amp; FAQ</h1>
 
     <ul class="list--bare">
         <li class="trailer">
@@ -85,7 +85,7 @@
     </p>
 
     <p>For general questions or critical errors, you can contact Web Core through the following methods:</p>
-    <ul>
+    <ul class="list--bullet">
         <li><strong>[Application] HAL 9000</strong> (Hipchat)</li>
         <li><strong>[Team] CORE</strong> (Hipchat)</li>
         <li>{{ wcContact|raw }} (email)</li>
@@ -97,7 +97,7 @@
     <p>
         Any project can be added to HAL 9000. Doing so will allow you to create builds in the standard HAL environment. However, to deploy to servers please see <a href="#deploy-application">deployment instructions</a>.
     </p>
-    <ol>
+    <ol class="list--bullet">
         <li>
             <strong>Projects belong to groups. Determine what group your application should be part of, or create a new group.</strong>
             <p>
@@ -134,7 +134,7 @@
 
     <p>You will need help from the <strong>unix team</strong> during this process.</p>
 
-    <ol>
+    <ol class="list--bullet">
         <li>
             <strong>What environments and servers will your application be deployed to?</strong>
             <p>Examples: <code>test1www1</code>, <code>dev1iweb</code>, <code>prod1srvwww1</code></p>

@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Edit Group: ' ~ group.name %}
+{% set page_title = 'Edit Group : ' ~ group.name %}
 
 {% block content %}
-    <h2>Edit <b>{{ group.name }}</b> group</h2>
+    <h1>Edit Group - <strong>{{ group.name }}</strong></h1>
 
     <div class="form-wrapper">
         {% if errors %}
@@ -27,13 +27,11 @@
                 </li>
             </ul>
 
-            <div>
-                {# primary action #}
-                <input class="btn" type="submit" value="Save">
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('group', {id: group.id}) }}">Cancel</a></li>
+            </ul>
 
-                {# secondary actions #}
-                <a href="{{ urlFor('group', {id: group.id}) }}">Cancel</a>
-            </div>
         </form>
     </div>
 {% endblock %}

@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;

@@ -1,18 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Confirm Delete' %}
+{% set page_title = 'Confirm Removal' %}
 
 {% block content %}
 
+    <h1>{{ page_title }}</h1>
+
     <div class="details-box">
-        <h1>Are you sure?</h1>
 
+        <h3>Are you sure?</h3>
         <p>You're about to permanently remove this entity. Do you want to continue?</p>
+            <ul class="form-fields">
 
-        <form class="form-inline" method="post">
-            <input class="btn btn--destructive" type="submit" value="Delete">
+        <form class="form-wrapper" method="post">
+            <ul class="button-list">
+                <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="javascript:history.go(-1)">Cancel</a></li>
+            </ul>
         </form>
-        <a href="javascript:history.go(-1)">Cancel</a>
     </div>
 
 {% endblock %}

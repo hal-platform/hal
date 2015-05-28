@@ -3,7 +3,7 @@
 {% set page_title = 'Edit Deployment' %}
 
 {% block content %}
-    <h2>Edit Deployment</b></h2>
+    <h1>{{ page_title }}</h1>
 
     <h4>Type</h4>
     <p>{{ deployment.server|formatServerType }}</p>
@@ -73,13 +73,10 @@
                 </li>
             </ul>
 
-            <div>
-                {# primary action #}
-                <input class="btn" type="submit" value="Edit Deployment">
-
-                {# secondary actions #}
-                <a href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">Cancel</a>
-            </div>
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">Cancel</a></li>
+            </ul>
         </form>
     </div>
 

@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = 'Group: ' ~ group.name %}
+{% set page_title = 'Group : ' ~ group.name %}
 
 {% block content %}
-    <h2>Group Information</h2>
+    <h1>Group - <strong>{{ group.name }}</strong></h1>
 
     <h4>Name</h4>
     <p>{{ group.name }}</p>
@@ -47,15 +47,15 @@
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
-    <div>
-        <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Repository</a>
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Application</a></li>
         {% if isUserAdmin(currentUser) %}
-            <a class="btn btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a>
+            <li><a class="btn btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a></li>
 
             {% if not repos and isUserAdmin(currentUser) %}
-                <a class="btn btn--destructive" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a>
+                <li><a class="btn btn--destructive" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a></li>
             {% endif %}
         {% endif %}
-    </div>
+    </ul>
 
 {% endblock %}

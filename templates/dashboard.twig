@@ -7,15 +7,15 @@
 {% block content %}
 
     {% if isSeriousBusinessMode() %}
-        <h2>Dashboard</h2>
+        <h1>Dashboard</h1>
     {% else %}
-        <h2>
+        <h1>
             <span
                 data-initial=", {{ getUsersActualName(currentUser) }}."
                 data-freud=", {{ getUsersFreudianName() }}."
                 data-nofunzone=", {{ getUsersFirstName(currentUser) }}."
             >Hello</span>
-        </h2>
+        </h1>
     {% endif %}
 
     {% if isFirstLogin or not repositories %}
@@ -51,23 +51,19 @@
 
     {# PENDING WORK #}
     {% if pending %}
-        <h3>Build and Push Queue</h3>
+        <h2>Build and Push Queue</h2>
         {% include '_partial-job/pending-table.twig' %}
     {% endif %}
 
     <div class="dash-box-wrapper">
 
         <div class="dash-box">
-              {# RECENT USER BUILD ACTIVITY #}
-
-              <h3 class="trailer">Your Recent Builds</h3>
+              <h2 class="trailer">Your Recent Builds</h2>
               {% include '_partial-job/build-box.twig' with {'builds': builds, 'initiator': false} %}
         </div>
 
         <div class="dash-box">
-              {# RECENT USER PUSH ACTIVITY #}
-
-              <h3 class="trailer">Your Recent Pushes</h3>
+              <h2 class="trailer">Your Recent Pushes</h2>
               {% include '_partial-job/push-box.twig' with {'pushes': pushes, 'initiator': false} %}
         </div>
     </div>

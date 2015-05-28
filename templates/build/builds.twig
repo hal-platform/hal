@@ -2,12 +2,12 @@
 {% import '_partial/pagination.twig' as pagination %}
 {% set js_components = ["job.updater"] %}
 
-{% set page_title = repo.name ~ " Build History" %}
+{% set page_title = "Build History : " ~ repo.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Application Status</a></p>
 
-    <h2>Build History for <strong>{{ repo.name }}</strong></h2>
+    <h1>Build History - <strong>{{ repo.name }}</strong></h1>
 
     {{ block('search') }}
 

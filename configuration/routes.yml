@@ -416,14 +416,14 @@ parameters:
             stack: ['repoadmin.bouncer', 'delete.confirm.page']
             conditions:
                 repository: %routes.regex.digit%
-                id: %routes.regex.alphanum%
+                id: %routes.regex.guid%
         repository.encrypted.remove:
             method: ['POST']
             route: '/repositories/:repository/encrypted-properties/:id/remove'
             stack: ['repoadmin.bouncer', 'repository.encrypted.remove.handler']
             conditions:
                 repository: %routes.regex.digit%
-                id: %routes.regex.alphanum%
+                id: %routes.regex.guid%
 
         ################################################################################################################
         # GROUP ROUTES
