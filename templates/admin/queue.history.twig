@@ -3,7 +3,7 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Build and Push History" %}
-{% set paginationblock = pagination.time_pagination(selected_date, 'admin.queue') %}
+{% set paginationblock = pagination.time_pagination(selected_date, 'queue.history') %}
 
 {% block content %}
     <h2>Build and Push History</h2>

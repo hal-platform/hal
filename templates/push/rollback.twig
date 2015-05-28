@@ -86,7 +86,7 @@
                 <td>{{ push.end|html5date }}</td>
                 <td>
                     {% if push.user %}
-                        <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.handle }}</a>
+                        <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
                     {% else %}
                         Unknown
                     {% endif %}

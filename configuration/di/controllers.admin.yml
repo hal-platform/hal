@@ -43,19 +43,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/audit.logs.twig']]]
 
-    admin.queue.page:
-        class: 'QL\Hal\Controllers\Admin\QueueHistoryController'
-        arguments:
-            - @admin.queue.twig
-            - @doctrine.em
-            - @slim.response
-            - @clock
-            - @slim.route.parameters
-            - %date.timezone%
-    admin.queue.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/queue.history.twig']]]
-
     ####################################################################################################################
     # PERMISSION CONTROLLERS
     ####################################################################################################################
@@ -75,10 +62,22 @@ services:
         arguments:
             - @admin.permissions.remove.twig
             - @currentUser
+            - @hal.userType
             - @doctrine.em
+            - @permissions.new
+            - @session.flasher
     admin.permissions.remove.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/permissions/type.remove.twig']]]
+
+    admin.permissions.remove.handler:
+        class: 'QL\Hal\Controllers\Admin\RemovePermissionsHandler'
+        arguments:
+            - @currentUser
+            - @hal.userType
+            - @doctrine.em
+            - @permissions.new
+            - @session.flasher
 
     ####################################################################################################################
     # SUPER ADMIN CONTROLLERS

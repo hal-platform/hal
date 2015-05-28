@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Environments" %}
 
@@ -6,20 +7,26 @@
     <h1>{{ page_title }}</h1>
 
     {% if envs %}
-        <table class="table--spacing-medium table--striped">
+        <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
             <thead>
                 <tr>
-                    <th>Environment</th>
-                    <th>Is Production</th>
+                    <th>Name</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                {% for env in envs %}
+                {% for environment in envs %}
                     <tr>
                         <td>
-                            <a href="{{ urlFor('environment', {'id': env.id}) }}">{{ env.key }}</a>
+                            {% if environment.key == 'prod' %}
+                                {{ macros.status(environment.key, 'info', 'key') }}
+                            {% else %}
+                                {{ environment.key }}
+                            {% endif %}
                         </td>
-                        <td>Maybe?</td>
+                        <td class="tr">
+                            <a href="{{ urlFor('environment', {'id': env.id}) }}">View</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

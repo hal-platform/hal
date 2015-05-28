@@ -7,17 +7,18 @@
 
 namespace QL\Hal\Controllers\User;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Repository\UserRepository;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserType;
+use QL\Hal\Service\NewPermissionsService;
+use QL\Hal\Service\UserPerm;
 use QL\Hal\Services\PermissionsService;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class UserController implements ControllerInterface
 {
@@ -27,14 +28,9 @@ class UserController implements ControllerInterface
     private $template;
 
     /**
-     * @type PermissionsService
+     * @type User
      */
-    private $permissions;
-
-    /**
-     * @type LdapService
-     */
-    private $ldap;
+    private $user;
 
     /**
      * @type UserRepository
@@ -44,52 +40,49 @@ class UserController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $userTypesRepo;
+    private $repoRepo;
 
     /**
-     * @type Response
+     * @type LdapService
      */
-    private $response;
+    private $ldap;
 
     /**
-     * @type NotFound
+     * @type NewPermissionsService
      */
-    private $notFound;
+    private $permissions;
 
     /**
-     * @type array
+     * @type PermissionsService
      */
-    private $parameters;
+    private $permissionsLegacy;
 
     /**
      * @param TemplateInterface $template
-     * @param LdapService $ldap
+     * @param User $user
      * @param EntityManagerInterface $em
-     * @param PermissionsService $permissions
-     * @param Response $response
-     * @param NotFound $notFound
-     * @param array $parameters
+     *
+     * @param LdapService $ldap
+     * @param NewPermissionsService $permissions
+     * @param PermissionsService $permissionsLegacy
      */
     public function __construct(
         TemplateInterface $template,
-        LdapService $ldap,
+        User $user,
         EntityManagerInterface $em,
-        PermissionsService $permissions,
-        Response $response,
-        NotFound $notFound,
-        array $parameters
+        LdapService $ldap,
+        NewPermissionsService $permissions,
+        PermissionsService $permissionsLegacy
     ) {
         $this->template = $template;
-        $this->ldap = $ldap;
+        $this->user = $user;
 
         $this->userRepo = $em->getRepository(User::CLASS);
-        $this->userTypesRepo = $em->getRepository(UserType::CLASS);
+        $this->repoRepo = $em->getRepository(Repository::CLASS);
 
+        $this->ldap = $ldap;
         $this->permissions = $permissions;
-
-        $this->response = $response;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->permissionsLegacy = $permissionsLegacy;
     }
 
     /**
@@ -97,62 +90,40 @@ class UserController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$user = $this->userRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
+        $userPerm = $this->permissions->getUserPermissions($this->user);
+        $leadApps = $this->getLeadApplications($userPerm);
 
         $rendered = $this->template->render([
-            'user' => $user,
-            'ldapUser' => $this->ldap->getUserByCommonId($user->getId()),
+            'user' => $this->user,
+            'userPerm' => $userPerm,
+            'leadApplications' => $leadApps,
 
-            'permissions' => $this->permissions->userPushPermissionPairs($user->getHandle()),
-            'builds' => $this->userRepo->getBuildCount($user),
-            'pushes' => $this->userRepo->getPushCount($user),
+            'ldapUser' => $this->ldap->getUserByCommonId($this->user->getId()),
 
-            'types' => $this->getUserTypes($user)
+            'permissions' => $this->permissionsLegacy->userPushPermissionPairs($this->user->getHandle()),
+            'builds' => $this->userRepo->getBuildCount($this->user),
+            'pushes' => $this->userRepo->getPushCount($this->user),
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**
-     * @param User $user
+     * @param UserPerm $perm
      *
-     * @return array
+     * @return Repository[]
      */
-    private function getUserTypes(User $user)
+    private function getLeadApplications(UserPerm $perm)
     {
-        $userTypes = $this->userTypesRepo->findBy(['user' => $user]);
-
-        $types = [
-            'hasType' => (count($userTypes) > 0),
-
-            'isPleb' => false,
-            'isLead' => false,
-            'isButtonPusher' => false,
-            'isSuper' => false,
-            'projects' => []
-        ];
-
-        foreach ($userTypes as $t) {
-            if ($t->type() === 'lead') {
-                $types['isLead'] = true;
-
-                if ($t->application()) {
-                    $types['applications'][$t->application()->getId()] = $t->application();
-                }
-
-            } elseif ($t->type() === 'btn_pusher') {
-                $types['isButtonPusher'] = true;
-
-            } elseif ($t->type() === 'super') {
-                $types['isSuper'] = true;
-
-            } elseif ($t->type() === 'pleb') {
-                $types['isPleb'] = true;
-            }
+        if (!$perm->isLead()) {
+            return [];
         }
 
-        return $types;
+        if (!$perm->applications()) {
+            return [];
+        }
+
+        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $perm->applications()));
+        $applications = $this->repoRepo->matching($criteria);
+
+        return $applications->toArray();
     }
 }

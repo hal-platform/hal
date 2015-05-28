@@ -40,7 +40,6 @@ class AutoRenderingTemplate extends LazyTwig
 
         if ($this->response) {
             $this->response->setBody($rendered);
-            return;
         }
 
         return $rendered;

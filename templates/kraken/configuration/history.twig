@@ -42,7 +42,7 @@
                     <td>{{ configuration.environment.name }}</td>
                     <td>
                         {% if configuration.user %}
-                            <a href="{{ urlFor('user', {id: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
+                            <a href="{{ urlFor('user', {user: configuration.user.id}) }}">{{ configuration.user.handle }}</a>
                         {% else %}
                             Unknown
                         {% endif %}

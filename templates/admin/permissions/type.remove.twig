@@ -1,11 +1,81 @@
 {% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
 
-{% set page_title = "Remove User Permissions" %}
+{% set page_title = "Remove Permissions" %}
 
 {% block content %}
 
     <h1>{{ page_title }}</h1>
 
+    <h2>Current Permissions - <strong>{{ userType.user.handle }}</strong></h2>
+    <div class="details-box">
+        <dl class="split mbn">
+
+            <dt class="split__title">Current User Types</dt>
+            <dd>
+                {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
+                    <ul class="inline-list--space">
+                        {% if userPerm.isLead %}
+                            <li>{{ macros.status('Lead', 'notice') }}</li>
+                        {% endif %}
+                        {% if userPerm.isButtonPusher %}
+                            <li>{{ macros.status('Admin', 'warning') }}</li>
+                        {% endif %}
+                        {% if userPerm.isSuper %}
+                            <li>{{ macros.status('Super', 'error') }}</li>
+                        {% endif %}
+                    </ul>
+                {% else %}
+                    Standard
+                {% endif %}
+            </dd>
+
+            {% if leadApplications %}
+                <dt class="split__title">Lead Applications</dt>
+                <dd>
+                    <ul class="inline-list--comma">
+                        {% for application in leadApplications %}
+                            <li><a href="{{ urlFor('repository', {id: application.id}) }}">{{ application.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            {% endif %}
+        </dl>
+    </div>
+
+    <h2>Remove the following permissions</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+
+            <dt class="split__title">User Type</dt>
+            <dd>
+                {% if userType.type == 'lead' %}
+                    <li>{{ macros.status('Lead', 'notice') }}</li>
+                {% endif %}
+                {% if userType.type == 'btn_pusher' %}
+                    <li>{{ macros.status('Admin', 'warning') }}</li>
+                {% endif %}
+                {% if userType.type == 'super' %}
+                    <li>{{ macros.status('Super', 'error') }}</li>
+                {% endif %}
+            </dd>
+
+            {% if userType.application %}
+                <dt class="split__title">Application</dt>
+                <dd><a href="{{ urlFor('repository', {id: userType.application.id}) }}">{{ userType.application.name }}</a></dd>
+            {% endif %}
+        </dl>
+    </div>
+
+    <h3>Are you sure?</h3>
+    <p>You're about to remove some of this user's permissions. Do you want to continue?</p>
+
+    <form class="form-wrapper" method="post">
+        <ul class="button-list">
+            <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('admin.permissions') }}">Cancel</a></li>
+        </ul>
+    </form>
 
 {% endblock %}
 

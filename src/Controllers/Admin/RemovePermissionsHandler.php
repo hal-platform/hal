@@ -7,17 +7,12 @@
 
 namespace QL\Hal\Controllers\Admin;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
 use QL\Hal\Service\NewPermissionsService;
-use QL\Hal\Service\UserPerm;
 use QL\Panthor\ControllerInterface;
-use QL\Panthor\TemplateInterface;
 
 /**
  * Super:
@@ -27,17 +22,12 @@ use QL\Panthor\TemplateInterface;
  * ButtonPusher:
  *     Add Lead, ButtonPusher
  *     Remove Lead
- *
  */
-class RemovePermissionsController implements ControllerInterface
+class RemovePermissionsHandler implements ControllerInterface
 {
+    const SUCCESS = 'User Permission "%s" revoked from "%s".';
     const ERR_NOPE_SUPER = 'HAL Administrators cannot remove other HAL Administrators from the frontend.';
     const ERR_NOPE_BTN = 'Deployment Administrators cannot remove other Deployment Administrators from the frontend.';
-
-    /**
-     * @type TemplateInterface
-     */
-    private $template;
 
     /**
      * @type User
@@ -50,11 +40,6 @@ class RemovePermissionsController implements ControllerInterface
     private $userType;
 
     /**
-     * @type EntityRepository
-     */
-    private $repoRepo;
-
-    /**
      * @type NewPermissionsService
      */
     private $permissions;
@@ -65,7 +50,6 @@ class RemovePermissionsController implements ControllerInterface
     private $flasher;
 
     /**
-     * @param TemplateInterface $template
      * @param User $currentUser
      * @param UserType $userType
      * @param EntityManagerInterface $em
@@ -73,19 +57,17 @@ class RemovePermissionsController implements ControllerInterface
      * @param Flasher $flasher
      */
     public function __construct(
-        TemplateInterface $template,
         User $currentUser,
         UserType $userType,
         EntityManagerInterface $em,
         NewPermissionsService $permissions,
         Flasher $flasher
     ) {
-        $this->template = $template;
         $this->currentUser = $currentUser;
         $this->userType = $userType;
 
+        $this->em = $em;
         $this->permissions = $permissions;
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
         $this->flasher = $flasher;
     }
 
@@ -95,8 +77,6 @@ class RemovePermissionsController implements ControllerInterface
     public function __invoke()
     {
         $currentUserPerms = $this->permissions->getUserPermissions($this->currentUser);
-        $affectedUserPerms = $this->permissions->getUserPermissions($this->userType->user());
-        $leadApps = $this->getLeadApplications($affectedUserPerms);
 
         $type = $this->userType->type();
 
@@ -119,31 +99,21 @@ class RemovePermissionsController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render([
-            'userType' => $this->userType,
-            'userPerm' => $affectedUserPerms,
-            'leadApplications' => $leadApps
-        ]);
-    }
+        $map = [
+            'pleb' => 'Standard',
+            'lead' => 'Lead',
+            'btn_pusher' => 'Admin',
+            'super' => 'Super'
+        ];
 
-    /**
-     * @param UserPerm $perm
-     *
-     * @return Repository[]
-     */
-    private function getLeadApplications(UserPerm $perm)
-    {
-        if (!$perm->isLead()) {
-            return [];
-        }
+        $type = $map[$type];
+        $name = $this->userType->user()->getHandle();
 
-        if (!$perm->applications()) {
-            return [];
-        }
+        $this->em->remove($this->userType);
+        $this->em->flush();
 
-        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $perm->applications()));
-        $applications = $this->repoRepo->matching($criteria);
-
-        return $applications->toArray();
+        $this->flasher
+            ->withFlash(sprintf(self::SUCCESS, $type, $name), 'success')
+            ->load('admin.permissions');
     }
 }

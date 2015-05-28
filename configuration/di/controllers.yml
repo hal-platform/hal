@@ -47,6 +47,10 @@ services:
         class: 'QL\Hal\Controllers\LogoutController'
         arguments: [@session, @url]
 
+    ####################################################################################################################
+    # QUEUE CONTROLLERS
+    ####################################################################################################################
+
     queue.page:
         class: 'QL\Hal\Controllers\QueueController'
         arguments:
@@ -56,6 +60,19 @@ services:
     queue.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue.twig']]]
+
+    queue.history.page:
+        class: 'QL\Hal\Controllers\QueueHistoryController'
+        arguments:
+            - @queue.history.twig
+            - @doctrine.em
+            - @slim.response
+            - @clock
+            - @slim.route.parameters
+            - %date.timezone%
+    queue.history.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/queue.history.twig']]]
 
     ####################################################################################################################
     # GROUP CONTROLLERS
@@ -386,6 +403,7 @@ services:
             - @url.helper
             - @slim.not.found
             - @slim.route.parameters
+
     ####################################################################################################################
     # USER CONTROLLERS
     ####################################################################################################################
@@ -394,14 +412,13 @@ services:
         class: 'QL\Hal\Controllers\User\UserController'
         arguments:
             - @user.twig
-            - @ldap
+            - @hal.user
             - @doctrine.em
+            - @ldap
+            - @permissions.new
             - @permissions
-            - @slim.response
-            - @slim.not.found
-            - @slim.route.parameters
     user.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/user.twig']]]
 
     users.page:
@@ -544,14 +561,8 @@ services:
     static.controller:
         class: 'QL\Hal\Controllers\StaticController'
 
-    denied.page:
-        parent: 'static.controller'
-        arguments:
-            - @denied.twig
-            - @slim.response
-            - 403
     denied.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['denied.twig']]]
 
     # The twig template for slim errors (404, 500)

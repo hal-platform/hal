@@ -13,26 +13,6 @@ services:
             - @url.helper
             - @slim.request
 
-    # Bounce non-admins
-    admin.bouncer:
-        class: 'QL\Hal\Middleware\Bouncer\AdminBouncer'
-        arguments:
-            - @service_container
-            - @permissions
-            - @denied.twig
-            - @login.bouncer
-            - @slim.response
-
-    # Bounce non-super-admins
-    superadmin.bouncer:
-        class: 'QL\Hal\Middleware\Bouncer\SuperAdminBouncer'
-        arguments:
-            - @service_container
-            - @permissions
-            - @denied.twig
-            - @login.bouncer
-            - @slim.response
-
     # Bounce users who don't have access to modify a repository
     repoadmin.bouncer:
         class: 'QL\Hal\Middleware\Bouncer\RepoAdminBouncer'
@@ -54,8 +34,43 @@ services:
             - @ldap
             - @doctrine.em
 
-    cachedApi.middleware:
+    middleware.cachedApi:
         class: 'QL\Hal\Middleware\CachedApiMiddleware'
         arguments:
             - @response.formatter
             - @slim.response
+
+    middleware.requireEntity:
+        class: 'QL\Hal\Middleware\RequireEntityMiddleware'
+        arguments:
+            - @service_container
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+
+    middleware.login:
+        class: 'QL\Hal\Middleware\ACL\LoginMiddleware'
+        arguments:
+            - @service_container
+            - @doctrine.em
+            - @session
+            - @url
+            - @slim.request
+
+    middleware.admin:
+        class: 'QL\Hal\Middleware\ACL\AdminMiddleware'
+        arguments:
+            - @service_container
+            - @middleware.login
+            - @denied.twig
+            - @permissions.new
+            - @slim.halt
+
+    middleware.super:
+        class: 'QL\Hal\Middleware\ACL\SuperMiddleware'
+        arguments:
+            - @service_container
+            - @middleware.login
+            - @denied.twig
+            - @permissions.new
+            - @slim.halt

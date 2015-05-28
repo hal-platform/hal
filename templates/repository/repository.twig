@@ -134,7 +134,7 @@
                     <td>
                         <ul class="col-list">
                             {% for rule in permission %}
-                                <li><a href="{{ urlFor('user', {'id': rule.user.id}) }}">{{ rule.user.name }}</a></li>
+                                <li><a href="{{ urlFor('user', {'user': rule.user.id}) }}">{{ rule.user.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </td>

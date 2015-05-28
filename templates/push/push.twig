@@ -101,7 +101,7 @@
             <dt class="split__title">Initiator</dt>
             <dd>
                 {% if push.user %}
-                    <a href="{{ urlFor('user', {'id': push.user.id}) }}">{{ push.user.name }}</a>
+                    <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.name }}</a>
                 {% else %}
                     Unknown
                 {% endif %}

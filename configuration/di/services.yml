@@ -30,6 +30,10 @@ services:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.permissions.ttl%]]
 
+    permissions.new:
+        class: 'QL\Hal\Service\NewPermissionsService'
+        arguments: [@doctrine.em, @json]
+
     global.message:
         class: 'QL\Hal\Services\GlobalMessageService'
         arguments: [@redis]

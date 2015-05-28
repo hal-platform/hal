@@ -36,7 +36,7 @@ class RepoAdminBouncer implements MiddlewareInterface
     /**
      * @type TemplateInterface
      */
-    private $twig;
+    private $template;
 
     /**
      * @type LoginBouncer
@@ -71,7 +71,7 @@ class RepoAdminBouncer implements MiddlewareInterface
     /**
      * @param ContainerInterface $di
      * @param PermissionsService $permissions
-     * @param TemplateInterface $twig
+     * @param TemplateInterface $template
      * @param LoginBouncer $loginBouncer
      * @param EntityManagerInterface $em
      * @param Response $response
@@ -81,7 +81,7 @@ class RepoAdminBouncer implements MiddlewareInterface
     public function __construct(
         ContainerInterface $di,
         PermissionsService $permissions,
-        TemplateInterface $twig,
+        TemplateInterface $template,
         LoginBouncer $loginBouncer,
         EntityManagerInterface $em,
         Response $response,
@@ -90,7 +90,7 @@ class RepoAdminBouncer implements MiddlewareInterface
     ) {
         $this->di = $di;
         $this->permissions = $permissions;
-        $this->twig = $twig;
+        $this->template = $template;
         $this->loginBouncer = $loginBouncer;
         $this->repoRepo = $em->getRepository(Repository::CLASS);
 
@@ -123,9 +123,8 @@ class RepoAdminBouncer implements MiddlewareInterface
             return;
         }
 
-        $rendered = $this->twig->render([]);
+        $this->template->render();
         $this->response->setStatus(403);
-        $this->response->setBody($rendered);
 
         throw new Stop;
     }

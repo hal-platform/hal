@@ -13,14 +13,12 @@ services:
     # RUN TIME INJECTED (SYNTHETIC) SERVICES
     ######################################################################################################################
 
-    # Set by LoginBouncer
-    currentUser:
-        class: 'QL\Hal\Core\Entity\User'
-        synthetic: true
+    # Set by bouncers
+    currentUser:   { synthetic: true }
+    requester:     { synthetic: true }
 
-    # Set by the API Auth Bouncer
-    requester:
-        synthetic: true
+    hal.user:      { synthetic: true }
+    hal.userType:  { synthetic: true }
 
     ######################################################################################################################
     # DOCTRINE CONFIGURATION

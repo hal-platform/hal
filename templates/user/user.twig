@@ -5,7 +5,7 @@
 {% set name = getUsersName(user) %}
 {% set displayName = isSeriousBusinessMode() ? name : getUsersActualName(user) %}
 
-{% set page_title = name %}
+{% set page_title = 'User : ' ~ name %}
 
 {% block content %}
 
@@ -74,15 +74,15 @@
 
             <dt class="split__title">User Types</dt>
             <dd>
-                {% if types.hasType %}
+                {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
                     <ul class="inline-list--space">
-                        {% if types.isLead %}
+                        {% if userPerm.isLead %}
                             <li>{{ macros.status('Lead', 'notice') }}</li>
                         {% endif %}
-                        {% if types.isButtonPusher %}
+                        {% if userPerm.isButtonPusher %}
                             <li>{{ macros.status('Admin', 'warning') }}</li>
                         {% endif %}
-                        {% if types.isSuper %}
+                        {% if userPerm.isSuper %}
                             <li>{{ macros.status('Super', 'error') }}</li>
                         {% endif %}
                     </ul>
@@ -91,12 +91,12 @@
                 {% endif %}
             </dd>
 
-            {% if types.isLead and types.applications %}
+            {% if leadApplications %}
                 <dt class="split__title">Lead Applications</dt>
                 <dd>
                     <ul class="inline-list--comma">
-                        {% for app in types.applications %}
-                            <li><a href="{{ urlFor('repository', {repository: app.id}) }}">{{ app.name }}</a></li>
+                        {% for application in leadApplications %}
+                            <li><a href="{{ urlFor('repository', {id: application.id}) }}">{{ application.name }}</a></li>
                         {% endfor %}
                     </ul>
                 </dd>

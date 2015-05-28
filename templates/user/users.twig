@@ -39,7 +39,7 @@
             {% set user = user.user %}
 
             <tr>
-                <td><a href="{{ urlFor('user', {'id': user.id}) }}">{{ user.id }}</a></td>
+                <td><a href="{{ urlFor('user', {'user': user.id}) }}">{{ user.id }}</a></td>
                 <td>{{ user.handle }}</td>
                 <td>
                     {% if isSeriousBusinessMode() %}

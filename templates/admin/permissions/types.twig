@@ -61,7 +61,7 @@
                     {% set user = type.user %}
 
                     <tr>
-                        <td><a href="{{ urlFor('user', {'id': user.id}) }}">{{ user.id }}</a></td>
+                        <td><a href="{{ urlFor('user', {'user': user.id}) }}">{{ user.id }}</a></td>
                         <td>{{ user.handle }}</td>
                         <td>
                             {% if isSeriousBusinessMode() %}
@@ -83,7 +83,7 @@
 
                         {% if can_remove %}
                             <td class="tr">
-                                <a href="{{ urlFor('admin.permissions.remove', {permission: type.id}) }}">Remove</a>
+                                <a href="{{ urlFor('admin.permissions.remove', {userType: type.id}) }}">Remove</a>
                             </td>
                         {% endif %}
 

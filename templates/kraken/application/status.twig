@@ -69,7 +69,7 @@
                                 <li>
                                     <span class="split__title">Deployed by:</span>
                                     {% if deployed.user %}
-                                        <a href="{{ urlFor('user', {id: deployed.user.id}) }}">{{ deployed.user.handle }}</a>
+                                        <a href="{{ urlFor('user', {user: deployed.user.id}) }}">{{ deployed.user.handle }}</a>
                                     {% else %}
                                         No one
                                     {% endif %}

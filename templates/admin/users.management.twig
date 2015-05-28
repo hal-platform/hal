@@ -34,7 +34,7 @@
         <tbody>
         {% for user in users %}
             <tr>
-                <td><a href="{{ urlFor('user', {'id': user.user.id}) }}">{{ user.user.id }}</a></td>
+                <td><a href="{{ urlFor('user', {'user': user.user.id}) }}">{{ user.user.id }}</a></td>
                 <td>{{ user.user.handle }}</td>
                 <td>
                     {% if user.hal_active %}
