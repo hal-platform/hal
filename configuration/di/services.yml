@@ -102,6 +102,11 @@ services:
     # TWIG STUFF
     ######################################################################################################################
 
+    twig.auto.template:
+        parent: 'twig.template'
+        class: 'QL\Kraken\Application\AutoRenderingTemplate'
+        calls: [['setResponse', [@slim.response]]]
+
     twig.extension.hal:
         class: 'QL\Hal\Twig\HalExtension'
         arguments:

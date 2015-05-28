@@ -12,6 +12,10 @@
         <h2>Inactive Users</h2>
         {{ page_macros.userTable(inactiveUsers, false) }}
     {% endif %}
+
+    <h2>User Types</h2>
+    {% include '_partial/user.types.twig' %}
+
 {% endblock %}
 
 {% macro userTable(users, showtypes) %}
@@ -22,7 +26,7 @@
             <tr>
                 <th>User ID</th>
                 <th>Username</th>
-                <th>Display Name</th>
+                <th>Name</th>
                 <th>E-mail</th>
                 {% if showtypes %}
                     <th></th>

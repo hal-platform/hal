@@ -57,6 +57,30 @@ services:
         calls: [['setTemplate', ['admin/queue.history.twig']]]
 
     ####################################################################################################################
+    # PERMISSION CONTROLLERS
+    ####################################################################################################################
+
+    admin.permissions.page:
+        class: 'QL\Hal\Controllers\Admin\PermissionsController'
+        arguments:
+            - @admin.permissions.twig
+            - @currentUser
+            - @doctrine.em
+    admin.permissions.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/permissions/types.twig']]]
+
+    admin.permissions.remove.page:
+        class: 'QL\Hal\Controllers\Admin\RemovePermissionsController'
+        arguments:
+            - @admin.permissions.remove.twig
+            - @currentUser
+            - @doctrine.em
+    admin.permissions.remove.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/permissions/type.remove.twig']]]
+
+    ####################################################################################################################
     # SUPER ADMIN CONTROLLERS
     ####################################################################################################################
 

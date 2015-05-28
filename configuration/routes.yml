@@ -83,6 +83,16 @@ parameters:
             stack: ['admin.bouncer', 'admin.audit.logs.page']
             conditions: {page: %routes.regex.digit%}
 
+        admin.permissions:
+            method: 'GET'
+            route: '/admin/permissions'
+            stack: ['admin.bouncer', 'admin.permissions.page']
+
+        admin.permissions.remove:
+            route: '/admin/permissions/:permission/remove'
+            stack: ['admin.bouncer', 'admin.permissions.remove.page']
+            conditions: {permission: %routes.regex.guid%}
+
         ################################################################################################################
         # SUPER ADMIN ROUTES
         ################################################################################################################
