@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% import "_partial/macros.twig" as macros %}
-{% set js_components = ["dashboard", "queue"] %}
+{% set js_components = ["queue"] %}
 
 {% set page_title = 'Dashboard' %}
 
@@ -34,19 +34,9 @@
 
     {# QUICK BUILD #}
     {% if repositories %}
-        <button class="btn trailer js-hide-btn">Start a Build</button>
-        <div class="js-hide-box">
-            <h3>Choose a Repository</h3>
-            <div class="form-wrapper">
-                <form action="" method="post">
-                    <ul class="form-fields">
-                        <li>
-                            <label for="search">Filter Repositories</label>
-                            <input class="text-input js-filter__input" type="text" id="search" name="search" autofocus>
-                        </li>
-                    </ul>
-                </form>
-            </div>
+        <section class="trailer">
+            <h3>Quick Build</h3>
+
             <div class="col-list">
                 <ul class="list--bare js-filter">
                     {% for repository in repositories %}
@@ -56,7 +46,7 @@
                     {% endfor %}
                 </ul>
             </div>
-        </div>
+        </section>
     {% endif %}
 
     {# PENDING WORK #}

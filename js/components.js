@@ -1,10 +1,6 @@
 module.exports = {
 
     // core
-    "dashboard": function() {
-        require('./app/dashboard').init();
-    },
-
     "queue": function() {
         require('./app/queue/queue').init();
     },
