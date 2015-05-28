@@ -1,5 +1,8 @@
 parameters:
 
+    application.environment: 'prod'
+
+
 
 
 

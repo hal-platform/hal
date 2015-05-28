@@ -46,7 +46,7 @@
     {% include '_partial-job/build-table.twig' with {'builds': builds} %}
 
     <ul class="button-list">
-        {% if canUserBuild(currentUser, repo.key) %}
+        {% if canUserBuild(currentUser, repo) %}
             <li><a class="btn btn--action" href="{{ urlFor('build.start', {'id': repo.id}) }}">Start New Build</a></li>
         {% endif %}
 

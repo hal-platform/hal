@@ -125,7 +125,7 @@
                         <td>
                             {% if inProgress %}
                                 Please Wait
-                            {% elseif canUserPush(currentUser, status.deployment.repository.key, status.deployment.server.environment.key) %}
+                            {% elseif canUserPush(currentUser, status.deployment.repository, status.deployment.server.environment) %}
                                 <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
                                 {% set allowSubmit = true %}
                             {% else %}

@@ -1,21 +1,22 @@
 <?php
 /**
- * @copyright ©2013 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
 
 namespace QL\Hal\Twig;
 
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\NewPermissionsService;
 use Twig_Extension;
 use Twig_SimpleFunction;
 
-class NewPermissionsExtension extends Twig_Extension
+class PermissionsExtension extends Twig_Extension
 {
-    const NAME = 'hal_new_permissions';
+    const NAME = 'hal_permissions';
 
     /**
      * @type NewPermissionsService
@@ -44,7 +45,6 @@ class NewPermissionsExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            // permissions
             new Twig_SimpleFunction('isUserStandard', [$this, 'isUserStandard']),
             new Twig_SimpleFunction('isUserLead', [$this, 'isUserLead']),
             new Twig_SimpleFunction('isUserAdmin', [$this, 'isUserAdmin']),
@@ -52,6 +52,9 @@ class NewPermissionsExtension extends Twig_Extension
 
             new Twig_SimpleFunction('isUserAdminOrSuper', [$this, 'isUserAdminOrSuper']),
             new Twig_SimpleFunction('isUserLeadOf', [$this, 'isUserLeadOf']),
+
+            new Twig_SimpleFunction('canUserBuild', [$this, 'canUserBuild']),
+            new Twig_SimpleFunction('canUserPush', [$this, 'canUserPush']),
         ];
     }
 
@@ -123,11 +126,11 @@ class NewPermissionsExtension extends Twig_Extension
 
     /**
      * @param User|null $user
-     * @param Repository|null $repository
+     * @param Repository|null $application
      *
      * @return bool
      */
-    public function isUserLeadOf($user, $repository)
+    public function isUserLeadOf($user, $application)
     {
         if (!$perm = $this->getUserPerms($user)) {
             return false;
@@ -137,13 +140,43 @@ class NewPermissionsExtension extends Twig_Extension
             return false;
         }
 
-        if (!$repository instanceof Repository) {
+        if (!$application instanceof Repository) {
             return false;
         }
 
         $apps = $perm->applications();
 
-        return in_array($repository->getId(), $apps, true);
+        return in_array($application->getId(), $apps, true);
+    }
+
+    /**
+     * @param User|null $user
+     * @param Repository|null $application
+     *
+     * @return bool
+     */
+    public function canUserBuild($user, $application)
+    {
+        if (!$user instanceof User) return false;
+        if (!$application instanceof Repository) return false;
+
+        return $this->permissions->canUserBuild($user, $application);
+    }
+
+    /**
+     * @param User|null $user
+     * @param Repository|null $application
+     * @param Environment|null $application
+     *
+     * @return bool
+     */
+    public function canUserPush($user, $application, $environment)
+    {
+        if (!$user instanceof User) return false;
+        if (!$application instanceof Repository) return false;
+        if (!$environment instanceof Environment) return false;
+
+        return $this->permissions->canUserPush($user, $application, $environment);
     }
 
     /**

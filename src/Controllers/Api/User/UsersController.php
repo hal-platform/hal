@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\UserNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Panthor\ControllerInterface;
 

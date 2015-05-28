@@ -100,7 +100,7 @@ class UserController implements ControllerInterface
 
             'ldapUser' => $this->ldap->getUserByCommonId($this->user->getId()),
 
-            'permissions' => $this->permissionsLegacy->userPushPermissionPairs($this->user->getHandle()),
+            // 'permissions' => $this->permissionsLegacy->userPushPermissionPairs($this->user->getHandle()),
             'builds' => $this->userRepo->getBuildCount($this->user),
             'pushes' => $this->userRepo->getPushCount($this->user),
         ]);

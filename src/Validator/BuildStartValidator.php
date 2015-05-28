@@ -13,8 +13,8 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Services\GithubService;
-use QL\Hal\Services\PermissionsService;
+use QL\Hal\Service\NewPermissionsService;
+use QL\Hal\Service\GitHubService;
 
 class BuildStartValidator
 {
@@ -42,12 +42,12 @@ class BuildStartValidator
     private $envRepo;
 
     /**
-     * @type GithubService
+     * @type GitHubService
      */
     private $github;
 
     /**
-     * @type PermissionsService
+     * @type NewPermissionsService
      */
     private $permissions;
 
@@ -63,14 +63,14 @@ class BuildStartValidator
 
     /**
      * @param EntityManagerInterface $em
-     * @param GithubService $github
-     * @param PermissionsService $permissions
+     * @param GitHubService $github
+     * @param NewPermissionsService $permissions
      * @param User $currentUser
      */
     public function __construct(
         EntityManagerInterface $em,
-        GithubService $github,
-        PermissionsService $permissions,
+        GitHubService $github,
+        NewPermissionsService $permissions,
         User $currentUser
     ) {
         $this->repoRepo = $em->getRepository(Repository::CLASS);
@@ -125,7 +125,7 @@ class BuildStartValidator
         }
 
         // no permission
-        if (!$this->permissions->allowBuild($this->currentUser, $repo->getKey())) {
+        if (!$this->permissions->canUserBuild($this->currentUser, $repo)) {
             $this->errors[] = self::ERR_NO_PERMISSION;
             return null;
         }

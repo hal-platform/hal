@@ -87,5 +87,4 @@ services:
 
     normalizer.user:
         class: 'QL\Hal\Api\Normalizer\UserNormalizer'
-        arguments:
-            - @permissions
+        arguments: [@permissions.new]

@@ -10,7 +10,6 @@ namespace QL\Hal\Twig;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Services\ElasticBeanstalk\Environment as EBEnvironment;
-use QL\Hal\Services\PermissionsService;
 use Twig_Extension;
 use Twig_SimpleFilter;
 

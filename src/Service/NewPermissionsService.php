@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
@@ -20,6 +20,7 @@ class NewPermissionsService
     use CachingTrait;
 
     const CACHE_PERM = 'permissions:hal.%s';
+    const CACHE_COLLAB = 'permissions:github.%s.%s';
 
     /**
      * @type EntityManagerInterface
@@ -30,6 +31,11 @@ class NewPermissionsService
      * @type EntityRepository
      */
     private $userTypeRepo;
+
+    /**
+     * @type GitHubService
+     */
+    private $github;
 
     /**
      * @type Json
@@ -43,16 +49,33 @@ class NewPermissionsService
      */
     private $internalCache;
 
+    private $productionEnvironments;
+    private $superApplications;
+
     /**
      * @param EntityManagerInterface $em
+     * @param GitHubService $github
+     * @param Json $json
      */
-    public function __construct(EntityManagerInterface $em, Json $json)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        GitHubService $github,
+        Json $json
+    ) {
         $this->em = $em;
         $this->userTypesRepo = $em->getRepository(UserType::CLASS);
+
+        $this->github = $github;
         $this->json = $json;
 
         $this->internalCache = [];
+
+        $this->productionEnvironments = ['prod', 'production'];
+        $this->superApplications = [
+            'hal9000',
+            'hal9000-agent',
+            'eternia-cloud'
+        ];
     }
 
     /**
@@ -108,6 +131,114 @@ class NewPermissionsService
     {
         $key = sprintf(self::CACHE_PERM, $user->getId());
         $this->setToCache($key, null);
+    }
+
+    /**
+     * @param User $user
+     * @param Repository $application
+     *
+     * @return bool
+     */
+    public function canUserBuild(User $user, Repository $application)
+    {
+        $perm = $user->getUserPermissions($user);
+
+        if ($perm->isButtonPusher() || $perm->isSuper()) {
+            return true;
+        }
+
+        if ($perm->isLead() && in_array($repository->getId(), $perm->applications(), true)) {
+            return true;
+        }
+
+        if ($this->isUserCollaborator($user, $application)) {
+            return true;
+        }
+
+        // @todo, add deployment permissions here
+
+        return false;
+    }
+
+    /**
+     * @param User $user
+     * @param Repository $application
+     * @param Environment $environment
+     *
+     * @return bool
+     */
+    public function canUserPush(User $user, Repository $application, Environment $environment)
+    {
+        $perm = $user->getUserPermissions($user);
+
+        // Not prod? Same permissions as building
+        if (!$this->isEnvironmentProduction($environment)) {
+            return $this->canUserBuild($user, $application);
+        }
+
+        if ($perm->isButtonPusher()) {
+            return true;
+        }
+
+        if ($perm->isSuper() && $this->isSuperApplication($application)) {
+            return true;
+        }
+
+        // @todo, add deployment permissions here
+
+        return false;
+    }
+
+    /**
+     * @todo replace with db toggle
+     *
+     * @param string $environment
+     * @return bool
+     */
+    private function isEnvironmentProduction($environment)
+    {
+        return in_array($environment, $this->productionEnvironments);
+    }
+
+    /**
+     * @param Repository $application
+     *
+     * @return bool
+     */
+    private function isSuperApplication(Repository $application)
+    {
+        return in_array($application->getKey(), $this->superApplications);
+    }
+
+    /**
+     * @param User $user
+     * @param Repository $application
+     *
+     * @return bool
+     */
+    private function isUserCollaborator(User $user, Repository $application)
+    {
+        $key = sprintf(self::CACHE_COLLAB, $user->getId(), $application->getKey());
+
+        // internal cache
+        if (array_key_exists($key, $this->internalCache)) {
+            return $this->internalCache[$key];
+        }
+
+        // external cache
+        if ($result = $this->getFromCache($key)) {
+            return $result;
+        }
+
+        $result = $this->github->isUserCollaborator(
+            $application->getGithubUser(),
+            $application->getGithubRepo(),
+            $user->getHandle()
+        );
+
+        $this->setToCache($key, $result);
+        $this->internalCache[$key] = $result;
+        return $result;
     }
 
     /**

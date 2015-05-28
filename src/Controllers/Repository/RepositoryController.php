@@ -136,7 +136,7 @@ class RepositoryController implements ControllerInterface
             'repository' => $repo,
             'deployment_environments' => $environmentalized,
             'deployment_count' => $deploymentCount,
-            'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey()),
+            // 'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey()),
             'kraken' => $krakenApp
         ]);
 

@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Controllers\Push;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
@@ -14,7 +15,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Services\PermissionsService;
+use QL\Hal\Service\NewPermissionsService;
 use QL\Hal\Services\StickyEnvironmentService;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
@@ -41,7 +42,6 @@ class StartPushHandler implements MiddlewareInterface
     private $buildRepo;
     private $pushRepo;
     private $deployRepo;
-    private $userRepo;
 
     /**
      * @type EntityManagerInterface
@@ -59,7 +59,7 @@ class StartPushHandler implements MiddlewareInterface
     private $currentUser;
 
     /**
-     * @type PermissionsService
+     * @type NewPermissionsService
      */
     private $permissions;
 
@@ -93,7 +93,7 @@ class StartPushHandler implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param Url $url
      * @param User $currentUser
-     * @param PermissionsService $permissions
+     * @param NewPermissionsService $permissions
      * @param JobIdGenerator $unique
      * @param Request $request
      * @param Context $context
@@ -105,7 +105,7 @@ class StartPushHandler implements MiddlewareInterface
         EntityManagerInterface $em,
         Url $url,
         User $currentUser,
-        PermissionsService $permissions,
+        NewPermissionsService $permissions,
         JobIdGenerator $unique,
         Request $request,
         Context $context,
@@ -117,7 +117,6 @@ class StartPushHandler implements MiddlewareInterface
         $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->deployRepo = $em->getRepository(Deployment::CLASS);
-        $this->userRepo = $em->getRepository(User::CLASS);
         $this->em = $em;
 
         $this->url = $url;
@@ -152,26 +151,36 @@ class StartPushHandler implements MiddlewareInterface
             return $this->context->addContext(['errors' => [self::ERR_NO_DEPS]]);
         }
 
-        $buildEnv = $build->getEnvironment();
+        $environment = $build->getEnvironment();
         $repo = $build->getRepository();
         $pushes = [];
 
-        foreach ($deploymentIds as $deploymentId) {
-            $deployment = $this->deployRepo->find($deploymentId);
+        $canUserPush = $this->permissions->canUserPush($this->currentUser, $repo, $environment);
 
-            if (!$deployment) {
+        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $deploymentIds));
+        $deployments = $this->deployRepo->matching($criteria);
+        $deployments = $deployments->toArray();
+
+        $kvd = [];
+        foreach ($deployments as $deployment) {
+            $kvd[$deployment->getId()] = $deployment;
+        }
+
+        foreach ($deploymentIds as $deploymentId) {
+            if (!isset($kvd[$deploymentId])) {
                 return $this->context->addContext(['errors' => [self::ERR_BAD_DEP]]);
             }
 
+            $deployment = $kvd[$deploymentId];
             $server = $deployment->getServer();
 
-            if ($buildEnv->getId() !== $server->getEnvironment()->getId()) {
+            if ($environment !== $server->getEnvironment())) {
                 return $this->context->addContext([
-                    'errors' => [sprintf(self::ERR_WRONG_ENV, $buildEnv->getKey())]
+                    'errors' => [sprintf(self::ERR_WRONG_ENV, $environment->getKey())]
                 ]);
             }
 
-            if (!$this->permissions->allowPush($this->currentUser, $repo->getKey(), $buildEnv->getKey())) {
+            if (!$canUserPush) {
                 return $this->context->addContext([
                     'errors' => [sprintf(self::ERR_NO_PERM, $server->getName())]
                 ]);
@@ -180,11 +189,10 @@ class StartPushHandler implements MiddlewareInterface
             $push = new Push;
 
             $id = $this->unique->generatePushId();
-            $user = $this->userRepo->find($this->currentUser->getId());
 
             $push->setId($id);
             $push->setStatus('Waiting');
-            $push->setUser($user);
+            $push->setUser($this->currentUser);
             $push->setBuild($build);
             $push->setDeployment($deployment);
             $push->setRepository($repo);

@@ -71,7 +71,7 @@
         </dl>
     </div>
 
-    {% if canUserBuild(currentUser, build.repository.key) %}
+    {% if canUserBuild(currentUser, build.repository) %}
         {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
         {% set unpushableMessage = 'The build cannot be pushed.' %}
 

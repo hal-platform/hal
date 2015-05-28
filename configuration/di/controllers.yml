@@ -15,7 +15,7 @@ services:
         arguments:
             - @dashboard.twig
             - @currentUser
-            - @permissions
+            - @permissions.new
             - @clock
             - @doctrine.em
             - @slim.response
@@ -172,8 +172,8 @@ services:
         class: 'QL\Hal\Validator\BuildStartValidator'
         arguments:
             - @doctrine.em
-            - @github
-            - @permissions
+            - @github.new
+            - @permissions.new
             - @currentUser
 
     builds.page:
@@ -213,7 +213,7 @@ services:
             - @doctrine.em
             - @url
             - @currentUser
-            - @permissions
+            - @permissions.new
             - @utility.id.generator
             - @slim.request
             - @twig.context
@@ -463,7 +463,7 @@ services:
         class: 'QL\Hal\Controllers\User\Token\AddTokenController'
         arguments:
             - @doctrine.em
-            - @permissions
+            - @permissions.new
             - @currentUser
             - @session.flasher
             - @slim.request
@@ -475,7 +475,7 @@ services:
         class: 'QL\Hal\Controllers\User\Token\RemoveTokenController'
         arguments:
             - @doctrine.em
-            - @permissions
+            - @permissions.new
             - @currentUser
             - @session.flasher
             - @slim.not.found

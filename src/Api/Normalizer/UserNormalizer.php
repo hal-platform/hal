@@ -5,7 +5,7 @@ namespace QL\Hal\Api\Normalizer;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Services\PermissionsService;
+use QL\Hal\Service\NewPermissionsService;
 
 /**
  * User Object Normalizer
@@ -16,15 +16,15 @@ class UserNormalizer
     use HypermediaResourceTrait;
 
     /**
-     * @var PermissionsService
+     * @var NewPermissionsService
      */
     private $permissions;
 
     /**
-     * @param PermissionsService $permissions
+     * @param NewPermissionsService $permissions
      */
     public function __construct(
-        PermissionsService $permissions
+        NewPermissionsService $permissions
     ) {
         $this->permissions = $permissions;
     }
@@ -53,6 +53,8 @@ class UserNormalizer
             return null;
         }
 
+        $perm = $this->permissions->getUserPermissions($user);
+
         return $this->buildResource(
             [
                 'id' => $user->getId(),
@@ -61,8 +63,10 @@ class UserNormalizer
                 'email' => $user->getEmail(),
                 'picture' => $user->getPictureUrl(),
                 'permissions' => [
-                    'admin' => $this->permissions->allowAdmin($user),
-                    'superAdmin' => $this->permissions->allowSuperAdmin($user)
+                    'standard' => $perm->isPleb(),
+                    'lead' => $perm->isLead(),
+                    'admin' => $perm->isButtonPusher(),
+                    'super' => $perm->isSuper()
                 ]
             ],
             [],

@@ -32,7 +32,10 @@ services:
 
     permissions.new:
         class: 'QL\Hal\Service\NewPermissionsService'
-        arguments: [@doctrine.em, @json]
+        arguments:
+            - @doctrine.em
+            - @github.new
+            - @json
         calls:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.permissions.ttl%]]
@@ -63,6 +66,10 @@ services:
         arguments:
             - %redis.server%
             - {prefix: '%redis.prefix%:'}
+
+    github.new:
+        class: 'QL\Hal\Service\GitHubService'
+        parent: 'github'
 
     ####################################################################################################################
     # Crypto
@@ -134,16 +141,13 @@ services:
             - ['addGlobal', ['applicationTitle', %application.title%]]
             - ['addGlobal', ['applicationSha', %application.sha%]]
             - ['addGlobal', ['applicationVersion', %application.major.version%]]
+            - ['addGlobal', ['applicationEnvironment', %application.environment%]]
             - ['addGlobal', ['navItems', %navigation.list%]]
             - ['addGlobal', ['session', @session]]
 
     twig.extension.permissions:
-        class: 'QL\Hal\Twig\NewPermissionsExtension'
+        class: 'QL\Hal\Twig\PermissionsExtension'
         arguments: [@permissions.new]
-
-    twig.extension.permissions.legacy:
-        class: 'QL\Hal\Twig\PermissionExtension'
-        arguments: [@permissions]
 
     twig.extension.github:
         class: 'QL\Hal\Twig\GithubExtension'
@@ -161,7 +165,6 @@ services:
         calls:
             - ['addExtension', [@twig.extension.hal]]
             - ['addExtension', [@twig.extension.hal.global]]
-            - ['addExtension', [@twig.extension.permissions.legacy]]
             - ['addExtension', [@twig.extension.permissions]]
             - ['addExtension', [@twig.extension.github]]
             - ['addExtension', [@twig.extension.ansi]]
