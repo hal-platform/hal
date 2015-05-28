@@ -15,28 +15,27 @@ parameters:
         dashboard:
             method: 'GET'
             route: '/'
-            stack: ['login.bouncer', 'dashboard.page']
+            stack: ['middleware.login', 'dashboard.page']
 
         logout:
             method: 'GET'
             route: '/logout'
             stack: ['logout.handler']
 
-
         debug:
             method: 'GET'
             route:  '/debug'
-            stack:  ['login.bouncer', 'debug.page']
+            stack:  ['middleware.login', 'debug.page']
 
         github.authorization:
             method: 'GET'
             route:  '/github-authorization'
-            stack:  ['login.bouncer', 'github.authorization.page']
+            stack:  ['middleware.login', 'github.authorization.page']
 
         github.authorization.remove:
             method: ['GET', 'POST']
             route:  '/settings/remove-github-authorization'
-            stack:  ['login.bouncer', 'github.authorization.remove.page']
+            stack:  ['middleware.login', 'github.authorization.remove.page']
 
         ################################################################################################################
         # QUEUE ROUTES
@@ -45,17 +44,17 @@ parameters:
         queue:
             method: 'GET'
             route: '/queue'
-            stack: ['login.bouncer', 'queue.page']
+            stack: ['middleware.login', 'queue.page']
 
         queue.history.page1:
             method: 'GET'
             route: '/queue-history'
-            stack: ['login.bouncer', 'queue.history.page']
+            stack: ['middleware.login', 'queue.history.page']
 
         queue.history:
             method: 'GET'
             route: '/queue-history/date/:date'
-            stack: ['login.bouncer', 'queue.history.page']
+            stack: ['middleware.login', 'queue.history.page']
             conditions: {date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'}
 
         ################################################################################################################
@@ -165,12 +164,12 @@ parameters:
         build.history.page1:
             method: 'GET'
             route: '/repositories/:id/builds'
-            stack: ['login.bouncer', 'builds.page']
+            stack: ['middleware.login', 'builds.page']
             conditions: {id: %routes.regex.digit%}
         build.history:
             method: 'GET'
             route: '/repositories/:id/builds(/page/:page)'
-            stack: ['login.bouncer', 'builds.page']
+            stack: ['middleware.login', 'builds.page']
             conditions:
                 id: %routes.regex.digit%
                 page: %routes.regex.digit%
@@ -178,13 +177,13 @@ parameters:
         build:
             method: 'GET'
             route: '/builds/:build'
-            stack: ['login.bouncer', 'build.page']
+            stack: ['middleware.login', 'build.page']
             conditions: {build: %routes.regex.buildId%}
 
         build.start:
             method: ['GET', 'POST']
             route: '/repositories/:id/build'
-            stack: ['login.bouncer', 'build.start.handler', 'build.start.page']
+            stack: ['middleware.login', 'build.start.handler', 'build.start.page']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
@@ -194,24 +193,24 @@ parameters:
         push:
             method: 'GET'
             route: '/pushes/:push'
-            stack: ['login.bouncer', 'push.page']
+            stack: ['middleware.login', 'push.page']
             conditions: {push: %routes.regex.pushId%}
 
         push.start:
             method: ['GET', 'POST']
             route: '/builds/:build/push'
-            stack: ['login.bouncer', 'push.start.handler', 'push.start.page']
+            stack: ['middleware.login', 'push.start.handler', 'push.start.page']
             conditions: {build: %routes.regex.buildId%}
 
         push.history.page1:
             method: 'GET'
             route: '/repositories/:id/pushes'
-            stack: ['login.bouncer', 'pushes.page']
+            stack: ['middleware.login', 'pushes.page']
             conditions: {id: %routes.regex.digit%}
         push.history:
             method: 'GET'
             route: '/repositories/:id/pushes(/page/:page)'
-            stack: ['login.bouncer', 'pushes.page']
+            stack: ['middleware.login', 'pushes.page']
             conditions:
                 id: %routes.regex.digit%
                 page: %routes.regex.digit%
@@ -219,7 +218,7 @@ parameters:
         rollback.page1:
             method: 'GET'
             route: '/repositories/:id/deployments/:deployment/pushes'
-            stack: ['login.bouncer', 'push.rollback.page']
+            stack: ['middleware.login', 'push.rollback.page']
             conditions:
                 id: %routes.regex.digit%
                 deployment: %routes.regex.digit%
@@ -227,7 +226,7 @@ parameters:
         rollback:
             method: 'GET'
             route: '/repositories/:id/deployments/:deployment/pushes(/page/:page)'
-            stack: ['login.bouncer', 'push.rollback.page']
+            stack: ['middleware.login', 'push.rollback.page']
             conditions:
                 id: %routes.regex.digit%
                 deployment: %routes.regex.digit%
@@ -239,12 +238,12 @@ parameters:
         servers:
             method: 'GET'
             route: '/servers'
-            stack: ['login.bouncer', 'servers.page']
+            stack: ['middleware.login', 'servers.page']
 
         server:
             method: 'GET'
             route: '/servers/:id'
-            stack: ['login.bouncer', 'server.page']
+            stack: ['middleware.login', 'server.page']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
@@ -280,24 +279,24 @@ parameters:
         user:
             method: 'GET'
             route: '/users/:user'
-            stack: ['login.bouncer', 'middleware.requireEntity', 'user.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'user.page']
             conditions: {user: %routes.regex.digit%}
 
         settings:
             method: 'GET'
             route: '/settings'
-            stack: ['login.bouncer', 'user.settings.page']
+            stack: ['middleware.login', 'user.settings.page']
 
         settings.handler:
             method: 'POST'
             route: '/users/:id/preferences'
-            stack: ['login.bouncer', 'user.settings.handler']
+            stack: ['middleware.login', 'user.settings.handler']
             conditions: {id: %routes.regex.digit%}
 
         users:
             method: 'GET'
             route: '/users'
-            stack: ['login.bouncer', 'users.page']
+            stack: ['middleware.login', 'users.page']
 
         ################################################################################################################
         # USER TOKEN MANAGEMENT ROUTES
@@ -306,20 +305,20 @@ parameters:
         user.token.add:
             method: 'POST'
             route: '/users/:id/tokens'
-            stack: ['login.bouncer', 'user.token.add.handler']
+            stack: ['middleware.login', 'user.token.add.handler']
             conditions: {id: %routes.regex.digit%}
 
         user.token.remove.confirm:
             method: 'GET'
             route: '/users/:id/tokens/:token/revoke'
-            stack: ['login.bouncer', 'delete.confirm.page']
+            stack: ['middleware.login', 'delete.confirm.page']
             conditions:
                 id: %routes.regex.digit%
                 token: %routes.regex.guid%
         user.token.remove:
             method: 'POST'
             route: '/users/:id/tokens/:token/revoke'
-            stack: ['login.bouncer', 'user.token.remove.handler']
+            stack: ['middleware.login', 'user.token.remove.handler']
             conditions:
                 id: %routes.regex.digit%
                 token: %routes.regex.guid%
@@ -331,29 +330,29 @@ parameters:
         repositories:
             method: 'GET'
             route: '/repositories'
-            stack: ['login.bouncer', 'repositories.page']
+            stack: ['middleware.login', 'repositories.page']
 
         repository:
             method: 'GET'
             route: '/repositories/:id'
-            stack: ['login.bouncer', 'repository.page']
+            stack: ['middleware.login', 'repository.page']
             conditions: {id: %routes.regex.digit%}
 
         repository.status:
             method: 'GET'
             route: '/repositories/:id/status'
-            stack: ['login.bouncer', 'repository.status.sticky.handler', 'repository.status.page']
+            stack: ['middleware.login', 'repository.status.sticky.handler', 'repository.status.page']
             conditions: {id: %routes.regex.digit%}
 
         repository.admin.add:
             method: ['GET', 'POST']
             route: '/repositories/add'
-            stack: ['login.bouncer', 'repository.admin.add.page']
+            stack: ['middleware.login', 'repository.admin.add.page']
 
         repository.admin.edit:
             method: ['GET', 'POST']
             route: '/repositories/:repository/edit'
-            stack: ['repoadmin.bouncer', 'repository.admin.edit.page']
+            stack: ['middleware.lead', 'repository.admin.edit.page']
             conditions: {repository: %routes.regex.digit%}
 
         ################################################################################################################
@@ -378,7 +377,7 @@ parameters:
         repository.deployment:
             method: 'GET'
             route: '/repositories/:repository/deployments/:id'
-            stack: ['login.bouncer', 'repository.deployment.page']
+            stack: ['middleware.login', 'repository.deployment.page']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.digit%
@@ -386,19 +385,19 @@ parameters:
         repository.deployments:
             method: 'GET'
             route: '/repositories/:repository/deployments'
-            stack: ['login.bouncer', 'repository.deployments.page']
+            stack: ['middleware.login', 'repository.deployments.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.deployments.add:
             method: ['GET', 'POST']
             route: '/repositories/:repository/deployments/add'
-            stack: ['repoadmin.bouncer', 'repository.deployments.add.handler', 'repository.deployments.add.page']
+            stack: ['middleware.lead', 'repository.deployments.add.handler', 'repository.deployments.add.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.deployment.edit:
             method: ['GET', 'POST']
             route: '/repositories/:repository/deployments/:id/edit'
-            stack: ['repoadmin.bouncer', 'repository.deployment.edit.handler', 'repository.deployment.edit.page']
+            stack: ['middleware.lead', 'repository.deployment.edit.handler', 'repository.deployment.edit.page']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.digit%
@@ -406,7 +405,7 @@ parameters:
         repository.deployment.remove.confirm:
             method: 'GET'
             route: '/repositories/:repository/deployments/:id/remove'
-            stack: ['repoadmin.bouncer', 'delete.confirm.page']
+            stack: ['middleware.lead', 'delete.confirm.page']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.digit%
@@ -414,7 +413,7 @@ parameters:
         repository.deployment.remove:
             method: 'POST'
             route: '/repositories/:repository/deployments/:id/remove'
-            stack: ['repoadmin.bouncer', 'repository.deployments.remove.handler']
+            stack: ['middleware.lead', 'repository.deployments.remove.handler']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.digit%
@@ -426,26 +425,26 @@ parameters:
         repository.encrypted:
             method: 'GET'
             route: '/repositories/:repository/encrypted-properties'
-            stack: ['login.bouncer', 'repository.encrypted.page']
+            stack: ['middleware.login', 'repository.encrypted.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.encrypted.add:
             method: ['GET', 'POST']
             route: '/repositories/:repository/encrypted-properties/add'
-            stack: ['repoadmin.bouncer', 'repository.encrypted.add.handler', 'repository.encrypted.add.page']
+            stack: ['middleware.lead', 'repository.encrypted.add.handler', 'repository.encrypted.add.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.encrypted.remove.confirm:
             method: 'GET'
             route: '/repositories/:repository/encrypted-properties/:id/remove'
-            stack: ['repoadmin.bouncer', 'delete.confirm.page']
+            stack: ['middleware.lead', 'delete.confirm.page']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.guid%
         repository.encrypted.remove:
             method: ['POST']
             route: '/repositories/:repository/encrypted-properties/:id/remove'
-            stack: ['repoadmin.bouncer', 'repository.encrypted.remove.handler']
+            stack: ['middleware.lead', 'repository.encrypted.remove.handler']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.guid%
@@ -457,18 +456,18 @@ parameters:
         groups:
             method: 'GET'
             route: '/groups'
-            stack: ['login.bouncer', 'repositories.page']
+            stack: ['middleware.login', 'repositories.page']
 
         group:
             method: 'GET'
             route: '/groups/:id'
-            stack: ['login.bouncer', 'group.page']
+            stack: ['middleware.login', 'group.page']
             conditions: {id: %routes.regex.digit%}
 
         group.admin.add:
             method: ['GET', 'POST']
             route: '/groups/add'
-            stack: ['login.bouncer', 'group.admin.add.page']
+            stack: ['middleware.login', 'group.admin.add.page']
 
         ################################################################################################################
         # GROUP ROUTES - ADMIN
@@ -498,13 +497,13 @@ parameters:
         environments:
             method: 'GET'
             route: '/environments'
-            stack: ['login.bouncer', 'environments.page']
+            stack: ['middleware.login', 'environments.page']
             conditions: {id: %routes.regex.digit%}
 
         environment:
             method: 'GET'
             route: '/environments/:id'
-            stack: ['login.bouncer', 'environment.page']
+            stack: ['middleware.login', 'environment.page']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################

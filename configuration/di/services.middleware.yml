@@ -3,29 +3,6 @@ services:
     # MIDDLEWARE
     ######################################################################################################################
 
-    # Bounce unauthenticated users
-    login.bouncer:
-        class: 'QL\Hal\Middleware\Bouncer\LoginBouncer'
-        arguments:
-            - @session
-            - @doctrine.em
-            - @service_container
-            - @url.helper
-            - @slim.request
-
-    # Bounce users who don't have access to modify a repository
-    repoadmin.bouncer:
-        class: 'QL\Hal\Middleware\Bouncer\RepoAdminBouncer'
-        arguments:
-            - @service_container
-            - @permissions
-            - @denied.twig
-            - @login.bouncer
-            - @doctrine.em
-            - @slim.response
-            - @slim.not.found
-            - @slim.route.parameters
-
     # Bounce unauthenticated api clients
     api.auth.bouncer:
         class: 'QL\Hal\Middleware\Bouncer\ApiAuthBouncer'
@@ -56,6 +33,15 @@ services:
             - @session
             - @url
             - @slim.request
+
+    middleware.lead:
+        class: 'QL\Hal\Middleware\ACL\LeadMiddleware'
+        arguments:
+            - @service_container
+            - @middleware.login
+            - @denied.twig
+            - @permissions.new
+            - @slim.halt
 
     middleware.admin:
         class: 'QL\Hal\Middleware\ACL\AdminMiddleware'

@@ -15,9 +15,9 @@ use QL\Panthor\Slim\Halt;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Note: Supers also pass this middleware bouncer.
+ * Note: Admins and Supers also pass this middleware bouncer.
  */
-class AdminMiddleware implements MiddlewareInterface
+class LeadMiddleware implements MiddlewareInterface
 {
     /**
      * @type ContainerInterface
@@ -79,6 +79,16 @@ class AdminMiddleware implements MiddlewareInterface
 
         if ($perm->isButtonPusher() || $perm->isSuper()) {
             return;
+        }
+
+        // ASSUMPTION: the repository id will always be named 'repository' in the route
+        // dumb, but we need to look up the repo key here for user permission checks
+        $application = isset($this->parameters['repository']) ? $this->parameters['repository'] : null;
+
+        if ($application && $perm->isLead()) {
+            if (in_array($application, $perm->applications(), true)) {
+                return;
+            }
         }
 
         $rendered = $this->template->render();

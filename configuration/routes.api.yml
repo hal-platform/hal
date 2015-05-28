@@ -16,7 +16,7 @@ parameters:
         api.github.user.repositories:
             method: 'GET'
             route: '/api/github/users/:username/repositories'
-            stack: ['login.bouncer', 'api.github.user.repositories']
+            stack: ['middleware.login', 'api.github.user.repositories']
             conditions: {username: %routes.api.regex.githubname%}
 
         ################################################################################################################
