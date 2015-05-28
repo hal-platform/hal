@@ -2,6 +2,8 @@
 
 {% set page_title = 'Environment : ' ~ env.key %}
 
+{% set isAdmin = isUserSuper(currentUser) %}
+
 {% block content %}
     <h1>Environment - <strong>{{ env.key }}</strong></h1>
 
@@ -30,15 +32,15 @@
         <p>There are no servers associated with this environment.</p>
     {% endif %}
 
-    {% if isUserAdmin(currentUser) and servers %}
+    {% if isAdmin and servers %}
         <p><strong>Note:</strong> All associated servers must be removed or transferred to remove this environment.</p>
     {% endif %}
 
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('environments') }}">Environments</a></li>
-        {% if isUserAdmin(currentUser) %}
+        {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit Environment</a></li>
-            {% if not servers and isUserAdmin(currentUser) %}
+            {% if not servers and isAdmin %}
                 <li><a class="btn btn--destructive" href="{{ urlFor('environment.admin.remove', {id: env.id}) }}">Remove Environment</a></li>
             {% endif %}
         {% endif %}

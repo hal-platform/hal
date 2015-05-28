@@ -3,7 +3,7 @@
 
 {% set page_title = 'Application' ~ repository.name %}
 
-{% set isRepoAdmin = isUserRepoAdmin(currentUser, repository.key) %}
+{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, repository) %}
 
 {% block content %}
     <h1>Application - <strong>{{ repository.name }}</strong></h1>
@@ -54,11 +54,11 @@
         <ul class="button-list">
             <li><a class="btn" href="{{ urlFor('repository.status', {id: repository.id}) }}">Application Status</a></li>
 
-            {% if isRepoAdmin %}
+            {% if isAdmin %}
                 <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: repository.id}) }}">Edit Application</a></li>
             {% endif %}
 
-            {% if isUserAdmin(currentUser) and not deployment_count %}
+            {% if isUserAdminOrSuper(currentUser) and not deployment_count %}
                 <li><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: repository.id}) }}">Remove Application</a></li>
             {% endif %}
 

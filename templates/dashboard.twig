@@ -23,7 +23,7 @@
     {% endif %}
 
     {# STUCK WORK #}
-    {% if isUserAdmin(currentUser) and stuck %}
+    {% if isUserAdminOrSuper(currentUser) and stuck %}
         {% set title = 'There is <strong>' ~ stuck|length ~ '</strong> stuck job!' %}
         {% if stuck|length > 1 %}
             {% set title = 'There are <strong>' ~ stuck|length ~ '</strong> stuck jobs!' %}

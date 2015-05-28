@@ -38,7 +38,7 @@
                         {{ nav_macros.optionalNavlink('Environments', 'environments', 'leaf') }}
                         {{ nav_macros.optionalNavlink('Users', 'users', 'users') }}
 
-                        {% if isUserAdmin(currentUser) %}
+                        {% if isUserAdminOrSuper(currentUser) %}
                             {{ nav_macros.optionalNavlink('Admin', 'admin', 'watch') }}
                         {% endif %}
                         {{ nav_macros.optionalNavlink('Help', 'help', 'question') }}

@@ -5,9 +5,8 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Admin;
+namespace QL\Hal\Controllers\Admin\Permissions;
 
-use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
@@ -52,21 +51,18 @@ class RemovePermissionsHandler implements ControllerInterface
     /**
      * @param User $currentUser
      * @param UserType $userType
-     * @param EntityManagerInterface $em
      * @param NewPermissionsService $permissions
      * @param Flasher $flasher
      */
     public function __construct(
         User $currentUser,
         UserType $userType,
-        EntityManagerInterface $em,
         NewPermissionsService $permissions,
         Flasher $flasher
     ) {
         $this->currentUser = $currentUser;
         $this->userType = $userType;
 
-        $this->em = $em;
         $this->permissions = $permissions;
         $this->flasher = $flasher;
     }
@@ -109,8 +105,7 @@ class RemovePermissionsHandler implements ControllerInterface
         $type = $map[$type];
         $name = $this->userType->user()->getHandle();
 
-        $this->em->remove($this->userType);
-        $this->em->flush();
+        $this->permissions->removeUserPermissions($this->userType);
 
         $this->flasher
             ->withFlash(sprintf(self::SUCCESS, $type, $name), 'success')

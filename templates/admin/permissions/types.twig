@@ -3,8 +3,8 @@
 
 {% set page_title = "User Permissions" %}
 
-{% set canRemoveLead = isCurrentUserSuper or isCurrentUserAdmin %}
-{% set canRemoveAdmin = isCurrentUserSuper %}
+{% set canRemoveLead = isUserSuper(currentUser) or isUserAdmin(currentUser) %}
+{% set canRemoveAdmin = isUserSuper(currentUser) %}
 
 {% block content %}
 
@@ -83,7 +83,7 @@
 
                         {% if can_remove %}
                             <td class="tr">
-                                <a href="{{ urlFor('admin.permissions.remove', {userType: type.id}) }}">Remove</a>
+                                <a class="btn btn--tiny btn--destructive" href="{{ urlFor('admin.permissions.remove', {userType: type.id}) }}">Remove</a>
                             </td>
                         {% endif %}
 

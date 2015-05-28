@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Admin;
+namespace QL\Hal\Controllers\Admin\Permissions;
 
 use Closure;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,16 +66,6 @@ class PermissionsController implements ControllerInterface
     {
         $types = $this->getTypes();
 
-        // Get current users permissions
-        $isSuper = $isButtonPusher = false;
-        foreach ($types['current'] as $currentType) {
-            if ($currentType->type() === 'btn_pusher') {
-                $isSuper = true;
-            } elseif ($currentType->type() === 'super') {
-                $isButtonPusher = true;
-            }
-        }
-
         // sort
         $sorter = $this->typeSorter();
 
@@ -85,9 +75,7 @@ class PermissionsController implements ControllerInterface
         usort($types['super'], $sorter);
 
         $rendered = $this->template->render([
-            'userTypes' => $types,
-            'isCurrentUserSuper' => $isSuper,
-            'isCurrentUserAdmin' => $isButtonPusher
+            'userTypes' => $types
         ]);
     }
 

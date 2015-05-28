@@ -48,7 +48,7 @@ services:
     ####################################################################################################################
 
     admin.permissions.page:
-        class: 'QL\Hal\Controllers\Admin\PermissionsController'
+        class: 'QL\Hal\Controllers\Admin\Permissions\PermissionsController'
         arguments:
             - @admin.permissions.twig
             - @currentUser
@@ -58,7 +58,7 @@ services:
         calls: [['setTemplate', ['admin/permissions/types.twig']]]
 
     admin.permissions.remove.page:
-        class: 'QL\Hal\Controllers\Admin\RemovePermissionsController'
+        class: 'QL\Hal\Controllers\Admin\Permissions\RemovePermissionsController'
         arguments:
             - @admin.permissions.remove.twig
             - @currentUser
@@ -71,13 +71,31 @@ services:
         calls: [['setTemplate', ['admin/permissions/type.remove.twig']]]
 
     admin.permissions.remove.handler:
-        class: 'QL\Hal\Controllers\Admin\RemovePermissionsHandler'
+        class: 'QL\Hal\Controllers\Admin\Permissions\RemovePermissionsHandler'
         arguments:
             - @currentUser
             - @hal.userType
-            - @doctrine.em
             - @permissions.new
             - @session.flasher
+
+    admin.permissions.add.page:
+        class: 'QL\Hal\Controllers\Admin\Permissions\AddPermissionsController'
+        arguments:
+            - @slim.request
+            - @admin.permissions.add.twig
+            - @currentUser
+            - @hal.user
+            - @doctrine.em
+            - @permissions.new
+            - @json
+            - @session.flasher
+            - @doctrine.random.id
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.page.ttl%]]
+    admin.permissions.add.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/permissions/type.add.twig']]]
 
     ####################################################################################################################
     # SUPER ADMIN CONTROLLERS

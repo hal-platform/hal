@@ -65,6 +65,7 @@ parameters:
     cache.aws.ttl: 20
     cache.server.ttl: 300
     cache.stats.ttl: 900
+    cache.page.ttl: 300
 
     ############################################################################
     # configuration

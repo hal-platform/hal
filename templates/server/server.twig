@@ -3,6 +3,8 @@
 {% set name = (server.type == 'rsync') ? server.name : server|formatServerType %}
 {% set page_title = 'Server: ' ~ name %}
 
+{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+
 {% block content %}
     <h2>Server Information</h2>
 
@@ -76,14 +78,14 @@
         <p>There are no deployments associated with this server.</p>
     {% endif %}
 
-    {% if isUserAdmin(currentUser) and deployments %}
+    {% if isAdmin and deployments %}
         <p><strong>Note:</strong> All associated deployments must be removed or transferred to remove this server.</p>
     {% endif %}
 
     <div>
-        {% if isUserAdmin(currentUser) %}
+        {% if isAdmin %}
             <a class="btn btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
-            {% if not deployments and isUserAdmin(currentUser) %}
+            {% if not deployments and isAdmin %}
                 <a class="btn btn--destructive" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a>
             {% endif %}
         {% endif %}

@@ -3,6 +3,8 @@
 
 {% set page_title = 'Group : ' ~ group.name %}
 
+{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+
 {% block content %}
     <h1>Group - <strong>{{ group.name }}</strong></h1>
 
@@ -43,16 +45,16 @@
         <p>There are no repositories associated with this group.</p>
     {% endif %}
 
-    {% if isUserAdmin(currentUser) and repos %}
+    {% if isAdmin and repos %}
         <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
     {% endif %}
 
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Application</a></li>
-        {% if isUserAdmin(currentUser) %}
+        {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a></li>
 
-            {% if not repos and isUserAdmin(currentUser) %}
+            {% if not repos and isAdmin %}
                 <li><a class="btn btn--destructive" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a></li>
             {% endif %}
         {% endif %}

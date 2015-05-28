@@ -2,7 +2,7 @@
 
 {% set page_title = 'Encrypted Properties : ' ~ repository.name %}
 
-{% set isRepoAdmin = isUserRepoAdmin(currentUser, repository.key) %}
+{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, repository) %}
 
 {% block content %}
     <h1>Encrypted Properties - <strong>{{ repository.name }}</strong></h1>
@@ -13,7 +13,7 @@
                 <tr>
                     <th>Property Name</th>
                     <th>Environment</th>
-                    {% if isRepoAdmin %}
+                    {% if isAdmin %}
                         <th></th>
                     {% endif %}
                 </tr>
@@ -31,7 +31,7 @@
                             Global (Available in all environments)
                         {% endif %}
                     </td>
-                    {% if isRepoAdmin %}
+                    {% if isAdmin %}
                         <td class="tr">
                             <a class="btn btn--tiny btn--destructive" href="{{ urlFor('repository.encrypted.remove', {'repository': repository.id, 'id': property.id}) }}">Remove</a>
                         </td>
@@ -55,14 +55,10 @@
 
 
     <ul class="button-list">
-        {% if isRepoAdmin %}
+        {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('repository.encrypted.add', {repository: repository.id}) }}">Add Encrypted Property</a></li>
         {% endif %}
         <li><a class="btn" href="{{ urlFor('repository', {'id': repository.id}) }}">Application</a></li>
-
     </ul>
-
-
-
 
 {% endblock %}

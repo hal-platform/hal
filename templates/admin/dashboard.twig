@@ -49,7 +49,7 @@
             </a>
         </li>
 
-        {% if isUserSuperAdmin(currentUser) %}
+        {% if isUserSuper(currentUser) %}
             <li>
                 <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
                     {{ macros.icon('dashboard') }} Super Admin Dashboard

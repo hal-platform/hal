@@ -33,6 +33,9 @@ services:
     permissions.new:
         class: 'QL\Hal\Service\NewPermissionsService'
         arguments: [@doctrine.em, @json]
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.permissions.ttl%]]
 
     global.message:
         class: 'QL\Hal\Services\GlobalMessageService'
@@ -135,6 +138,10 @@ services:
             - ['addGlobal', ['session', @session]]
 
     twig.extension.permissions:
+        class: 'QL\Hal\Twig\NewPermissionsExtension'
+        arguments: [@permissions.new]
+
+    twig.extension.permissions.legacy:
         class: 'QL\Hal\Twig\PermissionExtension'
         arguments: [@permissions]
 
@@ -154,6 +161,7 @@ services:
         calls:
             - ['addExtension', [@twig.extension.hal]]
             - ['addExtension', [@twig.extension.hal.global]]
+            - ['addExtension', [@twig.extension.permissions.legacy]]
             - ['addExtension', [@twig.extension.permissions]]
             - ['addExtension', [@twig.extension.github]]
             - ['addExtension', [@twig.extension.ansi]]

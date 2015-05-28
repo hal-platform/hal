@@ -20,13 +20,15 @@ class NewPermissionsService
     use CachingTrait;
 
     const CACHE_PERM = 'permissions:hal.%s';
-    // const CACHE_LDAP_GROUP = 'permissions:ldap.group.%s';
-    // const CACHE_LDAP_USER = 'permissions:ldap.user.%s';
+
+    /**
+     * @type EntityManagerInterface
+     */
+    private $em;
 
     /**
      * @type EntityRepository
      */
-    // private $userRepo;
     private $userTypeRepo;
 
     /**
@@ -35,12 +37,22 @@ class NewPermissionsService
     private $json;
 
     /**
+     * Simple in-memory cache
+     *
+     * @type array
+     */
+    private $internalCache;
+
+    /**
      * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em, Json $json)
     {
+        $this->em = $em;
         $this->userTypesRepo = $em->getRepository(UserType::CLASS);
         $this->json = $json;
+
+        $this->internalCache = [];
     }
 
     /**
@@ -51,6 +63,13 @@ class NewPermissionsService
     public function getUserPermissions(User $user)
     {
         $key = sprintf(self::CACHE_PERM, $user->getId());
+
+        // internal cache
+        if (array_key_exists($key, $this->internalCache)) {
+            return $this->internalCache[$key];
+        }
+
+        // external cache
         if ($result = $this->getFromCache($key)) {
             $decoded = $this->json->decode($result);
 
@@ -60,23 +79,41 @@ class NewPermissionsService
         }
 
         $userTypes = $this->userTypesRepo->findBy(['user' => $user]);
-        $parsed = $this->parseUserTypes($userTypes);
-        $perm = new UserPerm(
-            $parsed['isPleb'],
-            $parsed['isLead'],
-            $parsed['isButtonPusher'],
-            $parsed['isSuper'],
-            $parsed['applications']
-        );
+        $perm = $this->parseUserTypes($userTypes);
 
+        $this->internalCache[$key] = $perm;
         $this->setToCache($key, $this->json->encode($perm));
         return $perm;
     }
 
     /**
+     * @param UserType $permission
+     *
+     * @return void
+     */
+    public function removeUserPermissions(UserType $permission)
+    {
+        $this->clearUserCache($permission->user());
+
+        $this->em->remove($permission);
+        $this->em->flush();
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return void
+     */
+    public function clearUserCache(User $user)
+    {
+        $key = sprintf(self::CACHE_PERM, $user->getId());
+        $this->setToCache($key, null);
+    }
+
+    /**
      * @param UserType[] $types
      *
-     * @return array
+     * @return UserPerm
      */
     private function parseUserTypes(array $types)
     {
@@ -109,6 +146,12 @@ class NewPermissionsService
 
         $parsed['applications'] = array_values($parsed['applications']);
 
-        return $parsed;
+        return new UserPerm(
+            $parsed['isPleb'],
+            $parsed['isLead'],
+            $parsed['isButtonPusher'],
+            $parsed['isSuper'],
+            $parsed['applications']
+        );
     }
 }

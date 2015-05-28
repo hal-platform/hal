@@ -78,6 +78,10 @@ parameters:
             stack: ['middleware.admin', 'admin.audit.logs.page']
             conditions: {page: %routes.regex.digit%}
 
+        ################################################################################################################
+        # ADMIN ROUTES - PERMISSIONS
+        ################################################################################################################
+
         admin.permissions:
             method: 'GET'
             route: '/admin/permissions'
@@ -94,6 +98,12 @@ parameters:
             route: '/admin/permissions/:userType/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.remove.handler']
             conditions: {userType: %routes.regex.guid%}
+
+        admin.permissions.add:
+            method: ['GET', 'POST']
+            route: '/admin/permissions/:user/add'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.add.page']
+            conditions: {user: %routes.regex.digit%}
 
         ################################################################################################################
         # SUPER ADMIN ROUTES

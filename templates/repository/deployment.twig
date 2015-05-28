@@ -2,6 +2,8 @@
 
 {% set page_title = 'Deployment Information' %}
 
+{% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, deployment.repository) %}
+
 {% block content %}
     <h1>{{ page_title }}</h1>
 
@@ -72,9 +74,6 @@
         {% endif %}
     </p>
 
-    {% set canEdit = isUserRepoAdmin(currentUser, repository.key) %}
-
-
     <ul class="button-list">
         <li><a class="btn" href="{{ urlFor('repository.deployments', {repository: deployment.repository.id}) }}">Deployment Targets</a></li>
         {% if canEdit %}
@@ -83,7 +82,5 @@
         {% endif %}
 
     </ul>
-
-
 
 {% endblock %}
