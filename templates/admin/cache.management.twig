@@ -7,24 +7,28 @@
 
     <h2>Cache Management</h2>
 
-    <section class="trailer">
+    <ul class="button-list trailer">
+        <li>
+            <form method="post">
+                <input name="cache_type" type="hidden" value="doctrine">
+                <input type="submit" class="btn" value="Clear doctrine cache">
+            </form>
+        </li>
 
-        <form method="post">
-            <input name="cache_type" type="hidden" value="doctrine">
-            <input type="submit" class="btn" value="Clear doctrine cache">
-        </form>
+        <li>
+            <form method="post">
+                <input name="cache_type" type="hidden" value="permissions">
+                <input type="submit" class="btn" value="Clear permissions cache">
+            </form>
+        </li>
+        <li>
+            <form method="post">
+                <input name="cache_type" type="hidden" value="opcache">
+                <input type="submit" class="btn" value="Clear OP cache">
+            </form>
+        </li>
 
-        <form method="post">
-            <input name="cache_type" type="hidden" value="permissions">
-            <input type="submit" class="btn" value="Clear permissions cache">
-        </form>
-
-        <form method="post">
-            <input name="cache_type" type="hidden" value="opcache">
-            <input type="submit" class="btn" value="Clear OP cache">
-        </form>
-
-    </section>
+    </ul>
 
     <h3>Permissions Cache</h3>
     <section class="trailer">

@@ -6,7 +6,7 @@
 {% block content %}
     <h1>Admin Dashboard</h1>
 
-    <h2>Manage Deployments</h2>
+    <h2 class="leader">Manage Deployments</h2>
     <ul class="button-list">
         <li>
             <a href="{{ urlFor('repositories') }}" class="btn">
@@ -31,7 +31,7 @@
     </ul>
 
 
-    <h2>Security and Permissions</h2>
+    <h2 class="leader">Security and Permissions</h2>
     <ul class="button-list">
         <li>
             <a href="{{ urlFor('users') }}" class="btn btn--primary">
@@ -48,14 +48,57 @@
                 {{ macros.icon('watch') }} Audit Logs
             </a>
         </li>
-
-        {% if isUserSuper(currentUser) %}
-            <li>
-                <a href="{{ urlFor('admin.super') }}" class="btn btn--destructive">
-                    {{ macros.icon('dashboard') }} Super Admin Dashboard
-                </a>
-            </li>
-        {% endif %}
     </ul>
+
+    {% if isUserSuper(currentUser) %}
+        <h2 class="leader">Super Administrators</h2>
+        <ul class="button-list">
+            <li><a href="{{ urlFor('admin.super.users') }}" class="btn" >User Management</a></li>
+            <li><a href="{{ urlFor('admin.super.caches') }}" class="btn">Cache Management</a></li>
+            <li><a href="{{ urlFor('admin.super.message') }}" class="btn">Global Message</a></li>
+        </ul>
+
+        <h3>Server Information</h3>
+        <div class="details-box">
+            <dl class="split mbn">
+                <dl>
+                    <dt class="split__title"><strong>Hostname</strong></dt>
+                    <dd>
+                        <div class="pre-wrapper">
+                            <pre>{{ servername }}</pre>
+                        </div>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt class="split__title"><strong>Encryption key</strong></dt>
+                    <dd>
+                        <div class="pre-wrapper">
+                            <pre>{{ encryption_key }}</pre>
+                        </div>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt class="split__title"><strong>Session Encryption key</strong></dt>
+                    <dd>
+                        <div class="pre-wrapper">
+                            <pre>{{ session_encryption_key }}</pre>
+                        </div>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt class="split__title"><strong>HAL 9000 Push File</strong></dt>
+                    <dd>
+                        <div class="pre-wrapper">
+                            {% if pushfile %}
+                                <pre>{{ pushfile }}</pre>
+                            {% else %}
+                                <pre>No push file found. Are you in dev?</pre>
+                            {% endif %}
+                        </div>
+                    </dd>
+                </dl>
+            </dl>
+        </div>
+    {% endif %}
 
 {% endblock %}

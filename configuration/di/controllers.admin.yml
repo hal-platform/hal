@@ -5,31 +5,14 @@ services:
 
     admin.dashboard.page:
         class: 'QL\Hal\Controllers\Admin\DashboardController'
-        arguments: [@admin.dashboard.twig, @slim.response]
+        arguments:
+            - @admin.dashboard.twig
+            - %encryption.secret%
+            - %session.encryption.secret%
+            - @hal.pushfile
     admin.dashboard.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/dashboard.twig']]]
-
-    admin.server.status.page:
-        class: 'QL\Hal\Controllers\Server\ServersController'
-        arguments:
-            - @admin.server.status.twig
-            - @doctrine.em
-            - @slim.response
-    admin.server.status.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/server.status.twig']]]
-
-    admin.server.status.handler:
-        class: 'QL\Hal\Controllers\Admin\ServerStatusHandler'
-        arguments:
-            - @slim.response
-            - @doctrine.em
-            - @slim.route.parameters
-            - %cli.user%
-        calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.server.ttl%]]
 
     admin.audit.logs.page:
         class: 'QL\Hal\Controllers\Admin\AuditLogsController'
@@ -134,18 +117,6 @@ services:
     # SUPER ADMIN CONTROLLERS
     ####################################################################################################################
 
-    admin.super.page:
-        class: 'QL\Hal\Controllers\Admin\Super\SuperController'
-        arguments:
-            - @admin.super.twig
-            - @slim.response
-            - %encryption.secret%
-            - %session.encryption.secret%
-            - @hal.pushfile
-    admin.super.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.twig']]]
-
     admin.users.page:
         class: 'QL\Hal\Controllers\Admin\Super\UserManagementController'
         arguments:
@@ -191,13 +162,3 @@ services:
     admin.message.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/global.message.twig']]]
-
-    admin.dangerzone.page:
-        class: 'QL\Hal\Controllers\Admin\Super\DangerzoneController'
-        arguments:
-            - @admin.dangerzone.twig
-            - @slim.request
-            - @slim.response
-    admin.dangerzone.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/dangerzone.cli.twig']]]

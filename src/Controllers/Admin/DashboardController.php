@@ -9,7 +9,6 @@ namespace QL\Hal\Controllers\Admin;
 
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class DashboardController implements ControllerInterface
 {
@@ -19,26 +18,33 @@ class DashboardController implements ControllerInterface
     private $template;
 
     /**
-     * @type Response
+     * @type string
      */
-    private $response;
+    private $encryptionKey;
 
     /**
-     * @type int
+     * @type string
      */
-    private $statusCode;
+    private $sessionEncryptionKey;
+
+    /**
+     * @type string
+     */
+    private $halPushFile;
 
     /**
      * @param TemplateInterface $template
-     * @param int $statusCode
-     * @param Response $response
+     * @param string $encryptionKey
+     * @param string $sessionEncryptionKey
+     * @param string $halPushFile
      */
-    public function __construct(TemplateInterface $template, Response $response, $statusCode = 200)
+    public function __construct(TemplateInterface $template, $encryptionKey, $sessionEncryptionKey, $halPushFile)
     {
         $this->template = $template;
-        $this->statusCode = $statusCode;
 
-        $this->response = $response;
+        $this->encryptionKey = $encryptionKey;
+        $this->sessionEncryptionKey = $sessionEncryptionKey;
+        $this->halPushFile = $halPushFile;
     }
 
     /**
@@ -46,9 +52,17 @@ class DashboardController implements ControllerInterface
      */
     public function __invoke()
     {
-        $rendered = $this->template->render();
+        $context = [
+            'servername' => gethostname(),
+            'encryption_key' => $this->encryptionKey,
+            'session_encryption_key' => $this->sessionEncryptionKey
+        ];
 
-        $this->response->setStatus($this->statusCode);
-        $this->response->setBody($rendered);
+        # add hal push file if possible.
+        if (file_exists($this->halPushFile)) {
+            $context['pushfile'] = file_get_contents($this->halPushFile);
+        }
+
+        $this->template->render($context);
     }
 }

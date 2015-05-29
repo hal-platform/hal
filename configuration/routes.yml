@@ -129,11 +129,6 @@ parameters:
         # SUPER ADMIN ROUTES
         ################################################################################################################
 
-        admin.super:
-            method: 'GET'
-            route: '/superadmin'
-            stack: ['middleware.super', 'admin.super.page']
-
         admin.super.caches:
             method: ['GET', 'POST']
             route: '/superadmin/caches'
