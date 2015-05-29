@@ -73,7 +73,7 @@ services:
             - @admin.permissions.remove.twig
             - @currentUser
             - @hal.userType
-            - @permissions.new
+            - @permissions
             - @session.flasher
     admin.permissions.remove.twig:
         parent: 'twig.auto.template'
@@ -84,7 +84,7 @@ services:
         arguments:
             - @currentUser
             - @hal.userType
-            - @permissions.new
+            - @permissions
             - @session.flasher
 
     admin.permissions.add.page:
@@ -95,7 +95,7 @@ services:
             - @currentUser
             - @hal.user
             - @doctrine.em
-            - @permissions.new
+            - @permissions
             - @json
             - @session.flasher
             - @doctrine.random.id
@@ -111,7 +111,7 @@ services:
         arguments:
             - @admin.permissions.deployment.remove.twig
             - @hal.userPermission
-            - @permissions.new
+            - @permissions
     admin.permissions.deployment.remove.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/permissions/deployment.remove.twig']]]
@@ -120,7 +120,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\Permissions\RemoveDeploymentPermissionsHandler'
         arguments:
             - @hal.userPermission
-            - @permissions.new
+            - @permissions
             - @session.flasher
 
     ####################################################################################################################

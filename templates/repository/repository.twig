@@ -19,9 +19,6 @@
 
     {{ block('legacy_commands') }}
 
-    <h2>Permissions</h2>
-    {{ block('permissions') }}
-
     <h2>Deployment Targets</h2>
     {{ block('server_deployments') }}
 
@@ -114,36 +111,6 @@
                 To add, change, or remove commands: a <code>.hal9000.yml</code> must be commited to the project repository.
             </p>
         </div>
-    {% endif %}
-{% endblock %}
-
-{% block permissions %}
-    {% if permissions %}
-        <p>The following users have permission to push to the specified environment.</p>
-        <table class="table--spacing-medium" data-tablesaw-mode="stack">
-            <thead>
-                <tr>
-                    <th>Environment</th>
-                    <th>Users</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for env, permission in permissions %}
-                <tr>
-                    <td>{{ env }}</td>
-                    <td>
-                        <ul class="col-list">
-                            {% for rule in permission %}
-                                <li><a href="{{ urlFor('user', {'user': rule.user.id}) }}">{{ rule.user.name }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No users can push this repository.</p>
     {% endif %}
 {% endblock %}
 

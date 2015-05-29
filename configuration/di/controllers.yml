@@ -15,7 +15,7 @@ services:
         arguments:
             - @dashboard.twig
             - @currentUser
-            - @permissions.new
+            - @permissions
             - @clock
             - @doctrine.em
             - @slim.response
@@ -173,7 +173,7 @@ services:
         arguments:
             - @doctrine.em
             - @github.new
-            - @permissions.new
+            - @permissions
             - @currentUser
 
     builds.page:
@@ -213,7 +213,7 @@ services:
             - @doctrine.em
             - @url
             - @currentUser
-            - @permissions.new
+            - @permissions
             - @utility.id.generator
             - @slim.request
             - @twig.context
@@ -395,7 +395,7 @@ services:
             - @hal.user
             - @doctrine.em
             - @ldap
-            - @permissions.new
+            - @permissions
             - @json
         calls:
             - ['setCache', [@cache]]
@@ -446,7 +446,7 @@ services:
         class: 'QL\Hal\Controllers\User\Token\AddTokenController'
         arguments:
             - @doctrine.em
-            - @permissions.new
+            - @permissions
             - @currentUser
             - @session.flasher
             - @slim.request
@@ -458,7 +458,7 @@ services:
         class: 'QL\Hal\Controllers\User\Token\RemoveTokenController'
         arguments:
             - @doctrine.em
-            - @permissions.new
+            - @permissions
             - @currentUser
             - @session.flasher
             - @slim.not.found

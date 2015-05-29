@@ -25,7 +25,11 @@ HELP;
 $group = array_shift($argv);
 
 $ldap = $container->get('ldap');
-$query = sprintf('CN=%s,DC=mi,DC=corp', $group);
+
+// deployment permissions
+// CN = git-REPO_KEY-ENV_NAME
+$query = sprintf('CN=git-%s,DC=mi,DC=corp', $group);
+
 $dn = Dn::fromString($query);
 $users = $ldap->usersInGroup($dn);
 

@@ -11,7 +11,7 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
-use QL\Hal\Service\NewPermissionsService;
+use QL\Hal\Service\PermissionsService;
 use QL\Hal\Service\UserPerm;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -47,7 +47,7 @@ class RemovePermissionsController implements ControllerInterface
     private $userType;
 
     /**
-     * @type NewPermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
@@ -61,14 +61,14 @@ class RemovePermissionsController implements ControllerInterface
      * @param User $currentUser
      * @param UserType $userType
      * @param EntityManagerInterface $em
-     * @param NewPermissionsService $permissions
+     * @param PermissionsService $permissions
      * @param Flasher $flasher
      */
     public function __construct(
         TemplateInterface $template,
         User $currentUser,
         UserType $userType,
-        NewPermissionsService $permissions,
+        PermissionsService $permissions,
         Flasher $flasher
     ) {
         $this->template = $template;

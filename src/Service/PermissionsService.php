@@ -17,7 +17,7 @@ use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Panthor\Utility\Json;
 
-class NewPermissionsService
+class PermissionsService
 {
     use CachingTrait;
 

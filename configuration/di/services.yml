@@ -19,19 +19,7 @@ services:
             - ['authenticate', [%ldap.username%, %ldap.password%, false]]
 
     permissions:
-        class: 'QL\Hal\Services\PermissionsService'
-        arguments:
-            - @ldap
-            - @doctrine.em
-            - @github
-            - %permissions.prod.envs%
-            - %permissions.hal.repos%
-        calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.permissions.ttl%]]
-
-    permissions.new:
-        class: 'QL\Hal\Service\NewPermissionsService'
+        class: 'QL\Hal\Service\PermissionsService'
         arguments:
             - @doctrine.em
             - @github.new
@@ -147,7 +135,7 @@ services:
 
     twig.extension.permissions:
         class: 'QL\Hal\Twig\PermissionsExtension'
-        arguments: [@permissions.new]
+        arguments: [@permissions]
 
     twig.extension.github:
         class: 'QL\Hal\Twig\GithubExtension'

@@ -18,7 +18,6 @@ services:
         arguments:
             - @repository.twig
             - @doctrine.em
-            - @permissions
             - @eb
             - @slim.response
             - @slim.not.found

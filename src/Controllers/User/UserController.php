@@ -12,7 +12,7 @@ use MCP\Cache\CachingTrait;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\NewPermissionsService;
+use QL\Hal\Service\PermissionsService;
 use QL\Hal\Service\UserPerm;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -45,7 +45,7 @@ class UserController implements ControllerInterface
     private $ldap;
 
     /**
-     * @type NewPermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
@@ -60,7 +60,7 @@ class UserController implements ControllerInterface
      * @param EntityManagerInterface $em
      *
      * @param LdapService $ldap
-     * @param NewPermissionsService $permissions
+     * @param PermissionsService $permissions
      * @param Json $json
      */
     public function __construct(
@@ -68,7 +68,7 @@ class UserController implements ControllerInterface
         User $user,
         EntityManagerInterface $em,
         LdapService $ldap,
-        NewPermissionsService $permissions,
+        PermissionsService $permissions,
         Json $json
     ) {
         $this->template = $template;
@@ -100,7 +100,6 @@ class UserController implements ControllerInterface
 
             'ldapUser' => $this->ldap->getUserByCommonId($this->user->getId()),
 
-            // 'permissions' => $this->permissionsLegacy->userPushPermissionPairs($this->user->getHandle()),
             'builds' => $stats['builds'],
             'pushes' => $stats['pushes']
         ]);

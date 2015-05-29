@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Admin\Permissions;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
-use QL\Hal\Service\NewPermissionsService;
+use QL\Hal\Service\PermissionsService;
 use QL\Panthor\ControllerInterface;
 
 /**
@@ -39,7 +39,7 @@ class RemovePermissionsHandler implements ControllerInterface
     private $userType;
 
     /**
-     * @type NewPermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
@@ -51,13 +51,13 @@ class RemovePermissionsHandler implements ControllerInterface
     /**
      * @param User $currentUser
      * @param UserType $userType
-     * @param NewPermissionsService $permissions
+     * @param PermissionsService $permissions
      * @param Flasher $flasher
      */
     public function __construct(
         User $currentUser,
         UserType $userType,
-        NewPermissionsService $permissions,
+        PermissionsService $permissions,
         Flasher $flasher
     ) {
         $this->currentUser = $currentUser;

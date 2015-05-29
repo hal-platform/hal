@@ -8,7 +8,7 @@
 namespace QL\Hal\Middleware\ACL;
 
 use Exception;
-use QL\Hal\Service\NewPermissionsService;
+use QL\Hal\Service\PermissionsService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\Halt;
@@ -32,7 +32,7 @@ class SuperMiddleware implements MiddlewareInterface
     private $template;
 
     /**
-     * @type NewPermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
@@ -45,13 +45,13 @@ class SuperMiddleware implements MiddlewareInterface
      * @param ContainerInterface $di
      * @param LoginMiddleware $loginMiddleware
      * @param TemplateInterface $template
-     * @param NewPermissionsService $permissions
+     * @param PermissionsService $permissions
      */
     public function __construct(
         ContainerInterface $di,
         LoginMiddleware $loginMiddleware,
         TemplateInterface $template,
-        NewPermissionsService $permissions,
+        PermissionsService $permissions,
         Halt $halt
     ) {
         $this->di = $di;

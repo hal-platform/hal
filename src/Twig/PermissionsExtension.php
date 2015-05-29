@@ -10,7 +10,7 @@ namespace QL\Hal\Twig;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\NewPermissionsService;
+use QL\Hal\Service\PermissionsService;
 use Twig_Extension;
 use Twig_SimpleFunction;
 
@@ -19,14 +19,14 @@ class PermissionsExtension extends Twig_Extension
     const NAME = 'hal_permissions';
 
     /**
-     * @type NewPermissionsService
+     * @type PermissionsService
      */
     private $permissions;
 
     /**
-     * @param NewPermissionsService $permissions
+     * @param PermissionsService $permissions
      */
-    public function __construct(NewPermissionsService $permissions)
+    public function __construct(PermissionsService $permissions)
     {
         $this->permissions = $permissions;
     }

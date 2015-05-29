@@ -14,7 +14,6 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Services\ElasticBeanstalkService;
-use QL\Hal\Services\PermissionsService;
 use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -39,11 +38,6 @@ class RepositoryController implements ControllerInterface
      * @type DeploymentRepository
      */
     private $deploymentRepo;
-
-    /**
-     * @type PermissionsService
-     */
-    private $permissions;
 
     /**
      * @type EntityRepository
@@ -73,7 +67,6 @@ class RepositoryController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em,
-     * @param PermissionsService $permissions
      * @param ElasticBeanstalkService $ebService
      * @param Response $response
      * @param NotFound $notFound
@@ -82,7 +75,6 @@ class RepositoryController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        PermissionsService $permissions,
         ElasticBeanstalkService $ebService,
         Response $response,
         NotFound $notFound,
@@ -94,7 +86,6 @@ class RepositoryController implements ControllerInterface
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
 
-        $this->permissions = $permissions;
         $this->ebService = $ebService;
 
         $this->response = $response;
@@ -136,7 +127,6 @@ class RepositoryController implements ControllerInterface
             'repository' => $repo,
             'deployment_environments' => $environmentalized,
             'deployment_count' => $deploymentCount,
-            // 'permissions' => $this->permissions->repositoryPermissionPairs($repo->getKey()),
             'kraken' => $krakenApp
         ]);
 
