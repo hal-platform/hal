@@ -2,11 +2,10 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Application Configuration" %}
-{% set isAdmin = true %}
 
 {% block content %}
 
-    <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
+    <h1>{{ page_title }} - <strong>{{ application.name }}</strong></h1>
 
     <h2>Environments</h2>
     {{ block('environment_targets') }}
@@ -35,7 +34,7 @@
                 <li>
                     <article class="card card--{{ target.environment.name }}">
                         <header class="card__header">
-                            {% if isAdmin %}
+                            {% if canUserReleaseTheKraken(currentUser, application, target.environment) %}
                                 <a class="icon--link btn btn--small btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy</a>
                             {% endif %}
 
@@ -86,7 +85,7 @@
         </ul>
 
     {% else %}
-        <p>There are no environments added yet for this application.</p>
+        <p>There are no environments added yet for this application. It cannot be deployed.</p>
     {% endif %}
 
 {% endblock %}

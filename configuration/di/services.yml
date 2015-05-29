@@ -24,6 +24,7 @@ services:
             - @doctrine.em
             - @github.new
             - @json
+            - %permissions.check.github%
         calls:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.permissions.ttl%]]

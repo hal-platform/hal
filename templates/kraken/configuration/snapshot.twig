@@ -2,11 +2,10 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = is_deployed ? 'Deployed Snapshot' : 'Snapshot' %}
-{% set isAdmin = true %}
 
 {% block content %}
 
-    <h1>{{ page_title }} for <strong>{{ configuration.environment.name }}</strong></h1>
+    <h1>{{ page_title }} - <strong>{{ configuration.environment.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -25,7 +24,7 @@
 
     {% include 'kraken/_partial/configuration.status.twig' %}
 
-    {% if isAdmin %}
+    {% if canUserReleaseTheKraken(currentUser, application, configuration.environment) %}
         {% set deploy_title = is_deployed or not configuration.isSuccess ? 'Redeploy' : 'Rollback' %}
 
         <h3>{{ deploy_title }}</h3>

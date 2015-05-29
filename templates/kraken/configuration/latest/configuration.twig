@@ -2,11 +2,10 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Latest Configuration" %}
-{% set isAdmin = true %}
 
 {% block content %}
 
-    <h1>{{ page_title }} for <strong>{{ environment.name }}</strong></h1>
+    <h1>{{ page_title }} - <strong>{{ environment.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -18,7 +17,7 @@
     {% include 'kraken/_partial/configuration.twig' with {'properties': configuration} %}
 
     <ul class="button-list">
-        {% if isAdmin and is_missing_properties %}
+        {% if is_missing_properties and canUserReleaseTheKraken(currentUser, application, environment) %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.property.add', {application: application.id, environment: environment.id}) }}">Add Property</a></li>
         {% endif %}
 

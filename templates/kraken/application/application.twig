@@ -2,7 +2,8 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Application" %}
-{% set isAdmin = true %}
+
+{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application.halApplication) %}
 
 {% block content %}
 
@@ -85,7 +86,7 @@
                             <td>Environment is not assigned.</td>
                             <td class="tr">
                                 {% if isAdmin %}
-                                    <a class="btn btn--small btn--action" href="{{ urlFor('kraken.application.add_target', {application: application.id}) }}">Assign environment</a>
+                                    <a class="btn btn--small btn--action" href="{{ urlFor('kraken.application.target.add', {application: application.id}) }}">Assign environment</a>
                                 {% endif %}
                             </td>
 

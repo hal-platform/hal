@@ -62,7 +62,8 @@ parameters:
         api.queue: 0 # the queue api uses no caching
         api.queue.refresh: 0 # the queue api uses no caching
 
-    cache.permissions.ttl: 600
+    # 2 hrs for permissions
+    cache.permissions.ttl: 7200
     cache.doctrine.ttl: 600
     cache.aws.ttl: 20
     cache.server.ttl: 300
@@ -103,16 +104,8 @@ parameters:
     # permission settings
     ############################################################################
 
-    # Environments that are considered to be 'Production'
-    permissions.prod.envs:
-        - 'prod'
-        - 'production'
-
-    # Repositories part of the HAL 9000 system
-    permissions.hal.repos:
-        - 'hal9000'
-        - 'hal9000-agent'
-        - 'eternia-cloud'
+    # Check GitHub collaborators for non-prod permissions
+    permissions.check.github: false
 
     ############################################################################
     # aws

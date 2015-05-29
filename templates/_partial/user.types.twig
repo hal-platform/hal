@@ -1,30 +1,30 @@
 {% import "_partial/macros.twig" as macros %}
 
-<article class="card--baby mbm">
     {% if user_type_header %}
         <header class="card__header">
             <h4>User Types</h4>
         </header>
     {% endif %}
 
-    <section class="card__details">
-        <ul class="mbn">
-            <li>
-                <span>{{ macros.status('Standard', 'info') }}</span>
-                Standard users are useless and can't do anything.
-            </li>
-            <li>
-                <span>{{ macros.status('Lead', 'notice') }}</span>
-                Leads can manage specific applications and add deployments. Users can lead multiple applications.
-            </li>
-            <li>
-                <span>{{ macros.status('Admin', 'warning') }}</span>
-                Deployment Administrators can deploy to all environments, manage all applications and permissions.
-            </li>
-            <li>
-                <span>{{ macros.status('Super', 'error') }}</span>
-                HAL Administrators can deploy to all non-prod environments, manage all applications and permissions.
-            </li>
-        </ul>
-    </section>
-</article>
+<section class="details-box">
+    <ul class="list--bare mbn">
+        <li class="list--legend">
+            <p class="mbn mrs">{{ macros.status('Standard', 'info') }}</p>
+            <p class="mbn">Standard users are useless and can't do anything.</p>
+        </li>
+        <li class="list--legend">
+            <p class="mbn mrs">{{ macros.status('Lead', 'notice') }}</p>
+            <p class="mbn">
+                Leads can manage specific applications, their deployments and encrypted properties. They can deploy to non-prod environments. Users can lead multiple applications.
+            </p>
+        </li>
+        <li class="list--legend">
+            <p class="mbn mrs">{{ macros.status('Admin', 'warning') }}</p>
+            <p class="mbn">Deployment Administrators can deploy to all environments, manage all applications and permissions.</p>
+        </li>
+        <li class="list--legend">
+            <p class="mbn mrs">{{ macros.status('Super', 'error') }}</p>
+            <p class="mbn">HAL Administrators can deploy to all non-prod environments, manage all applications and permissions.</p>
+        </li>
+    </ul>
+</section>

@@ -8,7 +8,7 @@
     <h1>Applications</h1>
 
     {% if applications %}
-        <table class="table--spacing-medium" data-tablesaw-mode="stack">
+        <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -34,7 +34,7 @@
                             {% endif %}
                         </td>
                         <td class="tr">
-                            <a class="btn" href="{{ urlFor('kraken.status', {application: app.id}) }}">Configuration</a>
+                            <a class="btn btn--small" href="{{ urlFor('kraken.status', {application: app.id}) }}">Configuration</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -46,7 +46,7 @@
 
     <ul class="button-list">
         {% if not admin %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.add_application') }}">Add Application</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.application.add') }}">Add Application</a></li>
         {% endif %}
 
         <li><a class="btn" href="{{ urlFor('kraken.environments') }}">Environments</a></li>

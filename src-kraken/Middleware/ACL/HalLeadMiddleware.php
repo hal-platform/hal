@@ -5,10 +5,14 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Middleware\ACL;
+namespace QL\Kraken\Middleware\ACL;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Exception;
+use QL\Hal\Middleware\ACL\LoginMiddleware;
 use QL\Hal\Service\PermissionsService;
+use QL\Kraken\Core\Entity\Application;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\Halt;
@@ -17,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Note: Admins and Supers also pass this middleware bouncer.
  */
-class LeadMiddleware implements MiddlewareInterface
+class HalLeadMiddleware implements MiddlewareInterface
 {
     /**
      * @type ContainerInterface
@@ -40,29 +44,46 @@ class LeadMiddleware implements MiddlewareInterface
     private $permissions;
 
     /**
+     * @type EntityRepository
+     */
+    private $applicationRepo;
+
+    /**
      * @type Halt
      */
     private $halt;
+
+    /**
+     * @type array
+     */
+    private $parameters;
 
     /**
      * @param ContainerInterface $di
      * @param LoginMiddleware $loginMiddleware
      * @param TemplateInterface $template
      * @param PermissionsService $permissions
+     * @param EntityManagerInterface $em
+     * @param Halt $halt
      */
     public function __construct(
         ContainerInterface $di,
         LoginMiddleware $loginMiddleware,
         TemplateInterface $template,
         PermissionsService $permissions,
-        Halt $halt
+        EntityManagerInterface $em,
+        Halt $halt,
+        array $parameters
     ) {
         $this->di = $di;
         $this->loginMiddleware = $loginMiddleware;
 
         $this->template = $template;
         $this->permissions = $permissions;
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->halt = $halt;
+        $this->parameters = $parameters;
+
     }
 
     /**
@@ -81,11 +102,15 @@ class LeadMiddleware implements MiddlewareInterface
             return;
         }
 
-        $application = isset($this->parameters['repository']) ? $this->parameters['repository'] : null;
+        $application = isset($this->parameters['application']) ? $this->parameters['application'] : null;
 
         if ($application && $perm->isLead()) {
-            if (in_array($application, $perm->leadApplications(), true)) {
-                return;
+            $krakenApp = $this->applicationRepo->find($application);
+
+            if ($krakenApp->halApplication()) {
+                if (in_array($krakenApp->halApplication()->getId(), $perm->leadApplications(), true)) {
+                    return;
+                }
             }
         }
 

@@ -1,4 +1,25 @@
 imports:
     - resource: kraken.routes.yml
     - resource: kraken.services.yml
+    - resource: kraken.middleware.yml
     - resource: kraken.pages.yml
+
+services:
+    kraken.application:     { synthetic: true }
+    kraken.environment:     { synthetic: true }
+    kraken.property:        { synthetic: true }
+    kraken.configuration:   { synthetic: true }
+    kraken.schema:          { synthetic: true }
+    kraken.target:          { synthetic: true }
+
+    ####################################################################################################################
+    # ATTACHMENTS - Attach Kraken-specific routes and doctrine entities
+    ####################################################################################################################
+
+    slim.hook.kraken.routes:
+        class: 'QL\Panthor\Slim\RouteLoaderHook'
+        arguments: [@service_container, %kraken.routes%]
+
+    doctrine.listener.kraken.persist:
+        class: 'QL\Kraken\Doctrine\DoctrinePersistListener'
+        arguments: [@clock]

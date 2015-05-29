@@ -2,11 +2,10 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Application" %}
-{% set isAdmin = true %}
 
 {% block content %}
 
-    <h1>Manage Configuration Schema for <strong>{{ application.name }}</strong></h1>
+    <h1>Manage Configuration Schema - <strong>{{ application.name }}</strong></h1>
 
     {{ block('meta') }}
 
@@ -14,9 +13,7 @@
     {{ block('configuration') }}
 
     <ul class="button-list">
-        {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.schema.add', {application: application.id}) }}">Add Property to Schema</a></li>
-        {% endif %}
+        <li><a class="btn btn--action" href="{{ urlFor('kraken.schema.add', {application: application.id}) }}">Add Property to Schema</a></li>
 
         <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application</a></li>
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
@@ -38,9 +35,7 @@
                     <th>Property</th>
                     <th class="t15">Type</th>
                     <th>Value</th>
-                    {% if isAdmin %}
-                        <th></th>
-                    {% endif %}
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -53,38 +48,25 @@
                         </td>
                         <td>{{ schema.description }}</td>
 
-                        {% if isAdmin %}
-                            <td class="tr">
-                                <a href="{{ urlFor('kraken.schema.edit', {schema: schema.id}) }}">
-                                    Edit <span class="tablesaw-collapse">Property Schema</span>
-                                </a>
-                            </td>
-                        {% endif %}
+                        <td class="tr">
+                            <a href="{{ urlFor('kraken.schema.edit', {schema: schema.id}) }}">
+                                Edit <span class="tablesaw-collapse">Property Schema</span>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>
-            No schema is defined.
-            {% if isAdmin %}
-                Add properties to the schema by clicking <b>Add Property</b> below.
-            {% else %}
-                An administrator must add properties to the schema.
-            {% endif %}
-        </p>
+        <p>No schema is defined. Add properties to the schema by clicking <b>Add Property</b> below.</p>
 
-        {% if isAdmin %}
-            <div class="trailer">
-                <p>
-                    Is this a skeletor application? Prime this application with skeletor configuration schema.
-                </p>
+        <div class="trailer">
+            <p>Is this a skeletor application? Prime this application with skeletor configuration schema.</p>
 
-                <form action="{{ urlFor('kraken.schema.skeletor', {application:application.id}) }}" method="POST">
-                    <input class="btn btn--action" type="submit" value="Pre-populate skeletor schema"/>
-                </form>
-            </div>
-            {% endif %}
+            <form action="{{ urlFor('kraken.schema.skeletor', {application:application.id}) }}" method="POST">
+                <input class="btn btn--action" type="submit" value="Pre-populate skeletor schema"/>
+            </form>
+        </div>
 
     {% endif %}
 {% endblock %}

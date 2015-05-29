@@ -62,6 +62,21 @@
 }
 
 
+// Legend list
+.list--legend {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    > * {
+        flex: 1;
+    }
+
+    > :first-child {
+        flex: 0 0 auto;
+    }
+}
+
 // A list of buttons... and other page nav type things.
 .button-list {
     list-style-type: none;

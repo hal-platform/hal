@@ -1,44 +1,12 @@
-# Application specific endpoints and controllers go here
-# This includes handlers, middleware, or validators dedicated to a single page.
 services:
 
-    kraken.application:     { synthetic: true }
-    kraken.environment:     { synthetic: true }
-    kraken.property:        { synthetic: true }
-    kraken.configuration:   { synthetic: true }
-    kraken.schema:          { synthetic: true }
-    kraken.target:          { synthetic: true }
-
     ####################################################################################################################
-    # ATTACHMENTS - Attach Kraken-specific routes and doctrine entities
+    # SERVICES
     ####################################################################################################################
 
-    slim.hook.kraken.routes:
-        class: 'QL\Panthor\Slim\RouteLoaderHook'
-        arguments: [@service_container, %kraken.routes%]
-
-    doctrine.listener.kraken.persist:
-        class: 'QL\Kraken\Doctrine\DoctrinePersistListener'
-        arguments: [@clock]
-
-    ####################################################################################################################
-    # UTIL
-    ####################################################################################################################
-
-    kraken.template:
-        parent: 'twig.template'
-        class: 'QL\Kraken\Application\AutoRenderingTemplate'
-        calls: [['setResponse', [@slim.response]]]
-
-    kraken.twig.extension:
-        class: 'QL\Kraken\Application\KrakenTwigExtension'
-        arguments: [@json]
-
-    kraken.json:
-        class: 'QL\Panthor\Utility\Json'
-
-    kraken.guzzle:
-        class: 'GuzzleHttp\Client'
+    kraken.permissions:
+        class: 'QL\Kraken\Service\PermissionService'
+        arguments: [@permissions]
 
     kraken.consul:
         class: 'QL\Kraken\Service\ConsulService'
@@ -55,6 +23,25 @@ services:
     kraken.diff:
         class: 'QL\Kraken\ConfigurationDiffService'
         arguments: [@doctrine.em]
+
+    ####################################################################################################################
+    # UTIL
+    ####################################################################################################################
+
+    kraken.template:
+        parent: 'twig.template'
+        class: 'QL\Kraken\Application\AutoRenderingTemplate'
+        calls: [['setResponse', [@slim.response]]]
+
+    kraken.twig.extension:
+        class: 'QL\Kraken\Application\KrakenTwigExtension'
+        arguments: [@kraken.permissions, @json]
+
+    kraken.json:
+        class: 'QL\Panthor\Utility\Json'
+
+    kraken.guzzle:
+        class: 'GuzzleHttp\Client'
 
     kraken.random:
         class: 'QL\Hal\Core\RandomGenerator'
@@ -82,18 +69,6 @@ services:
     kraken.validator.application:
         class: 'QL\Kraken\Validator\ApplicationValidator'
         arguments: [@doctrine.em, @kraken.random]
-
-    ####################################################################################################################
-    # MIDDLEWARE
-    ####################################################################################################################
-
-    kraken.middleware.require.entity:
-        class: 'QL\Kraken\Middleware\RequireEntityMiddleware'
-        arguments:
-            - @service_container
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
 
     ####################################################################################################################
     # encryption

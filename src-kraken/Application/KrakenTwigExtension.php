@@ -7,15 +7,20 @@
 
 namespace QL\Kraken\Application;
 
+use QL\Hal\Core\Entity\User;
 use QL\Kraken\Diff;
+use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Core\Type\EnumType\PropertyEnum;
+use QL\Kraken\Service\PermissionService;
 use QL\Panthor\Utility\Json;
 use Twig_Extension;
 use Twig_SimpleFilter;
+use Twig_SimpleFunction;
 use Twig_SimpleTest;
 
 class KrakenTwigExtension extends Twig_Extension
@@ -24,15 +29,22 @@ class KrakenTwigExtension extends Twig_Extension
     const INVALID_DECODED_PROPERTY = 0xA9E1B2E76;
 
     /**
+     * @type PermissionService
+     */
+    private $permissions;
+
+    /**
      * @type Json
      */
     private $json;
 
     /**
+     * @param PermissionService $permissions
      * @param Json $json
      */
-    public function __construct(Json $json)
+    public function __construct(PermissionService $permissions, Json $json)
     {
+        $this->permissions = $permissions;
         $this->json = $json;
     }
 
@@ -58,11 +70,13 @@ class KrakenTwigExtension extends Twig_Extension
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFunctions()
     {
-        return [];
+        return [
+            new Twig_SimpleFunction('canUserReleaseTheKraken', [$this, 'canUserDeploy']),
+        ];
     }
 
     /**
@@ -90,6 +104,22 @@ class KrakenTwigExtension extends Twig_Extension
                 return $value === self::INVALID_DECODED_PROPERTY;
             })
         ];
+    }
+
+    /**
+     * @param User|null $user
+     * @param Application|null $application
+     * @param Environment|null $application
+     *
+     * @return bool
+     */
+    public function canUserDeploy($user, $application, $environment)
+    {
+        if (!$user instanceof User) return false;
+        if (!$application instanceof Application) return false;
+        if (!$environment instanceof Environment) return false;
+
+        return $this->permissions->canUserDeploy($user, $application, $environment);
     }
 
     /**

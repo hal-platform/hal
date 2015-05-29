@@ -3,10 +3,9 @@
 {% import "kraken/_partial/macros.twig" as kraken_macros %}
 
 {% set page_title = "Property" %}
-{% set isAdmin = true %}
 
 {% block content %}
-    <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
+    <h1>{{ page_title }} - <strong>{{ application.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -41,7 +40,7 @@
     </section>
 
     <ul class="button-list">
-        {% if isAdmin %}
+        {% if canUserReleaseTheKraken(currentUser, application, environment) %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.property.edit', {property: property.id}) }}">Edit Property</a></li>
         {% endif %}
         <li><a class="btn" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: environment.id}) }}">Latest Configuration</a></li>

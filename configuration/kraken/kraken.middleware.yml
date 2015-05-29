@@ -1,0 +1,20 @@
+services:
+
+    kraken.middleware.require.entity:
+        class: 'QL\Kraken\Middleware\RequireEntityMiddleware'
+        arguments:
+            - @service_container
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+
+    kraken.middleware.lead:
+        class: 'QL\Kraken\Middleware\ACL\HalLeadMiddleware'
+        arguments:
+            - @service_container
+            - @middleware.login
+            - @denied.twig
+            - @permissions
+            - @doctrine.em
+            - @slim.halt
+            - @slim.route.parameters

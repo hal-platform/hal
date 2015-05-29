@@ -4,10 +4,9 @@
 {% set js_components = ["kraken.property"] %}
 
 {% set page_title = "Edit Property" %}
-{% set isAdmin = true %}
 
 {% block content %}
-    <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
+    <h1>{{ page_title }} - <strong>{{ application.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -49,7 +48,7 @@
         {% endembed %}
     </section>
 
-    {% if isAdmin %}
+    {% if canUserReleaseTheKraken(currentUser, application, environment) %}
         <section class="leader--andre">
             <h2>Remove Property</h2>
 

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = 'Application' ~ repository.name %}
+{% set page_title = 'Application : ' ~ repository.name %}
 
 {% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, repository) %}
 

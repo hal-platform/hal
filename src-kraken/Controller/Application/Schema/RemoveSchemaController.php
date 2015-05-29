@@ -47,7 +47,6 @@ class RemoveSchemaController implements ControllerInterface
         EntityManagerInterface $em
     ) {
         $this->template = $template;
-        $this->application = $application;
         $this->schema = $schema;
 
         $this->propertyRepo = $em->getRepository(Property::CLASS);

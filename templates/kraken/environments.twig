@@ -2,7 +2,7 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Environments" %}
-{% set isAdmin = true %}
+{% set isAdmin = isUserSuper(currentUser) %}
 
 {% block content %}
     <h1>Environments</h1>
@@ -49,7 +49,7 @@
 
     <ul class="button-list">
         {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.add_environment') }}">Add Environment</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.environment.add') }}">Add Environment</a></li>
         {% endif %}
 
         <li><a class="btn" href="{{ urlFor('kraken.applications') }}">Applications</a></li>

@@ -2,10 +2,9 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Edit Configuration Schema" %}
-{% set isAdmin = true %}
 
 {% block content %}
-    <h1>{{ page_title }} for <strong>{{ application.name }}</strong></h1>
+    <h1>{{ page_title }} - <strong>{{ application.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
@@ -66,9 +65,7 @@
         <p>This property has no values for any environment, and is safe to remove.</p>
     {% endif %}
 
-    {% if isAdmin %}
-        <p>
-            <a class="btn btn--destructive" href="{{ urlFor('kraken.schema.remove', {schema: schema.id}) }}">Remove property from schema</a></li>
-        </p>
-    {% endif %}
+    <p>
+        <a class="btn btn--destructive" href="{{ urlFor('kraken.schema.remove', {schema: schema.id}) }}">Remove property from schema</a></li>
+    </p>
 {% endblock %}

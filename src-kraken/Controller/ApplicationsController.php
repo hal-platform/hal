@@ -99,7 +99,7 @@ class ApplicationsController implements ControllerInterface
             ];
         }
 
-        $apps = $this->repository->findBy([], ['id' => 'ASC']);
+        $apps = $this->repository->findBy([], ['name' => 'ASC']);
 
         $context['applications'] = $apps;
 

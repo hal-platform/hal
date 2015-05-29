@@ -37,5 +37,8 @@ parameters:
         -----END PUBLIC KEY-----
 
 services:
+    # Comment these out if you want to use the redis caches
     cache.doctrine:
         class: 'Doctrine\Common\Cache\ArrayCache'
+    cache:
+        class: 'MCP\Cache\MemoryCache'

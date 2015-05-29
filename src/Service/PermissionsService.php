@@ -25,6 +25,7 @@ class PermissionsService
     const CACHE_PERM = 'permissions:hal.%s';
     const CACHE_COLLAB = 'permissions:github.%s.%s';
 
+    // Cached in memory only
     const CACHE_CAN_BUILD = 'permissions:hal.build.%s.%s';
     const CACHE_CAN_PUSH = 'permissions:hal.push.%s.%s.%s';
 
@@ -51,6 +52,11 @@ class PermissionsService
     private $json;
 
     /**
+     * @type bool
+     */
+    private $enableGitHubPermissions;
+
+    /**
      * Simple in-memory cache
      *
      * @type array
@@ -63,11 +69,13 @@ class PermissionsService
      * @param EntityManagerInterface $em
      * @param GitHubService $github
      * @param Json $json
+     * @param bool $enableGitHubPermissions
      */
     public function __construct(
         EntityManagerInterface $em,
         GitHubService $github,
-        Json $json
+        Json $json,
+        $enableGitHubPermissions
     ) {
         $this->em = $em;
         $this->userTypesRepo = $em->getRepository(UserType::CLASS);
@@ -77,6 +85,7 @@ class PermissionsService
         $this->github = $github;
         $this->json = $json;
 
+        $this->enableGitHubPermissions = $enableGitHubPermissions;
         $this->internalCache = [];
 
         $this->superApplications = [
@@ -272,11 +281,15 @@ class PermissionsService
      */
     private function isUserCollaborator(User $user, Repository $application)
     {
+        if (!$this->enableGitHubPermissions) {
+            return false;
+        }
+
         $key = sprintf(self::CACHE_COLLAB, $user->getId(), $application->getKey());
 
         // internal cache
-        if (array_key_exists($key, $this->internalCache)) {
-            return $this->internalCache[$key];
+        if (null !== ($cached = $this->getFromInternalCache($key))) {
+            return $cached;
         }
 
         // external cache
@@ -290,8 +303,8 @@ class PermissionsService
             $user->getHandle()
         );
 
+        $this->setToInternalCache($key, $result);
         $this->setToCache($key, $result);
-        $this->internalCache[$key] = $result;
         return $result;
     }
 
@@ -369,6 +382,6 @@ class PermissionsService
      */
     private function setToInternalCache($key, $value)
     {
-        $this->internalCache[$key] = $value;
+        return $this->internalCache[$key] = $value;
     }
 }
