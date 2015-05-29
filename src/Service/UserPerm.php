@@ -8,6 +8,7 @@
 namespace QL\Hal\Service;
 
 use JsonSerializable;
+use QL\Hal\Core\Entity\Repository;
 
 class UserPerm implements JsonSerializable
 {
@@ -36,23 +37,42 @@ class UserPerm implements JsonSerializable
      *
      * @type string[]
      */
-    private $applications;
+    private $leadApplications;
+
+    /**
+     * List of application IDs that this user can deploy to production
+     *
+     * @type string[]
+     */
+    private $prodApplications;
+
+    /**
+     * List of application IDs that this user can deploy to non-production
+     *
+     * @type string[]
+     */
+    private $nonProdApplications;
 
     /**
      * @param bool $isPleb
      * @param bool $isLead
      * @param bool $isButtonPusher
      * @param bool $isSuper
-     * @param string[] $applications
      */
-    public function __construct($isPleb = false, $isLead = false, $isButtonPusher = false, $isSuper = false, $applications = [])
-    {
+    public function __construct(
+        $isPleb = false,
+        $isLead = false,
+        $isButtonPusher = false,
+        $isSuper = false
+    ) {
         $this->isPleb = $isPleb;
         $this->isLead = $isLead;
         $this->isButtonPusher = $isButtonPusher;
         $this->isSuper = $isSuper;
 
-        $this->applications = $applications;
+        $this->leadApplications = [];
+        $this->prodApplications = [];
+        $this->nonProdApplications = [];
     }
 
     /**
@@ -90,9 +110,25 @@ class UserPerm implements JsonSerializable
     /**
      * @return array
      */
-    public function applications()
+    public function leadApplications()
     {
-        return $this->applications;
+        return $this->leadApplications;
+    }
+
+    /**
+     * @return array
+     */
+    public function prodApplications()
+    {
+        return $this->prodApplications;
+    }
+
+    /**
+     * @return array
+     */
+    public function nonProdApplications()
+    {
+        return $this->nonProdApplications;
     }
 
     /**
@@ -104,7 +140,64 @@ class UserPerm implements JsonSerializable
     {
         $id = $repository->getId();
 
-        return in_array($id, $this->applications, true);
+        return in_array($id, $this->leadApplications, true);
+    }
+
+    /**
+     * @param Repository $repository
+     *
+     * @return array
+     */
+    public function canDeployApplicationToProd(Repository $repository)
+    {
+        $id = $repository->getId();
+
+        return in_array($id, $this->prodApplications, true);
+    }
+
+    /**
+     * @param Repository $repository
+     *
+     * @return array
+     */
+    public function canDeployApplicationToNonProd(Repository $repository)
+    {
+        $id = $repository->getId();
+
+        return in_array($id, $this->nonProdApplications, true);
+    }
+
+    /**
+     * @param string[] $applications
+     *
+     * @return self
+     */
+    public function withLeadApplications(array $applications)
+    {
+        $this->leadApplications = $applications;
+        return $this;
+    }
+
+    /**
+     * @param string[] $applications
+     *
+     * @return self
+     */
+    public function withProdApplications(array $applications)
+    {
+        $this->prodApplications = $applications;
+        return $this;
+    }
+
+    /**
+     * @param string[] $applications
+     *
+     * @return self
+     */
+    public function withNonProdApplications(array $applications)
+    {
+        $this->nonProdApplications = $applications;
+        return $this;
     }
 
     /**
@@ -114,13 +207,18 @@ class UserPerm implements JsonSerializable
      */
     public static function fromSerialized(array $data)
     {
-        return new self(
+        $perm = new self(
             array_key_exists('isPleb', $data) ? $data['isPleb'] : false,
             array_key_exists('isLead', $data) ? $data['isLead'] : false,
             array_key_exists('isButtonPusher', $data) ? $data['isButtonPusher'] : false,
-            array_key_exists('isSuper', $data) ? $data['isSuper'] : false,
-            array_key_exists('applications', $data) ? $data['applications'] : []
+            array_key_exists('isSuper', $data) ? $data['isSuper'] : false
         );
+
+        $perm->withLeadApplications(array_key_exists('leadApplications', $data) ? $data['leadApplications'] : []);
+        $perm->withProdApplications(array_key_exists('prodApplications', $data) ? $data['prodApplications'] : []);
+        $perm->withNonProdApplications(array_key_exists('nonProdApplications', $data) ? $data['nonProdApplications'] : []);
+
+        return $perm;
     }
 
     /**
@@ -133,7 +231,9 @@ class UserPerm implements JsonSerializable
             'isLead' => $this->isLead(),
             'isButtonPusher' => $this->isButtonPusher(),
             'isSuper' => $this->isSuper(),
-            'applications' => $this->applications()
+            'leadApplications' => $this->leadApplications(),
+            'prodApplications' => $this->prodApplications(),
+            'nonProdApplications' => $this->nonProdApplications(),
         ];
 
         return $json;

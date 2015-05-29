@@ -8,41 +8,9 @@
 
     <h1>{{ page_title }}</h1>
 
-    <h2>Current Permissions - <strong>{{ selectedUser.handle }}</strong></h2>
-    <div class="details-box">
-        <dl class="split mbn">
+    <h2>Current Permissions - <strong>{{ user.handle }}</strong></h2>
 
-            <dt class="split__title">Current User Types</dt>
-            <dd>
-                {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
-                    <ul class="inline-list--space">
-                        {% if userPerm.isLead %}
-                            <li>{{ macros.status('Lead', 'notice') }}</li>
-                        {% endif %}
-                        {% if userPerm.isButtonPusher %}
-                            <li>{{ macros.status('Admin', 'warning') }}</li>
-                        {% endif %}
-                        {% if userPerm.isSuper %}
-                            <li>{{ macros.status('Super', 'error') }}</li>
-                        {% endif %}
-                    </ul>
-                {% else %}
-                    Standard
-                {% endif %}
-            </dd>
-
-            {% if leadApplications %}
-                <dt class="split__title">Lead Applications</dt>
-                <dd>
-                    <ul class="inline-list--comma">
-                        {% for application in leadApplications %}
-                            <li><a href="{{ urlFor('repository', {id: application.id}) }}">{{ application.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </dd>
-            {% endif %}
-        </dl>
-    </div>
+    {% include '_partial/user.status.twig' %}
 
     <h2>Add Permissions</h2>
 
@@ -61,7 +29,7 @@
                             {% endif %}
 
                             <li>
-                                <input id="perm-{{ user_type}}" type="radio" name="type" value="{{ user_type }}"{{ checked }}>
+                                <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}"{{ checked }}>
                                 <label for="perm-{{ user_type }}">{{ human }}</label>
                             </li>
                         {% endfor %}
@@ -70,7 +38,7 @@
                 <li>
                     <label for="perm-app">Application</label>
                     <small class="additional">
-                        Optional. Only required when adding Application Lead permissions.
+                        Optional. Only required when adding Application <b>lead</b> or <b>deployment</b> permissions.
                     </small>
 
                     <select name="application" id="perm-app">
@@ -84,6 +52,26 @@
                             <option value="{{ applicationId }}"{{ selected }}>{{ applicationName }}</option>
                         {% endfor %}
                     </select>
+                </li>
+
+                <li>
+                    <label for="perm-app">Allowed Environments</label>
+                    <small class="additional">
+                        Optional. Give a user access to deploy an application to a specific environment group. Only used for <b>deployment</b> permissions.
+                    </small>
+
+                    <ul class="radio-grid--form">
+                        <li>
+                            {% set isSelected = form.is_production is same as('true') ? true : false %}
+                            <input id="perm-prod-true" type="radio" name="is_production" value="true"{{ isSelected ? ' checked' : '' }}>
+                            <label for="perm-prod-true">Production</label>
+                        </li>
+                        <li>
+                            {% set isSelected = form.is_production is same as('false') ? true : false %}
+                            <input id="perm-prod-false" type="radio" name="is_production" value="false"{{ isSelected ? ' checked' : '' }}>
+                            <label for="perm-prod-false">Non-Production</label>
+                        </li>
+                    </ul>
                 </li>
             </ul>
 

@@ -13,7 +13,7 @@ use Doctrine\ORM\UnitOfWork;
 use MCP\DataType\Time\Clock;
 use QL\Hal\Core\Entity\AuditLog;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\LazyUserHelper;
+use QL\Hal\Utility\LazyUserRetriever;
 
 class EntityChangeLogger
 {
@@ -22,9 +22,9 @@ class EntityChangeLogger
     const ACTION_DELETE = 'DELETE';
 
     /**
-     * @type LazyUserHelper
+     * @type LazyUserRetriever
      */
-    private $userHelper;
+    private $lazyUser;
 
     /**
      * @type Clock
@@ -32,12 +32,12 @@ class EntityChangeLogger
     private $clock;
 
     /**
-     * @param LazyUserHelper $userHelper
+     * @param LazyUserRetriever $lazyUser
      * @param Clock $clock
      */
-    public function __construct(LazyUserHelper $userHelper, Clock $clock)
+    public function __construct(LazyUserRetriever $lazyUser, Clock $clock)
     {
-        $this->userHelper = $userHelper;
+        $this->lazyUser = $lazyUser;
         $this->clock = $clock;
     }
 
@@ -53,11 +53,11 @@ class EntityChangeLogger
         $em = $event->getEntityManager();
         $uow = $em->getUnitOfWork();
 
-        if (!$user = $this->userHelper->getUser()) {
+        if (!$user = $this->lazyUser->getUser()) {
             return;
         }
 
-        if (!$user = $em->find('QL\Hal\Core\Entity\User', $user->getId())) {
+        if (!$user = $em->find(User::CLASS, $user->getId())) {
             return;
         }
 
@@ -100,15 +100,24 @@ class EntityChangeLogger
             return;
         }
 
+        $fqcn = explode('\\', get_class($entity));
+        $classname = array_pop($fqcn);
+        $namespace = implode('\\', $fqcn);
+
+        // Only log entities in "QL\Hal\Core\Entity" namespace
+        if ($namespace !== 'QL\Hal\Core\Entity') {
+            return;
+        }
+
         // figure out the entity primary id
         $id = '?';
         if (is_callable([$entity, 'getId']) && $entity->getId()) {
             $id = $entity->getId();
+        } elseif (is_callable([$entity, 'id']) && $entity->id()) {
+            $id = $entity->id();
         }
 
-        $fqcn = get_class($entity);
-        $classname = explode('\\', $fqcn);
-        $object = sprintf('%s:%s', array_pop($classname), $id);
+        $object = sprintf('%s:%s', $classname, $id);
 
         $log = new AuditLog;
         $log->setUser($user);
@@ -154,7 +163,7 @@ class EntityChangeLogger
     {
         $em->persist($log);
 
-        $meta = $em->getClassMetadata('QL\Hal\Core\Entity\AuditLog');
+        $meta = $em->getClassMetadata(AuditLog::CLASS);
         $unit->computeChangeSet($meta, $log);
     }
 }

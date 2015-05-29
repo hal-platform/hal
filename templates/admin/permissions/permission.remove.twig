@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = "Remove Permissions" %}
+
+{% block content %}
+
+    <h1>{{ page_title }}</h1>
+
+    <h2>Current Permissions - <strong>{{ userType.user.handle }}</strong></h2>
+    {% include '_partial/user.status.twig' %}
+
+    <h2>Remove the following permissions</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+
+            <dt class="split__title">User Type</dt>
+            <dd>
+                {% if userType.type == 'lead' %}
+                    {{ macros.status('Lead', 'notice') }}
+                {% endif %}
+                {% if userType.type == 'btn_pusher' %}
+                    {{ macros.status('Admin', 'warning') }}
+                {% endif %}
+                {% if userType.type == 'super' %}
+                    {{ macros.status('Super', 'error') }}
+                {% endif %}
+            </dd>
+
+            {% if userType.application %}
+                <dt class="split__title">Application</dt>
+                <dd><a href="{{ urlFor('repository', {id: userType.application.id}) }}">{{ userType.application.name }}</a></dd>
+            {% endif %}
+        </dl>
+    </div>
+
+    <h3>Are you sure?</h3>
+    <p>You're about to remove some of this user's permissions. Do you want to continue?</p>
+
+    <form class="form-wrapper" method="post">
+        <ul class="button-list">
+            <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('admin.permissions') }}">Cancel</a></li>
+        </ul>
+    </form>
+
+{% endblock %}
+

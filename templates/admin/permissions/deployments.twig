@@ -1,33 +1,26 @@
 {% extends 'base.html.twig' %}
 {% import _self as page_macros %}
 
-{% set page_title = "User Permissions" %}
+{% set page_title = "Deployment Permissions" %}
 
-{% set canRemoveLead = isUserSuper(currentUser) or isUserAdmin(currentUser) %}
-{% set canRemoveAdmin = isUserSuper(currentUser) %}
+{% set isAdmin = isUserAdminOrSuper(currentUser) %}
 
 {% block content %}
 
     <h1>{{ page_title }}</h1>
 
-    <h2>Application Leads</h2>
-    {{ page_macros.userTable(userTypes.lead, 'lead', canRemoveLead) }}
+    <h2>Deployment Permissions - Non-production</h2>
+    {{ page_macros.userTable(userPermissions.non_prod, isAdmin) }}
 
-    <h2>Deployment Adminstrators</h2>
-    {{ page_macros.userTable(userTypes.btn_pusher, 'btn_pusher', canRemoveAdmin) }}
-
-    <h2>HAL Administrators</h2>
-    {{ page_macros.userTable(userTypes.super, 'super') }}
-
-    <h2>User Types</h2>
-    {% include '_partial/user.types.twig' %}
+    <h2>Deployment Permissions - Production</h2>
+    {{ page_macros.userTable(userPermissions.prod, isAdmin) }}
 
     <ul class="button-list">
         <li>
             <a href="{{ urlFor('admin') }}" class="btn">Admin Dashboard</a>
         </li>
         <li>
-            <a href="#" class="btn btn--destructive">Deployment Permissions</a>
+            <a href="{{ urlFor('admin.permissions') }}" class="btn">User Permissions</a>
         </li>
         <li>
             <a href="{{ urlFor('users') }}" class="btn btn--primary">Users</a>
@@ -36,10 +29,10 @@
 
 {% endblock %}
 
-{% macro userTable(users_by_type, table_type, can_remove) %}
+{% macro userTable(permissions_by_type, can_remove) %}
     {% import "_partial/macros.twig" as macros %}
 
-    {% if users_by_type %}
+    {% if permissions_by_type %}
         <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
             <thead>
                 <tr>
@@ -47,9 +40,7 @@
                     <th class="t20">Username</th>
                     <th>Name</th>
 
-                    {% if table_type == 'lead' %}
-                        <th>Application</th>
-                    {% endif %}
+                    <th>Application</th>
 
                     {% if can_remove %}
                         <th></th>
@@ -57,8 +48,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for type in users_by_type %}
-                    {% set user = type.user %}
+                {% for perm in permissions_by_type %}
+                    {% set user = perm.user %}
 
                     <tr>
                         <td><a href="{{ urlFor('user', {'user': user.id}) }}">{{ user.id }}</a></td>
@@ -71,19 +62,13 @@
                             {% endif %}
                         </td>
 
-                        {% if table_type == 'lead' %}
-                            <td>
-                                {% if type.application %}
-                                    <a href="{{ urlFor('repository', {repository: type.application.id}) }}">{{ type.application.name }}</a>
-                                {% else %}
-                                    None
-                                {% endif %}
-                            </td>
-                        {% endif %}
+                        <td>
+                            <a href="{{ urlFor('repository', {repository: type.application.id}) }}">{{ perm.application.name }}</a>
+                        </td>
 
                         {% if can_remove %}
                             <td class="tr">
-                                <a class="btn btn--tiny btn--destructive" href="{{ urlFor('admin.permissions.remove', {userType: type.id}) }}">Remove</a>
+                                <a class="btn btn--tiny btn--destructive" href="{{ urlFor('admin.permissions.deployment.remove', {userPermission: perm.id}) }}">Remove</a>
                             </td>
                         {% endif %}
 
@@ -93,7 +78,7 @@
         </table>
 
     {% else %}
-        <p>There are no users of this type.</p>
+        <p>There are no deployment permissions for this environment group.</p>
     {% endif %}
 
 {% endmacro %}

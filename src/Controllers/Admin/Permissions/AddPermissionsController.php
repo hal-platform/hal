@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityRepository;
 use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
 use QL\Hal\Service\NewPermissionsService;
@@ -33,8 +34,10 @@ class AddPermissionsController implements ControllerInterface
     const ERR_INVALID_TYPE = 'Please select a valid permission type.';
     const ERR_CANNOT_ADD_SUPER = 'Invalid permission type selected.';
     const ERR_DUPLICATE_PERMISSION = 'Cannot add permissions. This user already has this permission.';
-    const ERR_DUPLICATE_LEAD = 'Cannot add permissions. This user already has lead permissions for this application.';
-    const ERR_APPLICATION_REQUIRED = 'Application is required if adding lead permissions.';
+    const ERR_DUPLICATE_LEAD = 'This user already has lead permissions for this application.';
+    const ERR_DUPLICATE_DEPLOY = 'This user already has deployment permissions for this application.';
+    const ERR_APPLICATION_REQUIRED = 'Application is required for lead or deployment permissions.';
+    const ERR_ENVIRONMENT_REQUIRED = 'Allowed Environments is required for deployment permissions.';
 
     /**
      * @type Request
@@ -142,28 +145,34 @@ class AddPermissionsController implements ControllerInterface
         if ($this->request->isPost()) {
             $form = [
                 'type' => $this->request->post('type'),
-                'application' => $this->request->post('application')
+                'application' => $this->request->post('application'),
+                'is_production' => $this->request->post('is_production')
             ];
 
             if ($permission = $this->handleForm($currentUserPerms, $selectedUserPerms)) {
+
+                $landingUrl = ($permission instanceof UserPermission) ? 'admin.permissions.deployment' : 'admin.permissions';
+
                 return $this->flasher
                     ->withFlash(sprintf(self::SUCCESS, $permission->user()->getHandle()))
-                    ->load('admin.permissions');
+                    ->load($landingUrl);
             }
         }
 
         $availableTypes = $this->getAvailableTypes($currentUserPerms);
         $availableApplications = $this->getAvailableApplications();
 
-        $leadApps = $this->getLeadApplications($availableApplications, $selectedUserPerms);
+        $appPerm = $this->permissions->getApplications($selectedUserPerms);
 
         $rendered = $this->template->render([
             'form' => $form,
             'errors' => $this->errors,
 
-            'selectedUser' => $this->selectedUser,
+            'user' => $this->selectedUser,
             'userPerm' => $selectedUserPerms,
-            'leadApplications' => $leadApps,
+            'leadApplications' => $appPerm['lead'],
+            'prodApplications' => $appPerm['prod'],
+            'nonProdApplications' => $appPerm['non_prod'],
 
             'availableTypes' => $availableTypes,
             'availableApplications' => $availableApplications,
@@ -178,6 +187,7 @@ class AddPermissionsController implements ControllerInterface
     private function getAvailableTypes(UserPerm $perm)
     {
         $availableTypes = [
+            'deploy' => 'Deployment',
             'lead' => 'Lead',
             'admin' => 'Admin'
         ];
@@ -197,12 +207,13 @@ class AddPermissionsController implements ControllerInterface
      * @param UserPerm $currentPerm
      * @param UserPerm $selectedPerm
      *
-     * @return UserType|null
+     * @return UserType|UserPermission|null
      */
     private function handleForm(UserPerm $currentPerm, UserPerm $selectedPerm)
     {
         $type = $this->request->post('type');
         $appId = $this->request->post('application');
+        $isProd = $this->request->post('is_production');
 
         $realMap = [
             'pleb' => 'pleb',
@@ -211,7 +222,7 @@ class AddPermissionsController implements ControllerInterface
             'super' => 'super'
         ];
 
-        if (!in_array($type, ['pleb', 'lead', 'admin', 'super'])) {
+        if (!in_array($type, ['pleb', 'lead', 'admin', 'super', 'deploy'])) {
             $this->errors[] = self::ERR_INVALID_TYPE;
         }
 
@@ -235,9 +246,14 @@ class AddPermissionsController implements ControllerInterface
             $this->errors[] = self::ERR_APPLICATION_REQUIRED;
         }
 
+        if ($type === 'deploy' && !in_array($isProd, ['true', 'false'], true)) {
+            $this->errors[] = self::ERR_ENVIRONMENT_REQUIRED;
+        }
+
         if ($this->errors) return null;
 
-        if ($type === 'lead') {
+
+        if ($type === 'lead' || $type === 'deploy') {
             if (!$application = $this->applicationRepo->find($appId)) {
                 $this->errors[] = self::ERR_APPLICATION_REQUIRED;
             }
@@ -245,15 +261,58 @@ class AddPermissionsController implements ControllerInterface
             $application = null;
         }
 
-        if ($application && in_array($application->getId(), $selectedPerm->applications())) {
+        if ($this->errors) return null;
+
+        // Duplicate deployment permissions
+        if ($type === 'deploy') {
+            $isProd = ($isProd === 'true') ? true : false;
+            if ($isProd && $selectedPerm->canDeployApplicationToProd($application)) {
+                $this->errors[] = self::ERR_DUPLICATE_DEPLOY;
+
+            } elseif (!$isProd && $selectedPerm->canDeployApplicationToNonProd($application)) {
+                $this->errors[] = self::ERR_DUPLICATE_DEPLOY;
+            }
+        }
+
+        // Duplicate lead permissions
+        if ($application && $selectedPerm->isLeadOfApplication($application)) {
             $this->errors[] = self::ERR_DUPLICATE_LEAD;
         }
 
         if ($this->errors) return null;
 
-        return $this->savePermissions($realMap[$type], $application);
+        if ($type === 'deploy') {
+            return $this->savePermissions($application, $isProd);
+        } else {
+            return $this->saveType($realMap[$type], $application);
+        }
     }
 
+    /**
+     * @param Repository $application
+     * @param bool $isProd
+     *
+     * @return UserPermission
+     */
+    private function savePermissions(Repository $application, $isProd)
+    {
+        $id = call_user_func($this->random);
+
+        $permissions = (new UserPermission)
+            ->withId($id)
+            ->withIsProduction($isProd)
+            ->withApplication($application)
+            ->withUser($this->selectedUser);
+
+        // Clear cache
+        $this->permissions->clearUserCache($this->selectedUser);
+
+        // persist to database
+        $this->em->persist($permissions);
+        $this->em->flush();
+
+        return $permissions;
+    }
 
     /**
      * @param string $type
@@ -261,7 +320,7 @@ class AddPermissionsController implements ControllerInterface
      *
      * @return UserType
      */
-    private function savePermissions($type, Repository $application = null)
+    private function saveType($type, Repository $application = null)
     {
         $id = call_user_func($this->random);
 
@@ -306,35 +365,5 @@ class AddPermissionsController implements ControllerInterface
 
         $this->setToCache(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->json->encode($data));
         return $data;
-    }
-
-    /**
-     * @param array $availableApps
-     * @param UserPerm $perm
-     *
-     * @return array
-     */
-    private function getLeadApplications(array $availableApps, UserPerm $perm)
-    {
-        if (!$perm->isLead()) {
-            return [];
-        }
-
-        if (!$perm->applications()) {
-            return [];
-        }
-
-        $apps = [];
-
-        foreach ($perm->applications() as $app) {
-            if (isset($availableApps[$app])) {
-                $apps[] = [
-                    'id' => $app,
-                    'name' => $availableApps[$app]
-                ];
-            }
-        }
-
-        return $apps;
     }
 }

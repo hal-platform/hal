@@ -7,21 +7,23 @@
 
 namespace QL\Hal\Controllers\User;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use MCP\Cache\CachingTrait;
 use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Repository\UserRepository;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\NewPermissionsService;
 use QL\Hal\Service\UserPerm;
-use QL\Hal\Services\PermissionsService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
+use QL\Panthor\Utility\Json;
 
 class UserController implements ControllerInterface
 {
+    use CachingTrait;
+
+    const CACHE_KEY_COUNTS = 'page:db.job_counts.%s';
+
     /**
      * @type TemplateInterface
      */
@@ -38,11 +40,6 @@ class UserController implements ControllerInterface
     private $userRepo;
 
     /**
-     * @type EntityRepository
-     */
-    private $repoRepo;
-
-    /**
      * @type LdapService
      */
     private $ldap;
@@ -53,9 +50,9 @@ class UserController implements ControllerInterface
     private $permissions;
 
     /**
-     * @type PermissionsService
+     * @type Json
      */
-    private $permissionsLegacy;
+    private $json;
 
     /**
      * @param TemplateInterface $template
@@ -64,7 +61,7 @@ class UserController implements ControllerInterface
      *
      * @param LdapService $ldap
      * @param NewPermissionsService $permissions
-     * @param PermissionsService $permissionsLegacy
+     * @param Json $json
      */
     public function __construct(
         TemplateInterface $template,
@@ -72,17 +69,16 @@ class UserController implements ControllerInterface
         EntityManagerInterface $em,
         LdapService $ldap,
         NewPermissionsService $permissions,
-        PermissionsService $permissionsLegacy
+        Json $json
     ) {
         $this->template = $template;
         $this->user = $user;
 
         $this->userRepo = $em->getRepository(User::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
 
         $this->ldap = $ldap;
         $this->permissions = $permissions;
-        $this->permissionsLegacy = $permissionsLegacy;
+        $this->json = $json;
     }
 
     /**
@@ -91,39 +87,46 @@ class UserController implements ControllerInterface
     public function __invoke()
     {
         $userPerm = $this->permissions->getUserPermissions($this->user);
-        $leadApps = $this->getLeadApplications($userPerm);
+        $appPerm = $this->permissions->getApplications($userPerm);
+
+        $stats = $this->getCounts();
 
         $rendered = $this->template->render([
             'user' => $this->user,
             'userPerm' => $userPerm,
-            'leadApplications' => $leadApps,
+            'leadApplications' => $appPerm['lead'],
+            'prodApplications' => $appPerm['prod'],
+            'nonProdApplications' => $appPerm['non_prod'],
 
             'ldapUser' => $this->ldap->getUserByCommonId($this->user->getId()),
 
             // 'permissions' => $this->permissionsLegacy->userPushPermissionPairs($this->user->getHandle()),
-            'builds' => $this->userRepo->getBuildCount($this->user),
-            'pushes' => $this->userRepo->getPushCount($this->user),
+            'builds' => $stats['builds'],
+            'pushes' => $stats['pushes']
         ]);
     }
 
     /**
-     * @param UserPerm $perm
-     *
-     * @return Repository[]
+     * @return array
      */
-    private function getLeadApplications(UserPerm $perm)
+    private function getCounts()
     {
-        if (!$perm->isLead()) {
-            return [];
+        $key = sprintf(self::CACHE_KEY_COUNTS, $this->user->getId());
+
+        // external cache
+        if ($result = $this->getFromCache($key)) {
+            $decoded = $this->json->decode($result);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
         }
 
-        if (!$perm->applications()) {
-            return [];
-        }
+        $data = [
+            'builds' => $this->userRepo->getBuildCount($this->user),
+            'pushes' => $this->userRepo->getPushCount($this->user),
+        ];
 
-        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $perm->applications()));
-        $applications = $this->repoRepo->matching($criteria);
-
-        return $applications->toArray();
+        $this->setToCache($key, $this->json->encode($data));
+        return $data;
     }
 }

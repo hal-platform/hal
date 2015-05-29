@@ -7,34 +7,40 @@
 
 {% set page_title = 'User : ' ~ name %}
 
+{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+
 {% block content %}
 
-    <h1>
-        {% if isSeriousBusinessMode() %}
-            {{ displayName }}
-        {% else %}
-            <span
-                data-initial="{{ getUsersActualName(currentUser) }}"
-                data-nofunzone="{{ name }}"
-            >{{ displayName }}</span>
-        {% endif %}
-    </h1>
+    <div class="flag">
+        <div class="flag__figure">
 
-    {% if ldapUser %}
-        <h4>{{ ldapUser.teamName }}</h4>
-        <p>{{ ldapUser.title }}</p>
-    {% endif %}
+            {% if ldapUser and user.pictureUrl %}
+                {% set profilePicture = user.pictureUrl.host ~ user.pictureUrl.path %}
+                <img src="{{ ishttpsOn ? 'https' : 'http' }}://{{ profilePicture }}" width="100">
+            {% else %}
+                <img src="/img/noprofile.jpg" width="100">
+            {% endif %}
+        </div>
+        <div class="flag__body">
 
-    <p>
-        {% if ldapUser %}
-            {% set profilePicture = user.pictureUrl.host ~ user.pictureUrl.path %}
-            <img src="{{ ishttpsOn ? 'https' : 'http' }}://{{ profilePicture }}" width="150">
-        {% else %}
-            <img src="/img/noprofile.jpg" width="150">
-        {% endif %}
-    </p>
+            <h1 class="mbs">
+                {% if isSeriousBusinessMode() %}
+                    {{ displayName }}
+                {% else %}
+                    <span data-initial="{{ getUsersActualName(currentUser) }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
+                {% endif %}
+            </h1>
+            {% if ldapUser %}
+                <h4>{{ ldapUser.title }}</h4>
+                <p>{{ ldapUser.teamName }}</p>
+            {% else %}
+                <h4>Astronaut</h4>
+                <p>Discovery One</p>
+            {% endif %}
+        </div>
+    </div>
 
-    <h2>Contact</h2>
+    <h2 class="leader">Contact</h2>
     <div class="details-box">
         <dl class="split mbn">
             <dt class="split__title">Email</dt>
@@ -52,57 +58,7 @@
     </div>
 
     <h2>Status</h2>
-    <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">HAL</dt>
-            <dd>
-                {% if user.isActive %}
-                    {{ macros.status('Active', 'success', 'tick') }}
-                {% else %}
-                    {{ macros.status('Inactive', 'error', 'nope') }}
-                {% endif %}
-            </dd>
-
-            <dt class="split__title">Active Directory</dt>
-            <dd>
-                {% if ldapUser %}
-                    {{ macros.status('Active', 'success', 'tick') }}
-                {% else %}
-                    {{ macros.status('Inactive', 'error', 'nope') }}
-                {% endif %}
-            </dd>
-
-            <dt class="split__title">User Types</dt>
-            <dd>
-                {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
-                    <ul class="inline-list--space">
-                        {% if userPerm.isLead %}
-                            <li>{{ macros.status('Lead', 'notice') }}</li>
-                        {% endif %}
-                        {% if userPerm.isButtonPusher %}
-                            <li>{{ macros.status('Admin', 'warning') }}</li>
-                        {% endif %}
-                        {% if userPerm.isSuper %}
-                            <li>{{ macros.status('Super', 'error') }}</li>
-                        {% endif %}
-                    </ul>
-                {% else %}
-                    Standard
-                {% endif %}
-            </dd>
-
-            {% if leadApplications %}
-                <dt class="split__title">Lead Applications</dt>
-                <dd>
-                    <ul class="inline-list--comma">
-                        {% for application in leadApplications %}
-                            <li><a href="{{ urlFor('repository', {id: application.id}) }}">{{ application.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </dd>
-            {% endif %}
-        </dl>
-    </div>
+    {% include '_partial/user.status.twig' with {showHalStatus: true} %}
 
     <h2>Activity</h2>
     <div class="details-box">

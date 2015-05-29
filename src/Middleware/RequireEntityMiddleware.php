@@ -9,6 +9,7 @@ namespace QL\Hal\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
@@ -69,6 +70,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
         // whitelist of route parameters and the entity they map to.
         $this->map = [
             'user' => User::CLASS,
+            'userPermission' => UserPermission::CLASS,
             'userType' => UserType::CLASS,
         ];
     }

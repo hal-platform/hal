@@ -7,9 +7,6 @@
 
 namespace QL\Hal\Controllers\Admin\Permissions;
 
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
@@ -50,11 +47,6 @@ class RemovePermissionsController implements ControllerInterface
     private $userType;
 
     /**
-     * @type EntityRepository
-     */
-    private $repoRepo;
-
-    /**
      * @type NewPermissionsService
      */
     private $permissions;
@@ -76,7 +68,6 @@ class RemovePermissionsController implements ControllerInterface
         TemplateInterface $template,
         User $currentUser,
         UserType $userType,
-        EntityManagerInterface $em,
         NewPermissionsService $permissions,
         Flasher $flasher
     ) {
@@ -85,7 +76,6 @@ class RemovePermissionsController implements ControllerInterface
         $this->userType = $userType;
 
         $this->permissions = $permissions;
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
         $this->flasher = $flasher;
     }
 
@@ -95,55 +85,56 @@ class RemovePermissionsController implements ControllerInterface
     public function __invoke()
     {
         $currentUserPerms = $this->permissions->getUserPermissions($this->currentUser);
-        $affectedUserPerms = $this->permissions->getUserPermissions($this->userType->user());
-        $leadApps = $this->getLeadApplications($affectedUserPerms);
 
+        if (!$this->isAllowed($currentUserPerms)) {
+            return $this->flasher->load('admin.permissions');
+        }
+
+        $selectedUserPerms = $this->permissions->getUserPermissions($this->userType->user());
+        $appPerm = $this->permissions->getApplications($selectedUserPerms);
+
+        $rendered = $this->template->render([
+            'userType' => $this->userType,
+            'userPerm' => $selectedUserPerms,
+
+            'leadApplications' => $appPerm['lead'],
+            'prodApplications' => $appPerm['prod'],
+            'nonProdApplications' => $appPerm['non_prod'],
+        ]);
+    }
+
+    /**
+     * Is the current user allowed to do this?
+     *
+     * @param UserPerm $currentUserPerms
+     *
+     * @return bool
+     */
+    private function isAllowed(UserPerm $currentUserPerms)
+    {
         $type = $this->userType->type();
 
         // Super can do this
         if ($currentUserPerms->isSuper()) {
             // super cannot remove super, must be done from DB
             if (!in_array($type, ['pleb', 'lead', 'btn_pusher'])) {
-                return $this->flasher
-                    ->withFlash('Access Denied', 'error', self::ERR_NOPE_SUPER)
-                    ->load('admin.permissions');
+                 $this->flasher->withFlash('Access Denied', 'error', self::ERR_NOPE_SUPER);
+                 return false;
             }
+
+            return true;
 
         // Button Pusher can do this
         } elseif ($currentUserPerms->isButtonPusher()) {
             // btn_pusher cannot remove super or btn_pusher
             if (!in_array($type, ['pleb', 'lead'])) {
-                return $this->flasher
-                    ->withFlash('Access Denied', 'error', self::ERR_NOPE_BTN)
-                    ->load('admin.permissions');
+                $this->flasher->withFlash('Access Denied', 'error', self::ERR_NOPE_BTN);
+                return false;
             }
+
+            return true;
         }
 
-        $rendered = $this->template->render([
-            'userType' => $this->userType,
-            'userPerm' => $affectedUserPerms,
-            'leadApplications' => $leadApps
-        ]);
-    }
-
-    /**
-     * @param UserPerm $perm
-     *
-     * @return Repository[]
-     */
-    private function getLeadApplications(UserPerm $perm)
-    {
-        if (!$perm->isLead()) {
-            return [];
-        }
-
-        if (!$perm->applications()) {
-            return [];
-        }
-
-        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $perm->applications()));
-        $applications = $this->repoRepo->matching($criteria);
-
-        return $applications->toArray();
+        return false;
     }
 }

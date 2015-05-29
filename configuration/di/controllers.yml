@@ -396,7 +396,10 @@ services:
             - @doctrine.em
             - @ldap
             - @permissions.new
-            - @permissions
+            - @json
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.page.ttl%]]
     user.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/user.twig']]]

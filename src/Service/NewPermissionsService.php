@@ -7,9 +7,11 @@
 
 namespace QL\Hal\Service;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\Cache\CachingTrait;
+use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Entity\UserPermission;
@@ -31,6 +33,8 @@ class NewPermissionsService
      * @type EntityRepository
      */
     private $userTypeRepo;
+    private $userPermissionsRepo;
+    private $applicationRepo;
 
     /**
      * @type GitHubService
@@ -49,7 +53,6 @@ class NewPermissionsService
      */
     private $internalCache;
 
-    private $productionEnvironments;
     private $superApplications;
 
     /**
@@ -64,13 +67,14 @@ class NewPermissionsService
     ) {
         $this->em = $em;
         $this->userTypesRepo = $em->getRepository(UserType::CLASS);
+        $this->userPermissionsRepo = $em->getRepository(UserPermission::CLASS);
+        $this->applicationRepo = $em->getRepository(Repository::CLASS);
 
         $this->github = $github;
         $this->json = $json;
 
         $this->internalCache = [];
 
-        $this->productionEnvironments = ['prod', 'production'];
         $this->superApplications = [
             'hal9000',
             'hal9000-agent',
@@ -102,24 +106,29 @@ class NewPermissionsService
         }
 
         $userTypes = $this->userTypesRepo->findBy(['user' => $user]);
-        $perm = $this->parseUserTypes($userTypes);
+        $userPermissions = $this->userPermissionsRepo->findBy(['user' => $user]);
+        $perm = $this->parseUserPermissions($userTypes, $userPermissions);
 
         $this->internalCache[$key] = $perm;
         $this->setToCache($key, $this->json->encode($perm));
+
         return $perm;
     }
 
     /**
-     * @param UserType $permission
+     * @param UserType|UserPermission $permission
      *
      * @return void
      */
-    public function removeUserPermissions(UserType $permission)
+    public function removeUserPermissions($permission)
     {
-        $this->clearUserCache($permission->user());
+        if ($permission instanceof UserType || $permission instanceof UserPermission) {
 
-        $this->em->remove($permission);
-        $this->em->flush();
+            $this->clearUserCache($permission->user());
+
+            $this->em->remove($permission);
+            $this->em->flush();
+        }
     }
 
     /**
@@ -147,15 +156,17 @@ class NewPermissionsService
             return true;
         }
 
-        if ($perm->isLead() && in_array($repository->getId(), $perm->applications(), true)) {
+        if ($perm->isLead() && $perm->isLeadOfApplication($application)) {
+            return true;
+        }
+
+        if ($perm->canDeployApplicationToNonProd($application)) {
             return true;
         }
 
         if ($this->isUserCollaborator($user, $application)) {
             return true;
         }
-
-        // @todo, add deployment permissions here
 
         return false;
     }
@@ -172,7 +183,7 @@ class NewPermissionsService
         $perm = $user->getUserPermissions($user);
 
         // Not prod? Same permissions as building
-        if (!$this->isEnvironmentProduction($environment)) {
+        if (!$environment->isProduction()) {
             return $this->canUserBuild($user, $application);
         }
 
@@ -184,20 +195,45 @@ class NewPermissionsService
             return true;
         }
 
-        // @todo, add deployment permissions here
+        if ($perm->canDeployApplicationToProd($application)) {
+            return true;
+        }
 
         return false;
     }
 
     /**
-     * @todo replace with db toggle
+     * Get a list of resolved applications sorted into "lead", "prod", "non_prod".
      *
-     * @param string $environment
-     * @return bool
+     * This is not cached, and should be used sparingly. NEVER in a loop.
+     *
+     * @param UserPerm $perm
+     *
+     * @return array
      */
-    private function isEnvironmentProduction($environment)
+    public function getApplications(UserPerm $perm)
     {
-        return in_array($environment, $this->productionEnvironments);
+        $apps = [];
+        foreach ($perm->leadApplications() as $app) $apps[$app] = $app;
+        foreach ($perm->prodApplications() as $app) $apps[$app] = $app;
+        foreach ($perm->nonProdApplications() as $app) $apps[$app] = $app;
+
+        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $apps));
+        $applications = $this->applicationRepo->matching($criteria);
+
+        $appPerm = [
+            'lead' => [],
+            'prod' => [],
+            'non_prod' => []
+        ];
+
+        foreach ($applications as $app) {
+            if ($perm->isLeadOfApplication($app)) $appPerm['lead'][] = $app;
+            if ($perm->canDeployApplicationToProd($app)) $appPerm['prod'][] = $app;
+            if ($perm->canDeployApplicationToNonProd($app)) $appPerm['non_prod'][] = $app;
+        }
+
+        return $appPerm;
     }
 
     /**
@@ -243,25 +279,29 @@ class NewPermissionsService
 
     /**
      * @param UserType[] $types
+     * @param UserPermission[] $permissions
      *
      * @return UserPerm
      */
-    private function parseUserTypes(array $types)
+    private function parseUserPermissions(array $types, array $permissions)
     {
         $parsed = [
             'isPleb' => false,
             'isLead' => false,
             'isButtonPusher' => false,
             'isSuper' => false,
-            'applications' => []
+            'leadApplications' => [],
+            'prodApplications' => [],
+            'nonProdApplications' => []
         ];
 
+        // types
         foreach ($types as $t) {
             if ($t->type() === 'lead') {
                 $parsed['isLead'] = true;
 
                 if ($t->application()) {
-                    $parsed['applications'][$t->application()->getId()] = $t->application()->getId();
+                    $parsed['leadApplications'][$t->application()->getId()] = $t->application()->getId();
                 }
 
             } elseif ($t->type() === 'btn_pusher') {
@@ -275,14 +315,17 @@ class NewPermissionsService
             }
         }
 
-        $parsed['applications'] = array_values($parsed['applications']);
+        // permissions
+        foreach ($permissions as $perm) {
+            $key = ($perm->isProduction()) ? 'prodApplications' : 'nonProdApplications';
+            $parsed[$key][$perm->application()->getId()] = $perm->application()->getId();
+        }
 
-        return new UserPerm(
-            $parsed['isPleb'],
-            $parsed['isLead'],
-            $parsed['isButtonPusher'],
-            $parsed['isSuper'],
-            $parsed['applications']
-        );
+        $perm = (new UserPerm($parsed['isPleb'], $parsed['isLead'], $parsed['isButtonPusher'], $parsed['isSuper']))
+            ->withLeadApplications(array_values($parsed['leadApplications']))
+            ->withProdApplications(array_values($parsed['prodApplications']))
+            ->withNonProdApplications(array_values($parsed['nonProdApplications']));
+
+        return $perm;
     }
 }

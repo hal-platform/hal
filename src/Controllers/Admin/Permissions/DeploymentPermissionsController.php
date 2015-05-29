@@ -11,7 +11,7 @@ use Closure;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserType;
+use QL\Hal\Core\Entity\UserPermission;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -25,7 +25,7 @@ use QL\Panthor\TemplateInterface;
  *     Remove Lead
  *
  */
-class PermissionsController implements ControllerInterface
+class DeploymentPermissionsController implements ControllerInterface
 {
     /**
      * @type TemplateInterface
@@ -56,7 +56,7 @@ class PermissionsController implements ControllerInterface
         $this->template = $template;
         $this->currentUser = $currentUser;
 
-        $this->userTypesRepo = $em->getRepository(UserType::CLASS);
+        $this->userPermissionsRepo = $em->getRepository(UserPermission::CLASS);
     }
 
     /**
@@ -64,45 +64,45 @@ class PermissionsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $types = $this->getTypes();
+        $permissions = $this->getPermissions();
 
         // sort
         $sorter = $this->typeSorter();
 
-        usort($types['pleb'], $sorter);
-        usort($types['lead'], $sorter);
-        usort($types['btn_pusher'], $sorter);
-        usort($types['super'], $sorter);
+        usort($permissions['prod'], $sorter);
+        usort($permissions['non_prod'], $sorter);
 
         $rendered = $this->template->render([
-            'userTypes' => $types
+            'userPermissions' => $permissions
         ]);
     }
 
     /**
-     * Get all user types in the whole db, collated into per-type buckets
+     * Get all user permissions in the whole db, collated into per-type buckets
      *
      * @return array
      */
-    private function getTypes()
+    private function getPermissions()
     {
-        $userTypes = $this->userTypesRepo->findAll();
+        $userPermissions = $this->userPermissionsRepo->findAll();
 
         $collated = [
-            'pleb' => [],
-            'lead' => [],
-            'btn_pusher' => [],
-            'super' => [],
+            'prod' => [],
+            'non_prod' => [],
             'current' => []
         ];
 
-        foreach ($userTypes as $userType) {
-            $type = $userType->type();
+        foreach ($userPermissions as $userPermission) {
 
-            $collated[$type][] = $userType;
+            if ($userPermission->isProduction()) {
+                $collated['prod'][] = $userPermission;
 
-            if ($userType->user() === $this->currentUser) {
-                $collated['current'][] = $userType;
+            } else {
+                $collated['non_prod'][] = $userPermission;
+            }
+
+            if ($userPermission->user() === $this->currentUser) {
+                $collated['current'][] = $userPermission;
             }
         }
 
@@ -114,7 +114,7 @@ class PermissionsController implements ControllerInterface
      */
     private function typeSorter()
     {
-        return function(UserType $a, UserType $b) {
+        return function(UserPermission $a, UserPermission $b) {
             $a = $a->user()->getName();
             $b = $b->user()->getName();
 

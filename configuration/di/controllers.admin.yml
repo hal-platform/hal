@@ -55,7 +55,17 @@ services:
             - @doctrine.em
     admin.permissions.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['admin/permissions/types.twig']]]
+        calls: [['setTemplate', ['admin/permissions/permissions.twig']]]
+
+    admin.permissions.deployment.page:
+        class: 'QL\Hal\Controllers\Admin\Permissions\DeploymentPermissionsController'
+        arguments:
+            - @admin.permissions.deployment.twig
+            - @currentUser
+            - @doctrine.em
+    admin.permissions.deployment.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/permissions/deployments.twig']]]
 
     admin.permissions.remove.page:
         class: 'QL\Hal\Controllers\Admin\Permissions\RemovePermissionsController'
@@ -63,12 +73,11 @@ services:
             - @admin.permissions.remove.twig
             - @currentUser
             - @hal.userType
-            - @doctrine.em
             - @permissions.new
             - @session.flasher
     admin.permissions.remove.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['admin/permissions/type.remove.twig']]]
+        calls: [['setTemplate', ['admin/permissions/permission.remove.twig']]]
 
     admin.permissions.remove.handler:
         class: 'QL\Hal\Controllers\Admin\Permissions\RemovePermissionsHandler'
@@ -95,7 +104,24 @@ services:
             - ['setCacheTTL', [%cache.page.ttl%]]
     admin.permissions.add.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['admin/permissions/type.add.twig']]]
+        calls: [['setTemplate', ['admin/permissions/permission.add.twig']]]
+
+    admin.permissions.deployment.remove.page:
+        class: 'QL\Hal\Controllers\Admin\Permissions\RemoveDeploymentPermissionsController'
+        arguments:
+            - @admin.permissions.deployment.remove.twig
+            - @hal.userPermission
+            - @permissions.new
+    admin.permissions.deployment.remove.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/permissions/deployment.remove.twig']]]
+
+    admin.permissions.deployment.remove.handler:
+        class: 'QL\Hal\Controllers\Admin\Permissions\RemoveDeploymentPermissionsHandler'
+        arguments:
+            - @hal.userPermission
+            - @permissions.new
+            - @session.flasher
 
     ####################################################################################################################
     # SUPER ADMIN CONTROLLERS

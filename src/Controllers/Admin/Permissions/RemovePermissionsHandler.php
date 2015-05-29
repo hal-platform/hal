@@ -74,25 +74,8 @@ class RemovePermissionsHandler implements ControllerInterface
     {
         $currentUserPerms = $this->permissions->getUserPermissions($this->currentUser);
 
-        $type = $this->userType->type();
-
-        // Super can do this
-        if ($currentUserPerms->isSuper()) {
-            // super cannot remove super, must be done from DB
-            if (!in_array($type, ['pleb', 'lead', 'btn_pusher'])) {
-                return $this->flasher
-                    ->withFlash('Access Denied', 'error', self::ERR_NOPE_SUPER)
-                    ->load('admin.permissions');
-            }
-
-        // Button Pusher can do this
-        } elseif ($currentUserPerms->isButtonPusher()) {
-            // btn_pusher cannot remove super or btn_pusher
-            if (!in_array($type, ['pleb', 'lead'])) {
-                return $this->flasher
-                    ->withFlash('Access Denied', 'error', self::ERR_NOPE_BTN)
-                    ->load('admin.permissions');
-            }
+        if (!$this->isAllowed($currentUserPerms)) {
+            return $this->flasher->load('admin.permissions');
         }
 
         $map = [
@@ -102,6 +85,7 @@ class RemovePermissionsHandler implements ControllerInterface
             'super' => 'Super'
         ];
 
+        $type = $this->userType->type();
         $type = $map[$type];
         $name = $this->userType->user()->getHandle();
 
@@ -110,5 +94,40 @@ class RemovePermissionsHandler implements ControllerInterface
         $this->flasher
             ->withFlash(sprintf(self::SUCCESS, $type, $name), 'success')
             ->load('admin.permissions');
+    }
+
+    /**
+     * Is the current user allowed to do this?
+     *
+     * @param UserPerm $currentUserPerms
+     *
+     * @return bool
+     */
+    private function isAllowed(UserPerm $currentUserPerms)
+    {
+        $type = $this->userType->type();
+
+        // Super can do this
+        if ($currentUserPerms->isSuper()) {
+            // super cannot remove super, must be done from DB
+            if (!in_array($type, ['pleb', 'lead', 'btn_pusher'])) {
+                 $this->flasher->withFlash('Access Denied', 'error', self::ERR_NOPE_SUPER);
+                 return false;
+            }
+
+            return true;
+
+        // Button Pusher can do this
+        } elseif ($currentUserPerms->isButtonPusher()) {
+            // btn_pusher cannot remove super or btn_pusher
+            if (!in_array($type, ['pleb', 'lead'])) {
+                $this->flasher->withFlash('Access Denied', 'error', self::ERR_NOPE_BTN);
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

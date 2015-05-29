@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "7c231c2d5020c4a7c25278604b352ab8",
@@ -1120,7 +1120,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git/web-core/hal-core",
-                "reference": "99da803ff2f71e57e6a42fcace772a8eb90e8c85"
+                "reference": "86141565946b921541487f5d5ad2137e365afe35"
             },
             "archive": {
                 "exclude": [
@@ -1161,7 +1161,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-05-28 23:55:51"
+            "time": "2015-05-29 15:29:20"
         },
         {
             "name": "ql/http-problem",
@@ -2169,12 +2169,12 @@
             "target-dir": "Zend/Ldap",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/Component_ZendLdap.git",
+                "url": "https://github.com/zendframework/zend-ldap.git",
                 "reference": "81dd696254adc20e017cfae776961014d385035f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendLdap/zipball/81dd696254adc20e017cfae776961014d385035f",
+                "url": "https://api.github.com/repos/zendframework/zend-ldap/zipball/2b82e35cc5834fbdcb4ceafd90021479e9445c4b",
                 "reference": "81dd696254adc20e017cfae776961014d385035f",
                 "shasum": ""
             },
@@ -2218,12 +2218,12 @@
             "target-dir": "Zend/Stdlib",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/Component_ZendStdlib.git",
+                "url": "https://github.com/zendframework/zend-stdlib.git",
                 "reference": "3f6e2416183d4879a983680e1165f14164b262f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/3f6e2416183d4879a983680e1165f14164b262f4",
+                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/2acb22aaf926f5a1934c6622d596f0b14872c3cd",
                 "reference": "3f6e2416183d4879a983680e1165f14164b262f4",
                 "shasum": ""
             },

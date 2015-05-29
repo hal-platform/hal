@@ -1,0 +1,94 @@
+{% import "_partial/macros.twig" as macros %}
+
+{# user #}
+{% set leadApplications = leadApplications|default([]) %}
+{% set nonProdApplications = nonProdApplications|default([]) %}
+{% set prodApplications = prodApplications|default([]) %}
+
+{% set isAdmin = isAdmin|default(false) %}
+{% set showHalStatus = showHalStatus|default(false) %}
+
+<div class="details-box">
+    <dl class="split mbn">
+        {% if showHalStatus %}
+            <dt class="split__title">HAL</dt>
+            <dd>
+                {% if user.isActive %}
+                    {{ macros.status('Active', 'success', 'tick') }}
+                {% else %}
+                    {{ macros.status('Inactive', 'error', 'nope') }}
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">Active Directory</dt>
+            <dd>
+                {% if ldapUser %}
+                    {{ macros.status('Active', 'success', 'tick') }}
+                {% else %}
+                    {{ macros.status('Inactive', 'error', 'nope') }}
+                {% endif %}
+            </dd>
+        {% endif %}
+
+        <dt class="split__title">User Types</dt>
+        <dd>
+            {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
+                <ul class="inline-list--space">
+                    {% if userPerm.isLead %}
+                        <li>{{ macros.status('Lead', 'notice') }}</li>
+                    {% endif %}
+                    {% if userPerm.isButtonPusher %}
+                        <li>{{ macros.status('Admin', 'warning') }}</li>
+                    {% endif %}
+                    {% if userPerm.isSuper %}
+                        <li>{{ macros.status('Super', 'error') }}</li>
+                    {% endif %}
+                </ul>
+            {% else %}
+                Standard
+            {% endif %}
+        </dd>
+
+        {% if leadApplications %}
+            <dt class="split__title">Lead Applications</dt>
+            <dd>
+                <ul class="inline-list--comma">
+                    {% for application in leadApplications %}
+                        <li><a href="{{ urlFor('repository', {id: application.id}) }}">{{ application.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        {% endif %}
+
+        {% if nonProdApplications %}
+            <dt class="split__title">Non-Production Permissions</dt>
+            <dd>
+                <ul class="inline-list--comma">
+                    {% for application in nonProdApplications %}
+                        <li><a href="{{ urlFor('repository', {id: application.id}) }}">{{ application.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        {% endif %}
+
+        {% if prodApplications %}
+            <dt class="split__title">Production Permissions</dt>
+            <dd>
+                <ul class="inline-list--comma">
+                    {% for application in prodApplications %}
+                        <li><a href="{{ urlFor('repository', {id: application.id}) }}">{{ application.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        {% endif %}
+    </dl>
+
+    {% if isAdmin %}
+        <ul class="button-list mtm">
+            <li><a class="btn btn--action" href="{{ urlFor('admin.permissions.add', {user: user.id}) }}">Add Permissions</a></li>
+            <li><a class="btn" href="{{ urlFor('admin.permissions') }}">Manage User Permissions</a></li>
+            <li><a class="btn" href="{{ urlFor('admin.permissions.deployment') }}">Manage Deployment Permissions</a></li>
+        </ul>
+    {% endif %}
+
+</div>

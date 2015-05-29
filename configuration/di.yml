@@ -14,11 +14,12 @@ services:
     ######################################################################################################################
 
     # Set by bouncers
-    currentUser:   { synthetic: true }
-    requester:     { synthetic: true }
+    currentUser:         { synthetic: true }
+    requester:           { synthetic: true }
 
-    hal.user:      { synthetic: true }
-    hal.userType:  { synthetic: true }
+    hal.user:            { synthetic: true }
+    hal.userType:        { synthetic: true }
+    hal.userPermission:  { synthetic: true }
 
     ######################################################################################################################
     # DOCTRINE CONFIGURATION
@@ -38,7 +39,7 @@ services:
 
     doctrine.listener.logger:
         class: 'QL\Hal\Doctrine\EntityChangeLogger'
-        arguments: [@user.helper, @clock]
+        arguments: [@utility.lazy.user, @clock]
 
     doctrine.listener.persist:
         class: 'QL\Hal\Core\DoctrinePersistListener'
@@ -117,10 +118,6 @@ services:
         class: 'QL\Hal\Helpers\DirectoryHelper'
         arguments: [@root]
 
-    user.helper:
-        class: 'QL\Hal\Helpers\LazyUserHelper'
-        arguments: [@service_container]
-
     api.helper:
         class: 'QL\Hal\Helpers\ApiHelper'
         arguments: [@url.helper, @slim.request, %api.cachetimes%]
@@ -129,6 +126,10 @@ services:
 
     name.helper:
         class: 'QL\Hal\Helpers\NameHelper'
+
+    utility.lazy.user:
+        class: 'QL\Hal\Utility\LazyUserRetriever'
+        arguments: [@service_container]
 
     utility.id.generator:
         class: 'QL\Hal\Core\JobIdGenerator'

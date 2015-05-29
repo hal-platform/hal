@@ -144,9 +144,7 @@ class PermissionsExtension extends Twig_Extension
             return false;
         }
 
-        $apps = $perm->applications();
-
-        return in_array($application->getId(), $apps, true);
+        return $perm->isLeadOfApplication($application);
     }
 
     /**

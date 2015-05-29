@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = "Remove Deployment Permissions" %}
+
+{% block content %}
+
+    <h1>{{ page_title }}</h1>
+
+    <h2>Current Permissions - <strong>{{ userPermission.user.handle }}</strong></h2>
+    {% include '_partial/user.status.twig' %}
+
+    <h2>Remove the following permissions</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+
+            <dt class="split__title">Type</dt>
+            <dd>
+                {% if userPermission.isProduction %}
+                    Production
+                {% else %}
+                    Non-Production
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">Application</dt>
+            <dd><a href="{{ urlFor('repository', {id: userPermission.application.id}) }}">{{ userPermission.application.name }}</a></dd>
+        </dl>
+    </div>
+
+    <h3>Are you sure?</h3>
+    <p>You're about to remove some of this user's permissions. Do you want to continue?</p>
+
+    <form class="form-wrapper" method="post">
+        <ul class="button-list">
+            <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('admin.permissions.deployment') }}">Cancel</a></li>
+        </ul>
+    </form>
+
+{% endblock %}
+
