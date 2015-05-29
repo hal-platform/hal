@@ -9,9 +9,11 @@
     {% endif %}
         <meta charset="utf-8">
         {% block page_head %}
+            {% block page_title %}
             <title>
-                {% if page_title %}{{ page_title }} - {% endif %}{{ applicationTitle }}
+                {% if page_title %}{{ page_title }} - {% endif %}{{ applicationEnvironment == 'prod' ? ' - ' ~ applicationTitle : applicationEnvironment|upper }}
             </title>
+            {% endblock %}
             {% block page_icon %}
                 <link type="image/x-icon" rel="shortcut icon" href="/hal.ico"> <!-- for ie -->
                 <link type="image/png" rel="apple-touch-icon-precomposed" sizes="57x57" href="/hal-57px.png"> <!-- for apple -->

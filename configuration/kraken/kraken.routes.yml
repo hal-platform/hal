@@ -10,15 +10,15 @@ parameters:
 
         kraken:
             route: '/kraken'
-            stack: ['login.bouncer', 'kraken.page']
+            stack: ['middleware.login', 'kraken.page']
 
         kraken.applications:
             route: '/kraken/applications'
-            stack: ['login.bouncer', 'kraken.applications.page']
+            stack: ['middleware.login', 'kraken.applications.page']
 
         kraken.environments:
             route: '/kraken/environments'
-            stack: ['login.bouncer', 'kraken.environments.page']
+            stack: ['middleware.login', 'kraken.environments.page']
 
         ################################################################################################################
         # APPLICATION
@@ -26,17 +26,17 @@ parameters:
 
         kraken.application:
             route: '/kraken/applications/:application'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.application.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         kraken.status:
             route: '/kraken/applications/:application/status'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.status.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.status.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         kraken.application.edit:
             route: '/kraken/applications/:application/edit'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.edit.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.application.edit.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         ################################################################################################################
@@ -45,7 +45,7 @@ parameters:
 
         kraken.environment.edit:
             route: '/kraken/environments/:environment/edit'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.environment.edit.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.environment.edit.page']
             conditions: {environment: %routes.kraken.regex.hex%}
 
         ################################################################################################################
@@ -54,29 +54,29 @@ parameters:
 
         kraken.configuration:
             route: '/kraken/configurations/:configuration'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.configuration.page']
             conditions: {configuration: %routes.kraken.regex.hex%}
 
         kraken.configuration.compare:
             route: '/kraken/configurations/:configuration/compare'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.compare.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.configuration.compare.page']
             conditions: {configuration: %routes.kraken.regex.hex%}
 
         kraken.configuration.history.page1:
             route: '/kraken/applications/:application/configurations'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.history.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.configuration.history.page']
             conditions:
                 application: %routes.kraken.regex.hex%
         kraken.configuration.history:
             route: '/kraken/applications/:application/configurations/page/:page'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.history.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.configuration.history.page']
             conditions:
                 application: %routes.kraken.regex.hex%
                 page: %routes.kraken.regex.digit%
 
         kraken.configuration.latest:
             route: '/kraken/applications/:application/environments/:environment'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.configuration.latest.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.configuration.latest.page']
             conditions:
                 application: %routes.kraken.regex.hex%
                 environment: %routes.kraken.regex.hex%
@@ -88,12 +88,12 @@ parameters:
         # add application
         kraken.add_application:
             route: '/kraken/applications/add'
-            stack: ['login.bouncer', 'kraken.application.add.page']
+            stack: ['middleware.login', 'kraken.application.add.page']
 
         # add environment
         kraken.add_environment:
             route: '/kraken/environments/add'
-            stack: ['login.bouncer', 'kraken.environment.add.page']
+            stack: ['middleware.login', 'kraken.environment.add.page']
 
         ################################################################################################################
         # CRUD - APPLICATION
@@ -102,7 +102,7 @@ parameters:
         # add environment to application
         kraken.application.add_target:
             route: '/kraken/applications/:application/environments'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.target.add.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.application.target.add.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         ################################################################################################################
@@ -111,38 +111,38 @@ parameters:
 
         kraken.schema:
             route: '/kraken/applications/:application/configuration-schema'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.application.schema.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.application.schema.page']
             conditions:
                 application: %routes.kraken.regex.hex%
 
         kraken.schema.add:
             route: '/kraken/applications/:application/schemas/add'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.add.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.add.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
         kraken.schema.edit:
             route: '/kraken/schemas/:schema/edit'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.edit.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.edit.page']
             conditions:
                 schema: %routes.kraken.regex.hex%
 
         kraken.schema.remove.confirm:
             method: 'GET'
             route: '/kraken/schemas/:schema/remove'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.remove.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.remove.page']
             conditions:
                 schema: %routes.kraken.regex.hex%
         kraken.schema.remove:
             method: 'POST'
             route: '/kraken/schemas/:schema/remove'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.remove.handler']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.remove.handler']
             conditions:
                 schema: %routes.kraken.regex.hex%
 
         kraken.schema.skeletor:
             method: 'POST'
             route: '/kraken/applications/:application/schemas/prime-skeletor'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.schema.skeletor.handler']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.skeletor.handler']
             conditions:
                 application: %routes.kraken.regex.hex%
 
@@ -152,33 +152,33 @@ parameters:
 
         kraken.property.add:
             route: '/kraken/applications/:application/environments/:environment/add'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.add.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.property.add.page']
             conditions:
                 application: %routes.kraken.regex.hex%
                 environment: %routes.kraken.regex.hex%
 
         kraken.property:
             route: '/kraken/properties/:property'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.property.page']
             conditions:
                 property: %routes.kraken.regex.hex%
 
         kraken.property.edit:
             route: '/kraken/properties/:property/edit'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.edit.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.property.edit.page']
             conditions:
                 property: %routes.kraken.regex.hex%
 
         kraken.property.remove.confirm:
             method: 'GET'
             route: '/kraken/properties/:property/remove'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.remove.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.property.remove.page']
             conditions:
                 property: %routes.kraken.regex.hex%
         kraken.property.remove:
             method: 'POST'
             route: '/kraken/properties/:property/remove'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.property.remove.handler']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.property.remove.handler']
             conditions:
                 property: %routes.kraken.regex.hex%
 
@@ -190,25 +190,25 @@ parameters:
         kraken.deploy:
             method: ['GET']
             route: '/kraken/targets/:target/deploy'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.deploy.page']
             conditions: {target: %routes.kraken.regex.hex%}
         kraken.deploy.handler:
             method: ['POST']
             route: '/kraken/targets/:target/deploy'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.deploy.handler']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.deploy.handler']
             conditions: {target: %routes.kraken.regex.hex%}
 
         # rollback previous or failed configuration to target
         kraken.rollback:
             method: ['GET']
             route: '/kraken/configurations/:configuration/rollback'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.rollback.page']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.rollback.page']
             conditions: {configuration: %routes.kraken.regex.hex%}
 
         kraken.rollback.handler:
             method: ['POST']
             route: '/kraken/configurations/:configuration/rollback'
-            stack: ['login.bouncer', 'kraken.middleware.require.entity', 'kraken.rollback.handler']
+            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.rollback.handler']
             conditions: {configuration: %routes.kraken.regex.hex%}
 
         ################################################################################################################

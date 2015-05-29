@@ -21,6 +21,14 @@
                         {% endif %}
                     </p>
                 </li>
+
+                <li>
+                    <h4>Is Production Environment?</h4>
+                    <p>
+                        {{ environment.isProduction ? 'Yes' : 'No' }}
+                    </p>
+                </li>
+
                 <li>
                     <label for="env-server">Consul Server</label>
                     <small class="additional">

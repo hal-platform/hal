@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 {% import '_partial/layout.header.twig' as nav_macros %}
 
+{% block page_title %}
+    <title>
+        {% if page_title %}{{ page_title }} - {% endif %}{{ applicationEnvironment == 'prod' ? ' - ' ~ applicationKrakenTitle : applicationEnvironment|upper }}
+    </title>
+{% endblock %}
+
 {% block page_header %}
     {% embed '_partial/layout.header.twig' %}
         {% block banner %}

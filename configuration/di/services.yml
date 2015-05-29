@@ -130,6 +130,7 @@ services:
             - ['addGlobal', ['applicationSha', %application.sha%]]
             - ['addGlobal', ['applicationVersion', %application.major.version%]]
             - ['addGlobal', ['applicationEnvironment', %application.environment%]]
+            - ['addGlobal', ['applicationKrakenTitle', %application.kraken.title%]]
             - ['addGlobal', ['navItems', %navigation.list%]]
             - ['addGlobal', ['session', @session]]
 

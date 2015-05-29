@@ -1,5 +1,4 @@
 parameters:
-    application.title: 'HAL 9000 DEV'
     application.environment: 'dev'
     debug: true
     twig.debug: true

@@ -1,6 +1,7 @@
 parameters:
     # use this file for default settings that can be overridden by dev|test|prod config
     application.title: 'HAL 9000'
+    application.kraken.title: 'Kraken'
     application.environment: ''
 
     ############################################################################
