@@ -86,8 +86,14 @@
     {% if isAdmin %}
         <ul class="button-list mtm">
             <li><a class="btn btn--action" href="{{ urlFor('admin.permissions.add', {user: user.id}) }}">Add Permissions</a></li>
-            <li><a class="btn" href="{{ urlFor('admin.permissions') }}">Manage User Permissions</a></li>
-            <li><a class="btn" href="{{ urlFor('admin.permissions.deployment') }}">Manage Deployment Permissions</a></li>
+            <li>
+                <form method="post" action="{{ urlFor('admin.permissions.refresh', {user: user.id}) }}">
+                    <input class="btn btn--action" type="submit" value="Refresh User Cache">
+                </form>
+            </li>
+
+            <li><a class="btn" href="{{ urlFor('admin.permissions') }}">User Permissions</a></li>
+            <li><a class="btn" href="{{ urlFor('admin.permissions.deployment') }}">Deployment Permissions</a></li>
         </ul>
     {% endif %}
 

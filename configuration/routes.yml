@@ -119,6 +119,12 @@ parameters:
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.deployment.remove.handler']
             conditions: {userPermission: %routes.regex.guid%}
 
+        admin.permissions.refresh:
+            method: 'POST'
+            route: '/admin/permissions/:user/refresh'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.refresh.handler']
+            conditions: {user: %routes.regex.digit%}
+
         ################################################################################################################
         # SUPER ADMIN ROUTES
         ################################################################################################################

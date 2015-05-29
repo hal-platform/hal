@@ -123,6 +123,13 @@ services:
             - @permissions
             - @session.flasher
 
+    admin.permissions.refresh.handler:
+        class: 'QL\Hal\Controllers\Admin\Permissions\RefreshUserPermissionsController'
+        arguments:
+            - @hal.user
+            - @permissions
+            - @session.flasher
+
     ####################################################################################################################
     # SUPER ADMIN CONTROLLERS
     ####################################################################################################################
