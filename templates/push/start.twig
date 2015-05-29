@@ -2,12 +2,12 @@
 {% import '_partial/macros.twig' as macros %}
 {% set js_components = ["push.start"] %}
 
-{% set page_title = "Start Push: " ~ build.id %}
+{% set page_title = "Start Push : " ~ build.id %}
 
 {% block content %}
     <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
 
-    <h2>Push a build for <strong>{{ build.repository.name }}</strong></h2>
+    <h2>Start Push - <strong>{{ build.repository.name }}</strong></h2>
 
     <p>Please review the below build details before pushing.</p>
 

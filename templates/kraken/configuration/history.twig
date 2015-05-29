@@ -2,12 +2,12 @@
 {% import '_partial/pagination.twig' as pagination %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = application.name ~ " Configuration History" %}
+{% set page_title = "Configuration History : " ~ application.name %}
 
 {% block content %}
     <p><a class="btn btn--small btn--back" href="{{ urlFor('kraken.status', {application: application.id}) }}">Back to Application Configuration</a></p>
 
-    <h2>Configuration History for <strong>{{ application.name }}</strong></h2>
+    <h2>Configuration History - <strong>{{ application.name }}</strong></h2>
 
     {{ block('configuration_table') }}
 

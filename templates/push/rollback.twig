@@ -2,7 +2,7 @@
 {% import '_partial/pagination.twig' as pagination %}
 {% import '_partial/macros.twig' as macros %}
 
-{% set page_title = "Push history for " ~ repo.name %}
+{% set page_title = "Push History : " ~ repo.name %}
 
 {% block content %}
     <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
@@ -11,7 +11,7 @@
     {% set deployment_details = deployment|formatDeploymentDetails %}
     {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
-    <h2>Push history for <strong>{{ repo.name }}</strong> to <strong>{{ server }}</strong></h2>
+    <h2>Push History - <strong>{{ repo.name }}</strong> to <strong>{{ server }}</strong></h2>
 
     <h3>Deployment Information</h3>
     <div class="details-box">
