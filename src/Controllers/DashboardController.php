@@ -11,17 +11,22 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\Time\Clock;
+use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionsService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
+use QL\Panthor\Utility\Json;
 
 class DashboardController implements ControllerInterface
 {
+    use CachingTrait;
+
+    const CACHE_KEY_PERMISSION_APPLICATIONS = 'page:db.job_counts.%s';
     const AGE_OF_STUCK_JOBS = '-45 minutes';
+    const AGE_OF_RECENT_BUILDS = '-2 months';
 
     /**
      * @type TemplateInterface
@@ -51,9 +56,9 @@ class DashboardController implements ControllerInterface
     private $userRepo;
 
     /**
-     * @type Response
+     * @type Json
      */
-    private $response;
+    private $json;
 
     /**
      * @param TemplateInterface $template
@@ -61,7 +66,7 @@ class DashboardController implements ControllerInterface
      * @param PermissionsService $permissions
      * @param Clock $clock
      * @param EntityManagerInterface $em
-     * @param Response $response
+     * @param Json $json
      */
     public function __construct(
         TemplateInterface $template,
@@ -69,7 +74,7 @@ class DashboardController implements ControllerInterface
         PermissionsService $permissions,
         Clock $clock,
         EntityManagerInterface $em,
-        Response $response
+        Json $json
     ) {
         $this->template = $template;
         $this->currentUser = $currentUser;
@@ -80,7 +85,7 @@ class DashboardController implements ControllerInterface
         $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->userRepo = $em->getRepository(User::CLASS);
 
-        $this->response = $response;
+        $this->json = $json;
     }
 
     /**
@@ -100,15 +105,45 @@ class DashboardController implements ControllerInterface
             $stuck = $this->getStuckJobs();
         }
 
-        $rendered = $this->template->render([
-            'repositories' => $this->permissions->userRepositories($this->currentUser),
+        $this->template->render([
+            'recent_applications' => $this->getBuildableApplications(),
             'pending' => $pending,
             'stuck' => $stuck,
             'builds' => $recentBuilds,
             'pushes' => $recentPushes
         ]);
+    }
 
-        $this->response->setBody($rendered);
+    /**
+     * @return array
+     */
+    private function getBuildableApplications()
+    {
+        $key = sprintf(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->currentUser->getId());
+
+        // external cache
+        if ($result = $this->getFromCache($key)) {
+            $decoded = $this->json->decode($result);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        $now = $this->clock->read();
+        $twoMonthsAgo = $now->modify(self::AGE_OF_RECENT_BUILDS);
+        $recentApplications = $this->userRepo->getUsersRecentApplications($this->currentUser, $twoMonthsAgo);
+
+        $data = [];
+        foreach ($recentApplications as $app) {
+            $data[$app->getId()] = $app->getName();
+        }
+
+        uasort($data, function($a, $b) {
+            return strcasecmp($a, $b);
+        });
+
+        $this->setToCache($key, $this->json->encode($data));
+        return $data;
     }
 
     /**

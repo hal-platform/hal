@@ -18,9 +18,12 @@ services:
             - @permissions
             - @clock
             - @doctrine.em
-            - @slim.response
+            - @json
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.page.ttl%]]
     dashboard.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['dashboard.twig']]]
 
     login.page:

@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\Cache\CachingTrait;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
@@ -23,6 +24,9 @@ class PermissionsService
 
     const CACHE_PERM = 'permissions:hal.%s';
     const CACHE_COLLAB = 'permissions:github.%s.%s';
+
+    const CACHE_CAN_BUILD = 'permissions:hal.build.%s.%s';
+    const CACHE_CAN_PUSH = 'permissions:hal.push.%s.%s.%s';
 
     /**
      * @type EntityManagerInterface
@@ -92,8 +96,8 @@ class PermissionsService
         $key = sprintf(self::CACHE_PERM, $user->getId());
 
         // internal cache
-        if (array_key_exists($key, $this->internalCache)) {
-            return $this->internalCache[$key];
+        if (null !== ($cached = $this->getFromInternalCache($key))) {
+            return $cached;
         }
 
         // external cache
@@ -109,7 +113,7 @@ class PermissionsService
         $userPermissions = $this->userPermissionsRepo->findBy(['user' => $user]);
         $perm = $this->parseUserPermissions($userTypes, $userPermissions);
 
-        $this->internalCache[$key] = $perm;
+        $this->setToInternalCache($key, $perm);
         $this->setToCache($key, $this->json->encode($perm));
 
         return $perm;
@@ -150,25 +154,32 @@ class PermissionsService
      */
     public function canUserBuild(User $user, Repository $application)
     {
-        $perm = $user->getUserPermissions($user);
+        $key = sprintf(self::CACHE_CAN_BUILD, $user->getId(), $application->getId());
+
+        // internal cache
+        if (null !== ($cached = $this->getFromInternalCache($key))) {
+            return $cached;
+        }
+
+        $perm = $this->getUserPermissions($user);
 
         if ($perm->isButtonPusher() || $perm->isSuper()) {
-            return true;
+            return $this->setToInternalCache($key, true);
         }
 
         if ($perm->isLead() && $perm->isLeadOfApplication($application)) {
-            return true;
+            return $this->setToInternalCache($key, true);
         }
 
         if ($perm->canDeployApplicationToNonProd($application)) {
-            return true;
+            return $this->setToInternalCache($key, true);
         }
 
         if ($this->isUserCollaborator($user, $application)) {
-            return true;
+            return $this->setToInternalCache($key, true);
         }
 
-        return false;
+        return $this->setToInternalCache($key, false);
     }
 
     /**
@@ -180,26 +191,33 @@ class PermissionsService
      */
     public function canUserPush(User $user, Repository $application, Environment $environment)
     {
-        $perm = $user->getUserPermissions($user);
+        $key = sprintf(self::CACHE_CAN_PUSH, $user->getId(), $application->getId(), $environment->getId());
+
+        // internal cache
+        if (null !== ($cached = $this->getFromInternalCache($key))) {
+            return $cached;
+        }
+
+        $perm = $this->getUserPermissions($user);
 
         // Not prod? Same permissions as building
-        if (!$environment->isProduction()) {
+        if (!$environment->getIsProduction()) {
             return $this->canUserBuild($user, $application);
         }
 
         if ($perm->isButtonPusher()) {
-            return true;
+            return $this->setToInternalCache($key, true);
         }
 
         if ($perm->isSuper() && $this->isSuperApplication($application)) {
-            return true;
+            return $this->setToInternalCache($key, true);
         }
 
         if ($perm->canDeployApplicationToProd($application)) {
-            return true;
+            return $this->setToInternalCache($key, true);
         }
 
-        return false;
+        return $this->setToInternalCache($key, false);
     }
 
     /**
@@ -327,5 +345,30 @@ class PermissionsService
             ->withNonProdApplications(array_values($parsed['nonProdApplications']));
 
         return $perm;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    private function getFromInternalCache($key)
+    {
+        if (array_key_exists($key, $this->internalCache)) {
+            return $this->internalCache[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private function setToInternalCache($key, $value)
+    {
+        $this->internalCache[$key] = $value;
     }
 }

@@ -18,7 +18,7 @@
         </h1>
     {% endif %}
 
-    {% if isFirstLogin or not repositories %}
+    {% if isFirstLogin or not recent_applications %}
        {{ block('intro') }}
     {% endif %}
 
@@ -33,19 +33,21 @@
     {% endif %}
 
     {# QUICK BUILD #}
-    {% if repositories %}
+    {% if recent_applications %}
         <section class="trailer">
             <h3>Quick Build</h3>
 
-            <div class="col-list">
-                <ul class="list--bare js-filter">
-                    {% for repository in repositories %}
-                        <li class="mbn"><a href="{{ urlFor('build.start', {'id': repository.id}) }}">{{ repository.name }}</a></li>
-                    {% else %}
-                        <li>Looks like you don't have access to anything.</li>
+            {% if recent_applications|length > 3 %}
+                <ul class="button-list">
+                    {% for id, app in recent_applications %}
+                        <li><a class="btn" href="{{ urlFor('build.start', {'id': id}) }}">{{ app }}</a></li>
                     {% endfor %}
                 </ul>
-            </div>
+            {% else %}
+                {% for id, app in recent_applications %}
+                    <a class="btn" href="{{ urlFor('build.start', {'id': id}) }}">{{ app }}</a>
+                {% endfor %}
+            {% endif %}
         </section>
     {% endif %}
 
@@ -72,15 +74,15 @@
 
 {% block intro %}
     <div>
-        <h4>My name is HAL.</h4>
-        <p><strong>I deploy code to other, less capable machines.</strong></p>
+        <h2>My name is HAL.</h2>
+        <h5>I deploy code to other, less capable machines.</h5>
 
         <p>
             This is the latest version of the HAL 9000 code deployment system for Quicken Loans applications.
            <br><br>
             The 9000 series is the most reliable computer ever made. No 9000 computer has ever made a mistake or distorted information. We are all, by any practical definition of the words, foolproof and incapable of error.
            <br><br>
-            Applications are organized in <strong>groups</strong>. To deploy an application, find the repository under the groups menu option.
+            Applications are organized in <strong>groups</strong>. To deploy an application, find the application under the applications menu option.
 
             If you you do not have the correct permissions or need support to remedy a mistake you have made, please check the <a href="{{ urlFor('help') }}">support page</a> for assistance.
             This page also has instructions on how to add an application so I can deploy it.
