@@ -63,7 +63,7 @@
             <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Deployment Targets</a></li>
 
             {% if kraken %}
-                <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('asterisk') }} Kraken Configuration</a></li>
+                <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken Configuration</a></li>
             {% endif %}
         </ul>
     </div>
