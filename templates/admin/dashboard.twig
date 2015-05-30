@@ -4,7 +4,7 @@
 {% set page_title = "Admin Dashboard" %}
 
 {% block content %}
-    <h1>Admin Dashboard</h1>
+    <h1>{{ page_title }}</h1>
 
     <h2 class="leader">Manage Deployments</h2>
     <ul class="button-list">
@@ -30,9 +30,13 @@
         </li>
     </ul>
 
-
     <h2 class="leader">Security and Permissions</h2>
     <ul class="button-list">
+        <li>
+            <a href="{{ urlFor('admin.system.status') }}" class="btn btn--primary">
+                {{ macros.icon('terminal') }} System Status
+            </a>
+        </li>
         <li>
             <a href="{{ urlFor('users') }}" class="btn btn--primary">
                 {{ macros.icon('users') }} Users
@@ -61,42 +65,37 @@
         <h3>Server Information</h3>
         <div class="details-box">
             <dl class="split mbn">
-                <dl>
-                    <dt class="split__title"><strong>Hostname</strong></dt>
-                    <dd>
-                        <div class="pre-wrapper">
-                            <pre>{{ servername }}</pre>
-                        </div>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt class="split__title"><strong>Encryption key</strong></dt>
-                    <dd>
-                        <div class="pre-wrapper">
-                            <pre>{{ encryption_key }}</pre>
-                        </div>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt class="split__title"><strong>Session Encryption key</strong></dt>
-                    <dd>
-                        <div class="pre-wrapper">
-                            <pre>{{ session_encryption_key }}</pre>
-                        </div>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt class="split__title"><strong>HAL 9000 Push File</strong></dt>
-                    <dd>
-                        <div class="pre-wrapper">
-                            {% if pushfile %}
-                                <pre>{{ pushfile }}</pre>
-                            {% else %}
-                                <pre>No push file found. Are you in dev?</pre>
-                            {% endif %}
-                        </div>
-                    </dd>
-                </dl>
+                <dt class="split__title"><strong>Hostname</strong></dt>
+                <dd>
+                    <div class="pre-wrapper">
+                        <pre>{{ servername }}</pre>
+                    </div>
+                </dd>
+
+                <dt class="split__title"><strong>Encryption key</strong></dt>
+                <dd>
+                    <div class="pre-wrapper">
+                        <pre>{{ encryption_key }}</pre>
+                    </div>
+                </dd>
+
+                <dt class="split__title"><strong>Session Encryption key</strong></dt>
+                <dd>
+                    <div class="pre-wrapper">
+                        <pre>{{ session_encryption_key }}</pre>
+                    </div>
+                </dd>
+
+                <dt class="split__title"><strong>HAL 9000 Push File</strong></dt>
+                <dd>
+                    <div class="pre-wrapper">
+                        {% if pushfile %}
+                            <pre>{{ pushfile }}</pre>
+                        {% else %}
+                            <pre>No push file found. Are you in dev?</pre>
+                        {% endif %}
+                    </div>
+                </dd>
             </dl>
         </div>
     {% endif %}

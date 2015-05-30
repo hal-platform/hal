@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = "Agent System Status" %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    <h2 class="mbn">Agent</h2>
+    <p>Last Update: {{ system.generated|html5date }}</p>
+
+    <h3>Agent Status</h3>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title"><strong>Agent System</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.agent.system }}</pre>
+                </div>
+            </dd>
+
+            <dt class="split__title"><strong>Agent Temp</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.agent.temp }}</pre>
+                </div>
+            </dd>
+        </dl>
+    </div>
+
+    <h3>Builder Status</h3>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title"><strong>Builder System</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.builder.system }}</pre>
+                </div>
+            </dd>
+
+            <dt class="split__title"><strong>Builder Temp</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.builder.temp }}</pre>
+                </div>
+            </dd>
+
+        <dl>
+            <dt class="split__title"><strong>Builder Docker</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.builder.docker }}</pre>
+                </div>
+            </dd>
+        </dl>
+    </div>
+
+    <h3>Docker Status</h3>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title"><strong>Info</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.docker.info }}</pre>
+                </div>
+            </dd>
+
+            <dt class="split__title"><strong>Images</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.docker.images }}</pre>
+                </div>
+            </dd>
+
+            <dt class="split__title"><strong>Containers</strong></dt>
+            <dd>
+                <div class="pre-wrapper">
+                    <pre>{{ system.docker.containers }}</pre>
+                </div>
+            </dd>
+        </dl>
+    </div>
+
+    <h2 class="mbn">Server Status</h2>
+    <p>Last Update: {{ connections.generated|html5date }}</p>
+
+    {% if connections.servers %}
+        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
+            <thead>
+                <tr class="tl">
+                    <th>Server</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for env, servers in connections.servers %}
+                    {% for status in servers %}
+
+                            <tr>
+                                <td>{{ env }}</td>
+                                <td>{{ status.server.name }}</td>
+                                <td>{{ status.resolved }}</td>
+                                <td>
+                                    {% if status.status %}
+                                        {{ macros.status('Success', 'success') }}
+                                    {% else %}
+                                        {{ macros.status('Error', 'error') }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Unknown</p>
+    {% endif %}
+
+    <p>
+        <a class="btn" href="{{ urlFor('admin') }}">Admin Dashboard</a>
+    </p>
+{% endblock %}

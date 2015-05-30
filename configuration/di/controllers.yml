@@ -75,7 +75,7 @@ services:
             - %date.timezone%
     queue.history.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/queue.history.twig']]]
+        calls: [['setTemplate', ['queue.history.twig']]]
 
     ####################################################################################################################
     # GROUP CONTROLLERS

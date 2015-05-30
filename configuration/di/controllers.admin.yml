@@ -26,6 +26,17 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/audit.logs.twig']]]
 
+    admin.system.status.page:
+        class: 'QL\Hal\Controllers\Admin\SystemStatusController'
+        arguments:
+            - @admin.system.status.twig
+            - @doctrine.em
+            - @redis
+            - @json
+    admin.system.status.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/system.status.twig']]]
+
     ####################################################################################################################
     # PERMISSION CONTROLLERS
     ####################################################################################################################
