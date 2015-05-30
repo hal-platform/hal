@@ -24,7 +24,7 @@ class AddTargetController implements ControllerInterface
     const ERR_DUPLICATE_ENV = 'This environment is already linked to this application.';
     const ERR_MISSING_ENV = 'Please select an environment.';
 
-    const VALIDATE_KEY_REGEX = '/^[a-zA-Z0-9]{2,200}$/';
+    const VALIDATE_KEY_REGEX = '/^[a-zA-Z0-9]{2,100}$/';
 
     /**
      * @type Request

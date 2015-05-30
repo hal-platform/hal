@@ -38,7 +38,7 @@ services:
             - ['addEventListener', [['prePersist'], @doctrine.listener.kraken.persist]]
 
     doctrine.listener.logger:
-        class: 'QL\Hal\Core\Listener\DoctrineEntityLogger'
+        class: 'QL\Hal\Core\Listener\DoctrineChangeLogger'
         arguments: [@clock, @doctrine.utility.lazy.user]
 
     doctrine.listener.persist:

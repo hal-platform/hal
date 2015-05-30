@@ -22,7 +22,7 @@ class ApplicationValidator
     const ERR_INVALID_HAL_REPOSITORY = 'Please select a valid HAL 9000 repository.';
 
     const VALIDATE_NAME_REGEX = '/^[a-zA-Z0-9-.\ ]{2,64}$/';
-    const VALIDATE_COREID_REGEX = '/^[\d]{6,64}$/';
+    const VALIDATE_COREID_REGEX = '/^[\d]{6,32}$/';
 
     /**
      * @type callable
