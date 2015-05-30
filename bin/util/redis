@@ -21,7 +21,11 @@ $key = '';
 // List keys in the hal namespace
 if ($list) {
     echo "\nLISTING REDIS KEYS...\n";
-    $keys = $redis->keys('*');
+;
+    $keys = [];
+    foreach (new \Predis\Collection\Iterator\Keyspace($redis, '*') as $key) {
+        $keys[] = $key;
+    }
 
     sort($keys);
     print_r($keys);
