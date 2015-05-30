@@ -9,7 +9,7 @@ services:
             - @admin.dashboard.twig
             - %encryption.secret%
             - %session.encryption.secret%
-            - @hal.pushfile
+            - @hal.pushfile.path
     admin.dashboard.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/dashboard.twig']]]

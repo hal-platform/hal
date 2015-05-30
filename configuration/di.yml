@@ -26,9 +26,9 @@ services:
     ######################################################################################################################
 
     doctrine.proxy.dir:
-        class: 'NOTHING_TO_SEE_HERE'
-        factory: [@directory.helper, 'fullPath']
-        arguments: ['.doctrine']
+        class: 'stdClass'
+        factory: ['QL\Panthor\Utility\Stringify', 'template']
+        arguments: ['%%s/%%s', [@root, '.doctrine']]
 
     doctrine.em.events:
         class: 'Doctrine\Common\EventManager'
@@ -38,15 +38,27 @@ services:
             - ['addEventListener', [['prePersist'], @doctrine.listener.kraken.persist]]
 
     doctrine.listener.logger:
-        class: 'QL\Hal\Doctrine\EntityChangeLogger'
-        arguments: [@utility.lazy.user, @clock]
+        class: 'QL\Hal\Core\Listener\DoctrineEntityLogger'
+        arguments: [@clock, @doctrine.utility.lazy.user]
 
     doctrine.listener.persist:
-        class: 'QL\Hal\Core\DoctrinePersistListener'
+        class: 'QL\Hal\Core\Listener\DoctrinePersistListener'
         arguments: [@clock, @doctrine.random.id]
 
+    doctrine.listener.kraken.persist:
+        class: 'QL\Kraken\Core\Listener\DoctrinePersistListener'
+        arguments: [@clock]
+
+    doctrine.cache:
+        class: 'QL\Hal\Core\Utility\DoctrinePredisCache'
+        arguments: [@redis, %cache.doctrine.ttl%]
+
+    doctrine.utility.lazy.user:
+        class: 'QL\Hal\Utility\LazyUserRetriever'
+        arguments: [@service_container]
+
     ######################################################################################################################
-    # APPLICATION
+    # SLIM
     ######################################################################################################################
 
     slim:
@@ -70,14 +82,18 @@ services:
         class: 'QL\Panthor\Slim\RouteLoaderHook'
         arguments: [@service_container, %routes.api%]
 
+    slim.hook.kraken.routes:
+        class: 'QL\Panthor\Slim\RouteLoaderHook'
+        arguments: [@service_container, %kraken.routes%]
+
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'
         arguments: [@session.handler, @service_container]
 
-    hal.pushfile:
-        class: 'dynamic_scalar'
-        factory: [@directory.helper, 'fullPath']
-        arguments: ['.hal9000.push.yml']
+    hal.pushfile.path:
+        class: 'stdClass'
+        factory: ['QL\Panthor\Utility\Stringify', 'template']
+        arguments: ['%%s/%%s', [@root, '.hal9000.push.yml']]
 
     ######################################################################################################################
     # ERROR & EXCEPTION HANDLING
@@ -98,10 +114,6 @@ services:
         class: 'QL\Hal\Github\MCPCache'
         arguments: [@cache]
 
-    cache.doctrine:
-        class: 'QL\Hal\Doctrine\PredisCache'
-        arguments: [@redis, %cache.doctrine.ttl%]
-
     ######################################################################################################################
     # HELPERS
     ######################################################################################################################
@@ -114,10 +126,6 @@ services:
             - @slim.router
             - @github
 
-    directory.helper:
-        class: 'QL\Hal\Helpers\DirectoryHelper'
-        arguments: [@root]
-
     api.helper:
         class: 'QL\Hal\Helpers\ApiHelper'
         arguments: [@url.helper, @slim.request, %api.cachetimes%]
@@ -126,10 +134,6 @@ services:
 
     name.helper:
         class: 'QL\Hal\Helpers\NameHelper'
-
-    utility.lazy.user:
-        class: 'QL\Hal\Utility\LazyUserRetriever'
-        arguments: [@service_container]
 
     utility.id.generator:
         class: 'QL\Hal\Core\JobIdGenerator'

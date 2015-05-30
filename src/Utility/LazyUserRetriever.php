@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
@@ -35,7 +35,7 @@ class LazyUserRetriever
     /**
      * @return User|null
      */
-    public function getUser()
+    public function __invoke()
     {
         if ($this->container instanceof IntrospectableContainerInterface && !$this->container->initialized(self::SERVICE_KEY)) {
             return;
