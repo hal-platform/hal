@@ -18,7 +18,6 @@ use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class RepositoryController implements ControllerInterface
 {
@@ -50,11 +49,6 @@ class RepositoryController implements ControllerInterface
     private $ebService;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -68,7 +62,6 @@ class RepositoryController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em,
      * @param ElasticBeanstalkService $ebService
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -76,7 +69,6 @@ class RepositoryController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         ElasticBeanstalkService $ebService,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -88,7 +80,6 @@ class RepositoryController implements ControllerInterface
 
         $this->ebService = $ebService;
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -123,14 +114,12 @@ class RepositoryController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'repository' => $repo,
             'deployment_environments' => $environmentalized,
             'deployment_count' => $deploymentCount,
             'kraken' => $krakenApp
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**
@@ -147,7 +136,7 @@ class RepositoryController implements ControllerInterface
         ];
 
         foreach ($deployments as $deployment) {
-            $env = $deployment->getServer()->getEnvironment()->getKey();
+            $env = $deployment->getServer()->getEnvironment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

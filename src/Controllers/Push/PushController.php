@@ -14,7 +14,6 @@ use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class PushController implements ControllerInterface
 {
@@ -29,11 +28,6 @@ class PushController implements ControllerInterface
     private $pushRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -46,21 +40,18 @@ class PushController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -74,10 +65,8 @@ class PushController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'push' => $push
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

@@ -14,7 +14,6 @@ use QL\Hal\Core\Repository\AuditLogRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class AuditLogsController implements ControllerInterface
 {
@@ -29,11 +28,6 @@ class AuditLogsController implements ControllerInterface
      * @type AuditLogRepository
      */
     private $auditRepo;
-
-    /**
-     * @type Response
-     */
-    private $response;
 
     /**
      * @type NotFound
@@ -55,14 +49,12 @@ class AuditLogsController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
         $this->auditRepo = $em->getRepository(AuditLog::CLASS);
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -96,13 +88,11 @@ class AuditLogsController implements ControllerInterface
         $total = count($logs);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'page' => $page,
             'last' => $last,
 
             'logs' => $logs
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

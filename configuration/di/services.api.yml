@@ -27,7 +27,7 @@ services:
             - @normalizer.log.event
             - @normalizer.group
             - @normalizer.push
-            - @normalizer.repository
+            - @normalizer.application
             - @normalizer.server
             - @normalizer.user
             - @normalizer.timepoint
@@ -38,13 +38,13 @@ services:
         arguments:
             - @url.helper
             - @normalizer.user
-            - @normalizer.repository
+            - @normalizer.application
             - @normalizer.environment
 
     normalizer.deployment:
         class: 'QL\Hal\Api\Normalizer\DeploymentNormalizer'
         arguments:
-            - @normalizer.repository
+            - @normalizer.application
             - @normalizer.server
 
     normalizer.environment:
@@ -69,10 +69,10 @@ services:
             - @normalizer.user
             - @normalizer.build
             - @normalizer.deployment
-            - @normalizer.repository
+            - @normalizer.application
 
-    normalizer.repository:
-        class: 'QL\Hal\Api\Normalizer\RepositoryNormalizer'
+    normalizer.application:
+        class: 'QL\Hal\Api\Normalizer\ApplicationNormalizer'
         arguments:
             - @url.helper
             - @normalizer.group

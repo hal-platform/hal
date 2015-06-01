@@ -55,11 +55,11 @@ class NameHelper
             $name = sprintf('%s %s', $user->firstName(), $user->lastName());
 
         } elseif ($user instanceof DomainUser) {
-            $exploded = explode(',', $user->getName());
+            $exploded = explode(',', $user->name());
             if (count($exploded) === 2) {
                 $name = sprintf('%s %s', trim($exploded[1]), trim($exploded[0]));
             } else {
-                $name = $user->getName();
+                $name = $user->name();
             }
         }
 

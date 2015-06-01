@@ -16,7 +16,6 @@ use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class RollbackController implements ControllerInterface
 {
@@ -39,11 +38,6 @@ class RollbackController implements ControllerInterface
     private $pushRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -56,14 +50,12 @@ class RollbackController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -73,7 +65,6 @@ class RollbackController implements ControllerInterface
         $this->deploymentRepository = $em->getRepository(Deployment::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -105,7 +96,7 @@ class RollbackController implements ControllerInterface
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'page' => $page,
             'last' => $last,
 
@@ -113,7 +104,5 @@ class RollbackController implements ControllerInterface
             'deployment' => $deployment,
             'pushes' => $pushes
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

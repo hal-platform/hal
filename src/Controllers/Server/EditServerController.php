@@ -19,7 +19,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class EditServerController implements ControllerInterface
 {
@@ -59,11 +58,6 @@ class EditServerController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -79,7 +73,6 @@ class EditServerController implements ControllerInterface
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -89,7 +82,6 @@ class EditServerController implements ControllerInterface
         Session $session,
         UrlHelper $url,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -103,7 +95,6 @@ class EditServerController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -120,7 +111,7 @@ class EditServerController implements ControllerInterface
         $renderContext = [
             'form' => [
                 'hostname' => ($this->request->isPost()) ? $this->request->post('hostname') : $server->getName(),
-                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->getEnvironment()->getId(),
+                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->getEnvironment()->id(),
                 'server_type' => ($this->request->isPost()) ? $this->request->post('server_type') : $server->getType(),
             ],
             'errors' => $this->checkFormErrors($this->request, $server),
@@ -142,8 +133,7 @@ class EditServerController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render($renderContext);
-        $this->response->setBody($rendered);
+        $this->template->render($renderContext);
     }
 
     /**

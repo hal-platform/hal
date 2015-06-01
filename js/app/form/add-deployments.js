@@ -122,7 +122,7 @@ module.exports = {
             eb = deployment['eb-environment'],
             ec2 = deployment['ec2-pool'],
             path = deployment.path,
-            env = server._embedded.environment.key;
+            env = server._embedded.environment.name;
 
         var hostname = server.name;
         var path_or_whatever = path;

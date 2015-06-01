@@ -17,7 +17,7 @@ class DeploymentNormalizer
     use EmbeddedResolutionTrait;
 
     /**
-     * @var RepositoryNormalizer
+     * @var ApplicationNormalizer
      */
     private $repositories;
 
@@ -32,11 +32,11 @@ class DeploymentNormalizer
     private $embed;
 
     /**
-     * @param RepositoryNormalizer $repositories
+     * @param ApplicationNormalizer $repositories
      * @param ServerNormalizer $servers
      */
     public function __construct(
-        RepositoryNormalizer $repositories,
+        ApplicationNormalizer $repositories,
         ServerNormalizer $servers
     ) {
         $this->repositories = $repositories;

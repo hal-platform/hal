@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\User;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\GithubOAuthHelper;
 use QL\Hal\Session;
@@ -15,7 +15,6 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class RemoveGithubTokenController implements ControllerInterface
 {
@@ -32,14 +31,9 @@ class RemoveGithubTokenController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
+     * @type EntityManagerInterface
      */
-    private $response;
-
-    /**
-     * @type EntityManager
-     */
-    private $entityManager;
+    private $em;
 
     /**
      * @type User
@@ -64,9 +58,8 @@ class RemoveGithubTokenController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param Request $request
-     * @param Response $response
      *
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param User $currentUser
      *
      * @param GithubOAuthHelper $githubOAuth
@@ -76,8 +69,7 @@ class RemoveGithubTokenController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         Request $request,
-        Response $response,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         User $currentUser,
         GithubOAuthHelper $githubOAuth,
         Session $session,
@@ -85,9 +77,8 @@ class RemoveGithubTokenController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->request = $request;
-        $this->response = $response;
 
-        $this->entityManager = $entityManager;
+        $this->em = $em;
         $this->currentUser = $currentUser;
 
         $this->githubOAuth = $githubOAuth;
@@ -101,7 +92,7 @@ class RemoveGithubTokenController implements ControllerInterface
     public function __invoke()
     {
         // Send back to settings if no token
-        if (!$this->currentUser->getGithubToken()) {
+        if (!$this->currentUser->githubToken()) {
             return $this->url->redirectFor('settings');
         }
 
@@ -109,8 +100,7 @@ class RemoveGithubTokenController implements ControllerInterface
             return $this->handlePost();
         }
 
-        $rendered = $this->template->render();
-        $this->response->setBody($rendered);
+        $this->template->render();
     }
 
     /**
@@ -119,12 +109,12 @@ class RemoveGithubTokenController implements ControllerInterface
     private function handlePost()
     {
         // revoke
-        $this->githubOAuth->revokeToken($this->currentUser->getGithubToken());
+        $this->githubOAuth->revokeToken($this->currentUser->githubToken());
 
         // remove
-        $this->currentUser->setGithubToken('');
-        $this->entityManager->merge($this->currentUser);
-        $this->entityManager->flush();
+        $this->currentUser->withGithubToken('');
+        $this->em->merge($this->currentUser);
+        $this->em->flush();
 
         // flash
         $this->session->flash(static::SUCCESS_TOKEN_REMOVED, 'success');

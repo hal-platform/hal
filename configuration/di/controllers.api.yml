@@ -201,19 +201,19 @@ services:
     # REPOSITORY CONTROLLERS
     ####################################################################################################################
 
-    api.repository:
-        class: 'QL\Hal\Controllers\Api\Repository\RepositoryController'
+    api.application:
+        class: 'QL\Hal\Controllers\Api\Application\ApplicationController'
         arguments:
             - @response.formatter
             - @doctrine.em
             - @slim.route.parameters
 
-    api.repositories:
-        class: 'QL\Hal\Controllers\Api\Repository\RepositoriesController'
+    api.applications:
+        class: 'QL\Hal\Controllers\Api\Application\ApplicationsController'
         arguments:
             - @response.formatter
             - @doctrine.em
-            - @normalizer.repository
+            - @normalizer.application
 
     ####################################################################################################################
     # USER CONTROLLERS

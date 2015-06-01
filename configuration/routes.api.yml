@@ -115,15 +115,15 @@ parameters:
             stack: ['middleware.cachedApi', 'api.event.log']
             conditions: {id: %routes.api.regex.alphanum%}
 
-        api.repositories:
+        api.applications:
             method: 'GET'
             route: '/api/repositories'
-            stack: ['middleware.cachedApi', 'api.repositories']
+            stack: ['middleware.cachedApi', 'api.applications']
 
-        api.repository:
+        api.application:
             method: 'GET'
             route: '/api/repositories/:id'
-            stack: ['middleware.cachedApi', 'api.repository']
+            stack: ['middleware.cachedApi', 'api.application']
             conditions: {id: %routes.api.regex.digit%}
 
         api.deployments:

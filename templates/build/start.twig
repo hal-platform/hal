@@ -30,7 +30,7 @@
                     {% for env in environments %}
                         <li>
                             <input id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ form.environment == env.id ? ' checked' : ''}}>
-                            <label for="env-{{ env.id }}">{{ env.key }}</label>
+                            <label for="env-{{ env.id }}">{{ env.name }}</label>
                         </li>
                     {% endfor %}
                 </ul>

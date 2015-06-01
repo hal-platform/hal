@@ -8,7 +8,7 @@
     {% for push in pushes %}
         {% set cardStyle = '' %}
         {% if push.deployment %}
-            {% set cardStyle = ' card--' ~ push.deployment.server.environment.key %}
+            {% set cardStyle = ' card--' ~ push.deployment.server.environment.name %}
         {% endif %}
 
         <li>
@@ -30,7 +30,7 @@
                         <li>
                             <span class="split__title">{{ push.created|html5date }}</span>
                             {% if push.deployment %}
-                                <a href="{{ urlFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.key }}</a>
+                                <a href="{{ urlFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.name }}</a>
                                 →
                                 <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment|formatDeploymentServer(true) }}</a>
                             {% else %}

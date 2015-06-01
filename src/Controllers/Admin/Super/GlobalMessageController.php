@@ -8,12 +8,11 @@
 namespace QL\Hal\Controllers\Admin\Super;
 
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Services\GlobalMessageService;
+use QL\Hal\Service\GlobalMessageService;
 use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class GlobalMessageController implements ControllerInterface
 {
@@ -43,25 +42,18 @@ class GlobalMessageController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param GlobalMessageService $messageService
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
-     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         GlobalMessageService $messageService,
         Session $session,
         UrlHelper $url,
-        Request $request,
-        Response $response
+        Request $request
     ) {
         $this->template = $template;
         $this->messageService = $messageService;
@@ -69,7 +61,6 @@ class GlobalMessageController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
     }
 
     /**
@@ -102,8 +93,6 @@ class GlobalMessageController implements ControllerInterface
             'ttl' => $this->messageService->expiry()
         ];
 
-        $rendered = $this->template->render($context);
-
-        $this->response->setBody($rendered);
+        $this->template->render($context);
     }
 }

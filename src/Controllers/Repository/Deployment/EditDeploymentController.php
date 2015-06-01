@@ -15,7 +15,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class EditDeploymentController implements ControllerInterface
 {
@@ -36,11 +35,6 @@ class EditDeploymentController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -54,7 +48,6 @@ class EditDeploymentController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -62,7 +55,6 @@ class EditDeploymentController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -71,7 +63,6 @@ class EditDeploymentController implements ControllerInterface
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -100,7 +91,6 @@ class EditDeploymentController implements ControllerInterface
             'deployment' => $deployment
         ];
 
-        $rendered = $this->template->render($renderContext);
-        $this->response->setBody($rendered);
+        $this->template->render($renderContext);
     }
 }

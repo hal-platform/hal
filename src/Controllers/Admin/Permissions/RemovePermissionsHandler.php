@@ -87,7 +87,7 @@ class RemovePermissionsHandler implements ControllerInterface
 
         $type = $this->userType->type();
         $type = $map[$type];
-        $name = $this->userType->user()->getHandle();
+        $name = $this->userType->user()->handle();
 
         $this->permissions->removeUserPermissions($this->userType);
 

@@ -12,7 +12,7 @@
 
     <h4>Server</h4>
     <p>
-        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a> in <strong>{{ deployment.server.environment.key }}</strong>
+        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a> in <strong>{{ deployment.server.environment.name }}</strong>
     </p>
 
     <h4>Repository</h4>
@@ -80,7 +80,6 @@
             <li><a class="btn btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.repository.id, id: deployment.id}) }}">Edit Deployment</a></li>
             <li><a class="btn btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.repository.id, id: deployment.id}) }}">Remove Deployment</a></li>
         {% endif %}
-
     </ul>
 
 {% endblock %}

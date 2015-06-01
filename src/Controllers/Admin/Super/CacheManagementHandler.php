@@ -13,7 +13,6 @@ use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class CacheManagementHandler implements MiddlewareInterface
 {
@@ -27,11 +26,6 @@ class CacheManagementHandler implements MiddlewareInterface
      * @type Request
      */
     private $request;
-
-    /**
-     * @type Response
-     */
-    private $response;
 
     /**
      * @type Session
@@ -55,7 +49,6 @@ class CacheManagementHandler implements MiddlewareInterface
 
     /**
      * @param Request $request
-     * @param Response $response
      * @param Session $session
      * @param Url $url
      * @param Configuration $doctrineConfig
@@ -63,14 +56,12 @@ class CacheManagementHandler implements MiddlewareInterface
      */
     public function __construct(
         Request $request,
-        Response $response,
         Session $session,
         Url $url,
         Configuration $doctrineConfig,
         Predis $predis
     ) {
         $this->request = $request;
-        $this->response = $response;
 
         $this->session = $session;
         $this->url = $url;

@@ -93,7 +93,7 @@ class DashboardController implements ControllerInterface
      */
     public function __invoke()
     {
-        $user = $this->userRepo->find($this->currentUser->getId());
+        $user = $this->userRepo->find($this->currentUser->id());
 
         $recentBuilds = $this->buildRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
         $recentPushes = $this->pushRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
@@ -119,7 +119,7 @@ class DashboardController implements ControllerInterface
      */
     private function getBuildableApplications()
     {
-        $key = sprintf(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->currentUser->getId());
+        $key = sprintf(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->currentUser->id());
 
         // external cache
         if ($result = $this->getFromCache($key)) {

@@ -36,9 +36,9 @@ class UserNormalizer
     public function link(User $user = null)
     {
         return  (is_null($user)) ? null :$this->buildLink(
-            ['api.user', ['id' => $user->getId()]],
+            ['api.user', ['id' => $user->id()]],
             [
-                'title' => $user->getHandle()
+                'title' => $user->handle()
             ]
         );
     }
@@ -57,11 +57,12 @@ class UserNormalizer
 
         return $this->buildResource(
             [
-                'id' => $user->getId(),
-                'handle' => $user->getHandle(),
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'picture' => $user->getPictureUrl(),
+                'id' => $user->id(),
+                'handle' => $user->handle(),
+                'name' => $user->name(),
+                'email' => $user->email(),
+                'picture' => $user->pictureUrl(),
+                'isActive' => $user->isActive(),
                 'permissions' => [
                     'standard' => $perm->isPleb(),
                     'lead' => $perm->isLead(),

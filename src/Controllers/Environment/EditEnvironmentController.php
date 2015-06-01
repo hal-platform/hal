@@ -16,7 +16,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class EditEnvironmentController implements ControllerInterface
 {
@@ -51,11 +50,6 @@ class EditEnvironmentController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -71,7 +65,6 @@ class EditEnvironmentController implements ControllerInterface
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -81,7 +74,6 @@ class EditEnvironmentController implements ControllerInterface
         Session $session,
         UrlHelper $url,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -94,7 +86,6 @@ class EditEnvironmentController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -110,7 +101,7 @@ class EditEnvironmentController implements ControllerInterface
 
         $renderContext = [
             'form' => [
-                'name' => ($this->request->isPost()) ? $this->request->post('name') : $environment->getKey()
+                'name' => ($this->request->isPost()) ? $this->request->post('name') : $environment->name()
             ],
             'env' => $environment,
             'errors' => $this->checkFormErrors($this->request)
@@ -118,11 +109,10 @@ class EditEnvironmentController implements ControllerInterface
 
         if ($this->handleFormSubmission($this->request, $environment, $renderContext['errors'])) {
             $this->session->flash('Environment updated successfully.', 'success');
-            return $this->url->redirectFor('environment', ['id' => $environment->getId()]);
+            return $this->url->redirectFor('environment', ['id' => $environment->id()]);
         }
 
-        $rendered = $this->template->render($renderContext);
-        $this->response->setBody($rendered);
+        $this->template->render($renderContext);
     }
 
     /**
@@ -131,6 +121,7 @@ class EditEnvironmentController implements ControllerInterface
      * @param Request $request
      * @param Environment $environment
      * @param array $errors
+     *
      * @return null
      */
     private function handleFormSubmission(Request $request, Environment $environment, array $errors)
@@ -139,7 +130,7 @@ class EditEnvironmentController implements ControllerInterface
             return false;
         }
 
-        $environment->setKey($request->post('name'));
+        $environment->withName($request->post('name'));
         $this->em->merge($environment);
         $this->em->flush();
 
@@ -148,6 +139,7 @@ class EditEnvironmentController implements ControllerInterface
 
     /**
      * @param Request $request
+     *
      * @return array
      */
     private function checkFormErrors(Request $request)
@@ -167,7 +159,7 @@ class EditEnvironmentController implements ControllerInterface
             $errors[] = 'Environment name must be between 2 and 24 characters.';
         }
 
-        if (!$errors && $env = $this->envRepo->findOneBy(['key' => $name])) {
+        if (!$errors && $env = $this->envRepo->findOneBy(['name' => $name])) {
             $errors[] = 'An environment with this name already exists.';
         }
 

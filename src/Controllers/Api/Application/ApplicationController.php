@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Api\Repository;
+namespace QL\Hal\Controllers\Api\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -14,7 +14,7 @@ use QL\Hal\Core\Entity\Repository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
-class RepositoryController implements ControllerInterface
+class ApplicationController implements ControllerInterface
 {
     /**
      * @type ResponseFormatter

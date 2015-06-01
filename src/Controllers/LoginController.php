@@ -7,10 +7,9 @@
 
 namespace QL\Hal\Controllers;
 
-use QL\Hal\Services\StatsService;
+use QL\Hal\Service\StatsService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class LoginController implements ControllerInterface
 {
@@ -18,11 +17,6 @@ class LoginController implements ControllerInterface
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type Response
-     */
-    private $response;
 
     /**
      * @type StatsService
@@ -34,10 +28,9 @@ class LoginController implements ControllerInterface
      * @param Response $response
      * @param StatsService $stats
      */
-    public function __construct(TemplateInterface $template, Response $response, StatsService $stats)
+    public function __construct(TemplateInterface $template, StatsService $stats)
     {
         $this->template = $template;
-        $this->response = $response;
         $this->stats = $stats;
     }
 
@@ -50,8 +43,6 @@ class LoginController implements ControllerInterface
             'stats' => $this->stats->getStatsForToday()
         ];
 
-        $rendered = $this->template->render($context);
-
-        $this->response->setBody($rendered);
+        $this->template->render($context);
     }
 }

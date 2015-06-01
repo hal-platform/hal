@@ -18,7 +18,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class DeploymentsController implements ControllerInterface
 {
@@ -42,11 +41,6 @@ class DeploymentsController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -59,14 +53,12 @@ class DeploymentsController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -76,7 +68,6 @@ class DeploymentsController implements ControllerInterface
         $this->repoRepo = $em->getRepository(Repository::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -97,14 +88,12 @@ class DeploymentsController implements ControllerInterface
 
         $environments = $this->environmentRepo->getAllEnvironmentsSorted();
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'environments' => $environments,
             'servers_by_env' => $this->environmentalizeServers($environments, $this->serverRepo->findAll()),
             'deployments' => $deployments,
             'repository' => $repo
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**
@@ -117,13 +106,13 @@ class DeploymentsController implements ControllerInterface
     {
         $env = [];
         foreach ($environments as $environment) {
-            $env[$environment->getKey()] = [];
+            $env[$environment->name()] = [];
         }
 
         $environments = $env;
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->getKey();
+            $env = $server->getEnvironment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

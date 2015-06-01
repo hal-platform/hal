@@ -82,7 +82,7 @@ class ApiAuthBouncer implements MiddlewareInterface
             throw HttpProblemException::build(403, sprintf('Access denied. Invalid token.', self::HEADER));
         }
 
-        $requester = ($token->getUser()) ? $token->getUser() : $token->getConsumer();
+        $requester = $token->user();
 
         if ($requester instanceof User) {
             if (!$requester->isActive()) {

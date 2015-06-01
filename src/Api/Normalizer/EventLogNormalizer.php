@@ -52,9 +52,9 @@ class EventLogNormalizer
     public function link(EventLog $log = null)
     {
         return  (is_null($log)) ? null :$this->buildLink(
-            ['api.event.log', ['id' => $log->getId()]],
+            ['api.event.log', ['id' => $log->id()]],
             [
-                'title' => $log->getId()
+                'title' => $log->id()
             ]
         );
     }
@@ -71,29 +71,29 @@ class EventLogNormalizer
         }
 
         $properties = [
-            'build' => $log->getBuild(),
-            'push' => $log->getPush()
+            'build' => $log->build(),
+            'push' => $log->push()
         ];
 
         $links = [];
 
-        if ($log->getBuild()) {
-            $links['build'] = $this->builds->link($log->getBuild());
+        if ($log->build()) {
+            $links['build'] = $this->builds->link($log->build());
         }
 
-        if ($log->getPush()) {
-            $links['push'] = $this->pushes->link($log->getPush());
+        if ($log->push()) {
+            $links['push'] = $this->pushes->link($log->push());
         }
 
         return $this->buildResource(
             [
-                'id' => $log->getId(),
-                'event' => $log->getEvent(),
-                'order' => $log->getOrder(),
-                'message' => $log->getMessage(),
-                'status' => $log->getStatus(),
-                'created' => $log->getCreated(),
-                'data' => $log->getData()
+                'id' => $log->id(),
+                'event' => $log->event(),
+                'order' => $log->order(),
+                'message' => $log->message(),
+                'status' => $log->status(),
+                'created' => $log->created(),
+                'data' => $log->data()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [

@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
 
 {% set page_title = 'Add Encrypted Property' %}
 
@@ -6,13 +7,7 @@
     <h1>{{ page_title }} - <strong>{{ repository.name }}</strong></h1>
 
     <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ form_macros.formErrors(errors) }}
 
         <form method="post">
             <ul class="form-fields">
@@ -45,7 +40,7 @@
 
                             <li>
                                 <input id="environment-{{ environment.id }}" type="radio" name="environment" value="{{ environment.id }}"{{ checked }}>
-                                <label for="environment-{{ environment.id }}">{{ environment.key }}</label>
+                                <label for="environment-{{ environment.id }}">{{ environment.name }}</label>
                             </li>
                         {% endfor %}
 

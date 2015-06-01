@@ -98,7 +98,7 @@ class UserController implements ControllerInterface
             'prodApplications' => $appPerm['prod'],
             'nonProdApplications' => $appPerm['non_prod'],
 
-            'ldapUser' => $this->ldap->getUserByCommonId($this->user->getId()),
+            'ldapUser' => $this->ldap->getUserByCommonId($this->user->id()),
 
             'builds' => $stats['builds'],
             'pushes' => $stats['pushes']
@@ -110,7 +110,7 @@ class UserController implements ControllerInterface
      */
     private function getCounts()
     {
-        $key = sprintf(self::CACHE_KEY_COUNTS, $this->user->getId());
+        $key = sprintf(self::CACHE_KEY_COUNTS, $this->user->id());
 
         // external cache
         if ($result = $this->getFromCache($key)) {

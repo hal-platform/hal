@@ -18,7 +18,6 @@ use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class AddServerController implements ControllerInterface
 {
@@ -58,25 +57,18 @@ class AddServerController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
-     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
-        Request $request,
-        Response $response
+        Request $request
     ) {
         $this->template = $template;
 
@@ -88,7 +80,6 @@ class AddServerController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
     }
 
     /**
@@ -133,8 +124,7 @@ class AddServerController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render($renderContext);
-        $this->response->setBody($rendered);
+        $this->template->render($renderContext);
     }
 
     /**

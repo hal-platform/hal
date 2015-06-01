@@ -19,11 +19,10 @@ services:
         arguments:
             - @admin.audit.logs.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     admin.audit.logs.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/audit.logs.twig']]]
 
     admin.system.status.page:
@@ -135,9 +134,8 @@ services:
             - @ldap
             - @doctrine.em
             - @slim.request
-            - @slim.response
     admin.users.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/users.management.twig']]]
 
     admin.caches.page:
@@ -145,17 +143,15 @@ services:
         arguments:
             - @admin.caches.twig
             - @redis
-            - @slim.response
             - @root
     admin.caches.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/cache.management.twig']]]
 
     admin.caches.handler:
         class: 'QL\Hal\Controllers\Admin\Super\CacheManagementHandler'
         arguments:
             - @slim.request
-            - @slim.response
             - @session
             - @url
             - @doctrine.config
@@ -169,7 +165,6 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
     admin.message.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/global.message.twig']]]

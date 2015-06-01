@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
 
 {% set page_title = 'Edit Environment : ' ~ env.key %}
 
@@ -6,13 +7,7 @@
     <h1>Edit Environment - <strong>{{ env.key }}</strong></h1>
 
     <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ form_macros.formErrors(errors) }}
 
         <form method="post">
             <ul class="form-fields">

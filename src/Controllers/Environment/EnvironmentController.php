@@ -15,7 +15,6 @@ use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class EnvironmentController implements ControllerInterface
 {
@@ -31,11 +30,6 @@ class EnvironmentController implements ControllerInterface
      */
     private $envRepo;
     private $serverRepo;
-
-    /**
-     * @type Response
-     */
-    private $response;
 
     /**
      * @type NotFound
@@ -57,7 +51,6 @@ class EnvironmentController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -65,7 +58,6 @@ class EnvironmentController implements ControllerInterface
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->serverRepo = $em->getRepository(Server::CLASS);
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -82,11 +74,9 @@ class EnvironmentController implements ControllerInterface
         $servers = $this->serverRepo->findBy(['environment' => $environment]);
         usort($servers, $this->serverSorter());
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'env' => $environment,
             'servers' => $servers
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

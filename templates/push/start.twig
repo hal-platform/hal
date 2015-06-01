@@ -18,13 +18,13 @@
                 <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
             </dd>
 
-            <dt class="split__title">Repository</dt>
+            <dt class="split__title">Application</dt>
             <dd>
                 <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
-            <dd>{{ build.environment.key }}</dd>
+            <dd>{{ build.environment.name }}</dd>
 
             <dt class="split__title">Reference</dt>
             <dd>

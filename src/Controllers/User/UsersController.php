@@ -14,7 +14,6 @@ use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 /**
  * @todo paginate this stupid page.
@@ -32,23 +31,15 @@ class UsersController implements ControllerInterface
     private $userRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, Response $response)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
 
         $this->userRepo = $em->getRepository(User::CLASS);
         $this->userTypesRepo = $em->getRepository(UserType::CLASS);
-
-        $this->response = $response;
     }
 
     /**
@@ -72,7 +63,7 @@ class UsersController implements ControllerInterface
                 continue;
             }
 
-            $id = $user->getId();
+            $id = $user->id();
             $types = isset($userTypes[$id]) ? $userTypes[$id] : [];
 
             $active[] = [
@@ -86,8 +77,7 @@ class UsersController implements ControllerInterface
             'inactiveUsers' => $inactive
         ];
 
-        $rendered = $this->template->render($context);
-        $this->response->setBody($rendered);
+        $this->template->render($context);
     }
 
     /**
@@ -112,7 +102,7 @@ class UsersController implements ControllerInterface
                 $flag = 'isSuper';
             }
 
-            $userId = $type->user()->getId();
+            $userId = $type->user()->id();
             if (!isset($collated[$userId])) {
                 $collated[$userId] = ['hasType' => true];
             }

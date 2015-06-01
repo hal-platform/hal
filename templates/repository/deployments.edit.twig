@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
 
-{% set page_title = 'Edit Deployment' %}
+{% set page_title = 'Edit Deployment : ' ~ deployment.repository.name %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <h1>Edit Deployment - <strong>{{ deployment.repository.name }}</strong></h1>
 
     <h4>Type</h4>
     <p>{{ deployment.server|formatServerType }}</p>
@@ -11,17 +12,11 @@
     <h4>Server</h4>
     <p>{{ deployment.server|formatServer }}</p>
 
-    <h4>Repository</h4>
+    <h4>Application</h4>
     <p>{{ deployment.repository.name }}</p>
 
     <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ form_macros.formErrors(errors) }}
 
         <form method="post">
             <ul class="form-fields">

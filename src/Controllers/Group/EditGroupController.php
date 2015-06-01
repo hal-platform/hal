@@ -17,7 +17,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class EditGroupController implements ControllerInterface
 {
@@ -54,11 +53,6 @@ class EditGroupController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -74,7 +68,6 @@ class EditGroupController implements ControllerInterface
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -84,7 +77,6 @@ class EditGroupController implements ControllerInterface
         Session $session,
         UrlHelper $url,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -97,7 +89,6 @@ class EditGroupController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -130,13 +121,13 @@ class EditGroupController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render($context);
-        $this->response->setBody($rendered);
+        $this->template->render($context);
     }
 
     /**
      * @param Request $request
      * @param Group $group
+     *
      * @return Group
      */
     private function handleFormSubmission(Request $request, Group $group)
@@ -156,6 +147,7 @@ class EditGroupController implements ControllerInterface
     /**
      * @param Request $request
      * @param Group $group
+     *
      * @return array
      */
     private function checkFormErrors(Request $request, Group $group)

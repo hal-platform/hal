@@ -15,7 +15,6 @@ use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class AddEnvironmentController implements ControllerInterface
 {
@@ -50,25 +49,18 @@ class AddEnvironmentController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
-     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         Session $session,
         UrlHelper $url,
-        Request $request,
-        Response $response
+        Request $request
     ) {
         $this->template = $template;
 
@@ -79,9 +71,7 @@ class AddEnvironmentController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
     }
-
 
     /**
      * {@inheritdoc}
@@ -101,8 +91,7 @@ class AddEnvironmentController implements ControllerInterface
             return $this->url->redirectFor('environments');
         }
 
-        $rendered = $this->template->render($renderContext);
-        $this->response->setBody($rendered);
+        $this->template->render($renderContext);
     }
 
     /**
@@ -118,9 +107,9 @@ class AddEnvironmentController implements ControllerInterface
             return false;
         }
 
-        $environment = new Environment;
-        $environment->setKey($request->post('name'));
-        $environment->setIsProduction(false);
+        $environment = (new Environment)
+            ->withName($request->post('name'))
+            ->withIsProduction(false);
 
         $this->em->persist($environment);
         $this->em->flush();

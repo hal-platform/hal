@@ -12,7 +12,6 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class EnvironmentsController implements ControllerInterface
 {
@@ -27,20 +26,13 @@ class EnvironmentsController implements ControllerInterface
     private $envRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, Response $response)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->envRepo = $em->getRepository(Environment::CLASS);
-        $this->response = $response;
     }
 
     /**
@@ -48,10 +40,8 @@ class EnvironmentsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $rendered = $this->template->render([
+        $this->template->render([
             'envs' => $this->envRepo->getAllEnvironmentsSorted()
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

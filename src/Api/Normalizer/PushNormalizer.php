@@ -38,7 +38,7 @@ class PushNormalizer
     private $deployments;
 
     /**
-     * @var RepositoryNormalizer
+     * @var ApplicationNormalizer
      */
     private $repositories;
 
@@ -52,14 +52,14 @@ class PushNormalizer
      * @param UserNormalizer $users
      * @param BuildNormalizer $builds
      * @param DeploymentNormalizer $deployments
-     * @param RepositoryNormalizer $repositories
+     * @param ApplicationNormalizer $repositories
      */
     public function __construct(
         UrlHelper $urls,
         UserNormalizer $users,
         BuildNormalizer $builds,
         DeploymentNormalizer $deployments,
-        RepositoryNormalizer $repositories
+        ApplicationNormalizer $repositories
     ) {
         $this->urls = $urls;
         $this->users = $users;

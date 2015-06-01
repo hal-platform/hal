@@ -8,9 +8,8 @@ services:
         arguments:
             - @repositories.twig
             - @doctrine.em
-            - @slim.response
     repositories.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/repositories.twig']]]
 
     repository.page:
@@ -19,11 +18,10 @@ services:
             - @repository.twig
             - @doctrine.em
             - @eb
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/repository.twig']]]
 
     repository.status.page:
@@ -32,11 +30,10 @@ services:
             - @repository.status.twig
             - @doctrine.em
             - @sticky.environment
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.status.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/status.twig']]]
 
     repository.status.sticky.handler:
@@ -57,9 +54,8 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
     repository.admin.add.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/admin.add.twig']]]
 
     repository.admin.edit.page:
@@ -70,11 +66,10 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.admin.edit.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/admin.edit.twig']]]
 
     repository.admin.remove.handler:
@@ -96,11 +91,10 @@ services:
             - @repository.deployment.twig
             - @doctrine.em
             - @eb
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.deployment.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/deployment.twig']]]
 
     repository.deployments.page:
@@ -108,11 +102,10 @@ services:
         arguments:
             - @repository.deployments.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.deployments.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/deployments.twig']]]
 
     repository.deployments.add.page:
@@ -122,11 +115,10 @@ services:
             - @doctrine.em
             - @url
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.deployments.add.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/deployments.add.twig']]]
 
     repository.deployments.add.handler:
@@ -154,7 +146,6 @@ services:
             - @json
             - @url
             - @slim.request
-            - @slim.response
             - @slim.route.parameters
     repository.deployment.validator:
         class: 'QL\Hal\Validator\DeploymentValidator'
@@ -166,11 +157,10 @@ services:
             - @repository.deployment.edit.twig
             - @doctrine.em
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.deployment.edit.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/deployments.edit.twig']]]
     repository.deployment.edit.handler:
         class: 'QL\Hal\Controllers\Repository\Deployment\EditDeploymentHandler'
@@ -201,11 +191,10 @@ services:
         arguments:
             - @repository.encrypted.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.encrypted.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/encrypted/encrypted.properties.twig']]]
 
     repository.encrypted.add.page:
@@ -214,11 +203,10 @@ services:
             - @repository.encrypted.add.twig
             - @doctrine.em
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     repository.encrypted.add.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['repository/encrypted/add.encrypted.property.twig']]]
     repository.encrypted.add.handler:
         class: 'QL\Hal\Controllers\Repository\EncryptedProperty\AddEncryptedPropertyHandler'

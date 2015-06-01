@@ -18,7 +18,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class EditRepositoryController implements ControllerInterface
 {
@@ -56,11 +55,6 @@ class EditRepositoryController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -88,7 +82,6 @@ class EditRepositoryController implements ControllerInterface
         Session $session,
         UrlHelper $url,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -102,7 +95,6 @@ class EditRepositoryController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -143,8 +135,7 @@ class EditRepositoryController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render($renderContext);
-        $this->response->setBody($rendered);
+        $this->template->render($renderContext);
     }
 
     /**

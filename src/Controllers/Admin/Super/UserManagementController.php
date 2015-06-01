@@ -15,7 +15,6 @@ use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 /**
  * Display all current users in HAL and show their LDAP and HAL status.
@@ -50,23 +49,16 @@ class UserManagementController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param LdapService $ldap
      * @param EntityManagerInterface $em
      * @param Request $request
-     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         LdapService $ldap,
         EntityManagerInterface $em,
-        Request $request,
-        Response $response
+        Request $request
     ) {
         $this->template = $template;
         $this->ldap = $ldap;
@@ -75,7 +67,6 @@ class UserManagementController implements ControllerInterface
         $this->em = $em;
 
         $this->request = $request;
-        $this->response = $response;
     }
 
     /**
@@ -87,7 +78,7 @@ class UserManagementController implements ControllerInterface
 
         $parsed = [];
         foreach ($users as $user) {
-            $ldapUser = $this->ldap->getUserByWindowsUsername($user->getHandle());
+            $ldapUser = $this->ldap->getUserByWindowsUsername($user->handle());
             $parsed[] = [
                 'user' => $user,
                 'hal_active' => $user->isActive(),
@@ -107,8 +98,7 @@ class UserManagementController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render($context);
-        $this->response->setBody($rendered);
+        $this->template->render($context);
     }
 
     /**
@@ -125,8 +115,8 @@ class UserManagementController implements ControllerInterface
             }
 
             if (!$user['ldap_active']) {
-                $pruned[] = $user['user']->getHandle();
-                $user['user']->setIsActive(false);
+                $pruned[] = $user['user']->handle();
+                $user['user']->withIsActive(false);
                 $this->em->merge($user['user']);
             }
         }

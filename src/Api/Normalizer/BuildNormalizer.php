@@ -28,7 +28,7 @@ class BuildNormalizer
     private $users;
 
     /**
-     * @var RepositoryNormalizer
+     * @var ApplicationNormalizer
      */
     private $repositories;
 
@@ -45,13 +45,13 @@ class BuildNormalizer
     /**
      * @param UrlHelper $urls
      * @param UserNormalizer $users
-     * @param RepositoryNormalizer $repositories
+     * @param ApplicationNormalizer $repositories
      * @param EnvironmentNormalizer $environments
      */
     public function __construct(
         UrlHelper $urls,
         UserNormalizer $users,
-        RepositoryNormalizer $repositories,
+        ApplicationNormalizer $repositories,
         EnvironmentNormalizer $environments
     ) {
         $this->urls = $urls;

@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\GithubApi;
 
-use QL\Hal\Services\GithubService;
+use QL\Hal\Service\GitHubService;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
 
@@ -17,7 +17,7 @@ use Slim\Http\Response;
 class Repos implements ControllerInterface
 {
     /**
-     * @var GithubService
+     * @var GitHubService
      */
     private $github;
 
@@ -32,11 +32,11 @@ class Repos implements ControllerInterface
     private $parameters;
 
     /**
-     * @param GithubService $github
+     * @param GitHubService $github
      * @param Response $response
      * @param array $parameters
      */
-    public function __construct(GithubService $github, Response $response, array $parameters)
+    public function __construct(GitHubService $github, Response $response, array $parameters)
     {
         $this->github = $github;
         $this->response = $response;

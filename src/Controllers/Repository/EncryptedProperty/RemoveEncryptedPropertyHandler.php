@@ -98,7 +98,7 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
         $this->em->remove($property);
         $this->em->flush();
 
-        $message = sprintf('Encrypted Property "%s" Removed.', $property->getName());
+        $message = sprintf('Encrypted Property "%s" Removed.', $property->name());
         $this->session->flash($message, 'success');
         $this->url->redirectFor('repository.encrypted', ['repository' => $this->parameters['repository']]);
     }

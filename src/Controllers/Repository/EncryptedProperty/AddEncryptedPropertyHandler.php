@@ -25,7 +25,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 {
     use ValidatorHelperTrait;
 
-    const SUCCESS = 'Encrypted Property Added.';
+    const SUCCESS = 'Encrypted Property "%s" added.';
 
     const ERR_NO_ENVIRONMENT = 'Please select an environment.';
     const ERR_NO_REPOSITORY = 'Invalid repository.';
@@ -145,7 +145,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
         $this->em->flush();
 
         // flash and redirect
-        $this->session->flash(self::SUCCESS, 'success');
+        $this->session->flash(sprintf(self::SUCCESS, $encryptedProperty->name()), 'success');
         $this->url->redirectFor('repository.encrypted', ['repository' => $this->parameters['repository']], [], 303);
     }
 
@@ -212,14 +212,13 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 
         $encrypted = $this->encrypter->encrypt($decrypted);
 
-        $property = new EncryptedProperty;
-        $property->setName($name);
-        $property->setData($encrypted);
-
-        $property->setRepository($repo);
+        $property = (new EncryptedProperty)
+            ->withName($name)
+            ->withData($encrypted)
+            ->withRepository($repo);
 
         if ($env) {
-            $property->setEnvironment($env);
+            $property->withEnvironment($env);
         }
 
         return $property;
@@ -232,7 +231,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      *
      * @return bool
      */
-    private function isPropertyDuplicate($name, Repository $repository, $env)
+    private function isPropertyDuplicate($name, Repository $repository, Environment $env = null)
     {
         $enc = $this->encryptedRepo->findBy([
             'name' => $name,

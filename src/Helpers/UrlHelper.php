@@ -3,11 +3,11 @@
 
 namespace QL\Hal\Helpers;
 
+use QL\Hal\Service\GitHubService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Router;
 use Slim\Route;
-use QL\Hal\Services\GithubService;
 
 /**
  *  Url Helper
@@ -32,7 +32,7 @@ class UrlHelper
     private $router;
 
     /**
-     * @var GithubService
+     * @var GitHubService
      */
     private $github;
 
@@ -40,13 +40,13 @@ class UrlHelper
      * @param Request $request
      * @param Response $response
      * @param Router $router
-     * @param GithubService $github
+     * @param GitHubService $github
      */
     public function __construct(
         Request $request,
         Response $response,
         Router $router,
-        GithubService $github
+        GitHubService $github
     ) {
         $this->request = $request;
         $this->response = $response;

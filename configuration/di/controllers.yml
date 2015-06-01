@@ -30,11 +30,9 @@ services:
         class: 'QL\Hal\Controllers\LoginController'
         arguments:
             - @login.twig
-            - @slim.response
             - @stats
     login.twig:
-        parent: 'twig.template'
-        arguments: ['login.twig']
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['login.twig']]]
     login.handler:
         class: 'QL\Hal\Controllers\LoginHandler'
@@ -59,9 +57,8 @@ services:
         arguments:
             - @queue.twig
             - @doctrine.em
-            - @slim.response
     queue.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['queue.twig']]]
 
     queue.history.page:
@@ -69,12 +66,11 @@ services:
         arguments:
             - @queue.history.twig
             - @doctrine.em
-            - @slim.response
             - @clock
             - @slim.route.parameters
             - %date.timezone%
     queue.history.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['queue.history.twig']]]
 
     ####################################################################################################################
@@ -86,11 +82,10 @@ services:
         arguments:
             - @group.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     group.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['group/group.twig']]]
 
     group.admin.add.page:
@@ -101,9 +96,8 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
     group.admin.add.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['group/admin.add.twig']]]
 
     group.admin.edit.page:
@@ -114,11 +108,10 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     group.admin.edit.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['group/admin.edit.twig']]]
     group.admin.remove.handler:
         class: 'QL\Hal\Controllers\Group\RemoveGroupController'
@@ -138,11 +131,10 @@ services:
         arguments:
             - @build.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     build.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/build.twig']]]
 
     build.start.page:
@@ -152,11 +144,10 @@ services:
             - @doctrine.em
             - @github
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     build.start.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/start.twig']]]
 
     build.start.handler:
@@ -175,7 +166,7 @@ services:
         class: 'QL\Hal\Validator\BuildStartValidator'
         arguments:
             - @doctrine.em
-            - @github.new
+            - @github
             - @permissions
             - @currentUser
 
@@ -185,11 +176,10 @@ services:
             - @builds.twig
             - @doctrine.em
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     builds.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/builds.twig']]]
 
     ####################################################################################################################
@@ -202,11 +192,10 @@ services:
             - @push.start.twig
             - @doctrine.em
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     push.start.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/start.twig']]]
 
     push.start.handler:
@@ -228,11 +217,10 @@ services:
         arguments:
             - @rollback.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     rollback.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/rollback.twig']]]
 
     push.page:
@@ -240,11 +228,10 @@ services:
         arguments:
             - @push.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     push.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/push.twig']]]
 
     pushes.page:
@@ -253,11 +240,10 @@ services:
             - @pushes.twig
             - @doctrine.em
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     pushes.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/pushes.twig']]]
 
     ####################################################################################################################
@@ -269,10 +255,9 @@ services:
         arguments:
             - @environments.twig
             - @doctrine.em
-            - @slim.response
 
     environments.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/environments.twig']]]
 
     environment.page:
@@ -280,11 +265,10 @@ services:
         arguments:
             - @environment.twig
             - @doctrine.em
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     environment.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/environment.twig']]]
 
     environment.admin.add.page:
@@ -295,9 +279,8 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
     environment.admin.add.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/admin.add.twig']]]
 
     environment.admin.edit.page:
@@ -308,11 +291,10 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     environment.admin.edit.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/admin.edit.twig']]]
 
     environment.admin.remove.handler:
@@ -323,6 +305,7 @@ services:
             - @url.helper
             - @slim.not.found
             - @slim.route.parameters
+
     ####################################################################################################################
     # SERVER CONTROLLERS
     ####################################################################################################################
@@ -332,9 +315,8 @@ services:
         arguments:
             - @servers.twig
             - @doctrine.em
-            - @slim.response
     servers.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/servers.twig']]]
 
     server.page:
@@ -343,11 +325,10 @@ services:
             - @server.twig
             - @doctrine.em
             - @eb
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     server.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/server.twig']]]
 
     server.admin.add.page:
@@ -358,9 +339,8 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
     server.admin.add.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/admin.add.twig']]]
 
     server.admin.edit.page:
@@ -371,11 +351,10 @@ services:
             - @session
             - @url.helper
             - @slim.request
-            - @slim.response
             - @slim.not.found
             - @slim.route.parameters
     server.admin.edit.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/admin.edit.twig']]]
 
     server.admin.remove.handler:
@@ -412,9 +391,8 @@ services:
         arguments:
             - @users.twig
             - @doctrine.em
-            - @slim.response
     users.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/users.twig']]]
 
     user.settings.page:
@@ -423,10 +401,9 @@ services:
             - @user.settings.twig
             - @doctrine.em
             - @currentUser
-            - @slim.response
             - @slim.not.found
     user.settings.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/settings.twig']]]
 
     user.settings.handler:
@@ -515,14 +492,13 @@ services:
         arguments:
             - @github.authorization.twig
             - @slim.request
-            - @slim.response
             - @doctrine.em
             - @currentUser
             - @utilty.github.oauth
             - @session
             - @url
     github.authorization.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/github.token.error.twig']]]
 
     github.authorization.remove.page:
@@ -530,14 +506,13 @@ services:
         arguments:
             - @github.authorization.remove.twig
             - @slim.request
-            - @slim.response
             - @doctrine.em
             - @currentUser
             - @utilty.github.oauth
             - @session
             - @url
     github.authorization.remove.twig:
-        parent: 'twig.template'
+        parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/github.token.remove.twig']]]
 
     ####################################################################################################################

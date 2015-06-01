@@ -22,7 +22,7 @@ services:
         class: 'QL\Hal\Service\PermissionsService'
         arguments:
             - @doctrine.em
-            - @github.new
+            - @github
             - @json
             - %permissions.check.github%
         calls:
@@ -30,18 +30,18 @@ services:
             - ['setCacheTTL', [%cache.permissions.ttl%]]
 
     global.message:
-        class: 'QL\Hal\Services\GlobalMessageService'
+        class: 'QL\Hal\Service\GlobalMessageService'
         arguments: [@redis]
 
     sticky.environment:
-        class: 'QL\Hal\Services\StickyEnvironmentService'
+        class: 'QL\Hal\Service\StickyEnvironmentService'
         arguments:
             - @slim.cookies
             - @json
             - %cookie.preferences.ttl%
 
     stats:
-        class: 'QL\Hal\Services\StatsService'
+        class: 'QL\Hal\Service\StatsService'
         arguments:
             - @doctrine.em
             - @clock
@@ -56,9 +56,19 @@ services:
             - %redis.server%
             - {prefix: '%redis.prefix%:'}
 
-    github.new:
+    github:
         class: 'QL\Hal\Service\GitHubService'
-        parent: 'github'
+        arguments:
+            - @github.repoService
+            - @github.repoCommitService
+            - @github.gitRefService
+            - @github.gitCommitService
+            - @github.pullService
+            - @github.userService
+            - @github.orgService
+            - @github.orgMemberService
+            - @github.pager
+
 
     ####################################################################################################################
     # Crypto
@@ -123,9 +133,9 @@ services:
         class: 'QL\Hal\Twig\GlobalExtension'
         arguments:
             - @service_container
+            - @doctrine.em
             - @slim.request
             - @session
-            - @doctrine.em
         calls:
             - ['addGlobal', ['applicationTitle', %application.title%]]
             - ['addGlobal', ['applicationSha', %application.sha%]]
@@ -140,7 +150,7 @@ services:
         arguments: [@permissions]
 
     twig.extension.github:
-        class: 'QL\Hal\Twig\GithubExtension'
+        class: 'QL\Hal\Twig\GitHubExtension'
         arguments: [@url.helper, @github]
 
     twig.extension.ansi:
@@ -172,18 +182,6 @@ services:
     # GitHub
     ####################################################################################################################
 
-    github:
-        class: 'QL\Hal\Services\GithubService'
-        arguments:
-            - @github.userService
-            - @github.repoService
-            - @github.refService
-            - @github.pullService
-            - @github.commitService
-            - @github.pager
-            - @github.commitRepo
-            - @github.members
-
     github.client:
         class: 'Github\Client'
         arguments: [@github.http.client]
@@ -200,35 +198,31 @@ services:
         class: 'Github\ResultPager'
         arguments: [@github.client]
 
-    github.orgService:
-        class: 'Github\Api\Organization'
-        arguments: [@github.client]
-
     github.pullService:
         class: 'Github\Api\PullRequest'
         arguments: [@github.client]
 
-    github.refService:
+    github.gitRefService:
         class: 'Github\Api\GitData\References'
         arguments: [@github.client]
-
-    github.commitService:
+    github.gitCommitService:
         class: 'Github\Api\GitData\Commits'
         arguments: [@github.client]
 
     github.repoService:
         class: 'Github\Api\Repo'
         arguments: [@github.client]
+    github.repoCommitService:
+        class: 'Github\Api\Repository\Commits'
+        arguments: [@github.client]
 
     github.userService:
         class: 'Github\Api\User'
         arguments: [@github.client]
-
-    github.commitRepo:
-        class: 'Github\Api\Repository\Commits'
+    github.orgService:
+        class: 'QL\Hal\Github\Organization'
         arguments: [@github.client]
-
-    github.members:
+    github.orgMemberService:
         class: 'Github\Api\Organization\Members'
         arguments: [@github.client]
 

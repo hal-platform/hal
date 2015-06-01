@@ -5,17 +5,17 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Api\Repository;
+namespace QL\Hal\Controllers\Api\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Api\Normalizer\RepositoryNormalizer;
+use QL\Hal\Api\Normalizer\ApplicationNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\ControllerInterface;
 
-class RepositoriesController implements ControllerInterface
+class ApplicationsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
@@ -30,19 +30,19 @@ class RepositoriesController implements ControllerInterface
     private $repositoryRepo;
 
     /**
-     * @var RepositoryNormalizer
+     * @var ApplicationNormalizer
      */
     private $normalizer;
 
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param RepositoryNormalizer $normalizer
+     * @param ApplicationNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
-        RepositoryNormalizer $normalizer
+        ApplicationNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
         $this->repositoryRepo = $em->getRepository(Repository::CLASS);
@@ -67,7 +67,7 @@ class RepositoriesController implements ControllerInterface
             ],
             [],
             [
-                'repositories' => $repos
+                'applications' => $repos
             ]
         ), $status);
     }

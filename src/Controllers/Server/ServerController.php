@@ -16,7 +16,6 @@ use QL\Hal\Services\ElasticBeanstalkService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class ServerController implements ControllerInterface
 {
@@ -37,11 +36,6 @@ class ServerController implements ControllerInterface
     private $ebService;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -55,7 +49,6 @@ class ServerController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param ElasticBeanstalkService $ebService
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -63,7 +56,6 @@ class ServerController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         ElasticBeanstalkService $ebService,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -74,7 +66,6 @@ class ServerController implements ControllerInterface
 
         $this->ebService = $ebService;
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -109,11 +100,9 @@ class ServerController implements ControllerInterface
             $deployments_with_eb[] = $dep_eb;
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'server' => $server,
             'deployments_with_optional_eb' => $deployments_with_eb
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

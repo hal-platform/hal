@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\GroupNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 
 class GroupsController implements ControllerInterface

@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 
 class EnvironmentsController implements ControllerInterface

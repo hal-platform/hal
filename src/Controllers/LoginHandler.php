@@ -118,8 +118,8 @@ class LoginHandler implements MiddlewareInterface
         $isFirstLogin = false;
         if (!$user) {
             $isFirstLogin = true;
-            $user = new User;
-            $user->setIsActive(true);
+            $user = (new User)
+                ->withIsActive(true);
         }
 
         $this->updateUserDetails($account, $user);
@@ -144,11 +144,11 @@ class LoginHandler implements MiddlewareInterface
     private function updateUserDetails(LdapUser $account, User $user)
     {
         // Update user
-        $user->setId($account->commonId());
-        $user->setEmail($account->email());
-        $user->setHandle($account->windowsUsername());
-        $user->setName($account->displayName());
-        $user->setPictureUrl($account->badgePhotoUrl());
+        $user->withId($account->commonId());
+        $user->withEmail($account->email());
+        $user->withHandle($account->windowsUsername());
+        $user->withName($account->displayName());
+        $user->withPictureUrl($account->badgePhotoUrl());
 
         $this->em->persist($user);
         $this->em->flush();

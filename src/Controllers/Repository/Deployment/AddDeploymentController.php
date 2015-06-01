@@ -17,7 +17,6 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class AddDeploymentController implements ControllerInterface
 {
@@ -45,11 +44,6 @@ class AddDeploymentController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -64,7 +58,6 @@ class AddDeploymentController implements ControllerInterface
      * @param EntityManagerInterface $em
      * @param Url $url
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -73,7 +66,6 @@ class AddDeploymentController implements ControllerInterface
         EntityManagerInterface $em,
         Url $url,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -83,7 +75,6 @@ class AddDeploymentController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -104,7 +95,7 @@ class AddDeploymentController implements ControllerInterface
             $this->url->redirectFor('repository', ['repository' => $this->parameters['repository']]);
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'form' => [
                 'server' => $this->request->post('server'),
                 'path' => $this->request->post('path'),
@@ -115,8 +106,6 @@ class AddDeploymentController implements ControllerInterface
             'servers_by_env' => $this->environmentalizeServers($servers),
             'repository' => $repo
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**
@@ -133,7 +122,7 @@ class AddDeploymentController implements ControllerInterface
         ];
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->getKey();
+            $env = $server->getEnvironment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

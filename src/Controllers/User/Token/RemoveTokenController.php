@@ -95,13 +95,13 @@ class RemoveTokenController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        if (!$this->isUserAllowed($token->getUser())) {
+        if (!$this->isUserAllowed($token->user())) {
             return $this->flasher
                 ->withFlash(self::ERR_DENIED, 'error')
                 ->load('settings');
         }
 
-        $label = $token->getLabel();
+        $label = $token->label();
 
         $this->em->remove($token);
         $this->em->flush();
@@ -125,6 +125,6 @@ class RemoveTokenController implements ControllerInterface
             return true;
         }
 
-        return ($this->currentUser->getId() == $user->getId());
+        return ($this->currentUser->id() == $user->id());
     }
 }

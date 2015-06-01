@@ -13,12 +13,11 @@ use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
-use QL\Hal\Services\GithubService;
+use QL\Hal\Service\GitHubService;
 use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class AddRepositoryController implements ControllerInterface
 {
@@ -41,7 +40,7 @@ class AddRepositoryController implements ControllerInterface
     private $em;
 
     /**
-     * @type GithubService
+     * @type GitHubService
      */
     private $github;
 
@@ -61,27 +60,20 @@ class AddRepositoryController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param GithubService $github
+     * @param GitHubService $github
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
-     * @param Response $response
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        GithubService $github,
+        GitHubService $github,
         Session $session,
         UrlHelper $url,
-        Request $request,
-        Response $response
+        Request $request
     ) {
         $this->template = $template;
         $this->groupRepo = $em->getRepository(Group::CLASS);
@@ -92,7 +84,6 @@ class AddRepositoryController implements ControllerInterface
         $this->url = $url;
 
         $this->request = $request;
-        $this->response = $response;
     }
 
     /**
@@ -134,8 +125,7 @@ class AddRepositoryController implements ControllerInterface
             }
         }
 
-        $rendered = $this->template->render($renderContext);
-        $this->response->setBody($rendered);
+        $this->template->render($renderContext);
     }
 
     /**

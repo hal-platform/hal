@@ -11,7 +11,7 @@ use QL\Hal\Helpers\UrlHelper;
 /**
  * Repository Object Normalizer
  */
-class RepositoryNormalizer
+class ApplicationNormalizer
 {
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
@@ -53,7 +53,7 @@ class RepositoryNormalizer
     public function link(Repository $repository = null)
     {
         return (is_null($repository)) ? null : $this->buildLink(
-            ['api.repository', ['id' => $repository->getId()]],
+            ['api.application', ['id' => $repository->getId()]],
             [
                 'title' => $repository->getKey()
             ]

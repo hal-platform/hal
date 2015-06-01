@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Services;
+namespace QL\Hal\Service;
 
 use Predis\Client as Predis;
 

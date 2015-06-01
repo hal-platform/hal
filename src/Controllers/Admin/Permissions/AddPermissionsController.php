@@ -154,7 +154,7 @@ class AddPermissionsController implements ControllerInterface
                 $landingUrl = ($permission instanceof UserPermission) ? 'admin.permissions.deployment' : 'admin.permissions';
 
                 return $this->flasher
-                    ->withFlash(sprintf(self::SUCCESS, $permission->user()->getHandle()))
+                    ->withFlash(sprintf(self::SUCCESS, $permission->user()->handle()))
                     ->load($landingUrl);
             }
         }

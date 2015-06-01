@@ -10,7 +10,6 @@ namespace QL\Hal\Controllers\Admin\Super;
 use Predis\Client as Predis;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class CacheManagementController implements ControllerInterface
 {
@@ -25,11 +24,6 @@ class CacheManagementController implements ControllerInterface
     private $predis;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type string
      */
     private $root;
@@ -37,19 +31,16 @@ class CacheManagementController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param Predis $predis
-     * @param Response $response
      * @param string $root
      */
     public function __construct(
         TemplateInterface $template,
         Predis $predis,
-        Response $response,
         $root
     ) {
         $this->template = $template;
         $this->predis = $predis;
 
-        $this->response = $response;
         $this->root = $root;
     }
 
@@ -65,9 +56,7 @@ class CacheManagementController implements ControllerInterface
             'opcache' => $this->getOpcacheData(),
         ];
 
-        $rendered = $this->template->render($context);
-
-        $this->response->setBody($rendered);
+        $this->template->render($context);
     }
 
     /**

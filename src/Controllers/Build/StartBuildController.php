@@ -12,12 +12,11 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Services\GithubService;
+use QL\Hal\Service\GitHubService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class StartBuildController implements ControllerInterface
 {
@@ -37,7 +36,7 @@ class StartBuildController implements ControllerInterface
     private $envRepo;
 
     /**
-     * @type GithubService
+     * @type GitHubService
      */
     private $github;
 
@@ -45,11 +44,6 @@ class StartBuildController implements ControllerInterface
      * @type Request
      */
     private $request;
-
-    /**
-     * @type Response
-     */
-    private $response;
 
     /**
      * @type NotFound
@@ -64,18 +58,16 @@ class StartBuildController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param GithubService $github
+     * @param GitHubService $github
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        GithubService $github,
+        GitHubService $github,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -85,7 +77,6 @@ class StartBuildController implements ControllerInterface
         $this->github = $github;
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -115,8 +106,7 @@ class StartBuildController implements ControllerInterface
             'environments' => $this->getBuildableEnvironments($repo)
         ];
 
-        $rendered = $this->template->render($context);
-        $this->response->setBody($rendered);
+        $this->template->render($context);
     }
 
     /**

@@ -14,7 +14,6 @@ use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class EncryptedPropertiesController implements ControllerInterface
 {
@@ -30,11 +29,6 @@ class EncryptedPropertiesController implements ControllerInterface
     private $repoRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -47,14 +41,12 @@ class EncryptedPropertiesController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -62,7 +54,6 @@ class EncryptedPropertiesController implements ControllerInterface
         $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
         $this->repoRepo = $em->getRepository(Repository::CLASS);
 
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -79,12 +70,10 @@ class EncryptedPropertiesController implements ControllerInterface
         $encrypted = $this->encryptedRepo->findBy(['repository' => $repo]);
         usort($encrypted, $this->sortByEnv());
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'repository' => $repo,
             'encrypted' => $encrypted
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     private function sortByEnv()
@@ -99,17 +88,17 @@ class EncryptedPropertiesController implements ControllerInterface
         return function($prop1, $prop2) use ($order) {
 
             // global to bottom
-            if ($prop1->getEnvironment() xor $prop2->getEnvironment()) {
-                return $prop1->getEnvironment() ? -1 : 1;
+            if ($prop1->environment() xor $prop2->environment()) {
+                return $prop1->environment() ? -1 : 1;
             }
 
-            if ($prop1->getEnvironment() === $prop2->getEnvironment()) {
+            if ($prop1->environment() === $prop2->environment()) {
                 // same env, compare name
-                return strcasecmp($prop1->getName(), $prop2->getName());
+                return strcasecmp($prop1->name(), $prop2->name());
             }
 
-            $aName = strtolower($prop1->getEnvironment()->name());
-            $bName = strtolower($prop2->getEnvironment()->name());
+            $aName = strtolower($prop1->environment()->name());
+            $bName = strtolower($prop2->environment()->name());
 
             $aOrder = isset($order[$aName]) ? $order[$aName] : 999;
             $bOrder = isset($order[$bName]) ? $order[$bName] : 999;

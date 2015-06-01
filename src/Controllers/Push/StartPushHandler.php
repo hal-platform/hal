@@ -16,7 +16,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Service\PermissionsService;
-use QL\Hal\Services\StickyEnvironmentService;
+use QL\Hal\Service\StickyEnvironmentService;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
@@ -176,7 +176,7 @@ class StartPushHandler implements MiddlewareInterface
 
             if ($environment !== $server->getEnvironment())) {
                 return $this->context->addContext([
-                    'errors' => [sprintf(self::ERR_WRONG_ENV, $environment->getKey())]
+                    'errors' => [sprintf(self::ERR_WRONG_ENV, $environment->name())]
                 ]);
             }
 
@@ -210,7 +210,7 @@ class StartPushHandler implements MiddlewareInterface
         $this->em->flush();
 
         // override sticky environment
-        $this->stickyService->save($repo->getId(), $deployment->getServer()->getEnvironment()->getId());
+        $this->stickyService->save($repo->getId(), $deployment->getServer()->getEnvironment()->name());
 
         $this->session->flash(self::NOTICE_DONE, 'success');
         $this->url->redirectFor('repository.status', ['id' => $repo->getId()]);

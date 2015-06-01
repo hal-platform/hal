@@ -135,7 +135,7 @@ class AddTokenController implements ControllerInterface
 
         $token = $this->generateToken($user, $label);
         $this->flasher
-            ->withFlash(sprintf(self::SUCCESS, $token->getLabel()), 'success')
+            ->withFlash(sprintf(self::SUCCESS, $token->label()), 'success')
             ->load('settings');
     }
 
@@ -149,10 +149,10 @@ class AddTokenController implements ControllerInterface
     {
         $hash = sha1(call_user_func($this->random));
 
-        $token = new Token;
-        $token->setValue($hash);
-        $token->setUser($user);
-        $token->setLabel($label);
+        $token = (new Token)
+            ->withLabel($label)
+            ->withValue($hash)
+            ->withUser($user);
 
         $this->em->persist($token);
         $this->em->flush();
@@ -174,6 +174,6 @@ class AddTokenController implements ControllerInterface
             return true;
         }
 
-        return ($this->currentUser->getId() == $user->getId());
+        return ($this->currentUser->id() == $user->id());
     }
 }

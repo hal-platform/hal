@@ -21,9 +21,9 @@ class EnvironmentNormalizer
     public function link(Environment $environment = null)
     {
         return (is_null($environment)) ? null : $this->buildLink(
-            ['api.environment', ['id' => $environment->getId()]],
+            ['api.environment', ['id' => $environment->id()]],
             [
-                'title' => $environment->getKey()
+                'title' => $environment->name()
             ]
         );
     }
@@ -40,9 +40,9 @@ class EnvironmentNormalizer
 
         return $this->buildResource(
             [
-                'id' => $environment->getId(),
-                'key' => $environment->getKey(),
-                'isProduction' => $environment->getIsProduction()
+                'id' => $environment->id(),
+                'name' => $environment->name(),
+                'isProduction' => $environment->isProduction()
             ],
             [],
             [

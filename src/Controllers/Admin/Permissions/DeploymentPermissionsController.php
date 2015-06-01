@@ -115,10 +115,10 @@ class DeploymentPermissionsController implements ControllerInterface
     private function typeSorter()
     {
         return function(UserPermission $a, UserPermission $b) {
-            $a = $a->user()->getName();
-            $b = $b->user()->getName();
+            $a = $a->user()->name();
+            $b = $b->user()->name();
 
-            return strcasecmp($b, $a);
+            return strcasecmp($a, $b);
         };
     }
 }

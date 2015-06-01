@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Services\StickyEnvironmentService;
+use QL\Hal\Service\StickyEnvironmentService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
@@ -79,7 +79,7 @@ class RepositoryStatusEnvironmentSaveHandler implements MiddlewareInterface
         // environment is valid. save to cookie.
         if ($environment = $this->envRepo->find($environmentId)) {
 
-            $this->service->save($repoId, $environment->getId());
+            $this->service->save($repoId, $environment->id());
         }
 
         $this->url->redirectFor('repository.status', ['id' => $repoId]);

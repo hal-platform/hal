@@ -10,7 +10,7 @@
 <ul class="list--bare cards--baby">
     {% for build in builds %}
         <li>
-            <article class="card--baby mbn card--{{ build.environment.key }}">
+            <article class="card--baby mbn card--{{ build.environment.name }}">
                 <header class="card__header split">
                     <span class="split__title">
                         <a href="{{ urlFor('repository.status', {id: build.repository.id}) }}">

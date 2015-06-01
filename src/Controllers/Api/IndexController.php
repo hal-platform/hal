@@ -39,7 +39,7 @@ class IndexController implements ControllerInterface
                 'servers' => ['href' => 'api.servers'],
                 'groups' => ['href' => 'api.groups'],
                 'users' => ['href' => 'api.users'],
-                'repositories' => ['href' => 'api.repositories'],
+                'applications' => ['href' => 'api.applications'],
                 'queue' => ['href' => 'api.queue']
             ]
         ]);

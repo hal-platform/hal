@@ -176,7 +176,7 @@ class BuildStartValidator
         }
 
         // search query is commit sha
-        if (preg_match(GithubService::REGEX_COMMIT, $search) === 1) {
+        if (preg_match(GitHubService::REGEX_COMMIT, $search) === 1) {
             return $search;
         }
 

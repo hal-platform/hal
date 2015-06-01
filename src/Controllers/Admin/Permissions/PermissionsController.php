@@ -115,10 +115,10 @@ class PermissionsController implements ControllerInterface
     private function typeSorter()
     {
         return function(UserType $a, UserType $b) {
-            $a = $a->user()->getName();
-            $b = $b->user()->getName();
+            $a = $a->user()->name();
+            $b = $b->user()->name();
 
-            return strcasecmp($b, $a);
+            return strcasecmp($a, $b);
         };
     }
 }

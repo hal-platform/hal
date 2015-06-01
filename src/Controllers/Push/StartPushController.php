@@ -18,7 +18,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class StartPushController implements ControllerInterface
 {
@@ -45,11 +44,6 @@ class StartPushController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -63,7 +57,6 @@ class StartPushController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -71,7 +64,6 @@ class StartPushController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -83,7 +75,6 @@ class StartPushController implements ControllerInterface
         $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -118,13 +109,11 @@ class StartPushController implements ControllerInterface
             ];
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'build' => $build,
             'selected' => $this->request->get('deployment'),
             'statuses' => $statuses
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**

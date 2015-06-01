@@ -16,7 +16,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class AddEncryptedPropertyController implements ControllerInterface
 {
@@ -41,11 +40,6 @@ class AddEncryptedPropertyController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -61,7 +55,6 @@ class AddEncryptedPropertyController implements ControllerInterface
      * @param EntityManagerInterface $em
      *
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -69,7 +62,6 @@ class AddEncryptedPropertyController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -78,7 +70,6 @@ class AddEncryptedPropertyController implements ControllerInterface
         $this->envRepo = $em->getRepository(Environment::CLASS);
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -97,7 +88,7 @@ class AddEncryptedPropertyController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'form' => [
                 'environment' => $this->request->post('environment'),
                 'name' => $this->request->post('name'),
@@ -106,7 +97,5 @@ class AddEncryptedPropertyController implements ControllerInterface
             'repository' => $repo,
             'environments' => $environments
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Services\StickyEnvironmentService;
+use QL\Hal\Service\StickyEnvironmentService;
 use QL\Hal\Session;
 use QL\Hal\Validator\BuildStartValidator;
 use QL\Panthor\MiddlewareInterface;

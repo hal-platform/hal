@@ -19,7 +19,6 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class QueueHistoryController implements ControllerInterface
 {
@@ -35,11 +34,6 @@ class QueueHistoryController implements ControllerInterface
      */
     private $buildRepo;
     private $pushRepo;
-
-    /**
-     * @type Response
-     */
-    private $response;
 
     /**
      * @type array
@@ -59,7 +53,6 @@ class QueueHistoryController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      * @param Clock $clock
      * @param array $parameters
      * @param string $timezone
@@ -67,7 +60,6 @@ class QueueHistoryController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Response $response,
         Clock $clock,
         array $parameters,
         $timezone
@@ -76,7 +68,6 @@ class QueueHistoryController implements ControllerInterface
         $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
-        $this->response = $response;
         $this->parameters = $parameters;
 
         $this->clock = $clock;
@@ -90,12 +81,10 @@ class QueueHistoryController implements ControllerInterface
     {
         $times = $this->getTimespan();
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'selected_date' => $times[0],
             'pending' => $this->getHistory($times[0], $times[1])
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**

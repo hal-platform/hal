@@ -75,7 +75,6 @@ class RemoveEnvironmentHandler implements ControllerInterface
         $this->parameters = $parameters;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -93,7 +92,7 @@ class RemoveEnvironmentHandler implements ControllerInterface
         $this->em->remove($environment);
         $this->em->flush();
 
-        $message = sprintf('Environment "%s" removed.', $environment->getKey());
+        $message = sprintf('Environment "%s" removed.', $environment->name());
         $this->session->flash($message, 'success');
         $this->url->redirectFor('environments');
     }

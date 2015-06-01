@@ -11,8 +11,11 @@ if (!$container = @include $root . '/configuration/bootstrap.php') {
     exit(1);
 };
 
-$generator = new DoctrineProxyGenerator($container);
+$generator = $container->get('doctrine.proxy.generator');
 
-if (!$generator()) {
+$success = $generator();
+echo $generator->output();
+
+if (!$success) {
     exit(1);
 }

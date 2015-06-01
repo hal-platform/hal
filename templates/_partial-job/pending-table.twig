@@ -21,7 +21,7 @@
                         <td>
                             {{ macros.job_status(job, true) }}
                         </td>
-                        <td>{{ job.environment.key }}
+                        <td>{{ job.environment.name }}
                         <td>
                             {{ macros.gitref(job, true) }}
                         </td>
@@ -35,9 +35,9 @@
                             {{ macros.job_status(job, true) }}
                         </td>
                         {% if job.deployment %}
-                            <td>{{ job.build.environment.key }} → {{ job.deployment|formatDeploymentServer(true) }}</td>
+                            <td>{{ job.build.environment.name }} → {{ job.deployment|formatDeploymentServer(true) }}</td>
                         {% else %}
-                            <td>{{ job.build.environment.key }} → Unknown</td>
+                            <td>{{ job.build.environment.name }} → Unknown</td>
                         {% endif %}
                         <td>
                             Build <a href="{{ urlFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a>

@@ -7,7 +7,7 @@
 
 namespace QL\Hal\Controllers\OAuth;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use MCP\DataType\GUID;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\GithubOAuthHelper;
@@ -16,7 +16,6 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class GithubCallbackController implements ControllerInterface
 {
@@ -43,14 +42,9 @@ class GithubCallbackController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
+     * @type EntityManagerInterface
      */
-    private $response;
-
-    /**
-     * @type EntityManager
-     */
-    private $entityManager;
+    private $em;
 
     /**
      * @type User
@@ -75,9 +69,8 @@ class GithubCallbackController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param Request $request
-     * @param Response $response
      *
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      * @param User $currentUser
      *
      * @param GithubOAuthHelper $githubOAuth
@@ -87,8 +80,7 @@ class GithubCallbackController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         Request $request,
-        Response $response,
-        EntityManager $entityManager,
+        EntityManagerInterface $em,
         User $currentUser,
         GithubOAuthHelper $githubOAuth,
         Session $session,
@@ -96,9 +88,8 @@ class GithubCallbackController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->request = $request;
-        $this->response = $response;
 
-        $this->entityManager = $entityManager;
+        $this->em = $em;
         $this->currentUser = $currentUser;
 
         $this->githubOAuth = $githubOAuth;
@@ -112,7 +103,7 @@ class GithubCallbackController implements ControllerInterface
     public function __invoke()
     {
         // bomb out if user already has a token
-        if ($this->currentUser->getGithubToken()) {
+        if ($this->currentUser->githubToken()) {
             $this->session->flash(static::ERR_TOKEN_EXISTS, 'error', static::ERR_TOKEN_FLAVOR);
             return $this->url->redirectFor('settings');
         }
@@ -164,12 +155,10 @@ class GithubCallbackController implements ControllerInterface
      */
     private function handleError($code, $description)
     {
-        $rendered = $this->template->render([
+        $this->template->render([
             'error_code' => $code,
             'error_description' => $description,
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**
@@ -185,9 +174,9 @@ class GithubCallbackController implements ControllerInterface
         }
 
         // save token to database
-        $this->currentUser->setGithubToken($token);
-        $this->entityManager->merge($this->currentUser);
-        $this->entityManager->flush();
+        $this->currentUser->withGithubToken($token);
+        $this->em->merge($this->currentUser);
+        $this->em->flush();
 
         // Send back to settings
         $this->session->flash(static::SUCCESS_TOKEN_GRANTED, 'success', static::SUCCESS_TOKEN_FLAVOR);

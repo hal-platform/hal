@@ -8,13 +8,13 @@
 namespace QL\Hal\Twig;
 
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Services\GithubService;
+use QL\Hal\Service\GitHubService;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
 use Exception;
 
-class GithubExtension extends Twig_Extension
+class GitHubExtension extends Twig_Extension
 {
     const NAME = 'github_permissions';
 
@@ -24,15 +24,15 @@ class GithubExtension extends Twig_Extension
     private $url;
 
     /**
-     * @type GithubService
+     * @type GitHubService
      */
     private $github;
 
     /**
      * @param UrlHelper $url
-     * @param GithubService $github
+     * @param GitHubService $github
      */
-    public function __construct(UrlHelper $url, GithubService $github)
+    public function __construct(UrlHelper $url, GitHubService $github)
     {
         $this->url = $url;
         $this->github = $github;

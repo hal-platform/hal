@@ -55,7 +55,7 @@ class RefreshUserPermissionsController implements ControllerInterface
         $this->permissions->clearUserCache($this->selectedUser);
 
         return $this->flasher
-            ->withFlash(sprintf(self::SUCCESS, $this->selectedUser->getHandle()))
-            ->load('user', ['user' => $this->selectedUser->getId()]);
+            ->withFlash(sprintf(self::SUCCESS, $this->selectedUser->handle()))
+            ->load('user', ['user' => $this->selectedUser->id()]);
     }
 }

@@ -7,13 +7,13 @@ use MCP\DataType\HttpUrl;
 use MCP\DataType\Time\TimePoint;
 use QL\Hal\Api\Normalizer\HttpUrlNormalizer;
 use QL\Hal\Api\Normalizer\TimePointNormalizer;
+use QL\Hal\Api\Normalizer\ApplicationNormalizer;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
 use QL\Hal\Api\Normalizer\EventLogNormalizer;
 use QL\Hal\Api\Normalizer\GroupNormalizer;
 use QL\Hal\Api\Normalizer\PushNormalizer;
-use QL\Hal\Api\Normalizer\RepositoryNormalizer;
 use QL\Hal\Api\Normalizer\ServerNormalizer;
 use QL\Hal\Api\Normalizer\UserNormalizer;
 use QL\Hal\Core\Entity\Deployment;
@@ -64,7 +64,7 @@ class Normalizer
     private $pushes;
 
     /**
-     * @var RepositoryNormalizer
+     * @var ApplicationNormalizer
      */
     private $repositories;
 
@@ -95,7 +95,7 @@ class Normalizer
      * @param EventLogNormalizer $events
      * @param GroupNormalizer $groups
      * @param PushNormalizer $pushes
-     * @param RepositoryNormalizer $repositories
+     * @param ApplicationNormalizer $repositories
      * @param ServerNormalizer $servers
      * @param UserNormalizer $users
      * @param TimePointNormalizer $time
@@ -108,7 +108,7 @@ class Normalizer
         EventLogNormalizer $events,
         GroupNormalizer $groups,
         PushNormalizer $pushes,
-        RepositoryNormalizer $repositories,
+        ApplicationNormalizer $repositories,
         ServerNormalizer $servers,
         UserNormalizer $users,
         TimePointNormalizer $time,

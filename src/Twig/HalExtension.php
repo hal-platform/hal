@@ -14,7 +14,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Services\GlobalMessageService;
+use QL\Hal\Service\GlobalMessageService;
 use QL\Hal\Utility\TimeFormatter;
 use Twig_Extension;
 use Twig_SimpleFilter;

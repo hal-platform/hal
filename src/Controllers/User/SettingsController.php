@@ -13,7 +13,6 @@ use QL\Hal\Core\Entity\User;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class SettingsController implements ControllerInterface
 {
@@ -53,14 +52,12 @@ class SettingsController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         User $currentUser,
-        Response $response,
         NotFound $notFound
     ) {
         $this->template = $template;
         $this->userRepo = $em->getRepository(User::CLASS);
         $this->currentUser = $currentUser;
 
-        $this->response = $response;
         $this->notFound = $notFound;
     }
 
@@ -69,15 +66,13 @@ class SettingsController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$user = $this->userRepo->find($this->currentUser->getId())) {
+        if (!$user = $this->userRepo->find($this->currentUser->id())) {
             return call_user_func($this->notFound);
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'user' => $user,
-            'hasGithubToken' => (strlen($user->getGithubToken()) > 0)
+            'hasGithubToken' => (strlen($user->githubToken()) > 0)
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

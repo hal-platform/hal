@@ -13,7 +13,6 @@ use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class RepositoriesController implements ControllerInterface
 {
@@ -29,24 +28,14 @@ class RepositoriesController implements ControllerInterface
     private $repoRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      */
-    public function __construct(
-        TemplateInterface $template,
-        EntityManagerInterface $em,
-        Response $response
-    ) {
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
+    {
         $this->template = $template;
         $this->groupRepo = $em->getRepository(Group::CLASS);
         $this->repoRepo = $em->getRepository(Repository::CLASS);
-        $this->response = $response;
     }
 
     /**
@@ -69,12 +58,10 @@ class RepositoriesController implements ControllerInterface
             $repositories[$id][] = $repo;
         }
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'groups' => $groups,
             'repositories' => $repositories
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**

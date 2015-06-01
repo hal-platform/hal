@@ -69,9 +69,6 @@ class SystemStatusController implements ControllerInterface
         $system = $this->parseLatestDocker();
         $connections = $this->parseLatestServerConnections();
 
-// var_dump($connections['servers']);
-//     die;
-
         $context = [
             'system' => $system,
             'connections' => $connections
@@ -169,6 +166,7 @@ class SystemStatusController implements ControllerInterface
 
     /**
      * @param Server[] $servers
+     *
      * @return array
      */
     private function sort(array $servers)
@@ -181,7 +179,7 @@ class SystemStatusController implements ControllerInterface
         ];
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->getKey();
+            $env = $server->getEnvironment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

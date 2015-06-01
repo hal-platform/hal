@@ -20,7 +20,7 @@
         <tbody>
         {% for log in logs %}
             <tr>
-                <td>{{ log.recorded|html5date }}</td>
+                <td>{{ log.created|html5date }}</td>
                 <td><a href="{{ urlFor('user', {'user': log.user.id}) }}">{{ log.user.handle }}</a></td>
                 <td><b>{{ log.action }}</b></td>
                 <td>{{ log.entity|replace({':': ' : '}) }}</td>

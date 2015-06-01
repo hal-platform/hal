@@ -21,10 +21,9 @@ use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
-use QL\Hal\Services\StickyEnvironmentService;
+use QL\Hal\Service\StickyEnvironmentService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
 
 class RepositoryStatusController implements ControllerInterface
 {
@@ -67,11 +66,6 @@ class RepositoryStatusController implements ControllerInterface
     private $stickyService;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -86,7 +80,6 @@ class RepositoryStatusController implements ControllerInterface
      * @param EntityMangerInterface $em
      *
      * @param StickyEnvironmentService $stickyService
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      *
@@ -96,7 +89,6 @@ class RepositoryStatusController implements ControllerInterface
         EntityManagerInterface $em,
 
         StickyEnvironmentService $stickyService,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -112,7 +104,6 @@ class RepositoryStatusController implements ControllerInterface
         $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
 
         $this->stickyService = $stickyService;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -154,7 +145,7 @@ class RepositoryStatusController implements ControllerInterface
 
         $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $repo]);
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'repo' => $repo,
             'builds' => $builds,
             'environments' => $environments,
@@ -163,14 +154,11 @@ class RepositoryStatusController implements ControllerInterface
 
             'kraken' => $krakenApp
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**
      * @param Environment[] $environments
      * @param string $selected
-     *
      *
      * @return Environment|null
      */
@@ -183,7 +171,7 @@ class RepositoryStatusController implements ControllerInterface
 
         // Find the selected environment
         foreach ($environments as $environment) {
-            if ($selected == $environment->getId()) {
+            if ($selected == $environment->id()) {
                 return $environment;
             }
         }

@@ -16,7 +16,6 @@ use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class PushesController implements ControllerInterface
 {
@@ -43,11 +42,6 @@ class PushesController implements ControllerInterface
     private $request;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @type NotFound
      */
     private $notFound;
@@ -61,7 +55,6 @@ class PushesController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
@@ -69,7 +62,6 @@ class PushesController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         Request $request,
-        Response $response,
         NotFound $notFound,
         array $parameters
     ) {
@@ -78,7 +70,6 @@ class PushesController implements ControllerInterface
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->request = $request;
-        $this->response = $response;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -105,7 +96,7 @@ class PushesController implements ControllerInterface
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'page' => $page,
             'last' => $last,
 
@@ -113,7 +104,5 @@ class PushesController implements ControllerInterface
             'pushes' => $pushes,
             'search_filter' => $searchFilter
         ]);
-
-        $this->response->setBody($rendered);
     }
 }

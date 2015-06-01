@@ -102,7 +102,7 @@ class PermissionsService
      */
     public function getUserPermissions(User $user)
     {
-        $key = sprintf(self::CACHE_PERM, $user->getId());
+        $key = sprintf(self::CACHE_PERM, $user->id());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
@@ -151,7 +151,7 @@ class PermissionsService
      */
     public function clearUserCache(User $user)
     {
-        $key = sprintf(self::CACHE_PERM, $user->getId());
+        $key = sprintf(self::CACHE_PERM, $user->id());
         $this->setToCache($key, null);
     }
 
@@ -163,7 +163,7 @@ class PermissionsService
      */
     public function canUserBuild(User $user, Repository $application)
     {
-        $key = sprintf(self::CACHE_CAN_BUILD, $user->getId(), $application->getId());
+        $key = sprintf(self::CACHE_CAN_BUILD, $user->id(), $application->getId());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
@@ -200,7 +200,7 @@ class PermissionsService
      */
     public function canUserPush(User $user, Repository $application, Environment $environment)
     {
-        $key = sprintf(self::CACHE_CAN_PUSH, $user->getId(), $application->getId(), $environment->getId());
+        $key = sprintf(self::CACHE_CAN_PUSH, $user->id(), $application->getId(), $environment->id());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
@@ -210,7 +210,7 @@ class PermissionsService
         $perm = $this->getUserPermissions($user);
 
         // Not prod? Same permissions as building
-        if (!$environment->getIsProduction()) {
+        if (!$environment->isProduction()) {
             return $this->canUserBuild($user, $application);
         }
 
@@ -285,7 +285,7 @@ class PermissionsService
             return false;
         }
 
-        $key = sprintf(self::CACHE_COLLAB, $user->getId(), $application->getKey());
+        $key = sprintf(self::CACHE_COLLAB, $user->id(), $application->getKey());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
@@ -300,7 +300,7 @@ class PermissionsService
         $result = $this->github->isUserCollaborator(
             $application->getGithubUser(),
             $application->getGithubRepo(),
-            $user->getHandle()
+            $user->handle()
         );
 
         $this->setToInternalCache($key, $result);

@@ -14,7 +14,6 @@ use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
-use Slim\Http\Response;
 
 class ServersController implements ControllerInterface
 {
@@ -31,20 +30,13 @@ class ServersController implements ControllerInterface
     private $serverRepo;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Response $response
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, Response $response)
+    public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
         $this->serverRepo = $em->getRepository(Server::CLASS);
-        $this->response = $response;
     }
 
     /**
@@ -54,12 +46,10 @@ class ServersController implements ControllerInterface
     {
         $servers = $this->serverRepo->findBy([], ['name' => 'ASC']);
 
-        $rendered = $this->template->render([
+        $this->template->render([
             'server_environments' => $this->sort($servers),
             'server_count' => count($servers)
         ]);
-
-        $this->response->setBody($rendered);
     }
 
     /**
@@ -76,7 +66,7 @@ class ServersController implements ControllerInterface
         ];
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->getKey();
+            $env = $server->getEnvironment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

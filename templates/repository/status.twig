@@ -14,7 +14,7 @@
             <h4>Change environment</h4>
             {% for environment in environments %}
                 {% set btnSelected = environment.id == selected_environment.id ? ' btn--action' : ' btn--not-selected' %}
-                <a class="btn{{ btnSelected }}" href="{{ urlFor('repository.status', {id: repo.id}, {environment: environment.id}) }}">{{ environment.key }}</a>
+                <a class="btn{{ btnSelected }}" href="{{ urlFor('repository.status', {id: repo.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
             {% endfor %}
         </div>
     {% endif %}
@@ -22,12 +22,12 @@
     {% set hasPushes = false %}
 
     <h3 class="{{ (deployment_statuses) ? 'js-overloader-parent' : '' }}">
-        Server Status for <strong>{{ selected_environment.key }}</strong>
+        Server Status - <strong>{{ selected_environment.name }}</strong>
     </h3>
 
     {# example display of servers by environment #}
     {% if deployment_statuses %}
-        <ul class="list--bare cards cards--{{ selected_environment.key }}">
+        <ul class="list--bare cards cards--{{ selected_environment.name }}">
             {% for status in deployment_statuses %}
 
                 {# Determine whether repo has been pushed so we can hide the all pushes button if there are no pushes #}
