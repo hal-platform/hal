@@ -325,18 +325,18 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $deployment->getServer()->getType();
+        $type = $deployment->server()->type();
 
         if ($withDetails) {
             if ($type === 'elasticbeanstalk') {
-                return sprintf('EB (%s)', $deployment->getEbEnvironment());
+                return sprintf('EB (%s)', $deployment->ebEnvironment());
 
             } elseif ($type === 'ec2') {
-                return sprintf('EC2 (%s)', $deployment->getEc2Pool());
+                return sprintf('EC2 (%s)', $deployment->ec2Pool());
             }
         }
 
-        return $this->formatServer($deployment->getServer());
+        return $this->formatServer($deployment->server());
     }
 
     /**
@@ -352,16 +352,16 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $deployment->getServer()->getType();
+        $type = $deployment->server()->type();
 
         if ($type === 'elasticbeanstalk') {
-            return $deployment->getEbEnvironment();
+            return $deployment->ebEnvironment();
 
         } elseif ($type === 'ec2') {
-            return $deployment->getEc2Pool();
+            return $deployment->ec2Pool();
         }
 
-        return $deployment->getPath();
+        return $deployment->path();
     }
 
     /**
@@ -377,7 +377,7 @@ class HalExtension extends Twig_Extension
             return 'Path';
         }
 
-        $type = $deployment->getServer()->getType();
+        $type = $deployment->server()->type();
 
         if ($type === 'elasticbeanstalk') {
             return 'EB Environment';
@@ -402,7 +402,7 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $server->getType();
+        $type = $server->type();
 
         if ($type === 'elasticbeanstalk') {
             return 'Elastic Beanstalk';
@@ -411,7 +411,7 @@ class HalExtension extends Twig_Extension
             return 'EC2';
         }
 
-        return $server->getName();
+        return $server->name();
     }
 
     /**
@@ -427,7 +427,7 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $server->getType();
+        $type = $server->type();
 
         $serverType = 'Internal (Rsync)';
         if ($type === 'elasticbeanstalk') {

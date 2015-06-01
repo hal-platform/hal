@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
@@ -29,8 +29,8 @@ class RollbackController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
-    private $deploymentRepository;
+    private $applicationRepo;
+    private $deploymentRepo;
 
     /**
      * @type PushRepository
@@ -61,8 +61,8 @@ class RollbackController implements ControllerInterface
     ) {
         $this->template = $template;
 
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
-        $this->deploymentRepository = $em->getRepository(Deployment::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->notFound = $notFound;
@@ -74,13 +74,13 @@ class RollbackController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repo = $this->repoRepo->find($this->parameters['id']);
-        $deployment = $this->deploymentRepository->findOneBy([
+        $application = $this->applicationRepo->find($this->parameters['id']);
+        $deployment = $this->deploymentRepo->findOneBy([
             'id' => $this->parameters['deployment'],
-            'repository' => $repo
+            'application' => $application
         ]);
 
-        if (!$repo || !$deployment) {
+        if (!$application || !$deployment) {
             return call_user_func($this->notFound);
         }
 
@@ -91,7 +91,7 @@ class RollbackController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getByDeployment($deployment, self::MAX_PER_PAGE, ($page-1));
+        $pushes = $this->pushRepo->getByApplication($deployment, self::MAX_PER_PAGE, ($page-1));
 
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -100,7 +100,7 @@ class RollbackController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'repo' => $repo,
+            'repo' => $application,
             'deployment' => $deployment,
             'pushes' => $pushes
         ]);

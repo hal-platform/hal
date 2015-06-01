@@ -11,8 +11,8 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\Cache\CachingTrait;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Entity\UserPermission;
@@ -80,7 +80,7 @@ class PermissionsService
         $this->em = $em;
         $this->userTypesRepo = $em->getRepository(UserType::CLASS);
         $this->userPermissionsRepo = $em->getRepository(UserPermission::CLASS);
-        $this->applicationRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
 
         $this->github = $github;
         $this->json = $json;
@@ -157,13 +157,13 @@ class PermissionsService
 
     /**
      * @param User $user
-     * @param Repository $application
+     * @param Application $application
      *
      * @return bool
      */
-    public function canUserBuild(User $user, Repository $application)
+    public function canUserBuild(User $user, Application $application)
     {
-        $key = sprintf(self::CACHE_CAN_BUILD, $user->id(), $application->getId());
+        $key = sprintf(self::CACHE_CAN_BUILD, $user->id(), $application->id());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
@@ -193,14 +193,14 @@ class PermissionsService
 
     /**
      * @param User $user
-     * @param Repository $application
+     * @param Application $application
      * @param Environment $environment
      *
      * @return bool
      */
-    public function canUserPush(User $user, Repository $application, Environment $environment)
+    public function canUserPush(User $user, Application $application, Environment $environment)
     {
-        $key = sprintf(self::CACHE_CAN_PUSH, $user->id(), $application->getId(), $environment->id());
+        $key = sprintf(self::CACHE_CAN_PUSH, $user->id(), $application->id(), $environment->id());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
@@ -264,28 +264,28 @@ class PermissionsService
     }
 
     /**
-     * @param Repository $application
+     * @param Application $application
      *
      * @return bool
      */
-    private function isSuperApplication(Repository $application)
+    private function isSuperApplication(Application $application)
     {
-        return in_array($application->getKey(), $this->superApplications);
+        return in_array($application->key(), $this->superApplications);
     }
 
     /**
      * @param User $user
-     * @param Repository $application
+     * @param Application $application
      *
      * @return bool
      */
-    private function isUserCollaborator(User $user, Repository $application)
+    private function isUserCollaborator(User $user, Application $application)
     {
         if (!$this->enableGitHubPermissions) {
             return false;
         }
 
-        $key = sprintf(self::CACHE_COLLAB, $user->id(), $application->getKey());
+        $key = sprintf(self::CACHE_COLLAB, $user->id(), $application->key());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
@@ -298,8 +298,8 @@ class PermissionsService
         }
 
         $result = $this->github->isUserCollaborator(
-            $application->getGithubUser(),
-            $application->getGithubRepo(),
+            $application->githubUser(),
+            $application->githubRepo(),
             $user->handle()
         );
 
@@ -332,7 +332,7 @@ class PermissionsService
                 $parsed['isLead'] = true;
 
                 if ($t->application()) {
-                    $parsed['leadApplications'][$t->application()->getId()] = $t->application()->getId();
+                    $parsed['leadApplications'][$t->application()->id()] = $t->application()->id();
                 }
 
             } elseif ($t->type() === 'btn_pusher') {
@@ -349,7 +349,7 @@ class PermissionsService
         // permissions
         foreach ($permissions as $perm) {
             $key = ($perm->isProduction()) ? 'prodApplications' : 'nonProdApplications';
-            $parsed[$key][$perm->application()->getId()] = $perm->application()->getId();
+            $parsed[$key][$perm->application()->id()] = $perm->application()->id();
         }
 
         $perm = (new UserPerm($parsed['isPleb'], $parsed['isLead'], $parsed['isButtonPusher'], $parsed['isSuper']))

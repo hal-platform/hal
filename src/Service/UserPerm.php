@@ -8,7 +8,7 @@
 namespace QL\Hal\Service;
 
 use JsonSerializable;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 
 class UserPerm implements JsonSerializable
 {
@@ -132,37 +132,37 @@ class UserPerm implements JsonSerializable
     }
 
     /**
-     * @param Repository $repository
+     * @param Application $application
      *
      * @return array
      */
-    public function isLeadOfApplication(Repository $repository)
+    public function isLeadOfApplication(Application $application)
     {
-        $id = $repository->getId();
+        $id = $application->id();
 
         return in_array($id, $this->leadApplications, true);
     }
 
     /**
-     * @param Repository $repository
+     * @param Application $application
      *
      * @return array
      */
-    public function canDeployApplicationToProd(Repository $repository)
+    public function canDeployApplicationToProd(Application $application)
     {
-        $id = $repository->getId();
+        $id = $application->id();
 
         return in_array($id, $this->prodApplications, true);
     }
 
     /**
-     * @param Repository $repository
+     * @param Application $application
      *
      * @return array
      */
-    public function canDeployApplicationToNonProd(Repository $repository)
+    public function canDeployApplicationToNonProd(Application $application)
     {
-        $id = $repository->getId();
+        $id = $repository->id();
 
         return in_array($id, $this->nonProdApplications, true);
     }

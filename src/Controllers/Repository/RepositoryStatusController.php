@@ -9,10 +9,10 @@ namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\BuildRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
@@ -37,7 +37,7 @@ class RepositoryStatusController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
     private $krakenRepo;
 
     /**
@@ -94,7 +94,7 @@ class RepositoryStatusController implements ControllerInterface
     ) {
         $this->template = $template;
 
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
 
@@ -113,40 +113,41 @@ class RepositoryStatusController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
-        $selected = $this->stickyService->get($repo->getId());
+        $selected = $this->stickyService->get($application->id());
 
-        $environments = $this->envRepo->getBuildableEnvironmentsByRepository($repo);
+        $environments = $this->envRepo->getBuildableEnvironmentsByApplication($application);
         // if empty, throw them a bone with "test"
         if (!$environments) {
-            $environments = $this->envRepo->findBy(['key' => 'test']);
+            $environments = $this->envRepo->findBy(['name' => 'test']);
         }
 
         $selectedEnvironment = $this->findSelectedEnvironment($environments, $selected);
 
         $deployments = [];
         if ($selectedEnvironment) {
-            $deployments = $this->deploymentRepo->getDeploymentsByRepositoryEnvironment($repo, $selectedEnvironment);
+            $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($application, $selectedEnvironment);
         }
 
         usort($deployments, $this->deploymentSorter());
 
+        $pushes = $this->pushRepo->getMostRecentByDeployments($deployments);
         foreach ($deployments as &$deployment) {
             $deployment = [
                 'deploy' => $deployment,
-                'latest' => $this->pushRepo->getMostRecentByDeployment($deployment)
+                'latest' => isset($pushes[$deployment->id()]) ? $pushes[$deployment->id()] : null
             ];
         }
 
-        $builds = $this->buildRepo->findBy(['repository' => $repo, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
+        $builds = $this->buildRepo->findBy(['application' => $application, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
 
-        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $repo]);
+        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $application]);
 
         $this->template->render([
-            'repo' => $repo,
+            'repo' => $application,
             'builds' => $builds,
             'environments' => $environments,
             'deployment_statuses' => $deployments,

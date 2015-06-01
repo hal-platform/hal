@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Service\GitHubService;
@@ -23,6 +23,9 @@ class AddRepositoryController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
+    const SUCCESS = 'Application "%s" added.';
+    const ERR_NO_GROUP = 'Please select a group.';
+
     /**
      * @type TemplateInterface
      */
@@ -32,7 +35,7 @@ class AddRepositoryController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type EntityManagerInterface
@@ -77,7 +80,7 @@ class AddRepositoryController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->groupRepo = $em->getRepository(Group::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
         $this->github = $github;
         $this->session = $session;
@@ -113,13 +116,13 @@ class AddRepositoryController implements ControllerInterface
         if ($this->request->isPost()) {
             // this is kind of crummy
             if (!$renderContext['errors'] && !$group = $this->groupRepo->find($this->request->post('group'))) {
-                $renderContext['errors'][] = 'Please select a group.';
+                $renderContext['errors'][] = self::ERR_NO_GROUP;
             }
 
             if (!$renderContext['errors']) {
                 $repository = $this->handleFormSubmission($this->request, $group);
 
-                $message = sprintf('Repository "%s" added.', $repository->getKey());
+                $message = sprintf(self::SUCCESS, $repository->key());
                 $this->session->flash($message, 'success');
                 return $this->url->redirectFor('repositories');
             }
@@ -131,7 +134,8 @@ class AddRepositoryController implements ControllerInterface
     /**
      * @param Request $request
      * @param Group $group
-     * @return Repository
+     *
+     * @return Application
      */
     private function handleFormSubmission(Request $request, Group $group)
     {
@@ -142,26 +146,26 @@ class AddRepositoryController implements ControllerInterface
         $user = strtolower($request->post('github_user'));
         $repo = strtolower($request->post('github_repo'));
 
-        $repository = new Repository;
-        $repository->setKey($identifier);
-        $repository->setName($name);
-        $repository->setGroup($group);
-        $repository->setEmail($email);
+        $application = (new Application)
+            ->withKey($identifier)
+            ->withName($name)
+            ->withGroup($group)
+            ->withEmail($email)
 
-        $repository->setGithubUser($user);
-        $repository->setGithubRepo($repo);
+            ->withGithubUser($user)
+            ->withGithubRepo($repo);
 
         // Default to blank, not null
-        $repository->setBuildCmd('');
-        $repository->setBuildTransformCmd('');
-        $repository->setPrePushCmd('');
-        $repository->setPostPushCmd('');
-        $repository->setEbName('');
+        $application->withBuildCmd('')
+        $application->withBuildTransformCmd('')
+        $application->withPrePushCmd('')
+        $application->withPostPushCmd('')
+        $application->withEbName('');
 
-        $this->em->persist($repository);
+        $this->em->persist($application);
         $this->em->flush();
 
-        return $repository;
+        return $application;
     }
 
     /**
@@ -198,7 +202,7 @@ class AddRepositoryController implements ControllerInterface
         );
 
         // check for duplicate nickname
-        if (!$errors && $this->repoRepo->findOneBy(['key' => $identifier])) {
+        if (!$errors && $this->applicationRepo->findOneBy(['key' => $identifier])) {
             $errors[] = 'A repository with this identifier already exists.';
         }
 

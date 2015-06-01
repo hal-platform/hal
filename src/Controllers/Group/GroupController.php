@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -26,7 +26,7 @@ class GroupController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type NotFound
@@ -52,7 +52,7 @@ class GroupController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->groupRepo = $em->getRepository(Group::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
 
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -69,7 +69,7 @@ class GroupController implements ControllerInterface
 
         $this->template->render([
             'group' => $group,
-            'repos' => $this->repoRepo->findBy(['group' => $group], ['key' => 'ASC'])
+            'repos' => $this->applicationRepo->findBy(['group' => $group], ['key' => 'ASC'])
         ]);
     }
 }

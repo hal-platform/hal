@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Repository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -29,7 +29,7 @@ class BuildsController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repositoryRepo;
+    private $applicationRepo;
     private $buildRepo;
 
     /**
@@ -56,7 +56,7 @@ class BuildsController implements ControllerInterface
     ) {
         $this->formatter = $formatter;
         $this->buildRepo = $em->getRepository(Build::CLASS);
-        $this->repositoryRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->normalizer = $normalizer;
 
         $this->parameters = $parameters;
@@ -68,13 +68,13 @@ class BuildsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repository = $this->repositoryRepo->find($this->parameters['id']);
+        $application = $this->applicationRepo->find($this->parameters['id']);
 
-        if (!$repository instanceof Repository) {
-            throw HttpProblemException::build(404, 'invalid-repository');
+        if (!$application instanceof Application) {
+            throw HttpProblemException::build(404, 'invalid-application');
         }
 
-        $builds = $this->buildRepo->findBy(['repository' => $repository], ['status' => 'ASC', 'start' => 'DESC']);
+        $builds = $this->buildRepo->findBy(['application' => $application], ['status' => 'ASC', 'start' => 'DESC']);
         $status = (count($builds) > 0) ? 200 : 404;
 
         $builds = array_map(function ($build) {

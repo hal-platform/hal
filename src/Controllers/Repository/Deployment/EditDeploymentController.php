@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -26,7 +26,7 @@ class EditDeploymentController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
     private $deploymentRepo;
 
     /**
@@ -59,7 +59,7 @@ class EditDeploymentController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->request = $request;
@@ -72,20 +72,20 @@ class EditDeploymentController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
-            return call_user_func($this->notFound);
-        }
-
         if (!$deployment = $this->deploymentRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
-        $url = $deployment->getUrl() ? $deployment->getUrl()->asString() : '';
+        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
+            return call_user_func($this->notFound);
+        }
+
+        $url = $deployment->url() ? $deployment->url()->asString() : '';
         $renderContext = [
             'form' => [
-                'path' => $this->request->isPost() ? $this->request->post('path') : $deployment->getPath(),
-                'eb_environment' => $this->request->isPost() ? $this->request->post('eb_environment') : $deployment->getEbEnvironment(),
-                'ec2_pool' => $this->request->isPost() ? $this->request->post('ec2_pool') : $deployment->getEc2Pool(),
+                'path' => $this->request->isPost() ? $this->request->post('path') : $deployment->path(),
+                'eb_environment' => $this->request->isPost() ? $this->request->post('eb_environment') : $deployment->ebEnvironment(),
+                'ec2_pool' => $this->request->isPost() ? $this->request->post('ec2_pool') : $deployment->ec2Pool(),
                 'url' => $this->request->isPost() ? $this->request->post('url') : $url,
             ],
             'deployment' => $deployment

@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -22,7 +22,7 @@ class RemoveGroupController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type EntityManagerInterface
@@ -64,7 +64,7 @@ class RemoveGroupController implements ControllerInterface
         array $parameters
     ) {
         $this->groupRepo = $em->getRepository(Group::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
 
         $this->session = $session;
@@ -83,15 +83,15 @@ class RemoveGroupController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        if ($repos = $this->repoRepo->findBy(['group' => $group])) {
+        if ($applications = $this->applicationRepo->findBy(['group' => $group])) {
             $this->session->flash('Cannot remove group. All associated repositories must first be removed.', 'error');
-            return $this->url->redirectFor('groups', ['id' => $group->getId()]);
+            return $this->url->redirectFor('groups', ['id' => $group->id()]);
         }
 
         $this->em->remove($group);
         $this->em->flush();
 
-        $message = sprintf('Group "%s" removed.', $group->getName());
+        $message = sprintf('Group "%s" removed.', $group->name());
         $this->session->flash($message, 'success');
         $this->url->redirectFor('groups');
     }

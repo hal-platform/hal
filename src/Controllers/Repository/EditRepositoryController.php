@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
@@ -23,6 +23,9 @@ class EditRepositoryController implements ControllerInterface
 {
     use ValidatorHelperTrait;
 
+    const ERR_DUPLICATE_IDENTIFIER = 'An application with this identifier already exists.';
+    const SUCCESS = 'Application updated successfully.';
+
     /**
      * @type TemplateInterface
      */
@@ -32,7 +35,7 @@ class EditRepositoryController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type EntityManagerInterface
@@ -88,7 +91,7 @@ class EditRepositoryController implements ControllerInterface
         $this->template = $template;
 
         $this->groupRepo = $em->getRepository(Group::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
 
         $this->session = $session;
@@ -104,21 +107,21 @@ class EditRepositoryController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
             return call_user_func($this->notFound);
         }
 
         $renderContext = [
             'form' => [
-                'identifier' => $this->request->post('identifier') ?: $repo->getKey(),
-                'name' => $this->request->post('name') ?: $repo->getName(),
-                'group' => $this->request->post('group') ?: $repo->getGroup()->getId(),
-                'notification_email' => $this->request->post('notification_email') ?: $repo->getEmail(),
-                'eb_name' => $this->request->post('eb_name') ?: $repo->getEbName()
+                'identifier' => $this->request->post('identifier') ?: $application->key(),
+                'name' => $this->request->post('name') ?: $application->nme(),
+                'group' => $this->request->post('group') ?: $application->group()->id(),
+                'notification_email' => $this->request->post('notification_email') ?: $application->email(),
+                'eb_name' => $this->request->post('eb_name') ?: $application->ebName()
             ],
-            'repository' => $repo,
+            'repository' => $application,
             'groups' => $this->groupRepo->findAll(),
-            'errors' => $this->checkFormErrors($this->request, $repo)
+            'errors' => $this->checkFormErrors($this->request, $application)
         ];
 
         if ($this->request->isPost()) {
@@ -128,10 +131,10 @@ class EditRepositoryController implements ControllerInterface
             }
 
             if (!$renderContext['errors']) {
-                $repository = $this->handleFormSubmission($this->request, $repo, $group);
+                $repository = $this->handleFormSubmission($this->request, $application, $group);
 
-                $this->session->flash('Repository updated successfully.', 'success');
-                return $this->url->redirectFor('repository', ['id' => $repo->getId()]);
+                $this->session->flash(self::SUCCESS, 'success');
+                return $this->url->redirectFor('repository', ['id' => $application->id()]);
             }
         }
 
@@ -140,35 +143,38 @@ class EditRepositoryController implements ControllerInterface
 
     /**
      * @param Request $request
-     * @param Repository $repository
+     * @param Application $application
      * @param Group $group
-     * @return Repository
+     *
+     * @return Application
      */
-    private function handleFormSubmission(Request $request, Repository $repository, Group $group)
+    private function handleFormSubmission(Request $request, Application $application, Group $group)
     {
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
         $email = $request->post('notification_email');
         $ebName = $request->post('eb_name');
 
-        $repository->setKey($identifier);
-        $repository->setName($name);
-        $repository->setGroup($group);
-        $repository->setEmail($email);
-        $repository->setEbName($ebName);
+        $application
+            ->withKey($identifier)
+            ->withName($name)
+            ->withGroup($group)
+            ->withEmail($email)
+            ->withEbName($ebName);
 
-        $this->em->merge($repository);
+        $this->em->merge($application);
         $this->em->flush();
 
-        return $repository;
+        return $application;
     }
 
     /**
      * @param Request $request
-     * @param Repository $repository
+     * @param Application $application
+     *
      * @return array
      */
-    private function checkFormErrors(Request $request, Repository $repository)
+    private function checkFormErrors(Request $request, Application $application)
     {
         if (!$request->isPost()) {
             return [];
@@ -194,9 +200,9 @@ class EditRepositoryController implements ControllerInterface
         );
 
         // Only check for duplicate identifier if it is being changed
-        if (!$errors && $identifier != $repository->getKey()) {
-            if ($repo = $this->repoRepo->findOneBy(['key' => $identifier])) {
-                $errors[] = 'A repository with this identifier already exists.';
+        if (!$errors && $identifier != $repository->key()) {
+            if ($repo = $this->applicationRepo->findOneBy(['key' => $identifier])) {
+                $errors[] = self::ERR_DUPLICATE_IDENTIFIER;
             }
         }
 

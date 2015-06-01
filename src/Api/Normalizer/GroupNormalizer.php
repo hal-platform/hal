@@ -21,9 +21,9 @@ class GroupNormalizer
     public function link(Group $group = null)
     {
         return  (is_null($group)) ? null : $this->buildLink(
-            ['api.group', ['id' => $group->getId()]],
+            ['api.group', ['id' => $group->id()]],
             [
-                'title' => $group->getKey()
+                'title' => $group->key()
             ]
         );
     }
@@ -40,9 +40,9 @@ class GroupNormalizer
 
         return $this->buildResource(
             [
-                'id' => $group->getId(),
-                'key' => $group->getKey(),
-                'name' => $group->getName()
+                'id' => $group->id(),
+                'key' => $group->key(),
+                'name' => $group->name()
             ],
             [],
             [

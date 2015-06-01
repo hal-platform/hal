@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Repository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -25,7 +25,7 @@ class RepositoriesController implements ControllerInterface
      * @type EntityRepository
      */
     private $groupRepo;
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @param TemplateInterface $template
@@ -35,7 +35,7 @@ class RepositoriesController implements ControllerInterface
     {
         $this->template = $template;
         $this->groupRepo = $em->getRepository(Group::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
     }
 
     /**
@@ -44,33 +44,33 @@ class RepositoriesController implements ControllerInterface
     public function __invoke()
     {
         $groups = $this->groupRepo->findBy([], ['name' => 'ASC']);
-        $repos = $this->repoRepo->findBy([], ['name' => 'ASC']);
-        usort($repos, $this->repoSorter());
+        $applications = $this->applicationRepo->findBy([], ['name' => 'ASC']);
+        usort($applications, $this->appSorter());
 
-        $repositories = [];
+        $grouped = [];
 
-        foreach ($repos as $repo) {
-            $id = $repo->getGroup()->getId();
-            if (!isset($repositories[$id])) {
-                $repositories[$id] = [];
+        foreach ($applications as $repo) {
+            $id = $repo->group()->id();
+            if (!isset($grouped[$id])) {
+                $grouped[$id] = [];
             }
 
-            $repositories[$id][] = $repo;
+            $grouped[$id][] = $repo;
         }
 
         $this->template->render([
             'groups' => $groups,
-            'repositories' => $repositories
+            'repositories' => $grouped
         ]);
     }
 
     /**
      * @return Closure
      */
-    private function repoSorter()
+    private function appSorter()
     {
         return function($a, $b) {
-            return strcasecmp($a->getName(), $b->getName());
+            return strcasecmp($a->name(), $b->name());
         };
     }
 }

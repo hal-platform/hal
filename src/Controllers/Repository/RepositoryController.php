@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Hal\Services\ElasticBeanstalkService;
@@ -31,7 +31,7 @@ class RepositoryController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type DeploymentRepository
@@ -74,7 +74,7 @@ class RepositoryController implements ControllerInterface
     ) {
         $this->template = $template;
 
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
 
@@ -89,13 +89,13 @@ class RepositoryController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
-        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $repo]);
+        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $application]);
 
-        $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
+        $deployments = $this->deploymentRepo->findBy(['application' => $application]);
         $environmentalized = $this->environmentalizeDeployments($deployments);
         $ebEnvironments = $this->ebService->getEnvironmentsByDeployments($deployments);
         $deploymentCount = count($deployments);
@@ -103,8 +103,8 @@ class RepositoryController implements ControllerInterface
         foreach ($environmentalized as $env => &$deployments) {
             foreach ($deployments as &$deployment) {
                 $ebEnv = '';
-                if (isset($ebEnvironments[$deployment->getId()])) {
-                    $ebEnv = $ebEnvironments[$deployment->getId()];
+                if (isset($ebEnvironments[$deployment->id()])) {
+                    $ebEnv = $ebEnvironments[$deployment->id()];
                 }
 
                 $deployment = [
@@ -115,7 +115,7 @@ class RepositoryController implements ControllerInterface
         }
 
         $this->template->render([
-            'repository' => $repo,
+            'repository' => $application,
             'deployment_environments' => $environmentalized,
             'deployment_count' => $deploymentCount,
             'kraken' => $krakenApp
@@ -136,7 +136,7 @@ class RepositoryController implements ControllerInterface
         ];
 
         foreach ($deployments as $deployment) {
-            $env = $deployment->getServer()->getEnvironment()->name();
+            $env = $deployment->server()->environment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\Cache\CachingTrait;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
@@ -127,7 +127,7 @@ class AddPermissionsController implements ControllerInterface
         $this->random = $random;
 
         $this->em = $em;
-        $this->applicationRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
 
         $this->errors = [];
     }
@@ -289,12 +289,12 @@ class AddPermissionsController implements ControllerInterface
     }
 
     /**
-     * @param Repository $application
+     * @param Application $application
      * @param bool $isProd
      *
      * @return UserPermission
      */
-    private function savePermissions(Repository $application, $isProd)
+    private function savePermissions(Application $application, $isProd)
     {
         $id = call_user_func($this->random);
 
@@ -316,11 +316,11 @@ class AddPermissionsController implements ControllerInterface
 
     /**
      * @param string $type
-     * @param Repository $application
+     * @param Application $application
      *
      * @return UserType
      */
-    private function saveType($type, Repository $application = null)
+    private function saveType($type, Application $application = null)
     {
         $id = call_user_func($this->random);
 
@@ -360,7 +360,7 @@ class AddPermissionsController implements ControllerInterface
 
         $data = [];
         foreach ($applications as $app) {
-            $data[$app->getId()] = $app->getName();
+            $data[$app->id()] = $app->name();
         }
 
         $this->setToCache(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->json->encode($data));

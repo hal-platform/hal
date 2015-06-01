@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -29,7 +29,7 @@ class PushesController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type PushRepository
@@ -66,7 +66,7 @@ class PushesController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->request = $request;
@@ -79,7 +79,7 @@ class PushesController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
@@ -91,7 +91,7 @@ class PushesController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getByRepository($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        $pushes = $this->pushRepo->getByApplication($application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
 
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -100,7 +100,7 @@ class PushesController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'repo' => $repo,
+            'repo' => $application,
             'pushes' => $pushes,
             'search_filter' => $searchFilter
         ]);

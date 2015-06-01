@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
@@ -30,7 +30,7 @@ class PushesController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repositoryRepo;
+    private $applicationRepo;
     private $pushRepo;
 
     /**
@@ -56,7 +56,7 @@ class PushesController implements ControllerInterface
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->repositoryRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->normalizer = $normalizer;
 
@@ -69,10 +69,10 @@ class PushesController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repository = $this->repositoryRepo->find($this->parameters['id']);
+        $repository = $this->applicationRepo->find($this->parameters['id']);
 
-        if (!$repository instanceof Repository) {
-            throw HttpProblemException::build(404, 'invalid-repository');
+        if (!$repository instanceof Application) {
+            throw HttpProblemException::build(404, 'invalid-application');
         }
 
         // get most recent 500 pushes, this is a hard limit.

@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Service\GitHubService;
 use QL\Panthor\Slim\NotFound;
@@ -28,7 +28,7 @@ class StartBuildController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type EnvironmentRepository
@@ -72,7 +72,7 @@ class StartBuildController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->github = $github;
 
@@ -86,7 +86,7 @@ class StartBuildController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
@@ -98,24 +98,25 @@ class StartBuildController implements ControllerInterface
                 'gitref' => $this->request->post('gitref')
             ],
 
-            'repo' => $repo,
-            'branches' => $this->getBranches($repo),
-            'tags' => $this->getTags($repo),
-            'open' => $this->getPullRequests($repo),
-            'closed' => $this->getPullRequests($repo, false),
-            'environments' => $this->getBuildableEnvironments($repo)
+            'repo' => $application,
+            'branches' => $this->getBranches($application),
+            'tags' => $this->getTags($application),
+            'open' => $this->getPullRequests($application),
+            'closed' => $this->getPullRequests($application, false),
+            'environments' => $this->getBuildableEnvironments($application)
         ];
 
         $this->template->render($context);
     }
 
     /**
-     * @param Repository $repository
+     * @param Application $application
+     *
      * @return null
      */
-    private function getBuildableEnvironments(Repository $repo)
+    private function getBuildableEnvironments(Application $application)
     {
-        $envs = $this->envRepo->getBuildableEnvironmentsByRepository($repo);
+        $envs = $this->envRepo->getBuildableEnvironmentsByRepository($application);
 
         // if empty, throw them a bone with "test"
         if (!$envs) {
@@ -126,17 +127,15 @@ class StartBuildController implements ControllerInterface
     }
 
     /**
-     * Get an array of branches for a repository
+     * Get an array of branches for an application
      *
-     * @param Repository $repo
+     * @param Application $application
+     *
      * @return array
      */
-    private function getBranches(Repository $repo)
+    private function getBranches(Application $application)
     {
-        $branches = $this->github->branches(
-            $repo->getGithubUser(),
-            $repo->getGithubRepo()
-        );
+        $branches = $this->github->branches($application->githubUser(), $application->githubRepo());
 
         // sort master to top, alpha otherwise
         usort($branches, function ($a, $b) {
@@ -155,17 +154,15 @@ class StartBuildController implements ControllerInterface
     }
 
     /**
-     * Get an array of tags for a repository
+     * Get an array of tags for an application
      *
-     * @param Repository $repo
+     * @param Application $application
+     *
      * @return array
      */
-    private function getTags(Repository $repo)
+    private function getTags(Application $application)
     {
-        $tags = $this->github->tags(
-            $repo->getGithubUser(),
-            $repo->getGithubRepo()
-        );
+        $tags = $this->github->tags($application->githubUser(), $application->githubRepo());
 
        // $tags = [
        //     ['name' => '3.1'],
@@ -200,16 +197,14 @@ class StartBuildController implements ControllerInterface
     /**
      * Get pull requests, sort in descending order by number.
      *
-     * @param Repository $repo
+     * @param Application $application
+     *
      * @return array
      */
-    private function getPullRequests(Repository $repo, $open = true)
+    private function getPullRequests(Application $application, $open = true)
     {
         $getter = ($open) ? 'openPullRequests' : 'closedPullRequests';
-        $pr = $this->github->$getter(
-            $repo->getGithubUser(),
-            $repo->getGithubRepo()
-        );
+        $pr = $this->github->$getter($application->githubUser(), $application->githubRepo());
 
         // sort by decreasing pull request number
         usort($pr, function ($a, $b) {

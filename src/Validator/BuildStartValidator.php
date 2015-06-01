@@ -9,18 +9,18 @@ namespace QL\Hal\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionsService;
 use QL\Hal\Service\GitHubService;
 
 class BuildStartValidator
 {
-    const ERR_NO_REPO = 'Repository is required.';
+    const ERR_NO_APPLICATION = 'Application is required.';
     const ERR_NO_ENV = 'Environment is required.';
-    const ERR_NO_PERMISSION = 'You do not have permission to create a build for this repository.';
+    const ERR_NO_PERMISSION = 'You do not have permission to create a build for this application.';
     const ERR_UNKNOWN_REF = 'You must select a valid git reference.';
 
     /**
@@ -38,7 +38,7 @@ class BuildStartValidator
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
     private $envRepo;
 
     /**
@@ -73,7 +73,7 @@ class BuildStartValidator
         PermissionsService $permissions,
         User $currentUser
     ) {
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
 
         $this->github = $github;
@@ -84,14 +84,14 @@ class BuildStartValidator
     }
 
     /**
-     * @param string $repositoryId
+     * @param string $applicationId
      * @param string $environmentId
      * @param string $gitReference
      * @param string $gitSearch
      *
      * @return Build|null
      */
-    public function isValid($repositoryId, $environmentId, $gitReference, $gitSearch)
+    public function isValid($applicationId, $environmentId, $gitReference, $gitSearch)
     {
         $this->errors = [];
 
@@ -108,12 +108,12 @@ class BuildStartValidator
         // 2. "search" - a search query provided by user
         $reference = $this->parseSubmittedRef($gitReference, $gitSearch);
 
-        if (!$this->sanityCheck($repositoryId, $environmentId, $reference)) {
+        if (!$this->sanityCheck($applicationId, $environmentId, $reference)) {
             return null;
         }
 
         // no repo
-        if (!$repo = $this->repoRepo->find($repositoryId)) {
+        if (!$application = $this->applicationRepo->find($applicationId)) {
             $this->errors[] = self::ERR_NO_REPO;
             return null;
         }
@@ -125,12 +125,12 @@ class BuildStartValidator
         }
 
         // no permission
-        if (!$this->permissions->canUserBuild($this->currentUser, $repo)) {
+        if (!$this->permissions->canUserBuild($this->currentUser, $application)) {
             $this->errors[] = self::ERR_NO_PERMISSION;
             return null;
         }
 
-        if (!$ref = $this->github->resolve($repo->getGithubUser(), $repo->getGithubRepo(), $reference)) {
+        if (!$ref = $this->github->resolve($application->githubUser(), $application->githubRepo(), $reference)) {
             $this->errors[] = self::ERR_UNKNOWN_REF;
             return null;
         }
@@ -147,7 +147,7 @@ class BuildStartValidator
         $build->setCommit($commit);
 
         $build->setUser($this->currentUser);
-        $build->setRepository($repo);
+        $build->setApplication($application);
         $build->setEnvironment($env);
 
         // Still needs ID assigned
@@ -189,16 +189,16 @@ class BuildStartValidator
     }
 
     /**
-     * @param string $repositoryId
+     * @param string $applicationId
      * @param string $environmentId
      * @param string $gitReference
      *
      * @return bool
      */
-    private function sanityCheck($repositoryId, $environmentId, $gitReference)
+    private function sanityCheck($applicationId, $environmentId, $gitReference)
     {
-        if (!$repositoryId) {
-            $this->errors[] = self::ERR_NO_REPO;
+        if (!$applicationId) {
+            $this->errors[] = self::ERR_NO_APPLICATION;
             return false;
         }
 

@@ -99,7 +99,7 @@ class PushNormalizer
             'user' => $push->getUser(),
             'build' => $push->getBuild(),
             'deployment' => $push->getDeployment(),
-            'repository' => $push->getRepository()
+            'application' => $push->getApplication()
         ];
 
         return $this->buildResource(
@@ -117,7 +117,7 @@ class PushNormalizer
                 'user' => $this->users->link($push->getUser()),
                 'build' => $this->builds->link($push->getBuild()),
                 'deployment' => $this->deployments->link($push->getDeployment()),
-                'repository' => $this->repositories->link($push->getRepository()),
+                'application' => $this->repositories->link($push->getApplication()),
                 'logs' => $this->buildLink(['api.push.logs', ['id' => $push->getId()]])
             ]
         );

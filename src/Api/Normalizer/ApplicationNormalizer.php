@@ -5,12 +5,9 @@ namespace QL\Hal\Api\Normalizer;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Helpers\UrlHelper;
 
-/**
- * Repository Object Normalizer
- */
 class ApplicationNormalizer
 {
     use HypermediaLinkTrait;
@@ -47,60 +44,60 @@ class ApplicationNormalizer
     }
 
     /**
-     * @param Repository $repository
+     * @param Application $application
      * @return array
      */
-    public function link(Repository $repository = null)
+    public function link(Application $application = null)
     {
-        return (is_null($repository)) ? null : $this->buildLink(
-            ['api.application', ['id' => $repository->getId()]],
+        return (is_null($application)) ? null : $this->buildLink(
+            ['api.application', ['id' => $application->id()]],
             [
-                'title' => $repository->getKey()
+                'title' => $application->key()
             ]
         );
     }
 
     /**
-     * @param Repository $repository
+     * @param Application $application
      * @param array $embed
      * @return array
      */
-    public function resource(Repository $repository = null, array $embed = [])
+    public function resource(Application $application = null, array $embed = [])
     {
-        if (is_null($repository)) {
+        if (is_null($application)) {
             return null;
         }
 
         $properties = [
-            'group' => $repository->getGroup()
+            'group' => $application->group()
         ];
 
         return $this->buildResource(
             [
-                'id' => $repository->getId(),
-                'key' => $repository->getKey(),
-                'title' => $repository->getName(),
+                'id' => $application->id(),
+                'key' => $application->key(),
+                'title' => $application->name(),
 
                 // @todo put html urls in _links, with html media type?
-                'url' => $this->url->urlFor('repository', ['id' => $repository->getId()]),
-                'email' => $repository->getEmail(),
+                'url' => $this->url->urlFor('repository', ['id' => $application->id()]),
+                'email' => $application->email(),
                 'github-user' => [
-                    'text' => $repository->getGithubUser(),
-                    'url' => $this->url->githubUserUrl($repository->getGithubUser())
+                    'text' => $application->githubUser(),
+                    'url' => $this->url->githubUserUrl($application->githubUser())
                 ],
                 'github-repository' => [
-                    'text' => $repository->getGithubRepo(),
-                    'url' => $this->url->githubRepoUrl($repository->getGithubUser(), $repository->getGithubRepo())
+                    'text' => $application->githubRepo(),
+                    'url' => $this->url->githubRepoUrl($application->githubUser(), $application->githubRepo())
                 ],
-                'eb-name' => $repository->getEbName()
+                'eb-name' => $application->ebName()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
-                'self' => $this->link($repository),
-                'group' => $this->groups->link($repository->getGroup()),
-                'deployments' => $this->buildLink(['api.deployments', ['id' => $repository->getId()]]),
-                'builds' => $this->buildLink(['api.builds', ['id' => $repository->getId()]]),
-                'pushes' => $this->buildLink(['api.pushes', ['id' => $repository->getId()]])
+                'self' => $this->link($application),
+                'group' => $this->groups->link($application->group()),
+                'deployments' => $this->buildLink(['api.deployments', ['id' => $application->id()]]),
+                'builds' => $this->buildLink(['api.builds', ['id' => $application->id()]]),
+                'pushes' => $this->buildLink(['api.pushes', ['id' => $application->id()]])
             ]
         );
     }

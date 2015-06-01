@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\BuildRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -29,7 +29,7 @@ class BuildsController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type BuildRepository
@@ -67,7 +67,7 @@ class BuildsController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->buildRepo = $em->getRepository(Build::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
 
         $this->request = $request;
         $this->notFound = $notFound;
@@ -79,7 +79,7 @@ class BuildsController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+        if (!$repo = $this->applicationRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
@@ -91,7 +91,7 @@ class BuildsController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $builds = $this->buildRepo->getByRepository($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        $builds = $this->buildRepo->getByApplication($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
 
         $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);

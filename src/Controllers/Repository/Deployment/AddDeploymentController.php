@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Helpers\SortingHelperTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -31,7 +31,7 @@ class AddDeploymentController implements ControllerInterface
      * @type EntityRepository
      */
     private $serverRepo;
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type Url
@@ -71,7 +71,7 @@ class AddDeploymentController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->serverRepo = $em->getRepository(Server::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->url = $url;
 
         $this->request = $request;
@@ -84,7 +84,7 @@ class AddDeploymentController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
             return call_user_func($this->notFound);
         }
 
@@ -104,7 +104,7 @@ class AddDeploymentController implements ControllerInterface
             ],
 
             'servers_by_env' => $this->environmentalizeServers($servers),
-            'repository' => $repo
+            'repository' => $application
         ]);
     }
 
@@ -122,7 +122,7 @@ class AddDeploymentController implements ControllerInterface
         ];
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->name();
+            $env = $server->environment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

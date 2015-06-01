@@ -7,7 +7,6 @@
 
 namespace QL\Hal\Controllers\Admin\Permissions;
 
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;

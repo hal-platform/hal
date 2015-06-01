@@ -9,9 +9,9 @@ namespace QL\Hal\Controllers\Repository\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\Slim\NotFound;
@@ -32,7 +32,7 @@ class DeploymentsController implements ControllerInterface
      * @type EntityRepository
      */
     private $serverRepo;
-    private $repoRepo;
+    private $applicationRepo;
     private $deploymentRepo;
 
     /**
@@ -65,7 +65,7 @@ class DeploymentsController implements ControllerInterface
         $this->template = $template;
         $this->environmentRepo = $em->getRepository(Environment::CLASS);
         $this->serverRepo = $em->getRepository(Server::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->notFound = $notFound;
@@ -77,12 +77,12 @@ class DeploymentsController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
             return call_user_func($this->notFound);
         }
 
         // Get and sort deployments
-        $deployments = $this->deploymentRepo->findBy(['repository' => $repo]);
+        $deployments = $this->deploymentRepo->findBy(['application' => $application]);
         $sorter = $this->deploymentSorter();
         usort($deployments, $sorter);
 
@@ -92,7 +92,7 @@ class DeploymentsController implements ControllerInterface
             'environments' => $environments,
             'servers_by_env' => $this->environmentalizeServers($environments, $this->serverRepo->findAll()),
             'deployments' => $deployments,
-            'repository' => $repo
+            'repository' => $application
         ]);
     }
 
@@ -112,7 +112,7 @@ class DeploymentsController implements ControllerInterface
         $environments = $env;
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->name();
+            $env = $server->environment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

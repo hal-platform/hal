@@ -52,9 +52,9 @@ class DeploymentNormalizer
     public function link(Deployment $deployment = null)
     {
         return (is_null($deployment)) ? null : $this->buildLink(
-            ['api.deployment', ['id' => $deployment->getId()]],
+            ['api.deployment', ['id' => $deployment->id()]],
             [
-                'title' => $deployment->getServer()->getName()
+                'title' => $deployment->server()->name()
             ]
         );
     }
@@ -71,25 +71,25 @@ class DeploymentNormalizer
         }
 
         $properties = [
-            'repository' => $deployment->getRepository(),
-            'server' => $deployment->getServer()
+            'application' => $deployment->application(),
+            'server' => $deployment->server()
         ];
 
         return $this->buildResource(
             [
-                'id' => $deployment->getId(),
-                'path' => $deployment->getPath(),
-                'eb-environment' => $deployment->getEbEnvironment(),
-                'ec2-pool' => $deployment->getEc2Pool(),
-                'url' => $deployment->getUrl(),
+                'id' => $deployment->id(),
+                'path' => $deployment->path(),
+                'eb-environment' => $deployment->ebEnvironment(),
+                'ec2-pool' => $deployment->ec2Pool(),
+                'url' => $deployment->url(),
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($deployment),
-                'repository' => $this->repositories->link($deployment->getRepository()),
-                'server' => $this->servers->link($deployment->getServer()),
-                'last-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()]]),
-                'last-successful-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->getId()], ['status' => 'Success']])
+                'application' => $this->repositories->link($deployment->application()),
+                'server' => $this->servers->link($deployment->server()),
+                'last-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
+                'last-successful-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']])
             ]
         );
     }

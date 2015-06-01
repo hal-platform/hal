@@ -9,8 +9,8 @@ namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -27,7 +27,7 @@ class AddEncryptedPropertyController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type EnvironmentRepository
@@ -66,7 +66,7 @@ class AddEncryptedPropertyController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
 
         $this->request = $request;
@@ -79,7 +79,7 @@ class AddEncryptedPropertyController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
             return call_user_func($this->notFound);
         }
 
@@ -94,7 +94,7 @@ class AddEncryptedPropertyController implements ControllerInterface
                 'name' => $this->request->post('name'),
                 'decrypted' => $this->request->post('decrypted')
             ],
-            'repository' => $repo,
+            'repository' => $application,
             'environments' => $environments
         ]);
     }

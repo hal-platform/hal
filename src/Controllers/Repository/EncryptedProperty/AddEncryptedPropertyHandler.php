@@ -11,9 +11,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Session;
 use QL\Hal\Core\Crypto\Encrypter;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Panthor\MiddlewareInterface;
@@ -43,7 +43,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      * @type EntityRepository
      */
     private $encryptedRepo;
-    private $repoRepo;
+    private $applicationRepo;
     private $envRepo;
 
     /**
@@ -102,7 +102,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     ) {
         $this->em = $em;
         $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->encrypter = $encrypter;
 
@@ -150,14 +150,14 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     }
 
     /**
-     * @param string $repositoryId
+     * @param string $applicationId
      * @param string $environmentId
      * @param string $name
      * @param string $decrypted
      *
      * @return EncryptedProperty|null
      */
-    private function isValid($repositoryId, $environmentId, $name, $decrypted)
+    private function isValid($applicationId, $environmentId, $name, $decrypted)
     {
         // validate fields
         $errors = [];
@@ -193,14 +193,14 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 
         // verify repository
         if (!$errors) {
-            if (!$repo = $this->repoRepo->find($repositoryId)) {
+            if (!$application = $this->applicationRepo->find($applicationId)) {
                 $errors[] = self::ERR_NO_REPOSITORY;
             }
         }
 
         // check dupe
         if (!$errors) {
-            if ($this->isPropertyDuplicate($name, $repo, $env)) {
+            if ($this->isPropertyDuplicate($name, $application, $env)) {
                 $errors[] = self::ERR_DUPE;
             }
         }
@@ -215,7 +215,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
         $property = (new EncryptedProperty)
             ->withName($name)
             ->withData($encrypted)
-            ->withRepository($repo);
+            ->withApplication($application);
 
         if ($env) {
             $property->withEnvironment($env);
@@ -226,16 +226,16 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 
     /**
      * @param string $name
-     * @param Repository $repository
+     * @param Application $application
      * @param Environment|null $env
      *
      * @return bool
      */
-    private function isPropertyDuplicate($name, Repository $repository, Environment $env = null)
+    private function isPropertyDuplicate($name, Application $application, Environment $env = null)
     {
         $enc = $this->encryptedRepo->findBy([
             'name' => $name,
-            'repository' => $repository,
+            'application' => $application,
             'environment' => $env
         ]);
 

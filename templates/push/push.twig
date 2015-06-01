@@ -2,13 +2,13 @@
 {% import '_partial/macros.twig' as macros %}
 {% set js_components = ["push.info"] %}
 
-{% set page_title = "Push Information" %}
+{% set page_title = "Push : " ~ push.application.name %}
 
 {% block content %}
 
     <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.repository.id}) }}">Back to Application Status</a></p>
 
-    <h1>{{ page_title }}</h1>
+    <h1>Push - <strong>{{ push.application.name }}</strong></h1>
 
     <h4>Push Details</h4>
 
@@ -59,7 +59,7 @@
 
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('repository', {'id': push.repository.id}) }}">{{ push.repository.name }}</a>
+                <a href="{{ urlFor('repository', {'id': push.repository.id}) }}">{{ push.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>

@@ -83,7 +83,7 @@ class ServerController implements ControllerInterface
 
         // Add status of elastic beanstalk environments
         $ebEnvironments = [];
-        if ($server->getType() === ServerEnum::TYPE_EB) {
+        if ($server->type() === ServerEnum::TYPE_EB) {
             $ebEnvironments = $this->ebService->getEnvironmentsByDeployments($deployments);
         }
 
@@ -93,8 +93,8 @@ class ServerController implements ControllerInterface
                 'deployment' => $deployment
             ];
 
-            if (isset($ebEnvironments[$deployment->getId()])) {
-                $dep_eb['eb_environment'] = $ebEnvironments[$deployment->getId()];
+            if (isset($ebEnvironments[$deployment->id()])) {
+                $dep_eb['eb_environment'] = $ebEnvironments[$deployment->id()];
             }
 
             $deployments_with_eb[] = $dep_eb;

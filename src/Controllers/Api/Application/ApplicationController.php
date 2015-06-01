@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Api\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -39,7 +39,7 @@ class ApplicationController implements ControllerInterface
     public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em, array $parameters)
     {
         $this->formatter = $formatter;
-        $this->repositoryRepo = $em->getRepository(Repository::CLASS);
+        $this->repositoryRepo = $em->getRepository(Application::CLASS);
         $this->parameters = $parameters;
     }
 
@@ -51,7 +51,7 @@ class ApplicationController implements ControllerInterface
     {
         $repository = $this->repositoryRepo->find($this->parameters['id']);
 
-        if (!$repository instanceof Repository) {
+        if (!$repository instanceof Application) {
             throw HttpProblemException::build(404, 'invalid-repository');
         }
 

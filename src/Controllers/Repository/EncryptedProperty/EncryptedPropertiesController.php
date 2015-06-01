@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Repository\EncryptedProperty;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\EncryptedProperty;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -26,7 +26,7 @@ class EncryptedPropertiesController implements ControllerInterface
      * @type EntityRepository
      */
     private $encryptedRepo;
-    private $repoRepo;
+    private $applicationRepo;
 
     /**
      * @type NotFound
@@ -52,7 +52,7 @@ class EncryptedPropertiesController implements ControllerInterface
     ) {
         $this->template = $template;
         $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
 
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -63,15 +63,15 @@ class EncryptedPropertiesController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['repository'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
             return call_user_func($this->notFound);
         }
 
-        $encrypted = $this->encryptedRepo->findBy(['repository' => $repo]);
+        $encrypted = $this->encryptedRepo->findBy(['application' => $application]);
         usort($encrypted, $this->sortByEnv());
 
         $this->template->render([
-            'repository' => $repo,
+            'repository' => $application,
             'encrypted' => $encrypted
         ]);
     }

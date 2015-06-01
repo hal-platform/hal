@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Session;
 use QL\Panthor\Slim\NotFound;
@@ -18,10 +18,13 @@ use QL\Panthor\ControllerInterface;
 
 class RemoveRepositoryController implements ControllerInterface
 {
+    const SUCCESS = 'Repository "%s" removed.';
+    const ERR_HAS_DEPLOYMENTS = 'Cannot remove application. All server deployments must first be removed.';
+
     /**
      * @type EntityRepository
      */
-    private $repoRepo;
+    private $applicationRepo;
     private $deploymentRepo;
 
     /**
@@ -61,7 +64,7 @@ class RemoveRepositoryController implements ControllerInterface
         NotFound $notFound,
         array $parameters
     ) {
-        $this->repoRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->em = $em;
 
@@ -77,19 +80,19 @@ class RemoveRepositoryController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->repoRepo->find($this->parameters['id'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
-        if ($deployments = $this->deploymentRepo->findBy(['repository' => $repo])) {
-            $this->session->flash('Cannot remove repository. All server deployments must first be removed.', 'error');
-            return $this->url->redirectFor('repository'. ['id' => $repo->getId()]);
+        if ($deployments = $this->deploymentRepo->findBy(['application' => $application])) {
+            $this->session->flash(self::ERR_HAS_DEPLOYMENTS, 'error');
+            return $this->url->redirectFor('repository'. ['id' => $repo->id()]);
         }
 
-        $this->em->remove($repo);
+        $this->em->remove($application);
         $this->em->flush();
 
-        $message = sprintf('Repository "%s" removed.', $repo->getKey());
+        $message = sprintf(self::SUCCESS, $application->key());
         $this->session->flash($message, 'success');
         $this->url->redirectFor('repositories');
     }

@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Repository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -29,7 +29,7 @@ class DeploymentsController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repositoryRepo;
+    private $applicationRepo;
     private $deploymentRepo;
 
     /**
@@ -56,7 +56,7 @@ class DeploymentsController implements ControllerInterface
     ) {
         $this->formatter = $formatter;
 
-        $this->repositoryRepo = $em->getRepository(Repository::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->normalizer = $normalizer;
@@ -69,13 +69,13 @@ class DeploymentsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repository = $this->repositoryRepo->find($this->parameters['id']);
+        $application = $this->applicationRepo->find($this->parameters['id']);
 
-        if (!$repository instanceof Repository) {
-            throw HttpProblemException::build(404, 'invalid-repository');
+        if (!$application instanceof Repository) {
+            throw HttpProblemException::build(404, 'invalid-application');
         }
 
-        $deployments = $this->deploymentRepo->findBy(['repository' => $repository], ['id' => 'ASC']);
+        $deployments = $this->deploymentRepo->findBy(['application' => $application], ['id' => 'ASC']);
         $status = (count($deployments) > 0) ? 200 : 404;
 
         $deployments = array_map(function ($deployment) {

@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Twig;
 
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionsService;
 use Twig_Extension;
@@ -126,7 +126,7 @@ class PermissionsExtension extends Twig_Extension
 
     /**
      * @param User|null $user
-     * @param Repository|null $application
+     * @param Application|null $application
      *
      * @return bool
      */
@@ -140,7 +140,7 @@ class PermissionsExtension extends Twig_Extension
             return false;
         }
 
-        if (!$application instanceof Repository) {
+        if (!$application instanceof Application) {
             return false;
         }
 
@@ -149,21 +149,21 @@ class PermissionsExtension extends Twig_Extension
 
     /**
      * @param User|null $user
-     * @param Repository|null $application
+     * @param Application|null $application
      *
      * @return bool
      */
     public function canUserBuild($user, $application)
     {
         if (!$user instanceof User) return false;
-        if (!$application instanceof Repository) return false;
+        if (!$application instanceof Application) return false;
 
         return $this->permissions->canUserBuild($user, $application);
     }
 
     /**
      * @param User|null $user
-     * @param Repository|null $application
+     * @param Application|null $application
      * @param Environment|null $application
      *
      * @return bool
@@ -171,7 +171,7 @@ class PermissionsExtension extends Twig_Extension
     public function canUserPush($user, $application, $environment)
     {
         if (!$user instanceof User) return false;
-        if (!$application instanceof Repository) return false;
+        if (!$application instanceof Application) return false;
         if (!$environment instanceof Environment) return false;
 
         return $this->permissions->canUserPush($user, $application, $environment);

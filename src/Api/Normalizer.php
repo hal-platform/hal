@@ -16,12 +16,12 @@ use QL\Hal\Api\Normalizer\GroupNormalizer;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\Normalizer\ServerNormalizer;
 use QL\Hal\Api\Normalizer\UserNormalizer;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\EventLog;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Repository;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\Build;
@@ -143,6 +143,8 @@ class Normalizer
         }
 
         switch (true) {
+            case $input instanceof Application:
+                return $this->resolve($this->repositories->resource($input));
             case $input instanceof Build:
                 return $this->resolve($this->builds->resource($input));
             case $input instanceof Deployment:
@@ -155,8 +157,6 @@ class Normalizer
                 return $this->resolve($this->groups->resource($input));
             case $input instanceof Push:
                 return $this->resolve($this->pushes->resource($input));
-            case $input instanceof Repository:
-                return $this->resolve($this->repositories->resource($input));
             case $input instanceof Server:
                 return $this->resolve($this->servers->resource($input));
             case $input instanceof User:

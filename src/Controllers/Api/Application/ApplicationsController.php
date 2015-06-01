@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\ApplicationNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Entity\Repository;
+use QL\Hal\Core\Entity\Application;
 use QL\Panthor\ControllerInterface;
 
 class ApplicationsController implements ControllerInterface
@@ -45,7 +45,7 @@ class ApplicationsController implements ControllerInterface
         ApplicationNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
-        $this->repositoryRepo = $em->getRepository(Repository::CLASS);
+        $this->repositoryRepo = $em->getRepository(Application::CLASS);
         $this->normalizer = $normalizer;
     }
 
