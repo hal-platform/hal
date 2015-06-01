@@ -36,14 +36,14 @@
                         <td>
                             {% if diff.schema %}
                                 <code class="code_clear">{{ diff.schema.key }}</code>
-                            {% elseif diff.configuration %}
-                                <code class="code_clear">{{ diff.configuration.key }}</code>
+                            {% elseif diff.snapshot %}
+                                <code class="code_clear">{{ diff.snapshot.key }}</code>
                             {% endif %}
                         </td>
 
                         <td>
-                            {% if diff.configuration %}
-                                {{ kraken_macros.renderProperty(diff.configuration) }}
+                            {% if diff.snapshot %}
+                                {{ kraken_macros.renderProperty(diff.snapshot) }}
                             {% else %}
                                 {{ macros.status('Missing', 'error', 'spam-2') }}
                             {% endif %}

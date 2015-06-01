@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Crypto\CryptoException;
 use QL\Hal\Core\Crypto\SymmetricDecrypter;
 use QL\Kraken\Core\Entity\Configuration;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\Utility\Json;
 
@@ -86,15 +86,15 @@ class DeploymentService
      * The checksum will be added to the Property.
      *
      * Example input:
-     *     test.key: ConfigurationProperty
-     *     test.key2: ConfigurationProperty
+     *     test.key: Snapshot
+     *     test.key2: Snapshot
      *
      *
      * Example ouput:
      *     test.key: 'base64_and_encrypted'
      *     test.key2: 'base64_and_encrypted'
      *
-     * @param ConfigurationProperty[] $properties
+     * @param Snapshot[] $properties
      *
      * @return string[]
      */
@@ -122,7 +122,7 @@ class DeploymentService
 
     /**
      * @param Configuration $configuration
-     * @param ConfigurationProperty[] $properties
+     * @param Snapshot[] $properties
      * @param ConsulResponse[] $updates
      *
      * @return void

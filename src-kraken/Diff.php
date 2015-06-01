@@ -7,9 +7,9 @@
 
 namespace QL\Kraken;
 
-use QL\Kraken\Core\Entity\ConfigurationProperty;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
+use QL\Kraken\Core\Entity\Snapshot;
 
 class Diff
 {
@@ -29,9 +29,9 @@ class Diff
     private $property;
 
     /**
-     * @type ConfigurationProperty
+     * @type Snapshot
      */
-    private $configuration;
+    private $snapshot;
 
     /**
      * @type bool
@@ -72,11 +72,11 @@ class Diff
     }
 
     /**
-     * @return ConfigurationProperty
+     * @return Snapshot
      */
-    public function configuration()
+    public function snapshot()
     {
-        return $this->configuration;
+        return $this->snapshot;
     }
 
     /**
@@ -110,13 +110,13 @@ class Diff
     }
 
     /**
-     * @param ConfigurationProperty $configuration
+     * @param Snapshot $snapshot
      *
      * @return self
      */
-    public function withConfiguration(ConfigurationProperty $configuration)
+    public function withSnapshot(Snapshot $snapshot)
     {
-        $this->configuration = $configuration;
+        $this->snapshot = $snapshot;
         return $this;
     }
 
@@ -130,5 +130,4 @@ class Diff
         $this->isChanged = (bool) $isChanged;
         return $this;
     }
-
 }

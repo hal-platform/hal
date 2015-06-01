@@ -9,8 +9,8 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
 use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -29,7 +29,7 @@ class PropertyController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $configPropertyRepo;
+    private $snapshotRepo;
 
     /**
      * @param TemplateInterface $template
@@ -45,7 +45,7 @@ class PropertyController implements ControllerInterface
         $this->template = $template;
         $this->property = $property;
 
-        $this->configPropertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
+        $this->snapshotRepo = $em->getRepository(Snapshot::CLASS);
     }
 
     /**
@@ -53,7 +53,7 @@ class PropertyController implements ControllerInterface
      */
     public function __invoke()
     {
-        $history10 = $this->configPropertyRepo->findBy(['property' => $this->property], ['created' => 'DESC'], 10);
+        $history10 = $this->snapshotRepo->findBy(['property' => $this->property], ['created' => 'DESC'], 10);
 
         $context = [
             'application' => $this->property->application(),

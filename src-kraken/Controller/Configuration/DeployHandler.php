@@ -13,9 +13,9 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Configuration;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulConnectionException;
 use QL\Kraken\Service\DeploymentService;
@@ -135,7 +135,7 @@ class DeployHandler implements ControllerInterface
     /**
      * @param Configuration $configuration
      *
-     * @return ConfigurationProperty[]
+     * @return Snapshot[]
      */
     private function buildProperties(Configuration $configuration)
     {
@@ -151,7 +151,7 @@ class DeployHandler implements ControllerInterface
 
             $id = call_user_func($this->random);
 
-            $cf = (new ConfigurationProperty)
+            $snapshot = (new Snapshot)
                 ->withId($id)
                 ->withKey($schema->key())
                 ->withDataType($schema->dataType())
@@ -162,7 +162,7 @@ class DeployHandler implements ControllerInterface
                 ->withProperty($property)
                 ->withSchema($schema);
 
-            $newconfig[$cf->key()] = $cf;
+            $newconfig[$cf->key()] = $snapshot;
         }
 
         return $newconfig;

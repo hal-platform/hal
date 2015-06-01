@@ -10,7 +10,7 @@ namespace QL\Kraken\Application;
 use QL\Hal\Core\Entity\User;
 use QL\Kraken\Diff;
 use QL\Kraken\Core\Entity\Application;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
@@ -94,8 +94,8 @@ class KrakenTwigExtension extends Twig_Extension
             new Twig_SimpleTest('target', function ($entity) {
                 return $entity instanceof Target;
             }),
-            new Twig_SimpleTest('configurationProperty', function ($entity) {
-                return $entity instanceof ConfigurationProperty;
+            new Twig_SimpleTest('snapshot', function ($entity) {
+                return $entity instanceof Snapshot;
             }),
             new Twig_SimpleTest('diff', function ($entity) {
                 return $entity instanceof Diff;
@@ -125,7 +125,7 @@ class KrakenTwigExtension extends Twig_Extension
     /**
      * Format a property schema data type for display
      *
-     * @param SchemaConfigurationProperty|Diff||string|null $schema
+     * @param Schema|Snapshot|Diff|string|null $schema
      *
      * @return string
      */
@@ -135,7 +135,7 @@ class KrakenTwigExtension extends Twig_Extension
             $schema = $schema->schema();
         }
 
-        if ($schema instanceof Schema || $schema instanceof ConfigurationProperty) {
+        if ($schema instanceof Schema || $schema instanceof Snapshot) {
             $schema = $schema->dataType();
         } elseif (!is_string($schema)) {
             $schema = '???';
@@ -155,7 +155,7 @@ class KrakenTwigExtension extends Twig_Extension
     /**
      * Format a property value for display
      *
-     * @param ConfigurationProperty|Property|Diff|null $schema
+     * @param Snapshot|Property|Diff|null $schema
      * @param int $maxLength
      *
      * @return string|null
@@ -168,7 +168,7 @@ class KrakenTwigExtension extends Twig_Extension
             $property = $property->property();
         }
 
-        if (!$property instanceof Property && !$property instanceof ConfigurationProperty) {
+        if (!$property instanceof Property && !$property instanceof Snapshot) {
             return '';
         }
 
@@ -176,7 +176,7 @@ class KrakenTwigExtension extends Twig_Extension
             return null;
         }
 
-        if ($property instanceof ConfigurationProperty && $property->isSecure()) {
+        if ($property instanceof Snapshot && $property->isSecure()) {
             return null;
         }
 

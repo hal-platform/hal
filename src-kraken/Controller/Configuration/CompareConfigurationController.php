@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Core\Entity\Configuration;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
 use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

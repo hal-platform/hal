@@ -13,8 +13,8 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Configuration;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
 use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulConnectionException;
 use QL\Kraken\Service\DeploymentService;
@@ -62,7 +62,7 @@ class RollbackHandler implements ControllerInterface
      * @type EntityRepository
      */
     private $targetRepo;
-    private $configurationPropertyRepo;
+    private $snapshotRepo;
 
     /**
      * @param EntityManagerInterface $em
@@ -94,7 +94,7 @@ class RollbackHandler implements ControllerInterface
 
         $this->em = $em;
         $this->targetRepo = $this->em->getRepository(Target::CLASS);
-        $this->configurationPropertyRepo = $this->em->getRepository(ConfigurationProperty::CLASS);
+        $this->snapshotRepo = $this->em->getRepository(Snapshot::CLASS);
     }
 
     /**
@@ -150,13 +150,13 @@ class RollbackHandler implements ControllerInterface
      * @param Configuration $source
      * @param Configuration $new
      *
-     * @return ConfigurationProperty[]
+     * @return Snapshot[]
      */
     private function buildProperties(Configuration $source, Configuration $new)
     {
         $configuration = [];
 
-        $properties = $this->configurationPropertyRepo->findBy([
+        $properties = $this->snapshotRepo->findBy([
             'configuration' => $source,
         ]);
 

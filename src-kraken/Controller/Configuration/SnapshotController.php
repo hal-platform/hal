@@ -10,7 +10,7 @@ namespace QL\Kraken\Controller\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Core\Entity\Configuration;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulResponse;
 use QL\Kraken\Service\ConsulService;
@@ -44,7 +44,7 @@ class SnapshotController implements ControllerInterface
      * @type EntityRepository
      */
     private $targetRepo;
-    private $configurationPropertyRepo;
+    private $snapshotRepo;
 
     /**
      * @param TemplateInterface $template
@@ -67,7 +67,7 @@ class SnapshotController implements ControllerInterface
         $this->json = $json;
 
         $this->targetRepo = $em->getRepository(Target::CLASS);
-        $this->configurationPropertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
+        $this->snapshotRepo = $em->getRepository(Snapshot::CLASS);
     }
 
     /**
@@ -77,7 +77,7 @@ class SnapshotController implements ControllerInterface
     {
         $target = $this->targetRepo->findOneBy(['configuration' => $this->configuration]);
 
-        $properties = $this->configurationPropertyRepo->findBy([
+        $properties = $this->snapshotRepo->findBy([
             'configuration' => $this->configuration
         ], ['key' => 'ASC']);
 

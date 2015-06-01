@@ -9,8 +9,8 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
 use QL\Kraken\Core\Entity\Property;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -30,7 +30,7 @@ class RemovePropertyController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $configurationPropertyRepo;
+    private $snapshotRepo;
     private $targetRepo;
 
     /**
@@ -47,7 +47,7 @@ class RemovePropertyController implements ControllerInterface
         $this->template = $template;
         $this->property = $property;
 
-        $this->configurationPropertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
+        $this->snapshotRepo = $em->getRepository(Snapshot::CLASS);
         $this->targetRepo = $em->getRepository(Target::CLASS);
     }
 
@@ -83,7 +83,7 @@ class RemovePropertyController implements ControllerInterface
             return null;
         }
 
-        $currentProperty = $this->configurationPropertyRepo->findBy([
+        $currentProperty = $this->snapshotRepo->findBy([
             'configuration' => $target->configuration(),
             'property' => $this->property
         ]);

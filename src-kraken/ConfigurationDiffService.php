@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Configuration;
-use QL\Kraken\Core\Entity\ConfigurationProperty;
+use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
@@ -24,7 +24,7 @@ class ConfigurationDiffService
      */
     private $schemaRepo;
     private $propertyRepo;
-    private $configurationPropertyRepo;
+    private $snapshotRepo;
 
     /**
      * @param EntityManagerInterface $em
@@ -33,7 +33,7 @@ class ConfigurationDiffService
     {
         $this->schemaRepo = $em->getRepository(Schema::CLASS);
         $this->propertyRepo = $em->getRepository(Property::CLASS);
-        $this->configurationPropertyRepo = $em->getRepository(ConfigurationProperty::CLASS);
+        $this->snapshotRepo = $em->getRepository(Snapshot::CLASS);
     }
 
     /**
@@ -79,22 +79,22 @@ class ConfigurationDiffService
     }
 
     /**
-     * Build a list of Diffs from a snapshot.
+     * Build a list of Diffs from a configuration.
      *
      * Used to compare two snapshots.
      *
-     * @param Configuration $snapshot
+     * @param Configuration $configuration
      *
      * @return Diff[]
      */
-    public function resolveConfiguration(Configuration $snapshot)
+    public function resolveConfiguration(Configuration $configuration)
     {
         $configuration = [];
 
         // Add properties from configuration
-        $properties = $this->configurationPropertyRepo->findBy(['configuration' => $snapshot]);
+        $snapshots = $this->snapshotRepo->findBy(['configuration' => $configuration]);
 
-        foreach ($properties as $property) {
+        foreach ($snapshots as $property) {
             if (!$schema = $property->schema()) {
                 $schema = (new Schema)
                     ->withKey($property->key())
@@ -134,9 +134,9 @@ class ConfigurationDiffService
         $diffed = $latestConfiguration;
 
         // Add properties from configuration
-        $properties = $this->configurationPropertyRepo->findBy(['configuration' => $configuration]);
-        foreach ($properties as $property) {
-            $diff = $this->diffConfigurationProperty($diffed, $property);
+        $snapshots = $this->snapshotRepo->findBy(['configuration' => $configuration]);
+        foreach ($snapshots as $property) {
+            $diff = $this->diffSnapshot($diffed, $property);
             $diffed[$diff->key()] = $diff;
         }
 
@@ -179,16 +179,16 @@ class ConfigurationDiffService
 
     /**
      * @param array $configuration
-     * @param ConfigurationProperty $property
+     * @param Snapshot $snapshot
      *
      * @return Diff
      */
-    private function diffConfigurationProperty(array $configuration, ConfigurationProperty $property)
+    private function diffSnapshot(array $configuration, Snapshot $snapshot)
     {
-        $key = $property->key();
+        $key = $snapshot->key();
         $diff = $this->getDiff($configuration, $key);
 
-        return $diff->withConfiguration($property);
+        return $diff->withSnapshot($snapshot);
     }
 
     /**
@@ -199,18 +199,18 @@ class ConfigurationDiffService
     private function determineChange(Diff $diff)
     {
         // deployed and new value are missing: no change
-        if (!$diff->configuration() && !$diff->property()) {
+        if (!$diff->snapshot() && !$diff->property()) {
             return $diff->withIsChanged(false);
 
         // one missing: change
-        } elseif ($diff->configuration() xor $diff->property()) {
+        } elseif ($diff->snapshot() xor $diff->property()) {
             return $diff->withIsChanged(true);
         }
 
         // Compare latest property with deployed configuration property
         if ($diff->property()) {
             // @todo make better
-            if ($diff->property()->value() === $diff->configuration()->value()) {
+            if ($diff->property()->value() === $diff->snapshot()->value()) {
                 return $diff->withIsChanged(false);
             }
         }

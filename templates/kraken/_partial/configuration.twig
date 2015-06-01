@@ -3,7 +3,7 @@
 
 {% if properties %}
 
-    {% set is_snapshot = properties|first is configurationProperty ? true : false %}
+    {% set is_snapshot = properties|first is snapshot ? true : false %}
 
     <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
         <thead>
