@@ -52,7 +52,7 @@ class RemoveDeploymentPermissionsHandler implements ControllerInterface
      */
     public function __invoke()
     {
-        $app = $this->userPermission->application()->getName();
+        $app = $this->userPermission->application()->name();
         $name = $this->userPermission->user()->handle();
 
         $this->permissions->removeUserPermissions($this->userPermission);

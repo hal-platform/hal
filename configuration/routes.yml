@@ -351,29 +351,29 @@ parameters:
         repositories:
             method: 'GET'
             route: '/repositories'
-            stack: ['middleware.login', 'repositories.page']
+            stack: ['middleware.login', 'applications.page']
 
         repository:
             method: 'GET'
             route: '/repositories/:id'
-            stack: ['middleware.login', 'repository.page']
+            stack: ['middleware.login', 'application.page']
             conditions: {id: %routes.regex.digit%}
 
         repository.status:
             method: 'GET'
             route: '/repositories/:id/status'
-            stack: ['middleware.login', 'repository.status.sticky.handler', 'repository.status.page']
+            stack: ['middleware.login', 'application.status.sticky.handler', 'application.status.page']
             conditions: {id: %routes.regex.digit%}
 
         repository.admin.add:
             method: ['GET', 'POST']
             route: '/repositories/add'
-            stack: ['middleware.login', 'repository.admin.add.page']
+            stack: ['middleware.login', 'application.admin.add.page']
 
         repository.admin.edit:
             method: ['GET', 'POST']
             route: '/repositories/:repository/edit'
-            stack: ['middleware.lead', 'repository.admin.edit.page']
+            stack: ['middleware.lead', 'application.admin.edit.page']
             conditions: {repository: %routes.regex.digit%}
 
         ################################################################################################################
@@ -388,7 +388,7 @@ parameters:
         repository.admin.remove:
             method: 'POST'
             route: '/repositories/:id/remove'
-            stack: ['middleware.admin', 'repository.admin.remove.handler']
+            stack: ['middleware.admin', 'application.admin.remove.handler']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
@@ -398,7 +398,7 @@ parameters:
         repository.deployment:
             method: 'GET'
             route: '/repositories/:repository/deployments/:id'
-            stack: ['middleware.login', 'repository.deployment.page']
+            stack: ['middleware.login', 'application.deployment.page']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.digit%
@@ -406,19 +406,19 @@ parameters:
         repository.deployments:
             method: 'GET'
             route: '/repositories/:repository/deployments'
-            stack: ['middleware.login', 'repository.deployments.page']
+            stack: ['middleware.login', 'application.deployments.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.deployments.add:
             method: ['GET', 'POST']
             route: '/repositories/:repository/deployments/add'
-            stack: ['middleware.lead', 'repository.deployments.add.handler', 'repository.deployments.add.page']
+            stack: ['middleware.lead', 'application.deployments.add.handler', 'application.deployments.add.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.deployment.edit:
             method: ['GET', 'POST']
             route: '/repositories/:repository/deployments/:id/edit'
-            stack: ['middleware.lead', 'repository.deployment.edit.handler', 'repository.deployment.edit.page']
+            stack: ['middleware.lead', 'application.deployment.edit.handler', 'application.deployment.edit.page']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.digit%
@@ -434,7 +434,7 @@ parameters:
         repository.deployment.remove:
             method: 'POST'
             route: '/repositories/:repository/deployments/:id/remove'
-            stack: ['middleware.lead', 'repository.deployments.remove.handler']
+            stack: ['middleware.lead', 'application.deployments.remove.handler']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.digit%
@@ -446,13 +446,13 @@ parameters:
         repository.encrypted:
             method: 'GET'
             route: '/repositories/:repository/encrypted-properties'
-            stack: ['middleware.login', 'repository.encrypted.page']
+            stack: ['middleware.login', 'application.encrypted.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.encrypted.add:
             method: ['GET', 'POST']
             route: '/repositories/:repository/encrypted-properties/add'
-            stack: ['middleware.lead', 'repository.encrypted.add.handler', 'repository.encrypted.add.page']
+            stack: ['middleware.lead', 'application.encrypted.add.handler', 'application.encrypted.add.page']
             conditions: {repository: %routes.regex.digit%}
 
         repository.encrypted.remove.confirm:
@@ -465,7 +465,7 @@ parameters:
         repository.encrypted.remove:
             method: ['POST']
             route: '/repositories/:repository/encrypted-properties/:id/remove'
-            stack: ['middleware.lead', 'repository.encrypted.remove.handler']
+            stack: ['middleware.lead', 'application.encrypted.remove.handler']
             conditions:
                 repository: %routes.regex.digit%
                 id: %routes.regex.guid%

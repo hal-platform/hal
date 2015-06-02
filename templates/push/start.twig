@@ -5,9 +5,9 @@
 {% set page_title = "Start Push : " ~ build.id %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.application.id}) }}">Back to Application Status</a></p>
 
-    <h2>Start Push - <strong>{{ build.repository.name }}</strong></h2>
+    <h2>Start Push - <strong>{{ build.application.name }}</strong></h2>
 
     <p>Please review the below build details before pushing.</p>
 
@@ -20,7 +20,7 @@
 
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('repository', {id: build.repository.id}) }}">{{ build.repository.name }}</a>
+                <a href="{{ urlFor('repository', {id: build.application.id}) }}">{{ build.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -28,7 +28,7 @@
 
             <dt class="split__title">Reference</dt>
             <dd>
-                {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
+                {% if githubCommitIsCurrent(build.application.githubUser, build.application.githubRepo, build.branch, build.commit) %}
                     {{ macros.status_icon(macros.gitref(build), 'success') }}
                 {% else %}
                     {{ macros.status_icon(macros.gitref(build), 'other') }}
@@ -94,7 +94,7 @@
                             {% set active = inProgress ? status.latest : status.success %}
 
                             <td>
-                                {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, active.build.branch, active.build.commit) %}
+                                {% if githubCommitIsCurrent(build.application.githubUser, build.application.githubRepo, active.build.branch, active.build.commit) %}
                                     {{ macros.status_icon(macros.gitref(active.build, true), 'success') }}
                                 {% else %}
                                     {{ macros.status_icon(macros.gitref(active.build, true), 'other') }}
@@ -125,7 +125,7 @@
                         <td>
                             {% if inProgress %}
                                 Please Wait
-                            {% elseif canUserPush(currentUser, status.deployment.repository, status.deployment.server.environment) %}
+                            {% elseif canUserPush(currentUser, status.deployment.application, status.deployment.server.environment) %}
                                 <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
                                 {% set allowSubmit = true %}
                             {% else %}

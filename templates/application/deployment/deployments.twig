@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+{% set js_components = ["deployment.add"] %}
+
+{% set page_title = 'Deployments : ' ~ application.name %}
+
+{% block content %}
+    <h1>Deployment Targets - <strong>{{ application.name }}</strong> </h1>
+
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository', {'id': application.id}) }}">Back to Application</a></p>
+
+    <p>
+        Deployment targets define what servers your application can be deployed to and where on that server the code will be uploaded.
+    </p>
+
+    {% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+
+    {% if environments %}
+
+        {% for environment in environments %}
+
+            <h2>{{ environment.name }}</h2>
+
+            <table class="table--spacing-medium" data-tablesaw-mode="stack">
+                <thead>
+                    <tr>
+                        <th class="t15">Hostname</th>
+                        <th class="t40">Path</th>
+                        <th>URL</th>
+                        <th class="t10"></th>
+                    </tr>
+                </thead>
+                <tbody class="js-add-deployment--{{ environment.name }}">
+                    {% for deployment in deployments if deployment.server.environment == environment %}
+
+                        <tr>
+                            <td>{{ deployment|formatDeploymentServer }}</td>
+                            <td>
+                                <code>{{ deployment|formatDeploymentDetails }}</code>
+                            </td>
+                            <td>
+                                {% if deployment.url %}
+                                    <a href="{{ deployment.url.asString() }}">{{ deployment.url.asString() }}</a>
+                                {% endif %}
+                            </td>
+                            <td class="tr">
+                                <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.application.id, id: deployment.id}) }}">View</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr class="js-add-deployment__empty">
+                            <td colspan="4">No deployments found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% endfor %}
+
+        {% if canEdit %}
+
+            <div class="form-wrapper js-add-deployment__form">
+                <h2>Add Deployment</b></h2>
+
+                {% include '_partial-form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': {}, 'application': application, rsync_only: true} %}
+            </div>
+
+            <div class="js-add-deployment__button">
+                {# primary action #}
+                <a class="btn" href="{{ urlFor('repository.deployments.add', {repository: application.id}) }}">Add Deployment</a>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <p>
+            There are no environments.
+            {% if isUserSuper(currentUser) %}
+                <br><a href="{{ urlFor('environment.admin.add') }}">Add an environment</a>
+            {% endif %}
+        </p>
+    {% endif %}
+
+{% endblock %}

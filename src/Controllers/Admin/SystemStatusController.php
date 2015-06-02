@@ -120,8 +120,8 @@ class SystemStatusController implements ControllerInterface
                     $parsed[$env] = [];
                 }
 
-                if (isset($connections[$server->getId()])) {
-                    $con = $connections[$server->getId()];
+                if (isset($connections[$server->id()])) {
+                    $con = $connections[$server->id()];
                     $parsed[$env][] = [
                         'server' => $server,
                         'resolved' => $con['server'],
@@ -179,7 +179,7 @@ class SystemStatusController implements ControllerInterface
         ];
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->name();
+            $env = $server->environment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

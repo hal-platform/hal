@@ -135,7 +135,7 @@ class DashboardController implements ControllerInterface
 
         $data = [];
         foreach ($recentApplications as $app) {
-            $data[$app->getId()] = $app->getName();
+            $data[$app->id()] = $app->name();
         }
 
         uasort($data, function($a, $b) {

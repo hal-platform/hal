@@ -104,8 +104,8 @@ class EditGroupController implements ControllerInterface
 
         $context = [
             'form' => [
-                'identifier' => ($this->request->isPost()) ? $this->request->post('identifier') : $group->getKey(),
-                'name' => ($this->request->isPost()) ? $this->request->post('name') : $group->getName()
+                'identifier' => ($this->request->isPost()) ? $this->request->post('identifier') : $group->key(),
+                'name' => ($this->request->isPost()) ? $this->request->post('name') : $group->name()
             ],
             'group' => $group,
             'errors' => $this->checkFormErrors($this->request, $group)
@@ -117,7 +117,7 @@ class EditGroupController implements ControllerInterface
                 $group = $this->handleFormSubmission($this->request, $group);
 
                 $this->session->flash('Group updated successfully.', 'success');
-                return $this->url->redirectFor('group', ['id' => $group->getId()]);
+                return $this->url->redirectFor('group', ['id' => $group->id()]);
             }
         }
 
@@ -135,8 +135,9 @@ class EditGroupController implements ControllerInterface
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
 
-        $group->setKey($identifier);
-        $group->setName($name);
+        $group
+            ->withKey($identifier)
+            ->withName($name);
 
         $this->em->merge($group);
         $this->em->flush();
@@ -163,14 +164,14 @@ class EditGroupController implements ControllerInterface
         $errors = array_merge($errors, $this->validateText($name, 'Name', 48, true));
 
         // Only check duplicate nickname if it is being changed
-        if (!$errors && $identifier !== $group->getKey()) {
+        if (!$errors && $identifier !== $group->key()) {
             if ($dupeGroup = $this->groupRepo->findOneBy(['key' => $identifier])) {
                 $errors[] = 'A group with this nickname already exists.';
             }
         }
 
         // Only check duplicate name if it is being changed
-        if (!$errors && $name !== $group->getName()) {
+        if (!$errors && $name !== $group->name()) {
             if ($dupeGroup = $this->groupRepo->findOneBy(['name' => $name])) {
                 $errors[] = 'A group with this name already exists.';
             }

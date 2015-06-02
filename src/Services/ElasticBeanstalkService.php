@@ -78,7 +78,7 @@ class ElasticBeanstalkService
                 continue;
             }
 
-            if (!$envId = $deployment->getEbEnvironment()) {
+            if (!$envId = $deployment->ebEnvironment()) {
                 continue;
             }
 
@@ -101,13 +101,13 @@ class ElasticBeanstalkService
         // Check cache, remove from grouped deployments if found
         foreach ($grouped as $appName => $appDeployments) {
             foreach ($appDeployments as $deployment) {
-                $ebEnv = $deployment->getEbEnvironment();
+                $ebEnv = $deployment->ebEnvironment();
 
                 $key = sprintf('aws.eb.env.%s', $ebEnv);
                 $cached = $this->getFromCache($key);
                 if ($cached instanceof Environment) {
 
-                    $loaded[$deployment->getId()] = $cached;
+                    $loaded[$deployment->id()] = $cached;
                     unset($grouped[$appName][$ebEnv]);
                     if (count($grouped[$appName]) === 0) {
                         unset($grouped[$appName]);
@@ -142,7 +142,7 @@ class ElasticBeanstalkService
                 $this->setToCache($key, $ebEnv);
 
                 if (isset($appDeployments[$ebEnv->id()])) {
-                    $deployId = $appDeployments[$ebEnv->id()]->getId();
+                    $deployId = $appDeployments[$ebEnv->id()]->id();
                     $loaded[$deployId] = $ebEnv;
                     unset($appDeployments[$ebEnv->id()]);
                 }
@@ -151,7 +151,7 @@ class ElasticBeanstalkService
             // Record was not returned in aws response, so add unknown
             if (count($appDeployments) > 0) {
                 foreach ($appDeployments as $deployment) {
-                    $loaded[$deployment->getId()] = $this->buildEBEnvironment([]);
+                    $loaded[$deployment->id()] = $this->buildEBEnvironment([]);
                 }
             }
         }
@@ -178,8 +178,8 @@ class ElasticBeanstalkService
                 continue;
             }
 
-            $ebName = $dep->getRepository()->getEbName();
-            $ebEnv = $dep->getEbEnvironment();
+            $ebName = $dep->application()->ebName();
+            $ebEnv = $dep->ebEnvironment();
 
             // skip invalid
             if (!$ebName || !$ebEnv) {

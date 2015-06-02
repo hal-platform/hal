@@ -125,11 +125,11 @@ class QueueController implements ControllerInterface
     {
         return array_map(function ($item) {
             if ($item instanceof Push) {
-                return $this->pushNormalizer->resource($item, ['build', 'deployment', 'repository']);
+                return $this->pushNormalizer->resource($item, ['build', 'deployment', 'application']);
             }
 
             if ($item instanceof Build) {
-                return $this->buildNormalizer->resource($item, ['repository']);
+                return $this->buildNormalizer->resource($item, ['application']);
             }
         }, $queue);
     }

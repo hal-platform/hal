@@ -100,7 +100,7 @@ class PushesController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'repo' => $application,
+            'application' => $application,
             'pushes' => $pushes,
             'search_filter' => $searchFilter
         ]);

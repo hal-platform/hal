@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
-{% set page_title = 'Edit Environment : ' ~ env.key %}
+{% set page_title = 'Edit Environment : ' ~ env.name %}
 
 {% block content %}
-    <h1>Edit Environment - <strong>{{ env.key }}</strong></h1>
+    <h1>Edit Environment - <strong>{{ env.name }}</strong></h1>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}

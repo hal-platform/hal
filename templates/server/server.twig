@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% set name = (server.type == 'rsync') ? server.name : server|formatServerType %}
-{% set page_title = 'Server: ' ~ name %}
+{% set page_title = 'Server : ' ~ name %}
 
 {% set isAdmin = isUserAdminOrSuper(currentUser) %}
 
 {% block content %}
-    <h2>Server Information</h2>
+    <h1>Server - <strong>{{ server.environment.name }}</strong></h1>
 
     <h3>Type</h3>
     <p>{{ server|formatServerType }}</p>
@@ -16,14 +16,14 @@
     <p>{{ hostname }}</p>
 
     <h3>Environment</h3>
-    <p>{{ server.environment.key }}</p>
+    <p>{{ server.environment.name }}</p>
 
-    <h3>Repository deployments</h3>
+    <h3>Application Deployment Targets</h3>
     {% if deployments_with_optional_eb %}
-        <table class="table--spacing-medium" data-tablesaw-mode="stack">
+        <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
             <thead>
                 <tr>
-                    <th>Repository</th>
+                    <th>Application</th>
                     <th>
                         {% if server.type == 'elasticbeanstalk' %}
                             EB Environment
@@ -47,7 +47,7 @@
 
                 <tr>
                     <td>
-                        <a href="{{ urlFor('repository', {id: deployment.repository.id}) }}">{{ deployment.repository.name }}</a>
+                        <a href="{{ urlFor('repository', {id: deployment.application.id}) }}">{{ deployment.application.name }}</a>
                     </td>
                     <td>
                         {% if server.type == 'elasticbeanstalk' %}
@@ -68,7 +68,7 @@
                         <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
                     </td>
                     <td>
-                        <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.repository.id, id: deployment.id}) }}">View</a>
+                        <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.application.id, id: deployment.id}) }}">View</a>
                     </td>
                 </tr>
             {% endfor %}

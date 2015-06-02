@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
+
+{% set js_components = ["application.add"] %}
+
+{% set page_title = 'Add Application' %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    <div class="form-wrapper">
+        {{ form_macros.formErrors(errors) }}
+
+        <form method="post">
+            <ul class="form-fields">
+                <li>
+                    <label for="name">
+                        Name
+                        <small class="additional">Display title for this application such as <span>"HAL 9000"</span> or <span>"My Secret Project"</span>.</small>
+                    </label>
+                    <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
+                </li>
+                <li>
+                    <label for="identifier">
+                        Identifier
+                        <small class="additional">
+                            Unique identifier such as <span>"hal9000"</span> or <span>"my-project"</span>.
+                            <br>Alphanumeric, hyphen, and period characters only.
+                        </small>
+                    </label>
+                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
+                </li>
+                <li>
+                    <label>Group</label>
+                    <ul class="radio-grid--form">
+                        {% for group in groups %}
+                            {% set checked = '' %}
+                            {% if form.group == group.id %}
+                                {% set checked = ' checked="checked"' %}
+                            {% endif %}
+
+                            <li>
+                                <input id="group-{{ group.id }}" type="radio" name="group" value="{{ group.id }}"{{ checked }}>
+                                <label for="group-{{ group.id }}">{{ group.name }}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li>
+                    <label for="github_user">GitHub Enterprise Organization</label>
+                    <select name="github_user" id="github_user">
+                        <option value=""></option>
+                        {% for org in github_orgs %}
+                            {% set selected = '' %}
+                            {% if form.github_user == org.login %}
+                                {% set selected = ' selected' %}
+                            {% endif %}
+
+                            <option value="{{ org.login|lower }}"{{ selected }}>{{ org.login }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li>
+                    <label for="github_repo">GitHub Enterprise Repository</label>
+                    <input type="text" name="github_repo" id="github_repo" maxlength="48" required value="{{ form.github_repo }}" class="text-input">
+                </li>
+                <li>
+                    <label for="notification_email">Notification Email Address <small class="additional">Optional. Notifications are sent on push or build completion.</small></label>
+                    <input type="email" name="notification_email" id="notification_email" maxlength="128" value="{{ form.notification_email }}" class="text-input">
+                </li>
+            </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Application"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repositories') }}">Cancel</a></li>
+            </ul>
+
+        </form>
+    </div>
+{% endblock %}

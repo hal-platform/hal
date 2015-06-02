@@ -19,7 +19,7 @@
                     <tr>
                         <td>
                             {% if environment.isProduction %}
-                                {{ macros.status(environment.key, 'info', 'key') }}
+                                {{ macros.status(environment.name, 'info', 'key') }}
                             {% else %}
                                 {{ environment.name }}
                             {% endif %}

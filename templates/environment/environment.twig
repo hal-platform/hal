@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = 'Environment : ' ~ env.key %}
+{% set page_title = 'Environment : ' ~ env.name %}
 
 {% set isAdmin = isUserSuper(currentUser) %}
 
 {% block content %}
-    <h1>Environment - <strong>{{ env.key }}</strong></h1>
+    <h1>Environment - <strong>{{ env.name }}</strong></h1>
 
     <h3>Name</h3>
     <p>{{ env.name }}</p>

@@ -1,18 +1,13 @@
 {% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
 
-{% set page_title = 'Edit Server: ' ~ server.name %}
+{% set page_title = 'Edit Server : ' ~ server.name %}
 
 {% block content %}
-    <h2>Edit Server</h2>
+    <h1>Edit Server - <strong>{{ server.name }}</strong></h1>
 
     <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ form_macros.formErrors(errors) }}
 
         <form method="post">
             <ul class="form-fields">
@@ -50,7 +45,7 @@
 
                         <li>
                             <input type="radio" name="environment" id="environment-{{ environment.id }}" value="{{ environment.id }}"{{ checked }}>
-                            <label for="environment-{{ environment.id }}">{{ environment.key }}</label>
+                            <label for="environment-{{ environment.id }}">{{ environment.name }}</label>
                         </li>
                     {% endfor %}
                     </ul>
@@ -65,15 +60,14 @@
                     {% set hostname = form.server_type == 'rsync' ? form.hostname : '' %}
                     <input type="text" name="hostname" id="hostname" maxlength="24" value="{{ hostname }}" class="text-input">
                 </li>
-
-                <li>
-                    {# primary action #}
-                    <input class="btn" type="submit" value="Save">
-
-                    {# secondary actions #}
-                    <a href="{{ urlFor('server', {id: server.id}) }}">Cancel</a>
-                </li>
             </ul>
+
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('server', {id: server.id}) }}">Cancel</a></li>
+            </ul>
+
         </form>
     </div>
 {% endblock %}

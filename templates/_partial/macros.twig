@@ -38,7 +38,7 @@
             {% set ref = ref[0:20] %}
         {% endif %}
 
-        <a href="{{ githubReference(build.repository.githubUser, build.repository.githubRepo, build.branch) }}">
+        <a href="{{ githubReference(build.application.githubUser, build.application.githubRepo, build.branch) }}">
             {% if type == 'pull' %}
                 Pull Request {{ ref }}
             {% elseif type == 'tag' %}
@@ -62,7 +62,7 @@
     {% if resolved %}
         {% set ref = resolved|last %}
 
-        <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">
+        <a href="{{ githubCommit(build.application.githubUser, build.application.githubRepo, build.commit) }}">
             {{ ref|commit }}
         </a>
         {{ self_macros.icon('commit') }}

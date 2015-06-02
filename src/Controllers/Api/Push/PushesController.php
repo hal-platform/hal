@@ -69,15 +69,15 @@ class PushesController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repository = $this->applicationRepo->find($this->parameters['id']);
+        $application = $this->applicationRepo->find($this->parameters['id']);
 
-        if (!$repository instanceof Application) {
+        if (!$application instanceof Application) {
             throw HttpProblemException::build(404, 'invalid-application');
         }
 
         // get most recent 500 pushes, this is a hard limit.
         // @todo add paging to api
-        $paginator = $this->pushRepo->getByRepository($repository, 500);
+        $paginator = $this->pushRepo->getByApplication($application, 500);
 
         // turn paginator into array
         $pushes = [];

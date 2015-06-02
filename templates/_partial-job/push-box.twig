@@ -15,8 +15,8 @@
             <article class="card--baby mbn{{ cardStyle }}">
                 <header class="card__header split">
                     <span class="split__title">
-                        <a href="{{ urlFor('repository.status', {id: push.build.repository.id}) }}">
-                            {{ push.build.repository.name }}
+                        <a href="{{ urlFor('repository.status', {id: push.build.application.id}) }}">
+                            {{ push.build.application.name }}
                         </a>
                     </span>
 

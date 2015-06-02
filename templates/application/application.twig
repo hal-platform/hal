@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = 'Application : ' ~ application.name %}
+
+{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+
+{% block content %}
+    <h1>Application - <strong>{{ application.name }}</strong></h1>
+    {{ block('meta') }}
+
+    <h2>Notifications</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Email</dt>
+            <dd>{{ application.email ?: 'None' }}</dd>
+        </dl>
+    </div>
+
+    {{ block('legacy_commands') }}
+
+    <h2>Deployment Targets</h2>
+    {{ block('server_deployments') }}
+
+{% endblock %}
+
+{% block meta %}
+    <div class="details-box">
+        <dl class="split trailer">
+            <dt class="split__title">Name</dt>
+            <dd>{{ application.name }}</dd>
+
+            <dt class="split__title">Identifier</dt>
+            <dd>{{ application.key }}</dd>
+
+            <dt class="split__title">Github Source</dt>
+            <dd>
+                <a href="{{ githubRepo(application.githubUser, application.githubRepo) }}">{{ application.githubUser }}/{{ application.githubRepo }}</a>
+                {{ macros.icon('github') }}
+            </dd>
+
+            {% if application.ebName %}
+                <dt class="split__title">Elastic Beanstalk Name</dt>
+                <dd>{{ application.ebName }}</dd>
+            {% else %}
+                <dt class="split__title">Elastic Beanstalk</dt>
+                <dd>Not Enabled</dd>
+            {% endif %}
+        </dl>
+
+        <ul class="button-list">
+            <li><a class="btn" href="{{ urlFor('repository.status', {id: application.id}) }}">Application Status</a></li>
+
+            {% if isAdmin %}
+                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: application.id}) }}">Edit Application</a></li>
+            {% endif %}
+
+            {% if isUserAdminOrSuper(currentUser) and not deployment_count %}
+                <li><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: application.id}) }}">Remove Application</a></li>
+            {% endif %}
+
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.encrypted', {repository: application.id}) }}">Encrypted Properties</a></li>
+            <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: application.id}) }}">Deployment Targets</a></li>
+
+            {% if kraken %}
+                <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken Configuration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block legacy_commands %}
+    {% if application.buildCmd or application.buildTransformCmd or application.prePushCmd or application.postPushCmd %}
+        <h2>Commands</h2>
+        <div class="details-box">
+            <dl class="split trailer">
+                {% if application.buildCmd %}
+                    <dt class="split__title">
+                        {{ macros.icon('code', '', 'On build') }}
+                        Build Command
+                    </dt>
+                    <dd>{{ application.buildCmd }}</dd>
+                {% endif %}
+
+                {% if application.buildTransformCmd %}
+                    <dt class="split__title">
+                        {{ macros.icon('swap-2', '', 'On push') }}
+                        Build Transform Command
+                    </dt>
+                    <dd>{{ application.buildTransformCmd }}</dd>
+                {% endif %}
+
+                {% if application.prePushCmd %}
+                    <dt class="split__title">
+                        {{ macros.icon('swap-2', '', 'On push') }}
+                        Pre-Push Command
+                    </dt>
+                    <dd>{{ application.prePushCmd }}</dd>
+                {% endif %}
+
+                {% if application.postPushCmd %}
+                    <dt class="split__title">
+                        {{ macros.icon('swap-2', '', 'On push') }}
+                        Post-Push Command
+                    </dt>
+                    <dd>{{ application.postPushCmd }}</dd>
+                {% endif %}
+            </dl>
+            <p class="mbn">
+                <strong>Repository commands cannot be changed, and are for legacy projects only.</strong><br>
+                To add, change, or remove commands: a <code>.hal9000.yml</code> must be commited to the project repository.
+            </p>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block server_deployments %}
+    {% if deployment_count %}
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Environment</th>
+                    <th>Server</th>
+                    <th>Path</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for env, deployments in deployment_environments %}
+                {% if deployments %}
+                    {% set isFirst = true %}
+                    {% for deployment_pair in deployments %}
+                        {% set deployment = deployment_pair.deployment %}
+                        {% set eb_environment = deployment_pair.eb_environment %}
+
+                        <tr>
+                            {% if isFirst %}
+                                {% set isFirst = false %}
+                                <td>{{ env }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+
+                            <td>
+                                <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer }}</a>
+                                {% if eb_environment %}
+                                    <small><br>{{ eb_environment|formatEBStatus }}
+                                    {{ eb_environment|formatEBHealth }}
+                                    </small>
+                                {% endif %}
+
+                            </td>
+                            <td>
+                                <code>{{ deployment|formatDeploymentDetails }}</code>
+                            </td>
+                            <td>
+                                <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no deployments associated with this application.</p>
+    {% endif %}
+{% endblock %}
+

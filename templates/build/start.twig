@@ -3,13 +3,13 @@
 {% import _self as page_macros %}
 {% set js_components = ["build.start"] %}
 
-{% set page_title = "Start Build : " ~ repo.name %}
+{% set page_title = "Start Build : " ~ application.name %}
 
 {% block content %}
 
-    <h1>Start Build - <strong>{{ repo.name }}</strong></h1>
+    <h1>Start Build - <strong>{{ application.name }}</strong></h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': application.id}) }}">Back to Application Status</a></p>
 
     {% if errors %}
         <ul class="error-list js-backend-error">
@@ -35,7 +35,7 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                {% set alert_message = 'There are no buildable environments for this repository. Deployments must added.' %}
+                {% set alert_message = 'There are no buildable environments for this application. Deployments must added.' %}
                 {{ macros.alert('error', alert_message) }}
             {% endif %}
         {% endblock %}
@@ -156,7 +156,7 @@
                         {{ macros.icon('branch') }}
                         {{ branch.name }} <br />
 
-                        <a href="{{ githubTreeish(repo.GithubUser, repo.GithubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
+                        <a href="{{ githubTreeish(application.GithubUser, application.GithubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
                         {{ macros.icon('github') }}
                     </label>
                 </li>
@@ -187,7 +187,7 @@
                         {{ macros.icon('tag') }}
                         {{ tag.name }} <br />
 
-                        <a href="{{ githubRelease(repo.GithubUser, repo.GithubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
+                        <a href="{{ githubRelease(application.GithubUser, application.GithubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
                         {{ macros.icon('github') }}
                     </label>
                 </li>
@@ -218,7 +218,7 @@
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
-                        <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                        <a href="{{ githubPullRequest(application.githubUser, application.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
                         {{ macros.icon('github') }}
                         <br />
 
@@ -255,7 +255,7 @@
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
-                        <a href="{{ githubPullRequest(repo.githubUser, repo.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                        <a href="{{ githubPullRequest(application.githubUser, application.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
                         {{ macros.icon('github') }}
                         <br />
 

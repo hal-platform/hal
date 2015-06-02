@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = "Applications" %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    <table class="table--spacing-medium" data-tablesaw-mode="stack">
+        <thead>
+            <tr>
+                <th>Application</th>
+                <th>GitHub Source</th>
+                <th class="t5"></th>
+            </tr>
+        </thead>
+        <tbody class="table-breathe">
+        {% set hasApplications = false %}
+        {% for group in groups %}
+            <tr>
+                <th colspan="4" class="table-mid-header">
+                    {{ group.name }}
+                    <a class="icon--link" href="{{ urlFor('group', {id: group.id}) }}">
+                        {{ macros.icon('outgoing') }}
+                    </a>
+                </th>
+            </tr>
+
+            {% if applications[group.id] %}
+                {% set hasApplications = true %}
+                {% for repo in applications[group.id] %}
+                    <tr>
+                        <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.name }}</a></td>
+                        <td>
+                            <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                            {{ macros.icon('github') }}
+                        </td>
+                        <td>
+                            <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No applications found.</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+
+        {% if not hasApplications %}
+            <tr>
+                <td colspan="4">There are no groups.</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    <p>
+        <a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Application</a>
+        <a class="btn" href="{{ urlFor('group.admin.add') }}">Add Group</a>
+    </p>
+{% endblock %}

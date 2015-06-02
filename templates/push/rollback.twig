@@ -2,16 +2,16 @@
 {% import '_partial/pagination.twig' as pagination %}
 {% import '_partial/macros.twig' as macros %}
 
-{% set page_title = "Push History : " ~ repo.name %}
+{% set page_title = "Push History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Repository Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': application.id}) }}">Back to Application Status</a></p>
 
     {% set server = deployment|formatDeploymentServer %}
     {% set deployment_details = deployment|formatDeploymentDetails %}
     {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
-    <h2>Push History - <strong>{{ repo.name }}</strong> to <strong>{{ server }}</strong></h2>
+    <h2>Push History - <strong>{{ application.name }}</strong> to <strong>{{ server }}</strong></h2>
 
     <h3>Deployment Information</h3>
     <div class="details-box">
@@ -44,7 +44,7 @@
         To rollback, simply choose a build, click <strong>rollback</strong>, and you'll be able to initate a new push.
     </p>
 
-    {% set canRollback = canUserPush(currentUser, repo, deployment.server.environment) %}
+    {% set canRollback = canUserPush(currentUser, application, deployment.server.environment) %}
 
     <h3>Push History</h3>
     <table class="table--spacing-medium" data-tablesaw-mode="stack">
@@ -112,6 +112,6 @@
         </tbody>
     </table>
 
-    {{ pagination.pagination(page, last, 'rollback', {'id': repo.id, 'deployment': deployment.id}) }}
+    {{ pagination.pagination(page, last, 'rollback', {'id': application.id, 'deployment': deployment.id}) }}
 
 {% endblock %}

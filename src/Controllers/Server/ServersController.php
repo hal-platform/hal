@@ -66,7 +66,7 @@ class ServersController implements ControllerInterface
         ];
 
         foreach ($servers as $server) {
-            $env = $server->getEnvironment()->name();
+            $env = $server->environment()->name();
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];

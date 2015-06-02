@@ -13,12 +13,12 @@
             <article class="card--baby mbn card--{{ build.environment.name }}">
                 <header class="card__header split">
                     <span class="split__title">
-                        <a href="{{ urlFor('repository.status', {id: build.repository.id}) }}">
-                            {{ build.repository.name }}
+                        <a href="{{ urlFor('repository.status', {id: build.application.id}) }}">
+                            {{ build.application.name }}
                         </a>
                     </span>
 
-                    <a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">
+                    <a href="{{ urlFor('build', {'repo': build.application.id, 'build': build.id}) }}">
                         {{ macros.job_status(build) }}
                     </a>
                 </header>

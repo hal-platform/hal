@@ -21,7 +21,7 @@
         <thead>
             <tr>
                 <th>Type</th>
-                <th>Repository</th>
+                <th>Application</th>
                 <th>Env → Server</th>
                 <th>Reference</th>
                 <th class="table-priority-55">Initiator</th>
@@ -51,16 +51,16 @@
                         </td>
 
                         <td>
-                            <a href="{{ urlFor('repository.status', {id: job.repository.id}) }}">{{ job.repository.name }}</a>
+                            <a href="{{ urlFor('repository.status', {id: job.application.id}) }}">{{ job.application.name }}</a>
                         </td>
 
                         <td>
                             {% if job is build %}
-                                {{ job.environment.key }}
+                                {{ job.environment.name }}
                             {% elseif job.deployment %}
-                                {{ job.build.environment.key }} → {{ job.deployment|formatDeploymentServer(true) }}
+                                {{ job.build.environment.name }} → {{ job.deployment|formatDeploymentServer(true) }}
                             {% else %}
-                                {{ job.build.environment.key }} → Unknown
+                                {{ job.build.environment.name }} → Unknown
                             {% endif %}
                         </td>
 

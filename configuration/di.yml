@@ -4,7 +4,7 @@ imports:
     - resource: di/services.middleware.yml
     - resource: di/controllers.yml
     - resource: di/controllers.admin.yml
-    - resource: di/controllers.repository.yml
+    - resource: di/controllers.application.yml
     - resource: di/controllers.api.yml
 
 services:

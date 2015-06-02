@@ -21,7 +21,7 @@
 
                 {% if available %}
                 <li>
-                    <label for="app-repo">
+                    <label for="app-hal_app">
                         HAL Application
                         <small class="additional">
                             Link a HAL application to this Kraken application. Recommended for applications already using HAL 9000.
@@ -30,23 +30,23 @@
 
 
                     {% if available|length > 10 %}
-                        <select class="select-input" name="hal_app" id="app-repo">
+                        <select class="select-input" name="hal_app" id="app-hal_app">
                             <option></option>
-                            {% for id, repository_name in available %}
+                            {% for id, hal_application in available %}
                                 {% set isSelected = (id == form.hal_app) %}
 
                                 <option value="{{ id }}" {{ isSelected ? ' selected' : '' }}>
-                                    {{ repository_name }}
+                                    {{ hal_application }}
                                 </option>
                             {% endfor %}
                         </select>
                     {% else %}
                         <ul class="radio-grid--form">
-                            {% for id, repository_name in available %}
+                            {% for id, hal_application in available %}
                                 {% set isSelected = (id == form.hal_app) %}
                                 <li>
                                     <input id="app-hal_app-{{ id }}" type="radio" name="hal_app" value="{{ id }}"{{ isSelected ? ' checked' : ''}}>
-                                    <label for="app-hal_app-{{ id }}">{{ repository_name }}</label>
+                                    <label for="app-hal_app-{{ id }}">{{ hal_application }}</label>
                                 </li>
                             {% endfor %}
                         </ul>

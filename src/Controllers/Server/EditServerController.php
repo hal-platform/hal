@@ -110,9 +110,9 @@ class EditServerController implements ControllerInterface
 
         $renderContext = [
             'form' => [
-                'hostname' => ($this->request->isPost()) ? $this->request->post('hostname') : $server->getName(),
-                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->getEnvironment()->id(),
-                'server_type' => ($this->request->isPost()) ? $this->request->post('server_type') : $server->getType(),
+                'hostname' => ($this->request->isPost()) ? $this->request->post('hostname') : $server->name(),
+                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->environment()->id(),
+                'server_type' => ($this->request->isPost()) ? $this->request->post('server_type') : $server->type(),
             ],
             'errors' => $this->checkFormErrors($this->request, $server),
             'server' => $server,
@@ -129,7 +129,7 @@ class EditServerController implements ControllerInterface
                 $this->handleFormSubmission($this->request, $server, $environment);
 
                 $this->session->flash('Server updated successfully.', 'success');
-                return $this->url->redirectFor('server', ['id' => $server->getId()]);
+                return $this->url->redirectFor('server', ['id' => $server->id()]);
             }
         }
 
@@ -153,9 +153,10 @@ class EditServerController implements ControllerInterface
             $name = '';
         }
 
-        $server->setType($type);
-        $server->setEnvironment($environment);
-        $server->setName($name);
+        $server
+            ->withType($type)
+            ->withEnvironment($environment)
+            ->withName($name);
 
         $this->em->merge($server);
         $this->em->flush();
@@ -196,7 +197,7 @@ class EditServerController implements ControllerInterface
             $errors = $this->validateHostname($hostname);
 
             // Only check duplicate hostname if it is being changed
-            if (!$errors && $hostname != $server->getName()) {
+            if (!$errors && $hostname != $server->name()) {
                 if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
                     $errors[] = 'A server with this hostname already exists.';
                 }
@@ -207,7 +208,7 @@ class EditServerController implements ControllerInterface
         } elseif ($serverType === ServerEnum::TYPE_EB && !$errors) {
 
             // Only check duplicate EB if it is being changed
-            $hasChanged = ($environmentId != $server->getEnvironment()->getId() || $serverType != $server->getType());
+            $hasChanged = ($environmentId != $server->environment()->id() || $serverType != $server->type());
             if (!$errors && $hasChanged) {
                 if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'environment' => $environmentId])) {
                     $errors[] = 'An EB server for this environment already exists.';
@@ -219,7 +220,7 @@ class EditServerController implements ControllerInterface
         } elseif ($serverType === ServerEnum::TYPE_EC2 && !$errors) {
 
             // Only check duplicate EC2 if it is being changed
-            $hasChanged = ($environmentId != $server->getEnvironment()->getId() || $serverType != $server->getType());
+            $hasChanged = ($environmentId != $server->environment()->id() || $serverType != $server->type());
             if (!$errors && $hasChanged) {
                 if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'environment' => $environmentId])) {
                     $errors[] = 'An EC2 server for this environment already exists.';

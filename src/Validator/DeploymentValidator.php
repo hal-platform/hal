@@ -22,7 +22,7 @@ class DeploymentValidator
 
     const ERR_INVALID_PATH = 'File path is invalid.';
     const ERR_INVALID_URL = 'URL is invalid.';
-    const ERR_INVALID_REPO = 'Repository is invalid.';
+    const ERR_INVALID_APPLICATION = 'Application is invalid.';
     const ERR_INVALID_SERVER = 'Server is invalid.';
     const ERR_INVALID_EB_ENVIRONMENT = 'EB Environment is invalid.';
     const ERR_INVALID_EC2_POOL = 'EC2 Pool is invalid.';
@@ -79,7 +79,7 @@ class DeploymentValidator
         }
 
         if (!$application = $this->applicationRepo->find($applicationId)) {
-            $this->errors[] = self::ERR_INVALID_REPO;
+            $this->errors[] = self::ERR_INVALID_APPLICATION;
         }
 
         if (!$server = $this->serverRepo->find($serverId)) {
@@ -131,7 +131,7 @@ class DeploymentValidator
         }
 
         $deployment = (new Deployment)
-            ->withRepository($application)
+            ->withApplication($application)
             ->withServer($server)
 
             ->withPath($path)

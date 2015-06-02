@@ -2,18 +2,18 @@
 {% import '_partial/pagination.twig' as pagination %}
 {% set js_components = ["job.updater"] %}
 
-{% set page_title = "Build History : " ~ repo.name %}
+{% set page_title = "Build History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': repo.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': application.id}) }}">Back to Application Status</a></p>
 
-    <h1>Build History - <strong>{{ repo.name }}</strong></h1>
+    <h1>Build History - <strong>{{ application.name }}</strong></h1>
 
     {{ block('search') }}
 
     {% include '_partial-job/build-table.twig' with {'builds': builds} %}
 
-    {{ pagination.pagination(page, last, 'build.history', {'id': repo.id}, {search: search_filter}) }}
+    {{ pagination.pagination(page, last, 'build.history', {'id': application.id}, {search: search_filter}) }}
 
 {% endblock %}
 
@@ -31,7 +31,7 @@
         <input class="btn" type="submit" value="Filter">
 
         {% if search_filter %}
-            <a class="btn btn--action" href="{{ urlFor('build.history.page1', {id: repo.id}) }}">Reset</a>
+            <a class="btn btn--action" href="{{ urlFor('build.history.page1', {id: application.id}) }}">Reset</a>
         {% endif %}
     </form>
 {% endblock %}

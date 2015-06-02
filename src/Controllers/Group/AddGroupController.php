@@ -94,7 +94,7 @@ class AddGroupController implements ControllerInterface
             if (!$renderContext['errors']) {
                 $group = $this->handleFormSubmission($this->request);
 
-                $message = sprintf('Group "%s" added.', $group->getName());
+                $message = sprintf('Group "%s" added.', $group->name());
                 $this->session->flash($message, 'success');
 
                 return $this->url->redirectFor('repositories');
@@ -113,9 +113,9 @@ class AddGroupController implements ControllerInterface
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
 
-        $group = new Group;
-        $group->setKey($identifier);
-        $group->setName($name);
+        $group = (new Group)
+            ->withKey($identifier);
+            ->withName($name);
 
         $this->em->persist($group);
         $this->em->flush();

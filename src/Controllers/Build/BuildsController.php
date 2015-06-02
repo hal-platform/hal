@@ -79,7 +79,7 @@ class BuildsController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$repo = $this->applicationRepo->find($this->parameters['id'])) {
+        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
             return call_user_func($this->notFound);
         }
 
@@ -91,7 +91,7 @@ class BuildsController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $builds = $this->buildRepo->getByApplication($repo, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        $builds = $this->buildRepo->getByApplication($application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
 
         $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -100,7 +100,7 @@ class BuildsController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'repo' => $repo,
+            'application' => $application,
             'builds' => $builds,
             'search_filter' => $searchFilter
         ]);

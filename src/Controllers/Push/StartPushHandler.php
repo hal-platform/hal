@@ -152,10 +152,10 @@ class StartPushHandler implements MiddlewareInterface
         }
 
         $environment = $build->getEnvironment();
-        $repo = $build->getRepository();
+        $application = $build->getApplication();
         $pushes = [];
 
-        $canUserPush = $this->permissions->canUserPush($this->currentUser, $repo, $environment);
+        $canUserPush = $this->permissions->canUserPush($this->currentUser, $application, $environment);
 
         $criteria = (new Criteria)->where(Criteria::expr()->in('id', $deploymentIds));
         $deployments = $this->deployRepo->matching($criteria);
@@ -163,7 +163,7 @@ class StartPushHandler implements MiddlewareInterface
 
         $kvd = [];
         foreach ($deployments as $deployment) {
-            $kvd[$deployment->getId()] = $deployment;
+            $kvd[$deployment->id()] = $deployment;
         }
 
         foreach ($deploymentIds as $deploymentId) {
@@ -172,9 +172,9 @@ class StartPushHandler implements MiddlewareInterface
             }
 
             $deployment = $kvd[$deploymentId];
-            $server = $deployment->getServer();
+            $server = $deployment->server();
 
-            if ($environment !== $server->getEnvironment())) {
+            if ($environment !== $server->environment()) {
                 return $this->context->addContext([
                     'errors' => [sprintf(self::ERR_WRONG_ENV, $environment->name())]
                 ]);
@@ -182,7 +182,7 @@ class StartPushHandler implements MiddlewareInterface
 
             if (!$canUserPush) {
                 return $this->context->addContext([
-                    'errors' => [sprintf(self::ERR_NO_PERM, $server->getName())]
+                    'errors' => [sprintf(self::ERR_NO_PERM, $server->name())]
                 ]);
             }
 
@@ -195,7 +195,7 @@ class StartPushHandler implements MiddlewareInterface
             $push->setUser($this->currentUser);
             $push->setBuild($build);
             $push->setDeployment($deployment);
-            $push->setRepository($repo);
+            $push->setApplication($application);
 
             $pushes[] = $push;
         }
@@ -210,10 +210,10 @@ class StartPushHandler implements MiddlewareInterface
         $this->em->flush();
 
         // override sticky environment
-        $this->stickyService->save($repo->getId(), $deployment->getServer()->getEnvironment()->name());
+        $this->stickyService->save($application->id(), $deployment->server()->environment()->name());
 
         $this->session->flash(self::NOTICE_DONE, 'success');
-        $this->url->redirectFor('repository.status', ['id' => $repo->getId()]);
+        $this->url->redirectFor('repository.status', ['id' => $application->id()]);
     }
 
     /**

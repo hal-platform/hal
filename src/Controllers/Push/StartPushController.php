@@ -71,7 +71,7 @@ class StartPushController implements ControllerInterface
 
         $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
-        $this->deployRepo = $em->getRepository(Deployment::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->request = $request;
@@ -130,7 +130,7 @@ class StartPushController implements ControllerInterface
         $servers = $this->serverRepo->findBy(['environment' => $build->getEnvironment()]);
 
         $criteria = [
-            'repository' => $build->getRepository(),
+            'application' => $build->getApplication(),
             'server' => $servers
         ];
 

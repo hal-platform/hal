@@ -55,7 +55,7 @@ class StickyEnvironmentService
     }
 
     /**
-     * Get the current env preference for a repository.
+     * Get the current env preference for an application.
      *
      * @param string $repoId
      *

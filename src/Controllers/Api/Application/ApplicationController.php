@@ -24,7 +24,7 @@ class ApplicationController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repositoryRepo;
+    private $applicationRepo;
 
     /**
      * @type array
@@ -39,7 +39,7 @@ class ApplicationController implements ControllerInterface
     public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em, array $parameters)
     {
         $this->formatter = $formatter;
-        $this->repositoryRepo = $em->getRepository(Application::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->parameters = $parameters;
     }
 
@@ -49,7 +49,7 @@ class ApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repository = $this->repositoryRepo->find($this->parameters['id']);
+        $repository = $this->applicationRepo->find($this->parameters['id']);
 
         if (!$repository instanceof Application) {
             throw HttpProblemException::build(404, 'invalid-repository');

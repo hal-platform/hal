@@ -27,7 +27,7 @@ class ApplicationsController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repositoryRepo;
+    private $applicationRepo;
 
     /**
      * @var ApplicationNormalizer
@@ -45,7 +45,7 @@ class ApplicationsController implements ControllerInterface
         ApplicationNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
-        $this->repositoryRepo = $em->getRepository(Application::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->normalizer = $normalizer;
     }
 
@@ -54,7 +54,7 @@ class ApplicationsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repos = $this->repositoryRepo->findBy([], ['id' => 'ASC']);
+        $repos = $this->applicationRepo->findBy([], ['id' => 'ASC']);
         $status = (count($repos) > 0) ? 200 : 404;
 
         $repos = array_map(function ($repo) {

@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.repository.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.application.id}) }}">Back to Application Status</a></p>
 
     <h1>{{ page_title }}</h1>
 
@@ -21,7 +21,7 @@
 
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('repository', {'id': build.repository.id}) }}">{{ build.repository.name }}</a>
+                <a href="{{ urlFor('repository', {'id': build.application.id}) }}">{{ build.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -29,7 +29,7 @@
 
             <dt class="split__title">Reference</dt>
             <dd>
-                {% if githubCommitIsCurrent(build.repository.githubUser, build.repository.githubRepo, build.branch, build.commit) %}
+                {% if githubCommitIsCurrent(build.application.githubUser, build.application.githubRepo, build.branch, build.commit) %}
                     {{ macros.status_icon(macros.gitref(build) ~ ' (latest)', 'success') }}
                 {% else %}
                     {{ macros.status_icon(macros.gitref(build) ~ ' (behind)', 'other') }}
@@ -38,7 +38,7 @@
 
             <dt class="split__title">Commit</dt>
             <dd>
-                <a href="{{ githubCommit(build.repository.githubUser, build.repository.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
+                <a href="{{ githubCommit(build.application.githubUser, build.application.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
                 {{ macros.icon('github') }}
             </dd>
 
@@ -71,7 +71,7 @@
         </dl>
     </div>
 
-    {% if canUserBuild(currentUser, build.repository) %}
+    {% if canUserBuild(currentUser, build.application) %}
         {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
         {% set unpushableMessage = 'The build cannot be pushed.' %}
 

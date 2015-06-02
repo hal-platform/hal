@@ -162,7 +162,7 @@ class UserPerm implements JsonSerializable
      */
     public function canDeployApplicationToNonProd(Application $application)
     {
-        $id = $repository->id();
+        $id = $application->id();
 
         return in_array($id, $this->nonProdApplications, true);
     }

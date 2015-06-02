@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Deployment : ' ~ deployment.application.name %}
+
+{% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, deployment.application) %}
+
+{% block content %}
+    <h1>Deployment - <strong>{{ deployment.application.name }}</strong></h1>
+
+    <h4>Type</h4>
+    <p>{{ deployment.server|formatServerType }}</p>
+
+    <h4>Server</h4>
+    <p>
+        <a href="{{ urlFor('server', {id: deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a> in <strong>{{ deployment.server.environment.name }}</strong>
+    </p>
+
+    <h4>Application</h4>
+    <p><a href="{{ urlFor('repository', {id: deployment.application.id}) }}">{{ deployment.application.name }}</a></p>
+
+    <h4>File path</h4>
+    <p>
+        {% if deployment.server.type == 'rsync' or deployment.server.type == 'ec2' %}
+            <code>{{ deployment.path }}</code>
+        {% else %}
+            Not Applicable
+        {% endif %}
+    </p>
+
+    {% if deployment.server.type == 'elasticbeanstalk' and eb_environment %}
+        <h4>Elastic Beanstalk</h4>
+
+        <h5 class="mbn"><strong>EB Application ID</strong></h5>
+        <p>{{ eb_environment.id }}</p>
+
+        <h5 class="mbn"><strong>EB Application Name</strong></h5>
+        <p>{{ eb_environment.name }}</p>
+
+        <h5 class="mbn"><strong>EB Status and Health</strong></h5>
+        <p class="mbn">Status: {{ eb_environment|formatEBStatus }}</p>
+        <p>Health: {{ eb_environment|formatEBHealth }}</p>
+
+        <h5 class="mbn"><strong>EB Solution</strong></h5>
+        <p>{{ eb_environment.solution }}</p>
+
+        <h5 class="mbn"><strong>EB Application URL</strong></h5>
+        <p><a href="http://{{ eb_environment.url }}">{{ eb_environment.url }}</a></p>
+    {% else %}
+        <h4>Elastic Beanstalk Environment ID</h4>
+        <p>
+            {% if deployment.server.type == 'elasticbeanstalk' %}
+                <code>{{ deployment.ebEnvironment }}</code>
+            {% else %}
+                Not Applicable
+            {% endif %}
+        </p>
+    {% endif %}
+
+    <h4>EC2 Pool</h4>
+    <p>
+        {% if deployment.server.type == 'ec2' %}
+            <code>{{ deployment.ec2Pool }}</code>
+        {% else %}
+            Not Applicable
+        {% endif %}
+    </p>
+
+    <h4>URL</h4>
+    <p>
+        {% if deployment.url %}
+            <a href="{{ deployment.url.asString() }}">{{ deployment.url.asString() }}</a>
+        {% else %}
+            None
+        {% endif %}
+    </p>
+
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('repository.deployments', {repository: deployment.application.id}) }}">Deployment Targets</a></li>
+        {% if canEdit %}
+            <li><a class="btn btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.application.id, id: deployment.id}) }}">Edit Deployment</a></li>
+            <li><a class="btn btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.application.id, id: deployment.id}) }}">Remove Deployment</a></li>
+        {% endif %}
+    </ul>
+
+{% endblock %}

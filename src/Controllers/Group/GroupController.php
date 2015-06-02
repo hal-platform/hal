@@ -69,7 +69,7 @@ class GroupController implements ControllerInterface
 
         $this->template->render([
             'group' => $group,
-            'repos' => $this->applicationRepo->findBy(['group' => $group], ['key' => 'ASC'])
+            'applications' => $this->applicationRepo->findBy(['group' => $group], ['key' => 'ASC'])
         ]);
     }
 }

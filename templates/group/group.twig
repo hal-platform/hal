@@ -14,27 +14,27 @@
     <h4>Identifier</h4>
     <p>{{ group.key }}</p>
 
-    <h4>Repositories</h4>
-    {% if repos %}
+    <h4>Applications</h4>
+    {% if applications %}
 
-        <table class="table--spacing-medium" data-tablesaw-mode="stack">
+        <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
             <thead>
                 <tr>
-                    <th>Repository</th>
+                    <th>Application</th>
                     <th>Github Source</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-            {% for repo in repos %}
+            {% for application in applications %}
                 <tr>
-                    <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.name }}</a></td>
+                    <td><a href="{{ urlFor('repository.status', {'id': application.id}) }}">{{ application.name }}</a></td>
                     <td>
-                        <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
+                        <a href="{{ githubRepo(application.githubUser, application.githubRepo) }}">{{ application.githubUser }}/{{ application.githubRepo }}</a>
                         {{ macros.icon('github') }}
                     </td>
-                    <td>
-                        <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
+                    <td class="tr">
+                        <a href="{{ urlFor('repository', {'id': application.id}) }}">Details</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -42,11 +42,11 @@
         </table>
 
     {% else %}
-        <p>There are no repositories associated with this group.</p>
+        <p>There are no applications associated with this group.</p>
     {% endif %}
 
-    {% if isAdmin and repos %}
-        <p><strong>Note:</strong> All associated repositories must be removed or transferred to remove this group.</p>
+    {% if isAdmin and applications %}
+        <p><strong>Note:</strong> All associated applications must be removed or transferred to remove this group.</p>
     {% endif %}
 
     <ul class="button-list">
@@ -54,9 +54,11 @@
         {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a></li>
 
-            {% if not repos and isAdmin %}
+            {% if not applications and isAdmin %}
                 <li><a class="btn btn--destructive" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a></li>
             {% endif %}
+
+        <li><a class="btn btn--secondary" href="{{ urlFor('repositories') }}">Applications</a></li>
         {% endif %}
     </ul>
 

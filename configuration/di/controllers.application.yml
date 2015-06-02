@@ -1,0 +1,229 @@
+services:
+    ####################################################################################################################
+    # APPLICATION CONTROLLERS
+    ####################################################################################################################
+
+    applications.page:
+        class: 'QL\Hal\Controllers\Application\ApplicationsController'
+        arguments:
+            - @applications.twig
+            - @doctrine.em
+    applications.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/applications.twig']]]
+
+    application.page:
+        class: 'QL\Hal\Controllers\Application\ApplicationController'
+        arguments:
+            - @application.twig
+            - @doctrine.em
+            - @eb
+            - @slim.not.found
+            - @slim.route.parameters
+    application.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/application.twig']]]
+
+    application.status.page:
+        class: 'QL\Hal\Controllers\Application\ApplicationStatusController'
+        arguments:
+            - @application.status.twig
+            - @doctrine.em
+            - @sticky.environment
+            - @slim.not.found
+            - @slim.route.parameters
+    application.status.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/status.twig']]]
+
+    application.status.sticky.handler:
+        class: 'QL\Hal\Controllers\Application\ApplicationStatusEnvironmentSaveHandler'
+        arguments:
+            - @doctrine.em
+            - @slim.request
+            - @url
+            - @sticky.environment
+            - @slim.route.parameters
+
+    application.admin.add.page:
+        class: 'QL\Hal\Controllers\Application\AddApplicationController'
+        arguments:
+            - @application.admin.add.twig
+            - @doctrine.em
+            - @github
+            - @session
+            - @url.helper
+            - @slim.request
+    application.admin.add.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/application.add.twig']]]
+
+    application.admin.edit.page:
+        class: 'QL\Hal\Controllers\Application\EditApplicationController'
+        arguments:
+            - @application.admin.edit.twig
+            - @doctrine.em
+            - @session
+            - @url.helper
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
+    application.admin.edit.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/application.edit.twig']]]
+
+    application.admin.remove.handler:
+        class: 'QL\Hal\Controllers\Application\RemoveApplicationController'
+        arguments:
+            - @doctrine.em
+            - @session
+            - @url.helper
+            - @slim.not.found
+            - @slim.route.parameters
+
+    ####################################################################################################################
+    # APPLICATION - DEPLOYMENT CONTROLLERS
+    ####################################################################################################################
+
+    application.deployment.page:
+        class: 'QL\Hal\Controllers\Application\Deployment\DeploymentController'
+        arguments:
+            - @application.deployment.twig
+            - @doctrine.em
+            - @eb
+            - @slim.not.found
+            - @slim.route.parameters
+    application.deployment.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/deployment/deployment.twig']]]
+
+    application.deployments.page:
+        class: 'QL\Hal\Controllers\Application\Deployment\DeploymentsController'
+        arguments:
+            - @application.deployments.twig
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+    application.deployments.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/deployment/deployments.twig']]]
+
+    application.deployments.add.page:
+        class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentController'
+        arguments:
+            - @application.deployments.add.twig
+            - @doctrine.em
+            - @url
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
+    application.deployments.add.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/deployment/deployments.add.twig']]]
+
+    application.deployments.add.handler:
+        class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentHandler'
+        arguments:
+            - @slim.request
+            - @application.deployments.add.handler.form
+            - @application.deployments.add.handler.json
+    application.deployments.add.handler.form:
+        class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentFormHandler'
+        arguments:
+            - @doctrine.em
+            - @application.deployment.validator
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+    application.deployments.add.handler.json:
+        class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentJsonHandler'
+        arguments:
+            - @doctrine.em
+            - @application.deployment.validator
+            - @slim.halt
+            - @json
+            - @url
+            - @slim.request
+            - @slim.route.parameters
+    application.deployment.validator:
+        class: 'QL\Hal\Validator\DeploymentValidator'
+        arguments: [@doctrine.em]
+
+    application.deployment.edit.page:
+        class: 'QL\Hal\Controllers\Application\Deployment\EditDeploymentController'
+        arguments:
+            - @application.deployment.edit.twig
+            - @doctrine.em
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
+    application.deployment.edit.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/deployment/deployments.edit.twig']]]
+    application.deployment.edit.handler:
+        class: 'QL\Hal\Controllers\Application\Deployment\EditDeploymentHandler'
+        arguments:
+            - @doctrine.em
+            - @application.deployment.validator
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+
+    application.deployments.remove.handler:
+        class: 'QL\Hal\Controllers\Application\Deployment\RemoveDeploymentHandler'
+        arguments:
+            - @doctrine.em
+            - @session
+            - @url.helper
+            - @slim.not.found
+            - @slim.route.parameters
+
+    ####################################################################################################################
+    # APPLICATION - ENCRYPTED PROPERTIES CONTROLLERS
+    ####################################################################################################################
+
+    application.encrypted.page:
+        class: 'QL\Hal\Controllers\Application\EncryptedProperty\EncryptedPropertiesController'
+        arguments:
+            - @application.encrypted.twig
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+    application.encrypted.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/encrypted/encrypted.properties.twig']]]
+
+    application.encrypted.add.page:
+        class: 'QL\Hal\Controllers\Application\EncryptedProperty\AddEncryptedPropertyController'
+        arguments:
+            - @application.encrypted.add.twig
+            - @doctrine.em
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters
+    application.encrypted.add.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/encrypted/add.encrypted.property.twig']]]
+    application.encrypted.add.handler:
+        class: 'QL\Hal\Controllers\Application\EncryptedProperty\AddEncryptedPropertyHandler'
+        arguments:
+            - @doctrine.em
+            - @encrypter
+            - @session
+            - @url
+            - @twig.context
+            - @slim.request
+            - @slim.route.parameters
+    application.encrypted.remove.handler:
+        class: 'QL\Hal\Controllers\Application\EncryptedProperty\RemoveEncryptedPropertyHandler'
+        arguments:
+            - @doctrine.em
+            - @session
+            - @url
+            - @slim.request
+            - @slim.not.found
+            - @slim.route.parameters

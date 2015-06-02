@@ -16,11 +16,11 @@
     {% for build in builds %}
         <tr>
 
-            <td><a href="{{ urlFor('build', {'repo': build.repository.id, 'build': build.id}) }}">{{ build.id|formatBuildId }}</a></td>
+            <td><a href="{{ urlFor('build', {'repo': build.application.id, 'build': build.id}) }}">{{ build.id|formatBuildId }}</a></td>
             <td>
                 {{ macros.job_status(build, true) }}
             </td>
-            <td>{{ build.environment.key }}</td>
+            <td>{{ build.environment.name }}</td>
             <td>
                 {{ macros.gitref(build, true) }}
             </td>
@@ -35,13 +35,13 @@
 
             {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
             {% set canPush = false %}
-            {% if build.status in ['Waiting', 'Building'] and canUserPush(currentUser, build.repository, build.environment) %}
+            {% if build.status in ['Waiting', 'Building'] and canUserPush(currentUser, build.application, build.environment) %}
                 {% set canPush = true %}
             {% endif %}
 
             <td class="tr{{ canPush ? ' js-build-push' : '' }}">
                 {% if build.status == 'Success' %}
-                    {% if canUserPush(currentUser, build.repository, build.environment) %}
+                    {% if canUserPush(currentUser, build.application, build.environment) %}
                         <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': build.id}) }}">Push</a>
                     {% endif %}
                 {% endif %}

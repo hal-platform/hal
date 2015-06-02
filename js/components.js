@@ -10,8 +10,8 @@ module.exports = {
         require('./app/form/order-environments').init();
     },
 
-    "repository.add": function() {
-        require('./app/form/add-repository').repos.attach();
+    "application.add": function() {
+        require('./app/form/add-application').repos.attach();
     },
 
     "deployment.add": function() {

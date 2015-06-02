@@ -4,11 +4,11 @@ Needs the following parameters:
 - form.server
 - form.path
 - form.url
-- repository
+- application
 - rsync_only
 
 #}
-<form method="post" action="{{ urlFor('repository.deployments.add', {repository: repository.id}) }}">
+<form method="post" action="{{ urlFor('repository.deployments.add', {repository: application.id}) }}">
     <ul class="form-fields">
         <li>
             <label for="server">
@@ -85,11 +85,10 @@ Needs the following parameters:
         </li>
     </ul>
 
-    <div>
-        {# primary action #}
-        <input class="btn" type="submit" value="Add Deployment">
 
-        {# secondary actions #}
-        <a href="{{ urlFor('repository.deployments', {repository: repository.id}) }}">Cancel</a>
-    </div>
+    <ul class="button-list">
+        <li><input class="btn btn--action" type="submit" value="Add Deployment"></li>
+        <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: application.id}) }}">Cancel</a></li>
+    </ul>
+
 </form>

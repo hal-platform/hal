@@ -111,10 +111,10 @@ class AddServerController implements ControllerInterface
             if (!$renderContext['errors']) {
                 $server = $this->handleFormSubmission($this->request, $environment);
 
-                $name = $server->getName();
-                if ($server->getType() === ServerEnum::TYPE_EB) {
+                $name = $server->name();
+                if ($server->type() === ServerEnum::TYPE_EB) {
                     $name = 'Elastic Beanstalk';
-                } elseif ($server->getType() === ServerEnum::TYPE_EC2) {
+                } elseif ($server->type() === ServerEnum::TYPE_EC2) {
                     $name = 'EC2';
                 }
 
@@ -141,10 +141,10 @@ class AddServerController implements ControllerInterface
             $name = '';
         }
 
-        $server = new Server;
-        $server->setType($type);
-        $server->setEnvironment($environment);
-        $server->setName($name);
+        $server = (new Server)
+            ->withType($type)
+            ->withEnvironment($environment)
+            ->withName($name);
 
         $this->em->persist($server);
         $this->em->flush();

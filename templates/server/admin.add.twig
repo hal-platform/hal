@@ -1,18 +1,13 @@
 {% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
 
 {% set page_title = 'Add Server' %}
 
 {% block content %}
-    <h2>Add a new server</h2>
+    <h1>{{ page_title }}</h1>
 
     <div class="form-wrapper">
-        {% if errors %}
-            <ul class="error-list">
-                {% for error in errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ form_macros.formErrors(errors) }}
 
         <form method="post">
             <ul class="form-fields">
@@ -50,7 +45,7 @@
 
                             <li>
                                 <input id="environment-{{ environment.id }}" type="radio" name="environment" value="{{ environment.id }}"{{ checked }}>
-                                <label for="environment-{{ environment.id }}">{{ environment.key }}</label>
+                                <label for="environment-{{ environment.id }}">{{ environment.name }}</label>
                             </li>
                         {% endfor %}
                     </ul>
@@ -63,15 +58,13 @@
                     </small>
                     <input type="text" name="hostname" id="hostname" maxlength="24" value="{{ form.hostname }}" class="text-input">
                 </li>
-
-                <li>
-                    {# primary action #}
-                    <input class="btn-" type="submit" value="Add Server">
-
-                    {# secondary actions #}
-                    <a href="{{ urlFor('servers') }}">Cancel</a>
-                </li>
             </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Server"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('servers') }}">Cancel</a></li>
+            </ul>
+
         </form>
     </div>
 {% endblock %}

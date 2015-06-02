@@ -98,7 +98,7 @@ class StartBuildController implements ControllerInterface
                 'gitref' => $this->request->post('gitref')
             ],
 
-            'repo' => $application,
+            'application' => $application,
             'branches' => $this->getBranches($application),
             'tags' => $this->getTags($application),
             'open' => $this->getPullRequests($application),

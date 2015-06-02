@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
+
+{% set page_title = 'Edit Deployment : ' ~ deployment.application.name %}
+
+{% block content %}
+    <h1>Edit Deployment - <strong>{{ deployment.application.name }}</strong></h1>
+
+    <h4>Type</h4>
+    <p>{{ deployment.server|formatServerType }}</p>
+
+    <h4>Server</h4>
+    <p>{{ deployment.server|formatServer }}</p>
+
+    <h4>Application</h4>
+    <p>{{ deployment.application.name }}</p>
+
+    <div class="form-wrapper">
+        {{ form_macros.formErrors(errors) }}
+
+        <form method="post">
+            <ul class="form-fields">
+                <li>
+                    {% set isDisabled = (deployment.server.type in ['rsync', 'ec2']) ? '' : ' disabled' %}
+                    <label for="path">
+                        File path
+                        <small class="additional">
+                            <strong>Rsync and EC2 Servers Only</strong><br>
+                            The absolute path to the file directory on the server.
+                            <br>Paths must begin with a forward slash (/).
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="path" id="path" maxlength="255" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'elasticbeanstalk') ? '' : ' disabled' %}
+                    <label for="eb_environment">
+                        Elastic Beanstalk Environment ID
+                        <small class="additional">
+                            <strong>EB Servers Only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'ec2') ? '' : ' disabled' %}
+                    <label for="ec2_pool">
+                        EC2 Pool
+                        <small class="additional">
+                            <strong>EC2 Servers Only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                <li>
+                    <label for="url">
+                        URL
+                        <small class="additional">
+                            A URL is required to help users find where the code is deployed.
+                            <br>Must be the full URL and begin with <code>http://</code> or <code>https://</code>.
+                        </small>
+                    </label>
+                    <input class="text-input" type="url" name="url" id="url" maxlength="255" value="{{ form.url }}" required>
+                </li>
+            </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repository.deployment', {repository: deployment.application.id, id: deployment.id}) }}">Cancel</a></li>
+            </ul>
+        </form>
+    </div>
+
+{% endblock %}

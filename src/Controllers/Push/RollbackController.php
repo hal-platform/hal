@@ -100,7 +100,7 @@ class RollbackController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'repo' => $application,
+            'application' => $application,
             'deployment' => $deployment,
             'pushes' => $pushes
         ]);
