@@ -26,7 +26,7 @@
 {% block navigation_pref %}
     <small>Customize the items on the navigation menu</small>
 
-    <form action="{{ urlFor('settings.handler', {id: user.id}) }}" method="post">
+    <form method="post">
 
         <ul class="nav--main nav--preferences">
             {% for item, description in navItems %}

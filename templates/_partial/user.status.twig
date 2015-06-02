@@ -6,6 +6,7 @@
 {% set prodApplications = prodApplications|default([]) %}
 
 {% set isAdmin = isAdmin|default(false) %}
+{% set isSuper = isSuper|default(false) %}
 {% set showHalStatus = showHalStatus|default(false) %}
 
 <div class="details-box">
@@ -91,6 +92,20 @@
                     <input class="btn btn--action" type="submit" value="Refresh User Cache">
                 </form>
             </li>
+
+            {% if isSuper %}
+                <li>
+                    {% if user.isActive %}
+                        <form method="post" action="{{ urlFor('user.disable', {user: user.id}) }}">
+                            <input class="btn btn--destructive" type="submit" value="Disable User">
+                        </form>
+                    {% else %}
+                        <form method="post" action="{{ urlFor('user.enable', {user: user.id}) }}">
+                            <input class="btn btn--destructive" type="submit" value="Enable User">
+                        </form>
+                    {% endif %}
+                </li>
+            {% endif %}
 
             <li><a class="btn" href="{{ urlFor('admin.permissions') }}">User Permissions</a></li>
             <li><a class="btn" href="{{ urlFor('admin.permissions.deployment') }}">Deployment Permissions</a></li>

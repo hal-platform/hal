@@ -8,6 +8,7 @@
 {% set page_title = 'User : ' ~ name %}
 
 {% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set isSuper = isUserSuper(currentUser) %}
 
 {% block content %}
 

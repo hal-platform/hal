@@ -418,6 +418,20 @@ services:
             - %navigation.list%
             - @slim.request
 
+    user.disable.handler:
+        class: 'QL\Hal\Controllers\User\DisableUserHandler'
+        arguments:
+            - @doctrine.em
+            - @session.flasher
+            - @hal.user
+
+    user.enable.handler:
+        class: 'QL\Hal\Controllers\User\EnableUserHandler'
+        arguments:
+            - @doctrine.em
+            - @session.flasher
+            - @hal.user
+
     ####################################################################################################################
     # USER TOKEN MANAGEMENT CONTROLLERS
     ####################################################################################################################

@@ -77,14 +77,13 @@ services:
             - @exception.dispatcher
             - @logger
             - @error.pages.twig
-
-    slim.hook.routes.api:
-        class: 'QL\Panthor\Slim\RouteLoaderHook'
-        arguments: [@service_container, %routes.api%]
-
-    slim.hook.kraken.routes:
-        class: 'QL\Panthor\Slim\RouteLoaderHook'
-        arguments: [@service_container, %kraken.routes%]
+    app.slim.hook.routes:
+        parent: 'slim.hook.routes'
+        calls:
+            - ['addRoutes', [%routes.api%]]
+            - ['addRoutes', [%routes.admin%]]
+            - ['addRoutes', [%routes.application%]]
+            - ['addRoutes', [%kraken.routes%]]
 
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'
@@ -94,6 +93,10 @@ services:
         class: 'stdClass'
         factory: ['QL\Panthor\Utility\Stringify', 'template']
         arguments: ['%%s/%%s', [@root, '.hal9000.push.yml']]
+
+    ######################################################################################################################
+    # INCREMENTAL ROUTE LOADING
+    ######################################################################################################################
 
     ######################################################################################################################
     # ERROR & EXCEPTION HANDLING
