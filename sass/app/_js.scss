@@ -19,11 +19,11 @@
     max-height: 300px;
 }
 
-.js-search-item {
-    display: none;
-}
-.js-search-item + .js-search-item-display {
+.js-search-item.js-search-item-display {
     display: block;
+}
+.js-search-item.js-search-item-hidden {
+    display: none;
 }
 
 .js-search-results {

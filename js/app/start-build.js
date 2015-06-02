@@ -7,6 +7,7 @@ module.exports = {
     searchQuery: 'span',
     searchQueryPrimary: '.js-search-primary',
     searchQueryShowClass: 'js-search-item-display',
+    searchQueryHideClass: 'js-search-item-hidden',
 
     $searchBox: null,
     $searchResults: null,
@@ -41,10 +42,20 @@ module.exports = {
                 _this.hideSearchListings();
             },
             hide           : function(row) {
-                row.removeClass(_this.searchQueryShowClass);
+                row
+                    .addClass(_this.searchQueryHideClass)
+                    .removeClass(_this.searchQueryShowClass);
             },
             show           : function(row) {
-                row.addClass(_this.searchQueryShowClass);
+                row
+                    .addClass(_this.searchQueryShowClass)
+                    .removeClass(_this.searchQueryHideClass);
+            },
+            onSearchEmpty  : function(der) {
+                _this.$searchResults
+                    .children(_this.searchResultItem)
+                    .addClass(_this.searchQueryShowClass)
+                    .removeClass(_this.searchQueryHideClass);
             }
         });
 
