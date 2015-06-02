@@ -33,13 +33,14 @@ $query = sprintf('CN=git-%s,DC=mi,DC=corp', $group);
 $dn = Dn::fromString($query);
 $users = $ldap->usersInGroup($dn);
 
+echo "\n" . sprintf('Group: "%s"', $group) . "\n";
 if (count($users) == 0) {
-    echo sprintf('No users found in "%s"', $group);
-    echo PHP_EOL;
-}
+    echo "No users found.\n";
+} else {
 
-foreach ($users as $user) {
-    $pad = str_pad($user->windowsUsername(), 15);
-    echo  $pad . $user->displayName();
-    echo PHP_EOL;
+    foreach ($users as $user) {
+        $pad = str_pad($user->windowsUsername(), 15);
+        echo  $pad . $user->displayName();
+        echo "\n";
+    }
 }
