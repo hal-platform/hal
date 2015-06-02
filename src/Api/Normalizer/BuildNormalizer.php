@@ -104,7 +104,7 @@ class BuildNormalizer
                 'reference' => [
                     'text' => $build->branch(),
                     'url' => $this->urls->githubReferenceUrl(
-                        $build->application()->githubUser(),
+                        $build->application()->githubOwner(),
                         $build->application()->githubRepo(),
                         $build->branch()
                     )
@@ -112,7 +112,7 @@ class BuildNormalizer
                 'commit' => [
                     'text' => $build->commit(),
                     'url' => $this->urls->githubCommitUrl(
-                        $build->application()->githubUser(),
+                        $build->application()->githubOwner(),
                         $build->application()->githubRepo(),
                         $build->commit()
                     )

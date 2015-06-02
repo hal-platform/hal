@@ -130,7 +130,7 @@ class BuildStartValidator
             return null;
         }
 
-        if (!$ref = $this->github->resolve($application->githubUser(), $application->githubRepo(), $reference)) {
+        if (!$ref = $this->github->resolve($application->githubOwner(), $application->githubRepo(), $reference)) {
             $this->errors[] = self::ERR_UNKNOWN_REF;
             return null;
         }

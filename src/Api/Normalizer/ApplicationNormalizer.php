@@ -82,12 +82,12 @@ class ApplicationNormalizer
                 'url' => $this->url->urlFor('repository', ['id' => $application->id()]),
                 'email' => $application->email(),
                 'github-user' => [
-                    'text' => $application->githubUser(),
-                    'url' => $this->url->githubUserUrl($application->githubUser())
+                    'text' => $application->githubOwner(),
+                    'url' => $this->url->githubUserUrl($application->githubOwner())
                 ],
                 'github-repository' => [
                     'text' => $application->githubRepo(),
-                    'url' => $this->url->githubRepoUrl($application->githubUser(), $application->githubRepo())
+                    'url' => $this->url->githubRepoUrl($application->githubOwner(), $application->githubRepo())
                 ],
                 'eb-name' => $application->ebName()
             ],

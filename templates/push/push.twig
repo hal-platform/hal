@@ -67,7 +67,7 @@
 
             <dt class="split__title">Reference</dt>
             <dd>
-                {% if githubCommitIsCurrent(push.application.githubUser, push.application.githubRepo, push.build.branch, push.build.commit) %}
+                {% if githubCommitIsCurrent(push.application.githubOwner, push.application.githubRepo, push.build.branch, push.build.commit) %}
                     {{ macros.status_icon(macros.gitref(push.build) ~ ' (latest)', 'success') }}
                 {% else %}
                     {{ macros.status_icon(macros.gitref(push.build) ~ ' (behind)', 'other') }}

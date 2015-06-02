@@ -34,10 +34,7 @@
             <dd>{{ application.key }}</dd>
 
             <dt class="split__title">Github Source</dt>
-            <dd>
-                <a href="{{ githubRepo(application.githubUser, application.githubRepo) }}">{{ application.githubUser }}/{{ application.githubRepo }}</a>
-                {{ macros.icon('github') }}
-            </dd>
+            <dd>{{ macros.gitsource(application) }}</dd>
 
             {% if application.ebName %}
                 <dt class="split__title">Elastic Beanstalk Name</dt>

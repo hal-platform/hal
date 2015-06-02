@@ -29,10 +29,7 @@
             {% for application in applications %}
                 <tr>
                     <td><a href="{{ urlFor('repository.status', {'id': application.id}) }}">{{ application.name }}</a></td>
-                    <td>
-                        <a href="{{ githubRepo(application.githubUser, application.githubRepo) }}">{{ application.githubUser }}/{{ application.githubRepo }}</a>
-                        {{ macros.icon('github') }}
-                    </td>
+                    <td>{{ macros.gitsource(application) }}</td>
                     <td class="tr">
                         <a href="{{ urlFor('repository', {'id': application.id}) }}">Details</a>
                     </td>

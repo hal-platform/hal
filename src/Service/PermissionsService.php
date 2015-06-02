@@ -298,7 +298,7 @@ class PermissionsService
         }
 
         $result = $this->github->isUserCollaborator(
-            $application->githubUser(),
+            $application->githubOwner(),
             $application->githubRepo(),
             $user->handle()
         );

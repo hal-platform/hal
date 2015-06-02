@@ -135,7 +135,7 @@ class StartBuildController implements ControllerInterface
      */
     private function getBranches(Application $application)
     {
-        $branches = $this->github->branches($application->githubUser(), $application->githubRepo());
+        $branches = $this->github->branches($application->githubOwner(), $application->githubRepo());
 
         // sort master to top, alpha otherwise
         usort($branches, function ($a, $b) {
@@ -162,7 +162,7 @@ class StartBuildController implements ControllerInterface
      */
     private function getTags(Application $application)
     {
-        $tags = $this->github->tags($application->githubUser(), $application->githubRepo());
+        $tags = $this->github->tags($application->githubOwner(), $application->githubRepo());
 
        // $tags = [
        //     ['name' => '3.1'],
@@ -204,7 +204,7 @@ class StartBuildController implements ControllerInterface
     private function getPullRequests(Application $application, $open = true)
     {
         $getter = ($open) ? 'openPullRequests' : 'closedPullRequests';
-        $pr = $this->github->$getter($application->githubUser(), $application->githubRepo());
+        $pr = $this->github->$getter($application->githubOwner(), $application->githubRepo());
 
         // sort by decreasing pull request number
         usort($pr, function ($a, $b) {

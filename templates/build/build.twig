@@ -30,7 +30,7 @@
 
             <dt class="split__title">Reference</dt>
             <dd>
-                {% if githubCommitIsCurrent(build.application.githubUser, build.application.githubRepo, build.branch, build.commit) %}
+                {% if githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
                     {{ macros.status_icon(macros.gitref(build) ~ ' (latest)', 'success') }}
                 {% else %}
                     {{ macros.status_icon(macros.gitref(build) ~ ' (behind)', 'other') }}
@@ -39,7 +39,7 @@
 
             <dt class="split__title">Commit</dt>
             <dd>
-                <a href="{{ githubCommit(build.application.githubUser, build.application.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
+                <a href="{{ githubCommit(build.application.githubOwner, build.application.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
                 {{ macros.icon('github') }}
             </dd>
 

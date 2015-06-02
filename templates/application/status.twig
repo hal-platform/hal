@@ -122,7 +122,7 @@
                 <li class="js-data-overload">
                     <span class="split__title">Reference:</span>
                     {% if active %}
-                        {% set isCurrent = githubCommitIsCurrent(application.githubUser, application.githubRepo, active.build.branch, active.build.commit) %}
+                        {% set isCurrent = githubCommitIsCurrent(application.githubOwner, application.githubRepo, active.build.branch, active.build.commit) %}
                         {{ macros.status_icon(macros.gitref(active.build, true), isCurrent ? 'success' : 'warning') }}
 
                     {% else %}

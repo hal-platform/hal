@@ -28,15 +28,12 @@
 
             {% if applications[group.id] %}
                 {% set hasApplications = true %}
-                {% for repo in applications[group.id] %}
+                {% for application in applications[group.id] %}
                     <tr>
-                        <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ repo.name }}</a></td>
+                        <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ application.name }}</a></td>
+                        <td>{{ macros.gitsource(application) }}</td>
                         <td>
-                            <a href="{{ githubRepo(repo.githubUser, repo.githubRepo) }}">{{ repo.githubUser }}/{{ repo.githubRepo }}</a>
-                            {{ macros.icon('github') }}
-                        </td>
-                        <td>
-                            <a href="{{ urlFor('repository', {'id': repo.id}) }}">Details</a>
+                            <a href="{{ urlFor('repository', {'id': application.id}) }}">Details</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -152,7 +152,7 @@ class AddApplicationController implements ControllerInterface
             ->withGroup($group)
             ->withEmail($email)
 
-            ->withGithubUser($user)
+            ->withGithubOwner($user)
             ->withGithubRepo($repo);
 
         // Default to blank, not null
