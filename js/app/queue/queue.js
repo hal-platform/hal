@@ -119,8 +119,8 @@ module.exports = {
         // - _embedded.jobs.[]._links.user
         // - _embedded.jobs.[]._links.user.title
         // - _embedded.jobs.[]._links.environment.title
-        // - _embedded.jobs.[]._embedded.repository.title
-        // - _embedded.jobs.[]._embedded.repository.url
+        // - _embedded.jobs.[]._embedded.application.title
+        // - _embedded.jobs.[]._embedded.application.url
 
         // Add Push Job requires these properties:
         // - _embedded.jobs.[].id
@@ -130,8 +130,8 @@ module.exports = {
         // - _embedded.jobs.[]._links.user.title
         // - _embedded.jobs.[]._embedded.build.id
         // - _embedded.jobs.[]._embedded.build._links.environment.title
-        // - _embedded.jobs.[]._embedded.repository.title
-        // - _embedded.jobs.[]._embedded.repository.url
+        // - _embedded.jobs.[]._embedded.application.title
+        // - _embedded.jobs.[]._embedded.application.url
         // - _embedded.jobs.[]._embedded.deployment._links.server.title
 
         $.getJSON(endpoint, function(data) {

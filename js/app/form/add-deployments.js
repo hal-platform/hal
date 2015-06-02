@@ -19,7 +19,7 @@ module.exports = {
             $form = $container.find('.form-fields'),
             $badBtn = $(this.badButton),
             $submitBtn = $container.find('input[type="submit"]'),
-            $cancelBtn = $container.find('.secondary-action'),
+            $cancelBtn = $container.find('.btn--secondary'),
             url = $container.find('form').attr('action');
 
         // Handler for original link to separate page

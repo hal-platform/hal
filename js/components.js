@@ -6,10 +6,6 @@ module.exports = {
     },
 
     // forms
-    "environment.order": function() {
-        require('./app/form/order-environments').init();
-    },
-
     "application.add": function() {
         require('./app/form/add-application').repos.attach();
     },

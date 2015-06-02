@@ -39,8 +39,8 @@ module.exports = {
             referenceType: this.determineGitrefType(humanReference),
             referenceUrl: build.commit.url,
 
-            repoName: build._embedded.repository.title,
-            repoStatusUrl: build._embedded.repository.url + '/status',
+            appName: build._embedded.application.title,
+            appStatusUrl: build._embedded.application.url + '/status',
 
             initiator: initiator
         };
@@ -83,8 +83,8 @@ module.exports = {
             environmentName: push._embedded.build._links.environment.title,
             serverName: servername_or_whatever,
 
-            repoName: push._embedded.repository.title,
-            repoStatusUrl: push._embedded.repository.url + '/status',
+            appName: push._embedded.application.title,
+            appStatusUrl: push._embedded.application.url + '/status',
 
             initiator: initiator
         };
