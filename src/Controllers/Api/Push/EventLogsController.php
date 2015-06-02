@@ -83,7 +83,7 @@ class EventLogsController implements ControllerInterface
 
         $logs = array_map(function ($log) {
             return $this->eventLogNormalizer->link($log);
-        }, $push->getLogs()->toArray());
+        }, $push->logs()->toArray());
 
         $status = (count($logs) > 0) ? 200 : 404;
 

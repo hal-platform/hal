@@ -137,7 +137,7 @@ class StartBuildHandler implements MiddlewareInterface
         // set ID
 
         $id = $this->unique->generateBuildId();
-        $build->setId($id);
+        $build->withId($id);
 
         // check for ID dupes
         $this->dupeCatcher($build);
@@ -151,7 +151,7 @@ class StartBuildHandler implements MiddlewareInterface
 
         // flash and redirect
         $this->session->flash(self::WAIT_FOR_IT, 'success');
-        $this->url->redirectFor('build', ['build' => $build->getId()], [], 303);
+        $this->url->redirectFor('build', ['build' => $build->id()], [], 303);
     }
 
     /**
@@ -160,10 +160,10 @@ class StartBuildHandler implements MiddlewareInterface
      */
     private function dupeCatcher(Build $build)
     {
-        $dupe = $this->buildRepo->find($build->getId());
+        $dupe = $this->buildRepo->find($build->id());
         if ($dupe) {
             $id = $this->unique->generateBuildId();
-            $build->setId($id);
+            $build->withId($id);
             $this->dupeCatcher($build);
         }
     }

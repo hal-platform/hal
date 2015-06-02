@@ -11,9 +11,9 @@
     {% set deployment_details = deployment|formatDeploymentDetails %}
     {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
-    <h2>Push History - <strong>{{ application.name }}</strong> to <strong>{{ server }}</strong></h2>
+    <h1>Push History - <strong>{{ application.name }}</strong> to <strong>{{ server }}</strong></h1>
 
-    <h3>Deployment Information</h3>
+    <h2>Deployment Details</h2>
     <div class="details-box">
         <dl class="split mbn">
 
@@ -46,7 +46,7 @@
 
     {% set canRollback = canUserPush(currentUser, application, deployment.server.environment) %}
 
-    <h3>Push History</h3>
+    <h2>Push History</h2>
     <table class="table--spacing-medium" data-tablesaw-mode="stack">
         <thead>
             <tr>

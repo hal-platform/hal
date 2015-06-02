@@ -69,9 +69,9 @@ class BuildNormalizer
     public function link(Build $build = null)
     {
         return (is_null($build)) ? null : $this->buildLink(
-            ['api.build', ['id' => $build->getId()]],
+            ['api.build', ['id' => $build->id()]],
             [
-                'title' => $build->getId()
+                'title' => $build->id()
             ]
         );
     }
@@ -88,43 +88,43 @@ class BuildNormalizer
         }
 
         $properties = [
-            'user' => $build->getUser(),
-            'application' => $build->getApplication(),
-            'environment' => $build->getEnvironment()
+            'user' => $build->user(),
+            'application' => $build->application(),
+            'environment' => $build->environment()
         ];
 
         return $this->buildResource(
             [
-                'id' => $build->getId(),
-                'status' => $build->getStatus(),
-                'url' => $this->urls->urlFor('build', ['build' => $build->getId()]),
-                'created' => $build->getCreated(),
-                'start' => $build->getStart(),
-                'end' => $build->getEnd(),
+                'id' => $build->id(),
+                'status' => $build->status(),
+                'url' => $this->urls->urlFor('build', ['build' => $build->id()]),
+                'created' => $build->created(),
+                'start' => $build->start(),
+                'end' => $build->end(),
                 'reference' => [
-                    'text' => $build->getBranch(),
+                    'text' => $build->branch(),
                     'url' => $this->urls->githubReferenceUrl(
-                        $build->getApplication()->githubUser(),
-                        $build->getApplication()->githubRepo(),
-                        $build->getBranch()
+                        $build->application()->githubUser(),
+                        $build->application()->githubRepo(),
+                        $build->branch()
                     )
                 ],
                 'commit' => [
-                    'text' => $build->getCommit(),
+                    'text' => $build->commit(),
                     'url' => $this->urls->githubCommitUrl(
-                        $build->getApplication()->githubUser(),
-                        $build->getApplication()->githubRepo(),
-                        $build->getCommit()
+                        $build->application()->githubUser(),
+                        $build->application()->githubRepo(),
+                        $build->commit()
                     )
                 ]
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($build),
-                'user' => $this->users->link($build->getUser()),
-                'application' => $this->repositories->link($build->getApplication()),
-                'environment' => $this->environments->link($build->getEnvironment()),
-                'logs' => $this->buildLink(['api.build.logs', ['id' => $build->getId()]]),
+                'user' => $this->users->link($build->user()),
+                'application' => $this->repositories->link($build->application()),
+                'environment' => $this->environments->link($build->environment()),
+                'logs' => $this->buildLink(['api.build.logs', ['id' => $build->id()]]),
             ]
         );
     }

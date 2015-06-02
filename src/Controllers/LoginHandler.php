@@ -125,7 +125,7 @@ class LoginHandler implements MiddlewareInterface
         $this->updateUserDetails($account, $user);
 
         $this->session->clear();
-        $this->session->set('user_id', $user->getId());
+        $this->session->set('user_id', $user->id());
         $this->session->set('is-first-login', $isFirstLogin);
 
         if ($redirect) {
@@ -144,11 +144,12 @@ class LoginHandler implements MiddlewareInterface
     private function updateUserDetails(LdapUser $account, User $user)
     {
         // Update user
-        $user->withId($account->commonId());
-        $user->withEmail($account->email());
-        $user->withHandle($account->windowsUsername());
-        $user->withName($account->displayName());
-        $user->withPictureUrl($account->badgePhotoUrl());
+        $user
+            ->withId($account->commonId())
+            ->withEmail($account->email())
+            ->withHandle($account->windowsUsername())
+            ->withName($account->displayName())
+            ->withPictureUrl($account->badgePhotoUrl());
 
         $this->em->persist($user);
         $this->em->flush();

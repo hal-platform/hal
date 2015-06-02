@@ -151,8 +151,8 @@ class StartPushHandler implements MiddlewareInterface
             return $this->context->addContext(['errors' => [self::ERR_NO_DEPS]]);
         }
 
-        $environment = $build->getEnvironment();
-        $application = $build->getApplication();
+        $environment = $build->environment();
+        $application = $build->application();
         $pushes = [];
 
         $canUserPush = $this->permissions->canUserPush($this->currentUser, $application, $environment);
@@ -186,16 +186,15 @@ class StartPushHandler implements MiddlewareInterface
                 ]);
             }
 
-            $push = new Push;
-
             $id = $this->unique->generatePushId();
 
-            $push->setId($id);
-            $push->setStatus('Waiting');
-            $push->setUser($this->currentUser);
-            $push->setBuild($build);
-            $push->setDeployment($deployment);
-            $push->setApplication($application);
+            $push = (new Push)
+                ->withId($id)
+                ->withStatus('Waiting')
+                ->withUser($this->currentUser)
+                ->withBuild($build)
+                ->withDeployment($deployment)
+                ->withApplication($application);
 
             $pushes[] = $push;
         }
@@ -226,21 +225,21 @@ class StartPushHandler implements MiddlewareInterface
     private function dupeCatcher(array $pushes)
     {
         $ids = array_map(function($push) {
-            return $push->getId();
+            return $push->id();
         }, $pushes);
 
         $dupes = $this->pushRepo->findBy(['id' => $ids]);
         if ($dupes) {
             $dupeIds = array_map(function($push) {
-                return $push->getId();
+                return $push->id();
             }, $dupes);
 
             $dupePushes = array_filter($pushes, function($push) use ($dupeIds) {
-                return in_array($push->getId(), $dupeIds);
+                return in_array($push->id(), $dupeIds);
             });
 
             foreach ($dupePushes as $push) {
-                $push->setId($this->unique->generatePushId());
+                $push->withId($this->unique->generatePushId());
             }
 
             $this->dupeCatcher($pushes);

@@ -140,15 +140,14 @@ class BuildStartValidator
             $reference = $commit;
         }
 
-        $build = new Build;
+        $build = (new Build)
+            ->withStatus('Waiting')
+            ->withBranch($reference)
+            ->withCommit($commit)
 
-        $build->setStatus('Waiting');
-        $build->setBranch($reference);
-        $build->setCommit($commit);
-
-        $build->setUser($this->currentUser);
-        $build->setApplication($application);
-        $build->setEnvironment($env);
+            ->withUser($this->currentUser)
+            ->withApplication($application)
+            ->withEnvironment($env);
 
         // Still needs ID assigned
         return $build;

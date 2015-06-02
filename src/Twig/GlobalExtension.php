@@ -7,12 +7,8 @@
 
 namespace QL\Hal\Twig;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use Slim\Http\Request;
-use Symfony\Component\DependencyInjection\IntrospectableContainerInterface;
 use Twig_Extension;
 
 /**
@@ -38,26 +34,23 @@ class GlobalExtension extends Twig_Extension
     private $session;
 
     /**
-     * @type EntityRepository
+     * @type callable
      */
-    private $userRepo;
+    private $lazyUser;
 
     /**
-     * @param IntrospectableContainerInterface $di
      * @param Request $request
      * @param Session $session
-     * @param EntityManagerInterface $em
+     * @param callable $lazyUser
      */
     public function __construct(
-        IntrospectableContainerInterface $di,
         Request $request,
         Session $session,
-        EntityManagerInterface $em
+        callable $lazyUser
     ) {
-        $this->di = $di;
         $this->request = $request;
         $this->session = $session;
-        $this->userRepo = $em->getRepository(User::CLASS);
+        $this->lazyUser = $lazyUser;
 
         $this->globals = [];
     }
@@ -77,7 +70,7 @@ class GlobalExtension extends Twig_Extension
      */
     public function getGlobals()
     {
-        $this->addGlobal('currentUser', $this->getCurrentUser());
+        $this->addGlobal('currentUser', call_user_func($this->lazyUser));
         $this->addGlobal('isFirstLogin', $this->session->get('is-first-login'));
         $this->addGlobal('ishttpsOn', ($this->request->getScheme() === 'https'));
 
@@ -93,24 +86,5 @@ class GlobalExtension extends Twig_Extension
     public function addGlobal($key, $value)
     {
         $this->globals[$key] = $value;
-    }
-
-    /**
-     * @return User|null
-     */
-    private function getCurrentUser()
-    {
-        $user = null;
-
-        // already loaded
-        if ($this->di->initialized('currentUser')) {
-            $user = $this->di->get('currentUser', IntrospectableContainerInterface::NULL_ON_INVALID_REFERENCE);
-
-        // read from db if session is set
-        } elseif ($userId = $this->session->get('user_id')) {
-            $user = $this->userRepo->find($userId);
-        }
-
-        return $user;
     }
 }

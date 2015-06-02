@@ -86,7 +86,7 @@ class StartPushController implements ControllerInterface
     {
         $build = $this->buildRepo->find($this->parameters['build']);
 
-        if (!$build || $build->getStatus() != 'Success') {
+        if (!$build || $build->status() != 'Success') {
             return call_user_func($this->notFound);
         }
 
@@ -96,7 +96,7 @@ class StartPushController implements ControllerInterface
         foreach ($deployments as $deployment) {
 
             $latest = $this->pushRepo->getMostRecentByDeployment($deployment);
-            if ($latest && $latest->getStatus() === 'Success') {
+            if ($latest && $latest->status() === 'Success') {
                 $success = $latest;
             } else {
                 $success = $this->pushRepo->getMostRecentSuccessByDeployment($deployment);
@@ -127,10 +127,10 @@ class StartPushController implements ControllerInterface
      */
     private function getDeploymentsForBuild(Build $build)
     {
-        $servers = $this->serverRepo->findBy(['environment' => $build->getEnvironment()]);
+        $servers = $this->serverRepo->findBy(['environment' => $build->environment()]);
 
         $criteria = [
-            'application' => $build->getApplication(),
+            'application' => $build->application(),
             'server' => $servers
         ];
 

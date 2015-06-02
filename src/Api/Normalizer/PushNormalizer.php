@@ -77,9 +77,9 @@ class PushNormalizer
     public function link(Push $push = null)
     {
         return  (is_null($push)) ? null : $this->buildLink(
-            ['api.push', ['id' => $push->getId()]],
+            ['api.push', ['id' => $push->id()]],
             [
-                'title' => $push->getId()
+                'title' => $push->id()
             ]
         );
     }
@@ -96,29 +96,29 @@ class PushNormalizer
         }
 
         $properties = [
-            'user' => $push->getUser(),
-            'build' => $push->getBuild(),
-            'deployment' => $push->getDeployment(),
-            'application' => $push->getApplication()
+            'user' => $push->user(),
+            'build' => $push->build(),
+            'deployment' => $push->deployment(),
+            'application' => $push->application()
         ];
 
         return $this->buildResource(
             [
-                'id' => $push->getId(),
-                'status' => $push->getStatus(),
-                'url' => $this->urls->urlFor('push', ['push' => $push->getId()]),
-                'created' => $push->getCreated(),
-                'start' => $push->getStart(),
-                'end' => $push->getEnd()
+                'id' => $push->id(),
+                'status' => $push->status(),
+                'url' => $this->urls->urlFor('push', ['push' => $push->id()]),
+                'created' => $push->created(),
+                'start' => $push->start(),
+                'end' => $push->end()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($push),
-                'user' => $this->users->link($push->getUser()),
-                'build' => $this->builds->link($push->getBuild()),
-                'deployment' => $this->deployments->link($push->getDeployment()),
-                'application' => $this->repositories->link($push->getApplication()),
-                'logs' => $this->buildLink(['api.push.logs', ['id' => $push->getId()]])
+                'user' => $this->users->link($push->user()),
+                'build' => $this->builds->link($push->build()),
+                'deployment' => $this->deployments->link($push->deployment()),
+                'application' => $this->repositories->link($push->application()),
+                'logs' => $this->buildLink(['api.push.logs', ['id' => $push->id()]])
             ]
         );
     }

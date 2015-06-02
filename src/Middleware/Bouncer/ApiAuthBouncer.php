@@ -84,13 +84,11 @@ class ApiAuthBouncer implements MiddlewareInterface
 
         $requester = $token->user();
 
-        if ($requester instanceof User) {
-            if (!$requester->isActive()) {
-                throw HttpProblemException::build(403, sprintf('Access denied. User has been marked as inactive.', self::HEADER));
-            }
-            if (!$this->ldap->getUserByCommonId($requester->getId())) {
-                throw HttpProblemException::build(403, sprintf('Access denied. User cannot be located.', self::HEADER));
-            }
+        if (!$requester->isActive()) {
+            throw HttpProblemException::build(403, sprintf('Access denied. User has been marked as inactive.', self::HEADER));
+        }
+        if (!$this->ldap->getUserByCommonId($requester->id())) {
+            throw HttpProblemException::build(403, sprintf('Access denied. User cannot be located.', self::HEADER));
         }
 
         // let controller know who or what is connected to the api

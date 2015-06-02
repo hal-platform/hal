@@ -91,7 +91,7 @@ class RollbackController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getByApplication($deployment, self::MAX_PER_PAGE, ($page-1));
+        $pushes = $this->pushRepo->getByApplication($application, self::MAX_PER_PAGE, ($page-1));
 
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);

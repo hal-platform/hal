@@ -94,7 +94,7 @@ class ElasticBeanstalkService
         $grouped = $this->groupByApplication($deployments);
         // Get EB App Name from the first deployment
         // $firstDeploy = reset($mapped);
-        // $ebApplicationName = $firstDeploy->getRepository()->getEbName();
+        // $ebApplicationName = $firstDeploy->application()->ebName();
 
         $loaded = [];
 

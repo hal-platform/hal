@@ -92,10 +92,10 @@ class RemoveServerController implements ControllerInterface
         $this->em->remove($server);
         $this->em->flush();
 
-        $name = $server->getName();
-        if ($server->getType() === ServerEnum::TYPE_EB) {
+        $name = $server->name();
+        if ($server->type() === ServerEnum::TYPE_EB) {
             $name = 'Elastic Beanstalk';
-        } elseif ($server->getType() === ServerEnum::TYPE_EC2) {
+        } elseif ($server->type() === ServerEnum::TYPE_EC2) {
             $name = 'EC2';
         }
 

@@ -116,7 +116,7 @@ class StartBuildController implements ControllerInterface
      */
     private function getBuildableEnvironments(Application $application)
     {
-        $envs = $this->envRepo->getBuildableEnvironmentsByRepository($application);
+        $envs = $this->envRepo->getBuildableEnvironmentsByApplication($application);
 
         // if empty, throw them a bone with "test"
         if (!$envs) {

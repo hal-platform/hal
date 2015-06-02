@@ -204,8 +204,8 @@ class DashboardController implements ControllerInterface
     private function queueSort()
     {
         return function($aEntity, $bEntity) {
-            $a = $aEntity->getCreated();
-            $b = $bEntity->getCreated();
+            $a = $aEntity->created();
+            $b = $bEntity->created();
 
             if ($a == $b) {
                 return 0;

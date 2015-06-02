@@ -67,14 +67,14 @@ class StatusExtension extends Twig_Extension
             return $default;
         }
 
-        if ($build->getStatus() === 'Success') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $build->getStatus());
+        if ($build->status() === 'Success') {
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $build->status());
 
-        } elseif (in_array($build->getStatus(), ['Error', 'Removed'], true)) {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $build->getStatus());
+        } elseif (in_array($build->status(), ['Error', 'Removed'], true)) {
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $build->status());
 
-        } elseif ($build->getStatus()) {
-            return sprintf('<span class="%s" data-build="%s">%s</span>', 'status-icon--warning', $build->getId(), $build->getStatus());
+        } elseif ($build->status()) {
+            return sprintf('<span class="%s" data-build="%s">%s</span>', 'status-icon--warning', $build->id(), $build->status());
         }
 
         return $default;
@@ -93,14 +93,14 @@ class StatusExtension extends Twig_Extension
             return $default;
         }
 
-        if ($push->getStatus() === 'Success') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $push->getStatus());
+        if ($push->status() === 'Success') {
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $push->status());
 
-        } elseif ($push->getStatus() === 'Error') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $push->getStatus());
+        } elseif ($push->status() === 'Error') {
+            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $push->status());
 
-        } elseif ($push->getStatus()) {
-            return sprintf('<span class="%s" data-push="%s">%s</span>', 'status-icon--warning', $push->getId(), $push->getStatus());
+        } elseif ($push->status()) {
+            return sprintf('<span class="%s" data-push="%s">%s</span>', 'status-icon--warning', $push->id(), $push->status());
         }
 
         return $default;
