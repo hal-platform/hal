@@ -84,27 +84,10 @@ class StatsService
             return $data;
         }
 
-        $data = $this->getRepoStatsForRange($from, $to);
+        $data = $this->getApplicationStatsForRange($from, $to);
 
         $this->setToCache($key, $data);
         return $data;
-    }
-
-    /**
-     * @param Environment $environment
-     *
-     * @return bool
-     */
-    private function isProduction(Environment $environment)
-    {
-        $env = $environment->getKey();
-
-        // starts with prod = prod
-        if (stripos($env, 'prod') !== false) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -113,14 +96,14 @@ class StatsService
      *
      * @return array
      */
-    private function getRepoStatsForRange($from, $to)
+    private function getApplicationStatsForRange($from, $to)
     {
         $data = [
             'builds' => 0,
             'prod_builds' => 0,
             'pushes' => 0,
             'prod_pushes' => 0,
-            'active_repos' => 0,
+            'active_applications' => 0,
         ];
 
         $criteria = (new Criteria)
@@ -151,28 +134,28 @@ class StatsService
      */
     private function collateJobStats(array $builds, array $pushes)
     {
-        $repos = [];
+        $applications = [];
         $prodBuilds = 0;
         $prodPushes = 0;
 
         foreach ($builds as $build) {
-            $repoId = $build->getRepository()->getId();
-            $env = $build->getEnvironment()->getKey();
+            $applicationId = $build->getApplication()->id();
+            $env = $build->getEnvironment()->key();
 
-            $repos[$repoId] = true;
+            $applications[$applicationId] = true;
 
-            if ($this->isProduction($build->getEnvironment())) {
+            if ($build->getEnvironment()->isProduction()) {
                 $prodBuilds++;
             }
         }
 
         foreach ($pushes as $push) {
-            $repoId = $push->getRepository()->getId();
-            $env = $push->getDeployment()->getServer()->getEnvironment();
+            $applicationId = $push->getApplication()->id();
+            $env = $push->getDeployment()->server()->environment();
 
-            $repos[$repoId] = true;
+            $applications[$applicationId] = true;
 
-            if ($this->isProduction($env)) {
+            if ($env->isProduction()) {
                 $prodPushes++;
             }
         }
@@ -180,7 +163,7 @@ class StatsService
         return [
             'prod_builds' => $prodBuilds,
             'prod_pushes' => $prodPushes,
-            'active_repos' => count($repos)
+            'active_applications' => count($applications)
         ];
     }
 }
