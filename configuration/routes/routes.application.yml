@@ -1,0 +1,128 @@
+parameters:
+    routes.application:
+
+        ################################################################################################################
+        # REPOSITORY ROUTES
+        ################################################################################################################
+
+        repositories:
+            method: 'GET'
+            route: '/repositories'
+            stack: ['middleware.login', 'applications.page']
+
+        repository:
+            method: 'GET'
+            route: '/repositories/:id'
+            stack: ['middleware.login', 'application.page']
+            conditions: {id: %routes.regex.digit%}
+
+        repository.status:
+            method: 'GET'
+            route: '/repositories/:id/status'
+            stack: ['middleware.login', 'application.status.sticky.handler', 'application.status.page']
+            conditions: {id: %routes.regex.digit%}
+
+        repository.admin.add:
+            method: ['GET', 'POST']
+            route: '/repositories/add'
+            stack: ['middleware.login', 'application.admin.add.page']
+
+        repository.admin.edit:
+            method: ['GET', 'POST']
+            route: '/repositories/:repository/edit'
+            stack: ['middleware.lead', 'application.admin.edit.page']
+            conditions: {repository: %routes.regex.digit%}
+
+        ################################################################################################################
+        # REPOSITORY ROUTES - ADMIN
+        ################################################################################################################
+
+        repository.admin.remove.confirm:
+            method: 'GET'
+            route: '/repositories/:id/remove'
+            stack: ['middleware.admin', 'delete.confirm.page']
+            conditions: {id: %routes.regex.digit%}
+        repository.admin.remove:
+            method: 'POST'
+            route: '/repositories/:id/remove'
+            stack: ['middleware.admin', 'application.admin.remove.handler']
+            conditions: {id: %routes.regex.digit%}
+
+        ################################################################################################################
+        # REPOSITORY DEPLOYMENT ROUTES
+        ################################################################################################################
+
+        repository.deployment:
+            method: 'GET'
+            route: '/repositories/:repository/deployments/:id'
+            stack: ['middleware.login', 'application.deployment.page']
+            conditions:
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
+
+        repository.deployments:
+            method: 'GET'
+            route: '/repositories/:repository/deployments'
+            stack: ['middleware.login', 'application.deployments.page']
+            conditions: {repository: %routes.regex.digit%}
+
+        repository.deployments.add:
+            method: ['GET', 'POST']
+            route: '/repositories/:repository/deployments/add'
+            stack: ['middleware.lead', 'application.deployments.add.handler', 'application.deployments.add.page']
+            conditions: {repository: %routes.regex.digit%}
+
+        repository.deployment.edit:
+            method: ['GET', 'POST']
+            route: '/repositories/:repository/deployments/:id/edit'
+            stack: ['middleware.lead', 'application.deployment.edit.handler', 'application.deployment.edit.page']
+            conditions:
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
+
+        repository.deployment.remove.confirm:
+            method: 'GET'
+            route: '/repositories/:repository/deployments/:id/remove'
+            stack: ['middleware.lead', 'delete.confirm.page']
+            conditions:
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
+
+        repository.deployment.remove:
+            method: 'POST'
+            route: '/repositories/:repository/deployments/:id/remove'
+            stack: ['middleware.lead', 'application.deployments.remove.handler']
+            conditions:
+                repository: %routes.regex.digit%
+                id: %routes.regex.digit%
+
+        ################################################################################################################
+        # REPOSITORY ENCRYPTED PROPERTIES ROUTES
+        ################################################################################################################
+
+        repository.encrypted:
+            method: 'GET'
+            route: '/repositories/:repository/encrypted-properties'
+            stack: ['middleware.login', 'application.encrypted.page']
+            conditions: {repository: %routes.regex.digit%}
+
+        repository.encrypted.add:
+            method: ['GET', 'POST']
+            route: '/repositories/:repository/encrypted-properties/add'
+            stack: ['middleware.lead', 'application.encrypted.add.handler', 'application.encrypted.add.page']
+            conditions: {repository: %routes.regex.digit%}
+
+        repository.encrypted.remove.confirm:
+            method: 'GET'
+            route: '/repositories/:repository/encrypted-properties/:id/remove'
+            stack: ['middleware.lead', 'delete.confirm.page']
+            conditions:
+                repository: %routes.regex.digit%
+                id: %routes.regex.guid%
+        repository.encrypted.remove:
+            method: ['POST']
+            route: '/repositories/:repository/encrypted-properties/:id/remove'
+            stack: ['middleware.lead', 'application.encrypted.remove.handler']
+            conditions:
+                repository: %routes.regex.digit%
+                id: %routes.regex.guid%

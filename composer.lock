@@ -1503,17 +1503,17 @@
         },
         {
             "name": "ql/panthor",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "git@git:web-frameworks/panthor.git",
-                "reference": "31d66f59071dc18ac384a7441ddb1c701764d584"
+                "reference": "c092d7331319e40f68f3770cc404178d0d873043"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-panthor-2.0.3-20dd72.zip",
-                "reference": "31d66f59071dc18ac384a7441ddb1c701764d584",
-                "shasum": "b445975bcc2b099d932cb7b93a9106331c9ac918"
+                "url": "http://composer/dist/ql-panthor-2.0.4-4e7a45.zip",
+                "reference": "c092d7331319e40f68f3770cc404178d0d873043",
+                "shasum": "447860e43b301bbfb98f58e3042fd4b13d0989e7"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -1527,8 +1527,8 @@
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "4.*",
                 "psr/log": "*",
-                "ql/mcp-core": "*",
-                "ql/mcp-crypto": "*",
+                "ql/mcp-core": "1.*",
+                "ql/mcp-crypto": "1.*",
                 "twig/twig": "*"
             },
             "type": "library",
@@ -1541,7 +1541,7 @@
                 "proprietary"
             ],
             "description": "Symfony + Slim = Panthor",
-            "time": "2015-03-24 14:27:34"
+            "time": "2015-06-02 17:35:01"
         },
         {
             "name": "react/promise",
@@ -2165,24 +2165,27 @@
         },
         {
             "name": "zendframework/zend-ldap",
-            "version": "2.3.7",
-            "target-dir": "Zend/Ldap",
+            "version": "2.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-ldap.git",
-                "reference": "81dd696254adc20e017cfae776961014d385035f"
+                "reference": "07bfa76ceea39e2db1da9121cdf56ecaa5505584"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-ldap/zipball/2b82e35cc5834fbdcb4ceafd90021479e9445c4b",
-                "reference": "81dd696254adc20e017cfae776961014d385035f",
+                "url": "https://api.github.com/repos/zendframework/zend-ldap/zipball/07bfa76ceea39e2db1da9121cdf56ecaa5505584",
+                "reference": "07bfa76ceea39e2db1da9121cdf56ecaa5505584",
                 "shasum": ""
             },
             "require": {
+                "ext-ldap": "*",
                 "php": ">=5.3.23",
                 "zendframework/zend-stdlib": "self.version"
             },
             "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
                 "zendframework/zend-eventmanager": "self.version"
             },
             "suggest": {
@@ -2191,13 +2194,13 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev",
-                    "dev-develop": "2.4-dev"
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Zend\\Ldap\\": ""
+                "psr-4": {
+                    "Zend\\Ldap\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2205,32 +2208,34 @@
                 "BSD-3-Clause"
             ],
             "description": "provides support for LDAP operations including but not limited to binding, searching and modifying entries in an LDAP directory",
-            "homepage": "https://github.com/zendframework/zf2",
+            "homepage": "https://github.com/zendframework/zend-ldap",
             "keywords": [
                 "ldap",
                 "zf2"
             ],
-            "time": "2015-03-12 16:55:53"
+            "time": "2015-05-11 15:11:40"
         },
         {
             "name": "zendframework/zend-stdlib",
-            "version": "2.3.7",
-            "target-dir": "Zend/Stdlib",
+            "version": "2.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-stdlib.git",
-                "reference": "3f6e2416183d4879a983680e1165f14164b262f4"
+                "reference": "a5dd7fd2ba6e8f6c6ea5a12db0605d3aa48af1e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/2acb22aaf926f5a1934c6622d596f0b14872c3cd",
-                "reference": "3f6e2416183d4879a983680e1165f14164b262f4",
+                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/a5dd7fd2ba6e8f6c6ea5a12db0605d3aa48af1e7",
+                "reference": "a5dd7fd2ba6e8f6c6ea5a12db0605d3aa48af1e7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.23"
             },
             "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
                 "zendframework/zend-eventmanager": "self.version",
                 "zendframework/zend-filter": "self.version",
                 "zendframework/zend-serializer": "self.version",
@@ -2245,25 +2250,25 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev",
-                    "dev-develop": "2.4-dev"
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Zend\\Stdlib\\": ""
+                "psr-4": {
+                    "Zend\\Stdlib\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
-            "homepage": "https://github.com/zendframework/zf2",
+            "homepage": "https://github.com/zendframework/zend-stdlib",
             "keywords": [
                 "stdlib",
                 "zf2"
             ],
-            "time": "2015-03-12 16:55:53"
+            "time": "2015-05-07 14:55:31"
         }
     ],
     "packages-dev": [

@@ -1,0 +1,338 @@
+parameters:
+    routes:
+        login:
+            method: ['GET', 'POST']
+            route: '/login'
+            stack: ['login.handler', 'login.page']
+
+        dashboard:
+            method: 'GET'
+            route: '/'
+            stack: ['middleware.login', 'dashboard.page']
+
+        logout:
+            method: 'GET'
+            route: '/logout'
+            stack: ['logout.handler']
+
+        debug:
+            method: 'GET'
+            route:  '/debug'
+            stack:  ['middleware.login', 'debug.page']
+
+        github.authorization:
+            method: 'GET'
+            route:  '/github-authorization'
+            stack:  ['middleware.login', 'github.authorization.page']
+
+        github.authorization.remove:
+            method: ['GET', 'POST']
+            route:  '/settings/remove-github-authorization'
+            stack:  ['middleware.login', 'github.authorization.remove.page']
+
+        ################################################################################################################
+        # QUEUE ROUTES
+        ################################################################################################################
+
+        queue:
+            method: 'GET'
+            route: '/queue'
+            stack: ['middleware.login', 'queue.page']
+
+        queue.history.page1:
+            method: 'GET'
+            route: '/queue-history'
+            stack: ['middleware.login', 'queue.history.page']
+
+        queue.history:
+            method: 'GET'
+            route: '/queue-history/date/:date'
+            stack: ['middleware.login', 'queue.history.page']
+            conditions: {date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'}
+
+        ################################################################################################################
+        # HELP ROUTES
+        ################################################################################################################
+
+        help:
+            method: 'GET'
+            route: '/help'
+            stack: ['help.page']
+
+        help.deployment:
+            method: 'GET'
+            route: '/help/deployment'
+            stack: ['help.deployment.page']
+
+        help.hal:
+            method: 'GET'
+            route: '/help/hal'
+            stack: ['help.hal.page']
+
+        help.githubpermissions:
+            method: 'GET'
+            route: '/help/github-permissions'
+            stack: ['help.githubpermissions.page']
+
+        # help.api:
+        #     method: 'GET'
+        #     route: '/help/api'
+        #     stack: ['help.api.page']
+
+        ################################################################################################################
+        # BUILD ROUTES
+        ################################################################################################################
+
+        build.history.page1:
+            method: 'GET'
+            route: '/repositories/:id/builds'
+            stack: ['middleware.login', 'builds.page']
+            conditions: {id: %routes.regex.digit%}
+        build.history:
+            method: 'GET'
+            route: '/repositories/:id/builds(/page/:page)'
+            stack: ['middleware.login', 'builds.page']
+            conditions:
+                id: %routes.regex.digit%
+                page: %routes.regex.digit%
+
+        build:
+            method: 'GET'
+            route: '/builds/:build'
+            stack: ['middleware.login', 'build.page']
+            conditions: {build: %routes.regex.buildId%}
+
+        build.start:
+            method: ['GET', 'POST']
+            route: '/repositories/:id/build'
+            stack: ['middleware.login', 'build.start.handler', 'build.start.page']
+            conditions: {id: %routes.regex.digit%}
+
+        ################################################################################################################
+        # PUSH ROUTES
+        ################################################################################################################
+
+        push:
+            method: 'GET'
+            route: '/pushes/:push'
+            stack: ['middleware.login', 'push.page']
+            conditions: {push: %routes.regex.pushId%}
+
+        push.start:
+            method: ['GET', 'POST']
+            route: '/builds/:build/push'
+            stack: ['middleware.login', 'push.start.handler', 'push.start.page']
+            conditions: {build: %routes.regex.buildId%}
+
+        push.history.page1:
+            method: 'GET'
+            route: '/repositories/:id/pushes'
+            stack: ['middleware.login', 'pushes.page']
+            conditions: {id: %routes.regex.digit%}
+        push.history:
+            method: 'GET'
+            route: '/repositories/:id/pushes(/page/:page)'
+            stack: ['middleware.login', 'pushes.page']
+            conditions:
+                id: %routes.regex.digit%
+                page: %routes.regex.digit%
+
+        rollback.page1:
+            method: 'GET'
+            route: '/repositories/:id/deployments/:deployment/pushes'
+            stack: ['middleware.login', 'push.rollback.page']
+            conditions:
+                id: %routes.regex.digit%
+                deployment: %routes.regex.digit%
+
+        rollback:
+            method: 'GET'
+            route: '/repositories/:id/deployments/:deployment/pushes(/page/:page)'
+            stack: ['middleware.login', 'push.rollback.page']
+            conditions:
+                id: %routes.regex.digit%
+                deployment: %routes.regex.digit%
+
+        ################################################################################################################
+        # SERVER ROUTES
+        ################################################################################################################
+
+        servers:
+            method: 'GET'
+            route: '/servers'
+            stack: ['middleware.login', 'servers.page']
+
+        server:
+            method: 'GET'
+            route: '/servers/:id'
+            stack: ['middleware.login', 'server.page']
+            conditions: {id: %routes.regex.digit%}
+
+        ################################################################################################################
+        # SERVER ROUTES - ADMIN
+        ################################################################################################################
+
+        server.admin.add:
+            method: ['GET', 'POST']
+            route: '/servers/add'
+            stack: ['middleware.admin', 'server.admin.add.page']
+
+        server.admin.edit:
+            method: ['GET', 'POST']
+            route: '/servers/:id/edit'
+            stack: ['middleware.admin', 'server.admin.edit.page']
+            conditions: {id: %routes.regex.digit%}
+
+        server.admin.remove.confirm:
+            method: 'GET'
+            route: '/servers/:id/remove'
+            stack: ['middleware.admin', 'delete.confirm.page']
+            conditions: {id: %routes.regex.digit%}
+        server.admin.remove:
+            method: 'POST'
+            route: '/servers/:id/remove'
+            stack: ['middleware.admin', 'server.admin.remove.handler']
+            conditions: {id: %routes.regex.digit%}
+
+        ################################################################################################################
+        # USER ROUTES
+        ################################################################################################################
+
+        user:
+            method: 'GET'
+            route: '/users/:user'
+            stack: ['middleware.login', 'middleware.requireEntity', 'user.page']
+            conditions: {user: %routes.regex.digit%}
+
+        settings:
+            method: 'GET'
+            route: '/settings'
+            stack: ['middleware.login', 'user.settings.page']
+
+        settings.handler:
+            method: 'POST'
+            route: '/settings'
+            stack: ['middleware.login', 'user.settings.handler']
+
+        users:
+            method: 'GET'
+            route: '/users'
+            stack: ['middleware.login', 'users.page']
+
+        user.disable:
+            method: 'POST'
+            route: '/users/:user/disable'
+            stack: ['middleware.super', 'middleware.requireEntity', 'user.disable.handler']
+
+        user.enable:
+            method: 'POST'
+            route: '/users/:user/enable'
+            stack: ['middleware.super', 'middleware.requireEntity', 'user.enable.handler']
+
+        ################################################################################################################
+        # USER TOKEN MANAGEMENT ROUTES
+        ################################################################################################################
+
+        user.token.add:
+            method: 'POST'
+            route: '/users/:id/tokens'
+            stack: ['middleware.login', 'user.token.add.handler']
+            conditions: {id: %routes.regex.digit%}
+
+        user.token.remove.confirm:
+            method: 'GET'
+            route: '/users/:id/tokens/:token/revoke'
+            stack: ['middleware.login', 'delete.confirm.page']
+            conditions:
+                id: %routes.regex.digit%
+                token: %routes.regex.guid%
+        user.token.remove:
+            method: 'POST'
+            route: '/users/:id/tokens/:token/revoke'
+            stack: ['middleware.login', 'user.token.remove.handler']
+            conditions:
+                id: %routes.regex.digit%
+                token: %routes.regex.guid%
+
+        ################################################################################################################
+        # GROUP ROUTES
+        ################################################################################################################
+
+        groups:
+            method: 'GET'
+            route: '/groups'
+            stack: ['middleware.login', 'repositories.page']
+
+        group:
+            method: 'GET'
+            route: '/groups/:id'
+            stack: ['middleware.login', 'group.page']
+            conditions: {id: %routes.regex.digit%}
+
+        group.admin.add:
+            method: ['GET', 'POST']
+            route: '/groups/add'
+            stack: ['middleware.login', 'group.admin.add.page']
+
+        ################################################################################################################
+        # GROUP ROUTES - ADMIN
+        ################################################################################################################
+
+        group.admin.edit:
+            method: ['GET', 'POST']
+            route: '/groups/:id/edit'
+            stack: ['middleware.admin', 'group.admin.edit.page']
+            conditions: {id: %routes.regex.digit%}
+
+        group.admin.remove.confirm:
+            method: 'GET'
+            route: '/groups/:id/remove'
+            stack: ['middleware.admin', 'delete.confirm.page']
+            conditions: {id: %routes.regex.digit%}
+        group.admin.remove:
+            method: 'POST'
+            route: '/groups/:id/remove'
+            stack: ['middleware.admin', 'group.admin.remove.handler']
+            conditions: {id: %routes.regex.digit%}
+
+        ################################################################################################################
+        # ENVIRONMENT ROUTES
+        ################################################################################################################
+
+        environments:
+            method: 'GET'
+            route: '/environments'
+            stack: ['middleware.login', 'environments.page']
+            conditions: {id: %routes.regex.digit%}
+
+        environment:
+            method: 'GET'
+            route: '/environments/:id'
+            stack: ['middleware.login', 'environment.page']
+            conditions: {id: %routes.regex.digit%}
+
+        ################################################################################################################
+        # ENVIRONMENT ROUTES - ADMIN
+        ################################################################################################################
+
+        environment.admin.add:
+            method: ['GET', 'POST']
+            route: '/environments/add'
+            stack: ['middleware.admin', 'environment.admin.add.page']
+
+        environment.admin.remove.confirm:
+            method: 'GET'
+            route: '/environments/:id/delete'
+            stack: ['middleware.admin', 'delete.confirm.page']
+            conditions: {id: %routes.regex.digit%}
+        environment.admin.remove:
+            method: 'POST'
+            route: '/environments/:id/delete'
+            stack: ['middleware.admin', 'environment.admin.remove.handler']
+            conditions: {id: %routes.regex.digit%}
+
+        environment.admin.edit:
+            method: ['GET', 'POST']
+            route: '/environments/:id/edit'
+            stack: ['middleware.admin', 'environment.admin.edit.page']
+            conditions: {id: %routes.regex.digit%}

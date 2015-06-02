@@ -1,0 +1,94 @@
+parameters:
+    routes.admin:
+
+        ################################################################################################################
+        # ADMIN ROUTES
+        ################################################################################################################
+
+        admin:
+            method: 'GET'
+            route: '/admin'
+            stack: ['middleware.admin', 'admin.dashboard.page']
+
+        admin.audit.logs.page1:
+            method: 'GET'
+            route: '/admin/audit-logs'
+            stack: ['middleware.admin', 'admin.audit.logs.page']
+
+        admin.audit.logs:
+            method: 'GET'
+            route: '/admin/audit-logs/page/:page'
+            stack: ['middleware.admin', 'admin.audit.logs.page']
+            conditions: {page: %routes.regex.digit%}
+
+        admin.system.status:
+            method: 'GET'
+            route: '/admin/status'
+            stack: ['middleware.admin', 'admin.system.status.page']
+
+        ################################################################################################################
+        # ADMIN ROUTES - PERMISSIONS
+        ################################################################################################################
+
+        admin.permissions:
+            method: 'GET'
+            route: '/admin/permissions'
+            stack: ['middleware.admin', 'admin.permissions.page']
+
+        admin.permissions.deployment:
+            method: 'GET'
+            route: '/admin/permissions/deployment'
+            stack: ['middleware.admin', 'admin.permissions.deployment.page']
+
+        admin.permissions.remove.confirm:
+            method: 'GET'
+            route: '/admin/permissions/:userType/remove'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.remove.page']
+            conditions: {userType: %routes.regex.guid%}
+        admin.permissions.remove:
+            method: 'POST'
+            route: '/admin/permissions/:userType/remove'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.remove.handler']
+            conditions: {userType: %routes.regex.guid%}
+
+        admin.permissions.add:
+            method: ['GET', 'POST']
+            route: '/admin/permissions/:user/add'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.add.page']
+            conditions: {user: %routes.regex.digit%}
+
+        admin.permissions.deployment.remove.confirm:
+            method: 'GET'
+            route: '/admin/permissions/deployment/:userPermission/remove'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.deployment.remove.page']
+            conditions: {userPermission: %routes.regex.guid%}
+        admin.permissions.deployment.remove:
+            method: 'POST'
+            route: '/admin/permissions/deployment/:userPermission/remove'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.deployment.remove.handler']
+            conditions: {userPermission: %routes.regex.guid%}
+
+        admin.permissions.refresh:
+            method: 'POST'
+            route: '/admin/permissions/:user/refresh'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.refresh.handler']
+            conditions: {user: %routes.regex.digit%}
+
+        ################################################################################################################
+        # SUPER ADMIN ROUTES
+        ################################################################################################################
+
+        admin.super.caches:
+            method: ['GET', 'POST']
+            route: '/superadmin/caches'
+            stack: ['middleware.super', 'admin.caches.handler', 'admin.caches.page']
+
+        admin.super.users:
+            method: 'GET'
+            route: '/superadmin/users'
+            stack: ['middleware.super', 'admin.users.page']
+
+        admin.super.message:
+            method: ['GET', 'POST']
+            route: '/superadmin/message'
+            stack: ['middleware.super', 'admin.message.page']
