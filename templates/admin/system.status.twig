@@ -7,6 +7,25 @@
     <h1>{{ page_title }}</h1>
 
     <h2 class="mbn">Agent</h2>
+    {% if system %}
+        {{ block('system_status') }}
+    {% else %}
+        <p>Unknown. No status available.</p>
+    {% endif %}
+
+    <h2 class="mbn">Server Status</h2>
+    {% if connections %}
+        {{ block('server_status') }}
+    {% else %}
+        <p>Unknown. No status available.</p>
+    {% endif %}
+
+    <p>
+        <a class="btn" href="{{ urlFor('admin') }}">Admin Dashboard</a>
+    </p>
+{% endblock %}
+
+{% block system_status %}
     <p>Last Update: {{ system.generated|html5date }}</p>
 
     <h3>Agent Status</h3>
@@ -81,15 +100,17 @@
         </dl>
     </div>
 
-    <h2 class="mbn">Server Status</h2>
+{% endblock %}
+
+{% block server_status %}
     <p>Last Update: {{ connections.generated|html5date }}</p>
 
     {% if connections.servers %}
         <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
             <thead>
-                <tr class="tl">
+                <tr>
+                    <th>Environment</th>
                     <th>Server</th>
-                    <th>Message</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -100,8 +121,8 @@
                             <tr>
                                 <td>{{ env }}</td>
                                 <td>{{ status.server.name }}</td>
-                                <td>{{ status.resolved }}</td>
-                                <td>
+                                <td>{{ status.resolved != status.server.name ? status.resolved : '' }}</td>
+                                <td class="tr">
                                     {% if status.status %}
                                         {{ macros.status('Success', 'success') }}
                                     {% else %}
@@ -118,7 +139,4 @@
         <p>Unknown</p>
     {% endif %}
 
-    <p>
-        <a class="btn" href="{{ urlFor('admin') }}">Admin Dashboard</a>
-    </p>
 {% endblock %}
