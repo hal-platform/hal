@@ -217,6 +217,7 @@ services:
             - @url
             - @twig.context
             - @slim.request
+            - @doctrine.random
             - @slim.route.parameters
     application.encrypted.remove.handler:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\RemoveEncryptedPropertyHandler'

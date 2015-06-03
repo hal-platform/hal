@@ -149,7 +149,8 @@ class AddTokenController implements ControllerInterface
     {
         $hash = sha1(call_user_func($this->random));
 
-        $token = (new Token)
+        $id = call_user_func($this->random);
+        $token = (new Token($id))
             ->withLabel($label)
             ->withValue($hash)
             ->withUser($user);

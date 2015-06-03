@@ -91,7 +91,7 @@ services:
             - @permissions
             - @json
             - @session.flasher
-            - @doctrine.random.id
+            - @doctrine.random
         calls:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.page.ttl%]]

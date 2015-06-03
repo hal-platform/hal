@@ -445,7 +445,7 @@ services:
             - @session.flasher
             - @slim.request
             - @slim.not.found
-            - @doctrine.random.id
+            - @doctrine.random
             - @slim.route.parameters
 
     user.token.remove.handler:

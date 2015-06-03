@@ -72,6 +72,11 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     private $request;
 
     /**
+     * @type callable
+     */
+    private $random;
+
+    /**
      * @type array
      */
     private $parameters;
@@ -89,6 +94,8 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      * @param Url $url
      * @param Context $context
      * @param Request $request
+     * @param callable $random
+     *
      * @param array $parameters
      */
     public function __construct(
@@ -98,6 +105,8 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
         Url $url,
         Context $context,
         Request $request,
+        callable $random,
+
         array $parameters
     ) {
         $this->em = $em;
@@ -110,6 +119,8 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
         $this->url = $url;
         $this->context = $context;
         $this->request = $request;
+        $this->random = $random;
+
         $this->parameters = $parameters;
 
         $this->errors = [];
@@ -212,7 +223,8 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 
         $encrypted = $this->encrypter->encrypt($decrypted);
 
-        $property = (new EncryptedProperty)
+        $id = call_user_func($this->random);
+        $property = (new EncryptedProperty($id))
             ->withName($name)
             ->withData($encrypted)
             ->withApplication($application);

@@ -1,5 +1,5 @@
 imports:
-    - resource: ../vendor/ql/hal-core/config/hal-core.yml
+    - resource: ../vendor/ql/hal-core/configuration/hal-core.yml
     - resource: ../vendor/ql/panthor/configuration/di.yml
     - resource: di.yml
     - resource: config.global.yml
