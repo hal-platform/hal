@@ -162,7 +162,7 @@ class DeployHandler implements ControllerInterface
                 ->withProperty($property)
                 ->withSchema($schema);
 
-            $newconfig[$cf->key()] = $snapshot;
+            $newconfig[$snapshot->key()] = $snapshot;
         }
 
         return $newconfig;

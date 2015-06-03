@@ -83,31 +83,31 @@ class ConfigurationDiffService
      *
      * Used to compare two snapshots.
      *
-     * @param Configuration $configuration
+     * @param Configuration $source
      *
      * @return Diff[]
      */
-    public function resolveConfiguration(Configuration $configuration)
+    public function resolveConfiguration(Configuration $source)
     {
         $configuration = [];
 
         // Add properties from configuration
-        $snapshots = $this->snapshotRepo->findBy(['configuration' => $configuration]);
+        $snapshots = $this->snapshotRepo->findBy(['configuration' => $source]);
 
-        foreach ($snapshots as $property) {
-            if (!$schema = $property->schema()) {
+        foreach ($snapshots as $snapshot) {
+            if (!$schema = $snapshot->schema()) {
                 $schema = (new Schema)
                     ->withKey($property->key())
                     ->withDataType($property->dataType())
                     ->withIsSecure($property->isSecure())
-                    ->withApplication($snapshot->application());
+                    ->withApplication($source->application());
             }
 
             $property = (new Property)
-                ->withValue($property->value())
+                ->withValue($snapshot->value())
                 ->withSchema($schema)
-                ->withApplication($snapshot->application())
-                ->withEnvironment($snapshot->environment());
+                ->withApplication($source->application())
+                ->withEnvironment($source->environment());
 
             $diff = $this->diffProperty($configuration, $property);
 

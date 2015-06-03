@@ -158,7 +158,7 @@ class AddTargetController implements ControllerInterface
         $key = $this->request->post('key');
         $envId = $this->request->post('env');
 
-        if (preg_match(self::VALIDATE_KEY_REGEX, $key) !== 1) {
+        if (strlen($key) > 0 && preg_match(self::VALIDATE_KEY_REGEX, $key) !== 1) {
             $this->errors[] = self::ERR_INVALID_KEY;
         }
 
@@ -201,8 +201,7 @@ class AddTargetController implements ControllerInterface
     {
         $id = call_user_func($this->random);
 
-        $target = (new Target)
-            ->withId($uniq)
+        $target = (new Target($id))
             ->withKey($key)
             ->withApplication($this->application)
             ->withEnvironment($env);

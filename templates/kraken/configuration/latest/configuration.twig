@@ -2,6 +2,7 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Latest Configuration" %}
+{% set canDeploy = canUserReleaseTheKraken(currentUser, application, environment) %}
 
 {% block content %}
 
@@ -14,12 +15,20 @@
     <p>{{ environment.name }}</p>
 
     <h2>Configuration Properties</h2>
-    {% include 'kraken/_partial/configuration.twig' with {'properties': configuration} %}
+    {% include 'kraken/_partial/configuration.twig' with {'properties': configuration, canDeploy: canDeploy} %}
+
+    <p>
+        {% if is_missing_properties and canDeploy %}
+            <a class="btn btn--action" href="{{ urlFor('kraken.property.add', {application: application.id, environment: environment.id}) }}">Add Property</a>
+        {% endif %}
+
+        {% if canDeploy %}
+            <a class="btn btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy Configuration</a>
+        {% endif %}
+
+    </p>
 
     <ul class="button-list">
-        {% if is_missing_properties and canUserReleaseTheKraken(currentUser, application, environment) %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.property.add', {application: application.id, environment: environment.id}) }}">Add Property</a></li>
-        {% endif %}
 
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Configuration Schema</a></li>

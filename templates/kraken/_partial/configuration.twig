@@ -1,6 +1,8 @@
 {% import "_partial/macros.twig" as macros %}
 {% import "kraken/_partial/macros.twig" as kraken_macros %}
 
+{% set canDeploy = canDeploy|default(false) %}
+
 {% if properties %}
 
     {% set is_snapshot = properties|first is snapshot ? true : false %}
@@ -62,7 +64,7 @@
                             <td>{{ kraken_macros.renderProperty(property) }}</td>
 
                             <td class="fixed-nobreak">
-                                <a href="{{ urlFor('kraken.property', {property: property.id}) }}">View History</a>
+                                <a href="{{ urlFor('kraken.property', {property: property.id}) }}">{{ canDeploy ? 'Manage' : 'History' }}</a>
                             </td>
 
                         {% else %}

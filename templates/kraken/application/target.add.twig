@@ -42,7 +42,13 @@
                             Configuration data is encrypted with the key returned by QKS.
                         </small>
                     </label>
-                    <input type="text" name="key" id="enc-key" maxlength="200" required value="{{ form.key }}" class="text-input">
+
+                    <input type="text" name="key" id="enc-key" maxlength="200" value="{{ form.key }}" class="text-input">
+
+                    <small class="additional">
+                        <b>Warning!</b> Encryption is currently not enabled and this value has no effect.
+                    </small>
+
                 </li>
             </ul>
 

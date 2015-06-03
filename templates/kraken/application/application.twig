@@ -14,7 +14,7 @@
     <h2 class="leader">Environments</h2>
     {{ block('application_targets') }}
 
-    <h2>Configuration Schema</h2>
+    <h2 class="leader">Configuration Schema</h2>
     {% include 'kraken/_partial/schema.twig' with {'schema': schema} %}
 
 {% endblock %}
@@ -71,30 +71,41 @@
                 </tr>
             </thead>
             <tbody>
+                {% set unassignedTargets = false %}
                 {% for target in targets %}
                     <tr>
                         {% if target is target %}
 
                             <td>{{ target.environment.name }}</td>
-                            <td><code>{{ target.key }}</code></td>
+                            <td>
+                                {% if target.key %}
+                                    <code>{{ target.key }}</code>
+                                {% else %}
+                                    Encryption not enabled.
+                                {% endif %}
+                            </td>
                             <td class="tr">
                                 <a class="btn btn--small" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </td>
 
                         {% else %}
+
+                            {% set unassignedTargets = true %}
                             <td>{{ target.name }}</td>
                             <td>Environment is not assigned.</td>
-                            <td class="tr">
-                                {% if isAdmin %}
-                                    <a class="btn btn--small btn--action" href="{{ urlFor('kraken.application.target.add', {application: application.id}) }}">Assign environment</a>
-                                {% endif %}
-                            </td>
+                            <td></td>
 
                         {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        {% if unassignedTargets and isAdmin %}
+        <p>
+            <a class="btn btn--action" href="{{ urlFor('kraken.application.target.add', {application: application.id}) }}">Assign environment</a>
+        </p>
+        {% endif %}
 
     {% else %}
         <p>There are no environments assigned for this application.</p>
