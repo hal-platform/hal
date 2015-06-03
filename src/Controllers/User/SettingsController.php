@@ -7,11 +7,7 @@
 
 namespace QL\Hal\Controllers\User;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\Token;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -21,11 +17,6 @@ class SettingsController implements ControllerInterface
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type EntityRepository
-     */
-    private $tokenRepo;
 
     /**
      * @type User
@@ -39,12 +30,9 @@ class SettingsController implements ControllerInterface
      */
     public function __construct(
         TemplateInterface $template,
-        EntityManagerInterface $em,
         User $currentUser
     ) {
         $this->template = $template;
-        $this->tokenRepo = $em->getRepository(Token::CLASS);
-
         $this->currentUser = $currentUser;
     }
 
@@ -55,7 +43,6 @@ class SettingsController implements ControllerInterface
     {
         $this->template->render([
             'user' => $this->currentUser,
-            'tokens' => $this->tokenRepo->findBy(['user' => $this->currentUser]),
             'hasGithubToken' => (strlen($this->currentUser->githubToken()) > 0)
         ]);
     }

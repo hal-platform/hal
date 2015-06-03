@@ -399,7 +399,6 @@ services:
         class: 'QL\Hal\Controllers\User\SettingsController'
         arguments:
             - @user.settings.twig
-            - @doctrine.em
             - @currentUser
     user.settings.twig:
         parent: 'twig.auto.template'
