@@ -19,7 +19,7 @@
                     <input type="numeric" name="core_id" id="app-coreid" maxlength="64" required value="{{ form.core_id }}" class="text-input t40">
                 </li>
 
-                {% if available %}
+
                 <li>
                     <label for="app-hal_app">
                         HAL Application
@@ -28,31 +28,26 @@
                         </small>
                     </label>
 
+                    {% if available %}
 
-                    {% if available|length > 10 %}
                         <select class="select-input" name="hal_app" id="app-hal_app">
                             <option></option>
-                            {% for id, hal_application in available %}
-                                {% set isSelected = (id == form.hal_app) %}
+                            {% for available_groups in available %}
+                                {% set firstApp = available_groups|first %}
 
-                                <option value="{{ id }}" {{ isSelected ? ' selected' : '' }}>
-                                    {{ hal_application }}
-                                </option>
+                                <optgroup label="{{ firstApp.group.name }}">
+                                    {% for hal_application in available_groups %}
+                                        {% set isSelected = (hal_application.id == form.hal_app) %}
+                                        <option value="{{ hal_application.id }}"{{ isSelected ? ' selected' : '' }}>{{ hal_application.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
                             {% endfor %}
                         </select>
+
                     {% else %}
-                        <ul class="radio-grid--form">
-                            {% for id, hal_application in available %}
-                                {% set isSelected = (id == form.hal_app) %}
-                                <li>
-                                    <input id="app-hal_app-{{ id }}" type="radio" name="hal_app" value="{{ id }}"{{ isSelected ? ' checked' : ''}}>
-                                    <label for="app-hal_app-{{ id }}">{{ hal_application }}</label>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                        <p>No HAL 9000 applications are available to be linked.</p>
                     {% endif %}
                 </li>
-                {% endif %}
 
                 <li>
                     <label for="app-name">

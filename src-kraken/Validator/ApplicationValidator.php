@@ -75,7 +75,7 @@ class ApplicationValidator
         if ($this->errors) return null;
 
         if ($halApp instanceof HalApplication) {
-            $name = $halApp->getName();
+            $name = $halApp->name();
         } else {
             $halApp = null;
         }
@@ -112,7 +112,7 @@ class ApplicationValidator
         if ($this->errors) return null;
 
         if ($halApp instanceof HalApplication) {
-            $name = $halApp->getName();
+            $name = $halApp->name();
         } else {
             $halApp = null;
         }

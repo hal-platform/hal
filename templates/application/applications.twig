@@ -15,40 +15,42 @@
             </tr>
         </thead>
         <tbody class="table-breathe">
-        {% set hasApplications = false %}
-        {% for group in groups %}
-            <tr>
-                <th colspan="4" class="table-mid-header">
-                    {{ group.name }}
-                    <a class="icon--link" href="{{ urlFor('group', {id: group.id}) }}">
-                        {{ macros.icon('outgoing') }}
-                    </a>
-                </th>
-            </tr>
+            {% set hasApplications = false %}
 
-            {% if applications[group.id] %}
-                {% set hasApplications = true %}
-                {% for application in applications[group.id] %}
-                    <tr>
-                        <td><a href="{{ urlFor('repository.status', {'id': repo.id}) }}">{{ application.name }}</a></td>
-                        <td>{{ macros.gitsource(application) }}</td>
-                        <td>
-                            <a href="{{ urlFor('repository', {'id': application.id}) }}">Details</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% else %}
+            {% for group_id, group_applications in applications %}
+                {% set group = groups[group_id] %}
                 <tr>
-                    <td colspan="4">No applications found.</td>
+                    <th colspan="4" class="table-mid-header">
+                        {{ group.name }}
+                        <a class="icon--link" href="{{ urlFor('group', {id: group.id}) }}">
+                            {{ macros.icon('outgoing') }}
+                        </a>
+                    </th>
+                </tr>
+
+                {% if group_applications %}
+                    {% set hasApplications = true %}
+                    {% for application in group_applications %}
+                        <tr>
+                            <td><a href="{{ urlFor('repository.status', {'id': application.id}) }}">{{ application.name }}</a></td>
+                            <td>{{ macros.gitsource(application) }}</td>
+                            <td>
+                                <a href="{{ urlFor('repository', {'id': application.id}) }}">Details</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4">No applications found.</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+
+            {% if not hasApplications %}
+                <tr>
+                    <td colspan="4">There are no groups.</td>
                 </tr>
             {% endif %}
-        {% endfor %}
-
-        {% if not hasApplications %}
-            <tr>
-                <td colspan="4">There are no groups.</td>
-            </tr>
-        {% endif %}
         </tbody>
     </table>
 

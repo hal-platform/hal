@@ -56,7 +56,8 @@
 {% endmacro %}
 
 {% macro gitsource(application) %}
-    <a href="{{ githubRepo(application.githubOwner, application.githubRepo) }}">{{ application.githubOwner }}/{{ application.githubRepo }}</a> {{ macros.icon('github') }}
+    {% import _self as self_macros %}
+    <a href="{{ githubRepo(application.githubOwner, application.githubRepo) }}">{{ application.githubOwner }}/{{ application.githubRepo }}</a> {{ self_macros.icon('github') }}
 {% endmacro %}
 
 {% macro gitcommit(build) %}

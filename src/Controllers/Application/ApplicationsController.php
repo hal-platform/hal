@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
+use QL\Hal\Core\Entity\Repository\ApplicationRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -22,10 +23,14 @@ class ApplicationsController implements ControllerInterface
     private $template;
 
     /**
+     * @type ApplicationRepository
+     */
+    private $applicationRepo;
+
+    /**
      * @type EntityRepository
      */
     private $groupRepo;
-    private $applicationRepo;
 
     /**
      * @param TemplateInterface $template
@@ -34,8 +39,9 @@ class ApplicationsController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->groupRepo = $em->getRepository(Group::CLASS);
+
         $this->applicationRepo = $em->getRepository(Application::CLASS);
+        $this->groupRepo = $em->getRepository(Group::CLASS);
     }
 
     /**
@@ -43,34 +49,16 @@ class ApplicationsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $groups = $this->groupRepo->findBy([], ['name' => 'ASC']);
-        $applications = $this->applicationRepo->findBy([], ['name' => 'ASC']);
-        usort($applications, $this->appSorter());
+        $grouped = $this->applicationRepo->getGroupedApplications();
 
-        $grouped = [];
-
-        foreach ($applications as $repo) {
-            $id = $repo->group()->id();
-            if (!isset($grouped[$id])) {
-                $grouped[$id] = [];
-            }
-
-            $grouped[$id][] = $repo;
+        $groups = [];
+        foreach ($this->groupRepo->findAll() as $group) {
+            $groups[$group->id()] = $group;
         }
 
         $this->template->render([
-            'groups' => $groups,
-            'applications' => $grouped
+            'applications' => $grouped,
+            'groups' => $groups
         ]);
-    }
-
-    /**
-     * @return Closure
-     */
-    private function appSorter()
-    {
-        return function($a, $b) {
-            return strcasecmp($a->name(), $b->name());
-        };
     }
 }

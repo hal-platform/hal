@@ -102,7 +102,7 @@ class AddApplicationController implements ControllerInterface
         $context = [
             'form' => $form,
             'errors' => $this->validator->errors(),
-            'available' => $this->getAvailableRepositories()
+            'available' => $this->getAvailableGroupedApplications()
         ];
 
         $this->template->render($context);
@@ -115,23 +115,30 @@ class AddApplicationController implements ControllerInterface
      *
      * @return array
      */
-    private function getAvailableRepositories()
+    private function getAvailableGroupedApplications()
     {
-        $applications = $this->applicationRepo->findAll();
-        $repos = $this->halRepo->findBy([], ['name' => 'ASC']);
+        $groupedApplications = $this->halRepo->getGroupedApplications();
 
-        $available = [];
-        foreach ($repos as $repo) {
-            $available[$repo->id()] = $repo->name();
+        $taken = [];
+        foreach ($this->applicationRepo->findAll() as $app) {
+            if ($app->halApplication()) {
+                $taken[$app->halApplication()->id()] = true;
+            }
+        }
+        foreach ($groupedApplications as $index => $grouped) {
+            $groupedApplications[$index] = array_filter($grouped, function($app) use ($taken) {
+                return !isset($taken[$app->id()]);
+            });
+
         }
 
-        foreach ($applications as $app) {
-            if ($app->halApplication()) {
-                unset($available[$app->halApplication()->id()]);
+        foreach ($groupedApplications as $index => $grouped) {
+            if (count($grouped) == 0) {
+                unset($groupedApplications[$index]);
             }
         }
 
-        return $available;
+        return $groupedApplications;
     }
 
     /**
