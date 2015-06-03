@@ -21,7 +21,7 @@ $key = '';
 // List keys in the hal namespace
 if ($list) {
     echo "\nLISTING REDIS KEYS...\n";
-;
+
     $keys = [];
     foreach (new \Predis\Collection\Iterator\Keyspace($redis, '*') as $key) {
         $keys[] = $key;
@@ -43,7 +43,11 @@ if ($delete) {
     }
 
     // List keys in the hal namespace
-    $keys = $redis->keys('doctrine:*');
+    $keys = [];
+    foreach (new \Predis\Collection\Iterator\Keyspace($redis, 'doctrine:*') as $key) {
+        $keys[] = $key;
+    }
+
     sort($keys);
     print_r($keys);
 }
