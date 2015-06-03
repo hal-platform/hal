@@ -146,6 +146,7 @@ services:
             - @json
             - @url
             - @slim.request
+            - @slim.response
             - @slim.route.parameters
     application.deployment.validator:
         class: 'QL\Hal\Validator\DeploymentValidator'

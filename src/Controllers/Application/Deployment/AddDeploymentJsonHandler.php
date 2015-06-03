@@ -14,6 +14,7 @@ use QL\Panthor\Slim\Halt;
 use QL\Panthor\Utility\Json;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
+use Slim\Http\Response;
 
 class AddDeploymentJsonHandler implements MiddlewareInterface
 {
@@ -62,6 +63,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
      * @param Json $json
      * @param Url $url
      * @param Request $request
+     * @param Response $response
      * @param array $parameters
      */
     public function __construct(
@@ -71,6 +73,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
         Json $json,
         Url $url,
         Request $request,
+        Response $response,
         array $parameters
     ) {
         $this->em = $em;

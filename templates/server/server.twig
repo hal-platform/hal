@@ -51,11 +51,11 @@
                     </td>
                     <td>
                         {% if server.type == 'elasticbeanstalk' %}
-                            <code>{{ deployment.ebEnvironment }}</code>
+                            <code class="code_clear">{{ deployment.ebEnvironment }}</code>
                         {% elseif server.type == 'ec2' %}
-                            <code>{{ deployment.ec2Pool }}</code>
+                            <code class="code_clear">{{ deployment.ec2Pool }}</code>
                         {% else %}
-                            <code>{{ deployment.path }}</code>
+                            <code class="code_clear">{{ deployment.path }}</code>
                         {% endif %}
                     </td>
                     {% if server.type == 'elasticbeanstalk' %}
