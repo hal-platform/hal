@@ -9,6 +9,7 @@ namespace QL\Kraken\Middleware;
 
 use Doctrine\ORM\EntityManager;
 use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\AuditLog;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
@@ -72,6 +73,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
         // whitelist of route parameters and the entity they map to.
         $this->map = [
+            'auditLog' => AuditLog::CLASS,
             'application' => Application::CLASS,
             'environment' => Environment::CLASS,
             'property' => Property::CLASS,

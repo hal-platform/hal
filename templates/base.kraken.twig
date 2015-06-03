@@ -31,6 +31,10 @@
                         <li>{{ nav_macros.navlink('Applications', 'kraken.applications', 'list') }}</li>
                         <li>{{ nav_macros.navlink('Environments', 'kraken.environments', 'leaf') }}</li>
 
+                        {% if isUserAdminOrSuper(currentUser) %}
+                            <li>{{ nav_macros.navlink('Audit Logs', 'kraken.admin.audit.logs.page1', 'watch') }}</li>
+                        {% endif %}
+
                         <li>{{ nav_macros.navlink('Help', 'kraken.help', 'question') }}</li>
                         <li>{{ nav_macros.navlink('Logout', 'logout', 'sign-out') }}</li>
 

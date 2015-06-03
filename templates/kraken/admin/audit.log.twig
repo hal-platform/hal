@@ -1,0 +1,114 @@
+{% extends 'base.kraken.twig' %}
+{% import '_partial/macros.twig' as macros %}
+
+{% set page_title = "Audit Log" %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    <h2>Resource Metadata</h2>
+    {{ block('resource_meta') }}
+
+    <h2>Logged Resource</h2>
+    {{ block('logged_resource') }}
+
+    <h2>Action Details</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">User</dt>
+            <dd><a href="{{ urlFor('user', {'user': log.user.id}) }}">{{ log.user.handle }}</a></dd>
+
+            <dt class="split__title">Time</dt>
+            <dd>{{ log.created|html5date }}</dd>
+
+            <dt class="split__title">Action</dt>
+            <dd>{{ log.action }}</dd>
+        </dl>
+    </div>
+
+    <h2>Raw Audit Data</h2>
+    <div class="pre-wrapper">
+        <pre>{{ log.data|jsonPretty|raw }}</pre>
+    </div>
+
+    <p class="leader">
+        <a class="btn" href="{{ urlFor('kraken.admin.audit.logs.page1') }}">Audit Logs</a>
+    </p>
+
+{% endblock %}
+
+{% block resource_meta %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>
+                {% if log.application %}
+                    <a href="{{ urlFor('kraken.application', {'application': log.application.id}) }}">{{ log.application.name }}</a>
+                {% else %}
+                    Unknown
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>
+                {% if environment %}
+                   {{ environment.name }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block logged_resource %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Type</dt>
+            <dd>{{ resource_type }}</dd>
+
+            <dt class="split__title">Resource</dt>
+            <dd>
+                {% if resource is schema %}
+                    <a href="{{ urlFor('kraken.schema', {schema: resource.id }) }}">{{ resource.id }}</a>
+
+                {% elseif resource is property %}
+                    <a href="{{ urlFor('kraken.property', {property: resource.id }) }}">{{ resource.id }}</a>
+
+                {% else %}
+                    Deleted : {{ resource_id }}
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">Property</dt>
+            <dd><code>{{ log.key }}</code></dd>
+
+            {# is property, has "value" #}
+            {% if changed is not same as(null) %}
+                {% if changed.current and changed.new %}
+                    <dt class="split__title">Old Value</dt>
+                    <dd>
+                        <div class="pre-wrapper">
+                            <pre>{{ changed.current|jsonPretty|raw }}</pre>
+                        </div>
+                    </dd>
+
+                    <dt class="split__title">New Value</dt>
+                    <dd>
+                        <div class="pre-wrapper">
+                            <pre>{{ changed.new|jsonPretty|raw }}</pre>
+                        </div>
+                    </dd>
+                {% else %}
+                    <dt class="split__title">Value</dt>
+                    <dd>
+                        <div class="pre-wrapper">
+                            <pre>{{ changed|jsonPretty|raw }}</pre>
+                        </div>
+                    </dd>
+                {% endif %}
+            {% endif %}
+
+        </dl>
+    </div>
+{% endblock %}

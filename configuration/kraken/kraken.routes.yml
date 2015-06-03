@@ -25,6 +25,23 @@ parameters:
             route: '/kraken/help'
             stack: ['kraken.help.page']
 
+        kraken.admin.audit.logs.page1:
+            method: 'GET'
+            route: '/kraken/admin/audit-logs'
+            stack: ['middleware.admin', 'kraken.admin.audit.logs.page']
+
+        kraken.admin.audit.logs:
+            method: 'GET'
+            route: '/kraken/admin/audit-logs/page/:page'
+            stack: ['middleware.admin', 'kraken.admin.audit.logs.page']
+            conditions: {page: %routes.kraken.regex.digit%}
+
+        kraken.admin.audit.log:
+            method: 'GET'
+            route: '/kraken/admin/audit-logs/:auditLog'
+            stack: ['middleware.admin', 'kraken.middleware.require.entity', 'kraken.admin.audit.log.page']
+            conditions: {auditLog: %routes.kraken.regex.hex%}
+
         ################################################################################################################
         # APPLICATION
         ################################################################################################################

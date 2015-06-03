@@ -7,6 +7,7 @@ imports:
 services:
 
     kraken.application:     { synthetic: true }
+    kraken.auditLog:        { synthetic: true }
     kraken.environment:     { synthetic: true }
     kraken.property:        { synthetic: true }
     kraken.configuration:   { synthetic: true }

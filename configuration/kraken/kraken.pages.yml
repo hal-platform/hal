@@ -23,6 +23,43 @@ services:
         calls: [['setTemplate', ['kraken/environments.twig']]]
 
     ####################################################################################################################
+    # GENERAL USE
+    ####################################################################################################################
+
+    kraken.help.page:
+        parent: 'static.controller'
+        arguments: [@kraken.help.twig, @slim.response]
+    kraken.help.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['kraken/help.twig']]]
+
+    ####################################################################################################################
+    # ADMIN
+    ####################################################################################################################
+
+    kraken.admin.audit.logs.page:
+        class: 'QL\Kraken\Controller\Admin\AuditLogsController'
+        arguments:
+            - @kraken.admin.audit.logs.twig
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+    kraken.admin.audit.logs.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/admin/audit.logs.twig']]]
+
+    kraken.admin.audit.log.page:
+        class: 'QL\Kraken\Controller\Admin\AuditLogController'
+        arguments:
+            - @kraken.admin.audit.log.twig
+            - @kraken.auditLog
+            - @doctrine.em
+            - @json
+    kraken.admin.audit.log.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/admin/audit.log.twig']]]
+
+    ####################################################################################################################
     # APPLICATION
     ####################################################################################################################
 
@@ -342,15 +379,3 @@ services:
             - @currentUser
             - @session.flasher
             - @kraken.random
-
-    ####################################################################################################################
-    # GENERAL USE
-    ####################################################################################################################
-
-    kraken.help.page:
-        parent: 'static.controller'
-        arguments: [@kraken.help.twig, @slim.response]
-    kraken.help.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['kraken/help.twig']]]
-
