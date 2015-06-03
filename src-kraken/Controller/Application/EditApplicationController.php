@@ -9,7 +9,7 @@ namespace QL\Kraken\Controller\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Entity\Repository as HalApplication;
+use QL\Hal\Core\Entity\Application as HalApplication;
 use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Validator\ApplicationValidator;
@@ -94,7 +94,7 @@ class EditApplicationController implements ControllerInterface
         $form = [
             'core_id' => $this->application->coreId(),
             'name' => $this->application->name(),
-            'hal_app' => $this->application->halApplication() ? $this->application->halApplication()->getId() : null
+            'hal_app' => $this->application->halApplication() ? $this->application->halApplication()->id() : null
         ];
 
         if ($this->request->isPost()) {
@@ -113,8 +113,8 @@ class EditApplicationController implements ControllerInterface
 
         $available = $this->getAvailableRepositories();
         if ($this->application->halApplication()) {
-            $id = $this->application->halApplication()->getId();
-            $name = $this->application->halApplication()->getName();
+            $id = $this->application->halApplication()->id();
+            $name = $this->application->halApplication()->name();
             $available = [$id => $name] + $available;
         }
 
@@ -161,12 +161,12 @@ class EditApplicationController implements ControllerInterface
 
         $available = [];
         foreach ($repos as $repo) {
-            $available[$repo->getId()] = $repo->getName();
+            $available[$repo->id()] = $repo->name();
         }
 
         foreach ($applications as $app) {
             if ($app->halApplication()) {
-                unset($available[$app->halApplication()->getId()]);
+                unset($available[$app->halApplication()->id()]);
             }
         }
 

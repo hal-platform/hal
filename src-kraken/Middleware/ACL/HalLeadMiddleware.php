@@ -108,7 +108,7 @@ class HalLeadMiddleware implements MiddlewareInterface
             $krakenApp = $this->applicationRepo->find($application);
 
             if ($krakenApp->halApplication()) {
-                if (in_array($krakenApp->halApplication()->getId(), $perm->leadApplications(), true)) {
+                if (in_array($krakenApp->halApplication()->id(), $perm->leadApplications(), true)) {
                     return;
                 }
             }

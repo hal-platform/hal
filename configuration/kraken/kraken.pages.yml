@@ -4,13 +4,6 @@ services:
     # CORE PAGES
     ####################################################################################################################
 
-    kraken.page:
-        parent: 'static.controller'
-        arguments: [@kraken.twig, @slim.response]
-    kraken.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['kraken/index.twig']]]
-
     kraken.applications.page:
         class: 'QL\Kraken\Controller\ApplicationsController'
         arguments:

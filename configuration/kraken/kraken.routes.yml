@@ -10,7 +10,7 @@ parameters:
 
         kraken:
             route: '/kraken'
-            stack: ['middleware.login', 'kraken.page']
+            stack: ['middleware.login', 'kraken.applications.page']
 
         kraken.applications:
             route: '/kraken/applications'

@@ -5,7 +5,7 @@
 
 {% block content %}
 
-    <h1>Applications</h1>
+    <h1>{{ page_title }}</h1>
 
     {% if applications %}
         <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
@@ -19,22 +19,20 @@
                 </tr>
             </thead>
             <tbody>
-                {% for app in applications %}
+                {% for application in applications %}
                     <tr>
-                        <td>{{ app.name }}</td>
+                        <td>{{ application.name }}</td>
+                        <td>{{ application.coreId }}</td>
                         <td>
-                            {{ app.coreId }}
+                            <a href="http://core/app/{{ application.coreId }}">{{ macros.icon('spinner') }} Core Website</a>
                         </td>
                         <td>
-                            <a href="http://core/app/{{ app.coreId }}">{{ macros.icon('spinner') }} Core Website</a>
-                        </td>
-                        <td>
-                            {% if app.halApplication %}
-                                <a href="{{ urlFor('repository.status', {id: app.halApplication.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
+                            {% if application.halApplication %}
+                                <a href="{{ urlFor('repository.status', {id: application.halApplication.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
                             {% endif %}
                         </td>
                         <td class="tr">
-                            <a class="btn btn--small" href="{{ urlFor('kraken.status', {application: app.id}) }}">Configuration</a>
+                            <a class="btn btn--small" href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration</a>
                         </td>
                     </tr>
                 {% endfor %}

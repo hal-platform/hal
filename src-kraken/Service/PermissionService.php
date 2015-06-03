@@ -56,7 +56,7 @@ class PermissionService
      */
     public function canUserDeploy(User $user, Application $application, Environment $environment)
     {
-        $key = sprintf(self::CACHE_CAN_DEPLOY, $user->getId(), $application->id(), $environment->id());
+        $key = sprintf(self::CACHE_CAN_DEPLOY, $user->id(), $application->id(), $environment->id());
 
         // internal cache
         if (null !== ($cached = $this->getFromInternalCache($key))) {
