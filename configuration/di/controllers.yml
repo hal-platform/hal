@@ -401,7 +401,6 @@ services:
             - @user.settings.twig
             - @doctrine.em
             - @currentUser
-            - @slim.not.found
     user.settings.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/settings.twig']]]

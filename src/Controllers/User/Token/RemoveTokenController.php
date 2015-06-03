@@ -107,7 +107,7 @@ class RemoveTokenController implements ControllerInterface
         $this->em->flush();
 
         $this->flasher
-            ->withFlash(sprintf(self::SUCCESS, $label), 'success');
+            ->withFlash(sprintf(self::SUCCESS, $label), 'success')
             ->load('settings');
     }
 

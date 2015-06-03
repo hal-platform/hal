@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\Token;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -24,7 +25,7 @@ class SettingsController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $userRepo;
+    private $tokenRepo;
 
     /**
      * @type User
@@ -32,33 +33,19 @@ class SettingsController implements ControllerInterface
     private $currentUser;
 
     /**
-     * @type Response
-     */
-    private $response;
-
-    /**
-     * @type NotFound
-     */
-    private $notFound;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param User $currentUser
-     * @param Response $response
-     * @param NotFound $notFound
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        User $currentUser,
-        NotFound $notFound
+        User $currentUser
     ) {
         $this->template = $template;
-        $this->userRepo = $em->getRepository(User::CLASS);
-        $this->currentUser = $currentUser;
+        $this->tokenRepo = $em->getRepository(Token::CLASS);
 
-        $this->notFound = $notFound;
+        $this->currentUser = $currentUser;
     }
 
     /**
@@ -66,13 +53,10 @@ class SettingsController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$user = $this->userRepo->find($this->currentUser->id())) {
-            return call_user_func($this->notFound);
-        }
-
         $this->template->render([
-            'user' => $user,
-            'hasGithubToken' => (strlen($user->githubToken()) > 0)
+            'user' => $this->currentUser,
+            'tokens' => $this->tokenRepo->findBy(['user' => $this->currentUser]),
+            'hasGithubToken' => (strlen($this->currentUser->githubToken()) > 0)
         ]);
     }
 }
