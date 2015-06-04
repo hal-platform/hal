@@ -1,9 +1,5 @@
 {% import "_partial/macros.twig" as macros %}
 
-{% if initiator is not defined %}
-    {% set initiator = true %}
-{% endif %}
-
 <ul class="list--bare cards--baby">
     {% for push in pushes %}
         {% set cardStyle = '' %}

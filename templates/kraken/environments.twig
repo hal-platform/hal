@@ -47,12 +47,12 @@
         <p>There are no environments defined.</p>
     {% endif %}
 
-    <p>
-        {% if isAdmin %}
-            <a class="btn btn--action" href="{{ urlFor('kraken.environment.add') }}">Add Environment</a>
-        {% endif %}
+    <ul class="button-list button-list--half">
+        <li><a class="btn" href="{{ urlFor('kraken.applications') }}">Applications</a></li>
 
-        <a class="btn" href="{{ urlFor('kraken.applications') }}">Applications</a>
-    </p>
+        {% if isAdmin %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.environment.add') }}">Add Environment</a></li>
+        {% endif %}
+    </ul>
 {% endblock %}
 

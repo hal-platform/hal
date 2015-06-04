@@ -6,19 +6,12 @@
 {% set page_title = "Start Push : " ~ build.id %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.application.id}) }}">Back to Application Status</a></p>
+    <p></p>
 
-    <h2>Start Push - <strong>{{ build.application.name }}</strong></h2>
-
-    <p>Please review the below build details before pushing.</p>
+    <h1>Start Push - <strong>{{ build.application.name }}</strong></h1>
 
     <div class="details-box">
         <dl class="split mbn">
-            <dt class="split__title">Build Id</dt>
-            <dd>
-                <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
-            </dd>
-
             <dt class="split__title">Application</dt>
             <dd>
                 <a href="{{ urlFor('repository', {id: build.application.id}) }}">{{ build.application.name }}</a>
@@ -27,16 +20,19 @@
             <dt class="split__title">Environment</dt>
             <dd>{{ build.environment.name }}</dd>
 
-            <dt class="split__title">Reference</dt>
+        </dl>
+    </div>
+
+    <h2>Build</h2>
+
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Build Id</dt>
             <dd>
-                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                {{ macros.gitref(build, false, isCurrent) }}
+                <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
             </dd>
 
-            <dt class="split__title">Commit</dt>
-            <dd>{{ macros.gitcommit(build) }}</dd>
-
-            <dt class="split__title">Initiator</dt>
+            <dt class="split__title">User</dt>
             <dd>
                 {% if build.user %}
                     <a href="{{ urlFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
@@ -45,9 +41,24 @@
                 {% endif %}
             </dd>
 
-            <dt class="split__title">Completed</dt>
+            <dt class="split__title">Time</dt>
             <dd>{{ build.end|html5date }}</dd>
+        </dl>
+    </div>
 
+
+    <h2>Git Reference</h2>
+
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Reference</dt>
+            <dd>
+                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
+                {{ macros.gitref(build, false, isCurrent) }}
+            </dd>
+
+            <dt class="split__title">Commit</dt>
+            <dd>{{ macros.gitcommit(build) }}</dd>
         </dl>
     </div>
 
@@ -111,7 +122,7 @@
                             <td colspan="4">No successful pushes found.</td>
                         {% endif %}
 
-                        <td>
+                        <td class="tr">
                             {% if inProgress %}
                                 Please Wait
                             {% elseif canUserPush(currentUser, status.deployment.application, status.deployment.server.environment) %}
@@ -126,9 +137,12 @@
                 </tbody>
             </table>
 
-            {% if allowSubmit %}
-                <input class="btn" type="submit" value="Push To Selected Servers" name="submit">
-            {% endif %}
+            <ul class="button-list button-list--half">
+                {% if allowSubmit %}
+                    <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
+                {% endif %}
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repository.status', {'id': build.application.id}) }}">Cancel</a></li>
+            </ul>
         </form>
     {% else %}
         <p>There are no servers to deploy to.</p>

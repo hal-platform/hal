@@ -21,9 +21,9 @@
 
     {% set hasPushes = false %}
 
-    <h3 class="{{ (deployment_statuses) ? 'js-overloader-parent' : '' }}">
+    <h2 class="{{ (deployment_statuses) ? 'js-overloader-parent' : '' }}">
         Server Status - <strong>{{ selected_environment.name }}</strong>
-    </h3>
+    </h2>
 
     {# example display of servers by environment #}
     {% if deployment_statuses %}
@@ -42,7 +42,7 @@
         <p>This application has no deployment targets for <strong>{{ selected_environment.name }}</strong> and cannot be pushed.</p>
     {% endif %}
 
-    <h3>Recent Builds - <strong>{{ selected_environment.name }}</strong></h3>
+    <h2>Recent Builds - <strong>{{ selected_environment.name }}</strong></h2>
     {% include '_partial-job/build-table.twig' with {'builds': builds} %}
 
     <ul class="button-list">

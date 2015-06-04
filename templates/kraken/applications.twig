@@ -1,11 +1,18 @@
 {% extends 'base.kraken.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = "Applications" %}
+{% set page_title = "Kraken Applications" %}
 
 {% block content %}
 
     <h1>{{ page_title }}</h1>
+
+    <p>
+        lorem ipsum blah blah
+    </p>
+
+    <p>See the <a href="{{ urlFor('kraken.help') }}">Help page</a> for more.</p>
+
 
     {% if applications %}
         <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
@@ -42,9 +49,9 @@
         <p>There are no applications defined.</p>
     {% endif %}
 
-    <p>
-        <a class="btn btn--action" href="{{ urlFor('kraken.application.add') }}">Add Application</a>
-        <a class="btn" href="{{ urlFor('kraken.environments') }}">Environments</a>
-    </p>
+    <ul class="button-list button-list--half">
+        <li><a class="btn" href="{{ urlFor('kraken.environments') }}">Environments</a></li>
+        <li><a class="btn btn--action" href="{{ urlFor('kraken.application.add') }}">Add Application</a></li>
+    </ul>
 
 {% endblock %}
