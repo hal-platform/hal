@@ -184,7 +184,7 @@ class PermissionsService
             return $this->setToInternalCache($key, true);
         }
 
-        if ($this->isUserCollaborator($user, $application)) {
+        if ($this->isUserOrganizationMember($user, $application)) {
             return $this->setToInternalCache($key, true);
         }
 
@@ -279,7 +279,7 @@ class PermissionsService
      *
      * @return bool
      */
-    private function isUserCollaborator(User $user, Application $application)
+    private function isUserOrganizationMember(User $user, Application $application)
     {
         if (!$this->enableGitHubPermissions) {
             return false;
@@ -297,11 +297,7 @@ class PermissionsService
             return $result;
         }
 
-        $result = $this->github->isUserCollaborator(
-            $application->githubOwner(),
-            $application->githubRepo(),
-            $user->handle()
-        );
+        $result = $this->github->isUserOrganizationMember($application->githubOwner(), $user->handle());
 
         $this->setToInternalCache($key, $result);
         $this->setToCache($key, $result);

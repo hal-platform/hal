@@ -302,19 +302,6 @@ class GitHubService
     }
 
     /**
-     * @todo delete
-     *
-     * @param string $owner
-     * @param string $repo
-     * @param string $user
-     * @return boolean
-     */
-    public function isUserCollaborator($owner, $repo, $user)
-    {
-        return $this->isUserOrganizationMember($owner, $user);
-    }
-
-    /**
      * @param string $organization
      * @param string $user
      *
