@@ -114,3 +114,10 @@ parameters:
     aws.region: ''
     aws.credentials.key: ''
     aws.credentials.secret: ''
+
+
+    ############################################################################
+    # kraken
+    ############################################################################
+
+    kraken.environmentalize: true

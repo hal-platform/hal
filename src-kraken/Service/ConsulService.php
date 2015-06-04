@@ -40,11 +40,12 @@ class ConsulService
 
     /**
      * @param Client $guzzle
+     * @param bool $environmentalize
      */
-    public function __construct(Client $guzzle)
+    public function __construct(Client $guzzle, $environmentalize)
     {
         $this->guzzle = $guzzle;
-        $this->environentalize = true;
+        $this->environentalize = $environmentalize;
     }
 
     /**
