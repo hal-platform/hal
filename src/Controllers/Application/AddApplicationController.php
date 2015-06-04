@@ -153,14 +153,14 @@ class AddApplicationController implements ControllerInterface
             ->withEmail($email)
 
             ->withGithubOwner($user)
-            ->withGithubRepo($repo);
+            ->withGithubRepo($repo)
+            ->withEbName('');
 
         // Default to blank, not null
-        $application->withBuildCmd('');
-        $application->withBuildTransformCmd('');
-        $application->withPrePushCmd('');
-        $application->withPostPushCmd('');
-        $application->withEbName('');
+        $application->setBuildCmd('');
+        $application->setBuildTransformCmd('');
+        $application->setPrePushCmd('');
+        $application->setPostPushCmd('');
 
         $this->em->persist($application);
         $this->em->flush();
