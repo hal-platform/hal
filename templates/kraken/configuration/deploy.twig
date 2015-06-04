@@ -69,10 +69,10 @@
         <p>There is no schema defined for this application. An empty configuration will be deployed.</p>
     {% endif %}
 
-    <form method="post">
+    <form method="post" class="form-wrapper">
         <ul class="button-list">
             <li><input type="submit" class="btn btn--action" value="Deploy Configuration"></li>
-            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
         </ul>
     </form>
 
