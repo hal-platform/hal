@@ -143,7 +143,7 @@ class ErrorHandlerHook
             // Special note: HAL uses error log level. Agent uses critical log level.
             $context = [
                 'exceptionClass' => get_class($exception),
-                'exceptionData' => $exception->getTraceAsString()
+                'exceptionData' => $exception instanceof FatalErrorException ? (string) $exception : $exception->getTraceAsString(),
             ];
 
             if ($previous = $exception->getPrevious()) {
