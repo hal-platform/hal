@@ -120,7 +120,7 @@ class StartBuildController implements ControllerInterface
 
         // if empty, throw them a bone with "test"
         if (!$envs) {
-            $envs = $this->envRepo->findBy(['key' => 'test']);
+            $envs = $this->envRepo->findBy(['name' => 'test']);
         }
 
         return $envs;
