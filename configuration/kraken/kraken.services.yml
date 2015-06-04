@@ -50,6 +50,12 @@ services:
         class: 'QL\Kraken\Application\SkeletorConfigurationTemplate'
         arguments: [@clock, @kraken.random]
 
+    # JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_PRESERVE_ZERO_FRACTION
+    kraken.json.encoder:
+        class: 'QL\Panthor\Utility\Json'
+        calls:
+            - ['setEncodingOptions', [1039]]
+
     ####################################################################################################################
     # VALIDATORS
     ####################################################################################################################
@@ -58,7 +64,7 @@ services:
         class: 'QL\Kraken\Validator\PropertyValidator'
         arguments:
             - @doctrine.em
-            - @json
+            - @kraken.json.encoder
             - @kraken.crypto.encrypter
             - @kraken.random
 

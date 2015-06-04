@@ -243,19 +243,35 @@ class PropertyValidator
             }
 
         } elseif ($schema->dataType() === 'strings') {
-            // @todo
+            foreach ($value as &$listValue) {
+                $listValue = (string) $listValue;
+            }
 
         } else {
             // "string"
             $value = (string) $value;
         }
 
-        // @todo JSON_PRESERVE_ZERO_FRACTION - PHP 5.6.6
-        $encoded = $this->json->encode($value);
+        // This is where the magic happens. This is the exact value stored in the DB, and eventually encrypted/base64 and sent to consul.
+        $encoded = $this->encodeValue($value);
 
         if ($schema->isSecure()) {
             $encoded = $this->encrypter->encrypt($encoded);
         }
+
+        return $encoded;
+    }
+
+    /**
+     * @see https://wiki.php.net/rfc/json_preserve_fractional_part
+     * To properly encode floats without data loss, this requires PHP >= 5.6.6 and the JSON_PRESERVE_ZERO_FRACTION flag.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    private function encodeValue($value)
+    {
+        $encoded = $this->json->encode($value);
 
         return $encoded;
     }
