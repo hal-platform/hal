@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7c231c2d5020c4a7c25278604b352ab8",
+    "hash": "480eac369dcefe40fad87550ec3447a1",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1116,11 +1116,11 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "dev-master",
+            "version": "2.7.0-beta1",
             "source": {
                 "type": "git",
                 "url": "http://git/web-core/hal-core",
-                "reference": "1b7d729f0a5e7a8244cc7150f4376d2e703dd747"
+                "reference": "fcbdf719fb76cbbbb74096ab89201e012c25c214"
             },
             "archive": {
                 "exclude": [
@@ -1131,7 +1131,7 @@
                 ]
             },
             "require": {
-                "doctrine/orm": "*",
+                "doctrine/orm": ">=2.5",
                 "ext-openssl": "*",
                 "php-64bit": ">=5.4.0",
                 "ql/mcp-core": "*",
@@ -1161,7 +1161,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-06-03 22:29:01"
+            "time": "2015-06-03 22:42:16"
         },
         {
             "name": "ql/http-problem",
@@ -3260,7 +3260,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/hal-core": 20
+        "ql/hal-core": 10
     },
     "prefer-stable": false,
     "prefer-lowest": false,
