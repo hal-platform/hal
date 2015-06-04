@@ -8,7 +8,7 @@
 namespace QL\Hal\Bootstrap;
 
 use Exception;
-use Symfony\Component\Debug\ErrorHandler;
+use QL\Hal\Slim\ErrorHandler;
 
 define('MAINTENANCE', false);
 
@@ -39,14 +39,10 @@ $app = $container->get('slim');
 // Custom application logic here
 ini_set('session.use_cookies', '0');
 ini_set('memory_limit','384M');
+ini_set('display_errors', 0);
 
 # convert errors to exceptions
-ErrorHandler::register();
-
-// Set a global exception handler. NOTE: This should only handle exceptions thrown by the error handler.
-set_exception_handler(function(Exception $exception) use ($app) {
-    call_user_func([$app, 'error'], $exception);
-});
+ErrorHandler::register([$app, 'error']);
 
 $headers = $app->response()->headers['Content-Type'] = 'text/html; charset=utf-8';
 
