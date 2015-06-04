@@ -2,13 +2,13 @@
 {% import '_partial/macros.twig' as macros %}
 {% set js_components = ["build.info"] %}
 
-{% set page_title = "Build Information" %}
+{% set page_title = "Build : " ~ build.application.name %}
 
 {% block content %}
 
     <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': build.application.id}) }}">Back to Application Status</a></p>
 
-    <h1>{{ page_title }}</h1>
+    <h1>Build - <strong>{{ build.application.name }}</strong></h1>
 
     <h2>Build Details</h2>
 
@@ -30,11 +30,8 @@
 
             <dt class="split__title">Reference</dt>
             <dd>
-                {% if githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                    {{ macros.status_icon(macros.gitref(build) ~ ' (latest)', 'success') }}
-                {% else %}
-                    {{ macros.status_icon(macros.gitref(build) ~ ' (behind)', 'other') }}
-                {% endif %}
+                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
+                {{ macros.gitref(build, false, isCurrent) }}
             </dd>
 
             <dt class="split__title">Commit</dt>

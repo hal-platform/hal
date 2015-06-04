@@ -19,10 +19,11 @@
 
 {% endmacro %}
 
-{% macro gitref(build, sliced) %}
+{% macro gitref(build, sliced, isCurrent, hideTooltip) %}
     {% import _self as self_macros %}
 
     {% set sliced = sliced|default(false) %}
+    {% set hideTooltip = hideTooltip|default(false) %}
 
     {% set resolved = build.branch|gitref %}
     {% if resolved %}
@@ -49,7 +50,25 @@
                 {{ ref }}
             {% endif %}
         </a>
-        {{ self_macros.icon(icontype) }}
+
+        {% set iconcolor = '' %}
+        {% if (isCurrent is sameas(true)) %}{% set iconcolor = 'icon--success' %}{% endif %}
+        {% if (isCurrent is sameas(false)) %}{% set iconcolor = 'icon--warning' %}{% endif %}
+
+        {% if not hideTooltip and isCurrent is not sameas(null) %}
+            {% if isCurrent is sameas(true) %}
+
+                <span class="tooltipped tooltipped-n" aria-label="This commit is update to date with HEAD">
+                    {{ self_macros.icon(icontype, iconcolor) }}
+                </span>
+            {% elseif isCurrent is sameas(false) %}
+                <span class="tooltipped tooltipped-n" aria-label="This commit is behind HEAD">
+                    {{ self_macros.icon(icontype, iconcolor) }}
+                </span>
+            {% endif %}
+        {% else %}
+            {{ self_macros.icon(icontype, iconcolor) }}
+        {% endif %}
 
     {% endif %}
 

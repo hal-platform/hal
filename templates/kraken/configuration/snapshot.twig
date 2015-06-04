@@ -60,13 +60,13 @@
                                 </span>
                                 <span class="tablesaw-collapse">The property was updated successfully</span>
 
-                            {% elseif log.detail is same as(false) %}
+                            {% elseif log.detail is sameas(false) %}
                                 <span class="tooltipped" aria-label="The property was not updated. The system failed to obtain a lock.">
                                     {{ macros.status_icon('', 'error') }}
                                 </span>
                                 <span class="tablesaw-collapse">The property was not updated. The system failed to obtain a lock.</span>
 
-                            {% elseif log.detail is same as(null) %}
+                            {% elseif log.detail is sameas(null) %}
                                 <span class="tooltipped" aria-label="The property was not updated. An unexpected error occured.">
                                     {{ macros.status_icon('', 'error') }}
                                 </span>
@@ -88,10 +88,10 @@
                             {% if log.isSuccess %}
                                 Success
 
-                            {% elseif log.detail is same as(false) %}
+                            {% elseif log.detail is sameas(false) %}
                                 Consul Error
 
-                            {% elseif log.detail is same as(null) %}
+                            {% elseif log.detail is sameas(null) %}
                                 Unknown Error
 
                             {% else %}

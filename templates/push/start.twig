@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 {% import '_partial/macros.twig' as macros %}
+{% import '_partial-form/macros.twig' as form_macros %}
 {% set js_components = ["push.start"] %}
 
 {% set page_title = "Start Push : " ~ build.id %}
@@ -28,11 +29,8 @@
 
             <dt class="split__title">Reference</dt>
             <dd>
-                {% if githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                    {{ macros.status_icon(macros.gitref(build), 'success') }}
-                {% else %}
-                    {{ macros.status_icon(macros.gitref(build), 'other') }}
-                {% endif %}
+                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
+                {{ macros.gitref(build, false, isCurrent) }}
             </dd>
 
             <dt class="split__title">Commit</dt>
@@ -58,17 +56,11 @@
         before selecting which servers you wish to deploy to.
     </p>
 
-    {% if errors %}
-        <ul class="error-list">
-            {% for error in errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    {{ form_macros.formErrors(errors) }}
 
     {% if statuses %}
         <form method="post">
-            <table class="table--spacing-medium" data-tablesaw-mode="stack">
+            <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
                 <thead>
                     <tr>
                         <th>Server</th>
@@ -76,7 +68,7 @@
                         <th>Commit</th>
                         <th>Last Pushed</th>
                         <th>Pushed By</th>
-                        <th class="js-toggle-container"></th>
+                        <th class="js-toggle-container"><span class="tablesaw-collapse">Deploy to Server?</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,11 +86,8 @@
                             {% set active = inProgress ? status.latest : status.success %}
 
                             <td>
-                                {% if githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, active.build.branch, active.build.commit) %}
-                                    {{ macros.status_icon(macros.gitref(active.build, true), 'success') }}
-                                {% else %}
-                                    {{ macros.status_icon(macros.gitref(active.build, true), 'other') }}
-                                {% endif %}
+                                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, active.build.branch, active.build.commit) %}
+                                {{ macros.gitref(active.build, true, isCurrent) }}
                             </td>
                             <td>
                                 {{ macros.gitcommit(active.build) }}

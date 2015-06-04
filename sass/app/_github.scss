@@ -1,0 +1,28 @@
+.github__pr--closed {
+    color: #c00000;
+}
+
+.github__pr--open {
+    color: #00c92c;
+}
+
+.github__pr {
+    @include adjust-font-size-to(ms(-3));
+    // text-transform: uppercase;
+}
+
+// Stolen directly from GitHub's css.
+.github__pr--source {
+    color: rgb(89, 138, 159);
+
+}
+
+.github__pr--label {
+    padding: msem(-7);
+    background-color: rgb(232, 240, 248);
+    color: rgb(51, 100, 121);
+
+    border-radius: 3px;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+}

@@ -123,7 +123,7 @@
                     <span class="split__title">Reference:</span>
                     {% if active %}
                         {% set isCurrent = githubCommitIsCurrent(application.githubOwner, application.githubRepo, active.build.branch, active.build.commit) %}
-                        {{ macros.status_icon(macros.gitref(active.build, true), isCurrent ? 'success' : 'warning') }}
+                        {{ macros.gitref(active.build, true, isCurrent, true) }}
 
                     {% else %}
                         Unknown

@@ -41,3 +41,12 @@
     background: $info-color;
     padding: 4px;
 }
+
+.icon--warning {
+    color: $warning-color;
+}
+.icon--warning-inverse {
+    color: $white;
+    background: $warning-color;
+    padding: 4px;
+}

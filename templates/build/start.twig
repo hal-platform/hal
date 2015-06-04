@@ -124,13 +124,13 @@
         </li>
         <li>
             <a name="js-tab--pr-open">
-                {{ macros.icon('pull', 'pr-open') }}
+                {{ macros.icon('pull', 'github__pr--open') }}
                 <span class="tab-text">Open Pull Requests</span>
             </a>
         </li>
         <li>
             <a name="js-tab--pr-closed">
-                {{ macros.icon('pull', 'pr-closed') }}
+                {{ macros.icon('pull', 'github__pr--closed') }}
                 <span class="tab-text">Closed Pull Requests</span>
             </a>
         </li>
@@ -214,7 +214,7 @@
                     >
 
                     <label for="{{ uniqueId }}" title="{{ pull.title }}">
-                        {{ macros.icon('pull', 'pr-open') }}
+                        {{ macros.icon('pull', 'github__pr--open') }}
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
@@ -222,9 +222,13 @@
                         {{ macros.icon('github') }}
                         <br />
 
-                        <span class="pr-smtxt">
-                            From <span class="pr-label">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />
-                            to <span class="pr-label">{{ pull.base.ref }}</span>
+                        <span class="github__pr">
+                            from <span class="github__pr--label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">
+                                <span class="github__pr--source">{{ pull.head.user.login }}:</span>{{ pull.head.ref }}
+                            </span>
+                            <br>
+
+                            to <span class="github__pr--label" title="{{ pull.base.user.login }}:{{ pull.base.ref }}">{{ pull.base.ref }}</span>
                         </span>
                     </label>
                 </li>
@@ -251,7 +255,7 @@
                     >
 
                     <label for="{{ uniqueId }}" title="{{ pull.title }}">
-                        {{ macros.icon('pull', 'pr-closed') }}
+                        {{ macros.icon('pull', 'github__pr--closed') }}
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
@@ -259,9 +263,13 @@
                         {{ macros.icon('github') }}
                         <br />
 
-                        <span class="pr-smtxt">
-                            From <span class="pr-label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">{{ pull.head.user.login }}:{{ pull.head.ref }}</span><br />
-                            to <span class="pr-label" title="{{ pull.base.ref }}">{{ pull.base.ref }}</span>
+                        <span class="github__pr">
+                            from <span class="github__pr--label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">
+                                <span class="github__pr--source">{{ pull.head.user.login }}:</span>{{ pull.head.ref }}
+                            </span>
+                            <br>
+
+                            to <span class="github__pr--label" title="{{ pull.base.user.login }}:{{ pull.base.ref }}">{{ pull.base.ref }}</span>
                         </span>
                     </label>
                 </li>
@@ -282,7 +290,7 @@
         {% set uniqueId = hash('pr' ~ ref.number) %}
 
         <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
-            {{ macros.icon('pull', 'pr-open') }}
+            {{ macros.icon('pull', 'github__pr--open') }}
             <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
 
             <span class="js-search-query">PR #{{ ref.number }}</span>
@@ -294,7 +302,7 @@
         {% set uniqueId = hash('pr' ~ ref.number) %}
 
         <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
-            {{ macros.icon('pull', 'pr-closed') }}
+            {{ macros.icon('pull', 'github__pr--closed') }}
             <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
 
             <span class="js-search-query">PR #{{ ref.number }}</span>
