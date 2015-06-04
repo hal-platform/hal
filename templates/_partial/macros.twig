@@ -101,9 +101,9 @@
     {% set title = title|default('') %}
 
     {% if title %}
-        <svg class="icon{{ class ? ' ' ~ class : ''}}" title="{{ title }}"><use xlink:href="/icons.svg#{{ icon }}"></use></svg>
+        <svg class="icon{{ class ? ' ' ~ class : '' }}" title="{{ title }}"><use xlink:href="/icons.svg#{{ icon }}"></use></svg>
     {% else %}
-        <svg class="icon{{ class ? ' ' ~ class : ''}}"><use xlink:href="/icons.svg#{{ icon }}"></use></svg>
+        <svg class="icon{{ class ? ' ' ~ class : '' }}"><use xlink:href="/icons.svg#{{ icon }}"></use></svg>
     {% endif %}
 
 {% endmacro %}
@@ -129,7 +129,7 @@
 
 {# Status Icon - icon prefix for a message #}
 {% macro status_icon(contents, type, extra_attributes) %}
-    {% set type = type|default('warning') %}
+    {% set type = type|default('info') %}
     {% set extra = extra_attributes|default({}) %}
     {% set typeClass = 'status-icon--info' %}
 

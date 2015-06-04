@@ -1,6 +1,7 @@
 {% extends 'base.kraken.twig' %}
+{% import "_partial/macros.twig" as macros %}
 
-{% set page_title = 'Help' %}
+{% set page_title = 'Kraken Help' %}
 
 {% block content %}
 
@@ -23,8 +24,10 @@
 
     <ul class="list--bare">
         <li class="trailer">
-            <a href="#kraken-usage"><b>Using Kraken</b></a>
+            <a href="#kraken-usage"><h3>Using Kraken</h3></a>
+
             <ul class="list--bullet">
+                <li><a href="#what-is-this">I am 12 years old and what is this?</a></li>
                 <li><a href="#add-application">How do I add my application to Kraken?</a></li>
                 <li><a href="#rollbacks">Are rollbacks possible?</a></li>
                 <li><a href="#configuration-schema">What type of configuration is supported?</a></li>
@@ -33,7 +36,8 @@
         </li>
 
         <li class="trailer">
-            <a href="#application-usage"><b>Loading Configuration (For application developers)</b></a>
+            <a href="#application-usage"><h3>Loading Configuration (For application developers)</h3></a>
+
             <ul class="list--bullet">
                 <li><a href="#sanity-checking">How do applications define what values they are expecting, and their type?</a></li>
                 <li><a href="#system-requirements">What is required to load configuration into my application?</a></li>
@@ -41,7 +45,8 @@
         </li>
 
         <li class="trailer">
-            <a href="#technical"><b>Technical Questions</b></a>
+            <a href="#technical"><h3>Technical Questions</h3></a>
+
             <ul class="list--bullet">
                 <li><a href="#consul">What is Consul?</a></li>
                 <li><a href="#consul-agent">What is the Consul agent?</a></li>
@@ -54,40 +59,131 @@
 
 {% block kraken_usage %}
 
-    <h4 id="add-application">How do I add my application to Kraken?</h4>
-    <p>tbd</p>
+    <h3 id="what-is-this">{{ macros.status_icon('I am 12 years old and what is this?') }}</h3>
+    <p>
+        <strong>Kraken</strong> is a system for storing <b>run-time</b> configuration. Run-time configuration consists of properties or settings
+        that change depending on environments, or need to be changed without requiring a code deployment.
+    </p>
+    <p class="mbn"><b>Here is a sample of what may be stored as run-time configuration:</b></p>
 
-    <h4 id="rollbacks">Are rollbacks possible?</h4>
-    <p>tbd</p>
+    <ul class="list--bullet">
+        <li>Host names of services</li>
+        <li>Lists of cache servers</li>
+        <li>Feature flags (disabling parts of application)</li>
+        <li>Logging settings (such as setting the log level to be sent to a service)</li>
+    </ul>
 
-    <h4 id="configuration-schema">What type of configuration is supported?</h4>
-    <p>tbd</p>
+    <h3 id="add-application">{{ macros.status_icon('How do I add my application to Kraken?') }}</h3>
+    <p>
+        All that is required to add an Application is a unique <b>CORE ID</b>, generated when an application is added to the <a href="http://core">CORE Website</a>.
+        When adding an application, we highly recommend </b>linking</b> to an existing HAL 9000 applicaiton to allow quick traversal back and
+        forth between HAL 9000 and Kraken. Kraken also inherits permission settings from HAL 9000.
+    </p>
 
+    <p>
+        Once added to Kraken, a <b>Configuration Schema</b> will need to be created.<br>
+        This schema defines what the names of properties in your configuration and their types (such as text, numbers, flags). This schema is global for all environments.
+    </p>
 
-    <h4 id="environment-promotion">How are changes promoted through environments?</h4>
-    <p>tbd</p>
+    <h3 id="rollbacks">{{ macros.status_icon('Are rollbacks possible?') }}</h3>
+    <p>
+        <strong>Yes.</strong><br>
+        Kraken mirrors the deployment process that is used for code deployments. When a configuration is deployed, the application
+        configuration schema and all current values are frozen. This <b>snapshot</b> is stored permanently (much like HAL 9000 builds) and can be redeployed
+        at <b>any time</b>, even if the application schema changes later.
+
+    </p>
+
+    <h3 id="configuration-schema">{{ macros.status_icon('What type of configuration is supported?') }}</h3>
+    <p>Kraken currently supports the following simple JSON types:</p>
+    <ul class="list--bullet">
+        <li>Text (Up to 20kb)</li>
+        <li>Number (integer)</li>
+        <li>Number (float)</li>
+        <li>Flag (boolean)</li>
+        <li>List (Text only)</li>
+    </ul>
+
+    <p>
+        Properties can also be marked as <b>Secure</b>. This ensures values are encrypted at rest, when they are stored in the Kraken database.
+        More complex types may be added at a later time.
+    </p>
+
+    <h3 id="environment-promotion">{{ macros.status_icon('How are changes promoted through environments?') }}</h3>
+    <p>
+        Properties are stored per-environment. <b>Configuration Schema</b> defines what the names of properties are, and their types.
+        This is universal for all environments.
+    </p>
+
+    <h4>Adding a property</h4>
+    <p>
+        When adding a property, Add the property to the configuration schema, and then incrementally add the property to each environment
+        as the code that requires the new configuration is deployed.
+    </p>
+
+    <p>
+        New values can be added to the Schema any time. If a property is missing from an environment, it will not be pushed
+        and has no effect on your application.
+    </p>
+
+    <h4>Removing a property</h4>
+    <p>
+        Special care must be taken when removing a property. When removed from the <b>Configuration Schema</b>, any properties saved for
+        any environment will also be removed.
+    </p>
+
+    <p>
+        Properties are not lost, however. Previously deployed snapshots that contain the property can be deployed from the configuration history.
+        The property will be missing from <b>new</b> deployments, but will still be present for <b>deployments</b> or <b>rollbacks</b>.
+    </p>
+
+    <h4>Changing a property</h4>
+    <p>
+        Schema is immutable. For example, it is not possible to change the type of a property from text to a flag. It must be removed, and then re-added.
+    </p>
 
 {% endblock %}
 
 {% block application_usage %}
 
-    <h4 id="#sanity-checking">How do applications define what values they are expecting, and their type?</h4>
+    <h3 id="#sanity-checking">{{ macros.status_icon('How do applications define what values they are expecting, and their type?') }}</h3>
     <p>tbd</p>
 
-    <h4 id="#system-requirements">What is required to load configuration into my application?</h4>
+    <h3 id="#system-requirements">{{ macros.status_icon('What is required to load configuration into my application?') }}</h3>
     <p>tbd</p>
 
 {% endblock %}
 
 {% block technical_questions %}
 
-    <h4 id="consul">What is Consul?</h4>
-    <p>tbd</p>
+    <h3 id="consul">{{ macros.status_icon('What is Consul?') }}</h3>
+    <p>
+        <a href="https://consul.io/">Consul</a> is the backend storage for configuration data. It is a highly available and distributed key-value store.
+        Kraken stores <b>live</b> configuration in a Consul cluster. Consul is made by Hashicorp, the creators of Vagrant.
+    </p>
 
-    <h4 id="consul-agent">What is the Consul agent?</h4>
-    <p>tbd</p>
+    <h3 id="consul-agent">{{ macros.status_icon('What is the Consul agent?') }}</h3>
+    <p>
+        The Consul Agent is an agent that is installed on application servers. It watches the Consul cluster for changes to a
+        specific application configuration, and updates a configuration file on the filesystem when changes are detected.
+    </p>
 
-    <h4 id="whats-your-stack-bro">What form does the data take at rest?</h4>
-    <p>tbd</p>
+    <h3 id="whats-your-stack-bro">{{ macros.status_icon('What form does the data take at rest?') }}</h3>
+    <p>
+        When a configuration property is saved, it is encoded with JSON. This is to ensure a platform-agnostic data format,
+        while still retaining some of the flexibility provided by JSON. Properties marked as <b>Secure</b> are encrypted by
+        Kraken with a symmetric scheme and stored.
+    </p>
+
+    <p>
+        When deployed, all properties are decrypted if needed, and then again encrypted with application-specific keys from the
+        <b>QKS Encryption Service</b>. These values are finally encoded into base64 and pushed to the Consul cluster for the specified environment.
+    </p>
+
+    <p>
+        This ensures all configuration is in a standard form which can be easily read by the consul agent and output to the file system.
+    </p>
+
+    <p>Please see the <a href="https://confluence/display/WC/Runtime+Configuration">Kraken page in the Web Core confluence space</a> for more information and neato diagrams.</p>
 
 {% endblock %}

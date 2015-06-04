@@ -11,7 +11,7 @@
 
     <ul class="list--bare">
         <li class="trailer">
-            <a href="#help-support"><b>Support</b></a>
+            <a href="#help-support"><h4>Support</h4></a>
             <ul class="list--bullet">
                 <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
                 <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
@@ -20,7 +20,7 @@
         </li>
 
         <li class="trailer">
-            <a href="#help-setup"><b>Application Setup</b></a>
+            <a href="#help-setup"><h4>Application Setup</h4></a>
             <ul class="list--bullet">
                 <li><a href="#add-application">How do I add my application to HAL?</a></li>
                 <li><a href="#deploy-application">How do I deploy my application with HAL?</a></li>
@@ -34,7 +34,7 @@
         </li>
 
         <li>
-            <a href="#help-misc"><b>Other</b></a>
+            <a href="#help-misc"><h4>Other</h4></a>
             <ul class="list--bullet">
                 <li><a href="#api">Does HAL have an API? Is there any documentation?</a></li>
                 {% if not isSeriousBusinessMode() %}
@@ -57,7 +57,8 @@
 {% endblock %}
 
 {% block support_questions %}
-    <h4 id="permission">Who should I contact for support or permission changes?</h4>
+    <h3 id="permission">{{ macros.status_icon('Who should I contact for support or permission changes?') }}</h3>
+
     <p>You should email <strong>Team Key Masters</strong> at {{ kmContact|raw }}.</p>
 
     <h6 class="mbn"><strong>How are permissions determined?</strong></h6>
@@ -65,13 +66,18 @@
         HAL grants non-prod build and push permissions to engineers that are <b>public</b> members of the Github organization that owns the project.
     </p>
     <p>
-        For non-engineers, users must be added to special Active Directory groups.
+        For non-engineers, users must be given access by an Administrator to build or deploy applications.
+    </p>
+
+    <p>
+        <b>Leads</b> of applications have access to a few more options such as Encrypted Properties, Deployment Targets, Kraken Schema, and more. Contact
+        an administrator if you think you may need this level of access.
     </p>
 
     {{ macros.alert('info', 'The way HAL determines Github permissions has recently changed.', block('github_permission_changes')) }}
 
 
-    <h4 id="bugs">Who should I contact regarding bugs or feature requests?</h4>
+    <h3 id="bugs">{{ macros.status_icon('Who should I contact regarding bugs or feature requests?') }}</h3>
     <p>
         HAL 9000 is developed and maintained by the Web Core team. To report bugs or request a new features, please
         submit an issue in the Github repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
@@ -80,13 +86,12 @@
     <p>For general questions or critical errors, you can contact Web Core through the following methods:</p>
     <ul class="list--bullet">
         <li><strong>[Application] HAL 9000</strong> (Hipchat)</li>
-        <li><strong>[Team] CORE</strong> (Hipchat)</li>
         <li>{{ wcContact|raw }} (email)</li>
     </ul>
 {% endblock %}
 
 {% block setup_questions %}
-    <h4 id="add-application">How do I add my application to HAL?</h4>
+    <h3 id="add-application">{{ macros.status_icon('How do I add my application to HAL?') }}</h3>
     <p>
         Any project can be added to HAL 9000. Doing so will allow you to create builds in the standard HAL environment. However, to deploy to servers please see <a href="#deploy-application">deployment instructions</a>.
     </p>
@@ -116,11 +121,11 @@
                 By default, HAL 9000 will grant build &amp; push permissions for non-production environments to all
                 users who are members of the GitHub organization that owns the project repository.</p>
             </p>
-            <p>If non-engineers need to be able to build and push, you will need to request that active directory permissions be created.</p>
+            <p>If non-engineers need to be able to build and deploy, you will need to request access from an administrator.</p>
         </li>
     </ol>
 
-    <h4 id="deploy-application">How do I deploy my application with HAL?</h4>
+    <h3 id="deploy-application">{{ macros.status_icon('How do I deploy my application with HAL?') }}</h3>
     <p>
         Once a project has been added to HAL 9000, servers must be added and assigned to start deployments.
     </p>
@@ -172,18 +177,18 @@ beta
         Once you have gathered all of the required information, Contact the Key Masters at {{ kmContact|raw }} to request that the deployment information be added to HAL 9000.
     </p>
 
-    <h4 id="application-deployment">How do I use a script to build or push my application?</h4>
+    <h3 id="application-deployment">{{ macros.status_icon('How do I use a script to build or push my application?') }}</h3>
     <p>
         System commands can be used to customize the build and/or push process for an application.
     </p>
 
     <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
 
-    <h4 id="env-support">Does HAL support .NET or AWS applications?</h4>
+    <h3 id="env-support">{{ macros.status_icon('Does HAL support .NET or AWS applications?') }}</h3>
     <p>HAL 9000 supports building windows projects and deploying to Amazon Elastic Beanstalk or Amazon EC2.</p>
     <p>However, these features will not be enabled.</p>
 
-    <h4 id="docker-support">Does HAL support Docker?</h4>
+    <h3 id="docker-support">{{ macros.status_icon('Does HAL support Docker?') }}</h3>
     <p>All unix-based applications are built in isolated Docker containers.</p>
     <p>
         This ensures reproducible builds by having a fresh container with consistent system configuration for every build.
@@ -191,7 +196,7 @@ beta
     </p>
     <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
 
-    <h4 id="encrypted-configuration">Does HAL support encrypted configuration?</h4>
+    <h3 id="encrypted-configuration">{{ macros.status_icon('Does HAL support encrypted configuration?') }}</h3>
     <p>
         <strong>Yes.</strong><br>
         HAL 9000 can store sensitive information such as passwords or API keys. This data is encrypted when it is store in the database, and only decrypted during the build process.
@@ -201,7 +206,7 @@ beta
     </p>
     <p>See in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a> for more details on how to read these values when they are decrypted during the build process.</p>
 
-    <h4 id="app-dependencies">My application needs a specific library or software installed to build. What do I do?</h4>
+    <h3 id="app-dependencies">{{ macros.status_icon('My application needs a specific library or software installed to build. What do I do?') }}</h3>
     <p>
         HAL builds within docker containers. Docker allows us to have completely isolated, custom build environments for any application that needs it.
     </p>
@@ -215,19 +220,19 @@ beta
 {% endblock %}
 
 {% block other_questions %}
-    <h4 id="api">Does HAL have an API? Is there any documentation?</h4>
+    <h3 id="api">{{ macros.status_icon('Does HAL have an API? Is there any documentation?') }}</h3>
     <p>There is a read-only hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a></p>
     <p>However, there is no api documentation at this time.</p>
 
     {% if not isSeriousBusinessMode() %}
-        <h4 id="hellodave">My name isn't Dave!</h4>
+        <h3 id="hellodave">{{ macros.status_icon("My name isn't Dave!") }}</h3>
         <p>
             Look Dave, I can see you're really upset about this.
             I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ urlFor('help.hal') }}">think things over</a>.
         </p>
     {% endif %}
 
-    <h4 id="release-notes">Release Notes</h4>
+    <h3 id="release-notes">Release Notes</h3>
     <ul class="list--bullet">
         <li>
             <a href="/docs/2.4/release-notes.html">2.4</a>
