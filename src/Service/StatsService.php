@@ -140,7 +140,7 @@ class StatsService
 
         foreach ($builds as $build) {
             $applicationId = $build->application()->id();
-            $env = $build->environment()->key();
+            $env = $build->environment()->name();
 
             $applications[$applicationId] = true;
 
