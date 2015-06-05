@@ -1,13 +1,13 @@
 {% extends 'base.kraken.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = "Application" %}
+{% set page_title = "Application : " ~ application.name %}
 
 {% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application.halApplication) %}
 
 {% block content %}
 
-    <h1>Manage Application <strong>{{ application.name }}</strong></h1>
+    <h1>Application - <strong>{{ application.name }}</strong></h1>
 
     {{ block('meta') }}
 
