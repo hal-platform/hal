@@ -53,8 +53,7 @@
         <p>There are no encrypted properties for this application.</p>
     {% endif %}
 
-
-    <ul class="button-list">
+    <ul class="button-list button-list-half">
         {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('repository.encrypted.add', {repository: application.id}) }}">Add Encrypted Property</a></li>
         {% endif %}
