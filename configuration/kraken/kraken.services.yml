@@ -82,7 +82,7 @@ services:
 
     kraken.crypto.factory:
         class: 'QL\Kraken\Utility\SymmetricCryptoFactory'
-        arguments: [%kraken.crypto.factory.secret.file%]
+        arguments: [@kraken.crypto.factory.secret.file]
 
     kraken.crypto.factory.secret.file:
         class: 'stdClass'
