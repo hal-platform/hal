@@ -124,20 +124,22 @@ class ConfigurationDiffService
     /**
      * Compare a deployed configuration snapshot to a list of Diffs
      *
-     * @param Configuration $configuration
+     * @param Configuration|null $configuration
      * @param Diff[] $latestConfiguration
      *
      * @return Diff[]
      */
-    public function diff(Configuration $configuration, array $latestConfiguration = [])
+    public function diff(Configuration $configuration = null, array $latestConfiguration = [])
     {
         $diffed = $latestConfiguration;
 
-        // Add properties from configuration
-        $snapshots = $this->snapshotRepo->findBy(['configuration' => $configuration]);
-        foreach ($snapshots as $property) {
-            $diff = $this->diffSnapshot($diffed, $property);
-            $diffed[$diff->key()] = $diff;
+        if ($configuration) {
+            // Add properties from configuration
+            $snapshots = $this->snapshotRepo->findBy(['configuration' => $configuration]);
+            foreach ($snapshots as $property) {
+                $diff = $this->diffSnapshot($diffed, $property);
+                $diffed[$diff->key()] = $diff;
+            }
         }
 
         foreach ($diffed as $diff) {

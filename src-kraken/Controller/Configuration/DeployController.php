@@ -51,11 +51,8 @@ class DeployController implements ControllerInterface
     {
         $diffs = $this->diffService->resolveLatestConfiguration($this->target->application(), $this->target->environment());
 
-        // Add "Deployed" configuration
-        if ($this->target->configuration()) {
-            // @todo verify checksum against consul checksum
-            $diffs = $this->diffService->diff($this->target->configuration(), $diffs);
-        }
+        // @todo verify checksum against consul checksum
+        $diffs = $this->diffService->diff($this->target->configuration(), $diffs);
 
         $context = [
             'target' => $this->target,
