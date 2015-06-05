@@ -121,3 +121,4 @@ parameters:
     ############################################################################
 
     kraken.environmentalize: true
+    encrypter.kraken.secret.path: 'configuration/kraken.encrypter.secret'

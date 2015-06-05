@@ -82,7 +82,12 @@ services:
 
     kraken.crypto.factory:
         class: 'QL\Kraken\Utility\SymmetricCryptoFactory'
-        arguments: [%encrypter.symmetricKeyPath%]
+        arguments: [%kraken.crypto.factory.secret.file%]
+
+    kraken.crypto.factory.secret.file:
+        class: 'stdClass'
+        factory: ['QL\Panthor\Utility\Stringify', 'template']
+        arguments: ['%%s/%%s', [@root, %encrypter.kraken.secret.path%]]
 
     kraken.crypto.encrypter:
         class: 'QL\Hal\Core\Crypto\SymmetricEncrypter'

@@ -29,3 +29,6 @@ npm-debug.log
 # deployment caches
 /.doctrine/
 /.twig/
+
+# secrets
+/configuration/kraken.encrypter.secret

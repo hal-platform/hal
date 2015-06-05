@@ -3,4 +3,5 @@ build:
     - 'bin/install'
     - 'bin/deploy'
 
-exclude: []
+exclude:
+    - 'configuration/kraken.encrypter.secret'
