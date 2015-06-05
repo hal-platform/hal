@@ -67,7 +67,7 @@
                     <td>
                         <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
                     </td>
-                    <td>
+                    <td class="tr">
                         <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.application.id, id: deployment.id}) }}">View</a>
                     </td>
                 </tr>
@@ -78,14 +78,14 @@
         <p>There are no deployments associated with this server.</p>
     {% endif %}
 
-    {% if isAdmin and deployments %}
+    {% if isAdmin and deployments_with_optional_eb %}
         <p><strong>Note:</strong> All associated deployments must be removed or transferred to remove this server.</p>
     {% endif %}
 
     <div>
         {% if isAdmin %}
             <a class="btn btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
-            {% if not deployments and isAdmin %}
+            {% if not deployments_with_optional_eb and isAdmin %}
                 <a class="btn btn--destructive" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a>
             {% endif %}
         {% endif %}
