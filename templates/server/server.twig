@@ -82,12 +82,13 @@
         <p><strong>Note:</strong> All associated deployments must be removed or transferred to remove this server.</p>
     {% endif %}
 
-    <div>
+    <ul class="button-list button-list--half">
         {% if isAdmin %}
-            <a class="btn btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit</a>
+            <li><a class="btn" href="{{ urlFor('servers') }}">Servers</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('server.admin.edit', {id: server.id}) }}">Edit Server</a></li>
             {% if not deployments_with_optional_eb and isAdmin %}
-                <a class="btn btn--destructive" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a>
+                <li><a class="btn btn--destructive" href="{{ urlFor('server.admin.remove', {id: server.id}) }}">Remove Server</a></li>
             {% endif %}
         {% endif %}
-    </div>
+    </ul>
 {% endblock %}
