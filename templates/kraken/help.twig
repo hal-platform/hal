@@ -49,7 +49,7 @@
 
             <ul class="list--bullet">
                 <li><a href="#consul">What is Consul?</a></li>
-                <li><a href="#consul-agent">What is the Consul agent?</a></li>
+                <li><a href="#consul-agent">What is the Consul Agent?</a></li>
                 <li><a href="#whats-your-stack-bro">What form does the data take at rest?</a></li>
             </ul>
         </li>
@@ -118,7 +118,7 @@
     <h4>Adding a property</h4>
     <p>
         When adding a property, Add the property to the configuration schema, and then incrementally add the property to each environment
-        as the code that requires the new configuration is deployed.
+        before the code that requires the new configuration is deployed.
     </p>
 
     <p>
@@ -134,7 +134,7 @@
 
     <p>
         Properties are not lost, however. Previously deployed snapshots that contain the property can be deployed from the configuration history.
-        The property will be missing from <b>new</b> deployments, but will still be present for <b>deployments</b> or <b>rollbacks</b>.
+        The property will be missing from <b>new</b> deployments, but will still be present for <b>redeployments</b> or <b>rollbacks</b>.
     </p>
 
     <h4>Changing a property</h4>
@@ -162,7 +162,7 @@
         Kraken stores <b>live</b> configuration in a Consul cluster. Consul is made by Hashicorp, the creators of Vagrant.
     </p>
 
-    <h3 id="consul-agent">{{ macros.status_icon('What is the Consul agent?') }}</h3>
+    <h3 id="consul-agent">{{ macros.status_icon('What is the Consul Agent?') }}</h3>
     <p>
         The Consul Agent is an agent that is installed on application servers. It watches the Consul cluster for changes to a
         specific application configuration, and updates a configuration file on the filesystem when changes are detected.
@@ -171,13 +171,13 @@
     <h3 id="whats-your-stack-bro">{{ macros.status_icon('What form does the data take at rest?') }}</h3>
     <p>
         When a configuration property is saved, it is encoded with JSON. This is to ensure a platform-agnostic data format,
-        while still retaining some of the flexibility provided by JSON. Properties marked as <b>Secure</b> are encrypted by
+        while still retaining some of the flexibility of the types provided by JSON. Properties marked as <b>Secure</b> are encrypted by
         Kraken with a symmetric scheme and stored.
     </p>
 
     <p>
-        When deployed, all properties are decrypted if needed, and then again encrypted with application-specific keys from the
-        <b>QKS Encryption Service</b>. These values are finally encoded into base64 and pushed to the Consul cluster for the specified environment.
+        When deployed, all properties are decrypted if needed, and then again encrypted with application-specific keys by
+        <b>QKS Encryption</b>. These values are finally encoded into base64 and pushed to the Consul cluster for the specified environment.
     </p>
 
     <p>
