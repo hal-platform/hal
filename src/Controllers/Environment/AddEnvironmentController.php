@@ -138,7 +138,7 @@ class AddEnvironmentController implements ControllerInterface
             $errors[] = 'Environment name must be between 2 and 24 characters.';
         }
 
-        if (!$errors && $env = $this->envRepo->findOneBy(['key' => $name])) {
+        if (!$errors && $env = $this->envRepo->findOneBy(['name' => $name])) {
             $errors[] = 'An environment with this name already exists.';
         }
 
