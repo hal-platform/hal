@@ -114,7 +114,7 @@ class AddGroupController implements ControllerInterface
         $name = $request->post('name');
 
         $group = (new Group)
-            ->withKey($identifier);
+            ->withKey($identifier)
             ->withName($name);
 
         $this->em->persist($group);
