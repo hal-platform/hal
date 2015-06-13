@@ -39,7 +39,7 @@
         <p><strong>Note:</strong> All associated servers must be removed or transferred to remove this environment.</p>
     {% endif %}
 
-    <ul class="button-list">
+    <ul class="button-list button-list--half">
         <li><a class="btn" href="{{ urlFor('environments') }}">Environments</a></li>
         {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit Environment</a></li>

@@ -17,18 +17,17 @@
     <h2>Configuration Properties</h2>
     {% include 'kraken/_partial/configuration.twig' with {'properties': configuration, canDeploy: canDeploy} %}
 
-    <p>
+    <ul class="button-list button-list--half">
         {% if is_missing_properties and canDeploy %}
-            <a class="btn btn--action" href="{{ urlFor('kraken.property.add', {application: application.id, environment: environment.id}) }}">Add Property</a>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.property.add', {application: application.id, environment: environment.id}) }}">Add Property</a></li>
         {% endif %}
 
         {% if canDeploy %}
-            <a class="btn btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy Configuration</a>
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy Configuration</a></li>
         {% endif %}
+    </ul>
 
-    </p>
-
-    <ul class="button-list">
+    <ul class="leader button-list">
 
         <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Configuration Schema</a></li>

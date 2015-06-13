@@ -99,7 +99,7 @@
                 {% for token in user.tokens %}
                     <tr>
                         <td>{{ token.label }}</td>
-                        <td>{{ token.value }}</td>
+                        <td><code>{{ token.value }}</code></td>
                         <td class="tr">
                             <a class="btn btn--tiny btn--destructive" href="{{ urlFor('user.token.remove', {id: user.id, token: token.id}) }}">
                                 Revoke <span class="tablesaw-collapse">Access Token</span>

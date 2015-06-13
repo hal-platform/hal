@@ -3,10 +3,13 @@
 
 {% set page_title = 'Application : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+{% set canRemove = isAdmin and not has_deployments %}
 
 {% block content %}
     <h1>Application - <strong>{{ application.name }}</strong></h1>
+
     {{ block('meta') }}
 
     <h2>Notifications</h2>
@@ -19,14 +22,34 @@
 
     {{ block('legacy_commands') }}
 
-    <h2>Deployment Targets</h2>
-    {{ block('server_deployments') }}
+    <ul class="button-list">
+        <li><a class="btn" href="{{ urlFor('repository.status', {id: application.id}) }}">Application Status</a></li>
+
+        <li><a class="btn btn--secondary" href="{{ urlFor('repository.encrypted', {repository: application.id}) }}">Encrypted Properties</a></li>
+        <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: application.id}) }}">Deployment Targets</a></li>
+
+        {% if kraken %}
+            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken Configuration</a></li>
+        {% endif %}
+    </ul>
+
+    {% if canEdit or canRemove %}
+        <ul class="leader button-list button-list--half">
+            {% if canEdit %}
+                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: application.id}) }}">Edit Application</a></li>
+            {% endif %}
+
+            {% if canRemove %}
+                <li class="button-list__fixed"><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: application.id}) }}">Remove Application</a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
 
 {% endblock %}
 
 {% block meta %}
     <div class="details-box">
-        <dl class="split trailer">
+        <dl class="split">
             <dt class="split__title">Name</dt>
             <dd>{{ application.name }}</dd>
 
@@ -44,25 +67,6 @@
                 <dd>Not Enabled</dd>
             {% endif %}
         </dl>
-
-        <ul class="button-list">
-            <li><a class="btn" href="{{ urlFor('repository.status', {id: application.id}) }}">Application Status</a></li>
-
-            {% if isAdmin %}
-                <li><a class="btn btn--action" href="{{ urlFor('repository.admin.edit', {repository: application.id}) }}">Edit Application</a></li>
-            {% endif %}
-
-            {% if isUserAdminOrSuper(currentUser) and not deployment_count %}
-                <li><a class="btn btn--destructive" href="{{ urlFor('repository.admin.remove', {id: application.id}) }}">Remove Application</a></li>
-            {% endif %}
-
-            <li><a class="btn btn--secondary" href="{{ urlFor('repository.encrypted', {repository: application.id}) }}">Encrypted Properties</a></li>
-            <li><a class="btn btn--secondary" href="{{ urlFor('repository.deployments', {repository: application.id}) }}">Deployment Targets</a></li>
-
-            {% if kraken %}
-                <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken Configuration</a></li>
-            {% endif %}
-        </ul>
     </div>
 {% endblock %}
 

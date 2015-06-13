@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 {% import '_partial/pagination.twig' as pagination %}
+{% import '_partial/macros.twig' as macros %}
 
 {% set page_title = "Audit Log History" %}
 
@@ -22,7 +23,15 @@
             <tr>
                 <td>{{ log.created|html5date }}</td>
                 <td><a href="{{ urlFor('user', {'user': log.user.id}) }}">{{ log.user.handle }}</a></td>
-                <td><b>{{ log.action }}</b></td>
+                <td>
+                    {% if log.action == 'CREATE' %}
+                        {{ macros.status(log.action, 'success') }}
+                    {% elseif log.action == 'DELETE' %}
+                        {{ macros.status(log.action, 'error') }}
+                    {% else %}
+                        <b>{{ log.action }}</b>
+                    {% endif %}
+                </td>
                 <td>{{ log.entity|replace({':': ' : '}) }}</td>
             </tr>
             <tr>

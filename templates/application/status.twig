@@ -11,11 +11,15 @@
     {# Only allow environment switching if has multiple env #}
     {% if environments|length > 1 %}
         <div class="trailer">
-            <h4>Change environment</h4>
-            {% for environment in environments %}
-                {% set btnSelected = environment.id == selected_environment.id ? ' btn--action' : ' btn--not-selected' %}
-                <a class="btn{{ btnSelected }}" href="{{ urlFor('repository.status', {id: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
-            {% endfor %}
+            <h3>Change environment</h3>
+            <ul class="button-list button-list--half">
+                {% for environment in environments %}
+                    {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
+                    <li>
+                        <a class="btn{{ btnSelected }}" href="{{ urlFor('repository.status', {id: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     {% endif %}
 

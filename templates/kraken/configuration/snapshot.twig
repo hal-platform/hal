@@ -25,9 +25,8 @@
     {% include 'kraken/_partial/configuration.status.twig' %}
 
     {% if canUserReleaseTheKraken(currentUser, application, configuration.environment) %}
-        {% set deploy_title = is_deployed or not configuration.isSuccess ? 'Redeploy' : 'Rollback' %}
+        {% set deploy_title = is_deployed or not configuration.isSuccess ? 'Redeploy' : 'Rollback to' %}
 
-        <h3>{{ deploy_title }}</h3>
         <p class="trailer--andre"><a class="btn btn--action" href="{{ urlFor('kraken.rollback', {configuration: configuration.id}) }}">{{ deploy_title }} this Snapshot</a></p>
     {% endif %}
 

@@ -20,7 +20,7 @@
 
             <h2>{{ environment.name }}</h2>
 
-            <table class="table--spacing-medium" data-tablesaw-mode="stack">
+            <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
                 <thead>
                     <tr>
                         <th class="t15">Hostname</th>
@@ -35,7 +35,7 @@
                         <tr>
                             <td>{{ deployment|formatDeploymentServer }}</td>
                             <td>
-                                <code>{{ deployment|formatDeploymentDetails }}</code>
+                                <code class="code_clear">{{ deployment|formatDeploymentDetails }}</code>
                             </td>
                             <td>
                                 {% if deployment.url %}

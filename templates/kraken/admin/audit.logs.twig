@@ -1,5 +1,6 @@
 {% extends 'base.kraken.twig' %}
 {% import '_partial/pagination.twig' as pagination %}
+{% import '_partial/macros.twig' as macros %}
 
 {% set page_title = "Audit Log History" %}
 
@@ -35,7 +36,16 @@
                                 Unknown
                             {% endif %}
                         </td>
-                        <td><b>{{ log.action }}</b></td>
+                        <td>
+                            {% if log.action == 'CREATE' %}
+                                {{ macros.status(log.action, 'success') }}
+                            {% elseif log.action == 'DELETE' %}
+                                {{ macros.status(log.action, 'error') }}
+                            {% else %}
+                                <b>{{ log.action }}</b>
+                            {% endif %}
+
+                        </td>
                         <td>{{ log.entity|replace({':': ' : '}) }}</td>
                     </tr>
                 {% endfor %}

@@ -6,14 +6,25 @@
 {% block content %}
     <h1>Edit Deployment - <strong>{{ deployment.application.name }}</strong></h1>
 
+    <div class="details-box">
+        <dl class="split">
+            <dt class="split__title">Application</dt>
+            <dd>
+                {{ deployment.application.name }}
+            </dd>
+
+            <dt class="split__title">Server</dt>
+            <dd>{{ deployment|formatDeploymentServer(true) }}</dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>
+                {{ deployment.server.environment.name }}
+            </dd>
+        </dl>
+    </div>
+
     <h4>Type</h4>
     <p>{{ deployment.server|formatServerType }}</p>
-
-    <h4>Server</h4>
-    <p>{{ deployment.server|formatServer }}</p>
-
-    <h4>Application</h4>
-    <p>{{ deployment.application.name }}</p>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}

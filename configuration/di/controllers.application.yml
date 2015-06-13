@@ -17,7 +17,6 @@ services:
         arguments:
             - @application.twig
             - @doctrine.em
-            - @eb
             - @slim.not.found
             - @slim.route.parameters
     application.twig:

@@ -11,7 +11,7 @@
         <thead>
             <tr>
                 {# yes this is stupid. just go with it #}
-                {% if is_snapshot %}
+                {% if is_snapshot and is_deployed %}
                     <th class="tf1"></th>
                 {% endif %}
 
@@ -28,8 +28,8 @@
 
                 <tr>
                     {% if is_snapshot %}
-                        <td>
-                            {% if is_deployed %}
+                        {% if is_deployed %}
+                            <td>
                                 {% if checksums[property.key] == property.checksum %}
                                     <span class="tooltipped" aria-label="Verified with Consul backend">{{ macros.status_icon('', 'success') }}</span>
                                     <span class="tablesaw-collapse">Verified with Consul backend</span>
@@ -37,9 +37,8 @@
                                     <span class="tooltipped" aria-label="Missing or different from Consul backend">{{ macros.status_icon('', 'error') }}</span>
                                     <span class="tablesaw-collapse">Missing or different from Consul backend</span>
                                 {% endif %}
-                            {% endif %}
-
-                        </td>
+                            </td>
+                        {% endif %}
                         <td>
                             <code class="code_clear">{{ property.key }}</code>
                         </td>
