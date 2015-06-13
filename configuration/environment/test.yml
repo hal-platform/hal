@@ -34,3 +34,6 @@ parameters:
         jrwd8t4mrGavecMmhQWbiyTJDXE6unuV+/2qTwkuj5PJDfHQI1Ys39CkSTWiwi8Z
         pLR/1o2u8njj+v/AaQIDAQAB
         -----END PUBLIC KEY-----
+
+    hal.agents:
+        - 'ql1haltsagt1'

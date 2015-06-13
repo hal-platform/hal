@@ -26,6 +26,11 @@ parameters:
             route: '/admin/status'
             stack: ['middleware.admin', 'admin.system.status.page']
 
+        admin.system.status.agent:
+            method: 'GET'
+            route: '/admin/status/:agent'
+            stack: ['middleware.admin', 'admin.system.status.page']
+
         ################################################################################################################
         # ADMIN ROUTES - PERMISSIONS
         ################################################################################################################

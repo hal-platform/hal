@@ -46,18 +46,44 @@ class SystemStatusController implements ControllerInterface
     private $json;
 
     /**
+     * @type callable
+     */
+    private $notFound;
+
+    /**
+     * @type array
+     */
+    private $agents;
+    private $parameters;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param Predis $predis
      * @param Json $json
+     * @param callable $notFound
+     *
+     * @param array $agents
+     * @param array $parameters
      */
-    public function __construct(TemplateInterface $template, EntityManagerInterface $em, Predis $predis, Json $json)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        EntityManagerInterface $em,
+        Predis $predis,
+        Json $json,
+        callable $notFound,
+        array $agents,
+        array $parameters
+    ) {
         $this->template = $template;
         $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->json = $json;
         $this->predis = $predis;
+        $this->notFound = $notFound;
+
+        $this->agents = $agents;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -65,27 +91,56 @@ class SystemStatusController implements ControllerInterface
      */
     public function __invoke()
     {
+        if (!$agent = $this->getAgentName()) {
+            return call_user_func($this->notFound);
+        }
 
-        $system = $this->parseLatestDocker();
-        $connections = $this->parseLatestServerConnections();
+        $system = $this->parseLatestDocker($agent);
+        $connections = $this->parseLatestServerConnections($agent);
 
         $context = [
             'system' => $system,
-            'connections' => $connections
+            'connections' => $connections,
+            'selected_agent' => $agent,
+            'agents' => $this->agents
         ];
 
         $this->template->render($context);
     }
 
     /**
-     * @return array|null
+     * @return string|null
      */
-    public function parseLatestDocker()
+    private function getAgentName()
     {
-        if (!$latestDocker = $this->predis->lindex(self::DOCKER_REDIS_KEY, 0)) {
+        if (!$this->agents) {
             return null;
         }
-        $docker = $this->json->decode($latestDocker);
+
+        if (!isset($this->parameters['agent'])) {
+            return reset($this->agents);
+        }
+
+        foreach ($this->agents as $agent) {
+            if ($agent === $this->parameters['agent']) {
+                return $agent;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $agent
+     *
+     * @return array|null
+     */
+    private function parseLatestDocker($agent)
+    {
+        if (!$docker = $this->getLatestStatusForAgent(self::DOCKER_REDIS_KEY, $agent)) {
+            return null;
+        }
+
         $time = isset($docker['generated']) ? $this->buildTime($docker['generated']) : null;
 
         return [
@@ -97,17 +152,18 @@ class SystemStatusController implements ControllerInterface
     }
 
     /**
+     * @param string $agent
+     *
      * @return array|null
      */
-    public function parseLatestServerConnections()
+    private function parseLatestServerConnections($agent)
     {
-        if (!$latestConnections = $this->predis->lindex(self::SERVERS_REDIS_KEY, 0)) {
+        if (!$connections = $this->getLatestStatusForAgent(self::SERVERS_REDIS_KEY, $agent)) {
             return null;
         }
 
         $servers = $this->sort($this->serverRepo->findBy(['type' => 'rsync']));
 
-        $connections = $this->json->decode($latestConnections);
         $time = isset($connections['generated']) ? $this->buildTime($connections['generated']) : null;
         $connections = isset($connections['servers']) ? $connections['servers'] : [];
 
@@ -140,6 +196,28 @@ class SystemStatusController implements ControllerInterface
             'servers' => $parsed,
             'generated' => $time
         ];
+    }
+
+    /**
+     * @param string $list
+     * @param string $agent
+     *
+     * @return array|null
+     */
+    private function getLatestStatusForAgent($list, $agent)
+    {
+        for ($i = 0; $i <= 20; $i++) {
+            $data = $this->predis->lindex($list, $i);
+
+            if ($data === null) {
+                return null;
+            }
+
+            $health = $this->json->decode($data);
+            if (isset($health['generated_by']) && $agent === $health['generated_by']) {
+                return $health;
+            }
+        }
     }
 
     /**

@@ -32,6 +32,9 @@ services:
             - @doctrine.em
             - @redis
             - @json
+            - @slim.not.found
+            - %hal.agents%
+            - @slim.route.parameters
     admin.system.status.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/system.status.twig']]]

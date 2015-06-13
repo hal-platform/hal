@@ -36,3 +36,7 @@ parameters:
         -----END PUBLIC KEY-----
 
     kraken.environmentalize: false
+
+    hal.agents:
+        - 'ql1halpragt1'
+        - 'ql2halpragt1'

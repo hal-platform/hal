@@ -35,6 +35,9 @@ parameters:
         fViScOUIuz9FnbkWLQIDAQAB
         -----END PUBLIC KEY-----
 
+    hal.agents:
+        - 'localhost'
+
 services:
     # Comment these out if you want to use the redis caches
     doctrine.cache:

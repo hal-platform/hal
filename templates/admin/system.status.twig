@@ -4,16 +4,26 @@
 {% set page_title = "Agent System Status" %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <h1>{{ page_title }} - <strong>{{ selected_agent }}</strong></h1>
 
-    <h2 class="mbn">Agent</h2>
+    <h2>Agents</h2>
+    <ul class="button-list button-list--half">
+        {% for agent in agents %}
+            {% set btnSelected = agent == selected_agent ? ' btn--selected' : ' btn--not-selected' %}
+            <li>
+                <a class="btn{{ btnSelected }}" href="{{ urlFor('admin.system.status.agent', {agent: agent}) }}">{{ agent }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Agent Status</h2>
     {% if system %}
         {{ block('system_status') }}
     {% else %}
         <p>Unknown. No status available.</p>
     {% endif %}
 
-    <h2 class="mbn">Server Status</h2>
+    <h2>Server Status</h2>
     {% if connections %}
         {{ block('server_status') }}
     {% else %}
@@ -26,9 +36,8 @@
 {% endblock %}
 
 {% block system_status %}
-    <p>Last Update: {{ system.generated|html5date }}</p>
+    <p class="mtn">Last Update: {{ system.generated|html5date }}</p>
 
-    <h3>Agent Status</h3>
     <div class="details-box">
         <dl class="split mbn">
             <dt class="split__title"><strong>Agent System</strong></dt>
@@ -106,7 +115,7 @@
     <p>Last Update: {{ connections.generated|html5date }}</p>
 
     {% if connections.servers %}
-        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
+        <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Environment</th>
@@ -119,7 +128,13 @@
                     {% for status in servers %}
 
                             <tr>
-                                <td>{{ env }}</td>
+                                <td>
+                                    {% if status.server.environment.isProduction %}
+                                        {{ macros.status(status.server.environment.name, 'info', 'key') }}
+                                    {% else %}
+                                        {{ status.server.environment.name }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ status.server.name }}</td>
                                 <td>{{ status.resolved != status.server.name ? status.resolved : '' }}</td>
                                 <td class="tr">
