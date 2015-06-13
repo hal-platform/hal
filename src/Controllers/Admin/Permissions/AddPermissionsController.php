@@ -360,8 +360,18 @@ class AddPermissionsController implements ControllerInterface
 
         $data = [];
         foreach ($applications as $app) {
-            $data[$app->id()] = $app->name();
+            $group = $app->group()->name();
+
+            if (!isset($data[$group])) {
+                $data[$group] = [];
+            }
+
+            $data[$group][$app->id()] = $app->name();
         }
+
+        uksort($data, function($a, $b) {
+            return strcasecmp($a, $b);
+        });
 
         $this->setToCache(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->json->encode($data));
         return $data;

@@ -43,14 +43,16 @@
 
                     <select name="application" id="perm-app">
                         <option value=""></option>
-                        {% for applicationId, applicationName in availableApplications %}
-                            {% set selected = '' %}
-                            {% if form.application == applicationId %}
-                                {% set selected = ' selected' %}
-                            {% endif %}
 
-                            <option value="{{ applicationId }}"{{ selected }}>{{ applicationName }}</option>
+                        {% for group_name, applications in availableApplications %}
+                            <optgroup label="{{ group_name }}">
+                                {% for application_id, application_name in applications %}
+                                    {% set isSelected = (application_id == form.application) %}
+                                    <option value="{{ application_id.id }}"{{ isSelected ? ' selected' : '' }}>{{ application_name }}</option>
+                                {% endfor %}
+                            </optgroup>
                         {% endfor %}
+
                     </select>
                 </li>
 
