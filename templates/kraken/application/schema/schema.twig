@@ -60,7 +60,8 @@
     {% else %}
         <p>No schema is defined. Add properties to the schema by clicking <b>Add Property</b> below.</p>
 
-        <div class="trailer">
+        <div class="trailer--andre details-box">
+            <h3 class="mtn">Prime Schema</h3>
             <p>Is this a skeletor application? Prime this application with skeletor configuration schema.</p>
 
             <form action="{{ urlFor('kraken.schema.skeletor', {application:application.id}) }}" method="POST">

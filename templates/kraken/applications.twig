@@ -29,7 +29,7 @@
             <tbody>
                 {% for application in applications %}
                     <tr>
-                        <td>{{ application.name }}</td>
+                        <td><a href="{{ urlFor('kraken.application', {application: application.id}) }}">{{ application.name }}</a></td>
                         <td>{{ application.coreId }}</td>
                         <td>
                             <a href="http://core/app/{{ application.coreId }}">{{ macros.icon('spinner') }} Core Website</a>
