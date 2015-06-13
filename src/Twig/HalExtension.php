@@ -456,7 +456,7 @@ class HalExtension extends Twig_Extension
 
             'admin' => true,
             'help' => true,
-            'kraken' => true
+            'kraken' => false
         ];
     }
 }

@@ -34,3 +34,5 @@ parameters:
         BtpfPvGc3OuoNVZk/gE5pcAXHGyn/I7DGWln1slYAaFY/vwpCO1lj4iMJQEv+4Va
         BlVv60PT/P0W0gLZ2wIDAQAB
         -----END PUBLIC KEY-----
+
+    kraken.environmentalize: false
