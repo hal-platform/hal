@@ -214,7 +214,7 @@ class SystemStatusController implements ControllerInterface
             }
 
             $health = $this->json->decode($data);
-            if (isset($health['generated_by']) && $agent === $health['generated_by']) {
+            if (isset($health['generated_by']) && stripos($health['generated_by'], $agent) !== false) {
                 return $health;
             }
         }
