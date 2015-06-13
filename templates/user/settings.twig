@@ -86,7 +86,7 @@
 {% block access_tokens %}
     <small>Personal Access Tokens can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</small>
 
-    {% if user.tokens %}
+    {% if tokens %}
         <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
@@ -96,7 +96,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for token in user.tokens %}
+                {% for token in tokens %}
                     <tr>
                         <td>{{ token.label }}</td>
                         <td><code>{{ token.value }}</code></td>

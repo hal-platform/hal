@@ -43,6 +43,7 @@ class SettingsController implements ControllerInterface
     {
         $this->template->render([
             'user' => $this->currentUser,
+            'tokens' => $this->currentUser->tokens()->toArray(),
             'hasGithubToken' => (strlen($this->currentUser->githubToken()) > 0)
         ]);
     }
