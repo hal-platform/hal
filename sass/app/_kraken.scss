@@ -24,11 +24,11 @@ $kraken-red-dark: rgb(145, 20, 22);
 
         border: 6px solid $kraken-red-dark;
 
-        background-image: linear-gradient($kraken-red, $kraken-red-dark);
+        background-image: -webkit-linear-gradient($kraken-red, $kraken-red-dark);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
 
-        color: $kraken-red-dark;
+        color: $kraken-red;
         display: block;
         font-weight: bold;
 
