@@ -71,6 +71,8 @@ class DeploymentValidator
     {
         $this->errors = [];
 
+        $path = trim($path);
+
         $this->validateRequired($applicationId, $serverId, $url);
 
         // stop validation if errors
@@ -155,6 +157,8 @@ class DeploymentValidator
     public function isEditValid(Deployment $deployment, $path, $ebEnvironment, $ec2Pool, $url)
     {
         $this->errors = [];
+
+        $path = trim($path);
 
         $serverType = $deployment->server()->type();
 

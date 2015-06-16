@@ -135,7 +135,7 @@ class AddServerController implements ControllerInterface
     private function handleFormSubmission(Request $request, Environment $environment)
     {
         $type = $request->post('server_type');
-        $name = strtolower($request->post('hostname'));
+        $name = strtolower(trim($request->post('hostname')));
 
         if ($type !== ServerEnum::TYPE_RSYNC) {
             $name = '';
@@ -162,7 +162,7 @@ class AddServerController implements ControllerInterface
             return [];
         }
 
-        $hostname = $request->post('hostname');
+        $hostname = trim($request->post('hostname'));
         $environmentId = $request->post('environment');
         $serverType = $request->post('server_type');
 
