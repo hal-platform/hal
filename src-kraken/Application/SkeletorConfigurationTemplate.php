@@ -72,11 +72,34 @@ class SkeletorConfigurationTemplate
     {
         return [
 
+            // Database
+            [
+                'key' => 'database.eternia.dsn',
+                'dataType' => 'string',
+                'description' => 'Eternia database PDO DSN (MySQL)'
+            ],
+            [
+                'key' => 'database.eternia.username',
+                'dataType' => 'string',
+                'description' => 'Eternia database username (MySQL)'
+            ],
+            [
+                'key' => 'database.eternia.password',
+                'dataType' => 'string',
+                'description' => 'Eternia database password (MySQL)',
+                'isSecure' => true
+            ],
+
             // Eternia
             [
-                'key' => 'eternia.cache',
+                'key' => 'eternia.enabled',
                 'dataType' => 'bool',
-                'description' => 'Cache eternia data between requests?'
+                'description' => 'Is Eternia enabled?'
+            ],
+            [
+                'key' => 'eternia.cache_enabled',
+                'dataType' => 'bool',
+                'description' => 'Is Eternia caching enabled?'
             ],
             [
                 'key' => 'eternia.cache_ttl',
@@ -86,119 +109,28 @@ class SkeletorConfigurationTemplate
             [
                 'key' => 'eternia.redis_servers',
                 'dataType' => 'strings',
-                'description' => 'Redis servers for Eternia previews'
+                'description' => 'Redis servers for Eternia previews (requires tcp:// scheme)'
             ],
 
-            // Logging
+            // Metrics
+
             [
-                'key' => 'log.core_endpoint',
-                'dataType' => 'string',
-                'description' => 'Full URL to Sonic endpoint for core logger (Only affects Core logger handler)'
-            ],
-            [
-                'key' => 'log.email',
-                'dataType' => 'string',
-                'description' => 'Send logs to this e-mail address (Only affects e-mail handler)'
-            ],
-            [
-                'key' => 'log.handlers',
-                'dataType' => 'strings',
-                'description' => 'Fully qualified class names of log handlers'
-            ],
-            [
-                'key' => 'log.minimum_level',
-                'dataType' => 'string',
-                'description' => 'Minimum level to log a message'
-            ],
-            [
-                'key' => 'log.sensitive_keys',
-                'dataType' => 'strings',
-                'description' => 'POST and GET keys to be excluded from log context data'
+                'key' => 'metrics.enabled',
+                'dataType' => 'bool',
+                'description' => 'Is metrics enabled?'
             ],
 
             // skeletor
-            [
-                'key' => 'skeletor.cookie.encryption_key',
-                'dataType' => 'string',
-                'description' => 'Encryption key for cookies'
-            ],
-            [
-                'key' => 'skeletor.cookie.unencrypted',
-                'dataType' => 'strings',
-                'description' => 'Unencrypted cookie names'
-            ],
-            [
-                'key' => 'skeletor.error.controller',
-                'dataType' => 'string',
-                'description' => 'Fully qualified class name of the error controller'
-            ],
-            [
-                'key' => 'skeletor.memcached.disable',
-                'dataType' => 'bool',
-                'description' => 'Disable memcache caching?'
-            ],
-            [
-                'key' => 'skeletor.memcached.log_errors',
-                'dataType' => 'bool',
-                'description' => 'Log an error when a memcached server fails to connect?'
-            ],
-            [
-                'key' => 'skeletor.memcached.servers',
-                'dataType' => 'strings',
-                'description' => 'Memcached servers'
-            ],
-            [
-                'key' => 'skeletor.session.handler',
-                'dataType' => 'string',
-                'description' => 'Fully qualified class name of the session handler'
-            ],
             [
                 'key' => 'skeletor.session.redis_servers',
                 'dataType' => 'strings',
                 'description' => 'Redis servers for session storage'
             ],
             [
-                'key' => 'skeletor.site.code',
-                'dataType' => 'string',
-                'description' => '2 character site-code, used by Eternia and Metrics'
-            ],
-            [
-                'key' => 'skeletor.site.core_id',
-                'dataType' => 'string',
-                'description' => 'Core Application ID'
-            ],
-            [
-                'key' => 'skeletor.site.name',
-                'dataType' => 'string',
-                'description' => 'The name of the application. Displayed to clients and used in the page title.'
-            ],
-
-            // skeletor - database
-            [
-                'key' => 'skeletor.database_persistence.eternia',
-                'dataType' => 'bool',
-                'description' => 'Enable connection persistence for this database'
-            ],
-            [
-                'key' => 'skeletor.database.eternia',
-                'dataType' => 'string',
-                'description' => 'DSN of Eternia database',
-                'isSecure' => true
-            ],
-
-            // Metrics
-            [
-                'key' => 'metrics.encryption_key',
-                'dataType' => 'string',
-                'description' => 'Encryption key for metrics',
-                'isSecure' => true
-            ],
-            [
-                'key' => 'skeletor.metrics.endpoint',
-                'dataType' => 'string',
-                'description' => 'Full URL of Sonic endpoint for metrics'
+                'key' => 'skeletor.memcached.servers',
+                'dataType' => 'strings',
+                'description' => 'Memcached servers'
             ]
-
         ];
     }
 
