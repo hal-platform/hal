@@ -19,8 +19,7 @@
         {
             "type": "composer",
             "url": "http://composer/"
-        },
-        { "type": "vcs", "url": "http://git/web-core/hal-core" }
+        }
     ],
     "require": {
         "aws/aws-sdk-php": "2.7.*",
