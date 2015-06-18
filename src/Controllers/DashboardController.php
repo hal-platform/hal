@@ -24,7 +24,7 @@ class DashboardController implements ControllerInterface
 {
     use CachingTrait;
 
-    const CACHE_KEY_PERMISSION_APPLICATIONS = 'page:db.job_counts.%s';
+    const CACHE_KEY_PERMISSION_APPLICATIONS = 'page:db.recent_apps.%s';
     const AGE_OF_STUCK_JOBS = '-45 minutes';
     const AGE_OF_RECENT_BUILDS = '-2 months';
 
