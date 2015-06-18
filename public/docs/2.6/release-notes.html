@@ -27,6 +27,14 @@
                     <li>Kraken is available at <a href="/kraken"><i>/kraken</i></a> and can be enabled on your navigation menu through your <i>settings</i>.</li>
                 </ul>
 
+                <h4>What kind of data can be stored in Kraken?</h4>
+                <ul>
+                    <li>Cache servers</li>
+                    <li>Feature flags to disable parts of application (dark launching)</li>
+                    <li>Logging settings</li>
+                    <li>Sensitive configuration that should be encrypted at rest (database passwords, api keys)</li>
+                </ul>
+
                 <p>Please see the <a href="/kraken/help"><i>Kraken Help</i></a> page for more information.</p>
             </blockquote>
         </li>
@@ -43,6 +51,15 @@
                     <li>Any user can be given non-prod or prod deployment permissions.</li>
                 </ul>
 
+                <h4>The following user types are available:</h4>
+                <ul>
+                    <li><b>Standard</b> - deployment permissions determined by GHE organization membership.</li>
+                    <li><b>Deployment</b> - was granted deployment permissions for a specific application to either non-prod or prod environments.</li>
+                    <li><b>Lead</b> - can manage a specific applications settings, deployments, encrypted properties, kraken schema and deploy to non-prod.</li>
+                    <li><b>Admin</b> - can manage all applications, and deploy to all environments.</li>
+                    <li><b>HAL Admin</b> - can manage all applications, and deploy to non-prod.</li>
+                </ul>
+
             </blockquote>
         </li>
 
@@ -56,7 +73,7 @@
             <h5>The <a href="/queue-history"><i>Queue History</i></a> page is now available to all users.</h5>
 
             <blockquote>
-                <p>The page shows all builds and pushes for a specific day. It available at <code>/queue-history</code> and is linked from the <i>Queue</i></p>
+                <p>The page shows all builds and pushes for a specific day. It is available at <a href="/queue-history">/queue-history</a> and is linked from the <i>Queue</i></p>
             </blockquote>
         </li>
         <li>
