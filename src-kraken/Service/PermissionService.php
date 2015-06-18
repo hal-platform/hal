@@ -69,8 +69,11 @@ class PermissionService
             return $this->setToInternalCache($key, true);
         }
 
-        if ($perm->isSuper() && $this->isSuperApplication($application)) {
-            return $this->setToInternalCache($key, true);
+        if ($perm->isSuper()) {
+            // Super can change super apps or non-prods
+            if ($this->isSuperApplication($application) || !$environment->isProduction()) {
+                return $this->setToInternalCache($key, true);
+            }
         }
 
         // lead and deployment permissions are based on hal applications.
