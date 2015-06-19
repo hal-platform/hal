@@ -100,19 +100,23 @@ class MCPCache implements GithubCacheInterface
     }
 
     /**
-     * @param string $id
+     * @param Response $response
+     *
      * @return int
      */
-    private function determineTTL($id)
+    private function determineTTL(Response $response)
     {
-        // List pull requests, Get data for a pull request.
-        $pullRegex = sprintf('#repos/%s/%s/pulls#', self::GITHUB_NAME, self::GITHUB_NAME);
+        if ($url = $response->getEffectiveUrl()) {
 
-        // Get data for a git reference. Resolving a branch or tag to a commit
-        $refRegex = sprintf('#repos/%s/%s/git/refs#', self::GITHUB_NAME, self::GITHUB_NAME);
+            // List pull requests, Get data for a pull request.
+            $pullRegex = sprintf('#repos/%s/%s/pulls#', self::GITHUB_NAME, self::GITHUB_NAME);
 
-        if (preg_match($pullRegex, $id) || preg_match($refRegex, $id)) {
-            return self::SHORT_TTL;
+            // Get data for a git reference. Resolving a branch or tag to a commit
+            $refRegex = sprintf('#repos/%s/%s/git/refs#', self::GITHUB_NAME, self::GITHUB_NAME);
+
+            if (preg_match($pullRegex, $url) || preg_match($refRegex, $url)) {
+                return self::SHORT_TTL;
+            }
         }
 
         return self::DEFAULT_TTL;
