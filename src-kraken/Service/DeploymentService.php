@@ -8,6 +8,7 @@
 namespace QL\Kraken\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use ErrorException;
 use QL\Hal\Core\Crypto\CryptoException;
 use QL\Hal\Core\Crypto\SymmetricDecrypter;
 use QL\Kraken\Core\Entity\Configuration;
@@ -22,6 +23,7 @@ class DeploymentService
     const ERR_CONSUL_CONNECTION_FAILURE = 'Update failed. Consul could not be contacted.';
     const ERR_THIS_IS_SUPER_BAD = 'A serious error has occured. Consul was partially updated.';
     const ERR_CONSUL_FAILURE = 'Errors occured while updating Consul. No updates were made.';
+    const ERR_DECRYPT_FAILURE = 'Secure property "%s" could not be decrypted.';
 
     /**
      * @type EntityManagerInterface
@@ -63,6 +65,7 @@ class DeploymentService
      * @param array properties
      *
      * @throws ConsulConnectionException
+     * @throws DecryptionException
      *
      * @return bool|null
      */
@@ -100,24 +103,31 @@ class DeploymentService
      */
     private function encryptProperties(array $properties)
     {
-        $encrypted = [];
+        $encrypteds = [];
 
         foreach ($properties as $prop) {
 
-            // @todo actually encrypt
             $key = $prop->key();
-            $encrypt = $prop->value();
+
+            $value = $prop->value();
+            if ($prop->isSecure()) {
+                if (null === ($value = $this->decrypt($value))) {
+                    throw new DecryptionException(sprintf(self::ERR_DECRYPT_FAILURE, $key));
+                }
+            }
+
+            $encrypted = $this->qksEncrypt($value);
 
             // encode
-            $encoded = base64_encode($encrypt);
+            $encoded = base64_encode($encrypted);
 
             // save checksum
             $prop->withChecksum(sha1($encoded));
 
-            $encrypted[$key] = $encoded;
+            $encrypteds[$key] = $encoded;
         }
 
-        return $encrypted;
+        return $encrypteds;
     }
 
     /**
@@ -205,6 +215,17 @@ class DeploymentService
     }
 
     /**
+     * @param string $decrypted
+     *
+     * @return string|null
+     */
+    private function qksEncrypt($decrypted)
+    {
+        // @todo actually encrypt
+        return $decrypted;
+    }
+
+    /**
      * @param string $encrypted
      *
      * @return string|null
@@ -213,6 +234,11 @@ class DeploymentService
     {
         try {
             $value = $this->decrypter->decrypt($encrypted);
+
+        // @todo make decrypter in Hal\Core more resilient (it should be cause errors!)
+        } catch (ErrorException $ex) {
+            $value = null;
+
         } catch (CryptoException $ex) {
             $value = null;
         }

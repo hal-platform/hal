@@ -18,6 +18,7 @@ use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulConnectionException;
+use QL\Kraken\Service\DecryptionException;
 use QL\Kraken\Service\DeploymentService;
 use QL\Panthor\ControllerInterface;
 
@@ -105,6 +106,11 @@ class DeployHandler implements ControllerInterface
             $status = $this->deployer->deploy($this->target, $configuration, $properties);
 
         } catch (ConsulConnectionException $ex) {
+            return $this->flasher
+                ->withFlash($ex->getMessage(), 'error')
+                ->load('kraken.deploy', ['target' => $this->target->id()]);
+
+        } catch (DecryptionException $ex) {
             return $this->flasher
                 ->withFlash($ex->getMessage(), 'error')
                 ->load('kraken.deploy', ['target' => $this->target->id()]);

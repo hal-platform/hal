@@ -113,7 +113,6 @@ class SkeletorConfigurationTemplate
             ],
 
             // Metrics
-
             [
                 'key' => 'metrics.enabled',
                 'dataType' => 'bool',
@@ -124,7 +123,7 @@ class SkeletorConfigurationTemplate
             [
                 'key' => 'skeletor.session.redis_servers',
                 'dataType' => 'strings',
-                'description' => 'Redis servers for session storage'
+                'description' => 'Redis servers for session storage (requires tcp:// scheme)'
             ],
             [
                 'key' => 'skeletor.memcached.servers',
