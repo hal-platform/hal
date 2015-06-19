@@ -11,7 +11,7 @@
         {% block page_head %}
             {% block page_title %}
             <title>
-                {% if page_title %}{{ page_title }} - {% endif %}{{ applicationEnvironment == 'prod' ? ' - ' ~ applicationTitle : applicationEnvironment|upper }}
+                {% if page_title %}{{ page_title }} - {% endif %}{{ applicationEnvironment == 'prod' ? applicationTitle : applicationEnvironment|upper }}
             </title>
             {% endblock %}
             {% block page_icon %}

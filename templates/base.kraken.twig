@@ -3,7 +3,7 @@
 
 {% block page_title %}
     <title>
-        {% if page_title %}{{ page_title }} - {% endif %}{{ applicationEnvironment == 'prod' ? ' - ' ~ applicationKrakenTitle : applicationEnvironment|upper }}
+        {% if page_title %}{{ page_title }} - {% endif %}{{ applicationEnvironment == 'prod' ? applicationKrakenTitle : applicationEnvironment|upper }}
     </title>
 {% endblock %}
 
