@@ -187,7 +187,7 @@ class PropertyValidator
      */
     private function validateValue(Schema $schema, $value)
     {
-        if ($schema->dataType() === 'integer') {
+        if ($schema->dataType() === 'int') {
             $value = str_replace(',', '', $value);
 
             if (preg_match('/^[\-]?[\d]+$/', $value) !== 1) {
@@ -231,7 +231,7 @@ class PropertyValidator
      */
     private function encode(Schema $schema, $value)
     {
-        if ($schema->dataType() === 'integer') {
+        if ($schema->dataType() === 'int') {
             $value = (int) $value;
 
         } elseif ($schema->dataType() === 'float') {
