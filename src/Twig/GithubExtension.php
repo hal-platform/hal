@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Twig;
 
+use MCP\Cache\CachingTrait;
 use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Service\GitHubService;
 use Twig_Extension;
@@ -16,6 +17,8 @@ use Exception;
 
 class GitHubExtension extends Twig_Extension
 {
+    use CachingTrait;
+
     const NAME = 'github_permissions';
 
     /**
@@ -77,25 +80,35 @@ class GitHubExtension extends Twig_Extension
     /**
      * Check if a commit hash is the most recent for a given Github user, repo, and reference
      *
-     * @param $user
-     * @param $repo
-     * @param $reference
-     * @param $commit
+     * @param string $user
+     * @param string $repo
+     * @param string $reference
+     * @param string $commit
      *
      * @return bool
      */
     public function commitIsCurrent($user, $repo, $reference, $commit)
     {
+        // cache ref comparisons in memory
+        $key = md5($user . $repo . $reference . $commit);
+
+        if (null !== ($isCurrent = $this->getFromCache($key))) {
+            return $isCurrent;
+        }
+
         try {
             $resolve = $this->github->resolve($user, $repo, $reference);
             $current = (is_array($resolve)) ? $resolve[1] : null;
 
-            return ($current == $commit) ? true : false;
+            $isCurrent = ($current == $commit) ? true : false;
 
         // Fuck off weird errors
         } catch (Exception $ex) {
-            return false;
+            $isCurrent = false;
         }
+
+        $this->setToCache($key, $isCurrent, 120);
+        return $isCurrent;
     }
 
     /**

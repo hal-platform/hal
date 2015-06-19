@@ -152,6 +152,11 @@ services:
     twig.extension.github:
         class: 'QL\Hal\Twig\GitHubExtension'
         arguments: [@url.helper, @github]
+        calls:
+            - ['setCache', [@twig.extension.github.cache]]
+
+    twig.extension.github.cache:
+        class: 'MCP\Cache\MemoryCache'
 
     twig.extension.ansi:
         class: 'SensioLabs\AnsiConverter\Bridge\Twig\AnsiExtension'

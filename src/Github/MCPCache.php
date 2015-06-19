@@ -20,7 +20,7 @@ class MCPCache implements GithubCacheInterface
 
     const GITHUB_NAME = '[A-Za-z0-9\_\.\-]+';
 
-    const SHORT_TTL = 10;
+    const SHORT_TTL = 20;
     const DEFAULT_TTL = 60;
 
     /**
