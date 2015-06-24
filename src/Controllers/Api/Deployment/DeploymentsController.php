@@ -71,7 +71,7 @@ class DeploymentsController implements ControllerInterface
     {
         $application = $this->applicationRepo->find($this->parameters['id']);
 
-        if (!$application instanceof Repository) {
+        if (!$application instanceof Application) {
             throw HttpProblemException::build(404, 'invalid-application');
         }
 
