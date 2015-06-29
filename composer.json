@@ -1,26 +1,18 @@
 {
     "name": "ql/hal",
-    "description": "Web application HAL 9000 deployment system",
+    "description": "HAL 9000 deployment system",
     "license": "proprietary",
     "authors": [
-        {
-            "name": "IT Team Web Core",
-            "email": "itteamwebcore@quickenloans.com"
-        }
+        { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }
     ],
 
     "autoload": {
-        "psr-4": {
-            "QL\\Hal\\": "src",
-            "QL\\Kraken\\": "src-kraken"
-        }
+        "psr-4": { "QL\\Hal\\": "src", "QL\\Kraken\\": "src-kraken" }
     },
     "repositories": [
-        {
-            "type": "composer",
-            "url": "http://composer/"
-        }
+        { "type": "composer", "url": "http://composer/" }
     ],
+
     "require": {
         "aws/aws-sdk-php": "2.7.*",
         "doctrine/orm": "~2.5",
@@ -32,7 +24,7 @@
         "psr/log": "*",
 
         "ql/exception-toolkit": "~0.1",
-        "ql/hal-core": "2.7.*",
+        "ql/hal-core": "2.7.1",
         "ql/http-problem": "~1.0",
 
         "ql/mcp-cache":         "~2.2",
@@ -40,7 +32,9 @@
         "ql/mcp-corp-account":  "~1.0",
         "ql/mcp-crypto":        "~2.0",
         "ql/mcp-logger":        "~2.0",
+
         "ql/panthor":           "~2.1",
+        "ql/uri-template":      "~1.0",
 
         "slim/slim": "2.4.*",
         "sensiolabs/ansi-to-html": "~1.1",

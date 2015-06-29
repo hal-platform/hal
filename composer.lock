@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ad1b2727621679ea0fde58f17370566b",
+    "hash": "c1f10aaee43ed0f8e40025d07a45c026",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1185,17 +1185,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "git@git:web-core/hal-core.git",
-                "reference": "93727bcf6ddac0a8886c9dcf51c225ea2d24e934"
+                "reference": "730713dd3e85c34bb0becadac8c018a153624d96"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.7.0-e7f0d9.zip",
-                "reference": "93727bcf6ddac0a8886c9dcf51c225ea2d24e934",
-                "shasum": "0ee52cc260f8a79fa5f95ad9802ca47c17618631"
+                "url": "http://composer/dist/ql-hal-core-2.7.1-10c580.zip",
+                "reference": "730713dd3e85c34bb0becadac8c018a153624d96",
+                "shasum": "8a08247705cc7cadf1b4e8ff43de8046de6b3d03"
             },
             "archive": {
                 "exclude": [
@@ -1236,7 +1236,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-06-15 11:50:15"
+            "time": "2015-07-06 12:02:57"
         },
         {
             "name": "ql/http-problem",
@@ -1342,23 +1342,21 @@
         },
         {
             "name": "ql/mcp-core",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-core.git",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf"
+                "reference": "2b42798f65fe241b3106eb64cbf2ce9ed3ae5d99"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-core-1.0.1-578aad.zip",
-                "reference": "460c2390f77253a0991f37328774e0c68dd7ebbf",
-                "shasum": "4ab925396c0ef4d2adbdfc58716fb6ef536b26a8"
+                "url": "http://composer/dist/ql-mcp-core-1.0.2-f5950f.zip",
+                "reference": "2b42798f65fe241b3106eb64cbf2ce9ed3ae5d99",
+                "shasum": "23b131d318970552c031524ec3fa47a5a8520809"
             },
             "archive": {
                 "exclude": [
-                    "/bin",
                     "/tests",
-                    "/pakefile",
                     "/phpunit.xml.dist"
                 ]
             },
@@ -1373,13 +1371,12 @@
             },
             "require-dev": {
                 "phpunit/php-invoker": "*",
-                "phpunit/phpunit": "*",
-                "squizlabs/php_codesniffer": "*"
+                "phpunit/phpunit": "*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "MCP\\DataType\\": "src"
+                "psr-4": {
+                    "MCP\\": "src\\"
                 }
             },
             "license": [
@@ -1388,33 +1385,26 @@
             "authors": [
                 {
                     "name": "Matt Nagi",
-                    "email": "mattnagi@quickenloans.com",
-                    "role": "Tech Lead",
-                    "homepage": "http://rwprofile/MySite/Public.aspx?accountname=MI%5cMNagi"
+                    "email": "mattnagi@quickenloans.com"
                 }
             ],
             "description": "Provides various 'data type' style classes: GUID, HttpUrl, IPv4Address, USAddress, and date/time related functionality.",
-            "homepage": "http://git/mnagi/mcp-core",
-            "support": {
-                "email": "mattnagi@quickenloans.com",
-                "issues": "http://git/mnagi/mcp-core/issues",
-                "source": "http://git/mnagi/mcp-core"
-            },
-            "time": "2013-10-15 17:53:16"
+            "homepage": "http://git/mcp/mcp-core",
+            "time": "2015-07-02 17:19:53"
         },
         {
             "name": "ql/mcp-corp-account",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-corp-account.git",
-                "reference": "6c62838454f96587bb71ee9f6c5d96b9ae5e481a"
+                "reference": "ec69e42b8d354b3c51f03509fca8bbeab7a3f428"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-corp-account-1.0.0-b27a24.zip",
-                "reference": "6c62838454f96587bb71ee9f6c5d96b9ae5e481a",
-                "shasum": "c2068c7a1b49925adbd8e1629b68fdb5bc07ea67"
+                "url": "http://composer/dist/ql-mcp-corp-account-1.1.0-9eb8ac.zip",
+                "reference": "ec69e42b8d354b3c51f03509fca8bbeab7a3f428",
+                "shasum": "5756b0500f560e6af1ae10d1982b14cf16596bf6"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -1443,21 +1433,21 @@
             ],
             "description": "Handles authenticating a username/password to Quicken Loans' corporate set of usernames and passwords. Note that this will NOT work for any public facing websites (yet). This will only work for internal QL applications.",
             "homepage": "http://git/mcp/mcp-corp-account",
-            "time": "2015-03-25 12:56:46"
+            "time": "2015-06-10 12:08:17"
         },
         {
             "name": "ql/mcp-crypto",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-crypto.git",
-                "reference": "abb49824cae5ab2779c2a6f22b2fbde8d210acf4"
+                "reference": "aa2d92e24590355963b9739f412d84212ded1b32"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-crypto-2.0.2-18a4aa.zip",
-                "reference": "abb49824cae5ab2779c2a6f22b2fbde8d210acf4",
-                "shasum": "bdf3919b13b5dfca72d504913c591d9cc2732618"
+                "url": "http://composer/dist/ql-mcp-crypto-2.0.3-bd9acd.zip",
+                "reference": "aa2d92e24590355963b9739f412d84212ded1b32",
+                "shasum": "8bc1d90d9ed5351e4d97639f512c3d7b87eb219f"
             },
             "require": {
                 "ext-pcre": "*",
@@ -1514,21 +1504,21 @@
             ],
             "description": "Symmetric and asymmetric encryption library for PHP",
             "homepage": "http://git/mcp/mcp-crypto",
-            "time": "2015-06-25 16:10:49"
+            "time": "2015-07-01 22:06:51"
         },
         {
             "name": "ql/mcp-logger",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-logger.git",
-                "reference": "b264b4e21fe72c39ec0fffe84fa3427df56b6631"
+                "reference": "b6ac82778f67e151801ed19d5af34574b2b76a06"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-logger-2.0.0-578003.zip",
-                "reference": "b264b4e21fe72c39ec0fffe84fa3427df56b6631",
-                "shasum": "72beb62805ab24b928220c4cd6e0bc4f9658ebd4"
+                "url": "http://composer/dist/ql-mcp-logger-2.1.0-a24b6e.zip",
+                "reference": "b6ac82778f67e151801ed19d5af34574b2b76a06",
+                "shasum": "1b9977e53cd0ce003e307cf5214bc5dc78c85390"
             },
             "archive": {
                 "exclude": [
@@ -1543,6 +1533,7 @@
                 "ql/uri-template": "1.*"
             },
             "require-dev": {
+                "aws/aws-sdk-php": "^3.0",
                 "guzzle/http": "*",
                 "guzzlehttp/guzzle": "5.*",
                 "mockery/mockery": ">=0.8",
@@ -1551,7 +1542,8 @@
                 "psr/log": "*"
             },
             "suggest": {
-                "guzzle/http": "Required for Guzzle-based service",
+                "aws/aws-sdk-php": "Required to use Kinesis Service",
+                "guzzlehttp/guzzle": "Required for Guzzle-based service",
                 "psr/log": "Required to use the included PSR-3 logger"
             },
             "type": "library",
@@ -1572,28 +1564,29 @@
             ],
             "description": "Library for handling PHP Logging within Quicken Loans.",
             "homepage": "http://git/mcp/mcp-logger",
-            "time": "2015-06-22 13:24:46"
+            "time": "2015-07-01 17:09:53"
         },
         {
             "name": "ql/mcp-qks",
-            "version": "1.0.1",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-qks.git",
-                "reference": "7863f4c8c05e76eab4c7a000d834c0daabf1fe91"
+                "reference": "4bed27c11fe80bbda4b9de62372cf0dde8f0e9c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-qks-1.0.1-59e2ac.zip",
-                "reference": "7863f4c8c05e76eab4c7a000d834c0daabf1fe91",
-                "shasum": "78c0a652fdeacc3dd9e8610ada5de4769771fb97"
+                "url": "http://composer/dist/ql-mcp-qks-1.0.3-4f0d7b.zip",
+                "reference": "4bed27c11fe80bbda4b9de62372cf0dde8f0e9c3",
+                "shasum": "fdd5b5e397902ca0b80f7cd2fc85811111f9146c"
             },
             "require": {
                 "ext-pcre": "*",
                 "guzzlehttp/guzzle": "^4.0 | ^5.0",
                 "justinrainbow/json-schema": "^1.4",
                 "php": ">=5.4.0",
-                "ql/mcp-core": "^1.0"
+                "ql/mcp-core": "^1.0",
+                "ql/uri-template": "^1.0"
             },
             "require-dev": {
                 "phpunit/php-invoker": "*",
@@ -1621,7 +1614,7 @@
             ],
             "description": "QKS Service Library",
             "homepage": "http://git/mcp/mcp-qks",
-            "time": "2015-06-25 15:13:59"
+            "time": "2015-07-01 21:33:08"
         },
         {
             "name": "ql/panthor",
