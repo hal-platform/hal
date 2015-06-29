@@ -7,7 +7,8 @@
 
 namespace QL\Hal;
 
-use MCP\Crypto\AES;
+use MCP\Crypto\Exception\CryptoException;
+use MCP\Crypto\Package\TamperResistantPackage;
 use QL\Panthor\Http\EncryptedCookies;
 
 class SessionHandler
@@ -30,7 +31,7 @@ class SessionHandler
     private $cookies;
 
     /**
-     * @type AES
+     * @type TamperResistantPackage
      */
     private $encryption;
 
@@ -48,10 +49,10 @@ class SessionHandler
 
     /**
      * @param EncryptedCookies $cookies
-     * @param AES $encryption
+     * @param TamperResistantPackage $encryption
      * @param array $settings
      */
-    public function __construct(EncryptedCookies $cookies, AES $encryption, array $settings = [])
+    public function __construct(EncryptedCookies $cookies, TamperResistantPackage $encryption, array $settings = [])
     {
         $this->cookies = $cookies;
         $this->encryption = $encryption;
@@ -67,7 +68,12 @@ class SessionHandler
         $this->cookieHash = sha1($serialized);
 
         if ($serialized) {
-            $decrypted = $this->encryption->decrypt($serialized);
+            try {
+                $decrypted = $this->encryption->decrypt($serialized);
+            } catch (CryptoException $ex) {
+                $decrypted = null;
+            }
+
             if (is_string($decrypted)) {
                 $unserialized = unserialize($decrypted);
                 if ($unserialized instanceof Session) {
@@ -79,7 +85,7 @@ class SessionHandler
         // If: No cookie present
         // If: Serialized data is invalid
         // If: Serialized data is not Session
-        return new Session;
+        return $this->buildSession();
     }
 
     /**
@@ -99,7 +105,7 @@ class SessionHandler
 
         // If cookie size is too big, kill everything.
         if (strlen($encrypted) > 4096) {
-            $serialized = serialize(new Session);
+            $serialized = serialize($this->buildSession());
             $encrypted = $this->encryption->encrypt($serialized);
         }
 
@@ -120,5 +126,15 @@ class SessionHandler
     public function isLoaded()
     {
         return ($this->cookieHash !== null);
+    }
+
+    /**
+     * @param array|null $data
+     *
+     * @return Session
+     */
+    private function buildSession(array $data = [])
+    {
+        return new Session($data);
     }
 }

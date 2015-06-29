@@ -8,7 +8,7 @@
 namespace QL\Hal\Slim;
 
 use MCP\DataType\IPv4Address;
-use MCP\Service\Logger\MessageFactoryInterface;
+use MCP\Logger\MessageFactoryInterface;
 use Slim\Slim;
 
 /**

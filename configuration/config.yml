@@ -14,7 +14,6 @@ parameters:
 
     # Replaced before di compiling
     application.sha: ''
-    session.encryption.secret: %cookie.encryption.secret%
 
     slim.hooks:
         slim.before:

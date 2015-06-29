@@ -100,8 +100,12 @@ services:
         arguments: ['%%s/%%s', [@root, '.hal9000.push.yml']]
 
     ######################################################################################################################
-    # INCREMENTAL ROUTE LOADING
+    # TRP COOKIES
     ######################################################################################################################
+
+    cookie.encryption:
+        class: 'QL\Panthor\Http\CookieEncryption\TRPCookieEncryption'
+        arguments: [@panthor.encryption.trp]
 
     ######################################################################################################################
     # ERROR & EXCEPTION HANDLING
@@ -186,5 +190,8 @@ services:
             - %session.cookie.configuration%
 
     session.encryption:
-        class: 'MCP\Crypto\AES'
-        arguments: [%session.encryption.secret%]
+        class: 'MCP\Crypto\Package\TamperResistantPackage'
+        arguments: [@session.encryption.factory, %session.encryption.secret%]
+
+    session.encryption.factory:
+        class: 'MCP\Crypto\Primitive\Factory'

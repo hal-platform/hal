@@ -275,7 +275,7 @@ class HalExtension extends Twig_Extension
         if ($cookie === null) {
             $this->parsedNavigationList = $this->defaultNavigation();
         } else {
-            $this->parsedNavigationList = json_decode($cookie, true);
+            $this->parsedNavigationList = !is_array($cookie) ? json_decode($cookie, true) : $cookie;
         }
 
         if (!array_key_exists($navSelection, $this->parsedNavigationList)) {
