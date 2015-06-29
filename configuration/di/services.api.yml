@@ -12,6 +12,8 @@ services:
             - @slim.route
             - @normalizer
             - @hypermedia.formatter
+        calls:
+            - ['setCache', [@cache]]
 
     hypermedia.formatter:
         class: 'QL\Hal\Api\Utility\HypermediaFormatter'

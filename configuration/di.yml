@@ -130,15 +130,6 @@ services:
     # HELPERS
     ######################################################################################################################
 
-    api.helper:
-        class: 'QL\Hal\Helpers\ApiHelper'
-        arguments:
-            - @url
-            - @slim.request
-            - %api.cachetimes%
-        calls:
-            - ['setCache', [@cache]]
-
     utility.name.formatter:
         class: 'QL\Hal\Utility\NameFormatter'
 
