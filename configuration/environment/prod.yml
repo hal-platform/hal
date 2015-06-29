@@ -19,7 +19,7 @@ parameters:
     redis.server: 'prod.example.com:6379'
     redis.prefix: 'hal9000'
 
-    encryption.secret: '26885952e5a4c316aedd6f3e7c429ed8ec2b15f55e575337b9fc75e0b78ffec1fbf81f7b7f16edf24effbac378a97cc0'
+    cookie.encryption.secret: '26885952e5a4c316aedd6f3e7c429ed8ec2b15f55e575337b9fc75e0b78ffec1fbf81f7b7f16edf24effbac378a97cc0'
 
     aws.region: 'us-west-2'
     aws.credentials.key: ''

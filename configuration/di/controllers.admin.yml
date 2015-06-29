@@ -7,7 +7,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\DashboardController'
         arguments:
             - @admin.dashboard.twig
-            - %encryption.secret%
+            - %cookie.encryption.secret%
             - %session.encryption.secret%
             - @hal.pushfile.path
     admin.dashboard.twig:

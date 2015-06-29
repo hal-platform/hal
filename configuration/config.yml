@@ -1,6 +1,6 @@
 imports:
     - resource: ../vendor/ql/hal-core/configuration/hal-core.yml
-    - resource: ../vendor/ql/panthor/configuration/di.yml
+    - resource: ../vendor/ql/panthor/configuration/panthor.yml
     - resource: di.yml
     - resource: config.global.yml
     - resource: config.env.yml
@@ -14,7 +14,7 @@ parameters:
 
     # Replaced before di compiling
     application.sha: ''
-    session.encryption.secret: %encryption.secret%
+    session.encryption.secret: %cookie.encryption.secret%
 
     slim.hooks:
         slim.before:
