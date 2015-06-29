@@ -1,4 +1,9 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api\Normalizer;
 
@@ -6,7 +11,8 @@ use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Github\GitHubURLBuilder;
+use QL\Panthor\Utility\Url;
 
 /**
  * Build Object Normalizer
@@ -18,9 +24,14 @@ class BuildNormalizer
     use EmbeddedResolutionTrait;
 
     /**
-     * @var UrlHelper
+     * @var Url
      */
-    private $urls;
+    private $url;
+
+    /**
+     * @var GitHubURLBuilder
+     */
+    private $urlBuilder;
 
     /**
      * @var UserNormalizer
@@ -43,18 +54,24 @@ class BuildNormalizer
     private $embed;
 
     /**
-     * @param UrlHelper $urls
+     * @param Url $url
+     * @param GitHubURLBuilder $urlBuilder
+     *
      * @param UserNormalizer $users
      * @param ApplicationNormalizer $repositories
      * @param EnvironmentNormalizer $environments
      */
     public function __construct(
-        UrlHelper $urls,
+        Url $url,
+        GitHubURLBuilder $urlBuilder,
+
         UserNormalizer $users,
         ApplicationNormalizer $repositories,
         EnvironmentNormalizer $environments
     ) {
-        $this->urls = $urls;
+        $this->url = $url;
+        $this->urlBuilder = $urlBuilder;
+
         $this->users = $users;
         $this->repositories = $repositories;
         $this->environments = $environments;
@@ -63,13 +80,20 @@ class BuildNormalizer
     }
 
     /**
-     * @param Build $build
-     * @return array
+     * @param Build|null $build
+     *
+     * @return array|null
      */
     public function link(Build $build = null)
     {
-        return (is_null($build)) ? null : $this->buildLink(
-            ['api.build', ['id' => $build->id()]],
+        if (!$build) {
+            return null;
+        }
+
+        return $this->buildLink(
+            [
+                'api.build', ['id' => $build->id()]
+            ],
             [
                 'title' => $build->id()
             ]
@@ -77,9 +101,10 @@ class BuildNormalizer
     }
 
     /**
-     * @param Build $build
+     * @param Build|null $build
      * @param array $embed
-     * @return array
+     *
+     * @return array|null
      */
     public function resource(Build $build = null, array $embed = [])
     {
@@ -97,13 +122,13 @@ class BuildNormalizer
             [
                 'id' => $build->id(),
                 'status' => $build->status(),
-                'url' => $this->urls->urlFor('build', ['build' => $build->id()]),
+                'url' => $this->url->absoluteUrlFor('build', ['build' => $build->id()]),
                 'created' => $build->created(),
                 'start' => $build->start(),
                 'end' => $build->end(),
                 'reference' => [
                     'text' => $build->branch(),
-                    'url' => $this->urls->githubReferenceUrl(
+                    'url' => $this->urlBuilder->githubReferenceURL(
                         $build->application()->githubOwner(),
                         $build->application()->githubRepo(),
                         $build->branch()
@@ -111,7 +136,7 @@ class BuildNormalizer
                 ],
                 'commit' => [
                     'text' => $build->commit(),
-                    'url' => $this->urls->githubCommitUrl(
+                    'url' => $this->urlBuilder->githubCommitURL(
                         $build->application()->githubOwner(),
                         $build->application()->githubRepo(),
                         $build->commit()

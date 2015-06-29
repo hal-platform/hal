@@ -156,7 +156,7 @@
                         {{ macros.icon('branch') }}
                         {{ branch.name }} <br />
 
-                        <a href="{{ githubTreeish(application.githubOwner, application.githubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
+                        <a href="{{ githubBranchUrl(application.githubOwner, application.githubRepo, branch.name) }}">{{ branch.object.sha|commit }}</a>
                         {{ macros.icon('github') }}
                     </label>
                 </li>
@@ -187,7 +187,7 @@
                         {{ macros.icon('tag') }}
                         {{ tag.name }} <br />
 
-                        <a href="{{ githubRelease(application.githubOwner, application.githubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
+                        <a href="{{ githubReleaseUrl(application.githubOwner, application.githubRepo, tag.name) }}">{{ tag.object.sha|commit }}</a>
                         {{ macros.icon('github') }}
                     </label>
                 </li>
@@ -218,7 +218,7 @@
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
-                        <a href="{{ githubPullRequest(application.githubOwner, application.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                        <a href="{{ githubPullRequestUrl(application.githubOwner, application.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
                         {{ macros.icon('github') }}
                         <br />
 
@@ -259,7 +259,7 @@
                         <span class="js-title">{{ pull.title }}</span>
                         <br />
 
-                        <a href="{{ githubPullRequest(application.githubOwner, application.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
+                        <a href="{{ githubPullRequestUrl(application.githubOwner, application.githubRepo, pull.number) }}">PR #{{ pull.number }}</a>
                         {{ macros.icon('github') }}
                         <br />
 

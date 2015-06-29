@@ -130,17 +130,12 @@ services:
     # HELPERS
     ######################################################################################################################
 
-    url.helper:
-        class: 'QL\Hal\Helpers\UrlHelper'
-        arguments:
-            - @slim.request
-            - @slim.response
-            - @slim.router
-            - @github
-
     api.helper:
         class: 'QL\Hal\Helpers\ApiHelper'
-        arguments: [@url.helper, @slim.request, %api.cachetimes%]
+        arguments:
+            - @url
+            - @slim.request
+            - %api.cachetimes%
         calls:
             - ['setCache', [@cache]]
 

@@ -8,6 +8,7 @@
 namespace QL\Hal\Helpers;
 
 use MCP\Cache\CachingTrait;
+use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -19,7 +20,7 @@ class ApiHelper
     const CACHE_KEY = 'api:%s';
 
     /**
-     * @var UrlHelper
+     * @var Url
      */
     private $url;
 
@@ -44,11 +45,11 @@ class ApiHelper
     private $cacheKey;
 
     /**
-     * @param UrlHelper $url
+     * @param Url $url
      * @param Request $request
      * @param array $customCacheTimes
      */
-    public function __construct(UrlHelper $url, Request $request, array $customCacheTimes)
+    public function __construct(Url $url, Request $request, array $customCacheTimes)
     {
         $this->url = $url;
         $this->request = $request;
@@ -130,17 +131,11 @@ class ApiHelper
     {
         foreach ($properties as $property => &$value) {
             if ($property == 'href') {
-                if (is_array($value) && count($value) >= 2) {
-                    $suffix = '';
-                    if (isset($value[2])) {
-                        $suffix .= '?' . http_build_query($value[2]);
-                    }
-
-                    $value = $this->url->urlFor($value[0], $value[1]) . $suffix;
-
-                } else {
-                    $value = $this->url->urlFor($value);
+                if (!is_array($value)) {
+                    $value = [$value];
                 }
+
+                $value = call_user_func_array([$this->url, 'absoluteUrlFor'], $value);
             }
         }
 
@@ -188,7 +183,12 @@ class ApiHelper
      */
     private function cacheTime()
     {
-        $name = $this->url->currentRoute()->getName();
+        if (!$route = $this->url->currentRoute()) {
+            return self::API_RESPONSE_CACHE_TIME;
+        }
+
+        $name = $route->getName();
+
         if (isset($this->customCacheTimes[$name])) {
             return $this->customCacheTimes[$name];
         }

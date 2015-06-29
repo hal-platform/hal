@@ -125,7 +125,6 @@ services:
         arguments:
             - @slim.cookies
             - @global.message
-            - @url.helper
             - @utility.time.formatter
             - @name.helper
 
@@ -151,7 +150,7 @@ services:
 
     twig.extension.github:
         class: 'QL\Hal\Twig\GitHubExtension'
-        arguments: [@url.helper, @github]
+        arguments: [@github, @github.url_builder]
         calls:
             - ['setCache', [@twig.extension.github.cache]]
 
@@ -195,6 +194,10 @@ services:
             - %github.site.baseurl%
             - %github.app.id%
             - %github.app.secret%
+
+    github.url_builder:
+        class: 'QL\Hal\Github\GitHubURLBuilder'
+        arguments: [@github, %github.site.baseurl%]
 
     github.client:
         class: 'Github\Client'

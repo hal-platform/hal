@@ -9,14 +9,17 @@ services:
         arguments:
             - @slim.request
             - @slim.response
-            - @url.helper
+            - @slim.route
             - @normalizer
             - @hypermedia.formatter
 
     hypermedia.formatter:
         class: 'QL\Hal\Api\Utility\HypermediaFormatter'
         arguments:
-            - @url.helper
+            - @url
+            - @slim.request
+            - @slim.route
+            - @slim.route.parameters
 
     normalizer:
         class: 'QL\Hal\Api\Normalizer'
@@ -36,7 +39,8 @@ services:
     normalizer.build:
         class: 'QL\Hal\Api\Normalizer\BuildNormalizer'
         arguments:
-            - @url.helper
+            - @url
+            - @github.url_builder
             - @normalizer.user
             - @normalizer.application
             - @normalizer.environment
@@ -65,7 +69,7 @@ services:
     normalizer.push:
         class: 'QL\Hal\Api\Normalizer\PushNormalizer'
         arguments:
-            - @url.helper
+            - @url
             - @normalizer.user
             - @normalizer.build
             - @normalizer.deployment
@@ -74,7 +78,8 @@ services:
     normalizer.application:
         class: 'QL\Hal\Api\Normalizer\ApplicationNormalizer'
         arguments:
-            - @url.helper
+            - @url
+            - @github.url_builder
             - @normalizer.group
 
     normalizer.server:

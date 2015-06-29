@@ -36,7 +36,7 @@
 
             <dt class="split__title">Commit</dt>
             <dd>
-                <a href="{{ githubCommit(build.application.githubOwner, build.application.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
+                <a href="{{ githubCommitUrl(build.application.githubOwner, build.application.githubRepo, build.commit) }}">{{ build.commit|commit }}</a>
                 {{ macros.icon('github') }}
             </dd>
 

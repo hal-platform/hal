@@ -396,7 +396,6 @@ class GitHubService
      */
     public function parseRefAsPull($reference)
     {
-
         if (preg_match(self::REGEX_PULL, $reference, $matches) !== 1) {
             return null;
         }

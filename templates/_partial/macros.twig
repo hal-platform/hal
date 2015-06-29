@@ -39,7 +39,7 @@
             {% set ref = ref[0:20] %}
         {% endif %}
 
-        <a href="{{ githubReference(build.application.githubOwner, build.application.githubRepo, build.branch) }}">
+        <a href="{{ githubReferenceUrl(build.application.githubOwner, build.application.githubRepo, build.branch) }}">
             {% if type == 'pull' %}
                 Pull Request {{ ref }}
             {% elseif type == 'tag' %}
@@ -76,7 +76,7 @@
 
 {% macro gitsource(application) %}
     {% import _self as self_macros %}
-    <a href="{{ githubRepo(application.githubOwner, application.githubRepo) }}">{{ application.githubOwner }}/{{ application.githubRepo }}</a> {{ self_macros.icon('github') }}
+    <a href="{{ githubRepoUrl(application.githubOwner, application.githubRepo) }}">{{ application.githubOwner }}/{{ application.githubRepo }}</a> {{ self_macros.icon('github') }}
 {% endmacro %}
 
 {% macro gitcommit(build) %}
@@ -86,7 +86,7 @@
     {% if resolved %}
         {% set ref = resolved|last %}
 
-        <a href="{{ githubCommit(build.application.githubOwner, build.application.githubRepo, build.commit) }}">
+        <a href="{{ githubCommitUrl(build.application.githubOwner, build.application.githubRepo, build.commit) }}">
             {{ ref|commit }}
         </a>
         {{ self_macros.icon('commit') }}

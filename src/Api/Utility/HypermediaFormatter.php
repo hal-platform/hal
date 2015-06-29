@@ -1,9 +1,15 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api\Utility;
 
-use RuntimeException;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Panthor\Utility\Url;
+use Slim\Http\Request;
+use Slim\Route;
 
 /**
  * Hypermedia Content Formatter
@@ -11,16 +17,37 @@ use QL\Hal\Helpers\UrlHelper;
 class HypermediaFormatter
 {
     /**
-     * @var UrlHelper
+     * @type Url
      */
     private $url;
 
     /**
-     * @param UrlHelper $url
+     * @type Request
      */
-    public function __construct(UrlHelper $url)
+    private $request;
+
+    /**
+     * @type Route
+     */
+    private $currentRoute;
+
+    /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
+     * @param Url $url
+     * @param Request $request
+     * @param Route $currentRoute
+     * @param array $parameters
+     */
+    public function __construct(Url $url, Request $request, Route $currentRoute, array $parameters)
     {
         $this->url = $url;
+        $this->request = $request;
+        $this->currentRoute = $currentRoute;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -43,7 +70,13 @@ class HypermediaFormatter
 
         // force self link
         if (!isset($links['self'])) {
-            $links = ['self' => ['href' => $this->url->url()]] + $links;
+            $self = $this->url->absoluteUrlFor(
+                $this->currentRoute->getName(),
+                $this->parameters,
+                $this->request->get()
+            );
+
+            $links = ['self' => ['href' => $self]] + $links;
         }
 
         // hide embedded if empty
@@ -238,7 +271,6 @@ class HypermediaFormatter
      *  - 'route_name'
      *  - ['route_name', [ route parameters ]]
      *  - ['route_name', [ route parameters ], [ url get parameters ]]
-     *  - ['route_name', [ route parameters ], [ url get parameters ], 'url_fragment']
      *
      * @param array $properties
      * @return array
@@ -249,22 +281,11 @@ class HypermediaFormatter
             // single link
             foreach ($properties as $property => &$value) {
                 if ($property === 'href') {
-                    if (is_array($value)) {
-                        $url = $this->url->urlFor($value[0], $value[1]);
-                        if (count($value) > 2) {
-                            $url = sprintf('%s?%s', $url, http_build_query($value[2]));
-                        }
-                        if (count($value) > 3) {
-                            $url = sprintf('%s#%s', $url, $value[3]);
-                        }
-                        $value = $url;
-                    } else {
-                        try {
-                            $value = $this->url->urlFor($value);
-                        } catch (RuntimeException $e) {
-                            // do nothing, pass $value through without modification
-                        }
+                    if (!is_array($value)) {
+                        $value = [$value];
                     }
+
+                    $value = call_user_func_array([$this->url, 'absoluteUrlFor'], $value);
                 }
             }
         } else {

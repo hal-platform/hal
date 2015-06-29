@@ -8,8 +8,8 @@
 namespace QL\Hal\Twig;
 
 use MCP\Cache\CachingTrait;
-use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Service\GitHubService;
+use QL\Hal\Github\GitHubURLBuilder;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -22,23 +22,23 @@ class GitHubExtension extends Twig_Extension
     const NAME = 'github_permissions';
 
     /**
-     * @type UrlHelper
-     */
-    private $url;
-
-    /**
      * @type GitHubService
      */
     private $github;
 
     /**
-     * @param UrlHelper $url
-     * @param GitHubService $github
+     * @type GitHubURLBuilder
      */
-    public function __construct(UrlHelper $url, GitHubService $github)
+    private $urlBuilder;
+
+    /**
+     * @param GitHubService $github
+     * @param GitHubURLBuilder $urlBuilder
+     */
+    public function __construct(GitHubService $github, GitHubURLBuilder $urlBuilder)
     {
-        $this->url = $url;
         $this->github = $github;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -55,12 +55,12 @@ class GitHubExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction('githubRepo', [$this->url, 'githubRepoUrl']),
-            new Twig_SimpleFunction('githubCommit', [$this->url, 'githubCommitUrl']),
-            new Twig_SimpleFunction('githubTreeish', [$this->url, 'githubTreeUrl']),
-            new Twig_SimpleFunction('githubPullRequest', [$this->url, 'githubPullRequestUrl']),
-            new Twig_SimpleFunction('githubReference', [$this->url, 'githubReferenceUrl']),
-            new Twig_SimpleFunction('githubRelease', [$this->url, 'githubReleaseUrl']),
+            new Twig_SimpleFunction('githubRepoUrl', [$this->urlBuilder, 'githubRepoURL']),
+            new Twig_SimpleFunction('githubCommitUrl', [$this->urlBuilder, 'githubCommitURL']),
+            new Twig_SimpleFunction('githubBranchUrl', [$this->urlBuilder, 'githubBranchURL']),
+            new Twig_SimpleFunction('githubPullRequestUrl', [$this->urlBuilder, 'githubPullRequestURL']),
+            new Twig_SimpleFunction('githubReferenceUrl', [$this->urlBuilder, 'githubReferenceURL']),
+            new Twig_SimpleFunction('githubReleaseUrl', [$this->urlBuilder, 'githubReleaseURL']),
 
             new Twig_SimpleFunction('githubCommitIsCurrent', [$this, 'commitIsCurrent'])
         ];

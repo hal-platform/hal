@@ -1,4 +1,9 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api\Normalizer;
 
@@ -6,7 +11,7 @@ use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Panthor\Utility\Url;
 
 /**
  * Push Object Normalizer
@@ -18,9 +23,9 @@ class PushNormalizer
     use EmbeddedResolutionTrait;
 
     /**
-     * @var UrlHelper
+     * @var Url
      */
-    private $urls;
+    private $url;
 
     /**
      * @var UserNormalizer
@@ -48,20 +53,21 @@ class PushNormalizer
     private $embed;
 
     /**
-     * @param UrlHelper $urls
+     * @param Url $url
      * @param UserNormalizer $users
      * @param BuildNormalizer $builds
      * @param DeploymentNormalizer $deployments
      * @param ApplicationNormalizer $repositories
      */
     public function __construct(
-        UrlHelper $urls,
+        Url $url,
         UserNormalizer $users,
         BuildNormalizer $builds,
         DeploymentNormalizer $deployments,
         ApplicationNormalizer $repositories
     ) {
-        $this->urls = $urls;
+        $this->url = $url;
+
         $this->users = $users;
         $this->builds = $builds;
         $this->deployments = $deployments;
@@ -71,13 +77,20 @@ class PushNormalizer
     }
 
     /**
-     * @param Push $push
-     * @return array
+     * @param Push|null $push
+     *
+     * @return array|null
      */
     public function link(Push $push = null)
     {
-        return  (is_null($push)) ? null : $this->buildLink(
-            ['api.push', ['id' => $push->id()]],
+        if (!$push) {
+            return null;
+        }
+
+        return $this->buildLink(
+            [
+                'api.push', ['id' => $push->id()]
+            ],
             [
                 'title' => $push->id()
             ]
@@ -85,9 +98,10 @@ class PushNormalizer
     }
 
     /**
-     * @param Push $push
+     * @param Push|null $push
      * @param array $embed
-     * @return array
+     *
+     * @return array|null
      */
     public function resource(Push $push = null, array $embed = [])
     {
@@ -106,7 +120,7 @@ class PushNormalizer
             [
                 'id' => $push->id(),
                 'status' => $push->status(),
-                'url' => $this->urls->urlFor('push', ['push' => $push->id()]),
+                'url' => $this->url->absoluteUrlFor('push', ['push' => $push->id()]),
                 'created' => $push->created(),
                 'start' => $push->start(),
                 'end' => $push->end()

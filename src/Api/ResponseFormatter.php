@@ -1,17 +1,18 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api;
 
 use MCP\Cache\CachingTrait;
 use QL\Hal\Api\Utility\HypermediaFormatter;
-use QL\Hal\Helpers\UrlHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Route;
 
-/**
- * API Response Formatter
- */
 class ResponseFormatter
 {
     use CachingTrait;
@@ -42,9 +43,9 @@ class ResponseFormatter
     private $formatter;
 
     /**
-     * @var UrlHelper
+     * @var Route
      */
-    private $url;
+    private $currentRoute;
 
     /**
      * @var array
@@ -59,7 +60,8 @@ class ResponseFormatter
     /**
      * @param Request $request
      * @param Response $response
-     * @param UrlHelper $url
+     * @param Route $currentRoute
+     *
      * @param Normalizer $normalizer
      * @param HypermediaFormatter $formatter
      * @param array $cacheTimes
@@ -67,14 +69,16 @@ class ResponseFormatter
     public function __construct(
         Request $request,
         Response $response,
-        UrlHelper $url,
+        Route $currentRoute,
+
         Normalizer $normalizer,
         HypermediaFormatter $formatter,
         array $cacheTimes = []
     ) {
         $this->request = $request;
         $this->response = $response;
-        $this->url = $url;
+        $this->currentRoute = $currentRoute;
+
         $this->normalizer = $normalizer;
         $this->formatter = $formatter;
         $this->cacheTimes = $cacheTimes;
@@ -100,7 +104,7 @@ class ResponseFormatter
         $body = json_encode($this->formatter->format($data), JSON_UNESCAPED_SLASHES);
 
         // cache the result
-        if ($cache && $this->request->isGet() && ($ttl = $this->cacheTime($this->url->currentRoute()))) {
+        if ($cache && $this->request->isGet() && ($ttl = $this->cacheTime($this->currentRoute))) {
             $this->setToCache($this->cacheKey($this->request), $body, $ttl);
         }
 

@@ -13,7 +13,6 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Helpers\NameHelper;
-use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Service\GlobalMessageService;
 use QL\Hal\Utility\TimeFormatter;
 use Twig_Extension;
@@ -36,11 +35,6 @@ class HalExtension extends Twig_Extension
     private $messageService;
 
     /**
-     * @type UrlHelper
-     */
-    private $url;
-
-    /**
      * @type TimeFormatter
      */
     private $time;
@@ -58,20 +52,17 @@ class HalExtension extends Twig_Extension
     /**
      * @param EncryptedCookies $cookies
      * @param GlobalMessageService $messageService
-     * @param UrlHelper $url
      * @param TimeFormatter $time
      * @param NameHelper $name
      */
     public function __construct(
         EncryptedCookies $cookies,
         GlobalMessageService $messageService,
-        UrlHelper $url,
         TimeFormatter $time,
         NameHelper $name
     ) {
         $this->cookies = $cookies;
         $this->messageService = $messageService;
-        $this->url = $url;
         $this->time = $time;
         $this->name = $name;
     }
