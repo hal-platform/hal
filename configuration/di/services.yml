@@ -126,7 +126,7 @@ services:
             - @slim.cookies
             - @global.message
             - @utility.time.formatter
-            - @name.helper
+            - @utility.name.formatter
 
     twig.extension.hal.global:
         class: 'QL\Hal\Twig\GlobalExtension'

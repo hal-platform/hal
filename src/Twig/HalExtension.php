@@ -12,8 +12,8 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Service\GlobalMessageService;
+use QL\Hal\Utility\NameFormatter;
 use QL\Hal\Utility\TimeFormatter;
 use Twig_Extension;
 use Twig_SimpleFilter;
@@ -40,7 +40,7 @@ class HalExtension extends Twig_Extension
     private $time;
 
     /**
-     * @type NameHelper
+     * @type NameFormatter
      */
     private $name;
 
@@ -53,13 +53,13 @@ class HalExtension extends Twig_Extension
      * @param EncryptedCookies $cookies
      * @param GlobalMessageService $messageService
      * @param TimeFormatter $time
-     * @param NameHelper $name
+     * @param NameFormatter $name
      */
     public function __construct(
         EncryptedCookies $cookies,
         GlobalMessageService $messageService,
         TimeFormatter $time,
-        NameHelper $name
+        NameFormatter $name
     ) {
         $this->cookies = $cookies;
         $this->messageService = $messageService;

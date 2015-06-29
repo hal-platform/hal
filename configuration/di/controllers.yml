@@ -400,7 +400,7 @@ services:
         arguments:
             - @slim.cookies
             - @session.flasher
-            - @name.helper
+            - @utility.name.formatter
             - @currentUser
             - %cookie.preferences.ttl%
             - %navigation.list%

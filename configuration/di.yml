@@ -139,8 +139,8 @@ services:
         calls:
             - ['setCache', [@cache]]
 
-    name.helper:
-        class: 'QL\Hal\Helpers\NameHelper'
+    utility.name.formatter:
+        class: 'QL\Hal\Utility\NameFormatter'
 
     utility.id.generator:
         class: 'QL\Hal\Core\JobIdGenerator'

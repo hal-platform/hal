@@ -1,22 +1,20 @@
 <?php
 /**
- * @copyright ©2013 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Helpers;
+namespace QL\Hal\Utility;
 
-use MCP\Corp\Account\User as LdapUser;
-use QL\Hal\Core\Entity\User as DomainUser;
+use QL\Hal\Core\Entity\User;
 
-class NameHelper
+class NameFormatter
 {
     /**
-     *  Get the user's actual name
+     * @param User $user
      *
-     *  @param LdapUser|DomainUser $user
-     *  @return string
+     * @return string
      */
     public function getUsersActualName($user)
     {
@@ -30,10 +28,11 @@ class NameHelper
     }
 
     /**
-     *  Get the user's first name
+     * Get the user's first name
      *
-     *  @param LdapUser|DomainUser $user
-     *  @return string
+     * @param User $user
+     *
+     * @return string
      */
     public function getUsersFirstName($user)
     {
@@ -43,35 +42,35 @@ class NameHelper
     }
 
     /**
-     *  Get the user's name
+     * Get the user's name
      *
-     *  @param LdapUser|DomainUser $user
-     *  @return string
+     * @param User $user
+     *
+     * @return string
      */
     public function getUsersName($user)
     {
         $name = '';
-        if ($user instanceof LdapUser) {
-            $name = sprintf('%s %s', $user->firstName(), $user->lastName());
+        if (!$user instanceof User) {
+            return $name;
+        }
 
-        } elseif ($user instanceof DomainUser) {
-            $exploded = explode(',', $user->name());
-            if (count($exploded) === 2) {
-                $name = sprintf('%s %s', trim($exploded[1]), trim($exploded[0]));
-            } else {
-                $name = $user->name();
-            }
+        $exploded = explode(',', $user->name());
+        if (count($exploded) === 2) {
+            $name = sprintf('%s %s', trim($exploded[1]), trim($exploded[0]));
+        } else {
+            $name = $user->name();
         }
 
         return trim($name);
     }
 
     /**
-     *  Get the user's freudian name
+     * Get the user's freudian name
      *
      * @see http://tvtropes.org/pmwiki/pmwiki.php/Main/CallAHumanAMeatbag
      *
-     *  @return string
+     * @return string
      */
     public function getUsersFreudianName()
     {

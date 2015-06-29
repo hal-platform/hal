@@ -8,8 +8,8 @@
 namespace QL\Hal\Controllers\User;
 
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\NameHelper;
 use QL\Hal\Flasher;
+use QL\Hal\Utility\NameFormatter;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Http\EncryptedCookies;
 use Slim\Http\Request;
@@ -45,7 +45,7 @@ HELLO;
     private $flasher;
 
     /**
-     * @type NameHelper
+     * @type NameFormatter
      */
     private $name;
 
@@ -72,7 +72,7 @@ HELLO;
     /**
      * @param EncryptedCookies $cookies
      * @param Flasher $flasher
-     * @param NameHelper $name
+     * @param NameFormatter $name
      * @param User $currentUser
      * @param string $preferencesExpiry
      * @param array $preferences
@@ -81,7 +81,7 @@ HELLO;
     public function __construct(
         EncryptedCookies $cookies,
         Flasher $flasher,
-        NameHelper $name,
+        NameFormatter $name,
         User $currentUser,
         $preferencesExpiry,
         $preferences,
