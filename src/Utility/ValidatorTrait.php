@@ -5,9 +5,9 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Helpers;
+namespace QL\Hal\Utility;
 
-trait ValidatorHelperTrait
+trait ValidatorTrait
 {
     /**
      * @param string $value

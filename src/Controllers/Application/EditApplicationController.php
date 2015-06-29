@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
+use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -21,7 +21,7 @@ use Slim\Http\Request;
 
 class EditApplicationController implements ControllerInterface
 {
-    use ValidatorHelperTrait;
+    use ValidatorTrait;
 
     const ERR_DUPLICATE_IDENTIFIER = 'An application with this identifier already exists.';
     const SUCCESS = 'Application updated successfully.';

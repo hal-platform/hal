@@ -11,15 +11,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Session;
+use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 
 class AddGroupController implements ControllerInterface
 {
-    use ValidatorHelperTrait;
+    use ValidatorTrait;
 
     /**
      * @type TemplateInterface

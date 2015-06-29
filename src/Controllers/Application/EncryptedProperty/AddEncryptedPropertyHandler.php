@@ -15,7 +15,7 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Helpers\ValidatorHelperTrait;
+use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;
@@ -23,7 +23,7 @@ use Slim\Http\Request;
 
 class AddEncryptedPropertyHandler implements MiddlewareInterface
 {
-    use ValidatorHelperTrait;
+    use ValidatorTrait;
 
     const SUCCESS = 'Encrypted Property "%s" added.';
 

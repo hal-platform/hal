@@ -12,16 +12,16 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Helpers\ValidatorHelperTrait;
 use QL\Hal\Service\GitHubService;
 use QL\Hal\Session;
+use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 
 class AddApplicationController implements ControllerInterface
 {
-    use ValidatorHelperTrait;
+    use ValidatorTrait;
 
     const SUCCESS = 'Application "%s" added.';
     const ERR_NO_GROUP = 'Please select a group.';
