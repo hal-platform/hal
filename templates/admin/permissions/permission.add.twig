@@ -48,7 +48,7 @@
                             <optgroup label="{{ group_name }}">
                                 {% for application_id, application_name in applications %}
                                     {% set isSelected = (application_id == form.application) %}
-                                    <option value="{{ application_id.id }}"{{ isSelected ? ' selected' : '' }}>{{ application_name }}</option>
+                                    <option value="{{ application_id }}"{{ isSelected ? ' selected' : '' }}>{{ application_name }}</option>
                                 {% endfor %}
                             </optgroup>
                         {% endfor %}
