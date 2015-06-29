@@ -11,6 +11,7 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
 use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\UserPerm;
 use QL\Panthor\ControllerInterface;
 
 /**
