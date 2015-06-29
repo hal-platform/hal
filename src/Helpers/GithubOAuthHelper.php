@@ -114,16 +114,4 @@ class GithubOAuthHelper
             'auth' => [$this->ghClientId, $this->ghClientSecret]
         ]);
     }
-
-    /**
-     * @param string $token
-     *
-     * @return void
-     */
-    public function asdasd($token)
-    {
-        if (!$token) {
-            return;
-        }
-    }
 }
