@@ -187,6 +187,15 @@ services:
     # GitHub
     ####################################################################################################################
 
+    github.oauth:
+        class: 'QL\Hal\Github\OAuthHandler'
+        arguments:
+            - @guzzle
+            - %github.baseurl%
+            - %github.site.baseurl%
+            - %github.app.id%
+            - %github.app.secret%
+
     github.client:
         class: 'Github\Client'
         arguments: [@github.http.client]

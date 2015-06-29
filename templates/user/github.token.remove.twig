@@ -10,10 +10,12 @@
 
         <p>This will revoke GitHub authorization and disable updates to GitHub when you deploy a build.</p>
 
-        <form method="post">
-            <input class="btn btn--destructive" type="submit" value="Remove">
+        <form class="form-wrapper" method="post">
+            <ul class="button-list">
+                <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="javascript:history.go(-1)">Cancel</a></li>
+            </ul>
         </form>
-        <a href="javascript:history.go(-1)">Cancel</a>
     </div>
 
 {% endblock %}

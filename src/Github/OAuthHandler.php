@@ -5,11 +5,11 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Helpers;
+namespace QL\Hal\Github;
 
 use GuzzleHttp\Client as Guzzle;
 
-class GithubOAuthHelper
+class OAuthHandler
 {
     /**
      * @type Guzzle

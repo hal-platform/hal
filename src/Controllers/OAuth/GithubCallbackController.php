@@ -10,7 +10,7 @@ namespace QL\Hal\Controllers\OAuth;
 use Doctrine\ORM\EntityManagerInterface;
 use MCP\DataType\GUID;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\GithubOAuthHelper;
+use QL\Hal\Github\OAuthHandler;
 use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -52,7 +52,7 @@ class GithubCallbackController implements ControllerInterface
     private $currentUser;
 
     /**
-     * @type GithubOAuthHelper
+     * @type OAuthHandler
      */
     private $githubOAuth;
 
@@ -73,7 +73,7 @@ class GithubCallbackController implements ControllerInterface
      * @param EntityManagerInterface $em
      * @param User $currentUser
      *
-     * @param GithubOAuthHelper $githubOAuth
+     * @param OAuthHandler $githubOAuth
      * @param Session $session
      * @param Url $url
      */
@@ -82,7 +82,7 @@ class GithubCallbackController implements ControllerInterface
         Request $request,
         EntityManagerInterface $em,
         User $currentUser,
-        GithubOAuthHelper $githubOAuth,
+        OAuthHandler $githubOAuth,
         Session $session,
         Url $url
     ) {
@@ -181,23 +181,5 @@ class GithubCallbackController implements ControllerInterface
         // Send back to settings
         $this->session->flash(static::SUCCESS_TOKEN_GRANTED, 'success', static::SUCCESS_TOKEN_FLAVOR);
         return $this->url->redirectFor('settings');
-    }
-
-    /**
-     * @param string $state
-     *
-     * @return void
-     */
-    private function sendToOAuthAuthorization($state)
-    {
-        $url = rtrim($this->ghBaseUrl, '/') . '/login/oauth/authorize';
-
-        $query = [
-            'client_id' => $this->ghClientId,
-            'scope' => implode(',', static::$requiredScopes),
-            'state' => $state
-        ];
-
-        $this->url->redirectForURL($url, $query);
     }
 }

@@ -506,7 +506,7 @@ services:
             - @slim.request
             - @doctrine.em
             - @currentUser
-            - @utilty.github.oauth
+            - @github.oauth
             - @session
             - @url
     github.authorization.twig:
@@ -520,7 +520,7 @@ services:
             - @slim.request
             - @doctrine.em
             - @currentUser
-            - @utilty.github.oauth
+            - @github.oauth
             - @session
             - @url
     github.authorization.remove.twig:

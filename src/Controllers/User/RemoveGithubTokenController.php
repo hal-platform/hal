@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Helpers\GithubOAuthHelper;
+use QL\Hal\Github\OAuthHandler;
 use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -41,7 +41,7 @@ class RemoveGithubTokenController implements ControllerInterface
     private $currentUser;
 
     /**
-     * @type GithubOAuthHelper
+     * @type OAuthHandler
      */
     private $githubOAuth;
 
@@ -62,7 +62,7 @@ class RemoveGithubTokenController implements ControllerInterface
      * @param EntityManagerInterface $em
      * @param User $currentUser
      *
-     * @param GithubOAuthHelper $githubOAuth
+     * @param OAuthHandler $githubOAuth
      * @param Session $session
      * @param Url $url
      */
@@ -71,7 +71,7 @@ class RemoveGithubTokenController implements ControllerInterface
         Request $request,
         EntityManagerInterface $em,
         User $currentUser,
-        GithubOAuthHelper $githubOAuth,
+        OAuthHandler $githubOAuth,
         Session $session,
         Url $url
     ) {
