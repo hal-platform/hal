@@ -11,13 +11,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
 class RemoveGroupController implements ControllerInterface
 {
+    const SUCCESS = 'Group "%s" removed.';
+    const ERR_HAS_APPLICATIONS = 'Cannot remove group. All associated applications must first be removed.';
+
     /**
      * @type EntityRepository
      */
@@ -30,14 +32,9 @@ class RemoveGroupController implements ControllerInterface
     private $entityManager;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type NotFound
@@ -51,15 +48,13 @@ class RemoveGroupController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         NotFound $notFound,
         array $parameters
     ) {
@@ -67,9 +62,7 @@ class RemoveGroupController implements ControllerInterface
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -84,15 +77,17 @@ class RemoveGroupController implements ControllerInterface
         }
 
         if ($applications = $this->applicationRepo->findBy(['group' => $group])) {
-            $this->session->flash('Cannot remove group. All associated repositories must first be removed.', 'error');
-            return $this->url->redirectFor('groups', ['id' => $group->id()]);
+            return $this->flasher
+                ->withFlash(self::ERR_HAS_APPLICATIONS, 'error')
+                ->load('group', ['id' => $group->id()]);
         }
 
         $this->em->remove($group);
         $this->em->flush();
 
-        $message = sprintf('Group "%s" removed.', $group->name());
-        $this->session->flash($message, 'success');
-        $this->url->redirectFor('groups');
+        $message = sprintf(self::SUCCESS, $group->name());
+        return $this->flasher
+            ->withFlash($message, 'success')
+            ->load('groups');
     }
 }

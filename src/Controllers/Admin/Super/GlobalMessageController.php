@@ -7,9 +7,8 @@
 
 namespace QL\Hal\Controllers\Admin\Super;
 
-use QL\Hal\Helpers\UrlHelper;
 use QL\Hal\Service\GlobalMessageService;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -27,14 +26,9 @@ class GlobalMessageController implements ControllerInterface
     private $messageService;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -44,21 +38,18 @@ class GlobalMessageController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param GlobalMessageService $messageService
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
      */
     public function __construct(
         TemplateInterface $template,
         GlobalMessageService $messageService,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request
     ) {
         $this->template = $template;
         $this->messageService = $messageService;
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
 
         $this->request = $request;
     }
@@ -75,16 +66,16 @@ class GlobalMessageController implements ControllerInterface
                 $message = $this->request->post('message');
                 $this->messageService->save($message, (int) $this->request->post('ttl'));
 
-                $this->session->flash('Global Message saved.', 'success');
-                $this->url->redirectFor('admin.super.message');
-                return;
+                return $this->flasher
+                    ->withFlash('Global Message saved.', 'success')
+                    ->load('admin.super.message');
 
             } elseif ($this->request->post('remove')) {
                 $this->messageService->clear();
 
-                $this->session->flash('Global Message removed.', 'success');
-                $this->url->redirectFor('admin.super.message');
-                return;
+                return $this->flasher
+                    ->withFlash('Global Message removed.', 'success')
+                    ->load('admin.super.message');
             }
         }
 

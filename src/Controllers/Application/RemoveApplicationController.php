@@ -11,8 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Application;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
@@ -33,14 +32,9 @@ class RemoveApplicationController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type NotFound
@@ -54,13 +48,13 @@ class RemoveApplicationController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
+     * @param NotFound $notFound
+     * @param array $parameters
      */
     public function __construct(
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         NotFound $notFound,
         array $parameters
     ) {
@@ -68,9 +62,7 @@ class RemoveApplicationController implements ControllerInterface
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -85,15 +77,17 @@ class RemoveApplicationController implements ControllerInterface
         }
 
         if ($deployments = $this->deploymentRepo->findBy(['application' => $application])) {
-            $this->session->flash(self::ERR_HAS_DEPLOYMENTS, 'error');
-            return $this->url->redirectFor('repository'. ['id' => $repo->id()]);
+            return $this->flasher
+                ->withFlash(self::ERR_HAS_DEPLOYMENTS, 'error')
+                ->load('repository', ['id' => $repo->id()]);
         }
 
         $this->em->remove($application);
         $this->em->flush();
 
         $message = sprintf(self::SUCCESS, $application->key());
-        $this->session->flash($message, 'success');
-        $this->url->redirectFor('repositories');
+        return $this->flasher
+            ->withFlash($message, 'success')
+            ->load('repositories');
     }
 }

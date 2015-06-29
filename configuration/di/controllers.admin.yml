@@ -165,8 +165,7 @@ services:
         arguments:
             - @admin.message.twig
             - @global.message
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
     admin.message.twig:
         parent: 'twig.auto.template'

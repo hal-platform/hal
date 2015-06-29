@@ -93,8 +93,7 @@ services:
         arguments:
             - @group.admin.add.twig
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
     group.admin.add.twig:
         parent: 'twig.auto.template'
@@ -105,8 +104,7 @@ services:
         arguments:
             - @group.admin.edit.twig
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
@@ -117,8 +115,7 @@ services:
         class: 'QL\Hal\Controllers\Group\RemoveGroupController'
         arguments:
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.not.found
             - @slim.route.parameters
 
@@ -276,8 +273,7 @@ services:
         arguments:
             - @environment.admin.add.twig
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
     environment.admin.add.twig:
         parent: 'twig.auto.template'
@@ -288,8 +284,7 @@ services:
         arguments:
             - @environment.admin.edit.twig
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
@@ -301,8 +296,7 @@ services:
         class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentHandler'
         arguments:
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.not.found
             - @slim.route.parameters
 
@@ -336,8 +330,7 @@ services:
         arguments:
             - @server.admin.add.twig
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
     server.admin.add.twig:
         parent: 'twig.auto.template'
@@ -348,8 +341,7 @@ services:
         arguments:
             - @server.admin.edit.twig
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
@@ -361,8 +353,7 @@ services:
         class: 'QL\Hal\Controllers\Server\RemoveServerController'
         arguments:
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.not.found
             - @slim.route.parameters
 
@@ -408,8 +399,7 @@ services:
         class: 'QL\Hal\Controllers\User\SettingsHandler'
         arguments:
             - @slim.cookies
-            - @session
-            - @url.helper
+            - @session.flasher
             - @name.helper
             - @currentUser
             - %cookie.preferences.ttl%

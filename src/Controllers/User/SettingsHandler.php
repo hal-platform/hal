@@ -9,8 +9,7 @@ namespace QL\Hal\Controllers\User;
 
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Helpers\NameHelper;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Http\EncryptedCookies;
 use Slim\Http\Request;
@@ -18,6 +17,8 @@ use Slim\Slim;
 
 class SettingsHandler implements ControllerInterface
 {
+    const SUCCESS = 'Your preferences have been saved.';
+
     const GOODBYE_HAL = <<<'BYEBYE'
 <pre class="line-wrap">
 I'm afraid. I'm afraid, %1$s.
@@ -39,14 +40,9 @@ HELLO;
     private $cookies;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type NameHelper
@@ -75,8 +71,7 @@ HELLO;
 
     /**
      * @param EncryptedCookies $cookies
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param NameHelper $name
      * @param User $currentUser
      * @param string $preferencesExpiry
@@ -85,8 +80,7 @@ HELLO;
      */
     public function __construct(
         EncryptedCookies $cookies,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         NameHelper $name,
         User $currentUser,
         $preferencesExpiry,
@@ -94,8 +88,7 @@ HELLO;
         Request $request
     ) {
         $this->cookies = $cookies;
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
         $this->name = $name;
         $this->currentUser = $currentUser;
 
@@ -121,9 +114,9 @@ HELLO;
             $details = sprintf($flavor, $name);
         }
 
-        $this->session->flash('Your preferences have been saved.', 'success', $details);
-
-        $this->url->redirectFor('settings');
+        return $this->flasher
+            ->withFlash(self::SUCCESS, 'success', $details)
+            ->load('settings');
     }
 
     /**

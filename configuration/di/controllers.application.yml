@@ -50,8 +50,7 @@ services:
             - @application.admin.add.twig
             - @doctrine.em
             - @github
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
     application.admin.add.twig:
         parent: 'twig.auto.template'
@@ -62,8 +61,7 @@ services:
         arguments:
             - @application.admin.edit.twig
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
@@ -75,8 +73,7 @@ services:
         class: 'QL\Hal\Controllers\Application\RemoveApplicationController'
         arguments:
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.not.found
             - @slim.route.parameters
 
@@ -177,8 +174,7 @@ services:
         class: 'QL\Hal\Controllers\Application\Deployment\RemoveDeploymentHandler'
         arguments:
             - @doctrine.em
-            - @session
-            - @url.helper
+            - @session.flasher
             - @slim.not.found
             - @slim.route.parameters
 

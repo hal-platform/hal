@@ -56,7 +56,5 @@ class Flasher
         call_user_func_array([$this->session, 'flash'], func_get_args());
 
         return $this;
-
-        $this->url->redirectFor($route, $routeParameters);
     }
 }

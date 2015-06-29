@@ -11,9 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Helpers\UrlHelper;
+use QL\Hal\Flasher;
 use QL\Hal\Service\GitHubService;
-use QL\Hal\Session;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -48,14 +47,9 @@ class AddApplicationController implements ControllerInterface
     private $github;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -66,16 +60,14 @@ class AddApplicationController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param GitHubService $github
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         GitHubService $github,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request
     ) {
         $this->template = $template;
@@ -83,8 +75,7 @@ class AddApplicationController implements ControllerInterface
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
         $this->github = $github;
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
 
         $this->request = $request;
     }
@@ -123,8 +114,9 @@ class AddApplicationController implements ControllerInterface
                 $application = $this->handleFormSubmission($this->request, $group);
 
                 $message = sprintf(self::SUCCESS, $application->key());
-                $this->session->flash($message, 'success');
-                return $this->url->redirectFor('repositories');
+                return $this->flasher
+                    ->withFlash($message, 'success')
+                    ->load('repositories');
             }
         }
 

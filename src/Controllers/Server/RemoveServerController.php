@@ -12,13 +12,15 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
 class RemoveServerController implements ControllerInterface
 {
+    const SUCCESS = '';
+    CONST ERR_HAS_DEPLOYMENTS = 'Cannot remove server. All associated deployments must first be removed.';
+
     /**
      * @type EntityRepository
      */
@@ -31,14 +33,9 @@ class RemoveServerController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type NotFound
@@ -52,15 +49,13 @@ class RemoveServerController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         NotFound $notFound,
         array $parameters
     ) {
@@ -68,9 +63,7 @@ class RemoveServerController implements ControllerInterface
         $this->deployRepo = $em->getRepository(Deployment::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
     }
@@ -85,8 +78,9 @@ class RemoveServerController implements ControllerInterface
         }
 
         if ($deployments = $this->deployRepo->findBy(['server' => $server])) {
-            $this->session->flash('Cannot remove server. All associated deployments must first be removed.', 'error');
-            return $this->url->redirectFor('server', ['id' => $this->parameters['id']]);
+            return $this->flasher
+                ->withFlash(self::ERR_HAS_DEPLOYMENTS, 'error')
+                ->load('server', ['id' => $server->id()]);
         }
 
         $this->em->remove($server);
@@ -100,7 +94,8 @@ class RemoveServerController implements ControllerInterface
         }
 
         $message = sprintf('Server "%s" removed.', $name);
-        $this->session->flash($message, 'success');
-        $this->url->redirectFor('servers');
+        return $this->flasher
+            ->withFlash($message, 'success')
+            ->load('servers');
     }
 }

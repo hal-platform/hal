@@ -10,8 +10,7 @@ namespace QL\Hal\Controllers\Application\Deployment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
@@ -28,14 +27,9 @@ class RemoveDeploymentHandler implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type NotFound
@@ -49,22 +43,19 @@ class RemoveDeploymentHandler implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         NotFound $notFound,
         array $parameters
     ) {
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->em = $em;
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
 
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -82,7 +73,8 @@ class RemoveDeploymentHandler implements ControllerInterface
         $this->em->remove($deployment);
         $this->em->flush();
 
-        $this->session->flash('Deployment removed.', 'success');
-        $this->url->redirectFor('repository.deployments', ['repository' => $this->parameters['repository']]);
+        return $this->flasher
+            ->withFlash('Deployment removed.', 'success')
+            ->load('repository.deployments', ['repository' => $this->parameters['repository']]);
     }
 }

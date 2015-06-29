@@ -10,8 +10,7 @@ namespace QL\Hal\Controllers\Environment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -34,14 +33,9 @@ class AddEnvironmentController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -51,15 +45,13 @@ class AddEnvironmentController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request
     ) {
         $this->template = $template;
@@ -67,9 +59,7 @@ class AddEnvironmentController implements ControllerInterface
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->request = $request;
     }
 
@@ -87,8 +77,9 @@ class AddEnvironmentController implements ControllerInterface
 
         if ($this->handleFormSubmission($this->request, $renderContext['errors'])) {
             $message = sprintf('Environment "%s" added.', $this->request->post('name'));
-            $this->session->flash($message, 'success');
-            return $this->url->redirectFor('environments');
+            return $this->flasher
+                ->withFlash($message, 'success')
+                ->load('environments');
         }
 
         $this->template->render($renderContext);

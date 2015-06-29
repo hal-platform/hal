@@ -10,8 +10,7 @@ namespace QL\Hal\Controllers\Group;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -21,6 +20,8 @@ use Slim\Http\Request;
 class EditGroupController implements ControllerInterface
 {
     use ValidatorTrait;
+
+    const SUCCESS = 'Group updated successfully.';
 
     /**
      * @type TemplateInterface
@@ -38,14 +39,9 @@ class EditGroupController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -65,8 +61,7 @@ class EditGroupController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
      * @param NotFound $notFound
      * @param array $parameters
@@ -74,8 +69,7 @@ class EditGroupController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request,
         NotFound $notFound,
         array $parameters
@@ -85,9 +79,7 @@ class EditGroupController implements ControllerInterface
         $this->groupRepo = $em->getRepository(Group::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->request = $request;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -116,8 +108,9 @@ class EditGroupController implements ControllerInterface
             if (!$context['errors']) {
                 $group = $this->handleFormSubmission($this->request, $group);
 
-                $this->session->flash('Group updated successfully.', 'success');
-                return $this->url->redirectFor('group', ['id' => $group->id()]);
+                return $this->flasher
+                    ->withFlash(self::SUCCESS, 'success')
+                    ->load('group', ['id' => $group->id()]);
             }
         }
 

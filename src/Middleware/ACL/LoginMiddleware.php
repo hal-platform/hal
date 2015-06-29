@@ -57,7 +57,7 @@ class LoginMiddleware implements MiddlewareInterface
      * @param ContainerInterface $di
      * @param EntityManagerInterface $em
      * @param Session $session
-     * @param UrlHelper $url
+     * @param Url $url
      * @param Request $request
      * @param MessageFactoryInterface $logFactory
      */

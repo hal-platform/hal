@@ -11,8 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -43,14 +42,9 @@ class EditApplicationController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -69,21 +63,16 @@ class EditApplicationController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param Layout $layout
      * @param EntityManagerInterface $em
-     * @param GithubService $github
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
-     * @param Response $response
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request,
         NotFound $notFound,
         array $parameters
@@ -94,8 +83,7 @@ class EditApplicationController implements ControllerInterface
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
 
         $this->request = $request;
         $this->notFound = $notFound;
@@ -133,8 +121,9 @@ class EditApplicationController implements ControllerInterface
             if (!$renderContext['errors']) {
                 $repository = $this->handleFormSubmission($this->request, $application, $group);
 
-                $this->session->flash(self::SUCCESS, 'success');
-                return $this->url->redirectFor('repository', ['id' => $application->id()]);
+                return $this->flasher
+                    ->withFlash(self::SUCCESS, 'success')
+                    ->load('repository', ['id' => $application->id()]);
             }
         }
 

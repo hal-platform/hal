@@ -12,13 +12,15 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
 class RemoveEnvironmentHandler implements ControllerInterface
 {
+    const SUCCESS = 'Environment "%s" removed.';
+    const ERR_HAS_SERVERS = 'Cannot remove environment. All associated servers must first be removed.';
+
     /**
      * @type EntityRepository
      */
@@ -31,14 +33,9 @@ class RemoveEnvironmentHandler implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type NotFound
@@ -52,15 +49,13 @@ class RemoveEnvironmentHandler implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param NotFound $notFound
      * @param array $parameters
      */
     public function __construct(
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         NotFound $notFound,
         array $parameters
     ) {
@@ -68,8 +63,7 @@ class RemoveEnvironmentHandler implements ControllerInterface
         $this->serverRepo = $em->getRepository(Server::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
 
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -85,15 +79,17 @@ class RemoveEnvironmentHandler implements ControllerInterface
         }
 
         if ($servers = $this->serverRepo->findBy(['environment' => $environment])) {
-            $this->session->flash('Cannot remove environment. All associated servers must first be removed.', 'error');
-            return $this->url->redirectFor('environment', ['id' => $this->parameters['id']]);
+            return $this->flasher
+                ->withFlash(self::ERR_HAS_SERVERS, 'error')
+                ->load('environment', ['id' => $this->parameters['id']]);
         }
 
         $this->em->remove($environment);
         $this->em->flush();
 
-        $message = sprintf('Environment "%s" removed.', $environment->name());
-        $this->session->flash($message, 'success');
-        $this->url->redirectFor('environments');
+        $message = sprintf(self::SUCCESS, $environment->name());
+        return $this->flasher
+            ->withFlash($message, 'success')
+            ->load('environments');
     }
 }

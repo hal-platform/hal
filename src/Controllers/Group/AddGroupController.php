@@ -10,8 +10,7 @@ namespace QL\Hal\Controllers\Group;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Group;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -37,14 +36,9 @@ class AddGroupController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -54,15 +48,13 @@ class AddGroupController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request
     ) {
         $this->template = $template;
@@ -70,8 +62,7 @@ class AddGroupController implements ControllerInterface
         $this->groupRepo = $em->getRepository(Group::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
 
         $this->request = $request;
     }
@@ -95,9 +86,9 @@ class AddGroupController implements ControllerInterface
                 $group = $this->handleFormSubmission($this->request);
 
                 $message = sprintf('Group "%s" added.', $group->name());
-                $this->session->flash($message, 'success');
-
-                return $this->url->redirectFor('repositories');
+                return $this->flasher
+                    ->withFlash($message, 'success')
+                    ->load('repositories');
             }
         }
 

@@ -13,14 +13,16 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 
 class AddServerController implements ControllerInterface
 {
+    const SUCCESS = 'Server "%s" added.';
+    const ERR_NO_ENVIRONMENTS = 'A server requires an environment. Environments must be added before servers.';
+
     /**
      * @type TemplateInterface
      */
@@ -42,14 +44,9 @@ class AddServerController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -59,15 +56,13 @@ class AddServerController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request
     ) {
         $this->template = $template;
@@ -76,9 +71,7 @@ class AddServerController implements ControllerInterface
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->request = $request;
     }
 
@@ -88,8 +81,9 @@ class AddServerController implements ControllerInterface
     public function __invoke()
     {
         if (!$environments = $this->envRepo->getAllEnvironmentsSorted()) {
-            $this->session->flash('A server requires an environment. Environments must be added before servers.', 'error');
-            return $this->url->redirectFor('environment.admin.add');
+            return $this->flasher
+                ->withFlash(self::ERR_NO_ENVIRONMENTS, 'error')
+                ->load('environment.admin.add');
         }
 
         $renderContext = [
@@ -118,9 +112,10 @@ class AddServerController implements ControllerInterface
                     $name = 'EC2';
                 }
 
-                $message = sprintf('Server "%s" added.', $name);
-                $this->session->flash($message, 'success');
-                return $this->url->redirectFor('servers');
+                $message = sprintf(self::SUCCESS, $name);
+                return $this->flasher
+                    ->withFlash($message, 'success')
+                    ->load('servers');
             }
         }
 

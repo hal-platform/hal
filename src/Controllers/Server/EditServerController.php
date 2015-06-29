@@ -13,8 +13,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Helpers\UrlHelper;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -22,6 +21,8 @@ use Slim\Http\Request;
 
 class EditServerController implements ControllerInterface
 {
+    const SUCCESS = 'Server updated successfully.';
+
     /**
      * @type TemplateInterface
      */
@@ -43,14 +44,9 @@ class EditServerController implements ControllerInterface
     private $em;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type UrlHelper
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -70,8 +66,7 @@ class EditServerController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param UrlHelper $url
+     * @param Flasher $flasher
      * @param Request $request
      * @param NotFound $notFound
      * @param array $parameters
@@ -79,8 +74,7 @@ class EditServerController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Session $session,
-        UrlHelper $url,
+        Flasher $flasher,
         Request $request,
         NotFound $notFound,
         array $parameters
@@ -91,9 +85,7 @@ class EditServerController implements ControllerInterface
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->em = $em;
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->request = $request;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -128,8 +120,9 @@ class EditServerController implements ControllerInterface
             if (!$renderContext['errors']) {
                 $this->handleFormSubmission($this->request, $server, $environment);
 
-                $this->session->flash('Server updated successfully.', 'success');
-                return $this->url->redirectFor('server', ['id' => $server->id()]);
+                return $this->flasher
+                    ->withFlash(self::SUCCESS, 'success')
+                    ->load('server', ['id' => $server->id()]);
             }
         }
 
