@@ -13,14 +13,14 @@ use Doctrine\ORM\EntityRepository;
 use MCP\DataType\Time\TimePoint;
 use Predis\Client as Predis;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Json;
 
 class SystemStatusController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     const DOCKER_REDIS_KEY = 'agent-status:docker';
     const SERVERS_REDIS_KEY = 'agent-status:server';

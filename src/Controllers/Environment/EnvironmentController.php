@@ -11,14 +11,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Utility\SortingTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class EnvironmentController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     /**
      * @type TemplateInterface

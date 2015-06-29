@@ -5,12 +5,12 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Helpers;
+namespace QL\Hal\Utility;
 
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 
-trait SortingHelperTrait
+trait SortingTrait
 {
     private $sortingHelperEnvironmentOrder = [
         'dev' => 0,

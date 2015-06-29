@@ -14,14 +14,14 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Panthor\Slim\NotFound;
-use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Slim\NotFound;
 use QL\Panthor\TemplateInterface;
 
 class DeploymentsController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     /**
      * @type TemplateInterface

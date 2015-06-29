@@ -10,14 +10,14 @@ namespace QL\Hal\Controllers\Server;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 
 class ServersController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     /**
      * @type TemplateInterface

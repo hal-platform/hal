@@ -18,16 +18,16 @@ use QL\Hal\Core\Repository\BuildRepository;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Helpers\SortingHelperTrait;
+use QL\Hal\Service\StickyEnvironmentService;
+use QL\Hal\Utility\SortingTrait;
 use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\Slim\NotFound;
-use QL\Hal\Service\StickyEnvironmentService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class ApplicationStatusController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     /**
      * @type TemplateInterface
