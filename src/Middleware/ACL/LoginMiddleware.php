@@ -10,12 +10,14 @@ namespace QL\Hal\Middleware\ACL;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
+use MCP\Logger\MessageFactoryInterface;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
 
 class LoginMiddleware implements MiddlewareInterface
 {
@@ -47,18 +49,25 @@ class LoginMiddleware implements MiddlewareInterface
     private $request;
 
     /**
+     * @type MessageFactoryInterface
+     */
+    private $logFactory;
+
+    /**
      * @param ContainerInterface $di
      * @param EntityManagerInterface $em
      * @param Session $session
      * @param UrlHelper $url
      * @param Request $request
+     * @param MessageFactoryInterface $logFactory
      */
     public function __construct(
         ContainerInterface $di,
         EntityManagerInterface $em,
         Session $session,
         Url $url,
-        Request $request
+        Request $request,
+        MessageFactoryInterface $logFactory
     ) {
         $this->session = $session;
 
@@ -67,6 +76,7 @@ class LoginMiddleware implements MiddlewareInterface
 
         $this->url = $url;
         $this->request = $request;
+        $this->logFactory = $logFactory;
     }
 
     /**
@@ -89,6 +99,10 @@ class LoginMiddleware implements MiddlewareInterface
         if (!$user = $this->userRepo->find($this->session->get(self::SESSION_KEY))) {
             return $this->url->redirectFor('logout');
         }
+
+        $this->logFactory->setDefaultProperty('userCommonId', $user->id());
+        $this->logFactory->setDefaultProperty('userName', $user->handle());
+        $this->logFactory->setDefaultProperty('userDisplayName', $user->name());
 
         $this->di->set('currentUser', $user);
     }

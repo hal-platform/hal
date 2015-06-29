@@ -43,10 +43,14 @@ class McpLoggerHook
         $this->factory->setDefaultProperty('machineName', $request->getHost());
 
         // client
-        $this->factory->setDefaultProperty('Referrer',  $request->getReferrer());
-        $this->factory->setDefaultProperty('Url',  $request->getUrl() . $request->getPathInfo());
-        $this->factory->setDefaultProperty('UserAgentBrowser', $request->getUserAgent());
-        $this->factory->setDefaultProperty('UserIPAddress', $request->getIp());
+        $this->factory->setDefaultProperty('requestMethod',  $request->getMethod());
+        $this->factory->setDefaultProperty('referrer',  $request->getReferrer());
+        $this->factory->setDefaultProperty('url',  $request->getUrl() . $request->getPathInfo());
+        $this->factory->setDefaultProperty('userAgentBrowser', $request->getUserAgent());
+
+        if ($userIp = IPv4Address::create($request->getIp())) {
+            $this->factory->setDefaultProperty('userIPAddress', $userIp);
+        }
 
         // slim doesn't expose this var
         if (!isset($_SERVER['SERVER_ADDR'])) {

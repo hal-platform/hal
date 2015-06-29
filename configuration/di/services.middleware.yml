@@ -33,6 +33,7 @@ services:
             - @session
             - @url
             - @slim.request
+            - @logger.mcp.factory
 
     middleware.lead:
         class: 'QL\Hal\Middleware\ACL\LeadMiddleware'
