@@ -47,14 +47,16 @@
             <dt class="split__title">Email</dt>
             <dd><a href="mailto:{{ user.Email }}">{{ user.Email }}</a></dd>
 
-            <dt class="split__title">Phone</dt>
-            <dd>{{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})</dd>
+            {% if ldapUser %}
+                <dt class="split__title">Phone</dt>
+                <dd>{{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})</dd>
 
-            <dt class="split__title">Mobile</dt>
-            <dd>{{ ldapUser.mobilePhone }}</dd>
+                <dt class="split__title">Mobile</dt>
+                <dd>{{ ldapUser.mobilePhone }}</dd>
 
-            <dt class="split__title">Rockworld Profile</dt>
-            <dd><a href="http://quniverse/profiles/Person.aspx?accountname=MI%5c{{ user.handle }}">Rockword Profile</a></dd>
+                <dt class="split__title">QUniverse Profile</dt>
+                <dd><a href="http://quniverse/profiles/Person.aspx?accountname=MI%5c{{ user.handle }}">Rockword Profile</a></dd>
+            {% endif %}
         </dl>
     </div>
 
@@ -70,7 +72,7 @@
             <dt class="split__title">Total Pushes</dt>
             <dd>{{ pushes }}</dd>
 
-            <dt class="split__title">Github Profile</dt>
+            <dt class="split__title">GitHub Profile</dt>
             <dd><a href="http://git/{{ user.handle }}">http://git/{{ user.handle }}</a> {{ macros.icon('github') }}</dd>
         </dl>
     </div>
