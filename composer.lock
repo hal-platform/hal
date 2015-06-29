@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "61dfd6e9a210b01b7f519a4ef30d9b6f",
+    "hash": "ad1b2727621679ea0fde58f17370566b",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -928,6 +928,72 @@
             "time": "2014-10-12 19:18:40"
         },
         {
+            "name": "justinrainbow/json-schema",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/justinrainbow/json-schema.git",
+                "reference": "7dfe4f1db8a62be3dd35710efce663537d515653"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/7dfe4f1db8a62be3dd35710efce663537d515653",
+                "reference": "7dfe4f1db8a62be3dd35710efce663537d515653",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "json-schema/json-schema-test-suite": "1.1.0",
+                "phpdocumentor/phpdocumentor": "~2",
+                "phpunit/phpunit": "~3.7"
+            },
+            "bin": [
+                "bin/validate-json"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "JsonSchema": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Bruno Prieto Reis",
+                    "email": "bruno.p.reis@gmail.com"
+                },
+                {
+                    "name": "Justin Rainbow",
+                    "email": "justin.rainbow@gmail.com"
+                },
+                {
+                    "name": "Igor Wiedler",
+                    "email": "igor@wiedler.ch"
+                },
+                {
+                    "name": "Robert Schönthal",
+                    "email": "seroscho@googlemail.com"
+                }
+            ],
+            "description": "A library to validate a json schema.",
+            "homepage": "https://github.com/justinrainbow/json-schema",
+            "keywords": [
+                "json",
+                "schema"
+            ],
+            "time": "2015-06-14 20:01:28"
+        },
+        {
             "name": "knplabs/github-api",
             "version": "1.3.1",
             "source": {
@@ -1381,45 +1447,52 @@
         },
         {
             "name": "ql/mcp-crypto",
-            "version": "1.2.0",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-crypto.git",
-                "reference": "385475686082b7ecbfe904beb894e59c6480882f"
+                "reference": "abb49824cae5ab2779c2a6f22b2fbde8d210acf4"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-crypto-1.2.0-636308.zip",
-                "reference": "385475686082b7ecbfe904beb894e59c6480882f",
-                "shasum": "491a1200f2b54fff417e4b19008f8c2b283b0db7"
-            },
-            "archive": {
-                "exclude": [
-                    "/tests",
-                    "/phpunit.xml.dist",
-                    "/README.md"
-                ]
+                "url": "http://composer/dist/ql-mcp-crypto-2.0.2-18a4aa.zip",
+                "reference": "abb49824cae5ab2779c2a6f22b2fbde8d210acf4",
+                "shasum": "bdf3919b13b5dfca72d504913c591d9cc2732618"
             },
             "require": {
-                "ext-mcrypt": "*",
                 "ext-pcre": "*",
-                "php": ">=5.4.0"
+                "php": ">=5.4.0",
+                "ql/mcp-core": "^1.0",
+                "ql/mcp-qks": "^1.0"
             },
             "require-dev": {
+                "ext-libsodium": "*",
+                "ext-mcrypt": "*",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
-                "squizlabs/php_codesniffer": "*"
+                "squizlabs/php_codesniffer": "*",
+                "symfony/config": ">=2.5",
+                "symfony/dependency-injection": ">=2.5",
+                "symfony/yaml": ">=2.5"
             },
             "suggest": {
-                "ext-openssl": "Provides a better random number generator for generating a key"
+                "ext-libsodium": "Required when using Sodium asymmetric encryption.",
+                "ext-mcrypt": "Required when using AES symmetric encryption.",
+                "ext-openssl": "Provides a better random number generator for generating a key."
             },
             "bin": [
-                "bin/symmetric-keygen"
+                "bin/random"
             ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "MCP\\Crypto\\": "src"
+                    "MCP\\Crypto\\": "src",
+                    "MCP\\Crypto\\Testing\\": "testing/src"
                 }
             },
             "license": [
@@ -1433,62 +1506,59 @@
                 {
                     "name": "Matt Nagi",
                     "email": "mattnagi@quickenloans.com"
+                },
+                {
+                    "name": "Matt Colf",
+                    "email": "mattcolf@quickenloans.com"
                 }
             ],
-            "description": "Simple, opinionated symmetric encryption",
-            "homepage": "http://git/mnagi/mcp-crypto",
-            "time": "2014-06-05 20:39:26"
+            "description": "Symmetric and asymmetric encryption library for PHP",
+            "homepage": "http://git/mcp/mcp-crypto",
+            "time": "2015-06-25 16:10:49"
         },
         {
             "name": "ql/mcp-logger",
-            "version": "1.3.1",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-logger.git",
-                "reference": "ea0e2a331bd92ce0f4f4e3ea4e9eccf861022946"
+                "reference": "b264b4e21fe72c39ec0fffe84fa3427df56b6631"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-logger-1.3.1-60bb9a.zip",
-                "reference": "ea0e2a331bd92ce0f4f4e3ea4e9eccf861022946",
-                "shasum": "cafd9bace02edd62b04d362189e09359af81adef"
+                "url": "http://composer/dist/ql-mcp-logger-2.0.0-578003.zip",
+                "reference": "b264b4e21fe72c39ec0fffe84fa3427df56b6631",
+                "shasum": "72beb62805ab24b928220c4cd6e0bc4f9658ebd4"
             },
             "archive": {
                 "exclude": [
-                    "/bin",
-                    "/fixtures",
                     "/phpunit.xml.dist",
-                    "src/MCP/Testing",
-                    "/tests"
+                    "/testing"
                 ]
             },
             "require": {
-                "ext-date": "*",
                 "ext-xmlwriter": "*",
                 "php": ">=5.4.0",
-                "ql/mcp-core": "1.*"
-            },
-            "conflict": {
-                "ql/mcp": "*"
+                "ql/mcp-core": "1.*",
+                "ql/uri-template": "1.*"
             },
             "require-dev": {
                 "guzzle/http": "*",
-                "guzzlehttp/guzzle": "*",
+                "guzzlehttp/guzzle": "5.*",
                 "mockery/mockery": ">=0.8",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
                 "psr/log": "*"
             },
             "suggest": {
-                "ext-http": "Required for HttpRequest-based service",
                 "guzzle/http": "Required for Guzzle-based service",
                 "psr/log": "Required to use the included PSR-3 logger"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "MCP\\Service\\Logger\\": "src/Logger",
-                    "MCP\\Testing\\": "src/Testing"
+                    "MCP\\Logger\\": "src",
+                    "MCP\\Logger\\Testing\\": "testing/src"
                 }
             },
             "license": [
@@ -1496,42 +1566,76 @@
             ],
             "authors": [
                 {
-                    "name": "Matt Nagi",
-                    "email": "mattnagi@quickenloans.com",
-                    "role": "Tech Lead"
-                },
-                {
-                    "name": "Steven Snider",
-                    "email": "stevensnider@quickenloans.com",
-                    "role": "Contributor"
-                },
-                {
-                    "name": "Steve Kluck",
-                    "email": "stevekluck@quickenloans.com",
-                    "role": "Contributor"
+                    "name": "IT Team Web Core",
+                    "email": "itteamwebcore@quickenloans.com"
                 }
             ],
-            "description": "Library for handling Core Logger within Quicken Loans.",
-            "support": {
-                "email": "stevekluck@quickenloans.com",
-                "issues": "http://git/mnagi/mcp-logger/issues",
-                "source": "http://git/mnagi/mcp-logger"
-            },
-            "time": "2014-06-17 14:12:02"
+            "description": "Library for handling PHP Logging within Quicken Loans.",
+            "homepage": "http://git/mcp/mcp-logger",
+            "time": "2015-06-22 13:24:46"
         },
         {
-            "name": "ql/panthor",
-            "version": "2.0.4",
+            "name": "ql/mcp-qks",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "git@git:web-frameworks/panthor.git",
-                "reference": "c092d7331319e40f68f3770cc404178d0d873043"
+                "url": "git@git:mcp/mcp-qks.git",
+                "reference": "7863f4c8c05e76eab4c7a000d834c0daabf1fe91"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-panthor-2.0.4-4e7a45.zip",
-                "reference": "c092d7331319e40f68f3770cc404178d0d873043",
-                "shasum": "447860e43b301bbfb98f58e3042fd4b13d0989e7"
+                "url": "http://composer/dist/ql-mcp-qks-1.0.1-59e2ac.zip",
+                "reference": "7863f4c8c05e76eab4c7a000d834c0daabf1fe91",
+                "shasum": "78c0a652fdeacc3dd9e8610ada5de4769771fb97"
+            },
+            "require": {
+                "ext-pcre": "*",
+                "guzzlehttp/guzzle": "^4.0 | ^5.0",
+                "justinrainbow/json-schema": "^1.4",
+                "php": ">=5.4.0",
+                "ql/mcp-core": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "*",
+                "squizlabs/php_codesniffer": "*",
+                "symfony/config": ">=2.5",
+                "symfony/dependency-injection": ">=2.5",
+                "symfony/yaml": ">=2.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MCP\\QKS\\": "src",
+                    "MCP\\QKS\\Testing\\": "testing/src"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Colf",
+                    "email": "mattcolf@quickenloans.com"
+                }
+            ],
+            "description": "QKS Service Library",
+            "homepage": "http://git/mcp/mcp-qks",
+            "time": "2015-06-25 15:13:59"
+        },
+        {
+            "name": "ql/panthor",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@git:web-frameworks/panthor.git",
+                "reference": "7dd861b14c9caea8098a6dd4e236c81a03ccc588"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-panthor-2.1.0-18808b.zip",
+                "reference": "7dd861b14c9caea8098a6dd4e236c81a03ccc588",
+                "shasum": "d0d61206ad78c65717a3a84af25fc27308649d9a"
             },
             "require": {
                 "php": ">=5.4.0",
@@ -1545,8 +1649,8 @@
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "4.*",
                 "psr/log": "*",
-                "ql/mcp-core": "1.*",
-                "ql/mcp-crypto": "1.*",
+                "ql/mcp-core": "~1.0",
+                "ql/mcp-crypto": "~2.0",
                 "twig/twig": "*"
             },
             "type": "library",
@@ -1559,7 +1663,50 @@
                 "proprietary"
             ],
             "description": "Symfony + Slim = Panthor",
-            "time": "2015-06-02 17:35:01"
+            "time": "2015-06-29 12:47:22"
+        },
+        {
+            "name": "ql/uri-template",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/QuickenLoans/uri-template.git",
+                "reference": "4b6b5cf150625ef0274ffa45b0588416ae545c65"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/QuickenLoans/uri-template/zipball/4b6b5cf150625ef0274ffa45b0588416ae545c65",
+                "reference": "4b6b5cf150625ef0274ffa45b0588416ae545c65",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "QL\\UriTemplate": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Nagi",
+                    "email": "mattnagi@quickenloans.com"
+                }
+            ],
+            "description": "An implementation of RFC 6570 level 4",
+            "homepage": "https://github.com/QuickenLoans/uri-template",
+            "time": "2013-08-28 18:35:46"
         },
         {
             "name": "react/promise",
