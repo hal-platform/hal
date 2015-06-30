@@ -13,7 +13,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Consul Server</th>
+                    <th>Consul Service</th>
+                    <th>QKS Service</th>
                     {% if isAdmin %}
                         <th></th>
                     {% endif %}
@@ -30,7 +31,16 @@
                                 {{ environment.name }}
                             {% endif %}
                         </td>
-                        <td><code>{{ environment.consulServer|trim('/') }}</code></td>
+                        <td>
+                            {% if environment.consulServiceURL %}
+                                <code>{{ environment.consulServiceURL|trim('/') }}</code>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if environment.qksServiceURL %}
+                                <code>{{ environment.qksServiceURL|trim('/') }}</code>
+                            {% endif %}
+                        </td>
 
                         {% if isAdmin %}
                             <td class="tr">

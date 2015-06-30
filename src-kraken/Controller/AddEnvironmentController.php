@@ -95,9 +95,14 @@ class AddEnvironmentController implements ControllerInterface
             'errors' => $this->validator->errors(),
             'form' => [
                 'name' => $this->request->post('name'),
-                'server' => $this->request->post('server'),
-                'token' => $this->request->post('token'),
-                'is_prod' => $this->request->post('is_prod')
+                'is_prod' => $this->request->post('is_prod'),
+
+                'consul_service' => $this->request->post('consul_service'),
+                'consul_token' => $this->request->post('consul_token'),
+
+                'qks_service' => $this->request->post('qks_service'),
+                'qks_client' => $this->request->post('qks_client'),
+                'qks_secret' => $this->request->post('qks_secret'),
             ]
         ];
 
@@ -110,11 +115,24 @@ class AddEnvironmentController implements ControllerInterface
     private function handleForm()
     {
         $name = $this->request->post('name');
-        $server = $this->request->post('server');
-        $token = $this->request->post('token');
         $isProd = $this->request->post('is_prod');
 
-        $environment = $this->validator->isValid($name, $server, $token, $isProd);
+        $consulService = $this->request->post('consul_service');
+        $consulToken = $this->request->post('consul_token');
+
+        $qksService = $this->request->post('qks_service');
+        $qksClient = $this->request->post('qks_client');
+        $qksSecret = $this->request->post('qks_secret');
+
+        $environment = $this->validator->isValid(
+            $name,
+            $isProd,
+            $consulService,
+            $consulToken,
+            $qksService,
+            $qksClient,
+            $qksSecret
+        );
 
         if ($environment) {
             // persist to database

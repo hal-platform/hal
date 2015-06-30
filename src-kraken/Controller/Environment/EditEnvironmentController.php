@@ -89,7 +89,7 @@ class EditEnvironmentController implements ControllerInterface
     public function __invoke()
     {
         $form = [
-            'server' => $this->environment->consulServer(),
+            'server' => $this->environment->consulServiceURL(),
             'token' => $this->environment->consulToken()
         ];
 
