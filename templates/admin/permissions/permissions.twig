@@ -3,18 +3,17 @@
 
 {% set page_title = "User Permissions" %}
 
-{% set canRemoveAdmin = isUserSuper(currentUser) %}
-{% set canRemoveLead = isUserAdminOrSuper(currentUser) %}
+{% set can_remove = isUserAdminOrSuper(currentUser) %}
 
 {% block content %}
 
     <h1>{{ page_title }}</h1>
 
     <h2>Application Leads</h2>
-    {{ page_macros.userTable(userTypes.lead, 'lead', canRemoveLead) }}
+    {{ page_macros.userTable(userTypes.lead, 'lead', can_remove) }}
 
     <h2>Deployment Adminstrators</h2>
-    {{ page_macros.userTable(userTypes.btn_pusher, 'btn_pusher', canRemoveAdmin) }}
+    {{ page_macros.userTable(userTypes.btn_pusher, 'btn_pusher', can_remove) }}
 
     <h2>HAL Administrators</h2>
     {{ page_macros.userTable(userTypes.super, 'super') }}

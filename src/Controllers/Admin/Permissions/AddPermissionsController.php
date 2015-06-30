@@ -32,7 +32,9 @@ class AddPermissionsController implements ControllerInterface
     const SUCCESS = 'New permissions added for "%s".';
 
     const ERR_INVALID_TYPE = 'Please select a valid permission type.';
-    const ERR_CANNOT_ADD_SUPER = 'Invalid permission type selected.';
+    const ERR_CANNOT_ADD_SUPER = 'You are not allowed to add super permissions.';
+    const ERR_CANNOT_ADD_ADMIN = 'You are not allowed to add admin permissions.';
+    const ERR_CANNOT_ADD_PROD = 'You are not allowed to add prod permissions';
     const ERR_DUPLICATE_PERMISSION = 'Cannot add permissions. This user already has this permission.';
     const ERR_DUPLICATE_LEAD = 'This user already has lead permissions for this application.';
     const ERR_DUPLICATE_DEPLOY = 'This user already has deployment permissions for this application.';
@@ -193,11 +195,13 @@ class AddPermissionsController implements ControllerInterface
         ];
 
         if ($perm->isSuper()) {
-            $availableTypes = array_merge(
-                ['pleb' => 'Standard'],
-                $availableTypes,
-                ['super' => 'Super']
-            );
+            $availableTypes = [
+                'pleb' => 'Standard',
+                'deploy' => 'Deployment',
+                'lead' => 'Lead',
+                // 'admin' => 'Admin',
+                'super' => 'Super'
+            ];
         }
 
         return $availableTypes;
@@ -231,6 +235,16 @@ class AddPermissionsController implements ControllerInterface
             $this->errors[] = self::ERR_CANNOT_ADD_SUPER;
         }
 
+        // Only admins can add admins
+        if (!$currentPerm->isButtonPusher() && $type === 'admin') {
+            $this->errors[] = self::ERR_CANNOT_ADD_ADMIN;
+        }
+
+        // If super, cannot add prod/deploy permission
+        if (!$currentPerm->isButtonPusher() && $type === 'deploy' && $isProd === 'true') {
+            $this->errors[] = self::ERR_CANNOT_ADD_PROD;
+        }
+
         // If already pleb, admin, super. reject.
         if ($type === 'pleb' && $selectedPerm->isPleb()) {
             $this->errors[] = self::ERR_DUPLICATE_PERMISSION;
@@ -251,7 +265,6 @@ class AddPermissionsController implements ControllerInterface
         }
 
         if ($this->errors) return null;
-
 
         if ($type === 'lead' || $type === 'deploy') {
             if (!$application = $this->applicationRepo->find($appId)) {

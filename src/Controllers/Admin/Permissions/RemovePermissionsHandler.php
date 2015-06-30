@@ -121,7 +121,7 @@ class RemovePermissionsHandler implements ControllerInterface
         // Button Pusher can do this
         } elseif ($currentUserPerms->isButtonPusher()) {
             // btn_pusher cannot remove super or btn_pusher
-            if (!in_array($type, ['pleb', 'lead'])) {
+            if (!in_array($type, ['pleb'])) {
                 $this->flasher->withFlash('Access Denied', 'error', self::ERR_NOPE_BTN);
                 return false;
             }
