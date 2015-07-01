@@ -1,14 +1,17 @@
 {% extends 'base.kraken.twig' %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
-{% set page_title = "Enable Environment" %}
+{% set page_title = "Edit Environment Target" %}
 
 {% block content %}
 
-    <h1>Enable Environment - <strong>{{ application.name }}</strong></h1>
+    <h1>Edit Environment Target - <strong>{{ application.name }}</strong></h1>
 
     <h4>Application</h4>
     <p>{{ application.name }}</p>
+
+    <h4>Environment</h4>
+    <p>{{ environment.name }}</p>
 
     {{ block('assign_environment') }}
 
@@ -22,19 +25,6 @@
             <ul class="form-fields">
 
                 <li>
-                    <label for="enc-env">Environment</label>
-                    <ul class="radio-grid--form">
-                        {% for env in environments %}
-                            {% set isSelected = (env.id == form.env) %}
-                            <li>
-                                <input id="env-{{ env.id }}" type="radio" name="env" value="{{ env.id }}"{{ isSelected ? ' checked' : ''}}>
-                                <label for="env-{{ env.id }}">{{ env.name }}</label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-
-                <li>
                     <label for="enc-key">QKS Identifier</label>
 
                     <input type="text" name="key" id="enc-key" maxlength="100" value="{{ form.key }}" class="text-input">
@@ -45,7 +35,7 @@
             </ul>
 
             <ul class="button-list">
-                <li><input class="btn btn--action" type="submit" value="Assign Environment"></li>
+                <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
                 <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Cancel</a></li>
             </ul>
 

@@ -5,10 +5,10 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Kraken\Service;
+namespace QL\Kraken\Service\Exception;
 
-use Exception as BaseException;
+use QL\Kraken\Service\ServiceException as BaseException;
 
-class ConsulConnectionException extends BaseException
+class DecryptionException extends BaseException
 {
 }

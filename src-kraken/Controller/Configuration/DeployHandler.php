@@ -17,9 +17,9 @@ use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
-use QL\Kraken\Service\ConsulConnectionException;
-use QL\Kraken\Service\DecryptionException;
+use QL\Kraken\Service\Exception\QKSConnectionException;
 use QL\Kraken\Service\DeploymentService;
+use QL\Kraken\Service\ServiceException;
 use QL\Panthor\ControllerInterface;
 
 class DeployHandler implements ControllerInterface
@@ -102,18 +102,10 @@ class DeployHandler implements ControllerInterface
         $properties = $this->buildProperties($configuration);
 
         // 3. Deploy
-        try {
-            $status = $this->deployer->deploy($this->target, $configuration, $properties);
+        $status = $this->deploy($configuration, $properties);
 
-        } catch (ConsulConnectionException $ex) {
-            return $this->flasher
-                ->withFlash($ex->getMessage(), 'error')
-                ->load('kraken.deploy', ['target' => $this->target->id()]);
-
-        } catch (DecryptionException $ex) {
-            return $this->flasher
-                ->withFlash($ex->getMessage(), 'error')
-                ->load('kraken.deploy', ['target' => $this->target->id()]);
+        if ($status instanceof Flasher) {
+            $status->load('kraken.deploy', ['target' => $this->target->id()]);
         }
 
         // And finally, go away.
@@ -172,6 +164,27 @@ class DeployHandler implements ControllerInterface
         }
 
         return $newconfig;
+    }
+
+    /**
+     * @param Configuration $configuration
+     * @param Snapshot[] $properties
+     *
+     * @return bool|null
+     */
+    private function deploy(Configuration $configuration, array $properties)
+    {
+        try {
+            $status = $this->deployer->deploy($this->target, $configuration, $properties);
+
+        } catch (QKSConnectionException $ex) {
+            return $this->flasher->withFlash($ex->getMessage(), 'error');
+
+        } catch (ServiceException $ex) {
+            return $this->flasher->withFlash($ex->getMessage(), 'error');
+        }
+
+        return $status;
     }
 
     /**

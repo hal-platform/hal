@@ -72,6 +72,12 @@ parameters:
             stack: ['kraken.middleware.lead', 'kraken.middleware.require.entity', 'kraken.application.target.add.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
+        # protected
+        kraken.application.target.edit:
+            route: '/kraken/targets/:target/edit'
+            stack: ['middleware.admin', 'kraken.middleware.require.entity', 'kraken.application.target.edit.page']
+            conditions: {target: %routes.kraken.regex.hex%}
+
         ################################################################################################################
         # ENVIRONMENT
         ################################################################################################################

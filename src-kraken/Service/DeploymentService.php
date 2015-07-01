@@ -10,19 +10,23 @@ namespace QL\Kraken\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
 use MCP\Crypto\Exception\CryptoException;
+use MCP\Crypto\Package\QuickenMessagePackage;
 use MCP\Crypto\Package\TamperResistantPackage;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
+use QL\Kraken\Service\Exception\ConfigurationException;
+use QL\Kraken\Service\Exception\DecryptionException;
+use QL\Kraken\Service\Exception\MixedUpdateException;
+use QL\Kraken\Utility\CryptoFactory;
 use QL\Panthor\Utility\Json;
 
 class DeploymentService
 {
     const SUCCESS = 'Configuration successfully deployed to %s';
 
-    const ERR_CONSUL_CONNECTION_FAILURE = 'Update failed. Consul could not be contacted.';
+    const ERR_QKS_KEY_NOT_CONFIGURED = 'Update failed. QKS encryption key is not configured for this environment.';
     const ERR_THIS_IS_SUPER_BAD = 'A serious error has occured. Consul was partially updated.';
-    const ERR_CONSUL_FAILURE = 'Errors occured while updating Consul. No updates were made.';
     const ERR_DECRYPT_FAILURE = 'Secure property "%s" could not be decrypted.';
 
     /**
@@ -36,6 +40,11 @@ class DeploymentService
     private $encryption;
 
     /**
+     * @type CryptoFactory
+     */
+    private $cryptoFactory;
+
+    /**
      * @type Json
      */
     private $json;
@@ -44,17 +53,20 @@ class DeploymentService
      * @param EntityManagerInterface $em
      * @param ConsulService $consul
      * @param TamperResistantPackage $encryption
+     * @param CryptoFactory $cryptoFactory
      * @param Json $json
      */
     public function __construct(
         EntityManagerInterface $em,
         ConsulService $consul,
         TamperResistantPackage $encryption,
+        CryptoFactory $cryptoFactory,
         Json $json
     ) {
         $this->em = $em;
         $this->consul = $consul;
         $this->encryption = $encryption;
+        $this->cryptoFactory = $cryptoFactory;
 
         $this->json = $json;
     }
@@ -64,15 +76,17 @@ class DeploymentService
      * @param Configuration configuration
      * @param array properties
      *
-     * @throws ConsulConnectionException
-     * @throws DecryptionException
+     * @throws ServiceException
      *
      * @return bool|null
      */
     public function deploy(Target $target, Configuration $configuration, array $properties)
     {
-        // 1.. Encrypt it
-        $encrypted = $this->encryptProperties($properties);
+        // 0. Get QMP
+        $qmp = $this->getQMP($target);
+
+        // 1. Encrypt with QMP and QKS
+        $encrypted = $this->encryptProperties($qmp, $target->key(), $properties);
 
         // 2. Save to Consul
         $updates = $this->consul->syncConfiguration($target, $encrypted);
@@ -82,6 +96,22 @@ class DeploymentService
 
         // 5. Analyze response types
         return $this->handleResponses($target, $configuration, $updates);
+    }
+
+    /**
+     * @param Target $target
+     *
+     * @throws ConfigurationException
+     *
+     * @return QuickenMessagePackage
+     */
+    private function getQMP(Target $target)
+    {
+        if (!$target->key()) {
+            throw new ConfigurationException(self::ERR_QKS_KEY_NOT_CONFIGURED);
+        }
+
+        return $this->cryptoFactory->getQMP($target->environment());
     }
 
     /**
@@ -97,11 +127,15 @@ class DeploymentService
      *     test.key: 'base64_and_encrypted'
      *     test.key2: 'base64_and_encrypted'
      *
+     * @param QuickenMessagePackage $qmp
+     * @param string $recepient
      * @param Snapshot[] $properties
+     *
+     * @throws DecryptionException
      *
      * @return string[]
      */
-    private function encryptProperties(array $properties)
+    private function encryptProperties(QuickenMessagePackage $qmp, $recepient, array $properties)
     {
         $encrypteds = [];
 
@@ -116,7 +150,7 @@ class DeploymentService
                 }
             }
 
-            $encrypted = $this->qksEncrypt($value);
+            $encrypted = $this->encrypt($qmp, $recepient, $value);
 
             // encode
             $encoded = base64_encode($encrypted);
@@ -215,14 +249,25 @@ class DeploymentService
     }
 
     /**
+     * @param QuickenMessagePackage $qmp
+     * @param string $receipientKey
      * @param string $decrypted
      *
      * @return string|null
      */
-    private function qksEncrypt($decrypted)
+    private function encrypt(QuickenMessagePackage $qmp, $receipientKey, $decrypted)
     {
-        // @todo actually encrypt
-        return $decrypted;
+        $receipients = [
+            $receipientKey
+        ];
+
+        try {
+            $encrypted = $qmp->encrypt($decrypted, $receipients);
+        } catch (CryptoException $ex) {
+            $encrypted = null;
+        }
+
+        return $encrypted;
     }
 
     /**

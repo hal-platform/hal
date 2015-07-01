@@ -16,10 +16,10 @@ use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
-use QL\Kraken\Service\ConsulConnectionException;
+use QL\Kraken\Service\Exception\QKSConnectionException;
 use QL\Kraken\Service\DeploymentService;
+use QL\Kraken\Service\ServiceException;
 use QL\Panthor\ControllerInterface;
-use Slim\Exception\Stop as StopException;
 
 class RollbackHandler implements ControllerInterface
 {
@@ -115,14 +115,7 @@ class RollbackHandler implements ControllerInterface
         $properties = $this->buildProperties($this->configuration, $configuration);
 
         // 3. Deploy
-        try {
-            $status = $this->deployer->deploy($target, $configuration, $properties);
-
-        } catch (ConsulConnectionException $ex) {
-            return $this->flasher
-                ->withFlash($ex->getMessage(), 'error')
-                ->load('kraken.rollback', ['configuration' => $this->configuration->id()]);
-        }
+        $status = $this->deploy($target, $configuration, $properties);
 
         // 4. And finally, go away.
         $this->redirect($target, $status);
@@ -178,9 +171,29 @@ class RollbackHandler implements ControllerInterface
 
     /**
      * @param Target $target
-     * @param bool|null $status
+     * @param Configuration $configuration
+     * @param Snapshot[] $properties
      *
-     * @throws StopException
+     * @return bool|null
+     */
+    private function deploy(Target $target, Configuration $configuration, array $properties)
+    {
+        try {
+            $status = $this->deployer->deploy($target, $configuration, $properties);
+
+        } catch (QKSConnectionException $ex) {
+            return $this->flasher->withFlash($ex->getMessage(), 'error');
+
+        } catch (ServiceException $ex) {
+            return $this->flasher->withFlash($ex->getMessage(), 'error');
+        }
+
+        return $status;
+    }
+
+    /**
+     * @param Target $target
+     * @param bool|null $status
      *
      * @return void
      */

@@ -18,6 +18,7 @@ use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulBatchTrait;
+use QL\Kraken\Service\Exception\ConsulConnectionException;
 use QL\UriTemplate\UriTemplate;
 
 class ConsulService

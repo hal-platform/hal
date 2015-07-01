@@ -21,6 +21,7 @@ services:
             - @doctrine.em
             - @kraken.consul
             - @kraken.crypto.db
+            - @kraken.crypto.factory
             - @json
 
     kraken.diff:
@@ -88,7 +89,11 @@ services:
 
     kraken.crypto.factory:
         class: 'QL\Kraken\Utility\CryptoFactory'
-        arguments: [@kraken.crypto.factory.secret.file]
+        arguments:
+            - @kraken.crypto.qmp.guzzle
+            - @kraken.crypto.qmp.json
+            - %kraken.qks.sourcekey%
+            - @kraken.crypto.factory.secret.file
 
     kraken.crypto.factory.secret.file:
         class: 'stdClass'
@@ -97,7 +102,18 @@ services:
 
     kraken.crypto.db:
         class: 'MCP\Crypto\Package\TamperResistantPackage'
-        factory: [@kraken.crypto.factory, 'getPackager']
+        factory: [@kraken.crypto.factory, 'getTRP']
+
+    kraken.crypto.qmp.guzzle:
+        class: 'GuzzleHttp\Client'
+
+    kraken.crypto.qmp.json:
+        class: 'MCP\QKS\Client\Parser\JsonParser'
+        arguments: [@kraken.crypto.qmp.json.schema]
+
+    kraken.crypto.qmp.json.schema:
+        class: 'JsonSchema\Validator'
+
     # kraken.crypto.decrypter:
         # class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
         # factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']

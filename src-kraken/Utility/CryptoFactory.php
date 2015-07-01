@@ -1,18 +1,47 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
 
 namespace QL\Kraken\Utility;
 
-use QL\Hal\Core\Crypto\CryptoException;
+use GuzzleHttp\ClientInterface as Guzzle;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Service\Exception\ConfigurationException;
 use MCP\Crypto\Primitive\Factory;
+use MCP\Crypto\Exception\CryptoException;
+use MCP\Crypto\Package\QuickenMessagePackage;
 use MCP\Crypto\Package\TamperResistantPackage;
+use MCP\DataType\HttpUrl;
+use MCP\QKS\Client\HttpClient as QKSGuzzleService;
+use MCP\QKS\Client\Parser\JsonParser;
 
 class CryptoFactory
 {
+    const ERR_EMPTY_SYMMETRIC_KEY = 'Symmetric key file is empty.';
+    const ERR_MISSING_SYMMETRIC_KEY = 'Path to symmetric key is invalid.';
+
+    const ERR_MISSING_QKS_SERVICE = 'QKS service is missing for this environment.';
+    const ERR_MISSING_QKS_AUTH = 'QKS credentials are missing for this environment.';
+    const ERR_INVALID_CLIENT_SECRET = 'QKS Secret could not be decrypted for usage.';
+
+    /**
+     * @type Guzzle
+     */
+    private $guzzle;
+
+    /**
+     * @type JsonParser
+     */
+    private $parser;
+
+    /**
+     * @type string
+     */
+    private $sourceQKSKey;
+
     /**
      * @type string
      */
@@ -24,35 +53,115 @@ class CryptoFactory
     private $fileLoader;
 
     /**
+     * @param Guzzle $guzzle
+     * @param JsonParser $parser
+     * @param string $sourceQKSKey
+     *
      * @param string $symKeyPath
      * @param callable|null $fileLoader
      */
-    public function __construct($symKeyPath, callable $fileLoader = null)
-    {
+    public function __construct(
+        Guzzle $guzzle,
+        JsonParser $parser,
+        $sourceQKSKey,
+        $symKeyPath,
+        callable $fileLoader = null
+    ) {
+        // qmp
+        $this->guzzle = $guzzle;
+        $this->parser = $parser;
+        $this->sourceQKSKey = $sourceQKSKey;
+
+        // trp
         $this->symKeyPath = $symKeyPath;
-        $this->fileLoader = $fileLoader ?: $this->getDefaultFileLoader();
+        $this->fileLoader = $fileLoader ?: [$this, 'defaultFileLoader'];
     }
 
     /**
-     * @throws CryptoException
+     * @throws ConfigurationException
      *
      * @return TamperResistantPackage
      */
-    public function getPackager()
+    public function getTRP()
     {
-        if (!file_exists($this->symKeyPath)) {
-            throw new CryptoException('Path to symmetric key is invalid.');
-        }
-
         $key = call_user_func($this->fileLoader, $this->symKeyPath);
-        return new TamperResistantPackage(new Factory, trim($key));
+        return new TamperResistantPackage(new Factory, $key);
     }
 
     /**
+     * @param Environment $environment
+     *
+     * @throws ConfigurationException
+     *
+     * @return QuickenMessagePackage
+     */
+    public function getQMP(Environment $environment)
+    {
+        $qksHost = $environment->qksServiceURL();
+        $clientID = $environment->qksClientID();
+        $encryptedClientSecret = $environment->qksClientSecret();
+
+        if (!$qksHost) {
+            throw new ConfigurationException(self::ERR_MISSING_QKS_SERVICE);
+        }
+
+        if (!$clientID || !$encryptedClientSecret) {
+            throw new ConfigurationException(self::ERR_MISSING_QKS_AUTH);
+        }
+
+        $trp = $this->getTRP();
+
+        if (!$clientSecret = $this->decrypt($trp, $encryptedClientSecret)) {
+            throw new ConfigurationException(self::ERR_INVALID_CLIENT_SECRET);
+        }
+
+        // bullshit
+        $qksHost = HttpUrl::create($qksHost);
+        $qksHost = $qksHost->host();
+
+        $service = new QKSGuzzleService($this->guzzle, $this->parser, [
+            QKSGuzzleService::CONFIG_HOSTNAME => $qksHost,
+            QKSGuzzleService::CONFIG_CLIENT_ID => $clientID,
+            QKSGuzzleService::CONFIG_CLIENT_SECRET => $clientSecret,
+        ]);
+
+        return new QuickenMessagePackage(new Factory, $service, $this->sourceQKSKey);
+    }
+
+    /**
+     * @param string $path
      * @return callable
      */
-    protected function getDefaultFileLoader()
+    protected function defaultFileLoader($path)
     {
-        return 'file_get_contents';
+        if (!file_exists($path)) {
+            throw new ConfigurationException(self::ERR_MISSING_SYMMETRIC_KEY);
+        }
+
+        $file = file_get_contents($path);
+        $file = trim($file);
+
+        if (!$file) {
+            throw new ConfigurationException(self::ERR_EMPTY_SYMMETRIC_KEY);
+        }
+
+        return $file;
+    }
+
+    /**
+     * @param TamperResistantPackage $trp
+     * @param string $encrypted
+     *
+     * @return string|null
+     */
+    private function decrypt(TamperResistantPackage $trp, $encrypted)
+    {
+        try {
+            $decrypted = $trp->decrypt($encrypted);
+        } catch (CryptoException $ex) {
+            $decrypted = null;
+        }
+
+        return $decrypted;
     }
 }

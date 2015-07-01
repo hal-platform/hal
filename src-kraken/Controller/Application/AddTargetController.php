@@ -158,7 +158,7 @@ class AddTargetController implements ControllerInterface
         $key = $this->request->post('key');
         $envId = $this->request->post('env');
 
-        if (strlen($key) > 0 && preg_match(self::VALIDATE_KEY_REGEX, $key) !== 1) {
+        if (preg_match(self::VALIDATE_KEY_REGEX, $key) !== 1) {
             $this->errors[] = self::ERR_INVALID_KEY;
         }
 

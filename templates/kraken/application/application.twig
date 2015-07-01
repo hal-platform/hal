@@ -81,10 +81,13 @@
                                 {% if target.key %}
                                     <code>{{ target.key }}</code>
                                 {% else %}
-                                    Encryption not enabled.
+                                    {{ macros.status('Missing', 'error', 'spam-2') }}
                                 {% endif %}
                             </td>
                             <td class="tr">
+                                {% if isAdmin %}
+                                    <a href="{{ urlFor('kraken.application.target.edit', {target: target.id}) }}">Manage</a>
+                                {% endif %}
                                 <a class="btn btn--small" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </td>
 
@@ -92,7 +95,7 @@
 
                             {% set unassignedTargets = true %}
                             <td>{{ target.name }}</td>
-                            <td>Environment is not assigned.</td>
+                            <td>Environment is not enabled.</td>
                             <td></td>
 
                         {% endif %}
@@ -102,13 +105,13 @@
         </table>
 
         {% if unassignedTargets and isAdmin %}
-        <p>
-            <a class="btn btn--action" href="{{ urlFor('kraken.application.target.add', {application: application.id}) }}">Assign environment</a>
-        </p>
+            <p>
+                <a class="btn btn--action" href="{{ urlFor('kraken.application.target.add', {application: application.id}) }}">Enable environment</a>
+            </p>
         {% endif %}
 
     {% else %}
-        <p>There are no environments assigned for this application.</p>
+        <p>There are no environments enabled for this application.</p>
     {% endif %}
 
 {% endblock %}
