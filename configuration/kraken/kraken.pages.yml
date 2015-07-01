@@ -214,6 +214,7 @@ services:
             - @slim.request
             - @kraken.environment.edit.twig
             - @kraken.environment
+            - @kraken.crypto.db
             - @session.flasher
             - @kraken.validator.environment
             - @doctrine.em

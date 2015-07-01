@@ -9,14 +9,19 @@ namespace QL\Kraken\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Kraken\Core\Entity\Environment;
+use MCP\Crypto\Package\TamperResistantPackage;
 use MCP\DataType\HttpUrl;
+use QL\Kraken\Core\Entity\Environment;
 
 class EnvironmentValidator
 {
-    const ERR_INVALID_NAME = 'Invalid Name. Environment names must be at least two alphanumeric characters.';
-    const ERR_INVALID_TOKEN = 'Invalid Token. Consul token must be at least two alphanumeric characters.';
-    const ERR_INVALID_SERVER = 'Invalid Consul service URL.';
+    const ERR_INVALID_NAME = 'Invalid Name. Environment names must be at least two alphanumeric characters without spaces.';
+    const ERR_INVALID_TOKEN = 'Invalid Token. Consul token must be at least two alphanumeric characters without spaces.';
+    const ERR_INVALID_CONSUL_SERVICE = 'Invalid Consul service URL.';
+
+    const ERR_INVALID_QKS_SERVICE = 'Invalid QKS service URL.';
+    const ERR_INVALID_CLIENT_ID = 'Invalid client ID. Client ID must be at least two alphanumeric characters without spaces.';
+    const ERR_INVALID_CLIENT_SECRET = 'Invalid client secret. Client secret must be at least two alphanumeric characters without spaces';
 
     const ERR_DUPLICATE_NAME = 'An environment with this name already exists.';
 
@@ -27,6 +32,11 @@ class EnvironmentValidator
      * @type callable
      */
     private $random;
+
+    /**
+     * @type TamperResistantPackage
+     */
+    private $encryption;
 
     /**
      * @type EntityRepository
@@ -40,10 +50,12 @@ class EnvironmentValidator
 
     /**
      * @param EntityManagerInterface $em
+     * @param TamperResistantPackage $encryption
      * @param callable $random
      */
-    public function __construct(EntityManagerInterface $em, callable $random)
+    public function __construct(EntityManagerInterface $em, TamperResistantPackage $encryption, callable $random)
     {
+        $this->encryption = $encryption;
         $this->random = $random;
         $this->environmentRepo = $em->getRepository(Environment::CLASS);
 
@@ -69,11 +81,8 @@ class EnvironmentValidator
             $this->errors[] = self::ERR_INVALID_NAME;
         }
 
-        $consulURL = '';
-        if ($consulService) {
-            $consulURL = $this->validateConsul($consulService, $consulToken);
-            if ($consulURL) $consulURL = $consulURL->asString();
-        }
+        $consulURL = ($consulService) ? $this->validateConsul($consulService, $consulToken) : '';
+        $qksURL = ($qksService) ? $this->validateQKS($qksService, $qksClient, $qksSecret) : '';
 
         // dupe check
         if (!$this->errors && $dupe = $this->environmentRepo->findOneBy(['name' => $name])) {
@@ -87,16 +96,25 @@ class EnvironmentValidator
         $id = call_user_func($this->random);
         $isProd = ($isProd === 'true');
 
+        if ($consulToken !== '') {
+            $consulToken = $this->encryption->encrypt($consulToken);
+        }
+
+        if ($qksSecret !== '') {
+            $qksSecret = $this->encryption->encrypt($qksSecret);
+        }
+
         $environment = (new Environment)
             ->withId($id)
             ->withName($name)
-            ->withIsProduction($isProd);
+            ->withIsProduction($isProd)
 
-        if ($consulService) {
-            $environment
-                ->withConsulServiceURL($consulURL->asString())
-                ->withConsulToken($consulToken);
-        }
+            ->withConsulServiceURL($consulURL)
+            ->withConsulToken($consulToken)
+
+            ->withQKSServiceURL($qksURL)
+            ->withQKSClientID($qksClient)
+            ->withQKSClientSecret($qksSecret);
 
         return $environment;
     }
@@ -110,24 +128,23 @@ class EnvironmentValidator
      *
      * @return Environment|null
      */
-    public function isValid(Environment $environment, $consulService, $consulToken, $qksService, $qksClient, $qksSecret)
+    public function isEditValid(Environment $environment, $consulService, $consulToken, $qksService, $qksClient, $qksSecret)
     {
         $this->errors = [];
 
-        $consulURL = '';
-        if ($consulService) {
-            $consulURL = $this->validateConsul($consulService, $consulToken);
-            if ($consulURL) $consulURL = $consulURL->asString();
-        }
-
-        $qksURL = '';
-        if ($qksService) {
-            $qksURL = $this->validateQKS($qksService, $qksClient, $qksSecret);
-            if ($qksURL) $qksURL = $qksURL->asString();
-        }
+        $consulURL = ($consulService) ? $this->validateConsul($consulService, $consulToken) : '';
+        $qksURL = ($qksService) ? $this->validateQKS($qksService, $qksClient, $qksSecret) : '';
 
         if ($this->errors) {
             return null;
+        }
+
+        if ($consulToken !== '') {
+            $consulToken = $this->encryption->encrypt($consulToken);
+        }
+
+        if ($qksSecret !== '') {
+            $qksSecret = $this->encryption->encrypt($qksSecret);
         }
 
         $environment
@@ -144,7 +161,7 @@ class EnvironmentValidator
      * @param string $service
      * @param string $token
      *
-     * @return HttpUrl|null
+     * @return string
      */
     private function validateConsul($service, $token)
     {
@@ -152,31 +169,40 @@ class EnvironmentValidator
             $this->errors[] = self::ERR_INVALID_TOKEN;
         }
 
-        $url = ($service) ? HttpUrl::create($service) : null;
+        $url = ($service) ? HttpUrl::create($service) : '';
 
-        if ($url === null) {
-            $this->errors[] = self::ERR_INVALID_SERVER;
+        if ($url) {
+            $url = $url->asString();
+        } else {
+            $this->errors[] = self::ERR_INVALID_CONSUL_SERVICE;
         }
 
         return $url;
     }
 
     /**
-     * @param string $server
-     * @param string $token
+     * @param string $service
+     * @param string $clientID
+     * @param string $clientSecret
      *
-     * @return HttpUrl|null
+     * @return string
      */
     private function validateQKS($service, $clientID, $clientSecret)
     {
-        if (preg_match(self::VALIDATE_TOKEN_REGEX, $token) !== 1) {
-            $this->errors[] = self::ERR_INVALID_TOKEN;
+        if (preg_match(self::VALIDATE_TOKEN_REGEX, $clientID) !== 1) {
+            $this->errors[] = self::ERR_INVALID_CLIENT_ID;
         }
 
-        $url = ($server) ? HttpUrl::create($server) : null;
+        if (preg_match(self::VALIDATE_TOKEN_REGEX, $clientSecret) !== 1) {
+            $this->errors[] = self::ERR_INVALID_CLIENT_SECRET;
+        }
 
-        if ($url === null) {
-            $this->errors[] = self::ERR_INVALID_SERVER;
+        $url = ($service) ? HttpUrl::create($service) : '';
+
+        if ($url) {
+            $url = $url->asString();
+        } else {
+            $this->errors[] = self::ERR_INVALID_QKS_SERVICE;
         }
 
         return $url;

@@ -17,7 +17,7 @@ services:
         arguments:
             - @doctrine.em
             - @kraken.consul
-            - @kraken.crypto.decrypter
+            - @kraken.crypto.db
             - @json
 
     kraken.diff:
@@ -65,12 +65,15 @@ services:
         arguments:
             - @doctrine.em
             - @kraken.json.encoder
-            - @kraken.crypto.encrypter
+            - @kraken.crypto.db
             - @kraken.random
 
     kraken.validator.environment:
         class: 'QL\Kraken\Validator\EnvironmentValidator'
-        arguments: [@doctrine.em, @kraken.random]
+        arguments:
+            - @doctrine.em
+            - @kraken.crypto.db
+            - @kraken.random
 
     kraken.validator.application:
         class: 'QL\Kraken\Validator\ApplicationValidator'
@@ -81,7 +84,7 @@ services:
     ####################################################################################################################
 
     kraken.crypto.factory:
-        class: 'QL\Kraken\Utility\SymmetricCryptoFactory'
+        class: 'QL\Kraken\Utility\CryptoFactory'
         arguments: [@kraken.crypto.factory.secret.file]
 
     kraken.crypto.factory.secret.file:
@@ -89,9 +92,9 @@ services:
         factory: ['QL\Panthor\Utility\Stringify', 'template']
         arguments: ['%%s/%%s', [@root, %encrypter.kraken.secret.path%]]
 
-    kraken.crypto.encrypter:
-        class: 'QL\Hal\Core\Crypto\SymmetricEncrypter'
-        factory: [@kraken.crypto.factory, 'getSymmetricEncrypter']
-    kraken.crypto.decrypter:
-        class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
-        factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']
+    kraken.crypto.db:
+        class: 'MCP\Crypto\Package\TamperResistantPackage'
+        factory: [@kraken.crypto.factory, 'getPackager']
+    # kraken.crypto.decrypter:
+        # class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
+        # factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']

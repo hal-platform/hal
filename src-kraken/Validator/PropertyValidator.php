@@ -9,7 +9,8 @@ namespace QL\Kraken\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Crypto\SymmetricEncrypter;
+use MCP\Crypto\Exception\CryptoException;
+use MCP\Crypto\Package\TamperResistantPackage;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
@@ -52,9 +53,9 @@ class PropertyValidator
     private $json;
 
     /**
-     * @type SymmetricEncrypter
+     * @type TamperResistantPackage
      */
-    private $encrypter;
+    private $encryption;
 
     /**
      * @type callable
@@ -69,20 +70,20 @@ class PropertyValidator
     /**
      * @param EntityManagerInterface $em
      * @param Json $json
-     * @param SymmetricEncrypter $encrypter
+     * @param TamperResistantPackage $encryption
      * @param callable $random
      */
     public function __construct(
         EntityManagerInterface $em,
         Json $json,
-        SymmetricEncrypter $encrypter,
+        TamperResistantPackage $encryption,
         callable $random
     ) {
         $this->schemaRepo = $em->getRepository(Schema::CLASS);
         $this->propertyRepo = $em->getRepository(Property::CLASS);
 
         $this->json = $json;
-        $this->encrypter = $encrypter;
+        $this->encryption = $encryption;
         $this->random = $random;
 
         $this->errors = [];
@@ -256,7 +257,7 @@ class PropertyValidator
         $encoded = $this->encodeValue($value);
 
         if ($schema->isSecure()) {
-            $encoded = $this->encrypter->encrypt($encoded);
+            $encoded = $this->encryption->encrypt($encoded);
         }
 
         return $encoded;

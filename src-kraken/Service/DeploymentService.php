@@ -9,8 +9,8 @@ namespace QL\Kraken\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use ErrorException;
-use QL\Hal\Core\Crypto\CryptoException;
-use QL\Hal\Core\Crypto\SymmetricDecrypter;
+use MCP\Crypto\Exception\CryptoException;
+use MCP\Crypto\Package\TamperResistantPackage;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
@@ -31,9 +31,9 @@ class DeploymentService
     private $em;
 
     /**
-     * @type SymmetricDecrypter
+     * @type TamperResistantPackage
      */
-    private $decrypter;
+    private $encryption;
 
     /**
      * @type Json
@@ -43,18 +43,18 @@ class DeploymentService
     /**
      * @param EntityManagerInterface $em
      * @param ConsulService $consul
-     * @param SymmetricDecrypter $decrypter
+     * @param TamperResistantPackage $encryption
      * @param Json $json
      */
     public function __construct(
         EntityManagerInterface $em,
         ConsulService $consul,
-        SymmetricDecrypter $decrypter,
+        TamperResistantPackage $encryption,
         Json $json
     ) {
         $this->em = $em;
         $this->consul = $consul;
-        $this->decrypter = $decrypter;
+        $this->encryption = $encryption;
 
         $this->json = $json;
     }
@@ -232,17 +232,16 @@ class DeploymentService
      */
     private function decrypt($encrypted)
     {
-        try {
-            $value = $this->decrypter->decrypt($encrypted);
-
-        // @todo make decrypter in Hal\Core more resilient (it should be cause errors!)
-        } catch (ErrorException $ex) {
-            $value = null;
-
-        } catch (CryptoException $ex) {
-            $value = null;
+        if (!$encrypted) {
+            return '';
         }
 
-        return $value;
+        try {
+            $decrypted = $this->encryption->decrypt($encrypted);
+        } catch (CryptoException $ex) {
+            $decrypted = null;
+        }
+
+        return $decrypted;
     }
 }

@@ -8,10 +8,10 @@
 namespace QL\Kraken\Utility;
 
 use QL\Hal\Core\Crypto\CryptoException;
-use QL\Hal\Core\Crypto\SymmetricDecrypter;
-use QL\Hal\Core\Crypto\SymmetricEncrypter;
+use MCP\Crypto\Primitive\Factory;
+use MCP\Crypto\Package\TamperResistantPackage;
 
-class SymmetricCryptoFactory
+class CryptoFactory
 {
     /**
      * @type string
@@ -36,31 +36,16 @@ class SymmetricCryptoFactory
     /**
      * @throws CryptoException
      *
-     * @return SymmetricEncrypter
+     * @return TamperResistantPackage
      */
-    public function getSymmetricEncrypter()
+    public function getPackager()
     {
         if (!file_exists($this->symKeyPath)) {
             throw new CryptoException('Path to symmetric key is invalid.');
         }
 
         $key = call_user_func($this->fileLoader, $this->symKeyPath);
-        return new SymmetricEncrypter($key);
-    }
-
-    /**
-     * @throws CryptoException
-     *
-     * @return SymmetricDecrypter
-     */
-    public function getSymmetricDecrypter()
-    {
-        if (!file_exists($this->symKeyPath)) {
-            throw new CryptoException('Path to symmetric key is invalid.');
-        }
-
-        $key = call_user_func($this->fileLoader, $this->symKeyPath);
-        return new SymmetricDecrypter($key);
+        return new TamperResistantPackage(new Factory, trim($key));
     }
 
     /**
