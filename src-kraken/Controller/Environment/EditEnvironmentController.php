@@ -9,11 +9,13 @@ namespace QL\Kraken\Controller\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use MCP\Crypto\Exception\CryptoException;
+use MCP\Crypto\Package\TamperResistantPackage;
+use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Validator\EnvironmentValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Hal\Flasher;
 use Slim\Http\Request;
 
 class EditEnvironmentController implements ControllerInterface
@@ -34,6 +36,11 @@ class EditEnvironmentController implements ControllerInterface
      * @type Environment
      */
     private $environment;
+
+    /**
+     * @type TamperResistantPackage
+     */
+    private $encryption;
 
     /**
      * @type Flasher
@@ -59,6 +66,7 @@ class EditEnvironmentController implements ControllerInterface
      * @param Request $request
      * @param TemplateInterface $template
      * @param Environment $environment
+     * @param TamperResistantPackage $encryption
      * @param Flasher $flasher
      * @param EnvironmentValidator $validator
      * @param EntityManagerInterface $em
@@ -67,6 +75,7 @@ class EditEnvironmentController implements ControllerInterface
         Request $request,
         TemplateInterface $template,
         Environment $environment,
+        TamperResistantPackage $encryption,
         Flasher $flasher,
         EnvironmentValidator $validator,
         EntityManagerInterface $em
@@ -74,6 +83,7 @@ class EditEnvironmentController implements ControllerInterface
         $this->request = $request;
         $this->template = $template;
         $this->environment = $environment;
+        $this->encryption = $encryption;
         $this->flasher = $flasher;
         $this->validator = $validator;
 
@@ -88,21 +98,34 @@ class EditEnvironmentController implements ControllerInterface
      */
     public function __invoke()
     {
-        $form = [
-            'server' => $this->environment->consulServiceURL(),
-            'token' => $this->environment->consulToken()
-        ];
+        if ($this->request->isPost()) {
+            $form = [
+                'service' => $this->request->post('service'),
+                'token' => $this->request->post('token'),
+                'qks_service' => $this->request->post('qks_service'),
+                'qks_client' => $this->request->post('qks_client'),
+                'qks_secret' => $this->request->post('qks_secret'),
+            ];
+        } else {
+
+            $token = $this->decrypt($this->environment->consulToken());
+            $secret = $this->decrypt($this->environment->qksClientSecret());
+
+            $form = [
+                'service' => $this->environment->consulServiceURL(),
+                'token' => $token,
+                'qks_service' => $this->environment->qksServiceURL(),
+                'qks_client' => $this->environment->qksClientID(),
+                'qks_secret' => $secret
+            ];
+        }
 
         if ($this->request->isPost()) {
-
-            $form['server'] = $this->request->post('server');
-            $form['token'] = $this->request->post('token');
-
-            if ($environment = $this->handleForm()) {
+            if ($environment = $this->handleForm($form)) {
                 // flash and redirect
                 $this->flasher
                     ->withFlash(sprintf(self::SUCCESS, $environment->name()), 'success')
-                    ->load('kraken.environments');
+                    ->load('kraken.environment', ['environment' => $environment->id()]);
             }
         }
 
@@ -116,20 +139,47 @@ class EditEnvironmentController implements ControllerInterface
     }
 
     /**
+     * @param array $data
+     *
      * @return Environment|null
      */
-    private function handleForm()
+    private function handleForm(array $data)
     {
-        $server = $this->request->post('server');
-        $token = $this->request->post('token');
+        $environment = $this->validator->isEditValid(
+            $this->environment,
+            $data['service'],
+            $data['token'],
+            $data['qks_service'],
+            $data['qks_client'],
+            $data['qks_secret']
+        );
 
-        if ($environment = $this->validator->isEditValid($this->environment, $server, $token)) {
-
+        if ($environment) {
             // persist to database
             $this->em->merge($environment);
             $this->em->flush();
         }
 
         return $environment;
+    }
+
+    /**
+     * @param string $encrypted
+     *
+     * @return string
+     */
+    private function decrypt($encrypted)
+    {
+        if (!$encrypted) {
+            return '';
+        }
+
+        try {
+            $decrypted = $this->encryption->decrypt($encrypted);
+        } catch (CryptoException $ex) {
+            $decrypted = '';
+        }
+
+        return $decrypted;
     }
 }

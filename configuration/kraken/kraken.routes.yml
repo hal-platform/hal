@@ -80,9 +80,26 @@ parameters:
             route: '/kraken/environments/add'
             stack: ['middleware.super', 'kraken.environment.add.page']
 
+        kraken.environment:
+            route: '/kraken/environments/:environment'
+            stack: ['kraken.middleware.require.entity', 'kraken.environment.page']
+            conditions: {environment: %routes.kraken.regex.hex%}
+
         kraken.environment.edit:
             route: '/kraken/environments/:environment/edit'
             stack: ['middleware.super', 'kraken.middleware.require.entity', 'kraken.environment.edit.page']
+            conditions: {environment: %routes.kraken.regex.hex%}
+
+        # protected
+        kraken.environment.remove.confirm:
+            method: 'GET'
+            route: '/kraken/environments/:environment/remove'
+            stack: ['middleware.super', 'kraken.middleware.require.entity', 'delete.confirm.page']
+            conditions: {environment: %routes.kraken.regex.hex%}
+        kraken.environment.remove:
+            method: 'POST'
+            route: '/kraken/environments/:environment/remove'
+            stack: ['middleware.super', 'kraken.middleware.require.entity', 'kraken.environment.remove.handler']
             conditions: {environment: %routes.kraken.regex.hex%}
 
         ################################################################################################################

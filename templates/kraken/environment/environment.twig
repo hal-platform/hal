@@ -1,0 +1,85 @@
+{% extends 'base.kraken.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = "Environment : " ~ environment.name %}
+{% set isAdmin = isUserSuper(currentUser) %}
+
+{% block content %}
+    <h1>Environment - <strong>{{ environment.name }}</strong></h1>
+
+    <h3>Name</h3>
+    <p>{{ environment.name }}</p>
+
+    <h3>Is Production Environment?</h3>
+    <p>{{ environment.isProduction ? 'Yes' : 'No' }}</p>
+
+    <h2>Consul</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Service</dt>
+            <dd>
+                {% if environment.consulServiceURL %}
+                    <code>{{ environment.consulServiceURL|trim('/') }}</code>
+                {% else %}
+                    {{ macros.status('Not Configured', 'error', 'spam-2') }}
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">Access Token</dt>
+            <dd>
+                {% if environment.consulToken %}
+                    {{ macros.icon('tick') }} Configured
+                {% else %}
+                    {{ macros.status('Not Configured', 'error', 'spam-2') }}
+                {% endif %}
+            </dd>
+        </dl>
+    </div>
+
+    <h2>QKS</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Service</dt>
+            <dd>
+                {% if environment.qksServiceURL %}
+                    <code>{{ environment.qksServiceURL|trim('/') }}</code>
+                {% else %}
+                    {{ macros.status('Not Configured', 'error', 'spam-2') }}
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">API Gateway Client ID</dt>
+            <dd>
+                {% if environment.qksClientID %}
+                    {{ environment.qksClientID }}
+                {% else %}
+                    {{ macros.status('Not Configured', 'error', 'spam-2') }}
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">API Gateway Client Secret</dt>
+            <dd>
+                {% if environment.qksClientSecret %}
+                    {{ macros.icon('tick') }} Configured
+                {% else %}
+                    {{ macros.status('Not Configured', 'error', 'spam-2') }}
+                {% endif %}
+            </dd>
+        </dl>
+    </div>
+
+    {% if isAdmin and not canRemove %}
+        <p>Configuration has been deployed to this environment. It cannot be removed.</p>
+    {% endif %}
+
+    <ul class="button-list button-list--half">
+        {% if isAdmin %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.environment.edit', {environment: environment.id}) }}">Edit Environment</a></li>
+            {% if canRemove %}
+                <li><a class="btn btn--destructive" href="{{ urlFor('kraken.environment.remove', {environment: environment.id}) }}">Remove Environment</a></li>
+            {% endif %}
+        {% endif %}
+        <li><a class="btn btn--secondary" href="{{ urlFor('kraken.environments') }}">Environments</a></li>
+    </ul>
+
+{% endblock %}

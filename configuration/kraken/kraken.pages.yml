@@ -15,13 +15,6 @@ services:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/applications.twig']]]
 
-    kraken.environments.page:
-        class: 'QL\Kraken\Controller\EnvironmentsController'
-        arguments: [@kraken.environments.twig, @doctrine.em]
-    kraken.environments.twig:
-        parent: 'kraken.template'
-        calls: [['setTemplate', ['kraken/environments.twig']]]
-
     ####################################################################################################################
     # GENERAL USE
     ####################################################################################################################
@@ -82,6 +75,28 @@ services:
     kraken.application.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/application.twig']]]
+
+
+    ####################################################################################################################
+    # ENVIRONMENT
+    ####################################################################################################################
+
+    kraken.environments.page:
+        class: 'QL\Kraken\Controller\EnvironmentsController'
+        arguments: [@kraken.environments.twig, @doctrine.em]
+    kraken.environments.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/environments.twig']]]
+
+    kraken.environment.page:
+        class: 'QL\Kraken\Controller\Environment\EnvironmentController'
+        arguments:
+            - @kraken.environment.twig
+            - @kraken.environment
+            - @doctrine.em
+    kraken.environment.twig:
+        parent: 'kraken.template'
+        calls: [['setTemplate', ['kraken/environment/environment.twig']]]
 
     ####################################################################################################################
     # CONFIGURATION
@@ -205,6 +220,13 @@ services:
     kraken.environment.edit.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/environment/environment.edit.twig']]]
+
+    kraken.environment.remove.handler:
+        class: 'QL\Kraken\Controller\Environment\RemoveEnvironmentHandler'
+        arguments:
+            - @kraken.environment
+            - @doctrine.em
+            - @session.flasher
 
     ####################################################################################################################
     # CRUD - SCHEMA

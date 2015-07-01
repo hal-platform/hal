@@ -15,15 +15,14 @@
                     <th>Name</th>
                     <th>Consul Service</th>
                     <th>QKS Service</th>
-                    {% if isAdmin %}
-                        <th></th>
-                    {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for environment in environments %}
                     <tr>
-                        <td>{{ environment.id[:7] }}</td>
+                        <td>
+                            <a href="{{ urlFor('kraken.environment', {environment: environment.id}) }}">{{ environment.id[:7] }}</a>
+                        </td>
                         <td>
                             {% if environment.isProduction %}
                                 {{ macros.status(environment.name, 'info', 'key') }}
@@ -34,21 +33,17 @@
                         <td>
                             {% if environment.consulServiceURL %}
                                 <code>{{ environment.consulServiceURL|trim('/') }}</code>
+                            {% else %}
+                                Not Configured
                             {% endif %}
                         </td>
                         <td>
                             {% if environment.qksServiceURL %}
                                 <code>{{ environment.qksServiceURL|trim('/') }}</code>
+                            {% else %}
+                                Not Configured
                             {% endif %}
                         </td>
-
-                        {% if isAdmin %}
-                            <td class="tr">
-                                <a href="{{ urlFor('kraken.environment.edit', {environment: environment.id}) }}">
-                                    Edit <span class="tablesaw-collapse">Configuration</span>
-                                </a>
-                            </td>
-                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

@@ -51,7 +51,7 @@
                     <label for="env-token">Consul Token</label>
                     <small class="additional">Access token for consul. Optional.</small>
 
-                    <input type="text" name="consul_token" id="env-token" maxlength="100" value="{{ form.consul_token }}" class="text-input" autocomplete="off">
+                    <input type="text" name="consul_token" id="env-token" maxlength="40" value="{{ form.consul_token }}" class="text-input" autocomplete="off">
                 </li>
 
                 <li>
@@ -76,7 +76,7 @@
                     <label for="env-qks_secret">QKS Client Secret</label>
                     <small class="additional">Application Client Secret from API Gateway.</small>
 
-                    <input type="text" name="qks_secret" id="env-qks_secret" maxlength="100" value="{{ form.qks_secret }}" class="text-input" autocomplete="off">
+                    <input type="text" name="qks_secret" id="env-qks_secret" maxlength="40" value="{{ form.qks_secret }}" class="text-input" autocomplete="off">
                 </li>
             </ul>
 
