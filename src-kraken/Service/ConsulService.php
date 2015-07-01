@@ -11,12 +11,14 @@ use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Utils;
 use MCP\Cache\CachingTrait;
+use MCP\Crypto\Exception\CryptoException;
+use MCP\Crypto\Package\TamperResistantPackage;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulBatchTrait;
+use QL\UriTemplate\UriTemplate;
 
 class ConsulService
 {
@@ -27,6 +29,7 @@ class ConsulService
     const CACHE_CHECKSUMS = 'consul:%s:checksums';
     const CACHE_CHECKSUMS_TTL = 'consul:%s:checksums';
 
+    const ERR_BAD_INTERNAL_DECRYPT = 'Update failed. Could not decrypt Consul ACL token.';
     const ERR_TARGET_FAILURE = 'Update failed. Application target is misconfigured.';
     const ERR_CONSUL_CONNECTION_FAILURE = 'Update failed. Consul could not be contacted.';
     const ERR_BAD_CONSUL_RESPONSE = 'Update failed. Unexpected response from Consul.';
@@ -36,15 +39,28 @@ class ConsulService
      */
     private $guzzle;
 
+    /**
+     * @type TamperResistantPackage
+     */
+    private $encryption;
+
+    /**
+     * @type bool
+     */
     private $environentalize;
 
     /**
      * @param Client $guzzle
+     * @param TamperResistantPackage $encryption
      * @param bool $environmentalize
      */
-    public function __construct(Client $guzzle, $environmentalize)
-    {
+    public function __construct(
+        Client $guzzle,
+        TamperResistantPackage $encryption,
+        $environmentalize
+    ) {
         $this->guzzle = $guzzle;
+        $this->encryption = $encryption;
         $this->environentalize = $environmentalize;
     }
 
@@ -79,8 +95,12 @@ class ConsulService
             $query['keys'] = 1;
         }
 
-        if ($token = $target->environment()->consulToken()) {
+        // Consul ACL is optional.
+        $token = $this->getAccessToken($target->environment());
+        if ($token) {
             $query['token'] = $token;
+        } elseif ($token === null) {
+            throw new ConsulConnectionException(self::ERR_BAD_INTERNAL_DECRYPT);
         }
 
         try {
@@ -129,8 +149,13 @@ class ConsulService
         }
 
         $query = [];
-        if ($token = $target->environment()->consulToken()) {
+
+        // Consul ACL is optional.
+        $token = $this->getAccessToken($target->environment());
+        if ($token) {
             $query['token'] = $token;
+        } elseif ($token === null) {
+            throw new ConsulConnectionException(self::ERR_BAD_INTERNAL_DECRYPT);
         }
 
         $requests = [];
@@ -203,25 +228,27 @@ class ConsulService
      * @param Application $application
      * @param Environment $environment
      *
-     * @return array|null
+     * @return string
      */
     private function buildEndpoint(Application $application, Environment $environment)
     {
         $applicationId = $application->coreId();
-        $host = $environment->consulServer();
+        $host = $environment->consulServiceURL();
 
         if (!$applicationId || !$host) {
-            return null;
+            return '';
         }
 
         $endpoint = rtrim($host, '/') . self::KV_ENDPOINT;
 
+        // should only used for testing/debug env
         if ($this->environentalize) {
             $endpoint .= $environment->name() . '/';
         }
 
-        // shitty. @todo replace with uri template
-        return Utils::uriTemplate($endpoint, [
+        $uri = new UriTemplate($endpoint);
+
+        return $uri->expand([
             'version' => 'v1',
             'application' => $applicationId
         ]);
@@ -229,7 +256,7 @@ class ConsulService
 
     /**
      * Potential returns:
-     *         If a list of keys rovided
+     *         If a list of keys is provided
      *         - '/path/key1'
      *         - '/path/key2'
      *         - '/path/key3'
@@ -267,5 +294,44 @@ class ConsulService
         }
 
         return $properties;
+    }
+
+    /**
+     * @param Environment $environment
+     *
+     * @return string|null
+     */
+    private function getAccessToken(Environment $environment)
+    {
+        if (!$token = $environment->consulToken()) {
+            return '';
+        }
+
+        if (!$token = $this->decrypt($token)) {
+            return null;
+            throw new ConsulConnectionException(self::ERR_BAD_INTERNAL_DECRYPT);
+        }
+
+        return $token;
+    }
+
+    /**
+     * @param string $encrypted
+     *
+     * @return string
+     */
+    private function decrypt($encrypted)
+    {
+        if (!$encrypted) {
+            return '';
+        }
+
+        try {
+            $decrypted = $this->encryption->decrypt($encrypted);
+        } catch (CryptoException $ex) {
+            $decrypted = '';
+        }
+
+        return $decrypted;
     }
 }

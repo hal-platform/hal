@@ -10,7 +10,10 @@ services:
 
     kraken.consul:
         class: 'QL\Kraken\Service\ConsulService'
-        arguments: [@kraken.guzzle, %kraken.environmentalize%]
+        arguments:
+            - @kraken.guzzle
+            - @kraken.crypto.db
+            - %kraken.environmentalize%
 
     kraken.deploy:
         class: 'QL\Kraken\Service\DeploymentService'
