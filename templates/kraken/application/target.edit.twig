@@ -34,6 +34,12 @@
                 </li>
             </ul>
 
+            <p>
+                <strong>Warning!</strong>
+                Changing the QKS Identifier will change how configuration is encrypted. Before changing this, ensure the application is configured to decrypt
+                data with this identifier.
+            </p>
+
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
                 <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: application.id}) }}">Cancel</a></li>

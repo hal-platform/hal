@@ -62,7 +62,7 @@
 {% block application_targets %}
 
     {% if targets %}
-        <table class="table--spacing-medium">
+        <table class="table--spacing-medium table--top-aligned" data-tablesaw-mode="stack">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -76,7 +76,13 @@
                     <tr>
                         {% if target is target %}
 
-                            <td>{{ target.environment.name }}</td>
+                            <td>
+                                {% if target.environment.isProduction %}
+                                    {{ macros.status(target.environment.name, 'info', 'key') }}
+                                {% else %}
+                                    {{ target.environment.name }}
+                                {% endif %}
+                            </td>
                             <td>
                                 {% if target.key %}
                                     <code>{{ target.key }}</code>
@@ -94,7 +100,14 @@
                         {% else %}
 
                             {% set unassignedTargets = true %}
-                            <td>{{ target.name }}</td>
+                            <td>
+                                {% if target.isProduction %}
+                                    {{ macros.status(target.name, 'info', 'key') }}
+                                {% else %}
+                                    {{ target.name }}
+                                {% endif %}
+                            </td>
+
                             <td>Environment is not enabled.</td>
                             <td></td>
 
