@@ -24,11 +24,31 @@
 
 {% block lets_do_this %}
 
-    <form class="form-wrapper" method="post">
-        <ul class="button-list">
-            <li><input type="submit" class="btn btn--action" value="Rollback Configuration"></li>
-            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration', {configuration: configuration.id}) }}">Cancel</a></li>
+    {% if errors %}
+
+        {{ macros.alert('error', 'Cannot deploy configuration!', 'Consul or QKS may not be configured correctly. Contact an Administrator immediately.') }}
+
+        <p>Kraken found the following errors:</p>
+        <ul class="list--bullet">
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
         </ul>
-    </form>
+
+        <ul class="button-list button-list--half">
+            <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application</a></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
+        </ul>
+
+    {% else %}
+
+        <form class="form-wrapper" method="post">
+            <ul class="button-list">
+                <li><input type="submit" class="btn btn--action" value="Rollback Configuration"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration', {configuration: configuration.id}) }}">Cancel</a></li>
+            </ul>
+        </form>
+
+    {% endif %}
 
 {% endblock %}

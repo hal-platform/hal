@@ -17,6 +17,7 @@
     <h2>Verify Deployment</h2>
     {{ block('deploy_comparison') }}
 
+    {{ block('release_the_kraken') }}
 {% endblock %}
 
 {% block deploy_comparison %}
@@ -68,12 +69,35 @@
     {% else %}
         <p>There is no schema defined for this application. An empty configuration will be deployed.</p>
     {% endif %}
+{% endblock %}
 
-    <form method="post" class="form-wrapper">
-        <ul class="button-list">
-            <li><input type="submit" class="btn btn--action" value="Deploy Configuration"></li>
+{% block release_the_kraken %}
+
+    {% if errors %}
+
+        {{ macros.alert('error', 'Cannot rollback configuration!', 'Consul or QKS may not be configured correctly. Contact an Administrator immediately.') }}
+
+        <p>Kraken found the following errors:</p>
+        <ul class="list--bullet">
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+
+        <ul class="button-list button-list--half">
+            <li><a class="btn" href="{{ urlFor('kraken.application', {application: application.id}) }}">Application</a></li>
             <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
         </ul>
-    </form>
+
+    {% else %}
+
+        <form method="post" class="form-wrapper">
+            <ul class="button-list">
+                <li><input type="submit" class="btn btn--action" value="Deploy Configuration"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
+            </ul>
+        </form>
+
+    {% endif %}
 
 {% endblock %}
