@@ -58,10 +58,9 @@
                     </small>
 
                     {% set hostname = form.server_type == 'rsync' ? form.hostname : '' %}
-                    <input type="text" name="hostname" id="hostname" maxlength="24" value="{{ hostname }}" class="text-input">
+                    <input type="text" name="hostname" id="hostname" maxlength="60" value="{{ hostname }}" class="text-input">
                 </li>
             </ul>
-
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>

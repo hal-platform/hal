@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Flasher;
+use QL\Hal\Validator\ServerValidator;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -42,6 +43,11 @@ class EditServerController implements ControllerInterface
      * @type EntityManagerInterface
      */
     private $em;
+
+    /**
+     * @type Validator
+     */
+    private $validator;
 
     /**
      * @type Flasher
@@ -74,6 +80,7 @@ class EditServerController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        ServerValidator $validator,
         Flasher $flasher,
         Request $request,
         NotFound $notFound,
@@ -85,6 +92,7 @@ class EditServerController implements ControllerInterface
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->em = $em;
 
+        $this->validator = $validator;
         $this->flasher = $flasher;
         $this->request = $request;
         $this->notFound = $notFound;
@@ -100,165 +108,60 @@ class EditServerController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $renderContext = [
-            'form' => [
-                'hostname' => ($this->request->isPost()) ? $this->request->post('hostname') : $server->name(),
-                'environment' => ($this->request->isPost()) ? $this->request->post('environment') : $server->environment()->id(),
-                'server_type' => ($this->request->isPost()) ? $this->request->post('server_type') : $server->type(),
-            ],
-            'errors' => $this->checkFormErrors($this->request, $server),
-            'server' => $server,
-            'environments' => $this->envRepo->getAllEnvironmentsSorted()
-        ];
+        if ($this->request->isPost()) {
+            $form = [
+                'server_type' => $this->request->post('server_type'),
+                'environment' => $this->request->post('environment'),
+                'hostname' => $this->request->post('hostname')
+            ];
+        } else {
+            $form = [
+                'server_type' => $server->type(),
+                'environment' => $server->environment()->id(),
+                'hostname' => $server->name(),
+            ];
+        }
 
         if ($this->request->isPost()) {
-            // this is kind of crummy
-            if (!$renderContext['errors'] && !$environment = $this->envRepo->find($this->request->post('environment'))) {
-                $renderContext['errors'][] = 'Please select an environment.';
-            }
-
-            if (!$renderContext['errors']) {
-                $this->handleFormSubmission($this->request, $server, $environment);
-
+            if ($modified = $this->handleForm($server, $form)) {
+                // flash and redirect
                 return $this->flasher
                     ->withFlash(self::SUCCESS, 'success')
-                    ->load('server', ['id' => $server->id()]);
+                    ->load('server', ['id' => $modified->id()]);
             }
         }
 
-        $this->template->render($renderContext);
+        $context = [
+            'form' => $form,
+            'errors' => $this->validator->errors(),
+            'server' => $server,
+            'environments' => $this->envRepo->getAllEnvironmentsSorted(),
+        ];
+
+        $this->template->render($context);
     }
 
     /**
-     * @param Request $request
      * @param Server $server
-     * @param Environment $environment
-     * @return Server
+     * @param array $data
+     *
+     * @return Server|null
      */
-    private function handleFormSubmission(Request $request, Server $server, Environment $environment)
+    private function handleForm(Server $server, array $data)
     {
-        $type = $request->post('server_type');
-        $name = strtolower(trim($request->post('hostname')));
+        $server = $this->validator->isEditValid(
+            $server,
+            $data['server_type'],
+            $data['environment'],
+            $data['hostname']
+        );
 
-        if ($type !== ServerEnum::TYPE_RSYNC) {
-            $name = '';
+        if ($server) {
+            // persist to database
+            $this->em->merge($server);
+            $this->em->flush();
         }
-
-        $server
-            ->withType($type)
-            ->withEnvironment($environment)
-            ->withName($name);
-
-        $this->em->merge($server);
-        $this->em->flush();
 
         return $server;
-    }
-
-    /**
-     * @param Request $request
-     * @param Server $server
-     * @return array
-     */
-    private function checkFormErrors(Request $request, Server $server)
-    {
-        if (!$request->isPost()) {
-            return [];
-        }
-
-        $hostname = trim($request->post('hostname'));
-        $environmentId = $request->post('environment');
-        $serverType = $request->post('server_type');
-
-        $errors = [];
-
-        if (!in_array($serverType, ServerEnum::values())) {
-            $errors[] = 'Please select a type.';
-        }
-
-        if (!$environmentId) {
-            $errors[] = 'Please select an environment.';
-        }
-
-        // validate hostname if rsync server
-        if ($serverType === ServerEnum::TYPE_RSYNC && !$errors) {
-            // normalize the hostname
-            $hostname = strtolower($hostname);
-
-            $errors = $this->validateHostname($hostname);
-
-            // Only check duplicate hostname if it is being changed
-            if (!$errors && $hostname != $server->name()) {
-                if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
-                    $errors[] = 'A server with this hostname already exists.';
-                }
-            }
-
-        // validate duplicate EB for environment
-        // Only 1 EB "server" per environment
-        } elseif ($serverType === ServerEnum::TYPE_EB && !$errors) {
-
-            // Only check duplicate EB if it is being changed
-            $hasChanged = ($environmentId != $server->environment()->id() || $serverType != $server->type());
-            if (!$errors && $hasChanged) {
-                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'environment' => $environmentId])) {
-                    $errors[] = 'An EB server for this environment already exists.';
-                }
-            }
-
-        // validate duplicate EC2 for environment
-        // Only 1 EC2 "server" per environment
-        } elseif ($serverType === ServerEnum::TYPE_EC2 && !$errors) {
-
-            // Only check duplicate EC2 if it is being changed
-            $hasChanged = ($environmentId != $server->environment()->id() || $serverType != $server->type());
-            if (!$errors && $hasChanged) {
-                if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'environment' => $environmentId])) {
-                    $errors[] = 'An EC2 server for this environment already exists.';
-                }
-            }
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Validates if a given string is a valid domain name according to RFC 1034
-     *
-     * The one exception to the spec is a domain name may start with a number.
-     * In reality I know this is allowed, but I can't find any mention in any
-     * other RFC.
-     *
-     * Additionally this validates the app specific length requirements.
-     *
-     * Examples:
-     * - www.example.com - good
-     * - .example.com - bad
-     * - www..example.com - bad
-     * - 1-800-flowers.com - good
-     * - -awesome-.com - bad
-     * - x---x.ql - good
-     *
-     * @param string $hostname
-     * @return array
-     */
-    private function validateHostName($hostname)
-    {
-        $errors = [];
-
-        if (strlen($hostname) === 0) {
-            $errors[] = 'You must enter a hostname';
-        }
-
-        $regex = '@^([0-9a-z]([0-9a-z-]*[0-9a-z])?)(\.[0-9a-z]([0-9a-z-]*[0-9a-z])?)*$@';
-        if (!preg_match($regex, $hostname)) {
-            $errors[] = 'Hostname must only use numbers, letters, hyphens and periods.';
-        }
-
-        if (strlen($hostname) > 24) {
-            $errors[] = 'Hostname must be less than or equal to 32 characters';
-        }
-
-        return $errors;
     }
 }

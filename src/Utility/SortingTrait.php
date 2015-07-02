@@ -16,7 +16,11 @@ trait SortingTrait
         'dev' => 0,
         'test' => 1,
         'beta' => 2,
-        'prod' => 3
+        'prod' => 3,
+        'dev-aws' => 4,
+        'test-aws' => 5,
+        'beta-aws' => 6,
+        'prod-aws' => 7
     ];
 
     /**

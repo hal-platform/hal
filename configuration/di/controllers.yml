@@ -330,6 +330,7 @@ services:
         arguments:
             - @server.admin.add.twig
             - @doctrine.em
+            - @server.validator
             - @session.flasher
             - @slim.request
     server.admin.add.twig:
@@ -341,6 +342,7 @@ services:
         arguments:
             - @server.admin.edit.twig
             - @doctrine.em
+            - @server.validator
             - @session.flasher
             - @slim.request
             - @slim.not.found
@@ -356,6 +358,10 @@ services:
             - @session.flasher
             - @slim.not.found
             - @slim.route.parameters
+
+    server.validator:
+        class: 'QL\Hal\Validator\ServerValidator'
+        arguments: [@doctrine.em]
 
     ####################################################################################################################
     # USER CONTROLLERS
