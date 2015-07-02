@@ -12,12 +12,14 @@ use ErrorException;
 use MCP\Crypto\Exception\CryptoException;
 use MCP\Crypto\Package\QuickenMessagePackage;
 use MCP\Crypto\Package\TamperResistantPackage;
+use MCP\QKS\QKSException;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\Exception\ConfigurationException;
 use QL\Kraken\Service\Exception\DecryptionException;
 use QL\Kraken\Service\Exception\MixedUpdateException;
+use QL\Kraken\Service\Exception\QKSConnectionException;
 use QL\Kraken\Utility\CryptoFactory;
 use QL\Panthor\Utility\Json;
 
@@ -25,7 +27,8 @@ class DeploymentService
 {
     const SUCCESS = 'Configuration successfully deployed to %s';
 
-    const ERR_QKS_KEY_NOT_CONFIGURED = 'Update failed. QKS encryption key is not configured for this environment.';
+    const ERR_QKS_ERROR = 'An error occured while contacting QKS.';
+    const ERR_QKS_KEY_NOT_CONFIGURED = 'QKS encryption key is not configured for this environment.';
     const ERR_THIS_IS_SUPER_BAD = 'A serious error has occured. Consul was partially updated.';
     const ERR_DECRYPT_FAILURE = 'Secure property "%s" could not be decrypted.';
 
@@ -132,6 +135,7 @@ class DeploymentService
      * @param Snapshot[] $properties
      *
      * @throws DecryptionException
+     * @throws QKSConnectionException
      *
      * @return string[]
      */
@@ -253,6 +257,8 @@ class DeploymentService
      * @param string $receipientKey
      * @param string $decrypted
      *
+     * @throws QKSConnectionException
+     *
      * @return string|null
      */
     private function encrypt(QuickenMessagePackage $qmp, $receipientKey, $decrypted)
@@ -263,8 +269,10 @@ class DeploymentService
 
         try {
             $encrypted = $qmp->encrypt($decrypted, $receipients);
+        } catch (QKSException $ex) {
+            throw new QKSConnectionException(self::ERR_QKS_ERROR);
         } catch (CryptoException $ex) {
-            $encrypted = null;
+            throw new QKSConnectionException($ex->getMessage());
         }
 
         return $encrypted;
