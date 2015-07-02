@@ -103,6 +103,7 @@ class EditEnvironmentController implements ControllerInterface
                 'service' => $this->request->post('service'),
                 'token' => $this->request->post('token'),
                 'qks_service' => $this->request->post('qks_service'),
+                'qks_key' => $this->request->post('qks_key'),
                 'qks_client' => $this->request->post('qks_client'),
                 'qks_secret' => $this->request->post('qks_secret'),
             ];
@@ -115,6 +116,7 @@ class EditEnvironmentController implements ControllerInterface
                 'service' => $this->environment->consulServiceURL(),
                 'token' => $token,
                 'qks_service' => $this->environment->qksServiceURL(),
+                'qks_key' => $this->environment->qksEncryptionKey(),
                 'qks_client' => $this->environment->qksClientID(),
                 'qks_secret' => $secret
             ];
@@ -150,6 +152,7 @@ class EditEnvironmentController implements ControllerInterface
             $data['service'],
             $data['token'],
             $data['qks_service'],
+            $data['qks_key'],
             $data['qks_client'],
             $data['qks_secret']
         );

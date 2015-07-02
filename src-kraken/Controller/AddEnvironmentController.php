@@ -101,6 +101,7 @@ class AddEnvironmentController implements ControllerInterface
                 'consul_token' => $this->request->post('consul_token'),
 
                 'qks_service' => $this->request->post('qks_service'),
+                'qks_key' => $this->request->post('qks_key'),
                 'qks_client' => $this->request->post('qks_client'),
                 'qks_secret' => $this->request->post('qks_secret'),
             ]
@@ -121,6 +122,7 @@ class AddEnvironmentController implements ControllerInterface
         $consulToken = $this->request->post('consul_token');
 
         $qksService = $this->request->post('qks_service');
+        $qksKey = $this->request->post('qks_key');
         $qksClient = $this->request->post('qks_client');
         $qksSecret = $this->request->post('qks_secret');
 
@@ -130,6 +132,7 @@ class AddEnvironmentController implements ControllerInterface
             $consulService,
             $consulToken,
             $qksService,
+            $qksKey,
             $qksClient,
             $qksSecret
         );

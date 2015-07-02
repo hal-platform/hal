@@ -15,8 +15,12 @@ use QL\Panthor\TemplateInterface;
 class DeployController implements ControllerInterface
 {
     const ERR_ENCRYPTION_KEY = 'QKS Encryption key is missed. This must be added for this application in this environment.';
+
     const ERR_CONSUL_SERVICE = 'Consul Service URL is missing.';
     const ERR_QKS_SERVICE = 'QKS Service URL is missing.';
+
+    const ERR_QKS_KEY = 'QKS source encryption key is missing.';
+
     const ERR_QKS_CLIENT_ID = 'QKS Client ID is missing.';
     const ERR_QKS_CLIENT_SECRET = 'QKS Client Secret is missing.';
 
@@ -90,6 +94,7 @@ class DeployController implements ControllerInterface
 
         if (!$environment->consulServiceURL()) $errors[] = self::ERR_CONSUL_SERVICE;
         if (!$environment->qksServiceURL()) $errors[] = self::ERR_QKS_SERVICE;
+        if (!$environment->qksEncryptionKey()) $errors[] = self::ERR_QKS_KEY;
         if (!$environment->qksClientID()) $errors[] = self::ERR_QKS_CLIENT_ID;
         if (!$environment->qksClientSecret()) $errors[] = self::ERR_QKS_CLIENT_SECRET;
 

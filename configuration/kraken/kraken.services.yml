@@ -92,7 +92,6 @@ services:
         arguments:
             - @kraken.crypto.qmp.guzzle
             - @kraken.crypto.qmp.json
-            - %kraken.qks.sourcekey%
             - @kraken.crypto.factory.secret.file
 
     kraken.crypto.factory.secret.file:

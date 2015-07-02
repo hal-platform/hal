@@ -35,7 +35,5 @@ parameters:
         pLR/1o2u8njj+v/AaQIDAQAB
         -----END PUBLIC KEY-----
 
-    kraken.qks.sourcekey: ''
-
     hal.agents:
         - 'ql1haltsagt1'

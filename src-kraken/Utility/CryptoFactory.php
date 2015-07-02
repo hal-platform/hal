@@ -24,6 +24,7 @@ class CryptoFactory
     const ERR_MISSING_SYMMETRIC_KEY = 'Path to symmetric key is invalid.';
 
     const ERR_MISSING_QKS_SERVICE = 'QKS service is missing for this environment.';
+    const ERR_MISSING_QKS_KEY = 'QKS encryption key is missing for this environment.';
     const ERR_MISSING_QKS_AUTH = 'QKS credentials are missing for this environment.';
     const ERR_INVALID_CLIENT_SECRET = 'QKS Secret could not be decrypted for usage.';
 
@@ -40,11 +41,6 @@ class CryptoFactory
     /**
      * @type string
      */
-    private $sourceQKSKey;
-
-    /**
-     * @type string
-     */
     private $symKeyPath;
 
     /**
@@ -55,7 +51,6 @@ class CryptoFactory
     /**
      * @param Guzzle $guzzle
      * @param JsonParser $parser
-     * @param string $sourceQKSKey
      *
      * @param string $symKeyPath
      * @param callable|null $fileLoader
@@ -63,14 +58,12 @@ class CryptoFactory
     public function __construct(
         Guzzle $guzzle,
         JsonParser $parser,
-        $sourceQKSKey,
         $symKeyPath,
         callable $fileLoader = null
     ) {
         // qmp
         $this->guzzle = $guzzle;
         $this->parser = $parser;
-        $this->sourceQKSKey = $sourceQKSKey;
 
         // trp
         $this->symKeyPath = $symKeyPath;
@@ -98,11 +91,16 @@ class CryptoFactory
     public function getQMP(Environment $environment)
     {
         $qksHost = $environment->qksServiceURL();
+        $qksKey = $environment->qksEncryptionKey();
         $clientID = $environment->qksClientID();
         $encryptedClientSecret = $environment->qksClientSecret();
 
         if (!$qksHost) {
             throw new ConfigurationException(self::ERR_MISSING_QKS_SERVICE);
+        }
+
+        if (!$qksKey) {
+            throw new ConfigurationException(self::ERR_MISSING_QKS_KEY);
         }
 
         if (!$clientID || !$encryptedClientSecret) {
@@ -125,7 +123,7 @@ class CryptoFactory
             QKSGuzzleService::CONFIG_CLIENT_SECRET => $clientSecret,
         ]);
 
-        return new QuickenMessagePackage(new Factory, $service, $this->sourceQKSKey);
+        return new QuickenMessagePackage(new Factory, $service, $qksKey);
     }
 
     /**

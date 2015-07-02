@@ -15,18 +15,20 @@ use QL\Kraken\Core\Entity\Environment;
 
 class EnvironmentValidator
 {
-    const ERR_INVALID_NAME = 'Invalid Name. Environment names must be at least two alphanumeric characters without spaces.';
-    const ERR_INVALID_TOKEN = 'Invalid Token. Consul token must be at least two alphanumeric characters without spaces.';
+    const ERR_INVALID_NAME = 'Environment name must consist of letters, underscores and/or hyphens.';
+    const ERR_INVALID_TOKEN = 'Consul token must be at least two alphanumeric characters without spaces.';
     const ERR_INVALID_CONSUL_SERVICE = 'Invalid Consul service URL.';
 
     const ERR_INVALID_QKS_SERVICE = 'Invalid QKS service URL.';
-    const ERR_INVALID_CLIENT_ID = 'Invalid client ID. Client ID must be at least two alphanumeric characters without spaces.';
-    const ERR_INVALID_CLIENT_SECRET = 'Invalid client secret. Client secret must be at least two alphanumeric characters without spaces';
+    const ERR_INVALID_QKS_KEY = 'Encryption key must be 6 alphanumeric characters.';
+    const ERR_INVALID_CLIENT_ID = 'Client ID must be at least two alphanumeric characters without spaces.';
+    const ERR_INVALID_CLIENT_SECRET = 'Client secret must be at least two alphanumeric characters without spaces';
 
     const ERR_DUPLICATE_NAME = 'An environment with this name already exists.';
 
-    const VALIDATE_NAME_REGEX = '/^[a-zA-Z0-9]{2,40}$/';
+    const VALIDATE_NAME_REGEX = '/^[a-zA-Z_-]{2,40}*$/';
     const VALIDATE_TOKEN_REGEX = '/^[a-zA-Z0-9\-\=\.\+\/]{0,40}$/';
+    const VALIDATE_QKS_KEY_REGEX = '/^[0-9A-Z]{6}$/';
 
     /**
      * @type callable
@@ -68,12 +70,13 @@ class EnvironmentValidator
      * @param string $consulService
      * @param string $consulToken
      * @param string $qksService
+     * @param string $qksKey
      * @param string $qksClient
      * @param string $qksSecret
      *
      * @return Environment|null
      */
-    public function isValid($name, $isProd, $consulService, $consulToken, $qksService, $qksClient, $qksSecret)
+    public function isValid($name, $isProd, $consulService, $consulToken, $qksService, $qksKey, $qksClient, $qksSecret)
     {
         $this->errors = [];
 
@@ -81,8 +84,8 @@ class EnvironmentValidator
             $this->errors[] = self::ERR_INVALID_NAME;
         }
 
-        $consulURL = ($consulService) ? $this->validateConsul($consulService, $consulToken) : '';
-        $qksURL = ($qksService) ? $this->validateQKS($qksService, $qksClient, $qksSecret) : '';
+        $consulURL = $this->validateConsul($consulService, $consulToken);
+        $qksURL = $this->validateQKS($qksService, $qksKey, $qksClient, $qksSecret);
 
         // dupe check
         if (!$this->errors && $dupe = $this->environmentRepo->findOneBy(['name' => $name])) {
@@ -113,6 +116,8 @@ class EnvironmentValidator
             ->withConsulToken($consulToken)
 
             ->withQKSServiceURL($qksURL)
+            ->withQKSEncryptionKey($qksKey)
+
             ->withQKSClientID($qksClient)
             ->withQKSClientSecret($qksSecret);
 
@@ -123,17 +128,18 @@ class EnvironmentValidator
      * @param string $consulService
      * @param string $consulToken
      * @param string $qksService
+     * @param string $qksKey
      * @param string $qksClient
      * @param string $qksSecret
      *
      * @return Environment|null
      */
-    public function isEditValid(Environment $environment, $consulService, $consulToken, $qksService, $qksClient, $qksSecret)
+    public function isEditValid(Environment $environment, $consulService, $consulToken, $qksService, $qksKey, $qksClient, $qksSecret)
     {
         $this->errors = [];
 
-        $consulURL = ($consulService) ? $this->validateConsul($consulService, $consulToken) : '';
-        $qksURL = ($qksService) ? $this->validateQKS($qksService, $qksClient, $qksSecret) : '';
+        $consulURL = $this->validateConsul($consulService, $consulToken);
+        $qksURL = $this->validateQKS($qksService, $qksKey, $qksClient, $qksSecret);
 
         if ($this->errors) {
             return null;
@@ -150,7 +156,10 @@ class EnvironmentValidator
         $environment
             ->withConsulServiceURL($consulURL)
             ->withConsulToken($consulToken)
+
             ->withQKSServiceURL($qksURL)
+            ->withQKSEncryptionKey($qksKey)
+
             ->withQKSClientID($qksClient)
             ->withQKSClientSecret($qksSecret);
 
@@ -173,7 +182,7 @@ class EnvironmentValidator
 
         if ($url) {
             $url = $url->asString();
-        } else {
+        } elseif ($url === null) {
             $this->errors[] = self::ERR_INVALID_CONSUL_SERVICE;
         }
 
@@ -182,13 +191,18 @@ class EnvironmentValidator
 
     /**
      * @param string $service
+     * @param string $encryptionKey
      * @param string $clientID
      * @param string $clientSecret
      *
      * @return string
      */
-    private function validateQKS($service, $clientID, $clientSecret)
+    private function validateQKS($service, $encryptionKey, $clientID, $clientSecret)
     {
+        if (strlen($encryptionKey) > 0 && preg_match(self::VALIDATE_QKS_KEY_REGEX, $encryptionKey) !== 1) {
+            $this->errors[] = self::ERR_INVALID_QKS_KEY;
+        }
+
         if (preg_match(self::VALIDATE_TOKEN_REGEX, $clientID) !== 1) {
             $this->errors[] = self::ERR_INVALID_CLIENT_ID;
         }
@@ -201,7 +215,7 @@ class EnvironmentValidator
 
         if ($url) {
             $url = $url->asString();
-        } else {
+        } elseif ($url === null) {
             $this->errors[] = self::ERR_INVALID_QKS_SERVICE;
         }
 

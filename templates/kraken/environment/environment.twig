@@ -48,6 +48,15 @@
                 {% endif %}
             </dd>
 
+            <dt class="split__title">Sending Encryption Key</dt>
+            <dd>
+                {% if environment.qksEncryptionKey %}
+                    <code>{{ environment.qksEncryptionKey }}</code>
+                {% else %}
+                    {{ macros.status('Not Configured', 'error', 'spam-2') }}
+                {% endif %}
+            </dd>
+
             <dt class="split__title">API Gateway Client ID</dt>
             <dd>
                 {% if environment.qksClientID %}

@@ -36,8 +36,6 @@ parameters:
         fViScOUIuz9FnbkWLQIDAQAB
         -----END PUBLIC KEY-----
 
-    kraken.qks.sourcekey: ''
-
     hal.agents:
         - 'localhost'
 

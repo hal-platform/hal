@@ -34,7 +34,7 @@
                 </li>
                 <li>
                     <label for="env-service">
-                        <span class="tooltipped tooltipped-e" aria-label="The consul service associated with this environment.">Service URL</span>
+                        <span class="tooltipped tooltipped-e" aria-label="Consul service associated with this environment.">Service URL</span>
                     </label>
 
                     <input type="text" name="service" id="env-service" maxlength="200" value="{{ form.service }}" class="text-input">
@@ -54,12 +54,20 @@
                 </li>
                 <li>
                     <label for="env-qks_service">
-                        <span class="tooltipped tooltipped-e" aria-label="The QKS service associated with this environment.">Service URL</span>
+                        <span class="tooltipped tooltipped-e" aria-label="QKS service associated with this environment.">Service URL</span>
                     </label>
 
                     <input type="text" name="qks_service" id="env-qks_service" maxlength="200" value="{{ form.qks_service }}" class="text-input">
                     <small class="additional">Must be the full URL and begin with <code>http://</code> or <code>https://</code>.</small>
                 </li>
+                <li>
+                    <label for="env-qks_key">
+                        <span class="tooltipped tooltipped-e" aria-label="QKS Encryption Key used as sending key.">Encryption Key</span>
+                    </label>
+
+                    <input type="text" name="qks_key" id="env-qks_key" maxlength="6" value="{{ form.qks_key }}" class="text-input t30">
+                </li>
+
                 <li>
                     <label for="env-qks_client">
                         <span class="tooltipped tooltipped-e" aria-label="Application Client ID from API Gateway.">Client ID</span>
