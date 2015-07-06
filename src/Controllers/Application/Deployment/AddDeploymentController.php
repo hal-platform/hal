@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Utility\SortingTrait;
+use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

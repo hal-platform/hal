@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityRepository;
 use MCP\DataType\Time\TimePoint;
 use Predis\Client as Predis;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Utility\SortingTrait;
+use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Json;

@@ -14,7 +14,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Utility\SortingTrait;
+use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\TemplateInterface;
