@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\Admin\Super;
 
 use Predis\Client as Predis;
+use Predis\Collection\Iterator\Keyspace;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -53,6 +54,7 @@ class CacheManagementController implements ControllerInterface
 
         $context = [
             'permissions' => $this->getPermissionTTLs($permissions),
+            'doctrine_cached' => $this->getDoctrine(),
             'opcache' => $this->getOpcacheData(),
         ];
 
@@ -64,16 +66,13 @@ class CacheManagementController implements ControllerInterface
      */
     private function getPermissions()
     {
-        $permissions = $this->predis->keys('mcp-cache:permissions:*');
+        $permissions = [];
+        foreach (new Keyspace($this->predis, '*:mcp-cache:permissions:*') as $key) {
+            $parts = explode(':', $key);
+            $permissions[] = array_pop($parts);
+        }
 
-        return array_map(function(&$key) {
-            $namespacePosition = strpos($key, ':');
-            if ($namespacePosition === false) {
-                return $key;
-            } else {
-                return substr($key, $namespacePosition + 1);
-            }
-        }, $permissions);
+        return $permissions;
     }
 
     /**
@@ -85,17 +84,31 @@ class CacheManagementController implements ControllerInterface
         $permissionTTLs = [];
 
         foreach ($permissions as $key) {
+            $key = sprintf('mcp-cache:permissions:%s', $key);
             $ttl = $this->predis->ttl($key);
-
-            $key = stristr($key, 'mcp-cache:permissions:');
-            if (0 === strpos($key, 'mcp-cache:permissions:')) {
-                $key = substr($key, 22);
-            }
 
             $permissionTTLs[$key] = $ttl;
         }
 
         return $permissionTTLs;
+    }
+
+    /**
+     * @return array
+     */
+    private function getDoctrine()
+    {
+        $doctrine = [];
+        foreach (new Keyspace($this->predis, '*:doctrine:*') as $key) {
+
+            // slice namespace
+            $parts = explode(':', $key);
+            array_shift($parts);
+
+            $doctrine[] = implode(':', $parts);
+        }
+
+        return $doctrine;
     }
 
     /**

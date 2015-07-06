@@ -7,11 +7,10 @@
 
 namespace QL\Hal\Controllers\Admin\Super;
 
-use Doctrine\ORM\Configuration;
+use Predis\Collection\Iterator\Keyspace;
 use Predis\Client as Predis;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
 class CacheManagementHandler implements MiddlewareInterface
@@ -28,19 +27,9 @@ class CacheManagementHandler implements MiddlewareInterface
     private $request;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type Url
-     */
-    private $url;
-
-    /**
-     * @type Configuration
-     */
-    private $doctrineConfig;
+    private $flasher;
 
     /**
      * @type Predis
@@ -49,24 +38,16 @@ class CacheManagementHandler implements MiddlewareInterface
 
     /**
      * @param Request $request
-     * @param Session $session
-     * @param Url $url
-     * @param Configuration $doctrineConfig
+     * @param Flasher $flasher
      * @param Predis $predis
      */
     public function __construct(
         Request $request,
-        Session $session,
-        Url $url,
-        Configuration $doctrineConfig,
+        Flasher $flasher,
         Predis $predis
     ) {
         $this->request = $request;
-
-        $this->session = $session;
-        $this->url = $url;
-
-        $this->doctrineConfig = $doctrineConfig;
+        $this->flasher = $flasher;
         $this->predis = $predis;
     }
 
@@ -100,12 +81,12 @@ class CacheManagementHandler implements MiddlewareInterface
         }
 
         if ($msg) {
-            $this->session->flash($msg, 'success');
+            $this->flasher->withFlash($msg, 'success');
         } else {
-            $this->session->flash(self::ERR_INVALID, 'error');
+            $this->flasher->withFlash(self::ERR_INVALID, 'error');
         }
 
-        $this->url->redirectFor('admin.super.caches', [], [], 303);
+        $this->flasher->load('admin.super.caches');
     }
 
     /**
@@ -113,37 +94,38 @@ class CacheManagementHandler implements MiddlewareInterface
      */
     private function clearPermissions()
     {
-        $permissions = $this->predis->keys('mcp-cache:permissions:*');
+        $keys = [];
+        foreach (new Keyspace($this->predis, '*:mcp-cache:permissions:*') as $key) {
 
-        $permissions = array_map(function(&$key) {
-            $namespacePosition = strpos($key, ':');
-            if ($namespacePosition === false) {
-                return $key;
-            } else {
-                return substr($key, $namespacePosition + 1);
-            }
-        }, $permissions);
+            // slice namespace
+            $parts = explode(':', $key);
+            array_shift($parts);
 
+            $keys[] = implode(':', $parts);
+        }
 
-        if ($permissions) {
-            call_user_func_array([$this->predis, 'del'], $permissions);
+        if ($keys) {
+            call_user_func_array([$this->predis, 'del'], $keys);
         }
     }
+
     /**
      * @return void
      */
     private function clearDoctrine()
     {
-        if ($cache = $this->doctrineConfig->getQueryCacheImpl()) {
-            $cache->deleteAll();
+        $keys = [];
+        foreach (new Keyspace($this->predis, '*:doctrine:*') as $key) {
+
+            // slice namespace
+            $parts = explode(':', $key);
+            array_shift($parts);
+
+            $keys[] = implode(':', $parts);
         }
 
-        if ($cache = $this->doctrineConfig->getHydrationCacheImpl()) {
-            $cache->deleteAll();
-        }
-
-        if ($cache = $this->doctrineConfig->getMetadataCacheImpl()) {
-            $cache->deleteAll();
+        if ($keys) {
+            call_user_func_array([$this->predis, 'del'], $keys);
         }
     }
 }

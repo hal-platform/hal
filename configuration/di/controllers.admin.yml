@@ -155,9 +155,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\Super\CacheManagementHandler'
         arguments:
             - @slim.request
-            - @session
-            - @url
-            - @doctrine.config
+            - @session.flasher
             - @redis
 
     admin.message.page:

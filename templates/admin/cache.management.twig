@@ -33,28 +33,64 @@
     <section class="trailer">
 
         <div class="details-box scrollable-box">
-            <div class="scrolly-container">
-                <table class="table--spacing-small" data-tablesaw-mode="stack">
-                    <thead>
-                        <tr>
-                            <th class="t70">Key</th>
-                            <th>TTL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for key, ttl in permissions %}
+            {% if permissions %}
+                <div class="scrolly-container">
+                    <table class="table--spacing-small" data-tablesaw-mode="stack">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div class="code_fixed">
-                                        <code>{{ key }}</code>
-                                    </div>
-                                </td>
-                                <td>{{ ttl }} seconds</td>
+                                <th class="t70">Key</th>
+                                <th>TTL</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {% for key, ttl in permissions %}
+                                <tr>
+                                    <td>
+                                        <div class="code_fixed">
+                                            <code>{{ key }}</code>
+                                        </div>
+                                    </td>
+                                    <td>{{ ttl }} seconds</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>No cached data found.</p>
+            {% endif %}
+        </div>
+
+    </section>
+
+    <h3>Doctrine Cache</h3>
+    <section class="trailer">
+
+        <div class="details-box scrollable-box">
+            {% if doctrine_cached %}
+                <div class="scrolly-container">
+                    <table class="table--spacing-small" data-tablesaw-mode="stack">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key in doctrine_cached %}
+                                <tr>
+                                    <td>
+                                        <div class="code_fixed">
+                                            <code>{{ key }}</code>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>No cached data found.</p>
+            {% endif %}
         </div>
 
     </section>
