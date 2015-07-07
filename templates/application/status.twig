@@ -51,15 +51,15 @@
 
     <ul class="button-list">
         {% if canUserBuild(currentUser, application) %}
-            <li><a class="btn btn--action" href="{{ urlFor('build.start', {'id': application.id}) }}">Start New Build</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('build.start', {'application': application.id}) }}">Start New Build</a></li>
         {% endif %}
 
         {% if builds %}
-            <li><a class="btn" href="{{ urlFor('build.history.page1', {'id': application.id}) }}">All Builds</a></li>
+            <li><a class="btn" href="{{ urlFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
         {% endif %}
 
         {% if hasPushes %}
-            <li><a class="btn" href="{{ urlFor('push.history.page1', {'id': application.id}) }}">All Pushes</a></li>
+            <li><a class="btn" href="{{ urlFor('push.history.page1', {'application': application.id}) }}">All Pushes</a></li>
         {% endif %}
 
         <li><a class="btn btn--secondary" href="{{ urlFor('application', {application: application.id}) }}">Application</a></li>
@@ -86,7 +86,7 @@
                 {% endif %}
 
                 {% if active %}
-                    <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'id': application.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
+                    <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'application': application.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
                         {{ macros.icon('revert') }}
                     </a>
                 {% endif %}

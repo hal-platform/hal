@@ -8,7 +8,6 @@
 namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
@@ -27,14 +26,14 @@ class PushesController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityRepository
-     */
-    private $applicationRepo;
-
-    /**
      * @type PushRepository
      */
     private $pushRepo;
+
+    /**
+     * @type Application
+     */
+    private $application;
 
     /**
      * @type Request
@@ -54,6 +53,7 @@ class PushesController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
+     * @param Application $application
      * @param Request $request
      * @param NotFound $notFound
      * @param array $parameters
@@ -61,14 +61,15 @@ class PushesController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        Application $application,
         Request $request,
         NotFound $notFound,
         array $parameters
     ) {
         $this->template = $template;
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
+        $this->application = $application;
         $this->request = $request;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -79,10 +80,6 @@ class PushesController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
         $page = (isset($this->parameters['page'])) ? $this->parameters['page'] : 1;
         $searchFilter = is_string($this->request->get('search')) ? $this->request->get('search') : '';
 
@@ -91,7 +88,7 @@ class PushesController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getByApplication($application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        $pushes = $this->pushRepo->getByApplication($this->application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
 
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -100,7 +97,7 @@ class PushesController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'application' => $application,
+            'application' => $this->application,
             'pushes' => $pushes,
             'search_filter' => $searchFilter
         ]);

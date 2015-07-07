@@ -112,6 +112,6 @@
         </tbody>
     </table>
 
-    {{ pagination.pagination(page, last, 'rollback', {'id': application.id, 'deployment': deployment.id}) }}
+    {{ pagination.pagination(page, last, 'rollback', {'application': application.id, 'deployment': deployment.id}) }}
 
 {% endblock %}

@@ -8,12 +8,10 @@
 namespace QL\Hal\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Service\GitHubService;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -24,11 +22,6 @@ class StartBuildController implements ControllerInterface
      * @type TemplateInterface
      */
     private $template;
-
-    /**
-     * @type EntityRepository
-     */
-    private $applicationRepo;
 
     /**
      * @type EnvironmentRepository
@@ -46,39 +39,30 @@ class StartBuildController implements ControllerInterface
     private $request;
 
     /**
-     * @type NotFound
+     * @type Application
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $application;
 
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param GitHubService $github
      * @param Request $request
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Application $application
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         GitHubService $github,
         Request $request,
-        NotFound $notFound,
-        array $parameters
+        Application $application
     ) {
         $this->template = $template;
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->github = $github;
 
         $this->request = $request;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->application = $application;
     }
 
     /**
@@ -86,10 +70,6 @@ class StartBuildController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
         $context = [
             'form' => [
                 'environment' => $this->request->post('environment'),
@@ -98,12 +78,12 @@ class StartBuildController implements ControllerInterface
                 'gitref' => $this->request->post('gitref')
             ],
 
-            'application' => $application,
-            'branches' => $this->getBranches($application),
-            'tags' => $this->getTags($application),
-            'open' => $this->getPullRequests($application),
-            'closed' => $this->getPullRequests($application, false),
-            'environments' => $this->getBuildableEnvironments($application)
+            'application' => $this->application,
+            'branches' => $this->getBranches($this->application),
+            'tags' => $this->getTags($this->application),
+            'open' => $this->getPullRequests($this->application),
+            'closed' => $this->getPullRequests($this->application, false),
+            'environments' => $this->getBuildableEnvironments($this->application)
         ];
 
         $this->template->render($context);

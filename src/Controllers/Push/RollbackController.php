@@ -8,7 +8,6 @@
 namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
@@ -27,12 +26,6 @@ class RollbackController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityRepository
-     */
-    private $applicationRepo;
-    private $deploymentRepo;
-
-    /**
      * @type PushRepository
      */
     private $pushRepo;
@@ -43,6 +36,16 @@ class RollbackController implements ControllerInterface
     private $notFound;
 
     /**
+     * @type Application
+     */
+    private $application;
+
+    /**
+     * @type Deployment
+     */
+    private $deployment;
+
+    /**
      * @type array
      */
     private $parameters;
@@ -51,21 +54,26 @@ class RollbackController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param NotFound $notFound
+     * @param Application $application
+     * @param Deployment $deployment
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         NotFound $notFound,
+        Application $application,
+        Deployment $deployment,
         array $parameters
     ) {
         $this->template = $template;
 
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
-        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
         $this->notFound = $notFound;
+        $this->application = $application;
+        $this->deployment = $deployment;
+
         $this->parameters = $parameters;
     }
 
@@ -74,16 +82,6 @@ class RollbackController implements ControllerInterface
      */
     public function __invoke()
     {
-        $application = $this->applicationRepo->find($this->parameters['id']);
-        $deployment = $this->deploymentRepo->findOneBy([
-            'id' => $this->parameters['deployment'],
-            'application' => $application
-        ]);
-
-        if (!$application || !$deployment) {
-            return call_user_func($this->notFound);
-        }
-
         $page = (isset($this->parameters['page'])) ? $this->parameters['page'] : 1;
 
         // 404, invalid page
@@ -91,7 +89,7 @@ class RollbackController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getByApplication($application, self::MAX_PER_PAGE, ($page-1));
+        $pushes = $this->pushRepo->getByApplication($this->application, self::MAX_PER_PAGE, ($page-1));
 
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -100,8 +98,8 @@ class RollbackController implements ControllerInterface
             'page' => $page,
             'last' => $last,
 
-            'application' => $application,
-            'deployment' => $deployment,
+            'application' => $this->application,
+            'deployment' => $this->deployment,
             'pushes' => $pushes
         ]);
     }

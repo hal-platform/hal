@@ -85,15 +85,15 @@ parameters:
 
         build.history.page1:
             method: 'GET'
-            route: '/repositories/:id/builds'
-            stack: ['middleware.login', 'builds.page']
-            conditions: {id: %routes.regex.digit%}
+            route: '/applications/:application/builds'
+            stack: ['middleware.login', 'middleware.requireEntity', 'builds.page']
+            conditions: {application: %routes.regex.digit%}
         build.history:
             method: 'GET'
-            route: '/repositories/:id/builds(/page/:page)'
-            stack: ['middleware.login', 'builds.page']
+            route: '/applications/:application/builds(/page/:page)'
+            stack: ['middleware.login', 'middleware.requireEntity', 'builds.page']
             conditions:
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
                 page: %routes.regex.digit%
 
         build:
@@ -104,9 +104,9 @@ parameters:
 
         build.start:
             method: ['GET', 'POST']
-            route: '/repositories/:id/build'
-            stack: ['middleware.login', 'build.start.handler', 'build.start.page']
-            conditions: {id: %routes.regex.digit%}
+            route: '/applications/:application/build'
+            stack: ['middleware.login', 'middleware.requireEntity', 'build.start.handler', 'build.start.page']
+            conditions: {application: %routes.regex.digit%}
 
         ################################################################################################################
         # PUSH ROUTES
@@ -126,31 +126,31 @@ parameters:
 
         push.history.page1:
             method: 'GET'
-            route: '/repositories/:id/pushes'
-            stack: ['middleware.login', 'pushes.page']
-            conditions: {id: %routes.regex.digit%}
+            route: '/applications/:application/pushes'
+            stack: ['middleware.login', 'middleware.requireEntity', 'pushes.page']
+            conditions: {application: %routes.regex.digit%}
         push.history:
             method: 'GET'
-            route: '/repositories/:id/pushes(/page/:page)'
-            stack: ['middleware.login', 'pushes.page']
+            route: '/applications/:application/pushes(/page/:page)'
+            stack: ['middleware.login', 'middleware.requireEntity', 'pushes.page']
             conditions:
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
                 page: %routes.regex.digit%
 
         rollback.page1:
             method: 'GET'
-            route: '/repositories/:id/deployments/:deployment/pushes'
-            stack: ['middleware.login', 'push.rollback.page']
+            route: '/applications/:application/deployments/:deployment/pushes'
+            stack: ['middleware.login', 'middleware.requireEntity', 'push.rollback.page']
             conditions:
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
                 deployment: %routes.regex.digit%
 
         rollback:
             method: 'GET'
-            route: '/repositories/:id/deployments/:deployment/pushes(/page/:page)'
-            stack: ['middleware.login', 'push.rollback.page']
+            route: '/applications/:application/deployments/:deployment/pushes(/page/:page)'
+            stack: ['middleware.login', 'middleware.requireEntity', 'push.rollback.page']
             conditions:
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
                 deployment: %routes.regex.digit%
 
         ################################################################################################################

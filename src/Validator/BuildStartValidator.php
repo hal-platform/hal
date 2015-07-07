@@ -38,7 +38,6 @@ class BuildStartValidator
     /**
      * @type EntityRepository
      */
-    private $applicationRepo;
     private $envRepo;
 
     /**
@@ -73,7 +72,6 @@ class BuildStartValidator
         PermissionsService $permissions,
         User $currentUser
     ) {
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
 
         $this->github = $github;
@@ -84,14 +82,14 @@ class BuildStartValidator
     }
 
     /**
-     * @param string $applicationId
-     * @param string $environmentId
+     * @param Application $application
+     * @param string $environmentID
      * @param string $gitReference
      * @param string $gitSearch
      *
      * @return Build|null
      */
-    public function isValid($applicationId, $environmentId, $gitReference, $gitSearch)
+    public function isValid(Application $application, $environmentID, $gitReference, $gitSearch)
     {
         $this->errors = [];
 
@@ -108,18 +106,12 @@ class BuildStartValidator
         // 2. "search" - a search query provided by user
         $reference = $this->parseSubmittedRef($gitReference, $gitSearch);
 
-        if (!$this->sanityCheck($applicationId, $environmentId, $reference)) {
-            return null;
-        }
-
-        // no repo
-        if (!$application = $this->applicationRepo->find($applicationId)) {
-            $this->errors[] = self::ERR_NO_REPO;
+        if (!$this->sanityCheck($environmentID, $reference)) {
             return null;
         }
 
         // no env
-        if (!$env = $this->envRepo->find($environmentId)) {
+        if (!$env = $this->envRepo->find($environmentID)) {
             $this->errors[] = self::ERR_NO_ENV;
             return null;
         }
@@ -188,20 +180,14 @@ class BuildStartValidator
     }
 
     /**
-     * @param string $applicationId
-     * @param string $environmentId
+     * @param string $environmentID
      * @param string $gitReference
      *
      * @return bool
      */
-    private function sanityCheck($applicationId, $environmentId, $gitReference)
+    private function sanityCheck($environmentID, $gitReference)
     {
-        if (!$applicationId) {
-            $this->errors[] = self::ERR_NO_APPLICATION;
-            return false;
-        }
-
-        if (!$environmentId) {
+        if (!$environmentID) {
             $this->errors[] = self::ERR_NO_ENV;
             return false;
         }

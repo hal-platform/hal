@@ -141,8 +141,7 @@ services:
             - @doctrine.em
             - @github
             - @slim.request
-            - @slim.not.found
-            - @slim.route.parameters
+            - @hal.application
     build.start.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/start.twig']]]
@@ -152,13 +151,12 @@ services:
         arguments:
             - @doctrine.em
             - @build.start.validator
-            - @session
-            - @url
+            - @session.flasher
             - @utility.id.generator
             - @twig.context
             - @slim.request
             - @sticky.environment
-            - @slim.route.parameters
+            - @hal.application
     build.start.validator:
         class: 'QL\Hal\Validator\BuildStartValidator'
         arguments:
@@ -172,6 +170,7 @@ services:
         arguments:
             - @builds.twig
             - @doctrine.em
+            - @hal.application
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
@@ -215,6 +214,8 @@ services:
             - @rollback.twig
             - @doctrine.em
             - @slim.not.found
+            - @hal.application
+            - @hal.deployment
             - @slim.route.parameters
     rollback.twig:
         parent: 'twig.auto.template'
@@ -236,6 +237,7 @@ services:
         arguments:
             - @pushes.twig
             - @doctrine.em
+            - @hal.application
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters

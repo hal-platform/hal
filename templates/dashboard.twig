@@ -40,12 +40,12 @@
             {% if recent_applications|length > 3 %}
                 <ul class="button-list">
                     {% for id, app in recent_applications %}
-                        <li><a class="btn" href="{{ urlFor('build.start', {'id': id}) }}">{{ app }}</a></li>
+                        <li><a class="btn" href="{{ urlFor('build.start', {'application': id}) }}">{{ app }}</a></li>
                     {% endfor %}
                 </ul>
             {% else %}
                 {% for id, app in recent_applications %}
-                    <a class="btn" href="{{ urlFor('build.start', {'id': id}) }}">{{ app }}</a>
+                    <a class="btn" href="{{ urlFor('build.start', {'application': id}) }}">{{ app }}</a>
                 {% endfor %}
             {% endif %}
         </section>
