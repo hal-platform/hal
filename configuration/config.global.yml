@@ -100,10 +100,6 @@ parameters:
     session.cookie.configuration:
         lifetime: '5 days'
     cookie.preferences.ttl: '5 years'
-    cookie.unencrypted:
-        - 'navpreferences'
-        - 'stickyenvironment'
-        - 'seriousbusiness'
 
     ############################################################################
     # permission settings
