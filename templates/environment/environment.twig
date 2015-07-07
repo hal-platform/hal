@@ -42,9 +42,9 @@
     <ul class="button-list button-list--half">
         <li><a class="btn" href="{{ urlFor('environments') }}">Environments</a></li>
         {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('environment.admin.edit', {id: env.id}) }}">Edit Environment</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('environment.edit', {id: env.id}) }}">Edit Environment</a></li>
             {% if not servers and isAdmin %}
-                <li><a class="btn btn--destructive" href="{{ urlFor('environment.admin.remove', {id: env.id}) }}">Remove Environment</a></li>
+                <li><a class="btn btn--destructive" href="{{ urlFor('environment.remove', {id: env.id}) }}">Remove Environment</a></li>
             {% endif %}
         {% endif %}
     </ul>

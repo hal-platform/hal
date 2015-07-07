@@ -87,7 +87,7 @@ class AddServerController implements ControllerInterface
         if (!$environments = $this->envRepo->getAllEnvironmentsSorted()) {
             return $this->flasher
                 ->withFlash(self::ERR_NO_ENVIRONMENTS, 'error')
-                ->load('environment.admin.add');
+                ->load('environment.add');
         }
 
         $form = [

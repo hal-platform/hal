@@ -315,24 +315,24 @@ parameters:
         # ENVIRONMENT ROUTES - ADMIN
         ################################################################################################################
 
-        environment.admin.add:
+        environment.add:
             method: ['GET', 'POST']
             route: '/environments/add'
-            stack: ['middleware.admin', 'environment.admin.add.page']
+            stack: ['middleware.admin', 'environment.add.page']
 
-        environment.admin.remove.confirm:
+        environment.edit:
+            method: ['GET', 'POST']
+            route: '/environments/:id/edit'
+            stack: ['middleware.admin', 'environment.edit.page']
+            conditions: {id: %routes.regex.digit%}
+
+        environment.remove.confirm:
             method: 'GET'
             route: '/environments/:id/delete'
             stack: ['middleware.admin', 'delete.confirm.page']
             conditions: {id: %routes.regex.digit%}
-        environment.admin.remove:
+        environment.remove:
             method: 'POST'
             route: '/environments/:id/delete'
-            stack: ['middleware.admin', 'environment.admin.remove.handler']
-            conditions: {id: %routes.regex.digit%}
-
-        environment.admin.edit:
-            method: ['GET', 'POST']
-            route: '/environments/:id/edit'
-            stack: ['middleware.admin', 'environment.admin.edit.page']
+            stack: ['middleware.admin', 'environment.remove.handler']
             conditions: {id: %routes.regex.digit%}

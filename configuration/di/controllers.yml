@@ -270,31 +270,31 @@ services:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/environment.twig']]]
 
-    environment.admin.add.page:
+    environment.add.page:
         class: 'QL\Hal\Controllers\Environment\AddEnvironmentController'
         arguments:
-            - @environment.admin.add.twig
+            - @environment.add.twig
             - @doctrine.em
             - @session.flasher
             - @slim.request
-    environment.admin.add.twig:
+    environment.add.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['environment/admin.add.twig']]]
+        calls: [['setTemplate', ['environment/environment.add.twig']]]
 
-    environment.admin.edit.page:
+    environment.edit.page:
         class: 'QL\Hal\Controllers\Environment\EditEnvironmentController'
         arguments:
-            - @environment.admin.edit.twig
+            - @environment.edit.twig
             - @doctrine.em
             - @session.flasher
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
-    environment.admin.edit.twig:
+    environment.edit.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['environment/admin.edit.twig']]]
+        calls: [['setTemplate', ['environment/environment.edit.twig']]]
 
-    environment.admin.remove.handler:
+    environment.remove.handler:
         class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentHandler'
         arguments:
             - @doctrine.em
