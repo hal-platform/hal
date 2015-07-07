@@ -18,10 +18,9 @@ tbody tr {
     }
 }
 
-td {
-    // padding: 0 msem(-3);
-    // @include rhythm(0,.25,.25,0, ms(0));
-    // text-align:left;
+// reset back to normal, since scales sets this to center.
+[colspan] {
+    text-align: left;
 }
 
 // In the example markup above you can see several <col> elements with classes whose numbers
