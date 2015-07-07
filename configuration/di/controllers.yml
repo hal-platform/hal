@@ -88,30 +88,30 @@ services:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['group/group.twig']]]
 
-    group.admin.add.page:
+    group.add.page:
         class: 'QL\Hal\Controllers\Group\AddGroupController'
         arguments:
-            - @group.admin.add.twig
+            - @group.add.twig
             - @doctrine.em
             - @session.flasher
             - @slim.request
-    group.admin.add.twig:
+    group.add.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['group/admin.add.twig']]]
+        calls: [['setTemplate', ['group/group.add.twig']]]
 
-    group.admin.edit.page:
+    group.edit.page:
         class: 'QL\Hal\Controllers\Group\EditGroupController'
         arguments:
-            - @group.admin.edit.twig
+            - @group.edit.twig
             - @doctrine.em
             - @session.flasher
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
-    group.admin.edit.twig:
+    group.edit.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['group/admin.edit.twig']]]
-    group.admin.remove.handler:
+        calls: [['setTemplate', ['group/group.edit.twig']]]
+    group.remove.handler:
         class: 'QL\Hal\Controllers\Group\RemoveGroupController'
         arguments:
             - @doctrine.em

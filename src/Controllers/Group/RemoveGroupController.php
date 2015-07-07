@@ -88,6 +88,6 @@ class RemoveGroupController implements ControllerInterface
         $message = sprintf(self::SUCCESS, $group->name());
         return $this->flasher
             ->withFlash($message, 'success')
-            ->load('groups');
+            ->load('applications');
     }
 }
