@@ -24,6 +24,7 @@ services:
     hal.application:     { synthetic: true }
     hal.deployment:      { synthetic: true }
     hal.encrypted:       { synthetic: true }
+    hal.environment:     { synthetic: true }
 
     ######################################################################################################################
     # DOCTRINE CONFIGURATION

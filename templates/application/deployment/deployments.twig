@@ -14,11 +14,16 @@
 
     {% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
 
-    {% if environments %}
+    {% if deployment_by_env %}
 
-        {% for environment in environments %}
+        {% for name, deployments in deployment_by_env %}
 
-            <h2>{{ environment.name }}</h2>
+            {% set environment = environments[name] %}
+
+            <h2 class="mbn">{{ name }}</h2>
+            <p>
+                <a href="{{ urlFor('pools', {'application': application.id, 'environment': environment.id}) }}">Manage deployment pools</a>
+            </p>
 
             <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
                 <thead>
@@ -30,7 +35,7 @@
                     </tr>
                 </thead>
                 <tbody class="js-add-deployment--{{ environment.name }}">
-                    {% for deployment in deployments if deployment.server.environment == environment %}
+                    {% for deployment in deployments %}
 
                         <tr>
                             <td>{{ deployment|formatDeploymentServer }}</td>

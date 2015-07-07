@@ -97,6 +97,17 @@ parameters:
                 deployment: %routes.regex.digit%
 
         ################################################################################################################
+        # REPOSITORY POOLS ROUTES
+        ################################################################################################################
+
+        pools:
+            route: '/applications/:application/environments/:environment/pools'
+            stack: ['middleware.login', 'middleware.requireEntity', 'pools.page']
+            conditions:
+                application: %routes.regex.digit%
+                environment: %routes.regex.digit%
+
+        ################################################################################################################
         # REPOSITORY ENCRYPTED PROPERTIES ROUTES
         ################################################################################################################
 

@@ -303,7 +303,6 @@ parameters:
             method: 'GET'
             route: '/environments'
             stack: ['middleware.login', 'environments.page']
-            conditions: {id: %routes.regex.digit%}
 
         environment:
             method: 'GET'

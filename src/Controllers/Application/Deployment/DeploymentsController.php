@@ -67,29 +67,55 @@ class DeploymentsController implements ControllerInterface
      */
     public function __invoke()
     {
-        // Get and sort deployments
-        $deployments = $this->deploymentRepo->findBy(['application' => $this->application]);
-        $sorter = $this->deploymentSorter();
-        usort($deployments, $sorter);
-
         $environments = $this->environmentRepo->getAllEnvironmentsSorted();
 
+        $assoc = [];
+        foreach ($environments as $env) {
+            $assoc[$env->name()] = $env;
+        }
+
         $this->template->render([
-            'environments' => $environments,
-            'servers_by_env' => $this->environmentalizeServers($environments, $this->serverRepo->findAll()),
-            'deployments' => $deployments,
+            'servers_by_env' => $this->environmentalizeServers($environments),
+            'deployment_by_env' => $this->environmentalizeDeployments($environments),
+
+            'environments' => $assoc,
             'application' => $this->application
         ]);
     }
 
     /**
      * @param Environment[] $environments
-     * @param Server[] $servers
      *
      * @return array
      */
-    private function environmentalizeServers(array $environments, array $servers)
+    private function environmentalizeDeployments(array $environments)
     {
+        $deployments = $this->deploymentRepo->findBy(['application' => $this->application]);
+        $sorter = $this->deploymentSorter();
+        usort($deployments, $sorter);
+
+        $env = [];
+        foreach ($environments as $environment) {
+            $env[$environment->name()] = [];
+        }
+
+        foreach ($deployments as $deployment) {
+            $name = $deployment->server()->environment()->name();
+            $env[$name][] = $deployment;
+        }
+
+        return $env;
+    }
+
+    /**
+     * @param Environment[] $environments
+     *
+     * @return array
+     */
+    private function environmentalizeServers(array $environments)
+    {
+        $servers = $this->serverRepo->findAll();
+
         $env = [];
         foreach ($environments as $environment) {
             $env[$environment->name()] = [];

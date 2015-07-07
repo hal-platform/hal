@@ -11,11 +11,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class EncryptedPropertiesController implements ControllerInterface
 {
+    use SortingTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -63,12 +66,7 @@ class EncryptedPropertiesController implements ControllerInterface
 
     private function sortByEnv()
     {
-        $order = [
-            'dev' => 0,
-            'test' => 1,
-            'beta' => 2,
-            'prod' => 3
-        ];
+        $order = $this->sortingHelperEnvironmentOrder;
 
         return function($prop1, $prop2) use ($order) {
 
