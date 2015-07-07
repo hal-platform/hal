@@ -5,9 +5,9 @@ parameters:
         # REPOSITORY ROUTES
         ################################################################################################################
 
-        repositories:
+        applications:
             method: 'GET'
-            route: '/repositories'
+            route: '/applications'
             stack: ['middleware.login', 'applications.page']
 
         repository:

@@ -88,7 +88,7 @@ parameters:
     navigation.list:
         dashboard: 'Dashboard'
         queue: 'Queue'
-        repositories: 'Applications'
+        applications: 'Applications'
         servers: 'Servers'
         environments: 'Environments'
         users: 'Users'

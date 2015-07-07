@@ -41,7 +41,7 @@ class BuildNormalizer
     /**
      * @var ApplicationNormalizer
      */
-    private $repositories;
+    private $appNormalizer;
 
     /**
      * @var EnvironmentNormalizer
@@ -58,7 +58,7 @@ class BuildNormalizer
      * @param GitHubURLBuilder $urlBuilder
      *
      * @param UserNormalizer $users
-     * @param ApplicationNormalizer $repositories
+     * @param ApplicationNormalizer $appNormalizer
      * @param EnvironmentNormalizer $environments
      */
     public function __construct(
@@ -66,14 +66,14 @@ class BuildNormalizer
         GitHubURLBuilder $urlBuilder,
 
         UserNormalizer $users,
-        ApplicationNormalizer $repositories,
+        ApplicationNormalizer $appNormalizer,
         EnvironmentNormalizer $environments
     ) {
         $this->url = $url;
         $this->urlBuilder = $urlBuilder;
 
         $this->users = $users;
-        $this->repositories = $repositories;
+        $this->appNormalizer = $appNormalizer;
         $this->environments = $environments;
 
         $this->embed = [];
@@ -147,7 +147,7 @@ class BuildNormalizer
             [
                 'self' => $this->link($build),
                 'user' => $this->users->link($build->user()),
-                'application' => $this->repositories->link($build->application()),
+                'application' => $this->appNormalizer->link($build->application()),
                 'environment' => $this->environments->link($build->environment()),
                 'logs' => $this->buildLink(['api.build.logs', ['id' => $build->id()]]),
             ]

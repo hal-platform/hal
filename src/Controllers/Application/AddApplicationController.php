@@ -116,7 +116,7 @@ class AddApplicationController implements ControllerInterface
                 $message = sprintf(self::SUCCESS, $application->key());
                 return $this->flasher
                     ->withFlash($message, 'success')
-                    ->load('repositories');
+                    ->load('applications');
             }
         }
 

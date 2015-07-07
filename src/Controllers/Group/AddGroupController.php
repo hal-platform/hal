@@ -88,7 +88,7 @@ class AddGroupController implements ControllerInterface
                 $message = sprintf('Group "%s" added.', $group->name());
                 return $this->flasher
                     ->withFlash($message, 'success')
-                    ->load('repositories');
+                    ->load('applications');
             }
         }
 

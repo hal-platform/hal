@@ -19,7 +19,7 @@ class DeploymentNormalizer
     /**
      * @var ApplicationNormalizer
      */
-    private $repositories;
+    private $appNormalizer;
 
     /**
      * @var ServerNormalizer
@@ -32,14 +32,14 @@ class DeploymentNormalizer
     private $embed;
 
     /**
-     * @param ApplicationNormalizer $repositories
+     * @param ApplicationNormalizer $appNormalizer
      * @param ServerNormalizer $servers
      */
     public function __construct(
-        ApplicationNormalizer $repositories,
+        ApplicationNormalizer $appNormalizer,
         ServerNormalizer $servers
     ) {
-        $this->repositories = $repositories;
+        $this->appNormalizer = $appNormalizer;
         $this->servers = $servers;
 
         $this->embed = [];
@@ -86,7 +86,7 @@ class DeploymentNormalizer
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($deployment),
-                'application' => $this->repositories->link($deployment->application()),
+                'application' => $this->appNormalizer->link($deployment->application()),
                 'server' => $this->servers->link($deployment->server()),
                 'last-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
                 'last-successful-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']])

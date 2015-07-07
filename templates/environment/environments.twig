@@ -36,7 +36,7 @@
     {% endif %}
 
     <ul class="button-list button-list--half">
-        <li><a class="btn" href="{{ urlFor('repositories') }}">Applications</a></li>
+        <li><a class="btn" href="{{ urlFor('applications') }}">Applications</a></li>
 
         {% if isUserSuper(currentUser) %}
             <li><a class="btn btn--action" href="{{ urlFor('environment.admin.add') }}">Add Environment</a></li>

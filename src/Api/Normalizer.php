@@ -66,7 +66,7 @@ class Normalizer
     /**
      * @var ApplicationNormalizer
      */
-    private $repositories;
+    private $appNormalizer;
 
     /**
      * @var ServerNormalizer
@@ -95,7 +95,7 @@ class Normalizer
      * @param EventLogNormalizer $events
      * @param GroupNormalizer $groups
      * @param PushNormalizer $pushes
-     * @param ApplicationNormalizer $repositories
+     * @param ApplicationNormalizer $appNormalizer
      * @param ServerNormalizer $servers
      * @param UserNormalizer $users
      * @param TimePointNormalizer $time
@@ -108,7 +108,7 @@ class Normalizer
         EventLogNormalizer $events,
         GroupNormalizer $groups,
         PushNormalizer $pushes,
-        ApplicationNormalizer $repositories,
+        ApplicationNormalizer $appNormalizer,
         ServerNormalizer $servers,
         UserNormalizer $users,
         TimePointNormalizer $time,
@@ -120,7 +120,7 @@ class Normalizer
         $this->events = $events;
         $this->groups = $groups;
         $this->pushes = $pushes;
-        $this->repositories = $repositories;
+        $this->appNormalizer = $appNormalizer;
         $this->servers = $servers;
         $this->users = $users;
         $this->time = $time;
@@ -144,7 +144,7 @@ class Normalizer
 
         switch (true) {
             case $input instanceof Application:
-                return $this->resolve($this->repositories->resource($input));
+                return $this->resolve($this->appNormalizer->resource($input));
             case $input instanceof Build:
                 return $this->resolve($this->builds->resource($input));
             case $input instanceof Deployment:

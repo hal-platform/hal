@@ -45,7 +45,7 @@ class PushNormalizer
     /**
      * @var ApplicationNormalizer
      */
-    private $repositories;
+    private $appNormalizer;
 
     /**
      * @var array
@@ -57,21 +57,21 @@ class PushNormalizer
      * @param UserNormalizer $users
      * @param BuildNormalizer $builds
      * @param DeploymentNormalizer $deployments
-     * @param ApplicationNormalizer $repositories
+     * @param ApplicationNormalizer $appNormalizer
      */
     public function __construct(
         Url $url,
         UserNormalizer $users,
         BuildNormalizer $builds,
         DeploymentNormalizer $deployments,
-        ApplicationNormalizer $repositories
+        ApplicationNormalizer $appNormalizer
     ) {
         $this->url = $url;
 
         $this->users = $users;
         $this->builds = $builds;
         $this->deployments = $deployments;
-        $this->repositories = $repositories;
+        $this->appNormalizer = $appNormalizer;
 
         $this->embed = [];
     }
@@ -131,7 +131,7 @@ class PushNormalizer
                 'user' => $this->users->link($push->user()),
                 'build' => $this->builds->link($push->build()),
                 'deployment' => $this->deployments->link($push->deployment()),
-                'application' => $this->repositories->link($push->application()),
+                'application' => $this->appNormalizer->link($push->application()),
                 'logs' => $this->buildLink(['api.push.logs', ['id' => $push->id()]])
             ]
         );
