@@ -14,9 +14,6 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Github\GitHubURLBuilder;
 use QL\Panthor\Utility\Url;
 
-/**
- * Build Object Normalizer
- */
 class BuildNormalizer
 {
     use HypermediaLinkTrait;
@@ -36,7 +33,7 @@ class BuildNormalizer
     /**
      * @var UserNormalizer
      */
-    private $users;
+    private $userNormalizer;
 
     /**
      * @var ApplicationNormalizer
@@ -46,7 +43,7 @@ class BuildNormalizer
     /**
      * @var EnvironmentNormalizer
      */
-    private $environments;
+    private $envNormalizer;
 
     /**
      * @var array
@@ -57,24 +54,24 @@ class BuildNormalizer
      * @param Url $url
      * @param GitHubURLBuilder $urlBuilder
      *
-     * @param UserNormalizer $users
+     * @param UserNormalizer $userNormalizer
      * @param ApplicationNormalizer $appNormalizer
-     * @param EnvironmentNormalizer $environments
+     * @param EnvironmentNormalizer $envNormalizer
      */
     public function __construct(
         Url $url,
         GitHubURLBuilder $urlBuilder,
 
-        UserNormalizer $users,
+        UserNormalizer $userNormalizer,
         ApplicationNormalizer $appNormalizer,
-        EnvironmentNormalizer $environments
+        EnvironmentNormalizer $envNormalizer
     ) {
         $this->url = $url;
         $this->urlBuilder = $urlBuilder;
 
-        $this->users = $users;
+        $this->userNormalizer = $userNormalizer;
         $this->appNormalizer = $appNormalizer;
-        $this->environments = $environments;
+        $this->envNormalizer = $envNormalizer;
 
         $this->embed = [];
     }
@@ -118,39 +115,82 @@ class BuildNormalizer
             'environment' => $build->environment()
         ];
 
+
         return $this->buildResource(
             [
                 'id' => $build->id(),
                 'status' => $build->status(),
-                'url' => $this->url->absoluteUrlFor('build', ['build' => $build->id()]),
+
                 'created' => $build->created(),
                 'start' => $build->start(),
                 'end' => $build->end(),
-                'reference' => [
-                    'text' => $build->branch(),
-                    'url' => $this->urlBuilder->githubReferenceURL(
-                        $build->application()->githubOwner(),
-                        $build->application()->githubRepo(),
-                        $build->branch()
-                    )
-                ],
-                'commit' => [
-                    'text' => $build->commit(),
-                    'url' => $this->urlBuilder->githubCommitURL(
-                        $build->application()->githubOwner(),
-                        $build->application()->githubRepo(),
-                        $build->commit()
-                    )
-                ]
+
+                'reference' => $build->branch(),
+                'commit' => $build->commit()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            [
-                'self' => $this->link($build),
-                'user' => $this->users->link($build->user()),
-                'application' => $this->appNormalizer->link($build->application()),
-                'environment' => $this->environments->link($build->environment()),
-                'logs' => $this->buildLink(['api.build.logs', ['id' => $build->id()]]),
-            ]
+            $this->buildLinks($build)
         );
+    }
+
+    /**
+     * @param Build $build
+     *
+     * @return array
+     */
+    private function buildLinks(Build $build)
+    {
+        $ghOwner = $build->application()->githubOwner();
+        $ghRepo = $build->application()->githubRepo();
+
+        $self = [
+            'self' => $this->link($build)
+        ];
+
+        $links = [
+            'application' => $this->appNormalizer->link($build->application()),
+            'environment' => $this->envNormalizer->link($build->environment()),
+            'logs' => $this->buildLink(['api.build.logs', ['id' => $build->id()]]),
+        ];
+
+        $pages = [
+            'page' => $this->buildLink(
+                ['build', ['build' => $build->id()]],
+                [
+                    'type' => 'text/html'
+                ]
+            ),
+            'github_reference_page' => $this->buildLink(
+                $this->urlBuilder->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
+                [
+                    'type' => 'text/html'
+                ]
+            ),
+            'github_commit_page' => $this->buildLink(
+                $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->branch()),
+                [
+                    'type' => 'text/html'
+                ]
+            )
+        ];
+
+        if ($build->user()) {
+            $self += [
+                'user' => $this->userNormalizer->link($build->user())
+            ];
+        }
+
+        if ($build->status() === 'Success') {
+            $pages += [
+                'start_push_page' => $this->buildLink(
+                    ['push.start', ['build' => $build->id()]],
+                    [
+                        'type' => 'text/html'
+                    ]
+                )
+            ];
+        }
+
+        return $self + $links + $pages;
     }
 }

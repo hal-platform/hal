@@ -13,9 +13,6 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
 use QL\Panthor\Utility\Url;
 
-/**
- * Push Object Normalizer
- */
 class PushNormalizer
 {
     use HypermediaLinkTrait;
@@ -30,17 +27,17 @@ class PushNormalizer
     /**
      * @var UserNormalizer
      */
-    private $users;
+    private $userNormalizer;
 
     /**
      * @var BuildNormalizer
      */
-    private $builds;
+    private $buildNormalizer;
 
     /**
      * @var DeploymentNormalizer
      */
-    private $deployments;
+    private $deploymentNormalizer;
 
     /**
      * @var ApplicationNormalizer
@@ -54,23 +51,23 @@ class PushNormalizer
 
     /**
      * @param Url $url
-     * @param UserNormalizer $users
-     * @param BuildNormalizer $builds
-     * @param DeploymentNormalizer $deployments
+     * @param UserNormalizer $userNormalizer
+     * @param BuildNormalizer $buildNormalizer
+     * @param DeploymentNormalizer $deploymentNormalizer
      * @param ApplicationNormalizer $appNormalizer
      */
     public function __construct(
         Url $url,
-        UserNormalizer $users,
-        BuildNormalizer $builds,
-        DeploymentNormalizer $deployments,
+        UserNormalizer $userNormalizer,
+        BuildNormalizer $buildNormalizer,
+        DeploymentNormalizer $deploymentNormalizer,
         ApplicationNormalizer $appNormalizer
     ) {
         $this->url = $url;
 
-        $this->users = $users;
-        $this->builds = $builds;
-        $this->deployments = $deployments;
+        $this->userNormalizer = $userNormalizer;
+        $this->buildNormalizer = $buildNormalizer;
+        $this->deploymentNormalizer = $deploymentNormalizer;
         $this->appNormalizer = $appNormalizer;
 
         $this->embed = [];
@@ -120,20 +117,54 @@ class PushNormalizer
             [
                 'id' => $push->id(),
                 'status' => $push->status(),
-                'url' => $this->url->absoluteUrlFor('push', ['push' => $push->id()]),
+
                 'created' => $push->created(),
                 'start' => $push->start(),
                 'end' => $push->end()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            [
-                'self' => $this->link($push),
-                'user' => $this->users->link($push->user()),
-                'build' => $this->builds->link($push->build()),
-                'deployment' => $this->deployments->link($push->deployment()),
-                'application' => $this->appNormalizer->link($push->application()),
-                'logs' => $this->buildLink(['api.push.logs', ['id' => $push->id()]])
-            ]
+            $this->buildLinks($push)
         );
+    }
+
+    /**
+     * @param Push $push
+     *
+     * @return array
+     */
+    private function buildLinks(Push $push)
+    {
+        $self = [
+            'self' => $this->link($push)
+        ];
+
+        $links = [
+            'build' => $this->buildNormalizer->link($push->build()),
+            'application' => $this->appNormalizer->link($push->application()),
+            'logs' => $this->buildLink(['api.push.logs', ['id' => $push->id()]])
+        ];
+
+        $pages = [
+            'page' => $this->buildLink(
+                ['push', ['push' => $push->id()]],
+                [
+                    'type' => 'text/html'
+                ]
+            )
+        ];
+
+        if ($push->user()) {
+            $self += [
+                'user' => $this->userNormalizer->link($push->user())
+            ];
+        }
+
+        if ($push->deployment()) {
+            $self += [
+                'deployment' => $this->deploymentNormalizer->link($push->deployment())
+            ];
+        }
+
+        return $self + $links + $pages;
     }
 }

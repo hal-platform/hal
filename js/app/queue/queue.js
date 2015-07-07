@@ -188,7 +188,7 @@ module.exports = {
 
         $(this.jobTarget).each(function(index, item) {
             var $item = $(item);
-            var status = $item.text().trim();
+            var status = $item.data('status').trim();
 
             var uniqueId = $item.data('push');
             if (typeof uniqueId === 'undefined') {
@@ -197,6 +197,7 @@ module.exports = {
 
             _this.jobs[uniqueId] = status;
         });
+
     },
     determineJobType: function(jobId) {
         var type = jobId.charAt(0).toUpperCase();

@@ -2,6 +2,10 @@
 {% import '_partial/pagination.twig' as pagination %}
 {% import "_partial/macros.twig" as macros %}
 
+{% if is_today %}
+    {% set js_components = ["queue"] %}
+{% endif %}
+
 {% set page_title = "Build and Push History" %}
 {% set paginationblock = pagination.time_pagination(selected_date, 'queue.history') %}
 
@@ -17,7 +21,7 @@
 {% endblock %}
 
 {% block queuehistory %}
-    <table class="table--spacing-medium" data-tablesaw-mode="stack">
+    <table id="js-queue" class="table--spacing-medium" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>Type</th>
@@ -31,24 +35,7 @@
         <tbody>
                 {% for job in pending %}
                     <tr>
-                        <td>
-                            {% set statusType = 'other' %}
-
-                            {% if job.status == 'Success' %}
-                                {% set statusType = 'success' %}
-
-                            {% elseif job.status in ['Error', 'Removed'] %}
-                                {% set statusType = 'error' %}
-                            {% endif %}
-
-                            {% if job is build %}
-                                {% set link = '<a href="' ~ urlFor('build', {build: job.id}) ~ '">Build</a>' %}
-                            {% else %}
-                                {% set link = '<a href="' ~ urlFor('push', {push: job.id}) ~ '">Push</a>' %}
-                            {% endif %}
-
-                            {{ macros.status_icon(link, statusType) }}
-                        </td>
+                        <td>{{ macros.job_status_prefix(job) }}</td>
 
                         <td>
                             <a href="{{ urlFor('application.status', {application: job.application.id}) }}">{{ job.application.name }}</a>
@@ -82,7 +69,7 @@
 
                     </tr>
                 {% else %}
-                    <tr>
+                    <tr id="js-emptyQueue">
                         <td colspan="6">There is no queue history for this date.</td>
                     </tr>
                 {% endfor %}

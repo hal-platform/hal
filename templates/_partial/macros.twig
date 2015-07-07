@@ -163,3 +163,42 @@
     {% endif %}
 
 {% endmacro %}
+
+{% macro job_status_prefix(job) %}
+    {% import _self as self_macros %}
+
+    {% if job is push %}
+
+        {% set push_link = self_macros.job_status_prefix_link(job) %}
+
+        {% if job.status == 'Success' %}
+            {{ self_macros.status_icon(push_link, 'success') }}
+        {% elseif job.status in ['Error', 'Removed'] %}
+            {{ self_macros.status_icon(push_link, 'error') }}
+        {% else %}
+            {{ self_macros.status_icon(push_link, 'thinking', {'data-push': job.id, 'data-status': job.status}) }}
+        {% endif %}
+
+    {% else %}
+
+        {% set build_link = self_macros.job_status_prefix_link(job) %}
+
+        {% if job.status == 'Success' %}
+            {{ self_macros.status_icon(build_link, 'success') }}
+        {% elseif job.status in ['Error', 'Removed'] %}
+            {{ self_macros.status_icon(build_link, 'error') }}
+        {% else %}
+            {{ self_macros.status_icon(build_link, 'thinking', {'data-build': job.id, 'data-status': job.status}) }}
+        {% endif %}
+
+    {% endif %}
+
+{% endmacro %}
+
+{% macro job_status_prefix_link(job) %}
+    {% if job is push %}
+        Push <a href="{{ urlFor('push', {'push': job.id}) }}">{{ job.id|formatPushId }}</a>
+    {% else %}
+        Build <a href="{{ urlFor('build', {'build': job.id}) }}">{{ job.id|formatBuildId }}</a>
+    {% endif %}
+{% endmacro %}

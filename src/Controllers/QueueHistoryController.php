@@ -81,7 +81,11 @@ class QueueHistoryController implements ControllerInterface
     {
         $times = $this->getTimespan();
 
+        $now = $this->clock->read();
+        $isToday = $now->format('Y-m-d', 'UTC') === $times[0]->format('Y-m-d', 'UTC');
+
         $this->template->render([
+            'is_today' => $isToday,
             'selected_date' => $times[0],
             'pending' => $this->getHistory($times[0], $times[1])
         ]);

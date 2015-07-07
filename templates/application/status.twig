@@ -46,8 +46,10 @@
         <p>This application has no deployment targets for <strong>{{ selected_environment.name }}</strong> and cannot be pushed.</p>
     {% endif %}
 
+    {% set isPushable = deployment_statuses|length > 0 %}
+
     <h2>Recent Builds - <strong>{{ selected_environment.name }}</strong></h2>
-    {% include '_partial-job/build-table.twig' with {'builds': builds} %}
+    {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable } %}
 
     <ul class="button-list">
         {% if canUserBuild(currentUser, application) %}

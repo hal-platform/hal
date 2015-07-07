@@ -95,20 +95,10 @@ class ApplicationNormalizer
             [
                 'id' => $application->id(),
                 'key' => $application->key(),
-                'title' => $application->name(),
+                'name' => $application->name(),
 
-                // @todo put html urls in _links, with html media type?
-                'url' => $this->url->absoluteUrlFor('application', ['application' => $application->id()]),
                 'email' => $application->email(),
-                'github-user' => [
-                    'text' => $application->githubOwner(),
-                    'url' => $this->urlBuilder->githubUserURL($application->githubOwner())
-                ],
-                'github-repository' => [
-                    'text' => $application->githubRepo(),
-                    'url' => $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo())
-                ],
-                'eb-name' => $application->ebName()
+                'eb_name' => $application->ebName()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
@@ -116,7 +106,25 @@ class ApplicationNormalizer
                 'group' => $this->groupNormalizer->link($application->group()),
                 'deployments' => $this->buildLink(['api.deployments', ['id' => $application->id()]]),
                 'builds' => $this->buildLink(['api.builds', ['id' => $application->id()]]),
-                'pushes' => $this->buildLink(['api.pushes', ['id' => $application->id()]])
+                'pushes' => $this->buildLink(['api.pushes', ['id' => $application->id()]]),
+
+                'page' => $this->buildLink(
+                    ['application', ['application' => $application->id()]],
+                    [
+                        'title' => $application->name(),
+                        'type' => 'text/html'
+                    ]
+                ),
+                'status_page' => $this->buildLink(
+                    ['application.status', ['application' => $application->id()]],
+                    [
+                        'title' => sprintf('%s Status', $application->name()),
+                        'type' => 'text/html'
+                    ]
+                ),
+                'github_page' => $this->buildLink(
+                    $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo())
+                )
             ]
         );
     }

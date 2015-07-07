@@ -11,7 +11,7 @@
 
     {{ block('search') }}
 
-    {% include '_partial-job/build-table.twig' with {'builds': builds} %}
+    {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': true} %}
 
     {{ pagination.pagination(page, last, 'build.history', {'application': application.id}, {search: search_filter}) }}
 

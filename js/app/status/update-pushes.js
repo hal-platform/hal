@@ -43,8 +43,8 @@ module.exports = {
         // Requires these properties:
         // - id
         // - status
-        // - start.text
-        // - end.text
+        // - start
+        // - end
         $.getJSON(endpoint, function(data) {
             var currentStatus = data.status;
             $elem.text(currentStatus);

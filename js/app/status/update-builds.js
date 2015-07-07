@@ -32,9 +32,6 @@ module.exports = {
     generateUrl: function(buildId, type) {
         if (type === 'api-update') {
             return '/api/builds/' + buildId;
-
-        } else if (type === 'push') {
-            return '/builds/' + buildId + '/push';
         }
     },
     checkStatus: function($elem) {
@@ -46,8 +43,9 @@ module.exports = {
         // Requires these properties:
         // - id
         // - status
-        // - start.text
-        // - end.text
+        // - start
+        // - end
+        // - ? _links.start_push_page.href
         $.getJSON(endpoint, function(data) {
             var currentStatus = data.status;
             $elem.text(currentStatus);
@@ -89,8 +87,10 @@ module.exports = {
 
         if (data.status == 'Success') {
             // Add push link if present
-            $('.js-build-push')
-                .html('<a class="btn btn--action" href="' + this.generateUrl(data.id, 'push') + '">Push Build</a>');
+            if (data._links.hasOwnProperty('start_push_page')) {
+                $('.js-build-push')
+                    .html('<a class="btn btn--action" href="' + data._links.start_push_page.href + '">Push Build</a>');
+            }
 
             // Replace success messaging
             $hdr = $('[data-success]');
@@ -125,9 +125,11 @@ module.exports = {
 
         if (data.status == 'Success') {
             // Add push link if present
-            $container
-                .children('.js-build-push')
-                .html('<a class="btn btn--tiny" href="' + this.generateUrl(data.id, 'push') + '">Push</a>');
+            if (data._links.hasOwnProperty('start_push_page')) {
+                $container
+                    .children('.js-build-push')
+                    .html('<a class="btn btn--tiny" href="' + data._links.start_push_page.href + '">Push</a>');
+            }
         }
     },
     createTimeElement: function(time) {

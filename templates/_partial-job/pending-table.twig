@@ -5,10 +5,10 @@
         <tr>
             <th>Type</th>
             <th>Application</th>
-            <th>Status</th>
             <th>Env → Server</th>
             <th>Reference</th>
-            <th>User</th>
+            <th class="table-priority-55">User</th>
+            <th class="table-priority-50">Time</th>
         </tr>
     </thead>
     <tbody>
@@ -16,33 +16,29 @@
             {% for job in pending %}
                 {% if job is build %}
                     <tr id="build-{{ job.id }}">
-                        <td><a href="{{ urlFor('build', {build: job.id}) }}">Build</a></td>
+                        <td>{{ macros.job_status_prefix(job) }}</td>
                         <td><a href="{{ urlFor('application.status', {application: job.application.id}) }}">{{ job.application.name }}</a></td>
-                        <td>
-                            {{ macros.job_status(job, true) }}
-                        </td>
+
                         <td>{{ job.environment.name }}
-                        <td>
-                            {{ macros.gitref(job, true) }}
-                        </td>
-                        <td>{{ job.user ? job.user.handle : 'Unknown' }}</td>
+
+                        <td>{{ macros.gitref(job, true) }}</td>
+                        <td class="table-priority-55">{{ job.user ? job.user.handle : 'Unknown' }}</td>
+                        <td class="table-priority-50">{{ job.created|timepoint('h:i:s A') }}</td>
                     </tr>
                 {% else %}
                     <tr id="push-{{ job.id }}">
-                        <td><a href="{{ urlFor('push', {push: job.id}) }}">Push</a></td>
+                        <td>{{ macros.job_status_prefix(job) }}</td>
                         <td><a href="{{ urlFor('application.status', {application: job.application.id}) }}">{{ job.application.name }}</a></td>
-                        <td>
-                            {{ macros.job_status(job, true) }}
-                        </td>
+
                         {% if job.deployment %}
                             <td>{{ job.build.environment.name }} → {{ job.deployment|formatDeploymentServer(true) }}</td>
                         {% else %}
                             <td>{{ job.build.environment.name }} → Unknown</td>
                         {% endif %}
-                        <td>
-                            Build <a href="{{ urlFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a>
-                        </td>
-                        <td>{{ job.user ? job.user.handle : 'Unknown' }}</td>
+
+                        <td>Build <a href="{{ urlFor('build', {'build': job.build.id}) }}">{{ job.build.id|formatBuildId }}</a></td>
+                        <td class="table-priority-55">{{ job.user ? job.user.handle : 'Unknown' }}</td>
+                        <td class="table-priority-50">{{ job.created|timepoint('h:i:s A') }}</td>
                     </tr>
                 {% endif %}
             {% endfor %}

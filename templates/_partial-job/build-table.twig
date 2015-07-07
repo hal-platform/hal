@@ -34,16 +34,22 @@
             <td>{{ build.created|html5date }}</td>
 
             {# this is a hacky way to let the frontend know if a user can push a build once it is available. #}
-            {% set canPush = false %}
-            {% if build.status in ['Waiting', 'Building'] and canUserPush(currentUser, build.application, build.environment) %}
-                {% set canPush = true %}
+            {% set canPushSoon = false %}
+            {% set canPushNow = false %}
+
+            {% if isPushable %}
+                {% if canUserPush(currentUser, build.application, build.environment) %}
+                    {% if build.status in ['Waiting', 'Building'] %}
+                        {% set canPushSoon = true %}
+                    {% elseif build.status in ['Success'] %}
+                        {% set canPushNow = true %}
+                    {% endif %}
+                {% endif %}
             {% endif %}
 
-            <td class="tr{{ canPush ? ' js-build-push' : '' }}">
-                {% if build.status == 'Success' %}
-                    {% if canUserPush(currentUser, build.application, build.environment) %}
-                        <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': build.id}) }}">Push</a>
-                    {% endif %}
+            <td class="tr{{ canPushSoon ? ' js-build-push' : '' }}">
+                {% if canPushNow %}
+                    <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': build.id}) }}">Push</a>
                 {% endif %}
             </td>
         </tr>

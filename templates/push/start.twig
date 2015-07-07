@@ -46,7 +46,6 @@
         </dl>
     </div>
 
-
     <h2>Git Reference</h2>
 
     <div class="details-box">
@@ -62,14 +61,15 @@
         </dl>
     </div>
 
-    <p>
-        This build can be pushed to the following servers. Please review the current status of each server below
-        before selecting which servers you wish to deploy to.
-    </p>
-
-    {{ form_macros.formErrors(errors) }}
-
     {% if statuses %}
+
+        <p>
+            This build can be pushed to the following servers. Please review the current status of each server below
+            before selecting which servers you wish to deploy to.
+        </p>
+
+        {{ form_macros.formErrors(errors) }}
+
         <form method="post">
             <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
                 <thead>
@@ -145,7 +145,12 @@
             </ul>
         </form>
     {% else %}
-        <p>There are no servers to deploy to.</p>
+        {{ macros.alert('error', 'This build cannot be deployed!', 'There are no deployments assigned to this environment.') }}
+
+        <p>
+            <a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a>
+        </p>
+
     {% endif %}
 
 {% endblock %}

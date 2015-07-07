@@ -1,23 +1,26 @@
 var $ = require('jquery');
 var nunjucks = require('nunjucks');
+var formatter = require('../util/time-formatter');
+
+var mplate1 = require('../../nunjucks-dist/queue.build.js');
+var mplate2 = require('../../nunjucks-dist/queue.push.js');
 
 module.exports = {
     buildTemplate: null,
     pushTemplate: null,
 
-    pendingClass: 'status-icon--warning',
+    pendingClass: 'status-icon--info',
     thinkingClass: 'status-icon--thinking',
     successClass: 'status-icon--success',
     failureClass: 'status-icon--error',
 
     init: function() {
-        nunjucks.configure('views');
-        // @todo compile templates
+        nunjucks.configure();
     },
 
     addBuildJob: function(build) {
         var buildId = String(build.id);
-        var reference = String(build.reference.text);
+        var reference = String(build.reference);
         var initiator = 'Unknown';
         if (build._links.hasOwnProperty('user')) {
             if (build._links.user !== null) {
@@ -29,7 +32,7 @@ module.exports = {
         var context = {
             buildId: buildId,
             buildIdShort: this.formatBuildId(buildId),
-            buildUrl: build.url,
+            buildUrl: build._links.page.href,
 
             buildStatusStyle: this.determineStatusStyle(build.status),
             buildStatus: build.status,
@@ -37,12 +40,13 @@ module.exports = {
             environmentName: build._links.environment.title,
             reference: humanReference,
             referenceType: this.determineGitrefType(humanReference),
-            referenceUrl: build.commit.url,
+            referenceUrl: build._links.github_commit_page.href,
 
-            appName: build._embedded.application.title,
-            appStatusUrl: build._embedded.application.url + '/status',
+            appName: build._embedded.application.name,
+            appStatusUrl: build._embedded.application._links.status_page.href,
 
-            initiator: initiator
+            initiator: initiator,
+            time: this.createTimeElement(build.created)
         };
 
         return nunjucks.render('queue.build.html', context);
@@ -71,11 +75,11 @@ module.exports = {
         var context = {
             buildId: buildId,
             buildIdShort: this.formatBuildId(buildId),
-            buildUrl: push._embedded.build.url,
+            buildUrl: push._embedded.build._links.github_commit_page.href,
 
             pushId: pushId,
             pushIdShort: this.formatPushId(pushId),
-            pushUrl: push.url,
+            pushUrl: push._links.page.href,
 
             pushStatusStyle: this.determineStatusStyle(push.status),
             pushStatus: push.status,
@@ -83,10 +87,11 @@ module.exports = {
             environmentName: push._embedded.build._links.environment.title,
             serverName: servername_or_whatever,
 
-            appName: push._embedded.application.title,
-            appStatusUrl: push._embedded.application.url + '/status',
+            appName: push._embedded.application.name,
+            appStatusUrl: push._embedded.application._links.status_page.href,
 
-            initiator: initiator
+            initiator: initiator,
+            time: this.createTimeElement(push.created)
         };
 
         return nunjucks.render('queue.push.html', context);
@@ -95,7 +100,6 @@ module.exports = {
     updatePushJob: function(job) {
         var $elem = $('[data-push="' + job.id + '"]');
         var currentStatus = job.status;
-        $elem.text(currentStatus);
 
         if (currentStatus == 'Waiting' || currentStatus == 'Pushing') {
             $elem
@@ -116,7 +120,6 @@ module.exports = {
     updateBuildJob: function(job) {
         var $elem = $('[data-build="' + job.id + '"]');
         var currentStatus = job.status;
-        $elem.text(currentStatus);
 
         if (currentStatus == 'Waiting' || currentStatus == 'Building') {
             $elem
@@ -153,7 +156,7 @@ module.exports = {
             return this.successClass;
 
         } else if (status == 'Error') {
-            return this.errorClass;
+            return this.failureClass;
 
         } else if (status == 'Waiting' || status == 'Building' || status == 'Pushing') {
             return this.thinkingClass;
@@ -231,5 +234,9 @@ module.exports = {
         }
 
         return pushId.slice(0, 10);
+    },
+    createTimeElement: function(time) {
+        var formatted = formatter.formatTime(time);
+        return '<time datetime="' + time + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>';
     },
 };

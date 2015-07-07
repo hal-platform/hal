@@ -21,6 +21,7 @@ npm-debug.log
 /bower_components/
 /node_modules/
 /vendor/
+/js/nunjucks-dist/
 
 # compiled configuration
 /configuration/config.env.yml

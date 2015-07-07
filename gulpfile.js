@@ -14,10 +14,13 @@ gulp.task('js-hint', function() {
 });
 
 gulp.task('js-clean', function(cb) {
-    del('public/js', cb);
+    del([
+        'js/nunjucks-dist',
+        'public/js',
+    ], cb);
 });
 
-gulp.task('js-webpack', ['js-clean'], function() {
+gulp.task('js-webpack', ['js-nunjucks-clean'], function() {
     var webpackOptions = {
         debug: isDeploy ? false : true,
         devtool: isDeploy ? '' : '#source-map',
@@ -53,12 +56,25 @@ gulp.task('js-webpack', ['js-clean'], function() {
     }
 });
 
-gulp.task('scripts', ['js-hint'], function() {
+gulp.task('js-nunjucks', function() {
+    return gulp.src('js/nunjucks-html/*.html')
+        .pipe(plugins.nunjucks())
+        .pipe(gulp.dest('js/nunjucks-dist'));
+});
+
+// this is stupid
+gulp.task('js-nunjucks-clean', ['js-clean'], function() {
+    return gulp.src('js/nunjucks-html/*.html')
+        .pipe(plugins.nunjucks())
+        .pipe(gulp.dest('js/nunjucks-dist'));
+});
+
+gulp.task('js', ['js-hint'], function() {
     gulp.start('js-webpack');
 });
 
 // css
-gulp.task('styles', function() {
+gulp.task('css', function() {
     return gulp.src('sass/**/*.scss')
         .pipe(plugins.sass({
             errLogToConsole: true,
@@ -71,17 +87,16 @@ gulp.task('styles', function() {
 
 // core
 gulp.task('watch', function() {
-    gulp.watch('sass/**/*.scss', ['styles']);
-    gulp.watch('js/**/*.js', ['scripts']);
+    gulp.watch('sass/**/*.scss', ['css']);
+    gulp.watch('js/**/*.js', ['js']);
 });
 
-gulp.task('build', ['styles', 'scripts']);
+gulp.task('build', ['css', 'js']);
 
-gulp.task('clean', function(cb) {
+gulp.task('clean', ['js-clean'], function(cb) {
     del([
         'public/js',
         'public/css'
-
     ], cb);
 });
 
