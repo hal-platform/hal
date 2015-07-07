@@ -47,7 +47,7 @@
 
                 <tr>
                     <td>
-                        <a href="{{ urlFor('repository', {id: deployment.application.id}) }}">{{ deployment.application.name }}</a>
+                        <a href="{{ urlFor('application', {application: deployment.application.id}) }}">{{ deployment.application.name }}</a>
                     </td>
                     <td>
                         {% if server.type == 'elasticbeanstalk' %}
@@ -68,7 +68,7 @@
                         <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
                     </td>
                     <td class="tr">
-                        <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.application.id, id: deployment.id}) }}">View</a>
+                        <a class="btn btn--tiny" href="{{ urlFor('deployment', {application: deployment.application.id, deployment: deployment.id}) }}">View</a>
                     </td>
                 </tr>
             {% endfor %}

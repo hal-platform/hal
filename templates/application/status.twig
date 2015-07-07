@@ -16,7 +16,7 @@
                 {% for environment in environments %}
                     {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
                     <li>
-                        <a class="btn{{ btnSelected }}" href="{{ urlFor('repository.status', {id: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
+                        <a class="btn{{ btnSelected }}" href="{{ urlFor('application.status', {application: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -62,7 +62,7 @@
             <li><a class="btn" href="{{ urlFor('push.history.page1', {'id': application.id}) }}">All Pushes</a></li>
         {% endif %}
 
-        <li><a class="btn btn--secondary" href="{{ urlFor('repository', {id: application.id}) }}">Application</a></li>
+        <li><a class="btn btn--secondary" href="{{ urlFor('application', {application: application.id}) }}">Application</a></li>
 
         {% if kraken %}
             <li><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken</a></li>

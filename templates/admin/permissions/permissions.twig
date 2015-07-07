@@ -73,7 +73,7 @@
                         {% if table_type == 'lead' %}
                             <td>
                                 {% if type.application %}
-                                    <a href="{{ urlFor('repository', {id: type.application.id}) }}">{{ type.application.name }}</a>
+                                    <a href="{{ urlFor('application', {application: type.application.id}) }}">{{ type.application.name }}</a>
                                 {% else %}
                                     None
                                 {% endif %}

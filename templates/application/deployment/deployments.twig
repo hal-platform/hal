@@ -6,7 +6,7 @@
 {% block content %}
     <h1>Deployment Targets - <strong>{{ application.name }}</strong> </h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository', {'id': application.id}) }}">Back to Application</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('application', {'application': application.id}) }}">Back to Application</a></p>
 
     <p>
         Deployment targets define what servers your application can be deployed to and where on that server the code will be uploaded.
@@ -43,7 +43,7 @@
                                 {% endif %}
                             </td>
                             <td class="tr">
-                                <a class="btn btn--tiny" href="{{ urlFor('repository.deployment', {repository: deployment.application.id, id: deployment.id}) }}">View</a>
+                                <a class="btn btn--tiny" href="{{ urlFor('deployment', {application: deployment.application.id, deployment: deployment.id}) }}">View</a>
                             </td>
                         </tr>
                     {% else %}
@@ -66,7 +66,7 @@
 
             <div class="js-add-deployment__button">
                 {# primary action #}
-                <a class="btn" href="{{ urlFor('repository.deployments.add', {repository: application.id}) }}">Add Deployment</a>
+                <a class="btn" href="{{ urlFor('deployments.add', {application: application.id}) }}">Add Deployment</a>
             </div>
         {% endif %}
 

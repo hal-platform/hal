@@ -69,7 +69,7 @@ class ApplicationStatusEnvironmentSaveHandler implements MiddlewareInterface
     public function __invoke()
     {
         $environmentId = $this->request->get('environment');
-        $applicationId = (array_key_exists('id', $this->parameters)) ? $this->parameters['id'] : null;
+        $applicationId = (array_key_exists('application', $this->parameters)) ? $this->parameters['application'] : null;
 
         // Fall through to controller if no environment in query string
         if (!$environmentId || !$applicationId) {
@@ -78,10 +78,9 @@ class ApplicationStatusEnvironmentSaveHandler implements MiddlewareInterface
 
         // environment is valid. save to cookie.
         if ($environment = $this->envRepo->find($environmentId)) {
-
             $this->service->save($applicationId, $environment->id());
         }
 
-        $this->url->redirectFor('repository.status', ['id' => $applicationId]);
+        $this->url->redirectFor('application.status', ['application' => $applicationId]);
     }
 }

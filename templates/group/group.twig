@@ -28,10 +28,10 @@
             <tbody>
             {% for application in applications %}
                 <tr>
-                    <td><a href="{{ urlFor('repository.status', {'id': application.id}) }}">{{ application.name }}</a></td>
+                    <td><a href="{{ urlFor('application.status', {'application': application.id}) }}">{{ application.name }}</a></td>
                     <td>{{ macros.gitsource(application) }}</td>
                     <td class="tr">
-                        <a href="{{ urlFor('repository', {'id': application.id}) }}">Details</a>
+                        <a href="{{ urlFor('application', {'application': application.id}) }}">Details</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -47,12 +47,12 @@
     {% endif %}
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Application</a></li>
+        <li><a class="btn" href="{{ urlFor('application.add') }}">Add Application</a></li>
         {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('group.admin.edit', {id: group.id}) }}">Edit Group</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('group.edit', {id: group.id}) }}">Edit Group</a></li>
 
             {% if not applications and isAdmin %}
-                <li><a class="btn btn--destructive" href="{{ urlFor('group.admin.remove', {id: group.id}) }}">Remove Group</a></li>
+                <li><a class="btn btn--destructive" href="{{ urlFor('group.remove', {id: group.id}) }}">Remove Group</a></li>
             {% endif %}
 
         <li><a class="btn btn--secondary" href="{{ urlFor('applications') }}">Applications</a></li>

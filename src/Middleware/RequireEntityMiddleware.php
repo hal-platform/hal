@@ -8,6 +8,9 @@
 namespace QL\Hal\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
+use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
@@ -72,6 +75,10 @@ class RequireEntityMiddleware implements MiddlewareInterface
             'user' => User::CLASS,
             'userPermission' => UserPermission::CLASS,
             'userType' => UserType::CLASS,
+
+            'application' => Application::CLASS,
+            'deployment' => Deployment::CLASS,
+            'encrypted' => EncryptedProperty::CLASS,
         ];
     }
 

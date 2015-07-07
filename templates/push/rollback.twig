@@ -5,7 +5,7 @@
 {% set page_title = "Push History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
 
     {% set server = deployment|formatDeploymentServer %}
     {% set deployment_details = deployment|formatDeploymentDetails %}

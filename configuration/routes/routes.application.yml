@@ -10,119 +10,119 @@ parameters:
             route: '/applications'
             stack: ['middleware.login', 'applications.page']
 
-        repository:
+        application:
             method: 'GET'
-            route: '/repositories/:id'
-            stack: ['middleware.login', 'application.page']
-            conditions: {id: %routes.regex.digit%}
+            route: '/applications/:application'
+            stack: ['middleware.login', 'middleware.requireEntity', 'application.page']
+            conditions: {application: %routes.regex.digit%}
 
-        repository.status:
+        application.status:
             method: 'GET'
-            route: '/repositories/:id/status'
-            stack: ['middleware.login', 'application.status.sticky.handler', 'application.status.page']
-            conditions: {id: %routes.regex.digit%}
+            route: '/applications/:application/status'
+            stack: ['middleware.login', 'application.status.sticky.handler', 'middleware.requireEntity', 'application.status.page']
+            conditions: {application: %routes.regex.digit%}
 
-        repository.admin.add:
+        application.add:
             method: ['GET', 'POST']
-            route: '/repositories/add'
-            stack: ['middleware.login', 'application.admin.add.page']
+            route: '/applications/add'
+            stack: ['middleware.login', 'application.add.page']
 
-        repository.admin.edit:
+        application.edit:
             method: ['GET', 'POST']
-            route: '/repositories/:repository/edit'
-            stack: ['middleware.lead', 'application.admin.edit.page']
-            conditions: {repository: %routes.regex.digit%}
+            route: '/applications/:application/edit'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'application.edit.page']
+            conditions: {application: %routes.regex.digit%}
 
         ################################################################################################################
         # REPOSITORY ROUTES - ADMIN
         ################################################################################################################
 
-        repository.admin.remove.confirm:
+        application.remove.confirm:
             method: 'GET'
-            route: '/repositories/:id/remove'
-            stack: ['middleware.admin', 'delete.confirm.page']
-            conditions: {id: %routes.regex.digit%}
-        repository.admin.remove:
+            route: '/applications/:application/remove'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'delete.confirm.page']
+            conditions: {application: %routes.regex.digit%}
+        application.remove:
             method: 'POST'
-            route: '/repositories/:id/remove'
-            stack: ['middleware.admin', 'application.admin.remove.handler']
-            conditions: {id: %routes.regex.digit%}
+            route: '/applications/:application/remove'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'application.remove.handler']
+            conditions: {application: %routes.regex.digit%}
 
         ################################################################################################################
-        # REPOSITORY DEPLOYMENT ROUTES
+        # DEPLOYMENT ROUTES
         ################################################################################################################
 
-        repository.deployment:
+        deployment:
             method: 'GET'
-            route: '/repositories/:repository/deployments/:id'
-            stack: ['middleware.login', 'application.deployment.page']
+            route: '/applications/:application/deployments/:deployment'
+            stack: ['middleware.login', 'middleware.requireEntity', 'deployment.page']
             conditions:
-                repository: %routes.regex.digit%
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
+                deployment: %routes.regex.digit%
 
-        repository.deployments:
+        deployments:
             method: 'GET'
-            route: '/repositories/:repository/deployments'
-            stack: ['middleware.login', 'application.deployments.page']
-            conditions: {repository: %routes.regex.digit%}
+            route: '/applications/:application/deployments'
+            stack: ['middleware.login', 'middleware.requireEntity', 'deployments.page']
+            conditions: {application: %routes.regex.digit%}
 
-        repository.deployments.add:
+        deployments.add:
             method: ['GET', 'POST']
-            route: '/repositories/:repository/deployments/add'
-            stack: ['middleware.lead', 'application.deployments.add.handler', 'application.deployments.add.page']
-            conditions: {repository: %routes.regex.digit%}
+            route: '/applications/:application/deployments/add'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'deployments.add.handler', 'deployments.add.page']
+            conditions: {application: %routes.regex.digit%}
 
-        repository.deployment.edit:
+        deployment.edit:
             method: ['GET', 'POST']
-            route: '/repositories/:repository/deployments/:id/edit'
-            stack: ['middleware.lead', 'application.deployment.edit.handler', 'application.deployment.edit.page']
+            route: '/applications/:application/deployments/:deployment/edit'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'deployment.edit.handler', 'deployment.edit.page']
             conditions:
-                repository: %routes.regex.digit%
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
+                deployment: %routes.regex.digit%
 
-        repository.deployment.remove.confirm:
+        deployment.remove.confirm:
             method: 'GET'
-            route: '/repositories/:repository/deployments/:id/remove'
-            stack: ['middleware.lead', 'delete.confirm.page']
+            route: '/applications/:application/deployments/:deployment/remove'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'delete.confirm.page']
             conditions:
-                repository: %routes.regex.digit%
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
+                deployment: %routes.regex.digit%
 
-        repository.deployment.remove:
+        deployment.remove:
             method: 'POST'
-            route: '/repositories/:repository/deployments/:id/remove'
-            stack: ['middleware.lead', 'application.deployments.remove.handler']
+            route: '/applications/:application/deployments/:deployment/remove'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'deployments.remove.handler']
             conditions:
-                repository: %routes.regex.digit%
-                id: %routes.regex.digit%
+                application: %routes.regex.digit%
+                deployment: %routes.regex.digit%
 
         ################################################################################################################
         # REPOSITORY ENCRYPTED PROPERTIES ROUTES
         ################################################################################################################
 
-        repository.encrypted:
+        encrypted:
             method: 'GET'
-            route: '/repositories/:repository/encrypted-properties'
-            stack: ['middleware.login', 'application.encrypted.page']
-            conditions: {repository: %routes.regex.digit%}
+            route: '/applications/:application/encrypted-properties'
+            stack: ['middleware.login', 'middleware.requireEntity', 'encrypted.page']
+            conditions: {application: %routes.regex.digit%}
 
-        repository.encrypted.add:
+        encrypted.add:
             method: ['GET', 'POST']
-            route: '/repositories/:repository/encrypted-properties/add'
-            stack: ['middleware.lead', 'application.encrypted.add.handler', 'application.encrypted.add.page']
-            conditions: {repository: %routes.regex.digit%}
+            route: '/applications/:application/encrypted-properties/add'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'encrypted.add.handler', 'encrypted.add.page']
+            conditions: {application: %routes.regex.digit%}
 
-        repository.encrypted.remove.confirm:
+        encrypted.remove.confirm:
             method: 'GET'
-            route: '/repositories/:repository/encrypted-properties/:id/remove'
-            stack: ['middleware.lead', 'delete.confirm.page']
+            route: '/applications/:application/encrypted-properties/:encrypted/remove'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'delete.confirm.page']
             conditions:
-                repository: %routes.regex.digit%
-                id: %routes.regex.guid%
-        repository.encrypted.remove:
+                application: %routes.regex.digit%
+                encrypted: %routes.regex.guid%
+        encrypted.remove:
             method: ['POST']
-            route: '/repositories/:repository/encrypted-properties/:id/remove'
-            stack: ['middleware.lead', 'application.encrypted.remove.handler']
+            route: '/applications/:application/encrypted-properties/:encrypted/remove'
+            stack: ['middleware.lead', 'middleware.requireEntity', 'encrypted.remove.handler']
             conditions:
-                repository: %routes.regex.digit%
-                id: %routes.regex.guid%
+                application: %routes.regex.digit%
+                encrypted: %routes.regex.guid%

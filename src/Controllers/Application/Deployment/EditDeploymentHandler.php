@@ -8,15 +8,13 @@
 namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
-use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
 class EditDeploymentHandler implements MiddlewareInterface
@@ -29,24 +27,14 @@ class EditDeploymentHandler implements MiddlewareInterface
     private $em;
 
     /**
-     * @type EntityRepository
-     */
-    private $deploymentRepo;
-
-    /**
      * @type DeploymentValidator
      */
     private $validator;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type Url
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Context
@@ -59,9 +47,9 @@ class EditDeploymentHandler implements MiddlewareInterface
     private $request;
 
     /**
-     * @type array
+     * @type Deployment
      */
-    private $parameters;
+    private $deployment;
 
     /**
      * @type array
@@ -71,31 +59,27 @@ class EditDeploymentHandler implements MiddlewareInterface
     /**
      * @param EntityManagerInterface $em
      * @param DeploymentValidator $validator
-     * @param Session $session
-     * @param Url $url
+     * @param Flasher $flasher
      * @param Context $context
      * @param Request $request
-     * @param array $parameters
+     * @param Deployment $deployment
      */
     public function __construct(
         EntityManagerInterface $em,
         DeploymentValidator $validator,
-        Session $session,
-        Url $url,
+        Flasher $flasher,
         Context $context,
         Request $request,
-        array $parameters
+        Deployment $deployment
     ) {
         $this->em = $em;
-        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->validator = $validator;
 
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
         $this->context = $context;
 
         $this->request = $request;
-        $this->parameters = $parameters;
+        $this->deployment = $deployment;
 
         $this->errors = [];
     }
@@ -105,12 +89,6 @@ class EditDeploymentHandler implements MiddlewareInterface
      */
     public function __invoke()
     {
-        $deployment = $this->deploymentRepo->find($this->parameters['id']);
-        if (!$deployment) {
-            // fall through to controller
-            return;
-        }
-
         if (!$this->request->isPost()) {
             return;
         }
@@ -120,7 +98,7 @@ class EditDeploymentHandler implements MiddlewareInterface
         $ec2Pool = $this->request->post('ec2_pool');
         $url = $this->request->post('url');
 
-        $deployment = $this->validator->isEditValid($deployment, $path, $ebEnvironment, $ec2Pool, $url);
+        $deployment = $this->validator->isEditValid($this->deployment, $path, $ebEnvironment, $ec2Pool, $url);
         if (!$deployment) {
             $this->context->addContext([
                 'errors' => $this->validator->errors()
@@ -152,8 +130,8 @@ class EditDeploymentHandler implements MiddlewareInterface
         $this->em->persist($deployment);
         $this->em->flush();
 
-        // flash and redirect
-        $this->session->flash(self::EDIT_SUCCESS, 'success');
-        $this->url->redirectFor('repository.deployments', ['repository' => $this->parameters['repository'], 'id' => $this->parameters['id']], [], 303);
+        $this->flasher
+            ->withFlash(self::EDIT_SUCCESS, 'success')
+            ->load('deployment', ['application' => $deployment->application()->id(), 'deployment' => $deployment->id()]);
     }
 }

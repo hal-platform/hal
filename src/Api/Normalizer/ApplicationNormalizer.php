@@ -98,7 +98,7 @@ class ApplicationNormalizer
                 'title' => $application->name(),
 
                 // @todo put html urls in _links, with html media type?
-                'url' => $this->url->absoluteUrlFor('repository', ['id' => $application->id()]),
+                'url' => $this->url->absoluteUrlFor('application', ['application' => $application->id()]),
                 'email' => $application->email(),
                 'github-user' => [
                     'text' => $application->githubOwner(),

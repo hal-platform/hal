@@ -10,15 +10,13 @@ namespace QL\Hal\Controllers\Application\EncryptedProperty;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\EncryptedProperty;
-use QL\Hal\Session;
-use QL\Panthor\Slim\NotFound;
+use QL\Hal\Flasher;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
 class RemoveEncryptedPropertyHandler implements MiddlewareInterface
 {
-    const SUCCESS = '';
+    const SUCCESS = 'Encrypted Property "%s" Removed.';
 
     /**
      * @type EntityManagerInterface
@@ -26,19 +24,9 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
     private $em;
 
     /**
-     * @type EntityRepository
+     * @type Flasher
      */
-    private $encryptedRepo;
-
-    /**
-     * @type Session
-     */
-    private $session;
-
-    /**
-     * @type Url
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Request
@@ -46,40 +34,29 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
     private $request;
 
     /**
-     * @type NotFound
+     * @type EncryptedProperty
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $encrypted;
 
     /**
      * @param EntityManagerInterface $em
-     * @param Session $session
-     * @param Url $url
+     * @param Flasher $flasher
      * @param Request $request
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Application $application
+     * @param EncryptedProperty $encrypted
      */
     public function __construct(
         EntityManagerInterface $em,
-        Session $session,
-        Url $url,
+        Flasher $flasher,
         Request $request,
-        NotFound $notFound,
-        array $parameters
+        EncryptedProperty $encrypted
     ) {
         $this->em = $em;
-        $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
 
-        $this->session = $session;
-        $this->url = $url;
-
+        $this->flasher = $flasher;
         $this->request = $request;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+
+        $this->encrypted = $encrypted;
     }
 
     /**
@@ -91,15 +68,12 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
             return;
         }
 
-        if (!$property = $this->encryptedRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
-        $this->em->remove($property);
+        $this->em->remove($this->encrypted);
         $this->em->flush();
 
-        $message = sprintf('Encrypted Property "%s" Removed.', $property->name());
-        $this->session->flash($message, 'success');
-        $this->url->redirectFor('repository.encrypted', ['repository' => $this->parameters['repository']]);
+        $message = sprintf(self::SUCCESS, $this->encrypted->name());
+        $this->flasher
+            ->withFlash($message, 'success')
+            ->load('encrypted', ['application' => $this->encrypted->application()->id()]);
     }
 }

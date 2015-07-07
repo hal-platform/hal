@@ -16,7 +16,6 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\TemplateInterface;
 
 class DeploymentsController implements ControllerInterface
@@ -41,35 +40,26 @@ class DeploymentsController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @type NotFound
+     * @type Application
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $application;
 
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Application $application
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        NotFound $notFound,
-        array $parameters
+        Application $application
     ) {
         $this->template = $template;
         $this->environmentRepo = $em->getRepository(Environment::CLASS);
         $this->serverRepo = $em->getRepository(Server::CLASS);
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->application = $application;
     }
 
     /**
@@ -77,12 +67,8 @@ class DeploymentsController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
-            return call_user_func($this->notFound);
-        }
-
         // Get and sort deployments
-        $deployments = $this->deploymentRepo->findBy(['application' => $application]);
+        $deployments = $this->deploymentRepo->findBy(['application' => $this->application]);
         $sorter = $this->deploymentSorter();
         usort($deployments, $sorter);
 
@@ -92,7 +78,7 @@ class DeploymentsController implements ControllerInterface
             'environments' => $environments,
             'servers_by_env' => $this->environmentalizeServers($environments, $this->serverRepo->findAll()),
             'deployments' => $deployments,
-            'application' => $application
+            'application' => $this->application
         ]);
     }
 

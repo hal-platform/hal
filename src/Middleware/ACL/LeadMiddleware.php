@@ -81,7 +81,7 @@ class LeadMiddleware implements MiddlewareInterface
             return;
         }
 
-        $application = isset($this->parameters['repository']) ? $this->parameters['repository'] : null;
+        $application = isset($this->parameters['application']) ? $this->parameters['application'] : null;
 
         if ($application && $perm->isLead()) {
             if (in_array($application, $perm->leadApplications(), true)) {

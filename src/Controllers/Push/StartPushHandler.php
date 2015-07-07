@@ -212,7 +212,7 @@ class StartPushHandler implements MiddlewareInterface
         $this->stickyService->save($application->id(), $deployment->server()->environment()->name());
 
         $this->session->flash(self::NOTICE_DONE, 'success');
-        $this->url->redirectFor('repository.status', ['id' => $application->id()]);
+        $this->url->redirectFor('application.status', ['application' => $application->id()]);
     }
 
     /**

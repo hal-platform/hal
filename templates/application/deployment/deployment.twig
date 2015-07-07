@@ -11,7 +11,7 @@
         <dl class="split">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('repository', {id: deployment.application.id}) }}">{{ deployment.application.name }}</a>
+                <a href="{{ urlFor('application', {application: deployment.application.id}) }}">{{ deployment.application.name }}</a>
             </dd>
 
             <dt class="split__title">Server</dt>
@@ -84,10 +84,10 @@
     </p>
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('repository.deployments', {repository: deployment.application.id}) }}">Deployment Targets</a></li>
+        <li><a class="btn" href="{{ urlFor('deployments', {application: deployment.application.id}) }}">Deployment Targets</a></li>
         {% if canEdit %}
-            <li><a class="btn btn--action" href="{{ urlFor('repository.deployment.edit', {repository: deployment.application.id, id: deployment.id}) }}">Edit Deployment</a></li>
-            <li><a class="btn btn--destructive" href="{{ urlFor('repository.deployment.remove', {repository: deployment.application.id, id: deployment.id}) }}">Remove Deployment</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('deployment.edit', {application: deployment.application.id, deployment: deployment.id}) }}">Edit Deployment</a></li>
+            <li><a class="btn btn--destructive" href="{{ urlFor('deployment.remove', {application: deployment.application.id, deployment: deployment.id}) }}">Remove Deployment</a></li>
         {% endif %}
     </ul>
 

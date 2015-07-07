@@ -269,7 +269,7 @@ parameters:
             stack: ['middleware.login', 'group.page']
             conditions: {id: %routes.regex.digit%}
 
-        group.admin.add:
+        group.add:
             method: ['GET', 'POST']
             route: '/groups/add'
             stack: ['middleware.login', 'group.admin.add.page']
@@ -278,18 +278,18 @@ parameters:
         # GROUP ROUTES - ADMIN
         ################################################################################################################
 
-        group.admin.edit:
+        group.edit:
             method: ['GET', 'POST']
             route: '/groups/:id/edit'
             stack: ['middleware.admin', 'group.admin.edit.page']
             conditions: {id: %routes.regex.digit%}
 
-        group.admin.remove.confirm:
+        group.remove.confirm:
             method: 'GET'
             route: '/groups/:id/remove'
             stack: ['middleware.admin', 'delete.confirm.page']
             conditions: {id: %routes.regex.digit%}
-        group.admin.remove:
+        group.remove:
             method: 'POST'
             route: '/groups/:id/remove'
             stack: ['middleware.admin', 'group.admin.remove.handler']

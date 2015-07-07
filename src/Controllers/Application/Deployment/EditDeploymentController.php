@@ -7,11 +7,7 @@
 
 namespace QL\Hal\Controllers\Application\Deployment;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -35,36 +31,23 @@ class EditDeploymentController implements ControllerInterface
     private $request;
 
     /**
-     * @type NotFound
+     * @type Deployment
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $deployment;
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManagerInterface $em
      * @param Request $request
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Deployment $deployment
      */
     public function __construct(
         TemplateInterface $template,
-        EntityManagerInterface $em,
         Request $request,
-        NotFound $notFound,
-        array $parameters
+        Deployment $deployment
     ) {
         $this->template = $template;
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
-        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
-
         $this->request = $request;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->deployment = $deployment;
     }
 
     /**
@@ -72,23 +55,15 @@ class EditDeploymentController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$deployment = $this->deploymentRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
-        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
-            return call_user_func($this->notFound);
-        }
-
-        $url = $deployment->url() ? $deployment->url()->asString() : '';
+        $url = $this->deployment->url() ? $this->deployment->url()->asString() : '';
         $renderContext = [
             'form' => [
-                'path' => $this->request->isPost() ? $this->request->post('path') : $deployment->path(),
-                'eb_environment' => $this->request->isPost() ? $this->request->post('eb_environment') : $deployment->ebEnvironment(),
-                'ec2_pool' => $this->request->isPost() ? $this->request->post('ec2_pool') : $deployment->ec2Pool(),
+                'path' => $this->request->isPost() ? $this->request->post('path') : $this->deployment->path(),
+                'eb_environment' => $this->request->isPost() ? $this->request->post('eb_environment') : $this->deployment->ebEnvironment(),
+                'ec2_pool' => $this->request->isPost() ? $this->request->post('ec2_pool') : $this->deployment->ec2Pool(),
                 'url' => $this->request->isPost() ? $this->request->post('url') : $url,
             ],
-            'deployment' => $deployment
+            'deployment' => $this->deployment
         ];
 
         $this->template->render($renderContext);

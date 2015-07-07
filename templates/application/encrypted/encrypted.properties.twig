@@ -33,7 +33,7 @@
                     </td>
                     {% if isAdmin %}
                         <td class="tr">
-                            <a class="btn btn--tiny btn--destructive" href="{{ urlFor('repository.encrypted.remove', {'repository': application.id, 'id': property.id}) }}">Remove</a>
+                            <a class="btn btn--tiny btn--destructive" href="{{ urlFor('encrypted.remove', {'application': application.id, 'encrypted': property.id}) }}">Remove</a>
                         </td>
                     {% endif %}
                 </tr>
@@ -53,11 +53,11 @@
         <p>There are no encrypted properties for this application.</p>
     {% endif %}
 
-    <ul class="button-list button-list-half">
+    <ul class="button-list button-list--half">
         {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('repository.encrypted.add', {repository: application.id}) }}">Add Encrypted Property</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('encrypted.add', {application: application.id}) }}">Add Encrypted Property</a></li>
         {% endif %}
-        <li><a class="btn" href="{{ urlFor('repository', {'id': application.id}) }}">Application</a></li>
+        <li><a class="btn" href="{{ urlFor('application', {'application': application.id}) }}">Application</a></li>
     </ul>
 
 {% endblock %}

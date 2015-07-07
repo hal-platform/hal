@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Application\EncryptedProperty;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Session;
+use QL\Hal\Flasher;
 use QL\Hal\Core\Crypto\Encrypter;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\EncryptedProperty;
@@ -18,7 +18,6 @@ use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
-use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
 class AddEncryptedPropertyHandler implements MiddlewareInterface
@@ -28,7 +27,6 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     const SUCCESS = 'Encrypted Property "%s" added.';
 
     const ERR_NO_ENVIRONMENT = 'Please select an environment.';
-    const ERR_NO_APPLICATION = 'Invalid application.';
 
     const ERR_DUPE = 'This property is already set for this environment.';
     const ERR_INVALID_PROPERTYNAME = 'Property name must consist of letters, numbers, and underscores only.';
@@ -43,7 +41,6 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      * @type EntityRepository
      */
     private $encryptedRepo;
-    private $applicationRepo;
     private $envRepo;
 
     /**
@@ -52,14 +49,9 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     private $encrypter;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type Url
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Context
@@ -77,9 +69,9 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     private $random;
 
     /**
-     * @type array
+     * @type Application
      */
-    private $parameters;
+    private $application;
 
     /**
      * @type array
@@ -90,38 +82,34 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param Encrypter $encrypter
      *
-     * @param Session $session
-     * @param Url $url
+     * @param Flasher $flasher
      * @param Context $context
      * @param Request $request
      * @param callable $random
      *
-     * @param array $parameters
+     * @param Application $application
      */
     public function __construct(
         EntityManagerInterface $em,
         Encrypter $encrypter,
-        Session $session,
-        Url $url,
+        Flasher $flasher,
         Context $context,
         Request $request,
         callable $random,
 
-        array $parameters
+        Application $application
     ) {
         $this->em = $em;
         $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->encrypter = $encrypter;
 
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
         $this->context = $context;
         $this->request = $request;
         $this->random = $random;
 
-        $this->parameters = $parameters;
+        $this->application = $application;
 
         $this->errors = [];
     }
@@ -136,7 +124,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
         }
 
         $encryptedProperty = $this->isValid(
-            $this->parameters['repository'],
+            $this->application,
             $this->request->post('environment'),
             $this->request->post('name'),
             $this->request->post('decrypted')
@@ -156,19 +144,20 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
         $this->em->flush();
 
         // flash and redirect
-        $this->session->flash(sprintf(self::SUCCESS, $encryptedProperty->name()), 'success');
-        $this->url->redirectFor('repository.encrypted', ['repository' => $this->parameters['repository']], [], 303);
+        $this->flasher
+            ->withFlash(sprintf(self::SUCCESS, $encryptedProperty->name()), 'success')
+            ->load('encrypted', ['application' => $this->application->id()]);
     }
 
     /**
-     * @param string $applicationId
-     * @param string $environmentId
+     * @param Application $application
+     * @param string $environmentID
      * @param string $name
      * @param string $decrypted
      *
      * @return EncryptedProperty|null
      */
-    private function isValid($applicationId, $environmentId, $name, $decrypted)
+    private function isValid(Application $application, $environmentID, $name, $decrypted)
     {
         // validate fields
         $errors = [];
@@ -188,7 +177,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
             $errors[] = self::ERR_INVALID_DATA;
         }
 
-        if (!$environmentId) {
+        if (!$environmentID) {
             $errors[] = self::ERR_NO_ENVIRONMENT;
         }
 
@@ -196,16 +185,9 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
 
         $env = null;
         // verify environment
-        if (!$errors && $environmentId !== 'global') {
-            if (!$env = $this->envRepo->find($environmentId)) {
+        if (!$errors && $environmentID !== 'global') {
+            if (!$env = $this->envRepo->find($environmentID)) {
                 $errors[] = self::ERR_NO_ENVIRONMENT;
-            }
-        }
-
-        // verify application
-        if (!$errors) {
-            if (!$application = $this->applicationRepo->find($applicationId)) {
-                $errors[] = self::ERR_NO_APPLICATION;
             }
         }
 

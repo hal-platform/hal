@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Application;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -26,36 +25,26 @@ class EncryptedPropertiesController implements ControllerInterface
      * @type EntityRepository
      */
     private $encryptedRepo;
-    private $applicationRepo;
 
     /**
-     * @type NotFound
+     * @type Application
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $application;
 
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Application $application
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        NotFound $notFound,
-        array $parameters
+        Application $application
     ) {
         $this->template = $template;
         $this->encryptedRepo = $em->getRepository(EncryptedProperty::CLASS);
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
 
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->application = $application;
     }
 
     /**
@@ -63,15 +52,11 @@ class EncryptedPropertiesController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
-            return call_user_func($this->notFound);
-        }
-
-        $encrypted = $this->encryptedRepo->findBy(['application' => $application]);
+        $encrypted = $this->encryptedRepo->findBy(['application' => $this->application]);
         usort($encrypted, $this->sortByEnv());
 
         $this->template->render([
-            'application' => $application,
+            'application' => $this->application,
             'encrypted' => $encrypted
         ]);
     }

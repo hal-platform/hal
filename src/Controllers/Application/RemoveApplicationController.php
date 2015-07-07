@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Flasher;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
 class RemoveApplicationController implements ControllerInterface
@@ -37,34 +36,26 @@ class RemoveApplicationController implements ControllerInterface
     private $flasher;
 
     /**
-     * @type NotFound
+     * @type Application
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $application;
 
     /**
      * @param EntityManagerInterface $em
      * @param Flasher $flasher
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Application $application
      */
     public function __construct(
         EntityManagerInterface $em,
         Flasher $flasher,
-        NotFound $notFound,
-        array $parameters
+        Application $application
     ) {
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->em = $em;
 
         $this->flasher = $flasher;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->application = $application;
     }
 
     /**
@@ -72,22 +63,18 @@ class RemoveApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
-        if ($deployments = $this->deploymentRepo->findBy(['application' => $application])) {
+        if ($deployments = $this->deploymentRepo->findBy(['application' => $this->application])) {
             return $this->flasher
                 ->withFlash(self::ERR_HAS_DEPLOYMENTS, 'error')
-                ->load('repository', ['id' => $repo->id()]);
+                ->load('application', ['application' => $repo->id()]);
         }
 
-        $this->em->remove($application);
+        $this->em->remove($this->application);
         $this->em->flush();
 
-        $message = sprintf(self::SUCCESS, $application->key());
+        $message = sprintf(self::SUCCESS, $this->application->key());
         return $this->flasher
             ->withFlash($message, 'success')
-            ->load('repositories');
+            ->load('applications');
     }
 }

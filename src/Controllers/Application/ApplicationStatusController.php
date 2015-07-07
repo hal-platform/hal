@@ -21,7 +21,6 @@ use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Core\Utility\SortingTrait;
 use QL\Hal\Service\StickyEnvironmentService;
 use QL\Kraken\Core\Entity\Application as KrakenApplication;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -66,31 +65,23 @@ class ApplicationStatusController implements ControllerInterface
     private $stickyService;
 
     /**
-     * @type NotFound
+     * @type Application
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $application;
 
     /**
      * @param TemplateInterface $template
      * @param EntityMangerInterface $em
      *
      * @param StickyEnvironmentService $stickyService
-     * @param NotFound $notFound
-     * @param array $parameters
-     *
+     * @param Application $application
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
 
         StickyEnvironmentService $stickyService,
-        NotFound $notFound,
-        array $parameters
+        Application $application
     ) {
         $this->template = $template;
 
@@ -104,8 +95,7 @@ class ApplicationStatusController implements ControllerInterface
         $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
 
         $this->stickyService = $stickyService;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->application = $application;
     }
 
     /**
@@ -113,13 +103,9 @@ class ApplicationStatusController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$application = $this->applicationRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
+        $selected = $this->stickyService->get($this->application->id());
 
-        $selected = $this->stickyService->get($application->id());
-
-        $environments = $this->envRepo->getBuildableEnvironmentsByApplication($application);
+        $environments = $this->envRepo->getBuildableEnvironmentsByApplication($this->application);
         // if empty, throw them a bone with "test"
         if (!$environments) {
             $environments = $this->envRepo->findBy(['name' => 'test']);
@@ -129,7 +115,7 @@ class ApplicationStatusController implements ControllerInterface
 
         $deployments = [];
         if ($selectedEnvironment) {
-            $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($application, $selectedEnvironment);
+            $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($this->application, $selectedEnvironment);
         }
 
         usort($deployments, $this->deploymentSorter());
@@ -143,12 +129,12 @@ class ApplicationStatusController implements ControllerInterface
             ];
         }
 
-        $builds = $this->buildRepo->findBy(['application' => $application, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
+        $builds = $this->buildRepo->findBy(['application' => $this->application, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
 
-        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $application]);
+        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $this->application]);
 
         $this->template->render([
-            'application' => $application,
+            'application' => $this->application,
             'builds' => $builds,
             'environments' => $environments,
             'deployment_statuses' => $deployments,

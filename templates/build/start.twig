@@ -9,7 +9,7 @@
 
     <h1>Start Build - <strong>{{ application.name }}</strong></h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
 
     {% if errors %}
         <ul class="error-list js-backend-error">

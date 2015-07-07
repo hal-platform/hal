@@ -281,6 +281,10 @@ class HypermediaFormatter
             // single link
             foreach ($properties as $property => &$value) {
                 if ($property === 'href') {
+                    if (is_string($value) && stripos($value, 'http') === 0) {
+                        continue;
+                    }
+
                     if (!is_array($value)) {
                         $value = [$value];
                     }

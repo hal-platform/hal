@@ -32,10 +32,10 @@
                     {% set hasApplications = true %}
                     {% for application in group_applications %}
                         <tr>
-                            <td><a href="{{ urlFor('repository.status', {'id': application.id}) }}">{{ application.name }}</a></td>
+                            <td><a href="{{ urlFor('application.status', {'application': application.id}) }}">{{ application.name }}</a></td>
                             <td>{{ macros.gitsource(application) }}</td>
                             <td>
-                                <a href="{{ urlFor('repository', {'id': application.id}) }}">Details</a>
+                                <a href="{{ urlFor('application', {'application': application.id}) }}">Details</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -55,7 +55,7 @@
     </table>
 
     <ul class="button-list button-list--half">
-        <li><a class="btn" href="{{ urlFor('repository.admin.add') }}">Add Application</a></li>
-        <li><a class="btn" href="{{ urlFor('group.admin.add') }}">Add Group</a></li>
+        <li><a class="btn" href="{{ urlFor('application.add') }}">Add Application</a></li>
+        <li><a class="btn" href="{{ urlFor('group.add') }}">Add Group</a></li>
     </ul>
 {% endblock %}

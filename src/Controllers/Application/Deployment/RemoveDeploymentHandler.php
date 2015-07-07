@@ -8,19 +8,12 @@
 namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Flasher;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
 class RemoveDeploymentHandler implements ControllerInterface
 {
-    /**
-     * @type EntityRepository
-     */
-    private $deploymentRepo;
-
     /**
      * @type EntityManagerInterface
      */
@@ -32,33 +25,24 @@ class RemoveDeploymentHandler implements ControllerInterface
     private $flasher;
 
     /**
-     * @type NotFound
+     * @type Deployment
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $deployment;
 
     /**
      * @param EntityManagerInterface $em
      * @param Flasher $flasher
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Deployment $deployment
      */
     public function __construct(
         EntityManagerInterface $em,
         Flasher $flasher,
-        NotFound $notFound,
-        array $parameters
+        Deployment $deployment
     ) {
-        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->em = $em;
         $this->flasher = $flasher;
 
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->deployment = $deployment;
     }
 
     /**
@@ -66,15 +50,11 @@ class RemoveDeploymentHandler implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$deployment = $this->deploymentRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
-        $this->em->remove($deployment);
+        $this->em->remove($this->deployment);
         $this->em->flush();
 
         return $this->flasher
             ->withFlash('Deployment removed.', 'success')
-            ->load('repository.deployments', ['repository' => $this->parameters['repository']]);
+            ->load('deployments', ['application' => $this->deployment->application()->id()]);
     }
 }

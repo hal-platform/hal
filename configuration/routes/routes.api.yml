@@ -117,30 +117,30 @@ parameters:
 
         api.applications:
             method: 'GET'
-            route: '/api/repositories'
+            route: '/api/applications'
             stack: ['middleware.cachedApi', 'api.applications']
 
         api.application:
             method: 'GET'
-            route: '/api/repositories/:id'
+            route: '/api/applications/:id'
             stack: ['middleware.cachedApi', 'api.application']
             conditions: {id: %routes.api.regex.digit%}
 
         api.deployments:
             method: 'GET'
-            route: '/api/repositories/:id/deployments'
+            route: '/api/applications/:id/deployments'
             stack: ['middleware.cachedApi', 'api.deployments']
             conditions: {id: %routes.api.regex.digit%}
 
         api.builds:
             method: 'GET'
-            route: '/api/repositories/:id/builds'
+            route: '/api/applications/:id/builds'
             stack: ['middleware.cachedApi', 'api.builds']
             conditions: {id: %routes.api.regex.digit%}
 
         api.pushes:
             method: 'GET'
-            route: '/api/repositories/:id/pushes'
+            route: '/api/applications/:id/pushes'
             stack: ['middleware.cachedApi', 'api.pushes']
             conditions: {id: %routes.api.regex.digit%}
 

@@ -8,11 +8,11 @@
 namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManager;
-use QL\Hal\Session;
+use QL\Hal\Core\Entity\Application;
+use QL\Hal\Flasher;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
-use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 
 class AddDeploymentFormHandler implements MiddlewareInterface
@@ -30,14 +30,9 @@ class AddDeploymentFormHandler implements MiddlewareInterface
     private $validator;
 
     /**
-     * @type Session
+     * @type Flasher
      */
-    private $session;
-
-    /**
-     * @type Url
-     */
-    private $url;
+    private $flasher;
 
     /**
      * @type Context
@@ -50,37 +45,34 @@ class AddDeploymentFormHandler implements MiddlewareInterface
     private $request;
 
     /**
-     * @type array
+     * @type Application
      */
-    private $parameters;
+    private $application;
 
     /**
      * @param EntityManager $em
      * @param DeploymentValidator $validator
-     * @param Session $session
-     * @param Url $url
+     * @param Flasher $flasher
      * @param Context $context
      * @param Request $request
-     * @param array $parameters
+     * @param Application $application
      */
     public function __construct(
         EntityManager $em,
         DeploymentValidator $validator,
-        Session $session,
-        Url $url,
+        Flasher $flasher,
         Context $context,
         Request $request,
-        array $parameters
+        Application $application
     ) {
         $this->em = $em;
         $this->validator = $validator;
 
-        $this->session = $session;
-        $this->url = $url;
+        $this->flasher = $flasher;
         $this->context = $context;
 
         $this->request = $request;
-        $this->parameters = $parameters;
+        $this->application = $application;
     }
 
     /**
@@ -89,7 +81,7 @@ class AddDeploymentFormHandler implements MiddlewareInterface
     public function __invoke()
     {
         $deployment = $this->validator->isValid(
-            $this->parameters['repository'],
+            $this->application,
             $this->request->post('server'),
             $this->request->post('path'),
             $this->request->post('eb_environment'),
@@ -111,7 +103,8 @@ class AddDeploymentFormHandler implements MiddlewareInterface
         $this->em->flush();
 
         // flash and redirect
-        $this->session->flash(self::SUCCESS, 'success');
-        $this->url->redirectFor('repository.deployments', ['repository' => $this->parameters['repository']], [], 303);
+        $this->flasher
+            ->withFlash(self::SUCCESS, 'success')
+            ->load('deployments', ['application' => $this->application->id()]);
     }
 }

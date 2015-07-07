@@ -14,7 +14,7 @@
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('repository', {id: build.application.id}) }}">{{ build.application.name }}</a>
+                <a href="{{ urlFor('application', {application: build.application.id}) }}">{{ build.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -141,7 +141,7 @@
                 {% if allowSubmit %}
                     <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
                 {% endif %}
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repository.status', {'id': build.application.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a></li>
             </ul>
         </form>
     {% else %}

@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManager;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Slim\Halt;
@@ -52,9 +53,9 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
     private $request;
 
     /**
-     * @type array
+     * @type Application
      */
-    private $parameters;
+    private $application;
 
     /**
      * @param EntityManager $em
@@ -64,7 +65,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
      * @param Url $url
      * @param Request $request
      * @param Response $response
-     * @param array $parameters
+     * @param Application $application
      */
     public function __construct(
         EntityManager $em,
@@ -74,7 +75,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
         Url $url,
         Request $request,
         Response $response,
-        array $parameters
+        Application $application
     ) {
         $this->em = $em;
         $this->validator = $validator;
@@ -85,7 +86,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
 
         $this->request = $request;
         $this->response = $response;
-        $this->parameters = $parameters;
+        $this->application = $application;
     }
 
     /**
@@ -96,7 +97,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
         $this->response->headers->set('Content-Type', 'application/json');
 
         // deployment always returned, it will blow up if not.
-        $deployment = $this->handleJson($this->parameters['repository']);
+        $deployment = $this->handleJson();
 
         // if validator didn't create a deployment, pass through to controller to handle errors
         if (!$deployment) {
@@ -112,11 +113,9 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
     }
 
     /**
-     * @param int $applicationId
-     *
      * @return Deployment|null
      */
-    private function handleJson($applicationId)
+    private function handleJson()
     {
         $body = $this->request->getBody();
         $decoded = call_user_func($this->json, $body);
@@ -127,7 +126,7 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
         }
 
         $deployment = $this->validator->isValid(
-            $applicationId,
+            $this->application,
             isset($decoded['server']) ? $decoded['server'] : null,
             isset($decoded['path']) ? $decoded['path'] : null,
             isset($decoded['eb_environment']) ? $decoded['eb_environment'] : null,

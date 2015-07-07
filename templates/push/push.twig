@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('repository.status', {'id': push.application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': push.application.id}) }}">Back to Application Status</a></p>
 
     <h1>Push - <strong>{{ push.application.name }}</strong></h1>
 
@@ -59,7 +59,7 @@
 
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('repository', {'id': push.application.id}) }}">{{ push.application.name }}</a>
+                <a href="{{ urlFor('application', {'id': push.application.id}) }}">{{ push.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>

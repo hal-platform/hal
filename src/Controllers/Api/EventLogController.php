@@ -25,7 +25,7 @@ class EventLogController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $repository;
+    private $logRepo;
 
     /**
      * @type EventLogNormalizer
@@ -50,7 +50,7 @@ class EventLogController implements ControllerInterface
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->repository = $em->getRepository(EventLog::CLASS);
+        $this->logRepo = $em->getRepository(EventLog::CLASS);
         $this->normalizer = $normalizer;
 
         $this->parameters = $parameters;
@@ -62,7 +62,7 @@ class EventLogController implements ControllerInterface
      */
     public function __invoke()
     {
-        $log = $this->repository->find($this->parameters['id']);
+        $log = $this->logRepo->find($this->parameters['id']);
 
         if (!$log instanceof EventLog) {
             throw HttpProblemException::build(404, 'invalid-log');

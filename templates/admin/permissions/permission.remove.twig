@@ -29,7 +29,7 @@
 
             {% if userType.application %}
                 <dt class="split__title">Application</dt>
-                <dd><a href="{{ urlFor('repository', {id: userType.application.id}) }}">{{ userType.application.name }}</a></dd>
+                <dd><a href="{{ urlFor('application', {application: userType.application.id}) }}">{{ userType.application.name }}</a></dd>
             {% endif %}
         </dl>
     </div>

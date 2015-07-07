@@ -49,12 +49,12 @@ class ApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repository = $this->applicationRepo->find($this->parameters['id']);
+        $application = $this->applicationRepo->find($this->parameters['id']);
 
-        if (!$repository instanceof Application) {
-            throw HttpProblemException::build(404, 'invalid-repository');
+        if (!$application instanceof Application) {
+            throw HttpProblemException::build(404, 'invalid-application');
         }
 
-        $this->formatter->respond($repository);
+        $this->formatter->respond($application);
     }
 }

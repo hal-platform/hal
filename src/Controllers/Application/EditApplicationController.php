@@ -13,7 +13,6 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Flasher;
 use QL\Hal\Utility\ValidatorTrait;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -42,6 +41,11 @@ class EditApplicationController implements ControllerInterface
     private $em;
 
     /**
+     * @type Application
+     */
+    private $application;
+
+    /**
      * @type Flasher
      */
     private $flasher;
@@ -52,30 +56,18 @@ class EditApplicationController implements ControllerInterface
     private $request;
 
     /**
-     * @type NotFound
-     */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
+     * @param Application $application
      * @param Flasher $flasher
      * @param Request $request
-     * @param NotFound $notFound
-     * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        Application $application,
         Flasher $flasher,
-        Request $request,
-        NotFound $notFound,
-        array $parameters
+        Request $request
     ) {
         $this->template = $template;
 
@@ -83,11 +75,10 @@ class EditApplicationController implements ControllerInterface
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
 
+        $this->application = $application;
         $this->flasher = $flasher;
 
         $this->request = $request;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
     }
 
     /**
@@ -95,21 +86,17 @@ class EditApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$application = $this->applicationRepo->find($this->parameters['repository'])) {
-            return call_user_func($this->notFound);
-        }
-
         $renderContext = [
             'form' => [
-                'identifier' => $this->request->post('identifier') ?: $application->key(),
-                'name' => $this->request->post('name') ?: $application->name(),
-                'group' => $this->request->post('group') ?: $application->group()->id(),
-                'notification_email' => $this->request->post('notification_email') ?: $application->email(),
-                'eb_name' => $this->request->post('eb_name') ?: $application->ebName()
+                'identifier' => $this->request->post('identifier') ?: $this->application->key(),
+                'name' => $this->request->post('name') ?: $this->application->name(),
+                'group' => $this->request->post('group') ?: $this->application->group()->id(),
+                'notification_email' => $this->request->post('notification_email') ?: $this->application->email(),
+                'eb_name' => $this->request->post('eb_name') ?: $this->application->ebName()
             ],
-            'application' => $application,
+            'application' => $this->application,
             'groups' => $this->groupRepo->findAll(),
-            'errors' => $this->checkFormErrors($this->request, $application)
+            'errors' => $this->checkFormErrors($this->request, $this->application)
         ];
 
         if ($this->request->isPost()) {
@@ -119,11 +106,11 @@ class EditApplicationController implements ControllerInterface
             }
 
             if (!$renderContext['errors']) {
-                $repository = $this->handleFormSubmission($this->request, $application, $group);
+                $application = $this->handleFormSubmission($this->request, $this->application, $group);
 
                 return $this->flasher
                     ->withFlash(self::SUCCESS, 'success')
-                    ->load('repository', ['id' => $application->id()]);
+                    ->load('application', ['application' => $this->application->id()]);
             }
         }
 

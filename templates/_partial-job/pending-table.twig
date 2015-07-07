@@ -17,7 +17,7 @@
                 {% if job is build %}
                     <tr id="build-{{ job.id }}">
                         <td><a href="{{ urlFor('build', {build: job.id}) }}">Build</a></td>
-                        <td><a href="{{ urlFor('repository.status', {id: job.application.id}) }}">{{ job.application.name }}</a></td>
+                        <td><a href="{{ urlFor('application.status', {application: job.application.id}) }}">{{ job.application.name }}</a></td>
                         <td>
                             {{ macros.job_status(job, true) }}
                         </td>
@@ -30,7 +30,7 @@
                 {% else %}
                     <tr id="push-{{ job.id }}">
                         <td><a href="{{ urlFor('push', {push: job.id}) }}">Push</a></td>
-                        <td><a href="{{ urlFor('repository.status', {id: job.application.id}) }}">{{ job.application.name }}</a></td>
+                        <td><a href="{{ urlFor('application.status', {application: job.application.id}) }}">{{ job.application.name }}</a></td>
                         <td>
                             {{ macros.job_status(job, true) }}
                         </td>

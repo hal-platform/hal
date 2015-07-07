@@ -7,10 +7,10 @@
 
 namespace QL\Hal\Validator;
 
-use QL\Hal\Core\Entity\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\DeploymentRepository;
@@ -22,7 +22,6 @@ class DeploymentValidator
 
     const ERR_INVALID_PATH = 'File path is invalid.';
     const ERR_INVALID_URL = 'URL is invalid.';
-    const ERR_INVALID_APPLICATION = 'Application is invalid.';
     const ERR_INVALID_SERVER = 'Server is invalid.';
     const ERR_INVALID_EB_ENVIRONMENT = 'EB Environment is invalid.';
     const ERR_INVALID_EC2_POOL = 'EC2 Pool is invalid.';
@@ -35,7 +34,6 @@ class DeploymentValidator
     /**
      * @type EntityRepository
      */
-    private $applicationRepo;
     private $serverRepo;
     private $deploymentRepo;
 
@@ -49,7 +47,6 @@ class DeploymentValidator
      */
     public function __construct(EntityManagerInterface $em)
     {
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->serverRepo = $em->getRepository(Server::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
@@ -57,7 +54,7 @@ class DeploymentValidator
     }
 
     /**
-     * @param int $applicationId
+     * @param Application $application
      * @param int $serverId
      *
      * @param string $path
@@ -67,21 +64,17 @@ class DeploymentValidator
      *
      * @return Deployment|null
      */
-    public function isValid($applicationId, $serverId, $path, $ebEnvironment, $ec2Pool, $url)
+    public function isValid(Application $application, $serverId, $path, $ebEnvironment, $ec2Pool, $url)
     {
         $this->errors = [];
 
         $path = trim($path);
 
-        $this->validateRequired($applicationId, $serverId, $url);
+        $this->validateRequired($serverId, $url);
 
         // stop validation if errors
         if ($this->errors) {
             return null;
-        }
-
-        if (!$application = $this->applicationRepo->find($applicationId)) {
-            $this->errors[] = self::ERR_INVALID_APPLICATION;
         }
 
         if (!$server = $this->serverRepo->find($serverId)) {
@@ -292,19 +285,14 @@ class DeploymentValidator
     }
 
     /**
-     * @param int $applicationId
      * @param int $serverId
      * @param string $url
      *
      * @return bool
      */
-    private function validateRequired($applicationId, $serverId, $url)
+    private function validateRequired($serverId, $url)
     {
         $errors = [];
-
-        if (!$applicationId) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'Application');
-        }
 
         if (!$serverId) {
             $errors[] = sprintf(self::ERR_REQUIRED, 'Server');

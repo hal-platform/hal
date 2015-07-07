@@ -21,6 +21,10 @@ services:
     hal.userType:        { synthetic: true }
     hal.userPermission:  { synthetic: true }
 
+    hal.application:     { synthetic: true }
+    hal.deployment:      { synthetic: true }
+    hal.encrypted:       { synthetic: true }
+
     ######################################################################################################################
     # DOCTRINE CONFIGURATION
     ######################################################################################################################

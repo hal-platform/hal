@@ -81,7 +81,7 @@
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('repository.deployment', {repository: deployment.application.id, id: deployment.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('deployment', {application: deployment.application.id, deployment: deployment.id}) }}">Cancel</a></li>
             </ul>
         </form>
     </div>
