@@ -84,6 +84,8 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
 .btn--disabled {
     @include btn-color($light-grey, false);
     color: shade($light-grey, 30%);
+    cursor: not-allowed;
+
     &:hover {
         color: shade($light-grey, 30%);
     }

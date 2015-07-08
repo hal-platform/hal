@@ -2,7 +2,7 @@
     @extend %clearfix;
 }
 
-.cards {
+.cards, .cards--dual {
     @include leader;
     @include trailer;
 }
@@ -13,7 +13,8 @@
     @include trailer(2);
 }
 
-.cards > li {
+.cards > li,
+.cards--dual > li {
     @include breakpoint(40em) {
         &:nth-child(odd) {
             @include grid-span(1, 1, $grid: 2, $gutter: .1);
@@ -22,10 +23,12 @@
 
         &:nth-child(even) {
             @include grid-span(1, 2, $grid: 2, $gutter: .1);
-            clear:right;
+            clear: right;
         }
     }
+}
 
+.cards > li {
     @include breakpoint(60em) {
         &:nth-child(3n+1) {
             @include grid-span(1, 1, $grid: 3, $gutter: .1);
@@ -71,6 +74,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: ms(3);
+}
+
+.card__details--divided > ul > li {
+    border-top: 4px solid $light-grey;
+    &:first-child {
+        border-top: 0;
+    }
 }
 
 .js-data-overload {

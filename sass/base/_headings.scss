@@ -34,3 +34,7 @@ h3, h5, h6 {
     @include leader(.75);
     @include trailer(.25);
 }
+
+h6 {
+    font-weight: bold;
+}
