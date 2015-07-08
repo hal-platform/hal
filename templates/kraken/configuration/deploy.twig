@@ -4,6 +4,8 @@
 
 {% set page_title = "Deploy Configuration" %}
 
+{% set isBusinessTime = isSeriousBusinessMode() %}
+
 {% block content %}
 
     <h1>{{ page_title }}</h1>
@@ -91,9 +93,11 @@
 
     {% else %}
 
+        {% set deploy_label = isBusinessTime ? 'Deploy Configuration' : 'Release the kraken' %}
+
         <form method="post" class="form-wrapper">
             <ul class="button-list">
-                <li><input type="submit" class="btn btn--action" value="Deploy Configuration"></li>
+                <li><input type="submit" class="btn btn--action" value="{{ deploy_label }}"></li>
                 <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: application.id}) }}">Cancel</a></li>
             </ul>
         </form>
