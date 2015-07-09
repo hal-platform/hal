@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c1f10aaee43ed0f8e40025d07a45c026",
+    "hash": "8bbb31921b0ed92fa311f0e3491e59a3",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1188,7 +1188,7 @@
             "version": "2.7.1",
             "source": {
                 "type": "git",
-                "url": "git@git:web-core/hal-core.git",
+                "url": "http://git/web-core/hal-core.git",
                 "reference": "730713dd3e85c34bb0becadac8c018a153624d96"
             },
             "dist": {
@@ -1394,19 +1394,20 @@
         },
         {
             "name": "ql/mcp-corp-account",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-corp-account.git",
-                "reference": "ec69e42b8d354b3c51f03509fca8bbeab7a3f428"
+                "reference": "e5207f9fd0c43b90cc438b608c72c5dfe85f121b"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-corp-account-1.1.0-9eb8ac.zip",
-                "reference": "ec69e42b8d354b3c51f03509fca8bbeab7a3f428",
-                "shasum": "5756b0500f560e6af1ae10d1982b14cf16596bf6"
+                "url": "http://composer/dist/ql-mcp-corp-account-1.1.1-2b0737.zip",
+                "reference": "e5207f9fd0c43b90cc438b608c72c5dfe85f121b",
+                "shasum": "caf87a271e8bb222c9926be8d493e6cf087e0c10"
             },
             "require": {
+                "ext-ldap": "*",
                 "php": ">=5.4.0",
                 "ql/mcp-core": "*",
                 "zendframework/zend-ldap": "*"
@@ -1433,23 +1434,24 @@
             ],
             "description": "Handles authenticating a username/password to Quicken Loans' corporate set of usernames and passwords. Note that this will NOT work for any public facing websites (yet). This will only work for internal QL applications.",
             "homepage": "http://git/mcp/mcp-corp-account",
-            "time": "2015-06-10 12:08:17"
+            "time": "2015-07-08 22:23:23"
         },
         {
             "name": "ql/mcp-crypto",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-crypto.git",
-                "reference": "aa2d92e24590355963b9739f412d84212ded1b32"
+                "reference": "7007f858b3d2a29980d7a16bb4145319edc3e926"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-crypto-2.0.3-bd9acd.zip",
-                "reference": "aa2d92e24590355963b9739f412d84212ded1b32",
-                "shasum": "8bc1d90d9ed5351e4d97639f512c3d7b87eb219f"
+                "url": "http://composer/dist/ql-mcp-crypto-2.0.4-4754c9.zip",
+                "reference": "7007f858b3d2a29980d7a16bb4145319edc3e926",
+                "shasum": "9f8b0e5fc2081b7588bf95f5832cc8e5f04d7c46"
             },
             "require": {
+                "ext-mbstring": "*",
                 "ext-pcre": "*",
                 "php": ">=5.4.0",
                 "ql/mcp-core": "^1.0",
@@ -1504,7 +1506,7 @@
             ],
             "description": "Symmetric and asymmetric encryption library for PHP",
             "homepage": "http://git/mcp/mcp-crypto",
-            "time": "2015-07-01 22:06:51"
+            "time": "2015-07-08 22:19:42"
         },
         {
             "name": "ql/mcp-logger",
@@ -3475,7 +3477,17 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php-64bit": "~5.5"
+        "php-64bit": "~5.5",
+        "ext-curl": "*",
+        "ext-ldap": "*",
+        "ext-libsodium": "*",
+        "ext-mbstring": "*",
+        "ext-mcrypt": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-pdo_sqlite": "*",
+        "ext-xmlwriter": "*"
     },
     "platform-dev": []
 }
