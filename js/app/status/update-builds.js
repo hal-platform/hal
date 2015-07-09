@@ -16,7 +16,7 @@ module.exports = {
         var $builds = $(this.buildTarget);
         $builds.each(function(index, item) {
             var $item = $(item);
-            var status = $item.text().trim();
+            var status = $item.data('status').trim();
 
             if (status == 'Waiting' || status == 'Building') {
                 $item
@@ -38,7 +38,7 @@ module.exports = {
         var _this = this;
         var id = $elem.data('build');
         var endpoint = this.generateUrl(id, 'api-update');
-        console.log(endpoint);
+        // console.log(endpoint);
 
         // Requires these properties:
         // - id
@@ -48,7 +48,7 @@ module.exports = {
         // - ? _links.start_push_page.href
         $.getJSON(endpoint, function(data) {
             var currentStatus = data.status;
-            $elem.text(currentStatus);
+            $elem.data('status', currentStatus); // protip: dom is not updated
 
             // console.log('Build ' + id + ' status: ' + currentStatus);
 
@@ -84,6 +84,8 @@ module.exports = {
     updateBuild: function(data, $elem) {
         var $container = $elem.closest('dl');
         var $hdr;
+
+        $elem.text($elem.data('status'));
 
         if (data.status == 'Success') {
             // Add push link if present

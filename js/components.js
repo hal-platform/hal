@@ -52,7 +52,7 @@ module.exports = {
 
     "job.updater": function() {
         require('./app/status/update-builds').init();
-        require('./app/status/update-builds').init();
+        require('./app/status/update-pushes').init();
     },
 
     // Kraken

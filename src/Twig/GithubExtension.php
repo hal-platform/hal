@@ -96,16 +96,8 @@ class GitHubExtension extends Twig_Extension
             return $isCurrent;
         }
 
-        try {
-            $resolve = $this->github->resolve($user, $repo, $reference);
-            $current = (is_array($resolve)) ? $resolve[1] : null;
-
-            $isCurrent = ($current == $commit) ? true : false;
-
-        // Fuck off weird errors
-        } catch (Exception $ex) {
-            $isCurrent = false;
-        }
+        $latest = $this->resolveRefToLatestCommit($user, $repo, $reference);
+        $isCurrent = ($latest == $commit) ? true : false;
 
         $this->setToCache($key, $isCurrent, 120);
         return $isCurrent;
@@ -144,5 +136,35 @@ class GitHubExtension extends Twig_Extension
         }
 
         return ['branch', $reference];
+    }
+
+    /**
+     * Check if a commit hash is the most recent for a given Github user, repo, and reference
+     *
+     * @param string $user
+     * @param string $repo
+     * @param string $reference
+     *
+     * @return string|null
+     */
+    private function resolveRefToLatestCommit($user, $repo, $reference)
+    {
+        $key = md5($user . $repo . $reference);
+
+        if (null !== ($latest = $this->getFromCache($key))) {
+            return $latest;
+        }
+
+        try {
+            $resolve = $this->github->resolve($user, $repo, $reference);
+            $latest = (is_array($resolve)) ? $resolve[1] : null;
+
+        // Fuck off weird errors
+        } catch (Exception $ex) {
+            $latest = null;
+        }
+
+        $this->setToCache($key, $latest, 15);
+        return $latest;
     }
 }

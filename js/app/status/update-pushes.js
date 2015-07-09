@@ -16,7 +16,7 @@ module.exports = {
         var $pushes = $(this.pushTarget);
         $pushes.each(function(index, item) {
             var $item = $(item);
-            var status = $item.text().trim();
+            var status = $item.data('status').trim();
 
             if (status == 'Waiting' || status == 'Pushing') {
                 $item
@@ -38,7 +38,7 @@ module.exports = {
         var _this = this;
         var id = $elem.data('push');
         var endpoint = this.generateUrl(id, 'api-update');
-        console.log(endpoint);
+        // console.log(endpoint);
 
         // Requires these properties:
         // - id
@@ -47,7 +47,7 @@ module.exports = {
         // - end
         $.getJSON(endpoint, function(data) {
             var currentStatus = data.status;
-            $elem.text(currentStatus);
+            $elem.data('status', currentStatus); // protip: dom is not updated
 
             // console.log('Push ' + id + ' status: ' + currentStatus);
 
@@ -85,6 +85,8 @@ module.exports = {
     updatePush: function(data, $elem) {
         var $container = $elem.closest('dl');
 
+        $elem.text($elem.data('status'));
+
         if (data.start) {
             var $start = $container.children('.js-push-start');
             if ($start.length > 0 && $start.children('time').length === 0) {
@@ -103,7 +105,7 @@ module.exports = {
         // derp
     },
     updateGrid: function(data, $elem) {
-        // derp
+        $elem.text($elem.data('status'));
     },
     formatTime: function(time) {
         var time = moment(time);

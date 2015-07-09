@@ -53,8 +53,11 @@
 }
 
 .card__header {
-    h4 {
-        margin: 0;
+    > h4 {
+        // margin: 0;
+
+        // because css is stupid garbage bullshit
+        margin: .01em;
         padding: ms(-10);
     }
 

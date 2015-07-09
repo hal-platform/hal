@@ -5,9 +5,9 @@
 {% set page_title = "Build History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
-
     <h1>Build History - <strong>{{ application.name }}</strong></h1>
+
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
 
     {{ block('search') }}
 
