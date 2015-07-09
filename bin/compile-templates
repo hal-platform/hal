@@ -15,9 +15,12 @@ use Symfony\Component\Finder\Finder;
 $root = __DIR__ . '/..';
 require_once $root . '/vendor/autoload.php';
 
-// Before the container is compiled, switch out the doctrine driver to fake sqlite.
 $di = Di::getDi($root, 'Who\Cares', function($container) use ($root) {
+    // Before the container is compiled, switch out the doctrine driver to fake sqlite.
     $container->setParameter('doctrine.connection', ['driver' => 'pdo_sqlite', 'memory' => true]);
+
+    // Add dummy encryption secret
+    $container->setParameter('session.encryption.secret', '000000ffffff000000ffffff000000ffffff000000ffffff000000ffffffaaaa');
 });
 
 // start slim to prime twig extension and inject synthetic services
