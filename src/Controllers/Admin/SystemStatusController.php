@@ -162,38 +162,34 @@ class SystemStatusController implements ControllerInterface
             return null;
         }
 
-        $servers = $this->sort($this->serverRepo->findBy(['type' => 'rsync']));
+        $serversByEnvironment = $this->aggregateServers();
 
         $time = isset($connections['generated']) ? $this->buildTime($connections['generated']) : null;
         $connections = isset($connections['servers']) ? $connections['servers'] : [];
 
-        $parsed = [];
-
-        foreach ($servers as $env => $servers) {
-            foreach ($servers as $server) {
-
-                if (!array_key_exists($env, $parsed)) {
-                    $parsed[$env] = [];
-                }
+        foreach ($serversByEnvironment as &$servers) {
+            foreach ($servers as &$server) {
 
                 if (isset($connections[$server->id()])) {
-                    $con = $connections[$server->id()];
-                    $parsed[$env][] = [
+                    $status = $connections[$server->id()];
+                    $server = [
                         'server' => $server,
-                        'resolved' => $con['server'],
-                        'status' => $con['status']
+                        'resolved' => $status['server'],
+                        'status' => $status['status'],
+                        'detail' => isset($status['detail']) ? $status['detail'] : ''
                     ];
                 } else {
-                    $parsed[$env][] = [
+                    $server = [
                         'server' => $server,
-                        'status' => 'unknown'
+                        'status' => 'unknown',
+                        'detail' => 'No status found.'
                     ];
                 }
             }
         }
 
         return [
-            'servers' => $parsed,
+            'servers' => $serversByEnvironment,
             'generated' => $time
         ];
     }
@@ -243,34 +239,26 @@ class SystemStatusController implements ControllerInterface
     }
 
     /**
-     * @param Server[] $servers
-     *
      * @return array
      */
-    private function sort(array $servers)
+    private function aggregateServers()
     {
-        $environments = [
-            'dev' => [],
-            'test' => [],
-            'beta' => [],
-            'prod' => []
-        ];
+        $servers = $this->serverRepo->findBy(['type' => 'rsync']);
+        usort($servers, $this->serverSorter());
+
+        $keys = array_keys($this->sortingHelperEnvironmentOrder);
+        $serverByEnvironment = array_fill_keys($keys, []);
 
         foreach ($servers as $server) {
-            $env = $server->environment()->name();
+            $name = $server->environment()->name();
 
-            if (!array_key_exists($env, $environments)) {
-                $environments[$env] = [];
+            if (array_key_exists($name, $serverByEnvironment)) {
+                $serverByEnvironment[$name][] = $server;
             }
-
-            $environments[$env][] = $server;
         }
 
-        $sorter = $this->serverSorter();
-        foreach ($environments as &$env) {
-            usort($env, $sorter);
-        }
-
-        return $environments;
+        return array_filter($serverByEnvironment, function ($servers) {
+            return count($servers) > 0;
+        });
     }
 }

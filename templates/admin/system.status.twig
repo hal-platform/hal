@@ -118,37 +118,43 @@
         <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
             <thead>
                 <tr>
-                    <th>Environment</th>
-                    <th>Server</th>
                     <th>Status</th>
+                    <th>Server</th>
+                    <th>Detail</th>
                 </tr>
             </thead>
-            <tbody>
+
                 {% for env, servers in connections.servers %}
-                    {% for status in servers %}
+                    <tbody class="table-breathe">
+                        <tr>
+                            <th colspan="4" class="table-mid-header">
+                                {{ env }}
+                            </th>
+                        </tr>
 
-                            <tr>
-                                <td>
-                                    {% if status.server.environment.isProduction %}
-                                        {{ macros.status(status.server.environment.name, 'info', 'key') }}
-                                    {% else %}
-                                        {{ status.server.environment.name }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ status.server.name }}</td>
-                                <td>{{ status.resolved != status.server.name ? status.resolved : '' }}</td>
-                                <td class="tr">
-                                    {% if status.status %}
-                                        {{ macros.status('Success', 'success') }}
-                                    {% else %}
-                                        {{ macros.status('Error', 'error') }}
-                                    {% endif %}
-                                </td>
-                            </tr>
+                        {% for status in servers %}
+                                <tr>
+                                    <td>
+                                        {% if status.status is sameas ('unknown') %}
+                                            {{ macros.status('Unknown', 'info') }}
+                                        {% elseif status.status %}
+                                            {{ macros.status('Success', 'success') }}
+                                        {% else %}
+                                            {{ macros.status('Error', 'error') }}
+                                        {% endif %}
+                                    </td>
 
-                    {% endfor %}
+                                    <td><a href="{{ urlFor('server', {id: status.server.id})}}">{{ status.server.name }}</a></td>
+                                    <td>
+                                        <div class="pre-wrapper">
+                                            <pre class="code_clear">{{ status.detail }}</pre>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                        {% endfor %}
+                    </tbody>
                 {% endfor %}
-            </tbody>
         </table>
     {% else %}
         <p>Unknown</p>
