@@ -148,8 +148,11 @@
     {% if job.status == 'Success' %}
         {{ self_macros.status_icon(job.status, 'success') }}
 
-    {% elseif job.status in ['Error', 'Removed'] %}
+    {% elseif job.status in ['Error'] %}
         {{ self_macros.status_icon(job.status, 'error') }}
+
+    {% elseif job.status in ['Removed'] %}
+        {{ self_macros.status_icon(job.status, 'info') }}
 
     {% elseif allowUpdates %}
         {% if job is push %}
@@ -174,8 +177,10 @@
 
         {% if job.status == 'Success' %}
             {{ self_macros.status_icon(push_link, 'success') }}
-        {% elseif job.status in ['Error', 'Removed'] %}
+        {% elseif job.status in ['Error'] %}
             {{ self_macros.status_icon(push_link, 'error') }}
+        {% elseif job.status in ['Removed'] %}
+            {{ self_macros.status_icon(push_link, 'info') }}
         {% else %}
             {{ self_macros.status_icon(push_link, 'thinking', {'data-push': job.id, 'data-status': job.status}) }}
         {% endif %}
@@ -187,8 +192,10 @@
 
         {% if job.status == 'Success' %}
             {{ self_macros.status_icon(build_link, 'success') }}
-        {% elseif job.status in ['Error', 'Removed'] %}
+        {% elseif job.status in ['Error'] %}
             {{ self_macros.status_icon(build_link, 'error') }}
+        {% elseif job.status in ['Removed'] %}
+            {{ self_macros.status_icon(build_link, 'info') }}
         {% else %}
             {{ self_macros.status_icon(build_link, 'thinking', {'data-build': job.id, 'data-status': job.status}) }}
         {% endif %}
