@@ -26,6 +26,9 @@ services:
     hal.encrypted:       { synthetic: true }
     hal.environment:     { synthetic: true }
 
+    hal.view:            { synthetic: true }
+    hal.pool:            { synthetic: true }
+
     ######################################################################################################################
     # DOCTRINE CONFIGURATION
     ######################################################################################################################

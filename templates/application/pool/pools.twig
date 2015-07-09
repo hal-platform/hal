@@ -2,13 +2,87 @@
 
 {% set page_title = 'Deployment Pools : ' ~ application.name %}
 
+{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+
 {% block content %}
     <h1>Deployment Pools - <strong>{{ application.name }}</strong> </h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('application', {'application': application.id}) }}">Back to Application</a></p>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>
+                <a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a>
+            </dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>{{ environment.name }}</dd>
+        </dl>
+    </div>
 
     <p>
-        Deployment targets define what servers your application can be deployed to and where on that server the code will be uploaded.
+        <b>Deployment Pools</b> are used to organize servers or deployments. This is primarily useful on the status page when there are many
+        servers assigned to an environment. <b>Pools</b> are assigned to <b>Deployment Views</b>. This allows multiple schemas to be created and shared.
     </p>
+
+    <h6>Example Views</h6>
+    <ul class="list--bullet">
+        <li><b>Datacenter</b>: Detroit, Troy</li>
+        <li><b>Push Phase</b>: Phase 1, Phase 2</li>
+        <li><b>Team</b>: Squad 1, Squad 2, Squad 3, Squad 4</li>
+    </ul>
+
+    <h2>Views</h2>
+
+    {% if views %}
+        <ul class="list--bare cards--dual">
+            {% for view in views %}
+                <li>
+                    <article class="card--baby">
+                        <header class="card__header split">
+                            <span class="split__title">{{ view.name }}</span>
+
+                            <a href="{{ urlFor('deployment_view', {'view': view.id}) }}">Manage</a>
+                        </header>
+
+                        <section class="card__details card__details--divided">
+                            {% if not view.pools.isEmpty %}
+                                <ul class="split">
+                                    {% for pool in view.pools %}
+                                        <li>
+                                            <span class="split__title"><b>{{ pool.name }}</b></span>
+                                            <ul>
+                                                {% for deployment in deployment_pools[pool.id] %}
+                                                    <li>
+                                                        {{ deployment|formatDeploymentServer }}
+                                                    </li>
+                                                {% else %}
+                                                    <li>None</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No pools defined.</p>
+                            {% endif %}
+                        </section>
+                    </article>
+
+                </li>
+            {% endfor %}
+
+        </ul>
+    {% else %}
+        <p>No views found for this application environment.</p>
+    {% endif %}
+
+    <ul class="button-list">
+        {% if isAdmin %}
+            <li><a class="btn btn--action" href="{{ urlFor('deployment_view.add', {'application': application.id, 'environment': environment.id}) }}">Add View</a></li>
+        {% endif %}
+
+        <li><a class="btn" href="{{ urlFor('deployments', {'application': application.id}) }}">Deployments</a></li>
+        <li><a class="btn" href="{{ urlFor('application.status', {'application': application.id}) }}">Application Status</a></li>
+    </ul>
 
 {% endblock %}

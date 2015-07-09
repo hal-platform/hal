@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
+
+{% set page_title = 'Add Deployment View : ' ~ application.name %}
+
+{% block content %}
+    <h1>Add Deployment View - <strong>{{ application.name }}</strong> </h1>
+
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>
+                <a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a>
+            </dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>{{ environment.name }}</dd>
+        </dl>
+    </div>
+
+    <div class="form-wrapper">
+        {{ form_macros.formErrors(errors) }}
+
+        <form method="post">
+            <ul class="form-fields">
+
+                <li>
+                    <label for="name">Name</label>
+                    <input name="name" id="name" maxlength="100" required value="{{ form.name }}" class="text-input">
+                </li>
+            </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Deployment View"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('pools', {'application': application.id, 'environment': environment.id}) }}">Cancel</a></li>
+            </ul>
+
+        </form>
+    </div>
+
+{% endblock %}

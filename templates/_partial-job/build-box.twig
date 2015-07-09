@@ -18,7 +18,7 @@
                         </a>
                     </span>
 
-                    <a href="{{ urlFor('build', {'repo': build.application.id, 'build': build.id}) }}">
+                    <a href="{{ urlFor('build', {'build': build.id}) }}">
                         {{ macros.job_status(build) }}
                     </a>
                 </header>

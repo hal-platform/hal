@@ -18,7 +18,7 @@ use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class PoolsController implements ControllerInterface
+class ViewController implements ControllerInterface
 {
     use SortingTrait;
 
@@ -30,13 +30,12 @@ class PoolsController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $viewsRepo;
     private $deploymentRepo;
 
     /**
-     * @type Application
+     * @type DeploymentView
      */
-    private $application;
+    private $view;
 
     /**
      * @type Environment
@@ -46,23 +45,18 @@ class PoolsController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Application $application
-     * @param Environment $environment
+     * @param DeploymentView $view
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Application $application,
-        Environment $environment
+        DeploymentView $view
     ) {
         $this->template = $template;
-        $this->viewRepo = $em->getRepository(DeploymentView::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
 
         $this->em = $em;
-
-        $this->application = $application;
-        $this->environment = $environment;
+        $this->view = $view;
     }
 
     /**
@@ -70,30 +64,26 @@ class PoolsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $views = $this->viewRepo->findBy([
-            'application' => $this->application,
-            'environment' => $this->environment
-        ]);
-
-        // Views sorted by name
-        usort($views, function(DeploymentView $a, DeploymentView $b) {
-            return strcmp($a->name(), $b->name());
+        // Pools sorted by name
+        $pools = $this->view->pools()->toArray();
+        usort($pools, function(DeploymentPool $a, DeploymentPool $b) {
+            return strcasecmp($a->name(), $b->name());
         });
 
-        $pools = [];
-        foreach ($views as $view) {
-            $pools += $this->sortPools($view->pools()->toArray());
-        }
+        $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($this->view->application(), $this->view->environment());
+        usort($deployments, $this->deploymentSorter());
+
+        $sortedPools = $this->sortPools($pools);
 
         $this->template->render([
-            'application' => $this->application,
-            'environment' => $this->environment,
+            'application' => $this->view->application(),
+            'environment' => $this->view->environment(),
 
-            'views' => $views,
-            'deployment_pools' => $pools
+            'view' => $this->view,
+            'pools' => $pools,
+            'deployment_pools' => $sortedPools,
+            'deployments' => $deployments
         ]);
-
-        // $this->bullshit();
     }
 
     /**

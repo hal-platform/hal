@@ -120,7 +120,7 @@
                 <li class="js-data-overload">
                     <span class="split__title">Build:</span>
                     {% if active %}
-                        <a href="{{ urlFor('build', {'repo': application.id, 'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
+                        <a href="{{ urlFor('build', {'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
                     {% else %}
                         Unknown
                     {% endif %}

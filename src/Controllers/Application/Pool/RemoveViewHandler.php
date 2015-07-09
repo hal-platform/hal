@@ -5,18 +5,17 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Application\EncryptedProperty;
+namespace QL\Hal\Controllers\Application\Pool;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Entity\EncryptedProperty;
+use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Flasher;
 use QL\Panthor\MiddlewareInterface;
-use Slim\Http\Request;
 
-class RemoveEncryptedPropertyHandler implements MiddlewareInterface
+class RemoveViewHandler implements MiddlewareInterface
 {
-    const SUCCESS = 'Encrypted Property "%s" removed.';
+    const SUCCESS = 'Deployment View "%s" removed.';
 
     /**
      * @type EntityManagerInterface
@@ -29,34 +28,25 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
     private $flasher;
 
     /**
-     * @type Request
+     * @type DeploymentView
      */
-    private $request;
-
-    /**
-     * @type EncryptedProperty
-     */
-    private $encrypted;
+    private $view;
 
     /**
      * @param EntityManagerInterface $em
      * @param Flasher $flasher
-     * @param Request $request
-     * @param Application $application
-     * @param EncryptedProperty $encrypted
+     * @param DeploymentView $view
      */
     public function __construct(
         EntityManagerInterface $em,
         Flasher $flasher,
-        Request $request,
-        EncryptedProperty $encrypted
+        DeploymentView $view
     ) {
         $this->em = $em;
 
         $this->flasher = $flasher;
-        $this->request = $request;
 
-        $this->encrypted = $encrypted;
+        $this->view = $view;
     }
 
     /**
@@ -64,16 +54,15 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
      */
     public function __invoke()
     {
-        if (!$this->request->isPost()) {
-            return;
-        }
-
-        $this->em->remove($this->encrypted);
+        $this->em->remove($this->view);
         $this->em->flush();
 
-        $message = sprintf(self::SUCCESS, $this->encrypted->name());
+        $message = sprintf(self::SUCCESS, $this->view->name());
         $this->flasher
             ->withFlash($message, 'success')
-            ->load('encrypted', ['application' => $this->encrypted->application()->id()]);
+            ->load('pools', [
+                'application' => $this->view->application()->id(),
+                'environment' => $this->view->environment()->id()
+            ]);
     }
 }

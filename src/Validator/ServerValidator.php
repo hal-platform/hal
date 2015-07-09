@@ -25,7 +25,7 @@ class ServerValidator
 
     const ERR_HOST = 'Invalid hostname.';
     const ERR_MISSING_HOST = 'Hostname is required for rsync servers.';
-    const ERR_LONG_HOST = 'Hostname must be less than or equal to 24 characters.';
+    const ERR_LONG_HOST = 'Hostname must be less than or equal to 60 characters.';
 
     /**
      * @type EntityRepository

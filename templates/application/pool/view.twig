@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% set page_title = 'Deployment View : ' ~ view.name %}
+
+{% if currentUser == view.user %}
+    {% set canEdit = true %}
+{% else %}
+    {% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+{% endif %}
+
+{% block content %}
+    <h1>Deployment View - <strong>{{ view.name }}</strong> </h1>
+
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>
+                <a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a>
+            </dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>{{ environment.name }}</dd>
+
+            <dt class="split__title">View Name</dt>
+            <dd>{{ view.name }}</dd>
+        </dl>
+    </div>
+
+    <h2>Pools</h2>
+
+    {% if pools %}
+
+        <p>When displayed, pools will always be sorted alphabetically. Servers within pools will be sorted using Quicken Loans&trade; Super Advanced&trade; algorithms.</p>
+
+        <ul class="list--bare cards--dual">
+            {% for pool in pools %}
+                <li>
+                    <article class="card--baby">
+                        <header class="card__header split">
+                            <span class="split__title">{{ pool.name }}</span>
+
+                            {% if canEdit %}
+                                <a href="{{ urlFor('pool.edit', {'view': view.id, 'pool': pool.id}) }}">Edit</a>
+                            {% endif %}
+                        </header>
+
+                        <section class="card__details card__details--divided" data-pool="{{ pool.id }}">
+                            <ul class="split">
+                                {% if deployment_pools[pool.id] %}
+                                    {% for deployment in deployment_pools[pool.id] %}
+                                        <li data-deployment="{{ deployment.id }}">
+                                            <span class="split__title">{{ deployment|formatDeploymentServer }}</span>
+                                            <a href="{{ urlFor('pool.deployment.remove', {view: view.id, pool: pool.id, deployment: deployment.id}) }}">Remove</a>
+                                        </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>
+                                        <span class="split__title">No deployments defined.</span>
+                                    </li>
+                                {% endif %}
+                            </ul>
+
+                            {% if canEdit %}
+                                <form class="mtm js-pool-form" method="post" action="{{ urlFor('pool.deployment.add', {'view': view.id, 'pool': pool.id}) }}">
+                                    <select class="select-input" name="deployment">
+                                        <option></option>
+                                        {% for deployment in deployments %}
+                                            <option value="{{ deployment.id }}">{{ deployment|formatDeploymentServer }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <p class="mbs mts">
+                                        <input class="btn btn--action btn--tiny" type="submit" value="Add Deployment">
+                                    </p>
+                                </form>
+                            {% endif %}
+                        </section>
+                    </article>
+                </li>
+            {% endfor %}
+
+        </ul>
+    {% else %}
+        <p>No pools found for this view.</p>
+    {% endif %}
+
+    <ul class="button-list">
+        {% if canEdit %}
+            <li><a class="btn btn--action" href="{{ urlFor('pool.add', {view: view.id}) }}">Add Pool</a></li>
+            <li><a class="btn btn--action" href="{{ urlFor('deployment_view.edit', {view: view.id}) }}">Edit View</a></li>
+        {% endif %}
+
+        <li><a class="btn" href="{{ urlFor('pools', {'application': application.id, 'environment': environment.id}) }}">Deployment Pools</a></li>
+        <li><a class="btn" href="{{ urlFor('application.status', {'application': application.id}) }}">Application Status</a></li>
+    </ul>
+
+{% endblock %}
