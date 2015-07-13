@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\DeploymentView;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
@@ -65,6 +66,11 @@ class AddViewController implements ControllerInterface
     private $environment;
 
     /**
+     * @type User
+     */
+    private $currentUser;
+
+    /**
      * @type array
      */
     private $errors;
@@ -77,6 +83,7 @@ class AddViewController implements ControllerInterface
      * @param EntityManagerInterface $em
      * @param Application $application
      * @param Environment $environment
+     * @param User $currentUser
      */
     public function __construct(
         TemplateInterface $template,
@@ -85,7 +92,8 @@ class AddViewController implements ControllerInterface
         callable $random,
         EntityManagerInterface $em,
         Application $application,
-        Environment $environment
+        Environment $environment,
+        User $currentUser
     ) {
         $this->template = $template;
         $this->request = $request;
@@ -97,6 +105,7 @@ class AddViewController implements ControllerInterface
 
         $this->application = $application;
         $this->environment = $environment;
+        $this->currentUser = $currentUser;
 
         $this->errors = [];
     }
@@ -134,7 +143,7 @@ class AddViewController implements ControllerInterface
             return null;
         }
 
-        $pool = $this->validateForm($data['name']);
+        $pool = $this->validateForm($data['name'], $data['shared']);
 
         if ($pool) {
             // persist to database
@@ -147,10 +156,11 @@ class AddViewController implements ControllerInterface
 
     /**
      * @param string $name
+     * @param bool $isShared
      *
      * @return DeploymentPool|null
      */
-    private function validateForm($name)
+    private function validateForm($name, $isShared)
     {
         $this->errors = $this->validateText($name, 'Name', 100, true);
 
@@ -174,6 +184,10 @@ class AddViewController implements ControllerInterface
             ->withApplication($this->application)
             ->withEnvironment($this->environment);
 
+        if (!$isShared) {
+            $pool->withUser($this->currentUser);
+        }
+
         return $pool;
     }
 
@@ -184,6 +198,7 @@ class AddViewController implements ControllerInterface
     {
         $form = [
             'name' => trim($this->request->post('name')),
+            'shared' => ($this->request->post('shared') === '1')
         ];
 
         return $form;

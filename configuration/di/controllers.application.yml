@@ -190,6 +190,7 @@ services:
             - @doctrine.em
             - @hal.application
             - @hal.environment
+            - @currentUser
     deployment_view.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/view.add.twig']]]

@@ -61,3 +61,21 @@ services:
             - @denied.twig
             - @permissions
             - @slim.halt
+
+    middleware.pool:
+        class: 'QL\Hal\Middleware\ACL\ManageDeploymentViewMiddleware'
+        arguments:
+            - @permissions
+            - @slim.halt
+            - @denied.twig
+            - @currentUser
+            - @hal.view
+
+    middleware.pool.add:
+        class: 'QL\Hal\Middleware\ACL\AddDeploymentViewMiddleware'
+        arguments:
+            - @permissions
+            - @slim.halt
+            - @denied.twig
+            - @currentUser
+            - @hal.application

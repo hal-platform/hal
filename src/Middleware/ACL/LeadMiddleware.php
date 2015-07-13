@@ -8,7 +8,7 @@
 namespace QL\Hal\Middleware\ACL;
 
 use Exception;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\Halt;
@@ -35,7 +35,7 @@ class LeadMiddleware implements MiddlewareInterface
     private $template;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -48,13 +48,13 @@ class LeadMiddleware implements MiddlewareInterface
      * @param ContainerInterface $di
      * @param LoginMiddleware $loginMiddleware
      * @param TemplateInterface $template
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      */
     public function __construct(
         ContainerInterface $di,
         LoginMiddleware $loginMiddleware,
         TemplateInterface $template,
-        PermissionsService $permissions,
+        PermissionService $permissions,
         Halt $halt
     ) {
         $this->di = $di;

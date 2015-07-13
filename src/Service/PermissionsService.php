@@ -18,6 +18,9 @@ use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Panthor\Utility\Json;
 
+/**
+ * @deprecated
+ */
 class PermissionsService
 {
     use CachingTrait;

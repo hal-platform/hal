@@ -28,6 +28,16 @@
                     <label for="name">Name</label>
                     <input name="name" id="name" maxlength="100" required value="{{ form.name }}" class="text-input">
                 </li>
+
+                <li>
+                    {% set isChecked = ('1' == form.shared) %}
+                    <label for="shared">
+                        <input type="checkbox" name="shared" id="shared" value="1"{{ isChecked ? ' checked' : '' }}> Shared?
+                    </label>
+                    <small class="additional">
+                        If this view is shared, all users with build access to this application can manage this view, including removal permissions. Otherwise, only you and administrators will have permission.
+                    </small>
+                </li>
             </ul>
 
             <ul class="button-list">

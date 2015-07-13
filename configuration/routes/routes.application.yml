@@ -109,7 +109,7 @@ parameters:
 
         deployment_view.add:
             route: '/applications/:application/environments/:environment/pools/add'
-            stack: ['middleware.login', 'middleware.requireEntity', 'deployment_view.add.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool.add', 'deployment_view.add.page']
             conditions:
                 application: %routes.regex.digit%
                 environment: %routes.regex.digit%
@@ -122,32 +122,32 @@ parameters:
 
         deployment_view.edit:
             route: '/deployment-views/:view/edit'
-            stack: ['middleware.login', 'middleware.requireEntity', 'deployment_view.edit.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'deployment_view.edit.page']
             conditions:
                 view: %routes.regex.guid%
 
         deployment_view.remove.confirm:
             method: 'GET'
             route: '/deployment-views/:view/remove'
-            stack: ['middleware.login', 'middleware.requireEntity', 'delete.confirm.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'delete.confirm.page']
             conditions:
                 view: %routes.regex.guid%
         deployment_view.remove:
             method: 'POST'
             route: '/deployment-views/:view/remove'
-            stack: ['middleware.login', 'middleware.requireEntity', 'deployment_view.remove.handler']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'deployment_view.remove.handler']
             conditions:
                 view: %routes.regex.guid%
 
         pool.add:
             route: '/deployment-views/:view/pools/add'
-            stack: ['middleware.login', 'middleware.requireEntity', 'pool.add.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'pool.add.page']
             conditions:
                 view: %routes.regex.guid%
 
         pool.edit:
             route: '/deployment-views/:view/pools/:pool/edit'
-            stack: ['middleware.login', 'middleware.requireEntity', 'pool.edit.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'pool.edit.page']
             conditions:
                 view: %routes.regex.guid%
                 pool: %routes.regex.guid%
@@ -155,14 +155,14 @@ parameters:
         pool.remove.confirm:
             method: 'GET'
             route: '/deployment-views/:view/pools/:pool/remove'
-            stack: ['middleware.login', 'middleware.requireEntity', 'delete.confirm.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'delete.confirm.page']
             conditions:
                 view: %routes.regex.guid%
                 pool: %routes.regex.guid%
         pool.remove:
             method: 'POST'
             route: '/deployment-views/:view/pools/:pool/remove'
-            stack: ['middleware.login', 'middleware.requireEntity', 'pool.remove.handler']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'pool.remove.handler']
             conditions:
                 view: %routes.regex.guid%
                 pool: %routes.regex.guid%
@@ -170,7 +170,7 @@ parameters:
         pool.deployment.add:
             method: 'POST'
             route: '/deployment-views/:view/pools/:pool/add'
-            stack: ['middleware.login', 'middleware.requireEntity', 'pool.deployment.add.handler']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'pool.deployment.add.handler']
             conditions:
                 view: %routes.regex.guid%
                 pool: %routes.regex.guid%
@@ -178,7 +178,7 @@ parameters:
         pool.deployment.remove.confirm:
             method: 'GET'
             route: '/deployment-views/:view/pools/:pool/remove/:deployment'
-            stack: ['middleware.login', 'middleware.requireEntity', 'delete.confirm.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'delete.confirm.page']
             conditions:
                 view: %routes.regex.guid%
                 pool: %routes.regex.guid%
@@ -186,7 +186,7 @@ parameters:
         pool.deployment.remove:
             method: 'POST'
             route: '/deployment-views/:view/pools/:pool/remove/:deployment'
-            stack: ['middleware.login', 'middleware.requireEntity', 'pool.deployment.remove.handler']
+            stack: ['middleware.login', 'middleware.requireEntity', 'middleware.pool', 'pool.deployment.remove.handler']
             conditions:
                 view: %routes.regex.guid%
                 pool: %routes.regex.guid%

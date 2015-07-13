@@ -19,7 +19,7 @@ services:
             - ['authenticate', [%ldap.username%, %ldap.password%, false]]
 
     permissions:
-        class: 'QL\Hal\Service\PermissionsService'
+        class: 'QL\Hal\Service\PermissionService'
         arguments:
             - @doctrine.em
             - @github
