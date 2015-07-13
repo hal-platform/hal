@@ -17,6 +17,7 @@ use QL\Hal\Flasher;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Slim\Halt;
 use QL\Panthor\Utility\Json;
+use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -57,6 +58,10 @@ class AddHandler implements MiddlewareInterface
      * @type Json
      */
     private $json;
+    /**
+     * @type Url
+     */
+    private $url;
 
     /**
      * @type EntityManagerInterface
@@ -95,6 +100,7 @@ class AddHandler implements MiddlewareInterface
      * @param Flasher $flasher
      * @param Halt $halt
      * @param Json $json
+     * @param Url $url
      * @param DeploymentView $view
      * @param DeploymentPool $pool
      */
@@ -104,6 +110,7 @@ class AddHandler implements MiddlewareInterface
         Flasher $flasher,
         Halt $halt,
         Json $json,
+        Url $url,
         EntityManagerInterface $em,
         DeploymentView $view,
         DeploymentPool $pool
@@ -113,6 +120,7 @@ class AddHandler implements MiddlewareInterface
         $this->flasher = $flasher;
         $this->halt = $halt;
         $this->json = $json;
+        $this->url = $url;
 
         $this->em = $em;
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
@@ -147,7 +155,15 @@ class AddHandler implements MiddlewareInterface
 
         if ($deployment = $this->handleForm($form)) {
             $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->setBody($this->json->encode($deployment));
+            $this->response->setBody($this->json->encode([
+                'deployment' => $deployment,
+                'server' => $deployment->server(),
+                'remove_url' => $this->url->urlFor('pool.deployment.remove', [
+                    'view' => $this->view->id(),
+                    'pool' => $this->pool->id(),
+                    'deployment' => $deployment->id()
+                ])
+            ]));
 
         } else {
             $this->JSONExploder($this->errors);
@@ -208,8 +224,10 @@ class AddHandler implements MiddlewareInterface
             $this->errors[] = self::ERR_DUPE;
         }
 
-        $dupe = $this->poolRepo->getPoolForViewAndDeployment($this->view, $deployment);
+        if ($this->errors) return;
 
+        // foreign dupe
+        $dupe = $this->poolRepo->getPoolForViewAndDeployment($this->view, $deployment);
         if ($dupe) {
             $this->errors[] = self::ERR_DUPE_POOL;
         }

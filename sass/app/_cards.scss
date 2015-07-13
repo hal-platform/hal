@@ -70,6 +70,15 @@
 .card__details {
     background: $white;
     padding: ms(-8) ms(-5);
+
+    .error-list {
+        @include adjust-font-size-to(ms(-1));
+    }
+
+    .alert-bar--success {
+        @include adjust-font-size-to(ms(-1));
+        margin-bottom: ms(-1);
+    }
 }
 
 .card__details li {

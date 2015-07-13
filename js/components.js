@@ -14,6 +14,10 @@ module.exports = {
         require('./app/form/add-deployments').init();
     },
 
+    "pool.add": function() {
+        require('./app/form/add-pool').init();
+    },
+
     // jobs - start
     "build.start": function() {
         require('./app/start-build').init();

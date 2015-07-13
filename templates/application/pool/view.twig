@@ -2,6 +2,8 @@
 
 {% set page_title = 'Deployment View : ' ~ view.name %}
 
+{% set js_components = ["pool.add"] %}
+
 {% if currentUser == view.user %}
     {% set canEdit = true %}
 {% else %}
@@ -32,10 +34,12 @@
 
         <p>When displayed, pools will always be sorted alphabetically. Servers within pools will be sorted using Quicken Loans&trade; Super Advanced&trade; algorithms.</p>
 
+        <p><b>Please note:</b> Deployments can only belong to a single view.</p>
+
         <ul class="list--bare cards--dual">
             {% for pool in pools %}
                 <li>
-                    <article class="card--baby">
+                    <article class="js-pool-form card--baby">
                         <header class="card__header split">
                             <span class="split__title">{{ pool.name }}</span>
 
@@ -48,13 +52,13 @@
                             <ul class="split">
                                 {% if deployment_pools[pool.id] %}
                                     {% for deployment in deployment_pools[pool.id] %}
-                                        <li data-deployment="{{ deployment.id }}">
+                                        <li>
                                             <span class="split__title">{{ deployment|formatDeploymentServer }}</span>
-                                            <a href="{{ urlFor('pool.deployment.remove', {view: view.id, pool: pool.id, deployment: deployment.id}) }}">Remove</a>
+                                            <a class="js-remove-deployment" href="{{ urlFor('pool.deployment.remove', {view: view.id, pool: pool.id, deployment: deployment.id}) }}">Remove</a>
                                         </li>
                                     {% endfor %}
                                 {% else %}
-                                    <li>
+                                    <li class="js-no-deployment">
                                         <span class="split__title">No deployments defined.</span>
                                     </li>
                                 {% endif %}
