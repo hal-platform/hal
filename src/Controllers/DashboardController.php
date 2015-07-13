@@ -15,7 +15,7 @@ use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Json;
@@ -39,7 +39,7 @@ class DashboardController implements ControllerInterface
     private $currentUser;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -63,7 +63,7 @@ class DashboardController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param User $currentUser
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      * @param Clock $clock
      * @param EntityManagerInterface $em
      * @param Json $json
@@ -71,7 +71,7 @@ class DashboardController implements ControllerInterface
     public function __construct(
         TemplateInterface $template,
         User $currentUser,
-        PermissionsService $permissions,
+        PermissionService $permissions,
         Clock $clock,
         EntityManagerInterface $em,
         Json $json

@@ -5,7 +5,7 @@ namespace QL\Hal\Api\Normalizer;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 
 /**
  * User Object Normalizer
@@ -16,16 +16,15 @@ class UserNormalizer
     use HypermediaResourceTrait;
 
     /**
-     * @var PermissionsService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      */
-    public function __construct(
-        PermissionsService $permissions
-    ) {
+    public function __construct(PermissionService $permissions)
+    {
         $this->permissions = $permissions;
     }
 

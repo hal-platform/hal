@@ -8,7 +8,7 @@
 namespace QL\Kraken\Service;
 
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\PermissionsService as HalPermissionService;
+use QL\Hal\Service\PermissionService as HalPermissionService;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Environment;
 

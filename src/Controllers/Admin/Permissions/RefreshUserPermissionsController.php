@@ -9,7 +9,7 @@ namespace QL\Hal\Controllers\Admin\Permissions;
 
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Panthor\ControllerInterface;
 
 class RefreshUserPermissionsController implements ControllerInterface
@@ -22,7 +22,7 @@ class RefreshUserPermissionsController implements ControllerInterface
     private $selectedUser;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -33,12 +33,12 @@ class RefreshUserPermissionsController implements ControllerInterface
 
     /**
      * @param User $selectedUser
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      * @param Flasher $flasher
      */
     public function __construct(
         User $selectedUser,
-        PermissionsService $permissions,
+        PermissionService $permissions,
         Flasher $flasher
     ) {
         $this->selectedUser = $selectedUser;

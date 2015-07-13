@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\Admin\Permissions;
 
 use QL\Hal\Core\Entity\UserPermission;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\UserPerm;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -26,19 +26,19 @@ class RemoveDeploymentPermissionsController implements ControllerInterface
     private $userPermission;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
     /**
      * @param TemplateInterface $template
      * @param UserPermission $userPermission
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      */
     public function __construct(
         TemplateInterface $template,
         UserPermission $userPermission,
-        PermissionsService $permissions
+        PermissionService $permissions
     ) {
         $this->template = $template;
         $this->userPermission = $userPermission;

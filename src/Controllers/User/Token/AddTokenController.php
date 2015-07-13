@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
@@ -39,7 +39,7 @@ class AddTokenController implements ControllerInterface
     private $flasher;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -70,7 +70,7 @@ class AddTokenController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      *
      * @param User $user
      * @param Flasher $flasher
@@ -83,7 +83,7 @@ class AddTokenController implements ControllerInterface
      */
     public function __construct(
         EntityManagerInterface $em,
-        PermissionsService $permissions,
+        PermissionService $permissions,
 
         User $currentUser,
         Flasher $flasher,

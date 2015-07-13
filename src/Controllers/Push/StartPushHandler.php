@@ -15,7 +15,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\StickyEnvironmentService;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
@@ -59,7 +59,7 @@ class StartPushHandler implements MiddlewareInterface
     private $currentUser;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -93,7 +93,7 @@ class StartPushHandler implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param Url $url
      * @param User $currentUser
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      * @param JobIdGenerator $unique
      * @param Request $request
      * @param Context $context
@@ -105,7 +105,7 @@ class StartPushHandler implements MiddlewareInterface
         EntityManagerInterface $em,
         Url $url,
         User $currentUser,
-        PermissionsService $permissions,
+        PermissionService $permissions,
         JobIdGenerator $unique,
         Request $request,
         Context $context,

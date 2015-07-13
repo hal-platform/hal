@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 use QL\Hal\Middleware\ACL\LoginMiddleware;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Kraken\Core\Entity\Application;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
@@ -39,7 +39,7 @@ class HalLeadMiddleware implements MiddlewareInterface
     private $template;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -62,7 +62,7 @@ class HalLeadMiddleware implements MiddlewareInterface
      * @param ContainerInterface $di
      * @param LoginMiddleware $loginMiddleware
      * @param TemplateInterface $template
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      * @param EntityManagerInterface $em
      * @param Halt $halt
      */
@@ -70,7 +70,7 @@ class HalLeadMiddleware implements MiddlewareInterface
         ContainerInterface $di,
         LoginMiddleware $loginMiddleware,
         TemplateInterface $template,
-        PermissionsService $permissions,
+        PermissionService $permissions,
         EntityManagerInterface $em,
         Halt $halt,
         array $parameters

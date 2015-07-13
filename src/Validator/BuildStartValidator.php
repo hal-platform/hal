@@ -13,7 +13,7 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\GitHubService;
 
 class BuildStartValidator
@@ -46,7 +46,7 @@ class BuildStartValidator
     private $github;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -63,13 +63,13 @@ class BuildStartValidator
     /**
      * @param EntityManagerInterface $em
      * @param GitHubService $github
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      * @param User $currentUser
      */
     public function __construct(
         EntityManagerInterface $em,
         GitHubService $github,
-        PermissionsService $permissions,
+        PermissionService $permissions,
         User $currentUser
     ) {
         $this->envRepo = $em->getRepository(Environment::CLASS);

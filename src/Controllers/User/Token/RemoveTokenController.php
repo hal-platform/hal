@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
-use QL\Hal\Service\PermissionsService;
+use QL\Hal\Service\PermissionService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
@@ -37,7 +37,7 @@ class RemoveTokenController implements ControllerInterface
     private $flasher;
 
     /**
-     * @type PermissionsService
+     * @type PermissionService
      */
     private $permissions;
 
@@ -58,7 +58,7 @@ class RemoveTokenController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param PermissionsService $permissions
+     * @param PermissionService $permissions
      * @param User $currentUser
      * @param Flasher $flasher
      * @param NotFound $notFound
@@ -66,7 +66,7 @@ class RemoveTokenController implements ControllerInterface
      */
     public function __construct(
         EntityManagerInterface $em,
-        PermissionsService $permissions,
+        PermissionService $permissions,
         User $currentUser,
         Flasher $flasher,
         NotFound $notFound,
