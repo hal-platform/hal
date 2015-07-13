@@ -8,22 +8,25 @@
 
     <ul class="button-list trailer">
         <li>
+            <a class="btn" href="{{ urlFor('admin') }}">Admin Dashboard</a>
+        </li>
+        <li>
             <form method="post">
                 <input name="cache_type" type="hidden" value="doctrine">
-                <input type="submit" class="btn" value="Clear doctrine cache">
+                <input type="submit" class="btn btn--action" value="Clear doctrine cache">
             </form>
         </li>
 
         <li>
             <form method="post">
                 <input name="cache_type" type="hidden" value="permissions">
-                <input type="submit" class="btn" value="Clear permissions cache">
+                <input type="submit" class="btn btn--action" value="Clear permissions cache">
             </form>
         </li>
         <li>
             <form method="post">
                 <input name="cache_type" type="hidden" value="opcache">
-                <input type="submit" class="btn" value="Clear OP cache">
+                <input type="submit" class="btn btn--action" value="Clear OP cache">
             </form>
         </li>
 
