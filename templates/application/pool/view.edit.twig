@@ -30,8 +30,28 @@
                 </li>
 
                 <li>
+                    <h5 class="label">Permissions</h5>
+                    {% if view.user %}
+                        This view is owned by <b>{{ view.user.name }}</b>.
+                        <br>Only administrators, leads, and this user can make changes.
+                    {% else %}
+                        This view is <b>shared</b>.
+                        <br>Any user with build permissions can make changes.
+                    {% endif %}
+                </li>
+
+                <li>
                     <label for="name">Name</label>
                     <input name="name" id="name" maxlength="100" required value="{{ form.name }}" class="text-input">
+                </li>
+                <li>
+                    {% set isChecked = ('1' == form.shared) %}
+                    <label for="shared">
+                        <input type="checkbox" name="shared" id="shared" value="1"{{ isChecked ? ' checked' : '' }}{{ view.user or not isChecked ? '' : ' disabled' }}> Shared?
+                    </label>
+                    <small class="additional">
+                        If this view is shared, all users with build access to this application will be able to manage this view, including removal permissions. Otherwise, only the owner and administrators will have permission.
+                    </small>
                 </li>
             </ul>
 

@@ -118,7 +118,7 @@ class EditViewController implements ControllerInterface
             return null;
         }
 
-        if ($view = $this->validateForm($data['name'])) {
+        if ($view = $this->validateForm($data['name'], $data['shared'])) {
             // persist to database
             $this->em->merge($view);
             $this->em->flush();
@@ -129,12 +129,15 @@ class EditViewController implements ControllerInterface
 
     /**
      * @param string $name
+     * @param string $shared
      *
      * @return DeploymentView|null
      */
-    private function validateForm($name)
+    private function validateForm($name, $shared)
     {
         $this->errors = $this->validateText($name, 'Name', 100, true);
+
+        $shared = ($shared === '1');
 
         if ($this->errors) return;
 
@@ -153,7 +156,15 @@ class EditViewController implements ControllerInterface
 
         if ($this->errors) return;
 
-        return $this->view->withName($name);
+        $this->view
+            ->withName($name);
+
+        if ($shared && $this->view->user()) {
+            $this->view
+                ->withUser(null);
+        }
+
+        return $this->view;
     }
 
     /**
@@ -164,10 +175,12 @@ class EditViewController implements ControllerInterface
         if ($this->request->isPost()) {
             $form = [
                 'name' => trim($this->request->post('name')),
+                'shared' => $this->request->post('shared'),
             ];
         } else {
             $form = [
                 'name' => $this->view->name(),
+                'shared' => ($this->view->user() === null) ? '1' : '',
             ];
         }
 

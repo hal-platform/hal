@@ -4,10 +4,11 @@
 
 {% set js_components = ["pool.add"] %}
 
-{% if currentUser == view.user %}
-    {% set canEdit = true %}
+{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+{% if view.user %}
+    {% set canEdit = isAdmin or currentUser == view.user %}
 {% else %}
-    {% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+    {% set canEdit = isAdmin or canUserBuild(currentUser, application) %}
 {% endif %}
 
 {% block content %}
@@ -22,9 +23,25 @@
 
             <dt class="split__title">Environment</dt>
             <dd>{{ environment.name }}</dd>
+        </dl>
+    </div>
 
-            <dt class="split__title">View Name</dt>
+    <h2>View</h2>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Name</dt>
             <dd>{{ view.name }}</dd>
+
+            <dt class="split__title">Permissions</dt>
+            <dd>
+                {% if view.user %}
+                    This view is owned by <b>{{ view.user.name }}</b>.
+                    <br>Only administrators, leads, and this user can make changes.
+                {% else %}
+                    This view is <b>shared</b>.
+                    <br>Any user with build permissions can make changes.
+                {% endif %}
+            </dd>
         </dl>
     </div>
 
@@ -54,7 +71,9 @@
                                     {% for deployment in deployment_pools[pool.id] %}
                                         <li>
                                             <span class="split__title">{{ deployment|formatDeploymentServer }}</span>
-                                            <a class="js-remove-deployment" href="{{ urlFor('pool.deployment.remove', {view: view.id, pool: pool.id, deployment: deployment.id}) }}">Remove</a>
+                                            {% if canEdit %}
+                                                <a class="js-remove-deployment" href="{{ urlFor('pool.deployment.remove', {view: view.id, pool: pool.id, deployment: deployment.id}) }}">Remove</a>
+                                            {% endif %}
                                         </li>
                                     {% endfor %}
                                 {% else %}

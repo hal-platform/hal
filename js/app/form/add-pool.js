@@ -18,11 +18,11 @@ module.exports = {
             });
         }
 
-        var removals = $(this.removeTarget);
-        if (removals.length !== 0) {
+        var $removals = $(this.removeTarget);
+        if ($removals.length !== 0) {
             var attacher = this.attachRemove.bind(this);
 
-            $(removals).each(function (index, removal) {
+            $removals.each(function (index, removal) {
                 attacher(removal);
             });
         }
@@ -115,19 +115,19 @@ module.exports = {
             path_or_whatever = '';
         }
 
-        this.context.addDeployment($pool, hostname, path_or_whatever, data.remove_url);
+        this.context.addDeployment($pool, deployment.id, hostname, path_or_whatever, data.remove_url);
     },
-    addDeployment: function($pool, hostname, path_or_whatever, remove_url) {
+    addDeployment: function($pool, id, hostname, path_or_whatever, remove_url) {
         var $row = $('<li>')
             .append('<span class="split__title">' + hostname + '</span>')
-            .append('<a class="js-remove-deployment" href="' + remove_url +'">Remove</a>');
+            .append('<a class="js-remove-deployment" href="' + remove_url +'" data-deployment="' + id + '">Remove</a>');
 
         // add new row, remove empty row if there
         $pool.children('ul')
             .append($row)
             .find(this.emptyRow).remove();
 
-        var removal = $pool.find(this.removeTarget);
+        var removal = $pool.find('a[data-deployment="' + id + '"]');
         this.attachRemove(removal);
     },
     resetForms: function() {
@@ -178,7 +178,7 @@ module.exports = {
         this.context.resetMessages();
 
         // Add new errors
-        $(this.removal)
+        this.removal
             .closest(this.context.target)
             .find('form').append(this.context.buildError(['An unknown error occured.']));
     },
@@ -187,7 +187,7 @@ module.exports = {
         // reset
         this.context.resetMessages();
 
-        var $removal = $(this.removal),
+        var $removal = this.removal,
             $pool = $removal.closest(this.context.target)
             $alert = $('<div>')
                 .addClass('alert-bar--success');
@@ -197,17 +197,19 @@ module.exports = {
             .appendTo($alert);
 
         $removal
-            .closest('li')
+            .parent('li')
             .remove();
 
         $pool
             .find('form').append($alert);
 
-        var $row = $('<li class="js-no-deployment">')
-            .append('<span class="split__title">No deployments defined.</span>');
 
         // if no deployments, add empty row
         if ($pool.find('a.js-remove-deployment').length === 0) {
+
+        var $row = $('<li class="js-no-deployment">')
+            .append('<span class="split__title">No deployments defined.</span>');
+
             $pool
                 .children('ul')
                 .append($row);
