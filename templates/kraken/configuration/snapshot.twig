@@ -17,7 +17,7 @@
     <p>{{ configuration.id }}</p>
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
+        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration Status</a></li>
         <li><a class="btn" href="{{ urlFor('kraken.configuration.compare', {configuration: configuration.id}) }}">Compare to latest configuration</a></li>
         <li><a class="btn btn--secondary" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id}) }}">Configuration History</a></li>
     </ul>

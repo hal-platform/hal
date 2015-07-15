@@ -1,11 +1,11 @@
 {% extends 'base.kraken.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = "Application Configuration" %}
+{% set page_title = "Configuration Status : " ~ application.name %}
 
 {% block content %}
 
-    <h1>{{ page_title }} - <strong>{{ application.name }}</strong></h1>
+    <h1>Configuration Status - <strong>{{ application.name }}</strong></h1>
 
     <h2>Environments</h2>
     {{ block('environment_targets') }}

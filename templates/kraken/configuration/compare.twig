@@ -18,7 +18,7 @@
     <p>{{ configuration.id }}</p>
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Application Configuration</a></li>
+        <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration Status</a></li>
         <li><a class="btn" href="{{ urlFor('kraken.configuration', {configuration: configuration.id}) }}">Configuration {{ configuration.id[:7] }}</a></li>
 
         <li><a class="btn" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: configuration.environment.id}) }}">Latest Configuration</a></li>
