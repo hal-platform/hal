@@ -1,6 +1,7 @@
 imports:
     - resource: routes/routes.admin.yml
     - resource: routes/routes.api.yml
+    - resource: routes/routes.api.crud.yml
     - resource: routes/routes.application.yml
     - resource: routes/routes.yml
 

@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\GitHubService;
 
@@ -38,7 +39,8 @@ class BuildStartValidator
     /**
      * @type EntityRepository
      */
-    private $envRepo;
+    private $environmentRepo;
+    private $buildRepo;
 
     /**
      * @type GitHubService
@@ -49,6 +51,11 @@ class BuildStartValidator
      * @type PermissionService
      */
     private $permissions;
+
+    /**
+     * @type JobIdGenerator
+     */
+    private $unique;
 
     /**
      * @type User
@@ -64,18 +71,23 @@ class BuildStartValidator
      * @param EntityManagerInterface $em
      * @param GitHubService $github
      * @param PermissionService $permissions
+     * @param JobIdGenerator $unique
      * @param User $currentUser
      */
     public function __construct(
         EntityManagerInterface $em,
         GitHubService $github,
         PermissionService $permissions,
+        JobIdGenerator $unique,
         User $currentUser
     ) {
-        $this->envRepo = $em->getRepository(Environment::CLASS);
+        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->environmentRepo = $em->getRepository(Environment::CLASS);
 
         $this->github = $github;
         $this->permissions = $permissions;
+        $this->unique = $unique;
+
         $this->currentUser = $currentUser;
 
         $this->errors = [];
@@ -111,28 +123,36 @@ class BuildStartValidator
         }
 
         // no env
-        if (!$env = $this->envRepo->find($environmentID)) {
-            $this->errors[] = self::ERR_NO_ENV;
-            return null;
+        if (!$env = $this->environmentRepo->find($environmentID)) {
+
+            # attempt search by name
+            if (!$env = $this->environmentRepo->findOneBy(['name' => $environmentID])) {
+                $this->errors[] = self::ERR_NO_ENV;
+            }
         }
+
+        if ($this->errors) return;
 
         // no permission
         if (!$this->permissions->canUserBuild($this->currentUser, $application)) {
             $this->errors[] = self::ERR_NO_PERMISSION;
-            return null;
         }
+
+        if ($this->errors) return;
 
         if (!$ref = $this->github->resolve($application->githubOwner(), $application->githubRepo(), $reference)) {
             $this->errors[] = self::ERR_UNKNOWN_REF;
-            return null;
         }
+
+        if ($this->errors) return;
 
         list($reference, $commit) = $ref;
         if ($reference === 'commit') {
             $reference = $commit;
         }
 
-        $build = (new Build)
+        $id = $this->unique->generateBuildId();
+        $build = (new Build($id))
             ->withStatus('Waiting')
             ->withBranch($reference)
             ->withCommit($commit)
@@ -141,7 +161,8 @@ class BuildStartValidator
             ->withApplication($application)
             ->withEnvironment($env);
 
-        // Still needs ID assigned
+        $this->dupeCatcher($build);
+
         return $build;
     }
 
@@ -198,5 +219,20 @@ class BuildStartValidator
         }
 
         return true;
+    }
+
+    /**
+     * @param Build $build
+     *
+     * @return null
+     */
+    private function dupeCatcher(Build $build)
+    {
+        $dupe = $this->buildRepo->find($build->id());
+        if ($dupe) {
+            $id = $this->unique->generateBuildId();
+            $build->withId($id);
+            $this->dupeCatcher($build);
+        }
     }
 }

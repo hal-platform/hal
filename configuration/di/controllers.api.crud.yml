@@ -1,0 +1,13 @@
+# Application specific endpoints and controllers go here
+services:
+
+    api.build.start:
+        class: 'QL\Hal\Controllers\Api\Build\StartBuildController'
+        arguments:
+            - @response.formatter
+            - @build.start.validator
+            - @doctrine.em
+            - @redis
+            - @hal.application
+            - @currentUser
+            - @request.body

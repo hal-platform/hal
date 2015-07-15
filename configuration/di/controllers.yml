@@ -152,7 +152,6 @@ services:
             - @doctrine.em
             - @build.start.validator
             - @session.flasher
-            - @utility.id.generator
             - @twig.context
             - @slim.request
             - @sticky.environment
@@ -163,6 +162,7 @@ services:
             - @doctrine.em
             - @github
             - @permissions
+            - @utility.id.generator
             - @currentUser
 
     builds.page:

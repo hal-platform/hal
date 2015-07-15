@@ -17,6 +17,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
+use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -51,6 +52,11 @@ class RequireEntityMiddleware implements MiddlewareInterface
     private $parameters;
 
     /**
+     * @type bool
+     */
+    private $isAPI;
+
+    /**
      * @type array
      */
     private $map;
@@ -60,18 +66,21 @@ class RequireEntityMiddleware implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param NotFound $notFound
      * @param array $parameters
+     * @param bool $isAPI
      */
     public function __construct(
         ContainerInterface $di,
         EntityManagerInterface $em,
         NotFound $notFound,
-        array $parameters
+        array $parameters,
+        $isAPI = false
     ) {
         $this->di = $di;
         $this->em = $em;
 
         $this->notFound = $notFound;
         $this->parameters = $parameters;
+        $this->isAPI = $isAPI;
 
         // whitelist of route parameters and the entity they map to.
         $this->map = [
@@ -91,6 +100,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
     /**
      * {@inheritdoc}
+     * @throws HttpProblemException
      */
     public function __invoke()
     {
@@ -101,7 +111,12 @@ class RequireEntityMiddleware implements MiddlewareInterface
             }
 
             if (!$this->lookup($entity, $id)) {
-                return call_user_func($this->notFound);
+
+                if ($this->isAPI) {
+                    throw HttpProblemException::build(404, sprintf('%s not found', ucfirst($entity)));
+                } else {
+                    return call_user_func($this->notFound);
+                }
             }
         }
     }

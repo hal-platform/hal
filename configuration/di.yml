@@ -6,6 +6,7 @@ imports:
     - resource: di/controllers.admin.yml
     - resource: di/controllers.application.yml
     - resource: di/controllers.api.yml
+    - resource: di/controllers.api.crud.yml
 
 services:
 
@@ -13,9 +14,8 @@ services:
     # RUN TIME INJECTED (SYNTHETIC) SERVICES
     ######################################################################################################################
 
-    # Set by bouncers
+    # Set by login or token middleware
     currentUser:         { synthetic: true }
-    requester:           { synthetic: true }
 
     hal.user:            { synthetic: true }
     hal.userType:        { synthetic: true }
@@ -93,7 +93,9 @@ services:
     app.slim.hook.routes:
         parent: 'slim.hook.routes'
         calls:
+            # %routes% is auto loaded by parent
             - ['addRoutes', [%routes.api%]]
+            - ['addRoutes', [%routes.api.crud%]]
             - ['addRoutes', [%routes.admin%]]
             - ['addRoutes', [%routes.application%]]
             - ['addRoutes', [%kraken.routes%]]

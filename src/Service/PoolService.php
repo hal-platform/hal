@@ -25,7 +25,7 @@ class PoolService
     use CachingTrait;
     use SortingTrait;
 
-    const KEY_VIEWS = 'pools.%s.%s';
+    const KEY_VIEWS = 'pools:%s.%s';
 
     /**
      * @type EntityRepository

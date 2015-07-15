@@ -3,20 +3,6 @@ services:
     # MIDDLEWARE
     ######################################################################################################################
 
-    # Bounce unauthenticated api clients
-    api.auth.bouncer:
-        class: 'QL\Hal\Middleware\Bouncer\ApiAuthBouncer'
-        arguments:
-            - @service_container
-            - @ldap
-            - @doctrine.em
-
-    middleware.cachedApi:
-        class: 'QL\Hal\Middleware\CachedApiMiddleware'
-        arguments:
-            - @response.formatter
-            - @slim.response
-
     middleware.requireEntity:
         class: 'QL\Hal\Middleware\RequireEntityMiddleware'
         arguments:
@@ -79,3 +65,30 @@ services:
             - @denied.twig
             - @currentUser
             - @hal.application
+
+    ######################################################################################################################
+    # API MIDDLEWARE
+    ######################################################################################################################
+
+    middleware.api.token:
+        class: 'QL\Hal\Middleware\ACL\TokenMiddleware'
+        arguments:
+            - @service_container
+            - @doctrine.em
+            - @slim.request
+            - @logger.mcp.factory
+
+    middleware.api.require_entity:
+        class: 'QL\Hal\Middleware\RequireEntityMiddleware'
+        arguments:
+            - @service_container
+            - @doctrine.em
+            - @slim.not.found
+            - @slim.route.parameters
+            - true
+
+    middleware.api.cached:
+        class: 'QL\Hal\Middleware\CachedApiMiddleware'
+        arguments:
+            - @response.formatter
+            - @slim.response

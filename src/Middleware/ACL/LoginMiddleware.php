@@ -18,7 +18,6 @@ use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
 class LoginMiddleware implements MiddlewareInterface
 {
     const SESSION_KEY = 'user_id';
