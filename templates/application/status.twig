@@ -5,6 +5,9 @@
 
 {% set page_title = "Status : " ~ application.name %}
 
+{% set canUserBuild = canUserBuild(currentUser, application) %}
+{% set isBusinessTime = isSeriousBusinessMode() %}
+
 {% block content %}
     <h1>Application Status - <strong>{{ application.name }}</strong></h1>
 
@@ -53,11 +56,28 @@
 
 {% endblock %}
 
+{% block env_picker %}
+    {# Only allow environment switching if has multiple env #}
+    {% if environments|length > 1 %}
+        <div class="trailer">
+            <h5>Change environment</h5>
+            <ul class="button-list button-list--half">
+                {% for environment in environments %}
+                    {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
+                    <li>
+                        <a class="btn{{ btnSelected }}" href="{{ urlFor('application.status', {application: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block view_picker %}
     {% if deployment_statuses %}
+        <h5>Change View</h5>
         {% if views %}
             <form method="post" action="{{ urlFor('application.sticky.view', {'application': application.id, 'environment': selected_environment.id}) }}">
-                <h5>Change View</h5>
                 <select class="select-input js-pool-picker" name="view">
                     <option value="">Default</option>
                     {% for id, view in views %}
@@ -86,27 +106,18 @@
             </form>
 
         {% else %}
-            No views found.
+            No views found. There are many deployments for this environment, but no views.
+            {% if canUserBuild %}
+                <a href="{{ urlFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Create deployment pools</a>
+                {% if isBusinessTime %}
+                    to categorize deployments into groups.
+                {% else %}
+                    to lessen the cognitive load on your tiny human brain.
+                {% endif %}
+            {% endif %}
         {% endif %}
     {% endif %}
 
-{% endblock %}
-
-{% block env_picker %}
-    {# Only allow environment switching if has multiple env #}
-    {% if environments|length > 1 %}
-        <div class="trailer">
-            <h5>Change environment</h5>
-            <ul class="button-list button-list--half">
-                {% for environment in environments %}
-                    {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
-                    <li>
-                        <a class="btn{{ btnSelected }}" href="{{ urlFor('application.status', {application: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
 {% endblock %}
 
 {% block deployment_cards %}
@@ -172,7 +183,7 @@
 
 {% block page_buttons %}
     <ul class="button-list">
-        {% if canUserBuild(currentUser, application) %}
+        {% if canUserBuild %}
             <li><a class="btn btn--action" href="{{ urlFor('build.start', {'application': application.id}) }}">Start New Build</a></li>
         {% endif %}
 
