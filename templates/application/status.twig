@@ -77,7 +77,7 @@
     {% if deployment_statuses %}
         <h5>Change View</h5>
         {% if views %}
-            <form method="post" action="{{ urlFor('application.sticky.view', {'application': application.id, 'environment': selected_environment.id}) }}">
+            <form method="post" action="{{ urlFor('application.sticky.pool', {'application': application.id, 'environment': selected_environment.id}) }}">
                 <select class="select-input js-pool-picker" name="view">
                     <option value="">Default</option>
                     {% for id, view in views %}

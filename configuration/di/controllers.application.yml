@@ -43,13 +43,13 @@ services:
             - @sticky.environment
             - @slim.route.parameters
 
-    application.sticky.view.handler:
-        class: 'QL\Hal\Controllers\Application\StickyViewHandler'
+    application.sticky.pool.handler:
+        class: 'QL\Hal\Controllers\Application\StickyPoolHandler'
         arguments:
             - @doctrine.em
             - @slim.request
             - @session.flasher
-            - @sticky.view
+            - @sticky.pool
             - @slim.response
             - @json
             - @hal.application

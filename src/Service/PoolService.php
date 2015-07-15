@@ -33,20 +33,20 @@ class PoolService
     private $viewRepo;
 
     /**
-     * @type stickyViewService
+     * @type StickyPoolService
      */
-    private $stickyViewService;
+    private $stickyPoolService;
 
     /**
      * @param EntityManagerInterface $em
-     * @param StickyViewService $stickyViewService
+     * @param StickyPoolService $stickyPoolService
      */
     public function __construct(
         EntityManagerInterface $em,
-        StickyViewService $stickyViewService
+        StickyPoolService $stickyPoolService
     ) {
         $this->viewRepo = $em->getRepository(DeploymentView::CLASS);
-        $this->stickyViewService = $stickyViewService;
+        $this->stickyPoolService = $stickyPoolService;
     }
 
     /**
@@ -83,7 +83,7 @@ class PoolService
             return null;
         }
 
-        $selected = $this->stickyViewService->get($application->id(), $environment->id());
+        $selected = $this->stickyPoolService->get($application->id(), $environment->id());
 
         // Find the selected view
         foreach ($views as $id => $view) {

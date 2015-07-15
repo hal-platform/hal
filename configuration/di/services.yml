@@ -40,8 +40,8 @@ services:
             - @json
             - %cookie.preferences.ttl%
 
-    sticky.view:
-        class: 'QL\Hal\Service\StickyViewService'
+    sticky.pool:
+        class: 'QL\Hal\Service\StickyPoolService'
         arguments:
             - @slim.cookies
             - @json
@@ -61,7 +61,7 @@ services:
         class: 'QL\Hal\Service\PoolService'
         arguments:
             - @doctrine.em
-            - @sticky.view
+            - @sticky.pool
         calls:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.stats.ttl%]]

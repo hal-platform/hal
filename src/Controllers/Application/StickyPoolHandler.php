@@ -13,13 +13,13 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Flasher;
-use QL\Hal\Service\StickyViewService;
+use QL\Hal\Service\StickyPoolService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Json;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class StickyViewHandler implements MiddlewareInterface
+class StickyPoolHandler implements MiddlewareInterface
 {
     /**
      * @type EntityRepository
@@ -37,9 +37,9 @@ class StickyViewHandler implements MiddlewareInterface
     private $flasher;
 
     /**
-     * @type StickyViewService
+     * @type StickyPoolService
      */
-    private $stickyView;
+    private $stickyPool;
 
     /**
      * @type Response
@@ -65,7 +65,7 @@ class StickyViewHandler implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param Request $request
      * @param Flasher $flasher
-     * @param StickyViewService $stickyView
+     * @param StickyPoolService $stickyPool
      *
      * @param Response $response
      * @param Json $json
@@ -77,7 +77,7 @@ class StickyViewHandler implements MiddlewareInterface
         EntityManagerInterface $em,
         Request $request,
         Flasher $flasher,
-        StickyViewService $stickyView,
+        StickyPoolService $stickyPool,
 
         Response $response,
         Json $json,
@@ -89,7 +89,7 @@ class StickyViewHandler implements MiddlewareInterface
 
         $this->request = $request;
         $this->flasher = $flasher;
-        $this->stickyView = $stickyView;
+        $this->stickyPool = $stickyPool;
 
         // For JSON processing
         $this->response = $response;
@@ -110,7 +110,7 @@ class StickyViewHandler implements MiddlewareInterface
             return $this->handleJSONForm();
         }
 
-        $this->saveStickyView($this->request->post('view'));
+        $this->saveStickyPool($this->request->post('view'));
         $this->flasher->load('application.status', ['application' => $this->application->id()]);
     }
 
@@ -119,7 +119,7 @@ class StickyViewHandler implements MiddlewareInterface
      *
      * @return void
      */
-    private function saveStickyView($viewID)
+    private function saveStickyPool($viewID)
     {
         $saved = null;
 
@@ -133,7 +133,7 @@ class StickyViewHandler implements MiddlewareInterface
             $saved = $view->id();
         }
 
-        $this->stickyView->save($this->application->id(), $this->environment->id(), $saved);
+        $this->stickyPool->save($this->application->id(), $this->environment->id(), $saved);
     }
 
     /**
@@ -150,7 +150,7 @@ class StickyViewHandler implements MiddlewareInterface
             $view = null;
         }
 
-        $this->saveStickyView($view);
+        $this->saveStickyPool($view);
 
         $this->response->setBody($this->json->encode([
             'awk' => 'cool story bro',

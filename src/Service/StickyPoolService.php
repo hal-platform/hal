@@ -10,9 +10,9 @@ namespace QL\Hal\Service;
 use QL\Panthor\Http\EncryptedCookies;
 use QL\Panthor\Utility\Json;
 
-class StickyViewService
+class StickyPoolService
 {
-    const COOKIE_NAME = 'stickyview';
+    const COOKIE_NAME = 'stickypool';
 
     /**
      * @type EncryptedCookies
