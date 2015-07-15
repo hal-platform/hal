@@ -131,25 +131,33 @@
         <section class="js-pool">
             {% if selected_view and views[selected_view] %}
 
-                {% set pooled = [] %}
+                {% set all_pooled = [] %}
 
                 {# empty pools have already been removed by the backend #}
                 {% for pool in views[selected_view].pools %}
-                    <div>
-                        <h3>{{ pool.name }}</h3>
-                        <ul class="list--bare cards cards--{{ selected_environment.name }}">
-                            {% for status in deployment_statuses if status.deploy.id in pool.deployments %}
-                                {% set pooled = pooled|merge([status.deploy.id]) %}
-                                <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+                    {% set pooled = [] %}
+                    {% for status in deployment_statuses if status.deploy.id in pool.deployments %}
+                        {% set pooled = pooled|merge([status]) %}
+                        {% set all_pooled = all_pooled|merge([status.deploy.id]) %}
+                    {% endfor %}
+
+                    {% if pooled %}
+                        <div>
+                            <h3>{{ pool.name }}</h3>
+                            <ul class="list--bare cards cards--{{ selected_environment.name }}">
+                                {% for status in pooled %}
+                                    <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
                 {% endfor %}
 
                 {# show unpooled grouping if some statuses didnt land in a pool #}
                 {% set unpooled = [] %}
                 {% for status in deployment_statuses %}
-                    {% if status.deploy.id not in pooled %}
+                    {% if status.deploy.id not in all_pooled %}
                         {% set unpooled = unpooled|merge([status]) %}
                     {% endif %}
                 {% endfor %}
