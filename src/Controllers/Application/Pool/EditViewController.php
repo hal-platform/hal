@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Flasher;
+use QL\Hal\Service\PoolService;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -38,6 +39,11 @@ class EditViewController implements ControllerInterface
     private $flasher;
 
     /**
+     * @type PoolService
+     */
+    private $poolService;
+
+    /**
      * @type EntityManagerInterface
      */
     private $em;
@@ -61,6 +67,7 @@ class EditViewController implements ControllerInterface
      * @param TemplateInterface $template
      * @param Request $request
      * @param Flasher $flasher
+     * @param PoolService $poolService
      * @param EntityManagerInterface $em
      * @param DeploymentView $view
      */
@@ -68,12 +75,14 @@ class EditViewController implements ControllerInterface
         TemplateInterface $template,
         Request $request,
         Flasher $flasher,
+        PoolService $poolService,
         EntityManagerInterface $em,
         DeploymentView $view
     ) {
         $this->template = $template;
         $this->request = $request;
         $this->flasher = $flasher;
+        $this->poolService = $poolService;
 
         $this->em = $em;
         $this->viewRepo = $em->getRepository(DeploymentView::CLASS);
@@ -122,6 +131,8 @@ class EditViewController implements ControllerInterface
             // persist to database
             $this->em->merge($view);
             $this->em->flush();
+
+            $this->poolService->clearViewCache($this->view);
         }
 
         return $view;

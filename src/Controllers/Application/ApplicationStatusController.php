@@ -12,8 +12,6 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\DeploymentPool;
-use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\BuildRepository;
@@ -21,8 +19,8 @@ use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Core\Utility\SortingTrait;
+use QL\Hal\Service\PoolService;
 use QL\Hal\Service\StickyEnvironmentService;
-use QL\Hal\Service\StickyViewService;
 use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -68,9 +66,9 @@ class ApplicationStatusController implements ControllerInterface
     private $stickyEnvironmentService;
 
     /**
-     * @type StickyViewService
+     * @type PoolService
      */
-    private $stickyViewService;
+    private $poolService;
 
     /**
      * @type Application
@@ -82,7 +80,7 @@ class ApplicationStatusController implements ControllerInterface
      * @param EntityMangerInterface $em
      *
      * @param StickyEnvironmentService $stickyEnvironmentService
-     * @param StickyViewService $stickyViewService
+     * @param PoolService $poolService
      * @param Application $application
      */
     public function __construct(
@@ -90,7 +88,7 @@ class ApplicationStatusController implements ControllerInterface
         EntityManagerInterface $em,
 
         StickyEnvironmentService $stickyEnvironmentService,
-        StickyViewService $stickyViewService,
+        PoolService $poolService,
         Application $application
     ) {
         $this->template = $template;
@@ -98,7 +96,6 @@ class ApplicationStatusController implements ControllerInterface
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->envRepo = $em->getRepository(Environment::CLASS);
-        $this->viewRepo = $em->getRepository(DeploymentView::CLASS);
 
         $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
@@ -106,7 +103,7 @@ class ApplicationStatusController implements ControllerInterface
         $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
 
         $this->stickyEnvironmentService = $stickyEnvironmentService;
-        $this->stickyViewService = $stickyViewService;
+        $this->poolService = $poolService;
         $this->application = $application;
     }
 
@@ -116,19 +113,27 @@ class ApplicationStatusController implements ControllerInterface
     public function __invoke()
     {
         // environments, selected env
-        $environments = $this->getEnvironments();
+        $environments = $this->getBuildableEnvironments();
         $selected = $this->stickyEnvironmentService->get($this->application->id());
         $selectedEnvironment = $this->findSelectedEnvironment($environments, $selected);
 
-        $deployments = $this->getDeploymentsForEnvironment($selectedEnvironment);
-        $builds = $this->buildRepo->findBy(['application' => $this->application, 'environment' => $selectedEnvironment], ['created' => 'DESC'], 10);
+        $deployments = $builds = $views = [];
+        $selectedView = null;
+
+        if ($selectedEnvironment) {
+            $deployments = $this->getDeploymentsForEnvironment($selectedEnvironment);
+            $builds = $this->buildRepo->findBy(
+                ['application' => $this->application, 'environment' => $selectedEnvironment],
+                ['created' => 'DESC'],
+                10
+            );
+
+            // views, selected view
+            $views = $this->poolService->getViews($this->application, $selectedEnvironment);
+            $selectedView = $this->poolService->findSelectedView($this->application, $selectedEnvironment, $views);
+        }
 
         $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $this->application]);
-
-        // views, selected view
-        $selected = $this->stickyViewService->get($this->application->id(), $selectedEnvironment->id());
-        $views = $this->getViews($selectedEnvironment);
-        $selectedView = $this->findSelectedView($views, $selected);
 
         $this->template->render([
             'application' => $this->application,
@@ -137,16 +142,18 @@ class ApplicationStatusController implements ControllerInterface
             'deployment_statuses' => $deployments,
             'selected_environment' => $selectedEnvironment,
 
-            'kraken' => $krakenApp,
             'views' => $views,
-            'selected_view' => $selectedView
+            'selected_view' => $selectedView,
+
+            'kraken' => $krakenApp,
+
         ]);
     }
 
     /**
      * @return Environment[]
      */
-    private function getEnvironments()
+    private function getBuildableEnvironments()
     {
         $environments = $this->envRepo->getBuildableEnvironmentsByApplication($this->application);
 
@@ -180,31 +187,6 @@ class ApplicationStatusController implements ControllerInterface
 
         // Not in the list? Just get the first
         return array_unshift($environments);
-    }
-
-
-    /**
-     * @param array $views
-     * @param string $selected
-     *
-     * @return string|null
-     */
-    private function findSelectedView($views, $selected)
-    {
-        // list empty
-        if (!$views) {
-            return null;
-        }
-
-        // Find the selected view
-        foreach ($views as $id => $view) {
-            if ($id === $selected) {
-                return $id;
-            }
-        }
-
-        // default to null = no view
-        return null;
     }
 
     /**
@@ -241,81 +223,5 @@ class ApplicationStatusController implements ControllerInterface
         }
 
         return $deployments;
-    }
-
-    /**
-     * @param Environment $selectedEnvironment
-     *
-     * @return array
-     * [
-     *     'id_1' => [
-     *         'name' => 'Name'
-     *         'pools' => [
-     *             [
-     *                 'name' => 'Name'
-     *                 'deployments' => [
-     *                     'id_1',
-     *                     'id_2',
-     *                     'id_3'
-     *                 ]
-     *             ],
-     *             [
-     *                 'name' => 'Name'
-     *                 'deployments' => [
-     *                     'id_1',
-     *                     'id_2',
-     *                     'id_3'
-     *                 ]
-     *             ]
-     *         ]
-     *     ]
-     * ]
-     */
-    private function getViews(Environment $selectedEnvironment = null)
-    {
-        if (!$selectedEnvironment) {
-            return [];
-        }
-
-        $sorter = function($a, $b) {
-            return strcasecmp($a->name(), $b->name());
-        };
-
-        $deploymentViews = $this->viewRepo->findBy(['application' => $this->application, 'environment' => $selectedEnvironment]);
-        usort($deploymentViews, $sorter);
-
-        $views = [];
-        foreach ($deploymentViews as $view) {
-            $deploymentPools = $view->pools()->toArray();
-            usort($deploymentPools, $sorter);
-
-            $pools = [];
-            foreach ($deploymentPools as $pool) {
-                $deployments = $pool->deployments()->toArray();
-
-                // skip empty pools
-                if (!$deployments) continue;
-
-                usort($deployments, $this->deploymentSorter());
-                array_walk($deployments, function (&$deployment) {
-                    $deployment = $deployment->id();
-                });
-
-                $pools[] = [
-                    'name' => $pool->name(),
-                    'deployments' => $deployments
-                ];
-            }
-
-            // skip empty views
-            if (!$pools) continue;
-
-            $views[$view->id()] = [
-                'name' => $view->name(),
-                'pools' => $pools
-            ];
-        }
-
-        return $views;
     }
 }

@@ -28,7 +28,7 @@ services:
             - @application.status.twig
             - @doctrine.em
             - @sticky.environment
-            - @sticky.view
+            - @pools
             - @hal.application
     application.status.twig:
         parent: 'twig.auto.template'
@@ -199,6 +199,7 @@ services:
             - @deployment_view.add.twig
             - @slim.request
             - @session.flasher
+            - @pools
             - @doctrine.random
             - @doctrine.em
             - @hal.application
@@ -224,18 +225,19 @@ services:
             - @deployment_view.edit.twig
             - @slim.request
             - @session.flasher
+            - @pools
             - @doctrine.em
             - @hal.view
     deployment_view.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/view.edit.twig']]]
 
-
     deployment_view.remove.handler:
         class: 'QL\Hal\Controllers\Application\Pool\RemoveViewHandler'
         arguments:
             - @doctrine.em
             - @session.flasher
+            - @pools
             - @hal.view
 
     pool.add.page:
@@ -244,6 +246,7 @@ services:
             - @pool.add.twig
             - @slim.request
             - @session.flasher
+            - @pools
             - @doctrine.random
             - @doctrine.em
             - @hal.view
@@ -257,6 +260,7 @@ services:
             - @pool.edit.twig
             - @slim.request
             - @session.flasher
+            - @pools
             - @doctrine.em
             - @hal.view
             - @hal.pool
@@ -269,6 +273,7 @@ services:
         arguments:
             - @doctrine.em
             - @session.flasher
+            - @pools
             - @hal.view
             - @hal.pool
 

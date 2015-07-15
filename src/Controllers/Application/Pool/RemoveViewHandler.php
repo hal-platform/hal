@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Flasher;
+use QL\Hal\Service\PoolService;
 use QL\Panthor\MiddlewareInterface;
 
 class RemoveViewHandler implements MiddlewareInterface
@@ -28,6 +29,11 @@ class RemoveViewHandler implements MiddlewareInterface
     private $flasher;
 
     /**
+     * @type PoolService
+     */
+    private $poolService;
+
+    /**
      * @type DeploymentView
      */
     private $view;
@@ -40,11 +46,13 @@ class RemoveViewHandler implements MiddlewareInterface
     public function __construct(
         EntityManagerInterface $em,
         Flasher $flasher,
+        PoolService $poolService,
         DeploymentView $view
     ) {
         $this->em = $em;
 
         $this->flasher = $flasher;
+        $this->poolService = $poolService;
 
         $this->view = $view;
     }
@@ -56,6 +64,8 @@ class RemoveViewHandler implements MiddlewareInterface
     {
         $this->em->remove($this->view);
         $this->em->flush();
+
+        $this->poolService->clearViewCache($this->view);
 
         $message = sprintf(self::SUCCESS, $this->view->name());
         $this->flasher

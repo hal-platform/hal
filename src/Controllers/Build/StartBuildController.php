@@ -92,7 +92,7 @@ class StartBuildController implements ControllerInterface
     /**
      * @param Application $application
      *
-     * @return null
+     * @return Environment[]
      */
     private function getBuildableEnvironments(Application $application)
     {

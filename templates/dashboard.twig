@@ -57,14 +57,14 @@
         {% include '_partial-job/pending-table.twig' %}
     {% endif %}
 
-    <div class="dash-box-wrapper">
+    <div class="flex-box-wrapper">
 
-        <div class="dash-box">
+        <div class="flex-box">
               <h2 class="trailer">Your Recent Builds</h2>
               {% include '_partial-job/build-box.twig' with {'builds': builds} %}
         </div>
 
-        <div class="dash-box">
+        <div class="flex-box">
               <h2 class="trailer">Your Recent Pushes</h2>
               {% include '_partial-job/push-box.twig' with {'pushes': pushes} %}
         </div>

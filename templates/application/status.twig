@@ -8,16 +8,48 @@
 {% block content %}
     <h1>Application Status - <strong>{{ application.name }}</strong></h1>
 
-    {{ block('env_picker') }}
-    {{ block('view_picker') }}
+    {% if selected_environment %}
 
-    {{ block('deployment_cards') }}
+        {{ block('pickers') }}
 
-    <h2>Recent Builds - <strong>{{ selected_environment.name }}</strong></h2>
-    {% set isPushable = deployment_statuses|length > 0 %}
-    {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable } %}
+        {{ block('deployment_cards') }}
 
-    {{ block('page_buttons') }}
+        <h2>Recent Builds - <strong>{{ selected_environment.name }}</strong></h2>
+        {% set isPushable = deployment_statuses|length > 0 %}
+        {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable } %}
+
+        {{ block('page_buttons') }}
+    {% else %}
+        <h2>Server Status</h2>
+        <p>This application has no deployment targets configured and cannot be pushed.</p>
+
+        <h2>Recent Builds</h2>
+        {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable } %}
+
+        {{ block('page_buttons') }}
+
+    {% endif %}
+
+{% endblock %}
+
+{% block pickers %}
+
+    {% set needsViews = deployment_statuses|length > 5 %}
+
+    {% if not views and not needsViews %}
+        {# if no views and does not need views, only show env picker #}
+        {{ block('env_picker') }}
+    {% else %}
+        <div class="flex-box-wrapper mbl">
+
+            <div class="flex-box mbl">
+                  {{ block('env_picker') }}
+            </div>
+            <div class="flex-box mbl">
+                  {{ block('view_picker') }}
+            </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
 
@@ -90,6 +122,7 @@
 
                 {% set pooled = [] %}
 
+                {# empty pools have already been removed by the backend #}
                 {% for pool in views[selected_view].pools %}
                     <div>
                         <h3>{{ pool.name }}</h3>
@@ -102,14 +135,24 @@
                     </div>
                 {% endfor %}
 
-                <div>
-                    <h3>Unpooled</h3>
-                    <ul class="list--bare cards cards--{{ selected_environment.name }}">
-                        {% for status in deployment_statuses if status.deploy.id not in pooled %}
-                            <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                {# show unpooled grouping if some statuses didnt land in a pool #}
+                {% set unpooled = [] %}
+                {% for status in deployment_statuses %}
+                    {% if status.deploy.id not in pooled %}
+                        {% set unpooled = unpooled|merge([status]) %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if unpooled %}
+                    <div>
+                        <h3>Unpooled</h3>
+                        <ul class="list--bare cards cards--{{ selected_environment.name }}">
+                            {% for status in unpooled %}
+                                <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
 
             {% else %}
                 <div class="js-pool">
@@ -133,14 +176,14 @@
             <li><a class="btn btn--action" href="{{ urlFor('build.start', {'application': application.id}) }}">Start New Build</a></li>
         {% endif %}
 
-        {% if builds %}
-            <li><a class="btn" href="{{ urlFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
-        {% endif %}
-
+        <li><a class="btn" href="{{ urlFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
         <li><a class="btn" href="{{ urlFor('push.history.page1', {'application': application.id}) }}">All Pushes</a></li>
 
         <li><a class="btn btn--secondary" href="{{ urlFor('application', {'application': application.id}) }}">Application</a></li>
-        <li><a class="btn btn--secondary" href="{{ urlFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Deployment Views</a></li>
+
+        {% if selected_environment and (views or deployment_statuses|length > 5) %}
+            <li><a class="btn btn--secondary" href="{{ urlFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Deployment Views</a></li>
+        {% endif %}
 
         {% if kraken %}
             <li><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken</a></li>

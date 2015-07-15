@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Flasher;
+use QL\Hal\Service\PoolService;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -39,6 +40,11 @@ class AddPoolController implements ControllerInterface
     private $flasher;
 
     /**
+     * @type PoolService
+     */
+    private $poolService;
+
+    /**
      * @type callable
      */
     private $random;
@@ -62,6 +68,7 @@ class AddPoolController implements ControllerInterface
      * @param TemplateInterface $template
      * @param Request $request
      * @param Flasher $flasher
+     * @param PoolService $poolService
      * @param callable $random
      * @param EntityManagerInterface $em
      * @param DeploymentView $view
@@ -70,6 +77,7 @@ class AddPoolController implements ControllerInterface
         TemplateInterface $template,
         Request $request,
         Flasher $flasher,
+        PoolService $poolService,
         callable $random,
         EntityManagerInterface $em,
         DeploymentView $view
@@ -77,6 +85,8 @@ class AddPoolController implements ControllerInterface
         $this->template = $template;
         $this->request = $request;
         $this->flasher = $flasher;
+        $this->poolService = $poolService;
+
         $this->random = $random;
 
         $this->em = $em;
@@ -128,6 +138,8 @@ class AddPoolController implements ControllerInterface
             // persist to database
             $this->em->persist($pool);
             $this->em->flush();
+
+            $this->poolService->clearViewCache($this->view);
         }
 
         return $pool;

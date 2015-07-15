@@ -1,7 +1,7 @@
-.dash-box-wrapper,
 .flex-box-wrapper {
     background-color: tint($light-grey, 50%);
     overflow: hidden;
+    display: block;
 
     // Must inverse the padding on the containing element
     @include margin-x(ms(2) * -1);
@@ -11,32 +11,6 @@
        @include margin-x(ms(3) * -1);
         margin-bottom: ms(3) * -1;
     }
-}
-
-.dash-box, .flex-box {
-    @include border-radius(5px);
-    @include leader();
-    @include padding-x(msem(5));
-    padding-top: msem(1);
-    background-color: #fff;
-}
-
-.dash-box {
-    @include breakpoint(40em) {
-        &:nth-child(odd) {
-            @include grid-span(1,1, $grid: 2, $gutter: .08);
-            clear: left;
-        }
-
-        &:nth-child(even) {
-            @include grid-span(1, 2, $grid: 2, $gutter: .08);
-            clear: right;
-        }
-    }
-}
-
-.flex-box-wrapper {
-    display: block;
 
     @include breakpoint(40em) {
        display: flex;
@@ -44,9 +18,16 @@
 }
 
 .flex-box {
-    flex: 1;
+    @include border-radius(5px);
+    @include leader();
     @include margin-x(0);
+
+    @include padding-x(msem(5));
+    padding-top: msem(1);
     padding-bottom: msem(1);
+
+    background-color: #fff;
+    flex: 1;
 
     @include breakpoint(40em) {
         &:nth-child(odd) {
@@ -58,4 +39,3 @@
         }
     }
 }
-

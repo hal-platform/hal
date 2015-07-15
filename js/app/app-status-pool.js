@@ -61,6 +61,11 @@ module.exports = {
                 }
             }
         }
+
+        // Remove unpooled if empty
+        if ($unpooled.find('[data-deploy]').length == 0) {
+            $unpooled.remove();
+        }
     },
     buildViews: function() {
         var $views = $(this.viewsTarget)

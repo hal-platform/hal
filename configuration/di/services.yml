@@ -57,6 +57,15 @@ services:
             - ['setCache', [@cache]]
             - ['setCacheTTL', [%cache.stats.ttl%]]
 
+    pools:
+        class: 'QL\Hal\Service\PoolService'
+        arguments:
+            - @doctrine.em
+            - @sticky.view
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.stats.ttl%]]
+
     redis:
         class: 'Predis\Client'
         arguments:
