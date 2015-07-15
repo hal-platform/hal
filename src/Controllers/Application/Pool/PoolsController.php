@@ -101,11 +101,10 @@ class PoolsController implements ControllerInterface
 
             'views' => $views,
             'deployment_pools' => $pools,
+            'server_collisions' => $this->findServerCollisions($pools),
 
             'selected_view' => $selectedView
         ]);
-
-        // $this->bullshit();
     }
 
     /**
@@ -132,5 +131,31 @@ class PoolsController implements ControllerInterface
         }
 
         return $indexed;
+    }
+
+    /**
+     * Find if a server has been applied to multiple deployments. Only apps that do this should be punished with excess noise.
+     *
+     * @param array $pools
+     *
+     * @return array
+     */
+    private function findServerCollisions(array $pools)
+    {
+        $servers = [];
+        $collisions = [];
+
+        foreach ($pools as $pool) {
+            foreach ($pool as $deployment) {
+                $id = $deployment->server()->id();
+                if (isset($servers[$id]) && $servers[$id] !== $deployment->id()) {
+                    $collisions[$id] = true;
+                } else {
+                    $servers[$id] = $deployment->id();
+                }
+            }
+        }
+
+        return $collisions;
     }
 }

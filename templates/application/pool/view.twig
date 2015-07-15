@@ -70,7 +70,16 @@
                                 {% if deployment_pools[pool.id] %}
                                     {% for deployment in deployment_pools[pool.id] %}
                                         <li>
-                                            <span class="split__title">{{ deployment|formatDeploymentServer }}</span>
+                                            <span class="split__title">
+                                                {% if server_collisions[deployment.server.id] %}
+                                                    <span class="tooltipped tooltipped-e" aria-label="{{ deployment.path }}">
+                                                        {{ deployment|formatDeploymentServer }}
+                                                    </span>
+                                                {% else %}
+                                                    {{ deployment|formatDeploymentServer }}
+                                                {% endif %}
+
+                                            </span>
                                             {% if canEdit %}
                                                 <a class="js-remove-deployment" href="{{ urlFor('pool.deployment.remove', {view: view.id, pool: pool.id, deployment: deployment.id}) }}">Remove</a>
                                             {% endif %}
@@ -88,7 +97,13 @@
                                     <select class="select-input" name="deployment">
                                         <option></option>
                                         {% for deployment in deployments %}
-                                            <option value="{{ deployment.id }}">{{ deployment|formatDeploymentServer }}</option>
+                                            <option value="{{ deployment.id }}">
+                                                {% if server_collisions[deployment.server.id] %}
+                                                    {{ deployment|formatDeploymentServer }} ({{ deployment|formatDeploymentDetails }})
+                                                {% else %}
+                                                    {{ deployment|formatDeploymentServer }}
+                                                {% endif %}
+                                            </option>
                                         {% endfor %}
                                     </select>
 

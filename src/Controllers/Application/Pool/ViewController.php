@@ -82,7 +82,9 @@ class ViewController implements ControllerInterface
             'view' => $this->view,
             'pools' => $pools,
             'deployment_pools' => $sortedPools,
-            'deployments' => $deployments
+            'deployments' => $deployments,
+
+            'server_collisions' => $this->findServerCollisions($deployments)
         ]);
     }
 
@@ -110,5 +112,30 @@ class ViewController implements ControllerInterface
         }
 
         return $indexed;
+    }
+
+    /**
+     * Find if a server has been applied to multiple deployments. Only apps that do this should be punished with excess noise.
+     *
+     * @param Deployment[] $deployments
+     *
+     * @return array
+     */
+    private function findServerCollisions(array $deployments)
+    {
+        $servers = [];
+        $collisions = [];
+
+        foreach ($deployments as $deployment) {
+            $id = $deployment->server()->id();
+
+            if (isset($servers[$id])) {
+                $collisions[$id] = true;
+            } else {
+                $servers[$id] = true;
+            }
+        }
+
+        return $collisions;
     }
 }
