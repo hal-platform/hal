@@ -15,7 +15,9 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Flasher;
 use QL\Hal\Service\StickyViewService;
 use QL\Panthor\MiddlewareInterface;
+use QL\Panthor\Utility\Json;
 use Slim\Http\Request;
+use Slim\Http\Response;
 
 class StickyViewHandler implements MiddlewareInterface
 {
@@ -40,6 +42,16 @@ class StickyViewHandler implements MiddlewareInterface
     private $stickyView;
 
     /**
+     * @type Response
+     */
+    private $response;
+
+    /**
+     * @type Json
+     */
+    private $json;
+
+    /**
      * @type Application
      */
     private $application;
@@ -54,6 +66,10 @@ class StickyViewHandler implements MiddlewareInterface
      * @param Request $request
      * @param Flasher $flasher
      * @param StickyViewService $stickyView
+     *
+     * @param Response $response
+     * @param Json $json
+     *
      * @param Application $application
      * @param Environment $environment
      */
@@ -62,6 +78,10 @@ class StickyViewHandler implements MiddlewareInterface
         Request $request,
         Flasher $flasher,
         StickyViewService $stickyView,
+
+        Response $response,
+        Json $json,
+
         Application $application,
         Environment $environment
     ) {
@@ -70,6 +90,10 @@ class StickyViewHandler implements MiddlewareInterface
         $this->request = $request;
         $this->flasher = $flasher;
         $this->stickyView = $stickyView;
+
+        // For JSON processing
+        $this->response = $response;
+        $this->json = $json;
 
         $this->application = $application;
         $this->environment = $environment;
@@ -80,9 +104,26 @@ class StickyViewHandler implements MiddlewareInterface
      */
     public function __invoke()
     {
+        $isAjax = ($this->request->getMediaType() === 'application/json');
+
+        if ($isAjax) {
+            return $this->handleJSONForm();
+        }
+
+        $this->saveStickyView($this->request->post('view'));
+        $this->flasher->load('application.status', ['application' => $this->application->id()]);
+    }
+
+    /**
+     * @param string $viewID
+     *
+     * @return void
+     */
+    private function saveStickyView($viewID)
+    {
         $saved = null;
 
-        if ($viewID = $this->request->post('view')) {
+        if ($viewID) {
             $view = $this->viewRepo->findOneBy([
                 'id' => $viewID,
                 'application' => $this->application,
@@ -93,7 +134,26 @@ class StickyViewHandler implements MiddlewareInterface
         }
 
         $this->stickyView->save($this->application->id(), $this->environment->id(), $saved);
+    }
 
-        $this->flasher->load('application.status', ['application' => $this->application->id()]);
+    /**
+     * @return void
+     */
+    private function handleJSONForm()
+    {
+        $this->response->headers->set('Content-Type', 'application/json');
+
+        $decoded = call_user_func($this->json, $this->request->getBody());
+        if (is_array($decoded) && isset($decoded['view'])) {
+            $view = $decoded['view'];
+        } else {
+            $view = null;
+        }
+
+        $this->saveStickyView($view);
+
+        $this->response->setBody($this->json->encode([
+            'awk' => 'cool story bro',
+        ]));
     }
 }

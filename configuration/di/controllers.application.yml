@@ -50,6 +50,8 @@ services:
             - @slim.request
             - @session.flasher
             - @sticky.view
+            - @slim.response
+            - @json
             - @hal.application
             - @hal.environment
 

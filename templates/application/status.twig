@@ -94,7 +94,7 @@
                     <div>
                         <h3>{{ pool.name }}</h3>
                         <ul class="list--bare cards cards--{{ selected_environment.name }}">
-                            {% for status in deployment_statuses if status.deploy.id and pool.deployments[status.deploy.id] %}
+                            {% for status in deployment_statuses if status.deploy.id in pool.deployments %}
                                 {% set pooled = pooled|merge([status.deploy.id]) %}
                                 <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
                             {% endfor %}

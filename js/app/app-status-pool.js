@@ -40,27 +40,27 @@ module.exports = {
             return;
         }
 
-        $rawdeploys.each(function(index, deploy) {
-            var $deploy = $(deploy),
-                id = $deploy.data('deploy');
+        var $unpooled = this.unpool(selectedView, $rawdeploys);
 
-            $deploys[id] = $deploy;
-        });
+        // Move elements to unpooled
+        this.$poolContainer
+            .empty()
+            .append($unpooled);
+
+        this.persistView(selectedView);
 
         // valid view = pool deployments
         if (this.views.hasOwnProperty(selectedView)) {
-            var $sections = this.poolDeployments(this.views[selectedView], $deploys);
+            var $section,
+                pools = this.views[selectedView];
 
-        } else {
-            // otherwise, unpool everything
-            var $sections = [
-                this.buildPoolDOM('', $deploys)
-            ]
+            for(var pool in pools) {
+                $section = this.poolDeployments(pool, pools[pool], $unpooled);
+                if ($section !== null) {
+                    $section.insertBefore($unpooled);
+                }
+            }
         }
-
-        this.$poolContainer
-            .empty()
-            .append($sections);
     },
     buildViews: function() {
         var $views = $(this.viewsTarget)
@@ -81,53 +81,56 @@ module.exports = {
                     name = $pool.data('pool'),
                     deploys = $pool.text();
 
-                pools[name] = {
-                    elements: [],
-                    ids: JSON.parse(deploys)
-                };
+                pools[name] = JSON.parse(deploys);
             });
 
             views[id] = pools;
         });
 
-        console.log(views);
         return views;
     },
-    poolDeployments: function(pools, $deploys) {
-        var $sections = [];
+
+    unpool: function (selectedView, $rawdeploys) {
+
+        var pool_name = '';
+        if (selectedView.length > 0) {
+            pool_name = 'Unpooled';
+        }
+
+        var $section = this.buildPoolDOM(pool_name);
+        $section
+            .find('.js-card-list')
+            .append($rawdeploys);
+
+        return $section;
+    },
+    poolDeployments: function(pool_name, pool, $unpooled) {
+
+        var $section = this.buildPoolDOM(pool_name),
+            $ul = $section.find('.js-card-list'),
+            hasDeploys = false;
 
         // It is important to use pools as the basis for building the new sections, because deployments
         //  are sorted by the backend. The dom order is not guaranteed to be sorted correctly.
-        for(var pool in pools) {
-            pools[pool].elements = [];
+        for(var index in pool) {
 
-            for (var deploy in pools[pool].ids) {
-                if ($deploys.hasOwnProperty(deploy)) {
-                    pools[pool].elements.push($deploys[deploy]);
-                    delete $deploys[deploy];
-                }
-            }
-
-            if (pools[pool].elements.length > 0) {
-                $sections.push(this.buildPoolDOM(pool, pools[pool].elements));
+            var $deploy = $unpooled.find('[data-deploy="' + pool[index] + '"]');
+            if ($deploy.length > 0) {
+                $ul.append($deploy);
+                hasDeploys = true;
             }
         }
 
-        // if there are deploys remaining "unpool", add them to another section
-        if (Object.keys($deploys).length > 0) {
-            $sections.push(this.buildPoolDOM('Unpooled', $deploys));
+        // Skip empty pools, if one got in somehow
+        if (hasDeploys) {
+            return $section;
         }
 
-        return $sections;
+        return null;
     },
-    buildPoolDOM: function(pool_name, $deploys) {
-        var $ul = $('<ul class="' + this.listClass + '">');
-        for(var index in $deploys) {
-            $ul.append($deploys[index]);
-        }
-
+    buildPoolDOM: function(pool_name) {
         var $section = $('<div>')
-            .append($ul);
+            .append('<ul class="js-card-list ' + this.listClass + '">');
 
         if (pool_name.length > 0) {
             $section
@@ -135,5 +138,20 @@ module.exports = {
         }
 
         return $section;
+    },
+    persistView: function (selectedView) {
+        var action = this.$picker.closest('form').attr('action');
+
+        if (action.length === 0) {
+            return;
+        }
+        $.ajax(action, {
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'view': selectedView
+            })
+        });
     }
 };

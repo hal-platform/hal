@@ -297,16 +297,13 @@ class ApplicationStatusController implements ControllerInterface
                 if (!$deployments) continue;
 
                 usort($deployments, $this->deploymentSorter());
-
-                // hashmap it
-                $hashed = [];
-                foreach ($deployments as $deployment) {
-                    $hashed[$deployment->id()] = true;
-                }
+                array_walk($deployments, function (&$deployment) {
+                    $deployment = $deployment->id();
+                });
 
                 $pools[] = [
                     'name' => $pool->name(),
-                    'deployments' => $hashed
+                    'deployments' => $deployments
                 ];
             }
 
