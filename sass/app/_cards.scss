@@ -128,32 +128,29 @@
 }
 
 /* env specific colors for push cards and push/build boxes */
-.cards--test .card,
+.card--test-aws,
 .card--test {
     box-shadow: 0 0 0 8px $hal-blue;
-}
-.cards--test .card__header,
-.card--test .card__header {
-    background-color: $hal-blue;
-    a, h4 { color: $white }
+    .card__header {
+        background-color: $hal-blue;
+        a, h4 { color: $white }
+    }
 }
 
-.cards--beta .card,
+.card--beta-aws,
 .card--beta {
     box-shadow: 0 0 0 8px $hal-cyan;
-}
-.cards--beta .card__header,
-.card--beta .card__header {
-    background-color: $hal-cyan;
-    a, h4 { color: $white }
+    .card__header {
+        background-color: $hal-cyan;
+        a, h4 { color: $white }
+    }
 }
 
-.cards--prod .card,
+.card--prod-aws,
 .card--prod {
     box-shadow: 0 0 0 8px $hal-red;
-}
-.cards--prod .card__header,
-.card--prod .card__header {
-    background-color: $hal-red;
-    a, h4 { color: $white }
+    .card__header {
+        background-color: $hal-red;
+        a, h4 { color: $white }
+    }
 }
