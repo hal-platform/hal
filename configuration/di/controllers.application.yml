@@ -28,6 +28,7 @@ services:
             - @application.status.twig
             - @doctrine.em
             - @sticky.environment
+            - @sticky.view
             - @hal.application
     application.status.twig:
         parent: 'twig.auto.template'
@@ -41,6 +42,16 @@ services:
             - @url
             - @sticky.environment
             - @slim.route.parameters
+
+    application.sticky.view.handler:
+        class: 'QL\Hal\Controllers\Application\StickyViewHandler'
+        arguments:
+            - @doctrine.em
+            - @slim.request
+            - @session.flasher
+            - @sticky.view
+            - @hal.application
+            - @hal.environment
 
     application.add.page:
         class: 'QL\Hal\Controllers\Application\AddApplicationController'

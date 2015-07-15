@@ -57,18 +57,14 @@
     display: none;
 }
 
-// Dashboard Quick Select
-.js-hide-box {
-    display: none;
-}
-
-// Environment Re-Order
-#env-reorder tbody tr {
-    cursor: move;
-}
-
 // Server card - extra data toggle
 .js-overloader-parent p {
     margin: 0;
     font-size: ms(-3);
 }
+
+// Application Status - Deployment Pools
+.js-pool-views {
+    display: none;
+}
+

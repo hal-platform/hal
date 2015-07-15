@@ -33,6 +33,14 @@ parameters:
             stack: ['middleware.lead', 'middleware.requireEntity', 'application.edit.page']
             conditions: {application: %routes.regex.digit%}
 
+        application.sticky.view:
+            method: 'POST'
+            route: '/applications/:application/environments/:environment'
+            stack: ['middleware.login', 'middleware.requireEntity', 'application.sticky.view.handler']
+            conditions:
+                application: %routes.regex.digit%
+                environment: %routes.regex.digit%
+
         ################################################################################################################
         # REPOSITORY ROUTES - ADMIN
         ################################################################################################################

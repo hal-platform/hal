@@ -10,9 +10,9 @@ namespace QL\Hal\Service;
 use QL\Panthor\Http\EncryptedCookies;
 use QL\Panthor\Utility\Json;
 
-class StickyEnvironmentService
+class StickyViewService
 {
-    const COOKIE_NAME = 'stickyenvironment';
+    const COOKIE_NAME = 'stickyview';
 
     /**
      * @type EncryptedCookies
@@ -44,30 +44,37 @@ class StickyEnvironmentService
     /**
      * @param string $applicationID
      * @param string $environmentID
+     * @param string|null $viewID
      *
      * @return void
      */
-    public function save($applicationID, $environmentID)
+    public function save($applicationID, $environmentID, $viewID)
     {
-        // we store each repo stickyness individually per repo, but in the same cookie.
+        // we store each app stickyness individually per app, but in the same cookie.
         $stickies = $this->unpackStickies();
-        $stickies[$applicationID] = $environmentID;
+
+        if ($viewID == null) {
+            unset($stickies[$applicationID][$environmentID]);
+        } else {
+            $stickies[$applicationID][$environmentID] = $viewID;
+        }
 
         $this->cookies->setCookie(self::COOKIE_NAME, $this->json->encode($stickies), $this->preferencesExpiry);
     }
 
     /**
-     * Get the current env preference for an application.
+     * Get the current view preference for an application.
      *
      * @param string $applicationID
+     * @param string $environmentID
      *
      * @return string|null
      */
-    public function get($applicationID)
+    public function get($applicationID, $environmentID)
     {
         $stickies = $this->unpackStickies();
-        if (isset($stickies[$applicationID])) {
-            return $stickies[$applicationID];
+        if (isset($stickies[$applicationID][$environmentID])) {
+            return $stickies[$applicationID][$environmentID];
         }
 
         return null;

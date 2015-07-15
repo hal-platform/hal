@@ -4,6 +4,8 @@
 {% set page_title = "Latest Configuration" %}
 {% set canDeploy = canUserReleaseTheKraken(currentUser, application, environment) %}
 
+{% set isBusinessTime = isSeriousBusinessMode() %}
+
 {% block content %}
 
     <h1>{{ page_title }} - <strong>{{ environment.name }}</strong></h1>
@@ -23,7 +25,8 @@
         {% endif %}
 
         {% if canDeploy %}
-            <li><a class="btn btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy Configuration</a></li>
+            {% set deploy_label = isBusinessTime ? 'Deploy Configuration' : 'Release the kraken' %}
+            <li><a class="btn btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">{{ deploy_label }}</a></li>
         {% endif %}
     </ul>
 

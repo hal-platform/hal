@@ -41,6 +41,7 @@ module.exports = {
         }
 
         this.$overloader.text(text);
+
         if (this.status) {
             this.$overloaded.hide();
         } else {

@@ -40,6 +40,13 @@ services:
             - @json
             - %cookie.preferences.ttl%
 
+    sticky.view:
+        class: 'QL\Hal\Service\StickyViewService'
+        arguments:
+            - @slim.cookies
+            - @json
+            - %cookie.preferences.ttl%
+
     stats:
         class: 'QL\Hal\Service\StatsService'
         arguments:

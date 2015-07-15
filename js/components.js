@@ -46,7 +46,8 @@ module.exports = {
 
     // jobs - status
     "status": function() {
-        require('./app/repository-status-overload').init();
+        require('./app/app-status-overload').init();
+        require('./app/app-status-pool').init();
         require('./app/status/update-builds').init();
 
         var pushUpdater = require('./app/status/update-pushes');

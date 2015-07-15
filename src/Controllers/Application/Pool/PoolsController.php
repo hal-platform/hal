@@ -77,7 +77,7 @@ class PoolsController implements ControllerInterface
 
         // Views sorted by name
         usort($views, function(DeploymentView $a, DeploymentView $b) {
-            return strcmp($a->name(), $b->name());
+            return strcasecmp($a->name(), $b->name());
         });
 
         $pools = [];

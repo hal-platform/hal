@@ -9,6 +9,7 @@ namespace QL\Hal\Middleware\ACL;
 
 use Exception;
 use QL\Hal\Service\PermissionService;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
