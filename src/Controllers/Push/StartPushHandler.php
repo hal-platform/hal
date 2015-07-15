@@ -209,7 +209,7 @@ class StartPushHandler implements MiddlewareInterface
         $this->em->flush();
 
         // override sticky environment
-        $this->stickyService->save($application->id(), $deployment->server()->environment()->name());
+        $this->stickyService->save($application->id(), $deployment->server()->environment()->id());
 
         $this->session->flash(self::NOTICE_DONE, 'success');
         $this->url->redirectFor('application.status', ['application' => $application->id()]);

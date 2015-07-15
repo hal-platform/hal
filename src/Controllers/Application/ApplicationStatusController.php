@@ -186,7 +186,7 @@ class ApplicationStatusController implements ControllerInterface
         }
 
         // Not in the list? Just get the first
-        return array_unshift($environments);
+        return array_shift($environments);
     }
 
     /**

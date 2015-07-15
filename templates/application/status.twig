@@ -155,7 +155,7 @@
                 {% endif %}
 
             {% else %}
-                <div class="js-pool">
+                <div>
                     <ul class="list--bare cards cards--{{ selected_environment.name }}">
                         {% for status in deployment_statuses %}
                             <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
