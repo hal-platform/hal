@@ -46,16 +46,17 @@
         {% if environments|length > 1 %}
 
             <div class="flex-box-wrapper mbl">
-
                 <div class="flex-box mbl">
-                      {{ block('env_picker') }}
+                    {{ block('env_picker') }}
                 </div>
                 <div class="flex-box mbl">
-                      {{ block('view_picker') }}
+                    {{ block('view_picker') }}
                 </div>
             </div>
         {% else %}
-            {{ block('view_picker') }}
+            <div class="form-wrapper">
+                {{ block('view_picker') }}
+            </div>
         {% endif %}
     {% endif %}
 
