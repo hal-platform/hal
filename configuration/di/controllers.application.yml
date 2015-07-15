@@ -186,6 +186,7 @@ services:
         class: 'QL\Hal\Controllers\Application\Pool\PoolsController'
         arguments:
             - @pools.twig
+            - @sticky.pool
             - @doctrine.em
             - @hal.application
             - @hal.environment

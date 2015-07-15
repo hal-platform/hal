@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Deployment Pools : ' ~ application.name %}
 
@@ -40,7 +41,12 @@
                 <li>
                     <article class="card--baby">
                         <header class="card__header split">
-                            <span class="split__title">{{ view.name }}</span>
+                            <span class="split__title">
+                                {% if selected_view == view.id %}
+                                    {{ macros.icon('star-2') }}
+                                {% endif %}
+                                {{ view.name }}
+                            </span>
                             <a href="{{ urlFor('deployment_view', {'view': view.id}) }}">Manage</a>
                         </header>
 
@@ -67,7 +73,6 @@
                             {% endif %}
                         </section>
                     </article>
-
                 </li>
             {% endfor %}
 

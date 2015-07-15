@@ -15,6 +15,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Utility\SortingTrait;
+use QL\Hal\Service\StickyPoolService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -26,6 +27,11 @@ class PoolsController implements ControllerInterface
      * @type TemplateInterface
      */
     private $template;
+
+    /**
+     * @type StickyPoolService
+     */
+    private $stickyPoolService;
 
     /**
      * @type EntityRepository
@@ -45,21 +51,23 @@ class PoolsController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
+     * @param StickyPoolService $stickyPoolService
      * @param EntityManagerInterface $em
      * @param Application $application
      * @param Environment $environment
      */
     public function __construct(
         TemplateInterface $template,
+        StickyPoolService $stickyPoolService,
         EntityManagerInterface $em,
         Application $application,
         Environment $environment
     ) {
         $this->template = $template;
+        $this->stickyPoolService = $stickyPoolService;
+
         $this->viewRepo = $em->getRepository(DeploymentView::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
-
-        $this->em = $em;
 
         $this->application = $application;
         $this->environment = $environment;
@@ -85,12 +93,16 @@ class PoolsController implements ControllerInterface
             $pools += $this->sortPools($view->pools()->toArray());
         }
 
+        $selectedView = $this->stickyPoolService->get($this->application->id(), $this->environment->id());
+
         $this->template->render([
             'application' => $this->application,
             'environment' => $this->environment,
 
             'views' => $views,
-            'deployment_pools' => $pools
+            'deployment_pools' => $pools,
+
+            'selected_view' => $selectedView
         ]);
 
         // $this->bullshit();
