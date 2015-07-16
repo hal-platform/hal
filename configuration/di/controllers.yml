@@ -327,33 +327,33 @@ services:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/server.twig']]]
 
-    server.admin.add.page:
+    server.add.page:
         class: 'QL\Hal\Controllers\Server\AddServerController'
         arguments:
-            - @server.admin.add.twig
+            - @server.add.twig
             - @doctrine.em
             - @server.validator
             - @session.flasher
             - @slim.request
-    server.admin.add.twig:
+    server.add.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['server/admin.add.twig']]]
+        calls: [['setTemplate', ['server/server.add.twig']]]
 
-    server.admin.edit.page:
+    server.edit.page:
         class: 'QL\Hal\Controllers\Server\EditServerController'
         arguments:
-            - @server.admin.edit.twig
+            - @server.edit.twig
             - @doctrine.em
             - @server.validator
             - @session.flasher
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters
-    server.admin.edit.twig:
+    server.edit.twig:
         parent: 'twig.auto.template'
-        calls: [['setTemplate', ['server/admin.edit.twig']]]
+        calls: [['setTemplate', ['server/server.edit.twig']]]
 
-    server.admin.remove.handler:
+    server.remove.handler:
         class: 'QL\Hal\Controllers\Server\RemoveServerController'
         arguments:
             - @doctrine.em

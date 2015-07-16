@@ -34,7 +34,7 @@ Needs the following parameters:
                 {% endfor %}
             </select>
             <small class="additional">
-                Server not listed? <a href="{{ urlFor('server.admin.add') }}">Add a new server</a>
+                Server not listed? <a href="{{ urlFor('server.add') }}">Add a new server</a>
             </small>
         </li>
         <li>
@@ -84,7 +84,6 @@ Needs the following parameters:
             <input class="text-input" type="url" name="url" id="url" maxlength="255" value="{{ form.url }}" required>
         </li>
     </ul>
-
 
     <ul class="button-list">
         <li><input class="btn btn--action" type="submit" value="Add Deployment"></li>

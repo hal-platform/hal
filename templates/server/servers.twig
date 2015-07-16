@@ -38,10 +38,10 @@
         </tbody>
     </table>
 
-    <div>
-        {# primary action #}
-        {% if isUserAdminOrSuper(currentUser) %}
-            <a class="btn" href="{{ urlFor('server.admin.add') }}">Add Server</a>
-        {% endif %}
-    </div>
+    {% if isUserAdminOrSuper(currentUser) %}
+        <ul class="button-list">
+            <li class="button-list__fixed"><a class="btn" href="{{ urlFor('server.add') }}">Add Server</a></li>
+        </ul>
+    {% endif %}
+
 {% endblock %}

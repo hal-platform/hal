@@ -172,26 +172,26 @@ parameters:
         # SERVER ROUTES - ADMIN
         ################################################################################################################
 
-        server.admin.add:
+        server.add:
             method: ['GET', 'POST']
             route: '/servers/add'
-            stack: ['middleware.admin', 'server.admin.add.page']
+            stack: ['middleware.admin', 'server.add.page']
 
-        server.admin.edit:
+        server.edit:
             method: ['GET', 'POST']
             route: '/servers/:id/edit'
-            stack: ['middleware.admin', 'server.admin.edit.page']
+            stack: ['middleware.admin', 'server.edit.page']
             conditions: {id: %routes.regex.digit%}
 
-        server.admin.remove.confirm:
+        server.remove.confirm:
             method: 'GET'
             route: '/servers/:id/remove'
             stack: ['middleware.admin', 'delete.confirm.page']
             conditions: {id: %routes.regex.digit%}
-        server.admin.remove:
+        server.remove:
             method: 'POST'
             route: '/servers/:id/remove'
-            stack: ['middleware.admin', 'server.admin.remove.handler']
+            stack: ['middleware.admin', 'server.remove.handler']
             conditions: {id: %routes.regex.digit%}
 
         ################################################################################################################
