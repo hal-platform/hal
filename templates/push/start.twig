@@ -6,8 +6,6 @@
 {% set page_title = "Start Push : " ~ build.id %}
 
 {% block content %}
-    <p></p>
-
     <h1>Start Push - <strong>{{ build.application.name }}</strong></h1>
 
     <div class="details-box">
@@ -19,7 +17,6 @@
 
             <dt class="split__title">Environment</dt>
             <dd>{{ build.environment.name }}</dd>
-
         </dl>
     </div>
 
