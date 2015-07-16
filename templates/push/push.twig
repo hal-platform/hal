@@ -59,7 +59,7 @@
 
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {'id': push.application.id}) }}">{{ push.application.name }}</a>
+                <a href="{{ urlFor('application', {'application': push.application.id}) }}">{{ push.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
