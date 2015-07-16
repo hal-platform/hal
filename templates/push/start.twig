@@ -91,7 +91,9 @@
 
                     <tr>
                         <td>
-                            <a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment|formatDeploymentServer(true) }}</a>
+                            <span class="tooltipped tooltipped-e" aria-label="{{ status.deployment|formatDeploymentDetails }}">
+                                <a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment|formatDeploymentServer }}</a>
+                            </span>
                         </td>
                         {% if inProgress or status.success %}
                             {% set active = inProgress ? status.latest : status.success %}

@@ -72,7 +72,7 @@
                                         <li>
                                             <span class="split__title">
                                                 {% if server_collisions[deployment.server.id] %}
-                                                    <span class="tooltipped tooltipped-e" aria-label="{{ deployment.path }}">
+                                                    <span class="tooltipped tooltipped-e" aria-label="{{ deployment|formatDeploymentDetails }}">
                                                         {{ deployment|formatDeploymentServer }}
                                                     </span>
                                                 {% else %}
