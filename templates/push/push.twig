@@ -39,7 +39,7 @@
             {% if push.deployment and push.deployment.url %}
                 <dt class="split__title">URL</dt>
                 <dd>
-                    <a href="{{ push.deployment.url.asString }}">{{ push.deployment.url.asString }}</a>
+                    <a href="{{ push.deployment.url }}">{{ push.deployment.url }}</a>
                 </dd>
             {% endif %}
         </dl>

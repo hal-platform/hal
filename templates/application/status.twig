@@ -225,7 +225,7 @@
                 <a href="{{ urlFor('server', {'id': deployment.server.id}) }}">{{ deployment|formatDeploymentServer }}</a>
 
                 {% if deployment.url %}
-                    <a class="icon--link" href="{{ deployment.url.asString }}">
+                    <a class="icon--link" href="{{ deployment.url }}">
                         {{ macros.icon('outgoing') }}
                     </a>
                 {% endif %}

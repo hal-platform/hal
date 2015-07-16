@@ -73,18 +73,16 @@ class DeploymentValidator
         $this->validateRequired($serverId, $url);
 
         // stop validation if errors
-        if ($this->errors) {
-            return null;
-        }
+        if ($this->errors) return;
+
+        $this->validateUrl($url);
 
         if (!$server = $this->serverRepo->find($serverId)) {
             $this->errors[] = self::ERR_INVALID_SERVER;
         }
 
         // stop validation if errors
-        if ($this->errors) {
-            return null;
-        }
+        if ($this->errors) return;
 
         if ($server->type() == ServerEnum::TYPE_RSYNC) {
             $this->validatePath($path);
@@ -99,17 +97,13 @@ class DeploymentValidator
         }
 
         // stop validation if errors
-        if ($this->errors) {
-            return null;
-        }
+        if ($this->errors) return;
 
         // check dupes
         $this->validateNewDuplicate($server, $ebEnvironment, $ec2Pool, $path);
 
         // stop validation if errors
-        if ($this->errors) {
-            return null;
-        }
+        if ($this->errors) return;
 
         // Wipe eb, ec2  for RSYNC server
         // Wipe path, ec2 for EB servers
@@ -133,7 +127,7 @@ class DeploymentValidator
             ->withEbEnvironment($ebEnvironment)
             ->withEc2Pool($ec2Pool)
 
-            ->withUrl(HttpUrl::create($url));
+            ->withUrl($url);
 
         return $deployment;
     }

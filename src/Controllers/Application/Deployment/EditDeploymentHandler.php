@@ -124,7 +124,7 @@ class EditDeploymentHandler implements MiddlewareInterface
         $deployment->withPath($path);
         $deployment->withEbEnvironment($ebEnvironment);
         $deployment->withEc2Pool($ec2Pool);
-        $deployment->withUrl(HttpUrl::create($url));
+        $deployment->withUrl($url);
 
         // persist to database
         $this->em->persist($deployment);

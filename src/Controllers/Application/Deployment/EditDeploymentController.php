@@ -55,13 +55,12 @@ class EditDeploymentController implements ControllerInterface
      */
     public function __invoke()
     {
-        $url = $this->deployment->url() ? $this->deployment->url()->asString() : '';
         $renderContext = [
             'form' => [
                 'path' => $this->request->isPost() ? $this->request->post('path') : $this->deployment->path(),
                 'eb_environment' => $this->request->isPost() ? $this->request->post('eb_environment') : $this->deployment->ebEnvironment(),
                 'ec2_pool' => $this->request->isPost() ? $this->request->post('ec2_pool') : $this->deployment->ec2Pool(),
-                'url' => $this->request->isPost() ? $this->request->post('url') : $url,
+                'url' => $this->request->isPost() ? $this->request->post('url') : $this->deployment->url(),
             ],
             'deployment' => $this->deployment
         ];

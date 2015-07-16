@@ -65,7 +65,9 @@
                         </td>
                     {% endif %}
                     <td>
-                        <a href="{{ deployment.url.asString()  }}">{{ deployment.url.asString()  }}</a>
+                        {% if deployment.url %}
+                            <a href="{{ deployment.url  }}">{{ deployment.url  }}</a>
+                        {% endif %}
                     </td>
                     <td class="tr">
                         <a class="btn btn--tiny" href="{{ urlFor('deployment', {application: deployment.application.id, deployment: deployment.id}) }}">View</a>

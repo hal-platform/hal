@@ -77,7 +77,7 @@
     <h4>URL</h4>
     <p>
         {% if deployment.url %}
-            <a href="{{ deployment.url.asString() }}">{{ deployment.url.asString() }}</a>
+            <a href="{{ deployment.url }}">{{ deployment.url }}</a>
         {% else %}
             None
         {% endif %}
