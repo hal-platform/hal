@@ -67,6 +67,9 @@
         <h4>Elastic Beanstalk Environment ID</h4>
         <p><code>{{ deployment.ebEnvironment }}</code></p>
 
+        <h4>S3 Bucket</h4>
+        <p><code>{{ deployment.s3bucket }}</code></p>
+
     {% elseif deployment.server.type == 's3' %}
 
         <h4>S3 Bucket</h4>

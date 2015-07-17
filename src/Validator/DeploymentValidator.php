@@ -115,6 +115,7 @@ class DeploymentValidator
         } elseif ($server->type() == ServerEnum::TYPE_EB) {
             $this->validateEbEnvironment($ebEnvironment);
             $this->validateEbConfigRequired($application);
+            $this->validateS3($s3bucket, $s3file);
 
         } elseif ($server->type() == ServerEnum::TYPE_EC2) {
             $this->validatePath($path);
@@ -197,6 +198,7 @@ class DeploymentValidator
         } elseif ($serverType == ServerEnum::TYPE_EB) {
             $this->validateEbEnvironment($ebEnvironment);
             $this->validateEbConfigRequired($deployment->application());
+            $this->validateS3($s3bucket, $s3file);
 
         } elseif ($serverType == ServerEnum::TYPE_EC2) {
             $this->validatePath($path);
@@ -246,13 +248,12 @@ class DeploymentValidator
      */
     private function sanitizeProperties($type, $path, $ebEnvironment, $ec2Pool, $s3bucket, $s3file)
     {
-        // Wipe eb,   ec2, s3  for RSYNC server
-        // Wipe path, ec2      for EB servers
-        // Wipe path, eb, s3   for EC2 server
-        // Wipe path, eb, ec2  for S3 server
-
         if ($type !== ServerEnum::TYPE_S3) {
-            $s3bucket = $s3file = null;
+            $s3file = null;
+        }
+
+        if (!in_array($type, [ServerEnum::TYPE_S3, ServerEnum::TYPE_EB], true)) {
+            $s3bucket = null;
         }
 
         if ($type !== ServerEnum::TYPE_EB) {

@@ -51,7 +51,7 @@ Needs the following parameters:
                 File path
                 {% if not rsync_only %}
                     <small class="additional">
-                            <strong>Rsync and EC2 Servers Only</strong><br>
+                            <strong>Rsync and EC2 servers only</strong><br>
                     </small>
                 {% endif %}
             </label>
@@ -67,7 +67,7 @@ Needs the following parameters:
                 <label for="eb_environment">
                     Elastic Beanstalk Environment ID
                     <small class="additional">
-                        <strong>EB Servers Only</strong>
+                        <strong>EB servers only</strong>
                     </small>
                 </label>
                 <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+">
@@ -77,7 +77,7 @@ Needs the following parameters:
                 <label for="ec2_pool">
                     EC2 Pool
                     <small class="additional">
-                        <strong>EC2 Servers Only</strong>
+                        <strong>EC2 servers only</strong>
                     </small>
                 </label>
                 <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+">
@@ -87,7 +87,7 @@ Needs the following parameters:
                 <label for="s3_bucket">
                     S3 Bucket
                     <small class="additional">
-                        <strong>S3 Servers Only</strong>
+                        <strong>S3 and EB servers only</strong>
                     </small>
                 </label>
                 <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+">
@@ -97,7 +97,7 @@ Needs the following parameters:
                 <label for="s3_file">
                     S3 File
                     <small class="additional">
-                        <strong>S3 Servers Only</strong>
+                        <strong>S3 servers only</strong>
                     </small>
                 </label>
                 <input class="text-input" type="text" name="s3_file" id="s3_file" maxlength="100" value="{{ form.s3_file }}" pattern="^[^\n\t]+">
