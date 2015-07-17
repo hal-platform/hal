@@ -1,4 +1,6 @@
 {% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
 {% set js_components = ["deployment.add"] %}
 
 {% set page_title = 'Deployments : ' ~ application.name %}
@@ -38,7 +40,12 @@
                     {% for deployment in deployments %}
 
                         <tr>
-                            <td>{{ deployment|formatDeploymentServer }}</td>
+                            <td>
+                                {% if deployment.server.type != 'rsync' and not deployment.credential %}
+                                    <span class="tooltipped" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
+                                {% endif %}
+                                {{ deployment|formatDeploymentServer }}
+                            </td>
                             <td>
                                 <code class="code_clear">{{ deployment|formatDeploymentDetails }}</code>
                             </td>
