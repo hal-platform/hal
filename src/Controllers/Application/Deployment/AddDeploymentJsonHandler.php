@@ -128,9 +128,12 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
         $deployment = $this->validator->isValid(
             $this->application,
             isset($decoded['server']) ? $decoded['server'] : null,
+            isset($decoded['name']) ? $decoded['name'] : null,
             isset($decoded['path']) ? $decoded['path'] : null,
             isset($decoded['eb_environment']) ? $decoded['eb_environment'] : null,
             isset($decoded['ec2_pool']) ? $decoded['ec2_pool'] : null,
+            isset($decoded['s3_bucket']) ? $decoded['s3_bucket'] : null,
+            isset($decoded['s3_file']) ? $decoded['s3_file'] : null,
             isset($decoded['url']) ? $decoded['url'] : null
         );
 

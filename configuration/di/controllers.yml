@@ -320,9 +320,7 @@ services:
         arguments:
             - @server.twig
             - @doctrine.em
-            - @eb
-            - @slim.not.found
-            - @slim.route.parameters
+            - @hal.server
     server.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/server.twig']]]

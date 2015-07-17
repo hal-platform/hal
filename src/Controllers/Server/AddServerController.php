@@ -90,26 +90,22 @@ class AddServerController implements ControllerInterface
                 ->load('environment.add');
         }
 
-        $form = [
-            'hostname' => $this->request->post('hostname'),
-            'environment' => $this->request->post('environment'),
-            'server_type' => $this->request->post('server_type'),
-        ];
+        $form = $this->data();;
 
-        if ($this->request->isPost()) {
-            if ($server = $this->handleForm($form)) {
+        if ($server = $this->handleForm($form)) {
 
-                $name = $server->name();
-                if ($server->type() === ServerEnum::TYPE_EB) {
-                    $name = 'Elastic Beanstalk';
-                } elseif ($server->type() === ServerEnum::TYPE_EC2) {
-                    $name = 'EC2';
-                }
-
-                return $this->flasher
-                    ->withFlash(sprintf(self::SUCCESS, $name), 'success')
-                    ->load('servers');
+            $name = $server->name();
+            if ($server->type() === ServerEnum::TYPE_EB) {
+                $name = 'Elastic Beanstalk';
+            } elseif ($server->type() === ServerEnum::TYPE_EC2) {
+                $name = 'EC2';
+            } elseif ($server->type() === ServerEnum::TYPE_S3) {
+                $name = 'S3';
             }
+
+            return $this->flasher
+                ->withFlash(sprintf(self::SUCCESS, $name), 'success')
+                ->load('servers');
         }
 
         $context = [
@@ -121,6 +117,7 @@ class AddServerController implements ControllerInterface
         $this->template->render($context);
     }
 
+
     /**
      * @param array $data
      *
@@ -128,13 +125,39 @@ class AddServerController implements ControllerInterface
      */
     private function handleForm(array $data)
     {
-        if (!$server = $this->validator->isValid($data['server_type'], $data['environment'], $data['hostname'])) {
-            return;
+        if (!$this->request->isPost()) {
+            return null;
         }
 
-        $this->em->persist($server);
-        $this->em->flush();
+        $server = $this->validator->isValid(
+            $data['server_type'],
+            $data['environment'],
+            $data['hostname'],
+            $data['region']
+        );
+
+        if ($server) {
+            // persist to database
+            $this->em->merge($server);
+            $this->em->flush();
+        }
 
         return $server;
+    }
+
+    /**
+     * @return array
+     */
+    private function data()
+    {
+        $form = [
+            'server_type' => $this->request->post('server_type'),
+            'environment' => $this->request->post('environment'),
+
+            'hostname' => trim($this->request->post('name')),
+            'region' => trim($this->request->post('region'))
+        ];
+
+        return $form;
     }
 }

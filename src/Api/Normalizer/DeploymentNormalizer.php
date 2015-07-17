@@ -78,9 +78,15 @@ class DeploymentNormalizer
         return $this->buildResource(
             [
                 'id' => $deployment->id(),
+                'name' => $deployment->name(),
+
                 'path' => $deployment->path(),
-                'eb-environment' => $deployment->ebEnvironment(),
-                'ec2-pool' => $deployment->ec2Pool(),
+
+                'eb_environment' => $deployment->ebEnvironment(),
+                'ec2_pool' => $deployment->ec2Pool(),
+                's3_bucket' => $deployment->s3bucket(),
+                's3_file' => $deployment->s3file(),
+
                 'url' => $deployment->url(),
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),

@@ -94,7 +94,6 @@ services:
         class: 'QL\Hal\Controllers\Application\Deployment\DeploymentController'
         arguments:
             - @deployment.twig
-            - @eb
             - @hal.deployment
     deployment.twig:
         parent: 'twig.auto.template'
@@ -157,6 +156,7 @@ services:
         arguments:
             - @deployment.edit.twig
             - @slim.request
+            - @doctrine.em
             - @hal.deployment
     deployment.edit.twig:
         parent: 'twig.auto.template'

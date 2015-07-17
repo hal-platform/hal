@@ -92,7 +92,7 @@
                                 {% endif %}
                             </ul>
 
-                            {% if canEdit %}
+                            {% if canEdit and deployments %}
                                 <form class="mtm js-pool-form" method="post" action="{{ urlFor('pool.deployment.add', {'view': view.id, 'pool': pool.id}) }}">
                                     <select class="select-input" name="deployment">
                                         <option></option>

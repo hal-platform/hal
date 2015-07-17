@@ -10,11 +10,11 @@
         <dl class="split">
             <dt class="split__title">Application</dt>
             <dd>
-                {{ deployment.application.name }}
+                <a href="{{ urlFor('application', {'application': deployment.application.id}) }}">{{ deployment.application.name }}</a>
             </dd>
 
             <dt class="split__title">Server</dt>
-            <dd>{{ deployment|formatDeploymentServer(true) }}</dd>
+            <dd><a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.server|formatServer }}</a></dd>
 
             <dt class="split__title">Environment</dt>
             <dd>
@@ -31,17 +31,37 @@
 
         <form method="post">
             <ul class="form-fields">
+
+                <li>
+                    <label for="name">Name</label>
+                    <input class="text-input" type="text" name="name" id="name" maxlength="80" value="{{ form.name }}" pattern="^[^\n\t]+">
+                    <small class="additional">
+                        Optionally, give a deployment a unique name for easy reference or to avoid confusion with multiple deployments to the same server.
+                    </small>
+                </li>
+
+                <li>
+                    <label for="url">URL</label>
+                    <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}" required>
+                    <small class="additional">
+                        A URL is required to help users find where the code is deployed.
+                        Must be the full URL and begin with <code>http://</code> or <code>https://</code>.
+                    </small>
+                </li>
+
                 <li>
                     {% set isDisabled = (deployment.server.type in ['rsync', 'ec2']) ? '' : ' disabled' %}
                     <label for="path">
                         File path
                         <small class="additional">
                             <strong>Rsync and EC2 Servers Only</strong><br>
-                            The absolute path to the file directory on the server.
-                            <br>Paths must begin with a forward slash (/).
                         </small>
                     </label>
-                    <input class="text-input" type="text" name="path" id="path" maxlength="255" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
+                    <input class="text-input" type="text" name="path" id="path" maxlength="200" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
+                    <small class="additional">
+                        The absolute path to the file directory on the server.
+                        Paths must begin with a forward slash (/).
+                    </small>
                 </li>
 
                 <li>
@@ -55,7 +75,6 @@
                     <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
-
                 <li>
                     {% set isDisabled = (deployment.server.type == 'ec2') ? '' : ' disabled' %}
                     <label for="ec2_pool">
@@ -67,16 +86,52 @@
                     <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
+                {% set isDisabled = (deployment.server.type == 's3') ? '' : ' disabled' %}
                 <li>
-                    <label for="url">
-                        URL
+                    <label for="s3_bucket">
+                        S3 Bucket
                         <small class="additional">
-                            A URL is required to help users find where the code is deployed.
-                            <br>Must be the full URL and begin with <code>http://</code> or <code>https://</code>.
+                            <strong>S3 Servers Only</strong>
                         </small>
                     </label>
-                    <input class="text-input" type="url" name="url" id="url" maxlength="255" value="{{ form.url }}" required>
+                    <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
+
+                <li>
+                    <label for="s3_file">
+                        S3 File
+                        <small class="additional">
+                            <strong>S3 Servers Only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="s3_file" id="s3_file" maxlength="100" value="{{ form.s3_file }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                    <small class="additional">
+                        Available placeholders: <code>$BUILDID</code>, <code>$PUSHID</code>, <code>$DATE</code> (YYYY-MM-DD).
+                        <br>Leave blank to use <code>$PUSHID.tar.gz</code>.
+                    </small>
+                </li>
+
+                <li>
+                    <label for="credential">Credentials</label>
+                    <select class="select-input" name="credential" id="credential">
+                        <option></option>
+                        {% for credential in credentials %}
+                            {% set isSelected = (credential.id == form.credential) %}
+
+                            {% if credential.type == 'aws' %}
+                                {% set type = 'AWS' %}
+                            {% else %}
+                                {% set type = 'Private Key' %}
+                            {% endif %}
+
+                            <option value="{{ credential.id }}"{{ isSelected ? ' selected' : '' }}>{{ credential.name }} ({{ type }})</option>
+                        {% endfor %}
+                    </select>
+                    <small class="additional">
+                        Credentials must be assigned for AWS-based deployments.
+                    </small>
+                </li>
+
             </ul>
 
             <ul class="button-list">

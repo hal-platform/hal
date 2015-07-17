@@ -10,7 +10,9 @@ namespace QL\Hal\Controllers\Application\Deployment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -30,6 +32,11 @@ class AddDeploymentController implements ControllerInterface
      * @type EntityRepository
      */
     private $serverRepo;
+
+    /**
+     * @type EnvironmentRepository
+     */
+    private $environmentRepo;
 
     /**
      * @type Url
@@ -61,9 +68,11 @@ class AddDeploymentController implements ControllerInterface
         Application $application
     ) {
         $this->template = $template;
-        $this->serverRepo = $em->getRepository(Server::CLASS);
-        $this->url = $url;
 
+        $this->serverRepo = $em->getRepository(Server::CLASS);
+        $this->environmentRepo = $em->getRepository(Environment::CLASS);
+
+        $this->url = $url;
         $this->request = $request;
         $this->application = $application;
     }
@@ -73,38 +82,38 @@ class AddDeploymentController implements ControllerInterface
      */
     public function __invoke()
     {
-        $servers = $this->serverRepo->findAll();
+        $environments = $this->environmentRepo->getAllEnvironmentsSorted();
+        $serversByEnv = $this->environmentalizeServers($environments);
 
         // If no servers, throw back to repo page
-        if (!$servers) {
+        if (!$serversByEnv) {
             $this->url->redirectFor('application', ['application' => $this->application->id()]);
         }
 
         $this->template->render([
-            'form' => [
-                'server' => $this->request->post('server'),
-                'path' => $this->request->post('path'),
-                'url' => $this->request->post('url'),
-                'eb_environment' => $this->request->post('eb_environment')
-            ],
+            'form' => $this->data(),
 
-            'servers_by_env' => $this->environmentalizeServers($servers),
+            'servers_by_env' => $serversByEnv,
             'application' => $this->application
         ]);
     }
 
+
     /**
-     * @param Server[] $servers
+     * @param Environment[] $environments
+     *
      * @return array
      */
-    private function environmentalizeServers(array $servers)
+    private function environmentalizeServers(array $environments)
     {
-        $environments = [
-            'dev' => [],
-            'test' => [],
-            'beta' => [],
-            'prod' => []
-        ];
+        $servers = $this->serverRepo->findAll();
+
+        $env = [];
+        foreach ($environments as $environment) {
+            $env[$environment->name()] = [];
+        }
+
+        $environments = $env;
 
         foreach ($servers as $server) {
             $env = $server->environment()->name();
@@ -128,5 +137,25 @@ class AddDeploymentController implements ControllerInterface
         }
 
         return $environments;
+    }
+
+    /**
+     * @return array
+     */
+    private function data()
+    {
+        $form = [
+            'server' => $this->request->post('server'),
+            'path' => $this->request->post('path'),
+
+            'eb_environment' => $this->request->post('eb_environment'),
+            'ec2_pool' => $this->request->post('ec2_pool'),
+            's3_bucket' => $this->request->post('s3_bucket'),
+            's3_file' => $this->request->post('s3_file'),
+
+            'url' => $this->request->post('url'),
+        ];
+
+        return $form;
     }
 }

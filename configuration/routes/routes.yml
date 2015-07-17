@@ -165,7 +165,7 @@ parameters:
         server:
             method: 'GET'
             route: '/servers/:server'
-            stack: ['middleware.login', 'server.page']
+            stack: ['middleware.login', 'middleware.requireEntity', 'server.page']
             conditions: {server: %routes.regex.digit%}
 
         ################################################################################################################
@@ -180,18 +180,18 @@ parameters:
         server.edit:
             method: ['GET', 'POST']
             route: '/servers/:server/edit'
-            stack: ['middleware.admin', 'middleware.requireEntity','server.edit.page']
+            stack: ['middleware.admin', 'middleware.requireEntity', 'server.edit.page']
             conditions: {server: %routes.regex.digit%}
 
         server.remove.confirm:
             method: 'GET'
             route: '/servers/:server/remove'
-            stack: ['middleware.admin', 'middleware.requireEntity','delete.confirm.page']
+            stack: ['middleware.admin', 'middleware.requireEntity', 'delete.confirm.page']
             conditions: {server: %routes.regex.digit%}
         server.remove:
             method: 'POST'
             route: '/servers/:id/remove'
-            stack: ['middleware.admin', 'middleware.requireEntity','server.remove.handler']
+            stack: ['middleware.admin', 'middleware.requireEntity', 'server.remove.handler']
             conditions: {server: %routes.regex.digit%}
 
         ################################################################################################################

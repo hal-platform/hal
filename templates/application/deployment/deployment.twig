@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Deployment : ' ~ deployment.application.name %}
 
@@ -15,7 +16,7 @@
             </dd>
 
             <dt class="split__title">Server</dt>
-            <dd><a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment|formatDeploymentServer(true) }}</a></dd>
+            <dd><a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.server|formatServer }}</a></dd>
 
             <dt class="split__title">Environment</dt>
             <dd>
@@ -24,8 +25,29 @@
         </dl>
     </div>
 
+    <h4>Name</h4>
+    <p>{{ deployment.name ?: 'None' }}</p>
+
     <h4>Type</h4>
     <p>{{ deployment.server|formatServerType }}</p>
+
+    {% if deployment.server.type != 'rsync' %}
+
+        <h4>Credentials</h4>
+        <p>
+            {% if deployment.credential %}
+                {% if credential.type == 'aws' %}
+                    {% set credential_type = 'AWS' %}
+                {% else %}
+                    {% set credential_type = 'Private Key' %}
+                {% endif %}
+
+                {{ deployment.credential.name }} ({{ credential_type }})
+            {% else %}
+                {{ macros.status('None', 'error', 'spam-2') }}
+            {% endif %}
+        </p>
+    {% endif %}
 
     {% if deployment.server.type == 'rsync' %}
 
@@ -42,26 +64,8 @@
 
     {% elseif deployment.server.type == 'elasticbeanstalk' %}
 
-        {% if eb_environment %}
-            <h4 class="mbn"><strong>EB Application ID</strong></h4>
-            <p>{{ eb_environment.id }}</p>
-
-            <h4 class="mbn"><strong>EB Application Name</strong></h4>
-            <p>{{ eb_environment.name }}</p>
-
-            <h4 class="mbn"><strong>EB Status and Health</strong></h4>
-            <p class="mbn">Status: {{ eb_environment|formatEBStatus }}</p>
-            <p>Health: {{ eb_environment|formatEBHealth }}</p>
-
-            <h4 class="mbn"><strong>EB Solution</strong></h4>
-            <p>{{ eb_environment.solution }}</p>
-
-            <h4 class="mbn"><strong>EB Application URL</strong></h4>
-            <p><a href="http://{{ eb_environment.url }}">{{ eb_environment.url }}</a></p>
-        {% else %}
-            <h4>Elastic Beanstalk Environment ID</h4>
-            <p><code>{{ deployment.ebEnvironment }}</code></p>
-        {% endif %}
+        <h4>Elastic Beanstalk Environment ID</h4>
+        <p><code>{{ deployment.ebEnvironment }}</code></p>
 
     {% elseif deployment.server.type == 's3' %}
 
@@ -90,4 +94,22 @@
         {% endif %}
     </ul>
 
+{% endblock %}
+
+{% block old_live_eb_validation_stuff %}
+    <h4 class="mbn"><strong>EB Application ID</strong></h4>
+    <p>{{ eb_environment.id }}</p>
+
+    <h4 class="mbn"><strong>EB Application Name</strong></h4>
+    <p>{{ eb_environment.name }}</p>
+
+    <h4 class="mbn"><strong>EB Status and Health</strong></h4>
+    <p class="mbn">Status: {{ eb_environment|formatEBStatus }}</p>
+    <p>Health: {{ eb_environment|formatEBHealth }}</p>
+
+    <h4 class="mbn"><strong>EB Solution</strong></h4>
+    <p>{{ eb_environment.solution }}</p>
+
+    <h4 class="mbn"><strong>EB Application URL</strong></h4>
+    <p><a href="http://{{ eb_environment.url }}">{{ eb_environment.url }}</a></p>
 {% endblock %}

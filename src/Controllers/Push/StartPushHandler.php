@@ -15,6 +15,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\StickyEnvironmentService;
 use QL\Hal\Session;
@@ -25,11 +26,13 @@ use Slim\Http\Request;
 
 class StartPushHandler implements MiddlewareInterface
 {
+    const SUCCESS = "The build has been queued to be pushed to the requested servers.";
+
     const ERR_NO_DEPS = 'You must select at least one deployment.';
     const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';
-    const ERR_WRONG_ENV = 'This build can only be pushed to deployments in the %s environment.';
-    const ERR_NO_PERM = "You attempted to push to %s but don't have permission.";
-    const NOTICE_DONE = "The build has been queued to be pushed to the requested servers.";
+    const ERR_WRONG_ENV = 'This build can only be pushed to deployments in the "%s" environment.';
+    const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';
+    const ERR_MISSING_CREDENTIALS = 'Attempted to initiate push to "%s", but credentials are missing.';
 
     /**
      * @type Session
@@ -157,6 +160,12 @@ class StartPushHandler implements MiddlewareInterface
 
         $canUserPush = $this->permissions->canUserPush($this->currentUser, $application, $environment);
 
+        if (!$canUserPush) {
+            return $this->context->addContext([
+                'errors' => [sprintf(self::ERR_NO_PERM, $environment->name())]
+            ]);
+        }
+
         $criteria = (new Criteria)->where(Criteria::expr()->in('id', $deploymentIds));
         $deployments = $this->deployRepo->matching($criteria);
         $deployments = $deployments->toArray();
@@ -180,9 +189,12 @@ class StartPushHandler implements MiddlewareInterface
                 ]);
             }
 
-            if (!$canUserPush) {
+            // Non-rsync need credentials
+            if ($server->type() !== ServerEnum::TYPE_RSYNC && !$deployment->credential()) {
+                $name = $deployment->name() ?: sprintf('%s (%s)', strtoupper($server->type()), $server->name());
+
                 return $this->context->addContext([
-                    'errors' => [sprintf(self::ERR_NO_PERM, $server->name())]
+                    'errors' => [sprintf(self::ERR_MISSING_CREDENTIALS, $name)]
                 ]);
             }
 
@@ -211,7 +223,7 @@ class StartPushHandler implements MiddlewareInterface
         // override sticky environment
         $this->stickyService->save($application->id(), $deployment->server()->environment()->id());
 
-        $this->session->flash(self::NOTICE_DONE, 'success');
+        $this->session->flash(self::SUCCESS, 'success');
         $this->url->redirectFor('application.status', ['application' => $application->id()]);
     }
 

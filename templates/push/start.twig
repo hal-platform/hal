@@ -68,7 +68,7 @@
         {{ form_macros.formErrors(errors) }}
 
         <form method="post">
-            <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
+            <table class="table--spacing-large table--striped" data-tablesaw-mode="stack">
                 <thead>
                     <tr>
                         <th>Server</th>
@@ -76,15 +76,22 @@
                         <th>Commit</th>
                         <th>Last Pushed</th>
                         <th>Pushed By</th>
-                        <th class="js-toggle-container"><span class="tablesaw-collapse">Deploy to Server?</span></th>
+                        <th>
+                            <p class="js-toggle-container mvn tr"></p>
+                            <span class="tablesaw-collapse">Deploy to Server?</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                 {% set allowSubmit = false %}
+                {% set canUserPush = canUserPush(currentUser, build.application, build.environment) %}
+
                 {% for status in statuses %}
 
                     {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
                     {% set isSelected = (status.deployment.id == selected) %}
+
+                    {% set needsCredentials = (status.deployment.server.type != 'rsync') %}
 
                     <tr>
                         <td>
@@ -123,8 +130,12 @@
 
                         <td class="tr">
                             {% if inProgress %}
-                                Please Wait
-                            {% elseif canUserPush(currentUser, status.deployment.application, status.deployment.server.environment) %}
+                                {{ macros.status('Please Wait', 'info', 'clock') }}
+
+                            {% elseif needsCredentials and not status.deployment.credential %}
+                                {{ macros.status('No Credentials', 'error', 'spam-2') }}
+
+                            {% elseif canUserPush %}
                                 <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
                                 {% set allowSubmit = true %}
                             {% else %}

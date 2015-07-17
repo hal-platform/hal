@@ -93,12 +93,20 @@ class EditDeploymentHandler implements MiddlewareInterface
             return;
         }
 
-        $path = $this->request->post('path');
-        $ebEnvironment = $this->request->post('eb_environment');
-        $ec2Pool = $this->request->post('ec2_pool');
-        $url = $this->request->post('url');
+        $form = $this->data();
 
-        $deployment = $this->validator->isEditValid($this->deployment, $path, $ebEnvironment, $ec2Pool, $url);
+        $deployment = $this->validator->isEditValid(
+            $this->deployment,
+            $form['name'],
+            $form['path'],
+            $form['eb_environment'],
+            $form['ec2_pool'],
+            $form['s3_bucket'],
+            $form['s3_file'],
+            $form['url'],
+            $form['credential']
+        );
+
         if (!$deployment) {
             $this->context->addContext([
                 'errors' => $this->validator->errors()
@@ -107,25 +115,6 @@ class EditDeploymentHandler implements MiddlewareInterface
             return;
         }
 
-        // Wipe eb, ec2  for RSYNC server
-        // Wipe path, ec2 for EB servers
-        // Wipe path, eb  for EC2 server
-        $serverType = $deployment->server()->type();
-        if ($serverType === ServerEnum::TYPE_RSYNC) {
-            $ebEnvironment = $ec2Pool = null;
-
-        } else if ($serverType === ServerEnum::TYPE_EC2) {
-            $path = $ebEnvironment = null;
-
-        } else if ($serverType === ServerEnum::TYPE_EB) {
-            $ec2Pool = null;
-        }
-
-        $deployment->withPath($path);
-        $deployment->withEbEnvironment($ebEnvironment);
-        $deployment->withEc2Pool($ec2Pool);
-        $deployment->withUrl($url);
-
         // persist to database
         $this->em->persist($deployment);
         $this->em->flush();
@@ -133,5 +122,26 @@ class EditDeploymentHandler implements MiddlewareInterface
         $this->flasher
             ->withFlash(self::EDIT_SUCCESS, 'success')
             ->load('deployment', ['application' => $deployment->application()->id(), 'deployment' => $deployment->id()]);
+    }
+
+    /**
+     * @return array
+     */
+    private function data()
+    {
+        $form = [
+            'name' => $this->request->post('name'),
+            'path' => $this->request->post('path'),
+
+            'eb_environment' => $this->request->post('eb_environment'),
+            'ec2_pool' => $this->request->post('ec2_pool'),
+            's3_bucket' => $this->request->post('s3_bucket'),
+            's3_file' => $this->request->post('s3_file'),
+
+            'url' => $this->request->post('url'),
+            'credential' => $this->request->post('credential'),
+        ];
+
+        return $form;
     }
 }

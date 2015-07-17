@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\DeploymentRepository;
@@ -22,20 +23,30 @@ class DeploymentValidator
 
     const ERR_INVALID_PATH = 'File path is invalid.';
     const ERR_INVALID_URL = 'URL is invalid.';
+    const ERR_INVALID_NAME = 'Name is invalid.';
+
+    const ERR_INVALID_CREDENTIALS = 'Credential is invalid.';
     const ERR_INVALID_SERVER = 'Server is invalid.';
     const ERR_INVALID_EB_ENVIRONMENT = 'EB Environment is invalid.';
     const ERR_INVALID_EC2_POOL = 'EC2 Pool is invalid.';
+
+    const ERR_INVALID_BUCKET = 'S3 Bucket is invalid.';
+    const ERR_INVALID_FILE = 'S3 File is invalid.';
 
     const ERR_DUPLICATE_RSYNC = 'A deployment already exists for this server and file path.';
     const ERR_DUPLICATE_EB = 'A deployment already exists for this EB environment ID.';
     const ERR_INVALID_EB_PROJECT = 'EB Application Name must be configured before adding EB Deployments.';
     const ERR_DUPLICATE_EC2 = 'A deployment already exists for this EC2 Pool.';
+    const ERR_DUPLICATE_S3 = 'A deployment already exists for this S3 bucket and file.';
+
+    const DEFAULT_S3_FILE = '$PUSHID.tar.gz';
 
     /**
      * @type EntityRepository
      */
     private $serverRepo;
     private $deploymentRepo;
+    private $credentialRepo;
 
     /**
      * @type array
@@ -49,35 +60,49 @@ class DeploymentValidator
     {
         $this->serverRepo = $em->getRepository(Server::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->credentialRepo = $em->getRepository(Credential::CLASS);
 
         $this->errors = [];
     }
 
     /**
      * @param Application $application
-     * @param int $serverId
+     * @param int $serverID
      *
      * @param string $path
+     * @param string $name
      * @param string $ebEnvironment
      * @param string $ec2Pool
+     * @param string $s3bucket
+     * @param string $s3file
      * @param string $url
      *
      * @return Deployment|null
      */
-    public function isValid(Application $application, $serverId, $path, $ebEnvironment, $ec2Pool, $url)
-    {
+    public function isValid(
+        Application $application,
+        $serverID,
+        $name,
+        $path,
+        $ebEnvironment,
+        $ec2Pool,
+        $s3bucket,
+        $s3file,
+        $url
+    ) {
         $this->errors = [];
 
         $path = trim($path);
 
-        $this->validateRequired($serverId, $url);
+        $this->validateRequired($serverID, $url);
 
         // stop validation if errors
         if ($this->errors) return;
 
         $this->validateUrl($url);
+        $this->validateName($name);
 
-        if (!$server = $this->serverRepo->find($serverId)) {
+        if (!$server = $this->serverRepo->find($serverID)) {
             $this->errors[] = self::ERR_INVALID_SERVER;
         }
 
@@ -94,38 +119,34 @@ class DeploymentValidator
         } elseif ($server->type() == ServerEnum::TYPE_EC2) {
             $this->validatePath($path);
             $this->validateEc2Pool($ec2Pool);
+
+        } elseif ($server->type() == ServerEnum::TYPE_S3) {
+            $this->validateS3($s3bucket, $s3file);
+            if (!$s3file) $s3file = self::DEFAULT_S3_FILE;
         }
 
         // stop validation if errors
         if ($this->errors) return;
 
         // check dupes
-        $this->validateNewDuplicate($server, $ebEnvironment, $ec2Pool, $path);
+        $this->validateNewDuplicate($server, $ebEnvironment, $ec2Pool, $path, $s3bucket, $s3file);
 
         // stop validation if errors
         if ($this->errors) return;
 
-        // Wipe eb, ec2  for RSYNC server
-        // Wipe path, ec2 for EB servers
-        // Wipe path, eb  for EC2 server
-        $serverType = $server->type();
-        if ($serverType === ServerEnum::TYPE_RSYNC) {
-            $ebEnvironment = $ec2Pool = null;
-
-        } else if ($serverType === ServerEnum::TYPE_EB) {
-            $path = $ec2Pool = null;
-
-        } else if ($serverType === ServerEnum::TYPE_EC2) {
-            $ebEnvironment = null;
-        }
+        $sanitized = $this->sanitizeProperties($server->type(), $path, $ebEnvironment, $ec2Pool, $s3bucket, $s3file);
+        list($path, $ebEnvironment, $ec2Pool, $s3bucket, $s3file) = $sanitized;
 
         $deployment = (new Deployment)
             ->withApplication($application)
             ->withServer($server)
 
+            ->withName($name)
             ->withPath($path)
             ->withEbEnvironment($ebEnvironment)
             ->withEc2Pool($ec2Pool)
+            ->withS3Bucket($s3bucket)
+            ->withS3File($s3file)
 
             ->withUrl($url);
 
@@ -135,14 +156,27 @@ class DeploymentValidator
     /**
      * @param Deployment $deployment
      * @param string $path
+     * @param string $name
      * @param string $ebEnvironment
      * @param string $ec2Pool
+     * @param string $s3bucket
+     * @param string $s3file
      * @param string $url
+     * @param string $credentialID
      *
      * @return Deployment|null
      */
-    public function isEditValid(Deployment $deployment, $path, $ebEnvironment, $ec2Pool, $url)
-    {
+    public function isEditValid(
+        Deployment $deployment,
+        $name,
+        $path,
+        $ebEnvironment,
+        $ec2Pool,
+        $s3bucket,
+        $s3file,
+        $url,
+        $credentialID
+    ) {
         $this->errors = [];
 
         $path = trim($path);
@@ -150,6 +184,12 @@ class DeploymentValidator
         $serverType = $deployment->server()->type();
 
         $this->validateUrl($url);
+        $this->validateName($name);
+
+        $credential = null;
+        if ($credentialID && !$credential = $this->credentialRepo->find($credentialID)) {
+            $this->errors[] = self::ERR_INVALID_CREDENTIALS;
+        }
 
         if ($serverType == ServerEnum::TYPE_RSYNC) {
             $this->validatePath($path);
@@ -161,17 +201,73 @@ class DeploymentValidator
         } elseif ($serverType == ServerEnum::TYPE_EC2) {
             $this->validatePath($path);
             $this->validateEc2Pool($ec2Pool);
-        }
 
-        // check dupes
-        $this->validateCurrentDuplicate($deployment, $ebEnvironment, $ec2Pool, $path);
+        } elseif ($serverType == ServerEnum::TYPE_S3) {
+            $this->validateS3($s3bucket, $s3file);
+            if (!$s3file) $s3file = self::DEFAULT_S3_FILE;
+        }
 
         // stop validation if errors
-        if ($this->errors) {
-            return null;
-        }
+        if ($this->errors) return;
+
+        // check dupes
+        $this->validateCurrentDuplicate($deployment, $ebEnvironment, $ec2Pool, $path, $s3bucket, $s3file);
+
+        // stop validation if errors
+        if ($this->errors) return;
+
+        $sanitized = $this->sanitizeProperties($serverType, $path, $ebEnvironment, $ec2Pool, $s3bucket, $s3file);
+        list($path, $ebEnvironment, $ec2Pool, $s3bucket, $s3file) = $sanitized;
+
+        $deployment
+            ->withName($name)
+            ->withPath($path)
+            ->withEbEnvironment($ebEnvironment)
+            ->withEc2Pool($ec2Pool)
+            ->withS3Bucket($s3bucket)
+            ->withS3File($s3file)
+
+            ->withUrl($url)
+            ->withCredential($credential);
 
         return $deployment;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @param string $path
+     * @param string $ebEnvironment
+     * @param string $ec2Pool
+     * @param string $s3bucket
+     * @param string $s3file
+     *
+     * @return array
+     */
+    private function sanitizeProperties($type, $path, $ebEnvironment, $ec2Pool, $s3bucket, $s3file)
+    {
+        // Wipe eb,   ec2, s3  for RSYNC server
+        // Wipe path, ec2      for EB servers
+        // Wipe path, eb, s3   for EC2 server
+        // Wipe path, eb, ec2  for S3 server
+
+        if ($type !== ServerEnum::TYPE_S3) {
+            $s3bucket = $s3file = null;
+        }
+
+        if ($type !== ServerEnum::TYPE_EB) {
+            $ebEnvironment = null;
+        }
+
+        if ($type !== ServerEnum::TYPE_EC2) {
+            $ec2Pool = null;
+        }
+
+        if (!in_array($type, [ServerEnum::TYPE_RSYNC, ServerEnum::TYPE_EC2], true)) {
+            $path = null;
+        }
+
+        return [$path, $ebEnvironment, $ec2Pool, $s3bucket, $s3file];
     }
 
     /**
@@ -187,10 +283,12 @@ class DeploymentValidator
      * @param string $ebEnvironment
      * @param string $ec2Pool
      * @param string $path
+     * @param string $s3bucket
+     * @param string $s3file
      *
      * @return bool
      */
-    private function validateCurrentDuplicate(Deployment $deployment, $ebEnvironment, $ec2Pool, $path)
+    private function validateCurrentDuplicate(Deployment $deployment, $ebEnvironment, $ec2Pool, $path, $s3bucket, $s3file)
     {
         $errors = [];
 
@@ -232,6 +330,18 @@ class DeploymentValidator
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EC2;
             }
+
+        } elseif ($server->type() == ServerEnum::TYPE_S3) {
+
+            // S3 did not change, skip dupe check
+            if ($deployment->s3bucket() == $s3bucket && $deployment->s3file() == $s3file) {
+                goto SKIP_VALIDATION;
+            }
+
+            $deployment = $this->deploymentRepo->findOneBy(['s3bucket' => $s3bucket, 's3file' => $s3file]);
+            if ($deployment) {
+                $errors[] = self::ERR_DUPLICATE_S3;
+            }
         }
 
         SKIP_VALIDATION:
@@ -240,16 +350,17 @@ class DeploymentValidator
         return count($errors) === 0;
     }
 
-
     /**
      * @param Server $server
      * @param string $ebEnvironment
      * @param string $ec2Pool
      * @param string $path
+     * @param string $s3bucket
+     * @param string $s3file
      *
      * @return bool
      */
-    private function validateNewDuplicate(Server $server, $ebEnvironment, $ec2Pool, $path)
+    private function validateNewDuplicate(Server $server, $ebEnvironment, $ec2Pool, $path, $s3bucket, $s3file)
     {
         $errors = [];
 
@@ -260,17 +371,21 @@ class DeploymentValidator
             }
 
         } elseif ($server->type() == ServerEnum::TYPE_EB) {
-            $this->validateEbEnvironment($ebEnvironment);
             $deployment = $this->deploymentRepo->findOneBy(['ebEnvironment' => $ebEnvironment]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EB;
             }
 
         } elseif ($server->type() == ServerEnum::TYPE_EC2) {
-            $this->validateEc2Pool($ec2Pool);
             $deployment = $this->deploymentRepo->findOneBy(['ec2Pool' => $ec2Pool]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EC2;
+            }
+
+        } elseif ($server->type() == ServerEnum::TYPE_S3) {
+            $deployment = $this->deploymentRepo->findOneBy(['s3bucket' => $s3bucket, 's3file' => $s3file]);
+            if ($deployment) {
+                $errors[] = self::ERR_DUPLICATE_S3;
             }
         }
 
@@ -313,7 +428,7 @@ class DeploymentValidator
             $errors[] = sprintf(self::ERR_REQUIRED, 'EB Environment');
         }
 
-        if (preg_match('#[\t\n]+#', $ebEnvironment) === 1) {
+        if (preg_match('#[\t\n]+#', $ebEnvironment) === 1 || strlen($ebEnvironment) > 100) {
             $errors[] = self::ERR_INVALID_EB_ENVIRONMENT;
         }
 
@@ -334,7 +449,7 @@ class DeploymentValidator
             $errors[] = sprintf(self::ERR_REQUIRED, 'EC2 Pool');
         }
 
-        if (preg_match('#[\t\n]+#', $ec2Pool) === 1) {
+        if (preg_match('#[\t\n]+#', $ec2Pool) === 1 || strlen($ec2Pool) > 100) {
             $errors[] = self::ERR_INVALID_EC2_POOL;
         }
 
@@ -372,6 +487,10 @@ class DeploymentValidator
             $errors[] = sprintf(self::ERR_REQUIRED, 'Path');
         }
 
+        if (strlen($path) > 200) {
+            $errors[] = self::ERR_INVALID_PATH;
+        }
+
         if (substr($path, 0, 1) !== '/') {
             $errors[] = self::ERR_INVALID_PATH;
         }
@@ -385,6 +504,51 @@ class DeploymentValidator
     }
 
     /**
+     * @param string $bucket
+     * @param string $file
+     *
+     * @return bool
+     */
+    private function validateS3($bucket, $file)
+    {
+        $errors = [];
+
+        if (!$bucket) {
+            $errors[] = sprintf(self::ERR_REQUIRED, 'Bucket');
+        }
+
+        if (preg_match('#[\t\n]+#', $bucket) === 1 || strlen($bucket) > 100) {
+            $errors[] = self::ERR_INVALID_BUCKET;
+        }
+
+        if (strlen($file) > 0) {
+
+            if (preg_match('#[\t\n]+#', $file) === 1 || strlen($file) > 100) {
+                $errors[] = self::ERR_INVALID_FILE;
+            }
+        }
+
+        $this->errors = array_merge($this->errors, $errors);
+        return count($errors) === 0;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    private function validateName($name)
+    {
+        $errors = [];
+
+        if (preg_match('#[\t\n]+#', $name) === 1 || strlen($name) > 100) {
+            $errors[] = self::ERR_INVALID_NAME;
+        }
+
+        $this->errors = array_merge($this->errors, $errors);
+        return count($errors) === 0;
+    }
+    /**
      * @param string $url
      *
      * @return bool
@@ -393,8 +557,11 @@ class DeploymentValidator
     {
         $errors = [];
 
-        $url = HttpUrl::create($url);
+        if (strlen($url) > 200) {
+            $errors[] = self::ERR_INVALID_URL;
+        }
 
+        $url = HttpUrl::create($url);
         if (!$url instanceof HttpUrl) {
             $errors[] = self::ERR_INVALID_URL;
         }

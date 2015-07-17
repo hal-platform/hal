@@ -12,6 +12,7 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Service\GlobalMessageService;
 use QL\Hal\Utility\NameFormatter;
 use QL\Hal\Utility\TimeFormatter;
@@ -316,14 +317,21 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $deployment->server()->type();
+        if ($deployment->name()) {
+            return $deployment->name();
+        }
 
         if ($withDetails) {
-            if ($type === 'elasticbeanstalk') {
+            $type = $deployment->server()->type();
+
+            if ($type === ServerEnum::TYPE_EB) {
                 return sprintf('EB (%s)', $deployment->ebEnvironment());
 
-            } elseif ($type === 'ec2') {
+            } elseif ($type === ServerEnum::TYPE_EC2) {
                 return sprintf('EC2 (%s)', $deployment->ec2Pool());
+
+            } elseif ($type === ServerEnum::TYPE_S3) {
+                return sprintf('S3 (%s)', $deployment->s3bucket());
             }
         }
 
@@ -345,11 +353,19 @@ class HalExtension extends Twig_Extension
 
         $type = $deployment->server()->type();
 
-        if ($type === 'elasticbeanstalk') {
+        if ($type === ServerEnum::TYPE_EB) {
             return $deployment->ebEnvironment();
 
-        } elseif ($type === 'ec2') {
+        } elseif ($type === ServerEnum::TYPE_EC2) {
             return $deployment->ec2Pool();
+
+        } elseif ($type === ServerEnum::TYPE_S3) {
+            $s3 = $deployment->s3bucket();
+            if ($file = $deployment->s3file()) {
+                $s3 = sprintf('%s/%s', $s3, $file);
+            }
+
+            return $s3;
         }
 
         return $deployment->path();
@@ -370,11 +386,14 @@ class HalExtension extends Twig_Extension
 
         $type = $deployment->server()->type();
 
-        if ($type === 'elasticbeanstalk') {
+        if ($type === ServerEnum::TYPE_EB) {
             return 'EB Environment';
 
-        } elseif ($type === 'ec2') {
+        } elseif ($type === ServerEnum::TYPE_EC2) {
             return 'EC2 Pool';
+
+        } elseif ($type === ServerEnum::TYPE_S3) {
+            return 'S3 Bucket';
         }
 
         return 'Path';
@@ -395,13 +414,13 @@ class HalExtension extends Twig_Extension
 
         $type = $server->type();
 
-        if ($type === 'elasticbeanstalk') {
+        if ($type === ServerEnum::TYPE_EB) {
             return sprintf('EB (%s)', $server->name());
 
-        } elseif ($type === 'ec2') {
+        } elseif ($type === ServerEnum::TYPE_EC2) {
             return sprintf('EC2 (%s)', $server->name());
 
-        } elseif ($type === 's3') {
+        } elseif ($type === ServerEnum::TYPE_S3) {
             return sprintf('S3 (%s)', $server->name());
         }
 

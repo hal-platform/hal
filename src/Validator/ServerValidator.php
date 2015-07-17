@@ -21,8 +21,9 @@ class ServerValidator
     const ERR_MISSING_ENV = 'Please select an environment.';
 
     const ERR_HOST_DUPLICATE = 'A server with this hostname already exists.';
-    const ERR_EB_DUPLICATE = 'An EB server for this environment already exists.';
-    const ERR_EC2_DUPLICATE = 'An EC2 server for this environment already exists.';
+    const ERR_EB_DUPLICATE = 'An EB server for this environment and region already exists.';
+    const ERR_EC2_DUPLICATE = 'An EC2 server for this environment and region already exists.';
+    const ERR_S3_DUPLICATE = 'An S3 server for this environment and region already exists.';
 
     const ERR_HOST = 'Invalid hostname.';
     const ERR_MISSING_HOST = 'Hostname is required for rsync servers.';
@@ -77,38 +78,33 @@ class ServerValidator
         // validate hostname if rsync server
         if ($serverType === ServerEnum::TYPE_RSYNC) {
 
-            $hostname = trim(strtolower($hostname));
-            $hostname = $this->validateHostname($hostname);
+            $name = trim(strtolower($hostname));
+            $name = $this->validateHostname($name);
 
             if ($this->errors) return;
 
-            if ($server = $this->serverRepo->findOneBy(['name' => $hostname])) {
+            if ($server = $this->serverRepo->findOneBy(['name' => $name])) {
                 $this->errors[] = self::ERR_HOST_DUPLICATE;
             }
 
-        // validate duplicate EB for environment
-        // Only 1 EB "server" per environment
-        } elseif ($serverType === ServerEnum::TYPE_EB) {
-            $hostname = '';
+        // validate duplicate AWS server for environment
+        // Only 1 aws type per region/environment
+        } elseif (in_array($serverType, [ServerEnum::TYPE_EB, ServerEnum::TYPE_EC2, ServerEnum::TYPE_S3])) {
 
-            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'environment' => $environment])) {
-                $this->errors[] = self::ERR_EB_DUPLICATE;
-            }
+            $name = trim(strtolower($region));
+            $name = $this->validateRegion($name);
 
-        // validate duplicate EC2 for environment
-        // Only 1 EC2 "server" per environment
-        } elseif ($serverType === ServerEnum::TYPE_EC2) {
-            $hostname = '';
+            if ($this->errors) return;
 
-            if ($server = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'environment' => $environment])) {
-                $this->errors[] = self::ERR_EC2_DUPLICATE;
-            }
+            $this->dupeCheck($environment, $serverType, $name);
         }
+
+        if ($this->errors) return;
 
         return (new Server)
             ->withType($serverType)
             ->withEnvironment($environment)
-            ->withName($hostname);
+            ->withName($name);
     }
 
     /**
@@ -142,69 +138,35 @@ class ServerValidator
 
             $name = trim(strtolower($hostname));
 
-            $hasChanged = ($name != $server->name());
+            $hasChanged = $hasChanged || ($name != $server->name());
             if (!$hasChanged) {
                 GOTO SKIP_DUPE_CHECK;
             }
 
-            $name = $this->validateHostname($hostname);
+            $name = $this->validateHostname($name);
 
             if ($this->errors) return;
 
-            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_RSYNC, 'name' => $hostname])) {
+            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_RSYNC, 'name' => $name])) {
                 $this->errors[] = self::ERR_HOST_DUPLICATE;
             }
 
-        // validate duplicate EB for environment
-        // EB-region (name) pair is unique
-        } elseif ($serverType === ServerEnum::TYPE_EB) {
+        // validate duplicate AWS server for environment
+        // Only 1 aws type per region/environment
+        } elseif (in_array($serverType, [ServerEnum::TYPE_EB, ServerEnum::TYPE_EC2, ServerEnum::TYPE_S3])) {
 
-            $name = trim($region);
+            $name = trim(strtolower($region));
 
-            $hasChanged = ($name != $server->name());
+            $hasChanged = $hasChanged || ($name != $server->name());
             if (!$hasChanged) {
                 GOTO SKIP_DUPE_CHECK;
             }
 
             $name = $this->validateRegion($name);
 
-            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'name' => $environment])) {
-                $this->errors[] = self::ERR_EB_DUPLICATE;
-            }
+            if ($this->errors) return;
 
-        // validate duplicate EC2 for environment
-        // EC2-region (name) pair is unique
-        } elseif ($serverType === ServerEnum::TYPE_EC2) {
-
-            $name = trim($region);
-
-            $hasChanged = ($name != $server->name());
-            if (!$hasChanged) {
-                GOTO SKIP_DUPE_CHECK;
-            }
-
-            $name = $this->validateRegion($name);
-
-            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'name' => $environment])) {
-                $this->errors[] = self::ERR_EC2_DUPLICATE;
-            }
-
-        // validate duplicate S3 for environment
-        // S3-region (name) pair is unique
-        } elseif ($serverType === ServerEnum::TYPE_S3) {
-
-            $name = trim($region);
-
-            $hasChanged = ($name != $server->name());
-            if (!$hasChanged) {
-                GOTO SKIP_DUPE_CHECK;
-            }
-
-            $name = $this->validateRegion($name);
-
-            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'name' => $environment])) {
-                $this->errors[] = self::ERR_EC2_DUPLICATE;
-            }
+            $this->dupeCheck($environment, $serverType, $name);
         }
 
         SKIP_DUPE_CHECK:
@@ -278,5 +240,33 @@ class ServerValidator
         }
 
         return $region;
+    }
+
+    /**
+     * @param Environment $environment
+     * @param string $type
+     * @param string $name
+     *
+     * @return void
+     */
+    private function dupeCheck(Environment $environment, $type, $name)
+    {
+        $dupe = $this->serverRepo->findOneBy([
+            'environment' => $environment,
+            'type' => $type,
+            'name' => $name
+        ]);
+
+        if (!$dupe) return;
+
+        if ($type == ServerEnum::TYPE_EB) {
+            $this->errors[] = self::ERR_EB_DUPLICATE;
+
+        } elseif ($type == ServerEnum::TYPE_EC2) {
+            $this->errors[] = self::ERR_EC2_DUPLICATE;
+
+        } elseif ($type == ServerEnum::TYPE_S3) {
+            $this->errors[] = self::ERR_S3_DUPLICATE;
+        }
     }
 }

@@ -104,22 +104,27 @@ module.exports = {
 
         var server = data.server,
             deployment = data.deployment,
-            hostname = server.name,
-            path_or_whatever = deployment.path;
+            hostname = server.name
 
-        if (server.type == 'elasticbeanstalk') {
-            hostname = 'Elastic Beanstalk';
-            path_or_whatever = '';
-        } else if (server.type == 'ec2') {
-            hostname = 'EC2';
-            path_or_whatever = '';
+        if (deployment.name.length > 0) {
+            name = deployment.name;
+        } else {
+            if (server.type == 'elasticbeanstalk') {
+                name = 'EB (' + hostname + ')';
+            } else if (server.type == 'ec2') {
+                name = 'EC2 (' + hostname + ')';
+            } else if (server.type == 's3') {
+                name = 'S3 (' + hostname + ')';
+            } else {
+                name = hostname
+            }
         }
 
-        this.context.addDeployment($pool, deployment.id, hostname, path_or_whatever, data.remove_url);
+        this.context.addDeployment($pool, deployment.id, name, data.remove_url);
     },
-    addDeployment: function($pool, id, hostname, path_or_whatever, remove_url) {
+    addDeployment: function($pool, id, name, remove_url) {
         var $row = $('<li>')
-            .append('<span class="split__title">' + hostname + '</span>')
+            .append('<span class="split__title">' + name + '</span>')
             .append('<a class="js-remove-deployment" href="' + remove_url +'" data-deployment="' + id + '">Remove</a>');
 
         // add new row, remove empty row if there
