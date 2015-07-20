@@ -11,6 +11,7 @@ module.exports = {
     entry: {
         app: './app.js',
         vendor: [
+            'favico',
             'jquery',
             'jquery.searchable',
             'jquery.sortable',
@@ -26,6 +27,7 @@ module.exports = {
     resolve: {
         alias: {
 
+            'favico':               vendorRoot + '/favico.js/favico.js',
             'jquery':               vendorRoot + '/jquery/dist/jquery.js',
             'jquery.searchable':    vendorRoot + '/jquery-searchable/jquery.searchable.js',
             'jquery.sortable':      vendorRoot + '/html5sortable/jquery.sortable.js',

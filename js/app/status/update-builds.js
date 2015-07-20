@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var formatter = require('../util/time-formatter');
+var favico = require('favico');
 
 module.exports = {
     interval: 5,
@@ -10,8 +11,17 @@ module.exports = {
     failureClass: 'status-icon--error',
     buildTarget: '[data-build]',
 
+    favicon: null,
+
     init: function() {
         var _this = this;
+
+        if (this.mode == 'build') {
+            this.favicon = favico({
+                animation: 'none',
+                fontStyle: 'bolder'
+            });
+        }
 
         var $builds = $(this.buildTarget);
         $builds.each(function(index, item) {
@@ -119,6 +129,29 @@ module.exports = {
             var $duration = $container.children('.js-build-duration');
             if ($duration.length > 0 && $duration.children('time').length === 0) {
                 $duration.html(this.createTimeDuration(data.start, data.end));
+            }
+        }
+
+        // favicon
+        if (this.favicon !== null) {
+            if (data.status == 'Success') {
+                // Unicode: U+2714 U+FE0E, UTF-8: E2 9C 94 EF B8 8E
+                this.favicon.badge("✔︎", {
+                    bgColor: '#0eb833',
+                    type: 'rectangle'
+                });
+            } else if (data.status == 'Error') {
+                // Unicode: U+2718, UTF-8: E2 9C 98
+                this.favicon.badge('✘', {
+                    bgColor: '#d63620',
+                    type: 'rectangle'
+                });
+
+            } else if (data.status == 'Waiting' || data.status == 'Building') {
+                this.favicon.badge("?", {
+                    bgColor: '#ff7c00',
+                    type: 'circle'
+                });
             }
         }
     },
