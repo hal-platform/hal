@@ -36,13 +36,13 @@
         <h4>Credentials</h4>
         <p>
             {% if deployment.credential %}
-                {% if credential.type == 'aws' %}
-                    {% set credential_type = 'AWS' %}
-                {% else %}
-                    {% set credential_type = 'Private Key' %}
+                {{ deployment.credential.name }}
+                {% if deployment.credential.type == 'aws' %}
+                    (AWS)
+                {% elseif deployment.credential.type == 'privatekey' %}
+                    (Private Key)
                 {% endif %}
 
-                {{ deployment.credential.name }} ({{ credential_type }})
             {% else %}
                 {{ macros.status('None', 'error', 'spam-2') }}
             {% endif %}

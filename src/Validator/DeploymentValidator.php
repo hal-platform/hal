@@ -143,8 +143,8 @@ class DeploymentValidator
 
             ->withName($name)
             ->withPath($path)
-            ->withEbEnvironment($ebEnvironment)
-            ->withEc2Pool($ec2Pool)
+            ->withEBEnvironment($ebEnvironment)
+            ->withEC2Pool($ec2Pool)
             ->withS3Bucket($s3bucket)
             ->withS3File($s3file)
 
@@ -222,8 +222,8 @@ class DeploymentValidator
         $deployment
             ->withName($name)
             ->withPath($path)
-            ->withEbEnvironment($ebEnvironment)
-            ->withEc2Pool($ec2Pool)
+            ->withEBEnvironment($ebEnvironment)
+            ->withEC2Pool($ec2Pool)
             ->withS3Bucket($s3bucket)
             ->withS3File($s3file)
 

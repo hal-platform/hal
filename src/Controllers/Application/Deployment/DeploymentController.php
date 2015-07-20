@@ -41,6 +41,8 @@ class DeploymentController implements ControllerInterface
      */
     public function __invoke()
     {
+        // $d = $this->deployment->credential()->id();
+
         $this->template->render([
             'deployment' => $this->deployment
         ]);
