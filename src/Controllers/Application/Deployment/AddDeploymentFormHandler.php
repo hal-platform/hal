@@ -83,13 +83,13 @@ class AddDeploymentFormHandler implements MiddlewareInterface
         $deployment = $this->validator->isValid(
             $this->application,
             $this->request->post('server'),
-            $this->request->post('name'),
+            $this->request->post('name') ?: '',
             $this->request->post('path'),
             $this->request->post('eb_environment'),
             $this->request->post('ec2_pool'),
             $this->request->post('s3_bucket'),
             $this->request->post('s3_file'),
-            $this->request->post('url')
+            $this->request->post('url') ?: ''
         );
 
         // if validator didn't create a deployment, pass through to controller to handle errors
