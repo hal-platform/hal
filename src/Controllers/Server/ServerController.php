@@ -55,6 +55,13 @@ class ServerController implements ControllerInterface
     {
         $deployments = $this->deployRepo->findBy(['server' => $this->server]);
 
+        usort($deployments, function ($a, $b) {
+            $appA = $a->application()->name();
+            $appB = $b->application()->name();
+
+            return strcasecmp($appA, $appB);
+        });
+
         $this->template->render([
             'server' => $this->server,
             'deployments' => $deployments
