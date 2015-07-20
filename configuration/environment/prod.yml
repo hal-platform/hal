@@ -21,10 +21,6 @@ parameters:
 
     cookie.encryption.secret: '26885952e5a4c316aedd6f3e7c429ed8ec2b15f55e575337b9fc75e0b78ffec1'
 
-    aws.region: 'us-west-2'
-    aws.credentials.key: ''
-    aws.credentials.secret: ''
-
     cli.user: 'hal9000'
 
     encrypter.publickey: |

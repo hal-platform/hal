@@ -65,7 +65,6 @@ parameters:
     # 30 min for permissions
     cache.permissions.ttl: 1800
     cache.doctrine.ttl: 600
-    cache.aws.ttl: 20
     cache.server.ttl: 300
     cache.stats.ttl: 900
     cache.page.ttl: 300
@@ -107,14 +106,6 @@ parameters:
 
     # Check GitHub collaborators for non-prod permissions
     permissions.check.github: true
-
-    ############################################################################
-    # aws
-    ############################################################################
-
-    aws.region: ''
-    aws.credentials.key: ''
-    aws.credentials.secret: ''
 
     ############################################################################
     # agent
