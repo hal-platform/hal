@@ -154,7 +154,7 @@ class AddServerController implements ControllerInterface
             'server_type' => $this->request->post('server_type'),
             'environment' => $this->request->post('environment'),
 
-            'hostname' => trim($this->request->post('name')),
+            'hostname' => trim($this->request->post('hostname')),
             'region' => trim($this->request->post('region'))
         ];
 

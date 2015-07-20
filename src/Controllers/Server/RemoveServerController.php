@@ -13,7 +13,6 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Flasher;
-use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 
 class RemoveServerController implements ControllerInterface
@@ -24,7 +23,6 @@ class RemoveServerController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $serverRepo;
     private $deployRepo;
 
     /**
@@ -38,34 +36,25 @@ class RemoveServerController implements ControllerInterface
     private $flasher;
 
     /**
-     * @type NotFound
+     * @type Server
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $server;
 
     /**
      * @param EntityManagerInterface $em
      * @param Flasher $flasher
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Server $server
      */
     public function __construct(
         EntityManagerInterface $em,
         Flasher $flasher,
-        NotFound $notFound,
-        array $parameters
+        Server $server
     ) {
-        $this->serverRepo = $em->getRepository(Server::CLASS);
         $this->deployRepo = $em->getRepository(Deployment::CLASS);
         $this->em = $em;
 
         $this->flasher = $flasher;
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->server = $server;
     }
 
     /**
@@ -73,25 +62,21 @@ class RemoveServerController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$server = $this->serverRepo->find($this->parameters['id'])) {
-            return call_user_func($this->notFound);
-        }
-
-        if ($deployments = $this->deployRepo->findBy(['server' => $server])) {
+        if ($deployments = $this->deployRepo->findBy(['server' => $this->server])) {
             return $this->flasher
                 ->withFlash(self::ERR_HAS_DEPLOYMENTS, 'error')
-                ->load('server', ['server' => $server->id()]);
+                ->load('server', ['server' => $this->server->id()]);
         }
 
-        $this->em->remove($server);
+        $this->em->remove($this->server);
         $this->em->flush();
 
-        $name = $server->name();
-        if ($server->type() === ServerEnum::TYPE_EB) {
+        $name = $this->server->name();
+        if ($this->server->type() === ServerEnum::TYPE_EB) {
             $name = 'Elastic Beanstalk';
-        } elseif ($server->type() === ServerEnum::TYPE_EC2) {
+        } elseif ($this->server->type() === ServerEnum::TYPE_EC2) {
             $name = 'EC2';
-        } elseif ($server->type() === ServerEnum::TYPE_S3) {
+        } elseif ($this->server->type() === ServerEnum::TYPE_S3) {
             $name = 'S3';
         }
 

@@ -190,7 +190,7 @@ parameters:
             conditions: {server: %routes.regex.digit%}
         server.remove:
             method: 'POST'
-            route: '/servers/:id/remove'
+            route: '/servers/:server/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'server.remove.handler']
             conditions: {server: %routes.regex.digit%}
 

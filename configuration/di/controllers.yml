@@ -355,8 +355,7 @@ services:
         arguments:
             - @doctrine.em
             - @session.flasher
-            - @slim.not.found
-            - @slim.route.parameters
+            - @hal.server
 
     server.validator:
         class: 'QL\Hal\Validator\ServerValidator'
