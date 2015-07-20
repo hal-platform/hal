@@ -98,21 +98,3 @@
     </ul>
 
 {% endblock %}
-
-{% block old_live_eb_validation_stuff %}
-    <h4 class="mbn"><strong>EB Application ID</strong></h4>
-    <p>{{ eb_environment.id }}</p>
-
-    <h4 class="mbn"><strong>EB Application Name</strong></h4>
-    <p>{{ eb_environment.name }}</p>
-
-    <h4 class="mbn"><strong>EB Status and Health</strong></h4>
-    <p class="mbn">Status: {{ eb_environment|formatEBStatus }}</p>
-    <p>Health: {{ eb_environment|formatEBHealth }}</p>
-
-    <h4 class="mbn"><strong>EB Solution</strong></h4>
-    <p>{{ eb_environment.solution }}</p>
-
-    <h4 class="mbn"><strong>EB Application URL</strong></h4>
-    <p><a href="http://{{ eb_environment.url }}">{{ eb_environment.url }}</a></p>
-{% endblock %}

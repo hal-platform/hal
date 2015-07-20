@@ -9,7 +9,6 @@ namespace QL\Hal\Twig;
 
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Services\ElasticBeanstalk\Environment as EBEnvironment;
 use Twig_Extension;
 use Twig_SimpleFilter;
 
@@ -46,11 +45,7 @@ class StatusExtension extends Twig_Extension
         return [
             // build/push
             new Twig_SimpleFilter('formatBuildStatus', [$this, 'stylizeBuildStatus'], ['is_safe' => ['html']]),
-            new Twig_SimpleFilter('formatPushStatus', [$this, 'stylizePushStatus'], ['is_safe' => ['html']]),
-
-            // elastic beanstalk
-            new Twig_SimpleFilter('formatEBHealth', [$this, 'stylizeEBHealth'], ['is_safe' => ['html']]),
-            new Twig_SimpleFilter('formatEBStatus', [$this, 'stylizeEBStatus'], ['is_safe' => ['html']])
+            new Twig_SimpleFilter('formatPushStatus', [$this, 'stylizePushStatus'], ['is_safe' => ['html']])
         ];
     }
 
@@ -101,58 +96,6 @@ class StatusExtension extends Twig_Extension
 
         } elseif ($push->status()) {
             return sprintf('<span class="%s" data-push="%s">%s</span>', 'status-icon--warning', $push->id(), $push->status());
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param EBEnvironment|null $environment
-     *
-     * @return string
-     */
-    public function stylizeEBHealth($environment)
-    {
-        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--info', 'Unknown');
-
-        if (!$environment instanceof EBEnvironment) {
-            return $default;
-        }
-
-        if ($environment->health() === 'Green') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $environment->health());
-
-        } elseif ($environment->health() === 'Red') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $environment->health());
-
-        } elseif ($environment->health() === 'Yellow') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--other', $environment->health());
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param EBEnvironment|null $environment
-     *
-     * @return string
-     */
-    public function stylizeEBStatus($environment)
-    {
-        $default = sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--info', 'Unknown');
-
-        if (!$environment instanceof EBEnvironment) {
-            return $default;
-        }
-
-        if ($environment->status() === 'Ready') {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--success', $environment->status());
-
-        } elseif (in_array($environment->status(), ['Terminating', 'Terminated'], true)) {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--error', $environment->status());
-
-        } elseif (in_array($environment->status(), ['Launching', 'Updating'], true)) {
-            return sprintf(self::HTML_STATUS_TEMPLATE, 'status-icon--warning', $environment->status());
         }
 
         return $default;

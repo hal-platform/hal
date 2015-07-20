@@ -94,39 +94,6 @@ services:
         class: 'QL\Hal\Core\Crypto\Encrypter'
         arguments: [%encrypter.publickey%]
 
-    ####################################################################################################################
-    # AWS
-    ####################################################################################################################
-
-    eb:
-        class: 'QL\Hal\Services\ElasticBeanstalkService'
-        arguments:
-            - @aws.eb
-            - %aws.credentials.key%
-            - %aws.credentials.secret%
-
-        calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.aws.ttl%]]
-
-    aws.credentials.cache:
-        class: 'Guzzle\Cache\DoctrineCacheAdapter'
-        arguments: [@aws.credentials.cache.source]
-    aws.credentials.cache.source:
-        # class: 'Doctrine\Common\Cache\FilesystemCache'
-        # arguments: ['/tmp/cache']
-        class: 'Doctrine\Common\Cache\ArrayCache'
-
-    aws.eb:
-        class: 'Aws\ElasticBeanstalk\ElasticBeanstalkClient'
-        factory: ['Aws\ElasticBeanstalk\ElasticBeanstalkClient', 'factory']
-        arguments:
-            -
-                credentials.cache: @aws.credentials.cache
-                region: %aws.region%
-                key: %aws.credentials.key%
-                secret: %aws.credentials.secret%
-
     ######################################################################################################################
     # TWIG STUFF
     ######################################################################################################################
