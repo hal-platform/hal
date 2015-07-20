@@ -28,7 +28,7 @@
         "ext-pdo_sqlite": "*",
         "ext-xmlwriter": "*",
 
-        "aws/aws-sdk-php": "2.7.*",
+        "aws/aws-sdk-php": "~3.2",
         "doctrine/orm": "~2.5",
         "guzzle/guzzle": "3.9.*",
         "guzzlehttp/guzzle": "5.*",
