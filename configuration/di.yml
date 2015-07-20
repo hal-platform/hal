@@ -22,9 +22,11 @@ services:
     hal.userPermission:  { synthetic: true }
 
     hal.application:     { synthetic: true }
+    hal.credential:      { synthetic: true }
     hal.deployment:      { synthetic: true }
     hal.encrypted:       { synthetic: true }
     hal.environment:     { synthetic: true }
+    hal.server:          { synthetic: true }
 
     hal.view:            { synthetic: true }
     hal.pool:            { synthetic: true }

@@ -9,11 +9,13 @@ namespace QL\Hal\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
@@ -89,9 +91,11 @@ class RequireEntityMiddleware implements MiddlewareInterface
             'userType' => UserType::CLASS,
 
             'application' => Application::CLASS,
+            'credential' => Credential::CLASS,
             'deployment' => Deployment::CLASS,
             'encrypted' => EncryptedProperty::CLASS,
             'environment' => Environment::CLASS,
+            'server' => Server::CLASS,
 
             'pool' => DeploymentPool::CLASS,
             'view' => DeploymentView::CLASS,

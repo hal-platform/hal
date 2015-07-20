@@ -32,10 +32,16 @@
                             <input id="server_type-ec2" type="radio" name="server_type" value="ec2"{{ checked }}>
                             <label for="server_type-ec2">EC2</label>
                         </li>
+
+                        {% set checked = form.server_type == 's3' ? ' checked' : '' %}
+                        <li>
+                            <input id="server_type-s3" type="radio" name="server_type" value="s3"{{ checked }}>
+                            <label for="server_type-s3">S3</label>
+                        </li>
                     </ul>
                 </li>
                 <li>
-                    <p>Environment</p>
+                    <label>Environment</label>
                     <ul class="radio-grid--form">
                     {% for environment in environments %}
                         {% set checked = '' %}
@@ -51,20 +57,24 @@
                     </ul>
                 </li>
 
+                {% set hostname = form.server_type == 'rsync' ? form.hostname : '' %}
                 <li>
                     <label for="hostname">Hostname</label>
-                    <small class="additional">
-                        <strong>Rsync Servers Only</strong>
-                    </small>
-
-                    {% set hostname = form.server_type == 'rsync' ? form.hostname : '' %}
                     <input type="text" name="hostname" id="hostname" maxlength="60" value="{{ hostname }}" class="text-input">
+                    <small class="additional">Rsync Servers Only</small>
+                </li>
+
+                {% set region = form.server_type != 'rsync' ? form.region : '' %}
+                <li>
+                    <label for="region">Region</label>
+                    <input type="text" name="region" id="region" maxlength="60" value="{{ region }}" class="text-input">
+                    <small class="additional">AWS Servers Only</small>
                 </li>
             </ul>
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('server', {id: server.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('server', {'server': server.id}) }}">Cancel</a></li>
             </ul>
 
         </form>

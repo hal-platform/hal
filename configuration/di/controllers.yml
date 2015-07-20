@@ -347,8 +347,7 @@ services:
             - @server.validator
             - @session.flasher
             - @slim.request
-            - @slim.not.found
-            - @slim.route.parameters
+            - @hal.server
     server.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/server.edit.twig']]]

@@ -144,7 +144,7 @@
                                         {% endif %}
                                     </td>
 
-                                    <td><a href="{{ urlFor('server', {id: status.server.id})}}">{{ status.server.name }}</a></td>
+                                    <td><a href="{{ urlFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
                                     <td>
                                         <div class="pre-wrapper">
                                             <pre class="code_clear">{{ status.detail }}</pre>

@@ -396,10 +396,13 @@ class HalExtension extends Twig_Extension
         $type = $server->type();
 
         if ($type === 'elasticbeanstalk') {
-            return 'Elastic Beanstalk';
+            return sprintf('EB (%s)', $server->name());
 
         } elseif ($type === 'ec2') {
-            return 'EC2';
+            return sprintf('EC2 (%s)', $server->name());
+
+        } elseif ($type === 's3') {
+            return sprintf('S3 (%s)', $server->name());
         }
 
         return $server->name();
@@ -426,6 +429,9 @@ class HalExtension extends Twig_Extension
 
         } elseif ($type === 'ec2') {
             $serverType = 'EC2 Autoscaling Pool';
+
+        } elseif ($type === 's3') {
+            $serverType = 'S3';
         }
 
         return $serverType;

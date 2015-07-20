@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright ©2013 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
 
 namespace QL\Hal\Validator;
 
+use Aws\Common\Enum\Region;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\HttpUrl;
@@ -26,6 +27,8 @@ class ServerValidator
     const ERR_HOST = 'Invalid hostname.';
     const ERR_MISSING_HOST = 'Hostname is required for rsync servers.';
     const ERR_LONG_HOST = 'Hostname must be less than or equal to 60 characters.';
+
+    const ERR_INVALID_REGION = 'Invalid AWS region specified.';
 
     /**
      * @type EntityRepository
@@ -53,10 +56,11 @@ class ServerValidator
      * @param string $serverType
      * @param string $environmentID
      * @param string $hostname
+     * @param string $region
      *
      * @return Server|null
      */
-    public function isValid($serverType, $environmentID, $hostname)
+    public function isValid($serverType, $environmentID, $hostname, $region)
     {
         $this->errors = [];
 
@@ -112,10 +116,11 @@ class ServerValidator
      * @param string $serverType
      * @param string $environmentID
      * @param string $hostname
+     * @param string $region
      *
      * @return Server|null
      */
-    public function isEditValid(Server $server, $serverType, $environmentID, $hostname)
+    public function isEditValid(Server $server, $serverType, $environmentID, $hostname, $region)
     {
         $this->errors = [];
 
@@ -132,46 +137,72 @@ class ServerValidator
         $hasChanged = ($environmentID != $server->environment()->id() || $serverType != $server->type());
 
         // validate hostname if rsync server
+        // RSYNC-hostname (name) pair is unique
         if ($serverType === ServerEnum::TYPE_RSYNC) {
 
-            $hostname = trim(strtolower($hostname));
+            $name = trim(strtolower($hostname));
 
-            $hasChanged = ($hostname != $server->name());
+            $hasChanged = ($name != $server->name());
             if (!$hasChanged) {
                 GOTO SKIP_DUPE_CHECK;
             }
 
-            $hostname = $this->validateHostname($hostname);
+            $name = $this->validateHostname($hostname);
 
             if ($this->errors) return;
 
-            if ($dupe = $this->serverRepo->findOneBy(['name' => $hostname])) {
+            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_RSYNC, 'name' => $hostname])) {
                 $this->errors[] = self::ERR_HOST_DUPLICATE;
             }
 
         // validate duplicate EB for environment
-        // Only 1 EB "server" per environment
+        // EB-region (name) pair is unique
         } elseif ($serverType === ServerEnum::TYPE_EB) {
-            $hostname = '';
 
+            $name = trim($region);
+
+            $hasChanged = ($name != $server->name());
             if (!$hasChanged) {
                 GOTO SKIP_DUPE_CHECK;
             }
 
-            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'environment' => $environment])) {
+            $name = $this->validateRegion($name);
+
+            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EB, 'name' => $environment])) {
                 $this->errors[] = self::ERR_EB_DUPLICATE;
             }
 
         // validate duplicate EC2 for environment
-        // Only 1 EC2 "server" per environment
+        // EC2-region (name) pair is unique
         } elseif ($serverType === ServerEnum::TYPE_EC2) {
-            $hostname = '';
 
+            $name = trim($region);
+
+            $hasChanged = ($name != $server->name());
             if (!$hasChanged) {
                 GOTO SKIP_DUPE_CHECK;
             }
 
-            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'environment' => $environment])) {
+            $name = $this->validateRegion($name);
+
+            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'name' => $environment])) {
+                $this->errors[] = self::ERR_EC2_DUPLICATE;
+            }
+
+        // validate duplicate S3 for environment
+        // S3-region (name) pair is unique
+        } elseif ($serverType === ServerEnum::TYPE_S3) {
+
+            $name = trim($region);
+
+            $hasChanged = ($name != $server->name());
+            if (!$hasChanged) {
+                GOTO SKIP_DUPE_CHECK;
+            }
+
+            $name = $this->validateRegion($name);
+
+            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_EC2, 'name' => $environment])) {
                 $this->errors[] = self::ERR_EC2_DUPLICATE;
             }
         }
@@ -183,7 +214,7 @@ class ServerValidator
         return $server
             ->withType($serverType)
             ->withEnvironment($environment)
-            ->withName($hostname);
+            ->withName($name);
     }
 
     /**
@@ -232,5 +263,20 @@ class ServerValidator
         }
 
         return $denom;
+    }
+
+    /**
+     * @param string $region
+     *
+     * @return string|null
+     */
+    private function validateRegion($region)
+    {
+        if (!in_array($region, Region::values(), true)) {
+            $this->errors[] = self::ERR_INVALID_REGION;
+            return;
+        }
+
+        return $region;
     }
 }

@@ -164,9 +164,9 @@ parameters:
 
         server:
             method: 'GET'
-            route: '/servers/:id'
+            route: '/servers/:server'
             stack: ['middleware.login', 'server.page']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {server: %routes.regex.digit%}
 
         ################################################################################################################
         # SERVER ROUTES - ADMIN
@@ -179,20 +179,20 @@ parameters:
 
         server.edit:
             method: ['GET', 'POST']
-            route: '/servers/:id/edit'
-            stack: ['middleware.admin', 'server.edit.page']
-            conditions: {id: %routes.regex.digit%}
+            route: '/servers/:server/edit'
+            stack: ['middleware.admin', 'middleware.requireEntity','server.edit.page']
+            conditions: {server: %routes.regex.digit%}
 
         server.remove.confirm:
             method: 'GET'
-            route: '/servers/:id/remove'
-            stack: ['middleware.admin', 'delete.confirm.page']
-            conditions: {id: %routes.regex.digit%}
+            route: '/servers/:server/remove'
+            stack: ['middleware.admin', 'middleware.requireEntity','delete.confirm.page']
+            conditions: {server: %routes.regex.digit%}
         server.remove:
             method: 'POST'
             route: '/servers/:id/remove'
-            stack: ['middleware.admin', 'server.remove.handler']
-            conditions: {id: %routes.regex.digit%}
+            stack: ['middleware.admin', 'middleware.requireEntity','server.remove.handler']
+            conditions: {server: %routes.regex.digit%}
 
         ################################################################################################################
         # USER ROUTES

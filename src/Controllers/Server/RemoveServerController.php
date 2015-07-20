@@ -80,7 +80,7 @@ class RemoveServerController implements ControllerInterface
         if ($deployments = $this->deployRepo->findBy(['server' => $server])) {
             return $this->flasher
                 ->withFlash(self::ERR_HAS_DEPLOYMENTS, 'error')
-                ->load('server', ['id' => $server->id()]);
+                ->load('server', ['server' => $server->id()]);
         }
 
         $this->em->remove($server);
@@ -91,6 +91,8 @@ class RemoveServerController implements ControllerInterface
             $name = 'Elastic Beanstalk';
         } elseif ($server->type() === ServerEnum::TYPE_EC2) {
             $name = 'EC2';
+        } elseif ($server->type() === ServerEnum::TYPE_S3) {
+            $name = 'S3';
         }
 
         $message = sprintf('Server "%s" removed.', $name);

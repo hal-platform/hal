@@ -89,7 +89,7 @@
                     <tr>
                         <td>
                             <span class="tooltipped tooltipped-e" aria-label="{{ status.deployment|formatDeploymentDetails }}">
-                                <a href="{{ urlFor('server', {'id': status.deployment.server.id}) }}">{{ status.deployment|formatDeploymentServer }}</a>
+                                <a href="{{ urlFor('server', {'server': status.deployment.server.id}) }}">{{ status.deployment|formatDeploymentServer }}</a>
                             </span>
                         </td>
                         {% if inProgress or status.success %}

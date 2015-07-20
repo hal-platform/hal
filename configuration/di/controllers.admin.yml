@@ -168,3 +168,46 @@ services:
     admin.message.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/global.message.twig']]]
+
+    ####################################################################################################################
+    # CREDENTIALS CONTROLLERS
+    ####################################################################################################################
+
+    admin.credentials.page:
+        class: 'QL\Hal\Controllers\Admin\Credentials\CredentialsController'
+        arguments:
+            - @admin.credentials.twig
+            - @doctrine.em
+    admin.credentials.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/credentials/credentials.twig']]]
+
+    admin.credential.page:
+        class: 'QL\Hal\Controllers\Admin\Credentials\CredentialController'
+        arguments:
+            - @admin.credential.twig
+            - @hal.credential
+            - @doctrine.em
+    admin.credential.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/credentials/credential.twig']]]
+
+    admin.credential.add.page:
+        class: 'QL\Hal\Controllers\Admin\Credentials\AddCredentialController'
+        arguments:
+            - @admin.credential.add.twig
+            - @doctrine.em
+            - @slim.request
+            - @session.flasher
+            - @doctrine.random
+            - @encrypter
+    admin.credential.add.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['admin/credentials/credential.add.twig']]]
+
+    admin.credential.remove.handler:
+        class: 'QL\Hal\Controllers\Admin\Credentials\RemoveCredentialHandler'
+        arguments:
+            - @doctrine.em
+            - @session.flasher
+            - @hal.credential

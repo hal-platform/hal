@@ -28,7 +28,7 @@
                             {% if push.deployment %}
                                 <a href="{{ urlFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.name }}</a>
                                 →
-                                <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment|formatDeploymentServer(true) }}</a>
+                                <a href="{{ urlFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment|formatDeploymentServer(true) }}</a>
                             {% else %}
                                 Unknown
                             {% endif %}

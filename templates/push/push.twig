@@ -23,7 +23,7 @@
             <dt class="split__title">Server</dt>
             <dd>
                 {% if push.deployment %}
-                    <a href="{{ urlFor('server', {'id': push.deployment.server.id}) }}">{{ push.deployment|formatDeploymentServer }}</a>
+                    <a href="{{ urlFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment|formatDeploymentServer }}</a>
                 {% else %}
                     Unknown
                 {% endif %}

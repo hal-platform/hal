@@ -25,7 +25,7 @@
                 {% for server in servers %}
                     <tr>
                         <td>
-                            <a href="{{ urlFor('server', {'id': server.id}) }}">{{ server|formatServer }}</a>
+                            <a href="{{ urlFor('server', {'server': server.id}) }}">{{ server|formatServer }}</a>
                         </td>
                     </tr>
                 {% endfor %}
