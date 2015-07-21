@@ -13,11 +13,13 @@ use QL\Hal\Api\Normalizer\ApplicationNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 
 class ApplicationsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
+    use SortingTrait;
 
     /**
      * @var ResponseFormatter
@@ -54,21 +56,25 @@ class ApplicationsController implements ControllerInterface
      */
     public function __invoke()
     {
-        $repos = $this->applicationRepo->findBy([], ['id' => 'ASC']);
-        $status = (count($repos) > 0) ? 200 : 404;
+        $applications = $this->applicationRepo->findAll();
+        usort($applications, $this->applicationSorter());
 
-        $repos = array_map(function ($repo) {
-            return $this->normalizer->link($repo);
-        }, $repos);
+        $status = (count($applications) > 0) ? 200 : 404;
 
-        $this->formatter->respond($this->buildResource(
+        array_walk($applications, function (&$app) {
+            $app = $this->normalizer->link($app);
+        });
+
+        $resource = $this->buildResource(
             [
-                'count' => count($repos)
+                'count' => count($applications)
             ],
             [],
             [
-                'applications' => $repos
+                'applications' => $applications
             ]
-        ), $status);
+        );
+
+        $this->formatter->respond($resource, $status);
     }
 }

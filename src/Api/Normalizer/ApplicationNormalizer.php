@@ -70,7 +70,7 @@ class ApplicationNormalizer
                 'api.application', ['id' => $application->id()]
             ],
             [
-                'title' => $application->key()
+                'title' => $application->name()
             ]
         );
     }

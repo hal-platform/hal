@@ -21,6 +21,8 @@ class BuildsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
+    const MAX_PER_PAGE = 25;
+
     /**
      * @type ResponseFormatter
      */
@@ -68,51 +70,98 @@ class BuildsController implements ControllerInterface
      */
     public function __invoke()
     {
+        $application = $this->getApplication();
+        $page = $this->getCurrentPage();
+
+        $pagination = $this->buildRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1));
+        $total = count($pagination);
+
+        $builds = [];
+        foreach ($pagination as $build) {
+            $builds[] = $this->normalizer->link($build);
+        }
+
+        $links = $this->buildPaginationLinks($page, $total, $application);
+        $links['builds'] = $builds;
+
+        $resource = $this->buildResource(
+            [
+                'count' => count($builds),
+                'total' => $total,
+                'page' => $page
+            ],
+            [],
+            $links
+        );
+
+        $status = (count($builds) > 0) ? 200 : 404;
+        $this->formatter->respond($resource, $status);
+    }
+
+    /**
+     * @throws HttpProblemException
+     *
+     * @return Application
+     */
+    private function getApplication()
+    {
         $application = $this->applicationRepo->find($this->parameters['id']);
 
         if (!$application instanceof Application) {
             throw HttpProblemException::build(404, 'invalid-application');
         }
 
-        $builds = $this->buildRepo->findBy(['application' => $application], ['status' => 'ASC', 'start' => 'DESC']);
-        $status = (count($builds) > 0) ? 200 : 404;
-
-        $builds = array_map(function ($build) {
-            return $this->normalizer->link($build);
-        }, $builds);
-
-        $this->formatter->respond($this->buildResource(
-            [
-                'count' => count($builds)
-            ],
-            [],
-            [
-                'builds' => $builds
-            ]
-        ), $status);
+        return $application;
     }
 
     /**
-     * @param array $builds
-     * @param boolean $isResolved
+     * @throws HttpProblemException
+     *
+     * @return int
+     */
+    private function getCurrentPage()
+    {
+        $page = (isset($this->parameters['page'])) ? intval($this->parameters['page']) : 1;
+
+        // 404, invalid page
+        if ($page < 1) {
+            throw HttpProblemException::build(404, 'invalid-page');
+        }
+
+        return $page;
+    }
+
+    /**
+     * @param int $current
+     * @param int $last
+     * @param Application $application
+     *
      * @return array
      */
-    private function normalizeBuilds(array $builds, $isResolved)
+    private function buildPaginationLinks($current, $total, Application $application)
     {
-        $normalized = array_map(function($build) use ($isResolved) {
-            if ($isResolved) {
-                return $this->normalizer->normalize($build);
-            }
+        $links = [];
 
-            return $this->normalizer->linked($build);
-        }, $builds);
+        $prev = $current - 1;
+        $next = $current + 1;
+        $last = ceil($total / self::MAX_PER_PAGE);
 
+        if ($current > 1) {
+            $links['prev'] = ['href' => ['api.builds.history', ['id' => $application->id(), 'page' => $prev]]];
+        }
 
-        $type = ($isResolved) ? '_embedded' : '_links';
-        return [
-            $type => [
-                'builds' => $normalized
-            ]
-        ];
+        if ($next <= $last) {
+            $links['next'] = ['href' => ['api.builds.history', ['id' => $application->id(), 'page' => $next]]];
+        }
+
+        if ($last > 1 && $current > 1) {
+            $links['first'] = ['href' => ['api.builds.history', ['id' => $application->id(), 'page' => '1']]];
+        }
+
+        if ($last > 1) {
+            $links['last'] = ['href' => ['api.builds.history', ['id' => $application->id(), 'page' => $last]]];
+        }
+
+        return $links;
     }
 }
