@@ -50,11 +50,25 @@
                     <label for="github_user">GitHub Enterprise Organization</label>
                     <select name="github_user" id="github_user">
                         <option value=""></option>
-                        {% for org in github_orgs %}
-                            {% set owner = org.login|lower %}
-                            {% set isSelected = (owner == form.github_user) %}
-                            <option value="{{ owner }}"{{ isSelected ? ' selected' : '' }}>{{ org.login }}</option>
-                        {% endfor %}
+
+                        {% if github_orgs.active %}
+                            <optgroup label="Active">
+                                {% for org in github_orgs.active %}
+                                    {% set owner = org|lower %}
+                                    {% set isSelected = (owner == form.github_user) %}
+                                    <option value="{{ owner }}"{{ isSelected ? ' selected' : '' }}>{{ org }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+
+                        <optgroup label="Other">
+                            {% for org in github_orgs.other %}
+                                {% set owner = org|lower %}
+                                {% set isSelected = (owner == form.github_user) %}
+                                <option value="{{ owner }}"{{ isSelected ? ' selected' : '' }}>{{ org }}</option>
+                            {% endfor %}
+                        </optgroup>
+
                     </select>
                 </li>
                 <li>

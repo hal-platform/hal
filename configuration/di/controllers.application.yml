@@ -66,6 +66,9 @@ services:
             - @slim.request
             - @currentUser
             - @doctrine.random
+        calls:
+            - ['setCache', [@cache]]
+            - ['setCacheTTL', [%cache.page.ttl%]]
     application.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/application.add.twig']]]
