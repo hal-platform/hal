@@ -139,6 +139,7 @@ services:
             - @response.formatter
             - @doctrine.em
             - @normalizer.server
+            - @slim.route.parameters
 
     ####################################################################################################################
     # GROUP CONTROLLERS
@@ -231,3 +232,4 @@ services:
             - @response.formatter
             - @doctrine.em
             - @normalizer.user
+            - @slim.route.parameters
