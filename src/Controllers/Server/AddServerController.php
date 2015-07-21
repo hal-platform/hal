@@ -90,7 +90,7 @@ class AddServerController implements ControllerInterface
                 ->load('environment.add');
         }
 
-        $form = $this->data();;
+        $form = $this->data();
 
         if ($server = $this->handleForm($form)) {
 
@@ -116,7 +116,6 @@ class AddServerController implements ControllerInterface
 
         $this->template->render($context);
     }
-
 
     /**
      * @param array $data

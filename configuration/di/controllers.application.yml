@@ -61,8 +61,11 @@ services:
             - @application.add.twig
             - @doctrine.em
             - @github
+            - @permissions
             - @session.flasher
             - @slim.request
+            - @currentUser
+            - @doctrine.random
     application.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/application.add.twig']]]

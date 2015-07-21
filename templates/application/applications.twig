@@ -35,7 +35,7 @@
                             <td><a href="{{ urlFor('application.status', {'application': application.id}) }}">{{ application.name }}</a></td>
                             <td>{{ macros.gitsource(application) }}</td>
                             <td>
-                                <a href="{{ urlFor('application', {'application': application.id}) }}">Details</a>
+                                <a href="{{ urlFor('application', {'application': application.id}) }}">Manage</a>
                             </td>
                         </tr>
                     {% endfor %}

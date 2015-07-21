@@ -46,8 +46,9 @@
                 </li>
 
                 <li>
-                    <label for="notification_email">Notification E-mail Address</label>
+                    <label for="notification_email">Notification Email Address</label>
                     <input type="email" name="notification_email" id="notification_email" maxlength="128" value="{{ form.notification_email }}" class="text-input">
+                    <small class="additional">Optional. Notifications are sent on push or build completion.</small>
                 </li>
                 <li>
                     <label for="eb_name">Amazon Elastic Beanstalk Application Name</label>

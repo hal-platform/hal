@@ -14,21 +14,20 @@
         <form method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="name">
-                        Name
-                        <small class="additional">Display title for this application such as <span>"HAL 9000"</span> or <span>"My Secret Project"</span>.</small>
-                    </label>
+                    <label for="name">Name</label>
                     <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
+                    <small class="additional">Display title for this application such as <b>HAL 9000</b> or <b>My Secret Project</b>.</small>
                 </li>
                 <li>
                     <label for="identifier">
-                        Identifier
-                        <small class="additional">
-                            Unique identifier such as <span>"hal9000"</span> or <span>"my-project"</span>.
-                            <br>Alphanumeric, hyphen, and period characters only.
-                        </small>
+                        <span class="tooltipped tooltipped-e" aria-label="Alphanumeric, hyphen, and period characters only.">
+                            Identifier
+                        </span>
                     </label>
                     <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
+                    <small class="additional">
+                        Unique identifier such as <b>hal9000</b> or <b>my-project</b>.
+                    </small>
                 </li>
                 <li>
                     <label>Group</label>
@@ -52,22 +51,15 @@
                     <select name="github_user" id="github_user">
                         <option value=""></option>
                         {% for org in github_orgs %}
-                            {% set selected = '' %}
-                            {% if form.github_user == org.login %}
-                                {% set selected = ' selected' %}
-                            {% endif %}
-
-                            <option value="{{ org.login|lower }}"{{ selected }}>{{ org.login }}</option>
+                            {% set owner = org.login|lower %}
+                            {% set isSelected = (owner == form.github_user) %}
+                            <option value="{{ owner }}"{{ isSelected ? ' selected' : '' }}>{{ org.login }}</option>
                         {% endfor %}
                     </select>
                 </li>
                 <li>
                     <label for="github_repo">GitHub Enterprise Repository</label>
                     <input type="text" name="github_repo" id="github_repo" maxlength="48" required value="{{ form.github_repo }}" class="text-input">
-                </li>
-                <li>
-                    <label for="notification_email">Notification Email Address <small class="additional">Optional. Notifications are sent on push or build completion.</small></label>
-                    <input type="email" name="notification_email" id="notification_email" maxlength="128" value="{{ form.notification_email }}" class="text-input">
                 </li>
             </ul>
 

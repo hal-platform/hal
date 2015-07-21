@@ -11,8 +11,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
+use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\UserType;
+use QL\Hal\Core\Type\EnumType\UserTypeEnum;
+use QL\Hal\Core\Utility\SortingTrait;
 use QL\Hal\Flasher;
 use QL\Hal\Service\GitHubService;
+use QL\Hal\Service\PermissionService;
 use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -20,10 +25,18 @@ use Slim\Http\Request;
 
 class AddApplicationController implements ControllerInterface
 {
+    use SortingTrait;
     use ValidatorTrait;
 
     const SUCCESS = 'Application "%s" added.';
-    const ERR_NO_GROUP = 'Please select a group.';
+
+    const ERR_INVALID_GROUP = 'Please select a group.';
+    const ERR_NO_GROUPS = 'An application requires an group. Groups must be added before applications.';
+
+    const ERR_DUPE_IDENTIFIER = 'An application with this identifier already exists.';
+
+    const ERR_GITHUB_INVALID_ORG = 'Invalid Github Enterprise organization';
+    const ERR_GITHUB_INVALID_REPO = 'Invalid Github Enterprise repository name';
 
     /**
      * @type TemplateInterface
@@ -47,6 +60,11 @@ class AddApplicationController implements ControllerInterface
     private $github;
 
     /**
+     * @type PermissionService
+     */
+    private $permissionService;
+
+    /**
      * @type Flasher
      */
     private $flasher;
@@ -57,27 +75,55 @@ class AddApplicationController implements ControllerInterface
     private $request;
 
     /**
+     * @type User
+     */
+    private $currentUser;
+
+    /**
+     * @type callable
+     */
+    private $random;
+
+    /**
+     * @type array
+     */
+    private $errors;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param GitHubService $github
+     * @param PermissionService $permissionService
      * @param Flasher $flasher
      * @param Request $request
+     * @param User $currentUser
+     * @param callable $random
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         GitHubService $github,
+        PermissionService $permissionService,
         Flasher $flasher,
-        Request $request
+        Request $request,
+        User $currentUser,
+        callable $random
     ) {
         $this->template = $template;
+
         $this->groupRepo = $em->getRepository(Group::CLASS);
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
+
         $this->github = $github;
+        $this->permissionService = $permissionService;
         $this->flasher = $flasher;
 
         $this->request = $request;
+        $this->currentUser = $currentUser;
+        $this->random = $random;
+
+        $this->errors = [];
     }
 
     /**
@@ -85,67 +131,113 @@ class AddApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
+        if (!$groups = $this->groupRepo->findAll()) {
+            return $this->flasher
+                ->withFlash(self::ERR_NO_GROUPS, 'error')
+                ->load('group.add');
+        }
+
         $orgs = $this->github->organizations();
         usort($orgs, function($a, $b) {
             return strcasecmp($a['login'], $b['login']);
         });
 
-        $renderContext = [
-            'form' => [
-                'identifier' => $this->request->post('identifier'),
-                'name' => $this->request->post('name'),
-                'group' => $this->request->post('group'),
-                'github_user' => $this->request->post('github_user'),
-                'github_repo' => $this->request->post('github_repo'),
-                'notification_email' => $this->request->post('notification_email')
-            ],
-            'groups' => $this->groupRepo->findBy([], ['name' => 'ASC']),
-            'errors' => $this->checkFormErrors($this->request),
+        $form = $this->data();
+
+        if ($application = $this->handleForm($form)) {
+            $message = sprintf(self::SUCCESS, $application->key());
+            return $this->flasher
+                ->withFlash($message, 'success')
+                ->load('applications');
+        }
+
+        usort($groups, $this->groupSorter());
+
+        $context = [
+            'form' => $form,
+            'errors' => $this->errors,
+            'groups' => $groups,
             'github_orgs' => $orgs
         ];
 
-        if ($this->request->isPost()) {
-            // this is kind of crummy
-            if (!$renderContext['errors'] && !$group = $this->groupRepo->find($this->request->post('group'))) {
-                $renderContext['errors'][] = self::ERR_NO_GROUP;
-            }
-
-            if (!$renderContext['errors']) {
-                $application = $this->handleFormSubmission($this->request, $group);
-
-                $message = sprintf(self::SUCCESS, $application->key());
-                return $this->flasher
-                    ->withFlash($message, 'success')
-                    ->load('applications');
-            }
-        }
-
-        $this->template->render($renderContext);
+        $this->template->render($context);
     }
 
     /**
-     * @param Request $request
-     * @param Group $group
+     * @param array $data
      *
-     * @return Application
+     * @return Application|null
      */
-    private function handleFormSubmission(Request $request, Group $group)
+    private function handleForm(array $data)
     {
-        $identifier = strtolower($request->post('identifier'));
-        $name = $request->post('name');
-        $email = $request->post('notification_email');
+        if (!$this->request->isPost()) {
+            return null;
+        }
 
-        $user = strtolower($request->post('github_user'));
-        $repo = strtolower($request->post('github_repo'));
+        $application = $this->validateForm(
+            $data['identifier'],
+            $data['name'],
+            $data['group'],
+            $data['github_user'],
+            $data['github_repo']
+        );
+
+        if ($application) {
+            $this->makeLeadMaybeQuestionMarkIDontKnow($application);
+
+            // persist to database
+            $this->em->persist($application);
+            $this->em->flush();
+        }
+
+        return $application;
+    }
+
+    /**
+     * @param string $identifier
+     * @param string $name
+     * @param string $groupID
+     * @param string $githubOwner
+     * @param string $githubRepo
+     *
+     * @return Application|null
+     */
+    private function validateForm($identifier, $name, $groupID, $githubOwner, $githubRepo)
+    {
+        $this->errors = array_merge(
+            $this->validateSimple($identifier, 'Identifier', 24, true),
+            $this->validateText($name, 'Name', 64, true),
+
+            $this->validateText($githubOwner, 'GitHub Organization', 48, true),
+            $this->validateText($githubRepo, 'GitHub Repository', 48, true)
+        );
+
+        if ($this->errors) return;
+
+        $this->validateGithubRepo($githubOwner, $githubRepo);
+
+        if ($this->errors) return;
+
+        // check for duplicate key
+        if ($dupe = $this->applicationRepo->findOneBy(['key' => $identifier])) {
+            $this->errors[] = self::ERR_DUPE_IDENTIFIER;
+        }
+
+        // check for duplicate key
+        if (!$group = $this->groupRepo->find($groupID)) {
+            $this->errors[] = self::ERR_INVALID_GROUP;
+        }
+
+        if ($this->errors) return;
 
         $application = (new Application)
             ->withKey($identifier)
             ->withName($name)
             ->withGroup($group)
-            ->withEmail($email)
 
-            ->withGithubOwner($user)
-            ->withGithubRepo($repo)
+            ->withGithubOwner($githubOwner)
+            ->withGithubRepo($githubRepo)
+            ->withEmail('')
             ->withEbName('');
 
         // Default to blank, not null
@@ -154,71 +246,65 @@ class AddApplicationController implements ControllerInterface
         $application->setPrePushCmd('');
         $application->setPostPushCmd('');
 
-        $this->em->persist($application);
-        $this->em->flush();
-
         return $application;
-    }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    private function checkFormErrors(Request $request)
-    {
-        if (!$request->isPost()) {
-            return [];
-        }
-
-        $human = [
-            'identifier' => 'Identifier',
-            'name' => 'Name',
-            'group' => 'Group',
-            'github_user' => 'Github Organization',
-            'github_repo' => 'Github Repository',
-            'notification_email' => 'Notification Email'
-        ];
-
-        $identifier = strtolower($request->post('identifier'));
-
-        $errors = array_merge(
-            $this->validateSimple($identifier, $human['identifier'], 24, true),
-            $this->validateText($request->post('name'), $human['name'], 64, true),
-
-            $this->validateText($request->post('group'), $human['group'], 128, true),
-            $this->validateText($request->post('github_user'), $human['github_user'], 48, true),
-            $this->validateText($request->post('github_repo'), $human['github_repo'], 48, true),
-            $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
-
-            $this->validateGithubRepo($request->post('github_user'), $request->post('github_repo'))
-        );
-
-        // check for duplicate nickname
-        if (!$errors && $this->applicationRepo->findOneBy(['key' => $identifier])) {
-            $errors[] = 'An application with this identifier already exists.';
-        }
-
-        return $errors;
     }
 
     /**
      * @param string $owner
      * @param string $repo
      *
-     * @return array
+     * @return void
      */
     private function validateGithubRepo($owner, $repo)
     {
-        $errors = [];
-
         if (!$this->github->organization($owner)) {
-            $errors[] = 'Invalid Github Enterprise organization';
+            $this->errors[] = self::ERR_GITHUB_INVALID_ORG;
 
         // elseif here so we dont bother making 2 github calls if the first one failed
         } elseif (!$this->github->repository($owner, $repo)) {
-            $errors[] = 'Invalid Github Enterprise repository name';
+            $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function data()
+    {
+        $form = [
+            'identifier' => strtolower($this->request->post('identifier')),
+            'name' => $this->request->post('name'),
+            'group' => $this->request->post('group'),
+
+            'github_user' => strtolower($this->request->post('github_user')),
+            'github_repo' => strtolower($this->request->post('github_repo'))
+        ];
+
+        return $form;
+    }
+
+    /**
+     * @return void
+     */
+    private function makeLeadMaybeQuestionMarkIDontKnow(Application $application)
+    {
+        $perms = $this->permissionService->getUserPermissions($this->currentUser);
+
+        if ($perms->isButtonPusher() || $perms->isSuper()) {
+            return;
         }
 
-        return $errors;
+        $id = call_user_func($this->random);
+        $permissions = (new UserType)
+            ->withId($id)
+            ->withType(UserTypeEnum::TYPE_LEAD)
+            ->withUser($this->currentUser)
+            ->withApplication($application);
+
+        // Clear cache
+        $this->permissionService->clearUserCache($this->currentUser);
+
+        // persist to database
+        $this->em->persist($permissions);
     }
 }
