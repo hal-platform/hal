@@ -7,11 +7,8 @@
 
 namespace QL\Hal\Controllers\Push;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\PushRepository;
-use QL\Panthor\Slim\NotFound;
+use QL\Hal\Service\EventLogService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -23,37 +20,26 @@ class PushController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityRepository
+     * @type Push
      */
-    private $pushRepo;
+    private $push;
 
     /**
-     * @type NotFound
+     * @type EventLogService
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $logService;
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManagerInterface $em
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Push $push
+     * @param EventLogService $logService
      */
-    public function __construct(
-        TemplateInterface $template,
-        EntityManagerInterface $em,
-        NotFound $notFound,
-        array $parameters
-    ) {
+    public function __construct(TemplateInterface $template, Push $push, EventLogService $logService)
+    {
         $this->template = $template;
-        $this->pushRepo = $em->getRepository(Push::CLASS);
 
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->push = $push;
+        $this->logService = $logService;
     }
 
     /**
@@ -61,12 +47,9 @@ class PushController implements ControllerInterface
      */
     public function __invoke()
     {
-        if (!$push = $this->pushRepo->find($this->parameters['push'])) {
-            return call_user_func($this->notFound);
-        }
-
         $this->template->render([
-            'push' => $push
+            'push' => $this->push,
+            'logs' => $this->logService->getLogs($this->push)
         ]);
     }
 }

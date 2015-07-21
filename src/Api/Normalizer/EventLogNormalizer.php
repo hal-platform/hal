@@ -7,9 +7,6 @@ use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\EventLog;
 
-/**
- *
- */
 class EventLogNormalizer
 {
     use HypermediaLinkTrait;
@@ -46,17 +43,18 @@ class EventLogNormalizer
     }
 
     /**
-     * @param EventLog $log
-     * @return array
+     * @param EventLog|null $log
+     *
+     * @return array|null
      */
     public function link(EventLog $log = null)
     {
-        return  (is_null($log)) ? null :$this->buildLink(
-            ['api.event.log', ['id' => $log->id()]],
-            [
-                'title' => $log->id()
-            ]
-        );
+        if (!$log) return $log;
+
+        return [
+            'href' => ['api.event.log', ['id' => $log->id()]],
+            'title' => $log->id()
+        ];
     }
 
     /**
@@ -85,20 +83,23 @@ class EventLogNormalizer
             $links['push'] = $this->pushes->link($log->push());
         }
 
-        return $this->buildResource(
-            [
-                'id' => $log->id(),
-                'event' => $log->event(),
-                'order' => $log->order(),
-                'message' => $log->message(),
-                'status' => $log->status(),
-                'created' => $log->created(),
-                'data' => $log->data()
-            ],
-            $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            [
-                'self' => $this->link($log)
-            ] + $links
-        );
+        $data = [
+            'id' => $log->id(),
+            'event' => $log->event(),
+            'order' => $log->order(),
+            'message' => $log->message(),
+            'status' => $log->status(),
+            'created' => $log->created(),
+            'data' => '**DATA**'
+        ];
+
+        if (in_array('data', $embed)) {
+            $data['data'] = $log->data();
+        }
+
+        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
+        $links = ['self' => $this->link($log)] + $links;
+
+        return $this->buildResource($data, $embedded, $links);
     }
 }

@@ -40,7 +40,7 @@ class ResponseFormatter
     /**
      * @var HypermediaFormatter
      */
-    private $formatter;
+    private $hypermediaFormatter;
 
     /**
      * @var Route
@@ -63,7 +63,7 @@ class ResponseFormatter
      * @param Route $currentRoute
      *
      * @param Normalizer $normalizer
-     * @param HypermediaFormatter $formatter
+     * @param HypermediaFormatter $hypermediaFormatter
      * @param array $cacheTimes
      */
     public function __construct(
@@ -72,7 +72,7 @@ class ResponseFormatter
         Route $currentRoute,
 
         Normalizer $normalizer,
-        HypermediaFormatter $formatter,
+        HypermediaFormatter $hypermediaFormatter,
         array $cacheTimes = []
     ) {
         $this->request = $request;
@@ -80,7 +80,7 @@ class ResponseFormatter
         $this->currentRoute = $currentRoute;
 
         $this->normalizer = $normalizer;
-        $this->formatter = $formatter;
+        $this->hypermediaFormatter = $hypermediaFormatter;
         $this->cacheTimes = $cacheTimes;
 
         $this->start = microtime(true);
@@ -101,7 +101,7 @@ class ResponseFormatter
             $data = $this->normalizer->normalize($data);
         }
 
-        $body = json_encode($this->formatter->format($data), JSON_UNESCAPED_SLASHES);
+        $body = json_encode($this->hypermediaFormatter->format($data), JSON_UNESCAPED_SLASHES);
 
         // cache the result
         if ($cache && $this->request->isGet() && ($ttl = $this->cacheTime($this->currentRoute))) {

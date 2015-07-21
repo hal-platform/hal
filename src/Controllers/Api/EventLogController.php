@@ -68,6 +68,8 @@ class EventLogController implements ControllerInterface
             throw HttpProblemException::build(404, 'invalid-log');
         }
 
+        $log = $this->normalizer->resource($log, ['data']);
+
         $this->formatter->respond($log);
     }
 }

@@ -9,12 +9,14 @@ namespace QL\Hal\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
@@ -86,6 +88,9 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
         // whitelist of route parameters and the entity they map to.
         $this->map = [
+            'build' => Build::CLASS,
+            'push' => Push::CLASS,
+
             'user' => User::CLASS,
             'userPermission' => UserPermission::CLASS,
             'userType' => UserType::CLASS,

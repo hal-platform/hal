@@ -89,11 +89,6 @@
     {% endif %}
 
     <h2 class="leader">Event Log</h2>
-
-    {% if build.logs.isEmpty %}
-        <p>No build events found.</p>
-    {% else %}
-        {% include '_partial/log-table.twig' with {'logs': build.logs} %}
-    {% endif %}
+    {% include '_partial/log-table.twig' with {'logs': logs} %}
 
 {% endblock %}

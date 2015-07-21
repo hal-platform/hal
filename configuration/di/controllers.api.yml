@@ -62,8 +62,10 @@ services:
     api.build.logs:
         class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
         arguments:
+            - @slim.request
             - @response.formatter
             - @doctrine.em
+            - @service.event_logs
             - @normalizer.log.event
             - @normalizer.build
             - @slim.route.parameters
@@ -172,8 +174,10 @@ services:
     api.push.logs:
         class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
         arguments:
+            - @slim.request
             - @response.formatter
             - @doctrine.em
+            - @service.event_logs
             - @normalizer.log.event
             - @normalizer.push
             - @slim.route.parameters

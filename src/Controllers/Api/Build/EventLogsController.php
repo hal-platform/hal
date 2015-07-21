@@ -14,12 +14,19 @@ use QL\Hal\Api\Normalizer\EventLogNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
+use QL\Hal\Service\EventLogService;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use Slim\Http\Request;
 
 class EventLogsController implements ControllerInterface
 {
     use HypermediaResourceTrait;
+
+    /**
+     * @type Request
+     */
+    private $request;
 
     /**
      * @type ResponseFormatter
@@ -30,6 +37,11 @@ class EventLogsController implements ControllerInterface
      * @type EntityRepository
      */
     private $buildRepo;
+
+    /**
+     * @type EventLogService
+     */
+    private $logService;
 
     /**
      * @type EventLogNormalizer
@@ -47,21 +59,28 @@ class EventLogsController implements ControllerInterface
     private $parameters;
 
     /**
+     * @param Request $request
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
+     * @param EventLogService $logService
      * @param EventLogNormalizer $eventLogNormalizer
      * @param BuildNormalizer $buildNormalizer
      * @param array $parameters
      */
     public function __construct(
+        Request $request,
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
+        EventLogService $logService,
         EventLogNormalizer $eventLogNormalizer,
         BuildNormalizer $buildNormalizer,
         array $parameters
     ) {
+        $this->request = $request;
         $this->formatter = $formatter;
         $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->logService = $logService;
+
         $this->eventLogNormalizer = $eventLogNormalizer;
         $this->buildNormalizer = $buildNormalizer;
 
@@ -80,21 +99,52 @@ class EventLogsController implements ControllerInterface
             throw HttpProblemException::build(404, 'invalid-build');
         }
 
-        $logs = array_map(function ($log) {
-            return $this->eventLogNormalizer->link($log);
-        }, $build->getLogs()->toArray());
+        $logs = $this->logService->getLogs($build);
+
+        $data = [
+            'count' => count($logs)
+        ];
+
+        $embedded = [];
+
+        $links = [
+            'build' => $this->buildNormalizer->link($build),
+        ];
+
+        if ($this->isEmbedded()) {
+
+            array_walk($logs, function(&$log) {
+                $log = $this->eventLogNormalizer->resource($log);
+            });
+
+            $embedded['logs'] = $logs;
+
+        } else {
+
+            array_walk($logs, function(&$log) {
+                $log = $this->eventLogNormalizer->link($log);
+            });
+
+            $links['logs'] = $logs;
+        }
+
+        $resource = $this->buildResource($data, $embedded, $links);
 
         $status = (count($logs) > 0) ? 200 : 404;
+        $this->formatter->respond($resource, $status);
+    }
 
-        $this->formatter->respond($this->buildResource(
-            [
-                'count' => count($logs)
-            ],
-            [],
-            [
-                'build' => $this->buildNormalizer->link($build),
-                'logs' => $logs
-            ]
-        ), $status);
+    /**
+     * @return bool
+     */
+    private function isEmbedded()
+    {
+        if (!$embed = $this->request->get('embed')) {
+            return false;
+        }
+
+        $embed = explode(',', $embed);
+
+        return in_array('logs', $embed);
     }
 }

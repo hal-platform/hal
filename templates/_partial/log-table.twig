@@ -12,7 +12,6 @@
 
     {% for log in logs %}
         <tbody>
-
             <tr class="{{ log.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>
                     {% if log.status == 'success' %}
@@ -51,7 +50,7 @@
         </tbody>
     {% else %}
         <tbody>
-            <tr>
+            <tr class="js-empty-row">
                 <td colspan="4">No logs found.</td>
             </tr>
         </tbody>

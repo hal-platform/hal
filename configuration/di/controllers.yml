@@ -127,9 +127,8 @@ services:
         class: 'QL\Hal\Controllers\Build\BuildController'
         arguments:
             - @build.twig
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
+            - @hal.build
+            - @service.event_logs
     build.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/build.twig']]]
@@ -225,9 +224,8 @@ services:
         class: 'QL\Hal\Controllers\Push\PushController'
         arguments:
             - @push.twig
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
+            - @hal.push
+            - @service.event_logs
     push.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/push.twig']]]

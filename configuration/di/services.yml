@@ -85,6 +85,11 @@ services:
             - @github.orgMemberService
             - @github.pager
 
+    service.event_logs:
+        class: 'QL\Hal\Service\EventLogService'
+        arguments:
+            - @redis
+            - @json
 
     ####################################################################################################################
     # Crypto

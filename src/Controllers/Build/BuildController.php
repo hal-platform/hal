@@ -1,16 +1,14 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
 
 namespace QL\Hal\Controllers\Build;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
-use QL\Panthor\Slim\NotFound;
+use QL\Hal\Service\EventLogService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -22,37 +20,26 @@ class BuildController implements ControllerInterface
     private $template;
 
     /**
-     * @type EntityRepository
+     * @type Build
      */
-    private $buildRepo;
+    private $build;
 
     /**
-     * @type NotFound
+     * @type EventLogService
      */
-    private $notFound;
-
-    /**
-     * @type array
-     */
-    private $parameters;
+    private $logService;
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManagerInterface $em
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param Build $build
+     * @param EventLogService $logService
      */
-    public function __construct(
-        TemplateInterface $template,
-        EntityManagerInterface $em,
-        NotFound $notFound,
-        array $parameters
-    ) {
+    public function __construct(TemplateInterface $template, Build $build, EventLogService $logService)
+    {
         $this->template = $template;
-        $this->buildRepo = $em->getRepository(Build::CLASS);
 
-        $this->notFound = $notFound;
-        $this->parameters = $parameters;
+        $this->build = $build;
+        $this->logService = $logService;
     }
 
     /**
@@ -60,14 +47,9 @@ class BuildController implements ControllerInterface
      */
     public function __invoke()
     {
-        $build = $this->buildRepo->find($this->parameters['build']);
-
-        if (!$build) {
-            return call_user_func($this->notFound);
-        }
-
         $this->template->render([
-            'build' => $build
+            'build' => $this->build,
+            'logs' => $this->logService->getLogs($this->build)
         ]);
     }
 }
