@@ -13,6 +13,7 @@ use QL\Hal\Core\Type\EnumType\PushStatusEnum;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Request;
@@ -35,6 +36,10 @@ class LastPushController implements ControllerInterface
      * @type EntityRepository
      */
     private $deploymentRepo;
+
+    /**
+     * @type PushRepository
+     */
     private $pushRepo;
 
     /**

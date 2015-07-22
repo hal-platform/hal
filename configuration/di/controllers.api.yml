@@ -93,6 +93,7 @@ services:
     api.deployments:
         class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
         arguments:
+            - @slim.request
             - @response.formatter
             - @doctrine.em
             - @normalizer.deployment
