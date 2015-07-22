@@ -12,35 +12,159 @@
 
     <h3>New Features</h3>
     <ul>
-        <li>TBD</li>
+        <li>
+            <h5>Deployment Pools</h5>
+            <blockquote>
+                <p>Deployment Views and Pools have been added to better organize servers on the status page.</p>
+                <p>This allows any user to create a "deployment view" and categorize servers into pools within that view. Views are shared and can be switched instantly from the status page.</p>
+
+                <b>Example Deployment Views</b>
+                <ul>
+                    <li><b>Datacenters:</b> Troy/Detroit</li>
+                    <li><b>Push Phase:</b> Phase 1/Phase 2</li>
+                    <li><b>Team Ownership:</b> Squad A, Squad B, Squad C</li>
+                </ul>
+            </blockquote>
+        </li>
+        <li>
+            <h5>Live Event Logs</h5>
+            <blockquote>
+                Event logs are now updated automatically on build and push pages as they occur in real-time. Please note that log details are not available until the job finishes.
+            </blockquote>
+        </li>
+        <li>
+            <h5>S3 Deployments</h5>
+            <blockquote>
+                <p>S3 deployments were added, in addition to the existing support for Elastic Beanstalk and EC2.</p>
+                <p>All AWS deployment types now use encrypted credentials stored in the HAL DB, and those credentials can be customized per-deployment.</p>
+            </blockquote>
+        </li>
     </ul>
 
     <h2>Changelog</h2>
 
     <h3>User Experience (UX) Enhancements</h3>
     <ul>
-        <li>TBD</li>
+        <li>
+            <h5>Deployments can now be named</h5>
+
+            <blockquote>
+                If an application has several deployments to the same server, it can be confusing telling them apart. Deployments can now be labeled to help with this.
+            </blockquote>
+        </li>
+        <li>
+            <h5>Users are automatically made leads of applications they create</h5>
+
+            <blockquote>
+                This will allow users to immediately edit or manage applications they just created. These permissions may be manually revoked by an administrator at a later time.
+            </blockquote>
+        </li>
+        <li>
+            <h5>Dynamically updated favicon on build/push pages</h5>
+
+            <blockquote>
+                <p>
+                    While waiting for long running jobs to complete, you probably do not want to stay on the build page and wait until it completes, as you are a busy IT professional and have other shit to do.
+                </p>
+                <p>
+                    The favicon will now be updated on the build and push pages to indicate the current status of the build.
+                    This will allow you to tab away and easily see when a job is finished so you can return to that page.
+                </p>
+            </blockquote>
+        </li>
     </ul>
 
     <h3>Bugs</h3>
     <ul>
-        <li>TBD</li>
-    </ul>
-
-    <h3>Changes</h3>
-
-    <ul>
-        <li>TBD</li>
+        <li>
+            <h5>Fix broken link to notification emails</h5>
+        </li>
     </ul>
 
     <h3>API Changes</h3>
     <ul>
-        <li>TBD</li>
+        <li>
+            <h5>Deployment</h5>
+
+            <blockquote>
+                <ul>
+                    <li>
+                        <code>name</code> added.
+                    </li>
+                    <li>
+                        <code>s3-bucket</code> added.
+                    </li>
+                    <li>
+                        <code>s3-file</code> added.
+                    </li>
+                </ul>
+            </blockquote>
+        </li>
+        <li>
+            <h5>Pagination</h5>
+            <blockquote>
+                <p>Pagination has been added to the following list endpoints: (<b>Users</b>, <b>Builds</b>, <b>Pushes</b>)</p>
+
+                The following links are added when applicable:
+                <ul>
+                    <li>
+                        <code>prev</code>
+                    </li>
+                    <li>
+                        <code>next</code>
+                    </li>
+                    <li>
+                        <code>first</code>
+                    </li>
+                    <li>
+                        <code>last</code>
+                    </li>
+                </ul>
+            </blockquote>
+        </li>
+        <li>
+            <h5>Start Build</h5>
+            <blockquote>
+                <p>
+                    Builds can now be started from the API by posting to <code>/api/applications/$applicationID/build</code>.
+                </p>
+                <p>
+                    This is the first non-readonly endpoint and requires use of Access Tokens.
+                    Start Build requires a POST payload with the following properties:
+                </p>
+                <ul>
+                    <li>
+                        <code>environment</code> (ID or name)
+                    </li>
+                    <li>
+                        <code>reference</code> (sha, branch, tag/$tag, or pull/#)
+                    </li>
+                </ul>
+            </blockquote>
+        </li>
     </ul>
 
     <h3>Technical</h3>
     <ul>
-        <li>TBD</li>
+        <li>
+            <h5>Dependencies</h5>
+
+            <blockquote>
+                <h4>The following components MUST go with this release:</h4>
+                <ul>
+                    <li>HAL 2.6.2</li>
+                    <li>HAL Core 2.8</li>
+                    <li>HAL Agent 2.4.3</li>
+                </ul>
+            </blockquote>
+        </li>
+        <li>
+            <h5>Agent 2 now enabled</h5>
+
+            <blockquote>
+                HAL now uses two agents to run jobs instead of one. There is still a single build server, however.
+            </blockquote>
+        </li>
     </ul>
 
     <h2>Need Help?</h2>
@@ -54,22 +178,29 @@
 
     <h3>Bug</h3>
     <ul class="task-list">
-        <li>tbd</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-276">HAL-276</a>] - Fix broken link to notification emails</li>
     </ul>
 
     <h3>Improvement</h3>
     <ul class="task-list">
-        <li>tbd</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-200">HAL-200</a>] - Add deployment views</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-234">HAL-234</a>] - Use --strip-components when untar github archive</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-257">HAL-257</a>] - When server connection fails, provide exact error message</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-274">HAL-274</a>] - Dynamically update favicon on build/push pages</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-275">HAL-275</a>] - Make a user a lead of applications they create</li>
     </ul>
 
     <h3>New Feature</h3>
     <ul class="task-list">
-        <li>tbd</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-30">HAL-30</a>] - Add pagination to the API</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-233">HAL-233</a>] - Read event log data from redis while job is in progress</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-271">HAL-271</a>] - Add start build support to API</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-272">HAL-272</a>] - Add S3 deployment type support</li>
     </ul>
 
     <h3>Task</h3>
     <ul class="task-list">
-        <li>tbd</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-267">HAL-267</a>] - Set up prod agent 2</li>
     </ul>
 </body>
 </html>
