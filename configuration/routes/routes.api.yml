@@ -95,6 +95,19 @@ parameters:
             stack: ['middleware.api.cached', 'api.deployment.lastpush']
             conditions: {id: %routes.api.regex.digit%}
 
+        api.deployment.history:
+            method: 'GET'
+            route: '/api/deployment/:id/pushes'
+            stack: ['middleware.api.cached', 'api.deployment.history']
+            conditions: {id: %routes.api.regex.digit%}
+        api.deployment.history.paged:
+            method: 'GET'
+            route: '/api/deployment/:id/pushes/page/:page'
+            stack: ['middleware.api.cached', 'api.deployment.history']
+            conditions:
+                id: %routes.api.regex.digit%
+                page: %routes.api.regex.digit%
+
         api.build:
             method: 'GET'
             route: '/api/builds/:id'

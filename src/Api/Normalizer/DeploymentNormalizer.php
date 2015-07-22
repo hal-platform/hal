@@ -97,6 +97,7 @@ class DeploymentNormalizer
                 'self' => $this->link($deployment),
                 'application' => $this->appNormalizer->link($deployment->application()),
                 'server' => $this->serverNormalizer->link($deployment->server()),
+                'pushes' => $this->buildLink(['api.deployment.history', ['id' => $deployment->id()]]),
                 'last-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
                 'last-successful-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']])
             ]

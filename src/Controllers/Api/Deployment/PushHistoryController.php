@@ -1,24 +1,25 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ * @copyright ©2015 Quicken Loans Inc. All rights reserved. Trade Secret,
  *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\Api\Push;
+namespace QL\Hal\Controllers\Api\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Core\Type\EnumType\PushStatusEnum;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
-class PushesController implements ControllerInterface
+class PushHistoryController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
@@ -32,7 +33,7 @@ class PushesController implements ControllerInterface
     /**
      * @type EntityRepository
      */
-    private $applicationRepo;
+    private $deploymentRepo;
 
     /**
      * @type PushRepository
@@ -62,7 +63,7 @@ class PushesController implements ControllerInterface
         array $parameters
     ) {
         $this->formatter = $formatter;
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
+        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->normalizer = $normalizer;
 
@@ -75,10 +76,10 @@ class PushesController implements ControllerInterface
      */
     public function __invoke()
     {
-        $application = $this->getApplication();
+        $deployment = $this->getDeployment();
         $page = $this->getCurrentPage();
 
-        $pagination = $this->pushRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->pushRepo->getByDeployment($deployment, self::MAX_PER_PAGE, ($page - 1));
         $total = count($pagination);
 
         $pushes = [];
@@ -86,7 +87,7 @@ class PushesController implements ControllerInterface
             $pushes[] = $this->normalizer->link($push);
         }
 
-        $links = $this->buildPaginationLinks($page, $total, $application);
+        $links = $this->buildPaginationLinks($page, $total, $deployment);
         $links['pushes'] = $pushes;
 
         $resource = $this->buildResource(
@@ -106,17 +107,17 @@ class PushesController implements ControllerInterface
     /**
      * @throws HttpProblemException
      *
-     * @return Application
+     * @return Deployment
      */
-    private function getApplication()
+    private function getDeployment()
     {
-        $application = $this->applicationRepo->find($this->parameters['id']);
+        $deployment = $this->deploymentRepo->find($this->parameters['id']);
 
-        if (!$application instanceof Application) {
-            throw HttpProblemException::build(404, 'invalid-application');
+        if (!$deployment instanceof Deployment) {
+            throw HttpProblemException::build(404, 'invalid-deployment');
         }
 
-        return $application;
+        return $deployment;
     }
 
     /**
@@ -139,11 +140,11 @@ class PushesController implements ControllerInterface
     /**
      * @param int $current
      * @param int $last
-     * @param Application $application
+     * @param Deployment $deployment
      *
      * @return array
      */
-    private function buildPaginationLinks($current, $total, Application $application)
+    private function buildPaginationLinks($current, $total, Deployment $deployment)
     {
         $links = [];
 
@@ -152,19 +153,19 @@ class PushesController implements ControllerInterface
         $last = ceil($total / self::MAX_PER_PAGE);
 
         if ($current > 1) {
-            $links['prev'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => $prev]]];
+            $links['prev'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $prev]]];
         }
 
         if ($next <= $last) {
-            $links['next'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => $next]]];
+            $links['next'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $next]]];
         }
 
         if ($last > 1 && $current > 1) {
-            $links['first'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => '1']]];
+            $links['first'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => '1']]];
         }
 
         if ($last > 1) {
-            $links['last'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => $last]]];
+            $links['last'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $last]]];
         }
 
         return $links;

@@ -106,6 +106,14 @@ services:
             - @doctrine.em
             - @slim.route.parameters
 
+    api.deployment.history:
+        class: 'QL\Hal\Controllers\Api\Deployment\PushHistoryController'
+        arguments:
+            - @response.formatter
+            - @doctrine.em
+            - @normalizer.push
+            - @slim.route.parameters
+
     ####################################################################################################################
     # ENVIRONMENT CONTROLLERS
     ####################################################################################################################
