@@ -15,38 +15,45 @@
     height: 100%;
 }
 
-.icon--success {
-    color: $success-color;
+@mixin icon-color($color, $inverse: false) {
+    @if $inverse {
+        color: $white;
+        background: $color;
+        padding: 4px;
+    }
+    @else {
+        color: $color;
+    }
 }
+
+.icon--success {
+    @include icon-color($success-color);
+}
+
 .icon--success-inverse {
-    color: $white;
-    background: $success-color;
-    padding: 4px;
+    @include icon-color($success-color, true);
 }
 
 .icon--error {
-    color: $error-color;
+    @include icon-color($error-color);
 }
+
 .icon--error-inverse {
-    color: $white;
-    background: $error-color;
-    padding: 4px;
+    @include icon-color($error-color, true);
 }
 
 .icon--info {
-    color: $info-color;
+    @include icon-color($info-color);
 }
+
 .icon--info-inverse {
-    color: $white;
-    background: $info-color;
-    padding: 4px;
+    @include icon-color($info-color, true);
 }
 
 .icon--warning {
-    color: $warning-color;
+    @include icon-color($warning-color);
 }
+
 .icon--warning-inverse {
-    color: $white;
-    background: $warning-color;
-    padding: 4px;
+    @include icon-color($warning-color, true);
 }
