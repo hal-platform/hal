@@ -1,3 +1,4 @@
+{% import _self as macros %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -71,19 +72,19 @@
             <section>
 
                 <h1>Header H1 <strong>details</strong></h1>
-                <p>Page headers</p>
+                <p>For use as page headers</p><hr>
 
                 <h2>Header H2</h2>
-                <p>Section headers</p>
+                <p>For use as section headers</p><hr>
 
                 <h3>Header H3</h3>
-                <p>Subsection header</p>
+                <p>For use as subsection headers</p><hr>
 
                 <h4>Header H4</h4>
-                <p>Label headers or attributes</p>
+                <p>For use as labels or attributes</p><hr>
 
                 <h5>Header H5</h5>
-                <p>????</p>
+                <p>????</p><hr>
 
                 <h6>Header h6</h6>
                 <p>????</p>
@@ -91,6 +92,9 @@
 
             <hr><h2>Buttons</h2><hr>
             <section>
+
+                <p class="mtm mbn">Usage:</p>
+                <pre class="mbm">{{ macros.button()|e('html') }}</pre>
 
                 <h3>Types</h3>
 
@@ -112,6 +116,10 @@
                 <a href="#" class="btn btn--large">btn--large</a>
 
                 <h3>Button Lists</h3>
+
+                <p class="mtm mbn">Usage:</p>
+                <pre class="mbm">{{ macros.button_list()|e('html') }}</pre>
+
                 <ul class="button-list">
                     <li><a href="#" class="btn">btn 1</a></li>
                     <li><a href="#" class="btn">btn 2</a></li>
@@ -139,7 +147,7 @@
                 <a href="icons.html">List of icons</a>
 
                 <p class="mtm mbn">Usage:</p>
-                <pre>&lt;svg class="icon"&gt;&lt;use xlink:href="/icons.svg#branch"&gt;&lt;/use&gt;&lt;/svg&gt;</pre>
+                <pre class="mbm">{{ macros.icon()|e('html') }}</pre>
 
                 <br><svg class="icon"><use xlink:href="/icons.svg#bullet"></use></svg>
                 <br><svg class="icon"><use xlink:href="/icons.svg#tick"></use></svg>
@@ -151,14 +159,22 @@
             <hr><h2>Status</h2><hr>
             <section>
 
-                <p>Blocks</p>
+                <h3>Blocks</h3>
+
+                <p class="mtm mbn">Usage:</p>
+                <pre class="mbm">{{ macros.status_block()|e('html') }}</pre>
+
                 <span class="status-block--info">status-block--info</span><br>
                 <span class="status-block--success">status-block--success</span><br>
                 <span class="status-block--error">status-block--error</span><br>
                 <span class="status-block--notice">status-block--notice</span><br>
                 <span class="status-block--warning">status-block--warning</span>
 
-                <p class="mtm">Icons</p>
+                <h3>Icons</h3>
+
+                <p class="mtm mbn">Usage:</p>
+                <pre class="mbm">{{ macros.status_icon()|e('html') }}</pre>
+
                 <span class="status-icon--info">status-icon--info</span><br>
                 <span class="status-icon--success">status-icon--success</span><br>
                 <span class="status-icon--error">status-icon--error</span><br>
@@ -166,7 +182,7 @@
                 <span class="status-icon--warning">status-icon--warning</span><br>
                 <span class="status-icon--thinking">status-icon--thinking</span>
 
-                <p class="mtm">Combination</p>
+                <h3>Combination</h3>
 
                 <span class="status-block--error">
                     <span class="status-icon--info">inner icon</span>
@@ -185,6 +201,9 @@
             <hr><h2>Alerts</h2><hr>
             <section>
 
+                <p class="mtm mbn">Usage:</p>
+                <pre class="mbm">{{ macros.alert_bar()|e('html') }}</pre>
+
                 <div class="alert-bar">
                     <h4>alert-bar</h4>
                 </div>
@@ -201,7 +220,6 @@
                     <h4>alert-bar--success</h4>
                 </div>
 
-
                 <div class="alert-bar">
                     <h4>alert-bar</h4>
                     <p>
@@ -209,34 +227,33 @@
                     </p>
                 </div>
 
-
             </section>
 
             <hr><h2>Lists</h2><hr>
             <section>
 
-                <p>No style</p>
+                <h3>No style</h3>
                 <ul>
                     <li>item 1</li>
                     <li>item 2</li>
                     <li>item 3</li>
                 </ul>
 
-                <p>bare</b></p>
+                <h3><code>list--bare</code></h3>
                 <ul class="list--bare">
                     <li>item 1</li>
                     <li>item 2</li>
                     <li>item 3</li>
                 </ul>
 
-                <p>bullet</b></p>
+                <h3><code>list--bullet</code></h3>
                 <ul class="list--bullet">
                     <li>item 1</li>
                     <li>item 2</li>
                     <li>item 3</li>
                 </ul>
 
-                <p>inline</p>
+                <h3>inline</h3>
 
                 <code>inline-list</code>:
                 <ul class="inline-list">
@@ -261,29 +278,74 @@
                     <li>item 3</li>
                 </ul>
 
-                <p class="mtm">stats</p>
+                <h3><code>stat-list</code></h3>
+                <h3>stats</h3>
                 <ul class="stat-list">
                     <li>item 1</li>
                     <li>item 2</li>
                     <li>item 3</li>
                 </ul>
 
-                <p class="mtm">code</p>
+                <h3><code>code-list</code></h3>
                 <ul class="code-list">
                     <li>item 1</li>
                     <li>item 2</li>
                     <li>item 3</li>
                 </ul>
 
-                <p class="mtm">legend</p>
+                <h3>Legend</h3>
+
+                <p class="mtm mbn">Usage:</p>
+                <pre class="mbm">{{ macros.list_legend()|e('html') }}</pre>
+
                 <ul>
                     <li class="list--legend"><b>Title_1</b><p>The second element is kept to the right of the title, regardless if it spans multiple lines</p></li>
                     <li class="list--legend"><b>Title_2</b><p>lorem ipsum dolor sit amet lorem ipsum dolor sit amet</p></li>
                     <li class="list--legend">item 3</li>
                 </ul>
-
             </section>
 
         </main>
     </body>
 </html>
+
+{% macro button() %}
+<a href="#" class="btn btn--action btn--small">Button text</a>
+{% endmacro %}
+
+{% macro button_list() %}
+<ul class="button-list">
+    <li><a href="#" class="btn">btn 1</a></li>
+    <li><a href="#" class="btn">btn 2</a></li>
+    <li><a href="#" class="btn">btn 3</a></li>
+</ul>
+{% endmacro %}
+
+{% macro icon() %}
+<svg class="icon"><use xlink:href="/icons.svg#branch"></use></svg>
+{% endmacro %}
+
+{% macro status_block() %}
+<span class="status-block--info">text</span>
+{% endmacro %}
+
+{% macro status_icon() %}
+<span class="status-icon--info">text</span>
+{% endmacro %}
+
+{% macro alert_bar() %}
+<div class="alert-bar">
+    <h4>Alert subject</h4>
+    <p>
+        Additional details
+    </p>
+</div>
+{% endmacro %}
+
+{% macro list_legend() %}
+<ul>
+    <li class="list--legend"><b>Title_1</b><p>decription 1</p></li>
+    <li class="list--legend"><b>Title_2</b><p>decription 2</p></li>
+    <li class="list--legend">item 3</li>
+</ul>
+{% endmacro %}

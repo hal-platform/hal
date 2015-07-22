@@ -537,3 +537,11 @@ services:
 
     debug.page:
         class: 'QL\Hal\Controllers\DebugController'
+
+    styleguide.page:
+        parent: 'static.controller'
+        arguments: [@styleguide.twig, @slim.response]
+    styleguide.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['styleguide.html.twig']]]
+

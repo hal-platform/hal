@@ -18,7 +18,7 @@ parameters:
         debug:
             method: 'GET'
             route:  '/debug'
-            stack:  ['middleware.login', 'debug.page']
+            stack:  ['middleware.super', 'debug.page']
 
         github.authorization:
             method: 'GET'
@@ -29,6 +29,11 @@ parameters:
             method: ['GET', 'POST']
             route:  '/settings/remove-github-authorization'
             stack:  ['middleware.login', 'github.authorization.remove.page']
+
+        styleguide:
+            method: 'GET'
+            route:  '/styleguide'
+            stack:  ['styleguide.page']
 
         ################################################################################################################
         # QUEUE ROUTES
