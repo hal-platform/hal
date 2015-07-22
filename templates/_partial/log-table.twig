@@ -1,6 +1,6 @@
 {% import "_partial/macros.twig" as macros %}
 
-<table class="table--spacing-medium" data-tablesaw-mode="stack">
+<table class="js-event-logs table--spacing-medium table--bodied" data-tablesaw-mode="stack">
     <thead>
         <tr>
             <th class="t20">Event</th>
@@ -11,7 +11,7 @@
     </thead>
 
     {% for log in logs %}
-        <tbody>
+        <tbody data-log="{{ log.id }}">
             <tr class="{{ log.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>
                     {% if log.status == 'success' %}
@@ -49,8 +49,8 @@
             {% endif %}
         </tbody>
     {% else %}
-        <tbody>
-            <tr class="js-empty-row">
+        <tbody class="js-empty-row">
+            <tr>
                 <td colspan="4">No logs found.</td>
             </tr>
         </tbody>

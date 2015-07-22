@@ -64,6 +64,20 @@ tbody tr {
     }
 }
 
+.table--bodied {
+    tbody {
+        tr {
+            border-bottom: 1px dotted $light-grey;
+        }
+
+        &:last-child {
+            tr:last-child {
+                border-bottom: 0;
+            }
+        }
+    }
+}
+
 .table-breathe::before
 {
     content: '';

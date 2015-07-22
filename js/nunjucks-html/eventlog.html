@@ -1,0 +1,27 @@
+<tbody data-log="{{ log.id }}">
+    <tr class="{% if log.status == 'failure' %}event-log--error{% endif %}">
+        <td>
+            {% if log.status == 'success' %}
+                <span class="status-block--success">
+                    <svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#tick"></use></svg>
+                    {{ logEvent|capitalize }}
+                </span>
+
+            {% elif log.status == 'failure' %}
+                 <span class="status-block--error">
+                    <svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#spam"></use></svg>
+                    {{ logEvent|capitalize }}
+                </span>
+
+            {% else %}
+                 <span class="status-block--info">
+                    <svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#paragraph-justify-2"></use></svg>
+                    {{ logEvent|capitalize }}
+                </span>
+            {% endif %}
+        </td>
+        <td>{{ logCreated }}</td>
+        <td>{{ log.message }}</td>
+        <td></td>
+    </tr>
+</tbody>
