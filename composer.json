@@ -35,17 +35,18 @@
         "predis/predis": "~1.0",
         "psr/log": "*",
 
-        "ql/exception-toolkit": "~0.1",
+        "ql/exception-toolkit": "~1.0",
         "ql/hal-core": "~2.8.0",
         "ql/http-problem": "~1.0",
 
         "ql/mcp-cache":         "~2.2",
         "ql/mcp-core":          "~1.0",
         "ql/mcp-corp-account":  "~1.0",
-        "ql/mcp-crypto":        "~2.0",
-        "ql/mcp-logger":        "~2.0",
+        "ql/mcp-crypto":        "~2.0.0",
+        "ql/mcp-qks":           "~1.0.0",
+        "ql/mcp-logger":        "~2.2.0",
 
-        "ql/panthor":           "~2.1",
+        "ql/panthor":           "~2.2",
         "ql/uri-template":      "~1.0",
 
         "slim/slim": "~2.6",

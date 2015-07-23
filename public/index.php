@@ -8,7 +8,7 @@
 namespace QL\Hal\Bootstrap;
 
 use Exception;
-use QL\Hal\Slim\ErrorHandler;
+use QL\Panthor\ErrorHandling\FatalErrorHandler;
 
 define('MAINTENANCE', false);
 
@@ -42,8 +42,8 @@ ini_set('memory_limit','384M');
 ini_set('display_errors', 0);
 
 # convert errors to exceptions
-ErrorHandler::register([$app, 'error']);
+FatalErrorHandler::register([$app, 'error']);
 
-$headers = $app->response()->headers['Content-Type'] = 'text/html; charset=utf-8';
+$headers = $app->response()->headers->set('Content-Type', 'text/html; charset=utf-8');
 
 $app->run();
