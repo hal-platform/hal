@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "14a8153c86134365aa9b432608b679ed",
+    "hash": "a3601600655c679d0a9e69758186b4e0",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1404,11 +1404,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "dev-master",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "http://git/web-core/hal-core.git",
-                "reference": "de5f6842f0d0eabc0b62b5aa06262e258245163b"
+                "reference": "d6988eacaf4ea43b9567887c147d34c93ae237d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-hal-core-2.8.0-2bc6eb.zip",
+                "reference": "d6988eacaf4ea43b9567887c147d34c93ae237d7",
+                "shasum": "98325703025ca8a41a3c308ee5bb1c9b1d6ed067"
             },
             "archive": {
                 "exclude": [
@@ -1424,7 +1430,6 @@
                 "ext-pdo": "*",
                 "ext-pdo_mysql": "*",
                 "ext-pdo_sqlite": "*",
-                "ext-xmlwriter": "*",
                 "php-64bit": ">=5.5",
                 "ql/mcp-core": "*"
             },
@@ -1452,7 +1457,7 @@
                 }
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-07-21 13:04:41"
+            "time": "2015-07-23 16:41:25"
         },
         {
             "name": "ql/http-problem",
@@ -3686,9 +3691,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ql/hal-core": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

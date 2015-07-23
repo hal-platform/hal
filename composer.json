@@ -10,7 +10,6 @@
         "psr-4": { "QL\\Hal\\": "src", "QL\\Kraken\\": "src-kraken" }
     },
     "repositories": [
-        { "type": "git", "url": "http://git/web-core/hal-core.git" },
         { "type": "composer", "url": "http://composer/" }
     ],
 
@@ -37,7 +36,7 @@
         "psr/log": "*",
 
         "ql/exception-toolkit": "~0.1",
-        "ql/hal-core": "dev-master",
+        "ql/hal-core": "~2.8.0",
         "ql/http-problem": "~1.0",
 
         "ql/mcp-cache":         "~2.2",
