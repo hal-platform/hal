@@ -129,7 +129,20 @@ services:
 
     exception.configurator:
         class: 'QL\Hal\Slim\ExceptionConfigurator'
-        arguments: [@error.pages.twig]
+        arguments: [@error.twig]
+
+    # Twig template for slim errors (404, 500)
+    error.twig:
+        class: 'QL\Panthor\Twig\LazyTwig'
+        arguments: [@error.failsafe.environment, @twig.context]
+        calls: [['setTemplate', ['error.html.twig']]]
+
+    # Twig error environment - limit the extensions used here, so we can ensure the error will render
+    error.failsafe.environment:
+        parent: 'panthor.twig.environment'
+        calls:
+            - ['addExtension', [@twig.extension.hal]]
+            - ['addExtension', [@twig.extension.hal.global]]
 
     ####################################################################################################################
     # CACHING

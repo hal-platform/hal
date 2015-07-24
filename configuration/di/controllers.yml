@@ -530,11 +530,6 @@ services:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['denied.twig']]]
 
-    # The twig template for slim errors (404, 500)
-    error.pages.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['error.twig']]]
-
     debug.page:
         class: 'QL\Hal\Controllers\DebugController'
 
