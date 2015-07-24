@@ -4,26 +4,24 @@ var nofunzone = require('./app/util/nofunzone');
 var reltime = require('./app/util/relative-time');
 
 var app = {
-    componentsAttr: "jsComponents",
+    componentsAttr: "data-js-components",
     init: function() {
 
-        var headData = document.querySelector('head').dataset,
-            requestedComponents;
-
-        if (headData.hasOwnProperty(this.componentsAttr)) {
-            requestedComponents = headData[this.componentsAttr];
-
-            // Load components
-            requestedComponents.split(' ').map(function(component) {
-                if (components.hasOwnProperty(component)) {
-                    component = components[component];
-                    component();
-                } else {
-                    console.log("Component not found: " + component);
-                }
-
-            });
+        var requested = document.querySelector('head').getAttribute(this.componentsAttr);
+        if (requested === "undefined" || requested == null) {
+            return;
         }
+
+        // Load components
+        requested.split(' ').map(function(component) {
+            if (components.hasOwnProperty(component)) {
+                component = components[component];
+                component();
+            } else {
+                console.log("Component not found: " + component);
+            }
+
+        });
     },
     globals: function() {
         terminal.init();

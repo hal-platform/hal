@@ -71,7 +71,7 @@
         {% if canEdit %}
 
             <div class="form-wrapper js-add-deployment__form">
-                <h2>Add Deployment</b></h2>
+                <h2>Add Deployment</h2>
 
                 {% include '_partial-form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': {}, 'application': application, rsync_only: true} %}
             </div>
