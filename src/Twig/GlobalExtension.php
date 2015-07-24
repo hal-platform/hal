@@ -7,8 +7,7 @@
 
 namespace QL\Hal\Twig;
 
-use Doctrine\ORM\EntityManagerInterface;
-use QL\Hal\Core\Repository\UserRepository;
+use Exception;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use Slim\Http\Request;
@@ -43,24 +42,16 @@ class GlobalExtension extends Twig_Extension
     private $session;
 
     /**
-     * @type UserRepository
-     */
-    private $userRepo;
-
-    /**
      * @param IntrospectableContainerInterface $di
-     * @param EntityManagerInterface $em
      * @param Request $request
      * @param Session $session
      */
     public function __construct(
         IntrospectableContainerInterface $di,
-        EntityManagerInterface $em,
         Request $request,
         Session $session
     ) {
         $this->di = $di;
-        $this->userRepo = $em->getRepository(User::CLASS);
 
         $this->request = $request;
         $this->session = $session;
@@ -110,14 +101,19 @@ class GlobalExtension extends Twig_Extension
      */
     private function getCurrentUser()
     {
-        $user = null;
-        // already loaded
-        if ($this->di->initialized('currentUser')) {
-            $user = $this->di->get('currentUser', IntrospectableContainerInterface::NULL_ON_INVALID_REFERENCE);
-        // read from db if session is set
-        } elseif ($userId = $this->session->get('user_id')) {
-            $user = $this->userRepo->find($userId);
+        try {
+            // already loaded
+            if ($this->di->initialized('currentUser')) {
+                $user = $this->di->get('currentUser', IntrospectableContainerInterface::NULL_ON_INVALID_REFERENCE);
+
+            // read from db if session is set
+            } elseif ($userId = $this->session->get('user_id')) {
+                $user = $this->di->get('doctrine.em')->getRepository(User::CLASS)->find($userId);
+            }
+        } catch (Exception $ex) {
+            $user = null;
         }
+
         return $user;
     }
 }

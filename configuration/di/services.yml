@@ -120,7 +120,6 @@ services:
         class: 'QL\Hal\Twig\GlobalExtension'
         arguments:
             - @service_container
-            - @doctrine.em
             - @slim.request
             - @session
         calls:
