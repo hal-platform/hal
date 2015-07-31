@@ -26,7 +26,7 @@ class EnvironmentValidator
 
     const ERR_DUPLICATE_NAME = 'An environment with this name already exists.';
 
-    const VALIDATE_NAME_REGEX = '/^[a-zA-Z_-]{2,40}*$/';
+    const VALIDATE_NAME_REGEX = '/^[a-zA-Z_-]{2,40}$/';
     const VALIDATE_TOKEN_REGEX = '/^[a-zA-Z0-9\-\=\.\+\/]{0,40}$/';
     const VALIDATE_QKS_KEY_REGEX = '/^[0-9A-Z]{6}$/';
 
