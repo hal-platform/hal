@@ -7,16 +7,12 @@
 
 namespace QL\Kraken\Utility;
 
-use GuzzleHttp\ClientInterface as Guzzle;
-use QL\Kraken\Core\Entity\Environment;
-use QL\Kraken\Service\Exception\ConfigurationException;
-use MCP\Crypto\Primitive\Factory;
 use MCP\Crypto\Exception\CryptoException;
 use MCP\Crypto\Package\QuickenMessagePackage;
 use MCP\Crypto\Package\TamperResistantPackage;
-use MCP\DataType\HttpUrl;
-use MCP\QKS\Client\HttpClient as QKSGuzzleService;
-use MCP\QKS\Client\Parser\JsonParser;
+use MCP\Crypto\Primitive\Factory as PrimitiveFactory;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Service\Exception\ConfigurationException;
 
 class CryptoFactory
 {
@@ -27,16 +23,12 @@ class CryptoFactory
     const ERR_MISSING_QKS_KEY = 'QKS encryption key is missing for this environment.';
     const ERR_MISSING_QKS_AUTH = 'QKS credentials are missing for this environment.';
     const ERR_INVALID_CLIENT_SECRET = 'QKS Secret could not be decrypted for usage.';
+    const ERR_QKS_EXPLODED = 'QKS Service Client could not be built.';
 
     /**
-     * @type Guzzle
+     * @type QKSFactory
      */
-    private $guzzle;
-
-    /**
-     * @type JsonParser
-     */
-    private $parser;
+    private $qksFactory;
 
     /**
      * @type string
@@ -49,21 +41,13 @@ class CryptoFactory
     private $fileLoader;
 
     /**
-     * @param Guzzle $guzzle
-     * @param JsonParser $parser
-     *
+     * @param QKSFactory $qksFactory
      * @param string $symKeyPath
      * @param callable|null $fileLoader
      */
-    public function __construct(
-        Guzzle $guzzle,
-        JsonParser $parser,
-        $symKeyPath,
-        callable $fileLoader = null
-    ) {
-        // qmp
-        $this->guzzle = $guzzle;
-        $this->parser = $parser;
+    public function __construct(QKSFactory $qksFactory, $symKeyPath, callable $fileLoader = null)
+    {
+        $this->qksFactory = $qksFactory;
 
         // trp
         $this->symKeyPath = $symKeyPath;
@@ -78,7 +62,7 @@ class CryptoFactory
     public function getTRP()
     {
         $key = call_user_func($this->fileLoader, $this->symKeyPath);
-        return new TamperResistantPackage(new Factory, $key);
+        return new TamperResistantPackage(new PrimitiveFactory, $key);
     }
 
     /**
@@ -90,16 +74,16 @@ class CryptoFactory
      */
     public function getQMP(Environment $environment)
     {
-        $qksHost = $environment->qksServiceURL();
-        $qksKey = $environment->qksEncryptionKey();
+        $qksURL = $environment->qksServiceURL();
+        $qksSendingKey = $environment->qksEncryptionKey();
         $clientID = $environment->qksClientID();
         $encryptedClientSecret = $environment->qksClientSecret();
 
-        if (!$qksHost) {
+        if (!$qksURL) {
             throw new ConfigurationException(self::ERR_MISSING_QKS_SERVICE);
         }
 
-        if (!$qksKey) {
+        if (!$qksSendingKey) {
             throw new ConfigurationException(self::ERR_MISSING_QKS_KEY);
         }
 
@@ -113,17 +97,11 @@ class CryptoFactory
             throw new ConfigurationException(self::ERR_INVALID_CLIENT_SECRET);
         }
 
-        // bullshit
-        $qksHost = HttpUrl::create($qksHost);
-        $qksHost = $qksHost->host();
+        if ($qmp = $this->qksFactory->getQMP($qksURL, $clientID, $clientSecret, $qksSendingKey)) {
+            return $qmp;
+        }
 
-        $service = new QKSGuzzleService($this->guzzle, $this->parser, [
-            QKSGuzzleService::CONFIG_HOSTNAME => $qksHost,
-            QKSGuzzleService::CONFIG_CLIENT_ID => $clientID,
-            QKSGuzzleService::CONFIG_CLIENT_SECRET => $clientSecret,
-        ]);
-
-        return new QuickenMessagePackage(new Factory, $service, $qksKey);
+        throw new ConfigurationException(self::ERR_QKS_EXPLODED);
     }
 
     /**

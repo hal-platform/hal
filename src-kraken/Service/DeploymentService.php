@@ -270,6 +270,15 @@ class DeploymentService
         try {
             $encrypted = $qmp->encrypt($decrypted, $receipients);
         } catch (QKSException $ex) {
+            // $this->logger->warning('', '');
+
+            // log this shit
+            // log this shit
+            // log this shit
+            // log this shit
+            // log this shit
+            // log this shit
+
             throw new QKSConnectionException(self::ERR_QKS_ERROR);
         } catch (CryptoException $ex) {
             throw new QKSConnectionException($ex->getMessage());

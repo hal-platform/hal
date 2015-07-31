@@ -90,9 +90,16 @@ services:
     kraken.crypto.factory:
         class: 'QL\Kraken\Utility\CryptoFactory'
         arguments:
-            - @kraken.crypto.qmp.guzzle
-            - @kraken.crypto.qmp.json
+            - @kraken.crypto.qks.factory
             - @kraken.crypto.factory.secret.file
+
+    kraken.crypto.qks.factory:
+        class: 'QL\Kraken\Utility\QKSFactory'
+        arguments:
+            - @kraken.crypto.qmp.http
+            - @kraken.crypto.qmp.json
+            - @kraken.crypto.qmp.envelope
+            - @kraken.crypto.qmp.box
 
     kraken.crypto.factory.secret.file:
         class: 'stdClass'
@@ -103,16 +110,38 @@ services:
         class: 'MCP\Crypto\Package\TamperResistantPackage'
         factory: [@kraken.crypto.factory, 'getTRP']
 
-    kraken.crypto.qmp.guzzle:
-        class: 'GuzzleHttp\Client'
-
     kraken.crypto.qmp.json:
-        class: 'MCP\QKS\Client\Parser\JsonParser'
-        arguments: [@kraken.crypto.qmp.json.schema]
+        class: 'QL\MCP\QKS\Crypto\Client\Parser\JsonParser'
+        arguments: [@kraken.crypto.qmp.json.schema, @kraken.crypto.qmp.json.resolver]
 
     kraken.crypto.qmp.json.schema:
         class: 'JsonSchema\Validator'
+    kraken.crypto.qmp.json.resolver:
+        class: 'JsonSchema\RefResolver'
 
     # kraken.crypto.decrypter:
         # class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
         # factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']
+
+    # omg kill me
+
+    kraken.crypto.qmp.envelope:
+        class: 'QL\MCP\QKS\Crypto\Envelope\Factory'
+        arguments: [@kraken.crypto.qmp.box]
+    kraken.crypto.qmp.box:
+        class: 'QL\MCP\QKS\Crypto\Envelope\Box\Factory'
+
+    kraken.crypto.qmp.http:
+        class: 'QL\MCP\Http\Client'
+        arguments:
+            - @kraken.crypto.qmp.guzzle.handler
+            -
+                connect_timeout: 2
+                request_timeout: 5
+
+    kraken.crypto.qmp.guzzle.handler:
+        class: 'QL\MCP\Http\Handler\Guzzle5Handler'
+        arguments: [@kraken.crypto.qmp.guzzle]
+
+    kraken.crypto.qmp.guzzle:
+        class: 'GuzzleHttp\Client'

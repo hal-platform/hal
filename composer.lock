@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2668c95b69be53c617f1b5357b44d169",
+    "hash": "535eaef1aae307066abff84365fc3a66",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1659,30 +1659,31 @@
         },
         {
             "name": "ql/mcp-crypto",
-            "version": "2.0.4",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-crypto.git",
-                "reference": "7007f858b3d2a29980d7a16bb4145319edc3e926"
+                "reference": "1c0006045ee19ce47b07147481326a21c7fe2832"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-crypto-2.0.4-4754c9.zip",
-                "reference": "7007f858b3d2a29980d7a16bb4145319edc3e926",
-                "shasum": "9f8b0e5fc2081b7588bf95f5832cc8e5f04d7c46"
+                "url": "http://composer/dist/ql-mcp-crypto-2.1.1-309a09.zip",
+                "reference": "1c0006045ee19ce47b07147481326a21c7fe2832",
+                "shasum": "97f98555ac0eb6e83c5646349861fdeac1d0eba6"
             },
             "require": {
                 "ext-mbstring": "*",
                 "ext-pcre": "*",
                 "php": ">=5.4.0",
-                "ql/mcp-core": "^1.0",
-                "ql/mcp-qks": "^1.0"
+                "ql/mcp-core": "^1.0"
             },
             "require-dev": {
                 "ext-libsodium": "*",
                 "ext-mcrypt": "*",
+                "guzzlehttp/guzzle": "^6.0",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
+                "ql/mcp-qks": "^2.0",
                 "squizlabs/php_codesniffer": "*",
                 "symfony/config": ">=2.5",
                 "symfony/dependency-injection": ">=2.5",
@@ -1691,7 +1692,8 @@
             "suggest": {
                 "ext-libsodium": "Required when using Sodium asymmetric encryption.",
                 "ext-mcrypt": "Required when using AES symmetric encryption.",
-                "ext-openssl": "Provides a better random number generator for generating a key."
+                "ext-openssl": "Provides a better random number generator for generating a key.",
+                "ql/mcp-qks": "Required when using Quicken Message Package (^2.0)."
             },
             "bin": [
                 "bin/random"
@@ -1727,7 +1729,59 @@
             ],
             "description": "Symmetric and asymmetric encryption library for PHP",
             "homepage": "http://git/mcp/mcp-crypto",
-            "time": "2015-07-08 22:19:42"
+            "time": "2015-07-28 15:55:39"
+        },
+        {
+            "name": "ql/mcp-http",
+            "version": "1.0.5",
+            "source": {
+                "type": "git",
+                "url": "git@git:mcp/mcp-http.git",
+                "reference": "1221619e2ab885eca6773ae6f21a2de18b5c8662"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-mcp-http-1.0.5-f836c5.zip",
+                "reference": "1221619e2ab885eca6773ae6f21a2de18b5c8662",
+                "shasum": "6ea382dfd94d749c97928f7096db8a1792050199"
+            },
+            "require": {
+                "guzzlehttp/promises": "^1.0",
+                "guzzlehttp/psr7": "^1.1",
+                "php": ">=5.5.0",
+                "ql/uri-template": "^1.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.0",
+                "mockery/mockery": ">=0.8",
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "*",
+                "squizlabs/php_codesniffer": "*",
+                "symfony/config": ">=2.5",
+                "symfony/dependency-injection": ">=2.5",
+                "symfony/yaml": ">=2.5"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "Required when using Guzzle 4, 5, or 6 clients."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\MCP\\Http\\": "src",
+                    "QL\\MCP\\Http\\Testing\\": "testing/src"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Colf",
+                    "email": "matthewcolf@quickenloans.com"
+                }
+            ],
+            "description": "Implementation agnostic HTTP client",
+            "time": "2015-07-29 15:16:09"
         },
         {
             "name": "ql/mcp-logger",
@@ -1791,27 +1845,28 @@
         },
         {
             "name": "ql/mcp-qks",
-            "version": "1.0.3",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-qks.git",
-                "reference": "4bed27c11fe80bbda4b9de62372cf0dde8f0e9c3"
+                "reference": "1bd5d0f0b185cc8b4975c7f24234db9eb1a9fa2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-qks-1.0.3-4f0d7b.zip",
-                "reference": "4bed27c11fe80bbda4b9de62372cf0dde8f0e9c3",
-                "shasum": "fdd5b5e397902ca0b80f7cd2fc85811111f9146c"
+                "url": "http://composer/dist/ql-mcp-qks-2.0.1-cbd8eb.zip",
+                "reference": "1bd5d0f0b185cc8b4975c7f24234db9eb1a9fa2c",
+                "shasum": "883e8a1a62c34184c7ba0d1579bd0522d9af746c"
             },
             "require": {
                 "ext-pcre": "*",
-                "guzzlehttp/guzzle": "^4.0 | ^5.0",
                 "justinrainbow/json-schema": "^1.4",
                 "php": ">=5.4.0",
                 "ql/mcp-core": "^1.0",
+                "ql/mcp-http": "^1.0",
                 "ql/uri-template": "^1.0"
             },
             "require-dev": {
+                "guzzlehttp/guzzle": "^6.0",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
                 "squizlabs/php_codesniffer": "*",
@@ -1822,8 +1877,8 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "MCP\\QKS\\": "src",
-                    "MCP\\QKS\\Testing\\": "testing/src"
+                    "QL\\MCP\\QKS\\": "src",
+                    "QL\\MCP\\QKS\\Testing\\": "testing/src"
                 }
             },
             "license": [
@@ -1837,7 +1892,7 @@
             ],
             "description": "QKS Service Library",
             "homepage": "http://git/mcp/mcp-qks",
-            "time": "2015-07-01 21:33:08"
+            "time": "2015-07-29 15:10:09"
         },
         {
             "name": "ql/panthor",
