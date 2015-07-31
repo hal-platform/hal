@@ -87,7 +87,7 @@ services:
             - ['add', [@slim.session]]
 
     slim.hook.logger:
-        class: 'QL\Panthor\Slim\McpLoggerHook'
+        class: 'QL\Hal\Slim\McpLoggerHook'
         arguments: [@logger.mcp.factory]
     slim.hook.errors:
         class: 'QL\Panthor\ErrorHandling\ErrorHandler'
