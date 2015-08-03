@@ -102,6 +102,8 @@ class GlobalExtension extends Twig_Extension
     private function getCurrentUser()
     {
         try {
+            $user = null;
+
             // already loaded
             if ($this->di->initialized('currentUser')) {
                 $user = $this->di->get('currentUser', IntrospectableContainerInterface::NULL_ON_INVALID_REFERENCE);
