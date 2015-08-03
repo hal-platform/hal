@@ -97,7 +97,7 @@ services:
     kraken.crypto.qks.factory:
         class: 'QL\Kraken\Utility\QKSFactory'
         arguments:
-            - @kraken.crypto.qmp.http
+            - @kraken.crypto.qmp.guzzle
             - @kraken.crypto.qmp.json
             - @kraken.crypto.qmp.envelope
             - @kraken.crypto.qmp.box
@@ -132,17 +132,11 @@ services:
     kraken.crypto.qmp.box:
         class: 'QL\MCP\QKS\Crypto\Envelope\Box\Factory'
 
-    kraken.crypto.qmp.http:
-        class: 'QL\MCP\Http\Client'
-        arguments:
-            - @kraken.crypto.qmp.guzzle.handler
-            -
-                connect_timeout: 2
-                request_timeout: 5
-
-    kraken.crypto.qmp.guzzle.handler:
-        class: 'QL\MCP\Http\Handler\Guzzle5Handler'
-        arguments: [@kraken.crypto.qmp.guzzle]
-
     kraken.crypto.qmp.guzzle:
         class: 'GuzzleHttp\Client'
+        arguments:
+            -
+                defaults:
+                    headers:
+                        connect_timeout: 2
+                        timeout: 5

@@ -10,6 +10,7 @@
         "psr-4": { "QL\\Hal\\": "src", "QL\\Kraken\\": "src-kraken" }
     },
     "repositories": [
+        { "type": "git", "url": "http://git/mcp/mcp-qks.git" },
         { "type": "composer", "url": "http://composer/" }
     ],
 
@@ -43,7 +44,7 @@
         "ql/mcp-core":          "~1.0",
         "ql/mcp-corp-account":  "~1.0",
         "ql/mcp-crypto":        "~2.1.0",
-        "ql/mcp-qks":           "~2.0.0",
+        "ql/mcp-qks":           "~2.0.2",
         "ql/mcp-logger":        "~2.2.0",
 
         "ql/panthor":           "~2.2",

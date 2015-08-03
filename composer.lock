@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "535eaef1aae307066abff84365fc3a66",
+    "hash": "e1c71070eb1e8988de533ff104b67347",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1845,17 +1845,11 @@
         },
         {
             "name": "ql/mcp-qks",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-qks.git",
-                "reference": "1bd5d0f0b185cc8b4975c7f24234db9eb1a9fa2c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-mcp-qks-2.0.1-cbd8eb.zip",
-                "reference": "1bd5d0f0b185cc8b4975c7f24234db9eb1a9fa2c",
-                "shasum": "883e8a1a62c34184c7ba0d1579bd0522d9af746c"
+                "url": "http://git/mcp/mcp-qks.git",
+                "reference": "3c0efcf6e6f4156750ff0ae5f888b64f82761aa5"
             },
             "require": {
                 "ext-pcre": "*",
@@ -1867,6 +1861,7 @@
             },
             "require-dev": {
                 "guzzlehttp/guzzle": "^6.0",
+                "mockery/mockery": "*",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
                 "squizlabs/php_codesniffer": "*",
@@ -1892,7 +1887,7 @@
             ],
             "description": "QKS Service Library",
             "homepage": "http://git/mcp/mcp-qks",
-            "time": "2015-07-29 15:10:09"
+            "time": "2015-08-03 19:29:28"
         },
         {
             "name": "ql/panthor",
