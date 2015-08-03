@@ -23,6 +23,7 @@ services:
             - @kraken.crypto.db
             - @kraken.crypto.factory
             - @json
+            - @logger
 
     kraken.diff:
         class: 'QL\Kraken\ConfigurationDiffService'

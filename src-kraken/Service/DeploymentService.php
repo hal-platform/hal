@@ -8,11 +8,11 @@
 namespace QL\Kraken\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use ErrorException;
+use Exception;
 use MCP\Crypto\Exception\CryptoException;
 use MCP\Crypto\Package\QuickenMessagePackage;
 use MCP\Crypto\Package\TamperResistantPackage;
-use MCP\QKS\QKSException;
+use Psr\Log\LoggerInterface;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
@@ -22,6 +22,7 @@ use QL\Kraken\Service\Exception\MixedUpdateException;
 use QL\Kraken\Service\Exception\QKSConnectionException;
 use QL\Kraken\Utility\CryptoFactory;
 use QL\Panthor\Utility\Json;
+use QL\MCP\QKS\Exception as QKSException;
 
 class DeploymentService
 {
@@ -31,6 +32,8 @@ class DeploymentService
     const ERR_QKS_KEY_NOT_CONFIGURED = 'QKS encryption key is not configured for this environment.';
     const ERR_THIS_IS_SUPER_BAD = 'A serious error has occured. Consul was partially updated.';
     const ERR_DECRYPT_FAILURE = 'Secure property "%s" could not be decrypted.';
+
+    const ERR_CRYPTO_ERROR = 'An error occured while encrypting with QMP.';
 
     /**
      * @type EntityManagerInterface
@@ -53,18 +56,25 @@ class DeploymentService
     private $json;
 
     /**
+     * @type LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param EntityManagerInterface $em
      * @param ConsulService $consul
      * @param TamperResistantPackage $encryption
      * @param CryptoFactory $cryptoFactory
      * @param Json $json
+     * @param LoggerInterface $logger
      */
     public function __construct(
         EntityManagerInterface $em,
         ConsulService $consul,
         TamperResistantPackage $encryption,
         CryptoFactory $cryptoFactory,
-        Json $json
+        Json $json,
+        LoggerInterface $logger
     ) {
         $this->em = $em;
         $this->consul = $consul;
@@ -72,6 +82,7 @@ class DeploymentService
         $this->cryptoFactory = $cryptoFactory;
 
         $this->json = $json;
+        $this->logger = $logger;
     }
 
     /**
@@ -268,19 +279,17 @@ class DeploymentService
         ];
 
         try {
+
             $encrypted = $qmp->encrypt($decrypted, $receipients);
+
         } catch (QKSException $ex) {
-            // $this->logger->warning('', '');
 
-            // log this shit
-            // log this shit
-            // log this shit
-            // log this shit
-            // log this shit
-            // log this shit
-
+            $this->recordError(self::ERR_QKS_ERROR, $ex);
             throw new QKSConnectionException(self::ERR_QKS_ERROR);
+
         } catch (CryptoException $ex) {
+
+            $this->recordError(self::ERR_CRYPTO_ERROR, $ex);
             throw new QKSConnectionException($ex->getMessage());
         }
 
@@ -305,5 +314,52 @@ class DeploymentService
         }
 
         return $decrypted;
+    }
+
+    /**
+     * @param string $title
+     * @param Exception $ex
+     *
+     * @return void
+     */
+    private function recordError($title, Exception $ex)
+    {
+        $extext = <<<MSG
+%s
+
+Class: %s
+File: %s
+
+MSG;
+
+        $file = sprintf('%s : %s', $ex->getFile(), $ex->getLine());
+        $msg = sprintf($extext, $ex->getMessage(), get_class($ex), $file);
+
+        $context = [
+            'exceptionMessage' => $ex->getMessage(),
+            'exceptionClass' => get_class($ex),
+            'exceptionFile' => $file
+        ];
+
+        if ($prev = $ex->getPrevious()) {
+
+            $file = sprintf('%s : %s', $prev->getFile(), $prev->getLine());
+            $msg .= "\n\nPrevious Exception:\n\n" . sprintf($extext, $prev->getMessage(), get_class($prev), $file);
+
+            $context += [
+                'previousExceptionMessage' => $prev->getMessage(),
+                'previousExceptionClass' => get_class($prev),
+                'previousExceptionFile' => $file
+            ];
+
+            if ($prev = $prev->getPrevious()) {
+                $file = sprintf('%s : %s', $prev->getFile(), $prev->getLine());
+                $msg .= "\n\nPrevious Exception:\n\n" . sprintf($extext, $prev->getMessage(), get_class($prev), $file);
+            }
+        }
+
+        $context['exceptionData'] = $msg;
+
+        $this->logger->warning($title, $context);
     }
 }
