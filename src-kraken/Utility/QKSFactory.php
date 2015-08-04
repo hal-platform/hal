@@ -10,11 +10,11 @@ namespace QL\Kraken\Utility;
 use Exception;
 use GuzzleHttp\ClientInterface as Guzzle;
 use MCP\Crypto\Package\QuickenMessagePackage;
+use MCP\Crypto\Package\QuickenMessagePackage\Header\MetaSerializer;
 use MCP\Crypto\Primitive\Factory as PrimitiveFactory;
 use MCP\DataType\HttpUrl;
 use QL\MCP\QKS\Crypto\Client\GuzzleClient;
 use QL\MCP\QKS\Crypto\Client\Parser\JsonParser;
-use QL\MCP\QKS\Crypto\Envelope\Box\Factory as BoxFactory;
 use QL\MCP\QKS\Crypto\Envelope\Factory as EnvelopeFactory;
 use QL\UriTemplate\UriTemplate;
 
@@ -36,27 +36,27 @@ class QKSFactory
     private $envelopeFactory;
 
     /**
-     * @type BoxFactory
+     * @type MetaSerializer
      */
-    private $boxFactory;
+    private $serializer;
 
     /**
      * @param Guzzle $guzzle
      * @param JsonParser $parser
      * @param EnvelopeFactory $envelopeFactory
-     * @param BoxFactory $boxFactory
+     * @param MetaSerializer $serializer
      */
     public function __construct(
         Guzzle $guzzle,
         JsonParser $parser,
         EnvelopeFactory $envelopeFactory,
-        BoxFactory $boxFactory
+        MetaSerializer $serializer
     ) {
         $this->guzzle = $guzzle;
         $this->parser = $parser;
 
         $this->envelopeFactory = $envelopeFactory;
-        $this->boxFactory = $boxFactory;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -79,7 +79,7 @@ class QKSFactory
             return null;
         }
 
-        return new QuickenMessagePackage(new PrimitiveFactory, $this->boxFactory, $service, $sendingKey);
+        return new QuickenMessagePackage(new PrimitiveFactory, $this->serializer, $service, $sendingKey);
     }
 
     /**

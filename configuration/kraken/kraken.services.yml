@@ -100,7 +100,7 @@ services:
             - @kraken.crypto.qmp.guzzle
             - @kraken.crypto.qmp.json
             - @kraken.crypto.qmp.envelope
-            - @kraken.crypto.qmp.box
+            - @kraken.crypto.qmp.serializer
 
     kraken.crypto.factory.secret.file:
         class: 'stdClass'
@@ -114,7 +114,6 @@ services:
     kraken.crypto.qmp.json:
         class: 'QL\MCP\QKS\Crypto\Client\Parser\JsonParser'
         arguments: [@kraken.crypto.qmp.json.schema, @kraken.crypto.qmp.json.resolver]
-
     kraken.crypto.qmp.json.schema:
         class: 'JsonSchema\Validator'
     kraken.crypto.qmp.json.resolver:
@@ -124,7 +123,9 @@ services:
         # class: 'QL\Hal\Core\Crypto\SymmetricDecrypter'
         # factory: [@kraken.crypto.factory, 'getSymmetricDecrypter']
 
-    # omg kill me
+    kraken.crypto.qmp.serializer:
+        class: 'MCP\Crypto\Package\QuickenMessagePackage\Header\MetaSerializer'
+        arguments: [@kraken.crypto.qmp.box]
 
     kraken.crypto.qmp.envelope:
         class: 'QL\MCP\QKS\Crypto\Envelope\Factory'
@@ -137,6 +138,6 @@ services:
         arguments:
             -
                 defaults:
-                    headers:
-                        connect_timeout: 2
-                        timeout: 5
+                    connect_timeout: 2
+                    timeout: 5
+                    verify: false

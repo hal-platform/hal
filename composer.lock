@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e1c71070eb1e8988de533ff104b67347",
+    "hash": "95aa6c2fa90ddcb5efd635ae9d84cd2b",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1659,17 +1659,17 @@
         },
         {
             "name": "ql/mcp-crypto",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "git@git:mcp/mcp-crypto.git",
-                "reference": "1c0006045ee19ce47b07147481326a21c7fe2832"
+                "reference": "07a9826515f8a7f7c0053c048c11a451d2aebf1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-crypto-2.1.1-309a09.zip",
-                "reference": "1c0006045ee19ce47b07147481326a21c7fe2832",
-                "shasum": "97f98555ac0eb6e83c5646349861fdeac1d0eba6"
+                "url": "http://composer/dist/ql-mcp-crypto-2.1.2-ae8826.zip",
+                "reference": "07a9826515f8a7f7c0053c048c11a451d2aebf1c",
+                "shasum": "668f090f0abee9c12f6c89fdd892378d0527997c"
             },
             "require": {
                 "ext-mbstring": "*",
@@ -1729,7 +1729,7 @@
             ],
             "description": "Symmetric and asymmetric encryption library for PHP",
             "homepage": "http://git/mcp/mcp-crypto",
-            "time": "2015-07-28 15:55:39"
+            "time": "2015-08-03 21:31:15"
         },
         {
             "name": "ql/mcp-http",
@@ -1845,11 +1845,11 @@
         },
         {
             "name": "ql/mcp-qks",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "http://git/mcp/mcp-qks.git",
-                "reference": "3c0efcf6e6f4156750ff0ae5f888b64f82761aa5"
+                "reference": "465df6ef8e5f017492c5026bd7a078c9417c5377"
             },
             "require": {
                 "ext-pcre": "*",
@@ -1887,7 +1887,7 @@
             ],
             "description": "QKS Service Library",
             "homepage": "http://git/mcp/mcp-qks",
-            "time": "2015-08-03 19:29:28"
+            "time": "2015-08-04 13:27:21"
         },
         {
             "name": "ql/panthor",

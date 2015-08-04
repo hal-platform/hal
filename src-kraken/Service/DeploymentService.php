@@ -32,8 +32,11 @@ class DeploymentService
     const ERR_QKS_KEY_NOT_CONFIGURED = 'QKS encryption key is not configured for this environment.';
     const ERR_THIS_IS_SUPER_BAD = 'A serious error has occured. Consul was partially updated.';
     const ERR_DECRYPT_FAILURE = 'Secure property "%s" could not be decrypted.';
+    const ERR_QKS_TIMEOUT = 'QKS encryption took too long.';
 
     const ERR_CRYPTO_ERROR = 'An error occured while encrypting with QMP.';
+
+    const MAX_ALLOWED_QKS_TIME = 30;
 
     /**
      * @type EntityManagerInterface
@@ -154,7 +157,16 @@ class DeploymentService
     {
         $encrypteds = [];
 
+        $start = microtime(true);
+
         foreach ($properties as $prop) {
+
+            // If total encryption time has exceeded 30 seconds, BAIL THE FUCK OUT
+            // This is just a sanity check, as QKS is very fast, but the gateway has proven to be unreliable
+            $elapsed = microtime(true) - $start;
+            if ($elapsed > self::MAX_ALLOWED_QKS_TIME) {
+                throw new DecryptionException(self::ERR_QKS_TIMEOUT);
+            }
 
             $key = $prop->key();
 
