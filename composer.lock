@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "644bbfb1e29e01d4d3beda51662d9135",
+    "hash": "7946cc960ca2a54e1c7965a589cb1c25",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1911,7 +1911,7 @@
             "version": "2.0.3",
             "source": {
                 "type": "git",
-                "url": "http://git/mcp/mcp-qks.git",
+                "url": "git@git:mcp/mcp-qks.git",
                 "reference": "465df6ef8e5f017492c5026bd7a078c9417c5377"
             },
             "require": {

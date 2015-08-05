@@ -10,7 +10,6 @@
         "psr-4": { "QL\\Hal\\": "src", "QL\\Kraken\\": "src-kraken" }
     },
     "repositories": [
-        { "type": "git", "url": "http://git/mcp/mcp-qks.git" },
         { "type": "composer", "url": "http://composer/" }
     ],
 
