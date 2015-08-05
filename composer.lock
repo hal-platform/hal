@@ -1566,7 +1566,7 @@
             "version": "2.3.1",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-cache.git",
+                "url": "http://git/mcp/mcp-cache.git",
                 "reference": "6a923d6644271a9d8d728627fc8ad206b3fdffab"
             },
             "dist": {
@@ -1629,7 +1629,7 @@
             "version": "1.0.2",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-core.git",
+                "url": "http://git/mcp/mcp-core.git",
                 "reference": "2b42798f65fe241b3106eb64cbf2ce9ed3ae5d99"
             },
             "dist": {
@@ -1681,7 +1681,7 @@
             "version": "1.1.1",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-corp-account.git",
+                "url": "http://git/mcp/mcp-corp-account.git",
                 "reference": "e5207f9fd0c43b90cc438b608c72c5dfe85f121b"
             },
             "dist": {
@@ -1725,7 +1725,7 @@
             "version": "2.1.2",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-crypto.git",
+                "url": "http://git/mcp/mcp-crypto.git",
                 "reference": "07a9826515f8a7f7c0053c048c11a451d2aebf1c"
             },
             "dist": {
@@ -1796,17 +1796,17 @@
         },
         {
             "name": "ql/mcp-http",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-http.git",
-                "reference": "1221619e2ab885eca6773ae6f21a2de18b5c8662"
+                "url": "http://git/mcp/mcp-http.git",
+                "reference": "124a95e613de6c463c6ff735230c7f2834a312e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-http-1.0.5-f836c5.zip",
-                "reference": "1221619e2ab885eca6773ae6f21a2de18b5c8662",
-                "shasum": "6ea382dfd94d749c97928f7096db8a1792050199"
+                "url": "http://composer/dist/ql-mcp-http-1.0.6-a5a576.zip",
+                "reference": "124a95e613de6c463c6ff735230c7f2834a312e1",
+                "shasum": "7c438da93919bc70dd3a30c9931c336cca7eb8c1"
             },
             "require": {
                 "guzzlehttp/promises": "^1.0",
@@ -1815,7 +1815,7 @@
                 "ql/uri-template": "^1.0"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "^6.0",
+                "guzzlehttp/guzzle": "^5.0",
                 "mockery/mockery": ">=0.8",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
@@ -1844,14 +1844,14 @@
                 }
             ],
             "description": "Implementation agnostic HTTP client",
-            "time": "2015-07-29 15:16:09"
+            "time": "2015-08-04 15:29:36"
         },
         {
             "name": "ql/mcp-logger",
             "version": "2.2.0",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-logger.git",
+                "url": "http://git/mcp/mcp-logger.git",
                 "reference": "593f0a209e4ae6c8be1bd8fa38267d5937d09afb"
             },
             "dist": {
@@ -1911,8 +1911,14 @@
             "version": "2.0.3",
             "source": {
                 "type": "git",
-                "url": "git@git:mcp/mcp-qks.git",
+                "url": "http://git/mcp/mcp-qks.git",
                 "reference": "465df6ef8e5f017492c5026bd7a078c9417c5377"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-mcp-qks-2.0.3-b28cd0.zip",
+                "reference": "465df6ef8e5f017492c5026bd7a078c9417c5377",
+                "shasum": "7ef67437123621b7a29497de3013d12061af303f"
             },
             "require": {
                 "ext-pcre": "*",
@@ -3144,16 +3150,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.1.9",
+            "version": "2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "5bd48b86cd282da411bb80baac1398ce3fefac41"
+                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/5bd48b86cd282da411bb80baac1398ce3fefac41",
-                "reference": "5bd48b86cd282da411bb80baac1398ce3fefac41",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2d7c03c0e4e080901b8f33b2897b0577be18a13c",
+                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c",
                 "shasum": ""
             },
             "require": {
@@ -3161,7 +3167,7 @@
                 "phpunit/php-file-iterator": "~1.3",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-token-stream": "~1.3",
-                "sebastian/environment": "~1.0",
+                "sebastian/environment": "^1.3.2",
                 "sebastian/version": "~1.0"
             },
             "require-dev": {
@@ -3176,7 +3182,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1.x-dev"
+                    "dev-master": "2.2.x-dev"
                 }
             },
             "autoload": {
@@ -3202,7 +3208,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-07-26 12:54:47"
+            "time": "2015-08-04 03:42:39"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -3628,16 +3634,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.0",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "4fe0a44cddd8cc19583a024bdc7374eb2fef0b87"
+                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/4fe0a44cddd8cc19583a024bdc7374eb2fef0b87",
-                "reference": "4fe0a44cddd8cc19583a024bdc7374eb2fef0b87",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6324c907ce7a52478eeeaede764f48733ef5ae44",
+                "reference": "6324c907ce7a52478eeeaede764f48733ef5ae44",
                 "shasum": ""
             },
             "require": {
@@ -3674,7 +3680,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-07-26 06:42:57"
+            "time": "2015-08-03 06:14:51"
         },
         {
             "name": "sebastian/exporter",
