@@ -331,6 +331,7 @@ services:
     encrypted.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/encrypted/add.encrypted.property.twig']]]
+
     encrypted.add.handler:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\AddEncryptedPropertyHandler'
         arguments:
@@ -341,6 +342,17 @@ services:
             - @slim.request
             - @doctrine.random
             - @hal.application
+
+    encrypted.view.page:
+        class: 'QL\Hal\Controllers\Application\EncryptedProperty\UnencryptedController'
+        arguments:
+            - @encrypted.view.twig
+            - @hal.encrypted
+            - @decrypter
+    encrypted.view.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['application/encrypted/unencrypted.twig']]]
+
     encrypted.remove.handler:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\RemoveEncryptedPropertyHandler'
         arguments:

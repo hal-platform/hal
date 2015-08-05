@@ -118,4 +118,10 @@ parameters:
     ############################################################################
 
     kraken.environmentalize: true
+
+    ############################################################################
+    # crypto
+    ############################################################################
+
     encrypter.kraken.secret.path: 'configuration/kraken.encrypter.secret'
+    encrypter.hal.secret.path: 'configuration/hal.encrypter.secret'

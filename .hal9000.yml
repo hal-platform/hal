@@ -5,3 +5,4 @@ build:
 
 exclude:
     - 'configuration/kraken.encrypter.secret'
+    - 'configuration/hal.encrypter.secret'

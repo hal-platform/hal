@@ -1,8 +1,10 @@
 {% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Encrypted Properties : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set canEdit = isAdmin or isUserLeadOf(currentUser, application) %}
 
 {% block content %}
     <h1>Encrypted Properties - <strong>{{ application.name }}</strong></h1>
@@ -14,6 +16,9 @@
                     <th>Property Name</th>
                     <th>Environment</th>
                     {% if isAdmin %}
+                        <th></th>
+                    {% endif %}
+                    {% if canEdit %}
                         <th></th>
                     {% endif %}
                 </tr>
@@ -32,6 +37,12 @@
                         {% endif %}
                     </td>
                     {% if isAdmin %}
+                        <td>
+                            <a href="{{ urlFor('encrypted.view', {'application': application.id, 'encrypted': property.id}) }}">{{ macros.icon('unlocked') }} View unencrypted</a>
+                        </td>
+                    {% endif %}
+
+                    {% if canEdit %}
                         <td class="tr">
                             <a class="btn btn--tiny btn--destructive" href="{{ urlFor('encrypted.remove', {'application': application.id, 'encrypted': property.id}) }}">Remove</a>
                         </td>
@@ -41,7 +52,8 @@
             </tbody>
         </table>
         <p>
-            Encrypted properties are immutable. To change the value of a property: Remove it then add it again.<br><br>
+            Encrypted properties are immutable. To change the value of a property: Remove it then add it again.
+            Only administrators can view encrypted values. If you need to know a previously set property, contact an administrator.<br><br>
 
             If a property is set for both <strong>Global</strong> and a specific environment, the environment-specific
             property will override the <strong>Global</strong> property.
@@ -54,7 +66,7 @@
     {% endif %}
 
     <ul class="button-list button-list--half">
-        {% if isAdmin %}
+        {% if canEdit %}
             <li><a class="btn btn--action" href="{{ urlFor('encrypted.add', {application: application.id}) }}">Add Encrypted Property</a></li>
         {% endif %}
         <li><a class="btn" href="{{ urlFor('application', {'application': application.id}) }}">Application</a></li>

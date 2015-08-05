@@ -10,10 +10,13 @@ namespace QL\Hal\Bin;
 
 use QL\Hal\Application\EnvConfigLoader;
 use QL\Panthor\Bootstrap\Di;
+use Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\ProxyDumper;
+use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+use QL\Hal\CachedContainer;
 
 $root = __DIR__ . '/../';
 $file = $root . 'src/CachedContainer.php';
-$class = 'QL\Hal\CachedContainer';
+$class = CachedContainer::CLASS;
 
 if (!$container = @include $root . '/configuration/bootstrap.php') {
     echo "An error occured while attempting to dump the DI Container.\n";
@@ -23,7 +26,15 @@ if (!$container = @include $root . '/configuration/bootstrap.php') {
 $modifier = [new EnvConfigLoader, 'load'];
 $container = Di::buildDi($root, $modifier);
 
-file_put_contents($file, Di::dumpDi($container, $class));
+// Manually build the dumper so we can attach the proxydumper to enable lazy services
+$dumper = new PhpDumper($container);
+$dumper->setProxyDumper(new ProxyDumper);
+
+$exploded = explode('\\', $class);
+file_put_contents($file, $dumper->dump([
+    'class' => array_pop($exploded),
+    'namespace' => implode('\\', $exploded)
+]));
 
 echo <<<OUTPUT
 Dumping DI Container cache:

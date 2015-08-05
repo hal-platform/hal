@@ -1,10 +1,13 @@
 parameters:
     application.environment: 'test'
+    debug: false
+    twig.debug: false
 
+    ############################################################################
+    # service configuration
+    ############################################################################
 
-
-
-
+    # ldap.password: resolved during build
 
     database.username: 'placeholder'
     database.database: 'hal9000_test'
@@ -19,9 +22,27 @@ parameters:
     redis.server: 'test.example.com:6379'
     redis.prefix: 'hal9000test'
 
-    cookie.encryption.secret: 'cc9218d4ecf369fe50dd9f00beae36cff3eb0e7b095f1491eeeae75fca7c37d1'
-
     cli.user: 'hal9000test'
+
+    ############################################################################
+    # agent
+    ############################################################################
+
+    hal.agents:
+        - 'ql1haltsagt1'
+
+    ############################################################################
+    # kraken
+    ############################################################################
+
+    kraken.environmentalize: true
+
+    ############################################################################
+    # ENCRYPTION
+    ############################################################################
+
+    cookie.encryption.secret: 'cc9218d4ecf369fe50dd9f00beae36cff3eb0e7b095f1491eeeae75fca7c37d1'
+    # session.encryption.secret: resolved during build
 
     encrypter.publickey: |
         -----BEGIN PUBLIC KEY-----
@@ -31,5 +52,27 @@ parameters:
         pLR/1o2u8njj+v/AaQIDAQAB
         -----END PUBLIC KEY-----
 
-    hal.agents:
-        - 'ql1haltsagt1'
+    encrypter.encryptedkey: |
+        8e03c4e2c804a008e59b3f430d7c0ed08fef66cfa4cb81e98d6a20cc2e8112a268804a6691d7ef1c
+        e2fe84787033117da09839aa24ef8aeafa3bf070459aee13d8e8d61f44af739dfd4dde8209cf62b2
+        a845a81b3a965aa91c2acb7611d97f9a211ae6f7c916175494325317a812ba09971a541dabec4b74
+        e1c4d8fa11ea7df3782d4f2e2c1fbc672fe7d6e2fbad46cc8195570b28920d72f7e4b938cc1e5f4b
+        b02b50982123001d146e33b2cb01d8a198ebefa49955caa49608253db404c8402f258b81c0d500b5
+        78995cbb29c0eb9ef04d29545bf7d34e996c3913975ec8370b0b3fa616130ea45e9b8010734b9383
+        8039d7031ab67638735d0dee9870f0bca0c1813ec9b89d040ea7a8224a4371fa646080135cb14b42
+        b2a9863ddcbe68f3996527bb7ca320e7e7f993263ec05e2190c0f82a0371293a59266f3a410ec132
+        448a4c5a520b286b7c1f287c38b78e5dc42f668d90a20f92da9209616c018f30037a3f2ea053c46c
+        bbd7a8c47630bc97e44628ac1de29c207ffe52cfee3c364b7019bedf2eb97de91d0d4c3bac571100
+        3763854367289240e17c606f6be4ac9a7892015ea8c54b4aff823ea9673668bd4975a6aed42cfefd
+        c43e1de53a00c925b760261a9d9f265fca35b4cacdda92428dff058d57db5f69156f5ee955ea64dd
+        cdf80a9d53723e546d73be452a7d2a593b9ff55febcbaf6c8e5804c8797b6ff3862e5cce2f354eb3
+        2d57d286fe116a9b08cf81ef0f468489a5cb31a37d3c40076750c04b8bfc7b57e2dbe2b9ecce8f18
+        3257a923ab59ea929e7915d76ab1e48f44666f04bd699349e50d9a66048c5f124651b3225d1ed1d4
+        6041b82a4dd1ebd636b1137a630cea534d1edf2e954af1a1d5f060f63fde2f3521d2111845562c6f
+        6be2839bf0bdb43ea10ca33fc75f1ac0872a792b11dbf213bb4acc05b78a2a2114d4c22fd941fb6d
+        1957ca6a9dc403c3804773887934c58d35bcb817c710dd0694bd2c228764fd4a399615d804fab48e
+        fe7fc13e8dae2ad28a46cc5596567743557e471f23bec1a825896a7983b145608ff5eaa89ee86358
+        ff7c71cfc60bef06bfbf8fc35d88c72b7b5cdd338aac516c4a71b731966d32a7f07b72732d766459
+        28dc7d05e1b9c6c1e04263f14fb2f90650157b546830b52aadbdc8f35388102dd8cb1dc485d1c368
+        3c0c5e99e9cd625dceed9890e43e46914789d521ff417b99414e194564954c38de3cd1cb5e2db510
+        5690130bae27cbfc21073013fc3f9aab|1e4f3d1994935b8223ef0a499e35c5a7

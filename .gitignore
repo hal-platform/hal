@@ -32,4 +32,5 @@ npm-debug.log
 /.twig/
 
 # secrets
+/configuration/hal.encrypter.secret
 /configuration/kraken.encrypter.secret

@@ -216,6 +216,14 @@ parameters:
             stack: ['middleware.lead', 'middleware.requireEntity', 'encrypted.add.handler', 'encrypted.add.page']
             conditions: {application: %routes.regex.digit%}
 
+        encrypted.view:
+            method: 'GET'
+            route: '/applications/:application/encrypted-properties/:encrypted/view'
+            stack: ['middleware.admin', 'middleware.requireEntity', 'encrypted.view.page']
+            conditions:
+                application: %routes.regex.digit%
+                encrypted: %routes.regex.guid%
+
         encrypted.remove.confirm:
             method: 'GET'
             route: '/applications/:application/encrypted-properties/:encrypted/remove'

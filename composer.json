@@ -58,6 +58,7 @@
         "symfony/debug":                "~2.7",
         "symfony/finder":               "~2.7",
         "symfony/yaml":                 "~2.7",
+        "symfony/proxy-manager-bridge": "~2.7",
 
         "twig/twig": "~1.15"
     },
