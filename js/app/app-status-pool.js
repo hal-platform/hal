@@ -49,7 +49,7 @@ module.exports = {
 
         this.persistView(selectedView);
 
-        // valid view = pool deployments
+        // if valid view - pool deployments
         if (this.views.hasOwnProperty(selectedView)) {
             var $section,
                 pools = this.views[selectedView];
@@ -63,15 +63,15 @@ module.exports = {
         }
 
         // Remove unpooled if empty
-        if ($unpooled.find('[data-deploy]').length == 0) {
+        if ($unpooled.find('[data-deploy]').length === 0) {
             $unpooled.remove();
         }
     },
     buildViews: function() {
-        var $views = $(this.viewsTarget)
+        var $views = $(this.viewsTarget),
             views = {};
 
-        if ($views.length == 0) {
+        if ($views.length === 0) {
             return views;
         }
 
