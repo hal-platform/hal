@@ -1,0 +1,61 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="/docs/release-notes.css">
+</head>
+<body>
+    <h1>HAL 9000 - Version 2.6.3</h1>
+    <p>Greetings! The web core team has deployed an update to HAL 9000. This is version 2.6.3.</p>
+
+    <h3>What is HAL 9000?</h3>
+    <p>HAL 9000 is the deployment system we use to deploy many of our client-facing websites, including MyQL, Rocket Mortgage, QLMS, ORMS, Agent Insight, QuickenLoans.com and more!</p>
+
+    <h2>Changelog</h2>
+
+    <h3>User Experience (UX) Enhancements</h3>
+    <ul>
+        <li>
+            <h5>Administrators can now view <i>Encrypted properties</i>, unencrypted.</h5>
+        </li>
+    </ul>
+
+    <h3>Technical</h3>
+    <ul>
+        <li>
+            <h5>Kraken now uses mcp-crypto 2.1.2, which supports QKS Client Protocol and ensures interop between PHP and .NET.</h5>
+        </li>
+    </ul>
+
+    <h3>Technical</h3>
+    <ul>
+        <li>
+            <h5>Dependencies</h5>
+
+            <blockquote>
+                <h4>The following components MUST go with this release:</h4>
+                <ul>
+                    <li>HAL 2.6.3</li>
+                </ul>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h2>Need Help?</h2>
+    <p>If you find any bugs or want to request a feature, drop us a line in the hipchat room <strong>[Application] HAL 9000</strong>, or <a href="mailto:itteamwebcore@quickenloans.com">send us an email</a>.</p>
+
+    <h2>JIRA Tasklist</h2>
+
+    <p>
+        <a href="https://fringedivision.atlassian.net/projects/HAL/versions/13806">JIRA Release page for HAL 9000 2.6.3</a>
+    </p>
+
+    <h3>Improvement</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-280">HAL-280</a>] - Update to latest mcp-crypto, due to BC break in packaging format.</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-281">HAL-281</a>] - Add extra logging when a kraken deploy fails</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-282">HAL-282</a>] - Update hal to use panthor 2.2</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-283">HAL-283</a>] - Update kraken to use crypto 2.1, qks 2.0</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-284">HAL-284</a>] - Allow admins to view encrypted properties unencrypted</li>
+    </ul>
+</body>
+</html>
