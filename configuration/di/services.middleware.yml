@@ -29,6 +29,7 @@ services:
             - @denied.twig
             - @permissions
             - @slim.halt
+            - @slim.route.parameters
 
     middleware.admin:
         class: 'QL\Hal\Middleware\ACL\AdminMiddleware'

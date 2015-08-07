@@ -45,17 +45,24 @@ class LeadMiddleware implements MiddlewareInterface
     private $halt;
 
     /**
+     * @type array
+     */
+    private $parameters;
+
+    /**
      * @param ContainerInterface $di
      * @param LoginMiddleware $loginMiddleware
      * @param TemplateInterface $template
      * @param PermissionService $permissions
+     * @param array $parameters
      */
     public function __construct(
         ContainerInterface $di,
         LoginMiddleware $loginMiddleware,
         TemplateInterface $template,
         PermissionService $permissions,
-        Halt $halt
+        Halt $halt,
+        array $parameters
     ) {
         $this->di = $di;
         $this->loginMiddleware = $loginMiddleware;
@@ -63,6 +70,7 @@ class LeadMiddleware implements MiddlewareInterface
         $this->template = $template;
         $this->permissions = $permissions;
         $this->halt = $halt;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -84,7 +92,7 @@ class LeadMiddleware implements MiddlewareInterface
         $application = isset($this->parameters['application']) ? $this->parameters['application'] : null;
 
         if ($application && $perm->isLead()) {
-            if (in_array($application, $perm->leadApplications(), true)) {
+            if (in_array($application, $perm->leadApplications())) {
                 return;
             }
         }
