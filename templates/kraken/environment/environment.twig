@@ -9,6 +9,7 @@
 
     <h3>Name</h3>
     <p>
+        {{ environment.name }}
         {% if environment.isProduction %}
             {{ macros.status('Production', 'info', 'key') }}
         {% endif %}
