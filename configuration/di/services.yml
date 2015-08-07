@@ -255,6 +255,10 @@ services:
     # Logging
     ####################################################################################################################
 
+    exception.logger:
+        class: 'QL\Hal\Application\ExceptionLogger'
+        arguments: [@logger]
+
     logger:
         class: 'MCP\Logger\Logger'
         arguments: [@logger.mcp.service, @logger.mcp.factory]

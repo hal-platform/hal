@@ -12,7 +12,7 @@ use Exception;
 use MCP\Crypto\Exception\CryptoException;
 use MCP\Crypto\Package\QuickenMessagePackage;
 use MCP\Crypto\Package\TamperResistantPackage;
-use Psr\Log\LoggerInterface;
+use QL\Hal\Application\ExceptionLogger;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
@@ -59,7 +59,7 @@ class DeploymentService
     private $json;
 
     /**
-     * @type LoggerInterface
+     * @type ExceptionLogger
      */
     private $logger;
 
@@ -69,7 +69,7 @@ class DeploymentService
      * @param TamperResistantPackage $encryption
      * @param CryptoFactory $cryptoFactory
      * @param Json $json
-     * @param LoggerInterface $logger
+     * @param ExceptionLogger $logger
      */
     public function __construct(
         EntityManagerInterface $em,
@@ -77,7 +77,7 @@ class DeploymentService
         TamperResistantPackage $encryption,
         CryptoFactory $cryptoFactory,
         Json $json,
-        LoggerInterface $logger
+        ExceptionLogger $logger
     ) {
         $this->em = $em;
         $this->consul = $consul;
@@ -296,12 +296,12 @@ class DeploymentService
 
         } catch (QKSException $ex) {
 
-            $this->recordError(self::ERR_QKS_ERROR, $ex);
+            $this->logger->logException(self::ERR_QKS_ERROR, $ex);
             throw new QKSConnectionException(self::ERR_QKS_ERROR);
 
         } catch (CryptoException $ex) {
 
-            $this->recordError(self::ERR_CRYPTO_ERROR, $ex);
+            $this->logger->logException(self::ERR_CRYPTO_ERROR, $ex);
             throw new QKSConnectionException($ex->getMessage());
         }
 
@@ -328,50 +328,4 @@ class DeploymentService
         return $decrypted;
     }
 
-    /**
-     * @param string $title
-     * @param Exception $ex
-     *
-     * @return void
-     */
-    private function recordError($title, Exception $ex)
-    {
-        $extext = <<<MSG
-%s
-
-Class: %s
-File: %s
-
-MSG;
-
-        $file = sprintf('%s : %s', $ex->getFile(), $ex->getLine());
-        $msg = sprintf($extext, $ex->getMessage(), get_class($ex), $file);
-
-        $context = [
-            'exceptionMessage' => $ex->getMessage(),
-            'exceptionClass' => get_class($ex),
-            'exceptionFile' => $file
-        ];
-
-        if ($prev = $ex->getPrevious()) {
-
-            $file = sprintf('%s : %s', $prev->getFile(), $prev->getLine());
-            $msg .= "\n\nPrevious Exception:\n\n" . sprintf($extext, $prev->getMessage(), get_class($prev), $file);
-
-            $context += [
-                'previousExceptionMessage' => $prev->getMessage(),
-                'previousExceptionClass' => get_class($prev),
-                'previousExceptionFile' => $file
-            ];
-
-            if ($prev = $prev->getPrevious()) {
-                $file = sprintf('%s : %s', $prev->getFile(), $prev->getLine());
-                $msg .= "\n\nPrevious Exception:\n\n" . sprintf($extext, $prev->getMessage(), get_class($prev), $file);
-            }
-        }
-
-        $context['exceptionData'] = $msg;
-
-        $this->logger->warning($title, $context);
-    }
 }
