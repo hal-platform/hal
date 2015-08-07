@@ -8,10 +8,11 @@
     <h1>Environment - <strong>{{ environment.name }}</strong></h1>
 
     <h3>Name</h3>
-    <p>{{ environment.name }}</p>
-
-    <h3>Is Production Environment?</h3>
-    <p>{{ environment.isProduction ? 'Yes' : 'No' }}</p>
+    <p>
+        {% if environment.isProduction %}
+            {{ macros.status('Production', 'info', 'key') }}
+        {% endif %}
+    </p>
 
     <h2>Consul</h2>
     <div class="details-box">
