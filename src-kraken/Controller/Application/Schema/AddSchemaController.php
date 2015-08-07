@@ -143,7 +143,7 @@ class AddSchemaController implements ControllerInterface
         $key = $this->request->post('key');
         $type = $this->request->post('type');
         $description = $this->request->post('description');
-        $isSecure = ($this->request->post('isSecure') === '1');
+        $isSecure = ($this->request->post('secure') === '1');
 
         if (strlen($key) === 0) {
             $this->errors[] = self::ERR_MISSING_KEY;
