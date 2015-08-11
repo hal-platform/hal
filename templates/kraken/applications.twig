@@ -36,7 +36,7 @@
                         </td>
                         <td>
                             {% if application.halApplication %}
-                                <a href="{{ urlFor('application.status', {id: application.halApplication.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
+                                <a href="{{ urlFor('application.status', {application: application.halApplication.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
                             {% endif %}
                         </td>
                         <td class="tr">
