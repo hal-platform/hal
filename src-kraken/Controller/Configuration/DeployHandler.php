@@ -61,6 +61,11 @@ class DeployHandler implements ControllerInterface
     private $propertyRepo;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param EntityManagerInterface $em
      * @param DeploymentService $deployer
      *
@@ -69,6 +74,7 @@ class DeployHandler implements ControllerInterface
      *
      * @param Flasher $flasher
      * @param callable $random
+     * @param ACL $acl
      */
     public function __construct(
         EntityManagerInterface $em,
@@ -78,7 +84,8 @@ class DeployHandler implements ControllerInterface
         User $currentUser,
 
         Flasher $flasher,
-        callable $random
+        callable $random,
+        ACL $acl
     ) {
         $this->deployer = $deployer;
 
@@ -87,6 +94,7 @@ class DeployHandler implements ControllerInterface
 
         $this->flasher = $flasher;
         $this->random = $random;
+        $this->acl = $acl;
 
         $this->propertyRepo = $em->getRepository(Property::CLASS);
     }
@@ -96,16 +104,19 @@ class DeployHandler implements ControllerInterface
      */
     public function __invoke()
     {
-        // 1. Create a configuration for this environment
+        // 1. Permission check
+        $this->acl->requireDeployPermissions($this->target->application(), $this->target->environment());
+
+        // 2. Create a configuration for this environment
         $configuration = $this->buildConfiguration($this->target->application(), $this->target->environment());
 
-        // 2. Get all property/schema pairs for environment
+        // 3. Get all property/schema pairs for environment
         $properties = $this->buildProperties($configuration);
 
-        // 3. Deploy
+        // 4. Deploy
         $status = $this->deploy($configuration, $properties);
 
-        // And finally, go away.
+        // 5. And finally, go away.
         $this->redirect($this->target, $status);
     }
 

@@ -15,7 +15,7 @@ use QL\Panthor\TemplateInterface;
 
 class DeployController implements ControllerInterface
 {
-    const ERR_ENCRYPTION_KEY = 'QKS Encryption key is missed. This must be added for this application in this environment.';
+    const ERR_ENCRYPTION_KEY = 'QKS Encryption key is missing. This must be added for this application in this environment.';
 
     const ERR_CONSUL_SERVICE = 'Consul Service URL is missing.';
     const ERR_QKS_SERVICE = 'QKS Service URL is missing.';
@@ -41,18 +41,26 @@ class DeployController implements ControllerInterface
     private $diffService;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param TemplateInterface $template
      * @param Target $target
      * @param ConfigurationDiffService $diffService
+     * @param ACL $acl
      */
     public function __construct(
         TemplateInterface $template,
         Target $target,
-        ConfigurationDiffService $diffService
+        ConfigurationDiffService $diffService,
+        ACL $acl
     ) {
         $this->template = $template;
         $this->target = $target;
         $this->diffService = $diffService;
+        $this->acl = $acl;
     }
 
     /**
@@ -60,6 +68,8 @@ class DeployController implements ControllerInterface
      */
     public function __invoke()
     {
+        $this->acl->requireDeployPermissions($this->target->application(), $this->target->environment());
+
         $diffs = $this->diffService->resolveLatestConfiguration($this->target->application(), $this->target->environment());
 
         // @todo verify checksum against consul checksum

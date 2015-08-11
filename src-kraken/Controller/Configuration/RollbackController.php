@@ -10,6 +10,7 @@ namespace QL\Kraken\Controller\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
+use QL\Kraken\ACL;
 use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Target;
@@ -18,7 +19,7 @@ use QL\Panthor\TemplateInterface;
 
 class RollbackController implements ControllerInterface
 {
-    const ERR_ENCRYPTION_KEY = 'QKS Encryption key is missed. This must be added for this application in this environment.';
+    const ERR_ENCRYPTION_KEY = 'QKS Encryption key is missing. This must be added for this application in this environment.';
 
     const ERR_CONSUL_SERVICE = 'Consul Service URL is missing.';
     const ERR_QKS_SERVICE = 'QKS Service URL is missing.';
@@ -54,23 +55,31 @@ class RollbackController implements ControllerInterface
     private $targetRepo;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param TemplateInterface $template
      * @param Configuration $configuration
      * @param ConfigurationDiffService $diffService
      * @param Flasher $flasher
      * @param EntityManagerInterface $em
+     * @param ACL $acl
      */
     public function __construct(
         TemplateInterface $template,
         Configuration $configuration,
         ConfigurationDiffService $diffService,
         Flasher $flasher,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ACL $acl
     ) {
         $this->template = $template;
         $this->configuration = $configuration;
         $this->diffService = $diffService;
         $this->flasher = $flasher;
+        $this->acl = $acl;
 
         $this->targetRepo = $em->getRepository(Target::CLASS);
     }
@@ -80,6 +89,8 @@ class RollbackController implements ControllerInterface
      */
     public function __invoke()
     {
+        $this->acl->requireDeployPermissions($this->configuration->application(), $this->configuration->environment());
+
         $target = $this->targetRepo->findOneBy([
             'application' => $this->configuration->application(),
             'environment' => $this->configuration->environment()

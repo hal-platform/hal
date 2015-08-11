@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
+use QL\Kraken\ACL;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Environment;
@@ -65,6 +66,11 @@ class RollbackHandler implements ControllerInterface
     private $snapshotRepo;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param EntityManagerInterface $em
      * @param DeploymentService $deployer
      *
@@ -73,6 +79,7 @@ class RollbackHandler implements ControllerInterface
      *
      * @param Flasher $flasher
      * @param callable $random
+     * @param ACL $acl
      */
     public function __construct(
         EntityManagerInterface $em,
@@ -82,7 +89,8 @@ class RollbackHandler implements ControllerInterface
         User $currentUser,
 
         Flasher $flasher,
-        callable $random
+        callable $random,
+        ACL $acl
     ) {
         $this->deployer = $deployer;
         $this->flasher = $flasher;
@@ -91,6 +99,7 @@ class RollbackHandler implements ControllerInterface
         $this->currentUser = $currentUser;
 
         $this->random = $random;
+        $this->acl = $acl;
 
         $this->em = $em;
         $this->targetRepo = $this->em->getRepository(Target::CLASS);
@@ -102,22 +111,25 @@ class RollbackHandler implements ControllerInterface
      */
     public function __invoke()
     {
-        // 1. Find target
+        // 1. Permission check
+        $this->acl->requireDeployPermissions($this->configuration->application(), $this->configuration->environment());
+
+        // 2. Find target
         $target = $this->targetRepo->findOneBy([
             'application' => $this->configuration->application(),
             'environment' => $this->configuration->environment()
         ]);
 
-        // 1. Create a configuration for this environment
+        // 3. Create a configuration for this environment
         $configuration = $this->buildConfiguration($target->application(), $target->environment());
 
-        // 2. Create new properties from old properties
+        // 4. Create new properties from old properties
         $properties = $this->buildProperties($this->configuration, $configuration);
 
-        // 3. Deploy
+        // 5. Deploy
         $status = $this->deploy($target, $configuration, $properties);
 
-        // 4. And finally, go away.
+        // 6. And finally, go away.
         $this->redirect($target, $status);
     }
 
