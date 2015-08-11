@@ -104,10 +104,6 @@ class DeployHandler implements ControllerInterface
         // 3. Deploy
         $status = $this->deploy($configuration, $properties);
 
-        if ($status instanceof Flasher) {
-            $status->load('kraken.deploy', ['target' => $this->target->id()]);
-        }
-
         // And finally, go away.
         $this->redirect($this->target, $status);
     }
@@ -170,7 +166,7 @@ class DeployHandler implements ControllerInterface
      * @param Configuration $configuration
      * @param Snapshot[] $properties
      *
-     * @return bool|null
+     * @return Flasher|bool|null
      */
     private function deploy(Configuration $configuration, array $properties)
     {
@@ -189,7 +185,7 @@ class DeployHandler implements ControllerInterface
 
     /**
      * @param Target $target
-     * @param bool|null $status
+     * @param Flasher|bool|null $status
      *
      * @throws StopException
      *
@@ -197,6 +193,10 @@ class DeployHandler implements ControllerInterface
      */
     private function redirect(Target $target, $status)
     {
+        if ($status instanceof Flasher) {
+            return $this->flasher->load('kraken.deploy', ['target' => $target->id()]);
+        }
+
         if ($status === null) {
             // Mixed update. BAD!
             $this->flasher->withFlash(self::ERR_THIS_IS_SUPER_BAD, 'error');

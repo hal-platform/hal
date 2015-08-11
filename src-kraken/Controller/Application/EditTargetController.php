@@ -47,6 +47,9 @@ class EditTargetController implements ControllerInterface
      */
     private $em;
 
+    /**
+     * @type array
+     */
     private $errors;
 
     /**

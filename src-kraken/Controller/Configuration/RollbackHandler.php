@@ -174,7 +174,7 @@ class RollbackHandler implements ControllerInterface
      * @param Configuration $configuration
      * @param Snapshot[] $properties
      *
-     * @return bool|null
+     * @return Flasher|bool|null
      */
     private function deploy(Target $target, Configuration $configuration, array $properties)
     {
@@ -193,12 +193,16 @@ class RollbackHandler implements ControllerInterface
 
     /**
      * @param Target $target
-     * @param bool|null $status
+     * @param Flasher|bool|null $status
      *
      * @return void
      */
     private function redirect(Target $target, $status)
     {
+        if ($status instanceof Flasher) {
+            return $this->flasher->load('kraken.status', ['application' => $target->application()->id()]);
+        }
+
         if ($status === null) {
             // Mixed update. BAD!
             $this->flasher->withFlash(self::ERR_THIS_IS_SUPER_BAD, 'error');
