@@ -177,15 +177,6 @@ services:
     guzzle:
         class: 'GuzzleHttp\Client'
 
-    acl:
-        class: 'QL\Hal\ACL'
-        arguments:
-            - @denied.twig
-            - @slim.halt
-            - @permissions
-            - @kraken.permissions
-            - @currentUser
-
     ####################################################################################################################
     # SESSION
     ####################################################################################################################

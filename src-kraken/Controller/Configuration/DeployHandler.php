@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
+use QL\Kraken\ACL;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Environment;

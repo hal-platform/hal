@@ -29,6 +29,14 @@ services:
         class: 'QL\Kraken\ConfigurationDiffService'
         arguments: [@doctrine.em]
 
+    kraken.acl:
+        class: 'QL\Kraken\ACL'
+        arguments:
+            - @denied.twig
+            - @slim.halt
+            - @kraken.permissions
+            - @currentUser
+
     ####################################################################################################################
     # UTIL
     ####################################################################################################################

@@ -10,7 +10,7 @@ namespace QL\Kraken\Controller\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
-use QL\Hal\ACL;
+use QL\Kraken\ACL;
 use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;

@@ -8,8 +8,8 @@
 namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
-use QL\Hal\ACL;
 use QL\Hal\Flasher;
+use QL\Kraken\ACL;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Validator\PropertyValidator;
 use QL\Panthor\ControllerInterface;
@@ -100,7 +100,7 @@ class EditPropertyController implements ControllerInterface
      */
     public function __invoke()
     {
-        $this->acl->requireKrakenDeployPermissions($this->property->application(), $this->property->environment());
+        $this->acl->requireDeployPermissions($this->property->application(), $this->property->environment());
 
         if ($property = $this->handleForm()) {
             // flash and redirect

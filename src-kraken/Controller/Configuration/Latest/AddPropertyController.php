@@ -9,9 +9,9 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\ACL;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
+use QL\Kraken\ACL;
 use QL\Kraken\ConfigurationDiffService;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Environment;
@@ -141,7 +141,7 @@ class AddPropertyController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $this->acl->requireKrakenDeployPermissions($this->application, $this->environment);
+        $this->acl->requireDeployPermissions($this->application, $this->environment);
 
         if ($property = $this->handleForm()) {
             // flash and redirect

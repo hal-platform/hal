@@ -5,11 +5,12 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal;
+namespace QL\Kraken;
 
-use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\PermissionService;
+use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Environment;
+use QL\Kraken\Service\PermissionService;
 use QL\Panthor\Slim\Halt;
 use QL\Panthor\TemplateInterface;
 
@@ -39,6 +40,7 @@ class ACL
      * @param TemplateInterface $denied
      * @param Halt $halt
      * @param PermissionService $permissions
+     * @param KrakenPermissionService $krakenPermissions
      * @param User $currentUser
      */
     public function __construct(
@@ -70,14 +72,15 @@ class ACL
 
     /**
      * @param Application $application
+     * @param Environment $environment
      *
      * @see self::denied
      */
-    public function requireLeadOrHigher(Application $application)
+    public function requireDeployPermissions(Application $application, Environment $environment)
     {
-        $perm = $this->permissions->getUserPermissions($this->currentUser);
+        $canDeploy = $this->permissions->canUserDeploy($this->currentUser, $application, $environment);
 
-        if ($perm->isLeadOfApplication($application) || $perm->isButtonPusher() || $perm->isSuper()) {
+        if ($canDeploy) {
             return;
         }
 

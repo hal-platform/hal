@@ -200,7 +200,7 @@ services:
             - @kraken.target
             - @session.flasher
             - @doctrine.em
-            - @acl
+            - @kraken.acl
     kraken.application.target.edit.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/target.edit.twig']]]
@@ -335,7 +335,7 @@ services:
             - @kraken.diff
             - @kraken.validator.property
             - @slim.not.found
-            - @acl
+            - @kraken.acl
     kraken.property.add.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/latest/property.add.twig']]]
@@ -350,7 +350,7 @@ services:
             - @kraken.validator.property
             - @json
             - @session.flasher
-            - @acl
+            - @kraken.acl
     kraken.property.edit.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/latest/property.edit.twig']]]
@@ -361,7 +361,7 @@ services:
             - @kraken.property.remove.twig
             - @kraken.property
             - @doctrine.em
-            - @acl
+            - @kraken.acl
     kraken.property.remove.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/configuration/latest/property.remove.twig']]]
@@ -372,7 +372,7 @@ services:
             - @kraken.property
             - @doctrine.em
             - @session.flasher
-            - @acl
+            - @kraken.acl
 
     ####################################################################################################################
     # DEPLOY
