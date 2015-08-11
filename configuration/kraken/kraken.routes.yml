@@ -167,23 +167,23 @@ parameters:
             conditions:
                 application: %routes.kraken.regex.hex%
 
-        # protected by controller
+        # protected
         kraken.schema.edit:
-            route: '/kraken/schemas/:schema/edit'
-            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.edit.page']
+            route: '/kraken/applications/:application/schemas/:schema/edit'
+            stack: ['kraken.middleware.lead', 'kraken.middleware.require.entity', 'kraken.schema.edit.page']
             conditions:
                 schema: %routes.kraken.regex.hex%
-        # protected by controller
+        # protected
         kraken.schema.remove.confirm:
             method: 'GET'
-            route: '/kraken/schemas/:schema/remove'
-            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.remove.page']
+            route: '/kraken/applications/:application/schemas/:schema/remove'
+            stack: ['kraken.middleware.lead', 'kraken.middleware.require.entity', 'kraken.schema.remove.page']
             conditions:
                 schema: %routes.kraken.regex.hex%
         kraken.schema.remove:
             method: 'POST'
-            route: '/kraken/schemas/:schema/remove'
-            stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.remove.handler']
+            route: '/kraken/applications/:application/schemas/:schema/remove'
+            stack: ['kraken.middleware.lead', 'kraken.middleware.require.entity', 'kraken.schema.remove.handler']
             conditions:
                 schema: %routes.kraken.regex.hex%
 

@@ -49,7 +49,7 @@
                         <td>{{ schema.description }}</td>
 
                         <td class="tr">
-                            <a href="{{ urlFor('kraken.schema.edit', {schema: schema.id}) }}">
+                            <a href="{{ urlFor('kraken.schema.edit', {application: application.id, schema: schema.id}) }}">
                                 Edit <span class="tablesaw-collapse">Property Schema</span>
                             </a>
                         </td>
@@ -64,7 +64,7 @@
             <h3 class="mtn">Prime Schema</h3>
             <p>Is this a skeletor application? Prime this application with skeletor configuration schema.</p>
 
-            <form action="{{ urlFor('kraken.schema.skeletor', {application:application.id}) }}" method="POST">
+            <form action="{{ urlFor('kraken.schema.skeletor', {application: application.id}) }}" method="POST">
                 <input class="btn btn--action" type="submit" value="Pre-populate skeletor schema"/>
             </form>
         </div>

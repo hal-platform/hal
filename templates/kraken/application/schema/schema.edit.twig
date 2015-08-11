@@ -66,6 +66,6 @@
     {% endif %}
 
     <p>
-        <a class="btn btn--destructive" href="{{ urlFor('kraken.schema.remove', {schema: schema.id}) }}">Remove property from schema</a></li>
+        <a class="btn btn--destructive" href="{{ urlFor('kraken.schema.remove', {application: application.id, schema: schema.id}) }}">Remove property from schema</a></li>
     </p>
 {% endblock %}
