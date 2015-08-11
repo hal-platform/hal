@@ -200,6 +200,7 @@ services:
             - @kraken.target
             - @session.flasher
             - @doctrine.em
+            - @acl
     kraken.application.target.edit.twig:
         parent: 'kraken.template'
         calls: [['setTemplate', ['kraken/application/target.edit.twig']]]

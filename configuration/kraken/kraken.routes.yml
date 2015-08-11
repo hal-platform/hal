@@ -25,17 +25,16 @@ parameters:
             route: '/kraken/help'
             stack: ['kraken.help.page']
 
+        # protected
         kraken.admin.audit.logs.page1:
             method: 'GET'
             route: '/kraken/admin/audit-logs'
             stack: ['middleware.admin', 'kraken.admin.audit.logs.page']
-
         kraken.admin.audit.logs:
             method: 'GET'
             route: '/kraken/admin/audit-logs/page/:page'
             stack: ['middleware.admin', 'kraken.admin.audit.logs.page']
             conditions: {page: %routes.kraken.regex.digit%}
-
         kraken.admin.audit.log:
             method: 'GET'
             route: '/kraken/admin/audit-logs/:auditLog'
@@ -72,16 +71,17 @@ parameters:
             stack: ['kraken.middleware.lead', 'kraken.middleware.require.entity', 'kraken.application.target.add.page']
             conditions: {application: %routes.kraken.regex.hex%}
 
-        # protected
+        # protected, prod protected by controller
         kraken.application.target.edit:
-            route: '/kraken/targets/:target/edit'
-            stack: ['middleware.admin', 'kraken.middleware.require.entity', 'kraken.application.target.edit.page']
+            route: '/kraken/applications/:application/targets/:target/edit'
+            stack: ['kraken.middleware.lead', 'kraken.middleware.require.entity', 'kraken.application.target.edit.page']
             conditions: {target: %routes.kraken.regex.hex%}
 
         ################################################################################################################
         # ENVIRONMENT
         ################################################################################################################
 
+        # protected
         kraken.environment.add:
             route: '/kraken/environments/add'
             stack: ['middleware.super', 'kraken.environment.add.page']
@@ -91,6 +91,7 @@ parameters:
             stack: ['kraken.middleware.require.entity', 'kraken.environment.page']
             conditions: {environment: %routes.kraken.regex.hex%}
 
+        # protected
         kraken.environment.edit:
             route: '/kraken/environments/:environment/edit'
             stack: ['middleware.super', 'kraken.middleware.require.entity', 'kraken.environment.edit.page']
@@ -166,13 +167,13 @@ parameters:
             conditions:
                 application: %routes.kraken.regex.hex%
 
-#???protected
+        # protected by controller
         kraken.schema.edit:
             route: '/kraken/schemas/:schema/edit'
             stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.schema.edit.page']
             conditions:
                 schema: %routes.kraken.regex.hex%
-#???protected
+        # protected by controller
         kraken.schema.remove.confirm:
             method: 'GET'
             route: '/kraken/schemas/:schema/remove'
@@ -190,6 +191,7 @@ parameters:
         # CRUD - PROPERTY
         ################################################################################################################
 
+        # protected by controller
         kraken.property.add:
             route: '/kraken/applications/:application/environments/:environment/add'
             stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.property.add.page']
@@ -203,12 +205,14 @@ parameters:
             conditions:
                 property: %routes.kraken.regex.hex%
 
+        # protected by controller
         kraken.property.edit:
             route: '/kraken/properties/:property/edit'
             stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.property.edit.page']
             conditions:
                 property: %routes.kraken.regex.hex%
 
+        # protected by controller
         kraken.property.remove.confirm:
             method: 'GET'
             route: '/kraken/properties/:property/remove'
@@ -227,11 +231,14 @@ parameters:
         ################################################################################################################
 
         # deploy configuration to target
+        # protected by controller
         kraken.deploy:
             method: ['GET']
             route: '/kraken/targets/:target/deploy'
             stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.deploy.page']
             conditions: {target: %routes.kraken.regex.hex%}
+
+        # protected by controller
         kraken.deploy.handler:
             method: ['POST']
             route: '/kraken/targets/:target/deploy'
@@ -239,12 +246,14 @@ parameters:
             conditions: {target: %routes.kraken.regex.hex%}
 
         # rollback previous or failed configuration to target
+        # protected by controller
         kraken.rollback:
             method: ['GET']
             route: '/kraken/configurations/:configuration/rollback'
             stack: ['middleware.login', 'kraken.middleware.require.entity', 'kraken.rollback.page']
             conditions: {configuration: %routes.kraken.regex.hex%}
 
+        # protected by controller
         kraken.rollback.handler:
             method: ['POST']
             route: '/kraken/configurations/:configuration/rollback'

@@ -3,7 +3,8 @@
 
 {% set page_title = "Application : " ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application.halApplication) %}
+{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set canEdit = isAdmin or isUserLeadOf(currentUser, application.halApplication) %}
 
 {% block content %}
 
@@ -44,7 +45,7 @@
         <ul class="button-list">
             <li><a class="btn" href="{{ urlFor('kraken.status', {application: application.id}) }}">Configuration Status</a></li>
 
-            {% if isAdmin %}
+            {% if canEdit %}
                 <li><a class="btn" href="{{ urlFor('kraken.schema', {application: application.id}) }}">Manage Schema</a></li>
                 <li><a class="btn btn--action" href="{{ urlFor('kraken.application.edit', {application: application.id}) }}">Edit Application</a></li>
             {% endif %}
@@ -92,8 +93,11 @@
                             </td>
                             <td class="tr">
                                 {% if isAdmin %}
-                                    <a href="{{ urlFor('kraken.application.target.edit', {target: target.id}) }}">Manage</a>
+                                    <a href="{{ urlFor('kraken.application.target.edit', {application: application.id, target: target.id}) }}">Manage</a>
+                                {% elseif canEdit and not target.environment.isProduction %}
+                                    <a href="{{ urlFor('kraken.application.target.edit', {application: application.id, target: target.id}) }}">Manage</a>
                                 {% endif %}
+
                                 <a class="btn btn--small" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: target.environment.id})}}">Latest Configuration</a>
                             </td>
 
@@ -117,7 +121,7 @@
             </tbody>
         </table>
 
-        {% if unassignedTargets and isAdmin %}
+        {% if unassignedTargets and canEdit %}
             <p>
                 <a class="btn btn--action" href="{{ urlFor('kraken.application.target.add', {application: application.id}) }}">Enable environment</a>
             </p>

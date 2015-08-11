@@ -10,6 +10,7 @@ namespace QL\Kraken\Controller\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
+use QL\Hal\ACL;
 use QL\Kraken\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -48,6 +49,11 @@ class EditTargetController implements ControllerInterface
     private $em;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @type array
      */
     private $errors;
@@ -58,13 +64,15 @@ class EditTargetController implements ControllerInterface
      * @param Target $target
      * @param Flasher $flasher
      * @param EntityManagerInterface $em
+     * @param ACL $acl
      */
     public function __construct(
         Request $request,
         TemplateInterface $template,
         Target $target,
         Flasher $flasher,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ACL $acl
     ) {
         $this->request = $request;
         $this->template = $template;
@@ -72,6 +80,7 @@ class EditTargetController implements ControllerInterface
         $this->flasher = $flasher;
 
         $this->em = $em;
+        $this->acl = $acl;
 
         $this->errors = [];
     }
@@ -81,6 +90,10 @@ class EditTargetController implements ControllerInterface
      */
     public function __invoke()
     {
+        if ($this->target->environment()->isProduction()) {
+            return $this->acl->requireAdmin();
+        }
+
         if ($this->request->isPost()) {
             $form = [
                 'key' => $this->request->post('key'),
