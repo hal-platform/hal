@@ -9,6 +9,7 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\ACL;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Snapshot;
 use QL\Kraken\Core\Entity\Target;
@@ -34,21 +35,29 @@ class RemovePropertyController implements ControllerInterface
     private $targetRepo;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param TemplateInterface $template
      * @param Property $property
-     *
      * @param EntityManagerInterface $em
+     * @param ACL $acl
      */
     public function __construct(
         TemplateInterface $template,
         Property $property,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ACL $acl
     ) {
         $this->template = $template;
         $this->property = $property;
 
         $this->snapshotRepo = $em->getRepository(Snapshot::CLASS);
         $this->targetRepo = $em->getRepository(Target::CLASS);
+
+        $this->acl = $acl;
     }
 
     /**
@@ -56,6 +65,8 @@ class RemovePropertyController implements ControllerInterface
      */
     public function __invoke()
     {
+        $this->acl->requireKrakenDeployPermissions($this->property->application(), $this->property->environment());
+
         $context = [
             'application' => $this->property->application(),
             'environment' => $this->property->environment(),

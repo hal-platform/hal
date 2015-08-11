@@ -8,6 +8,7 @@
 namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
+use QL\Hal\ACL;
 use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Validator\PropertyValidator;
@@ -57,6 +58,11 @@ class EditPropertyController implements ControllerInterface
     private $flasher;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param Request $request
      * @param TemplateInterface $template
      * @param Property $property
@@ -65,6 +71,7 @@ class EditPropertyController implements ControllerInterface
      * @param PropertyValidator $validator
      * @param Json $json
      * @param Flasher $flasher
+     * @param ACL $acl
      */
     public function __construct(
         Request $request,
@@ -74,7 +81,8 @@ class EditPropertyController implements ControllerInterface
         EntityManagerInterface $em,
         PropertyValidator $validator,
         Json $json,
-        Flasher $flasher
+        Flasher $flasher,
+        ACL $acl
     ) {
         $this->request = $request;
         $this->template = $template;
@@ -84,6 +92,7 @@ class EditPropertyController implements ControllerInterface
         $this->validator = $validator;
         $this->json = $json;
         $this->flasher = $flasher;
+        $this->acl = $acl;
     }
 
     /**
@@ -91,15 +100,15 @@ class EditPropertyController implements ControllerInterface
      */
     public function __invoke()
     {
-        if ($this->request->isPost()) {
-            if ($property = $this->handleForm()) {
-                // flash and redirect
-                $this->flasher
-                    ->withFlash(sprintf(self::SUCCESS, $property->schema()->key()), 'success')
-                    ->load('kraken.property', [
-                        'property' => $this->property->id()
-                    ]);
-            }
+        $this->acl->requireKrakenDeployPermissions($this->property->application(), $this->property->environment());
+
+        if ($property = $this->handleForm()) {
+            // flash and redirect
+            $this->flasher
+                ->withFlash(sprintf(self::SUCCESS, $property->schema()->key()), 'success')
+                ->load('kraken.property', [
+                    'property' => $this->property->id()
+                ]);
         }
 
         $context = [
@@ -119,6 +128,10 @@ class EditPropertyController implements ControllerInterface
      */
     private function handleForm()
     {
+        if (!$this->request->isPost()) {
+            return null;
+        }
+
         $value = $this->validator->resolvePropertyValueFromRequest($this->request, $this->property->schema());
 
         if ($property = $this->validator->isEditValid($this->property, $value)) {

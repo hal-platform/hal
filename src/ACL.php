@@ -10,6 +10,9 @@ namespace QL\Hal;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionService;
+use QL\Kraken\Core\Entity\Application as KrakenApplication;
+use QL\Kraken\Core\Entity\Environment as KrakenEnvironment;
+use QL\Kraken\Service\PermissionService as KrakenPermissionService;
 use QL\Panthor\Slim\Halt;
 use QL\Panthor\TemplateInterface;
 
@@ -31,6 +34,11 @@ class ACL
     private $permissions;
 
     /**
+     * @type KrakenPermissionService
+     */
+    private $krakenPermissions;
+
+    /**
      * @type User
      */
     private $currentUser;
@@ -39,18 +47,21 @@ class ACL
      * @param TemplateInterface $denied
      * @param Halt $halt
      * @param PermissionService $permissions
+     * @param KrakenPermissionService $krakenPermissions
      * @param User $currentUser
      */
     public function __construct(
         TemplateInterface $denied,
         Halt $halt,
         PermissionService $permissions,
+        KrakenPermissionService $krakenPermissions,
         User $currentUser
     ) {
         $this->denied = $denied;
         $this->halt = $halt;
 
         $this->permissions = $permissions;
+        $this->krakenPermissions = $krakenPermissions;
         $this->currentUser = $currentUser;
     }
 
@@ -78,6 +89,23 @@ class ACL
         $perm = $this->permissions->getUserPermissions($this->currentUser);
 
         if ($perm->isLeadOfApplication($application) || $perm->isButtonPusher() || $perm->isSuper()) {
+            return;
+        }
+
+        $this->denied();
+    }
+
+    /**
+     * @param KrakenApplication $application
+     * @param KrakenEnvironment $environment
+     *
+     * @see self::denied
+     */
+    public function requireKrakenDeployPermissions(KrakenApplication $application, KrakenEnvironment $environment)
+    {
+        $canDeploy = $this->krakenPermissions->canUserDeploy($this->currentUser, $application, $environment);
+
+        if ($canDeploy) {
             return;
         }
 

@@ -9,6 +9,7 @@ namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\ACL;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Flasher;
 use QL\Kraken\ConfigurationDiffService;
@@ -83,6 +84,11 @@ class AddPropertyController implements ControllerInterface
     private $notFound;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param Request $request
      * @param TemplateInterface $template
      * @param Application $application
@@ -94,6 +100,7 @@ class AddPropertyController implements ControllerInterface
      * @param ConfigurationDiffService $diffService
      * @param PropertyValidator $validator
      * @param NotFound $notFound
+     * @param ACL $acl
      */
     public function __construct(
         Request $request,
@@ -106,7 +113,8 @@ class AddPropertyController implements ControllerInterface
         Flasher $flasher,
         ConfigurationDiffService $diffService,
         PropertyValidator $validator,
-        NotFound $notFound
+        NotFound $notFound,
+        ACL $acl
     ) {
         $this->request = $request;
         $this->template = $template;
@@ -121,6 +129,7 @@ class AddPropertyController implements ControllerInterface
         $this->diffService = $diffService;
         $this->validator = $validator;
         $this->notFound = $notFound;
+        $this->acl = $acl;
     }
 
     /**
@@ -132,16 +141,16 @@ class AddPropertyController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        if ($this->request->isPost()) {
-            if ($property = $this->handleForm()) {
-                // flash and redirect
-                $this->flasher
-                    ->withFlash(sprintf(self::SUCCESS, $property->schema()->key()), 'success')
-                    ->load('kraken.configuration.latest', [
-                        'application' => $this->application->id(),
-                        'environment' => $this->environment->id()
-                    ]);
-            }
+        $this->acl->requireKrakenDeployPermissions($this->application, $this->environment);
+
+        if ($property = $this->handleForm()) {
+            // flash and redirect
+            $this->flasher
+                ->withFlash(sprintf(self::SUCCESS, $property->schema()->key()), 'success')
+                ->load('kraken.configuration.latest', [
+                    'application' => $this->application->id(),
+                    'environment' => $this->environment->id()
+                ]);
         }
 
         $latest = $this->diffService->resolveLatestConfiguration($target->application(), $target->environment());
@@ -194,6 +203,10 @@ class AddPropertyController implements ControllerInterface
      */
     private function handleForm()
     {
+        if (!$this->request->isPost()) {
+            return null;
+        }
+
         $schemaId = $this->request->post('prop');
 
         if ($property = $this->validator->isValid($this->environment, $this->request, $schemaId)) {

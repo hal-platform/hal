@@ -183,6 +183,7 @@ services:
             - @denied.twig
             - @slim.halt
             - @permissions
+            - @kraken.permissions
             - @currentUser
 
     ####################################################################################################################

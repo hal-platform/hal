@@ -8,6 +8,7 @@
 namespace QL\Kraken\Controller\Configuration\Latest;
 
 use Doctrine\ORM\EntityManagerInterface;
+use QL\Hal\ACL;
 use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Property;
 use QL\Panthor\ControllerInterface;
@@ -32,18 +33,26 @@ class RemovePropertyHandler implements ControllerInterface
     private $em;
 
     /**
+     * @type ACL
+     */
+    private $acl;
+
+    /**
      * @param Property $property
      * @param EntityManagerInterface $em
      * @param Flasher $flasher
+     * @param ACL $acl
      */
     public function __construct(
         Property $property,
         EntityManagerInterface $em,
-        Flasher $flasher
+        Flasher $flasher,
+        ACL $acl
     ) {
         $this->property = $property;
         $this->flasher = $flasher;
         $this->em = $em;
+        $this->acl = $acl;
     }
 
     /**
@@ -53,6 +62,8 @@ class RemovePropertyHandler implements ControllerInterface
     {
         $application = $this->property->application();
         $environment = $this->property->environment();
+
+        $this->acl->requireKrakenDeployPermissions($application, $environment);
 
         $key = $this->property->schema()->key();
 
