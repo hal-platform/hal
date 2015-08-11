@@ -77,7 +77,7 @@ class PermissionService
         }
 
         // lead and deployment permissions are based on hal applications.
-        if ($halApp = $application->halApplication()) {
+        if ($halApplication = $application->halApplication()) {
 
             if ($environment->isProduction()) {
                 if ($perm->canDeployApplicationToProd($halApplication)) {
@@ -87,7 +87,7 @@ class PermissionService
             } else {
 
                 // Non-prod fallback to building permissions, which includes github collabs
-                if ($this->permissions->canUserBuild($user, $halApp)) {
+                if ($this->permissions->canUserBuild($user, $halApplication)) {
                     return $this->setToInternalCache($key, true);
                 }
             }
