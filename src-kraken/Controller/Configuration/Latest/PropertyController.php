@@ -11,11 +11,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Snapshot;
+use QL\Kraken\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class PropertyController implements ControllerInterface
 {
+    use SortingTrait;
+
     /**
      * @type TemplateInterface
      */
@@ -30,6 +33,7 @@ class PropertyController implements ControllerInterface
      * @type EntityRepository
      */
     private $snapshotRepo;
+    private $propertyRepo;
 
     /**
      * @param TemplateInterface $template
@@ -46,6 +50,7 @@ class PropertyController implements ControllerInterface
         $this->property = $property;
 
         $this->snapshotRepo = $em->getRepository(Snapshot::CLASS);
+        $this->propertyRepo = $em->getRepository(Property::CLASS);
     }
 
     /**
@@ -59,9 +64,25 @@ class PropertyController implements ControllerInterface
             'application' => $this->property->application(),
             'environment' => $this->property->environment(),
             'property' => $this->property,
-            'history' => $history10
+            'history' => $history10,
+            'otherEnvironments' => $this->getValueFromAllEnvironments()
         ];
 
         $this->template->render($context);
+    }
+
+    /**
+     * @return Property[]
+     */
+    public function getValueFromAllEnvironments()
+    {
+        $properties = $this->propertyRepo->findBy(['schema' => $this->property->schema()]);
+        if (count($properties) === 1) {
+            return [];
+        }
+
+        usort($properties, $this->sorterPropertyByEnvironment());
+
+        return $properties;
     }
 }

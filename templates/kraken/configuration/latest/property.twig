@@ -42,6 +42,11 @@
     </section>
 
     <section class="leader--andre">
+        <h2 class="mbn">All Environments</h2>
+        {{ block('other_environments') }}
+    </section>
+
+    <section class="leader--andre">
         <h2 class="mbn">Deployment History</h2>
         {{ block('property_history') }}
     </section>
@@ -93,4 +98,46 @@
         <p>There are no previous values for this property.</p>
     {% endif %}
 
+{% endblock %}
+
+{% block other_environments %}
+    {% if otherEnvironments %}
+        <p class="additional">Current value for this property in all environments.</p>
+        <table class="table--spacing-medium table--striped table--top-aligned" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th class="t15">Environment</th>
+                    <th class="t10"></th>
+                    <th class="t15"></th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for other_property in otherEnvironments %}
+                    <tr>
+                        <td>
+                            {% if other_property.environment.isProduction %}
+                                {{ macros.status(other_property.environment.name, 'info', 'key') }}
+                            {% else %}
+                                {{ other_property.environment.name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: other_property.environment.id}) }}">
+                                {{ macros.icon('list') }} Latest
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ urlFor('kraken.property', {property: other_property.id}) }}">
+                                {{ macros.icon('compose-3') }} Property
+                            </a>
+                        </td>
+                        <td>{{ kraken_macros.renderProperty(other_property) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no other values for this property.</p>
+    {% endif %}
 {% endblock %}
