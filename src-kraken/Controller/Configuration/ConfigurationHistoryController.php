@@ -11,7 +11,9 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Core\Entity\Application;
+use QL\Kraken\Core\Entity\Configuration;
 use QL\Kraken\Core\Entity\Target;
+use QL\Kraken\Core\Repository\ConfigurationRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -19,21 +21,6 @@ use QL\Panthor\TemplateInterface;
 class ConfigurationHistoryController implements ControllerInterface
 {
     const MAX_PER_PAGE = 25;
-
-    const DQL_GET_CONFIGURATIONS = <<<SQL
-   SELECT c
-     FROM QL\Kraken\Core\Entity\Configuration c
-    WHERE c.application = :application
- ORDER BY c.created DESC
-SQL;
-
-    const DQL_GET_CONFIGURATIONS_FOR_ENV = <<<SQL
-   SELECT c
-     FROM QL\Kraken\Core\Entity\Configuration c
-    WHERE c.application = :application
-      AND c.environment = :environment
- ORDER BY c.created DESC
-SQL;
 
     /**
      * @type TemplateInterface
@@ -54,6 +41,11 @@ SQL;
      * @type EntityRepository
      */
     private $targetRepo;
+
+    /**
+     * @type ConfigurationRepository
+     */
+    private $configurationRepo;
 
     /**
      * @type NotFound
@@ -85,6 +77,7 @@ SQL;
 
         $this->em = $em;
         $this->targetRepo = $em->getRepository(Target::CLASS);
+        $this->configurationRepo = $em->getRepository(Configuration::CLASS);
 
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -102,7 +95,7 @@ SQL;
             return call_user_func($this->notFound);
         }
 
-        $configurations = $this->getConfigurations($this->application, self::MAX_PER_PAGE, ($page-1));
+        $configurations = $this->configurationRepo->getByApplication($this->application, self::MAX_PER_PAGE, ($page-1));
         $deployed = $this->getDeployedConfigurations($this->application);
 
         $total = count($configurations);
@@ -129,7 +122,8 @@ SQL;
     {
         $deployed = [];
 
-        foreach ($this->targetRepo->findBy(['application' => $application]) as $target) {
+        $targets = $this->targetRepo->findBy(['application' => $application]);
+        foreach ($targets as $target) {
             if (!$target->configuration()) continue;
 
             $id = $target->configuration()->id();
@@ -137,27 +131,5 @@ SQL;
         }
 
         return $deployed;
-    }
-
-    /**
-     * Get all configurations for an application.
-     *
-     * @param Application $application
-     * @param int $limit
-     * @param int $page
-     *
-     * @return Paginator
-     */
-    public function getConfigurations(Application $application, $limit = 25, $page = 0)
-    {
-        $dql = self::DQL_GET_CONFIGURATIONS;
-
-        $query = $this->em
-            ->createQuery($dql)
-            ->setMaxResults($limit)
-            ->setFirstResult($limit * $page)
-            ->setParameter('application', $application);
-
-        return new Paginator($query);
     }
 }
