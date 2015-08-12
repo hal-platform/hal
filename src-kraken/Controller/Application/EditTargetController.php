@@ -91,7 +91,7 @@ class EditTargetController implements ControllerInterface
     public function __invoke()
     {
         if ($this->target->environment()->isProduction()) {
-            return $this->acl->requireAdmin();
+            $this->acl->requireAdmin();
         }
 
         if ($this->request->isPost()) {

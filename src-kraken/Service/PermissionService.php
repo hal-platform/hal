@@ -45,6 +45,17 @@ class PermissionService
         ];
     }
 
+
+    /**
+     * @param User $user
+     *
+     * @return UserPerm
+     */
+    public function getUserPermissions(User $user)
+    {
+        return $this->permissions->getUserPermissions($user);
+    }
+
     /**
      * Can the user change or deploy the configuration for this environment?
      *
