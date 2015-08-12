@@ -289,7 +289,7 @@
     {% if type == 'pull-request' %}
         {% set uniqueId = hash('pr' ~ ref.number) %}
 
-        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-closed">
+        <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--pr-open">
             {{ macros.icon('pull', 'github__pr--open') }}
             <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
 
