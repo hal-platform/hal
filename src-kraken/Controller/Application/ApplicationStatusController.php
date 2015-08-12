@@ -12,13 +12,13 @@ use Doctrine\ORM\EntityRepository;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Schema;
 use QL\Kraken\Core\Entity\Target;
-use QL\Kraken\Utility\SortingHelperTrait;
+use QL\Kraken\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class ApplicationStatusController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     /**
      * @type TemplateInterface

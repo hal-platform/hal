@@ -12,12 +12,12 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
-use QL\Kraken\Utility\SortingHelperTrait;
+use QL\Kraken\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 
 class RemoveSchemaHandler implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     const SUCCESS = 'Property Schema "%s" has been removed from configuration.';
     const REMOVED_ENV = 'The property has also been removed from the following environment: <b>%s</b>';

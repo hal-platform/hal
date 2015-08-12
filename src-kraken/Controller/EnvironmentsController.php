@@ -9,13 +9,13 @@ namespace QL\Kraken\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Kraken\Core\Entity\Environment;
-use QL\Kraken\Utility\SortingHelperTrait;
+use QL\Kraken\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
 class EnvironmentsController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     /**
      * @type TemplateInterface

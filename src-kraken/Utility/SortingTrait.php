@@ -11,13 +11,24 @@ use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Target;
 
-trait SortingHelperTrait
+trait SortingTrait
 {
     private $sortingHelperEnvironmentOrder = [
         'dev' => 0,
         'test' => 1,
         'beta' => 2,
-        'prod' => 3
+        'prod' => 3,
+
+        'dev-aws' => 4,
+        'test-aws' => 5,
+        'beta-aws' => 6,
+        'prod-aws' => 7,
+
+        // not used?
+        'devaws' => 8,
+        'testaws' => 9,
+        'betaaws' => 10,
+        'prodaws' => 11
     ];
 
     /**
@@ -62,7 +73,7 @@ trait SortingHelperTrait
                 return 0;
             }
 
-            return ($aOrder > $bOrder);
+            return ($aOrder > $bOrder) ? 1 : -1;
         };
     }
 
@@ -85,7 +96,7 @@ trait SortingHelperTrait
                 return 0;
             }
 
-            return ($aOrder > $bOrder);
+            return ($aOrder > $bOrder) ? 1 : -1;
         };
     }
 }

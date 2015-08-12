@@ -13,7 +13,7 @@ use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
-use QL\Kraken\Utility\SortingHelperTrait;
+use QL\Kraken\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\TemplateInterface;
@@ -21,7 +21,7 @@ use Slim\Http\Request;
 
 class EditSchemaController implements ControllerInterface
 {
-    use SortingHelperTrait;
+    use SortingTrait;
 
     const SUCCESS = 'Description for key "%s" updated!';
 
