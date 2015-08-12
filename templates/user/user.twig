@@ -14,10 +14,8 @@
 
     <div class="flag">
         <div class="flag__figure">
-
-            {% if ldapUser and user.pictureUrl %}
-                {% set profilePicture = user.pictureUrl.host ~ user.pictureUrl.path %}
-                <img src="{{ ishttpsOn ? 'https' : 'http' }}://{{ profilePicture }}" width="100">
+            {% if ldapUser %}
+                <img src="{{ ishttpsOn ? 'https' : 'http' }}://rockworldapps/badgephotos/{{ ldapUser.commonId }}.jpg" width="100">
             {% else %}
                 <img src="/img/noprofile.jpg" width="100">
             {% endif %}

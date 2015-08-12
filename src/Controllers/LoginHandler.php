@@ -148,8 +148,7 @@ class LoginHandler implements MiddlewareInterface
             ->withId($account->commonId())
             ->withEmail($account->email())
             ->withHandle($account->windowsUsername())
-            ->withName($account->displayName())
-            ->withPictureUrl($account->badgePhotoUrl());
+            ->withName($account->displayName());
 
         $this->em->persist($user);
         $this->em->flush();

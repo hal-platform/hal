@@ -60,7 +60,6 @@ class UserNormalizer
                 'handle' => $user->handle(),
                 'name' => $user->name(),
                 'email' => $user->email(),
-                'picture' => $user->pictureUrl(),
                 'isActive' => $user->isActive(),
                 'permissions' => [
                     'standard' => $perm->isPleb(),
