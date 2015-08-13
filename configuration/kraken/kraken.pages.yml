@@ -133,6 +133,7 @@ services:
             - @kraken.configuration.history.twig
             - @kraken.application
             - @doctrine.em
+            - @slim.request
             - @slim.not.found
             - @slim.route.parameters
     kraken.configuration.history.twig:

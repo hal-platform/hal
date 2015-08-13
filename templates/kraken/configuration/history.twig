@@ -9,10 +9,31 @@
 
     <h1>Configuration History - <strong>{{ application.name }}</strong></h1>
 
+    {{ block('search') }}
+
     {{ block('configuration_table') }}
 
-    {{ pagination.pagination(page, last, 'kraken.configuration.history', {application: application.id, environment: environment.id}) }}
+    {{ pagination.pagination(page, last, 'kraken.configuration.history', {application: application.id}) }}
 
+{% endblock %}
+
+{% block search %}
+    <h3>Search by reference:</h3>
+    <form method="get" class="search-filter">
+        <input
+            class="text-input"
+            type="text"
+            name="search"
+            autocomplete="off"
+            value="{{ search_filter }}"
+            placeholder="Valid search query: env:$ENV_NAME">
+
+        <input class="btn" type="submit" value="Filter">
+
+        {% if search_filter %}
+            <a class="btn btn--action" href="{{ urlFor('kraken.configuration.history.page1', {application: application.id}) }}">Reset</a>
+        {% endif %}
+    </form>
 {% endblock %}
 
 {% block configuration_table %}
@@ -56,7 +77,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5">No configurations found.</td>
+                    <td colspan="6">No configurations found.</td>
                 </tr>
             {% endfor %}
         </tbody>

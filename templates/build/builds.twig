@@ -7,13 +7,13 @@
 {% block content %}
     <h1>Build History - <strong>{{ application.name }}</strong></h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {application: application.id}) }}">Back to Application Status</a></p>
 
     {{ block('search') }}
 
-    {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': true} %}
+    {% include '_partial-job/build-table.twig' with {builds: builds, isPushable: true} %}
 
-    {{ pagination.pagination(page, last, 'build.history', {'application': application.id}, {search: search_filter}) }}
+    {{ pagination.pagination(page, last, 'build.history', {application: application.id}, {search: search_filter}) }}
 
 {% endblock %}
 
@@ -31,7 +31,7 @@
         <input class="btn" type="submit" value="Filter">
 
         {% if search_filter %}
-            <a class="btn btn--action" href="{{ urlFor('build.history.page1', {'application': application.id}) }}">Reset</a>
+            <a class="btn btn--action" href="{{ urlFor('build.history.page1', {application: application.id}) }}">Reset</a>
         {% endif %}
     </form>
 {% endblock %}
