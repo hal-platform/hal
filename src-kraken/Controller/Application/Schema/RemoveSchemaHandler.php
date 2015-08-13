@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Flasher;
 use QL\Kraken\Core\Entity\Property;
 use QL\Kraken\Core\Entity\Schema;
-use QL\Kraken\Utility\SortingTrait;
+use QL\Kraken\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 
 class RemoveSchemaHandler implements ControllerInterface
