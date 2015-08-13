@@ -148,4 +148,3 @@ services:
                 defaults:
                     connect_timeout: 2
                     timeout: 5
-                    verify: false
