@@ -5,7 +5,9 @@
 
 {% block content %}
 
-    <h1>User Settings</h1>
+    <h1 class="mbn">User Settings</h1>
+
+    <a href="{{ urlFor('user', {user: user.id}) }}">User Profile</a>
 
     <section class="leader--andre">
         <h2 class="mbn">HAL Preferences</h2>
