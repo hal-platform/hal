@@ -549,6 +549,7 @@ class DeploymentValidator
         $this->errors = array_merge($this->errors, $errors);
         return count($errors) === 0;
     }
+
     /**
      * @param string $url
      *
