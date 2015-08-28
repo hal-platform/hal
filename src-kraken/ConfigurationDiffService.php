@@ -97,9 +97,9 @@ class ConfigurationDiffService
         foreach ($snapshots as $snapshot) {
             if (!$schema = $snapshot->schema()) {
                 $schema = (new Schema)
-                    ->withKey($property->key())
-                    ->withDataType($property->dataType())
-                    ->withIsSecure($property->isSecure())
+                    ->withKey($snapshot->key())
+                    ->withDataType($snapshot->dataType())
+                    ->withIsSecure($snapshot->isSecure())
                     ->withApplication($source->application());
             }
 
