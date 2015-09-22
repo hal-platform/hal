@@ -54,25 +54,25 @@
                     <tr>
                         <td>
                             {% if log.isSuccess %}
-                                <span class="tooltipped" aria-label="The property was updated successfully">
+                                <span class="tooltipped tooltipped-ne" aria-label="The property was updated successfully">
                                     {{ macros.status_icon('', 'success') }}
                                 </span>
                                 <span class="tablesaw-collapse">The property was updated successfully</span>
 
                             {% elseif log.detail is sameas(false) %}
-                                <span class="tooltipped" aria-label="The property was not updated. The system failed to obtain a lock.">
+                                <span class="tooltipped tooltipped-ne" aria-label="The property was not updated. The system failed to obtain a lock.">
                                     {{ macros.status_icon('', 'error') }}
                                 </span>
                                 <span class="tablesaw-collapse">The property was not updated. The system failed to obtain a lock.</span>
 
                             {% elseif log.detail is sameas(null) %}
-                                <span class="tooltipped" aria-label="The property was not updated. An unexpected error occured.">
+                                <span class="tooltipped tooltipped-ne" aria-label="The property was not updated. An unexpected error occured.">
                                     {{ macros.status_icon('', 'error') }}
                                 </span>
                                 <span class="tablesaw-collapse">The property was not updated. An unexpected error occured.</span>
 
                             {% else %}
-                                <span class="tooltipped" aria-label="The property was not updated. A service error occured.">
+                                <span class="tooltipped tooltipped-ne" aria-label="The property was not updated. A service error occured.">
                                     {{ macros.status_icon('', 'error') }}
                                 </span>
                                 <span class="tablesaw-collapse">The property was not updated. A service error occured.</span>

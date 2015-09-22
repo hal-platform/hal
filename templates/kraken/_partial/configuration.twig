@@ -31,10 +31,10 @@
                         {% if is_deployed %}
                             <td>
                                 {% if checksums[property.key] == property.checksum %}
-                                    <span class="tooltipped" aria-label="Verified with Consul backend">{{ macros.status_icon('', 'success') }}</span>
+                                    <span class="tooltipped tooltipped-ne" aria-label="Verified with Consul backend">{{ macros.status_icon('', 'success') }}</span>
                                     <span class="tablesaw-collapse">Verified with Consul backend</span>
                                 {% else %}
-                                    <span class="tooltipped" aria-label="Missing or different from Consul backend">{{ macros.status_icon('', 'error') }}</span>
+                                    <span class="tooltipped tooltipped-ne" aria-label="Missing or different from Consul backend">{{ macros.status_icon('', 'error') }}</span>
                                     <span class="tablesaw-collapse">Missing or different from Consul backend</span>
                                 {% endif %}
                             </td>
