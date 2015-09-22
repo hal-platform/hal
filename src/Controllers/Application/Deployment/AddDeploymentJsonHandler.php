@@ -9,6 +9,8 @@ namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Slim\Halt;
@@ -58,6 +60,11 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
     private $application;
 
     /**
+     * @type EnvironmentRepository
+     */
+    private $envRepo;
+
+    /**
      * @param EntityManager $em
      * @param DeploymentValidator $validator
      * @param Halt $halt
@@ -87,6 +94,8 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
         $this->request = $request;
         $this->response = $response;
         $this->application = $application;
+
+        $this->envRepo = $em->getRepository(Environment::CLASS);
     }
 
     /**
@@ -103,6 +112,9 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
         if (!$deployment) {
             return;
         }
+
+        // Clear cached query for buildable environments
+        $this->envRepo->clearBuildableEnvironmentsByApplication($deployment->application());
 
         // persist to database
         $this->em->persist($deployment);

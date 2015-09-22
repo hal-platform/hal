@@ -9,6 +9,8 @@ namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManager;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Flasher;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
@@ -50,6 +52,11 @@ class AddDeploymentFormHandler implements MiddlewareInterface
     private $application;
 
     /**
+     * @type EnvironmentRepository
+     */
+    private $envRepo;
+
+    /**
      * @param EntityManager $em
      * @param DeploymentValidator $validator
      * @param Flasher $flasher
@@ -73,6 +80,8 @@ class AddDeploymentFormHandler implements MiddlewareInterface
 
         $this->request = $request;
         $this->application = $application;
+
+        $this->envRepo = $em->getRepository(Environment::CLASS);
     }
 
     /**
@@ -109,6 +118,9 @@ class AddDeploymentFormHandler implements MiddlewareInterface
 
             return;
         }
+
+        // Clear cached query for buildable environments
+        $this->envRepo->clearBuildableEnvironmentsByApplication($deployment->application());
 
         // persist to database
         $this->em->persist($deployment);
