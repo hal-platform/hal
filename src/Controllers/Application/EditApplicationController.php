@@ -91,8 +91,7 @@ class EditApplicationController implements ControllerInterface
                 'identifier' => $this->request->post('identifier') ?: $this->application->key(),
                 'name' => $this->request->post('name') ?: $this->application->name(),
                 'group' => $this->request->post('group') ?: $this->application->group()->id(),
-                'notification_email' => $this->request->post('notification_email') ?: $this->application->email(),
-                'eb_name' => $this->request->post('eb_name') ?: $this->application->ebName()
+                'notification_email' => $this->request->post('notification_email') ?: $this->application->email()
             ],
             'application' => $this->application,
             'groups' => $this->groupRepo->findAll(),
@@ -129,14 +128,12 @@ class EditApplicationController implements ControllerInterface
         $identifier = strtolower($request->post('identifier'));
         $name = $request->post('name');
         $email = $request->post('notification_email');
-        $ebName = $request->post('eb_name');
 
         $application
             ->withKey($identifier)
             ->withName($name)
             ->withGroup($group)
-            ->withEmail($email)
-            ->withEbName($ebName);
+            ->withEmail($email);
 
         $this->em->merge($application);
         $this->em->flush();
@@ -160,8 +157,7 @@ class EditApplicationController implements ControllerInterface
             'identifier' => 'Identifier',
             'name' => 'Name',
             'group' => 'Group',
-            'notification_email' => 'Notification Email',
-            'eb_name' => 'Elastic Beanstalk Application Name',
+            'notification_email' => 'Notification Email'
         ];
 
         $identifier = strtolower($request->post('identifier'));
@@ -171,8 +167,7 @@ class EditApplicationController implements ControllerInterface
             $this->validateText($request->post('name'), $human['name'], 64, true),
 
             $this->validateText($request->post('group'), $human['group'], 128, true),
-            $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false),
-            $this->validateText($request->post('eb_name'), $human['eb_name'], 255, false)
+            $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false)
         );
 
         // Only check for duplicate identifier if it is being changed

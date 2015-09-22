@@ -58,14 +58,6 @@
 
             <dt class="split__title">Github Source</dt>
             <dd>{{ macros.gitsource(application) }}</dd>
-
-            {% if application.ebName %}
-                <dt class="split__title">Elastic Beanstalk Name</dt>
-                <dd>{{ application.ebName }}</dd>
-            {% else %}
-                <dt class="split__title">Elastic Beanstalk</dt>
-                <dd>Not Enabled</dd>
-            {% endif %}
         </dl>
     </div>
 {% endblock %}

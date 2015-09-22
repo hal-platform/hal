@@ -236,8 +236,7 @@ class AddApplicationController implements ControllerInterface
 
             ->withGithubOwner($githubOwner)
             ->withGithubRepo($githubRepo)
-            ->withEmail('')
-            ->withEbName('');
+            ->withEmail('');
 
         // Default to blank, not null
         $application->setBuildCmd('');
