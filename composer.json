@@ -36,7 +36,7 @@
         "psr/log": "*",
 
         "ql/exception-toolkit": "~1.0",
-        "ql/hal-core": "~2.8.1",
+        "ql/hal-core":   "2.8.2",
         "ql/http-problem": "~1.0",
 
         "ql/mcp-cache":         "~2.2",
