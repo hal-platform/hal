@@ -317,25 +317,7 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        if ($deployment->name()) {
-            return $deployment->name();
-        }
-
-        if ($withDetails) {
-            $type = $deployment->server()->type();
-
-            if ($type === ServerEnum::TYPE_EB) {
-                return sprintf('EB (%s)', $deployment->ebEnvironment());
-
-            } elseif ($type === ServerEnum::TYPE_EC2) {
-                return sprintf('EC2 (%s)', $deployment->ec2Pool());
-
-            } elseif ($type === ServerEnum::TYPE_S3) {
-                return sprintf('S3 (%s)', $deployment->s3bucket());
-            }
-        }
-
-        return $this->formatServer($deployment->server());
+        return $deployment->formatPretty($withDetails);
     }
 
     /**
@@ -351,24 +333,7 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $deployment->server()->type();
-
-        if ($type === ServerEnum::TYPE_EB) {
-            return $deployment->ebEnvironment();
-
-        } elseif ($type === ServerEnum::TYPE_EC2) {
-            return $deployment->ec2Pool();
-
-        } elseif ($type === ServerEnum::TYPE_S3) {
-            $s3 = $deployment->s3bucket();
-            if ($file = $deployment->s3file()) {
-                $s3 = sprintf('%s/%s', $s3, $file);
-            }
-
-            return $s3;
-        }
-
-        return $deployment->path();
+        return $deployment->formatMeta();
     }
 
     /**
@@ -394,6 +359,9 @@ class HalExtension extends Twig_Extension
 
         } elseif ($type === ServerEnum::TYPE_S3) {
             return 'S3 Bucket';
+
+        } elseif ($type === ServerEnum::TYPE_CD) {
+            return 'CodeDeploy Group';
         }
 
         return 'Path';
@@ -412,19 +380,7 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $server->type();
-
-        if ($type === ServerEnum::TYPE_EB) {
-            return sprintf('EB (%s)', $server->name());
-
-        } elseif ($type === ServerEnum::TYPE_EC2) {
-            return sprintf('EC2 (%s)', $server->name());
-
-        } elseif ($type === ServerEnum::TYPE_S3) {
-            return sprintf('S3 (%s)', $server->name());
-        }
-
-        return $server->name();
+        return $server->formatPretty();
     }
 
     /**
@@ -440,10 +396,10 @@ class HalExtension extends Twig_Extension
             return 'Unknown';
         }
 
-        $type = $server->type();
+        $type = $server->formatHumanType();
 
         $serverType = 'Internal (Rsync)';
-        if ($type === 'elasticbeanstalk') {
+        if ($type === 'eb') {
             $serverType = 'Elastic Beanstalk';
 
         } elseif ($type === 'ec2') {
@@ -451,6 +407,9 @@ class HalExtension extends Twig_Extension
 
         } elseif ($type === 's3') {
             $serverType = 'S3';
+
+        } elseif ($type === 'cd') {
+            $serverType = 'CodeDeploy';
         }
 
         return $serverType;
