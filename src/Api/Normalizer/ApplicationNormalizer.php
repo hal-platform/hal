@@ -97,8 +97,7 @@ class ApplicationNormalizer
                 'key' => $application->key(),
                 'name' => $application->name(),
 
-                'email' => $application->email(),
-                'eb_name' => $application->ebName()
+                'email' => $application->email()
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [

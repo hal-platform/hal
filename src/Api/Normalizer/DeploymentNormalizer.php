@@ -54,10 +54,14 @@ class DeploymentNormalizer
      */
     public function link(Deployment $deployment = null)
     {
-        return (is_null($deployment)) ? null : $this->buildLink(
+        if (!$deployment) {
+            return null;
+        }
+
+        return $this->buildLink(
             ['api.deployment', ['id' => $deployment->id()]],
             [
-                'title' => $this->formatDeploymentTitle($deployment)
+                'title' => $deployment->formatPretty(true)
             ]
         );
     }
@@ -85,8 +89,16 @@ class DeploymentNormalizer
 
                 'path' => $deployment->path(),
 
+
+                'cd-name' => $deployment->cdName(),
+                'cd-group' => $deployment->cdGroup(),
+                'cd-configuration' => $deployment->cdConfiguration(),
+
+                'eb-name' => $deployment->ebName(),
                 'eb-environment' => $deployment->ebEnvironment(),
+
                 'ec2-pool' => $deployment->ec2Pool(),
+
                 's3-bucket' => $deployment->s3bucket(),
                 's3-file' => $deployment->s3file(),
 
@@ -103,54 +115,4 @@ class DeploymentNormalizer
             ]
         );
     }
-
-    /**
-     * @param Server $server
-     *
-     * @return string
-     */
-    private function formatServerTitle(Server $server)
-    {
-        $type = $server->type();
-
-        if ($type === ServerEnum::TYPE_EB) {
-            return sprintf('EB (%s)', $server->name());
-
-        } elseif ($type === ServerEnum::TYPE_EC2) {
-            return sprintf('EC2 (%s)', $server->name());
-
-        } elseif ($type === ServerEnum::TYPE_S3) {
-            return sprintf('S3 (%s)', $server->name());
-        }
-
-        return $server->name();
-    }
-
-    /**
-     * @param Deployment $deployment
-     *
-     * @return string
-     */
-    private function formatDeploymentTitle(Deployment $deployment)
-    {
-        if ($deployment->name()) {
-            return $deployment->name();
-        }
-
-        $type = $deployment->server()->type();
-
-        if ($type === ServerEnum::TYPE_EB) {
-            return sprintf('EB (%s)', $deployment->ebEnvironment());
-
-        } elseif ($type === ServerEnum::TYPE_EC2) {
-            return sprintf('EC2 (%s)', $deployment->ec2Pool());
-
-        } elseif ($type === ServerEnum::TYPE_S3) {
-            return sprintf('S3 (%s)', $deployment->s3bucket());
-
-        } else {
-            return sprintf('RSync (%s)', $deployment->path());
-        }
-    }
-
 }
