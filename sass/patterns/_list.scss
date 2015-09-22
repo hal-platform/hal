@@ -106,6 +106,29 @@
             margin: ms(-9);
             width: auto;
         }
+
+        // see http://lea.verou.me/2011/01/styling-children-based-on-their-number-with-css3/
+        // 4 buttons = 2 per row
+        .button-list__selector:first-child:nth-last-child(4),
+        .button-list__selector:first-child:nth-last-child(4) ~ li {
+            min-width: 40%;
+        }
+
+        // 5, 6, 8 buttons = 3 per row
+        .button-list__selector:first-child:nth-last-child(5),
+        .button-list__selector:first-child:nth-last-child(5) ~ li,
+        .button-list__selector:first-child:nth-last-child(6),
+        .button-list__selector:first-child:nth-last-child(6) ~ li,
+        .button-list__selector:first-child:nth-last-child(8),
+        .button-list__selector:first-child:nth-last-child(8) ~ li {
+            min-width: 30%;
+        }
+
+        // 7 buttons = 4 per row
+        .button-list__selector:first-child:nth-last-child(7),
+        .button-list__selector:first-child:nth-last-child(7) ~ li {
+            min-width: 20%;
+        }
     }
 }
 

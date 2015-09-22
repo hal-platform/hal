@@ -63,14 +63,15 @@
 {% endblock %}
 
 {% block env_picker %}
+    {% set env_count = environments|length %}
     {# Only allow environment switching if has multiple env #}
-    {% if environments|length > 1 %}
+    {% if env_count > 1 %}
         <div class="trailer">
             <h5>Change environment</h5>
             <ul class="button-list button-list--half">
                 {% for environment in environments %}
                     {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
-                    <li>
+                    <li class="button-list__selector">
                         <a class="btn{{ btnSelected }}" href="{{ urlFor('application.status', {application: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
                     </li>
                 {% endfor %}
