@@ -18,8 +18,6 @@ use Slim\Http\Response;
 
 class RemoveHandler implements MiddlewareInterface
 {
-    use ServerFormatterTrait;
-
     const SUCCESS = 'Deployment "%s" removed.';
 
     /**
@@ -88,7 +86,7 @@ class RemoveHandler implements MiddlewareInterface
             return;
         }
 
-        $name = $this->formatServerType($this->deployment->server());
+        $name = $this->deployment->server()->formatPretty();
 
         $message = sprintf(self::SUCCESS, $name);
         $this->flasher

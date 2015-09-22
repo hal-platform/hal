@@ -23,8 +23,6 @@ use Slim\Http\Response;
 
 class AddHandler implements MiddlewareInterface
 {
-    use ServerFormatterTrait;
-
     const SUCCESS = 'Deployment "%s" added.';
     const ERROR = 'Deployment could not be attached.';
 
@@ -181,7 +179,7 @@ class AddHandler implements MiddlewareInterface
 
         if ($deployment = $this->handleForm($form)) {
 
-            $name = $this->formatServerType($deployment->server());
+            $name = $deployment->server()->formatPretty();
 
             $message = sprintf(self::SUCCESS, $name);
             $this->flasher->withFlash($message, 'success');
