@@ -14,16 +14,14 @@ class Organization extends OrganizationApi
     /**
      * Request all organizations:
      *
-     * @link https://developer.github.com/v3/search/#search-users
+     * @link https://developer.github.com/v3/orgs/#list-all-organizations
      *
      * @return array list of organizations found
      */
     public function all()
     {
-        $result = $this->get('search/users', [
-            'q' => 'type:organization'
-        ]);
+        $result = $this->get('organizations');
 
-        return $result['items'];
+        return $result;
     }
 }
