@@ -29,13 +29,26 @@
                 <tr>
                     <th>Application</th>
 
-                    {% if server.type == 'elasticbeanstalk' %}
+                    {% if server.type == 'eb' %}
+
+                        <th>EB Application</th>
                         <th>EB Environment</th>
+
                     {% elseif server.type == 'ec2' %}
-                        <th>EC2 Pool</th>
+
+                        <th>Pool</th>
+
                     {% elseif server.type == 's3' %}
+
                         <th>Bucket</th>
                         <th>File</th>
+
+                    {% elseif server.type == 'cd' %}
+
+                        <th>CD Application</th>
+                        <th>CD Group</th>
+                        <th>CD Configuration</th>
+
                     {% else %}
                         <th>Path</th>
                     {% endif %}
@@ -52,13 +65,26 @@
                         <a href="{{ urlFor('application', {application: deployment.application.id}) }}">{{ deployment.application.name }}</a>
                     </td>
 
-                    {% if server.type == 'elasticbeanstalk' %}
+                    {% if server.type == 'eb' %}
+
+                        <td><code class="code_clear">{{ deployment.ebName }}</code></td>
                         <td><code class="code_clear">{{ deployment.ebEnvironment }}</code></td>
+
                     {% elseif server.type == 'ec2' %}
+
                         <td><code class="code_clear">{{ deployment.ec2Pool }}</code></td>
+
                     {% elseif server.type == 's3' %}
+
                         <td><code class="code_clear">{{ deployment.s3bucket }}</code></td>
                         <td><code class="code_clear">{{ deployment.s3file }}</code></td>
+
+                    {% elseif server.type == 'cd' %}
+
+                        <td><code class="code_clear">{{ deployment.cdName }}</code></td>
+                        <td><code class="code_clear">{{ deployment.cdGroup }}</code></td>
+                        <td><code class="code_clear">{{ deployment.cdConfiguration }}</code></td>
+
                     {% else %}
                         <td><code class="code_clear">{{ deployment.path }}</code></td>
                     {% endif %}

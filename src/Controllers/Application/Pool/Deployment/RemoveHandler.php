@@ -18,6 +18,8 @@ use Slim\Http\Response;
 
 class RemoveHandler implements MiddlewareInterface
 {
+    use ServerFormatterTrait;
+
     const SUCCESS = 'Deployment "%s" removed.';
 
     /**
@@ -86,14 +88,7 @@ class RemoveHandler implements MiddlewareInterface
             return;
         }
 
-        $server = $this->deployment->server();
-        if ($server->type() === 'elasticbeanstalk') {
-            $name = 'Elastic Beanstalk';
-        } elseif ($server->type() === 'ec2') {
-            $name = 'EC2';
-        } else {
-            $name = $server->name();
-        }
+        $name = $this->formatServerType($this->deployment->server());
 
         $message = sprintf(self::SUCCESS, $name);
         $this->flasher

@@ -99,6 +99,10 @@ class EditDeploymentHandler implements MiddlewareInterface
             $this->deployment,
             $form['name'],
             $form['path'],
+            $form['cd_name'],
+            $form['cd_group'],
+            $form['cd_config'],
+            $form['eb_name'],
             $form['eb_environment'],
             $form['ec2_pool'],
             $form['s3_bucket'],
@@ -115,7 +119,6 @@ class EditDeploymentHandler implements MiddlewareInterface
             return;
         }
 
-        // persist to database
         $this->em->persist($deployment);
         $this->em->flush();
 
@@ -133,7 +136,13 @@ class EditDeploymentHandler implements MiddlewareInterface
             'name' => $this->request->post('name'),
             'path' => $this->request->post('path'),
 
+            'cd_name' => $this->request->post('cd_name'),
+            'cd_group' => $this->request->post('cd_group'),
+            'cd_config' => $this->request->post('cd_config'),
+
+            'eb_name' => $this->request->post('eb_name'),
             'eb_environment' => $this->request->post('eb_environment'),
+
             'ec2_pool' => $this->request->post('ec2_pool'),
             's3_bucket' => $this->request->post('s3_bucket'),
             's3_file' => $this->request->post('s3_file'),

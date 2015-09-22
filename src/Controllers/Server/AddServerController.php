@@ -101,6 +101,8 @@ class AddServerController implements ControllerInterface
                 $name = 'EC2';
             } elseif ($server->type() === ServerEnum::TYPE_S3) {
                 $name = 'S3';
+            } elseif ($server->type() === ServerEnum::TYPE_CD) {
+                $name = 'CodeDeploy';
             }
 
             return $this->flasher

@@ -148,7 +148,13 @@ class AddDeploymentController implements ControllerInterface
             'server' => $this->request->post('server'),
             'path' => $this->request->post('path'),
 
+            'cd_name' => $this->request->post('cd_name'),
+            'cd_group' => $this->request->post('cd_group'),
+            'cd_config' => $this->request->post('cd_config'),
+
+            'eb_name' => $this->request->post('eb_name'),
             'eb_environment' => $this->request->post('eb_environment'),
+
             'ec2_pool' => $this->request->post('ec2_pool'),
             's3_bucket' => $this->request->post('s3_bucket'),
             's3_file' => $this->request->post('s3_file'),

@@ -21,10 +21,10 @@
                             <label for="server_type-rsync">Internal (Rsync)</label>
                         </li>
 
-                        {% set checked = form.server_type == 'elasticbeanstalk' ? ' checked' : '' %}
+                        {% set checked = form.server_type == 'eb' ? ' checked' : '' %}
                         <li>
-                            <input id="server_type-elasticbeanstalk" type="radio" name="server_type" value="elasticbeanstalk"{{ checked }}>
-                            <label for="server_type-elasticbeanstalk">Elastic Beanstalk</label>
+                            <input id="server_type-eb" type="radio" name="server_type" value="eb"{{ checked }}>
+                            <label for="server_type-eb">Elastic Beanstalk</label>
                         </li>
 
                         {% set checked = form.server_type == 'ec2' ? ' checked' : '' %}
@@ -37,6 +37,12 @@
                         <li>
                             <input id="server_type-s3" type="radio" name="server_type" value="s3"{{ checked }}>
                             <label for="server_type-s3">S3</label>
+                        </li>
+
+                        {% set checked = form.server_type == 'cd' ? ' checked' : '' %}
+                        <li>
+                            <input id="server_type-cd" type="radio" name="server_type" value="cd"{{ checked }}>
+                            <label for="server_type-cd">CodeDeploy</label>
                         </li>
                     </ul>
                 </li>

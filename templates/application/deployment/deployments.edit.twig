@@ -49,6 +49,9 @@
                     </small>
                 </li>
 
+                {#
+                    RSYNC
+                #}
                 <li>
                     {% set isDisabled = (deployment.server.type in ['rsync', 'ec2']) ? '' : ' disabled' %}
                     <label for="path">
@@ -64,8 +67,58 @@
                     </small>
                 </li>
 
+                {#
+                    CodeDeploy
+                #}
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'elasticbeanstalk') ? '' : ' disabled' %}
+                    {% set isDisabled = (deployment.server.type == 'cd') ? '' : ' disabled' %}
+                    <label for="cd_name">
+                        CodeDeploy Application Name
+                        <small class="additional">
+                            <strong>CD servers only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'cd') ? '' : ' disabled' %}
+                    <label for="cd_group">
+                        CodeDeploy Deployment Group
+                        <small class="additional">
+                            <strong>CD servers only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'cd') ? '' : ' disabled' %}
+                    <label for="cd_config">
+                        CodeDeploy Configuration
+                        <small class="additional">
+                            <strong>CD servers only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                {#
+                    Elastic Beanstalk
+                #}
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'eb') ? '' : ' disabled' %}
+                    <label for="eb_name">
+                        Elastic Beanstalk Application Name
+                        <small class="additional">
+                            <strong>EB servers only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                </li>
+
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'eb') ? '' : ' disabled' %}
                     <label for="eb_environment">
                         Elastic Beanstalk Environment ID
                         <small class="additional">
@@ -75,6 +128,9 @@
                     <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
+                {#
+                    EC2
+                #}
                 <li>
                     {% set isDisabled = (deployment.server.type == 'ec2') ? '' : ' disabled' %}
                     <label for="ec2_pool">
@@ -86,32 +142,46 @@
                     <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
-                {% set isDisabled = (deployment.server.type in ['s3', 'elasticbeanstalk']) ? '' : ' disabled' %}
+                {#
+                    S3
+                #}
+                {% set isDisabled = (deployment.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
                 <li>
                     <label for="s3_bucket">
                         S3 Bucket
                         <small class="additional">
-                            <strong>S3 and EB servers only</strong>
+                            <strong>S3, CD and EB servers only</strong>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
-                {% set isDisabled = (deployment.server.type == 's3') ? '' : ' disabled' %}
+                {% set isDisabled = (deployment.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
                 <li>
                     <label for="s3_file">
                         S3 File
                         <small class="additional">
-                            <strong>S3 servers only</strong>
+                            <strong>S3, CD and EB servers only</strong>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="s3_file" id="s3_file" maxlength="100" value="{{ form.s3_file }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                     <small class="additional">
-                        Available placeholders: <code>$BUILDID</code>, <code>$PUSHID</code>, <code>$DATE</code> (YYYY-MM-DD).
-                        <br>Leave blank to use <code>$PUSHID.tar.gz</code>.
+                        Available placeholders:
+                        <ul class="inline-list--comma">
+                            <li><code>$APPID</code></li>
+                            <li><code>$APPNAME</code></li>
+                            <li><code>$BUILDID</code></li>
+                            <li><code>$PUSHID</code></li>
+                            <li><code>$DATE</code> (YYYY-MM-DD)</li>
+                            <li><code>$TIME</code> (HH:MM::SS)</li>
+                        </ul>
+                        <br>Leave blank to use <code>$PUSHID.tar.gz</code> (S3) or <code>$APPID/$PUSHID.(zip|tar.gz)</code> (EB, CD).
                     </small>
                 </li>
 
+                {#
+                    S3, EB, CD, EC2
+                #}
                 <li>
                     <label for="credential">Credentials</label>
                     <select class="select-input" name="credential" id="credential">

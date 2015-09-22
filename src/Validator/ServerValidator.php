@@ -23,6 +23,7 @@ class ServerValidator
     const ERR_EB_DUPLICATE = 'An EB server for this environment and region already exists.';
     const ERR_EC2_DUPLICATE = 'An EC2 server for this environment and region already exists.';
     const ERR_S3_DUPLICATE = 'An S3 server for this environment and region already exists.';
+    const ERR_CD_DUPLICATE = 'A CD server for this environment and region already exists.';
 
     const ERR_HOST = 'Invalid hostname.';
     const ERR_MISSING_HOST = 'Hostname is required for rsync servers.';
@@ -40,6 +41,11 @@ class ServerValidator
      * @type array
      */
     private $errors;
+
+    /**
+     * @type array
+     */
+    private $awsTypes;
 
     /**
      * Hardcoded, since Enums were removed in aws sdk 3.0
@@ -68,6 +74,13 @@ class ServerValidator
         $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->errors = [];
+
+        $this->awsTypes = [
+            ServerEnum::TYPE_EB,
+            ServerEnum::TYPE_EC2,
+            ServerEnum::TYPE_S3,
+            ServerEnum::TYPE_CD
+        ];
     }
 
     /**
@@ -81,6 +94,7 @@ class ServerValidator
     public function isValid($serverType, $environmentID, $hostname, $region)
     {
         $this->errors = [];
+
 
         if (!in_array($serverType, ServerEnum::values())) {
             $this->errors[] = self::ERR_MISSING_TYPE;
@@ -106,7 +120,7 @@ class ServerValidator
 
         // validate duplicate AWS server for environment
         // Only 1 aws type per region/environment
-        } elseif (in_array($serverType, [ServerEnum::TYPE_EB, ServerEnum::TYPE_EC2, ServerEnum::TYPE_S3])) {
+        } elseif (in_array($serverType, $this->awsTypes)) {
 
             $name = trim(strtolower($region));
             $name = $this->validateRegion($name);
@@ -170,7 +184,7 @@ class ServerValidator
 
         // validate duplicate AWS server for environment
         // Only 1 aws type per region/environment
-        } elseif (in_array($serverType, [ServerEnum::TYPE_EB, ServerEnum::TYPE_EC2, ServerEnum::TYPE_S3])) {
+        } elseif (in_array($serverType, $this->awsTypes)) {
 
             $name = trim(strtolower($region));
 
@@ -284,6 +298,9 @@ class ServerValidator
 
         } elseif ($type == ServerEnum::TYPE_S3) {
             $this->errors[] = self::ERR_S3_DUPLICATE;
+
+        } elseif ($type == ServerEnum::TYPE_CD) {
+            $this->errors[] = self::ERR_CD_DUPLICATE;
         }
     }
 }

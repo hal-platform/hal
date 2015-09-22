@@ -31,7 +31,7 @@
                 <thead>
                     <tr>
                         <th class="t15">Name</th>
-                        <th class="t40">Path</th>
+                        <th class="t40">Details</th>
                         <th>URL</th>
                         <th class="t10"></th>
                     </tr>
@@ -44,10 +44,33 @@
                                 {% if deployment.server.type != 'rsync' and not deployment.credential %}
                                     <span class="tooltipped" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
                                 {% endif %}
-                                {{ deployment|formatDeploymentServer }}
+                                {{ deployment.formatPretty }}
                             </td>
                             <td>
-                                <code class="code_clear">{{ deployment|formatDeploymentDetails }}</code>
+                                {% if deployment.server.type == 'eb' %}
+
+                                    Application: <code class="code_clear">{{ deployment.ebName }}</code>
+                                    <br>Environment: <code class="code_clear">{{ deployment.ebEnvironment }}</code>
+
+                                {% elseif deployment.server.type == 'cd' %}
+
+                                    Application: <code class="code_clear">{{ deployment.cdName }}</code>
+                                    <br>Group: <code class="code_clear">{{ deployment.cdGroup }}</code>
+                                    <br>Config: <code class="code_clear">{{ deployment.cdConfiguration }}</code>
+
+                                {% elseif deployment.server.type == 's3' %}
+
+                                    Bucket: <code class="code_clear">{{ deployment.s3bucket }}</code>
+                                    <br>File: <code class="code_clear">{{ deployment.s3file }}</code>
+
+                                {% elseif deployment.server.type == 'ec2' %}
+
+                                    Pool: <code class="code_clear">{{ deployment.ec2Pool }}</code>
+
+                                {% else %}
+                                    <code class="code_clear">{{ deployment.formatMeta }}</code>
+                                {% endif %}
+
                             </td>
                             <td>
                                 {% if deployment.url %}
