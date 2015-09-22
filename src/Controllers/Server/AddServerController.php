@@ -94,19 +94,8 @@ class AddServerController implements ControllerInterface
 
         if ($server = $this->handleForm($form)) {
 
-            $name = $server->name();
-            if ($server->type() === ServerEnum::TYPE_EB) {
-                $name = 'Elastic Beanstalk';
-            } elseif ($server->type() === ServerEnum::TYPE_EC2) {
-                $name = 'EC2';
-            } elseif ($server->type() === ServerEnum::TYPE_S3) {
-                $name = 'S3';
-            } elseif ($server->type() === ServerEnum::TYPE_CD) {
-                $name = 'CodeDeploy';
-            }
-
             return $this->flasher
-                ->withFlash(sprintf(self::SUCCESS, $name), 'success')
+                ->withFlash(sprintf(self::SUCCESS, $server->formatPretty()), 'success')
                 ->load('servers');
         }
 

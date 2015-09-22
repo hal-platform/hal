@@ -20,10 +20,7 @@ Needs the following parameters:
                     <optgroup label="{{ environment }}">
                         {% for server in servers if not rsync_only or server.type == 'rsync' %}
                             {% set isSelected = (server.id == form.server) %}
-
-                            {% set servername = server.formatPretty %}
-
-                            <option value="{{ server.id }}"{{ isSelected ? ' selected' : '' }}>{{ servername }}</option>
+                            <option value="{{ server.id }}"{{ isSelected ? ' selected' : '' }}>{{ server.formatPretty }}</option>
                         {% endfor %}
                     </optgroup>
                 {% endfor %}

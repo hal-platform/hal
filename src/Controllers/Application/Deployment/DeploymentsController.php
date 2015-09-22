@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
+use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -108,6 +109,8 @@ class DeploymentsController implements ControllerInterface
     }
 
     /**
+     * NOTE: non-rsync servers are filtered out of this list.
+     *
      * @param Environment[] $environments
      *
      * @return array
@@ -125,6 +128,10 @@ class DeploymentsController implements ControllerInterface
 
         foreach ($servers as $server) {
             $env = $server->environment()->name();
+
+            if ($server->type() !== ServerEnum::TYPE_RSYNC) {
+                continue;
+            }
 
             if (!array_key_exists($env, $environments)) {
                 $environments[$env] = [];
