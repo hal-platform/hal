@@ -1724,17 +1724,17 @@
         },
         {
             "name": "ql/mcp-crypto",
-            "version": "2.1.2",
+            "version": "2.1.3",
             "source": {
                 "type": "git",
                 "url": "http://git/mcp/mcp-crypto.git",
-                "reference": "07a9826515f8a7f7c0053c048c11a451d2aebf1c"
+                "reference": "db4d012901026f298849bb0d39f56439779bd338"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-crypto-2.1.2-ae8826.zip",
-                "reference": "07a9826515f8a7f7c0053c048c11a451d2aebf1c",
-                "shasum": "668f090f0abee9c12f6c89fdd892378d0527997c"
+                "url": "http://composer/dist/ql-mcp-crypto-2.1.3-9dffd0.zip",
+                "reference": "db4d012901026f298849bb0d39f56439779bd338",
+                "shasum": "11da45da465c2cfe1dc47b79449b8281882e93e9"
             },
             "require": {
                 "ext-mbstring": "*",
@@ -1794,7 +1794,7 @@
             ],
             "description": "Symmetric and asymmetric encryption library for PHP",
             "homepage": "http://git/mcp/mcp-crypto",
-            "time": "2015-08-03 21:31:15"
+            "time": "2015-08-12 20:03:16"
         },
         {
             "name": "ql/mcp-http",

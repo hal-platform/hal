@@ -32,11 +32,9 @@ class DeploymentService
     const ERR_QKS_KEY_NOT_CONFIGURED = 'QKS encryption key is not configured for this environment.';
     const ERR_THIS_IS_SUPER_BAD = 'A serious error has occured. Consul was partially updated.';
     const ERR_DECRYPT_FAILURE = 'Secure property "%s" could not be decrypted.';
-    const ERR_QKS_TIMEOUT = 'QKS encryption took too long.';
+    const ERR_ENCRYPT_FAILURE = 'Property "%s" failed to encrypt with QKS.';
 
     const ERR_CRYPTO_ERROR = 'An error occured while encrypting with QMP.';
-
-    const MAX_ALLOWED_QKS_TIME = 30;
 
     /**
      * @type EntityManagerInterface
@@ -145,7 +143,7 @@ class DeploymentService
      *     test.key2: 'base64_and_encrypted'
      *
      * @param QuickenMessagePackage $qmp
-     * @param string $recepient
+     * @param string $recipient
      * @param Snapshot[] $properties
      *
      * @throws DecryptionException
@@ -153,31 +151,34 @@ class DeploymentService
      *
      * @return string[]
      */
-    private function encryptProperties(QuickenMessagePackage $qmp, $recepient, array $properties)
+    private function encryptProperties(QuickenMessagePackage $qmp, $recipient, array $properties)
     {
-        $encrypteds = [];
-
-        $start = microtime(true);
+        $encrypteds = $values = [];
 
         foreach ($properties as $prop) {
-
-            // If total encryption time has exceeded 30 seconds, BAIL THE FUCK OUT
-            // This is just a sanity check, as QKS is very fast, but the gateway has proven to be unreliable
-            $elapsed = microtime(true) - $start;
-            if ($elapsed > self::MAX_ALLOWED_QKS_TIME) {
-                throw new DecryptionException(self::ERR_QKS_TIMEOUT);
-            }
-
-            $key = $prop->key();
-
             $value = $prop->value();
             if ($prop->isSecure()) {
                 if (null === ($value = $this->decrypt($value))) {
-                    throw new DecryptionException(sprintf(self::ERR_DECRYPT_FAILURE, $key));
+                    throw new DecryptionException(sprintf(self::ERR_DECRYPT_FAILURE, $prop->key()));
                 }
             }
 
-            $encrypted = $this->encrypt($qmp, $recepient, $value);
+            $values[$prop->id()] = $value;
+        }
+
+        // this should maintain the same keys was passed in, but this functionality could change...
+        $values = $this->encrypt($qmp, $recipient, $values);
+
+        foreach ($properties as $prop) {
+
+            $key = $prop->key();
+
+            // this should never happen
+            if (!array_key_exists($prop->id(), $values)) {
+                throw new DecryptionException(sprintf(self::ERR_ENCRYPT_FAILURE, $key));
+            }
+
+            $encrypted = $values[$prop->id()];
 
             // encode
             $encoded = base64_encode($encrypted);
@@ -221,6 +222,7 @@ class DeploymentService
     {
         try {
             $success = $this->parseConsulResponses($responses);
+
         } catch (MixedUpdateException $ex) {
             $success = null;
 
@@ -278,21 +280,20 @@ class DeploymentService
     /**
      * @param QuickenMessagePackage $qmp
      * @param string $receipientKey
-     * @param string $decrypted
+     * @param array $decryptedValues
      *
      * @throws QKSConnectionException
      *
      * @return string|null
      */
-    private function encrypt(QuickenMessagePackage $qmp, $receipientKey, $decrypted)
+    private function encrypt(QuickenMessagePackage $qmp, $receipientKey, array $decryptedValues)
     {
         $receipients = [
             $receipientKey
         ];
 
         try {
-
-            $encrypted = $qmp->encrypt($decrypted, $receipients);
+            $encrypteds = $qmp->encryptBatch($decryptedValues, $receipients);
 
         } catch (QKSException $ex) {
 
@@ -305,7 +306,7 @@ class DeploymentService
             throw new QKSConnectionException($ex->getMessage());
         }
 
-        return $encrypted;
+        return $encrypteds;
     }
 
     /**
@@ -327,5 +328,4 @@ class DeploymentService
 
         return $decrypted;
     }
-
 }
