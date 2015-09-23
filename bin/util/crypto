@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+namespace QL\Hal\Bin;
+
+use QL\Hal\Core\Crypto\CryptoFactory;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+$encryptedPrivateKey = 'encrypted-private-key';
+$pathToSymmetricKey = '/path/to/symmetric-password';
+
+$secret = 'encrypted-value';
+
+$factory = new CryptoFactory($encryptedPrivateKey, $pathToSymmetricKey);
+$decrypter = $factory->getAsymmetricDecrypter();
+$unencrypted = $decrypter->decrypt($secret);
+
+var_dump($unencrypted);
