@@ -20,7 +20,7 @@ use Slim\Http\Request;
 class AddTargetController implements ControllerInterface
 {
     const SUCCESS = 'Target added.';
-    const ERR_INVALID_KEY = 'Invalid Key. Encryption Key must be 6 alphanumeric characters.';
+    const ERR_INVALID_KEY = 'Encryption Key must be 6 alphanumeric characters.';
     const ERR_DUPLICATE_ENV = 'This environment is already linked to this application.';
     const ERR_MISSING_ENV = 'Please select an environment.';
 

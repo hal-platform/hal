@@ -19,9 +19,9 @@ use Slim\Http\Request;
 class EditTargetController implements ControllerInterface
 {
     const SUCCESS = 'Encryption key for "%s" updated.';
-    const ERR_INVALID_KEY = 'Invalid Key. Encryption Keys must be alphanumeric.';
+    const ERR_INVALID_KEY = 'Encryption Key must be 6 alphanumeric characters.';
 
-    const VALIDATE_KEY_REGEX = '/^[a-zA-Z0-9]{2,100}$/';
+    const VALIDATE_QKS_KEY_REGEX = '/^[0-9A-Z]{6}$/';
 
     /**
      * @type Request
@@ -132,7 +132,7 @@ class EditTargetController implements ControllerInterface
     {
         $key = $data['key'];
 
-        if (preg_match(self::VALIDATE_KEY_REGEX, $key) !== 1) {
+        if (preg_match(self::VALIDATE_QKS_KEY_REGEX, $key) !== 1) {
             $this->errors[] = self::ERR_INVALID_KEY;
         }
 
