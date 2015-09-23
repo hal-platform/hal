@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\PushRepository;
+use QL\Hal\Service\PoolService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -39,6 +40,11 @@ class StartPushController implements ControllerInterface
     private $pushRepo;
 
     /**
+     * @type PoolService
+     */
+    private $poolService;
+
+    /**
      * @type Request
      */
     private $request;
@@ -58,11 +64,13 @@ class StartPushController implements ControllerInterface
      * @param EntityManagerInterface $em
      * @param Request $request
      * @param NotFound $notFound
+     * @param PoolService $poolService
      * @param array $parameters
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        PoolService $poolService,
         Request $request,
         NotFound $notFound,
         array $parameters
@@ -74,6 +82,7 @@ class StartPushController implements ControllerInterface
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
         $this->serverRepo = $em->getRepository(Server::CLASS);
 
+        $this->poolService = $poolService;
         $this->request = $request;
         $this->notFound = $notFound;
         $this->parameters = $parameters;
@@ -90,8 +99,11 @@ class StartPushController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $deployments = $this->getDeploymentsForBuild($build);
+        // Get selected view user has saved
+        $views = $this->poolService->getViews($build->application(), $build->environment());
+        $selectedView = $this->poolService->findSelectedView($build->application(), $build->environment(), $views);
 
+        $deployments = $this->getDeploymentsForBuild($build);
         $statuses = [];
         foreach ($deployments as $deployment) {
 
@@ -112,7 +124,10 @@ class StartPushController implements ControllerInterface
         $this->template->render([
             'build' => $build,
             'selected' => $this->request->get('deployment'),
-            'statuses' => $statuses
+            'statuses' => $statuses,
+
+            'views' => $views,
+            'selected_view' => $selectedView
         ]);
     }
 

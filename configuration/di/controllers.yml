@@ -186,6 +186,7 @@ services:
         arguments:
             - @push.start.twig
             - @doctrine.em
+            - @pools
             - @slim.request
             - @slim.not.found
             - @slim.route.parameters

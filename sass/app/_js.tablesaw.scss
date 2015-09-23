@@ -159,6 +159,10 @@ CUSTOM OVERRIDES
             background-color: transparent;
         }
     }
+
+    .tablesaw-stack .tablesaw-cell-content label {
+        display: inline-block;
+    }
 }
 
 @media (min-width: 40em) {

@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 {% import '_partial/macros.twig' as macros %}
 {% import '_partial-form/macros.twig' as form_macros %}
+{% import _self as page_macros %}
 {% set js_components = ["push.start"] %}
 
 {% set page_title = "Start Push : " ~ build.id %}
@@ -8,6 +9,43 @@
 {% block content %}
     <h1>Start Push - <strong>{{ build.application.name }}</strong></h1>
 
+    {{ block('meta_details') }}
+
+    {% if statuses %}
+
+        <p>
+            This build can be pushed to the following servers. Please review the current status of each server below
+            before selecting which servers you wish to deploy to.
+        </p>
+
+        {{ form_macros.formErrors(errors) }}
+
+        {% set pushables = 0 %}
+        {% set canUserPush = canUserPush(currentUser, build.application, build.environment) %}
+
+        {% for status in statuses %}
+            {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
+            {% set needsCredentials = status.deployment.server.type != 'rsync' and not status.deployment.credential %}
+
+            {% if canUserPush and not inProgress and not needsCredentials %}
+                {% set pushables = pushables + 1 %}
+            {% endif %}
+        {% endfor %}
+
+        {{ block('push_form_table') }}
+
+    {% else %}
+        {{ macros.alert('error', 'This build cannot be deployed!', 'There are no deployments assigned to this environment.') }}
+
+        <p>
+            <a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a>
+        </p>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block meta_details %}
     <div class="details-box">
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
@@ -57,110 +95,162 @@
             <dd>{{ macros.gitcommit(build) }}</dd>
         </dl>
     </div>
+{% endblock %}
 
-    {% if statuses %}
+{% block push_form_table %}
+    <form method="post">
+        <table class="table--spacing-large table--striped" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Deployment</th>
+                    <th>Reference</th>
+                    <th>Commit</th>
+                    <th>Last Pushed</th>
+                    <th>Pushed By</th>
+                    <th>
+                        <p class="js-toggle-container mvn tr"></p>
+                        <span class="tablesaw-collapse">Deploy?</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table-breathe">
 
-        <p>
-            This build can be pushed to the following servers. Please review the current status of each server below
-            before selecting which servers you wish to deploy to.
-        </p>
+                {% if selected_view and views[selected_view] %}
 
-        {{ form_macros.formErrors(errors) }}
+                    {{ block('pooled_statuses') }}
 
-        <form method="post">
-            <table class="table--spacing-large table--striped" data-tablesaw-mode="stack">
-                <thead>
-                    <tr>
-                        <th>Server</th>
-                        <th>Reference</th>
-                        <th>Commit</th>
-                        <th>Last Pushed</th>
-                        <th>Pushed By</th>
-                        <th>
-                            <p class="js-toggle-container mvn tr"></p>
-                            <span class="tablesaw-collapse">Deploy to Server?</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% set allowSubmit = false %}
-                {% set canUserPush = canUserPush(currentUser, build.application, build.environment) %}
+                {% else %}
 
-                {% for status in statuses %}
+                    {% for status in statuses %}
+                        {{ page_macros.render_deployment_row(status, selected, canUserPush) }}
+                    {% endfor %}
 
-                    {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
-                    {% set isSelected = (status.deployment.id == selected) %}
-
-                    {% set needsCredentials = (status.deployment.server.type != 'rsync') %}
-
-                    <tr>
-                        <td>
-                            <span class="tooltipped tooltipped-e" aria-label="{{ status.deployment|formatDeploymentDetails }}">
-                                <a href="{{ urlFor('server', {'server': status.deployment.server.id}) }}">{{ status.deployment|formatDeploymentServer }}</a>
-                            </span>
-                        </td>
-                        {% if inProgress or status.success %}
-                            {% set active = inProgress ? status.latest : status.success %}
-
-                            <td>
-                                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, active.build.branch, active.build.commit) %}
-                                {{ macros.gitref(active.build, true, isCurrent) }}
-                            </td>
-                            <td>
-                                {{ macros.gitcommit(active.build) }}
-                            </td>
-                            <td>
-                                {% if inProgress %}
-                                    Now
-                                {% else %}
-                                    {{ active.created|html5date }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if active.user %}
-                                    <a href="{{ urlFor('user', {'user': active.user.id}) }}">{{ active.user.name }}</a>
-                                {% else %}
-                                    Unknown
-                                {% endif %}
-                            </td>
-                        {% else %}
-                            {# No successful pushes #}
-                            <td colspan="4">No successful pushes found.</td>
-                        {% endif %}
-
-                        <td class="tr">
-                            {% if inProgress %}
-                                {{ macros.status('Please Wait', 'info', 'clock') }}
-
-                            {% elseif needsCredentials and not status.deployment.credential %}
-                                {{ macros.status('No Credentials', 'error', 'spam-2') }}
-
-                            {% elseif canUserPush %}
-                                <label>Push Now <input type="checkbox" class="js-pushable-deployment" name="deployments[]" id="sel-{{ status.deployment.id }}" value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
-                                {% set allowSubmit = true %}
-                            {% else %}
-                                No Access
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-            <ul class="button-list button-list--half">
-                {% if allowSubmit %}
-                    <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
                 {% endif %}
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a></li>
-            </ul>
-        </form>
-    {% else %}
-        {{ macros.alert('error', 'This build cannot be deployed!', 'There are no deployments assigned to this environment.') }}
 
-        <p>
-            <a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a>
-        </p>
+            </tbody>
+        </table>
+
+        <ul class="button-list button-list--half">
+            {% if pushables %}
+                <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
+            {% endif %}
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a></li>
+        </ul>
+
+    </form>
+{% endblock %}
+
+{% block pooled_statuses %}
+
+    {% set all_pooled = [] %}
+    {% set unpooled = [] %}
+
+    {# empty pools have already been removed by the backend #}
+    {% for pool in views[selected_view].pools %}
+
+        {% set pooled = [] %}
+        {% for status in statuses if status.deployment.id in pool.deployments %}
+            {% set pooled = pooled|merge([status]) %}
+            {% set all_pooled = all_pooled|merge([status.deployment.id]) %}
+        {% endfor %}
+
+      {% if pooled %}
+        <tr>
+            <th colspan="6" class="table-mid-header">{{ pool.name }}</th>
+        </tr>
+
+        {% for status in pooled %}
+            {{ page_macros.render_deployment_row(status, selected, canUserPush) }}
+        {% endfor %}
+
+      {% endif %}
+
+    {% endfor %}
+
+    {# show unpooled grouping if some statuses didnt land in a pool #}
+    {% for status in statuses %}
+        {% if status.deployment.id not in all_pooled %}
+            {% set unpooled = unpooled|merge([status]) %}
+        {% endif %}
+    {% endfor %}
+
+    {% if unpooled %}
+        <tr>
+            <th colspan="6" class="table-mid-header">Unpooled</th>
+        </tr>
+
+        {% for status in unpooled %}
+            {{ page_macros.render_deployment_row(status, selected, canUserPush) }}
+        {% endfor %}
 
     {% endif %}
-
 {% endblock %}
+
+{% macro render_deployment_row(status, selected, canUserPush) %}
+    {% import '_partial/macros.twig' as macros %}
+
+    {% set isSelected = (status.deployment.id == selected) %}
+    {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
+    {% set needsCredentials = status.deployment.server.type != 'rsync' and not status.deployment.credential %}
+
+    <tr>
+        <td>
+            <span class="tooltipped tooltipped-e" aria-label="{{ status.deployment.server.formatHumanType }}: {{ status.deployment.formatMeta }}">
+                <a href="{{ urlFor('server', {'server': status.deployment.server.id}) }}">{{ status.deployment.formatPretty(false) }}</a>
+            </span>
+        </td>
+        {% if inProgress or status.success %}
+            {% set active = inProgress ? status.latest : status.success %}
+
+            <td>
+                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, active.build.branch, active.build.commit) %}
+                {{ macros.gitref(active.build, true, isCurrent) }}
+            </td>
+            <td>
+                {{ macros.gitcommit(active.build) }}
+            </td>
+            <td>
+                {% if inProgress %}
+                    Now
+                {% else %}
+                    {{ active.created|html5date }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                {% endif %}
+            </td>
+            <td>
+                {% if active.user %}
+                    <a href="{{ urlFor('user', {'user': active.user.id}) }}">{{ active.user.handle }}</a>
+                {% else %}
+                    Unknown
+                {% endif %}
+            </td>
+        {% else %}
+
+            {# No successful pushes #}
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+        {% endif %}
+
+        <td class="tr">
+            {% if inProgress %}
+                {{ macros.status('Please Wait', 'info', 'clock') }}
+
+            {% elseif needsCredentials %}
+                {{ macros.status('No Credentials', 'error', 'spam-2') }}
+
+            {% elseif canUserPush %}
+                <label>Push Now <input
+                    type="checkbox"
+                    class="js-pushable-deployment"
+                    name="deployments[]"
+                    id="sel-{{ status.deployment.id }}"
+                    value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
+            {% else %}
+                No Access
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}
+
