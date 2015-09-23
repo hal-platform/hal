@@ -29,6 +29,9 @@
                 Kraken deployments should be slightly faster, and clients can now use batch decryption to significantly decrease the load placed on QKS.
             </blockquote>
         </li>
+        <li>
+            <h5>Build refs are limited to 3 per row on the <i>Start Build</i> page, and PRs owned by the current user are highlighted.</h5>
+        </li>
     </ul>
 
     <h3>Bugs</h3>
@@ -79,11 +82,16 @@
     <h3>New Feature</h3>
     <ul class="task-list">
         <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-172">HAL-172</a>] - Add support for AWS CodeDeploy</li>
-        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-273">HAL-273</a>] - Add deployment views to start push page</li>
         <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-303">HAL-303</a>] - Batch encrypt kraken config</li>
     </ul>
 
-    <h3>Bugs</h3>
+    <h3>Improvement</h3>
+    <ul class="task-list">
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-187">HAL-187</a>] - Provide intelligent build refs for logged in user</li>
+        <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-273">HAL-273</a>] - Add deployment views to start push page</li>
+    </ul>
+
+    <h3>Bug</h3>
     <ul class="task-list">
         <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-295">HAL-295</a>] - Tooltips are slightly busted</li>
         <li>[<a href="https://fringedivision.atlassian.net/browse/HAL-298">HAL-298</a>] - Buildable environments cache does not clear if new deployment added</li>
