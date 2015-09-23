@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Build;
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Service\GitHubService;
 use QL\Hal\Utility\ReleaseSortingTrait;
@@ -47,18 +48,25 @@ class StartBuildController implements ControllerInterface
     private $application;
 
     /**
+     * @type User
+     */
+    private $currentUser;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param GitHubService $github
      * @param Request $request
      * @param Application $application
+     * @param User $currentUser
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         GitHubService $github,
         Request $request,
-        Application $application
+        Application $application,
+        User $currentUser
     ) {
         $this->template = $template;
         $this->envRepo = $em->getRepository(Environment::CLASS);
@@ -66,6 +74,7 @@ class StartBuildController implements ControllerInterface
 
         $this->request = $request;
         $this->application = $application;
+        $this->currentUser = $currentUser;
     }
 
     /**
@@ -164,11 +173,28 @@ class StartBuildController implements ControllerInterface
         $getter = ($open) ? 'openPullRequests' : 'closedPullRequests';
         $pr = $this->github->$getter($application->githubOwner(), $application->githubRepo());
 
+        $user = strtolower($this->currentUser->handle());
+
         // sort by decreasing pull request number
-        usort($pr, function ($a, $b) {
-            $a = (int) $a['number'];
-            $b = (int) $b['number'];
-            return ($a > $b) ? -1 : 1;
+        usort($pr, function ($a, $b) use ($user) {
+            $prA = (int) $a['number'];
+            $prB = (int) $b['number'];
+            $loginA = isset($a['head']['user']['login']) ? strtolower($a['head']['user']['login']) : 'unknown';
+            $loginB = isset($b['head']['user']['login']) ? strtolower($b['head']['user']['login']) : 'unknown';
+
+            if ($loginA === $loginB && $loginA === $user) {
+                // Everyone is owner
+                return ($prA > $prB) ? -1 : 1;
+
+            } elseif ($loginA === $user || $loginB === $user) {
+
+                // One is owner
+                if ($loginA === $user) return -1;
+                if ($loginB === $user) return 1;
+            }
+
+            // No one is owner
+            return ($prA > $prB) ? -1 : 1;
         });
 
         return $pr;

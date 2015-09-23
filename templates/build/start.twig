@@ -222,7 +222,12 @@
                         {{ macros.icon('github') }}
                         <br />
 
-                        <span class="github__pr">
+                        {% set label_style = "github__pr" %}
+                        {% if pull.head.user.login|lower == currentUser.handle|lower %}
+                            {% set label_style = label_style ~ " github__pr--owner" %}
+                        {% endif %}
+
+                        <span class="{{ label_style }}">
                             from <span class="github__pr--label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">
                                 <span class="github__pr--source">{{ pull.head.user.login }}:</span>{{ pull.head.ref }}
                             </span>
@@ -263,7 +268,12 @@
                         {{ macros.icon('github') }}
                         <br />
 
-                        <span class="github__pr">
+                        {% set label_style = "github__pr" %}
+                        {% if pull.head.user.login|lower == currentUser.handle|lower %}
+                            {% set label_style = label_style ~ " github__pr--owner" %}
+                        {% endif %}
+
+                        <span class="{{ label_style }}">
                             from <span class="github__pr--label" title="{{ pull.head.user.login }}:{{ pull.head.ref }}">
                                 <span class="github__pr--source">{{ pull.head.user.login }}:</span>{{ pull.head.ref }}
                             </span>

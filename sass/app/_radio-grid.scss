@@ -30,21 +30,17 @@
 
 .radio-grid > li {
     @include breakpoint(60em) {
-        &:nth-child(4n+1) {
-            @include grid-span(1, 1, $grid: 4, $gutter: .1);
+        &:nth-child(3n+1) {
+            @include grid-span(1, 1, $grid: 3, $gutter: .1);
             clear: left;
         }
 
-        &:nth-child(4n+2) {
-            @include grid-span(1, 2, $grid: 4, $gutter: .1);
+        &:nth-child(3n+2) {
+            @include grid-span(1, 2, $grid: 3, $gutter: .1);
         }
 
-        &:nth-child(4n+3) {
-            @include grid-span(1, 3, $grid: 4, $gutter: .1);
-        }
-
-        &:nth-child(4n+4){
-            @include grid-span(1, 4, $grid: 4, $gutter: .1);
+        &:nth-child(3n+3) {
+            @include grid-span(1, 3, $grid: 3, $gutter: .1);
         }
     }
 }

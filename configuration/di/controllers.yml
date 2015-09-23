@@ -141,6 +141,7 @@ services:
             - @github
             - @slim.request
             - @hal.application
+            - @currentUser
     build.start.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/start.twig']]]

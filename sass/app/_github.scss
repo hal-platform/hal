@@ -9,12 +9,15 @@
 .github__pr {
     @include adjust-font-size-to(ms(-3));
     // text-transform: uppercase;
+
+    &.github__pr--owner .github__pr--label {
+        background-color: rgb(250, 240, 210);
+    }
 }
 
 // Stolen directly from GitHub's css.
 .github__pr--source {
     color: rgb(89, 138, 159);
-
 }
 
 .github__pr--label {
@@ -24,5 +27,4 @@
 
     border-radius: 3px;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-
 }
