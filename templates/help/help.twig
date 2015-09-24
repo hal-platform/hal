@@ -25,7 +25,8 @@
                 <li><a href="#add-application">How do I add my application to HAL?</a></li>
                 <li><a href="#deploy-application">How do I deploy my application with HAL?</a></li>
                 <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
-                <li><a href="#env-support">Does HAL support .NET or AWS applications?</a></li>
+                <li><a href="#dotnet-support">Does HAL support .NET applications?</a></li>
+                <li><a href="#aws-support">Does HAL support AWS?</a></li>
                 <li><a href="#docker-support">Does HAL support Docker?</a></li>
                 <li><a href="#encrypted-configuration">Does HAL support encrypted configuration?</a></li>
                 <li><a href="#app-dependencies">My application needs a specific library or software installed to build. What do I do?</a></li>
@@ -184,9 +185,19 @@ beta
 
     <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
 
-    <h3 id="env-support">{{ macros.status_icon('Does HAL support .NET or AWS applications?') }}</h3>
-    <p>HAL 9000 supports building windows projects and deploying to Amazon Elastic Beanstalk or Amazon EC2.</p>
-    <p>However, these features will not be enabled.</p>
+    <h3 id="dotnet-support">{{ macros.status_icon('Does HAL support .NET applications?') }}</h3>
+    <p>HAL 9000 supports building windows projects and deploying to AWS-based deployment targets such as Elastic Beanstalk, CodeDeploy, and EC2.</p>
+    <p>However, this feature will not be enabled.</p>
+
+    <h3 id="aws-support">{{ macros.status_icon('Does HAL support AWS?') }}</h3>
+    <p>HAL 9000 supports the following deployment strategies:</p>
+    <ul class="list--bullet">
+        <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
+        <li><a href="https://aws.amazon.com/codedeploy/">AWS CodeDeploy</a></li>
+        <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (Static file deployments)</li>
+        <li><a href="https://aws.amazon.com/autoscaling/">AWS EC2</a> (EC2 Autoscaling Pools)</li>
+        <li>R Sync (On-premise unix servers)</li>
+    </ul>
 
     <h3 id="docker-support">{{ macros.status_icon('Does HAL support Docker?') }}</h3>
     <p>All unix-based applications are built in isolated Docker containers.</p>
