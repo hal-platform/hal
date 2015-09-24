@@ -77,6 +77,12 @@ class GlobalMessageController implements ControllerInterface
                     ->withFlash('Global Message removed.', 'success')
                     ->load('admin.super.message');
             }
+
+            if ($this->request->post('update-tick')) {
+                $this->messageService->enableUpdateTick();
+            } else {
+                $this->messageService->clearUpdateTick();
+            }
         }
 
         $context = [

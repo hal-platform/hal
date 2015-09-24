@@ -48,6 +48,14 @@ services:
         class: 'QL\Hal\Controllers\LogoutController'
         arguments: [@session, @url]
 
+    latest.release.page:
+        class: 'QL\Hal\Controllers\LatestReleaseController'
+        arguments:
+            - @latest.release.twig
+    latest.release.twig:
+        parent: 'twig.auto.template'
+        calls: [['setTemplate', ['latest-release.twig']]]
+
     ####################################################################################################################
     # QUEUE CONTROLLERS
     ####################################################################################################################

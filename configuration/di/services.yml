@@ -159,6 +159,7 @@ services:
             - ['addGlobal', ['applicationKrakenTitle', %application.kraken.title%]]
             - ['addGlobal', ['navItems', %navigation.list%]]
             - ['addGlobal', ['session', @session]]
+            - ['addGlobal', ['tick', @global.message]]
 
     twig.extension.permissions:
         class: 'QL\Hal\Twig\PermissionsExtension'

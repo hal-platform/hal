@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = 'Latest Release' %}
+
+{% block content %}
+
+    <h1>{{ page_title }}</h1>
+
+    {% if release_notes %}
+
+        {{ release_notes|raw }}
+
+    {% else %}
+
+        <p>There are no release notes for the latest version.</p>
+
+    {% endif %}
+
+    <h2>Past Releases</h2>
+    <p>Check the following documentation sites for recent changes to HAL 9000, or view past updates.</p>
+    <ul class="list--bullet">
+        <li><a href="http://git/web-core/hal/releases">GitHub release notes</a></li>
+        <li><a href="https://fringedivision.atlassian.net/projects/HAL?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=all">Jira version history</a></li>
+        <li>
+            HAL 9000 release notes
+            {% include '_partial/help.release-notes.twig' %}
+        </li>
+
+    </ul>
+
+{% endblock %}

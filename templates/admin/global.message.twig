@@ -17,19 +17,23 @@
                 {% endif %}
             </p>
 
-            <form action="" method="post">
+            <form action="" method="post" class="trailer">
                 <input type="hidden" name="remove" value="1">
                 <input class="btn btn--destructive" type="submit" name="submit" value="Remove Message">
             </form>
         {% else %}
             <p>No message currently set.</p>
         {% endif %}
+
+        {% if tick.isUpdateTickOn %}
+            <p>Update Tick is enabled.</p>
+        {% endif %}
     </div>
 
     <h3>New Message</h3>
 
     <p>Note that the message is not wrapped in any html! Use the following as a template if you wish to create an alert.</p>
-    <pre>{{ block('sample_message')|escape }}</pre>
+    <pre class="trailer">{{ block('sample_message')|escape }}</pre>
 
     <div class="trailer">
         <form action="" method="post">
@@ -47,6 +51,13 @@
                         <small class="additional">If empty or set to "0", the message will never expire and must be removed manually.</small>
                     </label>
                     <input class="text-input t10" type="text" id="ttl" name="ttl">
+                </li>
+                <li>
+                    <label for="update-tick">
+                        <input type="checkbox" id="update-tick" name="update-tick" value="1" {{ tick.isUpdateTickOn ? ' checked' : ''}}>
+                        Enable Update Tick on header
+                    </label>
+                    <small class="additional">This tick creates an icon on the header that links to the "Latest Release" page.</small>
                 </li>
             </ul>
             <input class="btn" type="submit" name="submit" value="Save Message" >

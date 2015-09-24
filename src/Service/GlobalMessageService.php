@@ -11,7 +11,8 @@ use Predis\Client as Predis;
 
 class GlobalMessageService
 {
-    const KEY = 'global_message';
+    const KEY = 'global-message';
+    const TICK_KEY = 'global-message-tick';
 
     /**
      * @type Predis
@@ -94,5 +95,33 @@ class GlobalMessageService
     public function clear()
     {
         $this->predis->del(self::KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUpdateTickOn()
+    {
+        if ($tick = $this->predis->get(self::TICK_KEY)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return null
+     */
+    public function enableUpdateTick()
+    {
+        $this->predis->set(self::TICK_KEY, 1);
+    }
+
+    /**
+     * @return null
+     */
+    public function clearUpdateTick()
+    {
+        $this->predis->del(self::TICK_KEY);
     }
 }
