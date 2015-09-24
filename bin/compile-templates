@@ -26,6 +26,7 @@ $di = Di::getDi($root, 'Who\Cares', function($container) use ($root) {
 // start slim to prime twig extension and inject synthetic services
 Environment::mock(['PATH_INFO' => '/derpderp']);
 $slim = $di->get('slim');
+$slim->get('/derpderp', function() {});
 $slim->call();
 
 $twig = $di->get('twig.environment');
