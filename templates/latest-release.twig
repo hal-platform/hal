@@ -7,15 +7,48 @@
 
     <h1>{{ page_title }}</h1>
 
-    {% if release_notes %}
+    <p>The latest release of HAL 9000 is <b>2.7</b>. It was deployed on Friday, Sep 25, 2015.</p>
 
-        {{ release_notes|raw }}
+    <h2>Changelog</h2>
 
-    {% else %}
+    <h3>New Features</h3>
+    <ul class="list--bullet">
+        <li>
+            AWS CodeDeploy is now supported.
+        </li>
+    </ul>
 
-        <p>There are no release notes for the latest version.</p>
+    <h3>User Experience (UX) Enhancements</h3>
+    <ul class="list--bullet">
+        <li>
+            Deployments are now categorized using the user's selected deployment pools on the <b>Start Push</b> page.
+        </li>
+        <li>
+            Configuration deployed with Kraken is now batch encrypted.
+            <br><small>
+                Kraken deployments should be slightly faster, and clients can now use batch decryption to significantly decrease the load placed on QKS.
+            </small>
+        </li>
+        <li>
+            Build refs are limited to 3 per row on the <b>Start Build</b> page, and PRs owned by the current user are highlighted.
+        </li>
+    </ul>
 
-    {% endif %}
+    <h3>Bugs</h3>
+    <ul class="list--bullet">
+        <li>
+            Miscellaneous UI inconsistencies were fixed.
+        </li>
+        <li>
+            Elastic Beanstalk deployments broken during v2 to v3 SDK upgrade have been fixed.
+        </li>
+        <li>
+            Missing temp folder would cause jobs to fail after an agent is restarted.
+        </li>
+        <li>
+            Fix <b>Add Application</b> page broken by GitHub organizations exceeding 100.
+        </li>
+    </ul>
 
     <h2>Past Releases</h2>
     <p>Check the following documentation sites for recent changes to HAL 9000, or view past updates.</p>
@@ -29,4 +62,8 @@
 
     </ul>
 
+{% endblock %}
+
+{% block no_release %}
+    <p>There are no release notes for the latest version.</p>
 {% endblock %}
