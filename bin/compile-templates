@@ -64,3 +64,19 @@ foreach ($files as $file) {
     $template = $twig->loadTemplate($file->getRelativePathname());
     $template->render([]);
 }
+
+echo "\nError Templates:\n";
+
+// find and attempt to load the templates
+$files = (new Finder)
+    ->files()
+    ->name('error.html.twig')
+    ->in($twigDir);
+
+$failsafeTwig = $di->get('error.failsafe.environment');
+foreach ($files as $file) {
+    echo $file->getRelativePathname() . "\n";
+    $template = $failsafeTwig->loadTemplate($file->getRelativePathname());
+    $template->render([]);
+}
+
