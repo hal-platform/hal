@@ -203,7 +203,7 @@
             {% set active = inProgress ? status.latest : status.success %}
 
             <td>
-                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, active.build.branch, active.build.commit) %}
+                {% set isCurrent = githubCommitIsCurrent(active.build.application.githubOwner, active.build.application.githubRepo, active.build.branch, active.build.commit) %}
                 {{ macros.gitref(active.build, true, isCurrent) }}
             </td>
             <td>
