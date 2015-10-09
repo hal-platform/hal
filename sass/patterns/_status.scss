@@ -53,6 +53,7 @@
 .status-icon--warning { @include status-bg($warning-color); }
 .status-icon--thinking {
     transform: translateZ(0);
+    position: relative;
     &:before {
         animation:spin 1s infinite linear;
         background: white;
