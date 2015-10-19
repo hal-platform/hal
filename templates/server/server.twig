@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set name = (server.type == 'rsync') ? server.name : server|formatServerType %}
+{% set name = (server.type == 'rsync') ? server.name : server.formatHumanType %}
 {% set page_title = 'Server : ' ~ name %}
 
 {% set isAdmin = isUserAdminOrSuper(currentUser) %}
@@ -9,7 +9,7 @@
     <h1>Server - <strong>{{ server.environment.name }}</strong></h1>
 
     <h3>Type</h3>
-    <p>{{ server|formatServerType }}</p>
+    <p>{{ server.formatHumanType }}</p>
 
     {% if server.type == 'rsync' %}
         {% set name_label = 'Hostname' %}
