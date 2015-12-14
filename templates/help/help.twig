@@ -38,6 +38,7 @@
             <a href="#help-misc"><h4>Other</h4></a>
             <ul class="list--bullet">
                 <li><a href="#api">Does HAL have an API? Is there any documentation?</a></li>
+                <li><a href="#maintenance">When is HAL 9000 updated? When does maintenance occur?</a></li>
                 {% if not isSeriousBusinessMode() %}
                     <li><a href="#hellodave">My name isn't Dave!</a></li>
                 {% endif %}
@@ -234,6 +235,18 @@ beta
     <h3 id="api">{{ macros.status_icon('Does HAL have an API? Is there any documentation?') }}</h3>
     <p>There is a read-only hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a></p>
     <p>However, there is no api documentation at this time.</p>
+
+    <h3 id="maintenance">{{ macros.status_icon('When is HAL 9000 updated? When does maintenance occur?') }}</h3>
+    <p>
+        New releases of HAL 9000 are deployed on <b>Fridays</b>. Typically this occurs before 9 AM, and time is blocked off for 1 hour.
+        The site may or may not be sent into maintenance mode, which disables the frontend.
+    </p>
+    <p>Higher risk deployments that contain larger changes or complex database migrations are performed at <b>night after 7 PM</b>.</p>
+    <p>
+        Hotfixes or critical bugfixes <b>may</b> be deployed on other days, however this is very rare.
+        For these fixes we deploy either during lunchtime, or after business (5 PM or later).
+    </p>
+
 
     {% if not isSeriousBusinessMode() %}
         <h3 id="hellodave">{{ macros.status_icon("My name isn't Dave!") }}</h3>
