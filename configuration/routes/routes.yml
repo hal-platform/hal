@@ -232,12 +232,12 @@ parameters:
         user.disable:
             method: 'POST'
             route: '/users/:user/disable'
-            stack: ['middleware.super', 'middleware.requireEntity', 'user.disable.handler']
+            stack: ['middleware.admin', 'middleware.requireEntity', 'user.disable.handler']
 
         user.enable:
             method: 'POST'
             route: '/users/:user/enable'
-            stack: ['middleware.super', 'middleware.requireEntity', 'user.enable.handler']
+            stack: ['middleware.admin', 'middleware.requireEntity', 'user.enable.handler']
 
         ################################################################################################################
         # USER TOKEN MANAGEMENT ROUTES

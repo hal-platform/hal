@@ -422,6 +422,7 @@ services:
         class: 'QL\Hal\Controllers\User\DisableUserHandler'
         arguments:
             - @doctrine.em
+            - @permissions
             - @session.flasher
             - @hal.user
 

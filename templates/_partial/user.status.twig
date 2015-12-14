@@ -93,7 +93,7 @@
                 </form>
             </li>
 
-            {% if isSuper %}
+            {% if isSuper or not userPerm.isSuper %}
                 <li>
                     {% if user.isActive %}
                         <form method="post" action="{{ urlFor('user.disable', {user: user.id}) }}">
