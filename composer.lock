@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fafd8befd096d9f32a011a95bc67c602",
-    "content-hash": "a24de54de7e271dbc532180834f54b69",
+    "hash": "1456fa0c8881b228c847979a4505ba49",
+    "content-hash": "5aa0818d5a6659a0ef4f41714f808b99",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1289,6 +1289,54 @@
             "time": "2015-08-09 04:28:19"
         },
         {
+            "name": "paragonie/random_compat",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "d762ee5b099a29044603cd4649851e81aa66cb47"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/d762ee5b099a29044603cd4649851e81aa66cb47",
+                "reference": "d762ee5b099a29044603cd4649851e81aa66cb47",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*|5.*"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/random.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+            "keywords": [
+                "csprng",
+                "pseudorandom",
+                "random"
+            ],
+            "time": "2015-12-10 14:48:13"
+        },
+        {
             "name": "predis/predis",
             "version": "v1.0.1",
             "source": {
@@ -1468,34 +1516,29 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.8.3",
-            "source": {
-                "type": "git",
-                "url": "http://git/web-core/hal-core.git",
-                "reference": "53a9c77b5d1a9d889c9ded2a7c096c105ccbc886"
-            },
+            "version": "dev-master",
             "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.8.3-1afd6f.zip",
-                "reference": "53a9c77b5d1a9d889c9ded2a7c096c105ccbc886",
-                "shasum": "29e24bad98e500785733fdfadd1634050b922551"
+                "type": "path",
+                "url": "../hal-core/",
+                "reference": "4f622aec2e83e9097b39ec5516a565409e6487fe",
+                "shasum": null
             },
             "archive": {
                 "exclude": [
                     ".gitignore",
                     "/bin",
                     "/phpunit.xml.dist",
-                    "/tests"
+                    "/testing"
                 ]
             },
             "require": {
-                "doctrine/orm": ">=2.5",
+                "doctrine/orm": "~2.5",
                 "ext-openssl": "*",
                 "ext-pdo": "*",
                 "ext-pdo_mysql": "*",
                 "ext-pdo_sqlite": "*",
                 "php-64bit": ">=5.5",
-                "ql/mcp-core": "*"
+                "ql/mcp-core": "^1.0.3"
             },
             "require-dev": {
                 "mockery/mockery": "*",
@@ -1509,6 +1552,7 @@
             "autoload": {
                 "psr-4": {
                     "QL\\Hal\\Core\\": "src/",
+                    "QL\\Hal\\Core\\Testing\\": "testing/src/",
                     "QL\\Kraken\\Core\\": "src-kraken/"
                 }
             },
@@ -1521,8 +1565,7 @@
                     "email": "itteamwebcore@quickenloans.com"
                 }
             ],
-            "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
-            "time": "2015-09-22 15:54:48"
+            "description": "HAL9000 Shared Libraries, Services, Models, and Repositories"
         },
         {
             "name": "ql/http-problem",
@@ -1627,18 +1670,78 @@
             "time": "2015-05-01 20:55:29"
         },
         {
-            "name": "ql/mcp-core",
-            "version": "1.0.2",
+            "name": "ql/mcp-common",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "http://git/mcp/mcp-core.git",
-                "reference": "2b42798f65fe241b3106eb64cbf2ce9ed3ae5d99"
+                "url": "https://github.com/quickenloans-mcp/mcp-common.git",
+                "reference": "44b2554b5aabdf12e3bf36e0b96673500a8eb996"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-core-1.0.2-f5950f.zip",
-                "reference": "2b42798f65fe241b3106eb64cbf2ce9ed3ae5d99",
-                "shasum": "23b131d318970552c031524ec3fa47a5a8520809"
+                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-common/zipball/44b2554b5aabdf12e3bf36e0b96673500a8eb996",
+                "reference": "44b2554b5aabdf12e3bf36e0b96673500a8eb996",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "paragonie/random_compat": "~1.1",
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "~4.5",
+                "psr/log": "*",
+                "symfony/config": "~2.8",
+                "symfony/dependency-injection": "~2.8",
+                "symfony/yaml": "~2.8"
+            },
+            "suggest": {
+                "paragonie/random_compat": "~1.1 or PHP7 are required for GUID and OpaqueProperty"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\MCP\\Common\\": "src\\"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Nagi",
+                    "email": "mattnagi@quickenloans.com"
+                },
+                {
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com"
+                },
+                {
+                    "name": "Matt Colf",
+                    "email": "mattcolf@quickenloans.com"
+                }
+            ],
+            "description": "Common library for Quicken Loans PHP projects",
+            "keywords": [
+                "mcp",
+                "quickenloans"
+            ],
+            "time": "2015-12-10 13:42:36"
+        },
+        {
+            "name": "ql/mcp-core",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "http://git/mcp/mcp-core.git",
+                "reference": "3261234da3c5e6baa4a6458a29d97f29dd9316cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-mcp-core-1.1.0-f94f33.zip",
+                "reference": "3261234da3c5e6baa4a6458a29d97f29dd9316cd",
+                "shasum": "d9346f80352b710d8430bb8a1117db5aa794b7c0"
             },
             "archive": {
                 "exclude": [
@@ -1647,10 +1750,8 @@
                 ]
             },
             "require": {
-                "ext-date": "*",
-                "ext-pcre": "*",
-                "ext-spl": "*",
-                "php": ">=5.4.0"
+                "paragonie/random_compat": "~1.1",
+                "ql/mcp-common": "~1.0"
             },
             "conflict": {
                 "ql/mcp": "*"
@@ -1668,15 +1769,8 @@
             "license": [
                 "proprietary"
             ],
-            "authors": [
-                {
-                    "name": "Matt Nagi",
-                    "email": "mattnagi@quickenloans.com"
-                }
-            ],
-            "description": "Provides various 'data type' style classes: GUID, HttpUrl, IPv4Address, USAddress, and date/time related functionality.",
-            "homepage": "http://git/mcp/mcp-core",
-            "time": "2015-07-02 17:19:53"
+            "description": "[DEPRECATED] Please use MCP Common instead.",
+            "time": "2015-12-11 16:52:43"
         },
         {
             "name": "ql/mcp-corp-account",
@@ -2187,12 +2281,12 @@
             "version": "v2.7.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Config.git",
+                "url": "https://github.com/symfony/config.git",
                 "reference": "6c905bbed1e728226de656e4c07d620dfe9e80d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Config/zipball/6c905bbed1e728226de656e4c07d620dfe9e80d9",
+                "url": "https://api.github.com/repos/symfony/config/zipball/6c905bbed1e728226de656e4c07d620dfe9e80d9",
                 "reference": "6c905bbed1e728226de656e4c07d620dfe9e80d9",
                 "shasum": ""
             },
@@ -2237,12 +2331,12 @@
             "version": "v2.7.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console.git",
+                "url": "https://github.com/symfony/console.git",
                 "reference": "9ff9032151186bd66ecee727d728f1319f52d1d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/9ff9032151186bd66ecee727d728f1319f52d1d8",
+                "url": "https://api.github.com/repos/symfony/console/zipball/9ff9032151186bd66ecee727d728f1319f52d1d8",
                 "reference": "9ff9032151186bd66ecee727d728f1319f52d1d8",
                 "shasum": ""
             },
@@ -2294,12 +2388,12 @@
             "version": "v2.7.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Debug.git",
+                "url": "https://github.com/symfony/debug.git",
                 "reference": "9daa1bf9f7e615fa2fba30357e479a90141222e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Debug/zipball/9daa1bf9f7e615fa2fba30357e479a90141222e3",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/9daa1bf9f7e615fa2fba30357e479a90141222e3",
                 "reference": "9daa1bf9f7e615fa2fba30357e479a90141222e3",
                 "shasum": ""
             },
@@ -2354,12 +2448,12 @@
             "version": "v2.7.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/DependencyInjection.git",
+                "url": "https://github.com/symfony/dependency-injection.git",
                 "reference": "d56b1b89a0c8b34a6eca6211ec76c43256ec4030"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/d56b1b89a0c8b34a6eca6211ec76c43256ec4030",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/d56b1b89a0c8b34a6eca6211ec76c43256ec4030",
                 "reference": "d56b1b89a0c8b34a6eca6211ec76c43256ec4030",
                 "shasum": ""
             },
@@ -2414,12 +2508,12 @@
             "version": "v2.7.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/EventDispatcher.git",
+                "url": "https://github.com/symfony/event-dispatcher.git",
                 "reference": "b58c916f1db03a611b72dd702564f30ad8fe83fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/b58c916f1db03a611b72dd702564f30ad8fe83fa",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/b58c916f1db03a611b72dd702564f30ad8fe83fa",
                 "reference": "b58c916f1db03a611b72dd702564f30ad8fe83fa",
                 "shasum": ""
             },
@@ -2472,12 +2566,12 @@
             "version": "v2.7.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Filesystem.git",
+                "url": "https://github.com/symfony/filesystem.git",
                 "reference": "f079e9933799929584200b9a926f72f29e291654"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/f079e9933799929584200b9a926f72f29e291654",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/f079e9933799929584200b9a926f72f29e291654",
                 "reference": "f079e9933799929584200b9a926f72f29e291654",
                 "shasum": ""
             },
@@ -2570,12 +2664,12 @@
             "version": "v2.7.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/ProxyManagerBridge.git",
+                "url": "https://github.com/symfony/proxy-manager-bridge.git",
                 "reference": "d82b82d47e8d93db9dac4ed186d7f521265ed93e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ProxyManagerBridge/zipball/d82b82d47e8d93db9dac4ed186d7f521265ed93e",
+                "url": "https://api.github.com/repos/symfony/proxy-manager-bridge/zipball/d82b82d47e8d93db9dac4ed186d7f521265ed93e",
                 "reference": "d82b82d47e8d93db9dac4ed186d7f521265ed93e",
                 "shasum": ""
             },
@@ -4028,7 +4122,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ql/hal-core": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
