@@ -5,9 +5,9 @@
 {% set page_title = "Build History : " ~ application.name %}
 
 {% block content %}
-    <h1>Build History - <strong>{{ application.name }}</strong></h1>
-
     <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {application: application.id}) }}">Back to Application Status</a></p>
+
+    <h1>Build History - <strong>{{ application.name }}</strong></h1>
 
     {{ block('search') }}
 
@@ -26,7 +26,7 @@
             name="search"
             autocomplete="off"
             value="{{ search_filter }}"
-            placeholder="Valid search queries: Branch name, commit SHA, pull/#, tag/#">
+            placeholder="Examples: Branch name, commit SHA, pull/#, tag/# or env:$ENV_NAME">
 
         <input class="btn" type="submit" value="Filter">
 

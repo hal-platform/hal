@@ -9,7 +9,9 @@ namespace QL\Hal\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
@@ -20,6 +22,8 @@ class PushesController implements ControllerInterface
 {
     const MAX_PER_PAGE = 25;
 
+    const REGEX_ENV = '/(?:environment|env|e):([a-zA-Z-]+)/';
+
     /**
      * @type TemplateInterface
      */
@@ -29,6 +33,11 @@ class PushesController implements ControllerInterface
      * @type PushRepository
      */
     private $pushRepo;
+
+    /**
+     * @type EnvironmentRepository
+     */
+    private $environmentRepo;
 
     /**
      * @type Application
@@ -67,7 +76,8 @@ class PushesController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->pushRepo = $em->getRepository(Push::CLASS);
+        $this->pushRepo = $em->getRepository(Push::class);
+        $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->application = $application;
         $this->request = $request;
@@ -88,7 +98,13 @@ class PushesController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $pushes = $this->pushRepo->getByApplication($this->application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
+            $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
+
+            $pushes = $this->pushRepo->getByApplicationForEnvironment($this->application, $environment, self::MAX_PER_PAGE, ($page-1), $sanitizedSearchFilter);
+        } else {
+            $pushes = $this->pushRepo->getByApplication($this->application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        }
 
         $total = count($pushes);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -101,5 +117,20 @@ class PushesController implements ControllerInterface
             'pushes' => $pushes,
             'search_filter' => $searchFilter
         ]);
+    }
+
+    /**
+     * @param string $search
+     *
+     * @return Environment|null|false
+     */
+    private function getEnvironmentFromSearchFilter($search)
+    {
+        if (preg_match(self::REGEX_ENV, $search, $matches) === 1) {
+            $name = strtolower(array_pop($matches));
+            return $this->environmentRepo->findOneBy(['name' => $name]);
+        }
+
+        return false;
     }
 }

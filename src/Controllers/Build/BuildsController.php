@@ -10,7 +10,9 @@ namespace QL\Hal\Controllers\Build;
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
+use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\BuildRepository;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -19,6 +21,8 @@ use Slim\Http\Request;
 class BuildsController implements ControllerInterface
 {
     const MAX_PER_PAGE = 25;
+
+    const REGEX_ENV = '/(environment|env|e):([a-zA-Z-]+)/';
 
     /**
      * @type TemplateInterface
@@ -29,6 +33,11 @@ class BuildsController implements ControllerInterface
      * @type BuildRepository
      */
     private $buildRepo;
+
+    /**
+     * @type EnvironmentRepository
+     */
+    private $environmentRepo;
 
     /**
      * @type Application
@@ -67,7 +76,8 @@ class BuildsController implements ControllerInterface
         array $parameters
     ) {
         $this->template = $template;
-        $this->buildRepo = $em->getRepository(Build::CLASS);
+        $this->buildRepo = $em->getRepository(Build::class);
+        $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->application = $application;
         $this->request = $request;
@@ -88,7 +98,13 @@ class BuildsController implements ControllerInterface
             return call_user_func($this->notFound);
         }
 
-        $builds = $this->buildRepo->getByApplication($this->application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        if ($environment = $this->getEnvironmentFromSearchFilter($searchFilter)) {
+            $sanitizedSearchFilter = trim(preg_replace(self::REGEX_ENV, '', $searchFilter, 1));
+
+            $builds = $this->buildRepo->getByApplicationForEnvironment($this->application, $environment, self::MAX_PER_PAGE, ($page-1), $sanitizedSearchFilter);
+        } else {
+            $builds = $this->buildRepo->getByApplication($this->application, self::MAX_PER_PAGE, ($page-1), $searchFilter);
+        }
 
         $total = count($builds);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -101,5 +117,20 @@ class BuildsController implements ControllerInterface
             'builds' => $builds,
             'search_filter' => $searchFilter
         ]);
+    }
+
+    /**
+     * @param string $search
+     *
+     * @return Environment|null|false
+     */
+    private function getEnvironmentFromSearchFilter($search)
+    {
+        if (preg_match(self::REGEX_ENV, $search, $matches) === 1) {
+            $name = strtolower(array_pop($matches));
+            return $this->environmentRepo->findOneBy(['name' => $name]);
+        }
+
+        return false;
     }
 }
