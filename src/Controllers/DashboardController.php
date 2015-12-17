@@ -85,6 +85,8 @@ class DashboardController implements ControllerInterface
         $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->userRepo = $em->getRepository(User::CLASS);
 
+        $this->em = $em;
+
         $this->json = $json;
     }
 
@@ -93,15 +95,13 @@ class DashboardController implements ControllerInterface
      */
     public function __invoke()
     {
-        $user = $this->userRepo->find($this->currentUser->id());
-
-        $recentBuilds = $this->buildRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
-        $recentPushes = $this->pushRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
+        $recentBuilds = $this->buildRepo->findBy(['user' => $this->currentUser], ['created' => 'DESC'], 5);
+        $recentPushes = $this->pushRepo->findBy(['user' => $this->currentUser], ['created' => 'DESC'], 5);
 
         $pending = $this->getAllPendingJobs();
 
         $stuck = [];
-        if ($this->permissions->getUserPermissions($user)->isSuper()) {
+        if ($this->permissions->getUserPermissions($this->currentUser)->isSuper()) {
             $stuck = $this->getStuckJobs();
         }
 
