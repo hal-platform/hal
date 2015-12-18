@@ -3,11 +3,10 @@ var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
 
-var root = __dirname + '/js';
-var vendorRoot = __dirname + '/bower_components';
+var vendor = __dirname + '/../bower_components';
 
 module.exports = {
-    context: root,
+    context: __dirname,
     entry: {
         app: './app.js',
         vendor: [
@@ -27,16 +26,16 @@ module.exports = {
     resolve: {
         alias: {
 
-            'favico':               vendorRoot + '/favico.js/favico.js',
-            'jquery':               vendorRoot + '/jquery/dist/jquery.js',
-            'jquery.searchable':    vendorRoot + '/jquery-searchable/jquery.searchable.js',
-            'jquery.sortable':      vendorRoot + '/html5sortable/jquery.sortable.js',
-            'jquery.tablesaw':      vendorRoot + '/tablesaw/dist/stackonly/tablesaw.stackonly.js',
+            'favico':               vendor + '/favico.js/favico.js',
+            'jquery':               vendor + '/jquery/dist/jquery.js',
+            'jquery.searchable':    vendor + '/jquery-searchable/jquery.searchable.js',
+            'jquery.sortable':      vendor + '/html5sortable/jquery.sortable.js',
+            'jquery.tablesaw':      vendor + '/tablesaw/dist/stackonly/tablesaw.stackonly.js',
 
-            'nunjucks':             vendorRoot + '/nunjucks/browser/nunjucks.js',
-            'sugarjs-date':         vendorRoot + '/sugarjs-date/sugar-date.js',
-            'svg4everybody':        vendorRoot + '/svg4everybody/svg4everybody.js',
-            'typed':                vendorRoot + '/typed.js/js/typed.js'
+            'nunjucks':             vendor + '/nunjucks/browser/nunjucks.js',
+            'sugarjs-date':         vendor + '/sugarjs-date/sugar-date.js',
+            'svg4everybody':        vendor + '/svg4everybody/svg4everybody.js',
+            'typed':                vendor + '/typed.js/js/typed.js'
         }
     },
     output: {
@@ -58,4 +57,4 @@ module.exports = {
             "window.jQuery": "jquery"
         })
     ]
-}
+};

@@ -180,7 +180,7 @@ module.exports = {
             if ($thinking.length > 0) {
                 $thinking.appendTo(this.$logTable);
             } else {
-                var $thinking = $('<tbody class="js-thinking-row">')
+                $thinking = $('<tbody class="js-thinking-row">')
                     .append('<tr><td><span class="status-icon--thinking">Loading...</span></td></tr>')
                     .appendTo(this.$logTable);
             }
@@ -247,7 +247,7 @@ module.exports = {
         $elem.text($elem.data('status'));
     },
     formatTime: function(time) {
-        var time = moment(time);
+        time = moment(time);
 
         return {
             absolute: time.format('MMM D, YYYY h:mm A'),

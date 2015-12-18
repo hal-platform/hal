@@ -20,7 +20,7 @@ module.exports = {
             time: time,
             absolute: absolute,
             relative: relative
-        }
+        };
     },
     formatDuration: function(iso8601) {
 
@@ -44,20 +44,21 @@ module.exports = {
             time: dur,
             absolute: dur.asClock(),
             relative: relative
-        }
+        };
     },
 
     calculateDuration: function(start, end) {
         var startDate = Date.create(start),
             endDate = Date.create(end),
-            seconds = (endDate.getTime() - startDate.getTime()) / 1000;
 
-        var hours = 0,
-            minutes = Math.floor(seconds / 60),
+            seconds = (endDate.getTime() - startDate.getTime()) / 1000,
+            hours = 0,
+            minutes = Math.floor(seconds / 60);
+
             seconds = seconds % 60;
 
         if (minutes > 60) {
-            hours = Math.floor(minutes / 60),
+            hours = Math.floor(minutes / 60);
             minutes = minutes % 60;
         }
 
@@ -76,6 +77,8 @@ module.exports = {
             } else {
                 return false;
             }
+
+            var hours, minutes, seconds;
 
             // > 6 months
             if (ms > that.threshold_6mo) {
@@ -102,9 +105,9 @@ module.exports = {
 
             // 1 hr - 4 hr
             } else if (ms > that.threshold_1hr) {
-                var minutes = time.minutesAgo(),
-                    hours = Math.floor(minutes / 60),
-                    minutes = minutes % 60;
+                minutes = time.minutesAgo();
+                hours = Math.floor(minutes / 60);
+                minutes = minutes % 60;
 
                 return hours + ' hr, ' + minutes + ' min ago';
 
@@ -114,9 +117,10 @@ module.exports = {
 
             // 1 min - 10 min
             } else if (ms > that.threshold_1min) {
-                var seconds = time.secondsAgo(),
-                    minutes = Math.floor(seconds / 60),
-                    seconds = seconds % 60;
+                seconds = time.secondsAgo();
+                minutes = Math.floor(seconds / 60);
+                seconds = seconds % 60;
+
                 return minutes + ' min, ' + seconds + ' sec ago';
 
             // 0 - 1 min

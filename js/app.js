@@ -8,7 +8,7 @@ var app = {
     init: function() {
 
         var requested = document.querySelector('head').getAttribute(this.componentsAttr);
-        if (requested === "undefined" || requested == null) {
+        if (requested === "undefined" || requested === null) {
             return;
         }
 

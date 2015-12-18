@@ -9,9 +9,11 @@ module.exports = {
 
     init: function() {
         this.$pools = $(this.target);
-        if (this.$pools.length !== 0) {
 
-            var attacher = this.attachAdd.bind(this);
+        var attacher;
+
+        if (this.$pools.length !== 0) {
+            attacher = this.attachAdd.bind(this);
 
             $(this.$pools).each(function (index, pool) {
                 attacher(pool);
@@ -20,7 +22,7 @@ module.exports = {
 
         var $removals = $(this.removeTarget);
         if ($removals.length !== 0) {
-            var attacher = this.attachRemove.bind(this);
+            attacher = this.attachRemove.bind(this);
 
             $removals.each(function (index, removal) {
                 attacher(removal);
@@ -104,7 +106,7 @@ module.exports = {
 
         var server = data.server,
             deployment = data.deployment,
-            hostname = server.name
+            hostname = server.name;
 
         if (deployment.name.length > 0) {
             name = deployment.name;
@@ -116,7 +118,7 @@ module.exports = {
             } else if (server.type == 's3') {
                 name = 'S3 (' + hostname + ')';
             } else {
-                name = hostname
+                name = hostname;
             }
         }
 
@@ -193,7 +195,7 @@ module.exports = {
         this.context.resetMessages();
 
         var $removal = this.removal,
-            $pool = $removal.closest(this.context.target)
+            $pool = $removal.closest(this.context.target);
             $alert = $('<div>')
                 .addClass('alert-bar--success');
 
