@@ -1774,17 +1774,25 @@
         },
         {
             "name": "ql/mcp-corp-account",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "http://git/mcp/mcp-corp-account.git",
-                "reference": "e5207f9fd0c43b90cc438b608c72c5dfe85f121b"
+                "reference": "b9c983100060a1d4ce384dba109efef9632ebf84"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-corp-account-1.1.1-2b0737.zip",
-                "reference": "e5207f9fd0c43b90cc438b608c72c5dfe85f121b",
-                "shasum": "caf87a271e8bb222c9926be8d493e6cf087e0c10"
+                "url": "http://composer/dist/ql-mcp-corp-account-1.2.0-686675.zip",
+                "reference": "b9c983100060a1d4ce384dba109efef9632ebf84",
+                "shasum": "e59acf7167ebdcdfc3fc2145311c693cfb09f36a"
+            },
+            "archive": {
+                "exclude": [
+                    "/.gitignore",
+                    "/bin/test.php",
+                    "/phpunit.xml.dist",
+                    "/tests"
+                ]
             },
             "require": {
                 "ext-ldap": "*",
@@ -1793,6 +1801,7 @@
                 "zendframework/zend-ldap": "*"
             },
             "require-dev": {
+                "mockery/mockery": "*",
                 "phpunit/phpunit": "*"
             },
             "type": "library",
@@ -1804,17 +1813,9 @@
             "license": [
                 "proprietary"
             ],
-            "authors": [
-                {
-                    "name": "Matt Nagi",
-                    "email": "mattnagi@quickenloans.com",
-                    "role": "Tech Lead",
-                    "homepage": "http://rwprofile/MySite/Public.aspx?accountname=MI%5cMNagi"
-                }
-            ],
-            "description": "Handles authenticating a username/password to Quicken Loans' corporate set of usernames and passwords. Note that this will NOT work for any public facing websites (yet). This will only work for internal QL applications.",
+            "description": "LDAP authentication for Quicken Loans' internal employee account system.",
             "homepage": "http://git/mcp/mcp-corp-account",
-            "time": "2015-07-08 22:23:23"
+            "time": "2015-08-17 12:56:34"
         },
         {
             "name": "ql/mcp-crypto",
