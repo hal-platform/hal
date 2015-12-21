@@ -6,66 +6,66 @@ services:
     middleware.requireEntity:
         class: 'QL\Hal\Middleware\RequireEntityMiddleware'
         arguments:
-            - @service_container
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@service_container'
+            - '@doctrine.em'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
 
     middleware.login:
         class: 'QL\Hal\Middleware\ACL\LoginMiddleware'
         arguments:
-            - @service_container
-            - @doctrine.em
-            - @session
-            - @url
-            - @slim.request
-            - @logger.mcp.factory
+            - '@service_container'
+            - '@doctrine.em'
+            - '@session'
+            - '@url'
+            - '@slim.request'
+            - '@logger.mcp.factory'
 
     middleware.lead:
         class: 'QL\Hal\Middleware\ACL\LeadMiddleware'
         arguments:
-            - @service_container
-            - @middleware.login
-            - @denied.twig
-            - @permissions
-            - @slim.halt
-            - @slim.route.parameters
+            - '@service_container'
+            - '@middleware.login'
+            - '@denied.twig'
+            - '@permissions'
+            - '@slim.halt'
+            - '@slim.route.parameters'
 
     middleware.admin:
         class: 'QL\Hal\Middleware\ACL\AdminMiddleware'
         arguments:
-            - @service_container
-            - @middleware.login
-            - @denied.twig
-            - @permissions
-            - @slim.halt
+            - '@service_container'
+            - '@middleware.login'
+            - '@denied.twig'
+            - '@permissions'
+            - '@slim.halt'
 
     middleware.super:
         class: 'QL\Hal\Middleware\ACL\SuperMiddleware'
         arguments:
-            - @service_container
-            - @middleware.login
-            - @denied.twig
-            - @permissions
-            - @slim.halt
+            - '@service_container'
+            - '@middleware.login'
+            - '@denied.twig'
+            - '@permissions'
+            - '@slim.halt'
 
     middleware.pool:
         class: 'QL\Hal\Middleware\ACL\ManageDeploymentViewMiddleware'
         arguments:
-            - @permissions
-            - @slim.halt
-            - @denied.twig
-            - @currentUser
-            - @hal.view
+            - '@permissions'
+            - '@slim.halt'
+            - '@denied.twig'
+            - '@currentUser'
+            - '@hal.view'
 
     middleware.pool.add:
         class: 'QL\Hal\Middleware\ACL\AddDeploymentViewMiddleware'
         arguments:
-            - @permissions
-            - @slim.halt
-            - @denied.twig
-            - @currentUser
-            - @hal.application
+            - '@permissions'
+            - '@slim.halt'
+            - '@denied.twig'
+            - '@currentUser'
+            - '@hal.application'
 
     ######################################################################################################################
     # API MIDDLEWARE
@@ -74,22 +74,20 @@ services:
     middleware.api.token:
         class: 'QL\Hal\Middleware\ACL\TokenMiddleware'
         arguments:
-            - @service_container
-            - @doctrine.em
-            - @slim.request
-            - @logger.mcp.factory
+            - '@service_container'
+            - '@doctrine.em'
+            - '@slim.request'
+            - '@logger.mcp.factory'
 
     middleware.api.require_entity:
         class: 'QL\Hal\Middleware\RequireEntityMiddleware'
         arguments:
-            - @service_container
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@service_container'
+            - '@doctrine.em'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
             - true
 
     middleware.api.cached:
         class: 'QL\Hal\Middleware\CachedApiMiddleware'
-        arguments:
-            - @response.formatter
-            - @slim.response
+        arguments: ['@response.formatter', '@slim.response']

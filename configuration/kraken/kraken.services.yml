@@ -6,36 +6,36 @@ services:
 
     kraken.permissions:
         class: 'QL\Kraken\Service\PermissionService'
-        arguments: [@permissions]
+        arguments: ['@permissions']
 
     kraken.consul:
         class: 'QL\Kraken\Service\ConsulService'
         arguments:
-            - @kraken.guzzle
-            - @kraken.crypto.db
-            - %kraken.environmentalize%
+            - '@kraken.guzzle'
+            - '@kraken.crypto.db'
+            - '%kraken.environmentalize%'
 
     kraken.deploy:
         class: 'QL\Kraken\Service\DeploymentService'
         arguments:
-            - @doctrine.em
-            - @kraken.consul
-            - @kraken.crypto.db
-            - @kraken.crypto.factory
-            - @json
-            - @exception.logger
+            - '@doctrine.em'
+            - '@kraken.consul'
+            - '@kraken.crypto.db'
+            - '@kraken.crypto.factory'
+            - '@json'
+            - '@exception.logger'
 
     kraken.diff:
         class: 'QL\Kraken\ConfigurationDiffService'
-        arguments: [@doctrine.em]
+        arguments: ['@doctrine.em']
 
     kraken.acl:
         class: 'QL\Kraken\ACL'
         arguments:
-            - @denied.twig
-            - @slim.halt
-            - @kraken.permissions
-            - @currentUser
+            - '@denied.twig'
+            - '@slim.halt'
+            - '@kraken.permissions'
+            - '@currentUser'
 
     ####################################################################################################################
     # UTIL
@@ -44,11 +44,11 @@ services:
     kraken.template:
         parent: 'twig.template'
         class: 'QL\Kraken\Application\AutoRenderingTemplate'
-        calls: [['setResponse', [@slim.response]]]
+        calls: [['setResponse', ['@slim.response']]]
 
     kraken.twig.extension:
         class: 'QL\Kraken\Application\KrakenTwigExtension'
-        arguments: [@kraken.permissions, @json]
+        arguments: ['@kraken.permissions', '@json']
 
     kraken.json:
         class: 'QL\Panthor\Utility\Json'
@@ -61,7 +61,7 @@ services:
 
     kraken.template.skeletor:
         class: 'QL\Kraken\Application\SkeletorConfigurationTemplate'
-        arguments: [@clock, @kraken.random]
+        arguments: ['@clock', '@kraken.random']
 
     # JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_PRESERVE_ZERO_FRACTION
     kraken.json.encoder:
@@ -76,21 +76,21 @@ services:
     kraken.validator.property:
         class: 'QL\Kraken\Validator\PropertyValidator'
         arguments:
-            - @doctrine.em
-            - @kraken.json.encoder
-            - @kraken.crypto.db
-            - @kraken.random
+            - '@doctrine.em'
+            - '@kraken.json.encoder'
+            - '@kraken.crypto.db'
+            - '@kraken.random'
 
     kraken.validator.environment:
         class: 'QL\Kraken\Validator\EnvironmentValidator'
         arguments:
-            - @doctrine.em
-            - @kraken.crypto.db
-            - @kraken.random
+            - '@doctrine.em'
+            - '@kraken.crypto.db'
+            - '@kraken.random'
 
     kraken.validator.application:
         class: 'QL\Kraken\Validator\ApplicationValidator'
-        arguments: [@doctrine.em, @kraken.random]
+        arguments: ['@doctrine.em', '@kraken.random']
 
     ####################################################################################################################
     # encryption
@@ -99,29 +99,29 @@ services:
     kraken.crypto.factory:
         class: 'QL\Kraken\Utility\CryptoFactory'
         arguments:
-            - @kraken.crypto.qks.factory
-            - @kraken.crypto.factory.secret.file
+            - '@kraken.crypto.qks.factory'
+            - '@kraken.crypto.factory.secret.file'
 
     kraken.crypto.qks.factory:
         class: 'QL\Kraken\Utility\QKSFactory'
         arguments:
-            - @kraken.crypto.qmp.guzzle
-            - @kraken.crypto.qmp.json
-            - @kraken.crypto.qmp.envelope
-            - @kraken.crypto.qmp.serializer
+            - '@kraken.crypto.qmp.guzzle'
+            - '@kraken.crypto.qmp.json'
+            - '@kraken.crypto.qmp.envelope'
+            - '@kraken.crypto.qmp.serializer'
 
     kraken.crypto.factory.secret.file:
         class: 'stdClass'
         factory: ['QL\Panthor\Utility\Stringify', 'template']
-        arguments: ['%%s/%%s', [@root, %encrypter.kraken.secret.path%]]
+        arguments: ['%%s/%%s', ['@root', '%encrypter.kraken.secret.path%']]
 
     kraken.crypto.db:
         class: 'MCP\Crypto\Package\TamperResistantPackage'
-        factory: [@kraken.crypto.factory, 'getTRP']
+        factory: ['@kraken.crypto.factory', 'getTRP']
 
     kraken.crypto.qmp.json:
         class: 'QL\MCP\QKS\Crypto\Client\Parser\JsonParser'
-        arguments: [@kraken.crypto.qmp.json.schema, @kraken.crypto.qmp.json.resolver]
+        arguments: ['@kraken.crypto.qmp.json.schema', '@kraken.crypto.qmp.json.resolver']
     kraken.crypto.qmp.json.schema:
         class: 'JsonSchema\Validator'
     kraken.crypto.qmp.json.resolver:
@@ -133,11 +133,11 @@ services:
 
     kraken.crypto.qmp.serializer:
         class: 'MCP\Crypto\Package\QuickenMessagePackage\Header\MetaSerializer'
-        arguments: [@kraken.crypto.qmp.box]
+        arguments: ['@kraken.crypto.qmp.box']
 
     kraken.crypto.qmp.envelope:
         class: 'QL\MCP\QKS\Crypto\Envelope\Factory'
-        arguments: [@kraken.crypto.qmp.box]
+        arguments: ['@kraken.crypto.qmp.box']
     kraken.crypto.qmp.box:
         class: 'QL\MCP\QKS\Crypto\Envelope\Box\Factory'
 

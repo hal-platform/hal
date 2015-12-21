@@ -16,9 +16,9 @@ services:
     application.page:
         class: 'QL\Hal\Controllers\Application\ApplicationController'
         arguments:
-            - @application.twig
-            - @doctrine.em
-            - @hal.application
+            - '@application.twig'
+            - '@doctrine.em'
+            - '@hal.application'
     application.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/application.twig']]]
@@ -26,11 +26,11 @@ services:
     application.status.page:
         class: 'QL\Hal\Controllers\Application\ApplicationStatusController'
         arguments:
-            - @application.status.twig
-            - @doctrine.em
-            - @sticky.environment
-            - @pools
-            - @hal.application
+            - '@application.status.twig'
+            - '@doctrine.em'
+            - '@sticky.environment'
+            - '@pools'
+            - '@hal.application'
     application.status.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/status.twig']]]
@@ -38,38 +38,38 @@ services:
     application.status.sticky.handler:
         class: 'QL\Hal\Controllers\Application\ApplicationStatusEnvironmentSaveHandler'
         arguments:
-            - @doctrine.em
-            - @slim.request
-            - @url
-            - @sticky.environment
-            - @slim.route.parameters
+            - '@doctrine.em'
+            - '@slim.request'
+            - '@url'
+            - '@sticky.environment'
+            - '@slim.route.parameters'
 
     application.sticky.pool.handler:
         class: 'QL\Hal\Controllers\Application\StickyPoolHandler'
         arguments:
-            - @doctrine.em
-            - @slim.request
-            - @session.flasher
-            - @sticky.pool
-            - @slim.response
-            - @json
-            - @hal.application
-            - @hal.environment
+            - '@doctrine.em'
+            - '@slim.request'
+            - '@session.flasher'
+            - '@sticky.pool'
+            - '@slim.response'
+            - '@json'
+            - '@hal.application'
+            - '@hal.environment'
 
     application.add.page:
         class: 'QL\Hal\Controllers\Application\AddApplicationController'
         arguments:
-            - @application.add.twig
-            - @doctrine.em
-            - @github
-            - @permissions
-            - @session.flasher
-            - @slim.request
-            - @currentUser
-            - @doctrine.random
+            - '@application.add.twig'
+            - '@doctrine.em'
+            - '@github'
+            - '@permissions'
+            - '@session.flasher'
+            - '@slim.request'
+            - '@currentUser'
+            - '@doctrine.random'
         calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.page.ttl%]]
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.page.ttl%']]
     application.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/application.add.twig']]]
@@ -77,11 +77,11 @@ services:
     application.edit.page:
         class: 'QL\Hal\Controllers\Application\EditApplicationController'
         arguments:
-            - @application.edit.twig
-            - @doctrine.em
-            - @hal.application
-            - @session.flasher
-            - @slim.request
+            - '@application.edit.twig'
+            - '@doctrine.em'
+            - '@hal.application'
+            - '@session.flasher'
+            - '@slim.request'
     application.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/application.edit.twig']]]
@@ -89,9 +89,9 @@ services:
     application.remove.handler:
         class: 'QL\Hal\Controllers\Application\RemoveApplicationController'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @hal.application
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@hal.application'
 
     ####################################################################################################################
     # DEPLOYMENT CONTROLLERS
@@ -100,8 +100,8 @@ services:
     deployment.page:
         class: 'QL\Hal\Controllers\Application\Deployment\DeploymentController'
         arguments:
-            - @deployment.twig
-            - @hal.deployment
+            - '@deployment.twig'
+            - '@hal.deployment'
     deployment.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/deployment/deployment.twig']]]
@@ -109,9 +109,9 @@ services:
     deployments.page:
         class: 'QL\Hal\Controllers\Application\Deployment\DeploymentsController'
         arguments:
-            - @deployments.twig
-            - @doctrine.em
-            - @hal.application
+            - '@deployments.twig'
+            - '@doctrine.em'
+            - '@hal.application'
     deployments.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/deployment/deployments.twig']]]
@@ -119,11 +119,11 @@ services:
     deployments.add.page:
         class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentController'
         arguments:
-            - @deployments.add.twig
-            - @doctrine.em
-            - @url
-            - @slim.request
-            - @hal.application
+            - '@deployments.add.twig'
+            - '@doctrine.em'
+            - '@url'
+            - '@slim.request'
+            - '@hal.application'
     deployments.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/deployment/deployments.add.twig']]]
@@ -131,59 +131,59 @@ services:
     deployments.add.handler:
         class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentHandler'
         arguments:
-            - @slim.request
-            - @deployments.add.handler.form
-            - @deployments.add.handler.json
+            - '@slim.request'
+            - '@deployments.add.handler.form'
+            - '@deployments.add.handler.json'
     deployments.add.handler.form:
         class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentFormHandler'
         arguments:
-            - @doctrine.em
-            - @deployment.validator
-            - @session.flasher
-            - @twig.context
-            - @slim.request
-            - @hal.application
+            - '@doctrine.em'
+            - '@deployment.validator'
+            - '@session.flasher'
+            - '@twig.context'
+            - '@slim.request'
+            - '@hal.application'
     deployments.add.handler.json:
         class: 'QL\Hal\Controllers\Application\Deployment\AddDeploymentJsonHandler'
         arguments:
-            - @doctrine.em
-            - @deployment.validator
-            - @slim.halt
-            - @json
-            - @url
-            - @slim.request
-            - @slim.response
-            - @hal.application
+            - '@doctrine.em'
+            - '@deployment.validator'
+            - '@slim.halt'
+            - '@json'
+            - '@url'
+            - '@slim.request'
+            - '@slim.response'
+            - '@hal.application'
     deployment.validator:
         class: 'QL\Hal\Validator\DeploymentValidator'
-        arguments: [@doctrine.em]
+        arguments: ['@doctrine.em']
 
     deployment.edit.page:
         class: 'QL\Hal\Controllers\Application\Deployment\EditDeploymentController'
         arguments:
-            - @deployment.edit.twig
-            - @slim.request
-            - @doctrine.em
-            - @hal.deployment
+            - '@deployment.edit.twig'
+            - '@slim.request'
+            - '@doctrine.em'
+            - '@hal.deployment'
     deployment.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/deployment/deployments.edit.twig']]]
     deployment.edit.handler:
         class: 'QL\Hal\Controllers\Application\Deployment\EditDeploymentHandler'
         arguments:
-            - @doctrine.em
-            - @deployment.validator
-            - @session.flasher
-            - @twig.context
-            - @slim.request
-            - @hal.deployment
+            - '@doctrine.em'
+            - '@deployment.validator'
+            - '@session.flasher'
+            - '@twig.context'
+            - '@slim.request'
+            - '@hal.deployment'
 
     deployments.remove.handler:
         class: 'QL\Hal\Controllers\Application\Deployment\RemoveDeploymentHandler'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @hal.deployment
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@hal.deployment'
 
     ####################################################################################################################
     # POOL CONTROLLERS
@@ -192,11 +192,11 @@ services:
     pools.page:
         class: 'QL\Hal\Controllers\Application\Pool\PoolsController'
         arguments:
-            - @pools.twig
-            - @sticky.pool
-            - @doctrine.em
-            - @hal.application
-            - @hal.environment
+            - '@pools.twig'
+            - '@sticky.pool'
+            - '@doctrine.em'
+            - '@hal.application'
+            - '@hal.environment'
     pools.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/pools.twig']]]
@@ -204,15 +204,15 @@ services:
     deployment_view.add.page:
         class: 'QL\Hal\Controllers\Application\Pool\AddViewController'
         arguments:
-            - @deployment_view.add.twig
-            - @slim.request
-            - @session.flasher
-            - @pools
-            - @doctrine.random
-            - @doctrine.em
-            - @hal.application
-            - @hal.environment
-            - @currentUser
+            - '@deployment_view.add.twig'
+            - '@slim.request'
+            - '@session.flasher'
+            - '@pools'
+            - '@doctrine.random'
+            - '@doctrine.em'
+            - '@hal.application'
+            - '@hal.environment'
+            - '@currentUser'
     deployment_view.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/view.add.twig']]]
@@ -220,9 +220,9 @@ services:
     deployment_view.page:
         class: 'QL\Hal\Controllers\Application\Pool\ViewController'
         arguments:
-            - @deployment_view.twig
-            - @doctrine.em
-            - @hal.view
+            - '@deployment_view.twig'
+            - '@doctrine.em'
+            - '@hal.view'
     deployment_view.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/view.twig']]]
@@ -230,12 +230,12 @@ services:
     deployment_view.edit.page:
         class: 'QL\Hal\Controllers\Application\Pool\EditViewController'
         arguments:
-            - @deployment_view.edit.twig
-            - @slim.request
-            - @session.flasher
-            - @pools
-            - @doctrine.em
-            - @hal.view
+            - '@deployment_view.edit.twig'
+            - '@slim.request'
+            - '@session.flasher'
+            - '@pools'
+            - '@doctrine.em'
+            - '@hal.view'
     deployment_view.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/view.edit.twig']]]
@@ -243,21 +243,21 @@ services:
     deployment_view.remove.handler:
         class: 'QL\Hal\Controllers\Application\Pool\RemoveViewHandler'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @pools
-            - @hal.view
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@pools'
+            - '@hal.view'
 
     pool.add.page:
         class: 'QL\Hal\Controllers\Application\Pool\AddPoolController'
         arguments:
-            - @pool.add.twig
-            - @slim.request
-            - @session.flasher
-            - @pools
-            - @doctrine.random
-            - @doctrine.em
-            - @hal.view
+            - '@pool.add.twig'
+            - '@slim.request'
+            - '@session.flasher'
+            - '@pools'
+            - '@doctrine.random'
+            - '@doctrine.em'
+            - '@hal.view'
     pool.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/pool.add.twig']]]
@@ -265,13 +265,13 @@ services:
     pool.edit.page:
         class: 'QL\Hal\Controllers\Application\Pool\EditPoolController'
         arguments:
-            - @pool.edit.twig
-            - @slim.request
-            - @session.flasher
-            - @pools
-            - @doctrine.em
-            - @hal.view
-            - @hal.pool
+            - '@pool.edit.twig'
+            - '@slim.request'
+            - '@session.flasher'
+            - '@pools'
+            - '@doctrine.em'
+            - '@hal.view'
+            - '@hal.pool'
     pool.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/pool/pool.edit.twig']]]
@@ -279,34 +279,34 @@ services:
     pool.remove.handler:
         class: 'QL\Hal\Controllers\Application\Pool\RemovePoolHandler'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @pools
-            - @hal.view
-            - @hal.pool
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@pools'
+            - '@hal.view'
+            - '@hal.pool'
 
     pool.deployment.add.handler:
         class: 'QL\Hal\Controllers\Application\Pool\Deployment\AddHandler'
         arguments:
-            - @slim.request
-            - @slim.response
-            - @session.flasher
-            - @slim.halt
-            - @json
-            - @url
-            - @doctrine.em
-            - @hal.view
-            - @hal.pool
+            - '@slim.request'
+            - '@slim.response'
+            - '@session.flasher'
+            - '@slim.halt'
+            - '@json'
+            - '@url'
+            - '@doctrine.em'
+            - '@hal.view'
+            - '@hal.pool'
 
     pool.deployment.remove.handler:
         class: 'QL\Hal\Controllers\Application\Pool\Deployment\RemoveHandler'
         arguments:
-            - @slim.request
-            - @slim.response
-            - @session.flasher
-            - @doctrine.em
-            - @hal.pool
-            - @hal.deployment
+            - '@slim.request'
+            - '@slim.response'
+            - '@session.flasher'
+            - '@doctrine.em'
+            - '@hal.pool'
+            - '@hal.deployment'
 
     ####################################################################################################################
     # ENCRYPTED PROPERTIES CONTROLLERS
@@ -315,9 +315,9 @@ services:
     encrypted.page:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\EncryptedPropertiesController'
         arguments:
-            - @encrypted.twig
-            - @doctrine.em
-            - @hal.application
+            - '@encrypted.twig'
+            - '@doctrine.em'
+            - '@hal.application'
     encrypted.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/encrypted/encrypted.properties.twig']]]
@@ -325,10 +325,10 @@ services:
     encrypted.add.page:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\AddEncryptedPropertyController'
         arguments:
-            - @encrypted.add.twig
-            - @doctrine.em
-            - @slim.request
-            - @hal.application
+            - '@encrypted.add.twig'
+            - '@doctrine.em'
+            - '@slim.request'
+            - '@hal.application'
     encrypted.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/encrypted/add.encrypted.property.twig']]]
@@ -336,20 +336,20 @@ services:
     encrypted.add.handler:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\AddEncryptedPropertyHandler'
         arguments:
-            - @doctrine.em
-            - @encrypter
-            - @session.flasher
-            - @twig.context
-            - @slim.request
-            - @doctrine.random
-            - @hal.application
+            - '@doctrine.em'
+            - '@encrypter'
+            - '@session.flasher'
+            - '@twig.context'
+            - '@slim.request'
+            - '@doctrine.random'
+            - '@hal.application'
 
     encrypted.view.page:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\UnencryptedController'
         arguments:
-            - @encrypted.view.twig
-            - @hal.encrypted
-            - @decrypter
+            - '@encrypted.view.twig'
+            - '@hal.encrypted'
+            - '@decrypter'
     encrypted.view.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/encrypted/unencrypted.twig']]]
@@ -357,7 +357,7 @@ services:
     encrypted.remove.handler:
         class: 'QL\Hal\Controllers\Application\EncryptedProperty\RemoveEncryptedPropertyHandler'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @slim.request
-            - @hal.encrypted
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@slim.request'
+            - '@hal.encrypted'

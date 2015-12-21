@@ -4,7 +4,7 @@ services:
 
     delete.confirm.page:
         parent: 'static.controller'
-        arguments: [@delete.confirm.twig, @slim.response]
+        arguments: ['@delete.confirm.twig', '@slim.response']
     delete.confirm.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['delete.confirm.twig']]]
@@ -12,41 +12,38 @@ services:
     dashboard.page:
         class: 'QL\Hal\Controllers\DashboardController'
         arguments:
-            - @dashboard.twig
-            - @currentUser
-            - @permissions
-            - @clock
-            - @doctrine.em
+            - '@dashboard.twig'
+            - '@currentUser'
+            - '@permissions'
+            - '@clock'
+            - '@doctrine.em'
     dashboard.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['dashboard.twig']]]
 
     login.page:
         class: 'QL\Hal\Controllers\LoginController'
-        arguments:
-            - @login.twig
-            - @stats
+        arguments: ['@login.twig', '@stats']
     login.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['login.twig']]]
     login.handler:
         class: 'QL\Hal\Controllers\LoginHandler'
         arguments:
-            - @twig.context
-            - @ldap
-            - @doctrine.em
-            - @session
-            - @url
-            - @slim.request
+            - '@twig.context'
+            - '@ldap'
+            - '@doctrine.em'
+            - '@session'
+            - '@url'
+            - '@slim.request'
 
     logout.handler:
         class: 'QL\Hal\Controllers\LogoutController'
-        arguments: [@session, @url]
+        arguments: ['@session', '@url']
 
     latest.release.page:
         class: 'QL\Hal\Controllers\LatestReleaseController'
-        arguments:
-            - @latest.release.twig
+        arguments: ['@latest.release.twig']
     latest.release.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['latest-release.twig']]]
@@ -57,9 +54,7 @@ services:
 
     queue.page:
         class: 'QL\Hal\Controllers\QueueController'
-        arguments:
-            - @queue.twig
-            - @doctrine.em
+        arguments: ['@queue.twig', '@doctrine.em']
     queue.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['queue.twig']]]
@@ -67,11 +62,11 @@ services:
     queue.history.page:
         class: 'QL\Hal\Controllers\QueueHistoryController'
         arguments:
-            - @queue.history.twig
-            - @doctrine.em
-            - @clock
-            - @slim.route.parameters
-            - %date.timezone%
+            - '@queue.history.twig'
+            - '@doctrine.em'
+            - '@clock'
+            - '@slim.route.parameters'
+            - '%date.timezone%'
     queue.history.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['queue.history.twig']]]
@@ -83,10 +78,10 @@ services:
     group.page:
         class: 'QL\Hal\Controllers\Group\GroupController'
         arguments:
-            - @group.twig
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@group.twig'
+            - '@doctrine.em'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     group.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['group/group.twig']]]
@@ -94,10 +89,10 @@ services:
     group.add.page:
         class: 'QL\Hal\Controllers\Group\AddGroupController'
         arguments:
-            - @group.add.twig
-            - @doctrine.em
-            - @session.flasher
-            - @slim.request
+            - '@group.add.twig'
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@slim.request'
     group.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['group/group.add.twig']]]
@@ -105,22 +100,22 @@ services:
     group.edit.page:
         class: 'QL\Hal\Controllers\Group\EditGroupController'
         arguments:
-            - @group.edit.twig
-            - @doctrine.em
-            - @session.flasher
-            - @slim.request
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@group.edit.twig'
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@slim.request'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     group.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['group/group.edit.twig']]]
     group.remove.handler:
         class: 'QL\Hal\Controllers\Group\RemoveGroupController'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # BUILD CONTROLLERS
@@ -129,9 +124,9 @@ services:
     build.page:
         class: 'QL\Hal\Controllers\Build\BuildController'
         arguments:
-            - @build.twig
-            - @hal.build
-            - @service.event_logs
+            - '@build.twig'
+            - '@hal.build'
+            - '@service.event_logs'
     build.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/build.twig']]]
@@ -139,12 +134,12 @@ services:
     build.start.page:
         class: 'QL\Hal\Controllers\Build\StartBuildController'
         arguments:
-            - @build.start.twig
-            - @doctrine.em
-            - @github
-            - @slim.request
-            - @hal.application
-            - @currentUser
+            - '@build.start.twig'
+            - '@doctrine.em'
+            - '@github'
+            - '@slim.request'
+            - '@hal.application'
+            - '@currentUser'
     build.start.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/start.twig']]]
@@ -152,31 +147,31 @@ services:
     build.start.handler:
         class: 'QL\Hal\Controllers\Build\StartBuildHandler'
         arguments:
-            - @doctrine.em
-            - @build.start.validator
-            - @session.flasher
-            - @twig.context
-            - @slim.request
-            - @sticky.environment
-            - @hal.application
+            - '@doctrine.em'
+            - '@build.start.validator'
+            - '@session.flasher'
+            - '@twig.context'
+            - '@slim.request'
+            - '@sticky.environment'
+            - '@hal.application'
     build.start.validator:
         class: 'QL\Hal\Validator\BuildStartValidator'
         arguments:
-            - @doctrine.em
-            - @github
-            - @permissions
-            - @utility.id.generator
-            - @currentUser
+            - '@doctrine.em'
+            - '@github'
+            - '@permissions'
+            - '@utility.id.generator'
+            - '@currentUser'
 
     builds.page:
         class: 'QL\Hal\Controllers\Build\BuildsController'
         arguments:
-            - @builds.twig
-            - @doctrine.em
-            - @hal.application
-            - @slim.request
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@builds.twig'
+            - '@doctrine.em'
+            - '@hal.application'
+            - '@slim.request'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     builds.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/builds.twig']]]
@@ -188,12 +183,12 @@ services:
     push.start.page:
         class: 'QL\Hal\Controllers\Push\StartPushController'
         arguments:
-            - @push.start.twig
-            - @doctrine.em
-            - @pools
-            - @slim.request
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@push.start.twig'
+            - '@doctrine.em'
+            - '@pools'
+            - '@slim.request'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     push.start.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/start.twig']]]
@@ -201,26 +196,26 @@ services:
     push.start.handler:
         class: 'QL\Hal\Controllers\Push\StartPushHandler'
         arguments:
-            - @session
-            - @doctrine.em
-            - @url
-            - @currentUser
-            - @permissions
-            - @utility.id.generator
-            - @slim.request
-            - @twig.context
-            - @sticky.environment
-            - @slim.route.parameters
+            - '@session'
+            - '@doctrine.em'
+            - '@url'
+            - '@currentUser'
+            - '@permissions'
+            - '@utility.id.generator'
+            - '@slim.request'
+            - '@twig.context'
+            - '@sticky.environment'
+            - '@slim.route.parameters'
 
     push.rollback.page:
         class: 'QL\Hal\Controllers\Push\RollbackController'
         arguments:
-            - @rollback.twig
-            - @doctrine.em
-            - @slim.not.found
-            - @hal.application
-            - @hal.deployment
-            - @slim.route.parameters
+            - '@rollback.twig'
+            - '@doctrine.em'
+            - '@slim.not.found'
+            - '@hal.application'
+            - '@hal.deployment'
+            - '@slim.route.parameters'
     rollback.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/rollback.twig']]]
@@ -228,9 +223,9 @@ services:
     push.page:
         class: 'QL\Hal\Controllers\Push\PushController'
         arguments:
-            - @push.twig
-            - @hal.push
-            - @service.event_logs
+            - '@push.twig'
+            - '@hal.push'
+            - '@service.event_logs'
     push.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/push.twig']]]
@@ -238,12 +233,12 @@ services:
     pushes.page:
         class: 'QL\Hal\Controllers\Push\PushesController'
         arguments:
-            - @pushes.twig
-            - @doctrine.em
-            - @hal.application
-            - @slim.request
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@pushes.twig'
+            - '@doctrine.em'
+            - '@hal.application'
+            - '@slim.request'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     pushes.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/pushes.twig']]]
@@ -254,9 +249,7 @@ services:
 
     environments.page:
         class: 'QL\Hal\Controllers\Environment\EnvironmentsController'
-        arguments:
-            - @environments.twig
-            - @doctrine.em
+        arguments: ['@environments.twig', '@doctrine.em']
 
     environments.twig:
         parent: 'twig.auto.template'
@@ -265,10 +258,10 @@ services:
     environment.page:
         class: 'QL\Hal\Controllers\Environment\EnvironmentController'
         arguments:
-            - @environment.twig
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@environment.twig'
+            - '@doctrine.em'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     environment.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/environment.twig']]]
@@ -276,10 +269,10 @@ services:
     environment.add.page:
         class: 'QL\Hal\Controllers\Environment\AddEnvironmentController'
         arguments:
-            - @environment.add.twig
-            - @doctrine.em
-            - @session.flasher
-            - @slim.request
+            - '@environment.add.twig'
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@slim.request'
     environment.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/environment.add.twig']]]
@@ -287,12 +280,12 @@ services:
     environment.edit.page:
         class: 'QL\Hal\Controllers\Environment\EditEnvironmentController'
         arguments:
-            - @environment.edit.twig
-            - @doctrine.em
-            - @session.flasher
-            - @slim.request
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@environment.edit.twig'
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@slim.request'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     environment.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['environment/environment.edit.twig']]]
@@ -300,10 +293,10 @@ services:
     environment.remove.handler:
         class: 'QL\Hal\Controllers\Environment\RemoveEnvironmentHandler'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # SERVER CONTROLLERS
@@ -311,9 +304,7 @@ services:
 
     servers.page:
         class: 'QL\Hal\Controllers\Server\ServersController'
-        arguments:
-            - @servers.twig
-            - @doctrine.em
+        arguments: ['@servers.twig', '@doctrine.em']
     servers.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/servers.twig']]]
@@ -321,9 +312,9 @@ services:
     server.page:
         class: 'QL\Hal\Controllers\Server\ServerController'
         arguments:
-            - @server.twig
-            - @doctrine.em
-            - @hal.server
+            - '@server.twig'
+            - '@doctrine.em'
+            - '@hal.server'
     server.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/server.twig']]]
@@ -331,11 +322,11 @@ services:
     server.add.page:
         class: 'QL\Hal\Controllers\Server\AddServerController'
         arguments:
-            - @server.add.twig
-            - @doctrine.em
-            - @server.validator
-            - @session.flasher
-            - @slim.request
+            - '@server.add.twig'
+            - '@doctrine.em'
+            - '@server.validator'
+            - '@session.flasher'
+            - '@slim.request'
     server.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/server.add.twig']]]
@@ -343,12 +334,12 @@ services:
     server.edit.page:
         class: 'QL\Hal\Controllers\Server\EditServerController'
         arguments:
-            - @server.edit.twig
-            - @doctrine.em
-            - @server.validator
-            - @session.flasher
-            - @slim.request
-            - @hal.server
+            - '@server.edit.twig'
+            - '@doctrine.em'
+            - '@server.validator'
+            - '@session.flasher'
+            - '@slim.request'
+            - '@hal.server'
     server.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['server/server.edit.twig']]]
@@ -356,13 +347,13 @@ services:
     server.remove.handler:
         class: 'QL\Hal\Controllers\Server\RemoveServerController'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @hal.server
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@hal.server'
 
     server.validator:
         class: 'QL\Hal\Validator\ServerValidator'
-        arguments: [@doctrine.em]
+        arguments: ['@doctrine.em']
 
     ####################################################################################################################
     # USER CONTROLLERS
@@ -371,33 +362,29 @@ services:
     user.page:
         class: 'QL\Hal\Controllers\User\UserController'
         arguments:
-            - @user.twig
-            - @hal.user
-            - @doctrine.em
-            - @ldap
-            - @permissions
-            - @json
+            - '@user.twig'
+            - '@hal.user'
+            - '@doctrine.em'
+            - '@ldap'
+            - '@permissions'
+            - '@json'
         calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.page.ttl%]]
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.page.ttl%']]
     user.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/user.twig']]]
 
     users.page:
         class: 'QL\Hal\Controllers\User\UsersController'
-        arguments:
-            - @users.twig
-            - @doctrine.em
+        arguments: ['@users.twig', '@doctrine.em']
     users.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/users.twig']]]
 
     user.settings.page:
         class: 'QL\Hal\Controllers\User\SettingsController'
-        arguments:
-            - @user.settings.twig
-            - @currentUser
+        arguments: ['@user.settings.twig', '@currentUser']
     user.settings.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/settings.twig']]]
@@ -405,28 +392,28 @@ services:
     user.settings.handler:
         class: 'QL\Hal\Controllers\User\SettingsHandler'
         arguments:
-            - @slim.cookies
-            - @session.flasher
-            - @utility.name.formatter
-            - @currentUser
-            - %cookie.preferences.ttl%
-            - %navigation.list%
-            - @slim.request
+            - '@slim.cookies'
+            - '@session.flasher'
+            - '@utility.name.formatter'
+            - '@currentUser'
+            - '%cookie.preferences.ttl%'
+            - '%navigation.list%'
+            - '@slim.request'
 
     user.disable.handler:
         class: 'QL\Hal\Controllers\User\DisableUserHandler'
         arguments:
-            - @doctrine.em
-            - @permissions
-            - @session.flasher
-            - @hal.user
+            - '@doctrine.em'
+            - '@permissions'
+            - '@session.flasher'
+            - '@hal.user'
 
     user.enable.handler:
         class: 'QL\Hal\Controllers\User\EnableUserHandler'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @hal.user
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@hal.user'
 
     ####################################################################################################################
     # USER TOKEN MANAGEMENT CONTROLLERS
@@ -435,24 +422,24 @@ services:
     user.token.add.handler:
         class: 'QL\Hal\Controllers\User\Token\AddTokenController'
         arguments:
-            - @doctrine.em
-            - @permissions
-            - @currentUser
-            - @session.flasher
-            - @slim.request
-            - @slim.not.found
-            - @doctrine.random
-            - @slim.route.parameters
+            - '@doctrine.em'
+            - '@permissions'
+            - '@currentUser'
+            - '@session.flasher'
+            - '@slim.request'
+            - '@slim.not.found'
+            - '@doctrine.random'
+            - '@slim.route.parameters'
 
     user.token.remove.handler:
         class: 'QL\Hal\Controllers\User\Token\RemoveTokenController'
         arguments:
-            - @doctrine.em
-            - @permissions
-            - @currentUser
-            - @session.flasher
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@doctrine.em'
+            - '@permissions'
+            - '@currentUser'
+            - '@session.flasher'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # HELP CONTROLLERS
@@ -460,13 +447,13 @@ services:
 
     help.page:
         parent: 'static.controller'
-        arguments: [@help.twig, @slim.response]
+        arguments: ['@help.twig', '@slim.response']
     help.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/help.twig']]]
     help.deployment.page:
         parent: 'static.controller'
-        arguments: [@help.deployment.twig, @slim.response]
+        arguments: ['@help.deployment.twig', '@slim.response']
     help.deployment.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/deployment.twig']]]
@@ -480,14 +467,14 @@ services:
 
     help.hal.page:
         parent: 'static.controller'
-        arguments: [@help.hal.twig, @slim.response]
+        arguments: ['@help.hal.twig', '@slim.response']
     help.hal.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/hal.twig']]]
 
     help.githubpermissions.page:
         parent: 'static.controller'
-        arguments: [@help.githubpermissions.twig, @slim.response]
+        arguments: ['@help.githubpermissions.twig', '@slim.response']
     help.githubpermissions.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/github-permissions.twig']]]
@@ -500,13 +487,13 @@ services:
     github.authorization.page:
         class: 'QL\Hal\Controllers\OAuth\GithubCallbackController'
         arguments:
-            - @github.authorization.twig
-            - @slim.request
-            - @doctrine.em
-            - @currentUser
-            - @github.oauth
-            - @session
-            - @url
+            - '@github.authorization.twig'
+            - '@slim.request'
+            - '@doctrine.em'
+            - '@currentUser'
+            - '@github.oauth'
+            - '@session'
+            - '@url'
     github.authorization.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/github.token.error.twig']]]
@@ -514,13 +501,13 @@ services:
     github.authorization.remove.page:
         class: 'QL\Hal\Controllers\User\RemoveGithubTokenController'
         arguments:
-            - @github.authorization.remove.twig
-            - @slim.request
-            - @doctrine.em
-            - @currentUser
-            - @github.oauth
-            - @session
-            - @url
+            - '@github.authorization.remove.twig'
+            - '@slim.request'
+            - '@doctrine.em'
+            - '@currentUser'
+            - '@github.oauth'
+            - '@session'
+            - '@url'
     github.authorization.remove.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/github.token.remove.twig']]]
@@ -541,7 +528,7 @@ services:
 
     styleguide.page:
         parent: 'static.controller'
-        arguments: [@styleguide.twig, @slim.response]
+        arguments: ['@styleguide.twig', '@slim.response']
     styleguide.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['styleguide.html.twig']]]

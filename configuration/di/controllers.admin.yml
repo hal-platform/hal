@@ -6,10 +6,10 @@ services:
     admin.dashboard.page:
         class: 'QL\Hal\Controllers\Admin\DashboardController'
         arguments:
-            - @admin.dashboard.twig
-            - %cookie.encryption.secret%
-            - %session.encryption.secret%
-            - @hal.pushfile.path
+            - '@admin.dashboard.twig'
+            - '%cookie.encryption.secret%'
+            - '%session.encryption.secret%'
+            - '@hal.pushfile.path'
     admin.dashboard.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/dashboard.twig']]]
@@ -17,10 +17,10 @@ services:
     admin.audit.logs.page:
         class: 'QL\Hal\Controllers\Admin\AuditLogsController'
         arguments:
-            - @admin.audit.logs.twig
-            - @doctrine.em
-            - @slim.not.found
-            - @slim.route.parameters
+            - '@admin.audit.logs.twig'
+            - '@doctrine.em'
+            - '@slim.not.found'
+            - '@slim.route.parameters'
     admin.audit.logs.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/audit.logs.twig']]]
@@ -28,13 +28,13 @@ services:
     admin.system.status.page:
         class: 'QL\Hal\Controllers\Admin\SystemStatusController'
         arguments:
-            - @admin.system.status.twig
-            - @doctrine.em
-            - @redis
-            - @json
-            - @slim.not.found
-            - %hal.agents%
-            - @slim.route.parameters
+            - '@admin.system.status.twig'
+            - '@doctrine.em'
+            - '@redis'
+            - '@json'
+            - '@slim.not.found'
+            - '%hal.agents%'
+            - '@slim.route.parameters'
     admin.system.status.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/system.status.twig']]]
@@ -46,9 +46,9 @@ services:
     admin.permissions.page:
         class: 'QL\Hal\Controllers\Admin\Permissions\PermissionsController'
         arguments:
-            - @admin.permissions.twig
-            - @currentUser
-            - @doctrine.em
+            - '@admin.permissions.twig'
+            - '@currentUser'
+            - '@doctrine.em'
     admin.permissions.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/permissions/permissions.twig']]]
@@ -56,9 +56,9 @@ services:
     admin.permissions.deployment.page:
         class: 'QL\Hal\Controllers\Admin\Permissions\DeploymentPermissionsController'
         arguments:
-            - @admin.permissions.deployment.twig
-            - @currentUser
-            - @doctrine.em
+            - '@admin.permissions.deployment.twig'
+            - '@currentUser'
+            - '@doctrine.em'
     admin.permissions.deployment.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/permissions/deployments.twig']]]
@@ -66,11 +66,11 @@ services:
     admin.permissions.remove.page:
         class: 'QL\Hal\Controllers\Admin\Permissions\RemovePermissionsController'
         arguments:
-            - @admin.permissions.remove.twig
-            - @currentUser
-            - @hal.userType
-            - @permissions
-            - @session.flasher
+            - '@admin.permissions.remove.twig'
+            - '@currentUser'
+            - '@hal.userType'
+            - '@permissions'
+            - '@session.flasher'
     admin.permissions.remove.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/permissions/permission.remove.twig']]]
@@ -78,26 +78,26 @@ services:
     admin.permissions.remove.handler:
         class: 'QL\Hal\Controllers\Admin\Permissions\RemovePermissionsHandler'
         arguments:
-            - @currentUser
-            - @hal.userType
-            - @permissions
-            - @session.flasher
+            - '@currentUser'
+            - '@hal.userType'
+            - '@permissions'
+            - '@session.flasher'
 
     admin.permissions.add.page:
         class: 'QL\Hal\Controllers\Admin\Permissions\AddPermissionsController'
         arguments:
-            - @slim.request
-            - @admin.permissions.add.twig
-            - @currentUser
-            - @hal.user
-            - @doctrine.em
-            - @permissions
-            - @json
-            - @session.flasher
-            - @doctrine.random
+            - '@slim.request'
+            - '@admin.permissions.add.twig'
+            - '@currentUser'
+            - '@hal.user'
+            - '@doctrine.em'
+            - '@permissions'
+            - '@json'
+            - '@session.flasher'
+            - '@doctrine.random'
         calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.page.ttl%]]
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.page.ttl%']]
     admin.permissions.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/permissions/permission.add.twig']]]
@@ -105,9 +105,9 @@ services:
     admin.permissions.deployment.remove.page:
         class: 'QL\Hal\Controllers\Admin\Permissions\RemoveDeploymentPermissionsController'
         arguments:
-            - @admin.permissions.deployment.remove.twig
-            - @hal.userPermission
-            - @permissions
+            - '@admin.permissions.deployment.remove.twig'
+            - '@hal.userPermission'
+            - '@permissions'
     admin.permissions.deployment.remove.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/permissions/deployment.remove.twig']]]
@@ -115,16 +115,16 @@ services:
     admin.permissions.deployment.remove.handler:
         class: 'QL\Hal\Controllers\Admin\Permissions\RemoveDeploymentPermissionsHandler'
         arguments:
-            - @hal.userPermission
-            - @permissions
-            - @session.flasher
+            - '@hal.userPermission'
+            - '@permissions'
+            - '@session.flasher'
 
     admin.permissions.refresh.handler:
         class: 'QL\Hal\Controllers\Admin\Permissions\RefreshUserPermissionsController'
         arguments:
-            - @hal.user
-            - @permissions
-            - @session.flasher
+            - '@hal.user'
+            - '@permissions'
+            - '@session.flasher'
 
     ####################################################################################################################
     # SUPER ADMIN CONTROLLERS
@@ -133,10 +133,10 @@ services:
     admin.users.page:
         class: 'QL\Hal\Controllers\Admin\Super\UserManagementController'
         arguments:
-            - @admin.users.twig
-            - @ldap
-            - @doctrine.em
-            - @slim.request
+            - '@admin.users.twig'
+            - '@ldap'
+            - '@doctrine.em'
+            - '@slim.request'
     admin.users.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/users.management.twig']]]
@@ -144,9 +144,9 @@ services:
     admin.caches.page:
         class: 'QL\Hal\Controllers\Admin\Super\CacheManagementController'
         arguments:
-            - @admin.caches.twig
-            - @redis
-            - @root
+            - '@admin.caches.twig'
+            - '@redis'
+            - '@root'
     admin.caches.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/cache.management.twig']]]
@@ -154,17 +154,17 @@ services:
     admin.caches.handler:
         class: 'QL\Hal\Controllers\Admin\Super\CacheManagementHandler'
         arguments:
-            - @slim.request
-            - @session.flasher
-            - @redis
+            - '@slim.request'
+            - '@session.flasher'
+            - '@redis'
 
     admin.message.page:
         class: 'QL\Hal\Controllers\Admin\Super\GlobalMessageController'
         arguments:
-            - @admin.message.twig
-            - @global.message
-            - @session.flasher
-            - @slim.request
+            - '@admin.message.twig'
+            - '@global.message'
+            - '@session.flasher'
+            - '@slim.request'
     admin.message.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/global.message.twig']]]
@@ -176,8 +176,8 @@ services:
     admin.credentials.page:
         class: 'QL\Hal\Controllers\Admin\Credentials\CredentialsController'
         arguments:
-            - @admin.credentials.twig
-            - @doctrine.em
+            - '@admin.credentials.twig'
+            - '@doctrine.em'
     admin.credentials.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/credentials/credentials.twig']]]
@@ -185,9 +185,9 @@ services:
     admin.credential.page:
         class: 'QL\Hal\Controllers\Admin\Credentials\CredentialController'
         arguments:
-            - @admin.credential.twig
-            - @hal.credential
-            - @doctrine.em
+            - '@admin.credential.twig'
+            - '@hal.credential'
+            - '@doctrine.em'
     admin.credential.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/credentials/credential.twig']]]
@@ -195,12 +195,12 @@ services:
     admin.credential.add.page:
         class: 'QL\Hal\Controllers\Admin\Credentials\AddCredentialController'
         arguments:
-            - @admin.credential.add.twig
-            - @doctrine.em
-            - @slim.request
-            - @session.flasher
-            - @doctrine.random
-            - @encrypter
+            - '@admin.credential.add.twig'
+            - '@doctrine.em'
+            - '@slim.request'
+            - '@session.flasher'
+            - '@doctrine.random'
+            - '@encrypter'
     admin.credential.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/credentials/credential.add.twig']]]
@@ -208,6 +208,6 @@ services:
     admin.credential.remove.handler:
         class: 'QL\Hal\Controllers\Admin\Credentials\RemoveCredentialHandler'
         arguments:
-            - @doctrine.em
-            - @session.flasher
-            - @hal.credential
+            - '@doctrine.em'
+            - '@session.flasher'
+            - '@hal.credential'

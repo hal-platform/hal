@@ -44,7 +44,7 @@ parameters:
             method: 'GET'
             route: '/admin/credentials/:credential'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.credential.page']
-            conditions: {credential: %routes.regex.guid%}
+            conditions: {credential: '%routes.regex.guid%'}
 
         admin.credential.add:
             method: ['GET', 'POST']
@@ -55,12 +55,12 @@ parameters:
             method: 'GET'
             route: '/admin/credentials/:credential/remove'
             stack: ['middleware.super', 'middleware.requireEntity', 'delete.confirm.page']
-            conditions: {credential: %routes.regex.guid%}
+            conditions: {credential: '%routes.regex.guid%'}
         admin.credential.remove:
             method: 'POST'
             route: '/admin/credentials/:credential/remove'
             stack: ['middleware.super', 'middleware.requireEntity', 'admin.credential.remove.handler']
-            conditions: {credential: %routes.regex.guid%}
+            conditions: {credential: '%routes.regex.guid%'}
 
         ################################################################################################################
         # ADMIN ROUTES - PERMISSIONS
@@ -80,35 +80,35 @@ parameters:
             method: 'GET'
             route: '/admin/permissions/:userType/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.remove.page']
-            conditions: {userType: %routes.regex.guid%}
+            conditions: {userType: '%routes.regex.guid%'}
         admin.permissions.remove:
             method: 'POST'
             route: '/admin/permissions/:userType/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.remove.handler']
-            conditions: {userType: %routes.regex.guid%}
+            conditions: {userType: '%routes.regex.guid%'}
 
         admin.permissions.add:
             method: ['GET', 'POST']
             route: '/admin/permissions/:user/add'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.add.page']
-            conditions: {user: %routes.regex.digit%}
+            conditions: {user: '%routes.regex.digit%'}
 
         admin.permissions.deployment.remove.confirm:
             method: 'GET'
             route: '/admin/permissions/deployment/:userPermission/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.deployment.remove.page']
-            conditions: {userPermission: %routes.regex.guid%}
+            conditions: {userPermission: '%routes.regex.guid%'}
         admin.permissions.deployment.remove:
             method: 'POST'
             route: '/admin/permissions/deployment/:userPermission/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.deployment.remove.handler']
-            conditions: {userPermission: %routes.regex.guid%}
+            conditions: {userPermission: '%routes.regex.guid%'}
 
         admin.permissions.refresh:
             method: 'POST'
             route: '/admin/permissions/:user/refresh'
             stack: ['middleware.admin', 'middleware.requireEntity', 'admin.permissions.refresh.handler']
-            conditions: {user: %routes.regex.digit%}
+            conditions: {user: '%routes.regex.digit%'}
 
         ################################################################################################################
         # SUPER ADMIN ROUTES

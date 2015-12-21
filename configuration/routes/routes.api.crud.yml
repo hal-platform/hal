@@ -7,4 +7,4 @@ parameters:
             route: '/api/applications/:application/build'
             stack: ['middleware.api.token', 'middleware.api.require_entity', 'middleware.requestBody', 'api.build.start']
             conditions:
-                application: %routes.regex.digit%
+                application: '%routes.regex.digit%'

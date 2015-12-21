@@ -8,7 +8,7 @@ services:
     api.index:
         class: 'QL\Hal\Controllers\Api\IndexController'
         arguments:
-            - @response.formatter
+            - '@response.formatter'
 
     ####################################################################################################################
     # QUEUE CONTROLLERS
@@ -17,21 +17,21 @@ services:
     api.queue:
         class: 'QL\Hal\Controllers\Api\QueueController'
         arguments:
-            - @slim.request
-            - @response.formatter
-            - @normalizer.build
-            - @normalizer.push
-            - @doctrine.em
-            - @clock
+            - '@slim.request'
+            - '@response.formatter'
+            - '@normalizer.build'
+            - '@normalizer.push'
+            - '@doctrine.em'
+            - '@clock'
 
     api.queue.refresh:
         class: 'QL\Hal\Controllers\Api\QueueRefreshController'
         arguments:
-            - @response.formatter
-            - @normalizer.build
-            - @normalizer.push
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@normalizer.build'
+            - '@normalizer.push'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # BUILD CONTROLLERS
@@ -40,28 +40,28 @@ services:
     api.build:
         class: 'QL\Hal\Controllers\Api\Build\BuildController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
 
     api.build.logs:
         class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
         arguments:
-            - @slim.request
-            - @response.formatter
-            - @doctrine.em
-            - @service.event_logs
-            - @normalizer.log.event
-            - @normalizer.build
-            - @slim.route.parameters
+            - '@slim.request'
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@service.event_logs'
+            - '@normalizer.log.event'
+            - '@normalizer.build'
+            - '@slim.route.parameters'
 
     api.builds:
         class: 'QL\Hal\Controllers\Api\Build\BuildsController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.build
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.build'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # DEPLOYMENT CONTROLLERS
@@ -70,35 +70,35 @@ services:
     api.deployment:
         class: 'QL\Hal\Controllers\Api\Deployment\DeploymentController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.deployment
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.deployment'
+            - '@slim.route.parameters'
 
     api.deployments:
         class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
         arguments:
-            - @slim.request
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.deployment
-            - @slim.route.parameters
+            - '@slim.request'
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.deployment'
+            - '@slim.route.parameters'
 
     api.deployment.lastpush:
         class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
         arguments:
-            - @slim.request
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@slim.request'
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
 
     api.deployment.history:
         class: 'QL\Hal\Controllers\Api\Deployment\PushHistoryController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.push
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.push'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # ENVIRONMENT CONTROLLERS
@@ -107,16 +107,16 @@ services:
     api.environment:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
 
     api.environments:
         class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.environment
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.environment'
 
     ####################################################################################################################
     # SERVER CONTROLLERS
@@ -125,17 +125,17 @@ services:
     api.server:
         class: 'QL\Hal\Controllers\Api\Server\ServerController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
 
     api.servers:
         class: 'QL\Hal\Controllers\Api\Server\ServersController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.server
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.server'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # GROUP CONTROLLERS
@@ -144,16 +144,16 @@ services:
     api.group:
         class: 'QL\Hal\Controllers\Api\Group\GroupController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
 
     api.groups:
         class: 'QL\Hal\Controllers\Api\Group\GroupsController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.group
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.group'
 
     ####################################################################################################################
     # PUSH CONTROLLERS
@@ -162,27 +162,27 @@ services:
     api.push:
         class: 'QL\Hal\Controllers\Api\Push\PushController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
     api.push.logs:
         class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
         arguments:
-            - @slim.request
-            - @response.formatter
-            - @doctrine.em
-            - @service.event_logs
-            - @normalizer.log.event
-            - @normalizer.push
-            - @slim.route.parameters
+            - '@slim.request'
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@service.event_logs'
+            - '@normalizer.log.event'
+            - '@normalizer.push'
+            - '@slim.route.parameters'
 
     api.pushes:
         class: 'QL\Hal\Controllers\Api\Push\PushesController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.push
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.push'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # EVENT LOG CONTROLLERS
@@ -191,10 +191,10 @@ services:
     api.event.log:
         class: 'QL\Hal\Controllers\Api\EventLogController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.log.event
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.log.event'
+            - '@slim.route.parameters'
 
     ####################################################################################################################
     # REPOSITORY CONTROLLERS
@@ -203,16 +203,16 @@ services:
     api.application:
         class: 'QL\Hal\Controllers\Api\Application\ApplicationController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
 
     api.applications:
         class: 'QL\Hal\Controllers\Api\Application\ApplicationsController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.application
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.application'
 
     ####################################################################################################################
     # USER CONTROLLERS
@@ -221,13 +221,13 @@ services:
     api.user:
         class: 'QL\Hal\Controllers\Api\User\UserController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@slim.route.parameters'
     api.users:
         class: 'QL\Hal\Controllers\Api\User\UsersController'
         arguments:
-            - @response.formatter
-            - @doctrine.em
-            - @normalizer.user
-            - @slim.route.parameters
+            - '@response.formatter'
+            - '@doctrine.em'
+            - '@normalizer.user'
+            - '@slim.route.parameters'

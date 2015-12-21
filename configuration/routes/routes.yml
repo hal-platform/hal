@@ -58,7 +58,7 @@ parameters:
             method: 'GET'
             route: '/queue-history/date/:date'
             stack: ['middleware.login', 'queue.history.page']
-            conditions: {date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'}
+            conditions: {date: '%routes.regex.date%'}
 
         ################################################################################################################
         # HELP ROUTES
@@ -97,26 +97,26 @@ parameters:
             method: 'GET'
             route: '/applications/:application/builds'
             stack: ['middleware.login', 'middleware.requireEntity', 'builds.page']
-            conditions: {application: %routes.regex.digit%}
+            conditions: {application: '%routes.regex.digit%'}
         build.history:
             method: 'GET'
             route: '/applications/:application/builds(/page/:page)'
             stack: ['middleware.login', 'middleware.requireEntity', 'builds.page']
             conditions:
-                application: %routes.regex.digit%
-                page: %routes.regex.digit%
+                application: '%routes.regex.digit%'
+                page: '%routes.regex.digit%'
 
         build:
             method: 'GET'
             route: '/builds/:build'
             stack: ['middleware.login', 'middleware.requireEntity', 'build.page']
-            conditions: {build: %routes.regex.buildId%}
+            conditions: {build: '%routes.regex.buildId%'}
 
         build.start:
             method: ['GET', 'POST']
             route: '/applications/:application/build'
             stack: ['middleware.login', 'middleware.requireEntity', 'build.start.handler', 'build.start.page']
-            conditions: {application: %routes.regex.digit%}
+            conditions: {application: '%routes.regex.digit%'}
 
         ################################################################################################################
         # PUSH ROUTES
@@ -126,42 +126,42 @@ parameters:
             method: 'GET'
             route: '/pushes/:push'
             stack: ['middleware.login', 'middleware.requireEntity', 'push.page']
-            conditions: {push: %routes.regex.pushId%}
+            conditions: {push: '%routes.regex.pushId%'}
 
         push.start:
             method: ['GET', 'POST']
             route: '/builds/:build/push'
             stack: ['middleware.login', 'push.start.handler', 'push.start.page']
-            conditions: {build: %routes.regex.buildId%}
+            conditions: {build: '%routes.regex.buildId%'}
 
         push.history.page1:
             method: 'GET'
             route: '/applications/:application/pushes'
             stack: ['middleware.login', 'middleware.requireEntity', 'pushes.page']
-            conditions: {application: %routes.regex.digit%}
+            conditions: {application: '%routes.regex.digit%'}
         push.history:
             method: 'GET'
             route: '/applications/:application/pushes(/page/:page)'
             stack: ['middleware.login', 'middleware.requireEntity', 'pushes.page']
             conditions:
-                application: %routes.regex.digit%
-                page: %routes.regex.digit%
+                application: '%routes.regex.digit%'
+                page: '%routes.regex.digit%'
 
         rollback.page1:
             method: 'GET'
             route: '/applications/:application/deployments/:deployment/pushes'
             stack: ['middleware.login', 'middleware.requireEntity', 'push.rollback.page']
             conditions:
-                application: %routes.regex.digit%
-                deployment: %routes.regex.digit%
+                application: '%routes.regex.digit%'
+                deployment: '%routes.regex.digit%'
 
         rollback:
             method: 'GET'
             route: '/applications/:application/deployments/:deployment/pushes(/page/:page)'
             stack: ['middleware.login', 'middleware.requireEntity', 'push.rollback.page']
             conditions:
-                application: %routes.regex.digit%
-                deployment: %routes.regex.digit%
+                application: '%routes.regex.digit%'
+                deployment: '%routes.regex.digit%'
 
         ################################################################################################################
         # SERVER ROUTES
@@ -176,7 +176,7 @@ parameters:
             method: 'GET'
             route: '/servers/:server'
             stack: ['middleware.login', 'middleware.requireEntity', 'server.page']
-            conditions: {server: %routes.regex.digit%}
+            conditions: {server: '%routes.regex.digit%'}
 
         ################################################################################################################
         # SERVER ROUTES - ADMIN
@@ -191,18 +191,18 @@ parameters:
             method: ['GET', 'POST']
             route: '/servers/:server/edit'
             stack: ['middleware.admin', 'middleware.requireEntity', 'server.edit.page']
-            conditions: {server: %routes.regex.digit%}
+            conditions: {server: '%routes.regex.digit%'}
 
         server.remove.confirm:
             method: 'GET'
             route: '/servers/:server/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'delete.confirm.page']
-            conditions: {server: %routes.regex.digit%}
+            conditions: {server: '%routes.regex.digit%'}
         server.remove:
             method: 'POST'
             route: '/servers/:server/remove'
             stack: ['middleware.admin', 'middleware.requireEntity', 'server.remove.handler']
-            conditions: {server: %routes.regex.digit%}
+            conditions: {server: '%routes.regex.digit%'}
 
         ################################################################################################################
         # USER ROUTES
@@ -212,7 +212,7 @@ parameters:
             method: 'GET'
             route: '/users/:user'
             stack: ['middleware.login', 'middleware.requireEntity', 'user.page']
-            conditions: {user: %routes.regex.digit%}
+            conditions: {user: '%routes.regex.digit%'}
 
         settings:
             method: 'GET'
@@ -258,22 +258,22 @@ parameters:
             method: 'POST'
             route: '/users/:id/tokens'
             stack: ['middleware.login', 'user.token.add.handler']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
 
         user.token.remove.confirm:
             method: 'GET'
             route: '/users/:id/tokens/:token/revoke'
             stack: ['middleware.login', 'delete.confirm.page']
             conditions:
-                id: %routes.regex.digit%
-                token: %routes.regex.guid%
+                id: '%routes.regex.digit%'
+                token: '%routes.regex.guid%'
         user.token.remove:
             method: 'POST'
             route: '/users/:id/tokens/:token/revoke'
             stack: ['middleware.login', 'user.token.remove.handler']
             conditions:
-                id: %routes.regex.digit%
-                token: %routes.regex.guid%
+                id: '%routes.regex.digit%'
+                token: '%routes.regex.guid%'
 
         ################################################################################################################
         # GROUP ROUTES
@@ -288,7 +288,7 @@ parameters:
             method: 'GET'
             route: '/groups/:id'
             stack: ['middleware.login', 'group.page']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
 
         group.add:
             method: ['GET', 'POST']
@@ -303,18 +303,18 @@ parameters:
             method: ['GET', 'POST']
             route: '/groups/:id/edit'
             stack: ['middleware.admin', 'group.edit.page']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
 
         group.remove.confirm:
             method: 'GET'
             route: '/groups/:id/remove'
             stack: ['middleware.admin', 'delete.confirm.page']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
         group.remove:
             method: 'POST'
             route: '/groups/:id/remove'
             stack: ['middleware.admin', 'group.remove.handler']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
 
         ################################################################################################################
         # ENVIRONMENT ROUTES
@@ -329,7 +329,7 @@ parameters:
             method: 'GET'
             route: '/environments/:id'
             stack: ['middleware.login', 'environment.page']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
 
         ################################################################################################################
         # ENVIRONMENT ROUTES - ADMIN
@@ -344,15 +344,15 @@ parameters:
             method: ['GET', 'POST']
             route: '/environments/:id/edit'
             stack: ['middleware.admin', 'environment.edit.page']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
 
         environment.remove.confirm:
             method: 'GET'
             route: '/environments/:id/delete'
             stack: ['middleware.admin', 'delete.confirm.page']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}
         environment.remove:
             method: 'POST'
             route: '/environments/:id/delete'
             stack: ['middleware.admin', 'environment.remove.handler']
-            conditions: {id: %routes.regex.digit%}
+            conditions: {id: '%routes.regex.digit%'}

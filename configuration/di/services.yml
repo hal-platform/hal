@@ -8,96 +8,96 @@ services:
         class: 'Zend\Ldap\Ldap'
         arguments:
             -
-                host: %ldap.host%
-                baseDn: %ldap.baseDn%
-                accountDomainNameShort: %ldap.domain%
+                host: '%ldap.host%'
+                baseDn: '%ldap.baseDn%'
+                accountDomainNameShort: '%ldap.domain%'
 
     ldap:
         class: 'MCP\Corp\Account\QLAdService'
-        arguments: [@ldap.transport]
+        arguments: ['@ldap.transport']
         calls:
-            - ['authenticate', [%ldap.username%, %ldap.password%, false]]
+            - ['authenticate', ['%ldap.username%', '%ldap.password%', false]]
 
     permissions:
         class: 'QL\Hal\Service\PermissionService'
         arguments:
-            - @doctrine.em
-            - @github
-            - @json
-            - %permissions.check.github%
+            - '@doctrine.em'
+            - '@github'
+            - '@json'
+            - '%permissions.check.github%'
         calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.permissions.ttl%]]
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.permissions.ttl%']]
 
     global.message:
         class: 'QL\Hal\Service\GlobalMessageService'
-        arguments: [@redis]
+        arguments: ['@redis']
 
     sticky.environment:
         class: 'QL\Hal\Service\StickyEnvironmentService'
         arguments:
-            - @slim.cookies
-            - @json
-            - %cookie.preferences.ttl%
+            - '@slim.cookies'
+            - '@json'
+            - '%cookie.preferences.ttl%'
 
     sticky.pool:
         class: 'QL\Hal\Service\StickyPoolService'
         arguments:
-            - @slim.cookies
-            - @json
-            - %cookie.preferences.ttl%
+            - '@slim.cookies'
+            - '@json'
+            - '%cookie.preferences.ttl%'
 
     stats:
         class: 'QL\Hal\Service\StatsService'
         arguments:
-            - @doctrine.em
-            - @clock
-            - %date.timezone%
+            - '@doctrine.em'
+            - '@clock'
+            - '%date.timezone%'
         calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.stats.ttl%]]
+            - ['setCache', [' @cache']]
+            - ['setCacheTTL', ['%cache.stats.ttl%']]
 
     pools:
         class: 'QL\Hal\Service\PoolService'
         arguments:
-            - @doctrine.em
-            - @sticky.pool
+            - '@doctrine.em'
+            - '@sticky.pool'
         calls:
-            - ['setCache', [@cache]]
-            - ['setCacheTTL', [%cache.stats.ttl%]]
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.stats.ttl%']]
 
     redis:
         class: 'Predis\Client'
         arguments:
-            - %redis.server%
+            - '%redis.server%'
             - {prefix: '%redis.prefix%:'}
 
     github:
         class: 'QL\Hal\Service\GitHubService'
         arguments:
-            - @github.repoService
-            - @github.repoCommitService
-            - @github.gitRefService
-            - @github.gitCommitService
-            - @github.pullService
-            - @github.userService
-            - @github.orgService
-            - @github.orgMemberService
-            - @github.pager
+            - '@github.repoService'
+            - '@github.repoCommitService'
+            - '@github.gitRefService'
+            - '@github.gitCommitService'
+            - '@github.pullService'
+            - '@github.userService'
+            - '@github.orgService'
+            - '@github.orgMemberService'
+            - '@github.pager'
 
     service.event_logs:
         class: 'QL\Hal\Service\EventLogService'
         arguments:
-            - @redis
-            - @json
+            - '@redis'
+            - '@json'
 
     acl:
         class: 'QL\Hal\ACL'
         arguments:
-            - @denied.twig
-            - @slim.halt
-            - @permissions
-            - @currentUser
+            - '@denied.twig'
+            - '@slim.halt'
+            - '@permissions'
+            - '@currentUser'
 
     ####################################################################################################################
     # Crypto
@@ -105,28 +105,28 @@ services:
 
     encrypter:
         class: 'QL\Hal\Core\Crypto\Encrypter'
-        arguments: [%encrypter.publickey%]
+        arguments: ['%encrypter.publickey%']
 
     decrypter:
         class: 'QL\Hal\Core\Crypto\Decrypter'
-        factory: [@decrypter.factory, 'getAsymmetricDecrypter']
+        factory: ['@decrypter.factory', 'getAsymmetricDecrypter']
         lazy: true
 
     decrypter.factory:
         class: 'QL\Hal\Core\Crypto\CryptoFactory'
         arguments:
-            - @encrypter.encryptedkey.squished
-            - @encrypter.secret.file
+            - '@encrypter.encryptedkey.squished'
+            - '@encrypter.secret.file'
 
     encrypter.encryptedkey.squished:
         class: 'stdClass'
         factory: ['QL\Hal\Application\Stringify', 'squish']
-        arguments: [%encrypter.encryptedkey%]
+        arguments: ['%encrypter.encryptedkey%']
 
     encrypter.secret.file:
         class: 'stdClass'
         factory: ['QL\Panthor\Utility\Stringify', 'template']
-        arguments: ['%%s/%%s', [@root, %encrypter.hal.secret.path%]]
+        arguments: ['%%s/%%s', ['@root', '%encrypter.hal.secret.path%']]
 
     ######################################################################################################################
     # TWIG STUFF
@@ -135,48 +135,48 @@ services:
     twig.auto.template:
         parent: 'twig.template'
         class: 'QL\Kraken\Application\AutoRenderingTemplate'
-        calls: [['setResponse', [@slim.response]]]
+        calls: [['setResponse', ['@slim.response']]]
 
     twig.extension.hal:
         class: 'QL\Hal\Twig\HalExtension'
         arguments:
-            - @slim.cookies
-            - @global.message
-            - @utility.time.formatter
-            - @utility.name.formatter
+            - '@slim.cookies'
+            - '@global.message'
+            - '@utility.time.formatter'
+            - '@utility.name.formatter'
 
     twig.extension.hal.global:
         class: 'QL\Hal\Twig\GlobalExtension'
         arguments:
-            - @service_container
-            - @slim.request
-            - @session
+            - '@service_container'
+            - '@slim.request'
+            - '@session'
         calls:
-            - ['addGlobal', ['applicationTitle', %application.title%]]
-            - ['addGlobal', ['applicationSha', %application.sha%]]
-            - ['addGlobal', ['applicationVersion', %application.major.version%]]
-            - ['addGlobal', ['applicationEnvironment', %application.environment%]]
-            - ['addGlobal', ['applicationKrakenTitle', %application.kraken.title%]]
-            - ['addGlobal', ['navItems', %navigation.list%]]
-            - ['addGlobal', ['session', @session]]
-            - ['addGlobal', ['tick', @global.message]]
+            - ['addGlobal', ['applicationTitle', '%application.title%']]
+            - ['addGlobal', ['applicationSha', '%application.sha%']]
+            - ['addGlobal', ['applicationVersion', '%application.major.version%']]
+            - ['addGlobal', ['applicationEnvironment', '%application.environment%']]
+            - ['addGlobal', ['applicationKrakenTitle', '%application.kraken.title%']]
+            - ['addGlobal', ['navItems', '%navigation.list%']]
+            - ['addGlobal', ['session', '@session']]
+            - ['addGlobal', ['tick', '@global.message']]
 
     twig.extension.permissions:
         class: 'QL\Hal\Twig\PermissionsExtension'
-        arguments: [@permissions]
+        arguments: ['@permissions']
 
     twig.extension.github:
         class: 'QL\Hal\Twig\GitHubExtension'
-        arguments: [@github, @github.url_builder]
+        arguments: ['@github', '@github.url_builder']
         calls:
-            - ['setCache', [@twig.extension.github.cache]]
+            - ['setCache', ['@twig.extension.github.cache']]
 
     twig.extension.github.cache:
         class: 'MCP\Cache\MemoryCache'
 
     twig.extension.ansi:
         class: 'SensioLabs\AnsiConverter\Bridge\Twig\AnsiExtension'
-        arguments: [@ansi.converter]
+        arguments: ['@ansi.converter']
     twig.extension.status:
         class: 'QL\Hal\Twig\StatusExtension'
 
@@ -184,17 +184,17 @@ services:
     twig.environment:
         parent: 'panthor.twig.environment'
         calls:
-            - ['addExtension', [@twig.extension.hal]]
-            - ['addExtension', [@twig.extension.hal.global]]
-            - ['addExtension', [@twig.extension.permissions]]
-            - ['addExtension', [@twig.extension.github]]
-            - ['addExtension', [@twig.extension.ansi]]
-            - ['addExtension', [@twig.extension.status]]
-            - ['addExtension', [@kraken.twig.extension]]
+            - ['addExtension', ['@twig.extension.hal']]
+            - ['addExtension', ['@twig.extension.hal.global' ]]
+            - ['addExtension', ['@twig.extension.permissions']]
+            - ['addExtension', ['@twig.extension.github']]
+            - ['addExtension', ['@twig.extension.ansi']]
+            - ['addExtension', ['@twig.extension.status']]
+            - ['addExtension', ['@kraken.twig.extension']]
 
     ansi.converter:
         class: 'SensioLabs\AnsiConverter\AnsiToHtmlConverter'
-        arguments: [@ansi.convert.theme, true]
+        arguments: ['@ansi.convert.theme', true]
 
     ansi.convert.theme:
         class: 'SensioLabs\AnsiConverter\Theme\Theme'
@@ -206,59 +206,59 @@ services:
     github.oauth:
         class: 'QL\Hal\Github\OAuthHandler'
         arguments:
-            - @guzzle
-            - %github.baseurl%
-            - %github.site.baseurl%
-            - %github.app.id%
-            - %github.app.secret%
+            - '@guzzle'
+            - '%github.baseurl%'
+            - '%github.site.baseurl%'
+            - '%github.app.id%'
+            - '%github.app.secret%'
 
     github.url_builder:
         class: 'QL\Hal\Github\GitHubURLBuilder'
-        arguments: [@github, %github.site.baseurl%]
+        arguments: ['@github', '%github.site.baseurl%']
 
     github.client:
         class: 'Github\Client'
-        arguments: [@github.http.client]
+        arguments: ['@github.http.client']
 
     github.http.client:
         class: 'QL\Hal\Github\CachedHttpClient'
         arguments:
-            - {base_url: %github.baseurl%}
+            - {base_url: '%github.baseurl%'}
         calls:
-            - ['authenticate', [%github.token%, null, 'http_token']]
-            - ['setCache', [@cache.github]]
+            - ['authenticate', ['%github.token%', null, 'http_token']]
+            - ['setCache', ['@cache.github']]
 
     github.pager:
         class: 'Github\ResultPager'
-        arguments: [@github.client]
+        arguments: ['@github.client']
 
     github.pullService:
         class: 'Github\Api\PullRequest'
-        arguments: [@github.client]
+        arguments: ['@github.client']
 
     github.gitRefService:
         class: 'Github\Api\GitData\References'
-        arguments: [@github.client]
+        arguments: ['@github.client']
     github.gitCommitService:
         class: 'Github\Api\GitData\Commits'
-        arguments: [@github.client]
+        arguments: ['@github.client']
 
     github.repoService:
         class: 'Github\Api\Repo'
-        arguments: [@github.client]
+        arguments: ['@github.client']
     github.repoCommitService:
         class: 'Github\Api\Repository\Commits'
-        arguments: [@github.client]
+        arguments: ['@github.client']
 
     github.userService:
         class: 'Github\Api\User'
-        arguments: [@github.client]
+        arguments: ['@github.client']
     github.orgService:
         class: 'QL\Hal\Github\Organization'
-        arguments: [@github.client]
+        arguments: ['@github.client']
     github.orgMemberService:
         class: 'Github\Api\Organization\Members'
-        arguments: [@github.client]
+        arguments: ['@github.client']
 
     ####################################################################################################################
     # Logging
@@ -266,22 +266,22 @@ services:
 
     exception.logger:
         class: 'QL\Hal\Application\ExceptionLogger'
-        arguments: [@logger]
+        arguments: ['@logger']
 
     logger:
         class: 'MCP\Logger\Logger'
-        arguments: [@logger.mcp.service, @logger.mcp.factory]
+        arguments: ['@logger.mcp.service', '@logger.mcp.factory']
 
     logger.mcp.service:
         class: 'MCP\Logger\Service\Guzzle5Service'
         arguments:
-            - @logger.mcp.guzzle
-            - @logger.mcp.renderer
-            - @logger.mcp.url
+            - '@logger.mcp.guzzle'
+            - '@logger.mcp.renderer'
+            - '@logger.mcp.url'
 
     logger.mcp.url:
         class: 'QL\UriTemplate\UriTemplate'
-        arguments: [%logger.mcp.host%]
+        arguments: ['%logger.mcp.host%']
     logger.mcp.guzzle:
         class: 'GuzzleHttp\Client'
     logger.mcp.renderer:
@@ -291,4 +291,4 @@ services:
         class: 'MCP\Logger\Adapter\Psr\MessageFactory'
         arguments: ['@clock']
         calls:
-            - ['setDefaultProperty', ['applicationId', %application.id%]]
+            - ['setDefaultProperty', ['applicationId', '%application.id%']]

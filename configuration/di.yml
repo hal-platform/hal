@@ -42,39 +42,45 @@ services:
     doctrine.proxy.dir:
         class: 'stdClass'
         factory: ['QL\Panthor\Utility\Stringify', 'template']
-        arguments: ['%%s/%%s', [@root, '.doctrine']]
+        arguments: ['%%s/%%s', ['@root', '.doctrine']]
 
     doctrine.em.events:
         class: 'Doctrine\Common\EventManager'
         calls:
-            - ['addEventListener', [['onFlush'], @doctrine.listener.logger]]
-            - ['addEventListener', [['onFlush'], @doctrine.listener.kraken.logger]]
-            - ['addEventListener', [['prePersist'], @doctrine.listener.persist]]
-            - ['addEventListener', [['prePersist'], @doctrine.listener.kraken.persist]]
+            - ['addEventListener', [['onFlush'], '@doctrine.listener.logger']]
+            - ['addEventListener', [['onFlush'], '@doctrine.listener.kraken.logger']]
+            - ['addEventListener', [['prePersist'], '@doctrine.listener.persist']]
+            - ['addEventListener', [['prePersist'], '@doctrine.listener.kraken.persist']]
 
     doctrine.listener.logger:
         class: 'QL\Hal\Core\Listener\DoctrineChangeLogger'
-        arguments: [@clock, @doctrine.random, @doctrine.utility.lazy.user]
+        arguments:
+            - '@clock'
+            - '@doctrine.random'
+            - '@doctrine.utility.lazy.user'
 
     doctrine.listener.persist:
         class: 'QL\Hal\Core\Listener\DoctrinePersistListener'
-        arguments: [@clock]
+        arguments: ['@clock']
 
     doctrine.listener.kraken.persist:
         class: 'QL\Kraken\Core\Listener\DoctrinePersistListener'
-        arguments: [@clock]
+        arguments: ['@clock']
 
     doctrine.listener.kraken.logger:
         class: 'QL\Kraken\Core\Listener\DoctrineChangeLogger'
-        arguments: [@clock, @doctrine.random, @doctrine.utility.lazy.user]
+        arguments:
+            - '@clock'
+            - '@doctrine.random'
+            - '@doctrine.utility.lazy.user'
 
     doctrine.cache:
         class: 'QL\Hal\Core\Utility\DoctrinePredisCache'
-        arguments: [@redis, %cache.doctrine.ttl%]
+        arguments: ['@redis', '%cache.doctrine.ttl%']
 
     doctrine.utility.lazy.user:
         class: 'QL\Hal\Utility\LazyUserRetriever'
-        arguments: [@service_container]
+        arguments: ['@service_container']
 
     ####################################################################################################################
     # SLIM
@@ -85,15 +91,15 @@ services:
         # arguments:
             # - %slim.configuration%
         calls:
-            - ['add', [@slim.session]]
+            - ['add', ['@slim.session']]
 
     slim.hook.logger:
         class: 'QL\Hal\Slim\McpLoggerHook'
-        arguments: [@logger.mcp.factory]
+        arguments: ['@logger.mcp.factory']
     slim.hook.errors:
         class: 'QL\Panthor\ErrorHandling\ErrorHandler'
-        arguments: [@logger]
-        configurator: [@exception.configurator, 'attach']
+        arguments: ['@logger']
+        configurator: ['@exception.configurator', 'attach']
         calls:
             - ['setStacktraceLogging', [true]]
 
@@ -101,20 +107,20 @@ services:
         parent: 'slim.hook.routes'
         calls:
             # %routes% is auto loaded by parent
-            - ['addRoutes', [%routes.api%]]
-            - ['addRoutes', [%routes.api.crud%]]
-            - ['addRoutes', [%routes.admin%]]
-            - ['addRoutes', [%routes.application%]]
-            - ['addRoutes', [%kraken.routes%]]
+            - ['addRoutes', ['%routes.api%']]
+            - ['addRoutes', ['%routes.api.crud%']]
+            - ['addRoutes', ['%routes.admin%']]
+            - ['addRoutes', ['%routes.application%']]
+            - ['addRoutes', ['%kraken.routes%']]
 
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'
-        arguments: [@session.handler, @service_container]
+        arguments: ['@session.handler', '@service_container']
 
     hal.pushfile.path:
         class: 'stdClass'
         factory: ['QL\Panthor\Utility\Stringify', 'template']
-        arguments: ['%%s/%%s', [@root, '.hal9000.push.yml']]
+        arguments: ['%%s/%%s', ['@root', '.hal9000.push.yml']]
 
     ####################################################################################################################
     # TRP COOKIES
@@ -122,7 +128,7 @@ services:
 
     cookie.encryption:
         class: 'QL\Panthor\Http\CookieEncryption\TRPCookieEncryption'
-        arguments: [@panthor.encryption.trp]
+        arguments: ['@panthor.encryption.trp']
 
     ####################################################################################################################
     # ERROR & EXCEPTION HANDLING
@@ -130,20 +136,20 @@ services:
 
     exception.configurator:
         class: 'QL\Hal\Slim\ExceptionConfigurator'
-        arguments: [@error.twig]
+        arguments: ['@error.twig']
 
     # Twig template for slim errors (404, 500)
     error.twig:
         class: 'QL\Panthor\Twig\LazyTwig'
-        arguments: [@error.failsafe.environment, @twig.context]
+        arguments: ['@error.failsafe.environment', '@twig.context']
         calls: [['setTemplate', ['error.html.twig']]]
 
     # Twig error environment - limit the extensions used here, so we can ensure the error will render
     error.failsafe.environment:
         parent: 'panthor.twig.environment'
         calls:
-            - ['addExtension', [@twig.extension.hal]]
-            - ['addExtension', [@twig.extension.hal.global]]
+            - ['addExtension', ['@twig.extension.hal']]
+            - ['addExtension', ['@twig.extension.hal.global']]
 
     ####################################################################################################################
     # CACHING
@@ -151,11 +157,11 @@ services:
 
     cache:
         class: 'MCP\Cache\PredisCache'
-        arguments: [@redis]
+        arguments: ['@redis']
 
     cache.github:
         class: 'QL\Hal\Github\MCPCache'
-        arguments: [@cache]
+        arguments: ['@cache']
 
     ####################################################################################################################
     # HELPERS
@@ -167,13 +173,13 @@ services:
     utility.id.generator:
         class: 'QL\Hal\Core\JobIdGenerator'
         arguments:
-            - %application.major.version%
-            - %unique.alphabet%
-            - %unique.size%
+            - '%application.major.version%'
+            - '%unique.alphabet%'
+            - '%unique.size%'
 
     utility.time.formatter:
         class: 'QL\Hal\Utility\TimeFormatter'
-        arguments: [@clock, %date.timezone%]
+        arguments: ['@clock', '%date.timezone%']
 
     guzzle:
         class: 'GuzzleHttp\Client'
@@ -184,22 +190,22 @@ services:
 
     session.flasher:
         class: 'QL\Hal\Flasher'
-        arguments: [@session, @url]
+        arguments: ['@session', '@url']
 
     session:
         class: 'QL\Hal\Session'
-        factory: [@session.handler, 'load']
+        factory: ['@session.handler', 'load']
 
     session.handler:
         class: 'QL\Hal\SessionHandler'
         arguments:
-            - @slim.cookies
-            - @session.encryption
-            - %session.cookie.configuration%
+            - '@slim.cookies'
+            - '@session.encryption'
+            - '%session.cookie.configuration%'
 
     session.encryption:
         class: 'MCP\Crypto\Package\TamperResistantPackage'
-        arguments: [@session.encryption.factory, %session.encryption.secret%]
+        arguments: ['@session.encryption.factory', '%session.encryption.secret%']
 
     session.encryption.factory:
         class: 'MCP\Crypto\Primitive\Factory'
