@@ -1,16 +1,39 @@
 {% extends 'base.html.twig' %}
+{% import _self as page_macros %}
 {% import "_partial/macros.twig" as macros %}
+{% set js_components = ["favorites"] %}
 
 {% set page_title = "Applications" %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>
 
+    {% if favorites %}
+        <h2>Favorites</h2>
+        <table class="table--spacing-medium" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Application</th>
+                    <th class="t50">GitHub Source</th>
+                    <th class="t5"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in favorites %}
+                    {{ page_macros.app_row(currentUser, application) }}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>All Applications</h2>
+
+    {% endif %}
+
     <table class="table--spacing-medium" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>Application</th>
-                <th>GitHub Source</th>
+                <th class="t50">GitHub Source</th>
                 <th class="t5"></th>
             </tr>
         </thead>
@@ -31,13 +54,7 @@
                 {% if group_applications %}
                     {% set hasApplications = true %}
                     {% for application in group_applications %}
-                        <tr>
-                            <td><a href="{{ urlFor('application.status', {'application': application.id}) }}">{{ application.name }}</a></td>
-                            <td>{{ macros.gitsource(application) }}</td>
-                            <td>
-                                <a href="{{ urlFor('application', {'application': application.id}) }}">Manage</a>
-                            </td>
-                        </tr>
+                        {{ page_macros.app_row(currentUser, application) }}
                     {% endfor %}
                 {% else %}
                     <tr>
@@ -59,3 +76,33 @@
         <li><a class="btn" href="{{ urlFor('group.add') }}">Add Group</a></li>
     </ul>
 {% endblock %}
+
+{% macro app_row(currentUser, application) %}
+    {% import "_partial/macros.twig" as macros %}
+    <tr>
+        <td>
+            {% if currentUser.settings.isFavoriteApplication(application) %}
+                <form method="post" action="{{ urlFor('settings.favorite_applications.remove.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
+                    <label class="form--fav__label fav-added">
+                        <input type="submit">
+                        {{ macros.icon('star-2', '', 'Remove from favorites') }}
+                    </label>
+                </form>
+            {% else %}
+                <form method="post" action="{{ urlFor('settings.favorite_applications.add.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
+                    <label class="form--fav__label fav-normal">
+                        <input type="submit">
+                        {{ macros.icon('star-2', '', 'Add to favorites') }}
+                    </label>
+                </form>
+            {% endif %}
+            <a href="{{ urlFor('application.status', {'application': application.id}) }}">{{ application.name }}</a>
+        </td>
+        <td>{{ macros.gitsource(application) }}</td>
+        <td>
+            <a href="{{ urlFor('application', {'application': application.id}) }}">Manage</a>
+        </td>
+    </tr>
+
+{% endmacro %}
+

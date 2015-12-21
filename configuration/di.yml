@@ -7,6 +7,7 @@ imports:
     - resource: di/controllers.application.yml
     - resource: di/controllers.api.yml
     - resource: di/controllers.api.crud.yml
+    - resource: di/controllers.api.internal.yml
 
 services:
 

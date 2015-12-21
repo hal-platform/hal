@@ -13,11 +13,27 @@ parameters:
         # INTERNAL API ROUTES (for use by local javascript)
         ################################################################################################################
 
-        api.github.user.repositories:
+        api_internal.github.user.repositories:
             method: 'GET'
             route: '/api/github/users/:username/repositories'
-            stack: ['middleware.login', 'api.github.user.repositories']
-            conditions: {username: %routes.api.regex.githubname%}
+            stack: ['middleware.login', 'api_internal.github.user.repositories']
+            conditions: {username: '%routes.api.regex.githubname%'}
+
+        ################################################################################################################
+        # INTERNAL API ROUTES (for use by local javascript)
+        ################################################################################################################
+
+        # Note: this endpoint is also available for direct form posts
+        api_internal.settings.favorite_applications.add:
+            method: ['PUT']
+            route: '/api/internal/settings/favorite-applications/:application'
+            stack: ['middleware.login', 'middleware.api.require_entity', 'api_internal.settings.favorite_applications.add']
+            conditions: {application: '%routes.regex.digit%'}
+        api_internal.settings.favorite_applications.remove:
+            method: ['DELETE']
+            route: '/api/internal/settings/favorite-applications/:application'
+            stack: ['middleware.login', 'middleware.api.require_entity', 'api_internal.settings.favorite_applications.remove']
+            conditions: {application: '%routes.regex.digit%'}
 
         ################################################################################################################
         # PUBLIC API ROUTES

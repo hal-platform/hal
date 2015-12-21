@@ -60,6 +60,10 @@ module.exports = {
         require('./app/status/update-pushes').init();
     },
 
+    "favorites": function() {
+        require('./app/form/add-favorites').init();
+    },
+
     // Kraken
     "kraken.property": function() {
         require('./app/kraken/form-add-property').init();

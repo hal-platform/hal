@@ -224,6 +224,17 @@ parameters:
             route: '/settings'
             stack: ['middleware.login', 'user.settings.handler']
 
+        settings.favorite_applications.add.handler:
+            method: ['POST']
+            route: '/settings/favorite-applications/:application'
+            stack: ['middleware.login', 'middleware.api.require_entity', 'api_internal.settings.favorite_applications.add']
+            conditions: {application: '%routes.regex.digit%'}
+        settings.favorite_applications.remove.handler:
+            method: ['POST']
+            route: '/settings/favorite-applications/:application/delete'
+            stack: ['middleware.login', 'middleware.api.require_entity', 'api_internal.settings.favorite_applications.remove']
+            conditions: {application: '%routes.regex.digit%'}
+
         users:
             method: 'GET'
             route: '/users'

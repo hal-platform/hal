@@ -6,8 +6,9 @@ services:
     applications.page:
         class: 'QL\Hal\Controllers\Application\ApplicationsController'
         arguments:
-            - @applications.twig
-            - @doctrine.em
+            - '@applications.twig'
+            - '@doctrine.em'
+            - '@currentUser'
     applications.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/applications.twig']]]

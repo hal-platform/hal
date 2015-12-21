@@ -9,7 +9,7 @@
 
     @include breakpoint(32em) {
         padding: ms(3);
-        border-radius: 5px;
+        @include border-radius(5px);
 
     }
 

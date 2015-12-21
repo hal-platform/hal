@@ -11,22 +11,17 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\DataType\Time\Clock;
-use MCP\Cache\CachingTrait;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Utility\Json;
 
 class DashboardController implements ControllerInterface
 {
-    use CachingTrait;
-
-    const CACHE_KEY_PERMISSION_APPLICATIONS = 'page:db.recent_apps.%s';
     const AGE_OF_STUCK_JOBS = '-45 minutes';
-    const AGE_OF_RECENT_BUILDS = '-2 months';
 
     /**
      * @type TemplateInterface
@@ -49,16 +44,11 @@ class DashboardController implements ControllerInterface
     private $clock;
 
     /**
-     * @type BuildRepository
+     * @type EntityRepository
      */
     private $buildRepo;
     private $pushRepo;
-    private $userRepo;
-
-    /**
-     * @type Json
-     */
-    private $json;
+    private $appRepo;
 
     /**
      * @param TemplateInterface $template
@@ -66,15 +56,13 @@ class DashboardController implements ControllerInterface
      * @param PermissionService $permissions
      * @param Clock $clock
      * @param EntityManagerInterface $em
-     * @param Json $json
      */
     public function __construct(
         TemplateInterface $template,
         User $currentUser,
         PermissionService $permissions,
         Clock $clock,
-        EntityManagerInterface $em,
-        Json $json
+        EntityManagerInterface $em
     ) {
         $this->template = $template;
         $this->currentUser = $currentUser;
@@ -83,11 +71,7 @@ class DashboardController implements ControllerInterface
 
         $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
-        $this->userRepo = $em->getRepository(User::CLASS);
-
-        $this->em = $em;
-
-        $this->json = $json;
+        $this->appRepo = $em->getRepository(Application::CLASS);
     }
 
     /**
@@ -106,44 +90,12 @@ class DashboardController implements ControllerInterface
         }
 
         $this->template->render([
-            'recent_applications' => $this->getBuildableApplications(),
+            'favorites' => $this->findFavorites(),
             'pending' => $pending,
             'stuck' => $stuck,
             'builds' => $recentBuilds,
             'pushes' => $recentPushes
         ]);
-    }
-
-    /**
-     * @return array
-     */
-    private function getBuildableApplications()
-    {
-        $key = sprintf(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->currentUser->id());
-
-        // external cache
-        if ($result = $this->getFromCache($key)) {
-            $decoded = $this->json->decode($result);
-            if (is_array($decoded)) {
-                return $decoded;
-            }
-        }
-
-        $now = $this->clock->read();
-        $twoMonthsAgo = $now->modify(self::AGE_OF_RECENT_BUILDS);
-        $recentApplications = $this->userRepo->getUsersRecentApplications($this->currentUser, $twoMonthsAgo);
-
-        $data = [];
-        foreach ($recentApplications as $app) {
-            $data[$app->id()] = $app->name();
-        }
-
-        uasort($data, function($a, $b) {
-            return strcasecmp($a, $b);
-        });
-
-        $this->setToCache($key, $this->json->encode($data));
-        return $data;
     }
 
     /**
@@ -222,5 +174,27 @@ class DashboardController implements ControllerInterface
 
             return -1;
         };
+    }
+
+
+    /**
+     * @return Application[]
+     */
+    private function findFavorites()
+    {
+        if (!$settings = $this->currentUser->settings()) {
+            return [];
+        }
+
+        if (!$fav = $settings->favoriteApplications()) {
+            return [];
+        }
+
+        $criteria = (new Criteria)
+            ->where(Criteria::expr()->in('id', $fav));
+
+        $apps = $this->appRepo->matching($criteria);
+
+        return $apps->toArray();
     }
 }

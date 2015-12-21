@@ -5,7 +5,7 @@
  *    is strictly prohibited.
  */
 
-namespace QL\Hal\Controllers\GithubApi;
+namespace QL\Hal\Controllers\ApiInternal;
 
 use QL\Hal\Service\GitHubService;
 use QL\Panthor\ControllerInterface;
@@ -14,7 +14,7 @@ use Slim\Http\Response;
 /**
  * @deprecated maybe?
  */
-class Repos implements ControllerInterface
+class GitHubReposController implements ControllerInterface
 {
     /**
      * @var GitHubService

@@ -18,7 +18,7 @@
         </h1>
     {% endif %}
 
-    {% if isFirstLogin or not recent_applications %}
+    {% if isFirstLogin or not favorites %}
        {{ block('intro') }}
     {% endif %}
 
@@ -32,22 +32,22 @@
         {{ macros.alert('error', title, block('stuck_details')) }}
     {% endif %}
 
-    {# QUICK BUILD #}
-    {% if recent_applications %}
-        <section class="trailer">
-            <h3>Quick Build</h3>
+    {# FAVORITES #}
+    {% if favorites %}
+        <section class="mbl">
+            <h2 class="mbn">Favorites</h2>
 
-            {% if recent_applications|length > 3 %}
-                <ul class="button-list">
-                    {% for id, app in recent_applications %}
-                        <li><a class="btn" href="{{ urlFor('build.start', {'application': id}) }}">{{ app }}</a></li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                {% for id, app in recent_applications %}
-                    <a class="btn" href="{{ urlFor('build.start', {'application': id}) }}">{{ app }}</a>
+            <div class="fav-box-wrapper">
+                {% for application in favorites %}
+                    <div class="fav-box">
+                        <h5>{{ application.name }}</h5>
+                        <p>
+                            <a class="btn btn--small" href="{{ urlFor('application.status', {'application': application.id}) }}">App Status</a>
+                            <a class="btn btn--small btn--action" href="{{ urlFor('build.start', {'application': application.id}) }}">Start Build</a>
+                        </p>
+                    </div>
                 {% endfor %}
-            {% endif %}
+            </div>
         </section>
     {% endif %}
 
@@ -59,12 +59,12 @@
 
     <div class="flex-box-wrapper">
 
-        <div class="flex-box">
+        <div class="flex-box box-roundy">
               <h2 class="trailer">Your Recent Builds</h2>
               {% include '_partial-job/build-box.twig' with {'builds': builds} %}
         </div>
 
-        <div class="flex-box">
+        <div class="flex-box box-roundy">
               <h2 class="trailer">Your Recent Pushes</h2>
               {% include '_partial-job/push-box.twig' with {'pushes': pushes} %}
         </div>

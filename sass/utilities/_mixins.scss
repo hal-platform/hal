@@ -2,8 +2,16 @@
     padding-left: $left;
     padding-right: $right;
 }
+@mixin padding-y($top: 0, $bottom: $top) {
+    padding-top: $top;
+    padding-bottom: $bottom;
+}
 
 @mixin margin-x($left: 0, $right: $left) {
     margin-left: $left;
     margin-right: $right;
+}
+@mixin margin-y($top: 0, $bottom: $top) {
+    margin-top: $top;
+    margin-bottom: $bottom;
 }

@@ -1,0 +1,36 @@
+services:
+
+    ####################################################################################################################
+    # INTERNAL API CONTROLLERS
+    #
+    # Used by application frontend only, not for public use.
+    ####################################################################################################################
+
+    api_internal.github.user.repositories:
+        class: 'QL\Hal\Controllers\ApiInternal\GitHubReposController'
+        arguments:
+            - '@github'
+            - '@slim.response'
+            - '@slim.route.parameters'
+
+    api_internal.settings.favorite_applications.add:
+        class: 'QL\Hal\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@slim.request'
+            - '@slim.response'
+            - '@session.flasher'
+            - '@json'
+            - '@doctrine.random'
+            - '@currentUser'
+            - '@hal.application'
+    api_internal.settings.favorite_applications.remove:
+        class: 'QL\Hal\Controllers\User\FavoriteApplications\RemoveFavoriteApplicationHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@slim.request'
+            - '@slim.response'
+            - '@session.flasher'
+            - '@json'
+            - '@currentUser'
+            - '@hal.application'

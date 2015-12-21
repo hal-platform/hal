@@ -11,21 +11,6 @@ services:
             - @response.formatter
 
     ####################################################################################################################
-    # GITHUB CONTROLLERS
-    ####################################################################################################################
-
-    api.github.users:
-        class: 'QL\Hal\Controllers\GithubApi\Users'
-        arguments: [@github, @slim.response]
-
-    api.github.user.repositories:
-        class: 'QL\Hal\Controllers\GithubApi\Repos'
-        arguments:
-            - @github
-            - @slim.response
-            - @slim.route.parameters
-
-    ####################################################################################################################
     # QUEUE CONTROLLERS
     ####################################################################################################################
 

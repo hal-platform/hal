@@ -106,6 +106,44 @@ select {
     display: inline-block;
 }
 
+.form--fav {
+    display: inline-block;
+    .form--fav__label {
+        display: inline-block;
+        line-height: .75em;
+
+        input[type=submit] {
+            display: none;
+        }
+    }
+
+    .fav-added {
+        color: $success-color;
+        padding: 2px;
+        &:hover {
+            color: $white;
+            background: $error-color;
+            &:after {
+                font-size: .75em;
+                content: "Remove"
+            }
+        }
+    }
+
+    .fav-normal {
+        color: $light-grey;
+        padding: 2px;
+        &:hover {
+            color: $white;
+            background: $success-color;
+            &:after {
+                font-size: .75em;
+                content: "Add"
+            }
+        }
+    }
+}
+
 .checkbox--pretty {
     @include trailer();
 
