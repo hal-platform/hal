@@ -23,10 +23,10 @@
     <form method="post" name="start-build">
 
         {% block select_environment %}
-            <h3>Choose what environment to build for:</h3>
+            <h3>Select Environment:</h3>
 
             {% if environments %}
-                <ul class="check-list radio-grid radio-grid__env">
+                <ul class="radio-grid radio-grid--tri">
                     {% for env in environments %}
                         <li>
                             <input id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ form.environment == env.id ? ' checked' : ''}}>
@@ -41,7 +41,7 @@
         {% endblock %}
 
         {% block select_build %}
-            <h3>Choose what to build:</h3>
+            <h3>Select Source:</h3>
 
             <ul class="form-fields">
                 <li class="mbn">
@@ -140,7 +140,7 @@
 
 {% block build_tabs_branches %}
     <div id="js-tab--branches" class="tab js-tab-active">
-        <ul class="check-list js-search-list radio-grid">
+        <ul class="js-search-list radio-grid radio-grid--tri">
             {% for branch in branches %}
                 <li>
                     {% set uniqueId = hash(branch.object.sha ~ '-' ~ branch.name) %}
@@ -171,7 +171,7 @@
 
 {% block build_tabs_releases %}
     <div id="js-tab--tags" class="tab">
-        <ul class="check-list js-search-list radio-grid">
+        <ul class="js-search-list radio-grid radio-grid--tri">
             {% for tag in tags %}
                 <li>
                     {% set uniqueId = hash(tag.object.sha ~ '-' ~ tag.name) %}
@@ -201,7 +201,7 @@
 
 {% block build_tabs_open %}
     <div id="js-tab--pr-open" class="tab">
-        <ul class="check-list js-search-list radio-grid">
+        <ul class="js-search-list radio-grid radio-grid--tri">
             {% for pull in open %}
                 <li>
                     {% set uniqueId = hash('pr' ~ pull.number) %}
@@ -247,7 +247,7 @@
 
 {% block build_tabs_closed %}
     <div id="js-tab--pr-closed" class="tab">
-        <ul class="check-list js-search-list radio-grid">
+        <ul class="js-search-list radio-grid radio-grid--tri">
             {% for pull in closed %}
                 <li>
                     {% set uniqueId = hash('pr' ~ pull.number) %}

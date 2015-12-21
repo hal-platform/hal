@@ -21,7 +21,7 @@
             <ul class="form-fields">
                 <li>
                     <label>Permission Type</label>
-                    <ul class="radio-grid--form">
+                    <ul class="radio-grid radio-grid--two">
                         {% for user_type, human in availableTypes %}
                             {% set checked = '' %}
                             {% if form.type == user_type %}
@@ -62,7 +62,7 @@
                         Optional. Give a user access to deploy an application to a specific environment group. Only used for <b>deployment</b> permissions.
                     </small>
 
-                    <ul class="radio-grid--form">
+                    <ul class="radio-grid radio-grid--two">
                         <li>
                             {% set isSelected = form.is_production is sameas('true') ? true : false %}
                             <input id="perm-prod-true" type="radio" name="is_production" value="true"{{ isSelected ? ' checked' : '' }}>

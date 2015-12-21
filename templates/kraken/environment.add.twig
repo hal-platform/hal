@@ -20,7 +20,7 @@
                 <li>
                     <label>Is this a production environment?</label>
 
-                    <ul class="radio-grid--form">
+                    <ul class="radio-grid radio-grid--two">
                         <li>
                             {% set isSelected = form.is_prod is sameas('true') ? true : false %}
                             <input id="env-is_prod-1" type="radio" name="is_prod" value="true"{{ isSelected ? ' checked' : '' }}>

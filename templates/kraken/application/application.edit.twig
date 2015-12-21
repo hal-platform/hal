@@ -44,7 +44,7 @@
                             {% endfor %}
                         </select>
                     {% else %}
-                        <ul class="radio-grid--form">
+                        <ul class="radio-grid radio-grid--tri">
                             {% for id, hal_application in available %}
                                 {% set isSelected = (id == form.hal_app) %}
                                 <li>

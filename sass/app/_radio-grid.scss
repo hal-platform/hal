@@ -2,51 +2,50 @@
     text-align: center;
 }
 
-.radio-grid--form {
-    margin-left: 0;
-}
-
-.radio-grid,
-.radio-grid--form {
-    overflow: hidden;
-}
-
-.radio-grid > li,
-.radio-grid--form > li {
-    width: 100%;
-
-    @include breakpoint(40em) {
-        &:nth-child(odd) {
-            @include grid-span(1, 1, $grid: 2, $gutter: .1);
-            clear: left;
-        }
-
-        &:nth-child(even) {
-            @include grid-span(1, 2, $grid: 2, $gutter: .1);
-            clear:right;
-        }
-    }
-}
-
 .radio-grid > li {
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+.radio-grid--two > li {
     @include breakpoint(60em) {
-        &:nth-child(3n+1) {
-            @include grid-span(1, 1, $grid: 3, $gutter: .1);
-            clear: left;
+        &:nth-child(even) {
+            margin-left: 1em;
         }
 
-        &:nth-child(3n+2) {
-            @include grid-span(1, 2, $grid: 3, $gutter: .1);
-        }
-
-        &:nth-child(3n+3) {
-            @include grid-span(1, 3, $grid: 3, $gutter: .1);
-        }
+        flex: 1 0 40%;
+        max-width: 47%;
     }
 }
 
-.radio-grid,
-.radio-grid--form {
+.radio-grid--tri > li {
+    @include breakpoint(60em) {
+        &:nth-child(3n+2) {
+            @include margin-x(1em);
+        }
+
+        flex: 1 0 30%;
+        max-width: 32%;
+    }
+}
+
+.radio-grid--four > li {
+    @include breakpoint(60em) {
+        &:nth-child(4n+2) {
+            @include margin-x(1em);
+        }
+        &:nth-child(4n+3) {
+            margin-right: 1em;
+        }
+
+        flex: 1 0 20%;
+        max-width: 23%;
+    }
+}
+
+.radio-grid {
+    display: flex;
+    flex-wrap: wrap;
     list-style: none;
 
     li.full {
@@ -71,6 +70,4 @@
         background-color: $highlight-color;
     }
 }
-.radio-grid--form li {
-    margin-bottom: msem(1);
-}
+

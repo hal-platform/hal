@@ -13,7 +13,7 @@
             <ul class="form-fields">
                 <li>
                     <label for="servertype">Type</label>
-                    <ul class="radio-grid--form">
+                    <ul class="radio-grid radio-grid--tri">
 
                         {% set checked = form.server_type == 'rsync' ? ' checked' : '' %}
                         <li>
@@ -48,7 +48,7 @@
                 </li>
                 <li>
                     <label>Environment</label>
-                    <ul class="radio-grid--form">
+                    <ul class="radio-grid radio-grid--tri">
                         {% for environment in environments %}
                             {% set checked = '' %}
                             {% if form.environment == environment.id %}

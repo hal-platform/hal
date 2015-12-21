@@ -23,7 +23,7 @@
 
                 <li>
                     <label for="enc-env">Environment</label>
-                    <ul class="radio-grid--form">
+                    <ul class="radio-grid radio-grid--tri">
                         {% for env in environments %}
                             {% set isSelected = (env.id == form.env) %}
                             <li>
