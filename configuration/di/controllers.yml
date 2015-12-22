@@ -127,6 +127,7 @@ services:
             - '@build.twig'
             - '@hal.build'
             - '@service.event_logs'
+            - '@doctrine.em'
     build.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['build/build.twig']]]
