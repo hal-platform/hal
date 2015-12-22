@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Service\PoolService;
 use QL\Panthor\Slim\NotFound;
@@ -32,7 +31,6 @@ class StartPushController implements ControllerInterface
      */
     private $buildRepo;
     private $deploymentRepo;
-    private $serverRepo;
 
     /**
      * @type PushRepository
@@ -80,7 +78,6 @@ class StartPushController implements ControllerInterface
         $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
         $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
-        $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->poolService = $poolService;
         $this->request = $request;
@@ -103,21 +100,12 @@ class StartPushController implements ControllerInterface
         $views = $this->poolService->getViews($build->application(), $build->environment());
         $selectedView = $this->poolService->findSelectedView($build->application(), $build->environment(), $views);
 
-        $deployments = $this->getDeploymentsForBuild($build);
+        $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($build->application(), $build->environment());
         $statuses = [];
         foreach ($deployments as $deployment) {
-
-            $latest = $this->pushRepo->getMostRecentByDeployment($deployment);
-            if ($latest && $latest->status() === 'Success') {
-                $success = $latest;
-            } else {
-                $success = $this->pushRepo->getMostRecentSuccessByDeployment($deployment);
-            }
-
             $statuses[] = [
                 'deployment' => $deployment,
-                'latest' => $latest,
-                'success' => $success
+                'push' => $this->pushRepo->getMostRecentByDeployment($deployment)
             ];
         }
 
@@ -129,26 +117,5 @@ class StartPushController implements ControllerInterface
             'views' => $views,
             'selected_view' => $selectedView
         ]);
-    }
-
-    /**
-     * Get the deployments a build can be deployed to.
-     *
-     * @todo Move to repository
-     *
-     * @param Build $build
-     *
-     * @return Deployments[]
-     */
-    private function getDeploymentsForBuild(Build $build)
-    {
-        $servers = $this->serverRepo->findBy(['environment' => $build->environment()]);
-
-        $criteria = [
-            'application' => $build->application(),
-            'server' => $servers
-        ];
-
-        return $this->deploymentRepo->findBy($criteria, ['server' => 'ASC']);
     }
 }

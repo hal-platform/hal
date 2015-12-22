@@ -116,13 +116,11 @@
             <tbody class="table-breathe">
 
                 {% if selected_view and views[selected_view] %}
-
-                    {{ block('pooled_statuses') }}
-
+                    {{ page_macros.pooled_statuses(views, selected_view, statuses, selected, canUserPush) }}
                 {% else %}
 
                     {% for status in statuses %}
-                        {{ page_macros.render_deployment_row(status, selected, canUserPush) }}
+                        {{ page_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
                     {% endfor %}
 
                 {% endif %}
@@ -140,7 +138,8 @@
     </form>
 {% endblock %}
 
-{% block pooled_statuses %}
+{% macro pooled_statuses(views, selected_view, statuses, selected, canUserPush) %}
+    {% import _self as macros %}
 
     {% set all_pooled = [] %}
     {% set unpooled = [] %}
@@ -160,7 +159,7 @@
         </tr>
 
         {% for status in pooled %}
-            {{ page_macros.render_deployment_row(status, selected, canUserPush) }}
+            {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
         {% endfor %}
 
       {% endif %}
@@ -180,45 +179,45 @@
         </tr>
 
         {% for status in unpooled %}
-            {{ page_macros.render_deployment_row(status, selected, canUserPush) }}
+            {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
         {% endfor %}
 
     {% endif %}
-{% endblock %}
+{% endmacro %}
 
-{% macro render_deployment_row(status, selected, canUserPush) %}
+{% macro render_deployment_row(deployment, push, selected, canUserPush) %}
     {% import '_partial/macros.twig' as macros %}
 
-    {% set isSelected = (status.deployment.id == selected) %}
-    {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
-    {% set needsCredentials = status.deployment.server.type != 'rsync' and not status.deployment.credential %}
+    {% set isSelected = (deployment.id == selected) %}
+    {% set inProgress = push.status in ['Waiting', 'Pushing'] %}
+    {% set needsCredentials = deployment.server.type != 'rsync' and not deployment.credential %}
 
     <tr>
         <td>
-            <span class="tooltipped tooltipped-e" aria-label="{{ status.deployment.server.formatHumanType }}: {{ status.deployment.formatMeta }}">
-                <a href="{{ urlFor('server', {'server': status.deployment.server.id}) }}">{{ status.deployment.formatPretty(false) }}</a>
+            <span class="tooltipped tooltipped-e" aria-label="{{ deployment.server.formatHumanType }}: {{ deployment.formatMeta }}">
+                <a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty(false) }}</a>
             </span>
         </td>
-        {% if inProgress or status.success %}
-            {% set active = inProgress ? status.latest : status.success %}
+        {% if push %}
+            {% set build = push.build %}
 
             <td>
-                {% set isCurrent = githubCommitIsCurrent(active.build.application.githubOwner, active.build.application.githubRepo, active.build.branch, active.build.commit) %}
-                {{ macros.gitref(active.build, true, isCurrent) }}
+                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
+                {{ macros.gitref(build, true, isCurrent) }}
             </td>
             <td>
-                {{ macros.gitcommit(active.build) }}
+                {{ macros.gitcommit(build) }}
             </td>
             <td>
                 {% if inProgress %}
                     Now
                 {% else %}
-                    {{ active.created|html5date }} (Push <a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                    {{ push.created|html5date }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)
                 {% endif %}
             </td>
             <td>
-                {% if active.user %}
-                    <a href="{{ urlFor('user', {'user': active.user.id}) }}">{{ active.user.handle }}</a>
+                {% if push.user %}
+                    <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -245,8 +244,8 @@
                     type="checkbox"
                     class="js-pushable-deployment"
                     name="deployments[]"
-                    id="sel-{{ status.deployment.id }}"
-                    value="{{ status.deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
+                    id="sel-{{ deployment.id }}"
+                    value="{{ deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
             {% else %}
                 No Access
             {% endif %}
