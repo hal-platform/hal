@@ -54,7 +54,7 @@ services:
             - '@clock'
             - '%date.timezone%'
         calls:
-            - ['setCache', [' @cache']]
+            - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.stats.ttl%']]
 
     pools:
