@@ -52,10 +52,19 @@ module.exports = {
             }
         });
 
-        // Add blur handler to parent that contains both the search box and results
-        this.$searchParent.on('blur', function() {
+        // Add fake blur handler to parent
+        this.$searchBox.on('herpderp', function() {
             _this.justwhatexactlyareyoutryingtododave();
             _this.hideSearchListings();
+        });
+
+        // Ugh
+        $(document.body).on('click', function() {
+            _this.$searchBox.trigger('herpderp');
+        });
+
+        this.$searchParent.on('click', function(e) {
+            e.stopPropagation();
         });
 
         // if fragment provided, attempt to select by it
@@ -74,7 +83,7 @@ module.exports = {
         this.$searchResults.on('click', this.searchResultItem, function(event) {
             _this.selectSearchResult(this);
             _this.$searchBox.trigger('change');
-            _this.$searchParent.trigger('blur');
+            _this.$searchBox.trigger('herpderp');
         });
 
         // add handler for showing/hiding tabs
