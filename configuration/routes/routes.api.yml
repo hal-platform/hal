@@ -15,7 +15,7 @@ parameters:
 
         api_internal.github.user.repositories:
             method: 'GET'
-            route: '/api/github/users/:username/repositories'
+            route: '/api/internal/github-users/:username/repositories'
             stack: ['middleware.login', 'api_internal.github.user.repositories']
             conditions: {username: '%routes.api.regex.githubname%'}
 

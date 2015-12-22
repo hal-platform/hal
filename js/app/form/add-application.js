@@ -90,7 +90,7 @@ module.exports = {
             var _this = this;
             this.dataStore = {};
 
-            return $.get('/api/github/users/' + user + '/repositories', function(data) {
+            return $.get('/api/internal/github-users/' + user + '/repositories', function(data) {
                 _this.dataStore = data;
             });
         }
