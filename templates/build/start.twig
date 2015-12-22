@@ -27,8 +27,9 @@
             {% if environments %}
                 <ul class="radio-grid radio-grid--tri">
                     {% for env in environments %}
+                        {% set isSelected = form.environment == env.id or environments|length == 1 %}
                         <li>
-                            <input id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ form.environment == env.id ? ' checked' : ''}}>
+                            <input id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ isSelected ? ' checked' : ''}}>
                             <label for="env-{{ env.id }}">{{ env.name }}</label>
                         </li>
                     {% endfor %}
@@ -43,29 +44,31 @@
             <h3>Select Source:</h3>
 
             <ul class="form-fields">
-                <li class="mbn">
+                <li class="mbn js-search-container">
                     <label for="js-search-input">Search for a Branch, Tag, Pull Request, or enter a Commit ID.</label>
                     <input id="js-search-input" class="text-input" type="text" name="search" autocomplete="off" value="{{ form.search }}" maxlength="200">
+
+                    <div class="js-search-drop">
+                        <ul class="list--bare js-search-results">
+                            <!-- search results go here -->
+                            {% for branch in branches %}
+                                {{ page_macros.search('branch', branch) }}
+                            {% endfor %}
+                            {% for tag in tags %}
+                                {{ page_macros.search('release', tag) }}
+                            {% endfor %}
+                            {% for pull in open %}
+                                {{ page_macros.search('pull-request', pull) }}
+                            {% endfor %}
+                            {% for pull in closed %}
+                                {{ page_macros.search('pull-request-closed', pull) }}
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </li>
             </ul>
 
-            <div class="js-search-drop">
-                <ul class="list--bare js-search-results">
-                    <!-- search results go here -->
-                    {% for branch in branches %}
-                        {{ page_macros.search('branch', branch) }}
-                    {% endfor %}
-                    {% for tag in tags %}
-                        {{ page_macros.search('release', tag) }}
-                    {% endfor %}
-                    {% for pull in open %}
-                        {{ page_macros.search('pull-request', pull) }}
-                    {% endfor %}
-                    {% for pull in closed %}
-                        {{ page_macros.search('pull-request-closed', pull) }}
-                    {% endfor %}
-                </ul>
-            </div>
+
 
             {# Dynamic warning, for when HAL cannot find a matching radio option #}
             {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}
@@ -100,6 +103,10 @@
             {% if environments %}
                 <input class="btn" type="submit" value="Start Build" name="submit">
             {% endif %}
+        {% endblock %}
+
+        {% block select_next %}
+
         {% endblock %}
 
     </form>

@@ -5,7 +5,6 @@ module.exports = {
     searchBox: '#js-search-input',
     searchResults: '.js-search-results',
     searchResultItem: '.js-search-item',
-    searchQuery: 'span',
     searchQueryPrimary: '.js-search-primary',
     searchQueryShowClass: 'js-search-item-display',
     searchQueryHideClass: 'js-search-item-hidden',
@@ -13,6 +12,7 @@ module.exports = {
     $searchBox: null,
     $searchResults: null,
     $searchContainer: $('.js-search-drop'),
+    $searchParent: $('.js-search-container'),
 
     $validOptions: $('.js-search-list li input'),
     $tabAnchors: $('.js-tabs li a'),
@@ -24,9 +24,6 @@ module.exports = {
 
         this.$searchBox = $(this.searchBox);
         this.$searchResults = $(this.searchResults);
-
-        // build search listings
-        // _this.buildSearchResults();
 
         filterSearch.init(this.$searchBox, {
             searchItem: '.js-search-item',
@@ -46,10 +43,6 @@ module.exports = {
             onFocus : function(box) {
                 _this.showSearchListings();
             },
-            onBlur : function(box) {
-                _this.justwhatexactlyareyoutryingtododave();
-                _this.hideSearchListings();
-            },
 
             onEmpty : function(box) {
                 _this.$searchResults
@@ -59,19 +52,17 @@ module.exports = {
             }
         });
 
+        // Add blur handler to parent that contains both the search box and results
+        this.$searchParent.on('blur', function() {
+            _this.justwhatexactlyareyoutryingtododave();
+            _this.hideSearchListings();
+        });
+
         // if fragment provided, attempt to select by it
         // only run if search box is empty
         if (window.location.hash && this.$searchBox.val().length === 0) {
             this.searchByFragment(window.location.hash);
         }
-
-        // match search listings size to search box size
-        this.$searchContainer.width(this.$searchBox.width() + 25);
-
-        // resize search listings on window resize
-        $(window).on('resize', function() {
-            _this.$searchContainer.width(_this.$searchBox.width() + 25);
-        });
 
         // add handler for selecting a ref from a valid radio input
         this.$validOptions.on('click', function() {
@@ -83,6 +74,7 @@ module.exports = {
         this.$searchResults.on('click', this.searchResultItem, function(event) {
             _this.selectSearchResult(this);
             _this.$searchBox.trigger('change');
+            _this.$searchParent.trigger('blur');
         });
 
         // add handler for showing/hiding tabs
@@ -170,12 +162,6 @@ module.exports = {
         }
     },
 
-    buildSearchResults: function() {
-        var count = this.$searchResults.children(this.searchResultItem).length;
-        if (count > 12) {
-            this.$searchContainer.css('max-height', '300px');
-        }
-    },
     showSearchListings: function() {
         this.$searchContainer.slideDown('fast');
     },
