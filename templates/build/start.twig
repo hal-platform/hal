@@ -19,7 +19,6 @@
         </ul>
     {% endif %}
 
-
     <form method="post" name="start-build">
 
         {% block select_environment %}
@@ -46,7 +45,7 @@
             <ul class="form-fields">
                 <li class="mbn">
                     <label for="js-search-input">Search for a Branch, Tag, Pull Request, or enter a Commit ID.</label>
-                    <input id="js-search-input" class="text-input" type="text" name="search" autocomplete="off" value="{{ form.search }}">
+                    <input id="js-search-input" class="text-input" type="text" name="search" autocomplete="off" value="{{ form.search }}" maxlength="200">
                 </li>
             </ul>
 
@@ -336,5 +335,3 @@
     {% endif %}
 
 {% endmacro %}
-
-

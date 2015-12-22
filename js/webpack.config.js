@@ -12,8 +12,8 @@ module.exports = {
         app: './app.js',
         vendor: [
             'favico',
+            'fuse.js',
             'jquery',
-            'jquery.searchable',
             'jquery.tablesaw',
             'jquery.tablesaw.init',
             'jquery.hideseek',
@@ -27,10 +27,9 @@ module.exports = {
 
     resolve: {
         alias: {
-
             'favico':                  vendor + '/favico.js/favico.js',
+            'fuse.js':                 vendor + '/fuse.js/src/fuse.js',
             'jquery':                  vendor + '/jquery/dist/jquery.js',
-            'jquery.searchable':    vendorOld + '/jquery-searchable/jquery.searchable.js',
             'jquery.tablesaw':         vendor + '/tablesaw/dist/stackonly/tablesaw.stackonly.js',
             'jquery.tablesaw.init':    vendor + '/tablesaw/dist/tablesaw-init.js',
             'jquery.hideseek':         vendor + '/hideseek/jquery.hideseek.js',

@@ -27,19 +27,21 @@
 }
 
 .js-search-results {
+
     > li {
         margin-bottom: 0;
-        padding-left: msem(0);
+        padding-left: .25em;
+
+        &.js-search-item-display:nth-child(odd) {
+            background-color: lighten($bright-blue, 35%);
+        }
+
+        &:hover {
+            background-color: $highlight-color !important;
+            cursor: pointer;
+        }
     }
 
-    li:nth-child(odd) {
-        background-color: lighten($bright-blue, 35%);
-    }
-
-    li:hover {
-        background-color: $highlight-color;
-        cursor: pointer;
-    }
     margin-bottom: 0;
 }
 

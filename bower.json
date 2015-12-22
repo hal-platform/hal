@@ -7,8 +7,6 @@
         "bower_components"
     ],
     "dependencies": {
-        "jquery-searchable": "1.1.0",
-
         "primer-css": "2.1.0",
 
         "modular-scale": "2.0.7",

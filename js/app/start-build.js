@@ -1,4 +1,5 @@
-var $ = require('jquery');
+var $ = require('jquery'),
+    filterSearch = require('./util/filter-search');
 
 module.exports = {
     searchBox: '#js-search-input',
@@ -25,33 +26,32 @@ module.exports = {
         this.$searchResults = $(this.searchResults);
 
         // build search listings
-        _this.buildSearchResults();
+        // _this.buildSearchResults();
 
-        // make search listings searchable
-        this.$searchResults.searchable({
-            selector       : 'li',
-            childSelector  : this.searchQuery,
-            searchField    : this.searchBox,
-            striped        : false,
-            searchType     : 'fuzzy',
-            onSearchFocus  : function() {
-                _this.showSearchListings();
-            },
-            onSearchBlur   : function() {
-                _this.justwhatexactlyareyoutryingtododave();
-                _this.hideSearchListings();
-            },
-            hide           : function(row) {
-                row
+        filterSearch.init(this.$searchBox, {
+            searchItem: '.js-search-item',
+            searchQuery: 'span',
+
+            onHide: function(item) {
+                item
                     .addClass(_this.searchQueryHideClass)
                     .removeClass(_this.searchQueryShowClass);
             },
-            show           : function(row) {
-                row
+            onShow: function(item) {
+                item
                     .addClass(_this.searchQueryShowClass)
                     .removeClass(_this.searchQueryHideClass);
             },
-            onSearchEmpty  : function(der) {
+
+            onFocus : function(box) {
+                _this.showSearchListings();
+            },
+            onBlur : function(box) {
+                _this.justwhatexactlyareyoutryingtododave();
+                _this.hideSearchListings();
+            },
+
+            onEmpty : function(box) {
                 _this.$searchResults
                     .children(_this.searchResultItem)
                     .addClass(_this.searchQueryShowClass)
