@@ -7,15 +7,15 @@
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
 use QL\Panthor\Utility\Url;
 
-class PushNormalizer
+class PushNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
 
@@ -74,6 +74,16 @@ class PushNormalizer
     }
 
     /**
+     * @param Push $input
+     *
+     * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
+
+    /**
      * @param Push|null $push
      *
      * @return array|null
@@ -84,13 +94,9 @@ class PushNormalizer
             return null;
         }
 
-        return $this->buildLink(
-            [
-                'api.push', ['id' => $push->id()]
-            ],
-            [
-                'title' => $push->id()
-            ]
+        return new Hyperlink(
+            ['api.push', ['id' => $push->id()]],
+            $push->id()
         );
     }
 
@@ -141,15 +147,14 @@ class PushNormalizer
         $links = [
             'build' => $this->buildNormalizer->link($push->build()),
             'application' => $this->appNormalizer->link($push->application()),
-            'logs' => $this->buildLink(['api.push.logs', ['id' => $push->id()]])
+            'logs' => new Hyperlink(['api.push.logs', ['id' => $push->id()]])
         ];
 
         $pages = [
-            'page' => $this->buildLink(
+            'page' => new Hyperlink(
                 ['push', ['push' => $push->id()]],
-                [
-                    'type' => 'text/html'
-                ]
+                null,
+                'text/html'
             )
         ];
 

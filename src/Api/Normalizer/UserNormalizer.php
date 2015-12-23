@@ -1,16 +1,20 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionService;
 
-/**
- * User Object Normalizer
- */
-class UserNormalizer
+class UserNormalizer implements NormalizerInterface
 {
     use HypermediaLinkTrait;
     use HypermediaResourceTrait;
@@ -29,16 +33,28 @@ class UserNormalizer
     }
 
     /**
+     * @param User $input
+     *
+     * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
+
+    /**
      * @param User $user
      * @return array
      */
     public function link(User $user = null)
     {
-        return  (is_null($user)) ? null :$this->buildLink(
+        if (!$user) {
+            return null;
+        }
+
+        return new Hyperlink(
             ['api.user', ['id' => $user->id()]],
-            [
-                'title' => $user->handle()
-            ]
+            $user->handle()
         );
     }
 

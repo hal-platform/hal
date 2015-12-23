@@ -7,16 +7,16 @@
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Github\GitHubURLBuilder;
 use QL\Panthor\Utility\Url;
 
-class ApplicationNormalizer
+class ApplicationNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
 
@@ -55,9 +55,19 @@ class ApplicationNormalizer
     }
 
     /**
+     * @param Application $input
+     *
+     * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
+
+    /**
      * @param Application|null $application
      *
-     * @return array|null
+     * @return Hyperlink|null
      */
     public function link(Application $application = null)
     {
@@ -65,13 +75,9 @@ class ApplicationNormalizer
             return null;
         }
 
-        return $this->buildLink(
-            [
-                'api.application', ['id' => $application->id()]
-            ],
-            [
-                'title' => $application->name()
-            ]
+        return new Hyperlink(
+            ['api.application', ['id' => $application->id()]],
+            $application->name()
         );
     }
 
@@ -103,25 +109,21 @@ class ApplicationNormalizer
             [
                 'self' => $this->link($application),
                 'group' => $this->groupNormalizer->link($application->group()),
-                'deployments' => $this->buildLink(['api.deployments', ['id' => $application->id()]]),
-                'builds' => $this->buildLink(['api.builds', ['id' => $application->id()]]),
-                'pushes' => $this->buildLink(['api.pushes', ['id' => $application->id()]]),
+                'deployments' => new Hyperlink(['api.deployments', ['id' => $application->id()]]),
+                'builds' => new Hyperlink(['api.builds', ['id' => $application->id()]]),
+                'pushes' => new Hyperlink(['api.pushes', ['id' => $application->id()]]),
 
-                'page' => $this->buildLink(
+                'page' => new Hyperlink(
                     ['application', ['application' => $application->id()]],
-                    [
-                        'title' => $application->name(),
-                        'type' => 'text/html'
-                    ]
+                    $application->name(),
+                    'text/html'
                 ),
-                'status_page' => $this->buildLink(
+                'status_page' => new Hyperlink(
                     ['application.status', ['application' => $application->id()]],
-                    [
-                        'title' => sprintf('%s Status', $application->name()),
-                        'type' => 'text/html'
-                    ]
+                    sprintf('%s Status', $application->name()),
+                    'text/html'
                 ),
-                'github_page' => $this->buildLink(
+                'github_page' => new Hyperlink(
                     $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo())
                 )
             ]

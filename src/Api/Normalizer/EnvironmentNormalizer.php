@@ -1,18 +1,30 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api\Normalizer;
 
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Environment;
 
-/**
- * Environment Object Normalizer
- */
-class EnvironmentNormalizer
+class EnvironmentNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
+
+    /**
+     * @param Environment $input
+     *
+     * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
 
     /**
      * @param Environment $environment
@@ -20,11 +32,13 @@ class EnvironmentNormalizer
      */
     public function link(Environment $environment = null)
     {
-        return (is_null($environment)) ? null : $this->buildLink(
+        if (!$environment) {
+            return null;
+        }
+
+        return new Hyperlink(
             ['api.environment', ['id' => $environment->id()]],
-            [
-                'title' => $environment->name()
-            ]
+            $environment->name()
         );
     }
 

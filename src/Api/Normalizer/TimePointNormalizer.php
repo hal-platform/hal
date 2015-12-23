@@ -9,8 +9,9 @@ namespace QL\Hal\Api\Normalizer;
 
 use DateTime;
 use MCP\DataType\Time\TimePoint;
+use QL\Hal\Api\NormalizerInterface;
 
-class TimePointNormalizer
+class TimePointNormalizer implements NormalizerInterface
 {
     const DEFAULT_TIMEZONE = 'UTC';
 
@@ -39,13 +40,13 @@ class TimePointNormalizer
     }
 
     /**
-     * @param TimePoint|null $time
+     * @param TimePoint $time
      *
      * @return string|null
      */
-    public function normalize(TimePoint $time = null)
+    public function normalize($time)
     {
-        if (!$time) {
+        if (!$time instanceof TimePoint) {
             return null;
         }
 

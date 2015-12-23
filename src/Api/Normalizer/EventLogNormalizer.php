@@ -1,15 +1,20 @@
 <?php
+/**
+ * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
+ *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
+ *    is strictly prohibited.
+ */
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\EventLog;
 
-class EventLogNormalizer
+class EventLogNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
 
@@ -43,23 +48,36 @@ class EventLogNormalizer
     }
 
     /**
+     * @param EventLog $input
+     *
+     * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
+
+    /**
      * @param EventLog|null $log
      *
-     * @return array|null
+     * @return Hyperlink|null
      */
     public function link(EventLog $log = null)
     {
-        if (!$log) return $log;
+        if (!$log) {
+            return $log;
+        }
 
-        return [
-            'href' => ['api.event.log', ['id' => $log->id()]],
-            'title' => $log->id()
-        ];
+        return new Hyperlink(
+            ['api.event.log', ['id' => $log->id()]],
+            $log->id()
+        );
     }
 
     /**
      * @param EventLog $log
      * @param array $embed
+     *
      * @return array
      */
     public function resource(EventLog $log = null, array $embed = [])
@@ -72,16 +90,6 @@ class EventLogNormalizer
             'build' => $log->build(),
             'push' => $log->push()
         ];
-
-        $links = [];
-
-        if ($log->build()) {
-            $links['build'] = $this->builds->link($log->build());
-        }
-
-        if ($log->push()) {
-            $links['push'] = $this->pushes->link($log->push());
-        }
 
         $data = [
             'id' => $log->id(),
@@ -98,8 +106,33 @@ class EventLogNormalizer
         }
 
         $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
-        $links = ['self' => $this->link($log)] + $links;
 
-        return $this->buildResource($data, $embedded, $links);
+        return $this->buildResource(
+            $data,
+            $embedded,
+            $this->buildLinks($log)
+        );
+    }
+
+    /**
+     * @param EventLog $log
+     *
+     * @return array
+     */
+    private function buildLinks(EventLog $log)
+    {
+        $links = [
+            'self' => $this->link($log)
+        ];
+
+        if ($log->build()) {
+            $links['build'] = $this->builds->link($log->build());
+        }
+
+        if ($log->push()) {
+            $links['push'] = $this->pushes->link($log->push());
+        }
+
+        return $links;
     }
 }

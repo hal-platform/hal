@@ -92,6 +92,8 @@ class ResponseFormatter
      * @param mixed $data
      * @param int $status
      * @param bool $cache
+     *
+     * @return void
      */
     public function respond($data, $status = 200, $cache = true)
     {
@@ -101,7 +103,22 @@ class ResponseFormatter
             $data = $this->normalizer->normalize($data);
         }
 
-        $body = json_encode($this->hypermediaFormatter->format($data), JSON_UNESCAPED_SLASHES);
+        $body = $this->hypermediaFormatter->format($data);
+        $this->send($body, $status, $cache);
+    }
+
+    /**
+     * Send the response data
+     *
+     * @param mixed $data
+     * @param int $status
+     * @param bool $cache
+     *
+     * @return void
+     */
+    public function send($data, $status = 200, $cache = true)
+    {
+        $body = json_encode($data, JSON_UNESCAPED_SLASHES);
 
         // cache the result
         if ($cache && $this->request->isGet() && ($ttl = $this->cacheTime($this->currentRoute))) {
@@ -110,8 +127,8 @@ class ResponseFormatter
 
         $this->response->body($body);
         $this->response->header('Content-Type', self::TYPE);
-        $this->response->header('hal_cache_status', 'NOT CACHED');
-        $this->response->header('hal_response_time', round(microtime(true) - $this->start, 2));
+        $this->response->header('hal-cache-status', 'NOT CACHED');
+        $this->response->header('hal-response-time', round(microtime(true) - $this->start, 2));
         $this->response->setStatus($status);
     }
 
@@ -144,8 +161,8 @@ class ResponseFormatter
         if ($this->request->isGet() && ($body = $this->getFromCache($key))) {
             $this->response->setBody($body);
             $this->response->headers->set('Content-Type', self::TYPE);
-            $this->response->headers->set('hal_cache_status', 'CACHED');
-            $this->response->headers->set('hal_response_time', round(microtime(true) - $this->start, 2));
+            $this->response->headers->set('hal-cache-status', 'CACHED');
+            $this->response->headers->set('hal-response-time', round(microtime(true) - $this->start, 2));
 
             return true;
         }

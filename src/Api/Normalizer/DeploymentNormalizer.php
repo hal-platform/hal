@@ -7,15 +7,15 @@
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 
-class DeploymentNormalizer
+class DeploymentNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
 
@@ -49,8 +49,19 @@ class DeploymentNormalizer
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Deployment $input
+     *
      * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
+
+    /**
+     * @param Deployment $deployment
+     *
+     * @return Hyperlink|null
      */
     public function link(Deployment $deployment = null)
     {
@@ -58,17 +69,16 @@ class DeploymentNormalizer
             return null;
         }
 
-        return $this->buildLink(
+        return new Hyperlink(
             ['api.deployment', ['id' => $deployment->id()]],
-            [
-                'title' => $deployment->formatPretty(true)
-            ]
+            $deployment->formatPretty(true)
         );
     }
 
     /**
      * @param Deployment $deployment
      * @param array $embed
+     *
      * @return array
      */
     public function resource(Deployment $deployment = null, array $embed = [])
@@ -89,7 +99,6 @@ class DeploymentNormalizer
 
                 'path' => $deployment->path(),
 
-
                 'cd-name' => $deployment->cdName(),
                 'cd-group' => $deployment->cdGroup(),
                 'cd-configuration' => $deployment->cdConfiguration(),
@@ -109,9 +118,9 @@ class DeploymentNormalizer
                 'self' => $this->link($deployment),
                 'application' => $this->appNormalizer->link($deployment->application()),
                 'server' => $this->serverNormalizer->link($deployment->server()),
-                'pushes' => $this->buildLink(['api.deployment.history', ['id' => $deployment->id()]]),
-                'last-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
-                'last-successful-push' => $this->buildLink(['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']])
+                'pushes' => new Hyperlink(['api.deployment.history', ['id' => $deployment->id()]]),
+                'last-push' => new Hyperlink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
+                'last-successful-push' => new Hyperlink(['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']])
             ]
         );
     }

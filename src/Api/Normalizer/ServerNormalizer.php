@@ -7,17 +7,17 @@
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Core\Utility\SortingTrait;
 
-class ServerNormalizer
+class ServerNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
     use SortingTrait;
@@ -43,6 +43,16 @@ class ServerNormalizer
     }
 
     /**
+     * @param Server $input
+     *
+     * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
+
+    /**
      * @param Server $server
      * @return array
      */
@@ -52,11 +62,9 @@ class ServerNormalizer
             return null;
         }
 
-        return $this->buildLink(
+        return new Hyperlink(
             ['api.server', ['id' => $server->id()]],
-            [
-                'title' => $server->formatPretty()
-            ]
+            $server->formatPretty()
         );
     }
 
@@ -82,9 +90,9 @@ class ServerNormalizer
         usort($deployments, $this->deploymentSorter());
 
         foreach ($deployments as $deployment) {
-            $linkedDeployments[] = $this->buildLink(
+            $linkedDeployments[] = new Hyperlink(
                 ['api.deployment', ['id' => $deployment->id()]],
-                ['title' => $deployment->formatPretty(true)]
+                $deployment->formatPretty(true)
             );
         }
 

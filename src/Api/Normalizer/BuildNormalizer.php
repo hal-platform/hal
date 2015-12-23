@@ -7,16 +7,16 @@
 
 namespace QL\Hal\Api\Normalizer;
 
+use QL\Hal\Api\Hyperlink;
+use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Github\GitHubURLBuilder;
 use QL\Panthor\Utility\Url;
 
-class BuildNormalizer
+class BuildNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
 
@@ -77,9 +77,19 @@ class BuildNormalizer
     }
 
     /**
+     * @param Build $input
+     *
+     * @return array
+     */
+    public function normalize($input)
+    {
+        return $this->resource($input);
+    }
+
+    /**
      * @param Build|null $build
      *
-     * @return array|null
+     * @return Hyperlink|null
      */
     public function link(Build $build = null)
     {
@@ -87,13 +97,9 @@ class BuildNormalizer
             return null;
         }
 
-        return $this->buildLink(
-            [
-                'api.build', ['id' => $build->id()]
-            ],
-            [
-                'title' => $build->id()
-            ]
+        return new Hyperlink(
+            ['api.build', ['id' => $build->id()]],
+            $build->id()
         );
     }
 
@@ -150,27 +156,24 @@ class BuildNormalizer
         $links = [
             'application' => $this->appNormalizer->link($build->application()),
             'environment' => $this->envNormalizer->link($build->environment()),
-            'logs' => $this->buildLink(['api.build.logs', ['id' => $build->id()]]),
+            'logs' => new Hyperlink(['api.build.logs', ['id' => $build->id()]]),
         ];
 
         $pages = [
-            'page' => $this->buildLink(
+            'page' => new Hyperlink(
                 ['build', ['build' => $build->id()]],
-                [
-                    'type' => 'text/html'
-                ]
+                null,
+                'text/html'
             ),
-            'github_reference_page' => $this->buildLink(
+            'github_reference_page' => new Hyperlink(
                 $this->urlBuilder->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
-                [
-                    'type' => 'text/html'
-                ]
+                null,
+                'text/html'
             ),
-            'github_commit_page' => $this->buildLink(
+            'github_commit_page' => new Hyperlink(
                 $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->branch()),
-                [
-                    'type' => 'text/html'
-                ]
+                null,
+                'text/html'
             )
         ];
 
@@ -182,11 +185,10 @@ class BuildNormalizer
 
         if ($build->status() === 'Success') {
             $pages += [
-                'start_push_page' => $this->buildLink(
+                'start_push_page' => new Hyperlink(
                     ['push.start', ['build' => $build->id()]],
-                    [
-                        'type' => 'text/html'
-                    ]
+                    null,
+                    'text/html'
                 )
             ];
         }

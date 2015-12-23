@@ -25,18 +25,18 @@ services:
 
     normalizer:
         class: 'QL\Hal\Api\Normalizer'
-        arguments:
-            - '@normalizer.build'
-            - '@normalizer.deployment'
-            - '@normalizer.environment'
-            - '@normalizer.log.event'
-            - '@normalizer.group'
-            - '@normalizer.push'
-            - '@normalizer.application'
-            - '@normalizer.server'
-            - '@normalizer.user'
-            - '@normalizer.timepoint'
-            - '@normalizer.url'
+        calls:
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Application', '@normalizer.application']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Build', '@normalizer.build']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Deployment', '@normalizer.deployment']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Environment', '@normalizer.environment']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\EventLog', '@normalizer.log.event']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Group', '@normalizer.group']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Push', '@normalizer.push']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Server', '@normalizer.server']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\User', '@normalizer.user']]
+            - ['addNormalizer', ['MCP\DataType\Time\TimePoint', '@normalizer.timepoint']]
+            - ['addNormalizer', ['QL\Hal\Api\Hyperlink', '@normalizer.hyperlink']]
 
     normalizer.build:
         class: 'QL\Hal\Api\Normalizer\BuildNormalizer'
@@ -90,3 +90,7 @@ services:
     normalizer.user:
         class: 'QL\Hal\Api\Normalizer\UserNormalizer'
         arguments: ['@permissions']
+
+    normalizer.hyperlink:
+        class: 'QL\Hal\Api\Normalizer\HyperlinkNormalizer'
+        arguments: ['@url']

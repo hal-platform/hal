@@ -7,8 +7,7 @@ services:
 
     api.index:
         class: 'QL\Hal\Controllers\Api\IndexController'
-        arguments:
-            - '@response.formatter'
+        arguments: ['@response.formatter']
 
     ####################################################################################################################
     # QUEUE CONTROLLERS
