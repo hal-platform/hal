@@ -1,5 +1,5 @@
-var sugar = require('sugarjs-date');
-var duration = require('./time-duration');
+import sugar from 'sugar-date';
+import duration from 'durationjs';
 
 module.exports = {
     threshold_6mo: (180).day(),

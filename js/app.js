@@ -1,7 +1,7 @@
-var components = require('./components');
-var terminal = require('./app/util/terminal');
-var nofunzone = require('./app/util/nofunzone');
-var reltime = require('./app/util/relative-time');
+import components from './components';
+import terminal from './app/util/terminal';
+import nofunzone from './app/util/nofunzone';
+import reltime from './app/util/relative-time';
 
 var app = {
     componentsAttr: "data-js-components",

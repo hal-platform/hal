@@ -1,5 +1,4 @@
-var $ = require('jquery');
-var typed = require('typed');
+import 'jquery';
 
 module.exports = {
     target: '.terminal__entry',

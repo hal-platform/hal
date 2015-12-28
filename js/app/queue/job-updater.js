@@ -1,9 +1,6 @@
-var $ = require('jquery');
-var nunjucks = require('nunjucks');
-var formatter = require('../util/time-formatter');
-
-var mplate1 = require('../../nunjucks-dist/queue.build.js');
-var mplate2 = require('../../nunjucks-dist/queue.push.js');
+import 'jquery';
+import nunjucks from 'nunjucks';
+import formatter from '../util/time-formatter';
 
 module.exports = {
     buildTemplate: null,

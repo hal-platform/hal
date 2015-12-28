@@ -32,9 +32,11 @@ gulp.task('jshint', function() {
   return gulp.src([
         path.join(srcJS, '**/*.js'),
         '!' + path.join(srcJS, 'nunjucks-dist/*.js'),
-        '!' + path.join(srcJS, 'app/util/time-duration.js'),
     ])
-    .pipe(jshint())
+    .pipe(jshint({
+        esnext: true
+        // esversion: 6
+    }))
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jshint.reporter('fail'));
 });

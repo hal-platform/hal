@@ -3,7 +3,6 @@ var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
 
-var vendorOld = __dirname + '/../bower_components';
 var vendor = __dirname + '/../node_modules';
 
 module.exports = {
@@ -11,34 +10,45 @@ module.exports = {
     entry: {
         app: './app.js',
         vendor: [
-            'favico',
+            'durationjs',
+            'favico.js',
             'fuse.js',
+
             'jquery',
             'jquery.tablesaw',
             'jquery.tablesaw.init',
-            'jquery.hideseek',
+            'jquery.typed',
 
             'nunjucks',
-            'sugarjs-date',
-            'svg4everybody',
-            'typed'
+            'sugar-date',
+            'svg4everybody'
         ]
     },
 
     resolve: {
         alias: {
-            'favico':                  vendor + '/favico.js/favico.js',
-            'fuse.js':                 vendor + '/fuse.js/src/fuse.js',
             'jquery':                  vendor + '/jquery/dist/jquery.js',
             'jquery.tablesaw':         vendor + '/tablesaw/dist/stackonly/tablesaw.stackonly.js',
             'jquery.tablesaw.init':    vendor + '/tablesaw/dist/tablesaw-init.js',
-            'jquery.hideseek':         vendor + '/hideseek/jquery.hideseek.js',
-
-            'nunjucks':                vendor + '/nunjucks/browser/nunjucks.js',
-            'sugarjs-date':            vendor + '/sugar-date/sugar-date.js',
-            'svg4everybody':           vendor + '/svg4everybody/dist/svg4everybody.js',
-            'typed':                vendorOld + '/typed.js/js/typed.js'
+            'jquery.typed':            vendor + '/typed.js/js/typed.js',
         }
+    },
+    module: {
+        loaders: [
+            {
+                test: /nunjucks\/browser\/nunjucks\.js$/,
+                loader: 'exports?nunjucks'
+            },
+            {
+                test: /\.js?$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel',
+                query: {
+                    cacheDirectory: true,
+                    presets: ["es2015"]
+                }
+            }
+        ]
     },
     output: {
         filename: '[name].js'

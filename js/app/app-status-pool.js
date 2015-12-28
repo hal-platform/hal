@@ -1,4 +1,4 @@
-var $ = require('jquery');
+import 'jquery';
 
 // @todo rewrite this pile of shit
 

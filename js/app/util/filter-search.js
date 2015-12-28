@@ -1,5 +1,5 @@
-var $ = require('jquery');
-var fuse = require('fuse.js');
+import 'jquery';
+import fuse from 'fuse.js';
 
 module.exports = {
     $search: null,

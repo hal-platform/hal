@@ -1,4 +1,4 @@
-var $ = require('jquery');
+import 'jquery';
 
 module.exports = {
     target: '.form--fav',
@@ -53,9 +53,6 @@ module.exports = {
         if ($form.length < 1) {
             return;
         }
-
-        console.log($form);
-        console.log(this.isAdded);
 
         if (this.isAdded) {
             $form.children('label')

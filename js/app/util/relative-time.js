@@ -1,5 +1,5 @@
-var $ = require('jquery');
-var formatter = require('./time-formatter');
+import 'jquery';
+import formatter from './time-formatter';
 
 module.exports = {
     interval: 10,
@@ -11,7 +11,7 @@ module.exports = {
         window.setInterval(this.refreshTimes, this.interval * 1000);
     },
     refreshTimes: function() {
-        $times = $('time[datetime]');
+        var $times = $('time[datetime]');
         $times.each(function() {
             var $this = $(this),
                 time = $this.attr('datetime'),

@@ -1,5 +1,5 @@
-var $ = require('jquery'),
-    filterSearch = require('./util/filter-search');
+import 'jquery';
+import filterSearch from './util/filter-search';
 
 module.exports = {
     searchBox: '#js-search-input',

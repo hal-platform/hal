@@ -1,4 +1,4 @@
-var $ = require('jquery');
+import 'jquery';
 
 module.exports = {
     selectTarget: '#kraken__add-property #config-prop',

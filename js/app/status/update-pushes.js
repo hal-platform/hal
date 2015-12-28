@@ -1,9 +1,7 @@
-var $ = require('jquery');
-var formatter = require('../util/time-formatter');
-var favico = require('favico');
-
-var nunjucks = require('nunjucks');
-var mplate1 = require('../../nunjucks-dist/eventlog.js');
+import 'jquery';
+import favico from 'favico.js';
+import nunjucks from 'nunjucks';
+import formatter from '../util/time-formatter';
 
 module.exports = {
     interval: 5,

@@ -1,5 +1,5 @@
-var $ = require('jquery');
-var jobUpdater = require('./job-updater');
+import 'jquery';
+import jobUpdater from './job-updater';
 
 module.exports = {
     pollingTimer: null,

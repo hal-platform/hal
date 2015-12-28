@@ -1,4 +1,4 @@
-var $ = require('jquery');
+import 'jquery';
 
 module.exports = {
     parent: '.js-overloader-parent',

@@ -1,4 +1,4 @@
-var $ = require('jquery');
+import 'jquery';
 
 module.exports = {
     target: '[data-expand-btn]',
