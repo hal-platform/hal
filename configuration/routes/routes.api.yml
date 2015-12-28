@@ -19,6 +19,14 @@ parameters:
             stack: ['middleware.login', 'api_internal.github.user.repositories']
             conditions: {username: '%routes.api.regex.githubname%'}
 
+        api_internal.deployment.status:
+            method: 'GET'
+            route: '/api/internal/applications/:application/environments/:environment/status'
+            stack: ['middleware.login', 'middleware.api.require_entity', 'api_internal.deployment.status']
+            conditions:
+                application: '%routes.regex.digit%'
+                environment: '%routes.regex.digit%'
+
         ################################################################################################################
         # INTERNAL API ROUTES (for use by local javascript)
         ################################################################################################################

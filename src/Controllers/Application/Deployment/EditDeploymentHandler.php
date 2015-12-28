@@ -8,7 +8,6 @@
 namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Flasher;

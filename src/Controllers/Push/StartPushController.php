@@ -103,10 +103,9 @@ class StartPushController implements ControllerInterface
         $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($build->application(), $build->environment());
         $statuses = [];
         foreach ($deployments as $deployment) {
-            $statuses[] = [
-                'deployment' => $deployment,
-                'push' => $this->pushRepo->getMostRecentByDeployment($deployment)
-            ];
+            $push = $this->pushRepo->getMostRecentByDeployment($deployment);
+
+            $statuses[] = compact('deployment', 'push');
         }
 
         $this->template->render([

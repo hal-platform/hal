@@ -13,6 +13,15 @@ services:
             - '@slim.response'
             - '@slim.route.parameters'
 
+    api_internal.deployment.status:
+        class: 'QL\Hal\Controllers\ApiInternal\DeploymentStatusController'
+        arguments:
+            - '@doctrine.em'
+            - '@pools'
+            - '@response.formatter'
+            - '@hal.application'
+            - '@hal.environment'
+
     api_internal.settings.favorite_applications.add:
         class: 'QL\Hal\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'
         arguments:
