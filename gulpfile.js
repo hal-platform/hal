@@ -1,7 +1,9 @@
 var gulp = require('gulp'),
+    gulputil = require('gulp-util'),
+
     sequence = require('run-sequence'),
     plumber = require('gulp-plumber'),
-    webpack = require('gulp-webpack-build'),
+    webpack = require('webpack'),
     jshint = require('gulp-jshint'),
     nunjucks = require('gulp-nunjucks'),
 
@@ -17,19 +19,14 @@ var isDeploy = process.argv.indexOf('--deploy') > -1,
     distJS = assets + '/js',
     srcCSS = 'sass',
     distCSS = assets + '/css',
-    webpackConfigFile = webpack.config.CONFIG_FILENAME;
+    webpackConfig = require('./' + path.join(srcJS, 'webpack.config.js'));
 
 // javascript
-var webpackOptions = {
-    debug: isDeploy ? false : true,
-    devtool: isDeploy ? '' : '#source-map',
-    watchDelay: 200
-  },
-  webpackConfig = {
-    useMemoryFs: true
-  };
+webpackConfig = Object.create(webpackConfig);
+webpackConfig.debug = isDeploy ? false : true;
+webpackConfig.devtool = isDeploy ? '' : 'eval-source-map';
 
-gulp.task('jshint', function() {
+gulp.task('js:hint', function() {
   return gulp.src([
         path.join(srcJS, '**/*.js'),
         '!' + path.join(srcJS, 'nunjucks-dist/*.js'),
@@ -42,44 +39,26 @@ gulp.task('jshint', function() {
     .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('js-clean', function(cb) {
-    return del(['js/nunjucks-dist'], cb);
+gulp.task('js:clean', function(callback) {
+    return del(['js/nunjucks-dist'], callback);
 });
 
-gulp.task('js-webpack', ['js-nunjucks'], function() {
-  return gulp.src(path.join(srcJS, webpackConfigFile), { base: path.resolve(srcJS) })
-    .pipe(webpack.init(webpackConfig))
-    .pipe(webpack.props(webpackOptions))
-    .pipe(webpack.run())
-    .pipe(webpack.format({ version: false, timings: true }))
-    .pipe(webpack.failAfter({ errors: true, warnings: false }))
-    .pipe(gulp.dest(distJS));
-});
-
-gulp.task('js-watch', function() {
-    gulp.watch(path.join(srcJS, '**/*.*')).on('change', function(event) {
-      if (event.type === 'changed') {
-        gulp.src(event.path, { base: path.resolve(srcJS) })
-          .pipe(webpack.closest(webpackConfigFile))
-          .pipe(webpack.init(webpackConfig))
-          .pipe(webpack.props(webpackOptions))
-          .pipe(webpack.watch(function(err, stats) {
-            gulp.src(this.path)
-              .pipe(webpack.proxy(err, stats))
-              .pipe(webpack.format({ version: false, timings: true }))
-              .pipe(gulp.dest(distJS));
-          }));
-      }
+var webpackCompiler = webpack(webpackConfig);
+gulp.task('js:webpack', ['js:nunjucks'], function(callback) {
+    webpackCompiler.run(function(err, stats) {
+        if (err) throw new gulputil.PluginError('js-webpack', err);
+        gulputil.log('[js-webpack]', stats.toString({
+            colors: true
+        }));
+        callback();
     });
 });
 
-// gulp.task('webpack', ['js-webpack']);
-
-gulp.task('js', function(cb) {
-    sequence('jshint', ['js-webpack'], cb);
+gulp.task('js', function(callback) {
+    sequence('js:hint', ['js:webpack'], callback);
 });
 
-gulp.task('js-nunjucks', ['js-clean'], function() {
+gulp.task('js:nunjucks', ['js:clean'], function() {
     return gulp.src('js/nunjucks-html/*.html')
         .pipe(nunjucks())
         .pipe(gulp.dest('js/nunjucks-dist'));
@@ -100,16 +79,23 @@ gulp.task('css', function() {
 
 // core
 gulp.task('watch', function() {
-    gulp.watch('sass/**/*.scss', ['css']);
-    gulp.start('js-watch');
+    gulp.watch(
+        path.join(srcCSS, '**/*.scss'),
+        ['css']
+    );
+    gulp.watch(
+        path.join(srcJS, '**/*.js'),
+        ['js:webpack']
+    );
+
 });
 
-gulp.task('build', function(cb) {
-  sequence('clean', ['css', 'js'], cb);
+gulp.task('build', function(callback) {
+  sequence('clean', ['css', 'js'], callback);
 });
 
-gulp.task('clean', ['js-clean'], function(cb) {
-    del([distJS, distCSS], cb);
+gulp.task('clean', ['js:clean'], function(callback) {
+    del([distJS, distCSS], callback);
 });
 
 gulp.task('default', ['build']);

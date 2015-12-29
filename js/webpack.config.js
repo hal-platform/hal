@@ -4,6 +4,7 @@ var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
 
 var vendor = __dirname + '/../node_modules';
+var target = __dirname + '/../public/js';
 
 module.exports = {
     context: __dirname,
@@ -51,6 +52,7 @@ module.exports = {
         ]
     },
     output: {
+        path: target,
         filename: '[name].js'
     },
     plugins: [
