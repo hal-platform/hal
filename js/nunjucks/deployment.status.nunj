@@ -1,0 +1,12 @@
+<tr>
+    <td>
+        <span class="tooltipped tooltipped-e" aria-label="{{ deployment.human }}: {{ deployment.meta }}">
+            <a href="{{ deployment.page_url }}">{{ deployment.pretty }}</a>
+        </span>
+    </td>
+    <td>derp</td>
+    <td>kerp</td>
+    <td>merp</td>
+    <td>berp</td>
+    <td>serp</td>
+</tr>

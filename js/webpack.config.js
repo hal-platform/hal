@@ -4,7 +4,7 @@ var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
 
 var vendor = __dirname + '/../node_modules';
-var target = __dirname + '/../public/js';
+var distTarget = __dirname + '/../public/js';
 
 module.exports = {
     context: __dirname,
@@ -20,7 +20,6 @@ module.exports = {
             'jquery.tablesaw.init',
             'jquery.typed',
 
-            'nunjucks',
             'sugar-date',
             'svg4everybody'
         ]
@@ -41,6 +40,10 @@ module.exports = {
                 loader: 'exports?nunjucks'
             },
             {
+                test: /\.nunj?$/,
+                loader: 'nunjucks-loader'
+            },
+            {
                 test: /\.js?$/,
                 exclude: /(node_modules|bower_components)/,
                 loader: 'babel',
@@ -52,14 +55,11 @@ module.exports = {
         ]
     },
     output: {
-        path: target,
+        path: distTarget,
         filename: '[name].js'
     },
     plugins: [
-        new CommonsChunkPlugin(
-            /* chunkName= */'vendor',
-            /* filename= */'vendor.bundle.js'
-        ),
+        new CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
         new UglifyJsPlugin({
             compress: {
                 warnings: false

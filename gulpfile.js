@@ -5,7 +5,6 @@ var gulp = require('gulp'),
     plumber = require('gulp-plumber'),
     webpack = require('webpack'),
     jshint = require('gulp-jshint'),
-    nunjucks = require('gulp-nunjucks'),
 
     sass = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
@@ -29,7 +28,6 @@ webpackConfig.devtool = isDeploy ? '' : 'eval-source-map';
 gulp.task('js:hint', function() {
   return gulp.src([
         path.join(srcJS, '**/*.js'),
-        '!' + path.join(srcJS, 'nunjucks-dist/*.js'),
     ])
     .pipe(jshint({
         esnext: true
@@ -39,12 +37,8 @@ gulp.task('js:hint', function() {
     .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('js:clean', function(callback) {
-    return del(['js/nunjucks-dist'], callback);
-});
-
 var webpackCompiler = webpack(webpackConfig);
-gulp.task('js:webpack', ['js:nunjucks'], function(callback) {
+gulp.task('js:webpack', function(callback) {
     webpackCompiler.run(function(err, stats) {
         if (err) throw new gulputil.PluginError('js-webpack', err);
         gulputil.log('[js-webpack]', stats.toString({
@@ -56,12 +50,6 @@ gulp.task('js:webpack', ['js:nunjucks'], function(callback) {
 
 gulp.task('js', function(callback) {
     sequence('js:hint', ['js:webpack'], callback);
-});
-
-gulp.task('js:nunjucks', ['js:clean'], function() {
-    return gulp.src('js/nunjucks-html/*.html')
-        .pipe(nunjucks())
-        .pipe(gulp.dest('js/nunjucks-dist'));
 });
 
 // css
@@ -94,7 +82,7 @@ gulp.task('build', function(callback) {
   sequence('clean', ['css', 'js'], callback);
 });
 
-gulp.task('clean', ['js:clean'], function(callback) {
+gulp.task('clean', function(callback) {
     del([distJS, distCSS], callback);
 });
 

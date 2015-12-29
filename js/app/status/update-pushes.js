@@ -1,6 +1,6 @@
 import 'jquery';
 import favico from 'favico.js';
-import nunjucks from 'nunjucks';
+import tpl from '../../nunjucks/eventlog.nunj';
 import formatter from '../util/time-formatter';
 
 module.exports = {
@@ -279,7 +279,7 @@ module.exports = {
             logCreated: this.createTimeElement(log.created)
         };
 
-        return nunjucks.render('eventlog.html', context);
+        return tpl.render(context);
     }
     // formatDuration: function(start, end) {
     //     var start = moment(start),

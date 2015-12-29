@@ -1,27 +1,17 @@
-# ide artifacts
-/.idea
-*.swp
-.DS_Store
-.sublime-workspace
-atlassian-ide-plugin.xml
-
 # testing
 /.phpunit/
 /phpunit.xml
 
 # compiled assets
-/.bundle/
-/.sass-cache/
 /public/css/
 /public/js/
-npm-debug.log
+/npm-debug.log
 
 # package installation
 /bin/composer
 /bower_components/
 /node_modules/
 /vendor/
-/js/nunjucks-dist/
 
 # compiled configuration
 /configuration/config.env.yml

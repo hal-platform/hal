@@ -1,5 +1,6 @@
 import 'jquery';
-import nunjucks from 'nunjucks';
+import tplBuild from '../../nunjucks/queue.build.nunj';
+import tplPush from '../../nunjucks/queue.push.nunj';
 import formatter from '../util/time-formatter';
 
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
     failureClass: 'status-icon--error',
 
     init: function() {
-        nunjucks.configure();
+        // derp
     },
 
     addBuildJob: function(build) {
@@ -46,7 +47,7 @@ module.exports = {
             time: this.createTimeElement(build.created)
         };
 
-        return nunjucks.render('queue.build.html', context);
+        return tplBuild.render(context);
     },
     addPushJob: function(push) {
         var pushId = String(push.id);
@@ -91,7 +92,7 @@ module.exports = {
             time: this.createTimeElement(push.created)
         };
 
-        return nunjucks.render('queue.push.html', context);
+        return tplPush.render(context);
     },
 
     updatePushJob: function(job) {
