@@ -97,7 +97,7 @@ select {
 }
 
 .form-wrapper {
-    @include breakpoint(37.125em) {
+    @include breakpoint($bp-medium) {
         max-width: 28em;
     }
 }

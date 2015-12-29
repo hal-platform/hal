@@ -29,7 +29,7 @@
 .tab-text {
     display: none;
 
-    @include breakpoint(60em){
+    @include breakpoint($bp-large) {
         display: inline-block;
     }
 }

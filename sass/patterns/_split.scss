@@ -20,7 +20,7 @@
         @include adjust-font-size-to(ms(1));
 
 
-        @include breakpoint(40em) {
+        @include breakpoint($bp-medium) {
             font-weight: normal;
             width: 15em;
 
@@ -40,7 +40,7 @@
 
 .details-box--wide {
     .split__title {
-        @include breakpoint(40em) {
+        @include breakpoint($bp-medium) {
             width: 25em;
         }
     }

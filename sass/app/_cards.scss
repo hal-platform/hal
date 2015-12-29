@@ -15,7 +15,7 @@
 
 .cards > li,
 .cards--dual > li {
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
         &:nth-child(odd) {
             @include grid-span(1, 1, $grid: 2, $gutter: .1);
             clear: left;
@@ -29,7 +29,7 @@
 }
 
 .cards > li {
-    @include breakpoint(60em) {
+    @include breakpoint($bp-large) {
         &:nth-child(3n+1) {
             @include grid-span(1, 1, $grid: 3, $gutter: .1);
             clear: left;

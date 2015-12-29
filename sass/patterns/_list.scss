@@ -100,7 +100,7 @@
         width: 100%;
     }
 
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
         flex-flow: row wrap;
         li {
             margin: ms(-9);
@@ -133,7 +133,7 @@
 }
 
 .button-list--half {
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
         max-width: 30em;
     }
 }

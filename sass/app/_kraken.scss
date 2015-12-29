@@ -44,7 +44,7 @@ $kraken-red-dark: rgb(145, 20, 22);
     margin: 0 auto;
 
     @include trailer(.5);
-    @include breakpoint(42.1875em) {
+    @include breakpoint($bp-medium) {
         margin-bottom: 0;
     }
 }

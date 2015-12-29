@@ -7,13 +7,13 @@
     @extend %clearfix;
     position: relative;
 
-    @include breakpoint(32em) {
+    @include breakpoint($bp-small) {
         padding: ms(3);
         @include border-radius(5px);
 
     }
 
-    @include breakpoint(42.1875em) {
+    @include breakpoint($bp-medium) {
         margin-top: -5em;
     }
 }

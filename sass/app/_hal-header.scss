@@ -7,7 +7,7 @@
 }
 
 .hal > .wrapper {
-    @include breakpoint(42.1875em) {
+    @include breakpoint($bp-medium) {
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
@@ -159,7 +159,7 @@
     @include trailer(.5);
     width: ms(16);
 
-    @include breakpoint(42.1875em) {
+    @include breakpoint($bp-medium) {
         margin-bottom: 0;
     }
 }

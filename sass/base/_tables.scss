@@ -53,7 +53,7 @@ tbody tr {
 .t90    { width:90% !important }
 .t95    { width:95% !important }
 
-@include breakpoint(40em) {
+@include breakpoint($bp-medium) {
     .tf1    { width: 1em !important }
     .tf2    { width: 2em !important }
 }
@@ -110,19 +110,19 @@ th.table-mid-header {
 
     .js-toggle-container {
         display: none;
-        @include breakpoint(40em) {
+        @include breakpoint($bp-medium) {
             display: block;
         }
     }
 
     .tablesaw-collapse {
-        @include breakpoint(40em) {
+        @include breakpoint($bp-medium) {
             display: none;
         }
     }
 
     .table-priority-45 {
-        @include breakpoint(40em) {
+        @include breakpoint($bp-medium) {
             display: none;
         }
         @include breakpoint(45em) {
@@ -130,7 +130,7 @@ th.table-mid-header {
         }
     }
     .table-priority-50 {
-        @include breakpoint(40em) {
+        @include breakpoint($bp-medium) {
             display: none;
         }
         @include breakpoint(50em) {
@@ -138,7 +138,7 @@ th.table-mid-header {
         }
     }
     .table-priority-55 {
-        @include breakpoint(40em) {
+        @include breakpoint($bp-medium) {
             display: none;
         }
         @include breakpoint(55em) {

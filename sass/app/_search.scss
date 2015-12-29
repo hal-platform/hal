@@ -6,7 +6,7 @@
     @include leader(.5);
 }
 
-@include breakpoint(60em) {
+@include breakpoint($bp-large) {
     .search-filter {
         display: flex;
         flex-direction: row;

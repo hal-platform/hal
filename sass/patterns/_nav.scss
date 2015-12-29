@@ -78,7 +78,22 @@
     }
 }
 
-@include breakpoint(30.0625em) {
+.nav--page {
+    display: flex;
+    flex-wrap: wrap;
+
+    h1 {
+        flex: 1 0 auto;
+        margin-bottom: 0;
+    }
+
+    .nav--page__back {
+        flex: 0 1 auto;
+        margin-bottom: 0;
+    }
+}
+
+@include breakpoint($bp-small) {
     .nav--main {
         display: flex;
         flex-wrap: wrap;
@@ -130,7 +145,7 @@
     }
 }
 
-@include breakpoint(42.1875em) {
+@include breakpoint($bp-medium) {
     [role="navigation"] {
         @include padding-trailer(5);
         @include padding-leader(.5);

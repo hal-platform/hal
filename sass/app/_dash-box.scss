@@ -7,12 +7,12 @@
     @include margin-x(ms(2) * -1);
     margin-bottom: ms(-2) * -1;
 
-    @include breakpoint(33em) {
+    @include breakpoint($bp-small) {
        @include margin-x(ms(3) * -1);
         margin-bottom: ms(3) * -1;
     }
 
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
        display: flex;
     }
 }
@@ -27,7 +27,7 @@
     background-color: #fff;
     flex: 1;
 
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
         &:first-child { margin-left: 0; }
         &:last-child { margin-right: 0; }
     }
@@ -38,7 +38,7 @@
 }
 
 .fav-box-wrapper {
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
        display: flex;
        flex-wrap: wrap;
     }
@@ -48,7 +48,7 @@
     flex: 1;
     margin: 0;
 
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
         min-width: 28%;
         max-width: 28%;
     }

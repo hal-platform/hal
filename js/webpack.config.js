@@ -58,7 +58,7 @@ module.exports = {
             /* chunkName= */'vendor',
             /* filename= */'vendor.bundle.js'
         ),
-        new webpack.optimize.UglifyJsPlugin({
+        new UglifyJsPlugin({
             compress: {
                 warnings: false
             }

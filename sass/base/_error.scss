@@ -37,7 +37,7 @@ $scanline-light: rgba(187, 145, 145, 0.25);
     height: 25em;
     max-width: 45em;
 
-    @include breakpoint(40em) {
+    @include breakpoint($bp-medium) {
         margin-top: -5em;
     }
 }
@@ -83,7 +83,7 @@ $scanline-light: rgba(187, 145, 145, 0.25);
 .terminal__header {
 
     /* At full site width - Make the header more prominent */
-    @include breakpoint(42.1875em) {
+    @include breakpoint($bp-medium) {
         animation: fadedblink 2s infinite;
     }
 

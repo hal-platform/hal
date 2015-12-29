@@ -8,7 +8,7 @@
 }
 
 .radio-grid--two > li {
-    @include breakpoint(60em) {
+    @include breakpoint($bp-large) {
         &:nth-child(even) {
             margin-left: 1em;
         }
@@ -19,7 +19,7 @@
 }
 
 .radio-grid--tri > li {
-    @include breakpoint(60em) {
+    @include breakpoint($bp-large) {
         &:nth-child(3n+2) {
             @include margin-x(1em);
         }
@@ -30,7 +30,7 @@
 }
 
 .radio-grid--four > li {
-    @include breakpoint(60em) {
+    @include breakpoint($bp-large) {
         &:nth-child(4n+2) {
             @include margin-x(1em);
         }
