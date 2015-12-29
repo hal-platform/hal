@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     sequence = require('run-sequence'),
+    plumber = require('gulp-plumber'),
     webpack = require('gulp-webpack-build'),
     jshint = require('gulp-jshint'),
     nunjucks = require('gulp-nunjucks'),
@@ -87,6 +88,7 @@ gulp.task('js-nunjucks', ['js-clean'], function() {
 // css
 gulp.task('css', function() {
     return gulp.src(srcCSS + '/style.scss')
+        .pipe(plumber())
         .pipe(sass.sync({
             errLogToConsole: true,
             outputStyle: isDeploy ? 'compressed' : 'compact',
