@@ -14,8 +14,10 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\PushRepository;
+use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\PoolService;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
@@ -26,6 +28,11 @@ class DeploymentStatusController implements ControllerInterface
      * @type PoolService
      */
     private $poolService;
+
+    /**
+     * @type PermissionService
+     */
+    private $permissionService;
 
     /**
      * @type ResponseFormatter
@@ -43,6 +50,11 @@ class DeploymentStatusController implements ControllerInterface
     private $environment;
 
     /**
+     * @type User
+     */
+    private $currentUser;
+
+    /**
      * @type DeploymentRepository
      */
     private $deploymentRepo;
@@ -55,22 +67,28 @@ class DeploymentStatusController implements ControllerInterface
     /**
      * @param EntityManagerInterface $em
      * @param PoolService $poolService
+     * @param PermissionService $permissionService
      * @param ResponseFormatter $responseFormatter
      * @param Application $application
      * @param Environment $environment
+     * @param User $currentUser
      */
     public function __construct(
         EntityManagerInterface $em,
         PoolService $poolService,
+        PermissionService $permissionService,
         ResponseFormatter $responseFormatter,
         Application $application,
-        Environment $environment
+        Environment $environment,
+        User $currentUser
     ) {
         $this->poolService = $poolService;
+        $this->permissionService = $permissionService;
         $this->responseFormatter = $responseFormatter;
 
         $this->application = $application;
         $this->environment = $environment;
+        $this->currentUser = $currentUser;
 
         $this->deploymentRepo = $em->getRepository(Deployment::class);
         $this->pushRepo = $em->getRepository(Push::class);
@@ -92,9 +110,12 @@ class DeploymentStatusController implements ControllerInterface
             $statuses[] = compact('deployment', 'push', 'build');
         }
 
+        $canPush = $this->permissionService->canUserPush($this->currentUser, $this->application, $this->environment);
+
         $payload = [
             'statuses' => $statuses,
-            'view' => $this->getSelectedView()
+            'view' => $this->getSelectedView(),
+            'permission' => $canPush
         ];
 
         $this->responseFormatter->respond($payload);

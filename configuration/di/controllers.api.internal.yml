@@ -18,9 +18,11 @@ services:
         arguments:
             - '@doctrine.em'
             - '@pools'
+            - '@permissions'
             - '@response.formatter'
             - '@hal.application'
             - '@hal.environment'
+            - '@currentUser'
 
     api_internal.settings.favorite_applications.add:
         class: 'QL\Hal\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'

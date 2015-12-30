@@ -112,15 +112,21 @@ class DeploymentNormalizer implements NormalizerInterface
                 's3-file' => $deployment->s3file(),
 
                 'url' => $deployment->url(),
+
+                'pretty-name' => $deployment->formatPretty(false),
+                'detail' => sprintf('%s: %s', $deployment->server()->formatHumanType(), $deployment->formatMeta()),
             ],
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             [
                 'self' => $this->link($deployment),
                 'application' => $this->appNormalizer->link($deployment->application()),
                 'server' => $this->serverNormalizer->link($deployment->server()),
+
                 'pushes' => new Hyperlink(['api.deployment.history', ['id' => $deployment->id()]]),
                 'last-push' => new Hyperlink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
-                'last-successful-push' => new Hyperlink(['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']])
+                'last-successful-push' => new Hyperlink(
+                    ['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']]
+                )
             ]
         );
     }
