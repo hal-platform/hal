@@ -7,9 +7,13 @@
 
 {% block content %}
 
-    <h1>Start Build - <strong>{{ application.name }}</strong></h1>
+    <div class="nav--page">
+        <h1>Start Build - <strong>{{ application.name }}</strong></h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a>
+        </p>
+    </div>
 
     {% if errors %}
         <ul class="error-list js-backend-error">
@@ -22,14 +26,14 @@
     <form method="post" name="start-build">
 
         {% block select_environment %}
-            <h3>Select Environment:</h3>
+            <h2 class="leader">Select Environment</h2>
 
             {% if environments %}
                 <ul class="radio-grid radio-grid--tri">
                     {% for env in environments %}
                         {% set isSelected = form.environment == env.id or environments|length == 1 %}
                         <li>
-                            <input id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ isSelected ? ' checked' : ''}}>
+                            <input class="js-environment-selector" id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ isSelected ? ' checked' : ''}}>
                             <label for="env-{{ env.id }}">{{ env.name }}</label>
                         </li>
                     {% endfor %}
@@ -41,7 +45,7 @@
         {% endblock %}
 
         {% block select_build %}
-            <h3>Select Source:</h3>
+            <h2 class="leader">Select Source</h2>
 
             <ul class="form-fields">
                 <li class="mbn js-search-container">
@@ -50,7 +54,6 @@
 
                     <div class="js-search-drop">
                         <ul class="list--bare js-search-results">
-                            <!-- search results go here -->
                             {% for branch in branches %}
                                 {{ page_macros.search('branch', branch) }}
                             {% endfor %}
@@ -67,8 +70,6 @@
                     </div>
                 </li>
             </ul>
-
-
 
             {# Dynamic warning, for when HAL cannot find a matching radio option #}
             {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}

@@ -1,27 +1,39 @@
 .tabs {
     margin-top: 1.5em;
     margin-bottom: 0;
-    @extend %clearfix;
+    display: flex;
+    user-select: none;
 
     > li {
-        float: left;
-        padding: ms(-2) ms(0);
-        margin: 0;
         background-color: $light-grey;
+        border-right: 2px solid $white;
+        flex: 1 1 auto;
+        margin: 0;
+        padding: 0.75em 1em;
         transition: all 0.2s ease-in-out;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-decoration: none;
+        white-space: nowrap;
 
         a {
             color: $grey;
             cursor: pointer;
+            display: block;
             text-decoration: none;
         }
-    }
 
-    .active {
-        background-color: $blue;
+        &:last-child {
+            border: none;
+        }
 
-        a {
-            color: $white;
+        &.active {
+            background-color: $blue;
+
+            a {
+                color: $white;
+            }
         }
     }
 }
@@ -29,17 +41,17 @@
 .tab-text {
     display: none;
 
-    @include breakpoint($bp-large) {
+    @include breakpoint($bp-medium) {
         display: inline-block;
     }
 }
 
-.tab {
-    display: none;
-}
-
 .tab-content {
     border: 2px solid $blue;
-    padding: ms(0);
-    margin-bottom: ms(0);
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.tab {
+    display: none;
 }

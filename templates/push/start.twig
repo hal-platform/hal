@@ -7,7 +7,13 @@
 {% set page_title = "Start Push : " ~ build.id %}
 
 {% block content %}
-    <h1>Start Push - <strong>{{ build.application.name }}</strong></h1>
+    <div class="nav--page">
+        <h1>Start Push - <strong>{{ build.application.name }}</strong></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Back to Application Status</a>
+        </p>
+    </div>
 
     {{ block('meta_details') }}
 
@@ -212,8 +218,9 @@
                 {% if inProgress %}
                     Now
                 {% else %}
-                    {{ push.created|html5date }} (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)
+                    {{ push.created|html5date }}
                 {% endif %}
+                (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)
             </td>
             <td>
                 {% if push.user %}
@@ -240,12 +247,15 @@
                 {{ macros.status('No Credentials', 'error', 'spam-2') }}
 
             {% elseif canUserPush %}
-                <label>Push Now <input
-                    type="checkbox"
-                    class="js-pushable-deployment"
-                    name="deployments[]"
-                    id="sel-{{ deployment.id }}"
-                    value="{{ deployment.id }}"{{ isSelected ? ' checked' : '' }}></label>
+                <label class="neatbox mrn" for="sel-{{ deployment.id }}">
+                    <input
+                        type="checkbox"
+                        class="js-pushable-deployment"
+                        name="deployments[]"
+                        id="sel-{{ deployment.id }}"
+                        value="{{ deployment.id }}"{{ isSelected ? ' checked' : '' }}>
+                    <b class="neatbox__check"></b>Push Now
+                </label>
             {% else %}
                 No Access
             {% endif %}
