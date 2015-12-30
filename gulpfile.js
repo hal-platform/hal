@@ -50,7 +50,7 @@ gulp.task('js:webpack', function(callback) {
 });
 
 gulp.task('js', function(callback) {
-    sequence('js:hint', ['js:webpack'], callback);
+    return sequence('js:hint', ['js:webpack'], callback);
 });
 
 // css
@@ -73,6 +73,7 @@ gulp.task('watch', function() {
         path.join(srcCSS, '**/*.scss'),
         ['css']
     );
+
     gulp.watch(
         [
             path.join(srcJS, '**/*.js'),
@@ -84,11 +85,11 @@ gulp.task('watch', function() {
 });
 
 gulp.task('build', function(callback) {
-  sequence('clean', ['css', 'js'], callback);
+    gulputil.log('[build]', isDeploy ? 'Building for production' : 'Building for development');
+
+    return sequence('clean', ['css', 'js'], callback);
 });
 
 gulp.task('clean', function(callback) {
-    del([distJS, distCSS], callback);
+    return del([distJS, distCSS], callback);
 });
-
-gulp.task('default', ['build']);

@@ -3,6 +3,7 @@
     "repository": "http://git/web-core/hal",
 
     "scripts": {
+        "deploy": "gulp build --deploy",
         "build": "gulp build",
         "watch": "gulp watch",
         "js": "gulp js",
