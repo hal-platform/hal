@@ -11,11 +11,6 @@ OUTOUT
 ┃ NPM INSTALLATION                                                             ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
-    read -r -d '' TITLE_BOWER <<OUTOUT
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ BOWER INSTALLATION                                                           ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-OUTOUT
 }
 
 # setup
@@ -30,7 +25,6 @@ set -e
 COMPOSER_SHOW_INSTALLED="composer show --installed"
 COMPOSER="composer install --prefer-dist"
 NPM="npm install"
-BOWER="node_modules/.bin/bower install"
 
 # If deploying, use production settings
 if [ -n "$HAL_ENVIRONMENT" ]; then
@@ -53,6 +47,3 @@ fi
 
 echo "$TITLE_NPM"
 $NPM
-
-echo "$TITLE_BOWER"
-$BOWER

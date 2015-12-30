@@ -45,7 +45,7 @@ module.exports = {
             },
             {
                 test: /\.js?$/,
-                exclude: /(node_modules|bower_components)/,
+                exclude: /(node_modules)/,
                 loader: 'babel',
                 query: {
                     cacheDirectory: true,

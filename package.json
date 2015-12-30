@@ -2,8 +2,14 @@
     "name": "HAL-9000",
     "repository": "http://git/web-core/hal",
 
+    "scripts": {
+        "build": "gulp build",
+        "watch": "gulp watch",
+        "js": "gulp js",
+        "css": "gulp css"
+    },
+
     "dependencies": {
-        "bower": "~1.6.2",
         "gulp": "~3.9.0",
         "webpack": "~1.12.2",
 
@@ -31,6 +37,12 @@
         "sugar-date": "~1.5",
         "svg4everybody": "~2.0.1",
         "tablesaw": "~2.0.2",
-        "typed.js": "1.1.1"
+        "typed.js": "1.1.1",
+
+        "breakpoint-sass": "~2.6",
+        "modularscale-sass": "~2.1",
+        "compass-mixins": "~0.12",
+        "scalescss": "2.2.2",
+        "primer-css": "~2.5"
     }
 }

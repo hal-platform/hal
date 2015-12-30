@@ -79,17 +79,19 @@
 }
 
 .nav--page {
-    display: flex;
-    flex-wrap: wrap;
+    margin-bottom: 1em;
 
-    h1 {
-        flex: 1 0 auto;
-        margin-bottom: 0;
+    h1, .nav--page__back {
+        margin-bottom: .25em;
     }
 
-    .nav--page__back {
-        flex: 0 1 auto;
-        margin-bottom: 0;
+    @include breakpoint($bp-medium) {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: .25em;
+
+        h1 { flex: 1 0 auto; }
+        .nav--page__back { flex: 0 1 auto; }
     }
 }
 

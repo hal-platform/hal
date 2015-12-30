@@ -30,6 +30,7 @@ gulp.task('js:hint', function() {
         path.join(srcJS, '**/*.js'),
     ])
     .pipe(jshint({
+        sub: true,
         esnext: true
         // esversion: 6
     }))
@@ -57,6 +58,7 @@ gulp.task('css', function() {
     return gulp.src(srcCSS + '/style.scss')
         .pipe(plumber())
         .pipe(sass.sync({
+            includePaths: ['./node_modules'],
             errLogToConsole: true,
             outputStyle: isDeploy ? 'compressed' : 'compact',
             precision: 2
@@ -72,7 +74,10 @@ gulp.task('watch', function() {
         ['css']
     );
     gulp.watch(
-        path.join(srcJS, '**/*.js'),
+        [
+            path.join(srcJS, '**/*.js'),
+            path.join(srcJS, '**/*.nunj')
+        ],
         ['js:webpack']
     );
 

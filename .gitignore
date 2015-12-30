@@ -9,7 +9,6 @@
 
 # package installation
 /bin/composer
-/bower_components/
 /node_modules/
 /vendor/
 

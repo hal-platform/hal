@@ -3,15 +3,11 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 
 function clean() {
     DELFILES=(
-        ".bundle"
         ".doctrine"
         ".phpunit"
-        ".sass-cache"
         ".twig"
-        "js/require-config.json"
         "src/CachedContainer.php"
         "node_modules"
-        "bower_components"
         "vendor"
     )
 
