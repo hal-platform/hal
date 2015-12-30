@@ -119,19 +119,16 @@
                     </th>
                 </tr>
             </thead>
-            <tbody class="table-breathe">
 
-                {% if selected_view and views[selected_view] %}
-                    {{ page_macros.pooled_statuses(views, selected_view, statuses, selected, canUserPush) }}
-                {% else %}
-
+            {% if selected_view and views[selected_view] %}
+                {{ page_macros.pooled_statuses(views, selected_view, statuses, selected, canUserPush) }}
+            {% else %}
+                <tbody class="table-breathe">
                     {% for status in statuses %}
                         {{ page_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
                     {% endfor %}
-
-                {% endif %}
-
-            </tbody>
+                </tbody>
+            {% endif %}
         </table>
 
         <ul class="button-list button-list--half">
@@ -159,16 +156,19 @@
             {% set all_pooled = all_pooled|merge([status.deployment.id]) %}
         {% endfor %}
 
-      {% if pooled %}
-        <tr>
-            <th colspan="6" class="table-mid-header">{{ pool.name }}</th>
-        </tr>
+        {% if pooled %}
 
-        {% for status in pooled %}
-            {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
-        {% endfor %}
+            <tbody class="table-breathe">
+                <tr>
+                    <th colspan="6" class="table-mid-header">{{ pool.name }}</th>
+                </tr>
 
-      {% endif %}
+                {% for status in pooled %}
+                    {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
+                {% endfor %}
+            </tbody>
+
+        {% endif %}
 
     {% endfor %}
 
@@ -180,13 +180,15 @@
     {% endfor %}
 
     {% if unpooled %}
-        <tr>
-            <th colspan="6" class="table-mid-header">Unpooled</th>
-        </tr>
+        <tbody class="table-breathe">
+            <tr>
+                <th colspan="6" class="table-mid-header">Unpooled</th>
+            </tr>
 
-        {% for status in unpooled %}
-            {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
-        {% endfor %}
+            {% for status in unpooled %}
+                {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
+            {% endfor %}
+        </tbody>
 
     {% endif %}
 {% endmacro %}

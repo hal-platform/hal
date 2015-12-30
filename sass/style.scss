@@ -35,6 +35,7 @@
 @import "scales-overrides-spacing/spacing";
 
 @import "primer-css/scss/tooltips";
+@import "tablesaw/dist/stackonly/tablesaw.stackonly.scss";
 
 // Utilities
 @import "utilities/functions";
@@ -52,6 +53,7 @@
 @import "base/links";
 @import "base/list";
 @import "base/tables";
+@import "base/time";
 @import "base/video";
 
 // App

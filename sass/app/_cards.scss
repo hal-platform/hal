@@ -2,6 +2,12 @@
     @include leader();
     @include trailer();
 
+    > li:after {
+            content: '';
+            height: 1.5em;
+            display: block;
+    }
+
     @include breakpoint($bp-medium) {
         display: flex;
         flex-wrap: wrap;
@@ -42,7 +48,6 @@
 }
 
 .card, .card--baby {
-    margin-bottom: ms(1);
     box-shadow: 0 0 0 8px $light-grey;
     position: relative;
 }

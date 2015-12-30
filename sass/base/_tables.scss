@@ -94,55 +94,16 @@ th.table-mid-header {
 
     color: white;
     font-weight: bold;
-    padding: 0 5px;
     margin : 5px;
+    padding: 0 5px;
+    position: relative;
 
     .icon--link {
-        float: right;
+        position: absolute;
+        right: 5px;
     }
 
     .tablesaw-cell-label {
         display: none;
-    }
-}
-
-.tablesaw-stack {
-
-    .js-toggle-container {
-        display: none;
-        @include breakpoint($bp-medium) {
-            display: block;
-        }
-    }
-
-    .tablesaw-collapse {
-        @include breakpoint($bp-medium) {
-            display: none;
-        }
-    }
-
-    .table-priority-45 {
-        @include breakpoint($bp-medium) {
-            display: none;
-        }
-        @include breakpoint(45em) {
-            display: table-cell;
-        }
-    }
-    .table-priority-50 {
-        @include breakpoint($bp-medium) {
-            display: none;
-        }
-        @include breakpoint(50em) {
-            display: table-cell;
-        }
-    }
-    .table-priority-55 {
-        @include breakpoint($bp-medium) {
-            display: none;
-        }
-        @include breakpoint(55em) {
-            display: table-cell;
-        }
     }
 }
