@@ -44,12 +44,12 @@ module.exports = {
                 loader: 'nunjucks-loader'
             },
             {
-                test: /\.js?$/,
+                test: /\.(js|jsx)?$/,
                 exclude: /(node_modules)/,
                 loader: 'babel',
                 query: {
                     cacheDirectory: true,
-                    presets: ["es2015"]
+                    presets: ['es2015', 'react']
                 }
             }
         ]

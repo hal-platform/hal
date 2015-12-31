@@ -1,24 +1,33 @@
 import 'jquery';
-import tpl from '../../nunjucks/deployment.status.nunj';
 import formatter from '../util/time-formatter';
 import gitref from '../util/git-reference';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import DeploymentsTable from './deployments.jsx';
 
 var selectorTarget = '.js-environment-selector',
-    tableTarget = '.js-child-deployment';
+    tableTarget = 'js-child-deployment';
 
 var $selector,
     $table,
     appID,
-    env = {};
+    deploymentsComponent,
+    deploymentsCacheByEnv = {};
 
 var init = () => {
     $selector = $(selectorTarget);
-    $table = $(tableTarget);
+    $table = $('#' + tableTarget);
 
     if ($table.length === 1 && $selector.length > 0) {
         appID = $table.data('app-id');
 
         if (appID) {
+
+            deploymentsComponent = ReactDOM.render(
+                <DeploymentsTable />,
+                document.getElementById(tableTarget)
+            );
+
             $selector.on('change', handleChange);
 
             // trigger change manually
@@ -35,9 +44,10 @@ function handleChange(event) {
     var envID = event.target.value;
 
     // use cache if available
-    if (env.hasOwnProperty(envID)) {
+    if (deploymentsCacheByEnv.hasOwnProperty(envID)) {
         console.log(`Loading cached environment: ${envID}`);
-        prepareDeployments(env[envID]);
+
+        deploymentsComponent.setState( { data: deploymentsCacheByEnv[envID] } );
         return;
     }
 
@@ -50,45 +60,34 @@ function handleChange(event) {
 }
 
 function handleSuccess(data) {
-    // Cache response
-    env[this.envID] = data;
+    // Parse and cache response
+    deploymentsCacheByEnv[this.envID] = {
+        pools: buildStatusContext(data),
+        canPush: data.permission,
+        deploymentCount: data.statuses.length
+    };
 
-    prepareDeployments(data);
+    handleStateChange(deploymentsCacheByEnv[this.envID]);
 }
 
 function handleError() {
     // wipe out statuses, set to empty state
-    delete env[envID];
+    delete deploymentsCacheByEnv[this.envID];
 
-    $table
-        // Kill previous env display
-        .children('.js-autopush-env')
-        .remove().end()
+    var err = {
+        pools: [],
+        canPush: false,
+        deploymentCount: -1
+    };
 
-        // Show empty display
-        .children('.js-autopush-empty')
-        .show();
+    handleStateChange(err);
 }
 
-function prepareDeployments(data) {
-    var context = {
-            pools: buildStatusContext(data),
-            canPush: data.permission,
-            deploymentCount: data.statuses.length
-        },
-        $deployments = $(tpl.render(context));
-
-    $table
-        // Kill previous env display
-        .children('.js-autopush-env')
-        .remove().end()
-
-        // Add deploys
-        .append($deployments)
-
-        // Hide empty display
-        .children('.js-autopush-empty')
-        .hide();
+function handleStateChange(state) {
+    // update react
+    deploymentsComponent.setState({
+        data: state
+    });
 
     // re-initialize tablesaw
     $table.removeData();
@@ -99,6 +98,10 @@ function buildStatusContext(data) {
 
     var pools = formatPools(data.view),
         statuses = [];
+
+    var matchDeployment = (element) => {
+        return element.deploymentIDs.indexOf(deploymentID) >= 0;
+    };
 
     for (var status of data.statuses) {
 
@@ -112,9 +115,7 @@ function buildStatusContext(data) {
             build = formatBuild(status.build),
             push = formatPush(status.push);
 
-        var pool = pools.find(function(element) {
-            return element.deploymentIDs.indexOf(deploymentID) >= 0;
-        });
+        var pool = pools.find(matchDeployment);
 
         // If no valid pool is found, append to the last pool (default)
         // This is either "unpooled" or "no pool" if there is no saved view

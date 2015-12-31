@@ -27,7 +27,7 @@ webpackConfig.devtool = isDeploy ? '' : 'eval-source-map';
 
 gulp.task('js:hint', function() {
   return gulp.src([
-        path.join(srcJS, '**/*.js'),
+        path.join(srcJS, '**/*.{js,jsx}'),
     ])
     .pipe(jshint({
         sub: true,
@@ -75,10 +75,7 @@ gulp.task('watch', function() {
     );
 
     gulp.watch(
-        [
-            path.join(srcJS, '**/*.js'),
-            path.join(srcJS, '**/*.nunj')
-        ],
+        path.join(srcJS, '**/*.{js,jsx,nunj}'),
         ['js:webpack']
     );
 
