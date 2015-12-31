@@ -198,16 +198,23 @@ services:
     push.start.handler:
         class: 'QL\Hal\Controllers\Push\StartPushHandler'
         arguments:
-            - '@session'
             - '@doctrine.em'
+            - '@push.start.validator'
+            - '@session'
             - '@url'
-            - '@currentUser'
-            - '@permissions'
             - '@utility.id.generator'
             - '@slim.request'
             - '@twig.context'
             - '@sticky.environment'
             - '@slim.route.parameters'
+    push.start.validator:
+        class: 'QL\Hal\Validator\PushStartValidator'
+        arguments:
+            - '@doctrine.em'
+            - '@permissions'
+            - '@utility.id.generator'
+            - '@currentUser'
+            - '@doctrine.random'
 
     push.rollback.page:
         class: 'QL\Hal\Controllers\Push\RollbackController'

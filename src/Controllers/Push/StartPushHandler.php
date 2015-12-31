@@ -7,17 +7,13 @@
 
 namespace QL\Hal\Controllers\Push;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\StickyEnvironmentService;
+use QL\Hal\Validator\PushStartValidator;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
@@ -28,11 +24,15 @@ class StartPushHandler implements MiddlewareInterface
 {
     const SUCCESS = "The build has been queued to be pushed to the requested servers.";
 
-    const ERR_NO_DEPS = 'You must select at least one deployment.';
-    const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';
-    const ERR_WRONG_ENV = 'This build can only be pushed to deployments in the "%s" environment.';
-    const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';
-    const ERR_MISSING_CREDENTIALS = 'Attempted to initiate push to "%s", but credentials are missing.';
+    /**
+     * @type EntityManagerInterface
+     */
+    private $em;
+
+    /**
+     * @type PushStartValidator
+     */
+    private $validator;
 
     /**
      * @type Session
@@ -44,27 +44,11 @@ class StartPushHandler implements MiddlewareInterface
      */
     private $buildRepo;
     private $pushRepo;
-    private $deployRepo;
-
-    /**
-     * @type EntityManagerInterface
-     */
-    private $em;
 
     /**
      * @type Url
      */
     private $url;
-
-    /**
-     * @type User
-     */
-    private $currentUser;
-
-    /**
-     * @type PermissionService
-     */
-    private $permissions;
 
     /**
      * @type JobIdGenerator
@@ -92,11 +76,10 @@ class StartPushHandler implements MiddlewareInterface
     private $parameters;
 
     /**
-     * @param Session $session
      * @param EntityManagerInterface $em
+     * @param PushStartValidator $validator
+     * @param Session $session
      * @param Url $url
-     * @param User $currentUser
-     * @param PermissionService $permissions
      * @param JobIdGenerator $unique
      * @param Request $request
      * @param Context $context
@@ -104,11 +87,10 @@ class StartPushHandler implements MiddlewareInterface
      * @param array $parameters
      */
     public function __construct(
-        Session $session,
         EntityManagerInterface $em,
+        PushStartValidator $validator,
+        Session $session,
         Url $url,
-        User $currentUser,
-        PermissionService $permissions,
         JobIdGenerator $unique,
         Request $request,
         Context $context,
@@ -117,19 +99,17 @@ class StartPushHandler implements MiddlewareInterface
     ) {
         $this->session = $session;
 
-        $this->buildRepo = $em->getRepository(Build::CLASS);
-        $this->pushRepo = $em->getRepository(Push::CLASS);
-        $this->deployRepo = $em->getRepository(Deployment::CLASS);
+        $this->buildRepo = $em->getRepository(Build::class);
+        $this->pushRepo = $em->getRepository(Push::class);
         $this->em = $em;
 
         $this->url = $url;
-        $this->currentUser = $currentUser;
-        $this->permissions = $permissions;
         $this->unique = $unique;
 
         $this->request = $request;
         $this->context = $context;
         $this->stickyService = $stickyService;
+        $this->validator = $validator;
         $this->parameters = $parameters;
     }
 
@@ -142,73 +122,29 @@ class StartPushHandler implements MiddlewareInterface
             return;
         }
 
-        $build = $this->buildRepo->findOneBy(['id' => $this->parameters['build'], 'status' => 'Success']);
+        // Can only deploy successful builds
+        $build = $this->buildRepo->findOneBy([
+            'id' => $this->parameters['build'],
+            'status' => 'Success'
+        ]);
+
         if (!$build) {
             // fall through to controller
             return;
         }
 
-        $deploymentIds = $this->request->post('deployments', []);
-
-        if (!is_array($deploymentIds) || count($deploymentIds) == 0) {
-            return $this->context->addContext(['errors' => [self::ERR_NO_DEPS]]);
-        }
-
-        $environment = $build->environment();
+        $deployments = $this->request->post('deployments', []);
         $application = $build->application();
-        $pushes = [];
+        $environment = $build->environment();
 
-        $canUserPush = $this->permissions->canUserPush($this->currentUser, $application, $environment);
+        // passed separately, in case one day we support cross-env builds?
+        $pushes = $this->validator->isValid($application, $environment, $build, $deployments);
 
-        if (!$canUserPush) {
+        // Pass through to controller if errors
+        if (!$pushes) {
             return $this->context->addContext([
-                'errors' => [sprintf(self::ERR_NO_PERM, $environment->name())]
+                'errors' => $this->validator->errors()
             ]);
-        }
-
-        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $deploymentIds));
-        $deployments = $this->deployRepo->matching($criteria);
-        $deployments = $deployments->toArray();
-
-        $kvd = [];
-        foreach ($deployments as $deployment) {
-            $kvd[$deployment->id()] = $deployment;
-        }
-
-        foreach ($deploymentIds as $deploymentId) {
-            if (!isset($kvd[$deploymentId])) {
-                return $this->context->addContext(['errors' => [self::ERR_BAD_DEP]]);
-            }
-
-            $deployment = $kvd[$deploymentId];
-            $server = $deployment->server();
-
-            if ($environment !== $server->environment()) {
-                return $this->context->addContext([
-                    'errors' => [sprintf(self::ERR_WRONG_ENV, $environment->name())]
-                ]);
-            }
-
-            // Non-rsync need credentials
-            if ($server->type() !== ServerEnum::TYPE_RSYNC && !$deployment->credential()) {
-                $name = $deployment->name() ?: sprintf('%s (%s)', strtoupper($server->type()), $server->name());
-
-                return $this->context->addContext([
-                    'errors' => [sprintf(self::ERR_MISSING_CREDENTIALS, $name)]
-                ]);
-            }
-
-            $id = $this->unique->generatePushId();
-
-            $push = (new Push)
-                ->withId($id)
-                ->withStatus('Waiting')
-                ->withUser($this->currentUser)
-                ->withBuild($build)
-                ->withDeployment($deployment)
-                ->withApplication($application);
-
-            $pushes[] = $push;
         }
 
         $this->dupeCatcher($pushes);
@@ -221,7 +157,7 @@ class StartPushHandler implements MiddlewareInterface
         $this->em->flush();
 
         // override sticky environment
-        $this->stickyService->save($application->id(), $deployment->server()->environment()->id());
+        $this->stickyService->save($application->id(), $environment->id());
 
         $this->session->flash(self::SUCCESS, 'success');
         $this->url->redirectFor('application.status', ['application' => $application->id()]);
