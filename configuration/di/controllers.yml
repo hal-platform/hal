@@ -138,6 +138,7 @@ services:
             - '@build.start.twig'
             - '@doctrine.em'
             - '@github'
+            - '@sticky.environment'
             - '@slim.request'
             - '@hal.application'
             - '@currentUser'

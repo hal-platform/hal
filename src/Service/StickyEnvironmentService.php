@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Service;
 
+use QL\Hal\Core\Entity\Application;
 use QL\Panthor\Http\EncryptedCookies;
 use QL\Panthor\Utility\Json;
 
@@ -42,13 +43,17 @@ class StickyEnvironmentService
     }
 
     /**
-     * @param string $applicationID
+     * @param Application|string $applicationID
      * @param string $environmentID
      *
      * @return void
      */
     public function save($applicationID, $environmentID)
     {
+        if ($applicationID instanceof Application) {
+            $applicationID = $applicationID->id();
+        }
+
         // we store each repo stickyness individually per repo, but in the same cookie.
         $stickies = $this->unpackStickies();
         $stickies[$applicationID] = $environmentID;
@@ -59,13 +64,18 @@ class StickyEnvironmentService
     /**
      * Get the current env preference for an application.
      *
-     * @param string $applicationID
+     * @param Application|string $applicationID
      *
      * @return string|null
      */
     public function get($applicationID)
     {
+        if ($applicationID instanceof Application) {
+            $applicationID = $applicationID->id();
+        }
+
         $stickies = $this->unpackStickies();
+
         if (isset($stickies[$applicationID])) {
             return $stickies[$applicationID];
         }

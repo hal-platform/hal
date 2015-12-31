@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Service\GitHubService;
+use QL\Hal\Service\StickyEnvironmentService;
 use QL\Hal\Utility\ReleaseSortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -38,6 +39,11 @@ class StartBuildController implements ControllerInterface
     private $github;
 
     /**
+     * @type StickyEnvironmentService
+     */
+    private $stickyService;
+
+    /**
      * @type Request
      */
     private $request;
@@ -56,6 +62,7 @@ class StartBuildController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param GitHubService $github
+     * @param StickyEnvironmentService $stickyService
      * @param Request $request
      * @param Application $application
      * @param User $currentUser
@@ -64,6 +71,7 @@ class StartBuildController implements ControllerInterface
         TemplateInterface $template,
         EntityManagerInterface $em,
         GitHubService $github,
+        StickyEnvironmentService $stickyService,
         Request $request,
         Application $application,
         User $currentUser
@@ -71,6 +79,7 @@ class StartBuildController implements ControllerInterface
         $this->template = $template;
         $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->github = $github;
+        $this->stickyService = $stickyService;
 
         $this->request = $request;
         $this->application = $application;
@@ -82,9 +91,15 @@ class StartBuildController implements ControllerInterface
      */
     public function __invoke()
     {
+        // Automatically select an environment from sticky pref if this is fresh form
+        $env = $this->request->post('environment');
+        if ($env === null) {
+            $env = $this->stickyService->get($this->application);
+        }
+
         $context = [
             'form' => [
-                'environment' => $this->request->post('environment'),
+                'environment' => $env,
                 'search' => $this->request->post('search'),
                 'reference' => $this->request->post('reference'),
                 'gitref' => $this->request->post('gitref')
