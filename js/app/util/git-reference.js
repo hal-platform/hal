@@ -6,7 +6,7 @@ function determineGitref(gitref, size = 200) {
     } else {
         return formatted.slice(0, size) + '...';
     }
-};
+}
 
 function determineGitrefType(gitref) {
     if (gitref.indexOf('Release') === 0) {
@@ -22,7 +22,7 @@ function determineGitrefType(gitref) {
     }
 
     return 'branch';
-};
+}
 
 function formatGitref(gitref) {
     var prRegex = /^pull\/([\d]+)$/i,
