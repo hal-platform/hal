@@ -110,9 +110,9 @@
                 <tr>
                     <th>Deployment</th>
                     <th>Reference</th>
-                    <th>Commit</th>
+                    <th class="table-priority-55">Commit</th>
                     <th>Last Pushed</th>
-                    <th>Pushed By</th>
+                    <th class="table-priority-55">Pushed By</th>
                     <th>
                         <p class="js-toggle-container mvn tr"></p>
                         <span class="tablesaw-collapse">Deploy?</span>
@@ -213,7 +213,7 @@
                 {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
                 {{ macros.gitref(build, true, isCurrent) }}
             </td>
-            <td>
+            <td class="table-priority-55">
                 {{ macros.gitcommit(build) }}
             </td>
             <td>
@@ -224,7 +224,7 @@
                 {% endif %}
                 (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)
             </td>
-            <td>
+            <td class="table-priority-55">
                 {% if push.user %}
                     <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
                 {% else %}
@@ -235,9 +235,9 @@
 
             {# No successful pushes #}
             <td></td>
+            <td class="table-priority-55"></td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td class="table-priority-55"></td>
 
         {% endif %}
 
