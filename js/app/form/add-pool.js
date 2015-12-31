@@ -106,7 +106,8 @@ module.exports = {
 
         var server = data.server,
             deployment = data.deployment,
-            hostname = server.name;
+            hostname = server.name,
+            name;
 
         if (deployment.name.length > 0) {
             name = deployment.name;
@@ -179,7 +180,7 @@ module.exports = {
 
         $removal.on('click', submitHandler);
     },
-    handleRemovalError: function(data) {
+    handleRemovalError: function() {
 
         // reset
         this.context.resetMessages();
@@ -195,7 +196,7 @@ module.exports = {
         this.context.resetMessages();
 
         var $removal = this.removal,
-            $pool = $removal.closest(this.context.target);
+            $pool = $removal.closest(this.context.target),
             $alert = $('<div>')
                 .addClass('alert-bar--success');
 

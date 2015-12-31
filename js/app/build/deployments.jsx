@@ -1,11 +1,11 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
 var Deployment = React.createClass({
     propTypes: {
         deployment: PropTypes.object,
         build: PropTypes.object,
         push: PropTypes.object,
-        canPush: PropTypes.bool,
+        canPush: PropTypes.bool
     },
 
     render: function() {

@@ -1,9 +1,9 @@
 import 'jquery';
 import formatter from '../util/time-formatter';
 import gitref from '../util/git-reference';
-import React from 'react';
 import ReactDOM from 'react-dom';
-import DeploymentsTable from './deployments.jsx';
+import 'react';
+import './deployments.jsx';
 
 var selectorTarget = '.js-environment-selector',
     tableTarget = 'js-child-deployment';
@@ -96,8 +96,7 @@ function handleStateChange(state) {
 
 function buildStatusContext(data) {
 
-    var pools = formatPools(data.view),
-        statuses = [];
+    var pools = formatPools(data.view);
 
     var matchDeployment = (element) => {
         return element.deploymentIDs.indexOf(deploymentID) >= 0;
@@ -105,12 +104,11 @@ function buildStatusContext(data) {
 
     for (var status of data.statuses) {
 
-        var context,
-            deploymentID = status.deployment.id,
+        var deploymentID = status.deployment.id,
             deployment = {
                 id: deploymentID,
                 pretty: status.deployment['pretty-name'],
-                additional: status.deployment['detail'],
+                additional: status.deployment['detail']
             },
             build = formatBuild(status.build),
             push = formatPush(status.push);

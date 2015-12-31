@@ -236,5 +236,5 @@ module.exports = {
     createTimeElement: function(time) {
         var formatted = formatter.formatTime(time);
         return '<time datetime="' + time + '" title="' + formatted.absolute + '">' + formatted.relative + '</time>';
-    },
+    }
 };

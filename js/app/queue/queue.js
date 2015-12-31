@@ -49,8 +49,6 @@ module.exports = {
     },
 
     togglePolling: function() {
-        var _this = this;
-
         if (this.pollingTimer === null) {
             this.refresh();
             this.pollingTimer = this.startRefreshTimer();

@@ -40,11 +40,11 @@ module.exports = {
                     .removeClass(_this.searchQueryHideClass);
             },
 
-            onFocus : function(box) {
+            onFocus : function() {
                 _this.showSearchListings();
             },
 
-            onEmpty : function(box) {
+            onEmpty : function() {
                 _this.$searchResults
                     .children(_this.searchResultItem)
                     .addClass(_this.searchQueryShowClass)
@@ -80,7 +80,7 @@ module.exports = {
         });
 
         // add handler for selecting a search result item
-        this.$searchResults.on('click', this.searchResultItem, function(event) {
+        this.$searchResults.on('click', this.searchResultItem, function() {
             _this.selectSearchResult(this);
             _this.$searchBox.trigger('change');
             _this.$searchBox.trigger('herpderp');
@@ -98,8 +98,7 @@ module.exports = {
 
     },
     searchByFragment: function(fragment) {
-        var searchBy,
-            $visible;
+        var searchBy;
 
         if (fragment.slice(0, 3) === '#pr') {
             searchBy = 'PR #' + fragment.slice(3);

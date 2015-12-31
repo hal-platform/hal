@@ -1,5 +1,5 @@
-import sugar from 'sugar-date';
-import duration from 'durationjs';
+import 'sugar-date';
+import 'durationjs';
 
 module.exports = {
     threshold_6mo: (180).day(),
@@ -69,7 +69,7 @@ module.exports = {
     sugarRelativeAlgo: function(time) {
         var that = this;
 
-        return function (value, unit, ms, loc) {
+        return function (value, unit, ms) {
 
             // if in future, just return default relative display
             if (ms < 0) {

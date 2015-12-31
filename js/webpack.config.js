@@ -15,6 +15,9 @@ module.exports = {
             'favico.js',
             'fuse.js',
 
+            'react',
+            'react-dom',
+
             'jquery',
             'jquery.tablesaw',
             'jquery.tablesaw.init',

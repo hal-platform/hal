@@ -16,7 +16,6 @@ module.exports = {
     },
     attach: function() {
         var $container = this.$container,
-            $form = $container.find('.form-fields'),
             $badBtn = $(this.badButton),
             $submitBtn = $container.find('input[type="submit"]'),
             $cancelBtn = $container.find('.btn--secondary'),
@@ -137,7 +136,7 @@ module.exports = {
         this.addDeployment(env, deployment.id, hostname, path_or_whatever, deployment.url);
     },
     addDeployment: function(env, id, hostname, path_or_whatever, url) {
-        var $list = $(this.envListPrefix + env);
+        var $list = $(this.envListPrefix + env),
             $row = $('<tr>')
             .append('<td>' + hostname + '</td>')
             .append('<td><code>' + path_or_whatever + '</code></td>')

@@ -1,0 +1,32 @@
+{
+    parser: 'babel-eslint',
+    extends: 'eslint:recommended',
+
+    plugins: [
+        'react'
+    ],
+
+    globals: {
+        document: true,
+        window: true,
+        module: true,
+        console: true,
+        '$': true,
+        clearInterval: true,
+        moment: true,
+        Duration: true,
+        require: true
+    },
+    environments: {
+        es6: true
+    },
+
+    ecmaFeatures: {
+        modules: true,
+        jsx: true
+    },
+
+    rules: {
+        'no-console': 0
+    }
+}

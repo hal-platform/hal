@@ -4,7 +4,7 @@ var gulp = require('gulp'),
     sequence = require('run-sequence'),
     plumber = require('gulp-plumber'),
     webpack = require('webpack'),
-    jshint = require('gulp-jshint'),
+    eslint = require('gulp-eslint'),
 
     sass = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
@@ -25,17 +25,14 @@ webpackConfig = Object.create(webpackConfig);
 webpackConfig.debug = isDeploy ? false : true;
 webpackConfig.devtool = isDeploy ? '' : 'eval-source-map';
 
-gulp.task('js:hint', function() {
+gulp.task('js:lint', function() {
   return gulp.src([
         path.join(srcJS, '**/*.{js,jsx}'),
+        '!js/webpack.config.js'
     ])
-    .pipe(jshint({
-        sub: true,
-        esnext: true
-        // esversion: 6
-    }))
-    .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(jshint.reporter('fail'));
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
 var webpackCompiler = webpack(webpackConfig);
@@ -50,7 +47,7 @@ gulp.task('js:webpack', function(callback) {
 });
 
 gulp.task('js', function(callback) {
-    return sequence('js:hint', ['js:webpack'], callback);
+    return sequence('js:lint', ['js:webpack'], callback);
 });
 
 // css

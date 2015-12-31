@@ -91,8 +91,8 @@ module.exports = {
             removalHandler = this.removeFromList,
             listContainer = this.listContainer;
 
-        return function(event) {
-            $clone = $parent.clone();
+        return function() {
+            var $clone = $parent.clone();
             $clone
                 .val('')
                 .removeAttr('id');

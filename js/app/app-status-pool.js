@@ -29,11 +29,10 @@ module.exports = {
 
         $picker.on('change', switchView);
     },
-    switchView: function(event) {
+    switchView: function() {
 
         var selectedView = this.$picker.val(),
-            $rawdeploys = $(this.cardTarget),
-            $deploys = {};
+            $rawdeploys = $(this.cardTarget);
 
         // no deploys, die
         if ($rawdeploys.length === 0) {

@@ -18,8 +18,7 @@ module.exports = {
 
     },
     attach: function(form) {
-        var _this = this,
-            $form = $(form),
+        var $form = $(form),
             appID = $form.data('app-id');
 
         var successHandler = this.handleSuccess;
@@ -46,9 +45,9 @@ module.exports = {
 
         $form.on('submit', submitHandler);
     },
-    handleSuccess: function(data) {
+    handleSuccess: function() {
         // Regrab the form to update all rows that match
-        $form = $('[data-app-id=' + this.appID + ']');
+        var $form = $('[data-app-id=' + this.appID + ']');
 
         if ($form.length < 1) {
             return;

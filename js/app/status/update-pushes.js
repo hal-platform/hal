@@ -30,10 +30,8 @@ module.exports = {
             });
 
             // stub event logs, dont need to be updated further
-            $logTable = $(this.logTable);
-            if ($logTable.length > 0) {
-                this.$logTable = $logTable;
-
+            this.$logTable = $(this.logTable);
+            if (this.$logTable.length > 0) {
                 this.$logTable
                     .find(this.logTarget)
                     .each(function(index, item) {
@@ -192,7 +190,7 @@ module.exports = {
     startUpdateTimer: function($elem) {
         var _this = this;
 
-        var timer = window.setTimeout(function() {
+        window.setTimeout(function() {
             _this.checkStatus($elem);
         }, _this.interval * 1000);
     },
@@ -238,7 +236,7 @@ module.exports = {
             }
         }
     },
-    updateTable: function(data, $elem) {
+    updateTable: function() {
         // derp
     },
     updateGrid: function(data, $elem) {
