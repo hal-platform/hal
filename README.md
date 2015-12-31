@@ -35,14 +35,14 @@ index     | `/path/to/hal/public/index.php`
 
 #### Application configuration
 
-1. Run `bin/install` to install PHP, Node, and Ruby dependencies.
+1. Run `bin/install` to install PHP and Node dependencies.
 2. Run `bin/normalize-configuration`.
 
 This will copy `app/environment/config.dev.yml` to `app/config.env.yml`. You may edit this file, as it is gitignored and will not be committed.
 
 #### Application compilation
 
-1. Run `bin/gulp build`.
+1. Run `npm run build`.
 
 This will process and optimize the CSS and JS.
 
