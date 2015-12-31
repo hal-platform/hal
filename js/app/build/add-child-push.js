@@ -72,8 +72,9 @@ function handleError() {
 
 function prepareDeployments(data) {
     var context = {
-            statuses: buildStatusContext(data),
-            canPush: data.permission
+            pools: buildStatusContext(data),
+            canPush: data.permission,
+            deploymentCount: data.statuses.length
         },
         $deployments = $(tpl.render(context));
 
@@ -96,49 +97,96 @@ function prepareDeployments(data) {
 
 function buildStatusContext(data) {
 
-    var statuses = [];
+    var pools = formatPools(data.view),
+        statuses = [];
 
     for (var status of data.statuses) {
 
         var context,
+            deploymentID = status.deployment.id,
             deployment = {
-                id: status.deployment.id,
+                id: deploymentID,
                 pretty: status.deployment['pretty-name'],
                 additional: status.deployment['detail'],
             },
-            build = null,
-            push = null,
+            build = formatBuild(status.build),
+            push = formatPush(status.push);
 
-            pushStatus = status.push === null ? null : status.push,
-            buildStatus = status.build === null ? null : status.build;
+        var pool = pools.find(function(element) {
+            return element.deploymentIDs.indexOf(deploymentID) >= 0;
+        });
 
-        if (pushStatus !== null) {
-            push = {
-                id: formatPushId(pushStatus.id),
-                status: pushStatus.status,
-                inProgress: pushStatus.status === 'Waiting' || pushStatus.status === 'Pushing',
-                time: createTimeElement(status.push['created']),
-                user: status.push._links.user ? status.push._links.user.title : null,
-                url: pushStatus._links.page.href
-            };
+        // If no valid pool is found, append to the last pool (default)
+        // This is either "unpooled" or "no pool" if there is no saved view
+        if (pool === undefined) {
+            pool = pools[pools.length - 1];
         }
 
-        if (buildStatus !== null) {
-            build = {
-                status: buildStatus.status,
-                reference: gitref.format(buildStatus.reference, 30),
-                referenceType: gitref.determineType(buildStatus.reference),
-                referenceUrl: buildStatus._links.github_reference_page.href,
-
-                commit: buildStatus.commit,
-                commitUrl: buildStatus._links.github_commit_page.href
-            };
-        }
-
-        statuses.push({ deployment, build, push });
+        pool.deployments.push({ deployment, build, push });
     }
 
-    return statuses;
+    return pools;
+}
+
+function formatPools(view) {
+    var pools = [];
+
+    if (view === null) {
+        pools.push({
+            name: 'err-no-view',
+            deployments: [],
+            deploymentIDs: []
+        });
+
+    } else {
+        for (var pool of view.pools) {
+            pools.push({
+                name: pool.name,
+                deployments: [],
+                deploymentIDs: pool.deployments
+            });
+        }
+
+        // Append unpooled to end
+        pools.push({
+            name: 'Unpooled',
+            deployments: [],
+            deploymentIDs: []
+        });
+    }
+
+    return pools;
+}
+
+function formatBuild(build) {
+    if (build === null) {
+        return null;
+    }
+
+    return {
+        status: build.status,
+        reference: gitref.format(build.reference, 30),
+        referenceType: gitref.determineType(build.reference),
+        referenceUrl: build._links.github_reference_page.href,
+
+        commit: build.commit,
+        commitUrl: build._links.github_commit_page.href
+    };
+}
+
+function formatPush(push) {
+    if (push === null) {
+        return null;
+    }
+
+    return {
+        id: formatPushId(push.id),
+        status: push.status,
+        inProgress: push.status === 'Waiting' || push.status === 'Pushing',
+        time: createTimeElement(push.created),
+        user: push._links.user ? push._links.user.title : null,
+        url: push._links.page.href
+    };
 }
 
 function formatPushId(pushId) {
