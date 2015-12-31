@@ -151,6 +151,7 @@ services:
         arguments:
             - '@doctrine.em'
             - '@build.start.validator'
+            - '@push.start.validator'
             - '@session.flasher'
             - '@twig.context'
             - '@slim.request'

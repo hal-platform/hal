@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Service\StickyEnvironmentService;
 use QL\Hal\Flasher;
 use QL\Hal\Validator\BuildStartValidator;
+use QL\Hal\Validator\PushStartValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use Slim\Http\Request;
@@ -33,6 +34,11 @@ class StartBuildHandler implements MiddlewareInterface
      * @type BuildStartValidator
      */
     private $validator;
+
+    /**
+     * @type PushStartValidator
+     */
+    private $pushValidator;
 
     /**
      * @type Flasher
@@ -62,6 +68,7 @@ class StartBuildHandler implements MiddlewareInterface
     /**
      * @param EntityManagerInterface $em
      * @param BuildStartValidator $validator
+     * @param PushStartValidator $pushValidator
      * @param Flasher $flasher
      * @param Context $context
      * @param Request $request
@@ -71,6 +78,7 @@ class StartBuildHandler implements MiddlewareInterface
     public function __construct(
         EntityManagerInterface $em,
         BuildStartValidator $validator,
+        PushStartValidator $pushValidator,
         Flasher $flasher,
         Context $context,
         Request $request,
@@ -79,6 +87,7 @@ class StartBuildHandler implements MiddlewareInterface
     ) {
         $this->em = $em;
         $this->validator = $validator;
+        $this->pushValidator = $pushValidator;
 
         $this->flasher = $flasher;
         $this->context = $context;
@@ -106,14 +115,33 @@ class StartBuildHandler implements MiddlewareInterface
 
         // if validator didn't create a build, add errors and pass through to controller
         if (!$build) {
-            $this->context->addContext([
-                'errors' => $this->validator->errors()
-            ]);
+            return $this->context->addContext(['errors' => $this->validator->errors()]);
+        }
 
-            return;
+        $children = null;
+        $deployments = $this->request->post('deployments');
+        if ($deployments) {
+            $children = $this->pushValidator->isProcessValid($build->application(), $build->environment(), $build, $deployments);
+            if (!$children) {
+                // child push validation failed, bomb out.
+                return $this->context->addContext(['errors' => $this->pushValidator->errors()]);
+            }
+        }
+
+        $deployments = $this->request->post('deployments');
+        $children = $this->maybeMakeChildren($build, $deployments);
+        if ($deployments && !$children) {
+            // child push validation failed, bomb out.
+            return $this->context->addContext(['errors' => $this->pushValidator->errors()]);
         }
 
         // persist to database
+        if ($children) {
+            foreach ($children as $process) {
+                $this->em->persist($process);
+            }
+        }
+
         $this->em->persist($build);
         $this->em->flush();
 
@@ -124,5 +152,20 @@ class StartBuildHandler implements MiddlewareInterface
         $this->flasher
             ->withFlash(self::WAIT_FOR_IT, 'success')
             ->load('build', ['build' => $build->id()]);
+    }
+
+    /**
+     * @param Build $build
+     * @param array|null $deployments
+     *
+     * @return array|null
+     */
+    private function maybeMakeChildren(Build $build, $deployments)
+    {
+        if (!$deployments) {
+            return null;
+        }
+
+        return $this->pushValidator->isProcessValid($build->application(), $build->environment(), $build, $deployments);
     }
 }
