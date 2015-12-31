@@ -6,7 +6,7 @@ module.exports = {
     toggled: false,
     $checks: null,
     init: function() {
-        $container = $(this.target);
+        var $container = $(this.target);
         this.$checks = $(this.checkTarget);
 
         if ($container.length && this.$checks.length > 1) {

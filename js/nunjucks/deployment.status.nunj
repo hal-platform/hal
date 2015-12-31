@@ -1,12 +1,64 @@
-<tr>
-    <td>
-        <span class="tooltipped tooltipped-e" aria-label="{{ deployment.human }}: {{ deployment.meta }}">
-            <a href="{{ deployment.page_url }}">{{ deployment.pretty }}</a>
-        </span>
-    </td>
-    <td>derp</td>
-    <td>kerp</td>
-    <td>merp</td>
-    <td>berp</td>
-    <td>serp</td>
-</tr>
+<tbody class="js-autopush-env">
+    {% if statuses|length > 0 %}
+        {% for status in statuses %}
+            <tr>
+                <td>
+                    <span class="tooltipped tooltipped-e" aria-label="{{ status.deployment.additional }}">
+                        {{ status.deployment.pretty }}
+                    </span>
+                </td>
+
+                {% if status.push %}
+                    <td>
+                        <a href="{{ status.build.referenceUrl }}">{{ status.build.reference }}</a>
+                        <svg class="icon"><use xlink:href="/icons.svg#{{ status.build.referenceType }}"></use></svg>
+                    </td>
+                    <td class="table-priority-55">
+                        <a href="{{ status.build.commitUrl }}">{{ status.build.commit|truncate(7, false, '') }}</a>
+                        <svg class="icon"><use xlink:href="/icons.svg#commit"></use></svg>
+                    </td>
+                    <td>
+                        {% if status.push.inProgress %}
+                            Now
+                        {% else %}
+                            {{ status.push.time | safe }}
+                        {% endif %}
+                        (Push <a href="{{ status.push.url }}">{{ status.push.id }}</a>)
+                    </td>
+                    <td class="table-priority-55">
+                        {% if status.push.user %}
+                            {{ status.push.user }}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+
+                {% else %}
+                    <td></td>
+                    <td class="table-priority-55"></td>
+                    <td></td>
+                    <td class="table-priority-55"></td>
+                {% endif %}
+
+                <td class="tr">
+                    {% if canPush %}
+                        <label class="neatbox mrn">
+                            <input
+                                type="checkbox"
+                                class="js-pushable-deployment"
+                                name="deployments[]"
+                                value="{{ status.deployment.id }}">
+                            <b class="neatbox__check"></b>Push When Ready
+                        </label>
+                    {% else %}
+                        No Access
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="6">No deployments available for this environment.</td>
+        </tr>
+    {% endif %}
+</table>

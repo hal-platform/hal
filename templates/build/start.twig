@@ -107,7 +107,35 @@
         {% endblock %}
 
         {% block select_next %}
+            {% if environments %}
+                <h2 class="leader mbn">Select Deployment</h2>
+                <p class="trailer"><span>Deployments will only be triggered if the build succeeds.</span></p>
 
+                <table class="js-child-deployment table--spacing-large table--striped" data-tablesaw-mode="stack" data-app-id="{{ application.id }}">
+                    <thead>
+                        <tr>
+                            <th>Deployment</th>
+                            <th>Reference</th>
+                            <th class="table-priority-55">Commit</th>
+                            <th>Last Pushed</th>
+                            <th class="table-priority-55">Pushed By</th>
+                            <th>
+                                <p class="js-toggle-container mvn tr"></p>
+                                <span class="tablesaw-collapse">Deploy?</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-breathe js-autopush-empty">
+                        <tr>
+                            <td colspan="6">
+                                Select an environment to show available deployments.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <input class="btn" type="submit" value="Start Build" name="submit">
+            {% endif %}
         {% endblock %}
 
     </form>

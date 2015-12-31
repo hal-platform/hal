@@ -1,3 +1,5 @@
+import StartBuildChildren from './app/build/add-child-push';
+
 module.exports = {
 
     // core
@@ -19,8 +21,9 @@ module.exports = {
     },
 
     // jobs - start
-    "build.start": function() {
+    "build.start": () => {
         require('./app/start-build').init();
+        StartBuildChildren();
     },
 
     "push.start": function() {
