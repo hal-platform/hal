@@ -8,6 +8,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
+
+
     .neatbox__check {
         height: 1.5em;
         width: 1.5em;
@@ -38,6 +40,10 @@
         }
     }
 
+    &:hover .neatbox__check {
+        box-shadow: 0 0 1px 2px $hal-blue;
+    }
+
     input[type="checkbox"] {
         visibility: hidden;
     }
@@ -50,4 +56,9 @@
             border-color: $white;
         }
     }
+
+    &:hover input[type="checkbox"]:checked + .neatbox__check {
+        box-shadow: 0 0 1px 2px $hal-blue;
+    }
+
 }
