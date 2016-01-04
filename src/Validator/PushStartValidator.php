@@ -26,6 +26,7 @@ class PushStartValidator
     const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';
 
     const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';
+    const ERR_IS_PENDING = 'Push to "%s" cannot be created, deployment already in progress.';
     const ERR_MISSING_CREDENTIALS = 'Attempted to initiate push to "%s", but credentials are missing.';
 
     /**
@@ -99,6 +100,16 @@ class PushStartValidator
         if (!$deployments) {
             return null;
         }
+
+        // Ensure no deployment has an active push (Waiting, Pushing)
+        foreach ($deployments as $deployment) {
+            $push = $deployment->push();
+            if ($push && $push->isPending()) {
+                $this->errors[] = sprintf(self::ERR_IS_PENDING, $deployment->formatPretty());
+            }
+        }
+
+        if ($this->errors) return null;
 
         $pushes = [];
         foreach ($deployments as $deployment) {

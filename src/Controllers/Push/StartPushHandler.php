@@ -151,6 +151,11 @@ class StartPushHandler implements MiddlewareInterface
 
         // commit pushes
         foreach ($pushes as $push) {
+            // record pushes as active push on each deployment
+            $deployment = $push->deployment();
+            $deployment->withPush($push);
+
+            $this->em->persist($deployment);
             $this->em->persist($push);
         }
 
@@ -168,6 +173,7 @@ class StartPushHandler implements MiddlewareInterface
      * there are no duplicates.
      *
      * @param Push[] $pushes
+     *
      * @return null
      */
     private function dupeCatcher(array $pushes)

@@ -213,8 +213,6 @@ class ApplicationStatusController implements ControllerInterface
 
         usort($deployments, $this->deploymentSorter());
 
-        // THIS QUERY SUCKS! BIG TIME.
-        // $pushes = $this->pushRepo->getMostRecentByDeployments($deployments);
         foreach ($deployments as &$deployment) {
             $deployment = [
                 'deploy' => $deployment,
