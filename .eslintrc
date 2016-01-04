@@ -14,16 +14,13 @@
         '$': true,
         clearInterval: true,
         moment: true,
-        Duration: true,
-        require: true
+        require: true,
+        React: true
     },
-    environments: {
-        es6: true
-    },
-
-    ecmaFeatures: {
-        modules: true,
-        jsx: true
+    parserOptions: {
+        ecmaFeatures: {
+          "jsx": true
+        }
     },
 
     rules: {

@@ -20,7 +20,7 @@
                 </span>
             {% endif %}
         </td>
-        <td>{{ logCreated }}</td>
+        <td>{{ logCreated | safe }}</td>
         <td>{{ log.message }}</td>
         <td></td>
     </tr>

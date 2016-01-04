@@ -161,14 +161,16 @@ var Table = React.createClass({
 
         var pools = [];
         this.state.data.pools.forEach((pool, index) => {
-            pools.push(
-                <Pool
-                    key={ 'pool' + index }
-                    name={ pool.name }
-                    deployments={ pool.deployments }
-                    canPush={ this.state.data.canPush }
-                />
-            );
+            if (pool.deployments.length > 0) {
+                pools.push(
+                    <Pool
+                        key={ 'pool' + index }
+                        name={ pool.name }
+                        deployments={ pool.deployments }
+                        canPush={ this.state.data.canPush }
+                    />
+                );
+            }
 
         });
 

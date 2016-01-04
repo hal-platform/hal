@@ -1,5 +1,5 @@
 import 'sugar-date';
-import 'durationjs';
+import Duration from 'durationjs';
 
 module.exports = {
     threshold_6mo: (180).day(),

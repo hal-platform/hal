@@ -2,8 +2,8 @@ import 'jquery';
 import formatter from '../util/time-formatter';
 import gitref from '../util/git-reference';
 import ReactDOM from 'react-dom';
-import 'react';
-import './deployments.jsx';
+import React from 'react';
+import DeploymentsTable from './deployments.jsx';
 
 var selectorTarget = '.js-environment-selector',
     tableTarget = 'js-child-deployment';
@@ -24,7 +24,7 @@ var init = () => {
         if (appID) {
 
             deploymentsComponent = ReactDOM.render(
-                <DeploymentsTable />,
+                React.createElement(DeploymentsTable),
                 document.getElementById(tableTarget)
             );
 
@@ -47,7 +47,7 @@ function handleChange(event) {
     if (deploymentsCacheByEnv.hasOwnProperty(envID)) {
         console.log(`Loading cached environment: ${envID}`);
 
-        deploymentsComponent.setState( { data: deploymentsCacheByEnv[envID] } );
+        handleStateChange(deploymentsCacheByEnv[envID]);
         return;
     }
 
