@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Validator\BuildStartValidator;
+use QL\Hal\Validator\PushStartValidator;
 use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
 
@@ -27,6 +28,7 @@ class StartBuildController implements ControllerInterface
 
     const ERR_CHECK_FORM = 'Cannot start build due to form submission failure. Please check errors.';
     const ERR_RATE_LIMIT = 'Cannot start build for this application more than once every %d seconds. Please wait a moment.';
+    const ERR_INVALID_DEPLOY = 'Cannot create child processes for selected deployments.';
 
     /**
      * @type ResponseFormatter
@@ -37,6 +39,11 @@ class StartBuildController implements ControllerInterface
      * @type BuildStartValidator
      */
     private $validator;
+
+    /**
+     * @type PushStartValidator
+     */
+    private $pushValidator;
 
     /**
      * @type Predis
@@ -61,6 +68,7 @@ class StartBuildController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param BuildStartValidator $validator
+     * @param PushStartValidator $pushValidator
      *
      * @param EntityManagerInterface $em
      * @param Predis $predis
@@ -72,6 +80,7 @@ class StartBuildController implements ControllerInterface
     public function __construct(
         ResponseFormatter $formatter,
         BuildStartValidator $validator,
+        PushStartValidator $pushValidator,
 
         EntityManagerInterface $em,
         Predis $predis,
@@ -82,6 +91,7 @@ class StartBuildController implements ControllerInterface
     ) {
         $this->formatter = $formatter;
         $this->validator = $validator;
+        $this->pushValidator = $pushValidator;
 
         $this->em = $em;
         $this->predis = $predis;
@@ -102,7 +112,7 @@ class StartBuildController implements ControllerInterface
 
         $build = $this->validator->isValid($this->application, $environment, $reference, '');
 
-        if (!$build instanceof Build) {
+        if (!$build) {
             throw HttpProblemException::build(400, 'invalid-submission', self::ERR_CHECK_FORM, [
                 'errors' => $this->validator->errors()
             ]);
@@ -113,7 +123,22 @@ class StartBuildController implements ControllerInterface
             throw HttpProblemException::build(429, 'rate-limit', sprintf(self::ERR_RATE_LIMIT, self::RATE_LIMIT_TIME));
         }
 
+        $children = null;
+        $deployments = isset($this->requestBody['deployments']) ? $this->requestBody['deployments'] : [];
+        if ($deployments && is_array($deployments)) {
+            $children = $this->pushValidator->isProcessValid($build->application(), $build->environment(), $build, $deployments);
+            if (!$children) {
+                throw HttpProblemException::build(400, 'invalid-deployment', self::ERR_INVALID_DEPLOY);
+            }
+        }
+
         // persist to database
+        if ($children) {
+            foreach ($children as $process) {
+                $this->em->persist($process);
+            }
+        }
+
         $this->em->persist($build);
         $this->em->flush();
 

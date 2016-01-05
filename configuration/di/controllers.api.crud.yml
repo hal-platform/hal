@@ -6,6 +6,7 @@ services:
         arguments:
             - '@response.formatter'
             - '@build.start.validator'
+            - '@push.start.validator'
             - '@doctrine.em'
             - '@redis'
             - '@hal.application'

@@ -120,7 +120,7 @@ class StartBuildHandler implements MiddlewareInterface
 
         $children = null;
         $deployments = $this->request->post('deployments');
-        if ($deployments) {
+        if ($deployments && is_array($deployments)) {
             $children = $this->pushValidator->isProcessValid($build->application(), $build->environment(), $build, $deployments);
             if (!$children) {
                 // child push validation failed, bomb out.
