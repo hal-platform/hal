@@ -9,9 +9,6 @@
     "autoload": {
         "psr-4": { "QL\\Hal\\": "src", "QL\\Kraken\\": "src-kraken" }
     },
-    "repositories": [
-        { "type": "path", "url": "../hal-core" }
-    ],
 
     "require": {
         "php-64bit": "~5.5",
@@ -37,7 +34,7 @@
         "psr/log": "*",
 
         "ql/exception-toolkit": "~1.0",
-        "ql/hal-core":   "dev-master",
+        "ql/hal-core":   "2.9.*@beta",
         "ql/http-problem": "~1.0",
 
         "ql/mcp-cache":         "~2.2",

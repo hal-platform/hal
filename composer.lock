@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1456fa0c8881b228c847979a4505ba49",
-    "content-hash": "5aa0818d5a6659a0ef4f41714f808b99",
+    "hash": "5cd53441e02b5e95e0c605c9d64ff7cb",
+    "content-hash": "f544a467276ea103dd16eb282182e1e4",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1516,12 +1516,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "dev-master",
+            "version": "2.9.0-beta1",
+            "source": {
+                "type": "git",
+                "url": "http://git/web-core/hal-core.git",
+                "reference": "2e925364abc4f428abf41690ff6996be841156ea"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hal-core/",
-                "reference": "4f622aec2e83e9097b39ec5516a565409e6487fe",
-                "shasum": null
+                "type": "zip",
+                "url": "http://composer/dist/ql-hal-core-2.9.0-beta1-e91c63.zip",
+                "reference": "2e925364abc4f428abf41690ff6996be841156ea",
+                "shasum": "cf9f0e94f712127ba8721b5c47b1459da00be398"
             },
             "archive": {
                 "exclude": [
@@ -1543,7 +1548,7 @@
             "require-dev": {
                 "mockery/mockery": "*",
                 "phpunit/phpunit": "*",
-                "robmorgan/phinx": "~0.4",
+                "robmorgan/phinx": "~0.5",
                 "symfony/config": "*",
                 "symfony/dependency-injection": "*",
                 "symfony/yaml": "*"
@@ -1565,7 +1570,8 @@
                     "email": "itteamwebcore@quickenloans.com"
                 }
             ],
-            "description": "HAL9000 Shared Libraries, Services, Models, and Repositories"
+            "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
+            "time": "2016-01-05 13:30:13"
         },
         {
             "name": "ql/http-problem",
@@ -4124,7 +4130,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/hal-core": 20
+        "ql/hal-core": 10
     },
     "prefer-stable": false,
     "prefer-lowest": false,
