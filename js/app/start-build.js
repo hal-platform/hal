@@ -179,13 +179,11 @@ module.exports = {
     hideWarning: function() {
         this.$warning.hide();
         this.$submitButtons
-            .removeClass('btn--action')
             .val(this.$warning.data('label'));
     },
     showWarning: function() {
         this.$warning.show();
         this.$submitButtons
-            .addClass('btn--action')
             .val(this.$warning.data('label-warning'));
     }
 };

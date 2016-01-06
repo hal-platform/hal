@@ -87,7 +87,7 @@
             </div>
 
             {% if environments %}
-                <div class="leader"><input class="btn" type="submit" value="Start Build" name="submit"></div>
+                <div class="leader"><input class="btn btn--action" type="submit" value="Start Build" name="submit"></div>
             {% endif %}
 
             {{ block('build_tabs') }}
@@ -102,7 +102,7 @@
             </div>
 
             {% if environments %}
-                <input class="btn" type="submit" value="Start Build" name="submit">
+                <input class="btn btn--action" type="submit" value="Start Build" name="submit">
             {% endif %}
         {% endblock %}
 
@@ -113,7 +113,7 @@
 
                 <div id="js-child-deployment" data-app-id="{{ application.id }}"></div>
 
-                <input class="btn" type="submit" value="Start Build" name="submit">
+                <input class="btn btn--action" type="submit" value="Start Build" name="submit">
             {% endif %}
         {% endblock %}
 
