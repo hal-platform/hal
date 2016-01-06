@@ -35,6 +35,7 @@ services:
             - '@doctrine.em'
             - '@session'
             - '@url'
+            - '@doctrine.random'
             - '@slim.request'
 
     logout.handler:

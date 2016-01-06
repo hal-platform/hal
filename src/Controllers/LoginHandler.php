@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityRepository;
 use MCP\Corp\Account\LdapService;
 use MCP\Corp\Account\User as LdapUser;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\UserSettings;
 use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
@@ -55,6 +56,11 @@ class LoginHandler implements MiddlewareInterface
     private $url;
 
     /**
+     * @type callable
+     */
+    private $random;
+
+    /**
      * @type Request
      */
     private $request;
@@ -65,6 +71,7 @@ class LoginHandler implements MiddlewareInterface
      * @param EntityManagerInterface $em
      * @param Session $session
      * @param Url $url
+     * @param callable $random
      * @param Request $request
      */
     public function __construct(
@@ -73,6 +80,7 @@ class LoginHandler implements MiddlewareInterface
         EntityManagerInterface $em,
         Session $session,
         Url $url,
+        callable $random,
         Request $request
     ) {
         $this->context = $context;
@@ -81,6 +89,7 @@ class LoginHandler implements MiddlewareInterface
         $this->em = $em;
         $this->session = $session;
         $this->url = $url;
+        $this->random = $random;
 
         $this->request = $request;
     }
@@ -149,6 +158,15 @@ class LoginHandler implements MiddlewareInterface
             ->withEmail($account->email())
             ->withHandle($account->windowsUsername())
             ->withName($account->displayName());
+
+        // Add user settings if not set.
+        if (!$user->settings()) {
+            $id = call_user_func($this->random);
+            $settings = (new UserSettings($id))
+                ->withUser($user);
+
+            $this->em->persist($settings);
+        }
 
         $this->em->persist($user);
         $this->em->flush();
