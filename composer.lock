@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5cd53441e02b5e95e0c605c9d64ff7cb",
-    "content-hash": "f544a467276ea103dd16eb282182e1e4",
+    "hash": "1623695f4cb6bdf69f73d46aeaddd9c0",
+    "content-hash": "c5e66a053584a6e94437ba2459a62823",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1474,47 +1474,6 @@
             "time": "2012-12-21 11:40:51"
         },
         {
-            "name": "ql/exception-toolkit",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "http://git/web-core/exception-toolkit.git",
-                "reference": "0049112c0abf39c7505a20af026a17fadd8b0aad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-exception-toolkit-1.0.0-05c199.zip",
-                "reference": "0049112c0abf39c7505a20af026a17fadd8b0aad",
-                "shasum": "4005425c3e0aa1c074147d7ee1cc3fe27c85e778"
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "QL\\ExceptionToolkit\\": [
-                        "src",
-                        "testing/src"
-                    ]
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Matt Colf",
-                    "email": "matthewcolf@quickenloans.com"
-                }
-            ],
-            "description": "Exception Handling Toolkit",
-            "time": "2015-07-27 17:51:42"
-        },
-        {
             "name": "ql/hal-core",
             "version": "2.9.0-beta1",
             "source": {
@@ -1572,45 +1531,6 @@
             ],
             "description": "HAL9000 Shared Libraries, Services, Models, and Repositories",
             "time": "2016-01-05 13:30:13"
-        },
-        {
-            "name": "ql/http-problem",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "http://git/web-core/http-problem.git",
-                "reference": "5c5444f87cece1e3b9f81e655cee02e3041183db"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-http-problem-1.0.0-53e9e1.zip",
-                "reference": "5c5444f87cece1e3b9f81e655cee02e3041183db",
-                "shasum": "3c4bace26a69071247fcc4b730e03980fa68d0c0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "QL\\HttpProblem\\": "src"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Matt Colf",
-                    "email": "matthewcolf@quickenloans.com"
-                },
-                {
-                    "name": "Steve Kluck",
-                    "email": "stevekluck@quickenloans.com"
-                }
-            ],
-            "description": "HTTP Problem",
-            "time": "2014-08-26 18:50:16"
         },
         {
             "name": "ql/mcp-cache",
@@ -1951,29 +1871,30 @@
         },
         {
             "name": "ql/mcp-logger",
-            "version": "2.2.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "http://git/mcp/mcp-logger.git",
-                "reference": "593f0a209e4ae6c8be1bd8fa38267d5937d09afb"
+                "reference": "5d6e826a2c7505c72deaf65535fe81121b3e4af2"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-mcp-logger-2.2.0-dde9bd.zip",
-                "reference": "593f0a209e4ae6c8be1bd8fa38267d5937d09afb",
-                "shasum": "3d14ab8774db79e595b97dd6423753e498c06139"
+                "url": "http://composer/dist/ql-mcp-logger-2.4.0-cfa0b3.zip",
+                "reference": "5d6e826a2c7505c72deaf65535fe81121b3e4af2",
+                "shasum": "bcef9714971cecac5e1fe61064f70520d52db0e2"
             },
             "archive": {
                 "exclude": [
                     "/phpunit.xml.dist",
-                    "/testing"
+                    "/testing",
+                    "/docker",
+                    "/docker-compose.yml"
                 ]
             },
             "require": {
-                "ext-xmlwriter": "*",
-                "php": ">=5.4.0",
-                "ql/mcp-core": "1.*",
-                "ql/uri-template": "1.*"
+                "php": ">=5.5",
+                "ql/mcp-common": "~1.0",
+                "ql/uri-template": "~1.0"
             },
             "require-dev": {
                 "aws/aws-sdk-php": "^3.0",
@@ -1982,12 +1903,14 @@
                 "mockery/mockery": ">=0.8",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "*",
-                "psr/log": "*"
+                "psr/log": "*",
+                "ql/mcp-http": "^1.0"
             },
             "suggest": {
                 "aws/aws-sdk-php": "Required when using the Kinesis Service",
                 "guzzlehttp/guzzle": "Required when using the Guzzle 4, Guzzle 5, Guzzle 6 services.",
-                "psr/log": "Required when using the PSR-3 logger."
+                "psr/log": "Required when using the PSR-3 logger.",
+                "ql/mcp-http": "Required when using Http Service"
             },
             "type": "library",
             "autoload": {
@@ -2007,7 +1930,65 @@
             ],
             "description": "Library for handling PHP Logging within Quicken Loans.",
             "homepage": "http://git/mcp/mcp-logger",
-            "time": "2015-07-17 17:03:25"
+            "time": "2015-12-28 17:44:38"
+        },
+        {
+            "name": "ql/mcp-panthor",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/quickenloans-mcp/mcp-panthor.git",
+                "reference": "fa79ebb7b0e92196b90db9bcbb333e28b8425855"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-panthor/zipball/fa79ebb7b0e92196b90db9bcbb333e28b8425855",
+                "reference": "fa79ebb7b0e92196b90db9bcbb333e28b8425855",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "psr/log": "*",
+                "ql/mcp-common": "~1.0",
+                "slim/slim": "~2.6",
+                "symfony/config": "~2.6",
+                "symfony/dependency-injection": "^2.6.3",
+                "symfony/yaml": "~2.6"
+            },
+            "require-dev": {
+                "ext-libsodium": "~1.0",
+                "mockery/mockery": "*",
+                "paragonie/random_compat": "~1.1",
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "4.*",
+                "twig/twig": "*"
+            },
+            "suggest": {
+                "ext-libsodium": "~1.0 PECL Libsodium recommended for secure cookie encryption."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\Panthor\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com"
+                }
+            ],
+            "description": "A thin microframework built on Slim and Symfony",
+            "keywords": [
+                "mcp",
+                "microframework",
+                "quickenloans"
+            ],
+            "time": "2015-12-28 16:15:28"
         },
         {
             "name": "ql/mcp-qks",
@@ -2062,49 +2043,44 @@
             "time": "2015-08-04 13:27:21"
         },
         {
-            "name": "ql/panthor",
-            "version": "2.2.0",
+            "name": "ql/panthor-plugins",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "http://git/web-frameworks/panthor.git",
-                "reference": "d03c60fd4a6c94e130b683d464033a52dfd1168f"
+                "url": "http://git/web-frameworks/panthor-plugins.git",
+                "reference": "9bbba7b06f1c154dd0b2c3c060380142c3bcf058"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-panthor-2.2.0-066e26.zip",
-                "reference": "d03c60fd4a6c94e130b683d464033a52dfd1168f",
-                "shasum": "3a4c750b24cb9bcffbed38a459fd187f23140da6"
+                "url": "http://composer/dist/ql-panthor-plugins-1.0.0-9c2a84.zip",
+                "reference": "9bbba7b06f1c154dd0b2c3c060380142c3bcf058",
+                "shasum": "d2ac251f034cd180bdce97d66d4172b245a1e5d1"
             },
             "require": {
-                "php": ">=5.4.0",
-                "slim/slim": "~2.4",
-                "symfony/config": "~2.6",
-                "symfony/dependency-injection": "^2.6.3",
-                "symfony/yaml": "~2.6"
+                "ql/mcp-panthor": "~2.3"
             },
             "require-dev": {
                 "mockery/mockery": "*",
                 "phpunit/php-invoker": "*",
                 "phpunit/phpunit": "4.*",
-                "psr/log": "*",
-                "ql/http-problem": "~1.0",
-                "ql/mcp-core": "~1.0",
+                "ql/mcp-common": "~1.0",
                 "ql/mcp-crypto": "~2.0",
-                "ql/mcp-logger": "~2.0",
-                "symfony/debug": "~2.6",
-                "twig/twig": "*"
+                "ql/mcp-logger": "~2.4",
+                "symfony/config": ">=2.6",
+                "symfony/dependency-injection": ">=2.6",
+                "symfony/yaml": ">=2.6"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "QL\\Panthor\\": "src"
+                    "QL\\Panthor\\Plugins\\": "src"
                 }
             },
             "license": [
                 "proprietary"
             ],
-            "description": "Symfony + Slim = Panthor",
-            "time": "2015-07-27 14:37:11"
+            "description": "QL-specific plugins and components for Panthor",
+            "time": "2015-12-28 17:55:38"
         },
         {
             "name": "ql/uri-template",
@@ -2769,16 +2745,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.22.2",
+            "version": "v1.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "79249fc8c9ff62e41e217e0c630e2e00bcadda6a"
+                "reference": "d9b6333ae8dd2c8e3fd256e127548def0bc614c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/79249fc8c9ff62e41e217e0c630e2e00bcadda6a",
-                "reference": "79249fc8c9ff62e41e217e0c630e2e00bcadda6a",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/d9b6333ae8dd2c8e3fd256e127548def0bc614c6",
+                "reference": "d9b6333ae8dd2c8e3fd256e127548def0bc614c6",
                 "shasum": ""
             },
             "require": {
@@ -2791,7 +2767,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.22-dev"
+                    "dev-master": "1.23-dev"
                 }
             },
             "autoload": {
@@ -2826,7 +2802,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-09-22 13:59:32"
+            "time": "2015-11-05 12:49:06"
         },
         {
             "name": "zendframework/zend-code",
@@ -3680,6 +3656,131 @@
                 "xunit"
             ],
             "time": "2015-08-19 09:14:08"
+        },
+        {
+            "name": "ql/exception-toolkit",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "http://git/web-core/exception-toolkit.git",
+                "reference": "0049112c0abf39c7505a20af026a17fadd8b0aad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-exception-toolkit-1.0.0-05c199.zip",
+                "reference": "0049112c0abf39c7505a20af026a17fadd8b0aad",
+                "shasum": "4005425c3e0aa1c074147d7ee1cc3fe27c85e778"
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\ExceptionToolkit\\": [
+                        "src",
+                        "testing/src"
+                    ]
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Colf",
+                    "email": "matthewcolf@quickenloans.com"
+                }
+            ],
+            "description": "Exception Handling Toolkit",
+            "time": "2015-07-27 17:51:42"
+        },
+        {
+            "name": "ql/http-problem",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "http://git/web-core/http-problem.git",
+                "reference": "5c5444f87cece1e3b9f81e655cee02e3041183db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-http-problem-1.0.0-53e9e1.zip",
+                "reference": "5c5444f87cece1e3b9f81e655cee02e3041183db",
+                "shasum": "3c4bace26a69071247fcc4b730e03980fa68d0c0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\HttpProblem\\": "src"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Colf",
+                    "email": "matthewcolf@quickenloans.com"
+                },
+                {
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com"
+                }
+            ],
+            "description": "HTTP Problem",
+            "time": "2014-08-26 18:50:16"
+        },
+        {
+            "name": "ql/panthor",
+            "version": "2.2.0",
+            "source": {
+                "type": "git",
+                "url": "http://git/web-frameworks/panthor.git",
+                "reference": "d03c60fd4a6c94e130b683d464033a52dfd1168f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-panthor-2.2.0-066e26.zip",
+                "reference": "d03c60fd4a6c94e130b683d464033a52dfd1168f",
+                "shasum": "3a4c750b24cb9bcffbed38a459fd187f23140da6"
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "slim/slim": "~2.4",
+                "symfony/config": "~2.6",
+                "symfony/dependency-injection": "^2.6.3",
+                "symfony/yaml": "~2.6"
+            },
+            "require-dev": {
+                "mockery/mockery": "*",
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "4.*",
+                "psr/log": "*",
+                "ql/http-problem": "~1.0",
+                "ql/mcp-core": "~1.0",
+                "ql/mcp-crypto": "~2.0",
+                "ql/mcp-logger": "~2.0",
+                "symfony/debug": "~2.6",
+                "twig/twig": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\Panthor\\": "src"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Symfony + Slim = Panthor",
+            "time": "2015-07-27 14:37:11"
         },
         {
             "name": "sebastian/comparator",

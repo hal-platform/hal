@@ -33,19 +33,18 @@
         "predis/predis": "~1.0",
         "psr/log": "*",
 
-        "ql/exception-toolkit": "~1.0",
-        "ql/hal-core":   "2.9.*@beta",
-        "ql/http-problem": "~1.0",
+        "ql/hal-core":          "2.9.*@beta",
+        "ql/panthor-plugins":   "~1.0",
 
         "ql/mcp-cache":         "~2.2",
-        "ql/mcp-common":        "~1.0",
         "ql/mcp-core":          "~1.1",
         "ql/mcp-corp-account":  "~1.0",
         "ql/mcp-crypto":        "~2.1.2",
         "ql/mcp-qks":           "~2.0.3",
-        "ql/mcp-logger":        "~2.2.0",
+        "ql/mcp-logger":        "~2.4.0",
 
-        "ql/panthor":           "~2.2",
+        "ql/mcp-common":        "~1.0",
+        "ql/mcp-panthor":       "~2.3",
         "ql/uri-template":      "~1.0",
 
         "slim/slim": "~2.6",
@@ -58,7 +57,7 @@
         "symfony/yaml":                 "~2.7",
         "symfony/proxy-manager-bridge": "~2.7",
 
-        "twig/twig": "~1.15"
+        "twig/twig": "~1.20"
     },
     "require-dev": {
         "mockery/mockery": "*",
