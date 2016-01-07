@@ -60,11 +60,11 @@
                                                 {% for deployment in deployment_pools[pool.id] %}
                                                     <li class="mbn">
                                                         {% if server_collisions[deployment.server.id] %}
-                                                            <span class="tooltipped tooltipped-e" aria-label="{{ deployment|formatDeploymentDetails }}">
-                                                                {{ deployment|formatDeploymentServer }}
+                                                            <span class="tooltipped tooltipped-e" aria-label="{{ deployment.formatMeta }}">
+                                                                {{ deployment.formatPretty }}
                                                             </span>
                                                         {% else %}
-                                                            {{ deployment|formatDeploymentServer }}
+                                                            {{ deployment.formatPretty }}
                                                         {% endif %}
                                                     </li>
                                                 {% else %}

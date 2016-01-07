@@ -72,11 +72,11 @@
                                         <li>
                                             <span class="split__title">
                                                 {% if server_collisions[deployment.server.id] %}
-                                                    <span class="tooltipped tooltipped-e" aria-label="{{ deployment|formatDeploymentDetails }}">
-                                                        {{ deployment|formatDeploymentServer }}
+                                                    <span class="tooltipped tooltipped-e" aria-label="{{ deployment.formatMeta }}">
+                                                        {{ deployment.formatPretty }}
                                                     </span>
                                                 {% else %}
-                                                    {{ deployment|formatDeploymentServer }}
+                                                    {{ deployment.formatPretty }}
                                                 {% endif %}
 
                                             </span>
@@ -99,9 +99,9 @@
                                         {% for deployment in deployments %}
                                             <option value="{{ deployment.id }}">
                                                 {% if server_collisions[deployment.server.id] %}
-                                                    {{ deployment|formatDeploymentServer }} ({{ deployment|formatDeploymentDetails }})
+                                                    {{ deployment.formatPretty }} ({{ deployment.formatMeta }})
                                                 {% else %}
-                                                    {{ deployment|formatDeploymentServer }}
+                                                    {{ deployment.formatPretty }}
                                                 {% endif %}
                                             </option>
                                         {% endfor %}

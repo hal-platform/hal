@@ -16,7 +16,7 @@
             </dd>
 
             <dt class="split__title">Server</dt>
-            <dd><a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.server|formatServer }}</a></dd>
+            <dd><a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.server.formatPretty }}</a></dd>
 
             <dt class="split__title">Environment</dt>
             <dd>

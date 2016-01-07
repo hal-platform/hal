@@ -7,8 +7,8 @@
 {% block content %}
     <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
 
-    {% set server = deployment|formatDeploymentServer %}
-    {% set deployment_details = deployment|formatDeploymentDetails %}
+    {% set server = deployment.formatPretty %}
+    {% set deployment_details = deployment.formatMeta %}
     {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
     <h1>Push History - <strong>{{ application.name }}</strong> to <strong>{{ server }}</strong></h1>

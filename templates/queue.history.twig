@@ -45,7 +45,7 @@
                             {% if job is build %}
                                 {{ job.environment.name }}
                             {% elseif job.deployment %}
-                                {{ job.build.environment.name }} → {{ job.deployment|formatDeploymentServer(true) }}
+                                {{ job.build.environment.name }} → {{ job.deployment.formatPretty(true) }}
                             {% else %}
                                 {{ job.build.environment.name }} → Unknown
                             {% endif %}

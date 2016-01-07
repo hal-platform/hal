@@ -31,7 +31,7 @@
                         <td><a href="{{ urlFor('application.status', {application: job.application.id}) }}">{{ job.application.name }}</a></td>
 
                         {% if job.deployment %}
-                            <td>{{ job.build.environment.name }} → {{ job.deployment|formatDeploymentServer(true) }}</td>
+                            <td>{{ job.build.environment.name }} → {{ job.deployment.formatPretty(true) }}</td>
                         {% else %}
                             <td>{{ job.build.environment.name }} → Unknown</td>
                         {% endif %}

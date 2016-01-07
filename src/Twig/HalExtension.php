@@ -121,11 +121,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('sliceString', [$this, 'sliceString']),
             new Twig_SimpleFilter('displayUrl', [$this, 'formatUrlForDisplay']),
 
-            new Twig_SimpleFilter('formatDeploymentServer', [$this, 'formatDeploymentServer']),
-            new Twig_SimpleFilter('formatDeploymentDetails', [$this, 'formatDeploymentDetails']),
             new Twig_SimpleFilter('formatDeploymentDetailsLabel', [$this, 'formatDeploymentDetailsLabel']),
-            new Twig_SimpleFilter('formatServer', [$this, 'formatServer']),
-            new Twig_SimpleFilter('formatServerType', [$this, 'formatServerType']),
         ];
     }
 
@@ -283,39 +279,6 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     * Format a deployment server for display
-     *
-     * @param Deployment|null $deployment
-     * @param bool $withDetails
-     *
-     * @return string
-     */
-    public function formatDeploymentServer(Deployment $deployment = null, $withDetails = false)
-    {
-        if (!$deployment) {
-            return 'Unknown';
-        }
-
-        return $deployment->formatPretty($withDetails);
-    }
-
-    /**
-     * Format a deployment details for display
-     *
-     * @param Deployment|null $deployment
-     *
-     * @return string
-     */
-    public function formatDeploymentDetails(Deployment $deployment = null)
-    {
-        if (!$deployment) {
-            return 'Unknown';
-        }
-
-        return $deployment->formatMeta();
-    }
-
-    /**
      * Format a deployment details label
      *
      * @param Deployment|null $deployment
@@ -344,73 +307,5 @@ class HalExtension extends Twig_Extension
         }
 
         return 'Path';
-    }
-
-    /**
-     * Format a server for display
-     *
-     * @param Server|null $server
-     *
-     * @return string
-     */
-    public function formatServer(Server $server = null)
-    {
-        if (!$server) {
-            return 'Unknown';
-        }
-
-        return $server->formatPretty();
-    }
-
-    /**
-     * Format a server type for display
-     *
-     * @param Server|null $server
-     *
-     * @return string
-     */
-    public function formatServerType(Server $server = null)
-    {
-        if (!$server) {
-            return 'Unknown';
-        }
-
-        $type = $server->formatHumanType();
-
-        $serverType = 'Internal (Rsync)';
-        if ($type === 'eb') {
-            $serverType = 'Elastic Beanstalk';
-
-        } elseif ($type === 'ec2') {
-            $serverType = 'EC2 Autoscaling Pool';
-
-        } elseif ($type === 's3') {
-            $serverType = 'S3';
-
-        } elseif ($type === 'cd') {
-            $serverType = 'CodeDeploy';
-        }
-
-        return $serverType;
-    }
-
-    /**
-     * @return array
-     */
-    private function defaultNavigation()
-    {
-        return [
-            'dashboard' => true,
-            'queue' => true,
-            'applications' => true,
-
-            'servers' => false,
-            'environments' => false,
-            'users' => false,
-
-            'admin' => true,
-            'help' => true,
-            'kraken' => false
-        ];
     }
 }

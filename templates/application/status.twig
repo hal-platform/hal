@@ -223,7 +223,7 @@
     <article class="card card--{{ deployment.server.environment.name }}">
         <header class="card__header">
             <h4>
-                <a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment|formatDeploymentServer }}</a>
+                <a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty }}</a>
 
                 {% if deployment.url %}
                     <a class="icon--link" href="{{ deployment.url }}">
@@ -290,7 +290,7 @@
 
                 {# deployment details #}
 
-                {% set deploymentDetails = deployment|formatDeploymentDetails %}
+                {% set deploymentDetails = deployment.formatMeta %}
 
                 <li class="js-data-overload">
                     <span class="split__title">{{ deployment|formatDeploymentDetailsLabel }}:</span>
