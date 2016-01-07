@@ -38,31 +38,33 @@
 }
 
 .fav-box-wrapper {
-    @include breakpoint($bp-medium) {
-       display: flex;
-       flex-wrap: wrap;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
 }
 
 .fav-box {
-    flex: 1;
-    margin: 0;
+    box-shadow: 0 0 0 2px $light-grey;
+    font-size: .75em;
+    flex: 0 1 auto;
+    margin: .5em;
+    width: 80%;
 
-    @include breakpoint($bp-medium) {
-        min-width: 28%;
-        max-width: 28%;
+    @include breakpoint($bp-small) {
+        width: 18em;
     }
 
-    @include leader();
-    @include margin-x(1em);
+    h5 {
+        background: $light-grey;
+        padding: .3em;
 
-     h5 {
         font-weight: bold;
-        line-height: 120%;
-        margin: .25em 0;
+        line-height: 110%;
+        margin: 0;
         overflow: hidden;
-
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
+    p { margin: 0; padding: 0 .3em; }
 }

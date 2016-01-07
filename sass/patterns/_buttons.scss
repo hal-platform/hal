@@ -65,8 +65,8 @@ $btn-color-transparent: rgba(255, 255, 255, .1);
     }
 }
 
-.btn--small { font-size: ms(-2); }
-.btn--large { font-size: ms(3); }
+.btn--small { font-size: .75em; }
+.btn--large { font-size: 1.5em; }
 
 // Button types
 .btn--secondary {

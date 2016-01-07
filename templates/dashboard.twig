@@ -34,16 +34,16 @@
 
     {# FAVORITES #}
     {% if favorites %}
-        <section class="mbl">
-            <h2 class="mbn">Favorites</h2>
+        <section class="mbm">
+            <h2 class="mbs">Favorites</h2>
 
             <div class="fav-box-wrapper">
                 {% for application in favorites %}
                     <div class="fav-box">
                         <h5>{{ application.name }}</h5>
                         <p>
-                            <a class="btn btn--small" href="{{ urlFor('application.status', {'application': application.id}) }}">App Status</a>
-                            <a class="btn btn--small btn--action" href="{{ urlFor('build.start', {'application': application.id}) }}">Start Build</a>
+                            <a href="{{ urlFor('application.status', {'application': application.id}) }}">App Status</a>
+                            | <a href="{{ urlFor('build.start', {'application': application.id}) }}">Start Build</a>
                         </p>
                     </div>
                 {% endfor %}
