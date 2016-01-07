@@ -87,7 +87,6 @@ class HalExtension extends Twig_Extension
     {
         return [
             // util
-            new Twig_SimpleFunction('isNavOn', [$this, 'isNavigationOn']),
             new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
             new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
             new Twig_SimpleFunction('hash', [$this, 'hash']),
@@ -255,26 +254,6 @@ class HalExtension extends Twig_Extension
     public function hash($data)
     {
         return md5($data);
-    }
-
-    /**
-     * @param string $navSelection
-     * @return boolean
-     */
-    public function isNavigationOn($navSelection)
-    {
-        $cookie = $this->cookies->getCookie('navpreferences');
-        if ($cookie === null) {
-            $this->parsedNavigationList = $this->defaultNavigation();
-        } else {
-            $this->parsedNavigationList = !is_array($cookie) ? json_decode($cookie, true) : $cookie;
-        }
-
-        if (!array_key_exists($navSelection, $this->parsedNavigationList)) {
-            return true;
-        }
-
-        return ($this->parsedNavigationList[$navSelection] === true);
     }
 
     /**

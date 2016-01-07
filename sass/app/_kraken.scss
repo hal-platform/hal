@@ -8,7 +8,7 @@
     border: 2px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 15px 5px rgba(0, 0, 0, 0.3);
     height: 6em;
-    margin: 0 auto;
+    margin: 0;
     position: relative;
     width: 6em;
 }
@@ -39,13 +39,13 @@ $kraken-red-dark: rgb(145, 20, 22);
     background-color: $text-color;
     border: 2px solid $kraken-red;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.4) inset;
-    font-size: 3em;
+    font-size: 2em;
     line-height: normal;
-    margin: 0 auto;
+    margin: 0;
+    margin-left: 1em;
 
-    @include trailer(.5);
     @include breakpoint($bp-medium) {
-        margin-bottom: 0;
+        font-size: 3em;
     }
 }
 

@@ -408,7 +408,6 @@ services:
             - '@utility.name.formatter'
             - '@currentUser'
             - '%cookie.preferences.ttl%'
-            - '%navigation.list%'
             - '@slim.request'
 
     user.disable.handler:

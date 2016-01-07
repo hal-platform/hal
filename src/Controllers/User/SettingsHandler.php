@@ -60,11 +60,6 @@ HELLO;
     private $preferencesExpiry;
 
     /**
-     * @type array
-     */
-    private $defaultPreferences;
-
-    /**
      * @type Request
      */
     private $request;
@@ -84,7 +79,6 @@ HELLO;
         NameFormatter $name,
         User $currentUser,
         $preferencesExpiry,
-        $preferences,
         Request $request
     ) {
         $this->cookies = $cookies;
@@ -94,8 +88,6 @@ HELLO;
 
         $this->preferencesExpiry = $preferencesExpiry;
         $this->request = $request;
-
-        $this->defaultPreferences = array_fill_keys(array_keys($preferences), false);
     }
 
     /**
@@ -105,7 +97,6 @@ HELLO;
     {
         $name = $this->name->getUsersActualName($this->currentUser);
 
-        $this->saveNavPreferences($this->request->post('navpreferences'));
         $isChanged = $this->saveBusinessMode($this->request->post('seriousbusiness'));
 
         $details = '';
@@ -117,25 +108,6 @@ HELLO;
         return $this->flasher
             ->withFlash(self::SUCCESS, 'success', $details)
             ->load('settings');
-    }
-
-    /**
-     * @param array|null $preferences
-     * @return null
-     */
-    private function saveNavPreferences($preferences)
-    {
-        if ($preferences === null) {
-            $preferences = [];
-        }
-
-        $pref = $this->defaultPreferences;
-
-        foreach ($preferences as $preference) {
-            $pref[$preference] = true;
-        }
-
-        $this->cookies->setCookie('navpreferences', json_encode($pref), $this->preferencesExpiry);
     }
 
     /**

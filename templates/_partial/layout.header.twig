@@ -5,14 +5,6 @@
     {% block banner %}
         <div class="hal">
             <div class="wrapper">
-
-                <h1 class="hal-label">
-                    <span class="hal-label__name">HAL</span>
-                    <span class="hal-label__version">9000 {% if tick.isUpdateTickOn %}
-                        <a class="hal-stamp" href="{{ urlFor('latest.release') }}" title="HAL 9000 was recently updated!">{{ macros.icon('star') }}</a>
-                    {% endif %}</span>
-                </h1>
-
                 <a href="/">
                     <div class="hal-eye circular">
                         <div class="ring circular"></div>
@@ -25,6 +17,13 @@
                         </div>
                     </div>
                 </a>
+
+                <h1 class="hal-label">
+                    <span class="hal-label__name">HAL</span>
+                    <span class="hal-label__version">9000 {% if tick.isUpdateTickOn %}
+                        <a class="hal-stamp" href="{{ urlFor('latest.release') }}" title="HAL 9000 was recently updated!">{{ macros.icon('star') }}</a>
+                    {% endif %}</span>
+                </h1>
             </div>
         </div>
     {% endblock %}
@@ -32,47 +31,30 @@
     {% block navigation %}
         {% if showNavigation %}
             <nav role="navigation">
-                <ul class="nav--main mbn">
-                    {% if currentUser %}
-                        {{ nav_macros.optionalNavlink('Dashboard', 'dashboard', 'dashboard') }}
-                        {{ nav_macros.optionalNavlink('Queue', 'queue', 'in') }}
-
-                        {{ nav_macros.optionalNavlink('Applications', 'applications', 'list') }}
-
-                        {{ nav_macros.optionalNavlink('Servers', 'servers', 'server') }}
-                        {{ nav_macros.optionalNavlink('Environments', 'environments', 'leaf') }}
-                        {{ nav_macros.optionalNavlink('Users', 'users', 'users') }}
-
+                {% if currentUser %}
+                    <ul class="nav--main">
                         {% if isUserAdminOrSuper(currentUser) %}
-                            {{ nav_macros.optionalNavlink('Admin', 'admin', 'watch') }}
+                            <li><a href="{{ urlFor('admin') }}">{{ macros.icon('watch') }} Admin</a></li>
+                        {% else %}
+                            <li><a href="{{ urlFor('dashboard') }}">{{ macros.icon('dashboard') }} Dashboard</a></li>
                         {% endif %}
-                        {{ nav_macros.optionalNavlink('Help', 'help', 'question') }}
-                        {{ nav_macros.optionalNavlink('Kraken', 'kraken', 'squid') }}
 
-                        <li>{{ nav_macros.navlink('Settings', 'settings', 'settings') }}</li>
-                        <li>{{ nav_macros.navlink('Logout', 'logout', 'sign-out') }}</li>
+                        <li><a href="{{ urlFor('queue') }}">{{ macros.icon('in') }} Queue</a></li>
+                        <li><a href="{{ urlFor('applications') }}">{{ macros.icon('list') }} Applications</a></li>
+                        <li><a href="{{ urlFor('settings') }}">{{ macros.icon('settings') }} Settings</a></li>
 
-                    {% else %}
-                        <li class="signed-out">{{ nav_macros.navlink('Help', 'help', 'question') }}</li>
-                        <li class="signed-out">{{ nav_macros.navlink('Login', 'login', 'sign-in') }}</li>
-                    {% endif %}
-                </ul>
+                        <li><a href="{{ urlFor('kraken') }}">{{ macros.icon('squid') }} Kraken</a></li>
+                        <li><a href="{{ urlFor('help') }}">{{ macros.icon('question') }} Help</a></li>
+                        <li><a href="{{ urlFor('logout') }}">{{ macros.icon('sign-out') }} Sign out</a></li>
+                    </ul>
+
+                {% else %}
+                    <ul class="nav--main-signed-out">
+                        <li class="signed-out"><a href="{{ urlFor('help') }}">{{ macros.icon('question') }} Help</a></li>
+                        <li class="signed-out"><a href="{{ urlFor('login') }}">{{ macros.icon('sign-in') }} Sign in</a></li>
+                    </ul>
+                {% endif %}
             </nav>
         {% endif %}
     {% endblock %}
 </header>
-
-{% macro navlink(title, key, icon) %}
-    {% import "_partial/macros.twig" as macros %}
-    <a href="{{ urlFor(key) }}" title="{{ title }}">
-        {{ macros.icon(icon) }}
-        {{ title }}
-    </a>
-{% endmacro %}
-
-{% macro optionalNavlink(title, key, icon) %}
-    {% import _self as nav_macros %}
-    {% if isNavOn(key) %}
-        <li>{{ nav_macros.navlink(title, key, icon) }}</li>
-    {% endif %}
-{% endmacro %}

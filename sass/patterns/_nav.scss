@@ -4,77 +4,83 @@
 }
 
 .nav--main {
-    max-width: 60em;
-    margin: 0 auto;
-    background-color: $text-color;
+    justify-content: space-between;
+}
+
+.nav--main-signed-out {
+    justify-content: flex-start;
+}
+
+.nav--main,
+.nav--main-signed-out {
+    display: flex;
+    flex-wrap: wrap;
+
     height: 100%;
+    list-style: none;
+    margin: 0 auto;
+    max-width: 60em;
 
     li {
-        a .icon {
-            margin-right: msem(-3);
+        width: 100%;
+        border-top: 1px dotted $grey;
+
+        &:first-child { border-top: 0; }
+
+        a {
+            color: $white;
+            background-color: $text-color;
+            display: block;
+            font-size: .8em;
+            padding-left: .5em;
+            text-decoration: none;
+
+            .icon {
+                margin-right: .25em;
+
+                @include breakpoint($bp-small) {
+                    display: block;
+                    margin: 0 auto .25em;
+                    width: 20px;
+                    height: 20px;
+                }
+
+                @include breakpoint($bp-medium) {
+                    width: 25px;
+                    height: 25px;
+                }
+            }
+
+            &:hover {
+                text-decoration: none;
+                background-color: $highlight-color;
+                color: $text-color;
+            }
+
+            @include breakpoint($bp-small) {
+                font-size: .6em;
+                padding-top: .5em;
+                text-align: center;
+            }
+
+            @include breakpoint($bp-medium) {
+                font-size: .8em;
+            }
         }
 
-        &:first-child a {
-            @include padding-leader(.25);
-            border-top: 1px solid $white;
+        @include breakpoint($bp-small) {
+            border-top: 0;
+            flex-grow: 1;
+            width: auto;
+            min-width: 3em;
+            max-width: 6em;
         }
     }
 }
 
-.nav--main li a,
-.nav--preferences li label {
-    border-bottom: 1px solid $text-color;
-    @include padding-leader(.25);
-    @include padding-trailer(.25);
-    padding-left: msem(0);
-    color: $white;
-    background-color: $text-color;
-    display: block;
-
-    &:hover {
-        text-decoration: none;
-        background-color: $highlight-color;
-        color: $text-color;
-        border-bottom: 1px solid $highlight-color;
-        padding-right: msem(5);
-    }
-}
-
-.nav--preferences {
-    background-color: transparent;
-    @include leader();
-    @include trailer();
-
-    li label {
-        color: black;
-        background-color: transparent;
-        border: none;
-
-        &:hover {
-            border-bottom: none;
-        }
-    }
-
-    .pref-off {
-        color: $error-color;
-        display: inline;
-    }
-
-    .pref-on {
-        color: $success-color;
-        display: none;
-    }
-
-    input {
-        display: none;
-    }
-
-    input:checked ~ .pref-on {
-        display: inline;
-    }
-
-    input:checked ~ .pref-off {
-        display: none;
+@include breakpoint($bp-medium) {
+    [role="navigation"] {
+        padding-bottom: 6em;
     }
 }
 
@@ -92,81 +98,6 @@
 
         h1 { flex: 1 0 auto; }
         .nav--page__back { flex: 0 1 auto; }
-    }
-}
-
-@include breakpoint($bp-small) {
-    .nav--main {
-        display: flex;
-        flex-wrap: wrap;
-
-        > li {
-
-            &,
-            > a {
-                flex-grow: 0;
-                display: block;
-            }
-        }
-    }
-
-    .nav--main li a,
-    .nav--preferences li label {
-        text-align: center;
-        @include padding-trailer(.25);
-        padding-left: msem(-1);
-        padding-right: msem(-1);
-        @include adjust-font-size-to(ms(-1));
-
-        &:hover {
-            @include padding-trailer(.25);
-            padding-right: msem(-1);
-        }
-    }
-
-    .nav--main li a .icon {
-        display: block;
-    }
-
-    .nav--main li a .icon,
-    .nav--preferences .icon {
-        margin: 0 auto msem(-3);
-        width: 32px;
-        height: 32px;
-    }
-
-    .nav--main li:first-child a {
-        border-top: 0;
-    }
-
-    .nav--preferences .pref-off {
-        display: block;
-    }
-    .nav--preferences input:checked ~ .pref-on {
-        display: block;
-    }
-}
-
-@include breakpoint($bp-medium) {
-    [role="navigation"] {
-        @include padding-trailer(5);
-        @include padding-leader(.5);
-    }
-
-    .nav--main {
-        flex-wrap: nowrap;
-
-        > li {
-
-            &,
-            > a {
-                flex-grow: 1;
-            }
-        }
-
-        > li.signed-out {
-            flex-grow: 0;
-        }
     }
 }
 
