@@ -44,10 +44,7 @@
                 {% set group = groups[group_id] %}
                 <tr>
                     <th colspan="4" class="table-mid-header">
-                        {{ group.name }}
-                        <a class="icon--link" href="{{ urlFor('group', {id: group.id}) }}">
-                            {{ macros.icon('outgoing') }}
-                        </a>
+                        <a href="{{ urlFor('group', {id: group.id}) }}">{{ group.name }}</a>
                     </th>
                 </tr>
 

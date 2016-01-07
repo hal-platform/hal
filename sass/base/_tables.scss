@@ -78,30 +78,23 @@ tbody tr {
     }
 }
 
-.table-breathe::before
-{
+.table-breathe::before {
     content: '';
     display: block;
     height: 1em;
 }
 
 th.table-mid-header {
-    font-size: ms(2);
-    line-height: ms(3);
-
     background: $bright-blue;
-    border: 3px solid $slightly-less-bright-blue;
+    color: $white;
 
-    color: white;
+    font-size: 1.25em;
     font-weight: bold;
-    margin : 5px;
-    padding: 0 5px;
-    position: relative;
 
-    .icon--link {
-        position: absolute;
-        right: 5px;
-        top: 0px;
+    padding: .5em;
+
+    a {
+        color: $white;
     }
 
     .tablesaw-cell-label {
