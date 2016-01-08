@@ -37,8 +37,12 @@ class HyperlinkNormalizer implements NormalizerInterface
 
         $href = $input->href();
 
-        if (is_string($href) && stripos($href, 'http') === 0) {
-            return $normalized;
+        if (is_string($href)) {
+            if (stripos($href, 'http') === 0) {
+                return $normalized;
+            } else {
+                $href = [$href];
+            }
         }
 
         $normalized['href'] = call_user_func_array([$this->url, 'absoluteUrlFor'], $href);

@@ -9,6 +9,7 @@ namespace QL\Hal\Controllers\Api\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Api\Hyperlink;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
@@ -152,19 +153,19 @@ class PushesController implements ControllerInterface
         $last = ceil($total / self::MAX_PER_PAGE);
 
         if ($current > 1) {
-            $links['prev'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => $prev]]];
+            $links['prev'] = new Hyperlink(['api.pushes.history', ['id' => $application->id(), 'page' => $prev]]);
         }
 
         if ($next <= $last) {
-            $links['next'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => $next]]];
+            $links['next'] = new Hyperlink(['api.pushes.history', ['id' => $application->id(), 'page' => $next]]);
         }
 
         if ($last > 1 && $current > 1) {
-            $links['first'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => '1']]];
+            $links['first'] = new Hyperlink(['api.pushes.history', ['id' => $application->id(), 'page' => '1']]);
         }
 
         if ($last > 1) {
-            $links['last'] = ['href' => ['api.pushes.history', ['id' => $application->id(), 'page' => $last]]];
+            $links['last'] = new Hyperlink(['api.pushes.history', ['id' => $application->id(), 'page' => $last]]);
         }
 
         return $links;

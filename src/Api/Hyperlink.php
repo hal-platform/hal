@@ -52,7 +52,7 @@ class Hyperlink
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function href()
     {

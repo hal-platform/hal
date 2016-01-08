@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Api\Deployment;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Type\EnumType\PushStatusEnum;
+use QL\Hal\Api\Hyperlink;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
@@ -153,19 +154,19 @@ class PushHistoryController implements ControllerInterface
         $last = ceil($total / self::MAX_PER_PAGE);
 
         if ($current > 1) {
-            $links['prev'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $prev]]];
+            $links['prev'] = new Hyperlink(['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $prev]]);
         }
 
         if ($next <= $last) {
-            $links['next'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $next]]];
+            $links['next'] = new Hyperlink(['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $next]]);
         }
 
         if ($last > 1 && $current > 1) {
-            $links['first'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => '1']]];
+            $links['first'] = new Hyperlink(['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => '1']]);
         }
 
         if ($last > 1) {
-            $links['last'] = ['href' => ['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $last]]];
+            $links['last'] = new Hyperlink(['api.deployment.history.paged', ['id' => $deployment->id(), 'page' => $last]]);
         }
 
         return $links;

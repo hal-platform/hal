@@ -126,19 +126,19 @@ class UsersController implements ControllerInterface
         $last = ceil($total / self::MAX_PER_PAGE);
 
         if ($current > 1) {
-            $links['prev'] = ['href' => ['api.users.paged', ['page' => $prev]]];
+            $links['prev'] = new Hyperlink(['api.users.paged', ['page' => $prev]]);
         }
 
         if ($next <= $last) {
-            $links['next'] = ['href' => ['api.users.paged', ['page' => $next]]];
+            $links['next'] = new Hyperlink(['api.users.paged', ['page' => $next]]);
         }
 
         if ($last > 1 && $current > 1) {
-            $links['first'] = ['href' => ['api.users.paged', ['page' => '1']]];
+            $links['first'] = new Hyperlink(['api.users.paged', ['page' => '1']]);
         }
 
         if ($last > 1) {
-            $links['last'] = ['href' => ['api.users.paged', ['page' => $last]]];
+            $links['last'] = new Hyperlink(['api.users.paged', ['page' => $last]]);
         }
 
         return $links;

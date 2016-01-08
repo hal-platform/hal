@@ -7,14 +7,12 @@
 
 namespace QL\Hal\Controllers\Api;
 
+use QL\Hal\Api\Hyperlink;
 use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Panthor\ControllerInterface;
 
 class IndexController implements ControllerInterface
 {
-    use HypermediaLinkTrait;
-
     /**
      * @type ResponseFormatter
      */
@@ -35,12 +33,14 @@ class IndexController implements ControllerInterface
     {
         $this->formatter->respond([
             '_links' => [
-                'environments' => ['href' => 'api.environments'],
-                'servers' => ['href' => 'api.servers'],
-                'groups' => ['href' => 'api.groups'],
-                'users' => ['href' => 'api.users'],
-                'applications' => ['href' => 'api.applications'],
-                'queue' => ['href' => 'api.queue']
+                'environments' => new Hyperlink('api.environments'),
+                'servers' => new Hyperlink('api.servers'),
+
+                'applications' => new Hyperlink('api.applications'),
+                'groups' => new Hyperlink('api.groups'),
+
+                'users' => new Hyperlink('api.users'),
+                'queue' => new Hyperlink('api.queue'),
             ]
         ]);
     }

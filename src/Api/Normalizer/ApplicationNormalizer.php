@@ -124,7 +124,9 @@ class ApplicationNormalizer implements NormalizerInterface
                     'text/html'
                 ),
                 'github_page' => new Hyperlink(
-                    $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo())
+                    $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo()),
+                    '',
+                    'text/html'
                 )
             ]
         );

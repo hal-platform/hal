@@ -10,10 +10,10 @@ namespace QL\Hal\Controllers\Api;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use QL\Hal\Api\Hyperlink;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\Normalizer\PushNormalizer;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
@@ -26,7 +26,6 @@ use QL\Panthor\Exception\HTTPProblemException;
 class QueueRefreshController implements ControllerInterface
 {
     use HypermediaResourceTrait;
-    use HypermediaLinkTrait;
 
     /**
      * @type ResponseFormatter
@@ -100,7 +99,7 @@ class QueueRefreshController implements ControllerInterface
                 'jobs' => $this->formatQueue($jobs)
             ],
             [
-                'self' => $this->buildLink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])
+                'self' => new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])
             ]
         ), $status);
     }

@@ -9,14 +9,12 @@ namespace QL\Hal\Api\Normalizer;
 
 use QL\Hal\Api\Hyperlink;
 use QL\Hal\Api\NormalizerInterface;
-use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionService;
 
 class UserNormalizer implements NormalizerInterface
 {
-    use HypermediaLinkTrait;
     use HypermediaResourceTrait;
 
     /**
