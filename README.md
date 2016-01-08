@@ -2,6 +2,7 @@
 
 - [HAL 9000 Development Setup](#hal-9000-development-setup)
 - [Server Requirements](#server-requirements)
+- [Proprietary Dependencies](#proprietary-dependencies)
 - [Encryption](#encryption)
 
 ## HAL 9000 Development Setup
@@ -70,6 +71,21 @@ HAL 9000 requires the following server environment:
 - **NGINX/FPM or Apache**
 - **MySQL Database**
 - **Redis server for caching**
+
+## Proprietary Dependencies
+
+#### Frontend
+
+- `mcp-logger` (Core Logger)
+- `mcp-corp-caccount` (Login auth, profile data)
+- `mcp-crypto` (Cookie encryption, Kraken encryption)
+- `mcp-qks` (Kraken encryption)
+- `mcp-cache`(Caching)
+- `ql/panthor-plugins` (Panthor/MCP Integration)
+
+#### Agent
+
+- `mcp-logger` (Core logger)
 
 ## Encryption
 
