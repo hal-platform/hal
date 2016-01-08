@@ -150,6 +150,9 @@ services:
         class: 'QL\Hal\Application\ExceptionLogger'
         arguments: ['@logger']
 
+    panthor.plugin.logging.service:
+        parent: 'panthor.plugin.logging.core_service'
+
     # Twig error environment - limit the extensions used here, so we can ensure the error will render
     error.failsafe.environment:
         parent: 'panthor.twig.environment'
