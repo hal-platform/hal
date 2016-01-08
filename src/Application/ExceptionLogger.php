@@ -9,9 +9,12 @@ namespace QL\Hal\Application;
 
 use Exception;
 use Psr\Log\LoggerInterface;
+use QL\Panthor\ErrorHandling\StacktraceFormatterTrait;
 
 class ExceptionLogger
 {
+    use StacktraceFormatterTrait;
+
     /**
      * @type LoggerInterface
      */
@@ -23,6 +26,8 @@ class ExceptionLogger
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
+
+        $this->setStacktraceLogging(true);
     }
 
     /**
@@ -34,45 +39,33 @@ class ExceptionLogger
      */
     public function logException($title, Exception $ex, $level = 'warning')
     {
-        $extext = <<<MSG
-%s
-
-Class: %s
-File: %s
-
-MSG;
-
-        $file = sprintf('%s : %s', $ex->getFile(), $ex->getLine());
-        $msg = sprintf($extext, $ex->getMessage(), get_class($ex), $file);
+        $exceptions = $this->unpackExceptions($ex);
 
         $context = [
-            'exceptionMessage' => $ex->getMessage(),
             'exceptionClass' => get_class($ex),
-            'exceptionFile' => $file
+            'exceptionData' => $this->formatStacktraceForExceptions($exceptions);
         ];
-
-        if ($prev = $ex->getPrevious()) {
-
-            $file = sprintf('%s : %s', $prev->getFile(), $prev->getLine());
-            $msg .= "\n\nPrevious Exception:\n\n" . sprintf($extext, $prev->getMessage(), get_class($prev), $file);
-
-            $context += [
-                'previousExceptionMessage' => $prev->getMessage(),
-                'previousExceptionClass' => get_class($prev),
-                'previousExceptionFile' => $file
-            ];
-
-            if ($prev = $prev->getPrevious()) {
-                $file = sprintf('%s : %s', $prev->getFile(), $prev->getLine());
-                $msg .= "\n\nPrevious Exception:\n\n" . sprintf($extext, $prev->getMessage(), get_class($prev), $file);
-            }
-        }
-
-        $context['exceptionData'] = $msg;
 
         $logging = [$this->logger, $level];
         if (is_callable($logging)) {
             call_user_func($logging, $title, $context);
         }
+    }
+
+    /**
+     * @param Exception $exception
+     *
+     * @return Exception[]
+     */
+    private function unpackExceptions(Exception $exception)
+    {
+        $exceptions = [$exception];
+
+        $e = $exception;
+        while ($e = $e->getPrevious()) {
+            $exceptions[] = $e;
+        }
+
+        return $execeptions;
     }
 }
