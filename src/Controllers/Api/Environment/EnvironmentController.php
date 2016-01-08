@@ -11,8 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Environment;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class EnvironmentController implements ControllerInterface
 {
@@ -45,14 +45,14 @@ class EnvironmentController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $environment = $this->envRepo->find($this->parameters['id']);
 
         if (!$environment instanceof Environment) {
-            throw HttpProblemException::build(404, 'invalid-environment');
+            throw new HTTPProblemException(404, 'Invalid environment ID specified');
         }
 
         $this->formatter->respond($environment);

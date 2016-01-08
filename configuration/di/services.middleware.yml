@@ -19,7 +19,7 @@ services:
             - '@session'
             - '@url'
             - '@slim.request'
-            - '@logger.mcp.factory'
+            - '@panthor.plugin.logging.factory'
 
     middleware.lead:
         class: 'QL\Hal\Middleware\ACL\LeadMiddleware'
@@ -77,7 +77,7 @@ services:
             - '@service_container'
             - '@doctrine.em'
             - '@slim.request'
-            - '@logger.mcp.factory'
+            - '@panthor.plugin.logging.factory'
 
     middleware.api.require_entity:
         class: 'QL\Hal\Middleware\RequireEntityMiddleware'

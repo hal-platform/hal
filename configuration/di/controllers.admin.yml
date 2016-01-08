@@ -32,6 +32,7 @@ services:
             - '@doctrine.em'
             - '@redis'
             - '@json'
+            - '@clock'
             - '@slim.not.found'
             - '%hal.agents%'
             - '@slim.route.parameters'

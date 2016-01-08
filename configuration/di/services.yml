@@ -90,6 +90,7 @@ services:
         arguments:
             - '@redis'
             - '@json'
+            - '@clock'
 
     acl:
         class: 'QL\Hal\ACL'
@@ -258,36 +259,3 @@ services:
     github.orgMemberService:
         class: 'Github\Api\Organization\Members'
         arguments: ['@github.client']
-
-    ####################################################################################################################
-    # Logging
-    ####################################################################################################################
-
-    exception.logger:
-        class: 'QL\Hal\Application\ExceptionLogger'
-        arguments: ['@logger']
-
-    logger:
-        class: 'MCP\Logger\Logger'
-        arguments: ['@logger.mcp.service', '@logger.mcp.factory']
-
-    logger.mcp.service:
-        class: 'MCP\Logger\Service\Guzzle5Service'
-        arguments:
-            - '@logger.mcp.guzzle'
-            - '@logger.mcp.renderer'
-            - '@logger.mcp.url'
-
-    logger.mcp.url:
-        class: 'QL\UriTemplate\UriTemplate'
-        arguments: ['%logger.mcp.host%']
-    logger.mcp.guzzle:
-        class: 'GuzzleHttp\Client'
-    logger.mcp.renderer:
-        class: 'MCP\Logger\Renderer\XmlRenderer'
-
-    logger.mcp.factory:
-        class: 'MCP\Logger\Adapter\Psr\MessageFactory'
-        arguments: ['@clock']
-        calls:
-            - ['setDefaultProperty', ['applicationId', '%application.id%']]

@@ -35,7 +35,7 @@ services:
             - ['addNormalizer', ['QL\Hal\Core\Entity\Push', '@normalizer.push']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Server', '@normalizer.server']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\User', '@normalizer.user']]
-            - ['addNormalizer', ['MCP\DataType\Time\TimePoint', '@normalizer.timepoint']]
+            - ['addNormalizer', ['QL\MCP\Common\Time\TimePoint', '@normalizer.timepoint']]
             - ['addNormalizer', ['QL\Hal\Api\Hyperlink', '@normalizer.hyperlink']]
 
     normalizer.build:

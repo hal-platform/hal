@@ -7,21 +7,19 @@
 
 namespace QL\Hal\Controllers\Api;
 
-use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Criteria;
-use MCP\DataType\Time\Clock;
-use MCP\DataType\Time\TimePoint;
 use QL\Hal\Api\Normalizer\BuildNormalizer;
 use QL\Hal\Api\Normalizer\PushNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\HttpProblem\HttpProblemException;
+use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;
 
 /**
@@ -92,14 +90,14 @@ class QueueController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $since = $this->request->get('since');
         $createdAfter = null;
-        if ($since && !$createdAfter = $this->parseValidSinceTime($since)) {
-            throw HttpProblemException::build(400, 'Malformed Datetime! Dates must be ISO8601 UTC.');
+        if ($since && !$createdAfter = $this->clock->fromString($since)) {
+            throw new HTTPProblemException(400, 'Malformed Datetime! Dates must be ISO8601 UTC.');
         }
 
         $createdAfter = $createdAfter ?: $this->getDefaultSinceTime();
@@ -143,27 +141,6 @@ class QueueController implements ControllerInterface
     {
         $time = $this->clock->read();
         return $time->modify('-20 minutes');
-    }
-
-    /**
-     * @param string $since
-     * @return TimePoint
-     */
-    private function parseValidSinceTime($since)
-    {
-        if (!$date = DateTime::createFromFormat(DateTime::ISO8601, $since, new DateTimeZone('UTC'))) {
-            return null;
-        }
-
-        return new TimePoint(
-            $date->format('Y'),
-            $date->format('m'),
-            $date->format('d'),
-            $date->format('H'),
-            $date->format('i'),
-            $date->format('s'),
-            'UTC'
-        );
     }
 
     /**

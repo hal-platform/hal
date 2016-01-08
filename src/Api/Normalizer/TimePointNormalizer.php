@@ -8,8 +8,8 @@
 namespace QL\Hal\Api\Normalizer;
 
 use DateTime;
-use MCP\DataType\Time\TimePoint;
 use QL\Hal\Api\NormalizerInterface;
+use QL\MCP\Common\Time\TimePoint;
 
 class TimePointNormalizer implements NormalizerInterface
 {

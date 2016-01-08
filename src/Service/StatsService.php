@@ -10,12 +10,12 @@ namespace QL\Hal\Service;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Environment;
-use MCP\Cache\CachingTrait;
-use MCP\DataType\Time\Clock;
-use MCP\DataType\Time\TimePoint;
+use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Time\TimePoint;
 
 class StatsService
 {

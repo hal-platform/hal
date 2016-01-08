@@ -16,8 +16,8 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class PushHistoryController implements ControllerInterface
 {
@@ -72,7 +72,7 @@ class PushHistoryController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
@@ -105,7 +105,7 @@ class PushHistoryController implements ControllerInterface
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return Deployment
      */
@@ -114,14 +114,14 @@ class PushHistoryController implements ControllerInterface
         $deployment = $this->deploymentRepo->find($this->parameters['id']);
 
         if (!$deployment instanceof Deployment) {
-            throw HttpProblemException::build(404, 'invalid-deployment');
+            throw new HTTPProblemException(404, 'Invalid deployment ID specified');
         }
 
         return $deployment;
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return int
      */
@@ -131,7 +131,7 @@ class PushHistoryController implements ControllerInterface
 
         // 404, invalid page
         if ($page < 1) {
-            throw HttpProblemException::build(404, 'invalid-page');
+            throw new HTTPProblemException(404, 'Invalid page specified');
         }
 
         return $page;

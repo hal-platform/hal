@@ -8,7 +8,7 @@
 namespace QL\Hal\Controllers\OAuth;
 
 use Doctrine\ORM\EntityManagerInterface;
-use MCP\DataType\GUID;
+use QL\MCP\Common\GUID;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Github\OAuthHandler;
 use QL\Hal\Session;

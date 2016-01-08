@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\EventLogNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\EventLog;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class EventLogController implements ControllerInterface
 {
@@ -58,14 +58,14 @@ class EventLogController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $log = $this->logRepo->find($this->parameters['id']);
 
         if (!$log instanceof EventLog) {
-            throw HttpProblemException::build(404, 'invalid-log');
+            throw new HTTPProblemException(404, 'Invalid log ID specified');
         }
 
         $log = $this->normalizer->resource($log, ['data']);

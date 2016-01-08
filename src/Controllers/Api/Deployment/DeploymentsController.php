@@ -17,8 +17,8 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Utility\SortingTrait;
 use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;
 
 class DeploymentsController implements ControllerInterface
@@ -120,7 +120,7 @@ class DeploymentsController implements ControllerInterface
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return Application
      */
@@ -129,14 +129,14 @@ class DeploymentsController implements ControllerInterface
         $application = $this->applicationRepo->find($this->parameters['id']);
 
         if (!$application instanceof Application) {
-            throw HttpProblemException::build(404, 'invalid-application');
+            throw new HTTPProblemException(404, 'Invalid application ID specified');
         }
 
         return $application;
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return Environment|null
      */
@@ -153,14 +153,11 @@ class DeploymentsController implements ControllerInterface
             return $environment;
         }
 
-        $env = strtolower($env);
-
         // try by name
-        if ($environment = $this->environmentRepo->findOneBy(['name' => $env])) {
+        if ($environment = $this->environmentRepo->findOneBy(['name' => strtolower($env)])) {
             return $environment;
         }
 
-        throw HttpProblemException::build(400, 'invalid-environment');
+        throw new HTTPProblemException(404, 'Invalid environment ID or name specified');
     }
-
 }

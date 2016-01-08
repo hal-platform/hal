@@ -7,7 +7,7 @@
 
 namespace QL\Kraken\Application;
 
-use MCP\DataType\Time\Clock;
+use QL\MCP\Common\Time\Clock;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Schema;
 use QL\Hal\Core\Entity\User;

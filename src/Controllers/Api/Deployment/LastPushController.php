@@ -14,8 +14,8 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;
 
 class LastPushController implements ControllerInterface
@@ -70,20 +70,20 @@ class LastPushController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $deployment = $this->deploymentRepo->find($this->parameters['id']);
 
         if (!$deployment instanceof Deployment) {
-            throw HttpProblemException::build(404, 'invalid-deployment');
+            throw new HTTPProblemException(404, 'Invalid deployment ID specified');
         }
 
         $status = $this->request->get(self::FILTER_STATUS);
 
         if ($status && !in_array($status, PushStatusEnum::values())) {
-            throw HttpProblemException::build(400, 'invalid-status');
+            throw new HTTPProblemException(400, 'Invalid push status specified');
         }
 
         if ($status === 'Success') {
@@ -93,7 +93,7 @@ class LastPushController implements ControllerInterface
         }
 
         if (!$push) {
-            throw HttpProblemException::build(404, 'no-pushes');
+            throw new HTTPProblemException(404, 'No push found for this deployment found');
         }
 
         $this->formatter->respond($push);

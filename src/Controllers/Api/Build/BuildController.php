@@ -11,8 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Build;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class BuildController implements ControllerInterface
 {
@@ -46,14 +46,14 @@ class BuildController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $build = $this->buildRepo->find($this->parameters['id']);
 
         if (!$build instanceof Build) {
-            throw HttpProblemException::build(404, 'invalid-build');
+            throw new HTTPProblemException(404, 'Invalid build ID specified');
         }
 
         $this->formatter->respond($build);

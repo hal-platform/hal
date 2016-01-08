@@ -16,8 +16,8 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Service\EventLogService;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;
 
 class EventLogsController implements ControllerInterface
@@ -90,14 +90,14 @@ class EventLogsController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $push = $this->pushRepo->find($this->parameters['id']);
 
         if (!$push instanceof Push) {
-            throw HttpProblemException::build(404, 'invalid-push');
+            throw new HTTPProblemException(404, 'Invalid push ID specified');
         }
 
         $logs = $this->logService->getLogs($push);

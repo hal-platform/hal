@@ -15,8 +15,8 @@ use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class PushesController implements ControllerInterface
 {
@@ -71,7 +71,7 @@ class PushesController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
@@ -104,7 +104,7 @@ class PushesController implements ControllerInterface
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return Application
      */
@@ -113,14 +113,14 @@ class PushesController implements ControllerInterface
         $application = $this->applicationRepo->find($this->parameters['id']);
 
         if (!$application instanceof Application) {
-            throw HttpProblemException::build(404, 'invalid-application');
+            throw new HTTPProblemException(404, 'Invalid application ID specified');
         }
 
         return $application;
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return int
      */
@@ -130,7 +130,7 @@ class PushesController implements ControllerInterface
 
         // 404, invalid page
         if ($page < 1) {
-            throw HttpProblemException::build(404, 'invalid-page');
+            throw new HTTPProblemException(404, 'Invalid page ID specified');
         }
 
         return $page;

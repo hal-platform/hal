@@ -10,10 +10,10 @@ namespace QL\Hal\Controllers\Admin;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\Time\TimePoint;
 use Predis\Client as Predis;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Utility\SortingTrait;
+use QL\MCP\Common\Time\Clock;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Json;
@@ -46,6 +46,11 @@ class SystemStatusController implements ControllerInterface
     private $json;
 
     /**
+     * @type Clock
+     */
+    private $clock;
+
+    /**
      * @type callable
      */
     private $notFound;
@@ -61,6 +66,7 @@ class SystemStatusController implements ControllerInterface
      * @param EntityManagerInterface $em
      * @param Predis $predis
      * @param Json $json
+     * @param Clock $clock
      * @param callable $notFound
      *
      * @param array $agents
@@ -71,6 +77,7 @@ class SystemStatusController implements ControllerInterface
         EntityManagerInterface $em,
         Predis $predis,
         Json $json,
+        Clock $clock,
         callable $notFound,
         array $agents,
         array $parameters
@@ -79,6 +86,7 @@ class SystemStatusController implements ControllerInterface
         $this->serverRepo = $em->getRepository(Server::CLASS);
 
         $this->json = $json;
+        $this->clock = $clock;
         $this->predis = $predis;
         $this->notFound = $notFound;
 
@@ -141,7 +149,7 @@ class SystemStatusController implements ControllerInterface
             return null;
         }
 
-        $time = isset($docker['generated']) ? $this->buildTime($docker['generated']) : null;
+        $time = isset($docker['generated']) ? $this->clock->fromString($docker['generated']) : null;
 
         return [
             'agent' => isset($docker['agent']) ? $docker['agent'] : '',
@@ -164,7 +172,7 @@ class SystemStatusController implements ControllerInterface
 
         $serversByEnvironment = $this->aggregateServers();
 
-        $time = isset($connections['generated']) ? $this->buildTime($connections['generated']) : null;
+        $time = isset($connections['generated']) ? $this->clock->fromString($connections['generated']) : null;
         $connections = isset($connections['servers']) ? $connections['servers'] : [];
 
         foreach ($serversByEnvironment as &$servers) {
@@ -214,28 +222,6 @@ class SystemStatusController implements ControllerInterface
                 return $health;
             }
         }
-    }
-
-    /**
-     * @param string $time
-     *
-     * @return TimePoint|null
-     */
-    private function buildTime($value)
-    {
-        if (!$date = DateTime::createFromFormat(DateTime::ISO8601, $value)) {
-            return null;
-        }
-
-        return new TimePoint(
-            $date->format('Y'),
-            $date->format('m'),
-            $date->format('d'),
-            $date->format('H'),
-            $date->format('i'),
-            $date->format('s'),
-            'UTC'
-        );
     }
 
     /**

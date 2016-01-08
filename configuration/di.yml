@@ -91,17 +91,8 @@ services:
         # arguments:
             # - %slim.configuration%
         calls:
+            - ['add', ['@panthor.middleware.error_handling']]
             - ['add', ['@slim.session']]
-
-    slim.hook.logger:
-        class: 'QL\Hal\Slim\McpLoggerHook'
-        arguments: ['@logger.mcp.factory']
-    slim.hook.errors:
-        class: 'QL\Panthor\ErrorHandling\ErrorHandler'
-        arguments: ['@logger']
-        configurator: ['@exception.configurator', 'attach']
-        calls:
-            - ['setStacktraceLogging', [true]]
 
     app.slim.hook.routes:
         parent: 'slim.hook.routes'
@@ -127,22 +118,37 @@ services:
     ####################################################################################################################
 
     cookie.encryption:
-        class: 'QL\Panthor\Http\CookieEncryption\TRPCookieEncryption'
-        arguments: ['@panthor.encryption.trp']
+        parent: 'panthor.plugin.cookie_encryption.trp_cookie'
 
     ####################################################################################################################
     # ERROR & EXCEPTION HANDLING
     ####################################################################################################################
 
-    exception.configurator:
-        class: 'QL\Hal\Slim\ExceptionConfigurator'
-        arguments: ['@error.twig']
+    error.handler:
+        class: 'QL\Panthor\ErrorHandling\ErrorHandler'
+        arguments: ['@logger']
+        calls:
+            - ['setStacktraceLogging', ['%error_handling.log_stacktrace%']]
+            - ['setThrownErrors', ['%error_handling.thrown_errors%']]
+            - ['setLoggedErrors', ['%error_handling.logged_errors%']]
+            - ['addHandler', ['@error.handler.api_not_found']]
+            - ['addHandler', ['@panthor.error_handling.handler.not_found']]
+            - ['addHandler', ['@panthor.error_handling.handler.http_problem']]
+            - ['addHandler', ['@panthor.error_handling.handler.request']]
+            - ['addHandler', ['@panthor.error_handling.handler.base']]
 
-    # Twig template for slim errors (404, 500)
-    error.twig:
+    panthor.error_handling.html_renderer.twig:
         class: 'QL\Panthor\Twig\LazyTwig'
         arguments: ['@error.failsafe.environment', '@twig.context']
-        calls: [['setTemplate', ['error.html.twig']]]
+        calls: [['setTemplate', ['%error_handling.html_template%']]]
+
+    error.handler.api_not_found:
+        class: 'QL\Hal\Application\APINotFoundHandler'
+        arguments: ['@panthor.error_handling.problem_renderer']
+
+    exception.logger:
+        class: 'QL\Hal\Application\ExceptionLogger'
+        arguments: ['@logger']
 
     # Twig error environment - limit the extensions used here, so we can ensure the error will render
     error.failsafe.environment:

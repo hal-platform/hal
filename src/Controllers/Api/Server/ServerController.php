@@ -11,8 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Server;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class ServerController implements ControllerInterface
 {
@@ -45,14 +45,14 @@ class ServerController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $server = $this->serverRepo->find($this->parameters['id']);
 
         if (!$server instanceof Server) {
-            throw HttpProblemException::build(404, 'invalid-server');
+            throw new HTTPProblemException(404, 'Invalid server ID specified');
         }
 
         $this->formatter->respond($server);

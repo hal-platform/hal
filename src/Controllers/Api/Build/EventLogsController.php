@@ -15,8 +15,8 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Service\EventLogService;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;
 
 class EventLogsController implements ControllerInterface
@@ -89,14 +89,14 @@ class EventLogsController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $build = $this->buildRepo->find($this->parameters['id']);
 
         if (!$build instanceof Build) {
-            throw HttpProblemException::build(404, 'invalid-build');
+            throw new HTTPProblemException(404, 'Invalid build ID specified');
         }
 
         $logs = $this->logService->getLogs($build);

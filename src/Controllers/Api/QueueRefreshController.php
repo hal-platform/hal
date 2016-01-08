@@ -17,8 +17,8 @@ use QL\Hal\Api\Utility\HypermediaLinkTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 /**
  * Get the current status of one or more jobs.
@@ -78,13 +78,13 @@ class QueueRefreshController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         if (!isset($this->parameters['jobs'])) {
             // Need some kind of error messaging
-            throw HttpProblemException::build(400, 'missing-jobs');
+            throw new HTTPProblemException(400, 'Missing jobs - No jobs to update');
         }
 
         $identifiers = explode(' ', $this->parameters['jobs']);

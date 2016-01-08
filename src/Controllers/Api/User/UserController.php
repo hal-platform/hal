@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class UserController implements ControllerInterface
 {
@@ -46,14 +46,14 @@ class UserController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $user = $this->userRepo->find($this->parameters['id']);
 
         if (!$user instanceof User) {
-            throw HttpProblemException::build(404, 'invalid-user');
+            throw new HTTPProblemException(404, 'Invalid user ID specified');
         }
 
         $this->formatter->respond($user);

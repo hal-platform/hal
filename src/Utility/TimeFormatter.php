@@ -8,9 +8,8 @@
 namespace QL\Hal\Utility;
 
 use DateTime;
-use DateTimeZone;
-use MCP\DataType\Time\Clock;
-use MCP\DataType\Time\TimePoint;
+use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Time\TimePoint;
 
 class TimeFormatter
 {

@@ -3,7 +3,7 @@
 
 namespace QL\Hal\Bin;
 
-use MCP\DataType\GUID;
+use QL\MCP\Common\GUID;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 

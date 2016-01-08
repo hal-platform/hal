@@ -1,6 +1,7 @@
 imports:
     - resource: ../vendor/ql/hal-core/configuration/hal-core.yml
-    - resource: ../vendor/ql/panthor/configuration/panthor.yml
+    - resource: ../vendor/ql/mcp-panthor/configuration/panthor.yml
+    - resource: ../vendor/ql/panthor-plugins/configuration/panthor-plugins.yml
     - resource: di.yml
     - resource: config.global.yml
     - resource: config.env.yml
@@ -17,7 +18,6 @@ parameters:
 
     slim.hooks:
         slim.before:
-            - 'slim.hook.logger'
-            - 'slim.hook.errors'
+            - 'panthor.plugin.logging.hook'
         slim.before.router:
             - 'app.slim.hook.routes'

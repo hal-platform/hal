@@ -21,7 +21,7 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
-use QL\HttpProblem\HttpProblemException;
+use QL\Panthor\Exception\HTTPProblemException;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\MiddlewareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -109,7 +109,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
@@ -122,7 +122,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
             if (!$this->lookup($entity, $id)) {
 
                 if ($this->isAPI) {
-                    throw HttpProblemException::build(404, sprintf('%s not found', ucfirst($entity)));
+                    throw new HTTPProblemException(404, sprintf('%s not found', ucfirst($entity)));
                 } else {
                     return call_user_func($this->notFound);
                 }

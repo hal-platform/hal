@@ -17,6 +17,7 @@ parameters:
 
     debug: false
     twig.debug: false
+    error_handling.log_stacktrace: true
 
     # slim
     slim.configuration:

@@ -13,8 +13,8 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Api\Normalizer\ServerNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class ServersController implements ControllerInterface
 {
@@ -62,7 +62,7 @@ class ServersController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
@@ -94,7 +94,7 @@ class ServersController implements ControllerInterface
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return int
      */
@@ -104,7 +104,7 @@ class ServersController implements ControllerInterface
 
         // 404, invalid page
         if ($page < 1) {
-            throw HttpProblemException::build(404, 'invalid-page');
+            throw new HTTPProblemException(404, 'Invalid page ID specified');
         }
 
         return $page;

@@ -10,12 +10,12 @@ namespace QL\Hal\Controllers;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\Time\Clock;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Service\PermissionService;
+use QL\MCP\Common\Time\Clock;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

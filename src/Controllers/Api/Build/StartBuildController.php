@@ -15,8 +15,8 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Validator\BuildStartValidator;
 use QL\Hal\Validator\PushStartValidator;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 /**
  * Permission checking is handled by BuildStartValidator
@@ -103,7 +103,7 @@ class StartBuildController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
@@ -113,14 +113,14 @@ class StartBuildController implements ControllerInterface
         $build = $this->validator->isValid($this->application, $environment, $reference, '');
 
         if (!$build) {
-            throw HttpProblemException::build(400, 'invalid-submission', self::ERR_CHECK_FORM, [
+            throw new HTTPProblemException(400, self::ERR_CHECK_FORM, [
                 'errors' => $this->validator->errors()
             ]);
         }
 
         $key = sprintf(self::RATE_LIMIT_KEY, $this->application->id(), $build->environment()->id());
         if ($blocked = $this->predis->get($key)) {
-            throw HttpProblemException::build(429, 'rate-limit', sprintf(self::ERR_RATE_LIMIT, self::RATE_LIMIT_TIME));
+            throw new HTTPProblemException(429, sprintf(self::ERR_RATE_LIMIT, self::RATE_LIMIT_TIME));
         }
 
         $children = null;
@@ -128,7 +128,7 @@ class StartBuildController implements ControllerInterface
         if ($deployments && is_array($deployments)) {
             $children = $this->pushValidator->isProcessValid($build->application(), $build->environment(), $build, $deployments);
             if (!$children) {
-                throw HttpProblemException::build(400, 'invalid-deployment', self::ERR_INVALID_DEPLOY);
+                throw new HTTPProblemException(400, self::ERR_INVALID_DEPLOY);
             }
         }
 

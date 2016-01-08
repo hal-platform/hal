@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use MCP\Logger\MessageFactoryInterface;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\MiddlewareInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -72,7 +72,7 @@ class TokenMiddleware implements MiddlewareInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
@@ -88,19 +88,19 @@ class TokenMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return string
      */
     private function validateAuthorization()
     {
         if (!$authorization = $this->request->headers['Authorization']) {
-            throw HttpProblemException::build(403, 'invalid_request', self::ERR_AUTH_REQUIRED);
+            throw new HTTPProblemException(403, self::ERR_AUTH_REQUIRED);
         }
 
         // Validate the header
         if (preg_match(static::REGEX_BEARER_AUTH, $authorization, $match) !== 1) {
-            throw HttpProblemException::build(403, 'invalid_client', self::ERR_AUTH_IS_WEIRD);
+            throw new HTTPProblemException(403, self::ERR_AUTH_IS_WEIRD);
         }
 
         $token = array_pop($match);
@@ -110,20 +110,20 @@ class TokenMiddleware implements MiddlewareInterface
     /**
      * @param string $token
      *
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return User
      */
     private function validateToken($token)
     {
         if (!$token = $this->tokenRepo->findOneBy(['value' => $token])) {
-            throw HttpProblemException::build(403, 'invalid_client', self::ERR_INVALID_TOKEN);
+            throw new HTTPProblemException(403, self::ERR_INVALID_TOKEN);
         }
 
         $user = $token->user();
 
         if (!$user->isActive()) {
-            throw HttpProblemException::build(403, 'invalid_client', sprintf(self::ERR_DISABLED, $user->handle()));
+            throw new HTTPProblemException(403, sprintf(self::ERR_DISABLED, $user->handle()));
         }
 
         return $user;

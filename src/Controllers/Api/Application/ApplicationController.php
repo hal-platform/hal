@@ -11,8 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Application;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class ApplicationController implements ControllerInterface
 {
@@ -45,14 +45,14 @@ class ApplicationController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $application = $this->applicationRepo->find($this->parameters['id']);
 
         if (!$application instanceof Application) {
-            throw HttpProblemException::build(404, 'invalid-application');
+            throw new HTTPProblemException(404, 'Invalid application ID specified');
         }
 
         $this->formatter->respond($application);

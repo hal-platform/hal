@@ -14,8 +14,8 @@ use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class BuildsController implements ControllerInterface
 {
@@ -99,7 +99,7 @@ class BuildsController implements ControllerInterface
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return Application
      */
@@ -108,14 +108,14 @@ class BuildsController implements ControllerInterface
         $application = $this->applicationRepo->find($this->parameters['id']);
 
         if (!$application instanceof Application) {
-            throw HttpProblemException::build(404, 'invalid-application');
+            throw new HTTPProblemException(404, 'Invalid application ID specified');
         }
 
         return $application;
     }
 
     /**
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      *
      * @return int
      */
@@ -125,7 +125,7 @@ class BuildsController implements ControllerInterface
 
         // 404, invalid page
         if ($page < 1) {
-            throw HttpProblemException::build(404, 'invalid-page');
+            throw new HTTPProblemException(404, 'Invalid page specified');
         }
 
         return $page;

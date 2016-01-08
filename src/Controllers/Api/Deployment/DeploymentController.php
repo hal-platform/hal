@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Api\Normalizer\DeploymentNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
-use QL\HttpProblem\HttpProblemException;
 use QL\Panthor\ControllerInterface;
+use QL\Panthor\Exception\HTTPProblemException;
 
 class DeploymentController implements ControllerInterface
 {
@@ -58,14 +58,14 @@ class DeploymentController implements ControllerInterface
 
     /**
      * {@inheritdoc}
-     * @throws HttpProblemException
+     * @throws HTTPProblemException
      */
     public function __invoke()
     {
         $deployment = $this->deploymentRepo->find($this->parameters['id']);
 
         if (!$deployment instanceof Deployment) {
-            throw HttpProblemException::build(404, 'invalid-deployment');
+            throw new HTTPProblemException(404, 'Invalid deployment ID specified');
         }
 
         $this->formatter->respond($this->normalizer->resource($deployment, ['server']));

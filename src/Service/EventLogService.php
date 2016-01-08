@@ -7,13 +7,12 @@
 
 namespace QL\Hal\Service;
 
-use DateTime;
-use DateTimeZone;
-use MCP\DataType\Time\TimePoint;
 use Predis\Client as Predis;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\EventLog;
 use QL\Hal\Core\Entity\Push;
+use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\Utility\Json;
 
 /**
@@ -36,13 +35,20 @@ class EventLogService
     private $json;
 
     /**
+     * @type Clock
+     */
+    private $clock;
+
+    /**
      * @param Predis $predis
      * @param Json $json
+     * @param Clock $clock
      */
-    public function __construct(Predis $predis, Json $json)
+    public function __construct(Predis $predis, Json $json, Clock $clock)
     {
         $this->predis = $predis;
         $this->json = $json;
+        $this->clock = $clock;
     }
 
     /**
@@ -129,32 +135,10 @@ class EventLogService
             ->withMessage($data['message'])
             ->withStatus($data['status']);
 
-        if ($timepoint = $this->buildTimepoint($data['created'])) {
+        if ($timepoint = $this->clock->fromString($data['created'])) {
             $log->withCreated($timepoint);
         }
 
         return $log;
-    }
-
-    /**
-     * @param string $time
-     *
-     * @return TimePoint|null
-     */
-    private function buildTimepoint($time)
-    {
-        if (!$date = DateTime::createFromFormat(DateTime::RFC3339, $time, new DateTimeZone('UTC'))) {
-            return null;
-        }
-
-        return new TimePoint(
-            $date->format('Y'),
-            $date->format('m'),
-            $date->format('d'),
-            $date->format('H'),
-            $date->format('i'),
-            $date->format('s'),
-            'UTC'
-        );
     }
 }

@@ -8,15 +8,13 @@
 namespace QL\Hal\Controllers;
 
 use Closure;
-use DateTime;
-use DateTimeZone;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\Time\Clock;
-use MCP\DataType\Time\TimePoint;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
+use QL\MCP\Common\Time\Clock;
+use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -124,7 +122,7 @@ class QueueHistoryController implements ControllerInterface
     {
         $date = null;
         if (isset($this->parameters['date'])) {
-            $date = $this->parseValidDate($this->parameters['date']);
+            $date = $this->clock->fromString($this->parameters['date'], 'Y-m-d');
         }
 
         if (!$date) {
@@ -139,28 +137,6 @@ class QueueHistoryController implements ControllerInterface
         $to = new TimePoint($y, $m, $d, 23, 59, 59, $this->timezone);
 
         return [$from, $to];
-    }
-
-    /**
-     * @param string $date
-     *
-     * @return TimePoint
-     */
-    private function parseValidDate($date)
-    {
-        if (!$date = DateTime::createFromFormat('Y-m-d', $date, new DateTimeZone($this->timezone))) {
-            return null;
-        }
-
-        return new TimePoint(
-            $date->format('Y'),
-            $date->format('m'),
-            $date->format('d'),
-            0,
-            0,
-            0,
-            $this->timezone
-        );
     }
 
     /**
