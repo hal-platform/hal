@@ -60,8 +60,7 @@
         "twig/twig": "~1.20"
     },
     "require-dev": {
-        "mockery/mockery": "*",
-        "phpunit/phpunit": "4.*",
-        "squizlabs/php_codesniffer": "*"
+        "mockery/mockery": "~0.9",
+        "phpunit/phpunit": "~4.5"
     }
 }
