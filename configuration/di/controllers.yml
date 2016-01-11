@@ -475,13 +475,6 @@ services:
     #   parent: 'twig.template'
     #   calls: [['setTemplate', ['help/api.twig']]]
 
-    help.hal.page:
-        parent: 'static.controller'
-        arguments: ['@help.hal.twig', '@slim.response']
-    help.hal.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['help/hal.twig']]]
-
     help.githubpermissions.page:
         parent: 'static.controller'
         arguments: ['@help.githubpermissions.twig', '@slim.response']

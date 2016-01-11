@@ -39,9 +39,6 @@
             <ul class="list--bullet">
                 <li><a href="#api">Does HAL have an API? Is there any documentation?</a></li>
                 <li><a href="#maintenance">When is HAL 9000 updated? When does maintenance occur?</a></li>
-                {% if not isSeriousBusinessMode() %}
-                    <li><a href="#hellodave">My name isn't Dave!</a></li>
-                {% endif %}
                 <li><a href="#release-notes">Release Notes</a></li>
             </ul>
         </li>
@@ -246,15 +243,6 @@ beta
         Hotfixes or critical bugfixes <b>may</b> be deployed on other days, however this is very rare.
         For these fixes we deploy either during lunchtime, or after business (5 PM or later).
     </p>
-
-
-    {% if not isSeriousBusinessMode() %}
-        <h3 id="hellodave">{{ macros.status_icon("My name isn't Dave!") }}</h3>
-        <p>
-            Look Dave, I can see you're really upset about this.
-            I honestly think you ought to sit down calmly, take a stress pill, and <a href="{{ urlFor('help.hal') }}">think things over</a>.
-        </p>
-    {% endif %}
 
     <h3 id="release-notes">{{ macros.status_icon('Release Notes') }}</h3>
     {% include '_partial/help.release-notes.twig' %}
