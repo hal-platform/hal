@@ -42,11 +42,8 @@
 
                 <li>
                     <label for="url">URL</label>
-                    <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}" required>
-                    <small class="additional">
-                        A URL is required to help users find where the code is deployed.
-                        Must be the full URL and begin with <code>http://</code> or <code>https://</code>.
-                    </small>
+                    <input class="text-input" type="url" name="url" id="url" maxlength="200" value="{{ form.url }}">
+                    <small class="additional">Add a URL to help users find where the code is deployed.</small>
                 </li>
 
                 {#

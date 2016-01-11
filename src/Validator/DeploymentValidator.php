@@ -656,6 +656,12 @@ class DeploymentValidator
      */
     private function validateUrl($url)
     {
+        $url = trim($url);
+
+        if (strlen($url) === 0) {
+            return $url;
+        }
+
         if (strlen($url) > 200) {
             $this->errors[] = self::ERR_INVALID_URL;
         }
