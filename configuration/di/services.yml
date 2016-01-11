@@ -142,6 +142,7 @@ services:
         class: 'QL\Hal\Twig\HalExtension'
         arguments:
             - '@slim.cookies'
+            - '@session'
             - '@global.message'
             - '@utility.time.formatter'
             - '@utility.name.formatter'
@@ -158,8 +159,6 @@ services:
             - ['addGlobal', ['applicationVersion', '%application.major.version%']]
             - ['addGlobal', ['applicationEnvironment', '%application.environment%']]
             - ['addGlobal', ['applicationKrakenTitle', '%application.kraken.title%']]
-            - ['addGlobal', ['session', '@session']]
-            - ['addGlobal', ['tick', '@global.message']]
 
     twig.extension.permissions:
         class: 'QL\Hal\Twig\PermissionsExtension'

@@ -61,9 +61,6 @@ services:
     normalizer.group:
         class: 'QL\Hal\Api\Normalizer\GroupNormalizer'
 
-    normalizer.url:
-        class: 'QL\Hal\Api\Normalizer\HttpUrlNormalizer'
-
     normalizer.push:
         class: 'QL\Hal\Api\Normalizer\PushNormalizer'
         arguments:

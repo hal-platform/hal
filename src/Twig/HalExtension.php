@@ -14,6 +14,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Service\GlobalMessageService;
+use QL\Hal\Session;
 use QL\Hal\Utility\NameFormatter;
 use QL\Hal\Utility\TimeFormatter;
 use Twig_Extension;
@@ -29,6 +30,11 @@ class HalExtension extends Twig_Extension
      * @type EncryptedCookies
      */
     private $cookies;
+
+    /**
+     * @type Session
+     */
+    private $session;
 
     /**
      * @type GlobalMessageService
@@ -52,17 +58,20 @@ class HalExtension extends Twig_Extension
 
     /**
      * @param EncryptedCookies $cookies
+     * @param Session $session
      * @param GlobalMessageService $messageService
      * @param TimeFormatter $time
      * @param NameFormatter $name
      */
     public function __construct(
         EncryptedCookies $cookies,
+        Session $session,
         GlobalMessageService $messageService,
         TimeFormatter $time,
         NameFormatter $name
     ) {
         $this->cookies = $cookies;
+        $this->session = $session;
         $this->messageService = $messageService;
         $this->time = $time;
         $this->name = $name;
@@ -88,16 +97,23 @@ class HalExtension extends Twig_Extension
         return [
             // util
             new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
-            new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
             new Twig_SimpleFunction('hash', [$this, 'hash']),
-
             new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
 
-            // other
+            // name
             new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),
             new Twig_SimpleFunction('getUsersFirstName', [$this->name, 'getUsersFirstName']),
             new Twig_SimpleFunction('getUsersActualName', [$this->name, 'getUsersActualName']),
-            new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName'])
+            new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName']),
+
+            // session
+            new Twig_SimpleFunction('session_flash', [$this->session, 'flash']),
+            new Twig_SimpleFunction('session_get', [$this->session, 'get']),
+
+            // services
+            new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
+            new Twig_SimpleFunction('isUpdateTickOn', [$this->messageService, 'isUpdateTickOn']),
+
         ];
     }
 

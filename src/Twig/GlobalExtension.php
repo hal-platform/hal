@@ -75,7 +75,6 @@ class GlobalExtension extends Twig_Extension
     public function getGlobals()
     {
         $this->addGlobal('currentUser', $this->getCurrentUser());
-        $this->addGlobal('isFirstLogin', $this->session->get('is-first-login'));
         $this->addGlobal('ishttpsOn', ($this->request->getScheme() === 'https'));
 
         return $this->globals;
