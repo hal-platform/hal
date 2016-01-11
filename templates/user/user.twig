@@ -22,7 +22,7 @@
                 {% if isSeriousBusinessMode() %}
                     {{ displayName }}
                 {% else %}
-                    <span data-initial="{{ getUsersActualName(getCurrentUser()) }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
+                    <span data-initial="{{ displayName }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
                 {% endif %}
             </h1>
             {% if ldapUser %}

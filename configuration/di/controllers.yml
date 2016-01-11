@@ -405,10 +405,8 @@ services:
         arguments:
             - '@slim.cookies'
             - '@session.flasher'
-            - '@utility.name.formatter'
-            - '@currentUser'
-            - '%cookie.preferences.ttl%'
             - '@slim.request'
+            - '%cookie.preferences.ttl%'
 
     user.disable.handler:
         class: 'QL\Hal\Controllers\User\DisableUserHandler'
