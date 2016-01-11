@@ -117,7 +117,7 @@
         </table>
     {% endif %}
 
-    {% if canUserBuild(currentUser, build.application) %}
+    {% if canUserBuild(getCurrentUser(), build.application) %}
         {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
         {% set unpushableMessage = 'The build cannot be pushed.' %}
 

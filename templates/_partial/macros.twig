@@ -52,16 +52,16 @@
         </a>
 
         {% set iconcolor = '' %}
-        {% if (isCurrent is sameas(true)) %}{% set iconcolor = 'icon--success' %}{% endif %}
-        {% if (isCurrent is sameas(false)) %}{% set iconcolor = 'icon--warning' %}{% endif %}
+        {% if (isCurrent is same as(true)) %}{% set iconcolor = 'icon--success' %}{% endif %}
+        {% if (isCurrent is same as(false)) %}{% set iconcolor = 'icon--warning' %}{% endif %}
 
-        {% if not hideTooltip and isCurrent is not sameas(null) %}
-            {% if isCurrent is sameas(true) %}
+        {% if not hideTooltip and isCurrent is not same as(null) %}
+            {% if isCurrent is same as(true) %}
 
                 <span class="tooltipped tooltipped-n" aria-label="This commit is update to date with HEAD">
                     {{ self_macros.icon(icontype, iconcolor) }}
                 </span>
-            {% elseif isCurrent is sameas(false) %}
+            {% elseif isCurrent is same as(false) %}
                 <span class="tooltipped tooltipped-n" aria-label="This commit is behind HEAD">
                     {{ self_macros.icon(icontype, iconcolor) }}
                 </span>

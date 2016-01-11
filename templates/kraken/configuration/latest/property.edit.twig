@@ -48,7 +48,7 @@
         {% endembed %}
     </section>
 
-    {% if canUserReleaseTheKraken(currentUser, application, environment) %}
+    {% if canUserReleaseTheKraken(getCurrentUser(), application, environment) %}
         <section class="leader--andre">
             <h2>Remove Property</h2>
 

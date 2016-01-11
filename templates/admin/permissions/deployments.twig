@@ -3,7 +3,7 @@
 
 {% set page_title = "Deployment Permissions" %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
 
 {% block content %}
 

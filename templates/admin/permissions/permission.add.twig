@@ -64,12 +64,12 @@
 
                     <ul class="radio-grid radio-grid--two">
                         <li>
-                            {% set isSelected = form.is_production is sameas('true') ? true : false %}
+                            {% set isSelected = form.is_production is same as('true') ? true : false %}
                             <input id="perm-prod-true" type="radio" name="is_production" value="true"{{ isSelected ? ' checked' : '' }}>
                             <label for="perm-prod-true">Production</label>
                         </li>
                         <li>
-                            {% set isSelected = form.is_production is sameas('false') ? true : false %}
+                            {% set isSelected = form.is_production is same as('false') ? true : false %}
                             <input id="perm-prod-false" type="radio" name="is_production" value="false"{{ isSelected ? ' checked' : '' }}>
                             <label for="perm-prod-false">Non-Production</label>
                         </li>

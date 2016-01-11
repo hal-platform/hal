@@ -3,7 +3,7 @@
 
 {% set page_title = 'Deployment : ' ~ deployment.application.name %}
 
-{% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, deployment.application) %}
+{% set canEdit = isUserAdminOrSuper(getCurrentUser()) or isUserLeadOf(getCurrentUser(), deployment.application) %}
 
 {% block content %}
     <h1>Deployment - <strong>{{ deployment.application.name }}</strong></h1>

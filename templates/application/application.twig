@@ -3,8 +3,8 @@
 
 {% set page_title = 'Application : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
-{% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
+{% set canEdit = isUserAdminOrSuper(getCurrentUser()) or isUserLeadOf(getCurrentUser(), application) %}
 {% set canRemove = isAdmin and not has_deployments %}
 
 {% block content %}

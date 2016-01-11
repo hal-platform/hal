@@ -7,8 +7,8 @@
 
 {% set page_title = 'User : ' ~ name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
-{% set isSuper = isUserSuper(currentUser) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
+{% set isSuper = isUserSuper(getCurrentUser()) %}
 
 {% block content %}
 
@@ -22,7 +22,7 @@
                 {% if isSeriousBusinessMode() %}
                     {{ displayName }}
                 {% else %}
-                    <span data-initial="{{ getUsersActualName(currentUser) }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
+                    <span data-initial="{{ getUsersActualName(getCurrentUser()) }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
                 {% endif %}
             </h1>
             {% if ldapUser %}

@@ -5,7 +5,7 @@
 
 {% set page_title = "Status : " ~ application.name %}
 
-{% set canUserBuild = canUserBuild(currentUser, application) %}
+{% set canUserBuild = canUserBuild(getCurrentUser(), application) %}
 {% set isBusinessTime = isSeriousBusinessMode() %}
 
 {% block content %}

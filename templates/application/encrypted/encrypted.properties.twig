@@ -3,8 +3,8 @@
 
 {% set page_title = 'Encrypted Properties : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
-{% set canEdit = isAdmin or isUserLeadOf(currentUser, application) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
+{% set canEdit = isAdmin or isUserLeadOf(getCurrentUser(), application) %}
 
 {% block content %}
     <h1>Encrypted Properties - <strong>{{ application.name }}</strong></h1>

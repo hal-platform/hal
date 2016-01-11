@@ -2,7 +2,7 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Latest Configuration" %}
-{% set canDeploy = canUserReleaseTheKraken(currentUser, application, environment) %}
+{% set canDeploy = canUserReleaseTheKraken(getCurrentUser(), application, environment) %}
 
 {% set isBusinessTime = isSeriousBusinessMode() %}
 

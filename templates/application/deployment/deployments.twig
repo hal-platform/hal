@@ -14,7 +14,7 @@
         Deployment targets define what servers your application can be deployed to and where on that server the code will be uploaded.
     </p>
 
-    {% set canEdit = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+    {% set canEdit = isUserAdminOrSuper(getCurrentUser()) or isUserLeadOf(getCurrentUser(), application) %}
 
     {% if deployment_by_env %}
 
@@ -108,7 +108,7 @@
     {% else %}
         <p>
             There are no environments.
-            {% if isUserSuper(currentUser) %}
+            {% if isUserSuper(getCurrentUser()) %}
                 <br><a href="{{ urlFor('environment.add') }}">Add an environment</a>
             {% endif %}
         </p>

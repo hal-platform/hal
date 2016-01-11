@@ -3,7 +3,7 @@
 
 {% set page_title = "User Permissions" %}
 
-{% set can_remove = isUserAdminOrSuper(currentUser) %}
+{% set can_remove = isUserAdminOrSuper(getCurrentUser()) %}
 
 {% block content %}
 

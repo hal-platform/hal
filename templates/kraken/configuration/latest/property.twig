@@ -52,7 +52,7 @@
     </section>
 
     <ul class="button-list">
-        {% if canUserReleaseTheKraken(currentUser, application, environment) %}
+        {% if canUserReleaseTheKraken(getCurrentUser(), application, environment) %}
             <li><a class="btn btn--action" href="{{ urlFor('kraken.property.edit', {property: property.id}) }}">Edit Property</a></li>
         {% endif %}
         <li><a class="btn" href="{{ urlFor('kraken.configuration.latest', {application: application.id, environment: environment.id}) }}">Latest Configuration</a></li>

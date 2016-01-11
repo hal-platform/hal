@@ -38,7 +38,7 @@
         </tbody>
     </table>
 
-    {% if isUserAdminOrSuper(currentUser) %}
+    {% if isUserAdminOrSuper(getCurrentUser()) %}
         <ul class="button-list">
             <li class="button-list__fixed"><a class="btn" href="{{ urlFor('server.add') }}">Add Server</a></li>
         </ul>

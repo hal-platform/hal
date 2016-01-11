@@ -34,7 +34,7 @@
                 <li>
                     <article class="card card--{{ target.environment.name }}">
                         <header class="card__header">
-                            {% if canUserReleaseTheKraken(currentUser, application, target.environment) %}
+                            {% if canUserReleaseTheKraken(getCurrentUser(), application, target.environment) %}
                                 <a class="icon--link btn btn--small btn--action" href="{{ urlFor('kraken.deploy', {target: target.id})}}">Deploy</a>
                             {% endif %}
 

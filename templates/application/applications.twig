@@ -20,7 +20,7 @@
             </thead>
             <tbody>
                 {% for application in favorites %}
-                    {{ page_macros.app_row(currentUser, application) }}
+                    {{ page_macros.app_row(getCurrentUser(), application) }}
                 {% endfor %}
             </tbody>
         </table>
@@ -51,7 +51,7 @@
                 {% if group_applications %}
                     {% set hasApplications = true %}
                     {% for application in group_applications %}
-                        {{ page_macros.app_row(currentUser, application) }}
+                        {{ page_macros.app_row(getCurrentUser(), application) }}
                     {% endfor %}
                 {% else %}
                     <tr>

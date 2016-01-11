@@ -70,10 +70,10 @@
                         <select class="select-input" name="value_bool" id="config-bool">
                             <option></option>
 
-                            {% set isSelected = form.value_bool is sameas('true') ? true : false %}
+                            {% set isSelected = form.value_bool is same as('true') ? true : false %}
                             <option value="true"{{ isSelected ? ' selected' : '' }}>true</option>
 
-                            {% set isSelected = form.value_bool is sameas('false') ? true : false %}
+                            {% set isSelected = form.value_bool is same as('false') ? true : false %}
                             <option value="false"{{ isSelected ? ' selected' : '' }}>false</option>
                         </select>
                     </li>

@@ -27,7 +27,7 @@
         {{ form_macros.formErrors(errors) }}
 
         {% set pushables = 0 %}
-        {% set canUserPush = canUserPush(currentUser, build.application, build.environment) %}
+        {% set canUserPush = canUserPush(getCurrentUser(), build.application, build.environment) %}
 
         {% for status in statuses %}
             {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}

@@ -3,7 +3,7 @@
 {% set name = (server.type == 'rsync') ? server.name : server.formatHumanType %}
 {% set page_title = 'Server : ' ~ name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
 
 {% block content %}
     <h1>Server - <strong>{{ server.environment.name }}</strong></h1>

@@ -84,7 +84,7 @@
             <dd><code>{{ log.key }}</code></dd>
 
             {# is property, has "value" #}
-            {% if changed is not sameas(null) %}
+            {% if changed is not same as(null) %}
                 {% if changed.current and changed.new %}
                     <dt class="split__title">Old Value</dt>
                     <dd>

@@ -4,11 +4,11 @@
 
 {% set js_components = ["pool.add"] %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) or isUserLeadOf(getCurrentUser(), application) %}
 {% if view.user %}
-    {% set canEdit = isAdmin or currentUser == view.user %}
+    {% set canEdit = isAdmin or getCurrentUser() == view.user %}
 {% else %}
-    {% set canEdit = isAdmin or canUserBuild(currentUser, application) %}
+    {% set canEdit = isAdmin or canUserBuild(getCurrentUser(), application) %}
 {% endif %}
 
 {% block content %}

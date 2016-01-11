@@ -23,12 +23,12 @@
 
         {% block navigation %}
             <nav role="navigation">
-                {% if currentUser %}
+                {% if getCurrentUser() %}
                     <ul class="nav--main">
                         <li><a href="{{ urlFor('kraken.applications') }}">{{ macros.icon('list') }} Applications</a></li>
                         <li><a href="{{ urlFor('kraken.environments') }}">{{ macros.icon('leaf') }} Environments</a></li>
 
-                        {% if isUserAdminOrSuper(currentUser) %}
+                        {% if isUserAdminOrSuper(getCurrentUser()) %}
                             <li><a href="{{ urlFor('kraken.admin.audit.logs.page1') }}">{{ macros.icon('watch') }} Audit Logs</a></li>
                         {% endif %}
 

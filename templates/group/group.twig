@@ -3,7 +3,7 @@
 
 {% set page_title = 'Group : ' ~ group.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
 
 {% block content %}
     <h1>Group - <strong>{{ group.name }}</strong></h1>

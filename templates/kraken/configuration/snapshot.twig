@@ -24,7 +24,7 @@
 
     {% include 'kraken/_partial/configuration.status.twig' %}
 
-    {% if canUserReleaseTheKraken(currentUser, application, configuration.environment) %}
+    {% if canUserReleaseTheKraken(getCurrentUser(), application, configuration.environment) %}
         {% set deploy_title = is_deployed or not configuration.isSuccess ? 'Redeploy' : 'Rollback to' %}
 
         <p class="trailer--andre"><a class="btn btn--action" href="{{ urlFor('kraken.rollback', {configuration: configuration.id}) }}">{{ deploy_title }} this Snapshot</a></p>
@@ -59,13 +59,13 @@
                                 </span>
                                 <span class="tablesaw-collapse">The property was updated successfully</span>
 
-                            {% elseif log.detail is sameas(false) %}
+                            {% elseif log.detail is same as(false) %}
                                 <span class="tooltipped tooltipped-ne" aria-label="The property was not updated. The system failed to obtain a lock.">
                                     {{ macros.status_icon('', 'error') }}
                                 </span>
                                 <span class="tablesaw-collapse">The property was not updated. The system failed to obtain a lock.</span>
 
-                            {% elseif log.detail is sameas(null) %}
+                            {% elseif log.detail is same as(null) %}
                                 <span class="tooltipped tooltipped-ne" aria-label="The property was not updated. An unexpected error occured.">
                                     {{ macros.status_icon('', 'error') }}
                                 </span>
@@ -87,10 +87,10 @@
                             {% if log.isSuccess %}
                                 Success
 
-                            {% elseif log.detail is sameas(false) %}
+                            {% elseif log.detail is same as(false) %}
                                 Consul Error
 
-                            {% elseif log.detail is sameas(null) %}
+                            {% elseif log.detail is same as(null) %}
                                 Unknown Error
 
                             {% else %}

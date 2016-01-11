@@ -59,7 +59,7 @@
         </li>
     </ul>
 
-    {% if isUserSuper(currentUser) %}
+    {% if isUserSuper(getCurrentUser()) %}
         <h2 class="leader">Super Administrators</h2>
         <ul class="button-list">
             <li><a href="{{ urlFor('admin.super.users') }}" class="btn" >User Management</a></li>

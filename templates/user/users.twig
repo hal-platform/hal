@@ -3,7 +3,7 @@
 
 {% set page_title = "Users" %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>

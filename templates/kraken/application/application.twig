@@ -3,8 +3,8 @@
 
 {% set page_title = "Application : " ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) %}
-{% set canEdit = isAdmin or isUserLeadOf(currentUser, application.halApplication) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
+{% set canEdit = isAdmin or isUserLeadOf(getCurrentUser(), application.halApplication) %}
 
 {% block content %}
 

@@ -22,13 +22,13 @@
 
                     <ul class="radio-grid radio-grid--two">
                         <li>
-                            {% set isSelected = form.is_prod is sameas('true') ? true : false %}
+                            {% set isSelected = form.is_prod is same as('true') ? true : false %}
                             <input id="env-is_prod-1" type="radio" name="is_prod" value="true"{{ isSelected ? ' checked' : '' }}>
                             <label for="env-is_prod-1">Yes</label>
                         </li>
 
                         <li>
-                            {% set isSelected = form.is_prod is sameas('false') ? true : false %}
+                            {% set isSelected = form.is_prod is same as('false') ? true : false %}
                             <input id="env-is_prod-0"  type="radio" name="is_prod" value="false"{{ isSelected ? ' checked' : '' }}>
                             <label for="env-is_prod-0">No</label>
                         </li>

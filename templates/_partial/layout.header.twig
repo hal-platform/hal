@@ -31,9 +31,9 @@
     {% block navigation %}
         {% if showNavigation %}
             <nav role="navigation">
-                {% if currentUser %}
+                {% if getCurrentUser() %}
                     <ul class="nav--main">
-                        {% if isUserAdminOrSuper(currentUser) %}
+                        {% if isUserAdminOrSuper(getCurrentUser()) %}
                             <li><a href="{{ urlFor('admin') }}">{{ macros.icon('watch') }} Admin</a></li>
                         {% else %}
                             <li><a href="{{ urlFor('dashboard') }}">{{ macros.icon('dashboard') }} Dashboard</a></li>

@@ -2,7 +2,7 @@
 
 {% set page_title = 'Environment : ' ~ env.name %}
 
-{% set isAdmin = isUserSuper(currentUser) %}
+{% set isAdmin = isUserSuper(getCurrentUser()) %}
 
 {% block content %}
     <h1>Environment - <strong>{{ env.name }}</strong></h1>

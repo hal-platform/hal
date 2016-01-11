@@ -44,7 +44,7 @@
         To rollback, simply choose a build, click <strong>rollback</strong>, and you'll be able to initate a new push.
     </p>
 
-    {% set canRollback = canUserPush(currentUser, application, deployment.server.environment) %}
+    {% set canRollback = canUserPush(getCurrentUser(), application, deployment.server.environment) %}
 
     <h2>Push History</h2>
     <table class="table--spacing-medium" data-tablesaw-mode="stack">

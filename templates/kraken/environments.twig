@@ -2,7 +2,7 @@
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Environments" %}
-{% set isAdmin = isUserSuper(currentUser) %}
+{% set isAdmin = isUserSuper(getCurrentUser()) %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>

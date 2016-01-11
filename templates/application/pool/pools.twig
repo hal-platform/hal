@@ -3,8 +3,8 @@
 
 {% set page_title = 'Deployment Pools : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(currentUser) or isUserLeadOf(currentUser, application) %}
-{% set canEditShared = isAdmin or canUserBuild(currentUser, application) %}
+{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) or isUserLeadOf(getCurrentUser(), application) %}
+{% set canEditShared = isAdmin or canUserBuild(getCurrentUser(), application) %}
 
 {% block content %}
     <h1>Deployment Pools - <strong>{{ application.name }}</strong> </h1>

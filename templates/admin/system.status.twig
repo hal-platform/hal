@@ -135,7 +135,7 @@
                         {% for status in servers %}
                                 <tr>
                                     <td>
-                                        {% if status.status is sameas ('unknown') %}
+                                        {% if status.status is same as ('unknown') %}
                                             {{ macros.status('Unknown', 'info') }}
                                         {% elseif status.status %}
                                             {{ macros.status('Success', 'success') }}
