@@ -103,6 +103,10 @@ class LoginMiddleware implements MiddlewareInterface
         $this->logFactory->setDefaultProperty('userName', $user->handle());
         $this->logFactory->setDefaultProperty('userDisplayName', $user->name());
 
+        // Save user to session and DI container
+        $this->session->user($user);
+
+        // @todo stop storing state in DI container
         $this->di->set('currentUser', $user);
     }
 }

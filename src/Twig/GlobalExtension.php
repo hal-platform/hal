@@ -12,11 +12,12 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
 use Symfony\Component\DependencyInjection\IntrospectableContainerInterface;
 use Twig_Extension;
+use Twig_Extension_GlobalsInterface;
 
 /**
  * Twig Extension for declaring and preparing global variables
  */
-class GlobalExtension extends Twig_Extension
+class GlobalExtension extends Twig_Extension implements Twig_Extension_GlobalsInterface
 {
     const NAME = 'hal_global';
 
@@ -26,18 +27,19 @@ class GlobalExtension extends Twig_Extension
     private $di;
 
     /**
-     * @type array
-     */
-    private $globals;
-
-    /**
      * @type Session
      */
     private $session;
 
     /**
+     * @type array
+     */
+    private $globals;
+
+    /**
      * @param IntrospectableContainerInterface $di
      * @param Session $session
+     * @param array $globals
      */
     public function __construct(IntrospectableContainerInterface $di, Session $session, array $globals = [])
     {

@@ -7,11 +7,17 @@
 
 namespace QL\Hal;
 
+use QL\Hal\Core\Entity\User;
 use Slim\Helper\Set;
 
 class Session extends Set
 {
     const FLASH_KEY = 'flash';
+
+    /**
+     * @type User|null
+     */
+    private $user;
 
     /**
      * Get an array of flash messages (and clear all flashes stored)
@@ -43,6 +49,20 @@ class Session extends Set
         }
 
         return call_user_func([$this, 'getAndFlush'], false);
+    }
+
+    /**
+     * @param User|null $user
+     *
+     * @return User|null
+     */
+    public function user(User $user = null)
+    {
+        if (func_num_args() === 1) {
+            $this->user = $user;
+        }
+
+        return $this->user;
     }
 
     /**

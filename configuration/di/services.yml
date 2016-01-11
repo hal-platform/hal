@@ -160,6 +160,10 @@ services:
                 applicationEnvironment: '%application.environment%'
                 applicationKrakenTitle: '%application.kraken.title%'
 
+    twig.extension.hal.lazy:
+        class: 'QL\Hal\Twig\LazyUserExtension'
+        arguments: ['@service_container', '@session']
+
     twig.extension.permissions:
         class: 'QL\Hal\Twig\PermissionsExtension'
         arguments: ['@permissions']
@@ -185,6 +189,7 @@ services:
         calls:
             - ['addExtension', ['@twig.extension.hal']]
             - ['addExtension', ['@twig.extension.hal.global' ]]
+            - ['addExtension', ['@twig.extension.hal.lazy' ]]
             - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
             - ['addExtension', ['@twig.extension.ansi']]
