@@ -459,12 +459,20 @@ services:
     help.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/help.twig']]]
+
     help.deployment.page:
         parent: 'static.controller'
         arguments: ['@help.deployment.twig', '@slim.response']
     help.deployment.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/deployment.twig']]]
+
+    help.application_setup.page:
+        parent: 'static.controller'
+        arguments: ['@help.application_setup.twig', '@slim.response']
+    help.application_setup.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['help/application-setup.twig']]]
 
     # help.api.page:
     #   parent: 'static.controller'

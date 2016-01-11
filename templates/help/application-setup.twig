@@ -1,0 +1,381 @@
+{% extends 'base.html.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = 'Help : Application Setup' %}
+
+{% set kmContact = '<a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a>' %}
+{% set wcContact = '<a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a>' %}
+
+{% block content %}
+
+    <div class="nav--page">
+        <h1>Help - Application Setup</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ urlFor('help') }}">Back to Help</a>
+        </p>
+    </div>
+
+    <p>
+        Once a project has been added to Hal, deployment targets must be added and assigned to start deployments.
+        This guide will help you step through all the requirements for setting up an application for deployments through Hal.
+    </p>
+
+    <p>
+        <b>Please note:</b><br>
+        Most of this configuration is handled by server administrators from <b>UNIX team</b>. Do not expect this setup to occur quickly.
+    </p>
+
+    <ul class="list--bare">
+        <li class="trailer">
+            <ul class="list--bullet">
+                <li><a href="#onprem-rsync">On Premise - Rsync</a></li>
+                <li><a href="#aws-elastic-beanstalk">AWS - Elastic Beanstalk</a></li>
+                <li><a href="#aws-codedeploy">AWS - CodeDeploy</a></li>
+                <li><a href="#aws-s3">AWS - S3</a></li>
+                <li><a href="#aws-ec2-autoscale">AWS - EC2 Autoscaling</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3 id="onprem-rsync">{{ macros.status_icon('How do I set up On Premise servers for HAL 9000?') }}</h3>
+    {{ block('setup_rsync') }}
+
+    <h3 id="aws-elastic-beanstalk">{{ macros.status_icon('How I configure my application for AWS Elastic Beanstalk?') }}</h3>
+    {{ block('setup_elastic') }}
+
+    <h3 id="aws-codedeploy">{{ macros.status_icon('How I configure my application for AWS CodeDeploy?') }}</h3>
+    {{ block('setup_codedeploy') }}
+
+    <h3 id="aws-s3">{{ macros.status_icon('How do I configure my application for AWS S3?') }}</h3>
+    {{ block('setup_s3') }}
+
+    <h3 id="aws-ec2-autoscale">{{ macros.status_icon('How do I configure my application for EC2 Autoscaling Pools?') }}</h3>
+    {{ block('setup_ec2') }}
+
+{% endblock %}
+
+{% block setup_rsync %}
+
+    <ol class="list--bullet">
+        <li>
+            <strong>Request servers from UNIX team.</strong>
+            <p>
+                Once provisioned to your requirements, you should get a list of servers from unix.
+                <br><small>Please have patience, this process can take a significant amount of time.</small>
+            </p>
+        </li>
+        <li>
+            <strong>What environments and servers will your application be deployed to?</strong>
+            <p>
+                Examples: <code>test1www1</code>, <code>dev1iweb</code>, <code>prod1srvwww1</code>
+            </p>
+        </li>
+        <li>
+            <strong>Where on those servers will your application be hosted?</strong>
+            <p>
+                This should be the full path to the directory that code is pushed to.
+                <br>Example: <code>/var/www/application</code>
+            </p>
+        </li>
+        <li>
+            <strong>Determine the URL for each environment or server.</strong>
+            <p>
+                When a server is added for your application to deploy to, you should also add the URL where the service or site is available from.
+                This will helps testers and administrators find your application servers.
+                <br>Examples: <code>http://test.application.com</code>, <code>http://test1w1.application.com</code>
+            </p>
+        </li>
+        <li>
+            <strong>Make sure permissions are correct on each server.</strong>
+            <p>
+                For Hal to be able to push code to these servers, the user <code>codexfer</code> must have passwordless access to each server.
+                In addition, the directory to be deployed to must be owned by <code>codexfer</code> and typically belong to the <code>apache</code> or <code>nginx</code> groups.
+            </p>
+        </li>
+    </ol>
+
+    <small>
+        Once this process is finished you should have the following information:
+        <b>Server names</b>,
+        <b>deployment path</b>,
+        and <b>deployment URLs</b>.
+
+        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
+    </small>
+
+{% endblock %}
+
+{% block setup_elastic %}
+
+    <p>
+        With Elastic Beanstalk, you can quickly deploy and manage applications in the AWS cloud without worrying about the infrastructure that runs those applications.
+    </p>
+    <p>
+        AWS Elastic Beanstalk reduces management complexity without restricting choice or control.
+        You simply upload your application, and Elastic Beanstalk automatically handles the details of capacity provisioning, load balancing, scaling, and application health monitoring.
+    </p>
+
+    <ol class="list--bullet">
+        <li>
+            <strong>Have unix create an Elastic Beanstalk Application and S3 bucket.</strong>
+            <p>
+                Versions of your application are uploaded as a zip file to S3. EB then downloads the versions and deploys them.
+            </p>
+        </li>
+        <li>
+            <strong>An environment must be created for each deployment target.</strong>
+            <p>
+                While you may have only one target per traditional environment (test, beta, prod). Elastic Beanstalk supports any number of environments.
+                For example, you may use this if you need multiple isolated testing environments in test.
+            </p>
+        </li>
+        <li>
+            <strong>Create AWS access token with correct permissions.</strong>
+            <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
+            <ul class="list--bare">
+                <li><code>s3:GetObject</code></li>
+                <li><code>s3:ListAllMyBuckets</code></li>
+                <li><code>s3:ListBucket</code></li>
+                <li><code>s3:PutObject</code></li>
+                <li><code>elasticbeanstalk:DescribeEnvironments</code></li>
+                <li><code>elasticbeanstalk:UpdateEnvironment</code></li>
+                <li><code>elasticbeanstalk:CreateApplicationVersion</code></li>
+                <li><code>elasticbeanstalk:DescribeApplicationVersions</code></li>
+            </ul>
+            <small>Please note: S3 permissions must be for the bucket resource and contents (<code>bucket</code> and <code>bucket/*</code>)</small>
+        </li>
+        <li>
+            <strong>Customize deployments with .ebextensions or env.yaml</strong>
+            <p>
+                If you need to run commands on the server when code is deployed, such as set permissions, warm caches or other functionality.
+            </p>
+        </li>
+    </ol>
+
+    <h6>Other references:</h6>
+    <ul class="list--bare">
+        <li class="mvn"><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/GettingStarted.Walkthrough.html">Elastic Beanstalk Walkthrough</a></li>
+        <li class="mvn"><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/ebextensions.html">Advanced environment customization (.bextensions)</a></li>
+        <li class="mvn"><a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-cfg-manifest.html">Environment manifest (env.yaml)</a></li>
+    </ul>
+
+    <small>
+        Once this process is finished you should have the following information:
+        <b>EB Application</b>,
+        <b>S3 bucket</b>,
+        <b>Environment ID</b>,
+        and <b>AWS Access Token</b>.
+
+        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
+    </small>
+
+{% endblock %}
+
+{% block setup_codedeploy %}
+
+    <p>
+        AWS CodeDeploy coordinates application deployments to Amazon EC2 instances, on-premises instances, or both.
+    </p>
+    <p>
+        AWS CodeDeploy works with various configuration management systems, continuous integration and deployment systems, and source control systems.
+        It is similar to Elastic Beanstalk, but provides more control over server instances and technology.
+    </p>
+
+    <ol class="list--bullet">
+        <li>
+            <strong>Request servers from UNIX team.</strong>
+            <p>
+                All AWS resources are built through Puppet. Complete provisioning instructions must be created to build your servers in AWS.
+                <br><small>Please have patience, this process can take a significant amount of time.</small>
+            </p>
+        </li>
+        <li>
+            <strong>CodeDeploy agent must be installed on all servers.</strong>
+            <p>
+                All AWS resources are built through Puppet. Complete provisioning instructions must be created to build your servers in AWS.
+                <br><small>Please have patience, this process can take a significant amount of time.</small>
+            </p>
+        </li>
+        <li>
+            <strong>Have unix create a CodeDeploy Application and S3 bucket.</strong>
+            <p>
+                Your application is compiled into a tarball and uploaded to S3. The CodeDeploy agents then pull the archive from the S3 bucket and deploy it to the server.
+            </p>
+        </li>
+
+        <li>
+            <strong>CodeDeploy agent must be installed on all servers.</strong>
+            <p>
+                All AWS resources are built through Puppet. Complete provisioning instructions must be created to build your servers in AWS.
+                <br><small>Please have patience, this process can take a significant amount of time.</small>
+            </p>
+        </li>
+
+        <li>
+            <strong>Create AWS access token with correct permissions.</strong>
+            <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
+            <ul class="list--bare">
+                <li><code>s3:GetObject</code></li>
+                <li><code>s3:ListAllMyBuckets</code></li>
+                <li><code>s3:ListBucket</code></li>
+                <li><code>s3:PutObject</code></li>
+                <li><code>codedeploy:CreateDeployment</code></li>
+                <li><code>codedeploy:CreateDeployment</code></li>
+                <li><code>codedeploy:ListDeployments</code></li>
+            </ul>
+
+            <p>
+                <small>Please note: S3 permissions must be for the bucket resource and contents (<code>bucket</code> and <code>bucket/*</code>)</small>
+            </p>
+        </li>
+
+        <li>
+            <strong>Configure deployments with .appspec.yml</strong>
+            <p class="mtm mbn">
+                You must configure your deployment procedure with an appspec file.
+                This informs the agents where to put your code.
+            </p>
+            {{ block('setup_codedeploy_appspec') }}
+
+            <p class="mtm mbn">If you need to customize permissions, you can add a block for that:</p>
+            {{ block('setup_codedeploy_appspec_perm') }}
+
+            <p class="mtm mbn">If you need to run a command on the server, this is also supported:</p>
+            {{ block('setup_codedeploy_appspec_command') }}
+        </li>
+    </ol>
+
+    <h6>Other references:</h6>
+    <ul class="list--bare">
+        <li class="mvn"><a href="http://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html">What is AWS CodeDeploy?</a></li>
+        <li class="mvn"><a href="http://docs.aws.amazon.com/codedeploy/latest/userguide/app-spec-ref.html">AWS CodeDeploy AppSpec File Reference</a></li>
+        <li class="mvn"><a href="http://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-add-appspec-file.html">Add an AppSpec File to a Revision for AWS CodeDeploy</a></li>
+        <li class="mvn"><a href="http://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-run-agent.html#how-to-run-agent-install-linux">Add an AppSpec File to a Revision for AWS CodeDeploy</a></li>
+    </ul>
+
+    <small>
+        Once this process is finished you should have the following information:
+        <b>CD Application</b>,
+        <b>S3 bucket</b>,
+        <b>Deployment Group</b>,
+        <b>Deployment Configuration</b>,
+        and <b>AWS Access Token</b>.
+
+        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
+    </small>
+
+{% endblock %}
+
+{% block setup_s3 %}
+    <p>
+        S3 deployments are useful for uploading code used by other processes or applications.
+        All deployments are compressed into a tarball and uploaded to a bucket.
+    </p>
+    <p>If you have need to upload to S3 <b>without compressing into an archive first</b> for example for a static site or assets, please contact us. We can add this feature if there is a need.</p>
+
+    <ol class="list--bullet">
+        <li>
+            <strong>Have unix create an S3 bucket.</strong>
+            <p>Your application will be compressed into a tarball and uploaded to the bucket, with the filename of your choice.</p>
+        </li>
+        <li>
+            <strong>Create AWS access token with correct permissions.</strong>
+            <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
+            <ul class="list--bare">
+                <li><code>s3:GetObject</code></li>
+                <li><code>s3:ListAllMyBuckets</code></li>
+                <li><code>s3:ListBucket</code></li>
+                <li><code>s3:PutObject</code></li>
+            </ul>
+
+            <p>
+                <small>Please note: S3 permissions must be for the bucket resource and contents (<code>bucket</code> and <code>bucket/*</code>)</small>
+            </p>
+        </li>
+    </ol>
+
+    <small>
+        Once this process is finished you should have the following information:
+        <b>S3 bucket</b>,
+        and <b>AWS Access Token</b>.
+
+        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
+    </small>
+
+{% endblock %}
+
+{% block setup_ec2 %}
+    <p>
+        EC2 Autoscale deployments work the same as traditional on premise servers,
+        however the hostnames of target servers dynamic, and fetched from the AWS API. This allows the server pool
+        to be scaled behind the scenes, independently of your configuration in Hal.
+    </p>
+
+    <ol class="list--bullet">
+        <li>
+            <strong>Follow instructions in <a href="#onprem-rsync">On Premise RSync Guide</a>.</strong>
+        </li>
+        <li>
+            <strong>All server instances in your pool must be tagged.</strong>
+            <p>This tag will be used to identify which servers should be deployed to.</p>
+        </li>
+        <li>
+            <strong>Servers must be configured with passwordless login.</strong>
+            <p>This deployment method still uses rsync to deploy code to servers.</p>
+        </li>
+        <li>
+            <strong>Create AWS access token with correct permissions.</strong>
+            <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
+            <ul class="list--bare">
+                <li><code>ec2:describeInstances</code></li>
+            </ul>
+        </li>
+    </ol>
+
+    <small>
+        Once this process is finished you should have the same information from the rsync deployment including the following:
+        <b>EC2 Tag</b>,
+        and <b>AWS Access Token</b>.
+
+        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
+    </small>
+
+{% endblock %}
+
+
+{% block setup_codedeploy_appspec %}
+    {% spaceless %}
+        <pre style="max-width:40em;">version: 0.0
+os: linux
+files:
+    - source: /
+      destination: /var/www/testapplication</pre>
+    {% endspaceless %}
+{% endblock %}
+
+{% block setup_codedeploy_appspec_perm %}
+    {% spaceless %}
+        <pre style="max-width:40em;">permissions:
+  - object: /var/www/testapplication
+    pattern: "**"
+    owner: ux-ecsvc
+    group: ux-ecsvc
+    type:
+      - file
+      - directory</pre>
+    {% endspaceless %}
+{% endblock %}
+
+{% block setup_codedeploy_appspec_command %}
+    {% spaceless %}
+        <pre style="max-width:40em;">hooks:
+  Install:
+    - location: /var/www/application/bin/myscript.sh
+      timeout: 30 (timeout in seconds, optional)
+      runas: user_to_run_command_as (optional)</pre>
+    {% endspaceless %}
+{% endblock %}
+
+
+

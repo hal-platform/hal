@@ -1,12 +1,17 @@
 {% extends 'base.html.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
-{% set page_title = 'Deployment Help' %}
+{% set page_title = 'Help : Deployment' %}
 
 {% block content %}
-    <h1>Help - <strong>Deployment Guide for engineers</strong></h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('help') }}">Back to Help</a></p>
+    <div class="nav--page">
+        <h1>Help - <strong>Deployment Guide for engineers</strong></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ urlFor('help') }}">Back to Help</a>
+        </p>
+    </div>
 
     <ul class="list--bullet">
         <li><a href="#shell-commands">Commands</a></li>

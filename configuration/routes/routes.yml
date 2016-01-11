@@ -79,6 +79,11 @@ parameters:
             route: '/help/github-permissions'
             stack: ['help.githubpermissions.page']
 
+        help.setup:
+            method: 'GET'
+            route: '/help/application-setup'
+            stack: ['help.application_setup.page']
+
         # help.api:
         #     method: 'GET'
         #     route: '/help/api'

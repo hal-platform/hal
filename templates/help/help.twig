@@ -125,56 +125,16 @@
     </ol>
 
     <h3 id="deploy-application">{{ macros.status_icon('How do I deploy my application with HAL?') }}</h3>
-    <p>
-        Once a project has been added to HAL 9000, servers must be added and assigned to start deployments.
-    </p>
+    <p>HAL 9000 supports the following deployment strategies:</p>
 
-    <p>You will need help from the <strong>unix team</strong> during this process.</p>
-
-    <ol class="list--bullet">
-        <li>
-            <strong>What environments and servers will your application be deployed to?</strong>
-            <p>Examples: <code>test1www1</code>, <code>dev1iweb</code>, <code>prod1srvwww1</code></p>
-        </li>
-        <li>
-            <strong>Where on those servers will your application be hosted?</strong>
-            <p>
-                This should be the full path to the directory that code is pushed to.
-                <br>Example: <code>/var/www/application</code>
-            </p>
-        </li>
-        <li>
-            <strong>Determine the URL for each environment or server.</strong>
-            <p>
-                When a server is added for your application to deploy to, you'll also need to add the URL where the service or site is available from.
-                <br>Examples: <code>http://test.application.com</code>, <code>http://test1w1.application.com</code>
-            </p>
-        </li>
-        <li>
-            <strong>Make sure permissions are correct on each server.</strong>
-            <p>
-                For HAL to be able to push code to these servers, the user <code>codexfer</code> must have access to each server.
-                In addition, the directory to be deployed to must be owned by <code>codexfer</code> and typically belong to the <code>apache</code> or <code>nginx</code> groups.
-            </p>
-        </li>
-    </ol>
-
-    <h6 class="mbn">
-        <strong>Example data</strong>
-    </h6>
-
-    <pre>
-dir: /var/www/application
-test
-    test1www1           http://test1w1.application.com
-    test2www1           http://test1w2.application.com
-beta
-    beta1www1           http://beta.application.com
-    beta2www1           http://beta.application.com</pre>
-
-    <p>
-        Once you have gathered all of the required information, Contact the Key Masters at {{ kmContact|raw }} to request that the deployment information be added to HAL 9000.
-    </p>
+    <ul class="list--bullet">
+        <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
+        <li><a href="https://aws.amazon.com/codedeploy/">AWS CodeDeploy</a></li>
+        <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (Static file deployments)</li>
+        <li><a href="https://aws.amazon.com/autoscaling/">AWS EC2</a> (EC2 Autoscaling Pools)</li>
+        <li>R Sync (On-premise unix servers)</li>
+    </ul>
+    <p>See <a href="{{ urlFor('help.setup') }}">the application setup page</a> for how to set up your application for on premise or AWS.</p>
 
     <h3 id="application-deployment">{{ macros.status_icon('How do I use a script to build or push my application?') }}</h3>
     <p>
