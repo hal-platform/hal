@@ -20,9 +20,9 @@
                         <tr>
                             <td>{{ env }}</td>
                             <td>
-                                <ul class="col-list">
+                                <ul class="col-list list--bare">
                                     {% for server in servers %}
-                                        <li><a href="{{ urlFor('server', {'server': server.id}) }}">{{ server.formatPretty }}</a></li>
+                                        <li class="mvn"><a href="{{ urlFor('server', {'server': server.id}) }}">{{ server.formatPretty }}</a></li>
                                     {% endfor %}
                                 </ul>
                             </td>
