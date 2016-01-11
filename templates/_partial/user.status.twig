@@ -10,31 +10,35 @@
 {% set showHalStatus = showHalStatus|default(false) %}
 
 <div class="details-box">
-    <dl class="split mbn">
+    <ul class="list--bare">
         {% if showHalStatus %}
-            <dt class="split__title">HAL</dt>
-            <dd>
-                {% if user.isActive %}
-                    {{ macros.status('Active', 'success', 'tick') }}
-                {% else %}
-                    {{ macros.status('Inactive', 'error', 'nope') }}
-                {% endif %}
-            </dd>
+            <li class="mvs">
+                <span class="split__title">HAL</span>
+                <p class="mvn">
+                    {% if user.isActive %}
+                        {{ macros.status('Active', 'success', 'tick') }}
+                    {% else %}
+                        {{ macros.status('Inactive', 'error', 'nope') }}
+                    {% endif %}
+                </p>
+            </li>
 
-            <dt class="split__title">Active Directory</dt>
-            <dd>
-                {% if ldapUser %}
-                    {{ macros.status('Active', 'success', 'tick') }}
-                {% else %}
-                    {{ macros.status('Inactive', 'error', 'nope') }}
-                {% endif %}
-            </dd>
+            <li class="mvs">
+                <span class="split__title">Active Directory</span>
+                <p class="mvn">
+                    {% if ldapUser %}
+                        {{ macros.status('Active', 'success', 'tick') }}
+                    {% else %}
+                        {{ macros.status('Inactive', 'error', 'nope') }}
+                    {% endif %}
+                </p>
+            </li>
         {% endif %}
 
-        <dt class="split__title">User Types</dt>
-        <dd>
-            {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
-                <ul class="inline-list--space">
+        <li class="mvs">
+            <span class="split__title">User Types</span>
+            <ul class="inline-list--space">
+                {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
                     {% if userPerm.isLead %}
                         <li>{{ macros.status('Lead', 'notice') }}</li>
                     {% endif %}
@@ -44,45 +48,45 @@
                     {% if userPerm.isSuper %}
                         <li>{{ macros.status('Super', 'error') }}</li>
                     {% endif %}
-                </ul>
-            {% else %}
-                Standard
-            {% endif %}
-        </dd>
+                {% else %}
+                    <li>Standard</li>
+                {% endif %}
+            </ul>
+        </li>
 
         {% if leadApplications %}
-            <dt class="split__title">Lead Applications</dt>
-            <dd>
+            <li class="mvs">
+                <span class="split__title">Lead Applications</span>
                 <ul class="inline-list--comma">
                     {% for application in leadApplications %}
                         <li><a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a></li>
                     {% endfor %}
                 </ul>
-            </dd>
+            </li>
         {% endif %}
 
         {% if nonProdApplications %}
-            <dt class="split__title">Non-Production Permissions</dt>
-            <dd>
+            <li class="mvs">
+                <span class="split__title">Non-Production Permissions</span>
                 <ul class="inline-list--comma">
                     {% for application in nonProdApplications %}
                         <li><a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a></li>
                     {% endfor %}
                 </ul>
-            </dd>
+            </li>
         {% endif %}
 
         {% if prodApplications %}
-            <dt class="split__title">Production Permissions</dt>
-            <dd>
+            <li class="mvs">
+                <span class="split__title">Production Permissions</span>
                 <ul class="inline-list--comma">
                     {% for application in prodApplications %}
                         <li><a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a></li>
                     {% endfor %}
                 </ul>
-            </dd>
+            </li>
         {% endif %}
-    </dl>
+    </ul>
 
     {% if isAdmin %}
         <ul class="button-list mtm">

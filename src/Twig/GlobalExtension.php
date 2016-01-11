@@ -10,7 +10,6 @@ namespace QL\Hal\Twig;
 use Exception;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Session;
-use Slim\Http\Request;
 use Symfony\Component\DependencyInjection\IntrospectableContainerInterface;
 use Twig_Extension;
 
@@ -32,31 +31,21 @@ class GlobalExtension extends Twig_Extension
     private $globals;
 
     /**
-     * @type Request
-     */
-    private $request;
-
-    /**
      * @type Session
      */
     private $session;
 
     /**
      * @param IntrospectableContainerInterface $di
-     * @param Request $request
      * @param Session $session
      */
-    public function __construct(
-        IntrospectableContainerInterface $di,
-        Request $request,
-        Session $session
-    ) {
+    public function __construct(IntrospectableContainerInterface $di, Session $session, array $globals = [])
+    {
         $this->di = $di;
 
-        $this->request = $request;
         $this->session = $session;
 
-        $this->globals = [];
+        $this->globals = $globals;
     }
 
     /**
@@ -74,21 +63,9 @@ class GlobalExtension extends Twig_Extension
      */
     public function getGlobals()
     {
-        $this->addGlobal('currentUser', $this->getCurrentUser());
-        $this->addGlobal('ishttpsOn', ($this->request->getScheme() === 'https'));
+        $this->globals['currentUser'] = $this->getCurrentUser();
 
         return $this->globals;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return null
-     */
-    public function addGlobal($key, $value)
-    {
-        $this->globals[$key] = $value;
     }
 
     /**

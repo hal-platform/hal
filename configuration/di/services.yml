@@ -141,6 +141,7 @@ services:
     twig.extension.hal:
         class: 'QL\Hal\Twig\HalExtension'
         arguments:
+            - '@slim.request'
             - '@slim.cookies'
             - '@session'
             - '@global.message'
@@ -151,14 +152,13 @@ services:
         class: 'QL\Hal\Twig\GlobalExtension'
         arguments:
             - '@service_container'
-            - '@slim.request'
             - '@session'
-        calls:
-            - ['addGlobal', ['applicationTitle', '%application.title%']]
-            - ['addGlobal', ['applicationSha', '%application.sha%']]
-            - ['addGlobal', ['applicationVersion', '%application.major.version%']]
-            - ['addGlobal', ['applicationEnvironment', '%application.environment%']]
-            - ['addGlobal', ['applicationKrakenTitle', '%application.kraken.title%']]
+            -
+                applicationTitle: '%application.title%'
+                applicationSha: '%application.sha%'
+                applicationVersion: '%application.major.version%'
+                applicationEnvironment: '%application.environment%'
+                applicationKrakenTitle: '%application.kraken.title%'
 
     twig.extension.permissions:
         class: 'QL\Hal\Twig\PermissionsExtension'

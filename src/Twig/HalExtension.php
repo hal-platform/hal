@@ -17,6 +17,7 @@ use QL\Hal\Service\GlobalMessageService;
 use QL\Hal\Session;
 use QL\Hal\Utility\NameFormatter;
 use QL\Hal\Utility\TimeFormatter;
+use Slim\Http\Request;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -25,6 +26,11 @@ use Twig_SimpleTest;
 class HalExtension extends Twig_Extension
 {
     const NAME = 'hal';
+
+    /**
+     * @type Request
+     */
+    private $request;
 
     /**
      * @type EncryptedCookies
@@ -57,6 +63,7 @@ class HalExtension extends Twig_Extension
     private $parsedNavigationList;
 
     /**
+     * @param Request $request
      * @param EncryptedCookies $cookies
      * @param Session $session
      * @param GlobalMessageService $messageService
@@ -64,12 +71,14 @@ class HalExtension extends Twig_Extension
      * @param NameFormatter $name
      */
     public function __construct(
+        Request $request,
         EncryptedCookies $cookies,
         Session $session,
         GlobalMessageService $messageService,
         TimeFormatter $time,
         NameFormatter $name
     ) {
+        $this->request = $request;
         $this->cookies = $cookies;
         $this->session = $session;
         $this->messageService = $messageService;
@@ -105,6 +114,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('getUsersFirstName', [$this->name, 'getUsersFirstName']),
             new Twig_SimpleFunction('getUsersActualName', [$this->name, 'getUsersActualName']),
             new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName']),
+            new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
 
             // session
             new Twig_SimpleFunction('session_flash', [$this->session, 'flash']),
@@ -323,5 +333,29 @@ class HalExtension extends Twig_Extension
         }
 
         return 'Path';
+    }
+
+    /**
+     * @param string $email
+     * @param int $size
+     *
+     * @return string
+     */
+    public function getAvatarLink($email, $size = 100)
+    {
+        $isHttpsOn = ($this->request->getScheme() === 'https');
+
+        $email = strtolower(trim($email));
+
+        $default = sprintf('%s://skluck.github.io/hal/halprofile_100.jpg', $isHttpsOn ? 'https' : 'http');
+
+        return sprintf(
+            '%s://www.gravatar.com/avatar/%s?s=%d&d=%s',
+            $isHttpsOn ? 'https' : 'http',
+            md5($email),
+            $size,
+            urlencode($default)
+        );
+
     }
 }
