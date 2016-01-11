@@ -9,7 +9,6 @@ namespace QL\Hal\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
@@ -26,6 +25,7 @@ class DeploymentValidator
 
     const ERR_INVALID_PATH = 'File path is invalid.';
     const ERR_INVALID_URL = 'URL is invalid.';
+    const ERR_INVALID_URL_SCHEME = 'URL scheme is invalid. Please use http or https.';
     const ERR_INVALID_NAME = 'Name is invalid.';
 
     const ERR_INVALID_CREDENTIALS = 'Credential is invalid.';
@@ -120,12 +120,12 @@ class DeploymentValidator
 
         $path = trim($path);
 
-        $this->validateRequired($serverID, $url);
+        $this->validateRequired($serverID);
 
         // stop validation if errors
         if ($this->errors) return;
 
-        $this->validateUrl($url);
+        $url = $this->validateUrl($url);
         $this->validateName($name);
 
         if (!$server = $this->serverRepo->find($serverID)) {
@@ -237,7 +237,7 @@ class DeploymentValidator
 
         $serverType = $deployment->server()->type();
 
-        $this->validateUrl($url);
+        $url = $this->validateUrl($url);
         $this->validateName($name);
 
         $credential = null;
@@ -478,25 +478,15 @@ class DeploymentValidator
     }
 
     /**
-     * @param int $serverId
-     * @param string $url
+     * @param int $serverID
      *
-     * @return bool
+     * @return void
      */
-    private function validateRequired($serverId, $url)
+    private function validateRequired($serverID)
     {
-        $errors = [];
-
-        if (!$serverId) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'Server');
+        if (!$serverID) {
+            $this->errors[] = sprintf(self::ERR_REQUIRED, 'Server');
         }
-
-        if (!$url) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'URL');
-        }
-
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
     }
 
     /**
@@ -650,40 +640,42 @@ class DeploymentValidator
     /**
      * @param string $name
      *
-     * @return bool
+     * @return void
      */
     private function validateName($name)
     {
-        $errors = [];
-
         if (preg_match('#[\t\n]+#', $name) === 1 || strlen($name) > 100) {
-            $errors[] = self::ERR_INVALID_NAME;
+            $this->errors[] = self::ERR_INVALID_NAME;
         }
-
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
     }
 
     /**
      * @param string $url
      *
-     * @return bool
+     * @return string
      */
     private function validateUrl($url)
     {
-        $errors = [];
-
         if (strlen($url) > 200) {
-            $errors[] = self::ERR_INVALID_URL;
+            $this->errors[] = self::ERR_INVALID_URL;
         }
 
-        $url = HttpUrl::create($url);
-        if (!$url instanceof HttpUrl) {
-            $errors[] = self::ERR_INVALID_URL;
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!in_array($scheme, [null, 'http', 'https'], true)) {
+            $this->errors[] = self::ERR_INVALID_URL_SCHEME;
         }
 
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
+        if ($scheme === null) {
+            $url = 'http://' . $url;
+        }
+
+        if ($this->errors) return '';
+
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            $this->errors[] = self::ERR_INVALID_URL;
+        }
+
+        return $url;
     }
 
     /**

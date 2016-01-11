@@ -10,7 +10,6 @@ namespace QL\Kraken\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use MCP\Crypto\Package\TamperResistantPackage;
-use MCP\DataType\HttpUrl;
 use QL\Kraken\Core\Entity\Environment;
 
 class EnvironmentValidator
@@ -178,11 +177,9 @@ class EnvironmentValidator
             $this->errors[] = self::ERR_INVALID_TOKEN;
         }
 
-        $url = ($service) ? HttpUrl::create($service) : '';
+        $url = ($service) ? $this->validateUrl($service) : '';
 
-        if ($url) {
-            $url = $url->asString();
-        } elseif ($url === null) {
+        if ($url === null) {
             $this->errors[] = self::ERR_INVALID_CONSUL_SERVICE;
         }
 
@@ -211,12 +208,33 @@ class EnvironmentValidator
             $this->errors[] = self::ERR_INVALID_CLIENT_SECRET;
         }
 
-        $url = ($service) ? HttpUrl::create($service) : '';
+        $url = ($service) ? $this->validateUrl($service) : '';
 
-        if ($url) {
-            $url = $url->asString();
-        } elseif ($url === null) {
+        if ($url === null) {
             $this->errors[] = self::ERR_INVALID_QKS_SERVICE;
+        }
+
+        return $url;
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return string|null
+     */
+    private function validateUrl($url)
+    {
+        if (strlen($url) > 200) {
+            return null;
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return null;
+        }
+
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return null;
         }
 
         return $url;

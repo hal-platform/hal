@@ -12,7 +12,6 @@ use GuzzleHttp\ClientInterface as Guzzle;
 use MCP\Crypto\Package\QuickenMessagePackage;
 use MCP\Crypto\Package\QuickenMessagePackage\Header\MetaSerializer;
 use MCP\Crypto\Primitive\Factory as PrimitiveFactory;
-use MCP\DataType\HttpUrl;
 use QL\MCP\QKS\Crypto\Client\GuzzleClient;
 use QL\MCP\QKS\Crypto\Client\Parser\JsonParser;
 use QL\MCP\QKS\Crypto\Envelope\Factory as EnvelopeFactory;
@@ -69,7 +68,7 @@ class QKSFactory
      */
     public function getQMP($url, $clientID, $clientSecret, $sendingKey)
     {
-        if (!$url = HttpUrl::create($url)) {
+        if (!$url = $this->validateUrl($url)) {
             return null;
         }
 
@@ -83,15 +82,15 @@ class QKSFactory
     }
 
     /**
-     * @param HttpUrl $url
+     * @param string $url
      * @param string $clientID
      * @param string $clientSecret
      *
      * @return QKSClient
      */
-    public function getQKSClient(HttpUrl $url, $clientID, $clientSecret)
+    private function getQKSClient($url, $clientID, $clientSecret)
     {
-        $baseURL = trim($url->asString(), '/');
+        $baseURL = trim($url, '/');
 
         return new GuzzleClient($this->guzzle, $this->parser, $this->envelopeFactory, [
             'client_id' => $clientID,
@@ -99,5 +98,28 @@ class QKSFactory
             'seal_url' => new UriTemplate(sprintf('%s/crypto/seal', $baseURL)),
             'open_url' => new UriTemplate(sprintf('%s/crypto/open', $baseURL))
         ]);
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return string|null
+     */
+    private function validateUrl($url)
+    {
+        if (strlen($url) > 200) {
+            return null;
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return null;
+        }
+
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        return $url;
     }
 }

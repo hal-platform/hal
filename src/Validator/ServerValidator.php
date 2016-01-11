@@ -9,7 +9,6 @@ namespace QL\Hal\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\DataType\HttpUrl;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
@@ -219,8 +218,6 @@ class ServerValidator
     }
 
     /**
-     * Validates a hostname through MCP\DataType\HttpUrl
-     *
      * @param string $hostname
      *
      * @return string|null
@@ -237,25 +234,16 @@ class ServerValidator
 
         if ($this->errors) return;
 
-        $url = HttpUrl::create('//' . $hostname);
+        $regex = '[a-zA-Z0-9]{1}' // must start with alphanumeric
+            . '[a-zA-Z0-9\.\-]{1,59}'
+            . '(\:[0-9]{1,5})?'; // port optional
 
-        if ($url === null) {
+        if (1 !== preg_match('/^' . $regex . '$/', $hostname)) {
             $this->errors[] = self::ERR_HOST;
             return;
         }
 
-        if (preg_match('/\:([0-9]{1,5})/', $hostname, $match) === 1) {
-            $denom = sprintf('%s:%s', $url->host(), $url->port());
-        } else {
-            $denom = $url->host();
-        }
-
-        if ($denom !== $hostname) {
-            $this->errors[] = self::ERR_HOST;
-            return;
-        }
-
-        return $denom;
+        return $hostname;
     }
 
     /**
