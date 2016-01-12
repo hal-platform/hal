@@ -7,8 +7,6 @@
 {% set showNavigation = false %}
 
 {% block page_main %}
-    <div class="error-header"></div>
-
     <div class="terminal">
         <div class="terminal--border">
             <div class="terminal--border-inner">
@@ -26,6 +24,11 @@
 
         <div class="terminal__text">{{ isSeriousBusinessMode() ? block('nofunzone') : block('denied_message') }}</div>
     </div>
+
+    <div class="star-1"></div>
+    <div class="star-2"></div>
+    <div class="star-3"></div>
+
 {% endblock %}
 
 {% block nofunzone %}

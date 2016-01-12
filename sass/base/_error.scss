@@ -1,20 +1,11 @@
+#error-page {
+    height: 100%;
 
-.error-header {
-    background-image: url(/img/spaaace.jpg);
-    background-size: contains;
-    background-repeat: no-repeat;
-    height: 12em;
-    box-shadow: 0px 5px 5px #c3c3c3;
-    animation: bgslide 60s infinite linear;
-
-    @include breakpoint(90em) {
-        background-size: cover;
+    header {
+        @include breakpoint($bp-medium) {
+            margin-bottom: 9em;
+        }
     }
-}
-
-@keyframes bgslide {
-    0% { background-position: 0 0% }
-    100% { background-position: 0 100% }
 }
 
 $borderSize: 5px;
