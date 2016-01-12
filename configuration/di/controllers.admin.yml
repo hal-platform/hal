@@ -189,6 +189,7 @@ services:
             - '@admin.credential.twig'
             - '@hal.credential'
             - '@doctrine.em'
+            - '@decrypter'
     admin.credential.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/credentials/credential.twig']]]
