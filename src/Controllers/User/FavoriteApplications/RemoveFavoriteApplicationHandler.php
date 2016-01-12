@@ -27,37 +27,37 @@ class RemoveFavoriteApplicationHandler implements ControllerInterface
     const SUCCESS = 'Application "%s" removed from favorites.';
 
     /**
-     * @type EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

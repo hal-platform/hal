@@ -24,37 +24,37 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class HalLeadMiddleware implements MiddlewareInterface
 {
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 
     /**
-     * @type LoginMiddleware
+     * @var LoginMiddleware
      */
     private $loginMiddleware;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
 
     /**
-     * @type Halt
+     * @var Halt
      */
     private $halt;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

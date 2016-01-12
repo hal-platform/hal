@@ -18,17 +18,17 @@ use QL\Panthor\Exception\HTTPProblemException;
 class PushController implements ControllerInterface
 {
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $pushRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

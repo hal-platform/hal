@@ -26,42 +26,42 @@ class EditSchemaController implements ControllerInterface
     const SUCCESS = 'Description for key "%s" updated!';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Schema
+     * @var Schema
      */
     private $schema;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $propertyRepo;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

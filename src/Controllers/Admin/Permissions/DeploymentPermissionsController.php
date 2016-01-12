@@ -28,17 +28,17 @@ use QL\Panthor\TemplateInterface;
 class DeploymentPermissionsController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $userRepo;
     private $userTypesRepo;

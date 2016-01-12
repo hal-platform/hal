@@ -17,17 +17,17 @@ use QL\Panthor\Exception\HTTPProblemException;
 class BuildController implements ControllerInterface
 {
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

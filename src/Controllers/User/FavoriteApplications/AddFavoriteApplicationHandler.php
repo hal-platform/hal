@@ -27,42 +27,42 @@ class AddFavoriteApplicationHandler implements ControllerInterface
     const SUCCESS = 'Application "%s" added to favorites.';
 
     /**
-     * @type EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

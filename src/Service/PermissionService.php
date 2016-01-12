@@ -30,36 +30,36 @@ class PermissionService
     const CACHE_CAN_PUSH = 'permissions:hal.push.%s.%s.%s';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $userTypeRepo;
     private $userPermissionsRepo;
     private $applicationRepo;
 
     /**
-     * @type GitHubService
+     * @var GitHubService
      */
     private $github;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $enableGitHubPermissions;
 
     /**
      * Simple in-memory cache
      *
-     * @type array
+     * @var array
      */
     private $internalCache;
 

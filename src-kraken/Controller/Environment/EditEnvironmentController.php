@@ -23,42 +23,42 @@ class EditEnvironmentController implements ControllerInterface
     const SUCCESS = 'Environment updated.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @type TamperResistantPackage
+     * @var TamperResistantPackage
      */
     private $encryption;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type EnvironmentValidator
+     * @var EnvironmentValidator
      */
     private $validator;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $environmentRepo;
 

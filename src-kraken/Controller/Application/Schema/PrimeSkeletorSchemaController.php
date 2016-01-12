@@ -22,32 +22,32 @@ class PrimeSkeletorSchemaController implements ControllerInterface
     const ERR_HAS_SCHEMA = 'This application has schema and cannot be primed.';
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $schemaRepo;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type SkeletorConfigurationTemplate
+     * @var SkeletorConfigurationTemplate
      */
     private $skeletorTemplate;
 

@@ -42,28 +42,28 @@ class PropertyValidator
     const MAX_VALUE_SIZE_BYTES = 20000;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $schemaRepo;
     private $propertyRepo;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type TamperResistantPackage
+     * @var TamperResistantPackage
      */
     private $encryption;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

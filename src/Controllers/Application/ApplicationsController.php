@@ -20,22 +20,22 @@ use QL\Panthor\TemplateInterface;
 class ApplicationsController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type ApplicationRepository
+     * @var ApplicationRepository
      */
     private $applicationRepo;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $groupRepo;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 

@@ -30,32 +30,32 @@ class PushStartValidator
     const ERR_MISSING_CREDENTIALS = 'Attempted to initiate push to "%s", but credentials are missing.';
 
     /**
-     * @type DeploymentRepository
+     * @var DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type JobIdGenerator
+     * @var JobIdGenerator
      */
     private $unique;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

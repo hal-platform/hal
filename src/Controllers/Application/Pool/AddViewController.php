@@ -27,57 +27,57 @@ class AddViewController implements ControllerInterface
     const SUCCESS = 'View added successfully.';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type PoolService
+     * @var PoolService
      */
     private $poolService;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $viewRepo;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

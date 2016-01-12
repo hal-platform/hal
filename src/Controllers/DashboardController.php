@@ -24,27 +24,27 @@ class DashboardController implements ControllerInterface
     const AGE_OF_STUCK_JOBS = '-45 minutes';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Clock
+     * @var Clock
      */
     private $clock;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
     private $pushRepo;

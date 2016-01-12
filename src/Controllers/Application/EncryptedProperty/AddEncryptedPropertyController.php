@@ -18,22 +18,22 @@ use Slim\Http\Request;
 class AddEncryptedPropertyController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

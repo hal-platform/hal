@@ -24,28 +24,28 @@ class PoolsController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type StickyPoolService
+     * @var StickyPoolService
      */
     private $stickyPoolService;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $viewsRepo;
     private $deploymentRepo;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 

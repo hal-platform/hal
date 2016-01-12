@@ -25,32 +25,32 @@ class UserController implements ControllerInterface
     const CACHE_KEY_COUNTS = 'page:db.job_counts.%s';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type User
+     * @var User
      */
     private $user;
 
     /**
-     * @type UserRepository
+     * @var UserRepository
      */
     private $userRepo;
 
     /**
-     * @type LdapService
+     * @var LdapService
      */
     private $ldap;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 

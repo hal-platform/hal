@@ -23,22 +23,22 @@ class ViewController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type DeploymentView
+     * @var DeploymentView
      */
     private $view;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 

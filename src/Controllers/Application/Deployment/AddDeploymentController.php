@@ -24,32 +24,32 @@ class AddDeploymentController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $serverRepo;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $environmentRepo;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

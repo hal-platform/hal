@@ -25,18 +25,18 @@ class ApplicationValidator
     const VALIDATE_COREID_REGEX = '/^[\d]{6,32}$/';
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
     private $halRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

@@ -20,17 +20,17 @@ class PropertyController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Property
+     * @var Property
      */
     private $property;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $snapshotRepo;
     private $propertyRepo;

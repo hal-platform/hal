@@ -24,37 +24,37 @@ class EventLogsController implements ControllerInterface
     use HypermediaResourceTrait;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
 
     /**
-     * @type EventLogService
+     * @var EventLogService
      */
     private $logService;
 
     /**
-     * @type EventLogNormalizer
+     * @var EventLogNormalizer
      */
     private $eventLogNormalizer;
 
     /**
-     * @type BuildNormalizer
+     * @var BuildNormalizer
      */
     private $buildNormalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

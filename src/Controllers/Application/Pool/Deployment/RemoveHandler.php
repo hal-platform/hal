@@ -21,27 +21,27 @@ class RemoveHandler implements MiddlewareInterface
     const SUCCESS = 'Deployment "%s" removed.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type DeploymentPool
+     * @var DeploymentPool
      */
     private $pool;
 

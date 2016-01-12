@@ -16,22 +16,22 @@ use Slim\Http\Request;
 class GlobalMessageController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type GlobalMessageService
+     * @var GlobalMessageService
      */
     private $messageService;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 

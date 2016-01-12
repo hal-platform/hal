@@ -24,37 +24,37 @@ class StartBuildController implements ControllerInterface
     use ReleaseSortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @type GitHubService
+     * @var GitHubService
      */
     private $github;
 
     /**
-     * @type StickyEnvironmentService
+     * @var StickyEnvironmentService
      */
     private $stickyService;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 

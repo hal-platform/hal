@@ -24,22 +24,22 @@ class RemoveSchemaHandler implements ControllerInterface
     const REMOVED_ENVS = 'The property has also been removed from the following environments: <b>%s</b>';
 
     /**
-     * @type Schema
+     * @var Schema
      */
     private $schema;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $propertyRepo;
 

@@ -27,38 +27,38 @@ class ConfigurationHistoryController implements ControllerInterface
     const REGEX_ENV = '/(?:environment|env|e):([a-zA-Z-]+)/';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $targetRepo;
     private $environmentRepo;
 
     /**
-     * @type ConfigurationRepository
+     * @var ConfigurationRepository
      */
     private $configurationRepo;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

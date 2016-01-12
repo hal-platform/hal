@@ -50,14 +50,14 @@ class DeploymentValidator
     const ERR_DUPLICATE_S3 = 'A deployment already exists for this S3 bucket and file.';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $serverRepo;
     private $deploymentRepo;
     private $credentialRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

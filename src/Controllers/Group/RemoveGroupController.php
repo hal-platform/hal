@@ -21,28 +21,28 @@ class RemoveGroupController implements ControllerInterface
     const ERR_HAS_APPLICATIONS = 'Cannot remove group. All associated applications must first be removed.';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $groupRepo;
     private $applicationRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

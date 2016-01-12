@@ -14,7 +14,7 @@ use QL\Panthor\Http\EncryptedCookies;
 class SessionHandler
 {
     /**
-     * @type array
+     * @var array
      */
     protected static $defaultSettings = [
         'name' => 'session',
@@ -26,24 +26,24 @@ class SessionHandler
     ];
 
     /**
-     * @type EncryptedCookies
+     * @var EncryptedCookies
      */
     private $cookies;
 
     /**
-     * @type TamperResistantPackage
+     * @var TamperResistantPackage
      */
     private $encryption;
 
     /**
-     * @type array
+     * @var array
      */
     private $settings;
 
     /**
      * Used to detect whether the cookie has changed and is worth writing out back to the user.
      *
-     * @type string|null
+     * @var string|null
      */
     private $cookieHash;
 

@@ -30,48 +30,48 @@ class ApplicationStatusController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
     private $krakenRepo;
 
     /**
-     * @type BuildRepository
+     * @var BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @type DeploymentRepository
+     * @var DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type PushRepository
+     * @var PushRepository
      */
     private $pushRepo;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @type StickyEnvironmentService
+     * @var StickyEnvironmentService
      */
     private $stickyEnvironmentService;
 
     /**
-     * @type PoolService
+     * @var PoolService
      */
     private $poolService;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

@@ -18,22 +18,22 @@ use Slim\Http\Request;
 class EditDeploymentController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $credentialRepo;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Deployment
+     * @var Deployment
      */
     private $deployment;
 

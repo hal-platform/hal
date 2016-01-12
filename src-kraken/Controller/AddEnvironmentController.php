@@ -21,37 +21,37 @@ class AddEnvironmentController implements ControllerInterface
     const SUCCESS = 'Environment "%s" added.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $environmentRepo;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type EnvironmentValidator
+     * @var EnvironmentValidator
      */
     private $validator;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

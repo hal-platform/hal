@@ -31,37 +31,37 @@ class StartBuildController implements ControllerInterface
     const ERR_INVALID_DEPLOY = 'Cannot create child processes for selected deployments.';
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type BuildStartValidator
+     * @var BuildStartValidator
      */
     private $validator;
 
     /**
-     * @type PushStartValidator
+     * @var PushStartValidator
      */
     private $pushValidator;
 
     /**
-     * @type Predis
+     * @var Predis
      */
     private $predis;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type array
+     * @var array
      */
     private $requestBody;
 

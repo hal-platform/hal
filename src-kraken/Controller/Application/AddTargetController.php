@@ -27,38 +27,38 @@ class AddTargetController implements ControllerInterface
     const VALIDATE_QKS_KEY_REGEX = '/^[0-9A-Z]{6}$/';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $environmentRepo;
     private $targetRepo;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

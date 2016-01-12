@@ -18,17 +18,17 @@ class RemoveEnvironmentHandler implements ControllerInterface
     const SUCCESS = 'Environment "%s" has been removed.';
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 

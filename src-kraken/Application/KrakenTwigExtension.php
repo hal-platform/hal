@@ -29,12 +29,12 @@ class KrakenTwigExtension extends Twig_Extension
     const INVALID_DECODED_PROPERTY = 0xA9E1B2E76;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 

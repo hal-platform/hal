@@ -24,47 +24,47 @@ class AddTokenController implements ControllerInterface
     const ERR_LABEL_REQUIRED = 'Token label is required to create a token.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $userRepo;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

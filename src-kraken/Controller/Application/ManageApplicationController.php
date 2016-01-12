@@ -22,17 +22,17 @@ class ManageApplicationController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $environmentRepo;
     private $targetRepo;

@@ -23,28 +23,28 @@ class QueueHistoryController implements ControllerInterface
     const MAX_PER_PAGE = 25;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
     private $pushRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 
     /**
-     * @type Clock
+     * @var Clock
      */
     private $clock;
 
     /**
-     * @type string
+     * @var string
      */
     private $timezone;
 

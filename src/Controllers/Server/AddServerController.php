@@ -26,32 +26,32 @@ class AddServerController implements ControllerInterface
     const ERR_NO_ENVIRONMENTS = 'A server requires an environment. Environments must be added before servers.';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type ServerValidator
+     * @var ServerValidator
      */
     private $validator;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 

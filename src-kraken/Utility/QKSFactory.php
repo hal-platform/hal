@@ -20,22 +20,22 @@ use QL\UriTemplate\UriTemplate;
 class QKSFactory
 {
     /**
-     * @type Guzzle
+     * @var Guzzle
      */
     private $guzzle;
 
     /**
-     * @type JsonParser
+     * @var JsonParser
      */
     private $parser;
 
     /**
-     * @type EnvelopeFactory
+     * @var EnvelopeFactory
      */
     private $envelopeFactory;
 
     /**
-     * @type MetaSerializer
+     * @var MetaSerializer
      */
     private $serializer;
 

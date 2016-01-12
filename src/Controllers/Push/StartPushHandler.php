@@ -25,53 +25,53 @@ class StartPushHandler implements MiddlewareInterface
     const SUCCESS = "The build has been queued to be pushed to the requested servers.";
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type PushStartValidator
+     * @var PushStartValidator
      */
     private $validator;
 
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
     private $pushRepo;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type JobIdGenerator
+     * @var JobIdGenerator
      */
     private $unique;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Context
+     * @var Context
      */
     private $context;
 
     /**
-     * @type StickyEnvironmentService
+     * @var StickyEnvironmentService
      */
     private $stickyService;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

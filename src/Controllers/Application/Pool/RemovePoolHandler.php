@@ -20,27 +20,27 @@ class RemovePoolHandler implements MiddlewareInterface
     const SUCCESS = 'Deployment Pool "%s" removed.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type PoolService
+     * @var PoolService
      */
     private $poolService;
 
     /**
-     * @type DeploymentView
+     * @var DeploymentView
      */
     private $view;
 
     /**
-     * @type DeploymentPool
+     * @var DeploymentPool
      */
     private $pool;
 

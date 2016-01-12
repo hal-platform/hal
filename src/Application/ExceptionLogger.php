@@ -16,7 +16,7 @@ class ExceptionLogger
     use StacktraceFormatterTrait;
 
     /**
-     * @type LoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 

@@ -15,17 +15,17 @@ use QL\Panthor\ControllerInterface;
 class RemoveDeploymentHandler implements ControllerInterface
 {
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Deployment
+     * @var Deployment
      */
     private $deployment;
 

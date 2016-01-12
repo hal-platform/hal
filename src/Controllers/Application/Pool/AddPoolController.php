@@ -25,42 +25,42 @@ class AddPoolController implements ControllerInterface
     const SUCCESS = 'Pool added successfully.';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type PoolService
+     * @var PoolService
      */
     private $poolService;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $poolRepo;
 
     /**
-     * @type DeploymentView
+     * @var DeploymentView
      */
     private $view;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

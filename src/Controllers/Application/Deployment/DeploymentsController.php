@@ -24,24 +24,24 @@ class DeploymentsController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $serverRepo;
     private $applicationRepo;
     private $deploymentRepo;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $environmentRepo;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

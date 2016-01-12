@@ -31,25 +31,25 @@ class ServerValidator
     const ERR_INVALID_REGION = 'Invalid AWS region specified.';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $envRepo;
     private $serverRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 
     /**
-     * @type array
+     * @var array
      */
     private $awsTypes;
 
     /**
      * Hardcoded, since Enums were removed in aws sdk 3.0
      *
-     * @type string[]
+     * @var string[]
      */
     private static $awsRegions = [
         'ap-northeast-1',

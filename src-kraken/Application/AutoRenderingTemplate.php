@@ -13,7 +13,7 @@ use Slim\Http\Response;
 class AutoRenderingTemplate extends LazyTwig
 {
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 

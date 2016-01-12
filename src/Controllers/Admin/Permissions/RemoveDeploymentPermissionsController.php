@@ -16,17 +16,17 @@ use QL\Panthor\TemplateInterface;
 class RemoveDeploymentPermissionsController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type UserPermission
+     * @var UserPermission
      */
     private $userPermission;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 

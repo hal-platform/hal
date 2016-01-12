@@ -19,23 +19,23 @@ use QL\Panthor\TemplateInterface;
 class RemovePropertyController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Property
+     * @var Property
      */
     private $property;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $snapshotRepo;
     private $targetRepo;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 

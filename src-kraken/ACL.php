@@ -17,22 +17,22 @@ use QL\Panthor\TemplateInterface;
 class ACL
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $denied;
 
     /**
-     * @type Halt
+     * @var Halt
      */
     private $halt;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 

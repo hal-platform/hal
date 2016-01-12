@@ -22,29 +22,29 @@ use Slim\Http\Request;
 class UserManagementController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type LdapService
+     * @var LdapService
      */
     private $ldap;
 
     /**
      * Used for autopruning removed users.
      *
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $userRepo;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 

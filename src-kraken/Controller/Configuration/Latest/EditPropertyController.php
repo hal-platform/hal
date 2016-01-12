@@ -23,42 +23,42 @@ class EditPropertyController implements ControllerInterface
     const ERR_DECODING = 'Decoding failure. The property "%s" is invalid.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Property
+     * @var Property
      */
     private $property;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type PropertyValidator
+     * @var PropertyValidator
      */
     private $validator;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 

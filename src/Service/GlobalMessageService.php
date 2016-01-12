@@ -15,17 +15,17 @@ class GlobalMessageService
     const TICK_KEY = 'global-message-tick';
 
     /**
-     * @type Predis
+     * @var Predis
      */
     private $predis;
 
     /**
-     * @type string|null
+     * @var string|null
      */
     private $message;
 
     /**
-     * @type int|null
+     * @var int|null
      */
     private $expiry;
 

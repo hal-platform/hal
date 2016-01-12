@@ -17,17 +17,17 @@ class EnableUserHandler implements ControllerInterface
     const SUCCESS = 'User Enabled.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type User
+     * @var User
      */
     private $selectedUser;
 

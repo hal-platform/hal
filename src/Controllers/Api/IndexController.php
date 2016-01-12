@@ -14,7 +14,7 @@ use QL\Panthor\ControllerInterface;
 class IndexController implements ControllerInterface
 {
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 

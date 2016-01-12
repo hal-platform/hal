@@ -29,27 +29,27 @@ class RequireEntityMiddleware implements MiddlewareInterface
     const KEY_TEMPLATE = 'kraken.%s';
 
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 
     /**
-     * @type EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 
     /**
-     * @type array
+     * @var array
      */
     private $map;
 

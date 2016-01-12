@@ -21,32 +21,32 @@ class RollbackController implements ControllerInterface
     const MAX_PER_PAGE = 10;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type PushRepository
+     * @var PushRepository
      */
     private $pushRepo;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Deployment
+     * @var Deployment
      */
     private $deployment;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

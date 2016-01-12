@@ -21,27 +21,27 @@ use QL\Panthor\Utility\Json;
 class SnapshotController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Configuration
+     * @var Configuration
      */
     private $configuration;
 
     /**
-     * @type ConsulService
+     * @var ConsulService
      */
     private $consul;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $targetRepo;
     private $snapshotRepo;

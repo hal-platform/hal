@@ -26,22 +26,22 @@ class DeployController implements ControllerInterface
     const ERR_QKS_CLIENT_SECRET = 'QKS Client Secret is missing.';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Target
+     * @var Target
      */
     private $target;
 
     /**
-     * @type ConfigurationDiffService
+     * @var ConfigurationDiffService
      */
     private $diffService;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 

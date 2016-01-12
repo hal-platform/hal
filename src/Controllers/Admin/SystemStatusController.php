@@ -26,37 +26,37 @@ class SystemStatusController implements ControllerInterface
     const SERVERS_REDIS_KEY = 'agent-status:server';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $serverRepo;
 
     /**
-     * @type Predis
+     * @var Predis
      */
     private $predis;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type Clock
+     * @var Clock
      */
     private $clock;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $agents;
     private $parameters;

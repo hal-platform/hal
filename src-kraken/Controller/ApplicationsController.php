@@ -24,32 +24,32 @@ class ApplicationsController implements ControllerInterface
     const VALIDATE_ID_REGEX = '/^[a-zA-Z0-9]{2,40}$/';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $repository;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

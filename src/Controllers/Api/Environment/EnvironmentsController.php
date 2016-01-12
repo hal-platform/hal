@@ -19,17 +19,17 @@ class EnvironmentsController implements ControllerInterface
     use HypermediaResourceTrait;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $envRepo;
 
     /**
-     * @type EnvironmentNormalizer
+     * @var EnvironmentNormalizer
      */
     private $normalizer;
 

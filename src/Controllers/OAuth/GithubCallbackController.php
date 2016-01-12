@@ -32,37 +32,37 @@ class GithubCallbackController implements ControllerInterface
     /**
      * Template used in case authorization process blows up
      *
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type OAuthHandler
+     * @var OAuthHandler
      */
     private $githubOAuth;
 
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 

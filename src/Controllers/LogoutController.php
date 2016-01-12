@@ -14,12 +14,12 @@ use QL\Panthor\Utility\Url;
 class LogoutController implements ControllerInterface
 {
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 

@@ -17,17 +17,17 @@ class Flash
     const WARNING = 'warning';
 
     /**
-     * @type string
+     * @var string
      */
     private $type;
 
     /**
-     * @type string
+     * @var string
      */
     private $message;
 
     /**
-     * @type string
+     * @var string
      */
     private $details;
 

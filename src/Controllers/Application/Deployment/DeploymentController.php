@@ -14,12 +14,12 @@ use QL\Panthor\TemplateInterface;
 class DeploymentController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Deployment
+     * @var Deployment
      */
     private $deployment;
 

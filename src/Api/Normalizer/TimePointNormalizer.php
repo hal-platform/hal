@@ -16,12 +16,12 @@ class TimePointNormalizer implements NormalizerInterface
     const DEFAULT_TIMEZONE = 'UTC';
 
     /**
-     * @type string
+     * @var string
      */
     private $fomat;
 
     /**
-     * @type string
+     * @var string
      */
     private $timezone;
 

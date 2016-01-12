@@ -21,22 +21,22 @@ class RemoveServerController implements ControllerInterface
     CONST ERR_HAS_DEPLOYMENTS = 'Cannot remove server. All associated deployments must first be removed.';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deployRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Server
+     * @var Server
      */
     private $server;
 

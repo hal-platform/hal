@@ -18,23 +18,23 @@ use QL\Panthor\TemplateInterface;
 class CompareConfigurationController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Configuration
+     * @var Configuration
      */
     private $configuration;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $targetRepo;
     private $propertyRepo;
 
     /**
-     * @type ConfigurationDiffService
+     * @var ConfigurationDiffService
      */
     private $diffService;
 

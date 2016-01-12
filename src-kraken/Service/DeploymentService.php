@@ -37,27 +37,27 @@ class DeploymentService
     const ERR_CRYPTO_ERROR = 'An error occured while encrypting with QMP.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type TamperResistantPackage
+     * @var TamperResistantPackage
      */
     private $encryption;
 
     /**
-     * @type CryptoFactory
+     * @var CryptoFactory
      */
     private $cryptoFactory;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type ExceptionLogger
+     * @var ExceptionLogger
      */
     private $logger;
 

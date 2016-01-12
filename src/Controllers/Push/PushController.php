@@ -15,17 +15,17 @@ use QL\Panthor\TemplateInterface;
 class PushController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Push
+     * @var Push
      */
     private $push;
 
     /**
-     * @type EventLogService
+     * @var EventLogService
      */
     private $logService;
 

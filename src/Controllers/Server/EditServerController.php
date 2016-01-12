@@ -24,42 +24,42 @@ class EditServerController implements ControllerInterface
     const SUCCESS = 'Server updated successfully.';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Validator
+     * @var Validator
      */
     private $validator;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Server
+     * @var Server
      */
     private $server;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

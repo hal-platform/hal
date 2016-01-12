@@ -25,42 +25,42 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
     const ERR_INVALID_JSON = 'Invalid JSON provided.';
 
     /**
-     * @type EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     * @type DeploymentValidator
+     * @var DeploymentValidator
      */
     private $validator;
 
     /**
-     * @type Halt
+     * @var Halt
      */
     private $halt;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 

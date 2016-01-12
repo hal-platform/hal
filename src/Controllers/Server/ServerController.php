@@ -17,17 +17,17 @@ use QL\Panthor\TemplateInterface;
 class ServerController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deployRepo;
 
     /**
-     * @type Server
+     * @var Server
      */
     private $server;
 

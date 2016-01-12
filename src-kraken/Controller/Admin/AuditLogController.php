@@ -20,24 +20,24 @@ use QL\Panthor\Utility\Json;
 class AuditLogController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type AuditLog
+     * @var AuditLog
      */
     private $audit;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $environmentRepo;
     private $schemaRepo;
     private $propertyRepo;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 

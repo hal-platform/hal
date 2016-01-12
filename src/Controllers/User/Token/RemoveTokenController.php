@@ -22,37 +22,37 @@ class RemoveTokenController implements ControllerInterface
     const ERR_DENIED = 'You do not have permission to perform this action.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $tokenRepo;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type LdapUser
+     * @var LdapUser
      */
     private $currentUser;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

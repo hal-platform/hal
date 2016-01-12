@@ -22,17 +22,17 @@ class GlobalExtension extends Twig_Extension implements Twig_Extension_GlobalsIn
     const NAME = 'hal_global';
 
     /**
-     * @type IntrospectableContainerInterface
+     * @var IntrospectableContainerInterface
      */
     private $di;
 
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type array
+     * @var array
      */
     private $globals;
 

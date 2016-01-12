@@ -20,22 +20,22 @@ class AuditLogsController implements ControllerInterface
     const MAX_PER_PAGE = 25;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type AuditLogRepository
+     * @var AuditLogRepository
      */
     private $auditRepo;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

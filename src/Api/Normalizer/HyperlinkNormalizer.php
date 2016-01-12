@@ -14,7 +14,7 @@ use QL\Hal\Api\NormalizerInterface;
 class HyperlinkNormalizer implements NormalizerInterface
 {
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 

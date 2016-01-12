@@ -13,43 +13,43 @@ use QL\Hal\Core\Entity\Application;
 class UserPerm implements JsonSerializable
 {
     /**
-     * @type bool
+     * @var bool
      */
     private $isPleb;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $isLead;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $isButtonPusher;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $isSuper;
 
     /**
      * List of application IDs that this user is lead for.
      *
-     * @type string[]
+     * @var string[]
      */
     private $leadApplications;
 
     /**
      * List of application IDs that this user can deploy to production
      *
-     * @type string[]
+     * @var string[]
      */
     private $prodApplications;
 
     /**
      * List of application IDs that this user can deploy to non-production
      *
-     * @type string[]
+     * @var string[]
      */
     private $nonProdApplications;
 

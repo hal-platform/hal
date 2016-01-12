@@ -13,7 +13,7 @@ use QL\Panthor\TemplateInterface;
 class LatestReleaseController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 

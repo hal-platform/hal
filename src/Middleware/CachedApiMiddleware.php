@@ -18,12 +18,12 @@ use Slim\Exception\Stop;
 class CachedApiMiddleware implements MiddlewareInterface
 {
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 

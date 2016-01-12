@@ -22,12 +22,12 @@ class GitHubExtension extends Twig_Extension
     const NAME = 'github_permissions';
 
     /**
-     * @type GitHubService
+     * @var GitHubService
      */
     private $github;
 
     /**
-     * @type GitHubURLBuilder
+     * @var GitHubURLBuilder
      */
     private $urlBuilder;
 

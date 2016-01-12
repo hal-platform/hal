@@ -30,22 +30,22 @@ class EnvironmentValidator
     const VALIDATE_QKS_KEY_REGEX = '/^[0-9A-Z]{6}$/';
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type TamperResistantPackage
+     * @var TamperResistantPackage
      */
     private $encryption;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $environmentRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

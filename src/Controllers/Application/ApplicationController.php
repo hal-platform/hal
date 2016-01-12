@@ -18,18 +18,18 @@ use QL\Panthor\TemplateInterface;
 class ApplicationController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deploymentRepo;
     private $krakenRepo;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

@@ -33,48 +33,48 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     const ERR_INVALID_DATA = 'Data must not have newlines or tabs.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $encryptedRepo;
     private $envRepo;
 
     /**
-     * @type Encrypter
+     * @var Encrypter
      */
     private $encrypter;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Context
+     * @var Context
      */
     private $context;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

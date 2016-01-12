@@ -22,28 +22,28 @@ class RemoveEnvironmentHandler implements ControllerInterface
     const ERR_HAS_SERVERS = 'Cannot remove environment. All associated servers must first be removed.';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $envRepo;
     private $serverRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

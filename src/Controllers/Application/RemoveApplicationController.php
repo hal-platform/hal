@@ -20,23 +20,23 @@ class RemoveApplicationController implements ControllerInterface
     const ERR_HAS_DEPLOYMENTS = 'Cannot remove application. All server deployments must first be removed.';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
     private $deploymentRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

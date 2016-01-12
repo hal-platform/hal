@@ -17,17 +17,17 @@ class RemoveDeploymentPermissionsHandler implements ControllerInterface
     const SUCCESS = 'User Permissions for "%s" revoked from "%s".';
 
     /**
-     * @type UserPermission
+     * @var UserPermission
      */
     private $userPermission;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 

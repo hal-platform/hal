@@ -23,22 +23,22 @@ class ServersController implements ControllerInterface
     const MAX_PER_PAGE = 25;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $serverRepo;
 
     /**
-     * @type ServerNormalizer
+     * @var ServerNormalizer
      */
     private $normalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

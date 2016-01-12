@@ -15,12 +15,12 @@ use QL\Hal\Core\Entity\User;
 class SkeletorConfigurationTemplate
 {
     /**
-     * @type clock
+     * @var clock
      */
     private $clock;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 

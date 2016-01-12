@@ -36,17 +36,17 @@ class ConsulService
     const ERR_BAD_CONSUL_RESPONSE = 'Update failed. Unexpected response from Consul.';
 
     /**
-     * @type Client
+     * @var Client
      */
     private $guzzle;
 
     /**
-     * @type TamperResistantPackage
+     * @var TamperResistantPackage
      */
     private $encryption;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $environentalize;
 

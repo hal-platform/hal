@@ -14,27 +14,27 @@ use QL\Kraken\Core\Entity\Snapshot;
 class Diff
 {
     /**
-     * @type string
+     * @var string
      */
     private $key;
 
     /**
-     * @type Schema
+     * @var Schema
      */
     private $schema;
 
     /**
-     * @type Property
+     * @var Property
      */
     private $property;
 
     /**
-     * @type Snapshot
+     * @var Snapshot
      */
     private $snapshot;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $isChanged;
 

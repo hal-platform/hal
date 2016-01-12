@@ -37,33 +37,33 @@ class BuildStartValidator
     const REGEX_PULL = '/^(?:pull|pr|pull request)(?: )?(?:#)?([\d]+)$/i';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $environmentRepo;
     private $buildRepo;
 
     /**
-     * @type GitHubService
+     * @var GitHubService
      */
     private $github;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type JobIdGenerator
+     * @var JobIdGenerator
      */
     private $unique;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

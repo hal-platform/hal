@@ -18,22 +18,22 @@ use QL\Panthor\Exception\HTTPProblemException;
 class DeploymentController implements ControllerInterface
 {
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type DeploymentNormalizer
+     * @var DeploymentNormalizer
      */
     private $normalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

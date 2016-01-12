@@ -19,22 +19,22 @@ class RemoveViewHandler implements MiddlewareInterface
     const SUCCESS = 'Deployment View "%s" removed.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type PoolService
+     * @var PoolService
      */
     private $poolService;
 
     /**
-     * @type DeploymentView
+     * @var DeploymentView
      */
     private $view;
 

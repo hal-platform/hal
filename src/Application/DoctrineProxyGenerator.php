@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManager;
 class DoctrineProxyGenerator
 {
     /**
-     * @type EntityManager
+     * @var EntityManager
      */
     private $em;
 

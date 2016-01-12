@@ -23,27 +23,27 @@ class LastPushController implements ControllerInterface
     const FILTER_STATUS = 'status';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type PushRepository
+     * @var PushRepository
      */
     private $pushRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

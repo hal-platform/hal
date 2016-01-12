@@ -18,17 +18,17 @@ use QL\Panthor\TemplateInterface;
 class ManageSchemaController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $propertyRepo;
     private $schemaRepo;

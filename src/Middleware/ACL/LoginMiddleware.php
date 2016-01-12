@@ -23,32 +23,32 @@ class LoginMiddleware implements MiddlewareInterface
     const SESSION_KEY = 'user_id';
 
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $userRepo;
 
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type MessageFactoryInterface
+     * @var MessageFactoryInterface
      */
     private $logFactory;
 

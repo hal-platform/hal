@@ -22,17 +22,17 @@ class CacheManagementHandler implements MiddlewareInterface
     const ERR_INVALID = 'Invalid cache specified.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Predis
+     * @var Predis
      */
     private $predis;
 

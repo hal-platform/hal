@@ -24,37 +24,37 @@ class EditTargetController implements ControllerInterface
     const VALIDATE_QKS_KEY_REGEX = '/^[0-9A-Z]{6}$/';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Target
+     * @var Target
      */
     private $target;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

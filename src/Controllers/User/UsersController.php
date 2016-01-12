@@ -21,12 +21,12 @@ use QL\Panthor\TemplateInterface;
 class UsersController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $userRepo;
 

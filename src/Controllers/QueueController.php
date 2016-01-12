@@ -18,12 +18,12 @@ use QL\Panthor\TemplateInterface;
 class QueueController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
     private $pushRepo;

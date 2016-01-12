@@ -23,12 +23,12 @@ class ServerNormalizer implements NormalizerInterface
     use SortingTrait;
 
     /**
-     * @type EnvironmentNormalizer
+     * @var EnvironmentNormalizer
      */
     private $normalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $embed;
 

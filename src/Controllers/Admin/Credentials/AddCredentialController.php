@@ -33,42 +33,42 @@ class AddCredentialController implements ControllerInterface
     const VALIDATE_NAME_REGEX = '/^[a-zA-Z0-9\:\-.\\ ]{2,100}$/';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $credentialRepo;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type Encrypter
+     * @var Encrypter
      */
     private $encrypter;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

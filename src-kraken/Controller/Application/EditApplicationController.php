@@ -22,37 +22,37 @@ class EditApplicationController implements ControllerInterface
     const SUCCESS = 'Application updated.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type ApplicationValidator
+     * @var ApplicationValidator
      */
     private $validator;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $environmentRepo;
     private $halRepo;

@@ -15,7 +15,7 @@ class Session extends Set
     const FLASH_KEY = 'flash';
 
     /**
-     * @type User|null
+     * @var User|null
      */
     private $user;
 

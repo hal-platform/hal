@@ -22,37 +22,37 @@ class AddDeploymentFormHandler implements MiddlewareInterface
     const SUCCESS = 'Deployment added.';
 
     /**
-     * @type EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     * @type DeploymentValidator
+     * @var DeploymentValidator
      */
     private $validator;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Context
+     * @var Context
      */
     private $context;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $envRepo;
 

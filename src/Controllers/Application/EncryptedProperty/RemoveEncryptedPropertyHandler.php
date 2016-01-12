@@ -19,22 +19,22 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
     const SUCCESS = 'Encrypted Property "%s" removed.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type EncryptedProperty
+     * @var EncryptedProperty
      */
     private $encrypted;
 

@@ -25,37 +25,37 @@ class BuildsController implements ControllerInterface
     const REGEX_ENV = '/(environment|env|e):([a-zA-Z-]+)/';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type BuildRepository
+     * @var BuildRepository
      */
     private $buildRepo;
 
     /**
-     * @type EnvironmentRepository
+     * @var EnvironmentRepository
      */
     private $environmentRepo;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

@@ -21,37 +21,37 @@ class EditDeploymentHandler implements MiddlewareInterface
     const EDIT_SUCCESS = 'Deployment updated.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type DeploymentValidator
+     * @var DeploymentValidator
      */
     private $validator;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Context
+     * @var Context
      */
     private $context;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Deployment
+     * @var Deployment
      */
     private $deployment;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

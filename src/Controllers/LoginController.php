@@ -14,12 +14,12 @@ use QL\Panthor\TemplateInterface;
 class LoginController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type StatsService
+     * @var StatsService
      */
     private $stats;
 

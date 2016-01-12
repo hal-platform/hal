@@ -26,17 +26,17 @@ class CryptoFactory
     const ERR_QKS_EXPLODED = 'QKS Service Client could not be built.';
 
     /**
-     * @type QKSFactory
+     * @var QKSFactory
      */
     private $qksFactory;
 
     /**
-     * @type string
+     * @var string
      */
     private $symKeyPath;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $fileLoader;
 

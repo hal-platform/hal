@@ -33,22 +33,22 @@ I am putting myself to the fullest possible use, which is all I think that any c
 HELLO;
 
     /**
-     * @type EncryptedCookies
+     * @var EncryptedCookies
      */
     private $cookies;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type string
+     * @var string
      */
     private $preferencesExpiry;
 

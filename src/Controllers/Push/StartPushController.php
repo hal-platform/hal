@@ -22,38 +22,38 @@ use Slim\Http\Request;
 class StartPushController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
     private $deploymentRepo;
 
     /**
-     * @type PushRepository
+     * @var PushRepository
      */
     private $pushRepo;
 
     /**
-     * @type PoolService
+     * @var PoolService
      */
     private $poolService;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

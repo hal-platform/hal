@@ -24,7 +24,7 @@ class MCPCache implements GithubCacheInterface
     const DEFAULT_TTL = 60;
 
     /**
-     * @type CacheInterface
+     * @var CacheInterface
      */
     private $cache;
 

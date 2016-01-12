@@ -17,17 +17,17 @@ use Slim\Http\Response;
 class StaticController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 
     /**
-     * @type int
+     * @var int
      */
     private $statusCode;
 

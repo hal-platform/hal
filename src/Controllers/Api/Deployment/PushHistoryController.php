@@ -27,27 +27,27 @@ class PushHistoryController implements ControllerInterface
     const MAX_PER_PAGE = 25;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type PushRepository
+     * @var PushRepository
      */
     private $pushRepo;
 
     /**
-     * @type PushNormalizer
+     * @var PushNormalizer
      */
     private $normalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

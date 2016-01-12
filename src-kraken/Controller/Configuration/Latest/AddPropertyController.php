@@ -29,62 +29,62 @@ class AddPropertyController implements ControllerInterface
     const SUCCESS = 'Property "%s" set.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $targetRepo;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type ConfigurationDiffService
+     * @var ConfigurationDiffService
      */
     private $diffService;
 
     /**
-     * @type PropertyValidator
+     * @var PropertyValidator
      */
     private $validator;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 

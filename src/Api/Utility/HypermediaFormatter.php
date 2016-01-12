@@ -18,22 +18,22 @@ use Slim\Route;
 class HypermediaFormatter
 {
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Route
+     * @var Route
      */
     private $currentRoute;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

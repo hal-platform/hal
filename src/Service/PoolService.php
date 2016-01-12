@@ -28,12 +28,12 @@ class PoolService
     const KEY_VIEWS = 'pools:%s.%s';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $viewRepo;
 
     /**
-     * @type StickyPoolService
+     * @var StickyPoolService
      */
     private $stickyPoolService;
 

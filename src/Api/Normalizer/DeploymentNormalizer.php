@@ -20,17 +20,17 @@ class DeploymentNormalizer implements NormalizerInterface
     use EmbeddedResolutionTrait;
 
     /**
-     * @type ApplicationNormalizer
+     * @var ApplicationNormalizer
      */
     private $appNormalizer;
 
     /**
-     * @type ServerNormalizer
+     * @var ServerNormalizer
      */
     private $serverNormalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $embed;
 

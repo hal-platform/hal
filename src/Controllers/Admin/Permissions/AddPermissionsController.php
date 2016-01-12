@@ -42,57 +42,57 @@ class AddPermissionsController implements ControllerInterface
     const ERR_ENVIRONMENT_REQUIRED = 'Allowed Environments is required for deployment permissions.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type User
+     * @var User
      */
     private $selectedUser;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

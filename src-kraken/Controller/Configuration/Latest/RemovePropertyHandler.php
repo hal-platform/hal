@@ -18,22 +18,22 @@ class RemovePropertyHandler implements ControllerInterface
     const SUCCESS = 'Property "%s" has been removed from configuration.';
 
     /**
-     * @type Property
+     * @var Property
      */
     private $property;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 

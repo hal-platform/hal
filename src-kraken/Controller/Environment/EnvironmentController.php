@@ -18,17 +18,17 @@ use QL\Panthor\TemplateInterface;
 class EnvironmentController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $propertyRepo;
     private $configurationRepo;

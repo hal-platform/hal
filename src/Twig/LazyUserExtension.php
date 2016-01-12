@@ -19,19 +19,19 @@ class LazyUserExtension extends Twig_Extension
     const NAME = 'hal_lazy';
 
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
      * Local storage of user, to prevent multiple hits to DB while template is rendering.
      *
-     * @type User|null|false
+     * @var User|null|false
      */
     private $user;
 

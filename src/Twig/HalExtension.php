@@ -28,37 +28,37 @@ class HalExtension extends Twig_Extension
     const NAME = 'hal';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type EncryptedCookies
+     * @var EncryptedCookies
      */
     private $cookies;
 
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type GlobalMessageService
+     * @var GlobalMessageService
      */
     private $messageService;
 
     /**
-     * @type TimeFormatter
+     * @var TimeFormatter
      */
     private $time;
 
     /**
-     * @type NameFormatter
+     * @var NameFormatter
      */
     private $name;
 
     /**
-     * @type array|null
+     * @var array|null
      */
     private $parsedNavigationList;
 

@@ -13,22 +13,22 @@ use QL\Panthor\TemplateInterface;
 class DashboardController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type string
+     * @var string
      */
     private $encryptionKey;
 
     /**
-     * @type string
+     * @var string
      */
     private $sessionEncryptionKey;
 
     /**
-     * @type string
+     * @var string
      */
     private $halPushFile;
 

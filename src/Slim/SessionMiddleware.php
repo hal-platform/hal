@@ -21,12 +21,12 @@ class SessionMiddleware extends Middleware
     const SERVICE_KEY = 'session';
 
     /**
-     * @type SessionHandler
+     * @var SessionHandler
      */
     private $handler;
 
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 

@@ -16,12 +16,12 @@ class TimeFormatter
     const OUTPUT_FORMAT_DATE = 'M j, Y g:i A';
 
     /**
-     * @type Clock
+     * @var Clock
      */
     private $clock;
 
     /**
-     * @type string
+     * @var string
      */
     private $timezone;
 

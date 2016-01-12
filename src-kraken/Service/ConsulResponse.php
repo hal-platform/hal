@@ -12,22 +12,22 @@ use JsonSerializable;
 class ConsulResponse implements JsonSerializable
 {
     /**
-     * @type string
+     * @var string
      */
     private $key;
 
     /**
-     * @type string
+     * @var string
      */
     private $type;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $isSuccess;
 
     /**
-     * @type mixed
+     * @var mixed
      */
     private $detail;
 

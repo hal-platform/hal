@@ -18,7 +18,7 @@ use QL\Panthor\Exception\NotFoundException;
 class APINotFoundHandler implements ExceptionHandlerInterface
 {
     /**
-     * @type ExceptionRendererInterface
+     * @var ExceptionRendererInterface
      */
     private $renderer;
 

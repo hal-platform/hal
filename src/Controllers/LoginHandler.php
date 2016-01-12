@@ -26,42 +26,42 @@ class LoginHandler implements MiddlewareInterface
     const ERR_DISABLED = 'Account disabled.';
 
     /**
-     * @type Context
+     * @var Context
      */
     private $context;
 
     /**
-     * @type LdapService
+     * @var LdapService
      */
     private $ldap;
 
     /**
-     * @type UserRepository
+     * @var UserRepository
      */
     private $userRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 

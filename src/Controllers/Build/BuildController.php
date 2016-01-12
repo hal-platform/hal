@@ -20,22 +20,22 @@ use QL\Panthor\TemplateInterface;
 class BuildController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Build
+     * @var Build
      */
     private $build;
 
     /**
-     * @type EventLogService
+     * @var EventLogService
      */
     private $logService;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $processRepo;
     private $pushRepo;

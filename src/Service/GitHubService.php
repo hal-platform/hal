@@ -31,47 +31,47 @@ class GitHubService
     const REGEX_COMMIT = '#^[0-9a-f]{40}$#';
 
     /**
-     * @type RepoApi
+     * @var RepoApi
      */
     public $repoApi;
 
     /**
-     * @type RepoCommitApi
+     * @var RepoCommitApi
      */
     private $repoCommitApi;
 
     /**
-     * @type ReferenceApi
+     * @var ReferenceApi
      */
     private $gitReferenceApi;
 
     /**
-     * @type CommitRepoApi
+     * @var CommitRepoApi
      */
     private $gitCommitApi;
 
     /**
-     * @type PullRequestApi
+     * @var PullRequestApi
      */
     private $pullRequestApi;
 
     /**
-     * @type UserApi
+     * @var UserApi
      */
     private $userApi;
 
     /**
-     * @type OrganizationApi
+     * @var OrganizationApi
      */
     private $orgApi;
 
     /**
-     * @type OrganizationMembersApi
+     * @var OrganizationMembersApi
      */
     private $orgMembersApi;
 
     /**
-     * @type ResultPager
+     * @var ResultPager
      */
     private $pager;
 

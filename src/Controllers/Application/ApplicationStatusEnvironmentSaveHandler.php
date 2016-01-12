@@ -18,27 +18,27 @@ use Slim\Http\Request;
 class ApplicationStatusEnvironmentSaveHandler implements MiddlewareInterface
 {
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $envRepo;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type StickyEnvironmentService
+     * @var StickyEnvironmentService
      */
     private $service;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

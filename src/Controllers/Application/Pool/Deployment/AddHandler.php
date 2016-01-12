@@ -35,61 +35,61 @@ class AddHandler implements MiddlewareInterface
     const ERR_INVALID_JSON = 'Invalid JSON provided.';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Halt
+     * @var Halt
      */
     private $halt;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type DeploymentPoolRepository
+     * @var DeploymentPoolRepository
      */
     private $poolRepo;
 
     /**
-     * @type DeploymentView
+     * @var DeploymentView
      */
     private $view;
 
     /**
-     * @type DeploymentPool
+     * @var DeploymentPool
      */
     private $pool;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

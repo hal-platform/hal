@@ -13,17 +13,17 @@ use Slim\Http\Request;
 class AddDeploymentHandler implements MiddlewareInterface
 {
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type AddDeploymentFormHandler
+     * @var AddDeploymentFormHandler
      */
     private $formHandler;
 
     /**
-     * @type AddDeploymentJsonHandler
+     * @var AddDeploymentJsonHandler
      */
     private $jsonHandler;
 

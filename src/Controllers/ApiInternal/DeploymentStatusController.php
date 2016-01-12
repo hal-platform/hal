@@ -25,42 +25,42 @@ use Slim\Http\Response;
 class DeploymentStatusController implements ControllerInterface
 {
     /**
-     * @type PoolService
+     * @var PoolService
      */
     private $poolService;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissionService;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $responseFormatter;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type DeploymentRepository
+     * @var DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type PushRepository
+     * @var PushRepository
      */
     private $pushRepo;
 

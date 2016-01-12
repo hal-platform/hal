@@ -32,22 +32,22 @@ class TokenMiddleware implements MiddlewareInterface
     const ERR_DISABLED = 'User account "%s" is disabled.';
 
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $tokenRepo;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type MessageFactoryInterface
+     * @var MessageFactoryInterface
      */
     private $logFactory;
 

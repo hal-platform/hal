@@ -15,17 +15,17 @@ class StickyPoolService
     const COOKIE_NAME = 'stickypool';
 
     /**
-     * @type EncryptedCookies
+     * @var EncryptedCookies
      */
     private $cookies;
 
     /**
-     * @type EncryptedCookies
+     * @var EncryptedCookies
      */
     private $json;
 
     /**
-     * @type string
+     * @var string
      */
     private $preferencesExpiry;
 

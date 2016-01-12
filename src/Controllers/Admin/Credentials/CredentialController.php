@@ -19,22 +19,22 @@ use QL\Panthor\TemplateInterface;
 class CredentialController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Credential
+     * @var Credential
      */
     private $credential;
 
     /**
-     * @type Decrypter
+     * @var Decrypter
      */
     private $decrypter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $deploymentRepo;
 

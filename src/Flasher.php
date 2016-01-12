@@ -12,12 +12,12 @@ use QL\Panthor\Utility\Url;
 class Flasher
 {
     /**
-     * @type Session
+     * @var Session
      */
     private $session;
 
     /**
-     * @type Url
+     * @var Url
      */
     private $url;
 

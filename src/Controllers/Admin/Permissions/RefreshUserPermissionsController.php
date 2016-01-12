@@ -17,17 +17,17 @@ class RefreshUserPermissionsController implements ControllerInterface
     const SUCCESS = 'Permission Cache refreshed for "%s".';
 
     /**
-     * @type User
+     * @var User
      */
     private $selectedUser;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 

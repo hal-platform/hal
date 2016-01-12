@@ -26,42 +26,42 @@ class StartBuildHandler implements MiddlewareInterface
     const WAIT_FOR_IT = 'Build has been queued for creation.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type BuildStartValidator
+     * @var BuildStartValidator
      */
     private $validator;
 
     /**
-     * @type PushStartValidator
+     * @var PushStartValidator
      */
     private $pushValidator;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Context
+     * @var Context
      */
     private $context;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type StickyEnvironmentService
+     * @var StickyEnvironmentService
      */
     private $stickyService;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

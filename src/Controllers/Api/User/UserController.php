@@ -23,12 +23,12 @@ class UserController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $userRepo;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

@@ -22,42 +22,42 @@ use Slim\Http\Response;
 class StickyPoolHandler implements MiddlewareInterface
 {
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $viewRepo;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type StickyPoolService
+     * @var StickyPoolService
      */
     private $stickyPool;
 
     /**
-     * @type Response
+     * @var Response
      */
     private $response;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 

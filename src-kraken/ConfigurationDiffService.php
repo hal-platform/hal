@@ -20,7 +20,7 @@ use QL\Kraken\Core\Entity\Target;
 class ConfigurationDiffService
 {
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $schemaRepo;
     private $propertyRepo;

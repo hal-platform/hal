@@ -16,17 +16,17 @@ class StickyEnvironmentService
     const COOKIE_NAME = 'stickyenvironment';
 
     /**
-     * @type EncryptedCookies
+     * @var EncryptedCookies
      */
     private $cookies;
 
     /**
-     * @type EncryptedCookies
+     * @var EncryptedCookies
      */
     private $json;
 
     /**
-     * @type string
+     * @var string
      */
     private $preferencesExpiry;
 

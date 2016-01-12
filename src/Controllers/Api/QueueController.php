@@ -33,33 +33,33 @@ class QueueController implements ControllerInterface
     use HypermediaResourceTrait;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type BuildNormalizer
+     * @var BuildNormalizer
      */
     private $buildNormalizer;
 
     /**
-     * @type PushNormalizer
+     * @var PushNormalizer
      */
     private $pushNormalizer;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
     private $pushRepo;
 
     /**
-     * @type Clock
+     * @var Clock
      */
     private $clock;
 

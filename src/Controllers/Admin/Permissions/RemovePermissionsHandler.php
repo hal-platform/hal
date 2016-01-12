@@ -30,22 +30,22 @@ class RemovePermissionsHandler implements ControllerInterface
     const ERR_NOPE_BTN = 'Deployment Administrators cannot remove other Deployment Administrators from the frontend.';
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type UserType
+     * @var UserType
      */
     private $userType;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 

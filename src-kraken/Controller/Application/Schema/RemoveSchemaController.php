@@ -20,17 +20,17 @@ class RemoveSchemaController implements ControllerInterface
     use SortingTrait;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Schema
+     * @var Schema
      */
     private $schema;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $propertyRepo;
 

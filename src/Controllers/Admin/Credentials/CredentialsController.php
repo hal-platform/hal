@@ -20,12 +20,12 @@ use Slim\Http\Request;
 class CredentialsController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $credentialsRepo;
 

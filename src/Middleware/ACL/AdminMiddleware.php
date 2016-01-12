@@ -20,27 +20,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class AdminMiddleware implements MiddlewareInterface
 {
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 
     /**
-     * @type LoginMiddleware
+     * @var LoginMiddleware
      */
     private $loginMiddleware;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Halt
+     * @var Halt
      */
     private $halt;
 

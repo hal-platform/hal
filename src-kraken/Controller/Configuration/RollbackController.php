@@ -30,32 +30,32 @@ class RollbackController implements ControllerInterface
     const ERR_QKS_CLIENT_SECRET = 'QKS Client Secret is missing.';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Configuration
+     * @var Configuration
      */
     private $configuration;
 
     /**
-     * @type ConfigurationDiffService
+     * @var ConfigurationDiffService
      */
     private $diffService;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $targetRepo;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 

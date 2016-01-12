@@ -14,12 +14,12 @@ use QL\Panthor\TemplateInterface;
 class SettingsController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 

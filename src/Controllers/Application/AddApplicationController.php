@@ -43,53 +43,53 @@ class AddApplicationController implements ControllerInterface
     const ERR_GITHUB_INVALID_REPO = 'Invalid Github Enterprise repository name';
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $groupRepo;
     private $applicationRepo;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type GitHubService
+     * @var GitHubService
      */
     private $github;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissionService;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type array
+     * @var array
      */
     private $errors;
 

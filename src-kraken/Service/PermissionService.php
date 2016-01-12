@@ -17,14 +17,14 @@ class PermissionService
     const CACHE_CAN_DEPLOY = 'permissions:kraken.deploy.%s.%s.%s';
 
     /**
-     * @type HalPermissionService
+     * @var HalPermissionService
      */
     private $permission;
 
     /**
      * Simple in-memory cache
      *
-     * @type array
+     * @var array
      */
     private $internalCache;
 

@@ -36,32 +36,32 @@ class RequireEntityMiddleware implements MiddlewareInterface
     const KEY_TEMPLATE = 'hal.%s';
 
     /**
-     * @type ContainerInterface
+     * @var ContainerInterface
      */
     private $di;
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 
     /**
-     * @type bool
+     * @var bool
      */
     private $isAPI;
 
     /**
-     * @type array
+     * @var array
      */
     private $map;
 

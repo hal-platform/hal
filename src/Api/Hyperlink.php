@@ -20,17 +20,17 @@ class Hyperlink
      *  - ['route_name', [ route parameters ]]
      *  - ['route_name', [ route parameters ], [ url get parameters ]]
      *
-     * @type string|array
+     * @var string|array
      */
     private $href;
 
     /**
-     * @type string|null
+     * @var string|null
      */
     private $title;
 
     /**
-     * @type string|null
+     * @var string|null
      */
     private $type;
 

@@ -18,17 +18,17 @@ class RemoveCredentialHandler implements ControllerInterface
     const SUCCESS = 'Credential "%s" removed.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type Credential
+     * @var Credential
      */
     private $credential;
 

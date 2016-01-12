@@ -25,23 +25,23 @@ class BuildsController implements ControllerInterface
     const MAX_PER_PAGE = 25;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
     private $buildRepo;
 
     /**
-     * @type BuildNormalizer
+     * @var BuildNormalizer
      */
     private $normalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

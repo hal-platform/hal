@@ -27,7 +27,7 @@ class ApplicationsController implements ControllerInterface
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
 

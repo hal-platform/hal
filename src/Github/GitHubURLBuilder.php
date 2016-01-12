@@ -12,12 +12,12 @@ use QL\Hal\Service\GitHubService;
 class GitHubURLBuilder
 {
     /**
-     * @type GitHubService
+     * @var GitHubService
      */
     private $github;
 
     /**
-     * @type string
+     * @var string
      */
     private $githubBaseURL;
 

@@ -23,22 +23,22 @@ class UsersController implements ControllerInterface
     const MAX_PER_PAGE = 25;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type UserRepository
+     * @var UserRepository
      */
     private $userRepo;
 
     /**
-     * @type UserNormalizer
+     * @var UserNormalizer
      */
     private $normalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

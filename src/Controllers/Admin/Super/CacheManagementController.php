@@ -15,17 +15,17 @@ use QL\Panthor\TemplateInterface;
 class CacheManagementController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Predis
+     * @var Predis
      */
     private $predis;
 
     /**
-     * @type string
+     * @var string
      */
     private $root;
 

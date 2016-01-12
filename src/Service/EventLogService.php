@@ -25,17 +25,17 @@ class EventLogService
     const REDIS_LOG_KEY = 'event-logs:%s';
 
     /**
-     * @type Predis
+     * @var Predis
      */
     private $predis;
 
     /**
-     * @type Json
+     * @var Json
      */
     private $json;
 
     /**
-     * @type Clock
+     * @var Clock
      */
     private $clock;
 

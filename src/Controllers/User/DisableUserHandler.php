@@ -19,22 +19,22 @@ class DisableUserHandler implements ControllerInterface
     const ERR_THANKS_FOR_ASKING = 'HAL Administrators cannot be disabled.';
 
     /**
-     * @type EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $em;
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type User
+     * @var User
      */
     private $selectedUser;
 

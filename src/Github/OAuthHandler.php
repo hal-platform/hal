@@ -12,12 +12,12 @@ use GuzzleHttp\Client as Guzzle;
 class OAuthHandler
 {
     /**
-     * @type Guzzle
+     * @var Guzzle
      */
     private $guzzle;
 
     /**
-     * @type string
+     * @var string
      */
     private $ghBaseApiUrl;
     private $ghBaseUrl;
@@ -25,7 +25,7 @@ class OAuthHandler
     private $ghClientSecret;
 
     /**
-     * @type array
+     * @var array
      */
     private static $requiredScopes = ['repo:status', 'repo_deployment'];
 

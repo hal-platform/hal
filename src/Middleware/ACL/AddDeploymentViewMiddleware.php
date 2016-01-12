@@ -21,27 +21,27 @@ use QL\Panthor\Slim\Halt;
 class AddDeploymentViewMiddleware implements MiddlewareInterface
 {
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
     /**
-     * @type Halt
+     * @var Halt
      */
     private $halt;
 
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 

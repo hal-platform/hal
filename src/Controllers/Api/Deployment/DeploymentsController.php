@@ -29,33 +29,33 @@ class DeploymentsController implements ControllerInterface
     const FILTER_ENVIRONMENT = 'environment';
 
     /**
-     * @type Request
+     * @var Request
      */
     private $request;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $applicationRepo;
     private $environmentRepo;
 
     /**
-     * @type DeploymentRepository
+     * @var DeploymentRepository
      */
     private $deploymentRepo;
 
     /**
-     * @type DeploymentNormalizer
+     * @var DeploymentNormalizer
      */
     private $normalizer;
 
     /**
-     * @type array
+     * @var array
      */
     private $parameters;
 

@@ -21,32 +21,32 @@ use QL\Panthor\Slim\NotFound;
 class ConfigurationController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type Application
+     * @var Application
      */
     private $application;
 
     /**
-     * @type Environment
+     * @var Environment
      */
     private $environment;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $targetRepo;
 
     /**
-     * @type ConfigurationDiffService
+     * @var ConfigurationDiffService
      */
     private $diffService;
 
     /**
-     * @type NotFound
+     * @var NotFound
      */
     private $notFound;
 

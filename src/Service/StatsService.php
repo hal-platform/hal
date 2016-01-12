@@ -24,18 +24,18 @@ class StatsService
     const KEY_STATS = 'stats:totals.%s';
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $buildRepo;
     private $pushRepo;
 
     /**
-     * @type Clock
+     * @var Clock
      */
     private $clock;
 
     /**
-     * @type string
+     * @var string
      */
     private $timezone;
 

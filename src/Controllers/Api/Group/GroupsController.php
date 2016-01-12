@@ -20,17 +20,17 @@ class GroupsController implements ControllerInterface
     use HypermediaResourceTrait;
 
     /**
-     * @type ResponseFormatter
+     * @var ResponseFormatter
      */
     private $formatter;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $groupRepo;
 
     /**
-     * @type GroupNormalizer
+     * @var GroupNormalizer
      */
     private $normalizer;
 

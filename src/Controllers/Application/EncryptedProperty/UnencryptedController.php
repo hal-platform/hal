@@ -17,17 +17,17 @@ use QL\Panthor\TemplateInterface;
 class UnencryptedController implements ControllerInterface
 {
     /**
-     * @type TemplateInterface
+     * @var TemplateInterface
      */
     private $template;
 
     /**
-     * @type EncryptedProperty
+     * @var EncryptedProperty
      */
     private $encrypted;
 
     /**
-     * @type Decrypter
+     * @var Decrypter
      */
     private $decrypter;
 

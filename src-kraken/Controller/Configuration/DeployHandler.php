@@ -31,37 +31,37 @@ class DeployHandler implements ControllerInterface
     const ERR_CONSUL_FAILURE = 'Errors occured while updating Consul. No updates were made.';
 
     /**
-     * @type DeploymentService
+     * @var DeploymentService
      */
     private $deployer;
 
     /**
-     * @type Target
+     * @var Target
      */
     private $target;
 
     /**
-     * @type User
+     * @var User
      */
     private $currentUser;
 
     /**
-     * @type Flasher
+     * @var Flasher
      */
     private $flasher;
 
     /**
-     * @type callable
+     * @var callable
      */
     private $random;
 
     /**
-     * @type EntityRepository
+     * @var EntityRepository
      */
     private $propertyRepo;
 
     /**
-     * @type ACL
+     * @var ACL
      */
     private $acl;
 

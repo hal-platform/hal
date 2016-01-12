@@ -19,7 +19,7 @@ class PermissionsExtension extends Twig_Extension
     const NAME = 'hal_permissions';
 
     /**
-     * @type PermissionService
+     * @var PermissionService
      */
     private $permissions;
 
