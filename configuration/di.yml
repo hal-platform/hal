@@ -137,10 +137,10 @@ services:
             - ['addHandler', ['@panthor.error_handling.handler.request']]
             - ['addHandler', ['@panthor.error_handling.handler.base']]
 
-    panthor.error_handling.html_renderer.twig:
-        class: 'QL\Panthor\Twig\LazyTwig'
-        arguments: ['@error.failsafe.environment', '@twig.context']
-        calls: [['setTemplate', ['%error_handling.html_template%']]]
+    panthor.error_handling.html_renderer.twig_base:
+        class: 'Twig_Template'
+        factory: ['@error.failsafe.environment', 'loadTemplate']
+        arguments: ['%error_handling.html_template%']
 
     error.handler.api_not_found:
         class: 'QL\Hal\Application\APINotFoundHandler'
