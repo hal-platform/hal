@@ -144,36 +144,6 @@ select {
     }
 }
 
-.checkbox--pretty {
-    @include trailer();
-
-    .flavor {
-        @include adjust-font-size-to(ms(-1));
-    }
-
-    input {
-        display: none;
-    }
-
-    .checkbox__on {
-        color: $success-color;
-    }
-
-    .checkbox__off {
-        color: $error-color;
-    }
-
-    .checkbox__off,
-    input:checked ~ .checkbox__on {
-        display: inline;
-    }
-
-    .checkbox__on,
-    input:checked ~ .checkbox__off {
-        display: none;
-    }
-}
-
 .deployment-form {
     clear: right;
 }

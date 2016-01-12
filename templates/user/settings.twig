@@ -32,18 +32,16 @@
 {% block navigation_pref %}
     <form method="post">
 
-        <div class="checkbox--pretty">
-            <label>
-                <input type="checkbox" name="seriousbusiness" value="1" {{ isSeriousBusinessMode() ? ' checked' : '' }}>
+        <label class="checkbox--switch">
+            <input type="checkbox" name="seriousbusiness" value="1" {{ isSeriousBusinessMode() ? ' checked' : '' }}>
+            <b class="checkbox--switch__pill"></b>Use <strong>Serious Business&trade;</strong> mode
+        </label>
 
-                {{ macros.icon('tick', 'checkbox__on') }}
-                {{ macros.icon('cross', 'checkbox__off') }}
-
-                Use <strong>Serious Business&trade;</strong> mode
-            </label>
-
-            <p class="flavor mbn">Flavor text such as <strong>Hello, Dave</strong> and <strong>I'm afraid I can't do that</strong> will be reduced across the application.</p>
-        </div>
+        <p>
+            <small>
+                Flavor text such as <strong>Hello, Dave</strong> and <strong>I'm afraid I can't do that</strong> will be reduced across the application.
+            </small>
+        </p>
 
         <p class="leader">
             <input class="btn btn--action btn--small" type="submit" value="Save Preferences">
