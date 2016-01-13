@@ -40,13 +40,7 @@ OUTOUT
 }
 
 function removeArtifacts() {
-    DELFILES=(
-        "node_modules"
-        "bin/composer"
-        "js"
-        "sass"
-        "tests"
-    )
+    DELFILES=$@
 
     # Remove files
     for i in ${DELFILES[@]}
@@ -66,32 +60,61 @@ function removeArtifacts() {
 DIR=$( cd "$( dirname "$0" )" && pwd )
 loadTitles
 
+BACKEND=true
+FRONTEND=true
+DEPLOY=false
+
 set -e
 
-# install and configure
-echo "$TITLE_ENCRYPTED"
-"$DIR"/verify-encrypted
+# run
 
-# Generate and export a new encryption secret
-export HAL_ENCRYPTION_SECRET=$("$DIR/generate-trp-secret")
+# determine whether to run frontend or backend only install
+for var in "$@" ; do
+    if [ "$var" = "--frontend" ] ; then
+        FRONTEND=true
+        BACKEND=false
+    elif [ "$var" = "--backend" ] ; then
+        FRONTEND=false
+        BACKEND=true
+    elif [ "$var" = "--deploy" ] ; then
+        DEPLOY=true
+    fi
+done
 
-echo "$TITLE_CONFIG"
-"$DIR"/normalize-configuration
+# run backend install
+if [ "$BACKEND" = true ] ; then
+    # install and configure
+    echo "$TITLE_ENCRYPTED"
+    "$DIR"/verify-encrypted
 
-echo "$TITLE_TWIG"
-"$DIR/"compile-templates
+    # Generate and export a new encryption secret
+    export HAL_ENCRYPTION_SECRET=$("$DIR/generate-trp-secret")
 
-echo "$TITLE_DOCTRINE"
-"$DIR"/generate-doctrine-proxies
+    echo "$TITLE_CONFIG"
+    "$DIR"/normalize-configuration
 
-echo "$TITLE_DUMP"
-"$DIR"/dump-di
+    echo "$TITLE_TWIG"
+    "$DIR/"compile-templates
 
-echo "$TITLE_GULP"
-npm run deploy
+    echo "$TITLE_DOCTRINE"
+    "$DIR"/generate-doctrine-proxies
 
-# Remove unneeded files if deploying from HAL
-if [ -n "$HAL_ENVIRONMENT" ]; then
-    echo "$TITLE_CLEANUP"
-    removeArtifacts
+    echo "$TITLE_DUMP"
+    "$DIR"/dump-di
+
+    if [ "$DEPLOY" = true ] ; then
+        echo "$TITLE_CLEANUP"
+        removeArtifacts "bin/composer" "testing"
+    fi
+fi
+
+# run frontend install
+if [ "$FRONTEND" = true ] ; then
+    echo "$TITLE_GULP"
+    npm run deploy
+
+    if [ "$DEPLOY" = true ] ; then
+        echo "$TITLE_CLEANUP"
+        removeArtifacts "node_modules" "js" "sass"
+    fi
 fi

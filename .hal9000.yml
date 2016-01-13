@@ -1,7 +1,9 @@
 system: docker:php5.6
 build:
-    - 'bin/install'
-    - 'bin/deploy'
+    - 'bin/install --deploy --backend'
+    - 'bin/deploy --deploy --backend'
+    - 'bin/install --deploy --frontend'
+    - 'bin/deploy --deploy --frontend'
 
 exclude:
     - 'configuration/kraken.encrypter.secret'

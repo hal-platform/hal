@@ -6,9 +6,19 @@ function loadTitles() {
 ┃ COMPOSER INSTALLATION                                                        ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
+    read -r -d '' TITLE_COMPOSER_INSTALLED <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ COMPOSER INSTALLED DEPENDENCIES                                              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
     read -r -d '' TITLE_NPM <<OUTOUT
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ NPM INSTALLATION                                                             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
+    read -r -d '' TITLE_NPM_INSTALLED <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ NPM INSTALLED DEPENDENCIES                                                   ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
 }
@@ -17,33 +27,66 @@ OUTOUT
 
 loadTitles
 DIR=$( cd "$( dirname "$0" )" && pwd )
+BACKEND=true
+FRONTEND=true
+DEPLOY=false
 
 set -e
 
 # run
 
-COMPOSER_SHOW_INSTALLED="composer show --installed"
 COMPOSER="composer install --prefer-dist"
+COMPOSER_SHOW_INSTALLED="composer show --installed"
+
 NPM="npm install"
+NPM_SHOW_INSTALLED="npm ls"
+
+# determine whether to run frontend or backend only install
+for var in "$@" ; do
+    if [ "$var" = "--frontend" ] ; then
+        FRONTEND=true
+        BACKEND=false
+    elif [ "$var" = "--backend" ] ; then
+        FRONTEND=false
+        BACKEND=true
+    elif [ "$var" = "--deploy" ] ; then
+        DEPLOY=true
+    fi
+done
 
 # If deploying, use production settings
-if [ -n "$HAL_ENVIRONMENT" ]; then
+if [ "$DEPLOY" = true ] ; then
     COMPOSER="composer install --prefer-dist --no-dev --no-interaction --ansi --optimize-autoloader --profile --no-progress"
     NPM="npm install --production --color=always"
 fi
 
-# download, update composer
-if [ ! -f "$DIR/composer" ]; then
-    echo "Downloading composer from http://composer..."
-    curl http://composer/installer | bash -s "$DIR/composer"
-    echo
+# run backend install
+if [ "$BACKEND" = true ] ; then
+
+    # download, update composer
+    if [ ! -f "$DIR/composer" ]; then
+        echo "Downloading composer from http://composer..."
+        curl http://composer/installer | bash -s "$DIR/composer"
+        echo
+    fi
+
+    echo "$TITLE_COMPOSER"
+    "$DIR/"$COMPOSER
+    if [ "$DEPLOY" = true ] ; then
+        echo ""
+        echo "$TITLE_COMPOSER_INSTALLED"
+        "$DIR/"$COMPOSER_SHOW_INSTALLED
+    fi
 fi
 
-echo "$TITLE_COMPOSER"
-"$DIR/"$COMPOSER
-if [ -n "$HAL_ENVIRONMENT" ]; then
-    "$DIR/"$COMPOSER_SHOW_INSTALLED
-fi
+# run frontend install
+if [ "$FRONTEND" = true ] ; then
+    echo "$TITLE_NPM"
+    $NPM
 
-echo "$TITLE_NPM"
-$NPM
+    # if [ "$DEPLOY" = true ] ; then
+    #     echo ""
+    #     echo "$TITLE_NPM_INSTALLED"
+    #     $NPM_SHOW_INSTALLED
+    # fi
+fi
