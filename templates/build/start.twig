@@ -110,8 +110,8 @@
 
         {% block select_next %}
             {% if environments %}
-                <h2 class="leader mbn">Select Deployment</h2>
-                <p class="trailer"><span>Deployments will only be triggered if the build succeeds.</span></p>
+                <h2 class="leader mbn">Select Deployment <small>(optional)</small></h2>
+                <p class="trailer"><span>Deployments will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
 
                 <div id="js-child-deployment" data-app-id="{{ application.id }}"></div>
 
