@@ -17,7 +17,7 @@ use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 
 /**
- * Display all current users in HAL and show their LDAP and HAL status.
+ * Display all current users in Hal and show their LDAP and Hal status.
  */
 class UserManagementController implements ControllerInterface
 {

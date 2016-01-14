@@ -21,17 +21,17 @@ class EnvConfigLoader
      */
     public function load(ContainerInterface $container)
     {
-        // Save database password from encrypted properties on HAL 9000 deployment
+        // Save database password from encrypted properties on Hal deployment
         if (false !== ($property = getenv('ENCRYPTED_HAL_DB_PASS'))) {
             $container->setParameter('database.password', $property);
         }
 
-        // Save LDAP password from encrypted properties on HAL 9000 deployment
+        // Save LDAP password from encrypted properties on Hal deployment
         if (false !== ($property = getenv('ENCRYPTED_LDAP_PASS'))) {
             $container->setParameter('ldap.password', $property);
         }
 
-        // Save commit SHA on HAL 9000 deployment
+        // Save commit SHA on Hal deployment
         if (false !== ($property = getenv('HAL_COMMIT'))) {
             $container->setParameter('application.sha', $property);
         }

@@ -14,7 +14,7 @@
     </div>
 
     <section class="leader--andre">
-        <h2 class="mbs">HAL Preferences</h2>
+        <h2 class="mbs">Hal Preferences</h2>
         {{ block('navigation_pref') }}
     </section>
 
@@ -50,7 +50,7 @@
 {% endblock %}
 
 {% block github_token %}
-    <small>Allow HAL to update github repositories you have access to when you build or push.</small>
+    <small>Allow Hal to update github repositories you have access to when you build or push.</small>
 
     <h5 class="leader mbn">Current status:</h5>
     <p>
@@ -64,14 +64,14 @@
             <strong>NOT ENABLED</strong>
 
             <p class="leader">
-                <a class="btn btn--small btn--action" href="{{ urlFor('github.authorization') }}">Authorize HAL 9000</a>
+                <a class="btn btn--small btn--action" href="{{ urlFor('github.authorization') }}">Authorize Hal</a>
             </p>
         {% endif %}
     </p>
 {% endblock %}
 
 {% block access_tokens %}
-    <small>Personal Access Tokens can be used to access the <a href="{{ urlFor('api.index') }}">HAL API</a>.</small>
+    <small>Personal Access Tokens can be used to access the <a href="{{ urlFor('api.index') }}">Hal API</a>.</small>
 
     {% if tokens %}
         <table class="table--spacing-medium" data-tablesaw-mode="stack">

@@ -16,7 +16,7 @@ use QL\Panthor\ControllerInterface;
 class DisableUserHandler implements ControllerInterface
 {
     const SUCCESS = 'User Disabled.';
-    const ERR_THANKS_FOR_ASKING = 'HAL Administrators cannot be disabled.';
+    const ERR_THANKS_FOR_ASKING = 'Hal Administrators cannot be disabled.';
 
     /**
      * @var EntityManagerInterface

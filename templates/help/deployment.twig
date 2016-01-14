@@ -53,12 +53,12 @@
     </p>
     <p>
        Build command are executed from isolated docker containers on the build server. Push commands are executed on the server the application code is being pushed to.
-       HAL 9000 will consider any command with a non-zero exit code as a failure.
+       Hal will consider any command with a non-zero exit code as a failure.
     </p>
 
     {{ macros.alert('warning', 'The exit code of the command <strong>MUST</strong> be 0.') }}
 
-    <h2 id="configuration-file">HAL 9000 configuration file</h2>
+    <h2 id="configuration-file">Hal configuration file</h2>
     <p>
         Several deployment options may be configured by committing a <code>.hal9000.yml</code> to the base directory of your project codebase.
     </p>
@@ -69,8 +69,8 @@
     {{ block('configuration_file') }}
 
     <p>
-        For applications already using HAL, build and push commands in the database will be used for <strong>old builds</strong>, and when no configuration file has been committed.
-        When present, commands found in the configuration file will be used instead of build and push commands stored in the HAL database.
+        For applications already using Hal, build and push commands in the database will be used for <strong>old builds</strong>, and when no configuration file has been committed.
+        When present, commands found in the configuration file will be used instead of build and push commands stored in the Hal database.
     </p>
 
     <h2 id="build-environment">Build Scripting Environment</h2>
@@ -105,7 +105,7 @@
     <h2 id="encrypted-configuration">Encrypted Properties</h2>
 
     <p>
-        From the frontend HAL interface, administrators and project leads can add encrypted properties. Encrypted Properties
+        From the frontend Hal interface, administrators and project leads can add encrypted properties. Encrypted Properties
         are sensitive information such as passwords or API keys. During <strong>build</strong> and <strong>build_transform</strong>,
         encrypted properties will be decrypted and set as environment variables.
     </p>
@@ -118,7 +118,7 @@
 
     <p>
         If your application requires specific properties to run, it is a good idea to check if they are set and fail your build if they are empty or missing.<br><br>
-        HAL 9000 will automatically fail builds when decryption fails, but this does not protect against required configuration being deleted from the encrypted property store.
+        Hal will automatically fail builds when decryption fails, but this does not protect against required configuration being deleted from the encrypted property store.
     </p>
 
 {% endblock %}
@@ -230,7 +230,7 @@ date: ''       # ISO 8601 date
             </tr>
             <tr>
                 <td>exclude</td>
-                <td>Directories or files to exclude while pushing deployment to target server. If you have caches or assets that must not be removed by HAL, enter them here.</td>
+                <td>Directories or files to exclude while pushing deployment to target server. If you have caches or assets that must not be removed by Hal, enter them here.</td>
             </tr>
             <tr>
                 <td>build</td>

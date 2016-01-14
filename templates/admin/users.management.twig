@@ -10,7 +10,7 @@
         {{ macros.alert('success', alert_message) }}
 
     {% elseif no_pruned %}
-        {% set alert_message = 'No users were disabled. All inactive users are already disabled in HAL.' %}
+        {% set alert_message = 'No users were disabled. All inactive users are already disabled in Hal.' %}
         {{ macros.alert('info', alert_message) }}
     {% endif %}
 
@@ -27,7 +27,7 @@
             <tr>
                 <th>User ID</th>
                 <th>Username</th>
-                <th>HAL Status</th>
+                <th>Hal Status</th>
                 <th>LDAP Status</th>
             </tr>
         </thead>

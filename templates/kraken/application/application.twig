@@ -32,7 +32,7 @@
             <dt class="split__title">Core ID</dt>
             <dd>{{ application.coreId }}</dd>
 
-            <dt class="split__title">HAL 9000 Application</dt>
+            <dt class="split__title">Hal Application</dt>
             <dd>
                 {% if application.halApplication %}
                     {{ application.halApplication.name }}
@@ -51,7 +51,7 @@
             {% endif %}
 
             {% if application.halApplication %}
-                <li><a class="btn btn--secondary" href="{{ urlFor('application.status', {application: application.halApplication.id}) }}">{{ macros.icon('spinner-3') }} HAL 9000</a></li>
+                <li><a class="btn btn--secondary" href="{{ urlFor('application.status', {application: application.halApplication.id}) }}">{{ macros.icon('spinner-3') }} Hal</a></li>
             {% endif %}
 
             <li><a class="btn btn--secondary" href="http://core/app/{{ application.coreId }}">{{ macros.icon('spinner') }} Core Website</a></li>

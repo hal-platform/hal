@@ -1,6 +1,6 @@
 {
     "name": "ql/hal",
-    "description": "HAL 9000 deployment system",
+    "description": "Hal deployment system",
     "license": "proprietary",
     "authors": [
         { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }

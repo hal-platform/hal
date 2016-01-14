@@ -109,7 +109,7 @@ class AddApplicationController implements ControllerInterface
     }
 
     /**
-     * Gets a list of available repositories from HAL 9000 that can be linked to Kraken Applications
+     * Gets a list of available repositories from Hal that can be linked to Kraken Applications
      *
      * @todo cache this
      *

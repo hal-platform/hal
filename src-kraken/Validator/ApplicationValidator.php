@@ -15,11 +15,11 @@ use QL\Kraken\Core\Entity\Application;
 
 class ApplicationValidator
 {
-    const ERR_DUPLICATE = 'An application with this name, CORE ID, or HAL Application already exists.';
+    const ERR_DUPLICATE = 'An application with this name, CORE ID, or Hal Application already exists.';
 
     const ERR_INVALID_NAME = 'Application names must be alphanumeric.';
     const ERR_INVALID_COREID = 'Please enter a valid 6-digit Core Application ID.';
-    const ERR_INVALID_HAL_REPOSITORY = 'Please select a valid HAL 9000 repository.';
+    const ERR_INVALID_HAL_REPOSITORY = 'Please select a valid Hal repository.';
 
     const VALIDATE_NAME_REGEX = '/^[a-zA-Z0-9-.\ ]{2,64}$/';
     const VALIDATE_COREID_REGEX = '/^[\d]{6,32}$/';

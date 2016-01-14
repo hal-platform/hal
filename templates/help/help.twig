@@ -22,13 +22,13 @@
         <li class="trailer">
             <a href="#help-setup"><h4>Application Setup</h4></a>
             <ul class="list--bullet">
-                <li><a href="#add-application">How do I add my application to HAL?</a></li>
-                <li><a href="#deploy-application">How do I deploy my application with HAL?</a></li>
+                <li><a href="#add-application">How do I add my application to Hal?</a></li>
+                <li><a href="#deploy-application">How do I deploy my application with Hal?</a></li>
                 <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
-                <li><a href="#dotnet-support">Does HAL support .NET applications?</a></li>
-                <li><a href="#aws-support">Does HAL support AWS?</a></li>
-                <li><a href="#docker-support">Does HAL support Docker?</a></li>
-                <li><a href="#encrypted-configuration">Does HAL support encrypted configuration?</a></li>
+                <li><a href="#dotnet-support">Does Hal support .NET applications?</a></li>
+                <li><a href="#aws-support">Does Hal support AWS?</a></li>
+                <li><a href="#docker-support">Does Hal support Docker?</a></li>
+                <li><a href="#encrypted-configuration">Does Hal support encrypted configuration?</a></li>
                 <li><a href="#app-dependencies">My application needs a specific library or software installed to build. What do I do?</a></li>
                 <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
             </ul>
@@ -37,8 +37,8 @@
         <li>
             <a href="#help-misc"><h4>Other</h4></a>
             <ul class="list--bullet">
-                <li><a href="#api">Does HAL have an API? Is there any documentation?</a></li>
-                <li><a href="#maintenance">When is HAL 9000 updated? When does maintenance occur?</a></li>
+                <li><a href="#api">Does Hal have an API? Is there any documentation?</a></li>
+                <li><a href="#maintenance">When is Hal updated? When does maintenance occur?</a></li>
                 <li><a href="#release-notes">Release Notes</a></li>
             </ul>
         </li>
@@ -62,7 +62,7 @@
 
     <h6 class="mbn"><strong>How are permissions determined?</strong></h6>
     <p>
-        HAL grants non-prod build and push permissions to engineers that are <b>public</b> members of the Github organization that owns the project.
+        Hal grants non-prod build and push permissions to engineers that are <b>public</b> members of the Github organization that owns the project.
     </p>
     <p>
         For non-engineers, users must be given access by an Administrator to build or deploy applications.
@@ -73,12 +73,12 @@
         an administrator if you think you may need this level of access.
     </p>
 
-    {{ macros.alert('info', 'The way HAL determines Github permissions has recently changed.', block('github_permission_changes')) }}
+    {{ macros.alert('info', 'The way Hal determines Github permissions has recently changed.', block('github_permission_changes')) }}
 
 
     <h3 id="bugs">{{ macros.status_icon('Who should I contact regarding bugs or feature requests?') }}</h3>
     <p>
-        HAL 9000 is developed and maintained by the Web Core team. To report bugs or request a new features, please
+        Hal is developed and maintained by the Web Core team. To report bugs or request a new features, please
         submit an issue in the Github repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
     </p>
 
@@ -90,9 +90,9 @@
 {% endblock %}
 
 {% block setup_questions %}
-    <h3 id="add-application">{{ macros.status_icon('How do I add my application to HAL?') }}</h3>
+    <h3 id="add-application">{{ macros.status_icon('How do I add my application to Hal?') }}</h3>
     <p>
-        Any project can be added to HAL 9000. Doing so will allow you to create builds in the standard HAL environment. However, to deploy to servers please see <a href="#deploy-application">deployment instructions</a>.
+        Any project can be added to Hal. Doing so will allow you to create builds in the standard Hal environment. However, to deploy to servers please see <a href="#deploy-application">deployment instructions</a>.
     </p>
     <ol class="list--bullet">
         <li>
@@ -110,22 +110,22 @@
         <li>
             <strong>Add a <code>.hal9000.yml</code> configuration file to your project.</strong>
             <p>
-                The hal9000 configuration file is used to tell HAL how to build and deploy your application.
+                The hal configuration file is used to tell Hal how to build and deploy your application.
                 Please see <a href="{{ urlFor('help.deployment') }}">deployment scripting guide</a> for full details.
             </p>
         </li>
         <li>
             <strong>Determine who should be able to build and push your application.</strong>
             <p>
-                By default, HAL 9000 will grant build &amp; push permissions for non-production environments to all
+                By default, Hal will grant build &amp; push permissions for non-production environments to all
                 users who are members of the GitHub organization that owns the project repository.</p>
             </p>
             <p>If non-engineers need to be able to build and deploy, you will need to request access from an administrator.</p>
         </li>
     </ol>
 
-    <h3 id="deploy-application">{{ macros.status_icon('How do I deploy my application with HAL?') }}</h3>
-    <p>HAL 9000 supports the following deployment strategies:</p>
+    <h3 id="deploy-application">{{ macros.status_icon('How do I deploy my application with Hal?') }}</h3>
+    <p>Hal supports the following deployment strategies:</p>
 
     <ul class="list--bullet">
         <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
@@ -143,12 +143,12 @@
 
     <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
 
-    <h3 id="dotnet-support">{{ macros.status_icon('Does HAL support .NET applications?') }}</h3>
-    <p>HAL 9000 supports building windows projects and deploying to AWS-based deployment targets such as Elastic Beanstalk, CodeDeploy, and EC2.</p>
+    <h3 id="dotnet-support">{{ macros.status_icon('Does Hal support .NET applications?') }}</h3>
+    <p>Hal supports building windows projects and deploying to AWS-based deployment targets such as Elastic Beanstalk, CodeDeploy, and EC2.</p>
     <p>However, this feature will not be enabled.</p>
 
-    <h3 id="aws-support">{{ macros.status_icon('Does HAL support AWS?') }}</h3>
-    <p>HAL 9000 supports the following deployment strategies:</p>
+    <h3 id="aws-support">{{ macros.status_icon('Does Hal support AWS?') }}</h3>
+    <p>Hal supports the following deployment strategies:</p>
     <ul class="list--bullet">
         <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
         <li><a href="https://aws.amazon.com/codedeploy/">AWS CodeDeploy</a></li>
@@ -157,7 +157,7 @@
         <li>R Sync (On-premise unix servers)</li>
     </ul>
 
-    <h3 id="docker-support">{{ macros.status_icon('Does HAL support Docker?') }}</h3>
+    <h3 id="docker-support">{{ macros.status_icon('Does Hal support Docker?') }}</h3>
     <p>All unix-based applications are built in isolated Docker containers.</p>
     <p>
         This ensures reproducible builds by having a fresh container with consistent system configuration for every build.
@@ -165,10 +165,10 @@
     </p>
     <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
 
-    <h3 id="encrypted-configuration">{{ macros.status_icon('Does HAL support encrypted configuration?') }}</h3>
+    <h3 id="encrypted-configuration">{{ macros.status_icon('Does Hal support encrypted configuration?') }}</h3>
     <p>
         <strong>Yes.</strong><br>
-        HAL 9000 can store sensitive information such as passwords or API keys. This data is encrypted when it is store in the database, and only decrypted during the build process.
+        Hal can store sensitive information such as passwords or API keys. This data is encrypted when it is store in the database, and only decrypted during the build process.
     </p>
     <p>
         Administrators and Project Leads can add encrypted properties from the Application page. Values can be stored for individual environments, or globally so they can be used in every environment.
@@ -177,10 +177,10 @@
 
     <h3 id="app-dependencies">{{ macros.status_icon('My application needs a specific library or software installed to build. What do I do?') }}</h3>
     <p>
-        HAL builds within docker containers. Docker allows us to have completely isolated, custom build environments for any application that needs it.
+        Hal builds within docker containers. Docker allows us to have completely isolated, custom build environments for any application that needs it.
     </p>
     <p>
-        <strong>Do not contact the UNIX team about installing software on the HAL 9000 servers, it will not help your application.</strong><br>
+        <strong>Do not contact the UNIX team about installing software on the Hal servers, it will not help your application.</strong><br>
     </p>
     <p>
         To enable a library, it must be installed either by your build scripts directly, or in a docker image.
@@ -189,13 +189,13 @@
 {% endblock %}
 
 {% block other_questions %}
-    <h3 id="api">{{ macros.status_icon('Does HAL have an API? Is there any documentation?') }}</h3>
+    <h3 id="api">{{ macros.status_icon('Does Hal have an API? Is there any documentation?') }}</h3>
     <p>There is a read-only hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a></p>
     <p>However, there is no api documentation at this time.</p>
 
-    <h3 id="maintenance">{{ macros.status_icon('When is HAL 9000 updated? When does maintenance occur?') }}</h3>
+    <h3 id="maintenance">{{ macros.status_icon('When is Hal updated? When does maintenance occur?') }}</h3>
     <p>
-        New releases of HAL 9000 are deployed on <b>Fridays</b>. Typically this occurs before 9 AM, and time is blocked off for 1 hour.
+        New releases of Hal are deployed on <b>Fridays</b>. Typically this occurs before 9 AM, and time is blocked off for 1 hour.
         The site may or may not be sent into maintenance mode, which disables the frontend.
     </p>
     <p>Higher risk deployments that contain larger changes or complex database migrations are performed at <b>night after 7 PM</b>.</p>
@@ -209,9 +209,9 @@
 {% endblock %}
 
 {% block github_permission_changes %}
-With Github Enterprise 2.1, features that HAL relied on to determine engineer permissions were removed.
+With Github Enterprise 2.1, features that Hal relied on to determine engineer permissions were removed.
 
-Previously, HAL could check whether users were repository collaborators, but must now check if users are <b>public</b>
+Previously, Hal could check whether users were repository collaborators, but must now check if users are <b>public</b>
 members of the organization that owns the repository.
 
 Please see <a href="{{ urlFor('help.githubpermissions') }}">these instructions </a> for how to make your github organizational status public.

@@ -4,35 +4,35 @@
     <link rel="stylesheet" href="/docs/release-notes.css">
 </head>
 <body>
-    <h1>HAL 9000 - Version 2.4</h1>
+    <h1>Hal - Version 2.4</h1>
 
-    <h3>What is HAL 9000?</h3>
-    <p>HAL 9000 is the deployment system we use to deploy many of our client-facing websites, including MyQL, Rocket Mortgage, QLMS, ORMS, Agent Insight, QuickenLoans.com and more!</p>
+    <h3>What is Hal?</h3>
+    <p>Hal is the deployment system we use to deploy many of our client-facing websites, including MyQL, Rocket Mortgage, QLMS, ORMS, Agent Insight, QuickenLoans.com and more!</p>
 
     <h3>New Features</h3>
     <ul>
         <li>
-            <h5>HAL can now deploy to Amazon Elastic Beanstalk.</h5>
+            <h5>Hal can now deploy to Amazon Elastic Beanstalk.</h5>
         </li>
 
         <li>
-            <h5>HAL can now deploy to Amazon EC2.</h5>
+            <h5>Hal can now deploy to Amazon EC2.</h5>
         </li>
 
         <li>
-            <h5>HAL now supports windows-based build servers.</h5>
+            <h5>Hal now supports windows-based build servers.</h5>
 
             <blockquote>
-                <p>This feature is not currently active, as HAL does not have access to a windows build server. The Web Core team is working on getting a dedicated windows build server.</p>
+                <p>This feature is not currently active, as Hal does not have access to a windows build server. The Web Core team is working on getting a dedicated windows build server.</p>
             </blockquote>
         </li>
 
         <li>
-            <h5>HAL can store encrypted configuration that is available to build scripts.</h5>
+            <h5>Hal can store encrypted configuration that is available to build scripts.</h5>
         </li>
 
         <li>
-            <h5>HAL builds and pushes can now be configured from a <code>.hal9000.yml</code> file within the project codebase.</h5>
+            <h5>Hal builds and pushes can now be configured from a <code>.hal9000.yml</code> file within the project codebase.</h5>
 
             <blockquote>
                 <p><b>This file enables several new features:</b></p>
@@ -73,9 +73,9 @@
             <h5><i>Start Build</i> page</h5>
             <blockquote>
                 <ul>
-                    <li>HAL can now build from any pull request, not just the ones listed.</li>
+                    <li>Hal can now build from any pull request, not just the ones listed.</li>
                     <li>Environments that a project has no valid deployments for will not be displayed.</li>
-                    <li>HAL will attempt to correctly resolve build search queries such as "pull/100", "tag/2.0.0", SHA hashes, and more.</li>
+                    <li>Hal will attempt to correctly resolve build search queries such as "pull/100", "tag/2.0.0", SHA hashes, and more.</li>
                     <li>The fuzzy search on the "Start Build" page has been rebuilt to be smarter and faster.</li>
                 </ul>
             </blockquote>
@@ -118,14 +118,14 @@
             <h5>Added support for <code>.hal9000.yml</code> configuration file.</h5>
 
             <blockquote>
-                <p>This file is in YAML format, and similar to many CI services like Travis or Scrutinizer, can be used to customize the way HAL builds and deploys your project.</p>
+                <p>This file is in YAML format, and similar to many CI services like Travis or Scrutinizer, can be used to customize the way Hal builds and deploys your project.</p>
             </blockquote>
 
             <a class="biggie-size" href="2.4/hal9000_yml.png" target="_blank"><img src="2.4/hal9000_yml.400.png"><span>Example .hal9000.yml</span></a>
         </li>
 
         <li>
-            <h5>The distribution directory HAL 9000 uses to archive builds can now be customized.</h5>
+            <h5>The distribution directory Hal uses to archive builds can now be customized.</h5>
 
             <blockquote>
                 <p>The default is "current directory".</p>
@@ -133,7 +133,7 @@
         </li>
 
         <li>
-            <h5>The file and directory list HAL excludes from file syncs on push can be customized.</h5>
+            <h5>The file and directory list Hal excludes from file syncs on push can be customized.</h5>
 
             <blockquote>
                 <p>The default is "config/database.ini" and "data/". Skeletor applications should always exclude these.</p>
@@ -148,10 +148,10 @@
             <h5>Support Github Deployments API (New in GHE 2.1)</h5>
 
             <blockquote>
-                <p>If you have a Github Wnterprise account, you can authorize HAL to make deployment updates on your behalf on the <i>Settings</i> page.</p>
+                <p>If you have a Github Wnterprise account, you can authorize Hal to make deployment updates on your behalf on the <i>Settings</i> page.</p>
                 <p>
-                    Once enabled, HAL will notify Github of a deployment everytime you push a project that you have write access to in github.
-                    These deployment updates will be displayed on pull requests with the success/fail status, and link back to the info page for the push within HAL.
+                    Once enabled, Hal will notify Github of a deployment everytime you push a project that you have write access to in github.
+                    These deployment updates will be displayed on pull requests with the success/fail status, and link back to the info page for the push within Hal.
                 </p>
             </blockquote>
         </li>
@@ -160,7 +160,7 @@
     <h3>Bugs</h3>
     <ul>
         <li>
-            <h5>HAL will no longer attempt to select a matching branch or release automatically if a user did not select one from the <i>Start Build</i> ref selector.</h5>
+            <h5>Hal will no longer attempt to select a matching branch or release automatically if a user did not select one from the <i>Start Build</i> ref selector.</h5>
 
             <blockquote>
                 <p>This would sometimes select the wrong git reference to build when releases and branches both started with numeric characters.</p>
@@ -180,7 +180,7 @@
 
     <ul>
         <li>
-            <h5>HAL now only supports organization-owned github repositories.</h5>
+            <h5>Hal now only supports organization-owned github repositories.</h5>
         </li>
 
         <li>
@@ -192,7 +192,7 @@
         </li>
 
         <li>
-            <h5>For HAL Administrators, a <i>Global Server Status</i> page was added for checking whether HAL can communicate with application servers.</h5>
+            <h5>For Hal Administrators, a <i>Global Server Status</i> page was added for checking whether Hal can communicate with application servers.</h5>
         </li>
     </ul>
 
@@ -259,10 +259,10 @@
     <h3>Technical</h3>
     <ul>
         <li>
-            <h5>HAL has been upgraded to Panthor 2.0.</h5>
+            <h5>Hal has been upgraded to Panthor 2.0.</h5>
         </li>
         <li>
-            <h5>HAL now uses <a href="http://phinx.org/">phinx</a> to enable better database migrations between versions.</h5>
+            <h5>Hal now uses <a href="http://phinx.org/">phinx</a> to enable better database migrations between versions.</h5>
         </li>
         <li>
             <h5>Dependencies</h5>
@@ -270,9 +270,9 @@
             <blockquote>
                 <p><b>The following components MUST go with this release:</b></p>
                 <ul>
-                    <li>HAL 2.4</li>
-                    <li>HAL Core 2.5</li>
-                    <li>HAL Agent 2.2</li>
+                    <li>Hal 2.4</li>
+                    <li>Hal Core 2.5</li>
+                    <li>Hal Agent 2.2</li>
                 </ul>
             </blockquote>
         </li>
@@ -284,7 +284,7 @@
     <h2>JIRA Tasklist</h2>
 
     <p>
-        <a href="https://confluence/projects/HAL/versions/10303">JIRA Release page for HAL 9000 2.4</a>
+        <a href="https://confluence/projects/HAL/versions/10303">JIRA Release page for Hal 2.4</a>
     </p>
 
     <h3>Bug</h3>

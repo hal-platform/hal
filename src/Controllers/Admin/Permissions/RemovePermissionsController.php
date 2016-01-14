@@ -27,7 +27,7 @@ use QL\Panthor\TemplateInterface;
  */
 class RemovePermissionsController implements ControllerInterface
 {
-    const ERR_NOPE_SUPER = 'HAL Administrators cannot remove other HAL Administrators from the frontend.';
+    const ERR_NOPE_SUPER = 'Hal Administrators cannot remove other Hal Administrators from the frontend.';
     const ERR_NOPE_BTN = 'Deployment Administrators cannot remove other Deployment Administrators from the frontend.';
 
     /**

@@ -20,12 +20,12 @@ use Slim\Http\Request;
 class GithubCallbackController implements ControllerInterface
 {
     const ERR_TOKEN_EXISTS = 'Your account already has a GitHub token.';
-    const ERR_TOKEN_FLAVOR = 'Tokens are immutable. Please remove the token and then re-authorize HAL 9000.';
+    const ERR_TOKEN_FLAVOR = 'Tokens are immutable. Please remove the token and then re-authorize Hal.';
 
     const SUCCESS_TOKEN_GRANTED = 'GitHub token saved.';
-    const SUCCESS_TOKEN_FLAVOR = 'HAL will now attempt to notify github when you push to a project you have github write access for.';
+    const SUCCESS_TOKEN_FLAVOR = 'Hal will now attempt to notify github when you push to a project you have github write access for.';
 
-    const ERR_INVALID_STATE = "Pesky human. HAL 9000 is infallible and has prevented your attack.";
+    const ERR_INVALID_STATE = "Pesky human. Hal is infallible and has prevented your attack.";
 
     const SESSION_PARAM = 'github_oauth_state';
 

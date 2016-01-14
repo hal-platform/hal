@@ -22,7 +22,7 @@
                     <th>Name</th>
                     <th>Core ID</th>
                     <th><span class="tablesaw-collapse">Core Website</span></th>
-                    <th><span class="tablesaw-collapse">HAL 9000</span></th>
+                    <th><span class="tablesaw-collapse">Hal</span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -36,7 +36,7 @@
                         </td>
                         <td>
                             {% if application.halApplication %}
-                                <a href="{{ urlFor('application.status', {application: application.halApplication.id})}}">{{ macros.icon('spinner-3') }} HAL 9000</a>
+                                <a href="{{ urlFor('application.status', {application: application.halApplication.id})}}">{{ macros.icon('spinner-3') }} Hal</a>
                             {% endif %}
                         </td>
                         <td class="tr">

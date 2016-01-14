@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if [ -z  "$HAL_ENVIRONMENT" ] ; then
-    echo "HAL 9000 environment not found. Using development configuration."
+    echo "Hal environment not found. Using development configuration."
     HAL_ENVIRONMENT="dev"
 fi
 

@@ -73,12 +73,12 @@
                 </li>
             </ul>
 
-            {# Dynamic warning, for when HAL cannot find a matching radio option #}
+            {# Dynamic warning, for when Hal cannot find a matching radio option #}
             {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}
             <div class="leader js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
 
                 {% if isSeriousBusinessMode() %}
-                    {% set alert_message = 'A git reference cannot be found from your search query. HAL will attempt to resolve this reference on the backend.' %}
+                    {% set alert_message = 'A git reference cannot be found from your search query. Hal will attempt to resolve this reference on the backend.' %}
                     {% set alert_details = '' %}
                 {% else %}
                     {% set alert_message = "Just what do you think you're doing, Dave?" %}

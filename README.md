@@ -1,17 +1,17 @@
-# HAL 9000
+# Hal
 
-- [HAL 9000 Development Setup](#hal-9000-development-setup)
+- [Hal Development Setup](#hal-development-setup)
 - [Server Requirements](#server-requirements)
 - [Proprietary Dependencies](#proprietary-dependencies)
 - [Encryption](#encryption)
 
-## HAL 9000 Development Setup
+## Hal Development Setup
 
 #### Database
 
-HAL 9000 uses a MySQL database as a back-end. In order to develop HAL 9000 you will need to install MySQL (or MariaDB) on your system.
+Hal uses a MySQL database as a back-end. In order to develop Hal you will need to install MySQL (or MariaDB) on your system.
 
-The default connection settings for HAL:
+The default connection settings for Hal:
 
 Setting   | Default
 --------- | -------
@@ -49,7 +49,7 @@ This will process and optimize the CSS and JS.
 
 ## Server Requirements
 
-HAL 9000 requires the following server environment:
+Hal requires the following server environment:
 
 - **PHP 5.6+**
     - The following extensions must be installed:
@@ -89,11 +89,11 @@ HAL 9000 requires the following server environment:
 
 ## Encryption
 
-The HAL 9000 frontend application uses encryption for three purposes:
+The Hal frontend application uses encryption for three purposes:
 
 #### 1. Symmetric Encryption
 
-For sensitive data at rest in the HAL database.
+For sensitive data at rest in the Hal database.
 This encryption method requires **libsodium** and uses `TamperResistantPackage`.
 
 - Kraken Sensitive Values
@@ -103,7 +103,7 @@ This encryption method requires **libsodium** and uses `TamperResistantPackage`.
 
 #### 2. Assymetric Encryption
 
-For values that must only be decrypted by the HAL Agents.
+For values that must only be decrypted by the Hal Agents.
 This encryption method requires **openssl** and uses `openssl_seal/openssl_open`. These values cannot be decrypted by the frontend.
 
 - Encrypted Properties
@@ -115,4 +115,4 @@ This encryption method requires **openssl** and uses `openssl_seal/openssl_open`
 For Kraken configuration sent to Consul.
 This encryption method requires **libsodium** and uses `QuickenMessagePackage`.
 
-Kraken configuration is encrypted while at rest in the HAL db. When configuration is deployed each property is re-encrypted using the QKS crypto packaging.
+Kraken configuration is encrypted while at rest in the Hal db. When configuration is deployed each property is re-encrypted using the QKS crypto packaging.

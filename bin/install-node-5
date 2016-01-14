@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z  "$HAL_ENVIRONMENT" ] ; then
-    echo "HAL 9000 environment not found. Failing."
+    echo "Hal environment not found. Failing."
     exit 1
 fi
 
