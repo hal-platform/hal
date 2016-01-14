@@ -2,8 +2,12 @@ system: docker:php5.6
 build:
     - 'bin/install --deploy --backend'
     - 'bin/deploy --deploy --backend'
+    - 'bin/install-node-5'
     - 'bin/install --deploy --frontend'
     - 'bin/deploy --deploy --frontend'
+    # @todo use dedicated frontend container after hal 2.8 is deployed to prod
+    #- 'docker:node5.3 bin/install --deploy --frontend'
+    #- 'docker:node5.3 bin/deploy --deploy --frontend'
 
 exclude:
     - 'configuration/kraken.encrypter.secret'
