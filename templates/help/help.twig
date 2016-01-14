@@ -15,7 +15,7 @@
             <ul class="list--bullet">
                 <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
                 <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
-                <li><a href="{{ urlFor('help.githubpermissions') }}">I'm a Github repository collaborator but am unable to build or push. Help!</a></li>
+                <li><a href="{{ urlFor('help.githubpermissions') }}">I'm a GitHub repository collaborator but am unable to build or push. Help!</a></li>
             </ul>
         </li>
 
@@ -62,7 +62,7 @@
 
     <h6 class="mbn"><strong>How are permissions determined?</strong></h6>
     <p>
-        Hal grants non-prod build and push permissions to engineers that are <b>public</b> members of the Github organization that owns the project.
+        Hal grants non-prod build and push permissions to engineers that are <b>public</b> members of the GitHub organization that owns the project.
     </p>
     <p>
         For non-engineers, users must be given access by an Administrator to build or deploy applications.
@@ -73,13 +73,13 @@
         an administrator if you think you may need this level of access.
     </p>
 
-    {{ macros.alert('info', 'The way Hal determines Github permissions has recently changed.', block('github_permission_changes')) }}
+    {{ macros.alert('info', 'The way Hal determines GitHub permissions has recently changed.', block('github_permission_changes')) }}
 
 
     <h3 id="bugs">{{ macros.status_icon('Who should I contact regarding bugs or feature requests?') }}</h3>
     <p>
         Hal is developed and maintained by the Web Core team. To report bugs or request a new features, please
-        submit an issue in the Github repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
+        submit an issue in the GitHub repository at <a href="http://git/web-core/hal/issues">http://git/web-core/hal</a>.
     </p>
 
     <p>For general questions or critical errors, you can contact Web Core through the following methods:</p>
@@ -209,7 +209,7 @@
 {% endblock %}
 
 {% block github_permission_changes %}
-With Github Enterprise 2.1, features that Hal relied on to determine engineer permissions were removed.
+With GitHub Enterprise 2.1, features that Hal relied on to determine engineer permissions were removed.
 
 Previously, Hal could check whether users were repository collaborators, but must now check if users are <b>public</b>
 members of the organization that owns the repository.
