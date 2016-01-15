@@ -10,6 +10,7 @@ namespace QL\Hal\Controllers\Api\Server;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Server;
+use QL\Hal\Api\Hyperlink;
 use QL\Hal\Api\Normalizer\ServerNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
@@ -20,7 +21,7 @@ class ServersController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
-    const MAX_PER_PAGE = 25;
+    const MAX_PER_PAGE = 5;
 
     /**
      * @var ResponseFormatter
