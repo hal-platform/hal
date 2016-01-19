@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+DIR=$( cd "$( dirname "$0" )" && pwd )
+SLATE_PORT=4567
+
+docker rm -f halslate
+
+docker run -d \
+-p $SLATE_PORT:$SLATE_PORT \
+--name halslate \
+-v "$DIR"/../slate:/app/source \
+slate \
+--force-polling
