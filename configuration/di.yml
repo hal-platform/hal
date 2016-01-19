@@ -135,6 +135,7 @@ services:
             - ['addHandler', ['@panthor.error_handling.handler.not_found']]
             - ['addHandler', ['@panthor.error_handling.handler.http_problem']]
             - ['addHandler', ['@panthor.error_handling.handler.request']]
+            - ['addHandler', ['@error.handler.api_base']]
             - ['addHandler', ['@panthor.error_handling.handler.base']]
 
     panthor.error_handling.html_renderer.twig_base:
@@ -145,6 +146,12 @@ services:
     error.handler.api_not_found:
         class: 'QL\Hal\Application\APINotFoundHandler'
         arguments: ['@panthor.error_handling.problem_renderer']
+
+    error.handler.api_base:
+        class: 'QL\Hal\Application\APIBaseHandler'
+        arguments: ['@panthor.error_handling.problem_renderer', '@logger']
+        calls:
+            - ['setStacktraceLogging', ['%error_handling.log_stacktrace%']]
 
     exception.logger:
         class: 'QL\Hal\Application\ExceptionLogger'
