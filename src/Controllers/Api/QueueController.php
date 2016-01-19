@@ -101,6 +101,12 @@ class QueueController implements ControllerInterface
         }
 
         $createdAfter = $createdAfter ?: $this->getDefaultSinceTime();
+
+        $oldest = $this->clock->read()->modify('-3 days');
+        if ($createdAfter->compare($oldest) !== 1) {
+            throw new HTTPProblemException(400, 'Invalid Datetime! The queue cannot retrieve jobs older than 3 days.');
+        }
+
         $jobs = $this->retrieveJobs($createdAfter);
         $status = count($jobs) > 0 ? 200 : 404;
 

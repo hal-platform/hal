@@ -88,6 +88,10 @@ class QueueRefreshController implements ControllerInterface
 
         $identifiers = explode(' ', $this->parameters['jobs']);
 
+        if (count($identifiers) > 50) {
+            throw new HTTPProblemException(400, 'Cannot get the status of more than 100 jobs at once.');
+        }
+
         $jobs = $this->retrieveJobs($identifiers);
         $status = (count($jobs) > 0) ? 200 : 404;
 
