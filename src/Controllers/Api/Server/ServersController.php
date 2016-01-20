@@ -21,7 +21,7 @@ class ServersController implements ControllerInterface
 {
     use HypermediaResourceTrait;
 
-    const MAX_PER_PAGE = 5;
+    const MAX_PER_PAGE = 25;
 
     /**
      * @var ResponseFormatter
