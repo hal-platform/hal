@@ -7,21 +7,28 @@ language_tabs:
   - shell: cURL
 
 toc_footers:
-  - <a href='https://hal9000/api'>API Home</a>
+  - <a href='https://hal9000/api'>Live API</a>
+  - <a href='https://hal9000/settings'>Generate an API Token</a>
   - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
-  - introduction/authentication
-  - introduction/errors
-  - introduction/hypermedia
-  - introduction/domain
+  - meta/authentication
+  - meta/errors
+  - meta/hypermedia
+  - meta/domain
   - endpoints/index
   - resources/applications
+  - resources/application_groups
   - resources/environments
-  - resources/groups
   - resources/servers
+  - resources/deployments
+  - resources/builds
+  - resources/builds_create
+  - resources/pushes
+  - resources/eventlogs
   - resources/users
   - endpoints/queue
+  - meta/changelog
 
 search: true
 ---
@@ -36,3 +43,7 @@ This is documentation for the Hal API. You can use the API to access resources s
 </aside>
 
 There are language examples in **HTTP**, **PHP**, and **cURL**. You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+
+<aside class="warning">
+    Any endpoint prefixed with <code>/api/internal/</code> is designated for <b>internal Hal use only</b>. It is not public use and may change for any reason at any time. Such endpoints are not documented here.
+</aside>

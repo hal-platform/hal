@@ -31,7 +31,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/servers');
@@ -90,7 +90,7 @@ This endpoint retrieves all servers.
 
 ### HTTP Request
 
-`GET https://hal9000/api/servers?page={page}`
+`GET https://hal9000/api/servers(/page/{page})`
 
 ### URL Parameters
 
@@ -116,7 +116,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/servers/4');

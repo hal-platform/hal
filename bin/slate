@@ -1,13 +1,41 @@
 #!/usr/bin/env bash
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
+
 SLATE_PORT=4567
+SLATE_CONTAINER="halslate"
+SLATE_IMAGE="slate"
 
-docker rm -f halslate
+CONTAINER_RUNNING=$(docker inspect -f "{{ .State.Running }}" $SLATE_CONTAINER 2>/dev/null)
 
-docker run -d \
--p $SLATE_PORT:$SLATE_PORT \
---name halslate \
--v "$DIR"/../slate:/app/source \
-slate \
---force-polling
+# container not found, build it
+if [ ! "$?" = "0" ] ; then
+
+    HAS_IMAGE=$(docker images -q slate)
+
+    if [ "$HAS_IMAGE" = "" ] ; then
+        echo
+        echo "Image $SLATE_IMAGE does not exist. Creating..."
+        docker build -t $SLATE_IMAGE "$DIR/slate"
+    fi
+
+    echo
+    echo "Container $SLATE_CONTAINER does not exist. Creating..."
+    docker run -d \
+    -p $SLATE_PORT:$SLATE_PORT \
+    --name $SLATE_CONTAINER \
+    -v "$DIR"/../slate:/app/source \
+    slate \
+    --force-polling
+
+elif [ ! "$CONTAINER_RUNNING" = "true" ] ; then
+
+    echo
+    echo "Container $SLATE_CONTAINER exists, but not running. Starting..."
+    docker start $SLATE_CONTAINER
+
+else
+    echo
+    echo "Container $SLATE_CONTAINER already running. Restarting..."
+    docker restart $SLATE_CONTAINER
+fi

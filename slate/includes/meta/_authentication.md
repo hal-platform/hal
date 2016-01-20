@@ -1,6 +1,6 @@
 ## Authentication
 
-> Make sure to replace `beepboopbeepboop` with your API key.  
+> Make sure to replace `beepboopbeepboop` with your API token.  
 > To authorize a request, use the following code.
 
 ```http
@@ -26,7 +26,7 @@ $token = 'beepboopbeepboop';
 $client = new Client([
     'base_uri' => 'https://hal9000',
     'headers' => [
-        'Authentication' => sprintf('token %s', $token)
+        'Authorization' => sprintf('token %s', $token)
     ]
 ]);
 
@@ -35,11 +35,12 @@ $response = $client->get('/api');
 
 ```shell
 # With shell, you can just pass the correct header with each request
-curl "https://hal9000/api"
-  -H "Authorization: token beepboopbeepboop"
+curl \
+  -H "Authorization: token beepboopbeepboop" \
+  "https://hal9000/api"
 ```
 
-Hal uses API tokens to allow access to the API. You can register a new Hal API key by signing into Hal and generating
+Hal uses API tokens to allow access to the API. You can register a new Hal API token by signing into Hal and generating
 a token from the [Settings](https://hal9000/settings) page. You may also revoke your tokens from this same page.
 
 Hal expects the API token to be included in all **write** API requests. Reads do not require authentication.

@@ -45,7 +45,7 @@ Code       | Meaning
 }
 ```
 
-### Error Response
+### Error Responses
 
 When an error or otherwise exceptional situation occurs, and the response is rendered as a **problem**. This is a resource
 type defined in the draft IETF RFC [Problem Details for HTTP APIs](https://datatracker.ietf.org/doc/draft-ietf-appsawg-http-problem/)

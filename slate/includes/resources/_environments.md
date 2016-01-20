@@ -30,7 +30,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/environments');
@@ -93,7 +93,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/environments/4');

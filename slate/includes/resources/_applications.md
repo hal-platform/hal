@@ -20,6 +20,20 @@ page            | **Link** - Page in frontend UI for this application           
 status_page     | **Link** - Status page for this application                   |
 github_page     | **Link** - GitHub page for the repository of this application |
 
+## Application Groups
+
+A group is merely an organizational unit for applications. Permissions cannot be granted to entire groups, and the group
+an application belongs to has no bearing on who can deploy an application.
+
+### Attributes
+
+Attribute       | Description                                         | Type     | Example
+--------------- | --------------------------------------------------- | -------- | -------------
+id              | Unique group ID                                     | number   | `5`
+key             | Unique alphanumeric identifier for this group       | string   | `testing`, `example-group`
+name            | Group name                                          | string   | `Test Group`
+
+
 ## Get All Applications
 
 ```http
@@ -38,7 +52,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/applications');
@@ -101,7 +115,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/applications/24');

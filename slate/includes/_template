@@ -1,0 +1,77 @@
+# Resource
+
+### Attributes
+
+Attribute       | Description                                         | Type     | Example
+--------------- | --------------------------------------------------- | -------- | -------------
+id              | Unique ID for resource                              | number   | `42`
+prop2           | Description                                         | string   | `ex1`, `ex2`
+prop3           | Description                                         | string   | `true`
+prop4           | **Embedded** - Description                          | resource |
+prop5           | **Link** - Description                              | list     |
+
+## Get All Resources
+
+```http
+
+```
+
+```http
+
+```
+
+```php
+
+```
+
+```shell
+
+```
+
+> ### Response
+
+```json
+
+```
+
+Description description desc description.
+
+### HTTP Request
+
+`GET https://hal9000/api/endpoint`
+
+## Get Resource
+
+```http
+
+```
+
+```http
+
+```
+
+```php
+
+```
+
+```shell
+
+```
+
+> ### Response
+
+```json
+
+```
+
+Description description desc description.
+
+### HTTP Request
+
+`GET https://hal9000/api/endpoint`
+
+### URL Parameters
+
+Parameter | Description
+--------- | -----------
+id        | The unique ID of the resource

@@ -29,7 +29,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/users');
@@ -78,7 +78,7 @@ This endpoint retrieves all users.
 
 ### HTTP Request
 
-`GET https://hal9000/api/users?page={page}`
+`GET https://hal9000/api/users(/page/{page})`
 
 ### URL Parameters
 
@@ -104,7 +104,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/users/3001');

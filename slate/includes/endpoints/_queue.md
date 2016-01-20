@@ -20,7 +20,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $response = $client->get('/api/queue?since=2016-01-12T13:45:00Z');
@@ -102,7 +102,7 @@ Content-Type: application/hal+json
 <?php
 $client = new Client([
     'base_uri' => 'https://hal9000',
-    'headers' => ['Authentication' => sprintf('token %s', getenv('HAL_TOKEN'))]
+    'headers' => ['Authorization' => sprintf('token %s', getenv('HAL_TOKEN'))]
 ]);
 
 $jobs = ['build1', 'push2', 'build3'];
