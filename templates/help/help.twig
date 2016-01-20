@@ -190,8 +190,12 @@
 
 {% block other_questions %}
     <h3 id="api">{{ macros.status_icon('Does Hal have an API? Is there any documentation?') }}</h3>
-    <p>There is a read-only hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a></p>
-    <p>However, there is no api documentation at this time.</p>
+    <p>
+        Hal has a hypermedia REST API here: <a href="{{ urlFor('api.index') }}">/api</a>. Please note that this API is mostly
+        limited to reads at the current time. With the exception of creating builds, actions cannot be performed through the API.
+
+    </p>
+    <p>Documentation is located at <a href="{{ urlFor('api.docs') }}">/docs/api</a>.</p>
 
     <h3 id="maintenance">{{ macros.status_icon('When is Hal updated? When does maintenance occur?') }}</h3>
     <p>

@@ -9,6 +9,10 @@ services:
         class: 'QL\Hal\Controllers\Api\IndexController'
         arguments: ['@response.formatter']
 
+    api.docs:
+        class: 'QL\Hal\Controllers\Api\DocsRedirectController'
+        arguments: ['@url']
+
     ####################################################################################################################
     # QUEUE CONTROLLERS
     ####################################################################################################################

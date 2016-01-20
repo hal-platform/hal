@@ -75,7 +75,7 @@ class HypermediaFormatter
                 $this->request->get()
             );
 
-            $links['self'] = $self;
+            $links = ['self' => $self] + $links;
         }
 
         // hide embedded if empty

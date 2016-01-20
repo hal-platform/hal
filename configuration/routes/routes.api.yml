@@ -47,6 +47,10 @@ parameters:
         # PUBLIC API ROUTES
         ################################################################################################################
 
+        api.docs:
+            route: '/docs/api'
+            stack: ['api.docs']
+
         api.index:
             method: 'GET'
             route: '/api'
