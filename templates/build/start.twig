@@ -320,6 +320,8 @@
             <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
 
             <span class="js-search-query">PR #{{ ref.number }}</span>
+            <span class="js-search-query">PR {{ ref.number }}</span>
+            <span class="js-search-query">pull/{{ ref.number }}</span>
             <span class="js-search-query">pull request {{ ref.number }}</span>
             <span class="js-search-query">{{ ref.title }}</span>
         </li>
@@ -332,6 +334,8 @@
             <span class="js-search-primary">PR #{{ ref.number }} : {{ ref.title }}</span>
 
             <span class="js-search-query">PR #{{ ref.number }}</span>
+            <span class="js-search-query">PR {{ ref.number }}</span>
+            <span class="js-search-query">pull/{{ ref.number }}</span>
             <span class="js-search-query">pull request {{ ref.number }}</span>
             <span class="js-search-query">{{ ref.title }}</span>
         </li>
@@ -341,6 +345,10 @@
         <li class="js-search-item" data-parent="{{ uniqueId }}" data-tab="js-tab--tags">
             {{ macros.icon('tag') }}
             <span class="js-search-primary">{{ ref.name }}</span>
+
+            <span class="js-search-query">tag {{ ref.name }}</span>
+            <span class="js-search-query">tag/{{ ref.name }}</span>
+            <span class="js-search-query">release {{ ref.name }}</span>
         </li>
     {% elseif type == 'branch' %}
         {% set uniqueId = hash(ref.object.sha ~ '-' ~ ref.name) %}

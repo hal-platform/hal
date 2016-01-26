@@ -25,7 +25,7 @@ module.exports = {
         this.$searchBox = $(this.searchBox);
         this.$searchResults = $(this.searchResults);
 
-        filterSearch.init(this.$searchBox, {
+        filterSearch(this.$searchBox, {
             searchItem: '.js-search-item',
             searchQuery: 'span',
 
@@ -90,6 +90,11 @@ module.exports = {
         this.$tabAnchors.on('click', function(event) {
             _this.selectTab(this);
             event.preventDefault();
+        });
+
+        // Add trigger for submit in case user tabs from search box
+        this.$submitButtons.on('click focus', function(event) {
+            _this.$searchBox.trigger('herpderp');
         });
 
         // Auto select a ref it there is only one visible
