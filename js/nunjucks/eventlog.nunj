@@ -9,7 +9,7 @@
 
             {% elif log.status == 'failure' %}
                  <span class="status-block--error">
-                    <svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#spam"></use></svg>
+                    <svg class="icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/icons.svg#spam-2"></use></svg>
                     {{ logEvent|capitalize }}
                 </span>
 

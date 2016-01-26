@@ -31,9 +31,12 @@ parameters:
             stack:  ['middleware.login', 'github.authorization.remove.page']
 
         styleguide:
-            method: 'GET'
             route:  '/styleguide'
             stack:  ['styleguide.page']
+
+        styleguide.icons:
+            route:  '/styleguide/icons'
+            stack:  ['styleguide.icons.page']
 
         latest.release:
             method: 'GET'

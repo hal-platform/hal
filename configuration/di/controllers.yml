@@ -542,3 +542,10 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['styleguide.html.twig']]]
 
+    styleguide.icons.page:
+        parent: 'static.controller'
+        arguments: ['@styleguide.icons.twig', '@slim.response']
+    styleguide.icons.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['styleguide.icons.html.twig']]]
+
