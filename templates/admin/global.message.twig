@@ -65,9 +65,14 @@
     </div>
 {% endblock %}
 
-{% block sample_message %}
+{% block sample_message -%}
 <div class="alert-bar--error|alert-bar--success|alert-bar--info">
-    <h4>Title.</h4>
-    <p>Optional. More info</p>
+    <div class="alert-bar-icon">
+        <svg class="icon"><use xlink:href="/icons.svg#info"></use></svg>
+    </div>
+    <div class="alert-bar-contents">
+        <h4>Title of message.</h4>
+        <p>Optional. More Info</p>
+    </div>
 </div>
-{% endblock %}
+{%- endblock %}

@@ -6,17 +6,26 @@
     {% if (type == 'success') %}{% set typeClass = 'alert-bar--success' %}{% endif %}
     {% if (type == 'warning') %}{% set typeClass = 'alert-bar--warning' %}{% endif %}
 
-    <div class="{{ typeClass }}">
-        <h4>{{ title|raw }}</h4>
-        {% if details %}
-            {% if isRaw %}
-                {{ details|raw }}
-            {% else %}
-                <p>{{ details|raw }}</p>
-            {% endif %}
-        {% endif %}
-    </div>
+    {% set iconType = 'info' %}
+    {% if (type == 'error') %}{% set iconType = 'cross-2' %}{% endif %}
+    {% if (type == 'success') %}{% set iconType = 'tick-2' %}{% endif %}
+    {% if (type == 'warning') %}{% set iconType = 'warning' %}{% endif %}
 
+    <div class="{{ typeClass }}">
+        <div class="alert-bar-icon">
+            <svg class="icon"><use xlink:href="/icons.svg#{{ iconType }}"></use></svg>
+        </div>
+        <div class="alert-bar-contents">
+            <h4>{{ title|raw }}</h4>
+            {% if details %}
+                {% if isRaw %}
+                    {{ details|raw }}
+                {% else %}
+                    <p>{{ details|raw }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
 {% endmacro %}
 
 {% macro gitref(build, sliced, isCurrent, hideTooltip) %}

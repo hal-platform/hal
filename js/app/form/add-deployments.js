@@ -106,24 +106,28 @@ module.exports = {
         this.resetMessages();
         this.resetForm();
 
-        // add success alert
-        var $alert = $('<div>')
-            .addClass('alert-bar--success');
-
-        $('<h4>')
-            .text('Deployment Added.')
-            .appendTo($alert);
-
-        this.$container
-            .find('form').before($alert);
-
         var server = deployment._embedded.server,
             eb = deployment['eb-environment'],
             ec2 = deployment['ec2-pool'],
             path = deployment.path,
-            env = server._embedded.environment.name;
+            env = server._embedded.environment.name,
+            hostname = server.name;
 
-        var hostname = server.name;
+        // add success alert
+        var alertHtml = `
+<div class="alert-bar--success">
+    <div class="alert-bar-icon">
+        <svg class="icon"><use xlink:href="/icons.svg#tick"></use></svg>
+    </div>
+    <div class="alert-bar-contents">
+        <h4>Deployment to "${hostname}" added.</h4>
+    </div>
+</div>`;
+
+        var $alert = $(alertHtml);
+        this.$container
+            .find('form').before($alert);
+
         var path_or_whatever = path;
         if (server.type == 'elasticbeanstalk') {
             hostname = 'Elastic Beanstalk';
