@@ -69,6 +69,14 @@
 
         <main role="main">
 
+            <div class="nav--page">
+                <h1>Style Components</h1>
+
+                <p class="nav--page__back">
+                    <a class="btn btn--small btn--back" href="{{ urlFor('styleguide.icons') }}">Icons</a>
+                </p>
+            </div>
+
             <hr><h2>Headers</h2><hr>
             <section>
 
@@ -145,15 +153,15 @@
 
             <hr><h2>Icons</h2><hr>
             <section>
-                <a href="icons.html">List of icons</a>
+                <a href="{{ urlFor('styleguide.icons') }}">List of icons</a>
 
                 <p class="mtm mbn">Usage:</p>
                 <pre class="mbm">{{ macros.icon()|e('html') }}</pre>
 
-                <br><svg class="icon"><use xlink:href="/icons.svg#bullet"></use></svg>
-                <br><svg class="icon"><use xlink:href="/icons.svg#tick"></use></svg>
+                <svg class="icon"><use xlink:href="/icons.svg#tick"></use></svg>
                 <br><svg class="icon"><use xlink:href="/icons.svg#github"></use></svg>
                 <br><svg class="icon"><use xlink:href="/icons.svg#squid"></use></svg>
+                <br><svg class="icon"><use xlink:href="/icons.svg#rocket"></use></svg>
 
             </section>
 
@@ -214,11 +222,29 @@
                 </div>
 
                 <div class="alert-bar--warning">
-                    <h4>alert-bar--warning</h4>
+                    <div class="alert-bar-icon">
+                        <svg class="icon"><use xlink:href="/icons.svg#spam-2"></use></svg>
+                    </div>
+                    <div class="alert-bar-contents">
+                        <h4>alert-bar--warning</h4>
+                    </div>
                 </div>
 
                 <div class="alert-bar--success">
-                    <h4>alert-bar--success</h4>
+                    <div class="alert-bar-icon">
+                        <svg class="icon"><use xlink:href="/icons.svg#tick-2"></use></svg>
+                    </div>
+                    <div class="alert-bar-contents">
+                        <h4>alert-bar--success</h4>
+                    </div>
+                </div>
+                <div class="alert-bar">
+                    <div class="alert-bar-icon">
+                        <svg class="icon"><use xlink:href="/icons.svg#info"></use></svg>
+                    </div>
+                    <div class="alert-bar-contents">
+                        <h4>alert-bar</h4>
+                    </div>
                 </div>
 
                 <div class="alert-bar">
@@ -226,6 +252,26 @@
                     <p>
                         Additional details. lorem ipsum dolor sit amet lorem ipsum dolor sit amet
                     </p>
+                </div>
+
+                <div class="alert-bar--error">
+                    <div class="alert-bar-icon">
+                        <svg class="icon"><use xlink:href="/icons.svg#cross-2"></use></svg>
+                    </div>
+                    <div class="alert-bar-contents">
+                        <h4>alert-bar--error</h4>
+                        <pre>This is inside a preformatted block.</pre>
+                    </div>
+                </div>
+
+                <div class="alert-bar--warning">
+                    <div class="alert-bar-icon">
+                        <svg class="icon"><use xlink:href="/icons.svg#warning"></use></svg>
+                    </div>
+                    <div class="alert-bar-contents">
+                        <h4>alert-bar--warning</h4>
+                        <p>Alert with icon and details</p>
+                    </div>
                 </div>
 
             </section>
@@ -340,6 +386,15 @@
     <p>
         Additional details
     </p>
+</div>
+
+<div class="alert-bar">
+    <div class="alert-bar-icon">
+        <svg class="icon"><use xlink:href="/icons.svg#icon-for-alert"></use></svg>
+    </div>
+    <div class="alert-bar-contents">
+        <h4>Alert subject</h4>
+    </div>
 </div>
 {% endmacro %}
 

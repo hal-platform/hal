@@ -1,57 +1,86 @@
+$alert-lightness: .35;
+$alert-border-size: .05em;
+
+@mixin alert-color($color, $lightness: .35, $border-size: .1em) {
+    background-color: rgba($color, $lightness);
+    box-shadow: 0 0 0 $border-size $color;
+
+    color: $white;
+    h4 {
+        color: $color;
+    }
+
+    .alert-bar-icon {
+        background: $color;
+    }
+}
+
 [class="alert-bar"], [class^="alert-bar--"] {
     text-align: left;
-    padding: msem(-5);
-    margin-bottom: msem(3);
-    @extend %clearfix;
+    margin-bottom: 1.25em;
+    display: flex;
+    flex-wrap: wrap;
+    // position: relative;
 
-    background-color: $bright-blue;
-    color: $white;
+    @include alert-color($bright-blue, $alert-lightness, $alert-border-size);
 
     h4 {
-        padding: msem(-9);
-        border: 2px solid #eee;
+        font-size: 100%;
         margin: 0;
-
-        background: rgba(255, 255, 255, 0.75);
-        color: $bright-blue;
+        padding: .15em 0;
     }
 
     p {
-        margin: msem(-9) 0;
+        font-size: .80em;
+        margin: 0;
     }
 
     pre {
         background-color: transparent;
         color: $text-color;
-        margin-top: msem(-5);
-        margin-bottom: msem(-5);
+        font-size: .70em;
+        margin: 0;
     }
 
-    border: 2px solid #ddd;
+    // Old format, if banner is not wrapped in icon/content
+    > h4, > p, > pre {
+        flex-basis: 100%;
+        padding: .5em;
+    }
+    > p, > pre {
+        padding-top: 0;
+    }
+
 }
 
 .alert-bar--error {
-    background-color: $error-color;
-    color: $white;
-    h4 {
-        color: $error-color;
-    }
+    @include alert-color($error-color, $alert-lightness, $alert-border-size);
 }
 
 .alert-bar--warning {
-    background-color: $warning-color;
-    color: $white;
-    h4 {
-        color: $warning-color;
-    }
+    @include alert-color($warning-color, $alert-lightness, $alert-border-size);
 }
 
 .alert-bar--success {
-    background-color: $success-color;
+    @include alert-color($success-color, $alert-lightness, $alert-border-size);
+}
+
+.alert-bar-icon {
+    flex: 0 0 auto;
     color: $white;
-    h4 {
-        color: $success-color;
-    }
+    text-align: center;
+    font-size: 130%;
+
+    width: 2em;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-bar-contents {
+    flex: 1;
+    padding: .5em;
 }
 
 // event log table
