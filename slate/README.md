@@ -19,7 +19,7 @@ While the halslate container is running:
 
    > Generate docs within the container
 
-2. `docker cp halslate:/app/build public/docs/api`
+2. `docker cp halslate:/app/build/. public/docs/api`
 
    > Copy docs to `public/docs/api`
 

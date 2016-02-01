@@ -43,7 +43,27 @@ restart it if already running.</p>
 
 <h1 id="compiling-docs-for-deployment">Compiling docs for deployment</h1>
 
-<p>@todo</p>
+<p>While the halslate container is running:</p>
+
+<ol>
+<li><code class="prettyprint">docker exec halslate rake build</code></li>
+</ol>
+
+<blockquote>
+<p>Generate docs within the container</p>
+</blockquote>
+
+<ol>
+<li><code class="prettyprint">docker cp halslate:/app/build public/docs/api</code></li>
+</ol>
+
+<blockquote>
+<p>Copy docs to <code class="prettyprint">public/docs/api</code></p>
+</blockquote>
+
+<ol>
+<li>Commit the changes</li>
+</ol>
 
       </div>
       <div class="dark-box">

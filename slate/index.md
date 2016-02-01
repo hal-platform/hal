@@ -45,5 +45,5 @@ This is documentation for the Hal API. You can use the API to access resources s
 There are language examples in **HTTP**, **PHP**, and **cURL**. You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
 
 <aside class="warning">
-    Any endpoint prefixed with <code>/api/internal/</code> is designated for <b>internal Hal use only</b>. It is not public use and may change for any reason at any time. Such endpoints are not documented here.
+    Any endpoint prefixed with <code>/api/internal/</code> is designated for <b>internal Hal use only</b>. It is not for public use and may change for any reason at any time. Such endpoints are not documented here.
 </aside>
