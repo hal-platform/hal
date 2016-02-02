@@ -1,4 +1,5 @@
 import StartBuildChildren from './app/build/add-child-push';
+import SearchBuild from './app/build/search';
 
 module.exports = {
 
@@ -22,7 +23,7 @@ module.exports = {
 
     // jobs - start
     "build.start": () => {
-        require('./app/start-build').init();
+        SearchBuild();
         StartBuildChildren();
     },
 
