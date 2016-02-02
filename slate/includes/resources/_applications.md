@@ -158,7 +158,7 @@ curl "https://hal9000/api/applications/24"
             "type": "text/html"
         },
         "github_page": {
-            "href": "http://git/web-core/hal-agent",
+            "href": "http://git/hal/hal-agent",
             "type": "text/html"
         }
     },

@@ -1,6 +1,6 @@
 {
     "name": "Hal",
-    "repository": "http://git/web-core/hal",
+    "repository": "http://git/hal/hal",
     "license": "SEE LICENSE IN LICENSE",
 
     "scripts": {

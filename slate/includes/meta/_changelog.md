@@ -1,6 +1,6 @@
 # Changelog
 
-Track releases on [GitHub](http://git/web-core/hal/releases) or [Hal](https://hal9000/latest-release).
+Track releases on [GitHub](http://git/hal/hal/releases) or [Hal](https://hal9000/latest-release).
 
 Date       | Changes
 ---------- | -------

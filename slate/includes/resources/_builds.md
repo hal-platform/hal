@@ -169,11 +169,11 @@ curl "https://hal9000/api/builds/b2.5KXaayW"
             "type": "text/html"
         },
         "github_reference_page": {
-            "href": "http://git/web-core/hal-agent/commit/3696a7a",
+            "href": "http://git/hal/hal-agent/commit/3696a7a",
             "type": "text/html"
         },
         "github_commit_page": {
-            "href": "http://git/web-core/hal-agent/tree/master",
+            "href": "http://git/hal/hal-agent/tree/master",
             "type": "text/html"
         },
         "start_push_page": {

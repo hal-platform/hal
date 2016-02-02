@@ -72,11 +72,11 @@ curl \
             "type": "text/html"
         },
         "github_reference_page": {
-            "href": "http://git/web-core/hal-agent/commit/9075f4b",
+            "href": "http://git/hal/hal-agent/commit/9075f4b",
             "type": "text/html"
         },
         "github_commit_page": {
-            "href": "http://git/web-core/hal-agent/tree/master",
+            "href": "http://git/hal/hal-agent/tree/master",
             "type": "text/html"
         }
     },
