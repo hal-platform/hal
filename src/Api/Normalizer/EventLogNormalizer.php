@@ -68,9 +68,11 @@ class EventLogNormalizer implements NormalizerInterface
             return $log;
         }
 
+        $title = sprintf('[%s] %s', $log->order(), $log->message());
+
         return new Hyperlink(
             ['api.event.log', ['id' => $log->id()]],
-            $log->id()
+            $title
         );
     }
 

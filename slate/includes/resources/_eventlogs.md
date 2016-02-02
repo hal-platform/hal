@@ -55,7 +55,7 @@ curl "https://hal9000/api/eventlogs/e34a3e76d2a44ff7a3c776999dee0708"
     "_links": {
         "self": {
             "href": "https://hal9000/api/eventlogs/e34a3e76d2a44ff",
-            "title": "e34a3e76d2a44ff"
+            "title": "[1] Resolved push properties"
         },
         "push": {
             "href": "https://hal9000/api/pushes/p2.5tqQFTF",

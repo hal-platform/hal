@@ -223,19 +223,19 @@ curl "https://hal9000/api/pushes/p2.5tqQFTF/logs"
         "logs": [
             {
                 "href": "https://hal9000/api/eventlogs/e34a3e76d2a44ff7a3c7",
-                "title": "e34a3e76d2a44ff7a3c7"
+                "title": "[1] Resolved push properties"
             },
             {
                 "href": "https://hal9000/api/eventlogs/d3c75e80d95a4d4b8681",
-                "title": "d3c75e80d95a4d4b8681"
+                "title": "[2] Copy archive to local storage"
             },
             {
                 "href": "https://hal9000/api/eventlogs/93ac503d0b334da5a41f",
-                "title": "93ac503d0b334da5a41f"
+                "title": "[3] Prepare push environment"
             },
             {
                 "href": "https://hal9000/api/eventlogs/e87ce283a6514f4a8215",
-                "title": "e87ce283a6514f4a8215"
+                "title": "[4] Code Deployment"
             }
         ],
         "self": "https://hal9000/api/pushes/p2.5tqQFTF/logs"

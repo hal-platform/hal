@@ -243,19 +243,19 @@ curl "https://hal9000/api/builds/b2.5KXaayW/logs"
         "logs": [
             {
                 "href": "https://hal9000/api/eventlogs/e34a3e76d2a44ff7a3c7",
-                "title": "e34a3e76d2a44ff7a3c7"
+                "title": "[1] Resolved build properties"
             },
             {
                 "href": "https://hal9000/api/eventlogs/d3c75e80d95a4d4b8681",
-                "title": "d3c75e80d95a4d4b8681"
+                "title": "[2] Reticulating splines"
             },
             {
                 "href": "https://hal9000/api/eventlogs/93ac503d0b334da5a41f",
-                "title": "93ac503d0b334da5a41f"
+                "title": "[3] Prepare build environment"
             },
             {
                 "href": "https://hal9000/api/eventlogs/e87ce283a6514f4a8215",
-                "title": "e87ce283a6514f4a8215"
+                "title": "[4] Archive build"
             }
         ],
         "self": "https://hal9000/api/builds/b2.5KXaayW/logs"
