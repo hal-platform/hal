@@ -1,5 +1,6 @@
 imports:
     - resource: ../vendor/ql/hal-core/configuration/hal-core.yml
+    - resource: ../vendor/ql/kraken-core/configuration/kraken-core.yml
     - resource: ../vendor/ql/mcp-panthor/configuration/panthor.yml
     - resource: ../vendor/ql/panthor-plugins/configuration/panthor-plugins.yml
     - resource: di.yml

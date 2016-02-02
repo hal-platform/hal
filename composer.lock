@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ce7dded1ab5db06e50c609106657c012",
-    "content-hash": "9b7869e0d6b77f337ada70fd4ddc9295",
+    "hash": "ea9969e5045cf5d8eaa25ddd8e2b87b0",
+    "content-hash": "55ee6e932af706f9f4952cba628c12aa",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1475,17 +1475,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.9.0-beta2",
+            "version": "2.9.0-rc1",
             "source": {
                 "type": "git",
-                "url": "http://git/web-core/hal-core.git",
-                "reference": "06b05d6cace46df582045852d4139b6b6d231b23"
+                "url": "http://git/hal/hal-core.git",
+                "reference": "0615e7fb1eb7de97f6d1cd822eb91d41dfd6bff8"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.9.0-beta2-8ac18d.zip",
-                "reference": "06b05d6cace46df582045852d4139b6b6d231b23",
-                "shasum": "3172c9d1a2b03d28a77ce4b79390272c12900206"
+                "url": "http://composer/dist/ql-hal-core-2.9.0-rc1-718c34.zip",
+                "reference": "0615e7fb1eb7de97f6d1cd822eb91d41dfd6bff8",
+                "shasum": "80daef430a0db93c90de5eaffa956a995c6aa16c"
             },
             "archive": {
                 "exclude": [
@@ -1517,8 +1517,7 @@
             "autoload": {
                 "psr-4": {
                     "QL\\Hal\\Core\\": "src/",
-                    "QL\\Hal\\Core\\Testing\\": "testing/src/",
-                    "QL\\Kraken\\Core\\": "src-kraken/"
+                    "QL\\Hal\\Core\\Testing\\": "testing/src/"
                 }
             },
             "license": [
@@ -1526,12 +1525,72 @@
             ],
             "authors": [
                 {
-                    "name": "IT Team Web Core",
-                    "email": "itteamwebcore@quickenloans.com"
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com"
                 }
             ],
-            "description": "HAL 9000 shared components and domain resources",
-            "time": "2016-01-06 19:06:01"
+            "description": "Hal shared components and domain resources",
+            "time": "2016-02-02 15:53:27"
+        },
+        {
+            "name": "ql/kraken-core",
+            "version": "2.9.0-rc1",
+            "source": {
+                "type": "git",
+                "url": "http://git/hal/kraken-core.git",
+                "reference": "4e6fd4dc2b0d59092280c9ed6772aeb5af826dcc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-kraken-core-2.9.0-rc1-d25566.zip",
+                "reference": "4e6fd4dc2b0d59092280c9ed6772aeb5af826dcc",
+                "shasum": "3d382a9a2ace6b690b92447020f2628041a34c6f"
+            },
+            "archive": {
+                "exclude": [
+                    ".gitignore",
+                    "/bin",
+                    "/phpunit.xml.dist",
+                    "/testing"
+                ]
+            },
+            "require": {
+                "doctrine/orm": "~2.5",
+                "ext-openssl": "*",
+                "ext-pdo": "*",
+                "ext-pdo_mysql": "*",
+                "ext-pdo_sqlite": "*",
+                "php-64bit": ">=5.5",
+                "ql/hal-core": "~2.9",
+                "ql/mcp-common": "~1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "*",
+                "paragonie/random_compat": "~1.1",
+                "phpunit/phpunit": "*",
+                "robmorgan/phinx": "~0.5",
+                "symfony/config": "*",
+                "symfony/dependency-injection": "*",
+                "symfony/yaml": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\Kraken\\Core\\": "src/",
+                    "QL\\Kraken\\Core\\Testing\\": "testing/src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Steve Kluck",
+                    "email": "stevekluck@quickenloans.com"
+                }
+            ],
+            "description": "Kraken shared components and domain resources",
+            "time": "2016-02-02 17:38:23"
         },
         {
             "name": "ql/mcp-cache",
@@ -4033,7 +4092,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/hal-core": 10
+        "ql/hal-core": 5,
+        "ql/kraken-core": 5
     },
     "prefer-stable": false,
     "prefer-lowest": false,
