@@ -77,7 +77,7 @@ Hal requires the following server environment:
 #### Frontend
 
 - `mcp-logger` (Core Logger)
-- `mcp-corp-caccount` (Login auth, profile data)
+- `mcp-corp-account` (Login auth, profile data)
 - `mcp-crypto` (Cookie encryption, Kraken encryption)
 - `mcp-qks` (Kraken encryption)
 - `mcp-cache`(Caching)
