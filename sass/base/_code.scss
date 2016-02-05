@@ -25,9 +25,7 @@ pre {
 
 .pre-ansi pre {
     background: black;
-}
-.pre-solarized pre {
-    background: #073642;
+    color: white;
 }
 
 // this is stupid, but will allow auto-overflowing of contained pre's without mangling its whitespace

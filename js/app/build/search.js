@@ -60,7 +60,7 @@ function attachHandlers() {
     });
 
     // Ugh
-    $(document.body).on('click', function(e) {
+    $(document.body).on('click', function() {
         $searchBox.trigger('herpderp');
     });
 
@@ -197,4 +197,4 @@ function showWarning() {
     $submitButtons.val($warning.data('label-warning'));
 }
 
-export default init
+export default init;

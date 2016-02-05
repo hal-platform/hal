@@ -11,6 +11,7 @@ module.exports = {
     entry: {
         app: './app.js',
         vendor: [
+            'ansi_up',
             'durationjs',
             'favico.js',
             'fuse.js',

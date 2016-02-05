@@ -177,9 +177,6 @@ services:
     twig.extension.github.cache:
         class: 'MCP\Cache\MemoryCache'
 
-    twig.extension.ansi:
-        class: 'SensioLabs\AnsiConverter\Bridge\Twig\AnsiExtension'
-        arguments: ['@ansi.converter']
     twig.extension.status:
         class: 'QL\Hal\Twig\StatusExtension'
 
@@ -192,16 +189,8 @@ services:
             - ['addExtension', ['@twig.extension.hal.lazy' ]]
             - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
-            - ['addExtension', ['@twig.extension.ansi']]
             - ['addExtension', ['@twig.extension.status']]
             - ['addExtension', ['@kraken.twig.extension']]
-
-    ansi.converter:
-        class: 'SensioLabs\AnsiConverter\AnsiToHtmlConverter'
-        arguments: ['@ansi.convert.theme', true]
-
-    ansi.convert.theme:
-        class: 'SensioLabs\AnsiConverter\Theme\Theme'
 
     ####################################################################################################################
     # GitHub

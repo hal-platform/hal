@@ -47,9 +47,12 @@ class PushController implements ControllerInterface
      */
     public function __invoke()
     {
+        // Resolves logs from redis (for in progress jobs) or db (after completed)
+        $logs = $this->logService->getLogs($this->push);
+
         $this->template->render([
             'push' => $this->push,
-            'logs' => $this->logService->getLogs($this->push)
+            'logs' => $logs
         ]);
     }
 }

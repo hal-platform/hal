@@ -1,5 +1,6 @@
 import StartBuildChildren from './app/build/add-child-push';
 import SearchBuild from './app/build/search';
+import EventLogLoader from './app/event-log';
 
 module.exports = {
 
@@ -33,7 +34,7 @@ module.exports = {
 
     // jobs - info
     "build.info": function() {
-        require('./app/event-log').init();
+        EventLogLoader();
 
         var buildUpdater = require('./app/status/update-builds');
         buildUpdater.mode = 'build';
@@ -41,7 +42,7 @@ module.exports = {
     },
 
     "push.info": function() {
-        require('./app/event-log').init();
+        EventLogLoader();
 
         var pushUpdater = require('./app/status/update-pushes');
         pushUpdater.mode = 'push';

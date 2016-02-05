@@ -1,5 +1,6 @@
 {% import "_partial/macros.twig" as macros %}
 
+{# expected context = logs, canLoad #}
 <table class="js-event-logs table--spacing-medium table--bodied" data-tablesaw-mode="stack">
     <thead>
         <tr>
@@ -11,7 +12,11 @@
     </thead>
 
     {% for log in logs %}
-        <tbody data-log="{{ log.id }}">
+        {% if canLoad and log.data %}
+            <tbody data-log="{{ log.id }}">
+        {% else %}
+            <tbody>
+        {% endif %}
             <tr class="{{ log.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>
                     {% if log.status == 'success' %}
@@ -26,27 +31,9 @@
                 </td>
                 <td>{{ log.created|html5date }}</td>
                 <td>{{ log.message }}</td>
-                <td class="tr">
-                    {% if log.data %}
-                        <a class="btn btn--tiny" data-expand-btn="{{ log.id }}">
-                            {{ macros.icon('menu-pull-down') }}
-                        </a>
-                    {% endif %}
-                </td>
-            </tr>
 
-            {% if log.data %}
-                <tr data-expand-target="{{ log.id }}">
-                    <td colspan="4" class="tl">
-                        {% for key, data in log.data %}
-                            <h4>{{ key }}</h4>
-                            <div class="pre-wrapper pre-ansi">
-                                <pre>{{ data|sanitizeToString|ansi_to_html }}</pre>
-                            </div>
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% endif %}
+                <td class="tr js-event-logs-loader"></td>
+            </tr>
         </tbody>
     {% else %}
         <tbody class="js-empty-row">

@@ -72,14 +72,18 @@ class BuildController implements ControllerInterface
             'parent' => $this->build->id()
         ]);
 
+        // Queries in loops SUUUUUUCK
         $children = array_map(function($child) {
             return $this->formatChild($child);
         }, $processes);
 
+        // Resolves logs from redis (for in progress jobs) or db (after completed)
+        $logs = $this->logService->getLogs($this->build);
+
         $this->template->render([
             'build' => $this->build,
             'children' => $children,
-            'logs' => $this->logService->getLogs($this->build)
+            'logs' => $logs
         ]);
     }
 
@@ -90,30 +94,45 @@ class BuildController implements ControllerInterface
      */
     private function formatChild(Process $process)
     {
-        $message = $process->message();
-
-        $context = $process->context();
-
-        $push = $deployment = null;
+        $meta = [
+            'id' => $process->id(),
+            'status' => $process->status(),
+            'message' => $process->message()
+        ];
 
         // For now, just format for autopushes, since thats the only type of process available in v1 of this feature
         if ($process->childType() === 'Push') {
+            $meta += $this->getProcessResources($process);
+        }
 
-            // Ugh, terrible stuff just to find target deployment
-            $push = $process->child() ? $this->pushRepo->find($process->child()) : null;
+        return $meta;
+    }
 
-            if ($push) {
-                $deployment = $push->deployment();
-            } elseif (isset($context['deployment'])) {
-                $deployment = $this->deploymentRepo->find($context['deployment']);
-            }
+    /**
+     * @param Process $process
+     *
+     * @return array
+     */
+    private function getProcessResources(Process $process)
+    {
+        $push = $process->child() ? $this->pushRepo->find($process->child()) : null;
+
+        $context = $process->context();
+
+        $deployment = null;
+
+        // Ugh, terrible stuff just to find target deployment
+        // If a push is found, grab the deployment from the push
+        if ($push) {
+            $deployment = $push->deployment();
+
+        // Otherwise, try a lookup of the deployment from context
+        // This is used if the child hasn't launched yet (or was aborted).
+        } elseif (isset($context['deployment'])) {
+            $deployment = $this->deploymentRepo->find($context['deployment']);
         }
 
         return [
-            'id' => $process->id(),
-            'status' => $process->status(),
-            'message' => $message,
-
             'push' => $push,
             'deployment' => $deployment
         ];

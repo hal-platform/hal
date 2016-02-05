@@ -136,6 +136,6 @@
     {% endif %}
 
     <h2 class="leader">Event Log</h2>
-    {% include '_partial/log-table.twig' with {'logs': logs} %}
+    {% include '_partial/log-table.twig' with {logs: logs, canLoad: build.isFinished } %}
 
 {% endblock %}
