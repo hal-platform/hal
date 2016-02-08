@@ -43,7 +43,7 @@ class ExceptionLogger
 
         $context = [
             'exceptionClass' => get_class($ex),
-            'exceptionData' => $this->formatStacktraceForExceptions($exceptions);
+            'exceptionData' => $this->formatStacktraceForExceptions($exceptions)
         ];
 
         $logging = [$this->logger, $level];
