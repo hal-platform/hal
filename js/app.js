@@ -4,33 +4,34 @@ import nofunzone from './app/util/nofunzone';
 import reltime from './app/util/relative-time';
 import svg4everybody from 'svg4everybody';
 
-var app = {
-    componentsAttr: "data-js-components",
-    init: function() {
+let routingSelector = 'data-js-components';
 
-        var requested = document.querySelector('head').getAttribute(this.componentsAttr);
-        if (requested === "undefined" || requested === null) {
-            return;
+function start() {
+
+    var requested = document.querySelector('head').getAttribute(routingSelector);
+    if (requested === "undefined" || requested === null) {
+        return;
+    }
+
+    // Load components
+    requested.split(' ').map(function(component) {
+        if (components.hasOwnProperty(component)) {
+            component = components[component];
+            component();
+        } else {
+            console.log("Component not found: " + component);
         }
 
-        // Load components
-        requested.split(' ').map(function(component) {
-            if (components.hasOwnProperty(component)) {
-                component = components[component];
-                component();
-            } else {
-                console.log("Component not found: " + component);
-            }
+    });
+}
 
-        });
-    },
-    globals: function() {
-        terminal.init();
-        nofunzone.init();
-        reltime.init();
-    }
-};
+// Start up
+start();
 
-app.init();
-app.globals();
+// global utilities
+terminal.init();
+nofunzone.init();
+reltime.init();
+
+// Vendor utilities
 svg4everybody();
