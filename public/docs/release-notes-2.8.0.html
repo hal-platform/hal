@@ -14,16 +14,60 @@
     <h3>New Features</h3>
     <ul>
         <li>
-            <h5>tbd</h5>
+            <h5>Users can now favorite applications</h5>
+            <blockquote>
+                Applications can now be starred from the application page and they will be stickied to the top of
+                the dashboard and app list pages.
+            </blockquote>
+        </li>
+        <li>
+            <h5>Add ability to automatically deploy successful builds</h5>
+            <blockquote>
+                Users can now optionally select deployment targets when starting a build. If the build is successful it
+                will be automatically deployed.
+
+                <br><br>
+                This is optional, and users can still choose to manually deploy after building.
+            </blockquote>
+        </li>
+        <li>
+            <h5>Add support for using multiple docker containers</h5>
+            <blockquote>
+                In your app configuration you can specify containers by prefixing them to the command. If no command
+                is specified, the default or globally specified container will be used. Apps can use as many different
+                containers as they like, in anyorder.
+                <br><br>
+
+                In the following example, the app-wide default container is <b>PHP 5.6</b>, but the <b>Node 5.3</b>
+                container is used when compiling frontend dependencies.
+                <pre>system: docker:php5.6
+build:
+    - 'bin/deploy --backend'
+    - 'docker:node5.3 bin/deploy --frontend'</pre>
+            </blockquote>
+        </li>
+        <li>
+            <h5>Add API documentation</h5>
+            <blockquote>
+                API documentation is linked from the Help page or available here: <a href="/docs/api">/docs/api</a>
+            </blockquote>
         </li>
     </ul>
 
     <h3>User Experience (UX) Enhancements</h3>
     <ul>
         <li>
-            <h5>tbd</h5>
+            <h5>Automatically select an environment for building from user preferences</h5>
             <blockquote>
-                alt
+                In most situations users will never need to select their desired environment when building,
+                as Hal remembers which environment they were last viewing.
+            </blockquote>
+        </li>
+        <li>
+            <h5>Add more descriptive event messages for build commands</h5>
+            <blockquote>
+                Build and push commands as well as docker image names will now be listed in event messages, rather than context data.
+                This will make this information easier to find so users do not have to drill down into logs as often.
             </blockquote>
         </li>
     </ul>
@@ -31,7 +75,11 @@
     <h3>Bugs</h3>
     <ul>
         <li>
-            <h5>tbd</h5>
+            <h5>Fix unresponsive build menu in Chrome</h5>
+            <blockquote>
+                In some versions of Chrome the last few items listed in the build menu (which contains branches, tags,
+                and pull requests) could not be selected. This should now be fixed.
+            </blockquote>
         </li>
     </ul>
 
@@ -46,8 +94,15 @@
                     <li>Hal 2.8.0</li>
                     <li>Hal Agent 2.6.0</li>
                     <li>Hal Core 2.9.0</li>
+                    <li>Kraken Core 2.9.0</li>
                 </ul>
             </blockquote>
+        </li>
+        <li>
+            <h5>Hal has been updated to use MCP Panthor 2.3. The open source version of our PHP microframework.</h5>
+        </li>
+        <li>
+            <h5>Hal Core has been split into Hal Core and Kraken Core to better isolate Kraken components and dependentencies from Hal.</h5>
         </li>
     </ul>
 
@@ -62,22 +117,35 @@
 
     <h3>New Feature</h3>
     <ul class="task-list">
-        <li>[<a href="http://git/hal/hal/issues/999">HAL-999</a>] - tbd</li>
+        <li>[<a href="http://git/hal/hal/issues/140">HAL-140</a>] - Add API docs</li>
+        <li>[<a href="http://git/hal/hal/issues/179">HAL-179</a>] - Add ability to favorite apps</li>
+        <li>[<a href="http://git/hal/hal/issues/189">HAL-189</a>] - Add ability to auto-push after a successful build</li>
+        <li>[<a href="http://git/hal/hal/issues/194">HAL-194</a>] - Add ability to use multiple docker containers</li>
     </ul>
 
     <h3>Improvement</h3>
     <ul class="task-list">
-        <li>[<a href="http://git/hal/hal/issues/999">HAL-999</a>] - tbd</li>
+        <li>[<a href="http://git/hal/hal/issues/170">HAL-170</a>] - Allow all builds and all pushes results to be filtered by environment</li>
+        <li>[<a href="http://git/hal/hal/issues/195">HAL-195</a>] - Automatically select an environment for building from user preferences</li>
+        <li>[<a href="http://git/hal/hal/issues/196">HAL-196</a>] - Verify target directory exists before attempting rsync</li>
+        <li>[<a href="http://git/hal/hal/issues/197">HAL-197</a>] - Add more descriptive event messages for build commands</li>
+        <li>[<a href="http://git/hal/hal/issues/207">HAL-207</a>] - Redesign alerts</li>
+        <li>[<a href="http://git/hal/hal/issues/209">HAL-209</a>] - Lazy load event logs on build and push pages</li>
     </ul>
 
     <h3>Bug</h3>
     <ul class="task-list">
-        <li>[<a href="http://git/hal/hal/issues/999">HAL-999</a>] - tbd</li>
+        <li>[<a href="http://git/hal/hal/issues/192">HAL-192</a>] - Cannot select last 4 items in search dropdown on build start page (chrome only)</li>
     </ul>
 
     <h3>Task</h3>
     <ul class="task-list">
-        <li>[<a href="http://git/hal/hal/issues/999">HAL-999</a>] - tbd</li>
+        <li>[<a href="http://git/hal/hal/issues/169">HAL-169</a>] - Allow admins to enable/disable users</li>
+        <li>[<a href="http://git/hal/hal/issues/175">HAL-175</a>] - Find replacement for jquery searchable</li>
+        <li>[<a href="http://git/hal/hal/issues/186">HAL-186</a>] - Add deployment schedule / maintenance window to FAQ</li>
+        <li>[<a href="http://git/hal/hal/issues/192">HAL-192</a>] - Update to OSS panthor 2.3</li>
+        <li>[<a href="http://git/hal/hal/issues/193">HAL-193</a>] - Update to babeljs</li>
+        <li>[<a href="http://git/hal/hal/issues/208">HAL-208</a>] - Update libsodium on hal servers to 1.0</li>
     </ul>
 </body>
 </html>

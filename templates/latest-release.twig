@@ -13,43 +13,79 @@
     <p>Check the following documentation sites for recent changes to Hal, or view past updates.</p>
     <ul class="list--bullet">
         <li><a href="http://git/hal/hal/releases">GitHub release notes</a></li>
-        <li><a href="https://jira/projects/HAL?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=all">Jira version history</a></li>
         <li>
             Hal release notes
             {% include '_partial/help.release-notes.twig' %}
         </li>
-
     </ul>
 
 {% endblock %}
 
 {% block latest_release_28 %}
-    <p>The latest release of Hal is <b>2.8</b>. It was deployed on Friday, Jan ??, 2016.</p>
+    <p>The latest release of Hal is <b>2.8</b>. It was deployed on Friday, February 12, 2016.</p>
 
     <h2>Changelog</h2>
 
     <h3>New Features</h3>
     <ul class="list--bullet">
         <li>
-            tbd
+            Users can now favorite applications
+            <blockquote>
+                <small>
+                Applications can now be starred from the application page and they will be stickied to the top of
+                the dashboard and app list pages.
+                </small>
+            </blockquote>
+        </li>
+        <li>
+            Add ability to automatically deploy successful builds
+            <blockquote>
+                <small>
+                Users can now optionally select deployment targets when starting a build. If the build is successful it
+                will be automatically deployed.
+
+                <br>
+                This is optional, and users can still choose to manually deploy after building.
+                </small>
+            </blockquote>
+        </li>
+        <li>
+            Add support for using multiple docker containers
+            <blockquote>
+                <small>
+                In your app configuration you can specify containers by prefixing them to the command. If no command
+                is specified, the default or globally specified container will be used. Apps can use as many different
+                containers as they like, in any order.
+
+                <br>
+                In the following example, the app-wide default container is <b>PHP 5.6</b>, but the <b>Node 5.3</b>
+                container is used when compiling frontend dependencies.
+                <pre>system: docker:php5.6
+build:
+    - 'bin/deploy --backend'
+    - 'docker:node5.3 bin/deploy --frontend'</pre>
+                </small>
+            </blockquote>
+        </li>
+        <li>
+            Add API documentation
+            <blockquote>
+                <small>
+                    API documentation is linked from the Help page or available here: <a href="{{ urlFor('api.docs') }}">/docs/api</a>.
+                </small>
+            </blockquote>
         </li>
     </ul>
 
     <h3>User Experience (UX) Enhancements</h3>
     <ul class="list--bullet">
-        <li>
-            tbd
-            <br><small>
-                alt
-            </small>
-        </li>
+        <li>Automatically select an environment for building from user preferences</li>
+        <li>Add more descriptive event messages for build commands</li>
     </ul>
 
     <h3>Bugs</h3>
     <ul class="list--bullet">
-        <li>
-            tbd
-        </li>
+        <li>Fix unresponsive build menu in Chrome</li>
     </ul>
 {% endblock %}
 
