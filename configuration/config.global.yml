@@ -81,6 +81,8 @@ parameters:
     unique.size: 4
     date.timezone: 'America/Detroit'
 
+    gravatar.fallback: 'skluck.github.io/hal/halprofile_100.jpg'
+
     ############################################################################
     # cookie
     ############################################################################

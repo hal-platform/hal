@@ -58,9 +58,9 @@ class HalExtension extends Twig_Extension
     private $name;
 
     /**
-     * @var array|null
+     * @var string
      */
-    private $parsedNavigationList;
+    private $gravatarFallbackImageURL;
 
     /**
      * @param Request $request
@@ -69,6 +69,7 @@ class HalExtension extends Twig_Extension
      * @param GlobalMessageService $messageService
      * @param TimeFormatter $time
      * @param NameFormatter $name
+     * @param string $gravatarFallbackImageURL
      */
     public function __construct(
         Request $request,
@@ -76,7 +77,8 @@ class HalExtension extends Twig_Extension
         Session $session,
         GlobalMessageService $messageService,
         TimeFormatter $time,
-        NameFormatter $name
+        NameFormatter $name,
+        $gravatarFallbackImageURL
     ) {
         $this->request = $request;
         $this->cookies = $cookies;
@@ -84,6 +86,8 @@ class HalExtension extends Twig_Extension
         $this->messageService = $messageService;
         $this->time = $time;
         $this->name = $name;
+
+        $this->gravatarFallbackImageURL = $gravatarFallbackImageURL;
     }
 
     /**
@@ -312,15 +316,13 @@ class HalExtension extends Twig_Extension
      */
     public function getAvatarLink($email, $size = 100)
     {
-        $isHttpsOn = ($this->request->getScheme() === 'https');
-
         $email = strtolower(trim($email));
-
-        $default = sprintf('%s://skluck.github.io/hal/halprofile_100.jpg', $isHttpsOn ? 'https' : 'http');
+        $scheme = ($this->request->getScheme() === 'https') ? 'https' : 'http';
+        $default = sprintf('%s://%s', $scheme, $this->gravatarFallbackImageURL);
 
         return sprintf(
-            '%s://www.gravatar.com/avatar/%s?s=%d&d=%s',
-            $isHttpsOn ? 'https' : 'http',
+            '%s://secure.gravatar.com/avatar/%s?s=%d&d=%s',
+            $scheme,
             md5($email),
             $size,
             urlencode($default)
