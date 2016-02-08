@@ -7,6 +7,7 @@
 
 namespace QL\Hal\Slim;
 
+use QL\Hal\Session;
 use QL\Hal\SessionHandler;
 use Slim\Middleware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SessionMiddleware extends Middleware
 {
-    const SERVICE_KEY = 'session';
+    const DEFAULT_SERVICE = 'session';
 
     /**
      * @var SessionHandler
@@ -31,13 +32,21 @@ class SessionMiddleware extends Middleware
     private $di;
 
     /**
+     * @var string
+     */
+    private $sessionService;
+
+    /**
      * @param SessionHandler $handler
      * @param ContainerInterface $di
+     * @param string $sessionServiceName
      */
-    public function __construct(SessionHandler $handler, ContainerInterface $di)
+    public function __construct(SessionHandler $handler, ContainerInterface $di, $sessionServiceName = null)
     {
         $this->handler = $handler;
         $this->di = $di;
+
+        $this->sessionService = $sessionServiceName ?: self::DEFAULT_SERVICE;
     }
 
     /**
@@ -58,7 +67,10 @@ class SessionMiddleware extends Middleware
             return;
         }
 
-        $session = $this->di->get(static::SERVICE_KEY);
-        $this->handler->save($session);
+        $session = $this->di->get($this->sessionService);
+
+        if ($session instanceof Session) {
+            $this->handler->save($session);
+        }
     }
 }

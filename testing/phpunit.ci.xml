@@ -49,7 +49,7 @@
 
     <testsuites>
         <testsuite name="Unit Tests">
-            <directory>tests</directory>
+            <directory>../testing/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

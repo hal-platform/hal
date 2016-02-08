@@ -11,6 +11,7 @@
         mapTestClassNameToCoveredClassName="true"
         printerClass="PHPUnit_TextUI_ResultPrinter"
         processIsolation="false"
+
         stopOnError="true"
         stopOnFailure="true"
         stopOnIncomplete="true"
@@ -35,8 +36,7 @@
     </listeners>
 
     <logging>
-        <log type="coverage-html" target="phpunit/php-code-coverage" charset="UTF-8" highlight="true" lowUpperBound="98" highLowerBound="99" />
-        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
     </logging>
 
     <php>
@@ -47,7 +47,7 @@
 
     <testsuites>
         <testsuite name="Unit Tests">
-            <directory>tests</directory>
+            <directory>testing/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

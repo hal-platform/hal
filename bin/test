@@ -7,16 +7,13 @@ DIR=$( cd "$( dirname "$0" )" && pwd )
 BIN="$DIR/../vendor/bin/phpunit"
 PARAMETERS=""
 NO_SUITE="--testsuite none"
-RAPID_CONFIG_FILE="--configuration $DIR/../testing/phpunit.rapid.xml"
 CI_CONFIG_FILE="--configuration $DIR/../testing/phpunit.ci.xml"
 
 STOP_SUITE=false
 
 for var in "$@"
 do
-    if [ "$var" = "--rapid" ] ; then
-        BIN="$BIN $RAPID_CONFIG_FILE"
-    elif [ "$var" = "--coverage" ] ; then
+    if [ "$var" = "--coverage" ] ; then
         BIN="$BIN $CI_CONFIG_FILE"
     else
         PARAMETERS="$PARAMETERS $var"
