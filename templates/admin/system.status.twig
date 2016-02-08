@@ -119,42 +119,64 @@
             <thead>
                 <tr>
                     <th>Status</th>
+                    <th>Env</th>
                     <th>Server</th>
                     <th>Detail</th>
                 </tr>
             </thead>
 
-                {% for env, servers in connections.servers %}
-                    <tbody class="table-breathe">
+            {% if connections.failures %}
+                <tbody class="table-breathe">
+                    <tr>
+                        <th colspan="5" class="table-mid-header">Failures</th>
+                    </tr>
+                    {% for status in connections.failures %}
+
                         <tr>
-                            <th colspan="4" class="table-mid-header">
-                                {{ env }}
-                            </th>
+                            <td>{{ macros.status('Error', 'error') }}</td>
+                            <td>{{ status.server.environment.name }}</td>
+                            <td><a href="{{ urlFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
+                            <td>
+                                <div class="pre-wrapper">
+                                    <pre class="code_clear">{{ status.detail }}</pre>
+                                </div>
+                            </td>
                         </tr>
 
-                        {% for status in servers %}
-                                <tr>
-                                    <td>
-                                        {% if status.status is same as ('unknown') %}
-                                            {{ macros.status('Unknown', 'info') }}
-                                        {% elseif status.status %}
-                                            {{ macros.status('Success', 'success') }}
-                                        {% else %}
-                                            {{ macros.status('Error', 'error') }}
-                                        {% endif %}
-                                    </td>
+                    {% endfor %}
+                </tbody>
+            {% endif %}
 
-                                    <td><a href="{{ urlFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
-                                    <td>
-                                        <div class="pre-wrapper">
-                                            <pre class="code_clear">{{ status.detail }}</pre>
-                                        </div>
-                                    </td>
-                                </tr>
+            {% for env, servers in connections.servers %}
+                <tbody class="table-breathe">
+                    <tr>
+                        <th colspan="5" class="table-mid-header">{{ env }}</th>
+                    </tr>
 
-                        {% endfor %}
-                    </tbody>
-                {% endfor %}
+                    {% for status in servers %}
+                            <tr>
+                                <td>
+                                    {% if status.status is same as ('unknown') %}
+                                        {{ macros.status('Unknown', 'info') }}
+                                    {% elseif status.status %}
+                                        {{ macros.status('Success', 'success') }}
+                                    {% else %}
+                                        {{ macros.status('Error', 'error') }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ env }}</td>
+
+                                <td><a href="{{ urlFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
+                                <td>
+                                    <div class="pre-wrapper">
+                                        <pre class="code_clear">{{ status.detail }}</pre>
+                                    </div>
+                                </td>
+                            </tr>
+
+                    {% endfor %}
+                </tbody>
+            {% endfor %}
         </table>
     {% else %}
         <p>Unknown</p>

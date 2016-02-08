@@ -171,6 +171,7 @@ class SystemStatusController implements ControllerInterface
         }
 
         $serversByEnvironment = $this->aggregateServers();
+        $failures = [];
 
         $time = isset($connections['generated']) ? $this->clock->fromString($connections['generated']) : null;
         $connections = isset($connections['servers']) ? $connections['servers'] : [];
@@ -180,6 +181,16 @@ class SystemStatusController implements ControllerInterface
 
                 if (isset($connections[$server->id()])) {
                     $status = $connections[$server->id()];
+
+                    if (!$status['status']) {
+                        $failures[] = [
+                            'server' => $server,
+                            'resolved' => $status['server'],
+                            'status' => $status['status'],
+                            'detail' => isset($status['detail']) ? $status['detail'] : ''
+                        ];
+                    }
+
                     $server = [
                         'server' => $server,
                         'resolved' => $status['server'],
@@ -197,6 +208,7 @@ class SystemStatusController implements ControllerInterface
         }
 
         return [
+            'failures' => $failures,
             'servers' => $serversByEnvironment,
             'generated' => $time
         ];
