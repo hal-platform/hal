@@ -106,7 +106,7 @@
                         </td>
                         <td>
                             {% if child.status == 'Launched' and child.push %}
-                                {{ macros.job_status_prefix(child.push) }} created successfully.
+                                {{ macros.job_status_prefix(child.push, false, false) }} created successfully.
                             {% else %}
                                 {{ child.message }}
                             {% endif %}

@@ -176,8 +176,17 @@
 
 {% endmacro %}
 
-{% macro job_status_prefix(job, withoutPrefix) %}
+{% macro job_status_prefix(job, withoutPrefix, allowThinking) %}
     {% import _self as self_macros %}
+
+    {# we dont use |default(value) because it doesnt work with falsey values #}
+    {% if withoutPrefix is sameas(null) %}
+        {% set withoutPrefix = false %}
+    {% endif %}
+
+    {% if allowThinking is sameas(null) %}
+        {% set allowThinking = true %}
+    {% endif %}
 
     {% if job is push %}
 
@@ -190,8 +199,10 @@
             {{ self_macros.status_icon(push_link, 'error') }}
         {% elseif job.status in ['Removed'] %}
             {{ self_macros.status_icon(push_link, 'info') }}
-        {% else %}
+        {% elseif allowThinking %}
             {{ self_macros.status_icon(push_link, 'thinking', {'data-push': job.id, 'data-status': job.status}) }}
+        {% else %}
+            {{ self_macros.status_icon(push_link, 'info') }}
         {% endif %}
 
     {% else %}
@@ -205,8 +216,10 @@
             {{ self_macros.status_icon(build_link, 'error') }}
         {% elseif job.status in ['Removed'] %}
             {{ self_macros.status_icon(build_link, 'info') }}
-        {% else %}
+        {% elseif allowThinking %}
             {{ self_macros.status_icon(build_link, 'thinking', {'data-build': job.id, 'data-status': job.status}) }}
+        {% else %}
+            {{ self_macros.status_icon(build_link, 'info') }}
         {% endif %}
 
     {% endif %}
