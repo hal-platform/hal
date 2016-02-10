@@ -13,5 +13,5 @@
         <svg class="icon"><use xlink:href="/icons.svg#{{ referenceType }}"></use></svg>
     </td>
     <td class="table-priority-55">{{ initiator }}</td>
-    <td class="table-priority-50">{{ time }}</td>
+    <td class="table-priority-50">{{ time | safe }}</td>
 </tr>

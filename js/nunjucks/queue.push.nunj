@@ -12,5 +12,5 @@
         Build <a href="{{ buildUrl }}">{{ buildIdShort }}</a>
     </td>
     <td class="table-priority-55">{{ initiator }}</td>
-    <td class="table-priority-50">{{ time }}</td>
+    <td class="table-priority-50">{{ time | safe }}</td>
 </tr>

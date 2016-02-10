@@ -73,7 +73,7 @@ module.exports = {
         var context = {
             buildId: buildId,
             buildIdShort: this.formatBuildId(buildId),
-            buildUrl: push._embedded.build._links.github_commit_page.href,
+            buildUrl: push._embedded.build._links.page.href,
 
             pushId: pushId,
             pushIdShort: this.formatPushId(pushId),

@@ -96,16 +96,21 @@ function handleStateChange(state) {
 
 function buildStatusContext(data) {
 
-    var pools = formatPools(data.view);
+    var pools = formatPools(data.view),
+        deploymentID = null;
 
     var matchDeployment = (element) => {
+        if (deploymentID === null) {
+            return false;
+        }
+
         return element.deploymentIDs.indexOf(deploymentID) >= 0;
     };
 
     for (var status of data.statuses) {
+        deploymentID = status.deployment.id;
 
-        var deploymentID = status.deployment.id,
-            deployment = {
+        var deployment = {
                 id: deploymentID,
                 pretty: status.deployment['pretty-name'],
                 additional: status.deployment['detail']
