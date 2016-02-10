@@ -13,16 +13,18 @@
 
 .nav--main,
 .nav--main-signed-out {
-    display: flex;
-    flex-wrap: wrap;
 
     height: 100%;
     list-style: none;
     margin: 0 auto;
-    max-width: 60em;
+
+    @include breakpoint($bp-small) {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 60em;
+    }
 
     li {
-        width: 100%;
         border-top: 1px dotted $grey;
 
         &:first-child { border-top: 0; }
@@ -33,6 +35,9 @@
             display: block;
             font-size: .8em;
             text-decoration: none;
+
+            padding: 0 .5em;
+            margin: auto;
 
             .icon {
                 margin-right: .25em;
@@ -58,8 +63,12 @@
 
             @include breakpoint($bp-small) {
                 font-size: .6em;
+                padding: 0;
                 padding-top: .5em;
                 text-align: center;
+
+                min-width: 3em;
+                max-width: 6em;
             }
 
             @include breakpoint($bp-medium) {
@@ -70,9 +79,17 @@
         @include breakpoint($bp-small) {
             border-top: 0;
             flex-grow: 1;
-            width: auto;
-            min-width: 3em;
-            max-width: 6em;
+            flex-shrink: 1;
+            flex-basis: auto;
+        }
+    }
+}
+
+@include breakpoint($bp-small) {
+    .nav--main-signed-out {
+        li {
+            flex-grow: 0;
+            width: 6em;
         }
     }
 }
