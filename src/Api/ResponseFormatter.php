@@ -126,9 +126,18 @@ class ResponseFormatter
         }
 
         $this->response->body($body);
-        $this->response->header('Content-Type', self::TYPE);
-        $this->response->header('hal-cache-status', 'NOT CACHED');
-        $this->response->header('hal-response-time', round(microtime(true) - $this->start, 2));
+
+        $this->response->headers->set('Content-Type', self::TYPE);
+        $this->response->headers->set('hal-cache-status', 'NOT CACHED');
+        $this->response->headers->set('hal-response-time', round(microtime(true) - $this->start, 2));
+
+        // Ugh IE sucks
+        // http://www.dashbay.com/2011/05/internet-explorer-caches-ajax/
+        $requestedWith = $this->request->headers->get('x-requested-with');
+        if ($requestedWith === 'XMLHttpRequest') {
+            $this->response->headers->set('Cache-Control', 'no-cache');
+        }
+
         $this->response->setStatus($status);
     }
 
