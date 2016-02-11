@@ -15,8 +15,9 @@ var init = () => {
 };
 
 function attachLoader(logTarget) {
-    let $container = $(logTarget).find(loaderAnchor),
-        logID = $container.data('log-loader'),
+    let $log = $(logTarget),
+        $container = $log.find(loaderAnchor),
+        logID = $log.data('log-loader'),
         iconHTML = generateIcon('menu-pull-down'),
         $loader = $(`<a class="btn btn--tiny" data-log-id="${logID}">${iconHTML}</a>`);
 
