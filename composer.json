@@ -33,7 +33,7 @@
         "predis/predis": "~1.0",
         "psr/log": "*",
 
-        "ql/hal-core":          "2.9.0-rc1",
+        "ql/hal-core":          "2.9.0-rc2",
         "ql/kraken-core":       "2.9.0-rc1",
         "ql/panthor-plugins":   "~1.0",
 

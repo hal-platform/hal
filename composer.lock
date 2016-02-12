@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1efa32b8d93537470fd018c4a1470e22",
-    "content-hash": "b3eaad26c25f4cb1332b2b70d49ec983",
+    "hash": "a37631b8a4f67c6ca9009f500c61b479",
+    "content-hash": "a745bc74ffb35c6c57d0f576d05c1b54",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1475,17 +1475,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.9.0-rc1",
+            "version": "2.9.0-rc2",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
-                "reference": "0615e7fb1eb7de97f6d1cd822eb91d41dfd6bff8"
+                "reference": "5b3b4b1a8e6c5ccff7ec574b81ad062b24f7dbca"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.9.0-rc1-718c34.zip",
-                "reference": "0615e7fb1eb7de97f6d1cd822eb91d41dfd6bff8",
-                "shasum": "80daef430a0db93c90de5eaffa956a995c6aa16c"
+                "url": "http://composer/dist/ql-hal-core-2.9.0-rc2-8b85d9.zip",
+                "reference": "5b3b4b1a8e6c5ccff7ec574b81ad062b24f7dbca",
+                "shasum": "b8d7d21da50c6e1c8bd1ed704e02e3e734d2092e"
             },
             "archive": {
                 "exclude": [
@@ -1530,7 +1530,7 @@
                 }
             ],
             "description": "Hal shared components and domain resources",
-            "time": "2016-02-02 15:53:27"
+            "time": "2016-02-12 18:13:34"
         },
         {
             "name": "ql/kraken-core",
