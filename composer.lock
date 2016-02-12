@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a37631b8a4f67c6ca9009f500c61b479",
-    "content-hash": "a745bc74ffb35c6c57d0f576d05c1b54",
+    "hash": "80c9ba0871e9f4154ea6249561da77ff",
+    "content-hash": "0a07ecdc1fed9b2f51730eaca241ba4e",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1475,7 +1475,7 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.9.0-rc2",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
@@ -1483,9 +1483,9 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.9.0-rc2-8b85d9.zip",
+                "url": "http://composer/dist/ql-hal-core-2.9.0-8b85d9.zip",
                 "reference": "5b3b4b1a8e6c5ccff7ec574b81ad062b24f7dbca",
-                "shasum": "b8d7d21da50c6e1c8bd1ed704e02e3e734d2092e"
+                "shasum": "b2a128c4585286baab4eab7b9375a4ff7e6ee308"
             },
             "archive": {
                 "exclude": [
@@ -1534,7 +1534,7 @@
         },
         {
             "name": "ql/kraken-core",
-            "version": "2.9.0-rc1",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/kraken-core.git",
@@ -1542,9 +1542,9 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-kraken-core-2.9.0-rc1-d25566.zip",
+                "url": "http://composer/dist/ql-kraken-core-2.9.0-d25566.zip",
                 "reference": "4e6fd4dc2b0d59092280c9ed6772aeb5af826dcc",
-                "shasum": "3d382a9a2ace6b690b92447020f2628041a34c6f"
+                "shasum": "3d2177c8724a6f0a2ef1a2f1795f1b07590ac341"
             },
             "archive": {
                 "exclude": [
@@ -4047,10 +4047,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ql/hal-core": 5,
-        "ql/kraken-core": 5
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
