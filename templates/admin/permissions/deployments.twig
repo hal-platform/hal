@@ -63,7 +63,7 @@
                         </td>
 
                         <td>
-                            <a href="{{ urlFor('application', {application: type.application.id}) }}">{{ perm.application.name }}</a>
+                            <a href="{{ urlFor('application', {application: perm.application.id}) }}">{{ perm.application.name }}</a>
                         </td>
 
                         {% if can_remove %}
