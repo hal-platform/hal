@@ -117,7 +117,7 @@ class LoginHandler implements MiddlewareInterface
             return $this->context->addContext(['errors' => [self::ERR_AUTH_FAILURE]]);
         }
 
-        $user = $this->userRepo->find($account->commonId());
+        $user = $this->userRepo->findOneBy(['handle' => $account->windowsUsername()]);
 
         // account disabled manually
         if ($user && !$user->isActive()) {
@@ -131,7 +131,7 @@ class LoginHandler implements MiddlewareInterface
                 ->withIsActive(true);
         }
 
-        $this->updateUserDetails($account, $user);
+        $this->updateUserDetails($account, $user, $isFirstLogin);
 
         $this->session->clear();
         $this->session->set('user_id', $user->id());
@@ -147,17 +147,26 @@ class LoginHandler implements MiddlewareInterface
     /**
      * @param LdapUser $account
      * @param User $user
+     * @param bool $isFirstLogin
      *
      * @return null
      */
-    private function updateUserDetails(LdapUser $account, User $user)
+    private function updateUserDetails(LdapUser $account, User $user, $isFirstLogin)
     {
-        // Update user
+        if ($isFirstLogin) {
+            // generate an id between 100,000,000 - 200,000,000.
+            // @todo change id to guid
+            $id = \random_int(100000000, 200000000);
+
+            $user
+                ->withId($id)
+                ->withHandle($account->windowsUsername());
+        }
+
+        // Always ensure email and name is in sync
         $user
-            ->withId($account->commonId())
-            ->withEmail($account->email())
-            ->withHandle($account->windowsUsername())
-            ->withName($account->displayName());
+            ->withEmail($account->email() ?: '')
+            ->withName($account->displayName() ?: '');
 
         // Add user settings if not set.
         if (!$user->settings()) {
