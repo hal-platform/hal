@@ -25,7 +25,7 @@
                     <span data-initial="{{ displayName }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
                 {% endif %}
             </h1>
-            {% if ldapUser %}
+            {% if ldapUser and ldapUser.title %}
                 <h4 class="mtn">{{ ldapUser.title }}</h4>
                 <p>{{ ldapUser.teamName }}</p>
             {% else %}
@@ -40,17 +40,29 @@
         <ul class="list--bare mbn">
             <li>
                 <span class="split__title">Email</span>
-                <a href="mailto:{{ user.Email }}">{{ user.Email }}</a>
+                {% if user.Email %}
+                    <a href="mailto:{{ user.Email }}">{{ user.Email }}</a>
+                {% else %}
+                    None
+                {% endif %}
             </li>
             {% if ldapUser %}
                 <li>
                     <span class="split__title">Phone</span>
-                    {{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})
+                    {% if ldapUser.workPhone %}
+                        {{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})
+                    {% else %}
+                        Unknown
+                    {% endif %}
                 </li>
 
                 <li>
                     <span class="split__title">Mobile</span>
-                    {{ ldapUser.mobilePhone }}
+                    {% if ldapUser.mobilePhone %}
+                        {{ ldapUser.mobilePhone }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
                 </li>
 
                 <li>
@@ -61,7 +73,7 @@
 
             <li>
                 <span class="split__title">GitHub Profile</span>
-                <a href="http://git/{{ user.handle }}">http://git/{{ user.handle }}</a> {{ macros.icon('github') }}
+                <a href="{{ githubUserUrl(user.handle) }}">{{ githubUserUrl(user.handle) }}</a> {{ macros.icon('github') }}
             </li>
         </dl>
     </div>

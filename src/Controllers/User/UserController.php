@@ -98,7 +98,7 @@ class UserController implements ControllerInterface
             'prodApplications' => $appPerm['prod'],
             'nonProdApplications' => $appPerm['non_prod'],
 
-            'ldapUser' => $this->ldap->getUserByCommonId($this->user->id()),
+            'ldapUser' => $this->ldap->getUserByWindowsUsername($this->user->handle()),
 
             'builds' => $stats['builds'],
             'pushes' => $stats['pushes']

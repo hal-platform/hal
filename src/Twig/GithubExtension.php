@@ -61,6 +61,7 @@ class GitHubExtension extends Twig_Extension
             new Twig_SimpleFunction('githubPullRequestUrl', [$this->urlBuilder, 'githubPullRequestURL']),
             new Twig_SimpleFunction('githubReferenceUrl', [$this->urlBuilder, 'githubReferenceURL']),
             new Twig_SimpleFunction('githubReleaseUrl', [$this->urlBuilder, 'githubReleaseURL']),
+            new Twig_SimpleFunction('githubUserUrl', [$this->urlBuilder, 'githubUserUrl']),
 
             new Twig_SimpleFunction('githubCommitIsCurrent', [$this, 'commitIsCurrent'])
         ];
