@@ -66,6 +66,6 @@ class ExceptionLogger
             $exceptions[] = $e;
         }
 
-        return $execeptions;
+        return $exceptions;
     }
 }
