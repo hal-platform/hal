@@ -773,6 +773,7 @@
                 "rest",
                 "web service"
             ],
+            "abandoned": "guzzlehttp/guzzle",
             "time": "2015-03-18 18:23:50"
         },
         {
@@ -1479,13 +1480,13 @@
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
-                "reference": "5b3b4b1a8e6c5ccff7ec574b81ad062b24f7dbca"
+                "reference": "de87b306f9544411329c764f5770bc3873523a00"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.9.0-8b85d9.zip",
-                "reference": "5b3b4b1a8e6c5ccff7ec574b81ad062b24f7dbca",
-                "shasum": "b2a128c4585286baab4eab7b9375a4ff7e6ee308"
+                "url": "http://composer/dist/ql-hal-core-2.9.0-a95fa3.zip",
+                "reference": "de87b306f9544411329c764f5770bc3873523a00",
+                "shasum": "4e0a639a5d2dcc7c23b0ffb189b6497103509d42"
             },
             "archive": {
                 "exclude": [
@@ -1538,13 +1539,13 @@
             "source": {
                 "type": "git",
                 "url": "http://git/hal/kraken-core.git",
-                "reference": "4e6fd4dc2b0d59092280c9ed6772aeb5af826dcc"
+                "reference": "482dc47ad5b000c7a0f9aaf8bd89d344aee036a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://composer/dist/ql-kraken-core-2.9.0-d25566.zip",
-                "reference": "4e6fd4dc2b0d59092280c9ed6772aeb5af826dcc",
-                "shasum": "3d2177c8724a6f0a2ef1a2f1795f1b07590ac341"
+                "url": "http://composer/dist/ql-kraken-core-2.9.0-4d12bb.zip",
+                "reference": "482dc47ad5b000c7a0f9aaf8bd89d344aee036a6",
+                "shasum": "153ae2524467b1f5ba6bd32417e723e00ee05125"
             },
             "archive": {
                 "exclude": [
@@ -2281,12 +2282,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "6c905bbed1e728226de656e4c07d620dfe9e80d9"
+                "reference": "65791be28189e2c3d2d289d1b0b23d1f1e521c65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/6c905bbed1e728226de656e4c07d620dfe9e80d9",
-                "reference": "6c905bbed1e728226de656e4c07d620dfe9e80d9",
+                "url": "https://api.github.com/repos/symfony/config/zipball/65791be28189e2c3d2d289d1b0b23d1f1e521c65",
+                "reference": "65791be28189e2c3d2d289d1b0b23d1f1e521c65",
                 "shasum": ""
             },
             "require": {
