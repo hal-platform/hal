@@ -21,9 +21,9 @@ username  | `root`
 
 These can be changed in your `config.env.yml`.
 
-The schema is located in the `hal-core` package which contains doctrine repositories and models for all hal deployments. Run the phinx migrations included with `hal-core`.
+The schema is located in the `hal-core` and `kraken-core` packages which contains doctrine repositories and models for all hal deployments. Run the phinx migrations included with `hal-core` then in `kraken-core`.
 
-Sometimes the schema changes between releases. Make sure to run the migrations included with `hal-core` in the release notes to stay up to date.
+Sometimes the schema changes between releases. Make sure to run the migrations included with `hal-core` and `kraken-core` in the release notes to stay up to date.
 
 #### Web server
 
