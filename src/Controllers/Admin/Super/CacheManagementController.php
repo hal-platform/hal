@@ -126,7 +126,7 @@ class CacheManagementController implements ControllerInterface
         $context = [
             'version' => $configuration['version']['version'],
             'configuration' => $this->formatConfig($configuration['directives']),
-            'scripts' => $this->formatScripts($status['scripts']),
+            'scripts' => $this->formatScripts(isset($status['scripts']) ? $status['scripts'] : []),
 
             'enabled' => $status['opcache_enabled'],
             'cache_full' => $status['cache_full'],
