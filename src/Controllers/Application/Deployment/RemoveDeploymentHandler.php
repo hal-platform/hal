@@ -9,6 +9,8 @@ namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 
@@ -52,6 +54,10 @@ class RemoveDeploymentHandler implements ControllerInterface
     {
         $this->em->remove($this->deployment);
         $this->em->flush();
+
+        /** @var EnvironmentRepository $envRepo */
+        $envRepo = $this->em->getRepository(Environment::class);
+        $envRepo->clearBuildableEnvironmentsByApplication($this->deployment->application());
 
         return $this->flasher
             ->withFlash('Deployment removed.', 'success')
