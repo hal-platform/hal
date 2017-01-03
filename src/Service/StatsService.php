@@ -139,10 +139,10 @@ class StatsService
         $prodPushes = 0;
 
         foreach ($builds as $build) {
-            $applicationId = $build->application()->id();
+            $applicationID = $build->application()->id();
             $env = $build->environment()->name();
 
-            $applications[$applicationId] = true;
+            $applications[$applicationID] = true;
 
             if ($build->environment()->isProduction()) {
                 $prodBuilds++;
@@ -150,12 +150,10 @@ class StatsService
         }
 
         foreach ($pushes as $push) {
-            $applicationId = $push->application()->id();
-            $env = $push->deployment()->server()->environment();
+            $applicationID = $push->application()->id();
+            $applications[$applicationID] = true;
 
-            $applications[$applicationId] = true;
-
-            if ($env->isProduction()) {
+            if ($push->build()->environment()->isProduction()) {
                 $prodPushes++;
             }
         }
