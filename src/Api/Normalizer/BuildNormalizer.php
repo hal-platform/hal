@@ -166,12 +166,12 @@ class BuildNormalizer implements NormalizerInterface
                 'text/html'
             ),
             'github_reference_page' => new Hyperlink(
-                $this->urlBuilder->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
+                $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->branch()),
                 null,
                 'text/html'
             ),
             'github_commit_page' => new Hyperlink(
-                $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->branch()),
+                $this->urlBuilder->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
                 null,
                 'text/html'
             )
