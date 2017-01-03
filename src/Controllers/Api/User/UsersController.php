@@ -8,6 +8,7 @@
 namespace QL\Hal\Controllers\Api\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use QL\Hal\Api\Hyperlink;
 use QL\Hal\Api\Normalizer\UserNormalizer;
 use QL\Hal\Api\ResponseFormatter;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
