@@ -63,7 +63,7 @@ class CachedHttpClient extends HttpClient
 
         $response = parent::request($path, $body, $httpMethod, $headers, $options);
 
-        if (304 == $response->getStatusCode()) {
+        if (304 == $response->getStatusCode() && $this->getCache()->has($cacheKey)) {
             $this->lastCachedResponse = $this->getCache()->get($cacheKey);
             return $this->lastCachedResponse;
         }
