@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "275e2c18359520bd96b4ec2d2165d7a2",
+    "content-hash": "6cbc24036dba0d1ce64bded59712400f",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1474,17 +1474,11 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.9.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
-                "reference": "de87b306f9544411329c764f5770bc3873523a00"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.9.0-a95fa3.zip",
-                "reference": "de87b306f9544411329c764f5770bc3873523a00",
-                "shasum": "4e0a639a5d2dcc7c23b0ffb189b6497103509d42"
+                "reference": "77152183b2397944f9b5618f3f3d6df896fac3e1"
             },
             "archive": {
                 "exclude": [
@@ -1495,7 +1489,7 @@
                 ]
             },
             "require": {
-                "doctrine/orm": "~2.5",
+                "doctrine/orm": "~2.5.6",
                 "ext-openssl": "*",
                 "ext-pdo": "*",
                 "ext-pdo_mysql": "*",
@@ -1529,7 +1523,7 @@
                 }
             ],
             "description": "Hal shared components and domain resources",
-            "time": "2016-02-12T18:13:34+00:00"
+            "time": "2017-01-03 17:48:32"
         },
         {
             "name": "ql/kraken-core",
@@ -4044,9 +4038,18 @@
             "time": "2015-06-21T13:59:46+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "2.9.1",
+            "alias_normalized": "2.9.1.0",
+            "version": "9999999-dev",
+            "package": "ql/hal-core"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ql/hal-core": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

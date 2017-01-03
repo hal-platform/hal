@@ -10,6 +10,10 @@
         "psr-4": { "QL\\Hal\\": "src", "QL\\Kraken\\": "src-kraken" }
     },
 
+    "repositories": [
+        { "type": "git", "url": "http://git/hal/hal-core.git" }
+    ],
+
     "require": {
         "php-64bit": "~5.5",
 
@@ -33,7 +37,7 @@
         "predis/predis": "~1.0",
         "psr/log": "*",
 
-        "ql/hal-core":          "2.9.0",
+        "ql/hal-core":          "dev-master as 2.9.1",
         "ql/kraken-core":       "2.9.0",
         "ql/panthor-plugins":   "~1.0",
 
