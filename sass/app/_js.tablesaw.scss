@@ -10,6 +10,16 @@ main {
 
 .tablesaw-stack {
 
+    .js-collapsible-global {
+        text-align: right;
+    }
+    .tablesaw-stack-hidden {
+        display: none;
+        @include breakpoint($bp-medium) {
+            display: block;
+        }
+    }
+
     .js-toggle-container {
         display: none;
         @include breakpoint($bp-medium) {

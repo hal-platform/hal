@@ -68,6 +68,9 @@ module.exports = {
     "favorites": function() {
         require('./app/form/add-favorites').init();
     },
+    "collapsible": function() {
+        require('./app/collapsible-table').init();
+    },
 
     // Kraken
     "kraken.property": function() {

@@ -13,6 +13,25 @@
     }
 }
 
+.toc-list {
+    font-size: ms(-2);
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+
+    @include columns(8em 2);
+    @include rhythm(0,.25,.25,1);
+
+    @include breakpoint($bp-medium) {
+        @include columns(8em 3);
+        @include rhythm(0,.25,.25,1);
+    }
+    @include breakpoint($bp-large) {
+        @include columns(8em 4);
+        @include rhythm(0,.25,.25,1);
+    }
+}
+
 // Inline list
 .inline-list, [class^="inline-list--"] {
     margin-left: 0;
