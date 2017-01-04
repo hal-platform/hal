@@ -27,6 +27,11 @@ OUTOUT
 ┃ CACHING DOCTRINE PROXIES                                                     ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
+    read -r -d '' TITLE_YARN <<OUTOUT
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ INSTALLING YARN AND NODE DEPENDENCIES                                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+OUTOUT
     read -r -d '' TITLE_GULP <<OUTOUT
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ RUNNING GULP DEPLOY                                                          ┃
@@ -110,8 +115,12 @@ fi
 
 # run frontend install
 if [ "$FRONTEND" = true ] ; then
+    echo "$TITLE_YARN"
+    npm install -g yarn@0.17.10 --depth=0
+    yarn install --production --no-progress
+
     echo "$TITLE_GULP"
-    npm run deploy
+    yarn run deploy
 
     if [ "$DEPLOY" = true ] ; then
         echo "$TITLE_CLEANUP"
