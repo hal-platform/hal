@@ -26,6 +26,6 @@ module.exports = {
             _this.toggle();
         });
 
-        $container.append($toggler);
+        $container.html($toggler);
     }
 };

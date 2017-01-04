@@ -4,6 +4,7 @@ import gitref from '../util/git-reference';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import DeploymentsTable from './deployments.jsx';
+import deployment_all_selector from '../start-push';
 
 var selectorTarget = '.js-environment-selector',
     tableTarget = 'js-child-deployment';
@@ -88,6 +89,9 @@ function handleStateChange(state) {
     deploymentsComponent.setState({
         data: state
     });
+
+    // re-initialize select-all
+    deployment_all_selector.init();
 
     // re-initialize tablesaw
     $table.removeData();
