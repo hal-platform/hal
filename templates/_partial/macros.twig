@@ -180,11 +180,11 @@
     {% import _self as self_macros %}
 
     {# we dont use |default(value) because it doesnt work with falsey values #}
-    {% if withoutPrefix is sameas(null) %}
+    {% if withoutPrefix is same as(null) %}
         {% set withoutPrefix = false %}
     {% endif %}
 
-    {% if allowThinking is sameas(null) %}
+    {% if allowThinking is same as(null) %}
         {% set allowThinking = true %}
     {% endif %}
 
