@@ -7,11 +7,11 @@
 
 namespace QL\Hal\Controllers\Admin\Permissions;
 
+use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
 use QL\Hal\Service\PermissionService;
-use QL\Hal\Service\UserPerm;
 use QL\Panthor\ControllerInterface;
 
 /**
@@ -25,9 +25,15 @@ use QL\Panthor\ControllerInterface;
  */
 class RemovePermissionsHandler implements ControllerInterface
 {
+    // This trait requires $this->em
+    use RemovalPermissionsTrait;
+
     const SUCCESS = 'User Permission "%s" revoked from "%s".';
-    const ERR_NOPE_SUPER = 'Hal Administrators cannot remove other Hal Administrators from the frontend.';
-    const ERR_NOPE_BTN = 'Deployment Administrators cannot remove other Deployment Administrators from the frontend.';
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
 
     /**
      * @var User
@@ -50,17 +56,20 @@ class RemovePermissionsHandler implements ControllerInterface
     private $flasher;
 
     /**
+     * @param EntityManagerInterface $em
      * @param User $currentUser
      * @param UserType $userType
      * @param PermissionService $permissions
      * @param Flasher $flasher
      */
     public function __construct(
+        EntityManagerInterface $em,
         User $currentUser,
         UserType $userType,
         PermissionService $permissions,
         Flasher $flasher
     ) {
+        $this->em = $em;
         $this->currentUser = $currentUser;
         $this->userType = $userType;
 
@@ -75,7 +84,8 @@ class RemovePermissionsHandler implements ControllerInterface
     {
         $currentUserPerms = $this->permissions->getUserPermissions($this->currentUser);
 
-        if (!$this->isAllowed($currentUserPerms)) {
+        if (!$this->isRemovalAllowed($currentUserPerms, $this->userType)) {
+            $this->flasher->withFlash('Access Denied', 'error', $this->getRemovalDeniedReason());
             return $this->flasher->load('admin.permissions');
         }
 
@@ -95,40 +105,5 @@ class RemovePermissionsHandler implements ControllerInterface
         $this->flasher
             ->withFlash(sprintf(self::SUCCESS, $type, $name), 'success')
             ->load('admin.permissions');
-    }
-
-    /**
-     * Is the current user allowed to do this?
-     *
-     * @param UserPerm $currentUserPerms
-     *
-     * @return bool
-     */
-    private function isAllowed(UserPerm $currentUserPerms)
-    {
-        $type = $this->userType->type();
-
-        // Super can do this
-        if ($currentUserPerms->isSuper()) {
-            // super cannot remove super, must be done from DB
-            if (!in_array($type, ['pleb', 'lead', 'btn_pusher'])) {
-                 $this->flasher->withFlash('Access Denied', 'error', self::ERR_NOPE_SUPER);
-                 return false;
-            }
-
-            return true;
-
-        // Button Pusher can do this
-        } elseif ($currentUserPerms->isButtonPusher()) {
-            // btn_pusher cannot remove super or btn_pusher
-            if (!in_array($type, ['pleb'])) {
-                $this->flasher->withFlash('Access Denied', 'error', self::ERR_NOPE_BTN);
-                return false;
-            }
-
-            return true;
-        }
-
-        return false;
     }
 }

@@ -4,6 +4,11 @@
 {% set page_title = "User Permissions" %}
 
 {% set can_remove = isUserAdminOrSuper(getCurrentUser()) %}
+{% if isUserAdmin(getCurrentUser())and userTypes.btn_pusher|length < 2 %}
+    {% set can_remove = false %}
+{% endif %}
+
+{% set can_remove_super = isUserSuper(getCurrentUser()) and userTypes.super|length > 1 %}
 
 {% block content %}
 
@@ -16,7 +21,7 @@
     {{ page_macros.userTable(userTypes.btn_pusher, 'btn_pusher', can_remove) }}
 
     <h2>Hal Administrators</h2>
-    {{ page_macros.userTable(userTypes.super, 'super') }}
+    {{ page_macros.userTable(userTypes.super, 'super', can_remove_super) }}
 
     <h2>User Types</h2>
     {% include '_partial/user.types.twig' %}
