@@ -7,15 +7,15 @@
             <th class="t20">Event</th>
             <th>Time</th>
             <th>Message</th>
-            <th class="t10"></th>
+            <th class="t15"></th>
         </tr>
     </thead>
 
     {% for log in logs %}
         {% if canLoad and log.data %}
-            <tbody data-log="{{ log.id }}">
+            <tbody data-log="{{ log.id }}" data-log-loadable="1">
         {% else %}
-            <tbody>
+            <tbody data-log="{{ log.id }}">
         {% endif %}
             <tr class="{{ log.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>

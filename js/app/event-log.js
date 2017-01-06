@@ -2,9 +2,11 @@ import 'jquery';
 import ansiUp from 'ansi_up';
 import generateIcon from './util/icon';
 
-let target = '[data-log]',
+let target = '[data-log][data-log-loadable=1]',
     loaderAnchor = '.js-event-logs-loader',
-    loadingStates = {};
+    loadingStates = {},
+    expandHTML = generateIcon('chevron-down') + ' Expand',
+    closeHTML = generateIcon('cross-2') + ' Close';
 
 var init = () => {
     var loadableLogs = $(target);
@@ -17,9 +19,8 @@ var init = () => {
 function attachLoader(logTarget) {
     let $log = $(logTarget),
         $container = $log.find(loaderAnchor),
-        logID = $log.data('log-loader'),
-        iconHTML = generateIcon('menu-pull-down'),
-        $loader = $(`<a class="btn btn--tiny" data-log-id="${logID}">${iconHTML}</a>`);
+
+        $loader = $(`<a href="">${expandHTML}</a>`);
 
     $container.append($loader);
     $loader.on('click.eventlog', loadLog);
@@ -43,7 +44,11 @@ function loadLog(e) {
 
     if ($context.length > 0) {
         // already loaded?
+        var btn = $context.is(":visible") ? expandHTML : closeHTML;
+        $anchor.html(btn);
+
         $context.toggle();
+
     } else {
 
         // To prevent someone smashing the button on first load
@@ -108,6 +113,10 @@ function renderRow(logID, data) {
     $context
         .append($td)
         .appendTo($parent);
+
+    $parent
+        .find(`${loaderAnchor} a`)
+        .html(closeHTML);
 
     loadingStates[logID] = false;
 }
