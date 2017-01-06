@@ -2,6 +2,7 @@ import 'jquery';
 import favico from 'favico.js';
 import tpl from '../../nunjucks/eventlog.nunj';
 import formatter from '../util/time-formatter';
+import EventLogLoader from '../event-log';
 
 module.exports = {
     interval: 5,
@@ -103,6 +104,7 @@ module.exports = {
             }
 
             _this.handleThinkingLogs(currentStatus);
+            _this.handleLogExpanding(currentStatus);
         });
 
         this.checkLogs(id);
@@ -182,6 +184,26 @@ module.exports = {
         } else {
             this.$logTable
                 .find('.js-thinking-row').remove();
+        }
+    },
+
+    handleLogExpanding: function(status) {
+        // Allow logs to be expandable when a job is done.
+
+        if (this.$logTable === null) {
+            return;
+        }
+
+        // is finished
+        if (status == 'Success' || status == 'Error') {
+            // wait 2 seconds so any remaining logs can be loaded
+            window.setTimeout(() => {
+                this.$logTable
+                    .find(this.logTarget)
+                    .each((i, e) => { $(e).attr('data-log-loadable', '1'); });
+
+                EventLogLoader();
+            }, 2000);
         }
     },
 

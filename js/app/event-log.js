@@ -20,7 +20,7 @@ function attachLoader(logTarget) {
     let $log = $(logTarget),
         $container = $log.find(loaderAnchor),
 
-        $loader = $(`<a href="">${expandHTML}</a>`);
+        $loader = $(`<a href="#">${expandHTML}</a>`);
 
     $container.append($loader);
     $loader.on('click.eventlog', loadLog);

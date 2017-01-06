@@ -22,6 +22,6 @@
         </td>
         <td>{{ logCreated | safe }}</td>
         <td>{{ log.message }}</td>
-        <td></td>
+        <td class="tr js-event-logs-loader"></td>
     </tr>
 </tbody>

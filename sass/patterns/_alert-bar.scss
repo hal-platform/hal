@@ -87,4 +87,6 @@ $alert-border-size: .05em;
 .event-log--error {
     color: $white;
     background-color: $error-color;
+
+    a { color: $white; }
 }
