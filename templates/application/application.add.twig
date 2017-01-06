@@ -1,17 +1,16 @@
 {% extends 'base.html.twig' %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
-{% set js_components = ["application.add"] %}
-
 {% set page_title = 'Add Application' %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>
 
-    <div class="form-wrapper">
-        {{ form_macros.formErrors(errors) }}
+    {{ form_macros.formErrors(errors) }}
 
-        <form method="post">
+    <form method="post">
+
+        <div class="form-wrapper">
             <ul class="form-fields">
                 <li>
                     <label for="name">Name</label>
@@ -29,51 +28,36 @@
                         Unique identifier such as <b>hal</b> or <b>my-project</b>.
                     </small>
                 </li>
-                <li>
-                    <label>Group</label>
-                    <ul class="radio-grid radio-grid--tri">
-                        {% for group in groups %}
-                            {% set checked = '' %}
-                            {% if form.group == group.id %}
-                                {% set checked = ' checked="checked"' %}
-                            {% endif %}
+            </ul>
+        </div>
 
-                            <li>
-                                <input id="group-{{ group.id }}" type="radio" name="group" value="{{ group.id }}"{{ checked }}>
-                                <label for="group-{{ group.id }}">{{ group.name }}</label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-
-                <li>
-                    <label for="github_user">GitHub Enterprise Organization</label>
-                    <select name="github_user" id="github_user">
-                        <option value=""></option>
-
-                        {% if github_orgs.active %}
-                            <optgroup label="Active">
-                                {% for org in github_orgs.active %}
-                                    {% set owner = org|lower %}
-                                    {% set isSelected = (owner == form.github_user) %}
-                                    <option value="{{ owner }}"{{ isSelected ? ' selected' : '' }}>{{ org }}</option>
-                                {% endfor %}
-                            </optgroup>
+        <ul class="form-fields">
+            <li>
+                <label>Group</label>
+                <ul class="radio-grid radio-grid--tri">
+                    {% for group in groups %}
+                        {% set checked = '' %}
+                        {% if form.group == group.id %}
+                            {% set checked = ' checked="checked"' %}
                         {% endif %}
 
-                        <optgroup label="Other">
-                            {% for org in github_orgs.other %}
-                                {% set owner = org|lower %}
-                                {% set isSelected = (owner == form.github_user) %}
-                                <option value="{{ owner }}"{{ isSelected ? ' selected' : '' }}>{{ org }}</option>
-                            {% endfor %}
-                        </optgroup>
+                        <li>
+                            <input id="group-{{ group.id }}" type="radio" name="group" value="{{ group.id }}"{{ checked }}>
+                            <label for="group-{{ group.id }}">{{ group.name }}</label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
 
-                    </select>
-                </li>
+        <div class="form-wrapper">
+            <ul class="form-fields">
                 <li>
-                    <label for="github_repo">GitHub Enterprise Repository</label>
-                    <input type="text" name="github_repo" id="github_repo" maxlength="48" required value="{{ form.github_repo }}" class="text-input">
+                    <label for="github">GitHub Enterprise Repository</label>
+                    <input name="github" id="github" maxlength="200" required value="{{ form.github }}" class="text-input">
+                    <small class="additional">
+                        Enter the full URL or organization/repository such as <b>http://git/team-a/project-b</b> or <b>team-a/project-b</b>.
+                    </small>
                 </li>
             </ul>
 
@@ -81,7 +65,6 @@
                 <li><input class="btn btn--action" type="submit" value="Add Application"></li>
                 <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('applications') }}">Cancel</a></li>
             </ul>
-
-        </form>
-    </div>
+        </div>
+    </form>
 {% endblock %}

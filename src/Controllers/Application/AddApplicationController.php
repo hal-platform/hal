@@ -39,8 +39,8 @@ class AddApplicationController implements ControllerInterface
 
     const ERR_DUPE_IDENTIFIER = 'An application with this identifier already exists.';
 
-    const ERR_GITHUB_INVALID_ORG = 'Invalid Github Enterprise organization';
-    const ERR_GITHUB_INVALID_REPO = 'Invalid Github Enterprise repository name';
+    const ERR_GITHUB_INVALID_OWNER = 'Invalid GitHub Enterprise user or organization.';
+    const ERR_GITHUB_INVALID_REPO = 'Invalid GitHub Enterprise Repository';
 
     /**
      * @var TemplateInterface
@@ -89,6 +89,11 @@ class AddApplicationController implements ControllerInterface
     private $random;
 
     /**
+     * @var string
+     */
+    private $githubEnterprisePrefix;
+
+    /**
      * @var array
      */
     private $errors;
@@ -102,6 +107,7 @@ class AddApplicationController implements ControllerInterface
      * @param Request $request
      * @param User $currentUser
      * @param callable $random
+     * @param string $githubEnterprisePrefix
      */
     public function __construct(
         TemplateInterface $template,
@@ -111,7 +117,8 @@ class AddApplicationController implements ControllerInterface
         Flasher $flasher,
         Request $request,
         User $currentUser,
-        callable $random
+        callable $random,
+        $githubEnterprisePrefix
     ) {
         $this->template = $template;
 
@@ -126,6 +133,7 @@ class AddApplicationController implements ControllerInterface
         $this->request = $request;
         $this->currentUser = $currentUser;
         $this->random = $random;
+        $this->githubEnterprisePrefix = $githubEnterprisePrefix;
 
         $this->errors = [];
     }
@@ -177,8 +185,7 @@ class AddApplicationController implements ControllerInterface
             $data['identifier'],
             $data['name'],
             $data['group'],
-            $data['github_user'],
-            $data['github_repo']
+            $data['github']
         );
 
         if ($application) {
@@ -201,15 +208,29 @@ class AddApplicationController implements ControllerInterface
      *
      * @return Application|null
      */
-    private function validateForm($identifier, $name, $groupID, $githubOwner, $githubRepo)
+    private function validateForm($identifier, $name, $groupID, $github)
     {
         $this->errors = array_merge(
             $this->validateSimple($identifier, 'Identifier', 24, true),
             $this->validateText($name, 'Name', 64, true),
-
-            $this->validateText($githubOwner, 'GitHub Organization', 48, true),
-            $this->validateText($githubRepo, 'GitHub Repository', 48, true)
+            $this->validateText($groupID, 'Group', 128, true),
+            $this->validateText($github, 'GitHub Repository', 100, true)
         );
+
+        if ($this->errors) return;
+
+        $github = $this->formatGitHubFromURL($github);
+
+        if ($this->errors) return;
+
+        // in team/project format
+        $parts = explode('/', $github);
+        if (count($parts) === 2) {
+            $githubOwner = $parts[0];
+            $githubRepo = $parts[1];
+        } else {
+            $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
+        }
 
         if ($this->errors) return;
 
@@ -255,13 +276,39 @@ class AddApplicationController implements ControllerInterface
      */
     private function validateGithubRepo($owner, $repo)
     {
-        if (!$this->github->organization($owner)) {
-            $this->errors[] = self::ERR_GITHUB_INVALID_ORG;
+        if (!$this->github->user($owner)) {
+            $this->errors[] = self::ERR_GITHUB_INVALID_OWNER;
 
         // elseif here so we dont bother making 2 github calls if the first one failed
         } elseif (!$this->github->repository($owner, $repo)) {
             $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
         }
+    }
+
+    /**
+     * Parse user/repo from the provided input which may or may not be a full github URL.
+     *
+     * @param string $github
+     *
+     * @return string
+     */
+    private function formatGitHubFromURL($github)
+    {
+        if (stripos($github, 'http://') === 0) {
+            // is URL
+            if (stripos($github, $this->githubEnterprisePrefix) === 0) {
+                $github = substr($github, strlen($this->githubEnterprisePrefix));
+
+                if (substr($github, -4) === '.git') {
+                    $github = substr($github, 0, -4);
+                }
+
+            } else {
+                $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
+            }
+        }
+
+        return $github;
     }
 
     /**
@@ -274,8 +321,7 @@ class AddApplicationController implements ControllerInterface
             'name' => $this->request->post('name'),
             'group' => $this->request->post('group'),
 
-            'github_user' => strtolower($this->request->post('github_user')),
-            'github_repo' => strtolower($this->request->post('github_repo'))
+            'github' => strtolower($this->request->post('github'))
         ];
 
         return $form;

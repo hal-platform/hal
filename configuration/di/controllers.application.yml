@@ -67,6 +67,7 @@ services:
             - '@slim.request'
             - '@currentUser'
             - '@doctrine.random'
+            - '%github.site.baseurl%'
         calls:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.page.ttl%']]
@@ -79,9 +80,11 @@ services:
         arguments:
             - '@application.edit.twig'
             - '@doctrine.em'
+            - '@github'
             - '@hal.application'
             - '@session.flasher'
             - '@slim.request'
+            - '%github.site.baseurl%'
     application.edit.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/application.edit.twig']]]

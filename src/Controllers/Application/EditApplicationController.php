@@ -13,6 +13,7 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Flasher;
 use QL\Hal\Utility\ValidatorTrait;
+use QL\Hal\Service\GitHubService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -21,8 +22,12 @@ class EditApplicationController implements ControllerInterface
 {
     use ValidatorTrait;
 
-    const ERR_DUPLICATE_IDENTIFIER = 'An application with this identifier already exists.';
     const SUCCESS = 'Application updated successfully.';
+
+    const ERR_DUPLICATE_IDENTIFIER = 'An application with this identifier already exists.';
+
+    const ERR_GITHUB_INVALID_OWNER = 'Invalid GitHub Enterprise user or organization.';
+    const ERR_GITHUB_INVALID_REPO = 'Invalid GitHub Enterprise Repository';
 
     /**
      * @var TemplateInterface
@@ -41,6 +46,11 @@ class EditApplicationController implements ControllerInterface
     private $em;
 
     /**
+     * @var GitHubService
+     */
+    private $github;
+
+    /**
      * @var Application
      */
     private $application;
@@ -56,18 +66,32 @@ class EditApplicationController implements ControllerInterface
     private $request;
 
     /**
+     * @var string
+     */
+    private $githubEnterprisePrefix;
+
+    /**
+     * @var array
+     */
+    private $errors;
+
+    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
+     * @param GitHubService $github
      * @param Application $application
      * @param Flasher $flasher
      * @param Request $request
+     * @param string $githubEnterprisePrefix
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        GitHubService $github,
         Application $application,
         Flasher $flasher,
-        Request $request
+        Request $request,
+        $githubEnterprisePrefix
     ) {
         $this->template = $template;
 
@@ -75,10 +99,14 @@ class EditApplicationController implements ControllerInterface
         $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
 
+        $this->github = $github;
         $this->application = $application;
         $this->flasher = $flasher;
 
         $this->request = $request;
+        $this->githubEnterprisePrefix = $githubEnterprisePrefix;
+
+        $this->errors = [];
     }
 
     /**
@@ -86,26 +114,21 @@ class EditApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $renderContext = [
+        $context = [
             'form' => [
                 'identifier' => $this->request->post('identifier') ?: $this->application->key(),
                 'name' => $this->request->post('name') ?: $this->application->name(),
                 'group' => $this->request->post('group') ?: $this->application->group()->id(),
-                'notification_email' => $this->request->post('notification_email') ?: $this->application->email()
+                'github' => $this->request->post('github') ?: sprintf('%s/%s', $this->application->githubOwner(), $this->application->githubRepo())
             ],
             'application' => $this->application,
-            'groups' => $this->groupRepo->findAll(),
-            'errors' => $this->checkFormErrors($this->request, $this->application)
+            'groups' => $this->groupRepo->findAll()
         ];
 
         if ($this->request->isPost()) {
-            // this is kind of crummy
-            if (!$renderContext['errors'] && !$group = $this->groupRepo->find($this->request->post('group'))) {
-                $renderContext['errors'][] = 'Please select a group.';
-            }
-
-            if (!$renderContext['errors']) {
-                $application = $this->handleFormSubmission($this->request, $this->application, $group);
+            if ($application = $this->handleFormSubmission($this->request, $this->application)) {
+                $this->em->merge($application);
+                $this->em->flush();
 
                 return $this->flasher
                     ->withFlash(self::SUCCESS, 'success')
@@ -113,70 +136,117 @@ class EditApplicationController implements ControllerInterface
             }
         }
 
-        $this->template->render($renderContext);
+        $context['errors'] = $this->errors;
+        $this->template->render($context);
     }
 
     /**
      * @param Request $request
      * @param Application $application
-     * @param Group $group
      *
-     * @return Application
+     * @return Application|null
      */
-    private function handleFormSubmission(Request $request, Application $application, Group $group)
+    private function handleFormSubmission(Request $request, Application $application)
     {
         $identifier = strtolower($request->post('identifier'));
-        $name = $request->post('name');
-        $email = $request->post('notification_email');
+        $github = strtolower($request->post('github'));
+
+        $this->errors = array_merge(
+            $this->validateSimple($identifier, 'Identifier', 24, true),
+            $this->validateText($request->post('name'), 'Name', 64, true),
+
+            $this->validateText($request->post('group'), 'Group', 128, true),
+            $this->validateText($github, 'GitHub Repository', 100, true)
+        );
+
+        if ($this->errors) return;
+
+        if (!$group = $this->groupRepo->find($this->request->post('group'))) {
+            $this->errors[] = 'Please select a group.';
+        }
+
+        if ($this->errors) return;
+
+        if ($github !== sprintf('%s/%s', $application->githubOwner(), $application->githubRepo())) {
+            $github = $this->formatGitHubFromURL($github);
+
+            $parts = explode('/', $github);
+            if (count($parts) === 2) {
+                $githubOwner = $parts[0];
+                $githubRepo = $parts[1];
+            } else {
+                $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
+            }
+
+            if ($this->errors) return;
+            $this->validateGithubRepo($githubOwner, $githubRepo);
+        }
+
+        if ($this->errors) return;
+
+        // Only check for duplicate identifier if it is being changed
+        if (!$this->errors && $identifier != $application->key()) {
+            if ($repo = $this->applicationRepo->findOneBy(['key' => $identifier])) {
+                $this->errors[] = self::ERR_DUPLICATE_IDENTIFIER;
+            }
+        }
+
+        if ($this->errors) return;
 
         $application
             ->withKey($identifier)
-            ->withName($name)
-            ->withGroup($group)
-            ->withEmail($email);
+            ->withName($request->post('name'))
+            ->withGroup($group);
 
-        $this->em->merge($application);
-        $this->em->flush();
+        if (isset($githubOwner)) {
+            $application
+                ->withGithubOwner($githubOwner)
+                ->withGithubRepo($githubRepo);
+        }
 
         return $application;
     }
 
     /**
-     * @param Request $request
-     * @param Application $application
+     * @param string $owner
+     * @param string $repo
      *
-     * @return array
+     * @return void
      */
-    private function checkFormErrors(Request $request, Application $application)
+    private function validateGithubRepo($owner, $repo)
     {
-        if (!$request->isPost()) {
-            return [];
+        if (!$this->github->user($owner)) {
+            $this->errors[] = self::ERR_GITHUB_INVALID_OWNER;
+
+        // elseif here so we dont bother making 2 github calls if the first one failed
+        } elseif (!$this->github->repository($owner, $repo)) {
+            $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
         }
+    }
 
-        $human = [
-            'identifier' => 'Identifier',
-            'name' => 'Name',
-            'group' => 'Group',
-            'notification_email' => 'Notification Email'
-        ];
+    /**
+     * Parse user/repo from the provided input which may or may not be a full github URL.
+     *
+     * @param string $github
+     *
+     * @return string
+     */
+    private function formatGitHubFromURL($github)
+    {
+        if (stripos($github, 'http://') === 0) {
+            // is URL
+            if (stripos($github, $this->githubEnterprisePrefix) === 0) {
+                $github = substr($github, strlen($this->githubEnterprisePrefix));
 
-        $identifier = strtolower($request->post('identifier'));
+                if (substr($github, -4) === '.git') {
+                    $github = substr($github, 0, -4);
+                }
 
-        $errors = array_merge(
-            $this->validateSimple($identifier, $human['identifier'], 24, true),
-            $this->validateText($request->post('name'), $human['name'], 64, true),
-
-            $this->validateText($request->post('group'), $human['group'], 128, true),
-            $this->validateText($request->post('notification_email'), $human['notification_email'], 128, false)
-        );
-
-        // Only check for duplicate identifier if it is being changed
-        if (!$errors && $identifier != $application->key()) {
-            if ($repo = $this->applicationRepo->findOneBy(['key' => $identifier])) {
-                $errors[] = self::ERR_DUPLICATE_IDENTIFIER;
+            } else {
+                $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
             }
         }
 
-        return $errors;
+        return $github;
     }
 }

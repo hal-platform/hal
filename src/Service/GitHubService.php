@@ -302,6 +302,24 @@ class GitHubService
     }
 
     /**
+     * Get the extended metadata for a github user
+     *
+     * @param string $user
+     *
+     * @return array|null
+     */
+    public function user($user)
+    {
+        try {
+            $user = $this->userApi->show($user);
+        } catch (RuntimeException $e) {
+            $user = null;
+        }
+
+        return $user;
+    }
+
+    /**
      * @param string $organization
      * @param string $user
      *
