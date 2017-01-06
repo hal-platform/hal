@@ -8,9 +8,10 @@
 namespace QL\Hal\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
+use QL\Hal\Core\Entity\Push;
 use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -23,10 +24,9 @@ class ApplicationController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityRepository
+     * @var EntityManagerInterface
      */
-    private $deploymentRepo;
-    private $krakenRepo;
+    private $em;
 
     /**
      * @var Application
@@ -44,10 +44,7 @@ class ApplicationController implements ControllerInterface
         Application $application
     ) {
         $this->template = $template;
-
-        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
-        $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
-
+        $this->em = $em;
         $this->application = $application;
     }
 
@@ -56,14 +53,40 @@ class ApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $this->application]);
-
-        $deployments = $this->deploymentRepo->findBy(['application' => $this->application]);
+        $krakenApp = $this->em
+            ->getRepository(KrakenApplication::class)
+            ->findOneBy(['halApplication' => $this->application]);
 
         $this->template->render([
             'application' => $this->application,
             'kraken' => $krakenApp,
-            'has_deployments' => (count($deployments) > 0)
+            'has_deployments' => $this->doesApplicationHaveChildren()
         ]);
+    }
+
+    /**
+     * @return bool
+     */
+    private function doesApplicationHaveChildren()
+    {
+        $targets = $this->em
+            ->getRepository(Deployment::class)
+            ->findOneBy(['application' => $this->application]);
+
+        if (count($targets) > 0) return true;
+
+        $builds = $this->em
+            ->getRepository(Build::class)
+            ->findOneBy(['application' => $this->application]);
+
+        if (count($builds) > 0) return true;
+
+        $deployments = $this->em
+            ->getRepository(Push::class)
+            ->findOneBy(['application' => $this->application]);
+
+        if (count($deployments) > 0) return true;
+
+        return false;
     }
 }
