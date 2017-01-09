@@ -11,7 +11,8 @@
     },
 
     "repositories": [
-        { "type": "git", "url": "http://git/hal/hal-core.git" }
+        { "type": "git", "url": "http://git/hal/hal-core.git" },
+        { "type": "git", "url": "http://git/hal/kraken-core.git" }
     ],
 
     "require": {
@@ -38,7 +39,7 @@
         "psr/log": "*",
 
         "ql/hal-core":          "dev-master as 2.9.1",
-        "ql/kraken-core":       "2.9.0",
+        "ql/kraken-core":       "dev-master",
         "ql/panthor-plugins":   "~1.0",
 
         "ql/mcp-cache":         "~2.2",

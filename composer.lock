@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6cbc24036dba0d1ce64bded59712400f",
+    "content-hash": "889d207b00cddb8b4d5a762391b7f0ea",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1527,17 +1527,11 @@
         },
         {
             "name": "ql/kraken-core",
-            "version": "2.9.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/kraken-core.git",
-                "reference": "482dc47ad5b000c7a0f9aaf8bd89d344aee036a6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-kraken-core-2.9.0-4d12bb.zip",
-                "reference": "482dc47ad5b000c7a0f9aaf8bd89d344aee036a6",
-                "shasum": "153ae2524467b1f5ba6bd32417e723e00ee05125"
+                "reference": "69ed981c60682b069b0ccebe5cd8f0746701db44"
             },
             "archive": {
                 "exclude": [
@@ -1583,7 +1577,7 @@
                 }
             ],
             "description": "Kraken shared components and domain resources",
-            "time": "2016-02-02T17:38:23+00:00"
+            "time": "2017-01-09 13:10:15"
         },
         {
             "name": "ql/mcp-cache",
@@ -4048,7 +4042,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/hal-core": 20
+        "ql/hal-core": 20,
+        "ql/kraken-core": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
