@@ -64,8 +64,5 @@
 
         "twig/twig": "~1.20"
     },
-    "require-dev": {
-        "mockery/mockery": "~0.9",
-        "phpunit/phpunit": "~4.8"
-    }
+    "require-dev": {}
 }
