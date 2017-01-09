@@ -318,19 +318,7 @@ class DeploymentValidator
         $server = $deployment->server();
         $serverType = $server->type();
 
-        if ($serverType == ServerEnum::TYPE_RSYNC) {
-
-            // rsync path did not change, skip dupe check
-            if ($deployment->path() == $path) {
-                goto SKIP_VALIDATION;
-            }
-
-            $deployment = $this->deploymentRepo->findOneBy(['server' => $server, 'path' => $path]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_RSYNC;
-            }
-
-        } elseif ($serverType == ServerEnum::TYPE_CD) {
+        if ($serverType == ServerEnum::TYPE_CD) {
 
             // CD did not change, skip dupe check
             if ($deployment->cdName() == $cdName && $deployment->cdGroup() == $cdGroup) {
@@ -352,18 +340,6 @@ class DeploymentValidator
             $deployment = $this->deploymentRepo->findOneBy(['ebName' => $ebName, 'ebEnvironment' => $ebEnvironment]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EB;
-            }
-
-        } elseif ($server->type() == ServerEnum::TYPE_S3) {
-
-            // S3 did not change, skip dupe check
-            if ($deployment->s3bucket() == $s3bucket && $deployment->s3file() == $s3file) {
-                goto SKIP_VALIDATION;
-            }
-
-            $deployment = $this->deploymentRepo->findOneBy(['s3bucket' => $s3bucket, 's3file' => $s3file]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_S3;
             }
         }
 
@@ -404,13 +380,7 @@ class DeploymentValidator
     ) {
         $errors = [];
 
-        if ($server->type() == ServerEnum::TYPE_RSYNC) {
-            $deployment = $this->deploymentRepo->findOneBy(['server' => $server, 'path' => $path]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_RSYNC;
-            }
-
-        } elseif ($server->type() == ServerEnum::TYPE_CD) {
+        if ($server->type() == ServerEnum::TYPE_CD) {
             $deployment = $this->deploymentRepo->findOneBy(['cdName' => $cdName, 'cdGroup' => $cdGroup]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EB;
@@ -420,12 +390,6 @@ class DeploymentValidator
             $deployment = $this->deploymentRepo->findOneBy(['ebName' => $ebName, 'ebEnvironment' => $ebEnvironment]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EB;
-            }
-
-        } elseif ($server->type() == ServerEnum::TYPE_S3) {
-            $deployment = $this->deploymentRepo->findOneBy(['s3bucket' => $s3bucket, 's3file' => $s3file]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_S3;
             }
         }
 
