@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1daa41193f7c3acb9a2d9103acd159a",
+    "content-hash": "0c8cfe5ccf14701aab6211b8a784ff42",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1587,7 +1587,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
-                "reference": "f3eefb8318e49add98eaef5fe2bfca4c2e6baf96"
+                "reference": "5a1a3f40312a182d5e35c04f07138f655ec58876"
             },
             "archive": {
                 "exclude": [
@@ -1603,7 +1603,7 @@
                 "ext-pdo": "*",
                 "ext-pdo_mysql": "*",
                 "ext-pdo_sqlite": "*",
-                "php-64bit": ">=5.5",
+                "php-64bit": "~5.6 || ~7.0",
                 "ql/mcp-common": "~1.0"
             },
             "require-dev": {
@@ -1632,7 +1632,7 @@
                 }
             ],
             "description": "Hal shared components and domain resources",
-            "time": "2017-01-09 18:35:39"
+            "time": "2017-01-09 19:20:03"
         },
         {
             "name": "ql/kraken-core",
@@ -3569,7 +3569,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php-64bit": "~5.5",
+        "php-64bit": "~5.6 || ~7.0",
         "ext-curl": "*",
         "ext-ldap": "*",
         "ext-libsodium": "*",
