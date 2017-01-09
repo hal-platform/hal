@@ -8,7 +8,7 @@ or a **region** for aws-based deployments.
 Attribute       | Description                                         | Type     | Example
 --------------- | --------------------------------------------------- | -------- | -------------
 id              | Unique server ID                                    | number   | `42`
-type            | Type of server                                      | string   | `rsync`, `eb`, `ec2`, `s3`, `cd`
+type            | Type of server                                      | string   | `rsync`, `eb`, `s3`, `cd`
 name            | Hostname or region, depending on server type        | string   | `localhost`, `us-east-1`
 environment     | **Embedded** - Environment this server belongs to   | resource |
 deployments     | **Link** - List of deployments for this server      | list     |

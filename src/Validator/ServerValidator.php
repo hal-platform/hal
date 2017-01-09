@@ -19,7 +19,6 @@ class ServerValidator
     const ERR_MISSING_ENV = 'Please select an environment.';
 
     const ERR_EB_DUPLICATE = 'An EB server for this environment and region already exists.';
-    const ERR_EC2_DUPLICATE = 'An EC2 server for this environment and region already exists.';
     const ERR_S3_DUPLICATE = 'An S3 server for this environment and region already exists.';
     const ERR_CD_DUPLICATE = 'A CD server for this environment and region already exists.';
 
@@ -85,7 +84,6 @@ class ServerValidator
 
         $this->awsTypes = [
             ServerEnum::TYPE_EB,
-            ServerEnum::TYPE_EC2,
             ServerEnum::TYPE_S3,
             ServerEnum::TYPE_CD
         ];
@@ -277,9 +275,6 @@ class ServerValidator
 
         if ($type == ServerEnum::TYPE_EB) {
             $this->errors[] = self::ERR_EB_DUPLICATE;
-
-        } elseif ($type == ServerEnum::TYPE_EC2) {
-            $this->errors[] = self::ERR_EC2_DUPLICATE;
 
         } elseif ($type == ServerEnum::TYPE_S3) {
             $this->errors[] = self::ERR_S3_DUPLICATE;

@@ -63,10 +63,6 @@
                                     Bucket: <code class="code_clear">{{ deployment.s3bucket }}</code>
                                     <br>File: <code class="code_clear">{{ deployment.s3file }}</code>
 
-                                {% elseif deployment.server.type == 'ec2' %}
-
-                                    Pool: <code class="code_clear">{{ deployment.ec2Pool }}</code>
-
                                 {% else %}
                                     <code class="code_clear">{{ deployment.formatMeta }}</code>
                                 {% endif %}

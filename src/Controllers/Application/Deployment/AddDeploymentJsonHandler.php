@@ -149,7 +149,6 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
 
             isset($decoded['eb_name']) ? $decoded['eb_name'] : null,
             isset($decoded['eb_environment']) ? $decoded['eb_environment'] : null,
-            isset($decoded['ec2_pool']) ? $decoded['ec2_pool'] : null,
 
             isset($decoded['s3_bucket']) ? $decoded['s3_bucket'] : null,
             isset($decoded['s3_file']) ? $decoded['s3_file'] : null,

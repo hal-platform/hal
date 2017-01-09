@@ -108,7 +108,7 @@ This encryption method requires **openssl** and uses `openssl_seal/openssl_open`
 
 - Encrypted Properties
 - Credentials
-    - Currently only used by AWS deployments (EB, EC2, S3)
+    - Currently only used by AWS deployments (EB, CD, S3)
 
 #### 3. QKS Symmetric Encryption
 

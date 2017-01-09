@@ -33,7 +33,6 @@
                 <li><a href="#aws-elastic-beanstalk">AWS - Elastic Beanstalk</a></li>
                 <li><a href="#aws-codedeploy">AWS - CodeDeploy</a></li>
                 <li><a href="#aws-s3">AWS - S3</a></li>
-                <li><a href="#aws-ec2-autoscale">AWS - EC2 Autoscaling</a></li>
             </ul>
         </li>
     </ul>
@@ -49,9 +48,6 @@
 
     <h3 id="aws-s3">{{ macros.status_icon('How do I configure my application for AWS S3?') }}</h3>
     {{ block('setup_s3') }}
-
-    <h3 id="aws-ec2-autoscale">{{ macros.status_icon('How do I configure my application for EC2 Autoscaling Pools?') }}</h3>
-    {{ block('setup_ec2') }}
 
 {% endblock %}
 
@@ -304,45 +300,6 @@
     </small>
 
 {% endblock %}
-
-{% block setup_ec2 %}
-    <p>
-        EC2 Autoscale deployments work the same as traditional on premise servers,
-        however the hostnames of target servers dynamic, and fetched from the AWS API. This allows the server pool
-        to be scaled behind the scenes, independently of your configuration in Hal.
-    </p>
-
-    <ol class="list--bullet">
-        <li>
-            <strong>Follow instructions in <a href="#onprem-rsync">On Premise RSync Guide</a>.</strong>
-        </li>
-        <li>
-            <strong>All server instances in your pool must be tagged.</strong>
-            <p>This tag will be used to identify which servers should be deployed to.</p>
-        </li>
-        <li>
-            <strong>Servers must be configured with passwordless login.</strong>
-            <p>This deployment method still uses rsync to deploy code to servers.</p>
-        </li>
-        <li>
-            <strong>Create AWS access token with correct permissions.</strong>
-            <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
-            <ul class="list--bare">
-                <li><code>ec2:describeInstances</code></li>
-            </ul>
-        </li>
-    </ol>
-
-    <small>
-        Once this process is finished you should have the same information from the rsync deployment including the following:
-        <b>EC2 Tag</b>,
-        and <b>AWS Access Token</b>.
-
-        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
-    </small>
-
-{% endblock %}
-
 
 {% block setup_codedeploy_appspec %}
     {% spaceless %}

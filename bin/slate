@@ -1,41 +1,51 @@
 #!/usr/bin/env bash
 
-DIR=$( cd "$( dirname "$0" )" && pwd )
+dir=$( cd "$( dirname "$0" )" && pwd )
 
-SLATE_PORT=4567
-SLATE_CONTAINER="halslate"
-SLATE_IMAGE="slate"
+slate_port=4567
+slate_container="halslate"
+slate_image="slate"
 
-CONTAINER_RUNNING=$(docker inspect -f "{{ .State.Running }}" $SLATE_CONTAINER 2>/dev/null)
+CONTAINER_RUNNING=$(docker inspect -f "{{ .State.Running }}" ${slate_container} 2>/dev/null)
 
-# container not found, build it
+# container not found -> build, start and build
 if [ ! "$?" = "0" ] ; then
 
-    HAS_IMAGE=$(docker images -q slate)
+    HAS_IMAGE=$(docker images -q "${slate_image}")
 
-    if [ "$HAS_IMAGE" = "" ] ; then
+    if [ "${HAS_IMAGE}" = "" ] ; then
         echo
-        echo "Image $SLATE_IMAGE does not exist. Creating..."
-        docker build -t $SLATE_IMAGE "$DIR/slate"
+        echo "Image ${slate_image} does not exist. Creating..."
+        docker build -t "${slate_image}" "${dir}/../slate"
     fi
 
     echo
-    echo "Container $SLATE_CONTAINER does not exist. Creating..."
+    echo "Container ${slate_container} does not exist. Creating..."
     docker run -d \
-    -p $SLATE_PORT:$SLATE_PORT \
-    --name $SLATE_CONTAINER \
-    -v "$DIR"/../slate:/app/source \
+    -p ${slate_port}:${slate_port} \
+    --name "${slate_container}" \
+    -v "${dir}"/../slate:/app/source \
     slate \
     --force-polling
 
-elif [ ! "$CONTAINER_RUNNING" = "true" ] ; then
+    docker exec "${slate_container}" rake build
+    docker cp "${slate_container}":/app/build/. "${dir}/../public/docs/api"
 
+# container not running -> start and build
+elif [ ! "${CONTAINER_RUNNING}" = "true" ] ; then
     echo
-    echo "Container $SLATE_CONTAINER exists, but not running. Starting..."
-    docker start $SLATE_CONTAINER
+    echo "Container ${slate_container} exists, but not running. Starting..."
+    docker start "${slate_container}"
 
+    docker exec "${slate_container}" rake build
+    docker cp "${slate_container}":/app/build/. "${dir}/../public/docs/api"
+
+# container running -> restart and build
 else
     echo
-    echo "Container $SLATE_CONTAINER already running. Restarting..."
-    docker restart $SLATE_CONTAINER
+    echo "Container ${slate_container} already running. Restarting..."
+    docker restart "${slate_container}"
+
+    docker exec "${slate_container}" rake build
+    docker cp "${slate_container}":/app/build/. "${dir}/../public/docs/api"
 fi

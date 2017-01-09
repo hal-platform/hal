@@ -295,9 +295,6 @@ class HalExtension extends Twig_Extension
         if ($type === ServerEnum::TYPE_EB) {
             return 'EB Environment';
 
-        } elseif ($type === ServerEnum::TYPE_EC2) {
-            return 'EC2 Pool';
-
         } elseif ($type === ServerEnum::TYPE_S3) {
             return 'S3 Bucket';
 

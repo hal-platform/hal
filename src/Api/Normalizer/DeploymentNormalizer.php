@@ -12,7 +12,6 @@ use QL\Hal\Api\NormalizerInterface;
 use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
 
 class DeploymentNormalizer implements NormalizerInterface
 {
@@ -105,8 +104,6 @@ class DeploymentNormalizer implements NormalizerInterface
 
                 'eb-name' => $deployment->ebName(),
                 'eb-environment' => $deployment->ebEnvironment(),
-
-                'ec2-pool' => $deployment->ec2Pool(),
 
                 's3-bucket' => $deployment->s3bucket(),
                 's3-file' => $deployment->s3file(),

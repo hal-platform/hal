@@ -961,7 +961,7 @@ or a <strong>region</strong> for aws-based deployments.</p>
 <td>type</td>
 <td>Type of server</td>
 <td>string</td>
-<td><code class="prettyprint">rsync</code>, <code class="prettyprint">eb</code>, <code class="prettyprint">ec2</code>, <code class="prettyprint">s3</code>, <code class="prettyprint">cd</code></td>
+<td><code class="prettyprint">rsync</code>, <code class="prettyprint">eb</code>, <code class="prettyprint">s3</code>, <code class="prettyprint">cd</code></td>
 </tr>
 <tr>
 <td>name</td>
@@ -1321,24 +1321,6 @@ For AWS-based deployments, <strong>servers</strong> are regions, so deployments 
 </tr>
 </tbody></table>
 
-<h4 id="for-ec2-autoscale-only">For EC2 Autoscale only</h4>
-
-<table><thead>
-<tr>
-<th>Attribute</th>
-<th>Description</th>
-<th>Type</th>
-<th>Example</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ec2-pool</td>
-<td>EC2 Tag to identify pool instances</td>
-<td>string,null</td>
-<td><code class="prettyprint">ec2-testpool</code></td>
-</tr>
-</tbody></table>
-
 <h2 id="get-all-deployment-targets">Get All Deployment Targets</h2>
 <pre class="highlight http"><code><span class="nf">GET</span> <span class="nn">/api/applications/24/deployments</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
 <span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
@@ -1447,7 +1429,6 @@ For AWS-based deployments, <strong>servers</strong> are regions, so deployments 
     </span><span class="nt">"cd-configuration"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
     </span><span class="nt">"eb-name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
     </span><span class="nt">"eb-environment"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"ec2-pool"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
     </span><span class="nt">"s3-bucket"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bucket-name"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"s3-file"</span><span class="p">:</span><span class="w"> </span><span class="s2">"testapp-24/$PUSHID.tar.gz"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://example.com"</span><span class="p">,</span><span class="w">

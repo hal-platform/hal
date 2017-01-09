@@ -51,7 +51,7 @@ Needs the following parameters:
                 File path
                 {% if not rsync_only %}
                     <small class="additional">
-                            <strong>Rsync and EC2 servers only</strong><br>
+                            <strong>Rsync servers only</strong><br>
                     </small>
                 {% endif %}
             </label>
@@ -119,19 +119,6 @@ Needs the following parameters:
                     </small>
                 </label>
                 <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+">
-            </li>
-
-            {#
-                EC2
-            #}
-            <li>
-                <label for="ec2_pool">
-                    EC2 Pool
-                    <small class="additional">
-                        <strong>EC2 servers only</strong>
-                    </small>
-                </label>
-                <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+">
             </li>
 
             {#

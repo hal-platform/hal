@@ -102,8 +102,6 @@ class AddDeploymentFormHandler implements MiddlewareInterface
             $this->request->post('eb_name'),
             $this->request->post('eb_environment'),
 
-            $this->request->post('ec2_pool'),
-
             $this->request->post('s3_bucket'),
             $this->request->post('s3_file'),
 

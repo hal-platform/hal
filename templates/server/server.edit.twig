@@ -27,12 +27,6 @@
                             <label for="server_type-eb">Elastic Beanstalk</label>
                         </li>
 
-                        {% set checked = form.server_type == 'ec2' ? ' checked' : '' %}
-                        <li>
-                            <input id="server_type-ec2" type="radio" name="server_type" value="ec2"{{ checked }}>
-                            <label for="server_type-ec2">EC2</label>
-                        </li>
-
                         {% set checked = form.server_type == 's3' ? ' checked' : '' %}
                         <li>
                             <input id="server_type-s3" type="radio" name="server_type" value="s3"{{ checked }}>

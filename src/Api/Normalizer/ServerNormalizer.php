@@ -13,7 +13,6 @@ use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
 use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Core\Utility\SortingTrait;
 
 class ServerNormalizer implements NormalizerInterface

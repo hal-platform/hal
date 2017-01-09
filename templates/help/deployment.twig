@@ -35,7 +35,7 @@
     <p>
         These commands must be executable in a standard <strong>SSH shell environment</strong>.
         It is common for applications to create a special bin within the project folder, but any command will do.<br><br>
-        Commands designed to run on the target server (pre-push or post-push) are skipped for EC2 and Elastic Beanstalk deployments
+        Commands designed to run on the target server (pre-push or post-push) are skipped for Code Deploy and Elastic Beanstalk deployments
     </p>
 
     Examples:
@@ -242,11 +242,11 @@ date: ''       # ISO 8601 date
             </tr>
             <tr>
                 <td>pre_push</td>
-                <td>A command or list of commands used to prepare target server for push. Up to 10 may be entered. <strong>Skipped for EC2 and EB deployments.</strong></td>
+                <td>A command or list of commands used to prepare target server for push. Up to 10 may be entered. <strong>Skipped for CD and EB deployments.</strong></td>
             </tr>
             <tr>
                 <td>post_push</td>
-                <td>A command or list of commands used to clean up target server after push. Up to 10 may be entered. <strong>Skipped for EC2 and EB deployments.</strong></td>
+                <td>A command or list of commands used to clean up target server after push. Up to 10 may be entered. <strong>Skipped for CD and EB deployments.</strong></td>
             </tr>
         </tbody>
     </table>

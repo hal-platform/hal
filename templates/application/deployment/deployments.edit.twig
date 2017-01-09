@@ -50,11 +50,11 @@
                     RSYNC
                 #}
                 <li>
-                    {% set isDisabled = (deployment.server.type in ['rsync', 'ec2']) ? '' : ' disabled' %}
+                    {% set isDisabled = (deployment.server.type == 'rsync') ? '' : ' disabled' %}
                     <label for="path">
                         File path
                         <small class="additional">
-                            <strong>Rsync and EC2 servers only</strong><br>
+                            <strong>Rsync servers only</strong><br>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="path" id="path" maxlength="200" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
@@ -126,20 +126,6 @@
                 </li>
 
                 {#
-                    EC2
-                #}
-                <li>
-                    {% set isDisabled = (deployment.server.type == 'ec2') ? '' : ' disabled' %}
-                    <label for="ec2_pool">
-                        EC2 Pool
-                        <small class="additional">
-                            <strong>EC2 servers only</strong>
-                        </small>
-                    </label>
-                    <input class="text-input" type="text" name="ec2_pool" id="ec2_pool" maxlength="100" value="{{ form.ec2_pool }}" pattern="^[^\n\t]+"{{ isDisabled }}>
-                </li>
-
-                {#
                     S3
                 #}
                 {% set isDisabled = (deployment.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
@@ -177,7 +163,7 @@
                 </li>
 
                 {#
-                    S3, EB, CD, EC2
+                    S3, EB, CD
                 #}
                 <li>
                     <label for="credential">Credentials</label>

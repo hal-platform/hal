@@ -38,15 +38,12 @@ class DeploymentValidator
     const ERR_INVALID_EB_APPLICATION = 'EB Application is invalid.';
     const ERR_INVALID_EB_ENVIRONMENT = 'EB Environment is invalid.';
 
-    const ERR_INVALID_EC2_POOL = 'EC2 Pool is invalid.';
-
     const ERR_INVALID_BUCKET = 'S3 Bucket is invalid.';
     const ERR_INVALID_FILE = 'S3 File is invalid.';
 
     const ERR_DUPLICATE_RSYNC = 'A deployment already exists for this server and file path.';
     const ERR_DUPLICATE_CD = 'A deployment already exists for this CD application and group.';
     const ERR_DUPLICATE_EB = 'A deployment already exists for this EB application and environment.';
-    const ERR_DUPLICATE_EC2 = 'A deployment already exists for this EC2 Pool.';
     const ERR_DUPLICATE_S3 = 'A deployment already exists for this S3 bucket and file.';
 
     /**
@@ -87,8 +84,6 @@ class DeploymentValidator
      * @param string $ebName
      * @param string $ebEnvironment
      *
-     * @param string $ec2Pool
-     *
      * @param string $s3bucket
      * @param string $s3file
      *
@@ -108,8 +103,6 @@ class DeploymentValidator
 
         $ebName,
         $ebEnvironment,
-
-        $ec2Pool,
 
         $s3bucket,
         $s3file,
@@ -146,10 +139,6 @@ class DeploymentValidator
             $this->validateEB($ebName, $ebEnvironment);
             $this->validateS3($s3bucket, $s3file);
 
-        } elseif ($server->type() == ServerEnum::TYPE_EC2) {
-            $this->validatePath($path);
-            $this->validateEc2Pool($ec2Pool);
-
         } elseif ($server->type() == ServerEnum::TYPE_S3) {
             $this->validateS3($s3bucket, $s3file);
         }
@@ -164,7 +153,6 @@ class DeploymentValidator
             $cdGroup,
             $ebName,
             $ebEnvironment,
-            $ec2Pool,
             $path,
             $s3bucket,
             $s3file
@@ -182,7 +170,6 @@ class DeploymentValidator
         $this
             ->withCD($deployment, $cdName, $cdGroup, $cdConfiguration)
             ->withEB($deployment, $ebName, $ebEnvironment)
-            ->withEC2($deployment, $ec2Pool)
             ->withPath($deployment, $path)
             ->withS3($deployment, $s3bucket, $s3file);
 
@@ -200,8 +187,6 @@ class DeploymentValidator
      *
      * @param string $ebName
      * @param string $ebEnvironment
-     *
-     * @param string $ec2Pool
      *
      * @param string $s3bucket
      * @param string $s3file
@@ -222,8 +207,6 @@ class DeploymentValidator
 
         $ebName,
         $ebEnvironment,
-
-        $ec2Pool,
 
         $s3bucket,
         $s3file,
@@ -256,10 +239,6 @@ class DeploymentValidator
             $this->validateEB($ebName, $ebEnvironment);
             $this->validateS3($s3bucket, $s3file);
 
-        } elseif ($serverType == ServerEnum::TYPE_EC2) {
-            $this->validatePath($path);
-            $this->validateEc2Pool($ec2Pool);
-
         } elseif ($serverType == ServerEnum::TYPE_S3) {
             $this->validateS3($s3bucket, $s3file);
         }
@@ -274,7 +253,6 @@ class DeploymentValidator
             $cdGroup,
             $ebName,
             $ebEnvironment,
-            $ec2Pool,
             $path,
             $s3bucket,
             $s3file
@@ -292,7 +270,6 @@ class DeploymentValidator
         $this
             ->withCD($deployment, $cdName, $cdGroup, $cdConfiguration)
             ->withEB($deployment, $ebName, $ebEnvironment)
-            ->withEC2($deployment, $ec2Pool)
             ->withPath($deployment, $path)
             ->withS3($deployment, $s3bucket, $s3file);
 
@@ -316,7 +293,6 @@ class DeploymentValidator
      * @param string $ebName
      * @param string $ebEnvironment
      *
-     * @param string $ec2Pool
      * @param string $path
      *
      * @param string $s3bucket
@@ -332,7 +308,6 @@ class DeploymentValidator
         $ebName,
         $ebEnvironment,
 
-        $ec2Pool,
         $path,
 
         $s3bucket,
@@ -379,18 +354,6 @@ class DeploymentValidator
                 $errors[] = self::ERR_DUPLICATE_EB;
             }
 
-        } elseif ($serverType == ServerEnum::TYPE_EC2) {
-
-            // EC2 did not change, skip dupe check
-            if ($deployment->ec2Pool() == $ec2Pool) {
-                goto SKIP_VALIDATION;
-            }
-
-            $deployment = $this->deploymentRepo->findOneBy(['ec2Pool' => $ec2Pool]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_EC2;
-            }
-
         } elseif ($server->type() == ServerEnum::TYPE_S3) {
 
             // S3 did not change, skip dupe check
@@ -419,8 +382,8 @@ class DeploymentValidator
      * @param string $ebName
      * @param string $ebEnvironment
      *
-     * @param string $ec2Pool
      * @param string $path
+     *
      * @param string $s3bucket
      * @param string $s3file
      *
@@ -434,7 +397,6 @@ class DeploymentValidator
         $ebName,
         $ebEnvironment,
 
-        $ec2Pool,
         $path,
 
         $s3bucket,
@@ -458,12 +420,6 @@ class DeploymentValidator
             $deployment = $this->deploymentRepo->findOneBy(['ebName' => $ebName, 'ebEnvironment' => $ebEnvironment]);
             if ($deployment) {
                 $errors[] = self::ERR_DUPLICATE_EB;
-            }
-
-        } elseif ($server->type() == ServerEnum::TYPE_EC2) {
-            $deployment = $this->deploymentRepo->findOneBy(['ec2Pool' => $ec2Pool]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_EC2;
             }
 
         } elseif ($server->type() == ServerEnum::TYPE_S3) {
@@ -552,27 +508,6 @@ class DeploymentValidator
 
         if (preg_match('#[\t\n]+#', $ebEnvironment) === 1 || strlen($ebEnvironment) > 100) {
             $errors[] = self::ERR_INVALID_EB_ENVIRONMENT;
-        }
-
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
-    }
-
-    /**
-     * @param string $ec2Pool
-     *
-     * @return bool
-     */
-    private function validateEc2Pool($ec2Pool)
-    {
-        $errors = [];
-
-        if (!$ec2Pool) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'EC2 Pool');
-        }
-
-        if (preg_match('#[\t\n]+#', $ec2Pool) === 1 || strlen($ec2Pool) > 100) {
-            $errors[] = self::ERR_INVALID_EC2_POOL;
         }
 
         $this->errors = array_merge($this->errors, $errors);
@@ -738,27 +673,6 @@ class DeploymentValidator
     /**
      * @param Deployment $deployment
      *
-     * @param string $ec2Pool
-     *
-     * @return Deployment
-     */
-    private function withEC2(Deployment $deployment, $ec2Pool)
-    {
-        $type = $deployment->server()->type();
-
-        if ($type !== ServerEnum::TYPE_EC2) {
-            $ec2Pool = null;
-        }
-
-        $deployment
-            ->withEC2Pool($ec2Pool);
-
-        return $this;
-    }
-
-    /**
-     * @param Deployment $deployment
-     *
      * @param string $path
      *
      * @return Deployment
@@ -767,7 +681,7 @@ class DeploymentValidator
     {
         $type = $deployment->server()->type();
 
-        if (!in_array($type, [ServerEnum::TYPE_RSYNC, ServerEnum::TYPE_EC2], true)) {
+        if (!in_array($type, [ServerEnum::TYPE_RSYNC], true)) {
             $path = null;
         }
 

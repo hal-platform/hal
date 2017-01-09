@@ -34,10 +34,6 @@
                         <th>EB Application</th>
                         <th>EB Environment</th>
 
-                    {% elseif server.type == 'ec2' %}
-
-                        <th>Pool</th>
-
                     {% elseif server.type == 's3' %}
 
                         <th>Bucket</th>
@@ -69,10 +65,6 @@
 
                         <td><code class="code_clear">{{ deployment.ebName }}</code></td>
                         <td><code class="code_clear">{{ deployment.ebEnvironment }}</code></td>
-
-                    {% elseif server.type == 'ec2' %}
-
-                        <td><code class="code_clear">{{ deployment.ec2Pool }}</code></td>
 
                     {% elseif server.type == 's3' %}
 

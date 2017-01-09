@@ -74,8 +74,8 @@ class RemoveServerController implements ControllerInterface
         $name = $this->server->name();
         if ($this->server->type() === ServerEnum::TYPE_EB) {
             $name = 'Elastic Beanstalk';
-        } elseif ($this->server->type() === ServerEnum::TYPE_EC2) {
-            $name = 'EC2';
+        } elseif ($this->server->type() === ServerEnum::TYPE_CD) {
+            $name = 'Code Deploy';
         } elseif ($this->server->type() === ServerEnum::TYPE_S3) {
             $name = 'S3';
         }

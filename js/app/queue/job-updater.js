@@ -65,8 +65,10 @@ module.exports = {
         if (servername_or_whatever.length === 0) {
             if (deployment['eb-environment'].length !== null) {
                 servername_or_whatever = 'EB';
-            } else if (deployment['ec2-pool'].length !== null) {
-                servername_or_whatever = 'EC2';
+            } else if (deployment['cd-name'].length !== null) {
+                servername_or_whatever = 'CD';
+            } else if (deployment['s3-file'].length !== null) {
+                servername_or_whatever = 'S3';
             }
         }
 

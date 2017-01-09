@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityRepository;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Flasher;
 use QL\Hal\Validator\ServerValidator;
 use QL\Panthor\ControllerInterface;

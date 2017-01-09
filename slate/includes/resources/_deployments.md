@@ -51,12 +51,6 @@ Attribute            | Description                                      | Type  
 s3-bucket            | Bucket name Configuration                        | string,null | `test-bucket`
 s3-file              | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
 
-#### For EC2 Autoscale only
-
-Attribute            | Description                                      | Type        | Example
--------------------- | ------------------------------------------------ | ----------- | -------------
-ec2-pool             | EC2 Tag to identify pool instances               | string,null | `ec2-testpool`
-
 ## Get All Deployment Targets
 
 ```http
@@ -181,7 +175,6 @@ curl "https://hal9000/api/deployments/502
     "cd-configuration": null,
     "eb-name": null,
     "eb-environment": null,
-    "ec2-pool": null,
     "s3-bucket": "bucket-name",
     "s3-file": "testapp-24/$PUSHID.tar.gz",
     "url": "http://example.com",

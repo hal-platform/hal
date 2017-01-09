@@ -54,14 +54,6 @@
         <h4>File path</h4>
         <p><code>{{ deployment.path }}</code></p>
 
-    {% elseif deployment.server.type == 'ec2' %}
-
-        <h4>File path</h4>
-        <p><code>{{ deployment.path }}</code></p>
-
-        <h4>EC2 Pool</h4>
-        <p><code>{{ deployment.ec2pool }}</code></p>
-
     {% elseif deployment.server.type == 'eb' %}
 
         <h4>Elastic Beanstalk Application Name</h4>

@@ -114,8 +114,8 @@ module.exports = {
         } else {
             if (server.type == 'elasticbeanstalk') {
                 name = 'EB (' + hostname + ')';
-            } else if (server.type == 'ec2') {
-                name = 'EC2 (' + hostname + ')';
+            } else if (server.type == 'cd') {
+                name = 'CD (' + hostname + ')';
             } else if (server.type == 's3') {
                 name = 'S3 (' + hostname + ')';
             } else {

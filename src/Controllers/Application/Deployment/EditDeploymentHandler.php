@@ -9,7 +9,6 @@ namespace QL\Hal\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
 use QL\Hal\Flasher;
 use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
@@ -103,7 +102,6 @@ class EditDeploymentHandler implements MiddlewareInterface
             $form['cd_config'],
             $form['eb_name'],
             $form['eb_environment'],
-            $form['ec2_pool'],
             $form['s3_bucket'],
             $form['s3_file'],
             $form['url'],
@@ -142,7 +140,6 @@ class EditDeploymentHandler implements MiddlewareInterface
             'eb_name' => $this->request->post('eb_name'),
             'eb_environment' => $this->request->post('eb_environment'),
 
-            'ec2_pool' => $this->request->post('ec2_pool'),
             's3_bucket' => $this->request->post('s3_bucket'),
             's3_file' => $this->request->post('s3_file'),
 
