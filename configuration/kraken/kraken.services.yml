@@ -12,8 +12,10 @@ services:
         class: 'QL\Kraken\Service\ConsulService'
         arguments:
             - '@kraken.guzzle'
+            - '@clock'
             - '@kraken.crypto.db'
             - '%kraken.environmentalize%'
+            - '%date.timezone%'
 
     kraken.deploy:
         class: 'QL\Kraken\Service\DeploymentService'
@@ -55,7 +57,12 @@ services:
 
     kraken.guzzle:
         class: 'GuzzleHttp\Client'
-
+        arguments:
+            -
+                defaults:
+                    connect_timeout: 2
+                    timeout: 3
+                    exceptions: true
     kraken.random:
         class: 'QL\Hal\Core\RandomGenerator'
 

@@ -7,10 +7,10 @@
 
 namespace QL\Kraken\Application;
 
-use QL\MCP\Common\Time\Clock;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Schema;
 use QL\Hal\Core\Entity\User;
+use QL\MCP\Common\Time\Clock;
 
 class SkeletorConfigurationTemplate
 {

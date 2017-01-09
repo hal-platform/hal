@@ -7,6 +7,7 @@
 
 namespace QL\Kraken\Service;
 
+use DateTime;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ParseException;
@@ -19,6 +20,7 @@ use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Target;
 use QL\Kraken\Service\ConsulBatchTrait;
 use QL\Kraken\Service\Exception\ConsulConnectionException;
+use QL\MCP\Common\Time\Clock;
 use QL\UriTemplate\UriTemplate;
 
 class ConsulService
@@ -41,6 +43,11 @@ class ConsulService
     private $guzzle;
 
     /**
+     * @var Clock
+     */
+    private $clock;
+
+    /**
      * @var TamperResistantPackage
      */
     private $encryption;
@@ -51,18 +58,29 @@ class ConsulService
     private $environentalize;
 
     /**
+     * @var string
+     */
+    private $localTimezone;
+
+    /**
      * @param Client $guzzle
+     * @param Clock $clock
      * @param TamperResistantPackage $encryption
      * @param bool $environmentalize
+     * @param string $localTimezone
      */
     public function __construct(
         Client $guzzle,
+        Clock $clock,
         TamperResistantPackage $encryption,
-        $environmentalize
+        $environmentalize,
+        $localTimezone
     ) {
         $this->guzzle = $guzzle;
+        $this->clock = $clock;
         $this->encryption = $encryption;
         $this->environentalize = $environmentalize;
+        $this->localTimezone = $localTimezone;
     }
 
     /**
@@ -137,6 +155,9 @@ class ConsulService
         if (!$endpoint = $this->buildEndpoint($target->application(), $target->environment())) {
             throw new ConsulConnectionException(self::ERR_TARGET_FAILURE);
         }
+
+        // Add updated time to payload
+        $properties['+updated'] = $this->clock->read()->format(DateTime::ATOM, $this->localTimezone);
 
         // Get what is currently deployed in consul kv
         $deployed = $this->getDeployedConfiguration($target, true);

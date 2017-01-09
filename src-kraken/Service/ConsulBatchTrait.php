@@ -24,11 +24,7 @@ trait ConsulBatchTrait
      */
     private function createRequest($method, $url, array $options = [])
     {
-        $requestOptions = array_merge([
-            'exceptions' => true
-        ], $options);
-
-        return $this->guzzle->createRequest($method, $url, $requestOptions);
+        return $this->guzzle->createRequest($method, $url, $options);
     }
 
     /**
