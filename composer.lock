@@ -1478,7 +1478,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
-                "reference": "ad0674fede26b095ce762a396bd6f50969a15aab"
+                "reference": "f3eefb8318e49add98eaef5fe2bfca4c2e6baf96"
             },
             "archive": {
                 "exclude": [
@@ -1523,7 +1523,7 @@
                 }
             ],
             "description": "Hal shared components and domain resources",
-            "time": "2017-01-09 17:41:19"
+            "time": "2017-01-09 18:35:39"
         },
         {
             "name": "ql/kraken-core",
