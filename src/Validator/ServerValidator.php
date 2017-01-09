@@ -18,7 +18,6 @@ class ServerValidator
     const ERR_MISSING_TYPE = 'Please select a type.';
     const ERR_MISSING_ENV = 'Please select an environment.';
 
-    const ERR_HOST_DUPLICATE = 'A server with this hostname already exists.';
     const ERR_EB_DUPLICATE = 'An EB server for this environment and region already exists.';
     const ERR_EC2_DUPLICATE = 'An EC2 server for this environment and region already exists.';
     const ERR_S3_DUPLICATE = 'An S3 server for this environment and region already exists.';
@@ -121,12 +120,6 @@ class ServerValidator
             $name = trim(strtolower($hostname));
             $name = $this->validateHostname($name);
 
-            if ($this->errors) return;
-
-            if ($server = $this->serverRepo->findOneBy(['name' => $name])) {
-                $this->errors[] = self::ERR_HOST_DUPLICATE;
-            }
-
         // validate duplicate AWS server for environment
         // Only 1 aws type per region/environment
         } elseif (in_array($serverType, $this->awsTypes)) {
@@ -184,12 +177,6 @@ class ServerValidator
             }
 
             $name = $this->validateHostname($name);
-
-            if ($this->errors) return;
-
-            if ($dupe = $this->serverRepo->findOneBy(['type' => ServerEnum::TYPE_RSYNC, 'name' => $name])) {
-                $this->errors[] = self::ERR_HOST_DUPLICATE;
-            }
 
         // validate duplicate AWS server for environment
         // Only 1 aws type per region/environment
