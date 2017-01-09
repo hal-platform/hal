@@ -22,11 +22,6 @@
         <h2 class="mbn">Personal Access Tokens</h2>
         {{ block('access_tokens') }}
     </section>
-
-    <section class="leader--andre">
-        <h2 class="mbn">GitHub Deployment Updates</h2>
-        {{ block('github_token') }}
-    </section>
 {% endblock %}
 
 {% block navigation_pref %}
@@ -47,27 +42,6 @@
             <input class="btn btn--action btn--small" type="submit" value="Save Preferences">
         </p>
     </form>
-{% endblock %}
-
-{% block github_token %}
-    <small>Allow Hal to update github repositories you have access to when you build or push.</small>
-
-    <h5 class="leader mbn">Current status:</h5>
-    <p>
-        {% if hasGithubToken %}
-            <strong>ENABLED</strong>
-
-            <p class="leader">
-                <a class="btn btn--small btn--destructive" href="{{ urlFor('github.authorization.remove') }}">Disable GitHub updates</a>
-            </p>
-        {% else %}
-            <strong>NOT ENABLED</strong>
-
-            <p class="leader">
-                <a class="btn btn--small btn--action" href="{{ urlFor('github.authorization') }}">Authorize Hal</a>
-            </p>
-        {% endif %}
-    </p>
 {% endblock %}
 
 {% block access_tokens %}
