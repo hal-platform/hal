@@ -11,16 +11,12 @@ OUTOUT
 ┃ COMPOSER INSTALLED DEPENDENCIES                                              ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
-    read -r -d '' TITLE_NPM <<OUTOUT
+    read -r -d '' TITLE_YARN <<OUTOUT
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ NPM INSTALLATION                                                             ┃
+┃ YARN INSTALLATION                                                            ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
-    read -r -d '' TITLE_NPM_INSTALLED <<OUTOUT
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ NPM INSTALLED DEPENDENCIES                                                   ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-OUTOUT
+
 }
 
 # setup
@@ -38,8 +34,7 @@ set -e
 COMPOSER="composer install --prefer-dist --no-progress"
 COMPOSER_SHOW_INSTALLED="composer show --installed"
 
-NPM="npm install"
-NPM_SHOW_INSTALLED="npm ls"
+YARN="yarn install"
 
 # determine whether to run frontend or backend only install
 for var in "$@" ; do
@@ -57,7 +52,7 @@ done
 # If deploying, use production settings
 if [ "$DEPLOY" = true ] ; then
     COMPOSER="composer install --prefer-dist --no-dev --no-interaction --ansi --optimize-autoloader --profile --no-progress --no-suggest"
-    NPM="npm install --production --color=always"
+    YARN="yarn install --production --no-progress --color=always"
 fi
 
 # run backend install
@@ -82,12 +77,7 @@ fi
 
 # run frontend install
 if [ "$FRONTEND" = true ] ; then
-    echo "$TITLE_NPM"
-    $NPM
-
-    # if [ "$DEPLOY" = true ] ; then
-    #     echo ""
-    #     echo "$TITLE_NPM_INSTALLED"
-    #     $NPM_SHOW_INSTALLED
-    # fi
+    echo "$TITLE_YARN"
+    npm install -g yarn@0.18.1 --depth=0
+    $YARN
 fi
