@@ -101,11 +101,11 @@ if [ "$BACKEND" = true ] ; then
     echo "$TITLE_TWIG"
     "$DIR/"compile-templates
 
-    echo "$TITLE_DOCTRINE"
-    "$DIR"/generate-doctrine-proxies
-
     echo "$TITLE_DUMP"
     "$DIR"/dump-di
+
+    echo "$TITLE_DOCTRINE"
+    "$DIR"/generate-doctrine-proxies
 
     if [ "$DEPLOY" = true ] ; then
         echo "$TITLE_CLEANUP"

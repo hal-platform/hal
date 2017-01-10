@@ -56,7 +56,7 @@ done
 
 # If deploying, use production settings
 if [ "$DEPLOY" = true ] ; then
-    COMPOSER="composer install --prefer-dist --no-dev --no-interaction --ansi --optimize-autoloader --profile --no-progress"
+    COMPOSER="composer install --prefer-dist --no-dev --no-interaction --ansi --optimize-autoloader --profile --no-progress --no-suggest"
     NPM="npm install --production --color=always"
 fi
 
@@ -67,11 +67,12 @@ if [ "$BACKEND" = true ] ; then
     if [ ! -f "$DIR/composer" ]; then
         echo "Downloading composer from http://composer..."
         curl http://composer/installer | bash -s "$DIR/composer"
+        "$DIR/composer" -V
         echo
     fi
 
     echo "$TITLE_COMPOSER"
-    "$DIR/"$COMPOSER
+    "$DIR/"$COMPOSER 2>&1
     if [ "$DEPLOY" = true ] ; then
         echo ""
         echo "$TITLE_COMPOSER_INSTALLED"
