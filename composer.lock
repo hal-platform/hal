@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c8cfe5ccf14701aab6211b8a784ff42",
+    "content-hash": "096e0205dc8792254379432bad25bd59",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1583,11 +1583,17 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "dev-master",
+            "version": "2.10-beta1",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
-                "reference": "5a1a3f40312a182d5e35c04f07138f655ec58876"
+                "reference": "d6087ffb42bb638586467d8a6f5770915c7b3239"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-hal-core-2.10-beta1-fcbc02.zip",
+                "reference": "d6087ffb42bb638586467d8a6f5770915c7b3239",
+                "shasum": "3aed8760058274f7b06a5be678b1d355a8bdd061"
             },
             "archive": {
                 "exclude": [
@@ -1632,15 +1638,21 @@
                 }
             ],
             "description": "Hal shared components and domain resources",
-            "time": "2017-01-09 19:20:03"
+            "time": "2017-01-10T17:50:21+00:00"
         },
         {
             "name": "ql/kraken-core",
-            "version": "dev-master",
+            "version": "2.10-beta1",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/kraken-core.git",
-                "reference": "69ed981c60682b069b0ccebe5cd8f0746701db44"
+                "reference": "e3668633df068a0f283c9170a81cff6d1af5eeb9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-kraken-core-2.10-beta1-2e4d7c.zip",
+                "reference": "e3668633df068a0f283c9170a81cff6d1af5eeb9",
+                "shasum": "f413d1885846891619677f0f55941d427084a44a"
             },
             "archive": {
                 "exclude": [
@@ -1657,7 +1669,7 @@
                 "ext-pdo_mysql": "*",
                 "ext-pdo_sqlite": "*",
                 "php-64bit": ">=5.5",
-                "ql/hal-core": "~2.9",
+                "ql/hal-core": "~2.10",
                 "ql/mcp-common": "~1.0"
             },
             "require-dev": {
@@ -1686,7 +1698,7 @@
                 }
             ],
             "description": "Kraken shared components and domain resources",
-            "time": "2017-01-09 13:10:15"
+            "time": "2017-01-10T17:59:36+00:00"
         },
         {
             "name": "ql/mcp-cache",
@@ -3553,18 +3565,11 @@
         }
     ],
     "packages-dev": [],
-    "aliases": [
-        {
-            "alias": "2.9.1",
-            "alias_normalized": "2.9.1.0",
-            "version": "9999999-dev",
-            "package": "ql/hal-core"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/hal-core": 20,
-        "ql/kraken-core": 20
+        "ql/hal-core": 10,
+        "ql/kraken-core": 10
     },
     "prefer-stable": false,
     "prefer-lowest": false,
