@@ -52,7 +52,7 @@ done
 # If deploying, use production settings
 if [ "$DEPLOY" = true ] ; then
     COMPOSER="composer install --prefer-dist --no-dev --no-interaction --ansi --optimize-autoloader --profile --no-progress --no-suggest"
-    YARN="yarn install --production --no-progress --color=always"
+    YARN="yarn install --production --no-progress"
 fi
 
 # run backend install
