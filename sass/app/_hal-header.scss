@@ -142,7 +142,7 @@
 }
 
 .hal-label {
-    @include adjust-font-size-to(ms(4));
+    @include adjust-font-size-to(ms(6));
     font-weight: normal;
 
     background-color: $text-color;
@@ -157,11 +157,11 @@
     margin-left: 1em;
 
     position: relative;
-    width: 7em;
+    width: 8em;
 
     @include breakpoint($bp-medium) {
         // margin: 0 auto;
-        width: 10em;
+        // width: 8em;
     }
 }
 
