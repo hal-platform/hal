@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "096e0205dc8792254379432bad25bd59",
+    "content-hash": "0039a4089313498ac7a40cbfb652779f",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1583,17 +1583,11 @@
         },
         {
             "name": "ql/hal-core",
-            "version": "2.10-beta1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "http://git/hal/hal-core.git",
-                "reference": "d6087ffb42bb638586467d8a6f5770915c7b3239"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://composer/dist/ql-hal-core-2.10-beta1-fcbc02.zip",
-                "reference": "d6087ffb42bb638586467d8a6f5770915c7b3239",
-                "shasum": "3aed8760058274f7b06a5be678b1d355a8bdd061"
+                "reference": "e4ba23806476f58000518bf2850d5dd97ba1cbc0"
             },
             "archive": {
                 "exclude": [
@@ -1638,7 +1632,7 @@
                 }
             ],
             "description": "Hal shared components and domain resources",
-            "time": "2017-01-10T17:50:21+00:00"
+            "time": "2017-01-17 20:18:18"
         },
         {
             "name": "ql/kraken-core",
@@ -3565,10 +3559,17 @@
         }
     ],
     "packages-dev": [],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "2.10.0-beta2",
+            "alias_normalized": "2.10.0.0-beta2",
+            "version": "9999999-dev",
+            "package": "ql/hal-core"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ql/hal-core": 10,
+        "ql/hal-core": 20,
         "ql/kraken-core": 10
     },
     "prefer-stable": false,
