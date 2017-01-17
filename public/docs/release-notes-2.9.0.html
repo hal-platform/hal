@@ -7,42 +7,164 @@
     <h1>Hal - Version 2.9.0</h1>
 
     <h3>What is Hal?</h3>
-    <p>Hal is the deployment system we use to deploy many of our client-facing websites, including MyQL, Rocket Mortgage, QLMS, ORMS, Agent Insight, QuickenLoans.com and more!</p>
+    <p>
+        Hal is the deployment system we use to deploy many of our client-facing websites, applications, and services.
+        Some of the supported applications includes
+        MyQL, Rocket Mortgage, QLMS, ORMS, QKS, QuickenLoans.com and more!
+    </p>
 
     <h2>Changelog</h2>
 
     <h3>New Features</h3>
     <ul>
         <li>
-            <h5>todo</h5>
+            <h5>Add new deployment type: script</h5>
+            <blockquote>
+                tbd
+            </blockquote>
         </li>
     </ul>
 
-    <h3>Enhancement</h3>
+    <h3>Enhancements</h3>
     <ul>
         <li>
-            <h5>todo</h5>
+            <h5>More details on deployments are logged for <b>CodeDeploy</b> deployment types. This should help immensely with debugging and troubleshooting issues more quickly.</h5>
+        </li>
+        <li>
+            <h5>Groups on the app listing can be collapsed.</h5>
             <blockquote>
-                todo
+                Several general UX improvements to the <i>applications</i> page including an organization listing for quickly finding your organization,
+                and the ability to collapse groups of applications.
             </blockquote>
+        </li>
+        <li>
+            <h5>Administrators can now remove other administrators without requiring direct database changes.</h5>
+        </li>
+        <li>
+            <h5>Administrators and application leads can now edit the github repository user by an application directly within the UI.</h5>
+        </li>
+        <li>
+            <h5>The deployment section of the build page now matches the push page, and all deployment targets can be selected at once.</h5>
         </li>
     </ul>
 
     <h3>Bugs</h3>
     <ul>
         <li>
-            <h5>todo</h5>
+            <h5>Fix periodic, unavoidable failures when docker starts a container for application builds.</h5>
+        </li>
+        <li>
+            <h5>Prevent event logs from being duplicated while a build/push is in progress.</h5>
+        </li>
+        <li>
+            <h5>Commits linking to refs (and vice versa) on the build page has been fixed.</h5>
+        </li>
+        <li>
+            <h5>Fix stale data in cached deployment targets.</h5>
+            <blockquote>
+                When adding a new server or deployment target to a server, sometimes it would not show up immediately for use. The caching methods
+                affecting this data have been updated to handle this scenario better.
+            </blockquote>
+        </li>
+        <li>
+            <h5>The api endpoint <code>/api/users</code> has been fixed.</h5>
+        </li>
+    </ul>
+
+    <h3>Changes</h3>
+    <ul>
+        <li>
+            <h5>Remove EC2 autoscaling deployment type.</h5>
+            <blockquote>
+                This was a specific method of deploying to an unknown number of instances using server tags to find an autoscaling group. It was never
+                used and is not the recommended way to handle deployments for autoscaling instances. Use **CodeDeploy** or **Elastic Beanstalk** instead.
+            </blockquote>
+        </li>
+    </ul>
+
+    <h3>API Changes</h3>
+    <ul>
+        <li>
+            <h5>Deployment Target</h5>
+            <blockquote>
+                <ul>
+                    <li>
+                        <code>ec2-pool</code> removed.
+                    </li>
+                </ul>
+            </blockquote>
+        </li>
+    </ul>
+
+    <h3>Technical</h3>
+    <ul>
+        <li>
+            <h5>Docker init <code>cgroupfs</code> settings must be changed and docker service restarted on build servers.</h5>
+        </li>
+        <li>
+            <h5>Dependencies</h5>
+
+            <blockquote>
+                <h4>The following components MUST go with this release:</h4>
+                <ul>
+                    <li>Hal 2.9.0</li>
+                    <li>Hal Core 2.10.0</li>
+                    <li>Hal Agent 2.7.0</li>
+                    <li>Kraken Core 2.10.0</li>
+                </ul>
+            </blockquote>
         </li>
     </ul>
 
     <h2>Need Help?</h2>
-    <p>If you find any bugs or want to request a feature, drop us a line in the hipchat room <b>[Team] Web Core</b>, or <a href="mailto:itteamwebcore@quickenloans.com">send us an email</a>.</p>
+    <p>
+        If you find any bugs or want to request a feature,
+        contact us in the hipchat room <b>[Team] Web Core</b>,
+        or submit a github issue: <a href="http://git/hal/hal/issues">http://git/hal/hal</a>.
+    </p>
 
     <h2>GitHub Tasklist</h2>
 
+    <p>
+        <a href="http://git/hal/hal/releases/2.9.0">GitHub release page for Hal 2.9.0</a>
+    </p>
+
     <h3>Enhancement</h3>
     <ul class="task-list">
-        <li>[<a href="http://git/hal/hal/issues/xxx">HAL-XXX</a>] - todo</li>
+        <li>[<a href="http://git/hal/hal/issues/177">HAL-177</a>] - Make group headers on app listing collapsible</li>
+        <li>[<a href="http://git/hal/hal/issues/205">HAL-205</a>] - Copy files out of docker containers instead of mangling permissions</li>
+        <li>[<a href="http://git/hal/hal/issues/223">HAL-223</a>] - Allow admins to remove other admins</li>
+        <li>[<a href="http://git/hal/hal/issues/225">HAL-225</a>] - Allow users to select all deployment targets on build step</li>
+        <li>[<a href="http://git/hal/hal/issues/267">HAL-267</a>] - Allow users to edit the github repo for an application</li>
+        <li>[<a href="http://git/hal/hal/issues/272">HAL-272</a>] - Get more logging details for codedeploy deployments</li>
+    </ul>
+
+    <h3>New Feature</h3>
+    <ul class="task-list">
+        <li>[<a href="http://git/hal/hal/issues/212">HAL-212</a>] - Add new deployment type: script</li>
+    </ul>
+
+    <h3>Bug</h3>
+    <ul class="task-list">
+        <li>[<a href="http://git/hal/hal/issues/184">HAL-184</a>] - Prevent consul from timing out the site</li>
+        <li>[<a href="http://git/hal/hal/issues/217">HAL-217</a>] - Event logs being duplicate on build/push info</li>
+        <li>[<a href="http://git/hal/hal/issues/221">HAL-221</a>] - Periodic docker failures when building</li>
+        <li>[<a href="http://git/hal/hal/issues/228">HAL-228</a>] - Commits linking to refs and vice versa</li>
+        <li>[<a href="http://git/hal/hal/issues/231">HAL-231</a>] - Permission failure on S3 upload not handled well</li>
+        <li>[<a href="http://git/hal/hal/issues/246">HAL-246</a>] - Push user ownership verification not cross-platform</li>
+        <li>[<a href="http://git/hal/hal/issues/247">HAL-247</a>] - Targets are cached too long</li>
+        <li>[<a href="http://git/hal/hal/issues/257">HAL-257</a>] - Unreachable github API causes hal agent to crash</li>
+        <li>[<a href="http://git/hal/hal/issues/261">HAL-261</a>] - Error when generating stats for login page</li>
+        <li>[<a href="http://git/hal/hal/issues/262">HAL-262</a>] - Attempting to delete an app with builds/pushes causes an error</li>
+        <li>[<a href="http://git/hal/hal/issues/266">HAL-266</a>] - Fix /api/users</li>
+    </ul>
+
+
+    <h3>Task</h3>
+    <ul class="task-list">
+        <li>[<a href="http://git/hal/hal/issues/256">HAL-256</a>] - Remove EC2 Autoscaling deployment type</li>
+        <li>[<a href="http://git/hal/hal/issues/269">HAL-269</a>] - Remove restriction on unique deployments</li>
+        <li>[<a href="http://git/hal/hal/issues/273">HAL-273</a>] - Add more details to codedeploy deployment description</li>
     </ul>
 </body>
 </html>

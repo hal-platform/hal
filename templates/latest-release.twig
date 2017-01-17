@@ -7,7 +7,7 @@
 
     <h1>{{ page_title }}</h1>
 
-    {{ block('latest_release_28') }}
+    {{ block('latest_release_29') }}
 
     <h2>Past Releases</h2>
     <p>Check the following documentation sites for recent changes to Hal, or view past updates.</p>
@@ -21,79 +21,42 @@
 
 {% endblock %}
 
-{% block latest_release_28 %}
-    <p>The latest release of Hal is <b>2.8.1</b>. It was deployed on Friday, April 8, 2016.</p>
+{% block latest_release_29 %}
+    <p>The latest release of Hal is <b>2.9.0</b>. It was deployed on Friday, January ??, 2017.</p>
 
     <h2>Changelog</h2>
 
     <h3>New Features</h3>
     <ul class="list--bullet">
         <li>
-            Users can now favorite applications
+            Add new deployment type: <code>script</code>.
             <blockquote>
                 <small>
-                Applications can now be starred from the application page and they will be stickied to the top of
-                the dashboard and app list pages.
-                </small>
-            </blockquote>
-        </li>
-        <li>
-            Add ability to automatically deploy successful builds
-            <blockquote>
-                <small>
-                Users can now optionally select deployment targets when starting a build. If the build is successful it
-                will be automatically deployed.
-
-                <br>
-                This is optional, and users can still choose to manually deploy after building.
-                </small>
-            </blockquote>
-        </li>
-        <li>
-            Add support for using multiple docker containers
-            <blockquote>
-                <small>
-                In your app configuration you can specify containers by prefixing them to the command. If no command
-                is specified, the default or globally specified container will be used. Apps can use as many different
-                containers as they like, in any order.
-
-                <br>
-                In the following example, the app-wide default container is <b>PHP 5.6</b>, but the <b>Node 5.3</b>
-                container is used when compiling frontend dependencies.
-                <pre>system: docker:php5.6
-build:
-    - 'bin/deploy --backend'
-    - 'docker:node5.3 bin/deploy --frontend'</pre>
-                </small>
-            </blockquote>
-        </li>
-        <li>
-            Add API documentation
-            <blockquote>
-                <small>
-                    API documentation is linked from the Help page or available here: <a href="{{ urlFor('api.docs') }}">/docs/api</a>.
+                tbd
                 </small>
             </blockquote>
         </li>
     </ul>
 
-    <h3>User Experience (UX) Enhancements</h3>
+    <h3>Enhancements</h3>
     <ul class="list--bullet">
-        <li>Automatically select an environment for building from user preferences.</li>
-        <li>Add more descriptive event messages for build commands.</li>
+        <li>More details on deployments are logged for <b>CodeDeploy</b> deployment types.</li>
+        <li>Groups on the app listing can be collapsed.</li>
+        <li>Administrators can now remove other administrators without requiring direct database changes.</li>
+        <li>Administrators and application leads can now edit the github repository user by an application directly within the UI.</li>
     </ul>
 
     <h3>Bugs</h3>
     <ul class="list--bullet">
-        <li>Fix unresponsive build menu in Chrome.</li>
-        <li>Fix many UI issues in Good Browser.</li>
+        <li>Fix periodic, unavoidable failures when docker starts a container for application builds.</li>
+        <li>Prevent event logs from being duplicated while a build/push is in progress.</li>
+        <li>Fix stale data in cached deployment targets.</li>
+        <li>The api endpoint <code>/api/users</code> has been fixed.</li>
     </ul>
 
-    <h3>Technical</h3>
+    <h3>Changes</h3>
     <ul class="list--bullet">
-        <li>PECL Libsodium updated to 1.0</li>
-        <li>Docker updated to 1.9</li>
-        <li>MCP Panthor updated to 2.3</li>
+        <li>Remove EC2 autoscaling deployment type.</li>
     </ul>
 {% endblock %}
 
