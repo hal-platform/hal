@@ -21,6 +21,7 @@ class ServerValidator
     const ERR_EB_DUPLICATE = 'An EB server for this environment and region already exists.';
     const ERR_S3_DUPLICATE = 'An S3 server for this environment and region already exists.';
     const ERR_CD_DUPLICATE = 'A CD server for this environment and region already exists.';
+    const ERR_SCRIPT_DUPLICATE = 'A script server for this environment already exists.';
 
     const ERR_HOST = 'Invalid hostname.';
     const ERR_MISSING_HOST = 'Hostname is required for rsync servers.';
@@ -118,6 +119,12 @@ class ServerValidator
             $name = trim(strtolower($hostname));
             $name = $this->validateHostname($name);
 
+        // validate duplicate script server for environment
+        // Only 1 script type per environment
+        } elseif ($serverType === ServerEnum::TYPE_SCRIPT) {
+            $name = '';
+            $this->dupeCheck($environment, $serverType, $name);
+
         // validate duplicate AWS server for environment
         // Only 1 aws type per region/environment
         } elseif (in_array($serverType, $this->awsTypes)) {
@@ -175,6 +182,18 @@ class ServerValidator
             }
 
             $name = $this->validateHostname($name);
+
+        // validate duplicate script server for environment
+        // Only 1 script type per environment
+        } elseif ($serverType === ServerEnum::TYPE_SCRIPT) {
+
+            $name = '';
+
+            if (!$hasChanged) {
+                GOTO SKIP_DUPE_CHECK;
+            }
+
+            $this->dupeCheck($environment, $serverType, $name);
 
         // validate duplicate AWS server for environment
         // Only 1 aws type per region/environment
@@ -281,6 +300,9 @@ class ServerValidator
 
         } elseif ($type == ServerEnum::TYPE_CD) {
             $this->errors[] = self::ERR_CD_DUPLICATE;
+
+        } elseif ($type == ServerEnum::TYPE_SCRIPT) {
+            $this->errors[] = self::ERR_SCRIPT_DUPLICATE;
         }
     }
 }

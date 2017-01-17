@@ -205,7 +205,7 @@ class PushStartValidator
                 $selectedDeployments[] = $deployment;
 
                 // Error if AWS deployment has no credential
-                if ($deployment->server()->type() !== ServerEnum::TYPE_RSYNC && !$deployment->credential()) {
+                if ($deployment->server()->isAWS() && !$deployment->credential()) {
                     $this->errors[] = sprintf(self::ERR_MISSING_CREDENTIALS, $deployment->formatPretty());
                 }
             }

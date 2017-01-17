@@ -51,7 +51,7 @@ Needs the following parameters:
                 File path
                 {% if not rsync_only %}
                     <small class="additional">
-                            <strong>Rsync servers only</strong><br>
+                        <strong>Rsync servers only</strong><br>
                     </small>
                 {% endif %}
             </label>
@@ -63,6 +63,22 @@ Needs the following parameters:
         </li>
 
         {% if not rsync_only %}
+
+            {#
+                Script
+            #}
+            <li>
+                <label for="script_context">
+                    Script Context
+                    <small class="additional">
+                        <strong>Script servers only</strong><br>
+                    </small>
+                </label>
+                <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}" pattern="^[^\n\t]+">
+                <small class="additional">
+                    Optionally, pass context text or data to your deploy script in your <code>.hal9000.yml</code> configuration. <b>Do not use this for secrets!</b>
+                </small>
+            </li>
 
             {#
                 CodeDeploy

@@ -65,6 +65,23 @@
                 </li>
 
                 {#
+                    Script
+                #}
+                <li>
+                    {% set isDisabled = (deployment.server.type == 'script') ? '' : ' disabled' %}
+                    <label for="script_context">
+                        Script Context
+                        <small class="additional">
+                            <strong>Script servers only</strong>
+                        </small>
+                    </label>
+                    <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}" pattern="^[^\n\t]+"{{ isDisabled }}>
+                    <small class="additional">
+                        Optionally, pass context text or data to your deploy script in your <code>.hal9000.yml</code> configuration. <b>Do not use this for secrets!</b>
+                    </small>
+                </li>
+
+                {#
                     CodeDeploy
                 #}
                 <li>

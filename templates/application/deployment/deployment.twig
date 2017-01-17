@@ -31,7 +31,7 @@
     <h4>Type</h4>
     <p>{{ deployment.server.formatHumanType }}</p>
 
-    {% if deployment.server.type != 'rsync' %}
+    {% if deployment.server.isAWS() %}
 
         <h4>Credentials</h4>
         <p>
@@ -92,6 +92,11 @@
 
         <h4>S3 File</h4>
         <p><code>{{ deployment.s3file ?: '$APPID/$PUSHID.tar.gz' }}</code></p>
+
+    {% elseif deployment.server.type == 'script' %}
+
+        <h4>Script Context</h4>
+        <p><code>{{ deployment.scriptContext ?: 'None' }}</code></p>
 
     {% endif %}
 

@@ -6,57 +6,54 @@
 {% block content %}
     <h1>Edit Server - <strong>{{ server.name }}</strong></h1>
 
-    <div class="form-wrapper">
-        {{ form_macros.formErrors(errors) }}
+    {{ form_macros.formErrors(errors) }}
 
-        <form method="post">
+    <form method="post">
+        <ul class="form-fields">
+            <li>
+                <label for="servertype">Type</label>
+                <ul class="radio-grid radio-grid--tri">
+
+                    {% set server_types = ['rsync', 'eb', 'cd', 's3', 'script'] %}
+
+                    {% for type in server_types %}
+                        {% set isSelected = form.server_type == type ? ' checked' : '' %}
+                        <li>
+                            <input id="server_type-{{ type }}" type="radio" name="server_type" value="{{ type }}"{{ isSelected }}>
+                            <label for="server_type-{{ type }}">
+                                {%- if type == 'rsync' %}
+                                    On-premise Linux (Rsync)
+                                {%- elseif type == 'eb' -%}
+                                    Elastic Beanstalk
+                                {%- elseif type == 'cd' -%}
+                                    CodeDeploy
+                                {%- elseif type == 's3' -%}
+                                    S3
+                                {%- elseif type == 'script' -%}
+                                    Script
+                                {%- endif -%}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>
+                <label>Environment</label>
+                <ul class="radio-grid radio-grid--tri">
+                    {% for environment in environments %}
+                        {% set isSelected = form.environment == environment.id ? ' checked' : '' %}
+
+                        <li>
+                            <input type="radio" name="environment" id="environment-{{ environment.id }}" value="{{ environment.id }}"{{ isSelected }}>
+                            <label for="environment-{{ environment.id }}">{{ environment.name }}</label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+
+        <div class="form-wrapper">
             <ul class="form-fields">
-                <li>
-                    <label for="servertype">Type</label>
-                    <ul class="radio-grid radio-grid--tri">
-
-                        {% set checked = form.server_type == 'rsync' ? ' checked' : '' %}
-                        <li>
-                            <input id="server_type-rsync" type="radio" name="server_type" value="rsync"{{ checked }}>
-                            <label for="server_type-rsync">Internal (Rsync)</label>
-                        </li>
-
-                        {% set checked = form.server_type == 'eb' ? ' checked' : '' %}
-                        <li>
-                            <input id="server_type-eb" type="radio" name="server_type" value="eb"{{ checked }}>
-                            <label for="server_type-eb">Elastic Beanstalk</label>
-                        </li>
-
-                        {% set checked = form.server_type == 's3' ? ' checked' : '' %}
-                        <li>
-                            <input id="server_type-s3" type="radio" name="server_type" value="s3"{{ checked }}>
-                            <label for="server_type-s3">S3</label>
-                        </li>
-
-                        {% set checked = form.server_type == 'cd' ? ' checked' : '' %}
-                        <li>
-                            <input id="server_type-cd" type="radio" name="server_type" value="cd"{{ checked }}>
-                            <label for="server_type-cd">CodeDeploy</label>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <label>Environment</label>
-                    <ul class="radio-grid radio-grid--tri">
-                        {% for environment in environments %}
-                            {% set checked = '' %}
-                            {% if form.environment == environment.id %}
-                                {% set checked = ' checked="checked"' %}
-                            {% endif %}
-
-                            <li>
-                                <input type="radio" name="environment" id="environment-{{ environment.id }}" value="{{ environment.id }}"{{ checked }}>
-                                <label for="environment-{{ environment.id }}">{{ environment.name }}</label>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </li>
-
                 {% set hostname = form.server_type == 'rsync' ? form.hostname : '' %}
                 <li>
                     <label for="hostname">Hostname</label>
@@ -76,7 +73,8 @@
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
                 <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('server', {'server': server.id}) }}">Cancel</a></li>
             </ul>
+        </div>
 
-        </form>
-    </div>
+    </form>
+
 {% endblock %}

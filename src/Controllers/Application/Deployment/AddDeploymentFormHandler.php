@@ -105,6 +105,8 @@ class AddDeploymentFormHandler implements MiddlewareInterface
             $this->request->post('s3_bucket'),
             $this->request->post('s3_file'),
 
+            $this->request->post('script_context'),
+
             $this->request->post('url') ?: ''
         );
 

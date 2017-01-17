@@ -300,6 +300,9 @@ class HalExtension extends Twig_Extension
 
         } elseif ($type === ServerEnum::TYPE_CD) {
             return 'CodeDeploy Group';
+
+        } elseif ($type === ServerEnum::TYPE_SCRIPT) {
+            return 'Context';
         }
 
         return 'Path';

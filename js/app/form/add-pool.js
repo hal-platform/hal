@@ -118,6 +118,8 @@ module.exports = {
                 name = 'CD (' + hostname + ')';
             } else if (server.type == 's3') {
                 name = 'S3 (' + hostname + ')';
+            } else if (server.type == 'script') {
+                name = 'Script';
             } else {
                 name = hostname;
             }

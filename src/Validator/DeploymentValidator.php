@@ -87,6 +87,8 @@ class DeploymentValidator
      * @param string $s3bucket
      * @param string $s3file
      *
+     * @param string $scriptContext
+     *
      * @param string $url
      *
      * @return Deployment|null
@@ -106,6 +108,8 @@ class DeploymentValidator
 
         $s3bucket,
         $s3file,
+
+        $scriptContext,
 
         $url
     ) {
@@ -165,7 +169,8 @@ class DeploymentValidator
             ->withApplication($application)
             ->withServer($server)
             ->withName($name)
-            ->withUrl($url);
+            ->withUrl($url)
+            ->withScriptContext($scriptContext);
 
         $this
             ->withCD($deployment, $cdName, $cdGroup, $cdConfiguration)
@@ -191,6 +196,8 @@ class DeploymentValidator
      * @param string $s3bucket
      * @param string $s3file
      *
+     * @param string $scriptContext
+     *
      * @param string $url
      * @param string $credentialID
      *
@@ -210,6 +217,8 @@ class DeploymentValidator
 
         $s3bucket,
         $s3file,
+
+        $scriptContext,
 
         $url,
         $credentialID
@@ -265,7 +274,8 @@ class DeploymentValidator
             ->withName($name)
             ->withPath($path)
             ->withUrl($url)
-            ->withCredential($credential);
+            ->withCredential($credential)
+            ->withScriptContext($scriptContext);
 
         $this
             ->withCD($deployment, $cdName, $cdGroup, $cdConfiguration)

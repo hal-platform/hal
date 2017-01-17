@@ -292,6 +292,10 @@
 
                 {% set deploymentDetails = deployment.formatMeta %}
 
+                {% if deployment.server.type == 'script' %}
+                    {% set deploymentDetails = deploymentDetails ?: 'N/A' %}
+                {% endif %}
+
                 <li class="js-data-overload">
                     <span class="split__title">{{ deployment|formatDeploymentDetailsLabel }}:</span>
                     <code title="{{ deploymentDetails }}">{{ deploymentDetails }}</code>

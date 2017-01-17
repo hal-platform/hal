@@ -41,7 +41,7 @@
 
                         <tr>
                             <td>
-                                {% if deployment.server.type != 'rsync' and not deployment.credential %}
+                                {% if deployment.server.isAWS() and not deployment.credential %}
                                     <span class="tooltipped tooltipped-e" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
                                 {% endif %}
                                 {{ deployment.formatPretty }}
@@ -62,6 +62,9 @@
 
                                     Bucket: <code class="code_clear">{{ deployment.s3bucket }}</code>
                                     <br>File: <code class="code_clear">{{ deployment.s3file }}</code>
+
+                                {% elseif deployment.server.type == 'script' %}
+                                    Context: <code class="code_clear">{{ deployment.scriptContext }}</code>
 
                                 {% else %}
                                     <code class="code_clear">{{ deployment.formatMeta }}</code>
@@ -90,7 +93,7 @@
         {% if canEdit %}
 
             <div class="form-wrapper js-add-deployment__form">
-                <h2>Add Deployment</h2>
+                <h2>Add On-premise Linux Deployment</h2>
 
                 {% include '_partial-form/add-deployment.twig' with {'servers_by_env': servers_by_env, 'form': {}, 'application': application, rsync_only: true} %}
             </div>

@@ -31,7 +31,7 @@
 
         {% for status in statuses %}
             {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
-            {% set needsCredentials = status.deployment.server.type != 'rsync' and not status.deployment.credential %}
+            {% set needsCredentials = status.deployment.server.isAWS() and not status.deployment.credential %}
 
             {% if canUserPush and not inProgress and not needsCredentials %}
                 {% set pushables = pushables + 1 %}
@@ -198,7 +198,7 @@
 
     {% set isSelected = (deployment.id == selected) %}
     {% set inProgress = push.status in ['Waiting', 'Pushing'] %}
-    {% set needsCredentials = deployment.server.type != 'rsync' and not deployment.credential %}
+    {% set needsCredentials = deployment.server.isAWS() and not deployment.credential %}
 
     <tr>
         <td>

@@ -11,13 +11,14 @@
     <h3>Type</h3>
     <p>{{ server.formatHumanType }}</p>
 
-    {% if server.type == 'rsync' %}
-        {% set name_label = 'Hostname' %}
-    {% else %}
-        {% set name_label = 'Region' %}
-    {% endif %}
+    {% set name_label =  server.type == 'rsync' ? 'Hostname' : 'Region' %}
     <h3>{{ name_label }}</h3>
-    <p>{{ server.name }}</p>
+
+    {% if server.type == 'script' %}
+        <p>N/A</p>
+    {% else %}
+        <p>{{ server.name }}</p>
+    {% endif %}
 
     <h3>Environment</h3>
     <p>{{ server.environment.name }}</p>

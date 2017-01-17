@@ -89,6 +89,8 @@ class EditDeploymentController implements ControllerInterface
                 's3_bucket' => $this->request->post('s3_bucket'),
                 's3_file' => $this->request->post('s3_file'),
 
+                'script_context' => $this->request->post('script_context'),
+
                 'url' => $this->request->post('url'),
                 'credential' => $this->request->post('credential'),
             ];
@@ -106,6 +108,8 @@ class EditDeploymentController implements ControllerInterface
 
                 's3_bucket' => $this->deployment->s3bucket(),
                 's3_file' => $this->deployment->s3file(),
+
+                'script_context' => $this->deployment->scriptContext(),
 
                 'url' => $this->deployment->url(),
                 'credential' => $this->deployment->credential() ? $this->deployment->credential()->id() : '',

@@ -104,6 +104,7 @@ class EditDeploymentHandler implements MiddlewareInterface
             $form['eb_environment'],
             $form['s3_bucket'],
             $form['s3_file'],
+            $form['script_context'],
             $form['url'],
             $form['credential']
         );
@@ -142,6 +143,8 @@ class EditDeploymentHandler implements MiddlewareInterface
 
             's3_bucket' => $this->request->post('s3_bucket'),
             's3_file' => $this->request->post('s3_file'),
+
+            'script_context' => $this->request->post('script_context'),
 
             'url' => $this->request->post('url'),
             'credential' => $this->request->post('credential'),
