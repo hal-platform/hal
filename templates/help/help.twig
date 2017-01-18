@@ -9,6 +9,9 @@
 {% block content %}
     <h1>Help &amp; FAQ</h1>
 
+    <a class="btn" href="{{ urlFor('help.setup') }}">Help with Application Setup</a>
+    <a class="btn" href="{{ urlFor('help.deployment') }}">Deployment scripting guide</a>
+
     <ul class="list--bare">
         <li class="trailer">
             <a href="#help-support"><h4>Support</h4></a>
@@ -30,7 +33,6 @@
                 <li><a href="#docker-support">Does Hal support Docker?</a></li>
                 <li><a href="#encrypted-configuration">Does Hal support encrypted configuration?</a></li>
                 <li><a href="#app-dependencies">My application needs a specific library or software installed to build. What do I do?</a></li>
-                <li><a href="{{ urlFor('help.deployment') }}">Deployment scripting guide for engineers</a></li>
             </ul>
         </li>
 
@@ -131,6 +133,7 @@
         <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
         <li><a href="https://aws.amazon.com/codedeploy/">AWS CodeDeploy</a></li>
         <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (Static file deployments)</li>
+        <li>Script (Applications define their deployment process in scripts)</li>
         <li>R Sync (On-premise unix servers)</li>
     </ul>
     <p>See <a href="{{ urlFor('help.setup') }}">the application setup page</a> for how to set up your application for on premise or AWS.</p>

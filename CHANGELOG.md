@@ -7,10 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`)
 
-## [2.9.0] - 2017-01-??
+## [2.9.0] - 2017-01-20
 
 ### Added
 - Add new deployment type: `script`.
+    - A new type of deployment can be used which runs scripts defined in the application's `.hal9000.yml`.
+    - Data can be passed to these scripts using **Script Context** defined for the **Target**.
 - Administrators can now remove other administrators without requiring direct database changes.
 - More details on deployments are logged for **CodeDeploy** deployment types.
 - Administrators and application leads can now edit the github repository user by an application directly within the UI.

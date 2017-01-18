@@ -26,16 +26,19 @@
     <h2 id="shell-commands">Commands</h2>
     <p>An application can specify a command to run in each of these separate steps in the deployment process:</p>
     <ul class="list--bullet">
-        <li><strong>Build</strong> (Runs on build server)</li>
-        <li><strong>Pre-push Build Transform</strong> (Runs on build server)</li>
-        <li><strong>Pre-push</strong> (Runs on deployment web server)</li>
-        <li><strong>Post-push</strong> (Runs on deployment web server)</li>
+        <li><b>Build</b> (Runs on build server)</li>
+        <li><b>Pre-deploy Build Transform</b> (Runs on build server)</li>
+        <li><b>Pre-deploy</b> (Runs on deployment web server)</li>
+        <li><b>Deploy</b> (Runs in build server)</li>
+        <li><b>Post-deploy</b> (Runs on deployment web server)</li>
     </ul>
 
     <p>
-        These commands must be executable in a standard <strong>SSH shell environment</strong>.
-        It is common for applications to create a special bin within the project folder, but any command will do.<br><br>
-        Commands designed to run on the target server (pre-push or post-push) are skipped for Code Deploy and Elastic Beanstalk deployments
+        These commands must be executable in a standard <b>shell environment</b>.
+        It is common for applications to create a special bin within the project folder, but any command will do.
+    </p>
+    <p>
+        Commands designed to run on the target server (pre-deploy or post-deploy) are used for rsync deployments only.
     </p>
 
     Examples:
@@ -52,15 +55,17 @@
         All commands are executed from the directory of the application.
     </p>
     <p>
-       Build command are executed from isolated docker containers on the build server. Push commands are executed on the server the application code is being pushed to.
+       Build command are executed from isolated docker containers on build servers.
+       Push commands are executed on the server the application code is being pushed to.
        Hal will consider any command with a non-zero exit code as a failure.
     </p>
 
-    {{ macros.alert('warning', 'The exit code of the command <strong>MUST</strong> be 0.') }}
+    {{ macros.alert('warning', 'The exit code of the command <b>MUST</b> be 0.') }}
 
     <h2 id="configuration-file">Hal configuration file</h2>
     <p>
-        Several deployment options may be configured by committing a <code>.hal9000.yml</code> to the base directory of your project codebase.
+        Several deployment options may be configured by committing a <code>.hal9000.yml</code>
+        to the base directory of your project codebase.
     </p>
 
     {{ block('configuration_explanation') }}
@@ -69,8 +74,9 @@
     {{ block('configuration_file') }}
 
     <p>
-        For applications already using Hal, build and push commands in the database will be used for <strong>old builds</strong>, and when no configuration file has been committed.
-        When present, commands found in the configuration file will be used instead of build and push commands stored in the Hal database.
+        For applications already using Hal, build and push commands in the database will be used for <b>old builds</b>,
+        and when no configuration file has been committed. When present, commands found in the configuration file
+        will be used instead of build and push commands stored in the Hal database.
     </p>
 
     <h2 id="build-environment">Build Scripting Environment</h2>
@@ -79,21 +85,21 @@
 
     <p>
         These variables will be available as standard environment variables in a shell scripting environment.
-        If using a PHP-based script, they are available in the <strong>$_SERVER</strong> superglobal.
+        If using a PHP-based script, they are available in the <b>$_SERVER</b> superglobal.
     </p>
 
-    <h2 id="push-environment">Push Scripting Environment</h2>
-    <p>During the push process, The following environment variables are available to application pre-push and post-push scripts:</p>
+    <h2 id="push-environment">Deployment Scripting Environment</h2>
+    <p>During the deployment process, The following environment variables are available to application pre-deploy and post-deploy scripts:</p>
     {{ block('push_vars') }}
 
     <p>Upon deployment a yaml file in the following format will be written to the application directory:</p>
     {{ block('push_file') }}
 
-    <h5 class="mbn"><strong>A note on post-push command failures</strong></h5>
+    <h5 class="mbn"><b>A note on post-deploy command failures</b></h5>
     <p>
-        Post-push commands run <strong>after</strong> the application code is synced to the target server. For this
-        reason, returning an error state will not stop the push process. If an error occurs, you will need to start
-        a new push and overwrite the failed one.
+        Post-deploy commands run <b>after</b> the application code is synced to the target server. For this
+        reason, returning an error state will not stop the deployment process. If an error occurs, you will need to start
+        a new deployment and overwrite the failed one.
     </p>
 
     <h2 id="docker">Docker</h2>
@@ -106,7 +112,7 @@
 
     <p>
         From the frontend Hal interface, administrators and project leads can add encrypted properties. Encrypted Properties
-        are sensitive information such as passwords or API keys. During <strong>build</strong> and <strong>build_transform</strong>,
+        are sensitive information such as passwords or API keys. During <b>build</b> and <b>build_transform</b>,
         encrypted properties will be decrypted and set as environment variables.
     </p>
     <p>
@@ -117,7 +123,8 @@
     {{ macros.alert('warning', 'Never dump environment variables to STDOUT!', 'Do not run commands such as "printenv" or "set". This can expose sensitive information which may be viewed by unauthorized users.') }}
 
     <p>
-        If your application requires specific properties to run, it is a good idea to check if they are set and fail your build if they are empty or missing.<br><br>
+        If your application requires specific properties to run, it is a good idea to check if they are set and fail your build if they are empty or missing.
+        <br><br>
         Hal will automatically fail builds when decryption fails, but this does not protect against required configuration being deleted from the encrypted property store.
     </p>
 
@@ -142,11 +149,11 @@
             </tr>
             <tr>
                 <td>HAL_GITREF</td>
-                <td>Git reference (such as <strong>master</strong>)</td>
+                <td>Git reference (such as <b>master</b>)</td>
             </tr>
             <tr>
                 <td>HAL_ENVIRONMENT</td>
-                <td>Environment (such as <strong>test</strong>, <strong>beta</strong>, <strong>prod</strong>)</td>
+                <td>Environment (such as <b>test</b>, <b>beta</b>, <b>prod</b>)</td>
             </tr>
             <tr>
                 <td>HAL_REPO</td>
@@ -175,11 +182,11 @@
             </tr>
             <tr>
                 <td>HAL_GITREF</td>
-                <td>Git reference (such as <strong>master</strong>)</td>
+                <td>Git reference (such as <b>master</b>)</td>
             </tr>
             <tr>
                 <td>HAL_ENVIRONMENT</td>
-                <td>Environment (such as <strong>test</strong>, <strong>beta</strong>, <strong>prod</strong>)</td>
+                <td>Environment (such as <b>test</b>, <b>beta</b>, <b>prod</b>)</td>
             </tr>
             <tr>
                 <td>HAL_REPO</td>
@@ -187,11 +194,24 @@
             </tr>
             <tr>
                 <td>HAL_HOSTNAME</td>
-                <td>Hostname of server (<strong>rsync</strong> deployments only)</td>
+                <td>
+                    Hostname of server
+                    <br><small>(<b>rsync</b> deployments only)</small>
+                </td>
             </tr>
             <tr>
                 <td>HAL_PATH</td>
-                <td>Full path of deployment directory on server (<strong>rsync</strong> deployments only)</td>
+                <td>
+                    Full path of deployment directory on server
+                    <br><small>(<b>rsync</b> deployments only)</small>
+                </td>
+            </tr>
+            <tr>
+                <td>HAL_CONTEXT</td>
+                <td>
+                    Context data for script deployments
+                    <br><small>(<b>script</b> deployments only)</small>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -222,15 +242,18 @@ date: ''       # ISO 8601 date
         <tbody>
             <tr>
                 <td>system</td>
-                <td>Build system. <strong>docker:$IMAGE_NAME</strong> or <strong>windows</strong>.</td>
+                <td>Build system. <b>docker:$IMAGE_NAME</b> or <b>windows</b>.</td>
             </tr>
             <tr>
                 <td>dist</td>
-                <td>Relative path to directory to archive. This path must exist and be within the project directory. If a <strong>dist</strong> or compiled binary is built as part of your build process, you can make sure to only archive compiled and deployable files.</td>
+                <td>Relative path to directory to archive. This path must exist and be within the project directory. If a <b>dist</b> or compiled binary is built as part of your build process, you can make sure to only archive compiled and deployable files.</td>
             </tr>
             <tr>
                 <td>exclude</td>
-                <td>Directories or files to exclude while pushing deployment to target server. If you have caches or assets that must not be removed by Hal, enter them here.</td>
+                <td>
+                    Directories or files to exclude while pushing deployment to target server. If you have caches or assets that must not be removed by Hal, enter them here.
+                    <br><small>(<b>rsync</b> deployments only)</small>
+                </td>
             </tr>
             <tr>
                 <td>build</td>
@@ -242,11 +265,24 @@ date: ''       # ISO 8601 date
             </tr>
             <tr>
                 <td>pre_push</td>
-                <td>A command or list of commands used to prepare target server for push. Up to 10 may be entered. <strong>Skipped for CD and EB deployments.</strong></td>
+                <td>
+                    A command or list of commands used to prepare target server for deployment. Up to 10 may be entered.
+                    <br><small>(<b>rsync</b> deployments only)</small>
+                </td>
+            </tr>
+            <tr>
+                <td>deploy</td>
+                <td>
+                    A command or list of commands used to deploy an application. Up to 10 may be entered.
+                    <br><small>(<b>script</b> deployments only)</small>
+                </td>
             </tr>
             <tr>
                 <td>post_push</td>
-                <td>A command or list of commands used to clean up target server after push. Up to 10 may be entered. <strong>Skipped for CD and EB deployments.</strong></td>
+                <td>
+                    A command or list of commands used to clean up target server after deployment. Up to 10 may be entered.
+                    <br><small>(<b>rsync</b> deployments only)</small>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -258,20 +294,22 @@ date: ''       # ISO 8601 date
 
 system: docker:legacy        # Build container.
 dist: .                      # Relative file path to use for build archive.
-exclude:                     # Array of directories or files to exclude while pushing to server
+exclude:                     # List of directories or files to exclude while pushing to server
     - config/database.ini
     - data/
 
 build: []                    # Shell commands to run during build process, on build server
-build_transform: []          # Shell commands to run before push process, on build server
-pre_push: []                 # Shell commands to run before push process, on target deployment server
-post_push: []                # Shell commands to run after push process, on target deployment server
+build_transform: []          # Shell commands to run before deployment process, on build server
+deploy: []                   # Shell commands to run during the deployment process.
+pre_push: []                 # Shell commands to run before deployment process, on target server
+post_push: []                # Shell commands to run after deployment process, on target server
 </pre>
 {% endblock %}
 
 {% block docker_info %}
     <p>
-        Each build is run in a new, isolated docker container.The <strong>entire</strong> build container is at your disposal. You may install anything, anywhere.
+        Each build is run in a new, isolated docker container.
+        The <b>entire</b> build container is at your disposal. You may install anything, anywhere.
     </p>
     <p>
         A custom docker container can be specified with <code>system</code> in your <code>.hal9000.yml</code>.
@@ -279,29 +317,30 @@ post_push: []                # Shell commands to run after push process, on targ
 
     <h4>Examples:</h4>
     <ul class="list--bare">
-        <li><code>system: 'docker:legacy'</code></li>
-        <li><code>system: 'docker:php5.5'</code></li>
-        <li><code>system: 'docker:erlang17.5'</code></li>
+        <li><code>system: 'docker:node6.2'</code></li>
+        <li><code>system: 'docker:php7.0'</code></li>
+        <li><code>system: 'docker:erlang19.0'</code></li>
     </ul>
 
     <p>
-        If no docker container is specified, the <strong>legacy</strong> container is used, which shares a similiar configuration to the old push servers.
+        If no docker container is specified, the <b>legacy</b> container is used, which shares a similiar configuration to the old push servers.
     </p>
 
     <p>
-        We recommend switching to a different container as soon as possible. If no current container fits your application needs, contact a member of the Web Core team.
+        We recommend switching to a different container as soon as possible.
+        If no current container fits your application needs, contact a member of the Web Core team.
         We can help you find a container that fits your needs or write a custom dockerfile for your usage.<br><br>
 
         Please see <a href="http://git/skluck/docker-images">skluck/docker-images</a>{{ macros.icon('github') }} for currently available containers.
     </p>
 
     <p>
-        <strong>Please Note:</strong><br>
+        <b>Please Note:</b><br>
         No data is cached between builds. This feature will be introduced in a later version.<br><br>
 
         This means no NPM, Composer, Ruby, etc packages or dependencies will be cached. As a result builds may be slightly slower than before.<br><br>
 
-        You can mitigate this additional time by building a custom docker image with your package manager dependencies <strong>pre-installed</strong>.
+        You can mitigate this additional time by building a custom docker image with your package manager dependencies <b>pre-installed</b>.
     </p>
 {% endblock %}
 

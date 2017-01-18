@@ -961,7 +961,7 @@ or a <strong>region</strong> for aws-based deployments.</p>
 <td>type</td>
 <td>Type of server</td>
 <td>string</td>
-<td><code class="prettyprint">rsync</code>, <code class="prettyprint">eb</code>, <code class="prettyprint">s3</code>, <code class="prettyprint">cd</code></td>
+<td><code class="prettyprint">rsync</code>, <code class="prettyprint">cd</code>, <code class="prettyprint">eb</code>, <code class="prettyprint">s3</code>, <code class="prettyprint">script</code></td>
 </tr>
 <tr>
 <td>name</td>
@@ -1318,6 +1318,24 @@ For AWS-based deployments, <strong>servers</strong> are regions, so deployments 
 <td>File name (may include directories)</td>
 <td>string,null</td>
 <td><code class="prettyprint">testapp/$PUSHID.tar.gz</code></td>
+</tr>
+</tbody></table>
+
+<h4 id="for-script-only">For Script only</h4>
+
+<table><thead>
+<tr>
+<th>Attribute</th>
+<th>Description</th>
+<th>Type</th>
+<th>Example</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>script-context</td>
+<td>Context data passed to deploy scripts</td>
+<td>string,null</td>
+<td><code class="prettyprint">server-pool1</code></td>
 </tr>
 </tbody></table>
 

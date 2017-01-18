@@ -9,8 +9,7 @@
     <h3>What is Hal?</h3>
     <p>
         Hal is the deployment system we use to deploy many of our client-facing websites, applications, and services.
-        Some of the supported applications includes
-        MyQL, Rocket Mortgage, QLMS, ORMS, QKS, QuickenLoans.com and more!
+        Some of the supported applications includes MyQL, Rocket Mortgage, QLMS, ORMS, QKS, QuickenLoans.com and more!
     </p>
 
     <h2>Changelog</h2>
@@ -18,9 +17,16 @@
     <h3>New Features</h3>
     <ul>
         <li>
-            <h5>Add new deployment type: script</h5>
+            <h5>Add new deployment type: <code>script</code></h5>
             <blockquote>
-                tbd
+                <p>
+                    Script deployments allow applications complete control over their deployment process. It allows applications to define shell scripts to run during their
+                    deployment process intead of having Hal use rsync, codedeploy, or other deployment types.
+                </p>
+
+                <small>
+                    Script deployments are run within docker containers, just like builds. Deployment commands are configured with the new <code>.hal9000.yml</code> property: <code>deploy</code>.
+                </small>
             </blockquote>
         </li>
     </ul>
@@ -41,7 +47,7 @@
             <h5>Administrators can now remove other administrators without requiring direct database changes.</h5>
         </li>
         <li>
-            <h5>Administrators and application leads can now edit the github repository user by an application directly within the UI.</h5>
+            <h5>Administrators and application leads can now edit the GitHub repository user by an application directly within the UI.</h5>
         </li>
         <li>
             <h5>The deployment section of the build page now matches the push page, and all deployment targets can be selected at once.</h5>
@@ -91,6 +97,9 @@
                     <li>
                         <code>ec2-pool</code> removed.
                     </li>
+                    <li>
+                        <code>script-context</code> added.
+                    </li>
                 </ul>
             </blockquote>
         </li>
@@ -120,7 +129,7 @@
     <p>
         If you find any bugs or want to request a feature,
         contact us in the hipchat room <b>[Team] Web Core</b>,
-        or submit a github issue: <a href="http://git/hal/hal/issues">http://git/hal/hal</a>.
+        or submit a GitHub issue: <a href="http://git/hal/hal/issues">http://git/hal/hal</a>.
     </p>
 
     <h2>GitHub Tasklist</h2>

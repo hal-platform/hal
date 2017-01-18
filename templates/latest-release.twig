@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block latest_release_29 %}
-    <p>The latest release of Hal is <b>2.9.0</b>. It was deployed on Friday, January ??, 2017.</p>
+    <p>The latest release of Hal is <b>2.9.0</b>. It was deployed on Friday, January 20, 2017.</p>
 
     <h2>Changelog</h2>
 
@@ -31,10 +31,17 @@
         <li>
             Add new deployment type: <code>script</code>.
             <blockquote>
+                <p>
+                    Script deployments allow applications complete control over their deployment process. It allows applications to define shell scripts to run during their
+                    deployment process intead of having Hal use rsync, codedeploy, or other deployment types.
+                </p>
+
                 <small>
-                tbd
+                    Script deployments are run within docker containers, just like builds. Deployment commands are configured with the new <code>.hal9000.yml</code> property: <code>deploy</code>.
                 </small>
+
             </blockquote>
+            See the <a href="{{ urlFor('help.setup') }}">Application Setup Help page</a> for more details.
         </li>
     </ul>
 

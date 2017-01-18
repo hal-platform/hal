@@ -29,16 +29,20 @@
     <ul class="list--bare">
         <li class="trailer">
             <ul class="list--bullet">
-                <li><a href="#onprem-rsync">On Premise - Rsync</a></li>
+                <li><a href="#onprem-rsync">On-premise - Rsync</a></li>
                 <li><a href="#aws-elastic-beanstalk">AWS - Elastic Beanstalk</a></li>
                 <li><a href="#aws-codedeploy">AWS - CodeDeploy</a></li>
                 <li><a href="#aws-s3">AWS - S3</a></li>
+                <li><a href="#any-script">Any - Script-based</a></li>
             </ul>
         </li>
     </ul>
 
-    <h3 id="onprem-rsync">{{ macros.status_icon('How do I set up On Premise servers for Hal?') }}</h3>
+    <h3 id="onprem-rsync">{{ macros.status_icon('How do I set up On-premise servers for Hal?') }}</h3>
     {{ block('setup_rsync') }}
+
+    <h3 id="any-script">{{ macros.status_icon('How do I configure my application for deploying with a script?') }}</h3>
+    {{ block('setup_script') }}
 
     <h3 id="aws-elastic-beanstalk">{{ macros.status_icon('How I configure my application for AWS Elastic Beanstalk?') }}</h3>
     {{ block('setup_elastic') }}
@@ -99,6 +103,43 @@
 
         Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
     </small>
+
+{% endblock %}
+
+{% block setup_script %}
+
+    <p>
+        Instead of using an existing deployment type within Hal, applications can specify <b>shell scripts</b> to be run during the deployments.
+        This allows applications complete control over their deployment process.
+    </p>
+
+    <p>
+        Commands are specified in the <code>.hal9000.yml</code> configuration file with the <code>deploy</code> property.
+    </p>
+
+    <p>See the following example where a server is shutdown, deployed to, and restarted as a part of an application-defined script-based deployment:</p>
+
+    {{ block('script_example') }}
+
+    <p>
+        Data can also be passed to these scripts using <b>Script Context</b>.
+        Script context is defined on the deployment target within Hal.
+        This is simply any data you would like to pass to your scripts.
+    </p>
+    <p>
+        <b>Do not use this to store secrets.</b> This data is not encrypted.
+    </p>
+
+    <p>
+        Script context accessible from the <code>HAL_CONTEXT</code> environment variable and can be accessed from with your scripts or as a shell argument.
+    </p>
+
+    {{ block('script_example_context') }}
+
+    <p>
+        The same variables and environment available for builds is available during the deploy process.
+        Check out the <a href="{{ urlFor('help.deployment') }}">Deployment scripting guide</a> for more details.
+    </p>
 
 {% endblock %}
 
@@ -334,5 +375,29 @@ files:
     {% endspaceless %}
 {% endblock %}
 
+{% block script_example %}
+    <pre>
+# filename: APPLICATION_ROOT/.hal9000.yml
+system: docker:node6.2
 
+build:
+    - 'npm install --production'
+    - 'npm run build'
+
+deploy:
+    - 'ssh deployuser@myserver /opt/testapp/shutdown-server.sh
+    - 'rsync . deployuser@myserver:/var/testapp'
+    - 'ssh deployuser@myserver /opt/testapp/restart-server.sh
+</pre>
+{% endblock %}
+
+{% block script_example_context %}
+    <pre>
+system: docker:node6.2
+build:
+    - 'npm install --production'
+deploy:
+    - 'run-script.sh ${HAL_CONTEXT}'
+</pre>
+{% endblock %}
 
