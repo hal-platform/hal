@@ -344,7 +344,7 @@
 
 {% block setup_codedeploy_appspec %}
     {% spaceless %}
-        <pre style="max-width:40em;">version: 0.0
+        <pre class="small-code">version: 0.0
 os: linux
 files:
     - source: /
@@ -354,7 +354,7 @@ files:
 
 {% block setup_codedeploy_appspec_perm %}
     {% spaceless %}
-        <pre style="max-width:40em;">permissions:
+        <pre class="small-code">permissions:
   - object: /var/www/testapplication
     pattern: "**"
     owner: ux-ecsvc
@@ -367,7 +367,7 @@ files:
 
 {% block setup_codedeploy_appspec_command %}
     {% spaceless %}
-        <pre style="max-width:40em;">hooks:
+        <pre class="small-code">hooks:
   Install:
     - location: /var/www/application/bin/myscript.sh
       timeout: 30 (timeout in seconds, optional)
@@ -376,7 +376,7 @@ files:
 {% endblock %}
 
 {% block script_example %}
-    <pre>
+    <pre class="small-code">
 # filename: APPLICATION_ROOT/.hal9000.yml
 system: docker:node6.2
 
@@ -385,14 +385,14 @@ build:
     - 'npm run build'
 
 deploy:
-    - 'ssh deployuser@myserver /opt/testapp/shutdown-server.sh
+    - 'ssh deployuser@myserver /opt/testapp/shutdown-server.sh'
     - 'rsync . deployuser@myserver:/var/testapp'
-    - 'ssh deployuser@myserver /opt/testapp/restart-server.sh
+    - 'ssh deployuser@myserver /opt/testapp/restart-server.sh'
 </pre>
 {% endblock %}
 
 {% block script_example_context %}
-    <pre>
+    <pre class="small-code">
 system: docker:node6.2
 build:
     - 'npm install --production'
