@@ -108,6 +108,8 @@ class DeploymentNormalizer implements NormalizerInterface
                 's3-bucket' => $deployment->s3bucket(),
                 's3-file' => $deployment->s3file(),
 
+                'script-context' => $deployment->scriptContext(),
+
                 'url' => $deployment->url(),
 
                 'pretty-name' => $deployment->formatPretty(false),

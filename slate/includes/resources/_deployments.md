@@ -51,6 +51,12 @@ Attribute            | Description                                      | Type  
 s3-bucket            | Bucket name Configuration                        | string,null | `test-bucket`
 s3-file              | File name (may include directories)              | string,null | `testapp/$PUSHID.tar.gz`
 
+#### For Script only
+
+Attribute            | Description                                      | Type        | Example
+-------------------- | ------------------------------------------------ | ----------- | -------------
+script-context       | Context data passed to deploy scripts            | string,null | `server-pool1`
+
 ## Get All Deployment Targets
 
 ```http
