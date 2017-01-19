@@ -36,8 +36,8 @@
         "predis/predis": "~1.0",
         "psr/log": "*",
 
-        "ql/hal-core":          "dev-master as 2.10.0-beta2",
-        "ql/kraken-core":       "~2.10@beta",
+        "ql/hal-core":          "2.10.0",
+        "ql/kraken-core":       "2.10.0",
         "ql/panthor-plugins":   "~1.0",
 
         "ql/mcp-cache":         "~2.2",
