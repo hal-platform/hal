@@ -37,7 +37,12 @@
                 {{ push.deployment|formatDeploymentDetailsLabel }}
             </dt>
             <dd>
-                <code>{{ push.deployment.formatMeta }}</code>
+                {# this sucks#}
+                {% if push.deployment.server.type == 'script' and not push.deployment.formatMeta %}
+                    N/A
+                {% else %}
+                    <code>{{ push.deployment.formatMeta }}</code>
+                {% endif %}
             </dd>
 
             {% if push.deployment and push.deployment.url %}
