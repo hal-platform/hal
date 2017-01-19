@@ -64,7 +64,12 @@
                                     <br>File: <code class="code_clear">{{ deployment.s3file }}</code>
 
                                 {% elseif deployment.server.type == 'script' %}
-                                    Context: <code class="code_clear">{{ deployment.scriptContext }}</code>
+
+                                    Context: <code class="code_clear">{{ deployment.scriptContext ?: 'N/A' }}</code>
+
+                                {% elseif deployment.server.type == 'rsync' %}
+
+                                    Path: <code class="code_clear">{{ deployment.path }}</code>
 
                                 {% else %}
                                     <code class="code_clear">{{ deployment.formatMeta }}</code>
