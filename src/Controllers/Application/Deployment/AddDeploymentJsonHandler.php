@@ -152,6 +152,10 @@ class AddDeploymentJsonHandler implements MiddlewareInterface
 
             isset($decoded['s3_bucket']) ? $decoded['s3_bucket'] : null,
             isset($decoded['s3_file']) ? $decoded['s3_file'] : null,
+            isset($decoded['s3_file']) ? $decoded['s3_file'] : null,
+
+            isset($decoded['script_context']) ? $decoded['script_context'] : null,
+
             isset($decoded['url']) ? $decoded['url'] : ''
         );
 
