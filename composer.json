@@ -9,9 +9,6 @@
     "autoload": {
         "psr-4": { "QL\\Hal\\": "src", "QL\\Kraken\\": "src-kraken" }
     },
-    "repositories": [
-        { "type": "git", "url": "http://git/hal/hal-core.git" }
-    ],
 
     "require": {
         "php-64bit": "~5.6 || ~7.0",
@@ -26,8 +23,6 @@
         "ext-pdo_mysql": "*",
         "ext-pdo_sqlite": "*",
         "ext-xmlwriter": "*",
-
-        "aws/aws-sdk-php": "~3.2",
         "doctrine/orm": "~2.5.6",
         "guzzle/guzzle": "3.9.*",
         "guzzlehttp/guzzle": "5.*",
