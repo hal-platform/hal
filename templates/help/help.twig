@@ -4,13 +4,12 @@
 {% set page_title = 'Help' %}
 
 {% set kmContact = '<a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a>' %}
-{% set wcContact = '<a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a>' %}
 
 {% block content %}
     <h1>Help &amp; FAQ</h1>
 
-    <a class="btn" href="{{ urlFor('help.setup') }}">Help with Application Setup</a>
-    <a class="btn" href="{{ urlFor('help.deployment') }}">Deployment scripting guide</a>
+    <a class="btn" href="{{ urlFor('help.setup') }}">Application Setup Guide</a>
+    <a class="btn" href="{{ urlFor('help.deployment') }}">Deployment Scripting Guide</a>
 
     <ul class="list--bare">
         <li class="trailer">
@@ -27,7 +26,7 @@
             <ul class="list--bullet">
                 <li><a href="#add-application">How do I add my application to Hal?</a></li>
                 <li><a href="#deploy-application">How do I deploy my application with Hal?</a></li>
-                <li><a href="#application-deployment">How do I use a script to build or push my application?</a></li>
+                <li><a href="#application-deployment">How do I use a script to build or deploy my application?</a></li>
                 <li><a href="#dotnet-support">Does Hal support .NET applications?</a></li>
                 <li><a href="#aws-support">Does Hal support AWS?</a></li>
                 <li><a href="#docker-support">Does Hal support Docker?</a></li>
@@ -64,10 +63,10 @@
 
     <h6 class="mbn"><strong>How are permissions determined?</strong></h6>
     <p>
-        Hal grants non-prod build and push permissions to engineers that are <b>public</b> members of the GitHub organization that owns the project.
+        Hal grants non-prod build and push permissions to users that are <b>public</b> members of the GitHub organization that owns the project.
     </p>
     <p>
-        For non-engineers, users must be given access by an Administrator to build or deploy applications.
+        For users that do not use GitHub, access can be granted by an Administrator to build or deploy applications.
     </p>
 
     <p>
@@ -87,7 +86,6 @@
     <p>For general questions or critical errors, you can contact Web Core through the following methods:</p>
     <ul class="list--bullet">
         <li><a href="hipchat://www.hipchat.com/room/1036795">[Team] Web Core</a> (Hipchat)</li>
-        <li>{{ wcContact|raw }} (email)</li>
     </ul>
 {% endblock %}
 
@@ -136,18 +134,23 @@
         <li>Script (Applications define their deployment process in scripts)</li>
         <li>R Sync (On-premise unix servers)</li>
     </ul>
-    <p>See <a href="{{ urlFor('help.setup') }}">the application setup page</a> for how to set up your application for on premise or AWS.</p>
+    <p>See the <a href="{{ urlFor('help.setup') }}">application setup guide</a> for how to set up your application for on premise or AWS.</p>
 
-    <h3 id="application-deployment">{{ macros.status_icon('How do I use a script to build or push my application?') }}</h3>
+    <h3 id="application-deployment">{{ macros.status_icon('How do I use a script to build or deploy my application?') }}</h3>
     <p>
-        System commands can be used to customize the build and/or push process for an application.
+        System commands can be used to customize the build and/or deploy process for an application.
     </p>
 
-    <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
+    <p>
+        If you would like complete control over your deployment process (and not just run commands before or after), use <b>script-based</b> deployments.
+        But be careful! This involves writing your own scripts and requires engineering.
+    </p>
+
+    <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide</a>.</p>
 
     <h3 id="dotnet-support">{{ macros.status_icon('Does Hal support .NET applications?') }}</h3>
-    <p>Hal supports building windows projects and deploying to AWS-based deployment targets such as Elastic Beanstalk and CodeDeploy.</p>
-    <p>However, this feature will not be enabled.</p>
+    <p>Hal can deploy any application to AWS-based deployment targets such as Elastic Beanstalk and CodeDeploy including both linux and windows-based applications.</p>
+    <p>However, it does not have the infrastructure to build and compile windows-based applications nor deploy to on-premise windows instances.</p>
 
     <h3 id="aws-support">{{ macros.status_icon('Does Hal support AWS?') }}</h3>
     <p>Hal supports the following deployment strategies:</p>
@@ -155,16 +158,17 @@
         <li><a href="https://aws.amazon.com/elasticbeanstalk/">AWS Elastic Beanstalk</a></li>
         <li><a href="https://aws.amazon.com/codedeploy/">AWS CodeDeploy</a></li>
         <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (Static file deployments)</li>
+        <li>Script (Applications define their deployment process in scripts)</li>
         <li>R Sync (On-premise unix servers)</li>
     </ul>
 
     <h3 id="docker-support">{{ macros.status_icon('Does Hal support Docker?') }}</h3>
-    <p>All unix-based applications are built in isolated Docker containers.</p>
+    <p>All linux-based applications are built in isolated Docker containers.</p>
     <p>
         This ensures reproducible builds by having a fresh container with consistent system configuration for every build.
         Applications can even use a custom, dedicated container if needed.
     </p>
-    <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide for engineers</a>.</p>
+    <p>Read more in the <a href="{{ urlFor('help.deployment') }}">deployment scripting guide</a>.</p>
 
     <h3 id="encrypted-configuration">{{ macros.status_icon('Does Hal support encrypted configuration?') }}</h3>
     <p>
@@ -181,10 +185,7 @@
         Hal builds within docker containers. Docker allows us to have completely isolated, custom build environments for any application that needs it.
     </p>
     <p>
-        <strong>Do not contact the UNIX team about installing software on the Hal servers, it will not help your application.</strong><br>
-    </p>
-    <p>
-        To enable a library, it must be installed either by your build scripts directly, or in a docker image.
+        To enable a library, it must be installed either by your build scripts directly, or be pre-baked in a docker image.
         Please see <a href="http://git/skluck/docker-images">skluck/docker-images</a>{{ macros.icon('github') }} for currently available containers.
     </p>
 {% endblock %}

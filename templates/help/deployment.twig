@@ -6,7 +6,7 @@
 {% block content %}
 
     <div class="nav--page">
-        <h1>Help - <strong>Deployment Guide for engineers</strong></h1>
+        <h1>Help - <strong>Deployment Scripting Guide</strong></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ urlFor('help') }}">Back to Help</a>
@@ -17,7 +17,7 @@
         <li><a href="#shell-commands">Commands</a></li>
         <li><a href="#configuration-file">.hal9000.yml configuration file</a></li>
         <li><a href="#build-environment">Build scripting environment</a></li>
-        <li><a href="#push-environment">Push scripting environment</a></li>
+        <li><a href="#deploy-environment">Deployment scripting environment</a></li>
         <li><a href="#docker">Docker</a></li>
         <li><a href="#package-managers">Package Managers</a></li>
         <li><a href="#encrypted-configuration">Encrypted Properties</a></li>
@@ -28,9 +28,9 @@
     <ul class="list--bullet">
         <li><b>Build</b> (Runs on build server)</li>
         <li><b>Pre-deploy Build Transform</b> (Runs on build server)</li>
-        <li><b>Pre-deploy</b> (Runs on deployment web server)</li>
-        <li><b>Deploy</b> (Runs in build server)</li>
-        <li><b>Post-deploy</b> (Runs on deployment web server)</li>
+        <li><b>Pre-deploy</b> (Runs on deployment target server)</li>
+        <li><b>Deploy</b> (Runs on build server)</li>
+        <li><b>Post-deploy</b> (Runs on deployment target server)</li>
     </ul>
 
     <p>
@@ -38,7 +38,8 @@
         It is common for applications to create a special bin within the project folder, but any command will do.
     </p>
     <p>
-        Commands designed to run on the target server (pre-deploy or post-deploy) are used for rsync deployments only.
+        Commands designed to run on the target server (pre-deploy or post-deploy) are used for rsync-based deployments only.
+        <b>Deploy</b> commands are run for script-based deployments only.
     </p>
 
     Examples:
@@ -73,12 +74,6 @@
     <h4>Here is an example with default values:</h4>
     {{ block('configuration_file') }}
 
-    <p>
-        For applications already using Hal, build and push commands in the database will be used for <b>old builds</b>,
-        and when no configuration file has been committed. When present, commands found in the configuration file
-        will be used instead of build and push commands stored in the Hal database.
-    </p>
-
     <h2 id="build-environment">Build Scripting Environment</h2>
     <p>During the build process, The following environment variables are available to application build scripts:</p>
     {{ block('build_vars') }}
@@ -88,7 +83,7 @@
         If using a PHP-based script, they are available in the <b>$_SERVER</b> superglobal.
     </p>
 
-    <h2 id="push-environment">Deployment Scripting Environment</h2>
+    <h2 id="deploy-environment">Deployment Scripting Environment</h2>
     <p>During the deployment process, The following environment variables are available to application pre-deploy and post-deploy scripts:</p>
     {{ block('push_vars') }}
 
@@ -242,7 +237,7 @@ date: ''       # ISO 8601 date
         <tbody>
             <tr>
                 <td>system</td>
-                <td>Build system. <b>docker:$IMAGE_NAME</b> or <b>windows</b>.</td>
+                <td>Build system. <b>docker:$IMAGE_NAME</b>.</td>
             </tr>
             <tr>
                 <td>dist</td>
@@ -323,13 +318,13 @@ post_push: []                # Shell commands to run after deployment process, o
     </ul>
 
     <p>
-        If no docker container is specified, the <b>legacy</b> container is used, which shares a similiar configuration to the old push servers.
+        If no docker container is specified, the <b>legacy</b> container is used, which has a frozen configuration with older versions of PHP, Node, and Ruby.
     </p>
 
     <p>
         We recommend switching to a different container as soon as possible.
-        If no current container fits your application needs, contact a member of the Web Core team.
-        We can help you find a container that fits your needs or write a custom dockerfile for your usage.<br><br>
+        If no current container fits your application needs, contact an Administrator.
+        They can help you find a container that fits your needs or write a custom dockerfile for your usage.<br><br>
 
         Please see <a href="http://git/skluck/docker-images">skluck/docker-images</a>{{ macros.icon('github') }} for currently available containers.
     </p>
