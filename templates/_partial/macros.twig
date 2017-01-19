@@ -67,11 +67,11 @@
         {% if not hideTooltip and isCurrent is not same as(null) %}
             {% if isCurrent is same as(true) %}
 
-                <span class="tooltipped tooltipped-n" aria-label="This commit is update to date with HEAD">
+                <span class="hint--top" aria-label="This commit is update to date with HEAD">
                     {{ self_macros.icon(icontype, iconcolor) }}
                 </span>
             {% elseif isCurrent is same as(false) %}
-                <span class="tooltipped tooltipped-n" aria-label="This commit is behind HEAD">
+                <span class="hint--top" aria-label="This commit is behind HEAD">
                     {{ self_macros.icon(icontype, iconcolor) }}
                 </span>
             {% endif %}

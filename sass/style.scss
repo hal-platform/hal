@@ -17,24 +17,19 @@
 @import "scales-base-typography/typography";
 @import "scales-base-images/images";
 @import "scales-base-lists/lists";
-// @import "scales-base-blockquotes/blockquotes";
 @import "scales-base-forms/forms";
 @import "scales-base-tables/tables";
 
 @import "scales-patterns-box/box";
-// @import "scales-patterns-horizontal-list/horizontal-list";
 @import "scales-patterns-vertical-list/vertical-list";
-// @import "scales-patterns-media-object/media-object";
 @import "scales-patterns-flag/flag";
 @import "scales-patterns-buttons/buttons";
 @import "scales-patterns-split/split";
-// @import "scales-patterns-stats/stats";
-// @import "scales-patterns-multi-col-list/multi-col-list";
 
 @import "scales-overrides-size/size";
 @import "scales-overrides-spacing/spacing";
 
-@import "primer-css/scss/tooltips";
+@import "hint.css/src/hint";
 @import "tablesaw/dist/stackonly/tablesaw.stackonly.scss";
 
 // Utilities

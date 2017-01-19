@@ -12,7 +12,7 @@ var Deployment = React.createClass({
         return (
             <tr>
                 <td key={ this.props.deployment.id + 'a' }>
-                    <span className="tooltipped tooltipped-e" aria-label={ this.props.deployment.additional }>
+                    <span className="hint--right" aria-label={ this.props.deployment.additional }>
                         { this.props.deployment.pretty }
                     </span>
                 </td>

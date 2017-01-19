@@ -42,7 +42,7 @@
                         <tr>
                             <td>
                                 {% if deployment.server.isAWS() and not deployment.credential %}
-                                    <span class="tooltipped tooltipped-e" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
+                                    <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
                                 {% endif %}
                                 {{ deployment.formatPretty }}
                             </td>
