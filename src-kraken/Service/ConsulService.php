@@ -157,7 +157,7 @@ class ConsulService
         }
 
         // Add updated time to payload
-        $properties['+updated'] = $this->clock->read()->format(DateTime::ATOM, $this->localTimezone);
+        // $properties['+updated'] = $this->clock->read()->format(DateTime::ATOM, $this->localTimezone);
 
         // Get what is currently deployed in consul kv
         $deployed = $this->getDeployedConfiguration($target, true);
