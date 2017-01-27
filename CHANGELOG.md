@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`)
 
+### Changed
+- MCP-Cache updated to `3.0.0`
+- Knplabs github api library updated to `2.0.1`
+    - Extended `Github\Client` to fix Enterprise Url bug in library
+    - `QL\Hal\Github\MCPCache` replaced with `QL\Hal\Github\MCPCachePlugin`
+
 ## [2.9.0] - 2017-01-20
 
 ### Added

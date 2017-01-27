@@ -81,4 +81,4 @@ services:
     doctrine.cache:
         class: 'Doctrine\Common\Cache\ArrayCache'
     cache:
-        class: 'MCP\Cache\MemoryCache'
+        class: 'QL\MCP\Cache\MemoryCache'

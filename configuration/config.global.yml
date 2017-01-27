@@ -69,13 +69,15 @@ parameters:
     cache.server.ttl: 300
     cache.stats.ttl: 900
     cache.page.ttl: 300
+    cache.github.default.ttl: 60
+    cache.github.short.ttl: 60
 
     ############################################################################
     # configuration
     ############################################################################
 
-    github.baseurl: 'http://git/api/v3/'
-    github.site.baseurl: 'http://git/'
+    github.baseurl: 'http://git/api/v3'
+    github.site.baseurl: 'http://git'
 
     unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
     unique.size: 4

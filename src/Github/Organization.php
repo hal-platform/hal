@@ -18,10 +18,8 @@ class Organization extends OrganizationApi
      *
      * @return array list of organizations found
      */
-    public function all()
+    public function all($since = '')
     {
-        $result = $this->get('organizations');
-
-        return $result;
+        return parent::all($since);
     }
 }

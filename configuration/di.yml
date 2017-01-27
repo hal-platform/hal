@@ -172,12 +172,14 @@ services:
     ####################################################################################################################
 
     cache:
-        class: 'MCP\Cache\PredisCache'
+        class: 'QL\MCP\Cache\PredisCache'
         arguments: ['@redis']
 
-    cache.github:
-        class: 'QL\Hal\Github\MCPCache'
-        arguments: ['@cache']
+    github.cache:
+        class: 'QL\MCP\Cache\PredisCache'
+        arguments: ['@redis']
+        calls:
+            - ['setMaximumTtl', ['%cache.github.default.ttl%']]
 
     ####################################################################################################################
     # HELPERS
