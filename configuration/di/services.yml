@@ -202,6 +202,7 @@ services:
             - '@cache'
             - '@plug.http_stream_factory'
             - {respect_cache_headers: false, default_ttl: '%cache.github.default.ttl%'}
+            - '%cache.github.short.ttl%'
 
     plug.http_stream_factory:
         class: 'Psr\Http\Message\StreamInterface\StreamFactory'

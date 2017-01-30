@@ -70,7 +70,7 @@ parameters:
     cache.stats.ttl: 900
     cache.page.ttl: 300
     cache.github.default.ttl: 60
-    cache.github.short.ttl: 60
+    cache.github.short.ttl: 20
 
     ############################################################################
     # configuration

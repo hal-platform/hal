@@ -16,10 +16,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MCPCachePlugin implements Plugin
 {
-    const SHORT_TTL = 20;
     const DEFAULT_TTL = 60;
 
     const GITHUB_NAME = '[A-Za-z0-9\_\.\-]+';
+    const KEY_RESPONSE = 'github:%s';
 
     /**
      * @var CacheInterface
@@ -37,9 +37,15 @@ class MCPCachePlugin implements Plugin
     private $config;
 
     /**
+     * @var int
+     */
+    private $shortTTL;
+
+    /**
      * @param CacheInterface $simpleCache
      * @param StreamFactory $streamFactory
      * @param array $config {
+     * @param int $shortTTL
      *
      * @var bool $respect_cache_headers Whether to look at the cache directives or ignore them
      * @var int $default_ttl (seconds) If we do not respect cache headers or can't calculate a good ttl, use this
@@ -50,14 +56,19 @@ class MCPCachePlugin implements Plugin
      *              We store a cache item for $cache_lifetime + max age of the response.
      * }
      */
-    public function __construct(CacheInterface $simpleCache, StreamFactory $streamFactory, array $config = [])
-    {
+    public function __construct(
+        CacheInterface $simpleCache,
+        StreamFactory $streamFactory,
+        array $config = [],
+        $shortTTL = 20
+    ) {
         $this->cache = $simpleCache;
         $this->streamFactory = $streamFactory;
 
         $optionsResolver = new OptionsResolver();
         $this->configureOptions($optionsResolver);
         $this->config = $optionsResolver->resolve($config);
+        $this->shortTTL = $shortTTL;
     }
 
     /**
@@ -152,7 +163,7 @@ class MCPCachePlugin implements Plugin
             // Get data for a git reference. Resolving a branch or tag to a commit
             $refRegex = sprintf('#repos/%s/%s/git/refs#', self::GITHUB_NAME, self::GITHUB_NAME);
             if (preg_match($pullRegex, $url) || preg_match($refRegex, $url)) {
-                return self::SHORT_TTL + $maxAge;
+                return $this->shortTTL + $maxAge;
             }
         }
 
@@ -231,7 +242,7 @@ class MCPCachePlugin implements Plugin
      */
     private function createCacheKey(RequestInterface $request)
     {
-        return hash($this->config['hash_algo'], $request->getMethod() . ' ' . $request->getUri());
+        return sprintf(self::KEY_RESPONSE, hash($this->config['hash_algo'], $request->getMethod() . ' ' . $request->getUri()));
     }
 
     /**
