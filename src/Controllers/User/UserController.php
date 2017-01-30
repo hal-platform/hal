@@ -8,12 +8,11 @@
 namespace QL\Hal\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use MCP\Cache\CachingTrait;
 use MCP\Corp\Account\LdapService;
-use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Service\PermissionService;
-use QL\Hal\Service\UserPerm;
+use QL\MCP\Cache\CachingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Json;
@@ -126,6 +125,7 @@ class UserController implements ControllerInterface
         ];
 
         $this->setToCache($key, $this->json->encode($data));
+
         return $data;
     }
 }

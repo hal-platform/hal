@@ -10,10 +10,9 @@ namespace QL\Hal\Service;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Environment;
+use QL\MCP\Cache\CachingTrait;
 use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
 
@@ -87,6 +86,7 @@ class StatsService
         $data = $this->getApplicationStatsForRange($from, $to);
 
         $this->setToCache($key, $data);
+
         return $data;
     }
 

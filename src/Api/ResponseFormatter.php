@@ -7,8 +7,8 @@
 
 namespace QL\Hal\Api;
 
-use MCP\Cache\CachingTrait;
 use QL\Hal\Api\Utility\HypermediaFormatter;
+use QL\MCP\Cache\CachingTrait;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Route;
@@ -145,6 +145,7 @@ class ResponseFormatter
      * Recursively resolve any objects in the resource tree
      *
      * @param array $tree
+     *
      * @return array
      */
     private function resolve(array $tree)
@@ -183,6 +184,7 @@ class ResponseFormatter
      * Get the cache key for a given request
      *
      * @param Request $request
+     *
      * @return string
      */
     private function cacheKey(Request $request)
@@ -194,6 +196,7 @@ class ResponseFormatter
      * Get the cache time for a given route
      *
      * @param Route $route
+     *
      * @return int
      */
     private function cacheTime(Route $route)

@@ -10,12 +10,12 @@ namespace QL\Hal\Service;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Entity\UserPermission;
+use QL\Hal\Core\Entity\UserType;
+use QL\MCP\Cache\CachingTrait;
 use QL\Panthor\Utility\Json;
 
 class PermissionService
@@ -301,6 +301,7 @@ class PermissionService
 
         $this->setToInternalCache($key, $result);
         $this->setToCache($key, $result);
+
         return $result;
     }
 

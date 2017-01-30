@@ -7,13 +7,13 @@
 
 namespace QL\Hal\Twig;
 
-use MCP\Cache\CachingTrait;
-use QL\Hal\Service\GitHubService;
+use Exception;
 use QL\Hal\Github\GitHubURLBuilder;
+use QL\Hal\Service\GitHubService;
+use QL\MCP\Cache\CachingTrait;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
-use Exception;
 
 class GitHubExtension extends Twig_Extension
 {
@@ -101,6 +101,7 @@ class GitHubExtension extends Twig_Extension
         $isCurrent = ($latest == $commit) ? true : false;
 
         $this->setToCache($key, $isCurrent, 120);
+
         return $isCurrent;
     }
 
@@ -108,6 +109,7 @@ class GitHubExtension extends Twig_Extension
      * Format a git commit hash for output
      *
      * @param $reference
+     *
      * @return string
      */
     public function formatGitCommit($reference)
@@ -160,12 +162,13 @@ class GitHubExtension extends Twig_Extension
             $resolve = $this->github->resolve($user, $repo, $reference);
             $latest = (is_array($resolve)) ? $resolve[1] : null;
 
-        // Fuck off weird errors
+            // Fuck off weird errors
         } catch (Exception $ex) {
             $latest = null;
         }
 
         $this->setToCache($key, $latest, 15);
+
         return $latest;
     }
 }

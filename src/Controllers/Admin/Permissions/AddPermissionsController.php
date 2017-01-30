@@ -7,10 +7,8 @@
 
 namespace QL\Hal\Controllers\Admin\Permissions;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
@@ -18,6 +16,7 @@ use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Flasher;
 use QL\Hal\Service\PermissionService;
 use QL\Hal\Service\UserPerm;
+use QL\MCP\Cache\CachingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Json;
@@ -382,11 +381,12 @@ class AddPermissionsController implements ControllerInterface
             $data[$group][$app->id()] = $app->name();
         }
 
-        uksort($data, function($a, $b) {
+        uksort($data, function ($a, $b) {
             return strcasecmp($a, $b);
         });
 
         $this->setToCache(self::CACHE_KEY_PERMISSION_APPLICATIONS, $this->json->encode($data));
+
         return $data;
     }
 }

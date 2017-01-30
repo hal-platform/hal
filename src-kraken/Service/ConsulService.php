@@ -7,19 +7,16 @@
 
 namespace QL\Kraken\Service;
 
-use DateTime;
-use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
-use MCP\Cache\CachingTrait;
 use MCP\Crypto\Exception\CryptoException;
 use MCP\Crypto\Package\TamperResistantPackage;
 use QL\Kraken\Core\Entity\Application;
 use QL\Kraken\Core\Entity\Environment;
 use QL\Kraken\Core\Entity\Target;
-use QL\Kraken\Service\ConsulBatchTrait;
 use QL\Kraken\Service\Exception\ConsulConnectionException;
+use QL\MCP\Cache\CachingTrait;
 use QL\MCP\Common\Time\Clock;
 use QL\UriTemplate\UriTemplate;
 
@@ -212,7 +209,7 @@ class ConsulService
         // This could take a while...
         $updates = $this->handleBatch($requests);
 
-        array_walk($updates, function(&$v, $k) use ($deletes) {
+        array_walk($updates, function (&$v, $k) use ($deletes) {
             $r = new ConsulResponse($k, isset($deletes[$k]) ? 'delete' : 'update');
             $v = $r->withDetail($v);
         });
@@ -238,11 +235,12 @@ class ConsulService
             return [];
         }
 
-        array_walk($current, function(&$v, $k) {
+        array_walk($current, function (&$v, $k) {
             $v = sha1($v['value']);
         });
 
         $this->setToCache($key, json_encode($current), self::CACHE_CHECKSUMS_TTL);
+
         return $current;
     }
 

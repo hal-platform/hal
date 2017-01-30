@@ -13,7 +13,7 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Utility\SortingTrait;
-use MCP\Cache\CachingTrait;
+use QL\MCP\Cache\CachingTrait;
 
 /**
  * Handle sorting, collating of deployment views and pools
@@ -66,6 +66,7 @@ class PoolService
         $data = $this->buildViews($application, $environment);
 
         $this->setToCache($key, $data);
+
         return $data;
     }
 
@@ -153,7 +154,7 @@ class PoolService
      */
     private function buildViews(Application $application, Environment $environment)
     {
-        $sorter = function($a, $b) {
+        $sorter = function ($a, $b) {
             return strcasecmp($a->name(), $b->name());
         };
 

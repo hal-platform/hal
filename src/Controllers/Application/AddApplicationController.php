@@ -9,7 +9,6 @@ namespace QL\Hal\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\Cache\CachingTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\User;
@@ -20,6 +19,7 @@ use QL\Hal\Flasher;
 use QL\Hal\Service\GitHubService;
 use QL\Hal\Service\PermissionService;
 use QL\Hal\Utility\ValidatorTrait;
+use QL\MCP\Cache\CachingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
@@ -153,6 +153,7 @@ class AddApplicationController implements ControllerInterface
 
         if ($application = $this->handleForm($form)) {
             $message = sprintf(self::SUCCESS, $application->key());
+
             return $this->flasher
                 ->withFlash($message, 'success')
                 ->load('applications');
@@ -254,7 +255,6 @@ class AddApplicationController implements ControllerInterface
             ->withKey($identifier)
             ->withName($name)
             ->withGroup($group)
-
             ->withGithubOwner($githubOwner)
             ->withGithubRepo($githubRepo)
             ->withEmail('');
@@ -279,7 +279,7 @@ class AddApplicationController implements ControllerInterface
         if (!$this->github->user($owner)) {
             $this->errors[] = self::ERR_GITHUB_INVALID_OWNER;
 
-        // elseif here so we dont bother making 2 github calls if the first one failed
+            // elseif here so we dont bother making 2 github calls if the first one failed
         } elseif (!$this->github->repository($owner, $repo)) {
             $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
         }
@@ -360,7 +360,7 @@ class AddApplicationController implements ControllerInterface
             }
         }
 
-        $sorter = function($a, $b) {
+        $sorter = function ($a, $b) {
             return strcasecmp($a, $b);
         };
 
@@ -373,6 +373,7 @@ class AddApplicationController implements ControllerInterface
         ];
 
         $this->setToCache(self::CACHE_KEY_ORGANIZATIONS, $data);
+
         return $data;
     }
 
