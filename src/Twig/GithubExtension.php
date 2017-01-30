@@ -162,7 +162,7 @@ class GitHubExtension extends Twig_Extension
             $resolve = $this->github->resolve($user, $repo, $reference);
             $latest = (is_array($resolve)) ? $resolve[1] : null;
 
-            // Fuck off weird errors
+        // Fuck off weird errors
         } catch (Exception $ex) {
             $latest = null;
         }

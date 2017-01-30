@@ -279,7 +279,7 @@ class AddApplicationController implements ControllerInterface
         if (!$this->github->user($owner)) {
             $this->errors[] = self::ERR_GITHUB_INVALID_OWNER;
 
-            // elseif here so we dont bother making 2 github calls if the first one failed
+        // elseif here so we dont bother making 2 github calls if the first one failed
         } elseif (!$this->github->repository($owner, $repo)) {
             $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
         }
