@@ -21,7 +21,6 @@ use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Core\Utility\SortingTrait;
 use QL\Hal\Service\PoolService;
 use QL\Hal\Service\StickyEnvironmentService;
-use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -38,7 +37,6 @@ class ApplicationStatusController implements ControllerInterface
      * @var EntityRepository
      */
     private $applicationRepo;
-    private $krakenRepo;
 
     /**
      * @var BuildRepository
@@ -100,8 +98,6 @@ class ApplicationStatusController implements ControllerInterface
         $this->buildRepo = $em->getRepository(Build::CLASS);
         $this->pushRepo = $em->getRepository(Push::CLASS);
 
-        $this->krakenRepo = $em->getRepository(KrakenApplication::CLASS);
-
         $this->stickyEnvironmentService = $stickyEnvironmentService;
         $this->poolService = $poolService;
         $this->application = $application;
@@ -133,8 +129,6 @@ class ApplicationStatusController implements ControllerInterface
             $selectedView = $this->poolService->findSelectedView($this->application, $selectedEnvironment, $views);
         }
 
-        $krakenApp = $this->krakenRepo->findOneBy(['halApplication' => $this->application]);
-
         $this->template->render([
             'application' => $this->application,
             'builds' => $builds,
@@ -144,9 +138,6 @@ class ApplicationStatusController implements ControllerInterface
 
             'views' => $views,
             'selected_view' => $selectedView,
-
-            'kraken' => $krakenApp,
-
         ]);
     }
 

@@ -12,7 +12,6 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
-use QL\Kraken\Core\Entity\Application as KrakenApplication;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -53,13 +52,8 @@ class ApplicationController implements ControllerInterface
      */
     public function __invoke()
     {
-        $krakenApp = $this->em
-            ->getRepository(KrakenApplication::class)
-            ->findOneBy(['halApplication' => $this->application]);
-
         $this->template->render([
             'application' => $this->application,
-            'kraken' => $krakenApp,
             'has_deployments' => $this->doesApplicationHaveChildren()
         ]);
     }
