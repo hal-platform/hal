@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4e4e5a63ba13ad032ebf9e140c11128",
+    "content-hash": "988fa435cfbe4d120a8f14995b0fdd6a",
     "packages": [
         {
             "name": "cache/adapter-common",
@@ -4239,7 +4239,6 @@
         "ext-ldap": "*",
         "ext-libsodium": "*",
         "ext-mbstring": "*",
-        "ext-mcrypt": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
         "ext-pdo_mysql": "*",

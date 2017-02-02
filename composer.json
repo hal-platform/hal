@@ -16,7 +16,6 @@
         "ext-ldap": "*",
         "ext-libsodium": "*",
         "ext-mbstring": "*",
-        "ext-mcrypt": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
         "ext-pdo_mysql": "*",
