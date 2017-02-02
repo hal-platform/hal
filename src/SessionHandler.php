@@ -7,8 +7,8 @@
 
 namespace QL\Hal;
 
-use MCP\Crypto\Exception\CryptoException;
-use MCP\Crypto\Package\TamperResistantPackage;
+use QL\Panthor\Encryption\LibsodiumSymmetricCrypto;
+use QL\Panthor\Exception\CryptoException;
 use QL\Panthor\Http\EncryptedCookies;
 
 class SessionHandler
@@ -31,7 +31,7 @@ class SessionHandler
     private $cookies;
 
     /**
-     * @var TamperResistantPackage
+     * @var LibsodiumSymmetricCrypto
      */
     private $encryption;
 
@@ -49,10 +49,10 @@ class SessionHandler
 
     /**
      * @param EncryptedCookies $cookies
-     * @param TamperResistantPackage $encryption
+     * @param LibsodiumSymmetricCrypto $encryption
      * @param array $settings
      */
-    public function __construct(EncryptedCookies $cookies, TamperResistantPackage $encryption, array $settings = [])
+    public function __construct(EncryptedCookies $cookies, LibsodiumSymmetricCrypto $encryption, array $settings = [])
     {
         $this->cookies = $cookies;
         $this->encryption = $encryption;

@@ -34,8 +34,8 @@ parameters:
     # ENCRYPTION
     ############################################################################
 
-    cookie.encryption.secret: 'ae9c0012b8892afc69140790103f9c7241d0cfe7e4a0c8f9ae9db077a83ccc51'
-    session.encryption.secret: '411f9d4093a3f5bcd3d9581de418fad0a0ddc31f6313905b33d805ce11b99a37'
+    cookie.encryption.secret: 'ae9c0012b8892afc69140790103f9c7241d0cfe7e4a0c8f9ae9db077a83ccc51ae9c0012b8892afc69140790103f9c7241d0cfe7e4a0c8f9ae9db077a83ccc51'
+    session.encryption.secret: '411f9d4093a3f5bcd3d9581de418fad0a0ddc31f6313905b33d805ce11b99a37411f9d4093a3f5bcd3d9581de418fad0a0ddc31f6313905b33d805ce11b99a37'
 
     encrypter.publickey: |
         -----BEGIN PUBLIC KEY-----

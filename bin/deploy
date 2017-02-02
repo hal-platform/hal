@@ -93,7 +93,7 @@ if [ "$BACKEND" = true ] ; then
     "$DIR"/verify-encrypted
 
     # Generate and export a new encryption secret
-    export HAL_ENCRYPTION_SECRET=$("$DIR/generate-trp-secret")
+    export HAL_ENCRYPTION_SECRET=$("$DIR/generate-cookie-secret")
 
     echo "$TITLE_CONFIG"
     "$DIR"/normalize-configuration

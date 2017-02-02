@@ -34,7 +34,7 @@ parameters:
     # ENCRYPTION
     ############################################################################
 
-    cookie.encryption.secret: '26885952e5a4c316aedd6f3e7c429ed8ec2b15f55e575337b9fc75e0b78ffec1'
+    cookie.encryption.secret: '26885952e5a4c316aedd6f3e7c429ed8ec2b15f55e575337b9fc75e0b78ffec126885952e5a4c316aedd6f3e7c429ed8ec2b15f55e575337b9fc75e0b78ffec1'
     # session.encryption.secret: resolved during build
 
     encrypter.publickey: |

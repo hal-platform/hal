@@ -100,13 +100,6 @@ services:
         arguments: ['%%s/%%s', ['@root', '.hal9000.push.yml']]
 
     ####################################################################################################################
-    # TRP COOKIES
-    ####################################################################################################################
-
-    cookie.encryption:
-        parent: 'panthor.plugin.cookie_encryption.trp_cookie'
-
-    ####################################################################################################################
     # ERROR & EXCEPTION HANDLING
     ####################################################################################################################
 
@@ -208,8 +201,7 @@ services:
             - '%session.cookie.configuration%'
 
     session.encryption:
-        class: 'MCP\Crypto\Package\TamperResistantPackage'
-        arguments: ['@session.encryption.factory', '%session.encryption.secret%']
+        class: 'QL\Panthor\Encryption\LibsodiumSymmetricCrypto'
+        arguments: ['%session.encryption.secret%']
 
-    session.encryption.factory:
-        class: 'MCP\Crypto\Primitive\Factory'
+
