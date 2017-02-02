@@ -17,8 +17,6 @@ parameters:
     github.app.id: ''
     github.app.secret: ''
 
-    logger.core.url: 'http://qlsonictest:2581/web/core/logentries'
-
     redis.server: 'test.example.com:6379'
     redis.prefix: 'hal9000test'
 

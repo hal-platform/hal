@@ -103,6 +103,9 @@ services:
     # ERROR & EXCEPTION HANDLING
     ####################################################################################################################
 
+    logger:
+        class: 'Psr\Log\NullLogger'
+
     error.handler:
         class: 'QL\Panthor\ErrorHandling\ErrorHandler'
         arguments: ['@logger']
@@ -135,9 +138,6 @@ services:
     exception.logger:
         class: 'QL\Hal\Application\ExceptionLogger'
         arguments: ['@logger']
-
-    panthor.plugin.logging.service:
-        parent: 'panthor.plugin.logging.core_service'
 
     # Twig error environment - limit the extensions used here, so we can ensure the error will render
     error.failsafe.environment:
