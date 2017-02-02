@@ -31,14 +31,12 @@
         "psr/log": "*",
 
         "ql/hal-core":          "2.10.0",
-        "ql/kraken-core":       "2.10.0",
         "ql/panthor-plugins":   "~1.0",
 
         "ql/mcp-cache":         "3.0.0",
         "ql/mcp-core":          "~1.1",
         "ql/mcp-corp-account":  "~1.0",
         "ql/mcp-crypto":        "~2.1.2",
-        "ql/mcp-qks":           "~2.0.3",
         "ql/mcp-logger":        "~2.4.0",
 
         "ql/mcp-common":        "~1.0",
