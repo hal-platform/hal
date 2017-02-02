@@ -11,6 +11,7 @@ services:
                 host: '%ldap.host%'
                 baseDn: '%ldap.baseDn%'
                 accountDomainNameShort: '%ldap.domain%'
+                port: '%ldap.port%'
 
     ldap:
         class: 'MCP\Corp\Account\QLAdService'

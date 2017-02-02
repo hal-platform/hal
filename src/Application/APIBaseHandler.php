@@ -18,12 +18,12 @@ class APIBaseHandler extends BaseHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Exception $exception)
+    public function handle($throwable)
     {
         if (!isset($_SERVER['REQUEST_URI']) || substr($_SERVER['REQUEST_URI'], 0, 5) !== '/api/') {
             return false;
         }
 
-        return parent::handle($exception);
+        return parent::handle($throwable);
     }
 }

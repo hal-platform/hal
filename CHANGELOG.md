@@ -12,6 +12,20 @@ Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`)
 - Knplabs github api library updated to `2.0.1`
     - Extended `Github\Client` to fix Enterprise Url bug in library
     - `QL\Hal\Github\MCPCache` replaced with `QL\Hal\Github\MCPCachePlugin`
+- Updating `symfony`, `slim`, and `panthor`
+    - Updating symfony/yaml (v2.7.2 => v2.8.16) 
+    - Updating symfony/dependency-injection (v2.7.2 => v2.8.16) 
+    - Updating symfony/config (v2.7.2 => v2.8.16) 
+    - Updating slim/slim (2.6.2 => 2.6.3) 
+    - Updating ql/mcp-panthor (2.3.1 => 2.4.0) 
+        - `APIBaseHandler::handle` updated to match panthor handle definition
+        - `APINotFoundHandler::handle` updated to match panthor handle definition
+    - Updating symfony/debug (v2.7.2 => v2.8.16) 
+    - Updating symfony/finder (v2.7.2 => v2.8.16) 
+    - Updating symfony/proxy-manager-bridge (v2.7.3 => v2.8.16) 
+    - Updating twig/twig (v1.23.1 => v2.1.0) 
+        - `base.kraken.twig` -- Explicitly imports `_partial/macros.twig` as twig no longer allows accessing implicit macros
+
 
 ## [2.9.0] - 2017-01-20
 

@@ -7,7 +7,6 @@
 
 namespace QL\Hal\Application;
 
-use Exception;
 use QL\Panthor\ErrorHandling\ExceptionHandlerInterface;
 use QL\Panthor\ErrorHandling\ExceptionRendererInterface;
 use QL\Panthor\Exception\NotFoundException;
@@ -41,9 +40,9 @@ class APINotFoundHandler implements ExceptionHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function handle(Exception $exception)
+    public function handle($throwable)
     {
-        if (!$exception instanceof NotFoundException) return false;
+        if (!$throwable instanceof NotFoundException) return false;
 
         if (!isset($_SERVER['REQUEST_URI']) || substr($_SERVER['REQUEST_URI'], 0, 5) !== '/api/') {
             return false;
@@ -54,7 +53,7 @@ class APINotFoundHandler implements ExceptionHandlerInterface
             'message' => 'Resource Not Found',
             'status' => $status,
             'severity' => 'NotFound',
-            'exception' => $exception
+            'exception' => $throwable
         ];
 
         $this->renderer->render($status, $context);

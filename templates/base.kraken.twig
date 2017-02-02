@@ -8,6 +8,7 @@
 
 {% block page_header %}
     {% embed '_partial/layout.header.twig' %}
+        {% import "_partial/macros.twig" as macros %}
         {% block banner %}
             <div class="hal">
                 <a href="{{ urlFor('kraken') }}" class="wrapper">

@@ -29,8 +29,7 @@ parameters:
 
     ldap.host: 'ldap.example.com'
     ldap.domain: 'MI'
-    ldap.baseDn: 'DC=mi,DC=corp'
-    ldap.username: ''
+    ldap.port: 389
 
     ############################################################################
     # doctrine
