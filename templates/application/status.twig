@@ -210,10 +210,6 @@
         {% if selected_environment and (views or deployment_statuses|length > 5) %}
             <li><a class="btn btn--secondary" href="{{ urlFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Deployment Views</a></li>
         {% endif %}
-
-        {% if kraken %}
-            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.status', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken</a></li>
-        {% endif %}
     </ul>
 {% endblock %}
 

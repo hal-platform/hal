@@ -11,13 +11,6 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-
-    @include breakpoint($bp-small) {
-        .kraken-label {
-            margin-bottom: 0;
-        }
-    }
-
     text-decoration: none;
 }
 

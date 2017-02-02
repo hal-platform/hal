@@ -66,10 +66,5 @@ module.exports = {
     },
     "collapsible": function() {
         require('./app/collapsible-table').init();
-    },
-
-    // Kraken
-    "kraken.property": function() {
-        require('./app/kraken/form-add-property').init();
     }
 };

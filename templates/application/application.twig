@@ -27,10 +27,6 @@
 
         <li><a class="btn btn--secondary" href="{{ urlFor('encrypted', {application: application.id}) }}">Encrypted Properties</a></li>
         <li><a class="btn btn--secondary" href="{{ urlFor('deployments', {application: application.id}) }}">Deployment Targets</a></li>
-
-        {% if kraken %}
-            <li><a class="btn btn--secondary" href="{{ urlFor('kraken.application', {application: kraken.id}) }}">{{ macros.icon('squid') }} Kraken Configuration</a></li>
-        {% endif %}
     </ul>
 
     {% if canEdit or canRemove %}
