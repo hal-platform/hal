@@ -48,9 +48,7 @@ services:
         class: 'Doctrine\Common\EventManager'
         calls:
             - ['addEventListener', [['onFlush'], '@doctrine.listener.logger']]
-            - ['addEventListener', [['onFlush'], '@doctrine.listener.kraken.logger']]
             - ['addEventListener', [['prePersist'], '@doctrine.listener.persist']]
-            - ['addEventListener', [['prePersist'], '@doctrine.listener.kraken.persist']]
 
     doctrine.listener.logger:
         class: 'QL\Hal\Core\Listener\DoctrineChangeLogger'
@@ -62,17 +60,6 @@ services:
     doctrine.listener.persist:
         class: 'QL\Hal\Core\Listener\DoctrinePersistListener'
         arguments: ['@clock']
-
-    doctrine.listener.kraken.persist:
-        class: 'QL\Kraken\Core\Listener\DoctrinePersistListener'
-        arguments: ['@clock']
-
-    doctrine.listener.kraken.logger:
-        class: 'QL\Kraken\Core\Listener\DoctrineChangeLogger'
-        arguments:
-            - '@clock'
-            - '@doctrine.random'
-            - '@doctrine.utility.lazy.user'
 
     doctrine.cache:
         class: 'QL\Hal\Core\Utility\DoctrinePredisCache'
@@ -102,7 +89,6 @@ services:
             - ['addRoutes', ['%routes.api.crud%']]
             - ['addRoutes', ['%routes.admin%']]
             - ['addRoutes', ['%routes.application%']]
-            - ['addRoutes', ['%kraken.routes%']]
 
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'

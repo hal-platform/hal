@@ -136,7 +136,7 @@ services:
 
     twig.auto.template:
         parent: 'twig.template'
-        class: 'QL\Kraken\Application\AutoRenderingTemplate'
+        class: 'QL\Hal\Application\AutoRenderingTemplate'
         calls: [['setResponse', ['@slim.response']]]
 
     twig.extension.hal:
@@ -160,7 +160,6 @@ services:
                 applicationSha: '%application.sha%'
                 applicationVersion: '%application.major.version%'
                 applicationEnvironment: '%application.environment%'
-                applicationKrakenTitle: '%application.kraken.title%'
 
     twig.extension.hal.lazy:
         class: 'QL\Hal\Twig\LazyUserExtension'
@@ -192,7 +191,6 @@ services:
             - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
             - ['addExtension', ['@twig.extension.status']]
-            - ['addExtension', ['@kraken.twig.extension']]
 
     ####################################################################################################################
     # HTTP Plug

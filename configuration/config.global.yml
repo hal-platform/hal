@@ -1,7 +1,6 @@
 parameters:
     # use this file for default settings that can be overridden by dev|test|prod config
     application.title: 'Hal'
-    application.kraken.title: 'Kraken'
     application.environment: ''
 
     ############################################################################
@@ -88,17 +87,6 @@ parameters:
     # cookie
     ############################################################################
 
-    navigation.list:
-        dashboard: 'Dashboard'
-        queue: 'Queue'
-        applications: 'Applications'
-        servers: 'Servers'
-        environments: 'Environments'
-        users: 'Users'
-        admin: 'Admin'
-        help: 'Help'
-        kraken: 'Kraken'
-
     session.encryption.secret: ''
     session.cookie.configuration:
         lifetime: '5 days'
@@ -118,14 +106,7 @@ parameters:
     hal.agents: []
 
     ############################################################################
-    # kraken
-    ############################################################################
-
-    kraken.environmentalize: true
-
-    ############################################################################
     # crypto
     ############################################################################
 
-    encrypter.kraken.secret.path: 'configuration/kraken.encrypter.secret'
     encrypter.hal.secret.path: 'configuration/hal.encrypter.secret'
