@@ -22,17 +22,6 @@
                     {% endif %}
                 </p>
             </li>
-
-            <li class="mvs">
-                <span class="split__title">Active Directory</span>
-                <p class="mvn">
-                    {% if ldapUser %}
-                        {{ macros.status('Active', 'success', 'tick') }}
-                    {% else %}
-                        {{ macros.status('Inactive', 'error', 'nope') }}
-                    {% endif %}
-                </p>
-            </li>
         {% endif %}
 
         <li class="mvs">

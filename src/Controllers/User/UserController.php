@@ -59,7 +59,6 @@ class UserController implements ControllerInterface
         TemplateInterface $template,
         User $user,
         EntityManagerInterface $em,
-        LdapService $ldap,
         PermissionService $permissions,
         Json $json
     ) {
