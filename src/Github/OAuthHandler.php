@@ -64,7 +64,7 @@ class OAuthHandler
         $response = $this->guzzle->post($url, [
             'exceptions' => false,
             'headers' => ['Accept' => 'application/json'],
-            'form_params' => [
+            'json' => [
                 'client_id' => $this->ghClientId,
                 'client_secret' => $this->ghClientSecret,
                 'code' => $code
