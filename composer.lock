@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "23fd89a734ed853151b7fa857ef42444",
+    "content-hash": "2935ee8cd60626b68779eb6a3aee4469",
     "packages": [
         {
             "name": "cache/adapter-common",
@@ -2369,16 +2369,16 @@
         },
         {
             "name": "ql/uri-template",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/QuickenLoans/uri-template.git",
-                "reference": "4b6b5cf150625ef0274ffa45b0588416ae545c65"
+                "reference": "ea0b70ec757658529331c7861ec39b0a58fc61a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QuickenLoans/uri-template/zipball/4b6b5cf150625ef0274ffa45b0588416ae545c65",
-                "reference": "4b6b5cf150625ef0274ffa45b0588416ae545c65",
+                "url": "https://api.github.com/repos/QuickenLoans/uri-template/zipball/ea0b70ec757658529331c7861ec39b0a58fc61a1",
+                "reference": "ea0b70ec757658529331c7861ec39b0a58fc61a1",
                 "shasum": ""
             },
             "require": {
@@ -2388,7 +2388,8 @@
             },
             "require-dev": {
                 "phpunit/php-invoker": "*",
-                "phpunit/phpunit": "*"
+                "phpunit/phpunit": "*",
+                "satooshi/php-coveralls": "dev-master@dev"
             },
             "type": "library",
             "autoload": {
@@ -2408,7 +2409,14 @@
             ],
             "description": "An implementation of RFC 6570 level 4",
             "homepage": "https://github.com/QuickenLoans/uri-template",
-            "time": "2013-08-28T18:35:46+00:00"
+            "keywords": [
+                "URI Template",
+                "rfc6570",
+                "template",
+                "uri",
+                "url"
+            ],
+            "time": "2015-12-09T10:44:44+00:00"
         },
         {
             "name": "react/promise",

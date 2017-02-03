@@ -37,7 +37,6 @@
 
         "ql/mcp-common":        "~1.0",
         "ql/mcp-panthor":       "~2.4.0",
-        "ql/uri-template":      "~1.0",
 
         "slim/slim": "~2.6",
 
