@@ -4,20 +4,23 @@ services:
     # NON-DATABASE SERVICES
     ####################################################################################################################
 
-    ldap.transport:
-        class: 'Zend\Ldap\Ldap'
+    ldap.auth:
+        class: 'QL\Hal\Auth'
         arguments:
+            - '@ldap.auth.symfony'
+            - '%ldap.base_dn%'
+            - '%ldap.domain%'
+            - 'person'
+            - 'sAMAccountName'
+
+    ldap.auth.symfony:
+        class: 'Symfony\Component\Ldap\Ldap'
+        factory: ['Symfony\Component\Ldap\Ldap', 'create']
+        arguments:
+            - 'ext_ldap'
             -
                 host: '%ldap.host%'
-                baseDn: '%ldap.baseDn%'
-                accountDomainNameShort: '%ldap.domain%'
                 port: '%ldap.port%'
-
-    ldap:
-        class: 'MCP\Corp\Account\QLAdService'
-        arguments: ['@ldap.transport']
-        calls:
-            - ['authenticate', ['%ldap.username%', '%ldap.password%', false]]
 
     permissions:
         class: 'QL\Hal\Service\PermissionService'

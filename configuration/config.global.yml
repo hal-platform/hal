@@ -7,7 +7,6 @@ parameters:
     # Encrypted Properties - Replaced at deploy time
     ############################################################################
 
-    ldap.password: ''
     database.password: ''
 
     ############################################################################
@@ -28,6 +27,7 @@ parameters:
 
     ldap.host: 'ldap.example.com'
     ldap.domain: 'MI'
+    ldap.base_dn: 'dc=mi,dc=corp'
     ldap.port: 389
 
     ############################################################################

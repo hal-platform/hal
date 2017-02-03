@@ -137,9 +137,7 @@ services:
         class: 'QL\Hal\Controllers\Admin\Super\UserManagementController'
         arguments:
             - '@admin.users.twig'
-            - '@ldap'
             - '@doctrine.em'
-            - '@slim.request'
     admin.users.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['admin/users.management.twig']]]

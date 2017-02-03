@@ -9,8 +9,7 @@ namespace QL\Hal\Controllers;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\Corp\Account\LdapService;
-use MCP\Corp\Account\User as LdapUser;
+use QL\Hal\Auth;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserSettings;
 use QL\Hal\Session;
@@ -31,9 +30,9 @@ class LoginHandler implements MiddlewareInterface
     private $context;
 
     /**
-     * @var LdapService
+     * @var Auth
      */
-    private $ldap;
+    private $auth;
 
     /**
      * @var UserRepository
@@ -76,7 +75,7 @@ class LoginHandler implements MiddlewareInterface
      */
     public function __construct(
         Context $context,
-        LdapService $ldap,
+        Auth $auth,
         EntityManagerInterface $em,
         Session $session,
         Url $url,
@@ -84,7 +83,7 @@ class LoginHandler implements MiddlewareInterface
         Request $request
     ) {
         $this->context = $context;
-        $this->ldap = $ldap;
+        $this->auth = $auth;
         $this->userRepo = $em->getRepository(User::CLASS);
         $this->em = $em;
         $this->session = $session;
@@ -113,11 +112,11 @@ class LoginHandler implements MiddlewareInterface
         }
 
         // auth failed
-        if (!$account = $this->ldap->authenticate($username, $password)) {
+        if (!$account = $this->auth->authenticate($username, $password)) {
             return $this->context->addContext(['errors' => [self::ERR_AUTH_FAILURE]]);
         }
 
-        $user = $this->userRepo->findOneBy(['handle' => $account->windowsUsername()]);
+        $user = $this->userRepo->findOneBy(['handle' => $account['username']]);
 
         // account disabled manually
         if ($user && !$user->isActive()) {
@@ -145,13 +144,13 @@ class LoginHandler implements MiddlewareInterface
     }
 
     /**
-     * @param LdapUser $account
+     * @param array $account
      * @param User $user
      * @param bool $isFirstLogin
      *
      * @return null
      */
-    private function updateUserDetails(LdapUser $account, User $user, $isFirstLogin)
+    private function updateUserDetails(array $account, User $user, $isFirstLogin)
     {
         if ($isFirstLogin) {
             // generate an id between 100,000,000 - 200,000,000.
@@ -160,13 +159,13 @@ class LoginHandler implements MiddlewareInterface
 
             $user
                 ->withId($id)
-                ->withHandle($account->windowsUsername());
+                ->withHandle($account['username']);
         }
 
         // Always ensure email and name is in sync
         $user
-            ->withEmail($account->email() ?: '')
-            ->withName($account->displayName() ?: '');
+            ->withEmail($account['email'] ?: '')
+            ->withName($account['name'] ?: '');
 
         // Add user settings if not set.
         if (!$user->settings()) {

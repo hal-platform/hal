@@ -25,13 +25,9 @@
                     <span data-initial="{{ displayName }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
                 {% endif %}
             </h1>
-            {% if ldapUser and ldapUser.title %}
-                <h4 class="mtn">{{ ldapUser.title }}</h4>
-                <p>{{ ldapUser.teamName }}</p>
-            {% else %}
-                <h4 class="mtn">Astronaut</h4>
-                <p>Discovery One</p>
-            {% endif %}
+
+            <h4 class="mtn">Astronaut</h4>
+            <p>Discovery One</p>
         </div>
     </div>
 
@@ -46,30 +42,6 @@
                     None
                 {% endif %}
             </li>
-            {% if ldapUser %}
-                <li>
-                    <span class="split__title">Phone</span>
-                    {% if ldapUser.workPhone %}
-                        {{ ldapUser.workPhone }} (x{{ ldapUser.workExt }})
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </li>
-
-                <li>
-                    <span class="split__title">Mobile</span>
-                    {% if ldapUser.mobilePhone %}
-                        {{ ldapUser.mobilePhone }}
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </li>
-
-                <li>
-                    <span class="split__title">QUniverse Profile</span>
-                    <a href="http://quniverse/profiles/Person.aspx?accountname=MI%5c{{ user.handle }}">QUniverse Profile</a>
-                </li>
-            {% endif %}
 
             <li>
                 <span class="split__title">GitHub Profile</span>

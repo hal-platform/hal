@@ -5,30 +5,14 @@
 
 {% block content %}
 
-    {% if pruned %}
-        {% set alert_message = 'The users <strong>' ~ pruned|join(', ') ~ '</strong> have been disabled.' %}
-        {{ macros.alert('success', alert_message) }}
-
-    {% elseif no_pruned %}
-        {% set alert_message = 'No users were disabled. All inactive users are already disabled in Hal.' %}
-        {{ macros.alert('info', alert_message) }}
-    {% endif %}
-
     <h1>{{ page_title }}</h1>
-
-    {% if not pruned and not no_pruned %}
-        <p>
-            <a href="{{ urlFor('admin.super.users', {}, {prune: 1}) }}" class="btn btn--destructive">Disable inactive users</a>
-        </p>
-    {% endif %}
 
     <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
         <thead>
             <tr>
                 <th>User ID</th>
                 <th>Username</th>
-                <th>Hal Status</th>
-                <th>LDAP Status</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -44,17 +28,6 @@
                     {% else %}
                         <span class="icon--error-inverse">
                             {{ macros.icon('nope') }} Inactive
-                        </span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if user.ldap_active %}
-                        <span class="icon--success">
-                            {{ macros.icon('tick') }} Active
-                        </span>
-                    {% else %}
-                        <span class="icon--error-inverse">
-                            {{ macros.icon('remove') }} Removed
                         </span>
                     {% endif %}
                 </td>

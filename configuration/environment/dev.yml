@@ -7,8 +7,6 @@ parameters:
     # service configuration
     ############################################################################
 
-    ldap.password: ''
-
     database.username: 'root'
     database.password: ''
     database.database: 'hal'

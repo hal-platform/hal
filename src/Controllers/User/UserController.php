@@ -8,7 +8,6 @@
 namespace QL\Hal\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use MCP\Corp\Account\LdapService;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Hal\Service\PermissionService;
@@ -39,11 +38,6 @@ class UserController implements ControllerInterface
     private $userRepo;
 
     /**
-     * @var LdapService
-     */
-    private $ldap;
-
-    /**
      * @var PermissionService
      */
     private $permissions;
@@ -58,7 +52,6 @@ class UserController implements ControllerInterface
      * @param User $user
      * @param EntityManagerInterface $em
      *
-     * @param LdapService $ldap
      * @param PermissionService $permissions
      * @param Json $json
      */
@@ -75,7 +68,6 @@ class UserController implements ControllerInterface
 
         $this->userRepo = $em->getRepository(User::CLASS);
 
-        $this->ldap = $ldap;
         $this->permissions = $permissions;
         $this->json = $json;
     }
@@ -96,8 +88,6 @@ class UserController implements ControllerInterface
             'leadApplications' => $appPerm['lead'],
             'prodApplications' => $appPerm['prod'],
             'nonProdApplications' => $appPerm['non_prod'],
-
-            'ldapUser' => $this->ldap->getUserByWindowsUsername($this->user->handle()),
 
             'builds' => $stats['builds'],
             'pushes' => $stats['pushes']

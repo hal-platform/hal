@@ -31,7 +31,7 @@ services:
         class: 'QL\Hal\Controllers\LoginHandler'
         arguments:
             - '@twig.context'
-            - '@ldap'
+            - '@ldap.auth'
             - '@doctrine.em'
             - '@session'
             - '@url'
@@ -376,7 +376,6 @@ services:
             - '@user.twig'
             - '@hal.user'
             - '@doctrine.em'
-            - '@ldap'
             - '@permissions'
             - '@json'
         calls:

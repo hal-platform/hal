@@ -7,8 +7,6 @@ parameters:
     # service configuration
     ############################################################################
 
-    # ldap.password: resolved during build
-
     database.username: 'placeholder'
     database.database: 'hal9000_test'
     database.server: 'test.example.com'
