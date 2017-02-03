@@ -8,6 +8,7 @@
 namespace QL\Hal\Github;
 
 use GuzzleHttp\Client as Guzzle;
+use QL\Panthor\Utility\Json;
 
 class OAuthHandler
 {
@@ -28,6 +29,10 @@ class OAuthHandler
      * @var array
      */
     private static $requiredScopes = ['repo:status', 'repo_deployment'];
+    /**
+     * @var Json
+     */
+    private $json;
 
     /**
      * @param Guzzle $guzzle
@@ -36,7 +41,7 @@ class OAuthHandler
      * @param string $ghClientId
      * @param string $ghClientSecret
      */
-    public function __construct(Guzzle $guzzle, $ghBaseApiUrl, $ghBaseUrl, $ghClientId, $ghClientSecret)
+    public function __construct(Guzzle $guzzle, $ghBaseApiUrl, $ghBaseUrl, $ghClientId, $ghClientSecret, Json $json)
     {
         $this->guzzle = $guzzle;
 
@@ -44,6 +49,7 @@ class OAuthHandler
         $this->ghBaseUrl = $ghBaseUrl;
         $this->ghClientId = $ghClientId;
         $this->ghClientSecret = $ghClientSecret;
+        $this->json = $json;
     }
 
     /**
@@ -58,7 +64,7 @@ class OAuthHandler
         $response = $this->guzzle->post($url, [
             'exceptions' => false,
             'headers' => ['Accept' => 'application/json'],
-            'body' => [
+            'form_params' => [
                 'client_id' => $this->ghClientId,
                 'client_secret' => $this->ghClientSecret,
                 'code' => $code
@@ -69,7 +75,7 @@ class OAuthHandler
             return '';
         }
 
-        $decoded = $response->json();
+        $decoded = $this->json->decode($response->getBody()->getContents());
         if (!isset($decoded['access_token']) || !$decoded['access_token']) {
             return '';
         }

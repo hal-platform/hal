@@ -207,8 +207,7 @@ services:
             - '%cache.github.short.ttl%'
 
     plug.http_stream_factory:
-        class: 'Psr\Http\Message\StreamInterface\StreamFactory'
-        factory: ['Http\Discovery\StreamFactoryDiscovery', 'find']
+        class: 'Http\Message\StreamFactory\GuzzleStreamFactory'
 
     ####################################################################################################################
     # GitHub

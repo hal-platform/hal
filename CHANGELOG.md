@@ -12,7 +12,7 @@ Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`)
 - Knplabs github api library updated to `2.0.1`
     - Extended `Github\Client` to fix Enterprise Url bug in library
     - `QL\Hal\Github\MCPCache` replaced with `QL\Hal\Github\MCPCachePlugin`
-- Updating `symfony`, `slim`, and `panthor`
+- Updating `symfony`, `slim`, `twig` and `panthor`
     - Updating symfony/yaml (v2.7.2 => v2.8.16) 
     - Updating symfony/dependency-injection (v2.7.2 => v2.8.16) 
     - Updating symfony/config (v2.7.2 => v2.8.16) 
@@ -26,6 +26,9 @@ Sections: (`Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`)
     - Updating twig/twig (v1.23.1 => v2.1.0) 
         - `base.kraken.twig` -- Explicitly imports `_partial/macros.twig` as twig no longer allows accessing implicit macros
 
+- Updating `ql/guzzle`
+     - Updating guzzlehttp/guzzle (5.3.0 => 6.2.2) 
+     - Installing php-http/guzzle6-adapter (v1.1.1) 
 
 ## [2.9.0] - 2017-01-20
 

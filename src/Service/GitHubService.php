@@ -344,7 +344,8 @@ class GitHubService
      * @param $repo
      * @param $base
      * @param $head
-     * @return \Guzzle\Http\EntityBodyInterface|mixed|string
+     *
+     * @return array|string
      */
     public function diff($user, $repo, $base, $head)
     {
