@@ -221,6 +221,7 @@ services:
             - '%github.site.baseurl%'
             - '%github.app.id%'
             - '%github.app.secret%'
+            - '@json'
 
     github.url_builder:
         class: 'QL\Hal\Github\GitHubURLBuilder'
