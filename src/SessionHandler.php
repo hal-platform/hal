@@ -64,12 +64,13 @@ class SessionHandler
      */
     public function load()
     {
-        $serialized = $this->cookies->getCookie($this->settings['name']);
-        $this->cookieHash = sha1($serialized);
+        $encoded = $this->cookies->getCookie($this->settings['name']);
+        $this->cookieHash = sha1($encoded);
 
-        if ($serialized) {
+        if ($encoded) {
             try {
-                $decrypted = $this->encryption->decrypt($serialized);
+                $encrypted = base64_decode($encoded);
+                $decrypted = $this->encryption->decrypt($encrypted);
             } catch (CryptoException $ex) {
                 $decrypted = null;
             }
@@ -94,9 +95,11 @@ class SessionHandler
      */
     public function save(Session $session)
     {
-        $serialized = serialize($session);
+        // wipe user first. This is only used for in-memory. Not persisted to cookie.
+        $session->user(null);
 
-        $encrypted = $this->encryption->encrypt($serialized);
+        $serialized = serialize($session);
+        $encrypted = base64_encode($this->encryption->encrypt($serialized));
 
         // Skip cookie rendering if it was not modified
         if ($this->cookieHash && $this->cookieHash === sha1($encrypted)) {
@@ -106,7 +109,7 @@ class SessionHandler
         // If cookie size is too big, kill everything.
         if (strlen($encrypted) > 4096) {
             $serialized = serialize($this->buildSession());
-            $encrypted = $this->encryption->encrypt($serialized);
+            $encrypted = base64_encode($this->encryption->encrypt($serialized));
         }
 
         $this->cookies->setCookie(

@@ -8,6 +8,7 @@
 namespace QL\Hal;
 
 use QL\MCP\Common\GUID;
+use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Ldap\Ldap;
 
 class Auth
@@ -54,7 +55,13 @@ class Auth
 
         $user = sprintf('%s\%s', $this->domain, $username);
 
-        $this->ldap->bind($user, $password);
+        try {
+            $this->ldap->bind($user, $password);
+
+        // Symfony suppresses errors, but our error handler does not properly ignore suppressed errors.
+        } catch (\Exception $ex) {
+            return null;
+        }
 
         $query = sprintf('(&(objectclass=%s)(%s=%s))', $this->userObject, $this->usernameAttribute, $username);
 
