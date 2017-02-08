@@ -26,7 +26,6 @@
         "guzzlehttp/guzzle": "6.*",
         "php-http/guzzle6-adapter": "~1.1.0",
         "knplabs/github-api": "~2.0.1",
-        "cache/predis-adapter": "~0.4.2",
         "paragonie/random_compat": "~1.1",
         "predis/predis": "~1.0",
         "psr/log": "*",
