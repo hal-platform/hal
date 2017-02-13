@@ -1,57 +1,38 @@
-# Hal
+# Hal Deployment Platform
 
-- [Hal Development Setup](#hal-development-setup)
+- [Development Setup](#development-setup)
 - [Server Requirements](#server-requirements)
-- [Proprietary Dependencies](#proprietary-dependencies)
-- [Encryption](#encryption)
 
-## Hal Development Setup
+## Development Setup
 
-#### Database
+1. Clone the project.
 
-Hal uses a MySQL database as a back-end. In order to develop Hal you will need to install MySQL (or MariaDB) on your system.
+2. Set up database.
+    > Hal uses a MySQL or Postgres database backend. Ensure one of these is installed and
+    > update the `database.*` properties in your config with connection details.
+    >
+    > Schema and migrations are handled by `hal-core` package. You will need to separately clone `hal-core` and run the phinx migrations.
 
-The default connection settings for Hal:
+3. Set up a web server (such as NGINX).
+    > Set up your vhost to point to `../public/index.php` and `../public` as your doc root.
 
-Setting   | Default
---------- | -------
-server    | `localhost`
-database  | `hal`
-username  | `root`
+4. Run `bin/install` to install PHP and Node dependencies.
 
-These can be changed in your `config.env.yml`.
+5. Copy `configuration/environment/dev.yml` to `configuration/config.env.yml`
+    > Run `bin/normalize-configuration` to do this automatically.
 
-The schema is located in the `hal-core` and `kraken-core` packages which contains doctrine repositories and models for all hal deployments. Run the phinx migrations included with `hal-core` then in `kraken-core`.
-
-Sometimes the schema changes between releases. Make sure to run the migrations included with `hal-core` and `kraken-core` in the release notes to stay up to date.
-
-#### Web server
-
-Create a vhost configuration for your web server with the following settings:
-
-Setting   | Value
---------- | -------
-root      | `/path/to/hal/public`
-index     | `/path/to/hal/public/index.php`
-
-#### Application configuration
-
-1. Run `bin/install` to install PHP and Node dependencies.
-2. Run `bin/normalize-configuration`.
-
-This will copy `app/environment/config.dev.yml` to `app/config.env.yml`. You may edit this file, as it is gitignored and will not be committed.
-
-#### Application compilation
-
-1. Run `npm run build`.
-
-This will process and optimize the CSS and JS.
+6. Update `configuration/config.env.yml` with any specific details for your local dev environment.
+7. Run `yarn run build`.
+    > Runs frontend (css, js) code build process and compilation to optimize assets.
 
 ## Server Requirements
 
 Hal requires the following server environment:
 
-- **PHP 5.6+**
+- **NGINX/FPM**
+- **MySQL or Postgres database**
+- **Redis server for caching**
+- **PHP 7.1+**
     - The following extensions must be installed:
     - `ext-apc`
     - `ext-curl`
@@ -68,51 +49,3 @@ Hal requires the following server environment:
     - `ext-SimpleXML`
     - `ext-xmlwriter`
     - `ext-zip`
-- **NGINX/FPM or Apache**
-- **MySQL Database**
-- **Redis server for caching**
-
-## Proprietary Dependencies
-
-#### Frontend
-
-- `mcp-logger` (Core Logger)
-- `mcp-corp-account` (Login auth, profile data)
-- `mcp-crypto` (Cookie encryption, Kraken encryption)
-- `mcp-qks` (Kraken encryption)
-- `mcp-cache`(Caching)
-- `ql/panthor-plugins` (Panthor/MCP Integration)
-
-#### Agent
-
-- `mcp-logger` (Core logger)
-
-## Encryption
-
-The Hal frontend application uses encryption for three purposes:
-
-#### 1. Symmetric Encryption
-
-For sensitive data at rest in the Hal database.
-This encryption method requires **libsodium** and uses `TamperResistantPackage`.
-
-- Kraken Sensitive Values
-    - The secret is stored in a file on the filesystem: `configuration/kraken.encrypter.secret`
-- Cookies
-    - The secret is stored in configuration: `%cookie.encryption.secret%`
-
-#### 2. Assymetric Encryption
-
-For values that must only be decrypted by the Hal Agents.
-This encryption method requires **openssl** and uses `openssl_seal/openssl_open`. These values cannot be decrypted by the frontend.
-
-- Encrypted Properties
-- Credentials
-    - Currently only used by AWS deployments (EB, CD, S3)
-
-#### 3. QKS Symmetric Encryption
-
-For Kraken configuration sent to Consul.
-This encryption method requires **libsodium** and uses `QuickenMessagePackage`.
-
-Kraken configuration is encrypted while at rest in the Hal db. When configuration is deployed each property is re-encrypted using the QKS crypto packaging.
