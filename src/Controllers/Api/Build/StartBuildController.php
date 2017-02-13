@@ -5,16 +5,16 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api\Build;
+namespace Hal\UI\Controllers\Api\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Predis\Client as Predis;
+use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\Validator\BuildStartValidator;
+use Hal\UI\Validator\PushStartValidator;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Validator\BuildStartValidator;
-use QL\Hal\Validator\PushStartValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Exception\HTTPProblemException;
 

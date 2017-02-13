@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application;
+namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Service\StickyEnvironmentService;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Service\StickyEnvironmentService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;

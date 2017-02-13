@@ -5,14 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application;
+namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Application;
-use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 
 class RemoveApplicationController implements ControllerInterface

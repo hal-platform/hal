@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\Deployment;
+namespace Hal\UI\Controllers\Application\Deployment;
 
 use QL\Hal\Core\Entity\Deployment;
 use QL\Panthor\ControllerInterface;

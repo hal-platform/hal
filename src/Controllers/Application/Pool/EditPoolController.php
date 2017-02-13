@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\Pool;
+namespace Hal\UI\Controllers\Application\Pool;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
+use Hal\UI\Service\PoolService;
+use Hal\UI\Utility\ValidatorTrait;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\DeploymentView;
-use QL\Hal\Flasher;
-use QL\Hal\Service\PoolService;
-use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;

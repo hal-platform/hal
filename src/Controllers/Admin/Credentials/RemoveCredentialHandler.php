@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Credentials;
+namespace Hal\UI\Controllers\Admin\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 
 class RemoveCredentialHandler implements ControllerInterface

@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\Deployment;
+namespace Hal\UI\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
+use Hal\UI\Validator\DeploymentValidator;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Flasher;
-use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use Slim\Http\Request;

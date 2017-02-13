@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Api\Normalizer;
+namespace Hal\UI\Api\Normalizer;
 
-use QL\Hal\Api\Hyperlink;
-use QL\Hal\Api\NormalizerInterface;
-use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\Api\Hyperlink;
+use Hal\UI\Api\NormalizerInterface;
+use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Group;
 
 class GroupNormalizer implements NormalizerInterface

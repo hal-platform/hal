@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api;
+namespace Hal\UI\Controllers\Api;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\Criteria;
-use QL\Hal\Api\Normalizer\BuildNormalizer;
-use QL\Hal\Api\Normalizer\PushNormalizer;
-use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\Api\Normalizer\BuildNormalizer;
+use Hal\UI\Api\Normalizer\PushNormalizer;
+use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\MCP\Common\Time\Clock;

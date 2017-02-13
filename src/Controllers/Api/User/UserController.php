@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api\User;
+namespace Hal\UI\Controllers\Api\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Core\Repository\UserRepository;
+use Hal\UI\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Repository\UserRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Exception\HTTPProblemException;
 

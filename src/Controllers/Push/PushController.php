@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Push;
+namespace Hal\UI\Controllers\Push;
 
+use Hal\UI\Service\EventLogService;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Service\EventLogService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

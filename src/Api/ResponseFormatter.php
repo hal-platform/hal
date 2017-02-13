@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Api;
+namespace Hal\UI\Api;
 
-use QL\Hal\Api\Utility\HypermediaFormatter;
+use Hal\UI\Api\Utility\HypermediaFormatter;
 use QL\MCP\Cache\CachingTrait;
 use Slim\Http\Request;
 use Slim\Http\Response;

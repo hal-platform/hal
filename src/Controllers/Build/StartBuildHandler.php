@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Build;
+namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
+use Hal\UI\Service\StickyEnvironmentService;
+use Hal\UI\Validator\BuildStartValidator;
+use Hal\UI\Validator\PushStartValidator;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Service\StickyEnvironmentService;
-use QL\Hal\Flasher;
-use QL\Hal\Validator\BuildStartValidator;
-use QL\Hal\Validator\PushStartValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use Slim\Http\Request;

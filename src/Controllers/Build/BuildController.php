@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Build;
+namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Service\EventLogService;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Process;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Service\EventLogService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

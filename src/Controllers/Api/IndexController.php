@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api;
+namespace Hal\UI\Controllers\Api;
 
-use QL\Hal\Api\Hyperlink;
-use QL\Hal\Api\ResponseFormatter;
+use Hal\UI\Api\Hyperlink;
+use Hal\UI\Api\ResponseFormatter;
 use QL\Panthor\ControllerInterface;
 
 class IndexController implements ControllerInterface

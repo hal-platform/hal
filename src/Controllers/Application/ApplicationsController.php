@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application;
+namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -13,7 +13,7 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserSettings;
-use QL\Hal\Core\Entity\Repository\ApplicationRepository;
+use QL\Hal\Core\Repository\ApplicationRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

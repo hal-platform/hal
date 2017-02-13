@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers;
+namespace Hal\UI\Controllers;
 
-use QL\Hal\Service\StatsService;
+use Hal\UI\Service\StatsService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

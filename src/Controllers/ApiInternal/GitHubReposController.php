@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\ApiInternal;
+namespace Hal\UI\Controllers\ApiInternal;
 
-use QL\Hal\Service\GitHubService;
+use Hal\UI\Service\GitHubService;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
 

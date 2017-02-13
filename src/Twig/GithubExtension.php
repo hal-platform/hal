@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Twig;
+namespace Hal\UI\Twig;
 
 use Exception;
-use QL\Hal\Github\GitHubURLBuilder;
-use QL\Hal\Service\GitHubService;
+use Hal\UI\Github\GitHubURLBuilder;
+use Hal\UI\Service\GitHubService;
 use QL\MCP\Cache\CachingTrait;
 use Twig_Extension;
 use Twig_SimpleFilter;

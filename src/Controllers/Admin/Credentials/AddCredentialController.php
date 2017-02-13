@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Credentials;
+namespace Hal\UI\Controllers\Admin\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Crypto\Encrypter;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Credential\AWSCredential;
 use QL\Hal\Core\Type\EnumType\CredentialEnum;
-use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;

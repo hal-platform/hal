@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\Deployment;
+namespace Hal\UI\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 
 class RemoveDeploymentHandler implements ControllerInterface

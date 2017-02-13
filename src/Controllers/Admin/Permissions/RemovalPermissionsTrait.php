@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Permissions;
+namespace Hal\UI\Controllers\Admin\Permissions;
 
-use QL\Hal\Service\UserPerm;
+use Hal\UI\Service\UserPerm;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Type\EnumType\UserTypeEnum;
 

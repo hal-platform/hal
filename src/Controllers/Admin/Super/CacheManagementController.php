@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Super;
+namespace Hal\UI\Controllers\Admin\Super;
 
 use Predis\Client as Predis;
 use Predis\Collection\Iterator\Keyspace;

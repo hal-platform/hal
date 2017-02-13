@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api\Group;
+namespace Hal\UI\Controllers\Api\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Api\Normalizer\GroupNormalizer;
-use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\Api\Normalizer\GroupNormalizer;
+use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 

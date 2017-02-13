@@ -5,14 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\User\Token;
+namespace Hal\UI\Controllers\User\Token;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
+use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Flasher;
-use QL\Hal\Service\PermissionService;
 use QL\Panthor\Slim\NotFound;
 use QL\Panthor\ControllerInterface;
 

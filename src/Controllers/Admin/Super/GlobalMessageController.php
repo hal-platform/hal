@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Super;
+namespace Hal\UI\Controllers\Admin\Super;
 
-use QL\Hal\Service\GlobalMessageService;
-use QL\Hal\Flasher;
+use Hal\UI\Flasher;
+use Hal\UI\Service\GlobalMessageService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;

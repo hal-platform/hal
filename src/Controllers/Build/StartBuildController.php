@@ -5,16 +5,16 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Build;
+namespace Hal\UI\Controllers\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Service\GitHubService;
+use Hal\UI\Service\StickyEnvironmentService;
+use Hal\UI\Utility\ReleaseSortingTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Service\GitHubService;
-use QL\Hal\Service\StickyEnvironmentService;
-use QL\Hal\Utility\ReleaseSortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;

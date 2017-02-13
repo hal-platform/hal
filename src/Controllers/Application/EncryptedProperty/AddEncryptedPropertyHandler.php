@@ -5,17 +5,17 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\EncryptedProperty;
+namespace Hal\UI\Controllers\Application\EncryptedProperty;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Flasher;
+use Hal\UI\Flasher;
+use Hal\UI\Utility\ValidatorTrait;
 use QL\Hal\Core\Crypto\Encrypter;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Utility\ValidatorTrait;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use Slim\Http\Request;

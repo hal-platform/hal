@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Service;
+namespace Hal\UI\Service;
 
 use Github\Api\GitData\Commits as CommitApi;
 use Github\Api\GitData\References as ReferenceApi;
@@ -16,7 +16,6 @@ use Github\Api\Repository\Commits as RepoCommitApi;
 use Github\Api\User as UserApi;
 use Github\Exception\RuntimeException;
 use Github\ResultPager;
-use QL\Hal\Github\Organization as OrganizationApi;
 
 /**
  * Combine all individual github api services into a giant convenience service.
@@ -61,11 +60,6 @@ class GitHubService
     private $userApi;
 
     /**
-     * @var OrganizationApi
-     */
-    private $orgApi;
-
-    /**
      * @var OrganizationMembersApi
      */
     private $orgMembersApi;
@@ -85,7 +79,6 @@ class GitHubService
      * @param PullRequestApi $pullRequestApi
      *
      * @param UserApi $userApi
-     * @param OrganizationApi $orgApi
      * @param OrganizationMembersApi $orgMembersApi
      *
      * @param ResultPager $pager
@@ -100,7 +93,6 @@ class GitHubService
         PullRequestApi $pullRequestApi,
 
         UserApi $userApi,
-        OrganizationApi $orgApi,
         OrganizationMembersApi $orgMembersApi,
 
         ResultPager $pager
@@ -114,7 +106,6 @@ class GitHubService
         $this->pullRequestApi = $pullRequestApi;
 
         $this->userApi = $userApi;
-        $this->orgApi = $orgApi;
         $this->orgMembersApi = $orgMembersApi;
 
         $this->pager = $pager;
@@ -265,40 +256,6 @@ class GitHubService
         });
 
         return $refs;
-    }
-
-    /**
-     * Get the extended metadata for a github organization
-     *
-     * @param string $org
-     *
-     * @return array|null
-     */
-    public function organization($org)
-    {
-        try {
-            $org = $this->orgApi->show($org);
-        } catch (RuntimeException $e) {
-            $org = null;
-        }
-
-        return $org;
-    }
-
-    /**
-     * Get the extended metadata for all github organizations.
-     *
-     * @return array
-     */
-    public function organizations()
-    {
-        try {
-            $orgs = $this->pager->fetchAll($this->orgApi, 'all');
-        } catch (RuntimeException $e) {
-            $orgs = [];
-        }
-
-        return $orgs;
     }
 
     /**

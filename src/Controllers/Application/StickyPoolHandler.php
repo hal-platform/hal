@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application;
+namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
+use Hal\UI\Service\StickyPoolService;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Flasher;
-use QL\Hal\Service\StickyPoolService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Json;
 use Slim\Http\Request;

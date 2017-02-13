@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Permissions;
+namespace Hal\UI\Controllers\Admin\Permissions;
 
 use Closure;
 use Doctrine\ORM\EntityManagerInterface;

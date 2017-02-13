@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\Pool\Deployment;
+namespace Hal\UI\Controllers\Application\Pool\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\DeploymentPool;
-use QL\Hal\Flasher;
 use QL\Panthor\MiddlewareInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;

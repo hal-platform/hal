@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api\User;
+namespace Hal\UI\Controllers\Api\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use QL\Hal\Api\Hyperlink;
-use QL\Hal\Api\Normalizer\UserNormalizer;
-use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\Api\Hyperlink;
+use Hal\UI\Api\Normalizer\UserNormalizer;
+use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Panthor\ControllerInterface;

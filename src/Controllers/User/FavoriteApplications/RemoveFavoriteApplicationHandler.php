@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\User\FavoriteApplications;
+namespace Hal\UI\Controllers\User\FavoriteApplications;
 
 use Doctrine\ORM\EntityManager;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserSettings;
-use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\Json;
 use Slim\Http\Request;

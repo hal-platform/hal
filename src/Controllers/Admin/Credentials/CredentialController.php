@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Credentials;
+namespace Hal\UI\Controllers\Admin\Credentials;
 
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;

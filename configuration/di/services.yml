@@ -85,7 +85,6 @@ services:
             - '@github.gitCommitService'
             - '@github.pullService'
             - '@github.userService'
-            - '@github.orgService'
             - '@github.orgMemberService'
             - '@github.pager'
 
@@ -267,9 +266,6 @@ services:
 
     github.userService:
         class: 'Github\Api\User'
-        arguments: ['@github.client']
-    github.orgService:
-        class: 'QL\Hal\Github\Organization'
         arguments: ['@github.client']
     github.orgMemberService:
         class: 'Github\Api\Organization\Members'

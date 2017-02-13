@@ -5,14 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers;
+namespace Hal\UI\Controllers;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Auth;
+use Hal\UI\Auth;
+use Hal\UI\Session;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserSettings;
-use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;

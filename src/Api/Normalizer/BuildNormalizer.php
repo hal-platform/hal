@@ -5,14 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Api\Normalizer;
+namespace Hal\UI\Api\Normalizer;
 
-use QL\Hal\Api\Hyperlink;
-use QL\Hal\Api\NormalizerInterface;
-use QL\Hal\Api\Utility\EmbeddedResolutionTrait;
-use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\Api\Hyperlink;
+use Hal\UI\Api\NormalizerInterface;
+use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
+use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\Github\GitHubURLBuilder;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Github\GitHubURLBuilder;
 use QL\Panthor\Utility\Url;
 
 class BuildNormalizer implements NormalizerInterface

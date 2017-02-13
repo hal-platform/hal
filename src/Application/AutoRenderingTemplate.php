@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Application;
+namespace Hal\UI\Application;
 
 use QL\Panthor\Twig\LazyTwig;
 use Slim\Http\Response;

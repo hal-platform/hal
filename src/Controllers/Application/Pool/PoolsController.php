@@ -5,17 +5,17 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\Pool;
+namespace Hal\UI\Controllers\Application\Pool;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Service\StickyPoolService;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Utility\SortingTrait;
-use QL\Hal\Service\StickyPoolService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

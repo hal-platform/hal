@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\User;
+namespace Hal\UI\Controllers\User;
 
-use QL\Hal\Flasher;
+use Hal\UI\Flasher;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Http\EncryptedCookies;
 use Slim\Http\Request;

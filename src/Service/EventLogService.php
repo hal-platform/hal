@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Service;
+namespace Hal\UI\Service;
 
 use Predis\Client as Predis;
 use QL\Hal\Core\Entity\Build;

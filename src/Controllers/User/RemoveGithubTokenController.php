@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\User;
+namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Github\OAuthHandler;
+use Hal\UI\Session;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Github\OAuthHandler;
-use QL\Hal\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\Url;

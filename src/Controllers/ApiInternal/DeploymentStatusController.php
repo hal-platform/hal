@@ -5,11 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\ApiInternal;
+namespace Hal\UI\Controllers\ApiInternal;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Api\ResponseFormatter;
+use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\Service\PermissionService;
+use Hal\UI\Service\PoolService;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
@@ -17,8 +19,6 @@ use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Service\PermissionService;
-use QL\Hal\Service\PoolService;
 use QL\Panthor\ControllerInterface;
 use Slim\Http\Response;
 

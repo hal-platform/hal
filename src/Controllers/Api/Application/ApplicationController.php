@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api\Application;
+namespace Hal\UI\Controllers\Api\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Api\ResponseFormatter;
+use Hal\UI\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Application;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Exception\HTTPProblemException;

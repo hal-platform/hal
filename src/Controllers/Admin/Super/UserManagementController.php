@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Super;
+namespace Hal\UI\Controllers\Admin\Super;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\User;

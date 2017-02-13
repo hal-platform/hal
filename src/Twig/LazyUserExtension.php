@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Twig;
+namespace Hal\UI\Twig;
 
 use Exception;
+use Hal\UI\Session;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Session;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Twig_Extension;
 use Twig_SimpleFunction;

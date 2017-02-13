@@ -1,12 +1,13 @@
 <?php
 /**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
+ * @copyright (c) 2014 Quicken Loans Inc.
+ *
+ * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Bootstrap;
+namespace Hal\Bootstrap;
 
+use Hal\UI\CachedContainer;
 use QL\Panthor\Bootstrap\Di;
 
 $root = __DIR__ . '/..';
@@ -16,7 +17,7 @@ require_once $root . '/vendor/autoload.php';
 ini_set('date.timezone', 'UTC');
 date_default_timezone_set('UTC');
 
-$container = Di::getDi($root, 'QL\Hal\CachedContainer');
+$container = Di::getDi($root, CachedContainer::class);
 
 // Custom application logic here
 

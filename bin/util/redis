@@ -1,7 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-namespace QL\Hal\Bin;
+namespace Hal\Bin;
+
+use Predis\Collection\Iterator\Keyspace;
 
 $root = __DIR__ . '/../..';
 if (!$container = @include $root . '/configuration/bootstrap.php') {
@@ -23,7 +25,7 @@ if ($list) {
     echo "\nLISTING REDIS KEYS...\n";
 
     $keys = [];
-    foreach (new \Predis\Collection\Iterator\Keyspace($redis, '*') as $key) {
+    foreach (new Keyspace($redis, '*') as $key) {
         $keys[] = $key;
     }
 
@@ -44,7 +46,7 @@ if ($delete) {
 
     // List keys in the hal namespace
     $keys = [];
-    foreach (new \Predis\Collection\Iterator\Keyspace($redis, 'doctrine:*') as $key) {
+    foreach (new Keyspace($redis, 'doctrine:*') as $key) {
         $keys[] = $key;
     }
 

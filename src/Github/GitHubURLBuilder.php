@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Github;
+namespace Hal\UI\Github;
 
-use QL\Hal\Service\GitHubService;
+use Hal\UI\Service\GitHubService;
 
 class GitHubURLBuilder
 {

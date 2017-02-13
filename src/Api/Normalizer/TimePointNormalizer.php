@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Api\Normalizer;
+namespace Hal\UI\Api\Normalizer;
 
 use DateTime;
-use QL\Hal\Api\NormalizerInterface;
+use Hal\UI\Api\NormalizerInterface;
 use QL\MCP\Common\Time\TimePoint;
 
 class TimePointNormalizer implements NormalizerInterface

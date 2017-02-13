@@ -5,9 +5,9 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers;
+namespace Hal\UI\Controllers;
 
-use QL\Hal\Session;
+use Hal\UI\Session;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\Url;
 

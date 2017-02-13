@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\EncryptedProperty;
+namespace Hal\UI\Controllers\Application\EncryptedProperty;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\EncryptedProperty;
-use QL\Hal\Flasher;
 use QL\Panthor\MiddlewareInterface;
 use Slim\Http\Request;
 

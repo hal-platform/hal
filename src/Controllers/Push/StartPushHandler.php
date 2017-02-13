@@ -5,16 +5,16 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Push;
+namespace Hal\UI\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Service\StickyEnvironmentService;
+use Hal\UI\Validator\PushStartValidator;
+use Hal\UI\Session;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Service\StickyEnvironmentService;
-use QL\Hal\Validator\PushStartValidator;
-use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\Url;

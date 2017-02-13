@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Middleware\ACL;
+namespace Hal\UI\Middleware\ACL;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
+use Hal\UI\Session;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Session;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;

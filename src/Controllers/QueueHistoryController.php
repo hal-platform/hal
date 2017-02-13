@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers;
+namespace Hal\UI\Controllers;
 
 use Closure;
 use Doctrine\Common\Collections\Criteria;

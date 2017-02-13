@@ -5,16 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Api\Utility;
+namespace Hal\UI\Api\Utility;
 
-use QL\Hal\Api\Hyperlink;
+use Hal\UI\Api\Hyperlink;
 use QL\Panthor\Utility\Url;
 use Slim\Http\Request;
 use Slim\Route;
 
-/**
- * Hypermedia Content Formatter
- */
 class HypermediaFormatter
 {
     /**

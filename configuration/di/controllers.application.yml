@@ -68,9 +68,6 @@ services:
             - '@currentUser'
             - '@doctrine.random'
             - '%github.site.baseurl%'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.page.ttl%']]
     application.add.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['application/application.add.twig']]]

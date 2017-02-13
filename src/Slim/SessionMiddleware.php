@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Slim;
+namespace Hal\UI\Slim;
 
-use QL\Hal\Session;
-use QL\Hal\SessionHandler;
+use Hal\UI\Session;
+use Hal\UI\SessionHandler;
 use Slim\Middleware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

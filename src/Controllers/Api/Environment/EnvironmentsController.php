@@ -4,13 +4,14 @@
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
-namespace QL\Hal\Controllers\Api\Environment;
+
+namespace Hal\UI\Controllers\Api\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Api\Normalizer\EnvironmentNormalizer;
-use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\Api\Normalizer\EnvironmentNormalizer;
+use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 

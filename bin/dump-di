@@ -1,22 +1,17 @@
 #!/usr/bin/env php
 <?php
-/**
- * @copyright ©2014 Quicken Loans Inc. All rights reserved. Trade Secret,
- *    Confidential and Proprietary. Any dissemination outside of Quicken Loans
- *    is strictly prohibited.
- */
 
-namespace QL\Hal\Bin;
+namespace Hal\Bin;
 
-use QL\Hal\Application\EnvConfigLoader;
+use Hal\UI\Application\EnvConfigLoader;
+use Hal\UI\CachedContainer;
 use QL\Panthor\Bootstrap\Di;
 use Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\ProxyDumper;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
-use QL\Hal\CachedContainer;
 
 $root = __DIR__ . '/../';
 $file = $root . 'src/CachedContainer.php';
-$class = CachedContainer::CLASS;
+$class = CachedContainer::class;
 
 if (!$container = @include $root . '/configuration/bootstrap.php') {
     echo "An error occured while attempting to dump the DI Container.\n";

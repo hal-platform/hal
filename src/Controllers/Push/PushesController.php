@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Push;
+namespace Hal\UI\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use QL\Hal\Core\Entity\Application;

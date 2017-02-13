@@ -5,14 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Application;
+namespace Hal\UI\Application;
 
 use Exception;
 use QL\Panthor\ErrorHandling\ExceptionHandler\BaseHandler;
 
-/**
- * Handler for errors for API endpoints
- */
 class APIBaseHandler extends BaseHandler
 {
     /**

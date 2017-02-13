@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Permissions;
+namespace Hal\UI\Controllers\Admin\Permissions;
 
+use Hal\UI\Flasher;
+use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Flasher;
-use QL\Hal\Service\PermissionService;
 use QL\Panthor\ControllerInterface;
 
 class RefreshUserPermissionsController implements ControllerInterface

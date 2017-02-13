@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Super;
+namespace Hal\UI\Controllers\Admin\Super;
 
+use Hal\UI\Flasher;
 use Predis\Collection\Iterator\Keyspace;
 use Predis\Client as Predis;
-use QL\Hal\Flasher;
 use QL\Panthor\MiddlewareInterface;
 use Slim\Http\Request;
 

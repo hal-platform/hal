@@ -5,18 +5,18 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Twig;
+namespace Hal\UI\Twig;
 
+use Hal\UI\Service\GlobalMessageService;
+use Hal\UI\Session;
+use Hal\UI\Utility\NameFormatter;
+use Hal\UI\Utility\TimeFormatter;
 use QL\Panthor\Http\EncryptedCookies;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Service\GlobalMessageService;
-use QL\Hal\Session;
-use QL\Hal\Utility\NameFormatter;
-use QL\Hal\Utility\TimeFormatter;
 use Slim\Http\Request;
 use Twig_Extension;
 use Twig_SimpleFilter;

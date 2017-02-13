@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api\Server;
+namespace Hal\UI\Controllers\Api\Server;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Api\Hyperlink;
+use Hal\UI\Api\Normalizer\ServerNormalizer;
+use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Server;
-use QL\Hal\Api\Hyperlink;
-use QL\Hal\Api\Normalizer\ServerNormalizer;
-use QL\Hal\Api\ResponseFormatter;
-use QL\Hal\Api\Utility\HypermediaResourceTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Exception\HTTPProblemException;
 

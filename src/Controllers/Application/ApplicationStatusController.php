@@ -5,10 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application;
+namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Service\PoolService;
+use Hal\UI\Service\StickyEnvironmentService;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
@@ -19,8 +21,6 @@ use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Hal\Core\Repository\PushRepository;
 use QL\Hal\Core\Utility\SortingTrait;
-use QL\Hal\Service\PoolService;
-use QL\Hal\Service\StickyEnvironmentService;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

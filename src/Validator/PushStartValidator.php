@@ -5,9 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Validator;
+namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
@@ -18,7 +19,6 @@ use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Service\PermissionService;
 
 class PushStartValidator
 {

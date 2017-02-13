@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Api\Normalizer;
+namespace Hal\UI\Api\Normalizer;
 
+use Hal\UI\Api\Hyperlink;
+use Hal\UI\Api\NormalizerInterface;
 use QL\Panthor\Utility\Url;
-use QL\Hal\Api\Hyperlink;
-use QL\Hal\Api\NormalizerInterface;
 
 class HyperlinkNormalizer implements NormalizerInterface
 {

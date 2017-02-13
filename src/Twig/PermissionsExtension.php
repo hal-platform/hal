@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Twig;
+namespace Hal\UI\Twig;
 
+use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\PermissionService;
 use Twig_Extension;
 use Twig_SimpleFunction;
 

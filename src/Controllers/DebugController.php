@@ -5,13 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers;
+namespace Hal\UI\Controllers;
 
 use QL\Panthor\ControllerInterface;
 
-/**
- * Debug Controller
- */
 class DebugController implements ControllerInterface
 {
     /**

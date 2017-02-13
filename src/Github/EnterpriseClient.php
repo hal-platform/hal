@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Github;
+namespace Hal\UI\Github;
 
 use Github\Client;
 use Github\HttpClient\Plugin\PathPrepend;
-use function GuzzleHttp\Psr7\uri_for;
 use Http\Client\Common\Plugin\AddHostPlugin;
+use function GuzzleHttp\Psr7\uri_for;
 
 class EnterpriseClient extends Client
 {

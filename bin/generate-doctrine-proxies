@@ -1,9 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-namespace QL\Hal\Bin;
+namespace Hal\Bin;
 
-use QL\Hal\Application\DoctrineProxyGenerator;
+use Hal\UI\Application\DoctrineProxyGenerator;
 
 $root = __DIR__ . '/..';
 if (!$container = @include $root . '/configuration/bootstrap.php') {

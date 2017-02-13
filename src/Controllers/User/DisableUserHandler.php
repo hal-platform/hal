@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\User;
+namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
+use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Flasher;
-use QL\Hal\Service\PermissionService;
 use QL\Panthor\ControllerInterface;
 
 class DisableUserHandler implements ControllerInterface

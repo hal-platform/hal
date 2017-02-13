@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api\Deployment;
+namespace Hal\UI\Controllers\Api\Deployment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Type\EnumType\PushStatusEnum;
-use QL\Hal\Api\ResponseFormatter;
+use Hal\UI\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Repository\PushRepository;
+use QL\Hal\Core\Type\EnumType\PushStatusEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;

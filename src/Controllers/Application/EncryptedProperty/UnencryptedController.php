@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\EncryptedProperty;
+namespace Hal\UI\Controllers\Application\EncryptedProperty;
 
 use Exception;
 use QL\Hal\Core\Crypto\Decrypter;

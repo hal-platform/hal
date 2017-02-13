@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\User;
+namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 
 class EnableUserHandler implements ControllerInterface

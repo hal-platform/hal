@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal;
+namespace Hal\UI;
 
 use QL\Hal\Core\Entity\User;
 use Slim\Helper\Set;

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\User;
+namespace Hal\UI\Controllers\User;
 
 use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;

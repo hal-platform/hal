@@ -5,16 +5,16 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Admin\Permissions;
+namespace Hal\UI\Controllers\Admin\Permissions;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Flasher;
+use Hal\UI\Service\PermissionService;
+use Hal\UI\Service\UserPerm;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Type\EnumType\UserTypeEnum;
-use QL\Hal\Flasher;
-use QL\Hal\Service\PermissionService;
-use QL\Hal\Service\UserPerm;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 

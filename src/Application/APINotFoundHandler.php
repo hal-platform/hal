@@ -5,15 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Application;
+namespace Hal\UI\Application;
 
 use QL\Panthor\ErrorHandling\ExceptionHandlerInterface;
 use QL\Panthor\ErrorHandling\ExceptionRendererInterface;
 use QL\Panthor\Exception\NotFoundException;
 
-/**
- * Handler for 404s
- */
 class APINotFoundHandler implements ExceptionHandlerInterface
 {
     /**
@@ -34,7 +31,7 @@ class APINotFoundHandler implements ExceptionHandlerInterface
      */
     public function getHandledExceptions()
     {
-        return [NotFoundException::CLASS];
+        return [NotFoundException::class];
     }
 
     /**

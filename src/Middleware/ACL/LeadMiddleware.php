@@ -5,10 +5,10 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Middleware\ACL;
+namespace Hal\UI\Middleware\ACL;
 
 use Exception;
-use QL\Hal\Service\PermissionService;
+use Hal\UI\Service\PermissionService;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Slim\Halt;

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Utility;
+namespace Hal\UI\Utility;
 
 use DateTime;
 use QL\MCP\Common\Time\Clock;

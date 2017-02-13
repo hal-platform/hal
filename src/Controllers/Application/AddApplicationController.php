@@ -5,32 +5,28 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application;
+namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
+use Hal\UI\Service\GitHubService;
+use Hal\UI\Service\PermissionService;
+use Hal\UI\Utility\ValidatorTrait;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Type\EnumType\UserTypeEnum;
 use QL\Hal\Core\Utility\SortingTrait;
-use QL\Hal\Flasher;
-use QL\Hal\Service\GitHubService;
-use QL\Hal\Service\PermissionService;
-use QL\Hal\Utility\ValidatorTrait;
-use QL\MCP\Cache\CachingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use Slim\Http\Request;
 
 class AddApplicationController implements ControllerInterface
 {
-    use CachingTrait;
     use SortingTrait;
     use ValidatorTrait;
-
-    const CACHE_KEY_ORGANIZATIONS = 'page:github.organizations';
 
     const SUCCESS = 'Application "%s" added.';
 
@@ -164,8 +160,7 @@ class AddApplicationController implements ControllerInterface
         $context = [
             'form' => $form,
             'errors' => $this->errors,
-            'groups' => $groups,
-            'github_orgs' => $this->getOrganizations()
+            'groups' => $groups
         ];
 
         $this->template->render($context);
@@ -325,56 +320,6 @@ class AddApplicationController implements ControllerInterface
         ];
 
         return $form;
-    }
-
-    /**
-     * @return array
-     */
-    private function getOrganizations()
-    {
-        // external cache
-        if ($cached = $this->getFromCache(self::CACHE_KEY_ORGANIZATIONS)) {
-            if (is_array($cached)) {
-                return $cached;
-            }
-        }
-
-        $apps = $this->applicationRepo->findAll();
-
-        $activeOrgs = [];
-        foreach ($apps as $app) {
-            $activeOrgs[$app->githubOwner()] = true;
-        }
-
-        $activeOrgs = array_keys($activeOrgs);
-
-        $active = $other = [];
-        $orgs = $this->github->organizations();
-
-        foreach ($orgs as $org) {
-            $owner = strtolower($org['login']);
-            if (in_array($owner, $activeOrgs)) {
-                $active[] = $org['login'];
-            } else {
-                $other[] = $org['login'];
-            }
-        }
-
-        $sorter = function ($a, $b) {
-            return strcasecmp($a, $b);
-        };
-
-        usort($active, $sorter);
-        usort($other, $sorter);
-
-        $data = [
-            'active' => $active,
-            'other' => $other
-        ];
-
-        $this->setToCache(self::CACHE_KEY_ORGANIZATIONS, $data);
-
-        return $data;
     }
 
     /**

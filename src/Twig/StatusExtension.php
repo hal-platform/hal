@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Twig;
+namespace Hal\UI\Twig;
 
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;

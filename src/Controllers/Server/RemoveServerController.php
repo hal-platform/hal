@@ -5,14 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Server;
+namespace Hal\UI\Controllers\Server;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Flasher;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use QL\Hal\Flasher;
 use QL\Panthor\ControllerInterface;
 
 class RemoveServerController implements ControllerInterface

@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal;
+namespace Hal\UI;
 
+use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\User;
-use QL\Hal\Service\PermissionService;
 use QL\Panthor\Slim\Halt;
 use QL\Panthor\TemplateInterface;
 

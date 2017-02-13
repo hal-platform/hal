@@ -5,13 +5,13 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Application\Deployment;
+namespace Hal\UI\Controllers\Application\Deployment;
 
 use Doctrine\ORM\EntityManager;
+use Hal\UI\Validator\DeploymentValidator;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Validator\DeploymentValidator;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Slim\Halt;
 use QL\Panthor\Utility\Json;

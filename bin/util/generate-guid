@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-namespace QL\Hal\Bin;
+namespace Hal\Bin;
 
 use QL\MCP\Common\GUID;
 

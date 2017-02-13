@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace QL\Hal\Controllers\Api;
+namespace Hal\UI\Controllers\Api;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Api\Normalizer\EventLogNormalizer;
-use QL\Hal\Api\ResponseFormatter;
+use Hal\UI\Api\Normalizer\EventLogNormalizer;
+use Hal\UI\Api\ResponseFormatter;
 use QL\Hal\Core\Entity\EventLog;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Exception\HTTPProblemException;
