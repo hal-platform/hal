@@ -38,6 +38,7 @@ parameters:
         file: '../.error.log'
     mcp.logger.default_properties:
         applicationID: '%application.id%'
+        serverEnvironment: '%application.environment%'
 
     ############################################################################
     # doctrine
