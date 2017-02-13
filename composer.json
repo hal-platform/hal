@@ -1,14 +1,20 @@
 {
-    "name": "ql/hal",
+    "name": "hal/hal",
     "description": "Hal Deployment Platform - UI",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
-        { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }
+        { "name": "Steve Kluck", "email": "steve@kluck.engineering" },
+        { "name": "Byron Nagi",  "email": "byro@fastmail.fm" }
     ],
+    "support": {
+        "source": "https://github.com/hal-platform/hal",
+        "issues": "https://github.com/hal-platform/hal/issues"
+    },
 
     "autoload": {
         "psr-4": { "QL\\Hal\\": "src" }
     },
+
     "require": {
         "php-64bit": "~7.0",
 
