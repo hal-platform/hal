@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ff787dae8f7b79d682d5d71cbfa1e3b",
+    "content-hash": "10f8ed9c9449be33c253bac47980ec5d",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -2016,20 +2016,20 @@
         },
         {
             "name": "ql/mcp-common",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/quickenloans-mcp/mcp-common.git",
-                "reference": "44b2554b5aabdf12e3bf36e0b96673500a8eb996"
+                "reference": "c3307de851d35de1153cbccf43537dea01875df4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-common/zipball/44b2554b5aabdf12e3bf36e0b96673500a8eb996",
-                "reference": "44b2554b5aabdf12e3bf36e0b96673500a8eb996",
+                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-common/zipball/c3307de851d35de1153cbccf43537dea01875df4",
+                "reference": "c3307de851d35de1153cbccf43537dea01875df4",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "php": "~5.6 || ~7.0"
             },
             "require-dev": {
                 "paragonie/random_compat": "~1.1",
@@ -2072,7 +2072,65 @@
                 "mcp",
                 "quickenloans"
             ],
-            "time": "2015-12-10T13:42:36+00:00"
+            "time": "2016-11-16T20:22:48+00:00"
+        },
+        {
+            "name": "ql/mcp-logger",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/quickenloans-mcp/mcp-logger.git",
+                "reference": "915df9161eaab48042ea7246a866d9abd6d434d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/quickenloans-mcp/mcp-logger/zipball/915df9161eaab48042ea7246a866d9abd6d434d3",
+                "reference": "915df9161eaab48042ea7246a866d9abd6d434d3",
+                "shasum": ""
+            },
+            "require": {
+                "paragonie/random_compat": "^1.1",
+                "php": "~5.6 || ~7.0",
+                "psr/log": "*",
+                "ql/mcp-common": "^1.1.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "~5.0.0",
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~5.6",
+                "symfony/config": "~3.1",
+                "symfony/dependency-injection": "~3.1",
+                "symfony/yaml": "~3.1"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "Required when using the Guzzle logger service."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "QL\\MCP\\Logger\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Colf",
+                    "email": "mattcolf@quickenloans.com"
+                },
+                {
+                    "name": "Steve Kluck",
+                    "email": "steve@kluck.engineering"
+                }
+            ],
+            "description": "Structured logging for Quicken Loans PHP projects",
+            "keywords": [
+                "mcp",
+                "quickenloans"
+            ],
+            "time": "2016-11-21T13:42:33+00:00"
         },
         {
             "name": "ql/mcp-panthor",

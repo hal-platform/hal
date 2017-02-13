@@ -1,6 +1,6 @@
 {
     "name": "ql/hal",
-    "description": "Hal deployment system",
+    "description": "Hal Deployment Platform - UI",
     "license": "proprietary",
     "authors": [
         { "name": "IT Team Web Core", "email": "itteamwebcore@quickenloans.com" }
@@ -32,21 +32,21 @@
 
         "ql/hal-core":          "2.10.0",
 
-        "ql/mcp-cache":         "3.0.0",
-
+        "ql/mcp-cache":         "~3.0.0",
         "ql/mcp-common":        "~1.0",
+        "ql/mcp-logger":        "~3.0.0",
         "ql/mcp-panthor":       "~2.4.0",
 
         "slim/slim": "~2.6",
 
-        "symfony/dependency-injection": "~2.8",
         "symfony/config":               "~2.8",
         "symfony/debug":                "~2.8",
+        "symfony/dependency-injection": "~2.8",
         "symfony/finder":               "~2.8",
-        "symfony/yaml":                 "~2.8",
+        "symfony/ldap":                 "~3.2",
         "symfony/options-resolver":     "~3.2",
         "symfony/proxy-manager-bridge": "~2.8",
-        "symfony/ldap":                 "~3.2",
+        "symfony/yaml":                 "~2.8",
 
         "twig/twig": "~2.0"
     },
