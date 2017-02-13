@@ -15,11 +15,6 @@ parameters:
 
     debug: false
     twig.debug: false
-    error_handling.log_stacktrace: true
-
-    # slim
-    slim.configuration:
-        debug: %debug%
 
     ############################################################################
     # ldap
@@ -29,6 +24,20 @@ parameters:
     ldap.domain: 'MI'
     ldap.base_dn: 'dc=mi,dc=corp'
     ldap.port: 389
+
+    ############################################################################
+    # error handling and logging
+    ############################################################################
+
+    error_handling.log_stacktrace: true
+
+    mcp.logger.service.syslog.options:
+        ident: 'hal-%application.id%'
+    mcp.logger.service.errorlog.options:
+        type: 3
+        file: '../.error.log'
+    mcp.logger.default_properties:
+        applicationID: '%application.id%'
 
     ############################################################################
     # doctrine

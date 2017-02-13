@@ -27,7 +27,7 @@ parameters:
         - 'localhost'
 
     ############################################################################
-    # ENCRYPTION
+    # encryption
     ############################################################################
 
     cookie.encryption.secret: 'ae9c0012b8892afc69140790103f9c7241d0cfe7e4a0c8f9ae9db077a83ccc51ae9c0012b8892afc69140790103f9c7241d0cfe7e4a0c8f9ae9db077a83ccc51'
@@ -72,3 +72,7 @@ services:
         class: 'Doctrine\Common\Cache\ArrayCache'
     cache:
         class: 'QL\MCP\Cache\MemoryCache'
+
+    # Comment this out to use default logger of syslog.
+    mcp.logger.service:
+        parent: 'mcp.logger.service.errorlog'

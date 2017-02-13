@@ -75,8 +75,6 @@ services:
 
     slim:
         parent: 'panthor.slim'
-        # arguments:
-            # - %slim.configuration%
         calls:
             - ['add', ['@panthor.middleware.error_handling']]
             - ['add', ['@slim.session']]
@@ -104,7 +102,7 @@ services:
     ####################################################################################################################
 
     logger:
-        class: 'Psr\Log\NullLogger'
+        parent: 'mcp.logger'
 
     error.handler:
         class: 'QL\Panthor\ErrorHandling\ErrorHandler'
