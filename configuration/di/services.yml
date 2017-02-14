@@ -5,7 +5,7 @@ services:
     ####################################################################################################################
 
     ldap.auth:
-        class: 'QL\Hal\Auth'
+        class: 'Hal\UI\Auth'
         arguments:
             - '@ldap.auth.symfony'
             - '%ldap.base_dn%'
@@ -23,7 +23,7 @@ services:
                 port: '%ldap.port%'
 
     permissions:
-        class: 'QL\Hal\Service\PermissionService'
+        class: 'Hal\UI\Service\PermissionService'
         arguments:
             - '@doctrine.em'
             - '@github'
@@ -34,25 +34,25 @@ services:
             - ['setCacheTTL', ['%cache.permissions.ttl%']]
 
     global.message:
-        class: 'QL\Hal\Service\GlobalMessageService'
+        class: 'Hal\UI\Service\GlobalMessageService'
         arguments: ['@redis']
 
     sticky.environment:
-        class: 'QL\Hal\Service\StickyEnvironmentService'
+        class: 'Hal\UI\Service\StickyEnvironmentService'
         arguments:
             - '@slim.cookies'
             - '@json'
             - '%cookie.preferences.ttl%'
 
     sticky.pool:
-        class: 'QL\Hal\Service\StickyPoolService'
+        class: 'Hal\UI\Service\StickyPoolService'
         arguments:
             - '@slim.cookies'
             - '@json'
             - '%cookie.preferences.ttl%'
 
     stats:
-        class: 'QL\Hal\Service\StatsService'
+        class: 'Hal\UI\Service\StatsService'
         arguments:
             - '@doctrine.em'
             - '@clock'
@@ -62,7 +62,7 @@ services:
             - ['setCacheTTL', ['%cache.stats.ttl%']]
 
     pools:
-        class: 'QL\Hal\Service\PoolService'
+        class: 'Hal\UI\Service\PoolService'
         arguments:
             - '@doctrine.em'
             - '@sticky.pool'
@@ -77,7 +77,7 @@ services:
             - {prefix: '%redis.prefix%:'}
 
     github:
-        class: 'QL\Hal\Service\GitHubService'
+        class: 'Hal\UI\Service\GitHubService'
         arguments:
             - '@github.repoService'
             - '@github.repoCommitService'
@@ -89,14 +89,14 @@ services:
             - '@github.pager'
 
     service.event_logs:
-        class: 'QL\Hal\Service\EventLogService'
+        class: 'Hal\UI\Service\EventLogService'
         arguments:
             - '@redis'
             - '@json'
             - '@clock'
 
     acl:
-        class: 'QL\Hal\ACL'
+        class: 'Hal\UI\ACL'
         arguments:
             - '@denied.twig'
             - '@slim.halt'
@@ -124,7 +124,7 @@ services:
 
     encrypter.encryptedkey.squished:
         class: 'stdClass'
-        factory: ['QL\Hal\Application\Stringify', 'squish']
+        factory: ['Hal\UI\Application\Stringify', 'squish']
         arguments: ['%encrypter.encryptedkey%']
 
     encrypter.secret.file:
@@ -138,11 +138,11 @@ services:
 
     twig.auto.template:
         parent: 'twig.template'
-        class: 'QL\Hal\Application\AutoRenderingTemplate'
+        class: 'Hal\UI\Application\AutoRenderingTemplate'
         calls: [['setResponse', ['@slim.response']]]
 
     twig.extension.hal:
-        class: 'QL\Hal\Twig\HalExtension'
+        class: 'Hal\UI\Twig\HalExtension'
         arguments:
             - '@slim.request'
             - '@slim.cookies'
@@ -153,7 +153,7 @@ services:
             - '%gravatar.fallback%'
 
     twig.extension.hal.global:
-        class: 'QL\Hal\Twig\GlobalExtension'
+        class: 'Hal\UI\Twig\GlobalExtension'
         arguments:
             - '@service_container'
             - '@session'
@@ -164,15 +164,15 @@ services:
                 applicationEnvironment: '%application.environment%'
 
     twig.extension.hal.lazy:
-        class: 'QL\Hal\Twig\LazyUserExtension'
+        class: 'Hal\UI\Twig\LazyUserExtension'
         arguments: ['@service_container', '@session']
 
     twig.extension.permissions:
-        class: 'QL\Hal\Twig\PermissionsExtension'
+        class: 'Hal\UI\Twig\PermissionsExtension'
         arguments: ['@permissions']
 
     twig.extension.github:
-        class: 'QL\Hal\Twig\GitHubExtension'
+        class: 'Hal\UI\Twig\GitHubExtension'
         arguments: ['@github', '@github.url_builder']
         calls:
             - ['setCache', ['@twig.extension.github.cache']]
@@ -181,7 +181,7 @@ services:
         class: 'QL\MCP\Cache\MemoryCache'
 
     twig.extension.status:
-        class: 'QL\Hal\Twig\StatusExtension'
+        class: 'Hal\UI\Twig\StatusExtension'
 
     # Twig Environment
     twig.environment:
@@ -198,7 +198,7 @@ services:
     # HTTP Plug
     ####################################################################################################################
     github.http.cache.plugin:
-        class: 'QL\Hal\Github\MCPCachePlugin'
+        class: 'Hal\UI\Github\MCPCachePlugin'
         arguments:
             - '@cache'
             - '@plug.http_stream_factory'
@@ -213,7 +213,7 @@ services:
     ####################################################################################################################
 
     github.oauth:
-        class: 'QL\Hal\Github\OAuthHandler'
+        class: 'Hal\UI\Github\OAuthHandler'
         arguments:
             - '@guzzle'
             - '%github.baseurl%'
@@ -223,18 +223,18 @@ services:
             - '@json'
 
     github.url_builder:
-        class: 'QL\Hal\Github\GitHubURLBuilder'
+        class: 'Hal\UI\Github\GitHubURLBuilder'
         arguments: ['@github', '%github.site.baseurl%']
 
     github.client:
-        class: 'QL\Hal\Github\EnterpriseClient'
+        class: 'Hal\UI\Github\EnterpriseClient'
         arguments: ['@github.http.builder', null, '%github.site.baseurl%']
         configurator: ['@github.client.configurator', configure]
         calls:
             - ['authenticate', ['%github.token%', null, 'http_token']]
 
     github.client.configurator:
-        class: 'QL\Hal\Github\GithubClientConfigurator'
+        class: 'Hal\UI\Github\GithubClientConfigurator'
         arguments:
             - '@github.http.cache.plugin'
             - '@github.http.builder'

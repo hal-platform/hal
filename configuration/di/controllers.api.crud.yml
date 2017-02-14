@@ -2,7 +2,7 @@
 services:
 
     api.build.start:
-        class: 'QL\Hal\Controllers\Api\Build\StartBuildController'
+        class: 'Hal\UI\Controllers\Api\Build\StartBuildController'
         arguments:
             - '@response.formatter'
             - '@build.start.validator'

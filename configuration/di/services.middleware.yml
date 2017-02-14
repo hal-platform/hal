@@ -4,7 +4,7 @@ services:
     ######################################################################################################################
 
     middleware.requireEntity:
-        class: 'QL\Hal\Middleware\RequireEntityMiddleware'
+        class: 'Hal\UI\Middleware\RequireEntityMiddleware'
         arguments:
             - '@service_container'
             - '@doctrine.em'
@@ -12,7 +12,7 @@ services:
             - '@slim.route.parameters'
 
     middleware.login:
-        class: 'QL\Hal\Middleware\ACL\LoginMiddleware'
+        class: 'Hal\UI\Middleware\ACL\LoginMiddleware'
         arguments:
             - '@service_container'
             - '@doctrine.em'
@@ -21,7 +21,7 @@ services:
             - '@slim.request'
 
     middleware.lead:
-        class: 'QL\Hal\Middleware\ACL\LeadMiddleware'
+        class: 'Hal\UI\Middleware\ACL\LeadMiddleware'
         arguments:
             - '@service_container'
             - '@middleware.login'
@@ -31,7 +31,7 @@ services:
             - '@slim.route.parameters'
 
     middleware.admin:
-        class: 'QL\Hal\Middleware\ACL\AdminMiddleware'
+        class: 'Hal\UI\Middleware\ACL\AdminMiddleware'
         arguments:
             - '@service_container'
             - '@middleware.login'
@@ -40,7 +40,7 @@ services:
             - '@slim.halt'
 
     middleware.super:
-        class: 'QL\Hal\Middleware\ACL\SuperMiddleware'
+        class: 'Hal\UI\Middleware\ACL\SuperMiddleware'
         arguments:
             - '@service_container'
             - '@middleware.login'
@@ -49,7 +49,7 @@ services:
             - '@slim.halt'
 
     middleware.pool:
-        class: 'QL\Hal\Middleware\ACL\ManageDeploymentViewMiddleware'
+        class: 'Hal\UI\Middleware\ACL\ManageDeploymentViewMiddleware'
         arguments:
             - '@permissions'
             - '@slim.halt'
@@ -58,7 +58,7 @@ services:
             - '@hal.view'
 
     middleware.pool.add:
-        class: 'QL\Hal\Middleware\ACL\AddDeploymentViewMiddleware'
+        class: 'Hal\UI\Middleware\ACL\AddDeploymentViewMiddleware'
         arguments:
             - '@permissions'
             - '@slim.halt'
@@ -71,7 +71,7 @@ services:
     ######################################################################################################################
 
     middleware.api.token:
-        class: 'QL\Hal\Middleware\ACL\TokenMiddleware'
+        class: 'Hal\UI\Middleware\ACL\TokenMiddleware'
         arguments:
             - '@service_container'
             - '@doctrine.em'
@@ -79,7 +79,7 @@ services:
             - '@mcp.logger.factory'
 
     middleware.api.require_entity:
-        class: 'QL\Hal\Middleware\RequireEntityMiddleware'
+        class: 'Hal\UI\Middleware\RequireEntityMiddleware'
         arguments:
             - '@service_container'
             - '@doctrine.em'
@@ -88,5 +88,5 @@ services:
             - true
 
     middleware.api.cached:
-        class: 'QL\Hal\Middleware\CachedApiMiddleware'
+        class: 'Hal\UI\Middleware\CachedApiMiddleware'
         arguments: ['@response.formatter', '@slim.response']

@@ -5,7 +5,7 @@ services:
     ####################################################################################################################
 
     response.formatter:
-        class: 'QL\Hal\Api\ResponseFormatter'
+        class: 'Hal\UI\Api\ResponseFormatter'
         arguments:
             - '@slim.request'
             - '@slim.response'
@@ -16,7 +16,7 @@ services:
             - ['setCache', ['@cache']]
 
     hypermedia.formatter:
-        class: 'QL\Hal\Api\Utility\HypermediaFormatter'
+        class: 'Hal\UI\Api\Utility\HypermediaFormatter'
         arguments:
             - '@url'
             - '@slim.request'
@@ -24,7 +24,7 @@ services:
             - '@slim.route.parameters'
 
     normalizer:
-        class: 'QL\Hal\Api\Normalizer'
+        class: 'Hal\UI\Api\Normalizer'
         calls:
             - ['addNormalizer', ['QL\Hal\Core\Entity\Application', '@normalizer.application']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Build', '@normalizer.build']]
@@ -36,10 +36,10 @@ services:
             - ['addNormalizer', ['QL\Hal\Core\Entity\Server', '@normalizer.server']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\User', '@normalizer.user']]
             - ['addNormalizer', ['QL\MCP\Common\Time\TimePoint', '@normalizer.timepoint']]
-            - ['addNormalizer', ['QL\Hal\Api\Hyperlink', '@normalizer.hyperlink']]
+            - ['addNormalizer', ['Hal\UI\Api\Hyperlink', '@normalizer.hyperlink']]
 
     normalizer.build:
-        class: 'QL\Hal\Api\Normalizer\BuildNormalizer'
+        class: 'Hal\UI\Api\Normalizer\BuildNormalizer'
         arguments:
             - '@url'
             - '@github.url_builder'
@@ -48,21 +48,21 @@ services:
             - '@normalizer.environment'
 
     normalizer.deployment:
-        class: 'QL\Hal\Api\Normalizer\DeploymentNormalizer'
+        class: 'Hal\UI\Api\Normalizer\DeploymentNormalizer'
         arguments: ['@normalizer.application', '@normalizer.server']
 
     normalizer.environment:
-        class: 'QL\Hal\Api\Normalizer\EnvironmentNormalizer'
+        class: 'Hal\UI\Api\Normalizer\EnvironmentNormalizer'
 
     normalizer.log.event:
-        class: 'QL\Hal\Api\Normalizer\EventLogNormalizer'
+        class: 'Hal\UI\Api\Normalizer\EventLogNormalizer'
         arguments: ['@normalizer.build', '@normalizer.push']
 
     normalizer.group:
-        class: 'QL\Hal\Api\Normalizer\GroupNormalizer'
+        class: 'Hal\UI\Api\Normalizer\GroupNormalizer'
 
     normalizer.push:
-        class: 'QL\Hal\Api\Normalizer\PushNormalizer'
+        class: 'Hal\UI\Api\Normalizer\PushNormalizer'
         arguments:
             - '@url'
             - '@normalizer.user'
@@ -71,23 +71,23 @@ services:
             - '@normalizer.application'
 
     normalizer.application:
-        class: 'QL\Hal\Api\Normalizer\ApplicationNormalizer'
+        class: 'Hal\UI\Api\Normalizer\ApplicationNormalizer'
         arguments:
             - '@url'
             - '@github.url_builder'
             - '@normalizer.group'
 
     normalizer.server:
-        class: 'QL\Hal\Api\Normalizer\ServerNormalizer'
+        class: 'Hal\UI\Api\Normalizer\ServerNormalizer'
         arguments: ['@normalizer.environment']
 
     normalizer.timepoint:
-        class: 'QL\Hal\Api\Normalizer\TimePointNormalizer'
+        class: 'Hal\UI\Api\Normalizer\TimePointNormalizer'
 
     normalizer.user:
-        class: 'QL\Hal\Api\Normalizer\UserNormalizer'
+        class: 'Hal\UI\Api\Normalizer\UserNormalizer'
         arguments: ['@permissions']
 
     normalizer.hyperlink:
-        class: 'QL\Hal\Api\Normalizer\HyperlinkNormalizer'
+        class: 'Hal\UI\Api\Normalizer\HyperlinkNormalizer'
         arguments: ['@url']

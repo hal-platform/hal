@@ -66,7 +66,7 @@ services:
         arguments: ['@redis', '%cache.doctrine.ttl%']
 
     doctrine.utility.lazy.user:
-        class: 'QL\Hal\Utility\LazyUserRetriever'
+        class: 'Hal\UI\Utility\LazyUserRetriever'
         arguments: ['@service_container']
 
     ####################################################################################################################
@@ -90,11 +90,11 @@ services:
             - ['addRoutes', ['%routes.application%']]
 
     slim.session:
-        class: 'QL\Hal\Slim\SessionMiddleware'
+        class: 'Hal\UI\Slim\SessionMiddleware'
         arguments: ['@session.handler', '@service_container']
 
     slim.logger_details:
-        class: 'QL\Hal\Slim\LoggerDetailsMiddleware'
+        class: 'Hal\UI\Slim\LoggerDetailsMiddleware'
         arguments: ['@mcp.logger.factory', '@slim.request']
 
     hal.pushfile.path:
@@ -129,17 +129,17 @@ services:
         arguments: ['%error_handling.html_template%']
 
     error.handler.api_not_found:
-        class: 'QL\Hal\Application\APINotFoundHandler'
+        class: 'Hal\UI\Application\APINotFoundHandler'
         arguments: ['@panthor.error_handling.problem_renderer']
 
     error.handler.api_base:
-        class: 'QL\Hal\Application\APIBaseHandler'
+        class: 'Hal\UI\Application\APIBaseHandler'
         arguments: ['@panthor.error_handling.problem_renderer', '@logger']
         calls:
             - ['setStacktraceLogging', ['%error_handling.log_stacktrace%']]
 
     exception.logger:
-        class: 'QL\Hal\Application\ExceptionLogger'
+        class: 'Hal\UI\Application\ExceptionLogger'
         arguments: ['@logger']
 
     # Twig error environment - limit the extensions used here, so we can ensure the error will render
@@ -168,7 +168,7 @@ services:
     ####################################################################################################################
 
     utility.name.formatter:
-        class: 'QL\Hal\Utility\NameFormatter'
+        class: 'Hal\UI\Utility\NameFormatter'
 
     utility.id.generator:
         class: 'QL\Hal\Core\JobIdGenerator'
@@ -178,7 +178,7 @@ services:
             - '%unique.size%'
 
     utility.time.formatter:
-        class: 'QL\Hal\Utility\TimeFormatter'
+        class: 'Hal\UI\Utility\TimeFormatter'
         arguments: ['@clock', '%date.timezone%']
 
     guzzle:
@@ -189,15 +189,15 @@ services:
     ####################################################################################################################
 
     session.flasher:
-        class: 'QL\Hal\Flasher'
+        class: 'Hal\UI\Flasher'
         arguments: ['@session', '@url']
 
     session:
-        class: 'QL\Hal\Session'
+        class: 'Hal\UI\Session'
         factory: ['@session.handler', 'load']
 
     session.handler:
-        class: 'QL\Hal\SessionHandler'
+        class: 'Hal\UI\SessionHandler'
         arguments:
             - '@slim.cookies'
             - '@session.encryption'

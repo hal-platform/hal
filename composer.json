@@ -12,7 +12,7 @@
     },
 
     "autoload": {
-        "psr-4": { "QL\\Hal\\": "src" }
+        "psr-4": { "Hal\\UI\\": "src" }
     },
 
     "require": {

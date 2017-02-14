@@ -7,14 +7,14 @@ services:
     ####################################################################################################################
 
     api_internal.github.user.repositories:
-        class: 'QL\Hal\Controllers\ApiInternal\GitHubReposController'
+        class: 'Hal\UI\Controllers\ApiInternal\GitHubReposController'
         arguments:
             - '@github'
             - '@slim.response'
             - '@slim.route.parameters'
 
     api_internal.deployment.status:
-        class: 'QL\Hal\Controllers\ApiInternal\DeploymentStatusController'
+        class: 'Hal\UI\Controllers\ApiInternal\DeploymentStatusController'
         arguments:
             - '@doctrine.em'
             - '@pools'
@@ -25,7 +25,7 @@ services:
             - '@currentUser'
 
     api_internal.settings.favorite_applications.add:
-        class: 'QL\Hal\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'
+        class: 'Hal\UI\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'
         arguments:
             - '@doctrine.em'
             - '@slim.request'
@@ -36,7 +36,7 @@ services:
             - '@currentUser'
             - '@hal.application'
     api_internal.settings.favorite_applications.remove:
-        class: 'QL\Hal\Controllers\User\FavoriteApplications\RemoveFavoriteApplicationHandler'
+        class: 'Hal\UI\Controllers\User\FavoriteApplications\RemoveFavoriteApplicationHandler'
         arguments:
             - '@doctrine.em'
             - '@slim.request'

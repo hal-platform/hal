@@ -6,11 +6,11 @@ services:
     ####################################################################################################################
 
     api.index:
-        class: 'QL\Hal\Controllers\Api\IndexController'
+        class: 'Hal\UI\Controllers\Api\IndexController'
         arguments: ['@response.formatter']
 
     api.docs:
-        class: 'QL\Hal\Controllers\Api\DocsRedirectController'
+        class: 'Hal\UI\Controllers\Api\DocsRedirectController'
         arguments: ['@url']
 
     ####################################################################################################################
@@ -18,7 +18,7 @@ services:
     ####################################################################################################################
 
     api.queue:
-        class: 'QL\Hal\Controllers\Api\QueueController'
+        class: 'Hal\UI\Controllers\Api\QueueController'
         arguments:
             - '@slim.request'
             - '@response.formatter'
@@ -28,7 +28,7 @@ services:
             - '@clock'
 
     api.queue.refresh:
-        class: 'QL\Hal\Controllers\Api\QueueRefreshController'
+        class: 'Hal\UI\Controllers\Api\QueueRefreshController'
         arguments:
             - '@response.formatter'
             - '@normalizer.build'
@@ -41,14 +41,14 @@ services:
     ####################################################################################################################
 
     api.build:
-        class: 'QL\Hal\Controllers\Api\Build\BuildController'
+        class: 'Hal\UI\Controllers\Api\Build\BuildController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
             - '@slim.route.parameters'
 
     api.build.logs:
-        class: 'QL\Hal\Controllers\Api\Build\EventLogsController'
+        class: 'Hal\UI\Controllers\Api\Build\EventLogsController'
         arguments:
             - '@slim.request'
             - '@response.formatter'
@@ -59,7 +59,7 @@ services:
             - '@slim.route.parameters'
 
     api.builds:
-        class: 'QL\Hal\Controllers\Api\Build\BuildsController'
+        class: 'Hal\UI\Controllers\Api\Build\BuildsController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -71,7 +71,7 @@ services:
     ####################################################################################################################
 
     api.deployment:
-        class: 'QL\Hal\Controllers\Api\Deployment\DeploymentController'
+        class: 'Hal\UI\Controllers\Api\Deployment\DeploymentController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -79,7 +79,7 @@ services:
             - '@slim.route.parameters'
 
     api.deployments:
-        class: 'QL\Hal\Controllers\Api\Deployment\DeploymentsController'
+        class: 'Hal\UI\Controllers\Api\Deployment\DeploymentsController'
         arguments:
             - '@slim.request'
             - '@response.formatter'
@@ -88,7 +88,7 @@ services:
             - '@slim.route.parameters'
 
     api.deployment.lastpush:
-        class: 'QL\Hal\Controllers\Api\Deployment\LastPushController'
+        class: 'Hal\UI\Controllers\Api\Deployment\LastPushController'
         arguments:
             - '@slim.request'
             - '@response.formatter'
@@ -96,7 +96,7 @@ services:
             - '@slim.route.parameters'
 
     api.deployment.history:
-        class: 'QL\Hal\Controllers\Api\Deployment\PushHistoryController'
+        class: 'Hal\UI\Controllers\Api\Deployment\PushHistoryController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -108,14 +108,14 @@ services:
     ####################################################################################################################
 
     api.environment:
-        class: 'QL\Hal\Controllers\Api\Environment\EnvironmentController'
+        class: 'Hal\UI\Controllers\Api\Environment\EnvironmentController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
             - '@slim.route.parameters'
 
     api.environments:
-        class: 'QL\Hal\Controllers\Api\Environment\EnvironmentsController'
+        class: 'Hal\UI\Controllers\Api\Environment\EnvironmentsController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -126,14 +126,14 @@ services:
     ####################################################################################################################
 
     api.server:
-        class: 'QL\Hal\Controllers\Api\Server\ServerController'
+        class: 'Hal\UI\Controllers\Api\Server\ServerController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
             - '@slim.route.parameters'
 
     api.servers:
-        class: 'QL\Hal\Controllers\Api\Server\ServersController'
+        class: 'Hal\UI\Controllers\Api\Server\ServersController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -145,14 +145,14 @@ services:
     ####################################################################################################################
 
     api.group:
-        class: 'QL\Hal\Controllers\Api\Group\GroupController'
+        class: 'Hal\UI\Controllers\Api\Group\GroupController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
             - '@slim.route.parameters'
 
     api.groups:
-        class: 'QL\Hal\Controllers\Api\Group\GroupsController'
+        class: 'Hal\UI\Controllers\Api\Group\GroupsController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -163,13 +163,13 @@ services:
     ####################################################################################################################
 
     api.push:
-        class: 'QL\Hal\Controllers\Api\Push\PushController'
+        class: 'Hal\UI\Controllers\Api\Push\PushController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
             - '@slim.route.parameters'
     api.push.logs:
-        class: 'QL\Hal\Controllers\Api\Push\EventLogsController'
+        class: 'Hal\UI\Controllers\Api\Push\EventLogsController'
         arguments:
             - '@slim.request'
             - '@response.formatter'
@@ -180,7 +180,7 @@ services:
             - '@slim.route.parameters'
 
     api.pushes:
-        class: 'QL\Hal\Controllers\Api\Push\PushesController'
+        class: 'Hal\UI\Controllers\Api\Push\PushesController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -192,7 +192,7 @@ services:
     ####################################################################################################################
 
     api.event.log:
-        class: 'QL\Hal\Controllers\Api\EventLogController'
+        class: 'Hal\UI\Controllers\Api\EventLogController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -204,14 +204,14 @@ services:
     ####################################################################################################################
 
     api.application:
-        class: 'QL\Hal\Controllers\Api\Application\ApplicationController'
+        class: 'Hal\UI\Controllers\Api\Application\ApplicationController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
             - '@slim.route.parameters'
 
     api.applications:
-        class: 'QL\Hal\Controllers\Api\Application\ApplicationsController'
+        class: 'Hal\UI\Controllers\Api\Application\ApplicationsController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
@@ -222,13 +222,13 @@ services:
     ####################################################################################################################
 
     api.user:
-        class: 'QL\Hal\Controllers\Api\User\UserController'
+        class: 'Hal\UI\Controllers\Api\User\UserController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
             - '@slim.route.parameters'
     api.users:
-        class: 'QL\Hal\Controllers\Api\User\UsersController'
+        class: 'Hal\UI\Controllers\Api\User\UsersController'
         arguments:
             - '@response.formatter'
             - '@doctrine.em'
