@@ -76,6 +76,7 @@ services:
             - '@service_container'
             - '@doctrine.em'
             - '@slim.request'
+            - '@mcp.logger.factory'
 
     middleware.api.require_entity:
         class: 'QL\Hal\Middleware\RequireEntityMiddleware'

@@ -76,6 +76,7 @@ services:
     slim:
         parent: 'panthor.slim'
         calls:
+            - ['add', ['@slim.logger_details']]
             - ['add', ['@panthor.middleware.error_handling']]
             - ['add', ['@slim.session']]
 
@@ -91,6 +92,10 @@ services:
     slim.session:
         class: 'QL\Hal\Slim\SessionMiddleware'
         arguments: ['@session.handler', '@service_container']
+
+    slim.logger_details:
+        class: 'QL\Hal\Slim\LoggerDetailsMiddleware'
+        arguments: ['@mcp.logger.factory', '@slim.request']
 
     hal.pushfile.path:
         class: 'stdClass'

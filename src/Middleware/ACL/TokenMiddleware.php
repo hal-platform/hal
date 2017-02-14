@@ -9,9 +9,10 @@ namespace Hal\UI\Middleware\ACL;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use MCP\Logger\MessageFactoryInterface;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
+use QL\MCP\Logger\MessageFactoryInterface;
+use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Exception\HTTPProblemException;
 use Slim\Http\Request;
@@ -80,9 +81,7 @@ class TokenMiddleware implements MiddlewareInterface
 
         $user = $this->validateToken($token);
 
-        $this->logFactory->setDefaultProperty('userCommonId', $user->id());
-        $this->logFactory->setDefaultProperty('userName', 'Token: ' . $user->handle());
-        $this->logFactory->setDefaultProperty('userDisplayName', $user->name());
+        $this->logFactory->setDefaultProperty(MessageInterface::USER_NAME, 'Token: ' . $user->handle());
 
         $this->di->set('currentUser', $user);
     }
