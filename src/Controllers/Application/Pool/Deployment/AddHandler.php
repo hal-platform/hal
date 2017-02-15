@@ -133,7 +133,7 @@ class AddHandler implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

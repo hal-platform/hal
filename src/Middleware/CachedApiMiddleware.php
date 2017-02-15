@@ -37,7 +37,7 @@ class CachedApiMiddleware implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      * @throws Stop
      */
     public function __invoke()

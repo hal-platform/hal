@@ -12,7 +12,7 @@ use QL\Panthor\ControllerInterface;
 class DebugController implements ControllerInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

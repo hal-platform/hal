@@ -37,7 +37,7 @@ class DeploymentController implements ControllerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

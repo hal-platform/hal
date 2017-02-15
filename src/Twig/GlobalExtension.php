@@ -61,7 +61,7 @@ class GlobalExtension extends Twig_Extension implements Twig_Extension_GlobalsIn
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getGlobals()
     {

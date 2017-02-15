@@ -114,7 +114,7 @@ class StartPushHandler implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

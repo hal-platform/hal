@@ -115,7 +115,7 @@ class AddEncryptedPropertyHandler implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

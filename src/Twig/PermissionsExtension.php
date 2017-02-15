@@ -32,7 +32,7 @@ class PermissionsExtension extends Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getName()
     {
@@ -40,7 +40,7 @@ class PermissionsExtension extends Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getFunctions()
     {

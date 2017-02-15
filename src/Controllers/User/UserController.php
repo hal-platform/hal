@@ -72,7 +72,7 @@ class UserController implements ControllerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

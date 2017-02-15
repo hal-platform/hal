@@ -42,7 +42,7 @@ class GitHubExtension extends Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getName()
     {
@@ -50,7 +50,7 @@ class GitHubExtension extends Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getFunctions()
     {
@@ -68,7 +68,7 @@ class GitHubExtension extends Twig_Extension
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getFilters()
     {

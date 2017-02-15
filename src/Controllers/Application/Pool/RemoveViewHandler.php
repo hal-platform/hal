@@ -58,7 +58,7 @@ class RemoveViewHandler implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

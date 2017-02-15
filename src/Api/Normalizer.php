@@ -26,7 +26,7 @@ class Normalizer implements NormalizerInterface
     /**
      * Normalize all known object types
      *
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function normalize($input)
     {

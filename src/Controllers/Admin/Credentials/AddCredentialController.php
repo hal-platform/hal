@@ -101,7 +101,7 @@ class AddCredentialController implements ControllerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

@@ -43,7 +43,7 @@ class AddDeploymentHandler implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

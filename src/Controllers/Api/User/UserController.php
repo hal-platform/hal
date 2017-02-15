@@ -45,7 +45,7 @@ class UserController implements ControllerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      * @throws HTTPProblemException
      */
     public function __invoke()

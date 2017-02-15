@@ -70,7 +70,7 @@ class LoginMiddleware implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      * @throws Exception
      */
     public function __invoke()

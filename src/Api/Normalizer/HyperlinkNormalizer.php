@@ -29,7 +29,7 @@ class HyperlinkNormalizer implements NormalizerInterface
     /**
      * @param Hyperlink $input
      *
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function normalize($input)
     {

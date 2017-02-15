@@ -73,7 +73,7 @@ class MCPCachePlugin implements Plugin
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function handleRequest(RequestInterface $request, callable $next, callable $first)
     {

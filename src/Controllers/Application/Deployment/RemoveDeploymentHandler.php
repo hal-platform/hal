@@ -48,7 +48,7 @@ class RemoveDeploymentHandler implements ControllerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

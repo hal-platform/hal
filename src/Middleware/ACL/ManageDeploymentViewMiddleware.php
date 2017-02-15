@@ -69,7 +69,7 @@ class ManageDeploymentViewMiddleware implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      * @throws Exception
      */
     public function __invoke()

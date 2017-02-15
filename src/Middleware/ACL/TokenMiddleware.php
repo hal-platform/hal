@@ -72,7 +72,7 @@ class TokenMiddleware implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      * @throws HTTPProblemException
      */
     public function __invoke()

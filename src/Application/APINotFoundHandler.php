@@ -27,7 +27,7 @@ class APINotFoundHandler implements ExceptionHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getHandledExceptions()
     {
@@ -35,7 +35,7 @@ class APINotFoundHandler implements ExceptionHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function handle($throwable)
     {

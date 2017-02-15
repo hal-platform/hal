@@ -66,7 +66,7 @@ class BuildsController implements ControllerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      * @throws HttpProblemException
      */
     public function __invoke()

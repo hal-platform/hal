@@ -73,7 +73,7 @@ HELLO;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

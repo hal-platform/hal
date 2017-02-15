@@ -13,7 +13,7 @@ use QL\Panthor\ErrorHandling\ExceptionHandler\BaseHandler;
 class APIBaseHandler extends BaseHandler
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function handle($throwable)
     {

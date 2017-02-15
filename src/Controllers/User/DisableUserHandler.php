@@ -58,7 +58,7 @@ class DisableUserHandler implements ControllerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

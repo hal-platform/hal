@@ -60,7 +60,7 @@ class RemoveEncryptedPropertyHandler implements MiddlewareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __invoke()
     {
