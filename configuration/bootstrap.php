@@ -7,8 +7,10 @@
 
 namespace Hal\Bootstrap;
 
+use Hal\UI\Application\Config\HalCoreExtension;
+use Hal\UI\Application\Di;
 use Hal\UI\CachedContainer;
-use QL\Panthor\Bootstrap\Di;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 $root = __DIR__ . '/..';
 require_once $root . '/vendor/autoload.php';
@@ -17,7 +19,16 @@ require_once $root . '/vendor/autoload.php';
 ini_set('date.timezone', 'UTC');
 date_default_timezone_set('UTC');
 
-$container = Di::getDi($root, CachedContainer::class);
+$halCoreExtension = new HalCoreExtension();
+$addHalCoreExtension = function (ContainerBuilder $container) use ($halCoreExtension) {
+    $container->registerExtension($halCoreExtension);
+};
+
+$loadHalCoreExtension = function (ContainerBuilder $container) use ($halCoreExtension) {
+    $container->loadFromExtension($halCoreExtension->getAlias());
+};
+
+$container = Di::getDi($root, CachedContainer::class, $addHalCoreExtension, $loadHalCoreExtension);
 
 // Custom application logic here
 

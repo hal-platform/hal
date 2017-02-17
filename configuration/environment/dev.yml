@@ -1,3 +1,15 @@
+hal_core:
+    dev_mode: true
+    cache:
+        type: memory
+
+    database_connection:
+        user: 'hal'
+        password: ''
+        host: '127.0.0.1'
+        port: ''
+        dbname: 'hal'
+
 parameters:
     application.environment: 'dev'
     debug: true
@@ -6,11 +18,6 @@ parameters:
     ############################################################################
     # service configuration
     ############################################################################
-
-    database.username: 'root'
-    database.password: ''
-    database.database: 'hal'
-    database.server: 'localhost'
 
     github.token: ''
     github.app.id: ''
@@ -67,12 +74,6 @@ parameters:
         4eca266fbc1045c7c35c4cde4d42609f|ab5f7474e0230947560d2187540971c0
 
 services:
-    # Comment these out if you want to use the redis caches
-    doctrine.cache:
-        class: 'Doctrine\Common\Cache\ArrayCache'
-    cache:
-        class: 'QL\MCP\Cache\MemoryCache'
-
     # Comment this out to use default logger of syslog.
     mcp.logger.service:
         parent: 'mcp.logger.service.errorlog'

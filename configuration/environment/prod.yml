@@ -1,3 +1,12 @@
+hal_core:
+    dev_mode: false
+
+    database_connection:
+        user: ''
+        password: '' #set in environment
+        host: 'prod.example.com'
+        dbname: 'hal9000'
+
 parameters:
     application.environment: 'prod'
     debug: false
@@ -6,10 +15,6 @@ parameters:
     ############################################################################
     # service configuration
     ############################################################################
-
-    database.username: 'placeholder'
-    database.database: 'hal9000'
-    database.server: 'prod.example.com'
 
     github.token: ''
     github.app.id: ''

@@ -1,13 +1,36 @@
+hal_core:
+    proxy_dir: '.doctrine'
+
+    database_connection:
+        driver: 'pdo_mysql'
+        user: 'hal'
+        password: ''
+        host: '127.0.0.1'
+        port: ''
+        dbname: 'hal'
+
+    cache:
+        type: predis
+        predis_service_id: 'redis'
+        lvl2_enabled: true
+        lvl2_ttl: 600
+        lvl2_lock: 60
+
+
+    lazy_user_loader: 'doctrine.utility.lazy.user'
+
+    clock:
+        service_id: 'clock'
+        date_timezone: '%date.timezone%'
+
+    event_listeners:
+        onFlush: ['doctrine.listener.logger']
+        prePersist: ['doctrine.listener.persist']
+
 parameters:
     # use this file for default settings that can be overridden by dev|test|prod config
     application.title: 'Hal'
     application.environment: ''
-
-    ############################################################################
-    # Encrypted Properties - Replaced at deploy time
-    ############################################################################
-
-    database.password: ''
 
     ############################################################################
     # debug
@@ -41,24 +64,6 @@ parameters:
         serverEnvironment: '%application.environment%'
 
     ############################################################################
-    # doctrine
-    ############################################################################
-
-    doctrine.devmode: false
-
-    # Replaced by env
-    database.username: ''
-    database.server: ''
-    database.database: ''
-
-    doctrine.connection:
-        driver: pdo_mysql
-        host: '%database.server%'
-        user: '%database.username%'
-        password: '%database.password%'
-        dbname: '%database.database%'
-
-    ############################################################################
     # caching
     ############################################################################
 
@@ -73,7 +78,6 @@ parameters:
 
     # 30 min for permissions
     cache.permissions.ttl: 1800
-    cache.doctrine.ttl: 600
     cache.server.ttl: 300
     cache.stats.ttl: 900
     cache.page.ttl: 300
