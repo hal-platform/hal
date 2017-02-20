@@ -185,6 +185,9 @@ class McpLoggerExtension extends Extension
     private function setLoggingService($loggingService, ContainerBuilder $container)
     {
         $loggerServiceDefinition = $container->getDefinition($loggingService);
+
+        // weirdness with replacing parent services -- this seemed to be the appropriate way
+        $container->removeDefinition('mcp.logger.service');
         $container->setDefinition('mcp.logger.service', $loggerServiceDefinition);
     }
 }

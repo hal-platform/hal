@@ -1,5 +1,4 @@
 imports:
-    - resource: '../vendor/ql/mcp-logger/configuration/mcp-logger.yml'
     - resource: '../vendor/ql/mcp-panthor/configuration/panthor.yml'
     - resource: 'di.yml'
     - resource: 'config.global.yml'

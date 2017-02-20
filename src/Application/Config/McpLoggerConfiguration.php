@@ -86,7 +86,7 @@ class McpLoggerConfiguration implements ConfigurationInterface
                         ->arrayNode('json_options')
                             ->children()
                                 ->arrayNode('system_options')
-                                    ->prototype('scalar')
+                                    ->prototype('scalar')->end()
                                     ->validate()
                                         ->ifString()->then($this->getConstantFromString())
                                     ->end()

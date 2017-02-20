@@ -11,7 +11,8 @@ hal_core:
         dbname: 'hal'
 
 mcp_logger:
-     errorlog_options:
+    logging_service: 'errorlog'
+    errorlog_options:
         type: 3
         destination: '../.error.log'
 
