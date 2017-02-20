@@ -14,8 +14,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
+
 class McpLoggerConfiguration implements ConfigurationInterface
 {
+    const ERR_INVALID_ERROR_LOG_TYPE = 'The errorlog type is invaild. Received `%s` must be one of %s';
+    const ERR_INVALID_PHP_CONST = 'valid php constant not found checked for `%s`';
 
     /**
      * Generates the configuration tree builder.
@@ -116,7 +119,7 @@ class McpLoggerConfiguration implements ConfigurationInterface
 
             if (!defined($uppercased)) {
                 throw new InvalidArgumentException(
-                    sprintf('valid php constant not found checked for `%s`', $stringConstant)
+                    sprintf(self::ERR_INVALID_PHP_CONST, $stringConstant)
                 );
             }
             return constant($uppercased);
@@ -136,7 +139,9 @@ class McpLoggerConfiguration implements ConfigurationInterface
             }
 
             if (!in_array(ErrorLogService::VALID_TYPES, $type)) {
-                throw new InvalidArgumentException(sprintf('The errorlog type is invaild. Recived %s', $type));
+                throw new InvalidArgumentException(
+                    sprintf(self::ERR_INVALID_ERROR_LOG_TYPE, $type, implode(" ", ErrorLogService::VALID_TYPES))
+                );
             }
 
             return $type;
