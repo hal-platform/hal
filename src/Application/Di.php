@@ -8,6 +8,7 @@
 namespace Hal\UI\Application;
 
 use Hal\UI\Application\Config\HalCoreExtension;
+use Hal\UI\Application\Config\McpLoggerExtension;
 use Hal\UI\CachedContainer;
 use QL\Panthor\Bootstrap\Di as PanthorDi;
 use Symfony\Component\Config\FileLocator;
@@ -18,16 +19,19 @@ class Di extends PanthorDi
 {
     public static function buildHalDI($root)
     {
-        $extension = new HalCoreExtension;
-
+        $extensions = [new HalCoreExtension, new McpLoggerExtension];
         $container = self::buildDi(
             $root,
-            function (ContainerBuilder $di) use ($extension) {
+            function (ContainerBuilder $di) use ($extensions) {
                 (new EnvConfigLoader)->load($di);
-                $di->registerExtension($extension);
+                foreach ($extensions as $ext) {
+                    $di->registerExtension($ext);
+                }
             },
-            function (ContainerBuilder $di) use ($extension) {
-                $di->loadFromExtension($extension->getAlias());
+            function (ContainerBuilder $di) use ($extensions) {
+                foreach ($extensions as $ext) {
+                    $di->loadFromExtension($ext->getAlias());
+                }
             }
         );
 
@@ -36,17 +40,20 @@ class Di extends PanthorDi
 
     public static function getHalDI($root)
     {
-        $extension = new HalCoreExtension;
+        $extensions = [new HalCoreExtension, new McpLoggerExtension];
 
         $container = self::getDi(
             $root,
             CachedContainer::class,
-            function (ContainerBuilder $di) use ($extension) {
+            function (ContainerBuilder $di) use ($extensions) {
                 (new EnvConfigLoader)->load($di);
-                $di->registerExtension($extension);
-            },
-            function (ContainerBuilder $di) use ($extension) {
-                $di->loadFromExtension($extension->getAlias());
+                foreach ($extensions as $ext) {
+                    $di->registerExtension($ext);
+                }            },
+            function (ContainerBuilder $di) use ($extensions) {
+                foreach ($extensions as $ext) {
+                    $di->loadFromExtension($ext->getAlias());
+                }
             }
         );
 

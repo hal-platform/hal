@@ -17,7 +17,6 @@ ini_set('date.timezone', 'UTC');
 date_default_timezone_set('UTC');
 
 $container = Di::getHalDI($root);
-
 // Custom application logic here
 
 return $container;

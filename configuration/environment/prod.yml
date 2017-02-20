@@ -7,6 +7,9 @@ hal_core:
         host: 'prod.example.com'
         dbname: 'hal9000'
 
+mcp_logger:
+    logger_service: 'syslog'
+
 parameters:
     application.environment: 'prod'
     debug: false

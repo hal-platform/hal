@@ -10,6 +10,11 @@ hal_core:
         port: ''
         dbname: 'hal'
 
+mcp_logger:
+     errorlog_options:
+        type: 3
+        destination: '../.error.log'
+
 parameters:
     application.environment: 'dev'
     debug: true
@@ -72,8 +77,3 @@ parameters:
         6d9bd96e3dba77f578fae4fb2f5348f3acfc1cd7a70669e9cfa5edf4f3e68f19ee8c971d831d9bf1
         3b524e80c45e8a4b2dc62f5f5f199e43cfb7c4816c449f9994921e1aeaf2f188ba7670205843d6f8
         4eca266fbc1045c7c35c4cde4d42609f|ab5f7474e0230947560d2187540971c0
-
-services:
-    # Comment this out to use default logger of syslog.
-    mcp.logger.service:
-        parent: 'mcp.logger.service.errorlog'
