@@ -23,22 +23,27 @@ use Symfony\Component\DependencyInjection\Reference;
 class HalCoreExtension extends Extension
 {
     /**
+     * @return string
+     */
+    public function getAlias()
+    {
+        return 'hal_core';
+    }
+
+    /**
      * Loads a specific configuration.
      *
      * @param array $configs An array of configuration values
      * @param ContainerBuilder $container A ContainerBuilder instance
      *
-     * @throws \InvalidArgumentException When provided tag is not defined in this extension
+     * @return void
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new HalCoreConfiguration();
-        $configs = $this->processConfiguration($configuration, $configs);
+        $configs = $this->processConfiguration(new HalCoreConfiguration, $configs);
 
-        $loader = new YamlFileLoader(
-            $container,
-            new FileLocator(__DIR__ . '/../../../vendor/ql/hal-core/configuration')
-        );
+        $configPath = __DIR__ . '/../../../vendor/ql/hal-core/configuration';
+        $loader = new YamlFileLoader($container, new FileLocator($configPath));
         $loader->load('hal-core.yml');
 
         // Save database password from encrypted properties on Hal deployment
@@ -52,13 +57,15 @@ class HalCoreExtension extends Extension
         $container->setParameter('doctrine.lvl2cache.ttl', $configs['cache']['lvl2_ttl']);
         $container->setParameter('doctrine.lvl2cache.lock', $configs['cache']['lvl2_lock']);
 
-        $this->configureDynamicServices($configs, $container);
-        $this->configureCache($configs, $container);
+        $this->configureDynamicServices($container, $configs);
+        $this->configureCache($container, $configs);
 
-        //Attach configured event listeners
+        // Attach configured event listeners
         foreach ($configs['event_listeners'] as $event => $listeners) {
             foreach ($listeners as $service) {
-                $container->getDefinition('doctrine.em.events')->addMethodCall('addEventListener', [[$event], new Reference($service)]);
+                $container
+                    ->getDefinition('doctrine.em.events')
+                    ->addMethodCall('addEventListener', [[$event], new Reference($service)]);
             }
         }
     }
@@ -66,65 +73,67 @@ class HalCoreExtension extends Extension
     /**
      * Process cache configuration
      *
-     * @param array $configs
      * @param ContainerBuilder $container
+     * @param array $configs
+     *
+     * @return void
      */
-    private function configureCache(array $configs, ContainerBuilder $container)
+    private function configureCache(ContainerBuilder $container, array $configs)
     {
         $cacheType = $configs['cache']['type'];
 
         if ($cacheType === 'redis') {
             $container->setDefinition('doctrine.cache', new Definition(DoctrinePredisCache::class, [
-                    $configs['predis_service_id'],
-                    $configs['cache']['lvl2_ttl']
+                $configs['predis_service_id'],
+                $configs['cache']['lvl2_ttl']
             ]));
+
         } elseif ($cacheType === 'memory') {
             $container->setDefinition('doctrine.cache', new Definition(ArrayCache::class));
+
         } elseif ($cacheType === 'custom') {
-            //they've already defined a cache so lets just call it that
+            // they've already defined a cache so lets just call it that
             $container->setAlias('doctrine.cache', $configs['cache']['custom_cache_service_id']);
         }
     }
 
-    private function configureDynamicServices(array $configs, ContainerBuilder $container)
+    /**
+     * @param ContainerBuilder $container
+     * @param array $configs
+     *
+     * @return void
+     */
+    private function configureDynamicServices(ContainerBuilder $container, array $configs)
     {
-        /**
-         * Use the applications supplied clock or make our own
-         * Configuration defaults date_timezone to 'UTC'
-         */
+        // Define clock service
         if (isset($configs['clock']['service_id'])) {
             $clock = new Reference($configs['clock']['service_id']);
         } else {
-            $clock = new Clock('now', $configs['clock']['date_timezone']);
+            $clock = new Definition(Clock::class, [
+                'now',
+                $configs['clock']['date_timezone']
+            ]);
         }
 
-        /**
-         * In the future these definitions would be set in hal-core.yml
-         * and the extension would take the `clock` and `lazy_user_loader` config options
-         * and modify the existing definitions
-         */
+        // In the future these definitions would be set in hal-core.yml
+        // and the extension would take the `clock` and `lazy_user_loader` config options
+        // and modify the existing definitions
         $listenerLogger = new Definition(DoctrineChangeLogger::class, [
             $clock,
-            $container->get('doctrine.random'),
+            new Reference('doctrine.random'),
             isset($configs['lazy_user_loader']) ? new Reference($configs['lazy_user_loader']): null
         ]);
+
         $persisterListener = new Definition(DoctrinePersistListener::class, [$clock]);
 
-        /**
-         * proxy directory
-         */
-        $proxyDir = new Definition('stdClass', []);
-        $proxyDir->setFactory([Stringify::class, 'template'])
+        // Location of doctrine proxies. Dynamic since it relies on service @root
+        $proxyDir = (new Definition('stdClass', []))
+            ->setFactory([Stringify::class, 'template'])
             ->addArgument('%%s/%%s')
             ->addArgument([new Reference('root'), $configs['proxy_dir']]);
 
         $container->setDefinition('doctrine.listener.logger', $listenerLogger);
         $container->setDefinition('doctrine.listener.persist', $persisterListener);
         $container->setDefinition('doctrine.proxy.dir', $proxyDir);
-    }
-
-    public function getAlias()
-    {
-        return 'hal_core';
     }
 }
