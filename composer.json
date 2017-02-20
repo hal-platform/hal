@@ -16,7 +16,7 @@
     },
 
     "require": {
-        "php-64bit": "~7.0",
+        "php-64bit": "~7.1",
 
         "ext-curl": "*",
         "ext-ldap": "*",
@@ -41,18 +41,18 @@
         "ql/mcp-cache":         "~3.0.0",
         "ql/mcp-common":        "~1.0",
         "ql/mcp-logger":        "~3.0.0",
-        "ql/mcp-panthor":       "~2.4.0",
+        "ql/mcp-panthor":       "~3.1.0",
 
-        "slim/slim": "~2.6",
+        "slim/slim": "~3.7",
 
-        "symfony/config":               "~2.8",
-        "symfony/debug":                "~2.8",
-        "symfony/dependency-injection": "~2.8",
-        "symfony/finder":               "~2.8",
+        "symfony/config":               "~3.2",
+        "symfony/debug":                "~3.2",
+        "symfony/dependency-injection": "~3.2",
+        "symfony/finder":               "~3.2",
         "symfony/ldap":                 "~3.2",
         "symfony/options-resolver":     "~3.2",
-        "symfony/proxy-manager-bridge": "~2.8",
-        "symfony/yaml":                 "~2.8",
+        "symfony/proxy-manager-bridge": "~3.2",
+        "symfony/yaml":                 "~3.2",
 
         "twig/twig": "~2.0"
     },
