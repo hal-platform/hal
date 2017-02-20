@@ -3,9 +3,8 @@
 
 namespace Hal\Bin;
 
-use Hal\UI\Application\EnvConfigLoader;
+use Hal\UI\Application\Di;
 use Hal\UI\CachedContainer;
-use QL\Panthor\Bootstrap\Di;
 use Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\ProxyDumper;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 
@@ -13,13 +12,12 @@ $root = __DIR__ . '/../';
 $file = $root . 'src/CachedContainer.php';
 $class = CachedContainer::class;
 
-if (!$container = @include $root . '/configuration/bootstrap.php') {
+if (!$autoloader = @include __DIR__ . '/../vendor/autoload.php') {
     echo "An error occured while attempting to dump the DI Container.\n";
     exit(1);
 };
 
-$modifier = [new EnvConfigLoader, 'load'];
-$container = Di::buildDi($root, $modifier);
+$container = Di::buildHalDI($root);
 
 // Manually build the dumper so we can attach the proxydumper to enable lazy services
 $dumper = new PhpDumper($container);

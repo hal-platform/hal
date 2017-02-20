@@ -7,6 +7,8 @@
 
 namespace Hal\UI\Application;
 
+use Hal\UI\Application\Config\HalCoreExtension;
+use Hal\UI\CachedContainer;
 use QL\Panthor\Bootstrap\Di as PanthorDi;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -14,6 +16,43 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Di extends PanthorDi
 {
+    public static function buildHalDI($root)
+    {
+        $extension = new HalCoreExtension;
+
+        $container = self::buildDi(
+            $root,
+            function (ContainerBuilder $di) use ($extension) {
+                (new EnvConfigLoader)->load($di);
+                $di->registerExtension($extension);
+            },
+            function (ContainerBuilder $di) use ($extension) {
+                $di->loadFromExtension($extension->getAlias());
+            }
+        );
+
+        return $container;
+    }
+
+    public static function getHalDI($root)
+    {
+        $extension = new HalCoreExtension;
+
+        $container = self::getDi(
+            $root,
+            CachedContainer::class,
+            function (ContainerBuilder $di) use ($extension) {
+                (new EnvConfigLoader)->load($di);
+                $di->registerExtension($extension);
+            },
+            function (ContainerBuilder $di) use ($extension) {
+                $di->loadFromExtension($extension->getAlias());
+            }
+        );
+
+        return $container;
+    }
+
     public static function buildDi($root, callable $preLoad = null, callable $postLoad = null)
     {
         $container = new ContainerBuilder;
