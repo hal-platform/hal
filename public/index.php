@@ -2,9 +2,6 @@
 
 namespace Hal\Bootstrap;
 
-use Exception;
-use QL\Panthor\ErrorHandling\FatalErrorHandler;
-
 define('MAINTENANCE', false);
 
 $root = __DIR__ . '/..';
@@ -31,17 +28,27 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
 // Error handling
 $handler = $container->get('error.handler');
 $handler->register();
+$handler->registerShutdown();
 
 ini_set('session.use_cookies', '0');
 ini_set('memory_limit','384M');
 ini_set('display_errors', 0);
 
-// Application
+// Build Slim application
 $app = $container->get('slim');
 
-// Custom application logic here
-$handler->attach($app);
+// Load routes onto Slim
+$routes = $container->get('slim.router.loader');
+$routes($app);
 
-$headers = $app->response()->headers->set('Content-Type', 'text/html; charset=utf-8');
+// Add global middleware to Slim
+$container
+    ->get('slim.global_middleware')
+    ->attach($app);
+
+// Attach Slim to exception handler for error rendering
+$container
+    ->get('exception.handler')
+    ->attachSlim($app);
 
 $app->run();
