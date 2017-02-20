@@ -13,6 +13,7 @@ mcp_logger:
 parameters:
     application.environment: 'prod'
     debug: false
+    symfony.debug: false
     twig.debug: false
 
     ############################################################################

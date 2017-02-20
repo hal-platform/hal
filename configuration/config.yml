@@ -1,4 +1,5 @@
 imports:
+    - resource: '../vendor/ql/mcp-panthor/configuration/panthor-slim.yml'
     - resource: '../vendor/ql/mcp-panthor/configuration/panthor.yml'
     - resource: 'di.yml'
     - resource: 'config.global.yml'
@@ -13,6 +14,5 @@ parameters:
     # Replaced before di compiling
     application.sha: ''
 
-    slim.hooks:
-        slim.before.router:
-            - 'app.slim.hook.routes'
+    global_middleware:
+        - 'slim.global_middleware.logger'

@@ -37,19 +37,19 @@ services:
         class: 'Hal\UI\Service\GlobalMessageService'
         arguments: ['@redis']
 
-    sticky.environment:
-        class: 'Hal\UI\Service\StickyEnvironmentService'
-        arguments:
-            - '@slim.cookies'
-            - '@json'
-            - '%cookie.preferences.ttl%'
+    # sticky.environment:
+    #     class: 'Hal\UI\Service\StickyEnvironmentService'
+    #     arguments:
+    #         - '@slim.cookies'
+    #         - '@json'
+    #         - '%cookie.preferences.ttl%'
 
-    sticky.pool:
-        class: 'Hal\UI\Service\StickyPoolService'
-        arguments:
-            - '@slim.cookies'
-            - '@json'
-            - '%cookie.preferences.ttl%'
+    # sticky.pool:
+    #     class: 'Hal\UI\Service\StickyPoolService'
+    #     arguments:
+    #         - '@slim.cookies'
+    #         - '@json'
+    #         - '%cookie.preferences.ttl%'
 
     stats:
         class: 'Hal\UI\Service\StatsService'
@@ -61,14 +61,14 @@ services:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.stats.ttl%']]
 
-    pools:
-        class: 'Hal\UI\Service\PoolService'
-        arguments:
-            - '@doctrine.em'
-            - '@sticky.pool'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.stats.ttl%']]
+    # pools:
+    #     class: 'Hal\UI\Service\PoolService'
+    #     arguments:
+    #         - '@doctrine.em'
+    #         - '@sticky.pool'
+    #     calls:
+    #         - ['setCache', ['@cache']]
+    #         - ['setCacheTTL', ['%cache.stats.ttl%']]
 
     redis:
         class: 'Predis\Client'
@@ -95,13 +95,13 @@ services:
             - '@json'
             - '@clock'
 
-    acl:
-        class: 'Hal\UI\ACL'
-        arguments:
-            - '@denied.twig'
-            - '@slim.halt'
-            - '@permissions'
-            - '@currentUser'
+    # acl:
+    #     class: 'Hal\UI\ACL'
+    #     arguments:
+    #         - '@denied.twig'
+    #         - '@slim.halt'
+    #         - '@permissions'
+    #         - '@currentUser'
 
     ####################################################################################################################
     # Crypto
@@ -136,17 +136,14 @@ services:
     # TWIG STUFF
     ######################################################################################################################
 
-    twig.auto.template:
-        parent: 'twig.template'
-        class: 'Hal\UI\Application\AutoRenderingTemplate'
-        calls: [['setResponse', ['@slim.response']]]
+    # twig.auto.template:
+    #     parent: 'twig.template'
+    #     class: 'Hal\UI\Application\AutoRenderingTemplate'
+    #     calls: [['setResponse', ['@slim.response']]]
 
     twig.extension.hal:
         class: 'Hal\UI\Twig\HalExtension'
         arguments:
-            - '@slim.request'
-            - '@slim.cookies'
-            - '@session'
             - '@global.message'
             - '@utility.time.formatter'
             - '@utility.name.formatter'
@@ -155,17 +152,15 @@ services:
     twig.extension.hal.global:
         class: 'Hal\UI\Twig\GlobalExtension'
         arguments:
-            - '@service_container'
-            - '@session'
             -
                 applicationTitle: '%application.title%'
                 applicationSha: '%application.sha%'
                 applicationVersion: '%application.major.version%'
                 applicationEnvironment: '%application.environment%'
 
-    twig.extension.hal.lazy:
-        class: 'Hal\UI\Twig\LazyUserExtension'
-        arguments: ['@service_container', '@session']
+    # twig.extension.hal.lazy:
+    #     class: 'Hal\UI\Twig\LazyUserExtension'
+    #     arguments: ['@service_container', '@session']
 
     twig.extension.permissions:
         class: 'Hal\UI\Twig\PermissionsExtension'
@@ -189,8 +184,8 @@ services:
         calls:
             - ['addExtension', ['@twig.extension.hal']]
             - ['addExtension', ['@twig.extension.hal.global' ]]
-            - ['addExtension', ['@twig.extension.hal.lazy' ]]
-            - ['addExtension', ['@twig.extension.permissions']]
+            # - ['addExtension', ['@twig.extension.hal.lazy' ]]
+            # - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
             - ['addExtension', ['@twig.extension.status']]
 
@@ -202,7 +197,9 @@ services:
         arguments:
             - '@cache'
             - '@plug.http_stream_factory'
-            - {respect_cache_headers: false, default_ttl: '%cache.github.default.ttl%'}
+            -
+                respect_cache_headers: false
+                default_ttl: '%cache.github.default.ttl%'
             - '%cache.github.short.ttl%'
 
     plug.http_stream_factory:

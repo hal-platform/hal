@@ -1,15 +1,19 @@
 imports:
-    - resource: di/services.yml
-    - resource: di/services.api.yml
-    - resource: di/services.middleware.yml
-    - resource: di/controllers.yml
-    - resource: di/controllers.admin.yml
-    - resource: di/controllers.application.yml
-    - resource: di/controllers.api.yml
-    - resource: di/controllers.api.crud.yml
-    - resource: di/controllers.api.internal.yml
+    - resource: 'di/services.yml'
+    # - resource: 'di/services.api.yml'
+    # - resource: 'di/services.middleware.yml'
+    # - resource: 'di/controllers.yml'
+    # - resource: 'di/controllers.admin.yml'
+    # - resource: 'di/controllers.application.yml'
+    # - resource: 'di/controllers.api.yml'
+    # - resource: 'di/controllers.api.crud.yml'
+    # - resource: 'di/controllers.api.internal.yml'
 
 services:
+    notFoundHandler:     { alias: 'panthor.handler.notFoundHandler' }
+    notAllowedHandler:   { alias: 'panthor.handler.notAllowedHandler' }
+    phpErrorHandler:     { alias: 'panthor.handler.phpErrorHandler' }
+    errorHandler:        { alias: 'panthor.handler.errorHandler' }
 
     ####################################################################################################################
     # RUN TIME INJECTED (SYNTHETIC) SERVICES
@@ -47,29 +51,25 @@ services:
     # SLIM
     ####################################################################################################################
 
-    slim:
-        parent: 'panthor.slim'
-        calls:
-            - ['add', ['@slim.logger_details']]
-            - ['add', ['@panthor.middleware.error_handling']]
-            - ['add', ['@slim.session']]
-
-    app.slim.hook.routes:
-        parent: 'slim.hook.routes'
-        calls:
+    slim.router.loader:
+        parent: 'router.loader'
+        # calls:
             # %routes% is auto loaded by parent
-            - ['addRoutes', ['%routes.api%']]
-            - ['addRoutes', ['%routes.api.crud%']]
-            - ['addRoutes', ['%routes.admin%']]
-            - ['addRoutes', ['%routes.application%']]
+            # - ['addRoutes', ['%routes.api%']]
+            # - ['addRoutes', ['%routes.api.crud%']]
+            # - ['addRoutes', ['%routes.admin%']]
+            # - ['addRoutes', ['%routes.application%']]
 
-    slim.session:
-        class: 'Hal\UI\Slim\SessionMiddleware'
-        arguments: ['@session.handler', '@service_container']
+    slim.global_middleware:
+        class: 'QL\Panthor\Bootstrap\GlobalMiddlewareLoader'
+        arguments: ['@service_container', '%global_middleware%']
+    slim.global_middleware.logger:
+        class: 'Hal\UI\Middleware\LoggerGlobalMiddleware'
+        arguments: ['@mcp.logger.factory']
 
-    slim.logger_details:
-        class: 'Hal\UI\Slim\LoggerDetailsMiddleware'
-        arguments: ['@mcp.logger.factory', '@slim.request']
+    # slim.session:
+    #     class: 'Hal\UI\Slim\SessionMiddleware'
+    #     arguments: ['@session.handler', '@service_container']
 
     hal.pushfile.path:
         class: 'stdClass'
@@ -83,45 +83,12 @@ services:
     logger:
         parent: 'mcp.logger'
 
-    error.handler:
-        class: 'QL\Panthor\ErrorHandling\ErrorHandler'
-        arguments: ['@logger']
-        calls:
-            - ['setStacktraceLogging', ['%error_handling.log_stacktrace%']]
-            - ['setThrownErrors', ['%error_handling.thrown_errors%']]
-            - ['setLoggedErrors', ['%error_handling.logged_errors%']]
-            - ['addHandler', ['@error.handler.api_not_found']]
-            - ['addHandler', ['@panthor.error_handling.handler.not_found']]
-            - ['addHandler', ['@panthor.error_handling.handler.http_problem']]
-            - ['addHandler', ['@panthor.error_handling.handler.request']]
-            - ['addHandler', ['@error.handler.api_base']]
-            - ['addHandler', ['@panthor.error_handling.handler.base']]
-
-    panthor.error_handling.html_renderer.twig_base:
-        class: 'Twig_Template'
-        factory: ['@error.failsafe.environment', 'loadTemplate']
-        arguments: ['%error_handling.html_template%']
-
-    error.handler.api_not_found:
-        class: 'Hal\UI\Application\APINotFoundHandler'
-        arguments: ['@panthor.error_handling.problem_renderer']
-
-    error.handler.api_base:
-        class: 'Hal\UI\Application\APIBaseHandler'
-        arguments: ['@panthor.error_handling.problem_renderer', '@logger']
-        calls:
-            - ['setStacktraceLogging', ['%error_handling.log_stacktrace%']]
-
-    exception.logger:
-        class: 'Hal\UI\Application\ExceptionLogger'
-        arguments: ['@logger']
-
-    # Twig error environment - limit the extensions used here, so we can ensure the error will render
-    error.failsafe.environment:
-        parent: 'panthor.twig.environment'
-        calls:
-            - ['addExtension', ['@twig.extension.hal']]
-            - ['addExtension', ['@twig.extension.hal.global']]
+    content_handler:
+        class: 'QL\Panthor\ErrorHandling\ContentHandler\LoggingContentHandler'
+        arguments:
+            - '@panthor.content_handler'
+            - '@logger'
+            - { error: 'critical' }
 
     ####################################################################################################################
     # CACHING
@@ -162,23 +129,22 @@ services:
     # SESSION
     ####################################################################################################################
 
-    session.flasher:
-        class: 'Hal\UI\Flasher'
-        arguments: ['@session', '@url']
+    # session.flasher:
+    #     class: 'Hal\UI\Flasher'
+    #     arguments: ['@session', '@uri']
 
-    session:
-        class: 'Hal\UI\Session'
-        factory: ['@session.handler', 'load']
+    # session:
+    #     class: 'Hal\UI\Session'
+    #     factory: ['@session.handler', 'load']
 
-    session.handler:
-        class: 'Hal\UI\SessionHandler'
-        arguments:
-            - '@slim.cookies'
-            - '@session.encryption'
-            - '%session.cookie.configuration%'
+    # session.handler:
+    #     class: 'Hal\UI\SessionHandler'
+    #     arguments:
+    #         - '@slim.cookies'
+    #         - '@session.encryption'
+    #         - '%session.cookie.configuration%'
 
-    session.encryption:
-        class: 'QL\Panthor\Encryption\LibsodiumSymmetricCrypto'
-        arguments: ['%session.encryption.secret%']
-
+    # session.encryption:
+    #     class: 'QL\Panthor\Encryption\LibsodiumSymmetricCrypto'
+    #     arguments: ['%session.encryption.secret%']
 
