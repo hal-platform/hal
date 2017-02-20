@@ -8,16 +8,13 @@
 namespace Hal\UI\Twig;
 
 use Hal\UI\Service\GlobalMessageService;
-use Hal\UI\Session;
 use Hal\UI\Utility\NameFormatter;
 use Hal\UI\Utility\TimeFormatter;
-use QL\Panthor\Http\EncryptedCookies;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
-use Slim\Http\Request;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
@@ -26,21 +23,6 @@ use Twig_SimpleTest;
 class HalExtension extends Twig_Extension
 {
     const NAME = 'hal';
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var EncryptedCookies
-     */
-    private $cookies;
-
-    /**
-     * @var Session
-     */
-    private $session;
 
     /**
      * @var GlobalMessageService
@@ -63,26 +45,17 @@ class HalExtension extends Twig_Extension
     private $gravatarFallbackImageURL;
 
     /**
-     * @param Request $request
-     * @param EncryptedCookies $cookies
-     * @param Session $session
      * @param GlobalMessageService $messageService
      * @param TimeFormatter $time
      * @param NameFormatter $name
      * @param string $gravatarFallbackImageURL
      */
     public function __construct(
-        Request $request,
-        EncryptedCookies $cookies,
-        Session $session,
         GlobalMessageService $messageService,
         TimeFormatter $time,
         NameFormatter $name,
         $gravatarFallbackImageURL
     ) {
-        $this->request = $request;
-        $this->cookies = $cookies;
-        $this->session = $session;
         $this->messageService = $messageService;
         $this->time = $time;
         $this->name = $name;
@@ -121,8 +94,8 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
 
             // session
-            new Twig_SimpleFunction('session_flash', [$this->session, 'flash']),
-            new Twig_SimpleFunction('session_get', [$this->session, 'get']),
+            // new Twig_SimpleFunction('session_flash', [$this->session, 'flash']),
+            // new Twig_SimpleFunction('session_get', [$this->session, 'get']),
 
             // services
             new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
@@ -256,9 +229,8 @@ class HalExtension extends Twig_Extension
      */
     public function isSeriousBusinessMode()
     {
-        $cookie = $this->cookies->getCookie('seriousbusiness');
-
-        return (bool) $cookie;
+        return false;
+        // return (bool) $this->cookies->getCookie('seriousbusiness');
     }
 
     /**
@@ -317,7 +289,8 @@ class HalExtension extends Twig_Extension
     public function getAvatarLink($email, $size = 100)
     {
         $email = strtolower(trim($email));
-        $scheme = ($this->request->getScheme() === 'https') ? 'https' : 'http';
+        // $scheme = ($this->request->getScheme() === 'https') ? 'https' : 'http';
+        $scheme = 'http';
         $default = sprintf('%s://%s', $scheme, $this->gravatarFallbackImageURL);
 
         return sprintf(

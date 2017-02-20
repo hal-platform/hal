@@ -7,10 +7,6 @@
 
 namespace Hal\UI\Twig;
 
-use Exception;
-use Hal\UI\Session;
-use QL\Hal\Core\Entity\User;
-use Symfony\Component\DependencyInjection\IntrospectableContainerInterface;
 use Twig_Extension;
 use Twig_Extension_GlobalsInterface;
 
@@ -22,38 +18,22 @@ class GlobalExtension extends Twig_Extension implements Twig_Extension_GlobalsIn
     const NAME = 'hal_global';
 
     /**
-     * @var IntrospectableContainerInterface
-     */
-    private $di;
-
-    /**
-     * @var Session
-     */
-    private $session;
-
-    /**
      * @var array
      */
     private $globals;
 
     /**
-     * @param IntrospectableContainerInterface $di
-     * @param Session $session
      * @param array $globals
      */
-    public function __construct(IntrospectableContainerInterface $di, Session $session, array $globals = [])
+    public function __construct(array $globals = [])
     {
-        $this->di = $di;
-
-        $this->session = $session;
-
         $this->globals = $globals;
     }
 
     /**
-     *  Get the extension name
+     * Get the extension name
      *
-     *  @return string
+     * @return string
      */
     public function getName()
     {
@@ -65,35 +45,6 @@ class GlobalExtension extends Twig_Extension implements Twig_Extension_GlobalsIn
      */
     public function getGlobals()
     {
-        $this->globals['currentUser'] = $this->getCurrentUser();
-
         return $this->globals;
-    }
-
-    /**
-     * This is required because we need to force the user to load, if the user is available.
-     *
-     * The "lazy user" loader used by the doctrine change logger fails gracefully if no user is available, it does not force a user load.
-     *
-     * @return User|null
-     */
-    private function getCurrentUser()
-    {
-        try {
-            $user = null;
-
-            // already loaded
-            if ($this->di->initialized('currentUser')) {
-                $user = $this->di->get('currentUser', IntrospectableContainerInterface::NULL_ON_INVALID_REFERENCE);
-
-            // read from db if session is set
-            } elseif ($userId = $this->session->get('user_id')) {
-                $user = $this->di->get('doctrine.em')->getRepository(User::CLASS)->find($userId);
-            }
-        } catch (Exception $ex) {
-            $user = null;
-        }
-
-        return $user;
     }
 }

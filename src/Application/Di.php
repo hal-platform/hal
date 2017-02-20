@@ -17,6 +17,9 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Di extends PanthorDi
 {
+    /**
+     * @return ContainerBuilder
+     */
     public static function buildHalDI($root)
     {
         $extensions = [new HalCoreExtension, new McpLoggerExtension];
@@ -38,6 +41,9 @@ class Di extends PanthorDi
         return $container;
     }
 
+    /**
+     * @return ContainerBuilder
+     */
     public static function getHalDI($root)
     {
         $extensions = [new HalCoreExtension, new McpLoggerExtension];
@@ -60,6 +66,9 @@ class Di extends PanthorDi
         return $container;
     }
 
+    /**
+     * @return ContainerBuilder
+     */
     public static function buildDi($root, callable $preLoad = null, callable $postLoad = null)
     {
         $container = new ContainerBuilder;
@@ -80,6 +89,9 @@ class Di extends PanthorDi
         return $container;
     }
 
+    /**
+     * @return ContainerBuilder
+     */
     public static function getDi($root, $class, callable $preLoad = null, callable  $postLoad = null)
     {
         $root = rtrim($root, '/');
