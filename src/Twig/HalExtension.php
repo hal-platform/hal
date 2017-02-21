@@ -93,10 +93,6 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName']),
             new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
 
-            // session
-            // new Twig_SimpleFunction('session_flash', [$this->session, 'flash']),
-            // new Twig_SimpleFunction('session_get', [$this->session, 'get']),
-
             // services
             new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
             new Twig_SimpleFunction('isUpdateTickOn', [$this->messageService, 'isUpdateTickOn']),

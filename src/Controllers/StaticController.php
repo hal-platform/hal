@@ -7,24 +7,23 @@
 
 namespace Hal\UI\Controllers;
 
+use Psr\Http\Message\ResponseInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Response;
+use QL\Panthor\HTTP\NewBodyTrait;
 
 /**
- * Render a twig template and do nothing else.
+ * Render a template and do nothing else.
  */
 class StaticController implements ControllerInterface
 {
+    use NewBodyTrait;
+    use ResponseOnlyControllerTrait;
+
     /**
      * @var TemplateInterface
      */
     private $template;
-
-    /**
-     * @var Response
-     */
-    private $response;
 
     /**
      * @var int
@@ -33,24 +32,24 @@ class StaticController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param Response $response
      * @param int $statusCode
      */
-    public function __construct(TemplateInterface $template, Response $response, $statusCode = 200)
+    public function __construct(TemplateInterface $template, int $statusCode = 200)
     {
         $this->template = $template;
-        $this->response = $response;
         $this->statusCode = $statusCode;
     }
 
     /**
-     * @inheritDoc
+     * @param ResponseInterface $response
+     *
+     * @return ResponseInterface
      */
-    public function __invoke()
+    public function execute(ResponseInterface $response): ResponseInterface
     {
         $rendered = $this->template->render();
-
-        $this->response->setStatus($this->statusCode);
-        $this->response->setBody($rendered);
+        return $this
+            ->withNewBody($response, $rendered)
+            ->withStatus($this->statusCode);
     }
 }
