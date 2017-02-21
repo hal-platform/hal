@@ -7,111 +7,124 @@
 
 namespace Hal\UI;
 
+use JsonSerializable;
 use QL\Hal\Core\Entity\User;
-use Slim\Helper\Set;
+use const JSON_UNESCAPED_SLASHES;
+use const JSON_PRESERVE_ZERO_FRACTION;
 
-class Session extends Set
+class Session implements SessionInterface
 {
-    const FLASH_KEY = 'flash';
+    /**
+     * @var array
+     */
+    private $data;
+    private $original;
 
     /**
-     * @var User|null
+     * @param array $data
      */
-    private $user;
-
-    /**
-     * Get an array of flash messages (and clear all flashes stored)
-     *
-     * The provided parameter acts as either a message to store, or whether to $keep existing messages.
-     *
-     * Examples:
-     * If a string message is provided, a flash is added.
-     * If true is provided, the flash messages are retrieved and NOT cleared.
-     * If false is provided, the flash messages are retrieved and cleared.
-     *
-     * Default behavior:
-     * Retrieve flashes and clear
-     *
-     * @param boolean|string|null $message|$keepFlashes
-     * @param string|null $flashType
-     * @param string|null $flashDetails
-     *
-     * @return array|Flash|null
-     */
-    public function flash($action = null, $type = null, $details = null)
+    public function __construct(array $data = [])
     {
-        if (func_num_args() === 1 && is_bool($action)) {
-            return call_user_func_array([$this, 'getAndFlush'], func_get_args());
-        }
-
-        if (func_num_args() > 0 && is_string($action)) {
-            return call_user_func_array([$this, 'setFlash'], func_get_args());
-        }
-
-        return call_user_func([$this, 'getAndFlush'], false);
+        $this->data = $this->original = $data;
     }
 
     /**
-     * @param User|null $user
+     * @param string $data
      *
-     * @return User|null
+     * @return SessionInterface|null
      */
-    public function user(User $user = null)
+    public static function fromCookie($data)
     {
-        if (func_num_args() === 1) {
-            $this->user = $user;
+        if (!$data) {
+            return null;
         }
 
-        return $this->user;
+        $decoded = json_decode($data, true);
+
+        if (!is_array($decoded)) {
+            return null;
+        }
+
+        return new self($decoded);
     }
 
     /**
-     * @param bool $keepFlashes
+     * @param SessionInterface $session
      *
-     * @return Flash[]
+     * @return string
      */
-    private function getAndFlush($keepFlashes)
+    public static function toCookie(SessionInterface $session)
     {
-        $flashes = $this->getFlashes();
-
-        if (!$keepFlashes) {
-            $this->set(self::FLASH_KEY, []);
-        }
-
-        return $flashes;
+        return json_encode($session, JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
     }
 
     /**
-     * @param string $message
-     * @param string|null $type
-     * @param string $details
-     *
-     * @return Flash
+     * @inheritDoc
      */
-    private function setFlash($message, $type = null, $details = '')
+    public function set(string $key, $value)
     {
-        $type = ($type) ? $type : Flash::INFO;
-        $flash = new Flash($message, $type, $details);
-
-        $flashes = $this->getFlashes();
-        $flashes[] = $flash;
-        $this->set(self::FLASH_KEY, $flashes);
-
-        return $flash;
+        $this->data[$key] = self::convertValueToScalar($value);
     }
 
     /**
-     * Flash helper
-     *
-     * @return array
+     * @inheritDoc
      */
-    private function getFlashes()
+    public function get(string $key, $default = null)
     {
-        $messages = $this->get(self::FLASH_KEY);
-        if (!is_array($messages)) {
-            $messages = [];
+        if (!$this->has($key)) {
+            return self::convertValueToScalar($default);
         }
 
-        return $messages;
+        return $this->data[$key];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function remove(string $key)
+    {
+        unset($this->data[$key]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function clear()
+    {
+        $this->data = [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasChanged() : bool
+    {
+        return $this->data !== $this->original;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param int|bool|string|float|array|object|JsonSerializable $value
+     *
+     * @return int|bool|string|float|array
+     */
+    private static function convertValueToScalar($value)
+    {
+        return json_decode(json_encode($value, JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION), true);
     }
 }
