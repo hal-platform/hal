@@ -153,10 +153,10 @@ services:
         class: 'Hal\UI\Twig\GlobalExtension'
         arguments:
             -
-                applicationTitle: '%application.title%'
-                applicationSha: '%application.sha%'
-                applicationVersion: '%application.major.version%'
-                applicationEnvironment: '%application.environment%'
+                application_title: '%application.title%'
+                application_environment: '%application.environment%'
+                application_sha: '%application.sha%'
+                application_version: '%application.version%'
 
     # twig.extension.hal.lazy:
     #     class: 'Hal\UI\Twig\LazyUserExtension'
@@ -185,7 +185,7 @@ services:
             - ['addExtension', ['@twig.extension.hal']]
             - ['addExtension', ['@twig.extension.hal.global' ]]
             # - ['addExtension', ['@twig.extension.hal.lazy' ]]
-            # - ['addExtension', ['@twig.extension.permissions']]
+            - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
             - ['addExtension', ['@twig.extension.status']]
 

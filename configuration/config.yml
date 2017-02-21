@@ -9,10 +9,16 @@ imports:
 parameters:
     # environment independent parameters
     application.id: '200947'
-    application.major.version: '2'
+
+    application.major.version: '3'
+    application.minor.version: '0'
+    application.version: '%application.major.version%.%application.minor.version%'
 
     # Replaced before di compiling
     application.sha: ''
 
     global_middleware:
         - 'slim.global_middleware.logger'
+        - 'slim.global_middleware.template_context'
+        - 'panthor.middleware.encrypted_cookies'
+        - 'slim.global_middleware.session'

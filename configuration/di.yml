@@ -1,5 +1,26 @@
+#
+# Definition conventions:
+# - If 1-2 arguments, enter on a single line. Otherwise break each argument into its own line.
+# - "calls" are always each on a separate line except when defining templates (for readability)
+#
+# Naming conventions
+#
+# Global middleware:      "slim.global_middleware.*"
+# Page middleware:        "middleware.*"
+# Controllers:            "*.page"
+# Single-page middleware: "*.middleware"
+# Single-page template:   "*.twig"
+#
+# Example (Page: "Sign In")
+#  - 'signin.page'
+#  - 'signin.middleware'
+#  - 'signin.twig'
+#
+# - 'middleware.signin' (shared middleware to check if user is signed in'
 imports:
     - resource: 'di/services.yml'
+    - resource: 'ui/controllers.yml'
+    - resource: 'ui/middleware.yml'
     # - resource: 'di/services.api.yml'
     # - resource: 'di/services.middleware.yml'
     # - resource: 'di/controllers.yml'
@@ -40,14 +61,6 @@ services:
     hal.pool:            { synthetic: true }
 
     ####################################################################################################################
-    # DOCTRINE CONFIGURATION
-    ####################################################################################################################
-
-    doctrine.utility.lazy.user:
-        class: 'Hal\UI\Utility\LazyUserRetriever'
-        arguments: ['@service_container']
-
-    ####################################################################################################################
     # SLIM
     ####################################################################################################################
 
@@ -66,10 +79,12 @@ services:
     slim.global_middleware.logger:
         class: 'Hal\UI\Middleware\LoggerGlobalMiddleware'
         arguments: ['@mcp.logger.factory']
-
-    # slim.session:
-    #     class: 'Hal\UI\Slim\SessionMiddleware'
-    #     arguments: ['@session.handler', '@service_container']
+    slim.global_middleware.session:
+        class: 'Hal\UI\Middleware\SessionGlobalMiddleware'
+        arguments: ['@cookie.handler', '%session.lifetime%']
+    slim.global_middleware.template_context:
+        class: 'Hal\UI\Middleware\TemplateContextGlobalMiddleware'
+        arguments: ['@twig.context']
 
     hal.pushfile.path:
         class: 'stdClass'
@@ -89,6 +104,10 @@ services:
             - '@panthor.content_handler'
             - '@logger'
             - { error: 'critical' }
+
+    doctrine.utility.lazy.user:
+        class: 'Hal\UI\Utility\LazyUserRetriever'
+        arguments: ['@twig.context']
 
     ####################################################################################################################
     # CACHING

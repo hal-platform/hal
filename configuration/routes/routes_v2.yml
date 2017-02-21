@@ -1,24 +1,5 @@
 parameters:
     routes:
-        login:
-            method: ['GET', 'POST']
-            route: '/login'
-            stack: ['login.handler', 'login.page']
-
-        dashboard:
-            method: 'GET'
-            route: '/'
-            stack: ['middleware.login', 'dashboard.page']
-
-        logout:
-            method: 'GET'
-            route: '/logout'
-            stack: ['logout.handler']
-
-        debug:
-            method: 'GET'
-            route:  '/debug'
-            stack:  ['middleware.super', 'debug.page']
 
         github.authorization:
             method: 'GET'
@@ -29,19 +10,6 @@ parameters:
             method: ['GET', 'POST']
             route:  '/settings/remove-github-authorization'
             stack:  ['middleware.login', 'github.authorization.remove.page']
-
-        styleguide:
-            route:  '/styleguide'
-            stack:  ['styleguide.page']
-
-        styleguide.icons:
-            route:  '/styleguide/icons'
-            stack:  ['styleguide.icons.page']
-
-        latest.release:
-            method: 'GET'
-            route:  '/latest-release'
-            stack:  ['latest.release.page']
 
         ################################################################################################################
         # QUEUE ROUTES
@@ -62,35 +30,6 @@ parameters:
             route: '/queue-history/date/:date'
             stack: ['middleware.login', 'queue.history.page']
             conditions: {date: '%routes.regex.date%'}
-
-        ################################################################################################################
-        # HELP ROUTES
-        ################################################################################################################
-
-        help:
-            method: 'GET'
-            route: '/help'
-            stack: ['help.page']
-
-        help.deployment:
-            method: 'GET'
-            route: '/help/deployment'
-            stack: ['help.deployment.page']
-
-        help.githubpermissions:
-            method: 'GET'
-            route: '/help/github-permissions'
-            stack: ['help.githubpermissions.page']
-
-        help.setup:
-            method: 'GET'
-            route: '/help/application-setup'
-            stack: ['help.application_setup.page']
-
-        # help.api:
-        #     method: 'GET'
-        #     route: '/help/api'
-        #     stack: ['help.api.page']
 
         ################################################################################################################
         # BUILD ROUTES

@@ -40,9 +40,9 @@ mcp_logger:
             serverEnvironment: '%application.environment%'
 
 parameters:
-    # use this file for default settings that can be overridden by dev|test|prod config
+
     application.title: 'Hal'
-    application.environment: ''
+    application.environment: 'dev'
 
     ############################################################################
     # panthor
@@ -111,10 +111,13 @@ parameters:
     # cookie
     ############################################################################
 
+    session.lifetime: '+20 minutes'
     session.encryption.secret: ''
-    session.cookie.configuration:
-        lifetime: '5 days'
-    cookie.preferences.ttl: '5 years'
+
+    cookie.encryption.secret: ''
+    # session.cookie.configuration:
+    #     lifetime: '5 days'
+    # cookie.preferences.ttl: '5 years'
 
     ############################################################################
     # permission settings

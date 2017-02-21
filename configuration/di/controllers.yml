@@ -1,5 +1,3 @@
-# Application specific endpoints and controllers go here
-# This includes handlers, middleware, or validators dedicated to a single page.
 services:
 
     delete.confirm.page:
@@ -8,46 +6,6 @@ services:
     delete.confirm.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['delete.confirm.twig']]]
-
-    dashboard.page:
-        class: 'Hal\UI\Controllers\DashboardController'
-        arguments:
-            - '@dashboard.twig'
-            - '@currentUser'
-            - '@permissions'
-            - '@clock'
-            - '@doctrine.em'
-    dashboard.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['dashboard.twig']]]
-
-    login.page:
-        class: 'Hal\UI\Controllers\LoginController'
-        arguments: ['@login.twig', '@stats']
-    login.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['login.twig']]]
-    login.handler:
-        class: 'Hal\UI\Controllers\LoginHandler'
-        arguments:
-            - '@twig.context'
-            - '@ldap.auth'
-            - '@doctrine.em'
-            - '@session'
-            - '@url'
-            - '@doctrine.random'
-            - '@slim.request'
-
-    logout.handler:
-        class: 'Hal\UI\Controllers\LogoutController'
-        arguments: ['@session', '@url']
-
-    latest.release.page:
-        class: 'Hal\UI\Controllers\LatestReleaseController'
-        arguments: ['@latest.release.twig']
-    latest.release.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['latest-release.twig']]]
 
     ####################################################################################################################
     # QUEUE CONTROLLERS
@@ -449,46 +407,6 @@ services:
             - '@slim.route.parameters'
 
     ####################################################################################################################
-    # HELP CONTROLLERS
-    ####################################################################################################################
-
-    help.page:
-        parent: 'static.controller'
-        arguments: ['@help.twig', '@slim.response']
-    help.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['help/help.twig']]]
-
-    help.deployment.page:
-        parent: 'static.controller'
-        arguments: ['@help.deployment.twig', '@slim.response']
-    help.deployment.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['help/deployment.twig']]]
-
-    help.application_setup.page:
-        parent: 'static.controller'
-        arguments: ['@help.application_setup.twig', '@slim.response']
-    help.application_setup.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['help/application-setup.twig']]]
-
-    # help.api.page:
-    #   parent: 'static.controller'
-    #   arguments: [@help.api.twig, @slim.response]
-    # help.api.twig:
-    #   parent: 'twig.template'
-    #   calls: [['setTemplate', ['help/api.twig']]]
-
-    help.githubpermissions.page:
-        parent: 'static.controller'
-        arguments: ['@help.githubpermissions.twig', '@slim.response']
-    help.githubpermissions.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['help/github-permissions.twig']]]
-
-
-    ####################################################################################################################
     # GITHUB OAUTH CONTROLLERS
     ####################################################################################################################
 
@@ -534,17 +452,4 @@ services:
     debug.page:
         class: 'Hal\UI\Controllers\DebugController'
 
-    styleguide.page:
-        parent: 'static.controller'
-        arguments: ['@styleguide.twig', '@slim.response']
-    styleguide.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['styleguide.html.twig']]]
-
-    styleguide.icons.page:
-        parent: 'static.controller'
-        arguments: ['@styleguide.icons.twig', '@slim.response']
-    styleguide.icons.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['styleguide.icons.html.twig']]]
 
