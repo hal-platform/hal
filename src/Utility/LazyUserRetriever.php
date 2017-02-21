@@ -7,44 +7,46 @@
 
 namespace Hal\UI\Utility;
 
+use Hal\UI\Middleware\ACL\SignedInMiddleware;
 use QL\Hal\Core\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\IntrospectableContainerInterface;
+use QL\Panthor\Twig\Context;
 
 /**
- * Attempt to get the currently logged in user. The user is a synthetic service, so its a bit tricky to avoid
- * blowing up.
+ * This sucks.
+ *
+ * This requires the SignedInMiddleware to be run which populates the user into the template context.
+ *
+ * This means only required-signed-in pages will make the user available, and pages
+ * cannot run in a dual signed-out/signed-in mode.
+ *
+ * @todo find a better way to pass user to logger with hal-core 3.0
  */
 class LazyUserRetriever
 {
-    const SERVICE_KEY = 'currentUser';
+    /**
+     * @var Context
+     */
+    private $context;
 
     /**
-     * @var ContainerInterface
+     * @param Context $context
      */
-    private $container;
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Context $context)
     {
-        $this->container = $container;
+        $this->context = $context;
     }
 
     /**
      * @return User|null
      */
-    public function __invoke()
+    public function __invoke(): ?User
     {
-        if ($this->container instanceof IntrospectableContainerInterface && !$this->container->initialized(self::SERVICE_KEY)) {
-            return;
+        $user = $this->context->get(SignedInMiddleware::USER_ATTRIBUTE);
+
+        if ($user instanceof User) {
+            return $user;
         }
 
-        if (!$this->container->has(self::SERVICE_KEY)) {
-            return;
-        }
-
-        return $this->container->get(self::SERVICE_KEY, ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        return null;
     }
 }

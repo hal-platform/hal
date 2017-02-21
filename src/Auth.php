@@ -7,6 +7,7 @@
 
 namespace Hal\UI;
 
+use Exception;
 use QL\MCP\Common\GUID;
 use Symfony\Component\Ldap\Exception\ConnectionException;
 use Symfony\Component\Ldap\Ldap;
@@ -59,7 +60,7 @@ class Auth
             $this->ldap->bind($user, $password);
 
         // Symfony suppresses errors, but our error handler does not properly ignore suppressed errors.
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return null;
         }
 

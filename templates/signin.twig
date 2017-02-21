@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% set page_title = "Login" %}
+{% set page_title = "Sign-In" %}
 
 {% block content %}
 
@@ -19,7 +19,7 @@
 
 {% endblock %}
 
-{% block login_form %}
+{% block signin_form %}
     <div class="form-wrapper">
         <form action="" method="post">
             <ul class="form-fields">
@@ -32,9 +32,7 @@
                     <input class="text-input" type="password" id="password" name="password">
                 </li>
                 <li>
-                    <p><small>Please use your Active Directory credentials to login (your "windows password").</small></p>
-
-                    <input class="btn" type="submit" value="Log In" name="submit">
+                    <input class="btn" type="submit" value="Sign In" name="submit">
                 </li>
             </ul>
         </form>
@@ -45,7 +43,7 @@
     <div class="flex-box-wrapper">
 
         <div class="flex-box">
-            {{ block('login_form') }}
+            {{ block('signin_form') }}
         </div>
 
         <div class="flex-box">
