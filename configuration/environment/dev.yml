@@ -18,6 +18,7 @@ mcp_logger:
 
 parameters:
     application.environment: 'dev'
+
     debug: true
     symfony.debug: true
     twig.debug: true

@@ -29,15 +29,15 @@ hal_core:
 
 
 mcp_logger:
-       syslog_options:
-            ident: 'hal-%application.id%'
-            facility: 'LOG_USER'
-            silent: true
-            options: ['LOG_ODELAY', 'LOG_CONS']
+   syslog_options:
+        ident: 'hal-%application.id%'
+        facility: 'LOG_USER'
+        silent: true
+        options: ['LOG_ODELAY', 'LOG_CONS']
 
-       default_properties:
-            applicationID: '%application.id%'
-            serverEnvironment: '%application.environment%'
+   default_properties:
+        applicationID: '%application.id%'
+        serverEnvironment: '%application.environment%'
 
 parameters:
 
