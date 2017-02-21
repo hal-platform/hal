@@ -56,5 +56,7 @@
 
         "twig/twig": "~2.0"
     },
-    "require-dev": {}
+    "require-dev": {
+        "symfony/var-dumper":           "~3.2"
+    }
 }
