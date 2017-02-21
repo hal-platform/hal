@@ -3,7 +3,6 @@
 {% set js_components = ["queue"] %}
 
 {% set page_title = 'Dashboard' %}
-{% set currentUser = getCurrentUser() %}
 
 {% block content %}
 
@@ -12,19 +11,19 @@
     {% else %}
         <h1>
             Hello<span
-                data-initial=", {{ getUsersActualName(currentUser) }}."
+                data-initial=", {{ getUsersActualName(current_user) }}."
                 data-freud=", {{ getUsersFreudianName() }}."
-                data-nofunzone=", {{ getUsersFirstName(currentUser) }}."
+                data-nofunzone=", {{ getUsersFirstName(current_user) }}."
             ></span>
         </h1>
     {% endif %}
 
-    {% if session_get('is-first-login') or not favorites %}
+    {% if session.get('is-first-login') or not favorites %}
        {{ block('intro') }}
     {% endif %}
 
     {# STUCK WORK #}
-    {% if isUserAdminOrSuper(currentUser) and stuck %}
+    {% if isUserAdminOrSuper(current_user) and stuck %}
         {% set title = 'There is <strong>' ~ stuck|length ~ '</strong> stuck job!' %}
         {% if stuck|length > 1 %}
             {% set title = 'There are <strong>' ~ stuck|length ~ '</strong> stuck jobs!' %}
@@ -43,8 +42,8 @@
                     <div class="fav-box">
                         <h5>{{ application.name }}</h5>
                         <p>
-                            <a href="{{ urlFor('application.status', {'application': application.id}) }}">App Status</a>
-                            | <a href="{{ urlFor('build.start', {'application': application.id}) }}">Start Build</a>
+                            <a href="{{ uriFor('application.status', {'application': application.id}) }}">App Status</a>
+                            | <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
                         </p>
                     </div>
                 {% endfor %}
@@ -86,11 +85,11 @@
             <b>To deploy an application:</b> Find the application under the applications menu option.
         </p>
         <p>
-            <b>To add an application:</b> Add the application from the applications page. You should probably read <a href="{{ urlFor('help') }}">support page</a> for additional instructions and supported systems and project types.
+            <b>To add an application:</b> Add the application from the applications page. You should probably read <a href="{{ uriFor('help') }}">support page</a> for additional instructions and supported systems and project types.
             We wouldn't want you doing something foolish, after all.
         </p>
         <p>
-            If you you do not have the correct permissions or need support to remedy a mistake you have made, please check the <a href="{{ urlFor('help') }}">support page</a> for assistance.
+            If you you do not have the correct permissions or need support to remedy a mistake you have made, please check the <a href="{{ uriFor('help') }}">support page</a> for assistance.
         </p>
 
         <p>I look forward to working with you.</p>

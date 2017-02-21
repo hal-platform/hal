@@ -1,0 +1,60 @@
+{% import "_partial/macros.twig" as macros %}
+
+<header role="banner">
+    {% block banner %}
+        <div class="hal">
+            <div class="wrapper">
+                <a href="/">
+                    <div class="hal-eye circular">
+                        <div class="ring circular"></div>
+                        <div class="oculus circular">
+                            <div class="iris circular narrow"></div>
+                            <div class="iris circular wide"></div>
+                            <div class="highlight alpha"></div>
+                            <div class="highlight"></div>
+                            <div class="highlight beta"></div>
+                        </div>
+                    </div>
+                </a>
+
+                <h1 class="hal-label">
+                    <span class="hal-label__name">Hal</span>
+                    <span class="hal-label__version">2.9.0
+                        {%- if isUpdateTickOn() -%}
+                            <a class="hal-stamp" href="{{ uriFor('latest_release') }}" title="Hal was recently updated!">{{ macros.icon('star') }}</a>
+                        {%- endif -%}
+                    </span>
+                </h1>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block navigation %}
+        {% if show_navigation %}
+            <nav role="navigation">
+                {% if current_user %}
+                    <ul class="nav--main">
+                        {% if isUserAdminOrSuper(current_user) %}
+                            <li><a href="{{ uriFor('admin') }}">{{ macros.icon('watch') }} Admin</a></li>
+                        {% else %}
+                            <li><a href="{{ uriFor('dashboard') }}">{{ macros.icon('dashboard') }} Dashboard</a></li>
+                        {% endif %}
+
+                        <li><a href="{{ uriFor('queue') }}">{{ macros.icon('in') }} Queue</a></li>
+                        <li><a href="{{ uriFor('applications') }}">{{ macros.icon('list') }} Applications</a></li>
+                        <li><a href="{{ uriFor('settings') }}">{{ macros.icon('settings') }} Settings</a></li>
+
+                        <li><a href="{{ uriFor('help') }}">{{ macros.icon('question') }} Help</a></li>
+                        <li><a href="{{ uriFor('signout') }}">{{ macros.icon('sign-out') }} Sign Out</a></li>
+                    </ul>
+
+                {% else %}
+                    <ul class="nav--main-signed-out">
+                        <li class="signed-out"><a href="{{ uriFor('help') }}">{{ macros.icon('question') }} Help</a></li>
+                        <li class="signed-out"><a href="{{ uriFor('signin') }}">{{ macros.icon('sign-in') }} Sign In</a></li>
+                    </ul>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% endblock %}
+</header>

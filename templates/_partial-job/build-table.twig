@@ -26,7 +26,7 @@
             </td>
             <td>
                 {% if build.user %}
-                    <a href="{{ urlFor('user', {'user': build.user.id}) }}">{{ build.user.handle }}</a>
+                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.handle }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -49,7 +49,7 @@
 
             <td class="tr{{ canPushSoon ? ' js-build-push' : '' }}">
                 {% if canPushNow %}
-                    <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': build.id}) }}">Push</a>
+                    <a class="btn btn--tiny" href="{{ uriFor('push.start', {'build': build.id}) }}">Push</a>
                 {% endif %}
             </td>
         </tr>

@@ -2,7 +2,7 @@
 
 {% import _self as macros %}
 {% set page_title = status == 404 ? 'Not Found' : 'Error' %}
-{% set buster = applicationSha[:4] ?: 'dev' ~ 'now'|date('U') %}
+{% set buster = application_sha[:4] ?: 'dev' ~ 'now'|date('U') %}
 
 <html class="no-js" id="error-page">
     <head>
@@ -12,7 +12,7 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
 
         <title>
-            {{ page_title }} - {{ applicationEnvironment == 'prod' ? applicationTitle : applicationEnvironment|upper }}
+            {{ page_title }} - {{ application_environment == 'prod' ? application_title : application_environment|upper }}
         </title>
 
         <link type="image/png" rel="shortcut icon" href="/hal.ico">
@@ -20,8 +20,6 @@
     </head>
 
     <body>
-        <span class="sticky-version">Version {{ applicationVersion }}.X, {{ applicationSha|default('dev') }}</span>
-
         <header role="banner">
             <div class="hal">
                 <div class="wrapper">
@@ -40,7 +38,7 @@
 
                     <h1 class="hal-label">
                         <span class="hal-label__name">Hal</span>
-                        <span class="hal-label__version">2.9.0</span>
+                        <span class="hal-label__version">{{ application_version }}.0</span>
                     </h1>
                 </div>
             </div>
@@ -61,7 +59,13 @@
                 <div class="terminal__footer__inner">HAL 9000 SERIES TERMINAL</div>
             </div>
 
-            <div class="terminal__text">{{ isSeriousBusinessMode() ? macros.nofunzone(severity) : macros.terminal(severity) }}</div>
+            <div class="terminal__text">
+                {{- macros.intro(severity) -}}
+                {%- if isDebugMode() -%}
+                        {{ macros.extra(message, details) }}
+                {%- endif -%}
+                {{- isSeriousBusinessMode() ? macros.nofunzone() : macros.terminal() -}}
+            </div>
         </div>
 
         <div class="star-1"></div>
@@ -73,22 +77,24 @@
     </body>
 </html>
 
-{% macro nofunzone(severity) %}
+{% macro intro(severity) %}
 An error has occured.^1500
 {% if severity %}
 
 Error Type: {{ severity }}
 {% endif %}
+{% endmacro %}
+
+{% macro extra(message, details) %}
+{{ message }}
+{% endmacro %}
+
+{% macro nofunzone() %}
 
 Please contact an administrator for further details.
 {% endmacro %}
 
-{% macro terminal(severity) %}
-An error has occured.^1500
-{% if severity %}
-
-Error Type: {{ severity }}
-{% endif %}
+{% macro terminal() %}
 
 I am sorry this happened to you, Dave.^1500
 

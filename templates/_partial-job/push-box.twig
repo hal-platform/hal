@@ -11,12 +11,12 @@
             <article class="card--baby mbn{{ cardStyle }}">
                 <header class="card__header split">
                     <span class="split__title">
-                        <a href="{{ urlFor('application.status', {application: push.build.application.id}) }}">
+                        <a href="{{ uriFor('application.status', {application: push.build.application.id}) }}">
                             {{ push.build.application.name }}
                         </a>
                     </span>
 
-                    <a href="{{ urlFor('push', {'push': push.id}) }}">
+                    <a href="{{ uriFor('push', {'push': push.id}) }}">
                         {{ macros.job_status(push) }}
                     </a>
                 </header>
@@ -26,9 +26,9 @@
                         <li>
                             <span class="split__title">{{ push.created|html5date }}</span>
                             {% if push.deployment %}
-                                <a href="{{ urlFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.name }}</a>
+                                <a href="{{ uriFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.name }}</a>
                                 →
-                                <a href="{{ urlFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment.formatPretty(true) }}</a>
+                                <a href="{{ uriFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment.formatPretty(true) }}</a>
                             {% else %}
                                 Unknown
                             {% endif %}

@@ -14,7 +14,7 @@
     <tbody>
     {% for push in pushes %}
         <tr>
-            <td><a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a></td>
+            <td><a href="{{ uriFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a></td>
             <td>
                 {{ macros.job_status(push) }}
             </td>
@@ -25,10 +25,10 @@
                     Unknown
                 {% endif %}
             </td>
-            <td>Build <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
+            <td>Build <a href="{{ uriFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
             <td>
                 {% if push.user %}
-                    <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
+                    <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
                 {% else %}
                     Unknown
                 {% endif %}

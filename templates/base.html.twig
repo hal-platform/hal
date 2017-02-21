@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% set buster = applicationSha[:4] ?: 'dev' ~ 'now'|date('U') %}
+{% set buster = application_sha[:4] ?: 'dev' ~ 'now'|date('U') %}
 <html class="no-js" id="{{ html_id ?: '' }}">
 
     {% if js_components %}
@@ -11,7 +11,7 @@
         {% block page_head %}
             {% block page_title %}
             <title>
-                {% if page_title %}{{ page_title }} - {% endif %}{{ applicationEnvironment == 'prod' ? applicationTitle : applicationEnvironment|upper }}
+                {% if page_title %}{{ page_title }} - {% endif %}{{ application_environment == 'prod' ? application_title : application_environment|upper }}
             </title>
             {% endblock %}
             {% block page_icon %}
@@ -31,20 +31,18 @@
     </head>
 
     <body>
-        <span class="sticky-version">Version {{ applicationVersion }}.X, {{ applicationSha|default('dev') }}</span>
         {% block page_body %}
 
             {% block page_header %}
-                {% if showNavigation is not defined %}
-                    {% set showNavigation = true %}
-                {% endif %}
-                {% embed '_partial/layout.header.twig' with {showNavigation: showNavigation} %}
-                {% endembed %}
+                {% set should_show_nav = show_navigation is defined ? show_navigation : true %}
+                {% embed 'base.header.twig' with {show_navigation: should_show_nav} %}{% endembed %}
             {% endblock %}
 
             {% block page_main %}
             <main role="main">
+                {#
                 {% include '_partial/layout.messages.twig' %}
+                #}
 
                 {# main page content #}
                 {% block content %}{% endblock %}
