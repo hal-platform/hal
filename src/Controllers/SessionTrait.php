@@ -9,9 +9,9 @@ namespace Hal\UI\Controllers;
 
 use Hal\UI\Flash;
 use Hal\UI\SessionInterface;
-use Hal\UI\Middleware\ACL\SignedInMiddleware;
 use Hal\UI\Middleware\FlashGlobalMiddleware;
 use Hal\UI\Middleware\SessionGlobalMiddleware;
+use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\User;
 
@@ -39,6 +39,16 @@ trait SessionTrait
 
     /**
      * @param ServerRequestInterface $request
+     *
+     * @return User|null
+     */
+    private function getUser(ServerRequestInterface $request): ?User
+    {
+        return $request->getAttribute(UserSessionGlobalMiddleware::USER_ATTRIBUTE);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
      * @param string $type
      * @param string $message
      * @param string $details
@@ -56,15 +66,5 @@ trait SessionTrait
             ->withMessage($type, $message, $details);
 
         return $request;
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return User|null
-     */
-    private function getUser(ServerRequestInterface $request): ?User
-    {
-        return $request->getAttribute(SignedInMiddleware::USER_ATTRIBUTE);
     }
 }

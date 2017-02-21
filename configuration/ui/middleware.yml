@@ -2,4 +2,4 @@ services:
 
     middleware.signed_in:
         class: 'Hal\UI\Middleware\ACL\SignedInMiddleware'
-        arguments: ['@doctrine.em', '@uri']
+        arguments: ['@uri']

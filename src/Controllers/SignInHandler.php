@@ -10,7 +10,7 @@ namespace Hal\UI\Controllers;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\UI\Auth;
-use Hal\UI\Middleware\ACL\SignedInMiddleware;
+use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Session;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -115,7 +115,7 @@ class SignInHandler implements MiddlewareInterface
         $session = $this->getSession($request);
 
         $session->clear();
-        $session->set(SignedInMiddleware::SESSION_ATTRIBUTE, $user->id());
+        $session->set(UserSessionGlobalMiddleware::SESSION_ATTRIBUTE, $user->id());
         $session->set('is_first_login', $isFirstLogin);
 
         if ($redirect && strpos($redirect, '/') === 0) {
