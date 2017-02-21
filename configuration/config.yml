@@ -21,4 +21,5 @@ parameters:
         - 'slim.global_middleware.logger'
         - 'slim.global_middleware.template_context'
         - 'panthor.middleware.encrypted_cookies'
+        - 'slim.global_middleware.flash'
         - 'slim.global_middleware.session'

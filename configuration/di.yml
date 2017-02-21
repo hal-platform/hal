@@ -82,6 +82,9 @@ services:
     slim.global_middleware.session:
         class: 'Hal\UI\Middleware\SessionGlobalMiddleware'
         arguments: ['@cookie.handler', '%session.lifetime%']
+    slim.global_middleware.flash:
+        class: 'Hal\UI\Middleware\FlashGlobalMiddleware'
+        arguments: ['@cookie.handler']
     slim.global_middleware.template_context:
         class: 'Hal\UI\Middleware\TemplateContextGlobalMiddleware'
         arguments: ['@twig.context']

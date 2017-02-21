@@ -55,11 +55,11 @@ class SessionGlobalMiddleware implements MiddlewareInterface
         // build session
         $session = $this->buildSession($request);
 
+        // attach to request
         $request = $this
             ->withContext($request, [self::SESSION_ATTRIBUTE => $session])
             ->withAttribute(self::SESSION_ATTRIBUTE, $session);
 
-        // attach to request
         $response = $next($request, $response);
 
         // render session

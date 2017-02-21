@@ -7,8 +7,10 @@
 
 namespace Hal\UI\Controllers;
 
+use Hal\UI\Flash;
 use Hal\UI\SessionInterface;
 use Hal\UI\Middleware\ACL\SignedInMiddleware;
+use Hal\UI\Middleware\FlashGlobalMiddleware;
 use Hal\UI\Middleware\SessionGlobalMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\User;
@@ -23,6 +25,37 @@ trait SessionTrait
     private function getSession(ServerRequestInterface $request): SessionInterface
     {
         return $request->getAttribute(SessionGlobalMiddleware::SESSION_ATTRIBUTE);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     *
+     * @return Flash
+     */
+    private function getFlash(ServerRequestInterface $request): Flash
+    {
+        return $request->getAttribute(FlashGlobalMiddleware::FLASH_ATTRIBUTE);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param string $type
+     * @param string $message
+     * @param string $details
+     *
+     * @return ServerRequestInterface
+     */
+    private function withFlash(
+        ServerRequestInterface $request,
+        string $type,
+        string $message,
+        string $details = ''
+    ): ServerRequestInterface {
+        $flash = $this
+            ->getFlash($request)
+            ->withMessage($type, $message, $details);
+
+        return $request;
     }
 
     /**

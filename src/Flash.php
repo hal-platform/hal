@@ -11,78 +11,149 @@ use InvalidArgumentException;
 
 class Flash
 {
-    const INFO = 'info';
-    const ERROR = 'error';
-    const SUCCESS = 'success';
-    const WARNING = 'warning';
+    public const INFO = 'info';
+    public const ERROR = 'error';
+    public const SUCCESS = 'success';
+    public const WARNING = 'warning';
 
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string
-     */
-    private $message;
-
-    /**
-     * @var string
-     */
-    private $details;
-
-    private static $validTypes = [
+    private const VALID_FLASH_TYPES = [
         self::INFO,
         self::ERROR,
         self::SUCCESS,
         self::WARNING
     ];
 
-    /**
-     * @param string $message
-     * @param string $type
-     * @param string $details
-     */
-    public function __construct($message, $type = self::INFO, $details = '')
-    {
-        $this->message = $message;
-        $this->type = $type;
-        $this->details = $details;
+    const ERRT_FLASH = 'Invalid flash type "%s" specified.';
 
-        if (!in_array($this->type, self::$validTypes)) {
-            throw new InvalidArgumentException(sprintf('Invalid type given: %s', $this->type));
+    /**
+     * @var array
+     */
+    private $messages;
+    private $original;
+
+    /**
+     * @param array $messages
+     */
+    public function __construct(array $messages = [])
+    {
+        $this->messages = [];
+
+        foreach ($messages as $msg) {
+            if (!is_array($msg)) {
+                continue;
+            }
+
+            if (!array_key_exists('type', $msg) || !array_key_exists('message', $msg)) {
+                continue;
+            }
+
+            $this->withMessage($msg['type'], $msg['message'], $msg['details'] ?? '');
         }
+
+        $this->original = $this->messages;
     }
 
     /**
-     * @return string
+     * @param string $data
+     *
+     * @return Flash|null
      */
-    public function type()
+    public static function fromCookie($data)
     {
-        return $this->type;
+        if (!$data) {
+            return null;
+        }
+
+        $decoded = json_decode($data, true);
+
+        if (!is_array($decoded)) {
+            return null;
+        }
+
+        return new self($decoded);
     }
 
     /**
+     * @param Flash $flash
+     *
      * @return string
      */
-    public function message()
+    public static function toCookie(Flash $flash)
     {
-        return $this->message;
+        return json_encode($flash, JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
     }
 
     /**
-     * @return string
+     * @param string $type
+     * @param string $message
+     * @param string $details
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return self
      */
-    public function details()
+    public function withMessage(string $type, string $message, string $details = ''): Flash
     {
-        return $this->details;
+        if (!in_array($type, self::VALID_FLASH_TYPES)) {
+            throw new InvalidArgumentException(sprintf(self::ERRT_FLASH, $type));
+        }
+
+        $this->messages[] = [
+            'type' => $type,
+            'message' => $message,
+            'details' => $details
+        ];
+
+        return $this;
     }
 
     /**
-     * @return string
+     * Get all messages.
+     *
+     * @return array
      */
-    public function __toString()
+    public function getMessages(): array
     {
-        return $this->message();
+        return $this->messages;
+    }
+
+    /**
+     * Remove all messages.
+     *
+     * @return array
+     */
+    public function removeMessages(): void
+    {
+        $this->messages = [];
+    }
+
+    /**
+     * Get all messages and flush them.
+     *
+     * @return array
+     */
+    public function flush(): array
+    {
+        $messages = $this->getMessages();
+
+        $this->removeMessages();
+
+        return $messages;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMessages(): bool
+    {
+        return count($this->messages) > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasChanged(): bool
+    {
+        return $this->messages !== $this->original;
     }
 }

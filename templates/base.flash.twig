@@ -1,0 +1,17 @@
+{% import "_partial/macros.twig" as macros %}
+
+{# FLASH MESSAGES #}
+{% block flash %}
+    {% if flashes.hasMessages() %}
+        {% for flash in flashes.flush() %}
+            {{ macros.alert(flash.type, flash.message, flash.details) }}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{# GLOBAL MESSAGE #}
+{% block messages %}
+    {% if globalMessage() %}
+        {{ globalMessage()|raw }}
+    {% endif %}
+{% endblock %}
