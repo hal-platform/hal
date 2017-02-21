@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Help' %}
@@ -17,7 +17,6 @@
             <ul class="list--bullet">
                 <li><a href="#permission">Who should I contact for support or permission changes?</a></li>
                 <li><a href="#bugs">Who should I contact regarding bugs or feature requests?</a></li>
-                <li><a href="{{ uriFor('help.github_permissions') }}">I'm a GitHub repository collaborator but am unable to build or push. Help!</a></li>
             </ul>
         </li>
 
@@ -73,8 +72,6 @@
         <b>Leads</b> of applications have access to a few more options such as Encrypted Properties, Deployment Targets, and more.
         Contact an administrator if you think you may need this level of access.
     </p>
-
-    {{ macros.alert('info', 'The way Hal determines GitHub permissions has recently changed.', block('github_permission_changes')) }}
 
 
     <h3 id="bugs">{{ macros.status_icon('Who should I contact regarding bugs or feature requests?') }}</h3>
@@ -215,13 +212,4 @@
         Details about the latest release are always available at <a href="{{ uriFor('latest.release') }}">/latest-release</a>.
     </p>
     {% include '_partial/help.release-notes.twig' %}
-{% endblock %}
-
-{% block github_permission_changes %}
-With GitHub Enterprise 2.1, features that Hal relied on to determine engineer permissions were removed.
-
-Previously, Hal could check whether users were repository collaborators, but must now check if users are <b>public</b>
-members of the organization that owns the repository.
-
-Please see <a href="{{ uriFor('help.github_permissions') }}">these instructions </a> for how to make your github organizational status public.
 {% endblock %}

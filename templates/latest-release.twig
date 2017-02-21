@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Latest Release' %}
@@ -41,7 +41,7 @@
                 </small>
 
             </blockquote>
-            See the <a href="{{ urlFor('help.setup') }}">Application Setup Help page</a> for more details.
+            See the <a href="{{ uriFor('help.setup') }}">Application Setup Help page</a> for more details.
         </li>
     </ul>
 

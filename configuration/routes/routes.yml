@@ -36,7 +36,7 @@ parameters:
         latest.release:
             method: 'GET'
             route:  '/latest-release'
-            stack:  ['latest.release.page']
+            stack:  ['latest_release.page']
 
         styleguide:
             route:  '/styleguide'
@@ -53,13 +53,8 @@ parameters:
 
         help.deployment:
             method: 'GET'
-            route: '/help/deployment'
+            route: '/help/deployment-scripting'
             stack: ['help.deployment.page']
-
-        help.github_permissions:
-            method: 'GET'
-            route: '/help/github-permissions'
-            stack: ['help.github_permissions.page']
 
         help.setup:
             method: 'GET'

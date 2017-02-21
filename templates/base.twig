@@ -40,9 +40,7 @@
 
             {% block page_main %}
             <main role="main">
-                {#
-                {% include '_partial/layout.messages.twig' %}
-                #}
+                {% embed 'base.flash.twig' %}{% endembed %}
 
                 {# main page content #}
                 {% block content %}{% endblock %}

@@ -76,13 +76,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/application-setup.twig']]]
 
-    help.github_permissions.page:
-        parent: 'static.controller'
-        arguments: ['@help.github_permissions.twig']
-    help.github_permissions.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['help/github-permissions.twig']]]
-
     ############################################################################
 
     static.controller:
