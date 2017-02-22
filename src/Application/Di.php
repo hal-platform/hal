@@ -55,7 +55,8 @@ class Di extends PanthorDi
                 (new EnvConfigLoader)->load($di);
                 foreach ($extensions as $ext) {
                     $di->registerExtension($ext);
-                }            },
+                }
+            },
             function (ContainerBuilder $di) use ($extensions) {
                 foreach ($extensions as $ext) {
                     $di->loadFromExtension($ext->getAlias());

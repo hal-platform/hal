@@ -1,14 +1,16 @@
 hal_core:
     dev_mode: true
-    cache:
-        type: memory
 
     database_connection:
+        driver: 'pdo_mysql'
+        host: '127.0.0.1'
+        port: 3306
+        dbname: 'hal'
         user: 'hal'
         password: ''
-        host: '127.0.0.1'
-        port: ''
-        dbname: 'hal'
+
+    cache:
+        type: memory
 
 mcp_logger:
     logging_service: 'errorlog'

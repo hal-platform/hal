@@ -1,32 +1,21 @@
 hal_core:
     proxy_dir: '.doctrine'
 
-    database_connection:
-        driver: 'pdo_mysql'
-        user: 'hal'
-        password: ''
-        host: '127.0.0.1'
-        port: ''
-        dbname: 'hal'
-
     cache:
-        type: predis
+        type: 'predis'
         predis_service_id: 'redis'
         lvl2_enabled: true
         lvl2_ttl: 600
         lvl2_lock: 60
 
-
     lazy_user_loader: 'doctrine.utility.lazy.user'
 
     clock:
         service_id: 'clock'
-        date_timezone: '%date.timezone%'
 
     event_listeners:
         onFlush: ['doctrine.listener.logger']
         prePersist: ['doctrine.listener.persist']
-
 
 mcp_logger:
    syslog_options:
@@ -34,6 +23,10 @@ mcp_logger:
         facility: 'LOG_USER'
         silent: true
         options: ['LOG_ODELAY', 'LOG_CONS']
+
+    errorlog_options:
+        type: !php/const:QL\MCP\Logger\Service\ErrorLogService::FILE
+        destination: '../.error.log'
 
    default_properties:
         applicationID: '%application.id%'

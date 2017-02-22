@@ -2,10 +2,12 @@ hal_core:
     dev_mode: false
 
     database_connection:
-        user: ''
-        password: '' #set in environment
+        driver: 'pdo_mysql'
         host: 'prod.example.com'
+        port: 3306
         dbname: 'hal9000'
+        user: ''
+        password: '' # set in environment
 
 mcp_logger:
     logging_service: 'syslog'
