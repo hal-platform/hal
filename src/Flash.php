@@ -23,7 +23,7 @@ class Flash
         self::WARNING
     ];
 
-    const ERRT_FLASH = 'Invalid flash type "%s" specified.';
+    private const ERRT_FLASH = 'Invalid flash type "%s" specified.';
 
     /**
      * @var array
