@@ -18,7 +18,7 @@ hal_core:
         prePersist: ['doctrine.listener.persist']
 
 mcp_logger:
-   syslog_options:
+    syslog_options:
         ident: 'hal-%application.id%'
         facility: 'LOG_USER'
         silent: true
@@ -28,7 +28,7 @@ mcp_logger:
         type: !php/const:QL\MCP\Logger\Service\ErrorLogService::FILE
         destination: '../.error.log'
 
-   default_properties:
+    default_properties:
         applicationID: '%application.id%'
         serverEnvironment: '%application.environment%'
 
