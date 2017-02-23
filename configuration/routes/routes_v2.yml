@@ -1,36 +1,6 @@
 parameters:
     routes:
 
-        github.authorization:
-            method: 'GET'
-            route:  '/github-authorization'
-            stack:  ['middleware.login', 'github.authorization.page']
-
-        github.authorization.remove:
-            method: ['GET', 'POST']
-            route:  '/settings/remove-github-authorization'
-            stack:  ['middleware.login', 'github.authorization.remove.page']
-
-        ################################################################################################################
-        # QUEUE ROUTES
-        ################################################################################################################
-
-        queue:
-            method: 'GET'
-            route: '/queue'
-            stack: ['middleware.login', 'queue.page']
-
-        queue.history.page1:
-            method: 'GET'
-            route: '/queue-history'
-            stack: ['middleware.login', 'queue.history.page']
-
-        queue.history:
-            method: 'GET'
-            route: '/queue-history/date/:date'
-            stack: ['middleware.login', 'queue.history.page']
-            conditions: {date: '%routes.regex.date%'}
-
         ################################################################################################################
         # BUILD ROUTES
         ################################################################################################################
