@@ -7,7 +7,7 @@
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
             {% if currentPage > 1 %}
-                <a href="{{ urlFor(routeName, routeParameters|merge({'page': currentPage-1}), queryParameters) }}">
+                <a href="{{ uriFor(routeName, routeParameters|merge({'page': currentPage-1}), queryParameters) }}">
                     {{ macros.icon('caret-left') }}newer
                 </a>
             {% else %}
@@ -23,7 +23,7 @@
         </li>
         <li class="nav--pagination__next">
             {% if currentPage < lastPage %}
-                <a href="{{ urlFor(routeName, routeParameters|merge({'page': currentPage+1}), queryParameters) }}">
+                <a href="{{ uriFor(routeName, routeParameters|merge({'page': currentPage+1}), queryParameters) }}">
                     older {{ macros.icon('caret-right') }}
                 </a>
             {% else %}
@@ -50,7 +50,7 @@
 
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
-            <a href="{{ urlFor(routeName, routeParameters|merge({'date': prevday|timepoint('Y-m-d')}), queryParameters) }}">
+            <a href="{{ uriFor(routeName, routeParameters|merge({'date': prevday|timepoint('Y-m-d')}), queryParameters) }}">
                 {{ macros.icon('caret-left') }}older
             </a>
         </li>
@@ -59,7 +59,7 @@
         </li>
         <li class="nav--pagination__next">
             {% if nextdayFormatted == nowFormatted or (nextdayFormatted != nowFormatted and nextday.compare(now) == -1) %}
-                <a href="{{ urlFor(routeName, routeParameters|merge({'date': nextdayFormatted}), queryParameters) }}">
+                <a href="{{ uriFor(routeName, routeParameters|merge({'date': nextdayFormatted}), queryParameters) }}">
                     newer {{ macros.icon('caret-right', 'mls') }}
                 </a>
             {% else %}

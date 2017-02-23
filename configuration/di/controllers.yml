@@ -8,29 +8,6 @@ services:
         calls: [['setTemplate', ['delete.confirm.twig']]]
 
     ####################################################################################################################
-    # QUEUE CONTROLLERS
-    ####################################################################################################################
-
-    queue.page:
-        class: 'Hal\UI\Controllers\QueueController'
-        arguments: ['@queue.twig', '@doctrine.em']
-    queue.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['queue.twig']]]
-
-    queue.history.page:
-        class: 'Hal\UI\Controllers\QueueHistoryController'
-        arguments:
-            - '@queue.history.twig'
-            - '@doctrine.em'
-            - '@clock'
-            - '@slim.route.parameters'
-            - '%date.timezone%'
-    queue.history.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['queue.history.twig']]]
-
-    ####################################################################################################################
     # GROUP CONTROLLERS
     ####################################################################################################################
 

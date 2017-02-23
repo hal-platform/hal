@@ -94,13 +94,32 @@ parameters:
             method: 'GET'
             route: '/servers'
             stack: ['middleware.signed_in', 'servers.page']
+
+        ################################################################################################################
+        # QUEUE ROUTES
+        ################################################################################################################
+
+        queue:
+            method: 'GET'
+            route: '/queue'
+            stack: ['middleware.signed_in', 'queue.page']
+
+        queue.history.page1:
+            method: 'GET'
+            route: '/queue-history'
+            stack: ['middleware.signed_in', 'queue.history.page']
+
+        queue.history:
+            method: 'GET'
+            route: '/queue-history/date/{date:%r.date%}'
+            stack: ['middleware.signed_in', 'queue.history.page']
+
         ################################################################################################################
 
         # routes not created yet
 
         # from nav
         admin: {route: '/derp1', stack: []}
-        queue: {route: '/derp2', stack: []}
         applications: {route: '/derp3', stack: []}
         settings: {route: '/derp4', stack: []}
 

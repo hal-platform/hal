@@ -6,11 +6,21 @@ imports:
     - resource: routes/routes.yml
 
 parameters:
-    routes.regex.alphanum: '[A-Za-z0-9]+'
-    routes.regex.digit: '[0-9]+'
-    routes.regex.guid: '[0-9a-zA-Z]{32,32}'
 
-    routes.regex.buildId: '[A-Za-z0-9\_\-\.]+'
-    routes.regex.pushId: '%routes.regex.buildId%'
+    # use these
+    r.alphanum: '[A-Za-z0-9]+'
+    r.digit: '[0-9]+'
+    r.guid: '[0-9a-zA-Z]{32,32}'
+    r.build: '[A-Za-z0-9\_\-\.]+'
+    r.release: '%r.build%'
+    r.date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
 
-    routes.regex.date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+    # not these (deprecated)
+    routes.regex.alphanum: '%r.alphanum%'
+    routes.regex.digit: '%r.digit%'
+    routes.regex.guid: '%r.guid%'
+
+    routes.regex.buildId: '%r.build%'
+    routes.regex.pushId: '%r.release%'
+
+    routes.regex.date: '%r.date%'

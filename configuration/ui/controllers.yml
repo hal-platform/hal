@@ -3,6 +3,17 @@ services:
     static.controller:
         class: 'Hal\UI\Controllers\StaticController'
 
+    denied.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['denied.twig']]]
+
+    delete.confirm.page:
+        parent: 'static.controller'
+        arguments: ['@delete.confirm.twig']
+    delete.confirm.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['delete.confirm.twig']]]
+
     ############################################################################
 
     dashboard.page:
@@ -131,18 +142,25 @@ services:
     server.validator:
         class: 'Hal\UI\Validator\ServerValidator'
         arguments: ['@doctrine.em']
-    ############################################################################
 
-    static.controller:
-        class: 'Hal\UI\Controllers\StaticController'
+    ####################################################################################################################
+    # QUEUE CONTROLLERS
+    ####################################################################################################################
 
-    denied.twig:
+    queue.page:
+        class: 'Hal\UI\Controllers\QueueController'
+        arguments: ['@queue.twig', '@job_queue']
+    queue.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['denied.twig']]]
+        calls: [['setTemplate', ['queue.twig']]]
 
-    delete.confirm.page:
-        parent: 'static.controller'
-        arguments: ['@delete.confirm.twig']
-    delete.confirm.twig:
+    queue.history.page:
+        class: 'Hal\UI\Controllers\QueueHistoryController'
+        arguments:
+            - '@queue.history.twig'
+            - '@job_queue'
+            - '@clock'
+            - '%date.timezone%'
+    queue.history.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['delete.confirm.twig']]]
+        calls: [['setTemplate', ['queue.history.twig']]]

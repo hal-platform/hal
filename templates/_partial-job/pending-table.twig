@@ -44,7 +44,14 @@
             {% endfor %}
         {% else %}
             <tr id="js-emptyQueue">
-                <td colspan="6">There are no jobs queued.<br>You do not need to refresh the page. New jobs will be added to the queue as they are created.</td>
+                <td colspan="6">
+                    {% if history_view %}
+                        There is no queue history for this date.
+                    {% else %}
+                        There are no jobs queued.<br>
+                        You do not need to refresh the page. New jobs will be added to the queue as they are started.
+                    {% endif %}
+                </td>
             </tr>
         {% endif %}
     </tbody>

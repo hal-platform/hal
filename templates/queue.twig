@@ -1,13 +1,13 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% set js_components = ["queue"] %}
 
 {% set page_title = "Queue" %}
 
 {% block content %}
-    <h1>Build and Push Queue</h1>
+    <h1>Build and Deployment Queue</h1>
 
-    {% include '_partial-job/pending-table.twig' %}
+    {% include '_partial-job/pending-table.twig' with {'pending': pending} only %}
 
-    <p><a class="btn" href="{{ urlFor('queue.history.page1') }}">Queue History</a></p>
+    <p><a class="btn" href="{{ uriFor('queue.history.page1') }}">Queue History</a></p>
 
 {% endblock %}

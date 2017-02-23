@@ -53,8 +53,8 @@
 
     {# PENDING WORK #}
     {% if pending %}
-        <h2>Build and Push Queue</h2>
-        {% include '_partial-job/pending-table.twig' %}
+        <h2>Build and Deployment Queue</h2>
+        {% include '_partial-job/pending-table.twig' with {'pending': pending} only %}
     {% endif %}
 
     <div class="flex-box-wrapper">
