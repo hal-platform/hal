@@ -149,27 +149,3 @@ services:
 
     guzzle:
         class: 'GuzzleHttp\Client'
-
-    ####################################################################################################################
-    # SESSION
-    ####################################################################################################################
-
-    # session.flasher:
-    #     class: 'Hal\UI\Flasher'
-    #     arguments: ['@session', '@uri']
-
-    # session:
-    #     class: 'Hal\UI\Session'
-    #     factory: ['@session.handler', 'load']
-
-    # session.handler:
-    #     class: 'Hal\UI\SessionHandler'
-    #     arguments:
-    #         - '@slim.cookies'
-    #         - '@session.encryption'
-    #         - '%session.cookie.configuration%'
-
-    # session.encryption:
-    #     class: 'QL\Panthor\Encryption\LibsodiumSymmetricCrypto'
-    #     arguments: ['%session.encryption.secret%']
-

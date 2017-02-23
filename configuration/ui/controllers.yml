@@ -1,11 +1,17 @@
 services:
+
+    static.controller:
+        class: 'Hal\UI\Controllers\StaticController'
+
+    ############################################################################
+
     dashboard.page:
         class: 'Hal\UI\Controllers\DashboardController'
         arguments:
             - '@dashboard.twig'
             - '@doctrine.em'
             - '@permissions'
-            - '@clock'
+            - '@job_queue'
     dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['dashboard.twig']]]
