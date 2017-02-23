@@ -8,12 +8,14 @@
 namespace Hal\UI\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\DeploymentPool;
+use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Push;
@@ -21,10 +23,11 @@ use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
-use QL\Panthor\Exception\HTTPProblemException;
-use QL\Panthor\Slim\NotFound;
+use QL\Panthor\HTTPProblem\HTTPProblem;
+use QL\Panthor\HTTPProblem\ProblemRendererInterface;
+use QL\Panthor\HTTPProblem\ProblemRenderingTrait;
 use QL\Panthor\MiddlewareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Slim\Route;
 
 /**
  * Automatically look up entities in the route parameters and fetch them from the DB.
@@ -33,12 +36,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RequireEntityMiddleware implements MiddlewareInterface
 {
-    const KEY_TEMPLATE = 'hal.%s';
-
-    /**
-     * @var ContainerInterface
-     */
-    private $di;
+    use ProblemRenderingTrait;
 
     /**
      * @var EntityManagerInterface
@@ -46,14 +44,14 @@ class RequireEntityMiddleware implements MiddlewareInterface
     private $em;
 
     /**
-     * @var NotFound
+     * @var ProblemRendererInterface
      */
-    private $notFound;
+    private $problemRenderer;
 
     /**
-     * @var array
+     * @var callable
      */
-    private $parameters;
+    private $notFound;
 
     /**
      * @var bool
@@ -66,24 +64,21 @@ class RequireEntityMiddleware implements MiddlewareInterface
     private $map;
 
     /**
-     * @param ContainerInterface $di
      * @param EntityManagerInterface $em
-     * @param NotFound $notFound
-     * @param array $parameters
+     * @param ProblemRendererInterface $problemRenderer
+     * @param callable $notFound
      * @param bool $isAPI
      */
     public function __construct(
-        ContainerInterface $di,
         EntityManagerInterface $em,
-        NotFound $notFound,
-        array $parameters,
+        ProblemRendererInterface $problemRenderer,
+        callable $notFound,
         $isAPI = false
     ) {
-        $this->di = $di;
         $this->em = $em;
 
+        $this->problemRenderer = $problemRenderer;
         $this->notFound = $notFound;
-        $this->parameters = $parameters;
         $this->isAPI = $isAPI;
 
         // whitelist of route parameters and the entity they map to.
@@ -109,44 +104,54 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
     /**
      * @inheritDoc
-     * @throws HTTPProblemException
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        foreach ($this->parameters as $entity => $id) {
+        /** @var Route $route */
+        $route = $request->getAttribute('route');
+
+        $params = $route->getArguments();
+
+        foreach ($params as $entity => $id) {
 
             if (!isset($this->map[$entity])) {
                 continue;
             }
 
-            if (!$this->lookup($entity, $id)) {
+            if (!$entityObj = $this->lookup($entity, $id)) {
 
                 if ($this->isAPI) {
-                    throw new HTTPProblemException(404, sprintf('%s not found', ucfirst($entity)));
+                    return $response = $this->renderProblem(
+                        $response,
+                        $this->problemRenderer,
+                        new HTTPProblem(404, sprintf('%s not found', ucfirst($entity)))
+                    );
                 } else {
-                    return call_user_func($this->notFound);
+                    return call_user_func($this->notFound, $request, $response);
                 }
             }
+
+            $request = $request->withAttribute($this->map[$entity], $entityObj);
         }
+
+        return $next($request, $response);
     }
 
     /**
      * @param string $entityName
      * @param string $id
      *
-     * @return bool
+     * @return mixed
      */
     private function lookup($entityName, $id)
     {
         $fq = $this->map[$entityName];
-        $key = sprintf(self::KEY_TEMPLATE, $entityName);
 
         $repository = $this->em->getRepository($fq);
         if (!$entity = $repository->find($id)) {
             return false;
         }
 
-        $this->di->set($key, $entity);
-        return true;
+        return $entity;
     }
 }

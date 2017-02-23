@@ -3,3 +3,10 @@ services:
     middleware.signed_in:
         class: 'Hal\UI\Middleware\ACL\SignedInMiddleware'
         arguments: ['@uri']
+
+    middleware.require_entity:
+        class: 'Hal\UI\Middleware\RequireEntityMiddleware'
+        arguments:
+            - '@doctrine.em'
+            - '@panthor.problem.renderer'
+            - '@notFoundHandler'
