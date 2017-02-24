@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 
 {% set page_title = "Servers" %}
 
@@ -22,7 +22,7 @@
                             <td>
                                 <ul class="col-list list--bare">
                                     {% for server in servers %}
-                                        <li class="mvn"><a href="{{ urlFor('server', {'server': server.id}) }}">{{ server.formatPretty }}</a></li>
+                                        <li class="mvn"><a href="{{ uriFor('server', {'server': server.id}) }}">{{ server.formatPretty }}</a></li>
                                     {% endfor %}
                                 </ul>
                             </td>
@@ -38,9 +38,9 @@
         </tbody>
     </table>
 
-    {% if isUserAdminOrSuper(getCurrentUser()) %}
+    {% if isUserAdminOrSuper(current_user) %}
         <ul class="button-list">
-            <li class="button-list__fixed"><a class="btn" href="{{ urlFor('server.add') }}">Add Server</a></li>
+            <li class="button-list__fixed"><a class="btn" href="{{ uriFor('server.add') }}">Add Server</a></li>
         </ul>
     {% endif %}
 

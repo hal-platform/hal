@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 use QL\Panthor\Utility\URI;
 
 trait RedirectableControllerTrait

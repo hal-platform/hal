@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
 {% set page_title = 'Add Server' %}
@@ -69,7 +69,7 @@
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Add Server"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('servers') }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('servers') }}">Cancel</a></li>
             </ul>
 
         </div>

@@ -62,6 +62,39 @@ parameters:
             stack: ['help.application_setup.page']
 
         ################################################################################################################
+        # Server Routes
+        ################################################################################################################
+
+        server:
+            method: 'GET'
+            route: '/servers/{server:%routes.regex.digit%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'server.page']
+
+        server.add:
+            method: ['GET', 'POST']
+            route: '/servers/add'
+            stack: ['middleware.is_admin', 'server.add.page']
+
+        server.edit:
+            method: ['GET', 'POST']
+            route: '/servers/{server:%routes.regex.digit%}/edit'
+            stack: ['middleware.is_admin', 'middleware.require_entity', 'server.edit.page']
+
+        server.remove.confirm:
+            method: 'GET'
+            route: '/servers/{server:%routes.regex.digit%}/remove'
+            stack: ['middleware.is_admin', 'middleware.require_entity', 'delete.confirm.page']
+
+        server.remove:
+            method: 'POST'
+            route: '/servers/{server:%routes.regex.digit%}/remove'
+            stack: ['middleware.is_admin', 'middleware.require_entity', 'server.remove.page']
+
+        servers:
+            method: 'GET'
+            route: '/servers'
+            stack: ['middleware.signed_in', 'servers.page']
+        ################################################################################################################
 
         # routes not created yet
 
@@ -84,5 +117,7 @@ parameters:
         build: {route: '/derp10', stack: []}
         user: {route: '/derp11', stack: []}
         environment: {route: '/derp12', stack: []}
-        server: {route: '/derp13', stack: []}
 
+        #from server
+        application: {route: '/derp34', stack: []}
+        deployment: {route: '/derp33', stack: []}

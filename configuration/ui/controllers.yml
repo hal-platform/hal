@@ -76,7 +76,67 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['help/application-setup.twig']]]
 
+    ####################################################################################################################
+    # SERVER CONTROLLERS
+    ####################################################################################################################
+
+    servers.page:
+        class: 'Hal\UI\Controllers\Server\ServersController'
+        arguments: ['@servers.twig', '@doctrine.em']
+    servers.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/servers.twig']]]
+
+    server.page:
+        class: 'Hal\UI\Controllers\Server\ServerController'
+        arguments: ['@server.twig', '@doctrine.em']
+    server.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/server.twig']]]
+
+    server.add.page:
+        class: 'Hal\UI\Controllers\Server\AddServerController'
+        arguments:
+            - '@server.add.twig'
+            - '@doctrine.em'
+            - '@server.validator'
+            - '@uri'
+    server.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/server.add.twig']]]
+
+    server.remove.page:
+        class: 'Hal\UI\Controllers\Server\RemoveServerController'
+        arguments:
+            - '@doctrine.em'
+            - '@uri'
+
+    server.edit.page:
+        class: 'Hal\UI\Controllers\Server\EditServerController'
+        arguments:
+            - '@server.edit.twig'
+            - '@doctrine.em'
+            - '@server.validator'
+            - '@uri'
+    server.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['server/server.edit.twig']]]
+
+    server.validator:
+        class: 'Hal\UI\Validator\ServerValidator'
+        arguments: ['@doctrine.em']
     ############################################################################
 
     static.controller:
         class: 'Hal\UI\Controllers\StaticController'
+
+    denied.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['denied.twig']]]
+
+    delete.confirm.page:
+        parent: 'static.controller'
+        arguments: ['@delete.confirm.twig']
+    delete.confirm.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['delete.confirm.twig']]]
