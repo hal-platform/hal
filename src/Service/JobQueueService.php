@@ -67,11 +67,11 @@ class JobQueueService
 
     /**
      * @param Timepoint $after
-     * @param Timepoint $before
+     * @param Timepoint|null $before
      *
      * @return array
      */
-    public function getHistory(TimePoint $after, TimePoint $before)
+    public function getHistory(TimePoint $after, ?TimePoint $before)
     {
         $buildCriteria = $this->getCriteria([], $before, $after);
         $pushCriteria = $this->getCriteria([], $before, $after);

@@ -133,6 +133,20 @@ parameters:
         user: {route: '/derp11', stack: []}
         environment: {route: '/derp12', stack: []}
 
-        #from server
+        # from server
         application: {route: '/derp34', stack: []}
         deployment: {route: '/derp33', stack: []}
+
+        api.environments: {route: '/derp14', stack: []}
+        api.servers: {route: '/derp15', stack: []}
+        api.applications: {route: '/derp16', stack: []}
+        api.groups: {route: '/derp17', stack: []}
+        api.users: {route: '/derp18', stack: []}
+
+        api.build: {route: '/derp19', stack: []}
+        api.push: {route: '/derp20', stack: []}
+        api.user: {route: '/derp21', stack: []}
+        api.deployment: {route: '/derp22', stack: []}
+        api.application: {route: '/derp23', stack: []}
+        api.environment: {route: '/derp24', stack: []}
+        api.push.logs: {route: '/derp25', stack: []}

@@ -6,3 +6,26 @@ services:
     docs.api:
         class: 'Hal\UI\Controllers\API\DocsRedirectController'
         arguments: ['@uri']
+
+    ####################################################################################################################
+    # QUEUE CONTROLLERS
+    ####################################################################################################################
+
+    queue.api:
+        class: 'Hal\UI\Controllers\API\QueueController'
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.build'
+            - '@api_normalizer.push'
+            - '@job_queue'
+            - '@problem.renderer'
+            - '@clock'
+
+    queue.refresh.api:
+        class: 'Hal\UI\Controllers\API\QueueRefreshController'
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.build'
+            - '@api_normalizer.push'
+            - '@doctrine.em'
+            - '@problem.renderer'

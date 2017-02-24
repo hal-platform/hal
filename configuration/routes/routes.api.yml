@@ -56,21 +56,24 @@ parameters:
             route: '/api'
             stack: ['index.api']
 
-        ################################################################################################################
-        # QUEUE ROUTES
-        ################################################################################################################
+        api:
+            route: '/api'
+            stack: ['middleware.api_caching']
+            routes:
 
-        # api.queue:
-        #     method: 'GET'
-        #     route: '/api/queue'
-        #     stack: ['middleware.api.cached', 'api.queue']
+                ################################################################################################################
+                # QUEUE ROUTES
+                ################################################################################################################
 
-        # api.queue.refresh:
-        #     method: 'GET'
-        #     route: '/api/queue-refresh/:jobs'
-        #     stack: ['middleware.api.cached', 'api.queue.refresh']
-        #     conditions: {jobs: '%routes.api.regex.queue.refresh%'}
+                api.queue:
+                    method: 'GET'
+                    route: '/queue'
+                    stack: ['queue.api']
 
+                api.queue.refresh:
+                    method: 'GET'
+                    route: '/queue-refresh/{jobs:%r.api.queue%}'
+                    stack: ['queue.refresh.api']
 
         # api.environments:
         #     method: 'GET'

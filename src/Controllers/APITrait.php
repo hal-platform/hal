@@ -10,11 +10,13 @@ namespace Hal\UI\Controllers;
 use Hal\UI\API\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Panthor\HTTP\NewBodyTrait;
+use QL\Panthor\HTTPProblem\HTTPProblem;
+use QL\Panthor\HTTPProblem\ProblemRendererInterface;
+use QL\Panthor\HTTPProblem\ProblemRenderingTrait;
 
 trait APITrait
 {
-    use NewBodyTrait;
+    use ProblemRenderingTrait;
 
     /**
      * Add the rendered endpoint to the response.
@@ -44,5 +46,26 @@ trait APITrait
         }
 
         return $this->withNewBody($response, $data);
+    }
+
+    /**
+     * Render HTTP Problem to the response.
+     *
+     * @param ProblemRendererInterface $renderer
+     * @param ResponseInterface $response
+     * @param string $message
+     * @param int $status
+     *
+     * @return ResponseInterface
+     */
+    private function withProblem(
+        ProblemRendererInterface $renderer,
+        ResponseInterface $response,
+        int $status,
+        string $message
+    ): ResponseInterface {
+        $problem = new HTTPProblem($status, $message);
+
+        return $this->renderProblem($response, $renderer, $problem);
     }
 }
