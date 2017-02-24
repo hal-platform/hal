@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\EmbeddedResolutionTrait;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 
 class DeploymentNormalizer implements NormalizerInterface
@@ -37,10 +37,8 @@ class DeploymentNormalizer implements NormalizerInterface
      * @param ApplicationNormalizer $appNormalizer
      * @param ServerNormalizer $serverNormalizer
      */
-    public function __construct(
-        ApplicationNormalizer $appNormalizer,
-        ServerNormalizer $serverNormalizer
-    ) {
+    public function __construct(ApplicationNormalizer $appNormalizer, ServerNormalizer $serverNormalizer)
+    {
         $this->appNormalizer = $appNormalizer;
         $this->serverNormalizer = $serverNormalizer;
 
@@ -50,7 +48,7 @@ class DeploymentNormalizer implements NormalizerInterface
     /**
      * @param Deployment $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -62,7 +60,7 @@ class DeploymentNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Deployment $deployment = null)
+    public function link(Deployment $deployment = null): ?Hyperlink
     {
         if (!$deployment) {
             return null;
@@ -78,7 +76,7 @@ class DeploymentNormalizer implements NormalizerInterface
      * @param Deployment $deployment
      * @param array $embed
      *
-     * @return array
+     * @return array|null
      */
     public function resource(Deployment $deployment = null, array $embed = [])
     {
@@ -91,42 +89,43 @@ class DeploymentNormalizer implements NormalizerInterface
             'server' => $deployment->server()
         ];
 
-        return $this->buildResource(
-            [
-                'id' => $deployment->id(),
-                'name' => $deployment->name(),
+        $data = [
+            'id' => $deployment->id(),
+            'name' => $deployment->name(),
 
-                'path' => $deployment->path(),
+            'path' => $deployment->path(),
 
-                'cd-name' => $deployment->cdName(),
-                'cd-group' => $deployment->cdGroup(),
-                'cd-configuration' => $deployment->cdConfiguration(),
+            'cd-name' => $deployment->cdName(),
+            'cd-group' => $deployment->cdGroup(),
+            'cd-configuration' => $deployment->cdConfiguration(),
 
-                'eb-name' => $deployment->ebName(),
-                'eb-environment' => $deployment->ebEnvironment(),
+            'eb-name' => $deployment->ebName(),
+            'eb-environment' => $deployment->ebEnvironment(),
 
-                's3-bucket' => $deployment->s3bucket(),
-                's3-file' => $deployment->s3file(),
+            's3-bucket' => $deployment->s3bucket(),
+            's3-file' => $deployment->s3file(),
 
-                'script-context' => $deployment->scriptContext(),
+            'script-context' => $deployment->scriptContext(),
 
-                'url' => $deployment->url(),
+            'url' => $deployment->url(),
 
-                'pretty-name' => $deployment->formatPretty(false),
-                'detail' => sprintf('%s: %s', $deployment->server()->formatHumanType(), $deployment->formatMeta()),
-            ],
-            $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            [
-                'self' => $this->link($deployment),
-                'application' => $this->appNormalizer->link($deployment->application()),
-                'server' => $this->serverNormalizer->link($deployment->server()),
+            'pretty-name' => $deployment->formatPretty(false),
+            'detail' => sprintf('%s: %s', $deployment->server()->formatHumanType(), $deployment->formatMeta()),
+        ];
+        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
 
-                'pushes' => new Hyperlink(['api.deployment.history', ['id' => $deployment->id()]]),
-                'last-push' => new Hyperlink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
-                'last-successful-push' => new Hyperlink(
-                    ['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']]
-                )
-            ]
-        );
+        $links = [
+            'self' => $this->link($deployment),
+            'application' => $this->appNormalizer->link($deployment->application()),
+            'server' => $this->serverNormalizer->link($deployment->server()),
+
+            'pushes' => new Hyperlink(['api.deployment.history', ['id' => $deployment->id()]]),
+            'last-push' => new Hyperlink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
+            'last-successful-push' => new Hyperlink(
+                ['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']]
+            )
+        ];
+
+        return $this->buildResource($data, $embedded, $links);
     }
 }

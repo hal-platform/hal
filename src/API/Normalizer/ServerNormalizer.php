@@ -5,12 +5,12 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\EmbeddedResolutionTrait;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Utility\SortingTrait;
@@ -44,7 +44,7 @@ class ServerNormalizer implements NormalizerInterface
     /**
      * @param Server $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -53,9 +53,10 @@ class ServerNormalizer implements NormalizerInterface
 
     /**
      * @param Server $server
-     * @return array
+     *
+     * @return Hyperlink|null
      */
-    public function link(Server $server = null)
+    public function link(Server $server = null): ?Hyperlink
     {
         if (!$server) {
             return null;
@@ -70,7 +71,8 @@ class ServerNormalizer implements NormalizerInterface
     /**
      * @param Server $server
      * @param array $embed
-     * @return array
+     *
+     * @return array|null
      */
     public function resource(Server $server = null, array $embed = [])
     {
@@ -95,18 +97,20 @@ class ServerNormalizer implements NormalizerInterface
             );
         }
 
-        return $this->buildResource(
-            [
-                'id' => $server->id(),
-                'type' => $server->type(),
-                'name' => $server->name()
-            ],
-            $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            [
-                'self' => $this->link($server),
-                'environment' => $this->normalizer->link($server->environment()),
-                'deployments' => $linkedDeployments
-            ]
-        );
+        $data = [
+            'id' => $server->id(),
+            'type' => $server->type(),
+            'name' => $server->name()
+        ];
+
+        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
+
+        $links = [
+            'self' => $this->link($server),
+            'environment' => $this->normalizer->link($server->environment()),
+            'deployments' => $linkedDeployments
+        ];
+
+        return $this->buildResource($data, $embedded, $links);
     }
 }

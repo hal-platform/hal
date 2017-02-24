@@ -5,25 +5,19 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\EmbeddedResolutionTrait;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Github\GitHubURLBuilder;
 use QL\Hal\Core\Entity\Build;
-use QL\Panthor\Utility\Url;
 
 class BuildNormalizer implements NormalizerInterface
 {
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
-
-    /**
-     * @var Url
-     */
-    private $url;
 
     /**
      * @var GitHubURLBuilder
@@ -51,7 +45,6 @@ class BuildNormalizer implements NormalizerInterface
     private $embed;
 
     /**
-     * @param Url $url
      * @param GitHubURLBuilder $urlBuilder
      *
      * @param UserNormalizer $userNormalizer
@@ -59,14 +52,12 @@ class BuildNormalizer implements NormalizerInterface
      * @param EnvironmentNormalizer $envNormalizer
      */
     public function __construct(
-        Url $url,
         GitHubURLBuilder $urlBuilder,
 
         UserNormalizer $userNormalizer,
         ApplicationNormalizer $appNormalizer,
         EnvironmentNormalizer $envNormalizer
     ) {
-        $this->url = $url;
         $this->urlBuilder = $urlBuilder;
 
         $this->userNormalizer = $userNormalizer;
@@ -79,7 +70,7 @@ class BuildNormalizer implements NormalizerInterface
     /**
      * @param Build $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -91,7 +82,7 @@ class BuildNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Build $build = null)
+    public function link(Build $build = null): ?Hyperlink
     {
         if (!$build) {
             return null;
@@ -121,19 +112,20 @@ class BuildNormalizer implements NormalizerInterface
             'environment' => $build->environment()
         ];
 
+        $data = [
+            'id' => $build->id(),
+            'status' => $build->status(),
+
+            'created' => $build->created(),
+            'start' => $build->start(),
+            'end' => $build->end(),
+
+            'reference' => $build->branch(),
+            'commit' => $build->commit()
+        ];
 
         return $this->buildResource(
-            [
-                'id' => $build->id(),
-                'status' => $build->status(),
-
-                'created' => $build->created(),
-                'start' => $build->start(),
-                'end' => $build->end(),
-
-                'reference' => $build->branch(),
-                'commit' => $build->commit()
-            ],
+            $data,
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             $this->buildLinks($build)
         );

@@ -5,24 +5,18 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\EmbeddedResolutionTrait;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
-use QL\Panthor\Utility\Url;
 
 class PushNormalizer implements NormalizerInterface
 {
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
-
-    /**
-     * @var Url
-     */
-    private $url;
 
     /**
      * @var UserNormalizer
@@ -50,21 +44,17 @@ class PushNormalizer implements NormalizerInterface
     private $embed;
 
     /**
-     * @param Url $url
      * @param UserNormalizer $userNormalizer
      * @param BuildNormalizer $buildNormalizer
      * @param DeploymentNormalizer $deploymentNormalizer
      * @param ApplicationNormalizer $appNormalizer
      */
     public function __construct(
-        Url $url,
         UserNormalizer $userNormalizer,
         BuildNormalizer $buildNormalizer,
         DeploymentNormalizer $deploymentNormalizer,
         ApplicationNormalizer $appNormalizer
     ) {
-        $this->url = $url;
-
         $this->userNormalizer = $userNormalizer;
         $this->buildNormalizer = $buildNormalizer;
         $this->deploymentNormalizer = $deploymentNormalizer;
@@ -76,7 +66,7 @@ class PushNormalizer implements NormalizerInterface
     /**
      * @param Push $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -86,9 +76,9 @@ class PushNormalizer implements NormalizerInterface
     /**
      * @param Push|null $push
      *
-     * @return array|null
+     * @return Hyperlink|null
      */
-    public function link(Push $push = null)
+    public function link(Push $push = null): ?Hyperlink
     {
         if (!$push) {
             return null;
@@ -119,15 +109,17 @@ class PushNormalizer implements NormalizerInterface
             'application' => $push->application()
         ];
 
-        return $this->buildResource(
-            [
-                'id' => $push->id(),
-                'status' => $push->status(),
+        $data = [
+            'id' => $push->id(),
+            'status' => $push->status(),
 
-                'created' => $push->created(),
-                'start' => $push->start(),
-                'end' => $push->end()
-            ],
+            'created' => $push->created(),
+            'start' => $push->start(),
+            'end' => $push->end()
+        ];
+
+        return $this->buildResource(
+            $data,
             $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
             $this->buildLinks($push)
         );
@@ -153,7 +145,7 @@ class PushNormalizer implements NormalizerInterface
         $pages = [
             'page' => new Hyperlink(
                 ['push', ['push' => $push->id()]],
-                null,
+                '',
                 'text/html'
             )
         ];

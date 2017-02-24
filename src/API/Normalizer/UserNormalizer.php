@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\User;
 
@@ -33,7 +33,7 @@ class UserNormalizer implements NormalizerInterface
     /**
      * @param User $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -42,9 +42,10 @@ class UserNormalizer implements NormalizerInterface
 
     /**
      * @param User $user
-     * @return array
+     *
+     * @return Hyperlink|null
      */
-    public function link(User $user = null)
+    public function link(User $user = null): ?Hyperlink
     {
         if (!$user) {
             return null;
@@ -58,7 +59,8 @@ class UserNormalizer implements NormalizerInterface
 
     /**
      * @param User $user
-     * @return array
+     *
+     * @return array|null
      */
     public function resource(User $user = null)
     {
@@ -68,24 +70,24 @@ class UserNormalizer implements NormalizerInterface
 
         $perm = $this->permissions->getUserPermissions($user);
 
-        return $this->buildResource(
-            [
-                'id' => $user->id(),
-                'handle' => $user->handle(),
-                'name' => $user->name(),
-                'email' => $user->email(),
-                'isActive' => $user->isActive(),
-                'permissions' => [
-                    'standard' => $perm->isPleb(),
-                    'lead' => $perm->isLead(),
-                    'admin' => $perm->isButtonPusher(),
-                    'super' => $perm->isSuper()
-                ]
-            ],
-            [],
-            [
-                'self' => $this->link($user)
+        $data = [
+            'id' => $user->id(),
+            'handle' => $user->handle(),
+            'name' => $user->name(),
+            'email' => $user->email(),
+            'isActive' => $user->isActive(),
+            'permissions' => [
+                'standard' => $perm->isPleb(),
+                'lead' => $perm->isLead(),
+                'admin' => $perm->isButtonPusher(),
+                'super' => $perm->isSuper()
             ]
-        );
+        ];
+
+        $embedded = [];
+
+        $links = ['self' => $this->link($user)];
+
+        return $this->buildResource($data, $embedded, $links);
     }
 }

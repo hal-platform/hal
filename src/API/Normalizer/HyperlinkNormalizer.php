@@ -9,21 +9,21 @@ namespace Hal\UI\Api\Normalizer;
 
 use Hal\UI\Api\Hyperlink;
 use Hal\UI\Api\NormalizerInterface;
-use QL\Panthor\Utility\Url;
+use QL\Panthor\Utility\URI;
 
 class HyperlinkNormalizer implements NormalizerInterface
 {
     /**
-     * @var Url
+     * @var URI
      */
-    private $url;
+    private $uri;
 
     /**
-     * @param Url $url
+     * @param URI $uri
      */
-    public function __construct(Url $url)
+    public function __construct(URI $uri)
     {
-        $this->url = $url;
+        $this->uri = $uri;
     }
 
     /**
@@ -45,7 +45,9 @@ class HyperlinkNormalizer implements NormalizerInterface
             }
         }
 
-        $normalized['href'] = call_user_func_array([$this->url, 'absoluteUrlFor'], $href);
+        // @todo change to absolute URL
+        // $normalized['href'] = $this->uri->absoluteUrlFor($request->getUri(), ...$href);
+        $normalized['href'] = $this->uri->uriFor(...$href);
 
         return $normalized;
     }

@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Environment;
 
 class EnvironmentNormalizer implements NormalizerInterface
@@ -19,7 +19,7 @@ class EnvironmentNormalizer implements NormalizerInterface
     /**
      * @param Environment $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -28,9 +28,10 @@ class EnvironmentNormalizer implements NormalizerInterface
 
     /**
      * @param Environment $environment
-     * @return array
+     *
+     * @return Hyperlink|null
      */
-    public function link(Environment $environment = null)
+    public function link(Environment $environment = null): ?Hyperlink
     {
         if (!$environment) {
             return null;
@@ -44,7 +45,8 @@ class EnvironmentNormalizer implements NormalizerInterface
 
     /**
      * @param Environment $environment
-     * @return array
+     *
+     * @return array|null
      */
     public function resource(Environment $environment = null)
     {
@@ -52,16 +54,16 @@ class EnvironmentNormalizer implements NormalizerInterface
             return null;
         }
 
-        return $this->buildResource(
-            [
-                'id' => $environment->id(),
-                'name' => $environment->name(),
-                'isProduction' => $environment->isProduction()
-            ],
-            [],
-            [
-                'self' => $this->link($environment)
-            ]
-        );
+        $data = [
+            'id' => $environment->id(),
+            'name' => $environment->name(),
+            'isProduction' => $environment->isProduction()
+        ];
+
+        $embedded = [];
+
+        $links = ['self' => $this->link($environment)];
+
+        return $this->buildResource($data, $embedded, $links);
     }
 }

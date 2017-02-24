@@ -5,25 +5,19 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\EmbeddedResolutionTrait;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Github\GitHubURLBuilder;
 use QL\Hal\Core\Entity\Application;
-use QL\Panthor\Utility\Url;
 
 class ApplicationNormalizer implements NormalizerInterface
 {
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
-
-    /**
-     * @var Url
-     */
-    private $url;
 
     /**
      * @var GitHubURLBuilder
@@ -41,13 +35,11 @@ class ApplicationNormalizer implements NormalizerInterface
     private $embed;
 
     /**
-     * @param Url $url
      * @param GitHubURLBuilder $urlBuilder
      * @param GroupNormalizer $groupNormalizer
      */
-    public function __construct(Url $url, GitHubURLBuilder $urlBuilder, GroupNormalizer $groupNormalizer)
+    public function __construct(GitHubURLBuilder $urlBuilder, GroupNormalizer $groupNormalizer)
     {
-        $this->url = $url;
         $this->urlBuilder = $urlBuilder;
         $this->groupNormalizer = $groupNormalizer;
 
@@ -57,7 +49,7 @@ class ApplicationNormalizer implements NormalizerInterface
     /**
      * @param Application $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -69,7 +61,7 @@ class ApplicationNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Application $application = null)
+    public function link(Application $application = null): ?Hyperlink
     {
         if (!$application) {
             return null;
@@ -97,38 +89,40 @@ class ApplicationNormalizer implements NormalizerInterface
             'group' => $application->group()
         ];
 
-        return $this->buildResource(
-            [
-                'id' => $application->id(),
-                'key' => $application->key(),
-                'name' => $application->name(),
+        $data = [
+            'id' => $application->id(),
+            'key' => $application->key(),
+            'name' => $application->name(),
 
-                'email' => $application->email()
-            ],
-            $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            [
-                'self' => $this->link($application),
-                'group' => $this->groupNormalizer->link($application->group()),
-                'deployments' => new Hyperlink(['api.deployments', ['id' => $application->id()]]),
-                'builds' => new Hyperlink(['api.builds', ['id' => $application->id()]]),
-                'pushes' => new Hyperlink(['api.pushes', ['id' => $application->id()]]),
+            'email' => $application->email()
+        ];
 
-                'page' => new Hyperlink(
-                    ['application', ['application' => $application->id()]],
-                    $application->name(),
-                    'text/html'
-                ),
-                'status_page' => new Hyperlink(
-                    ['application.status', ['application' => $application->id()]],
-                    sprintf('%s Status', $application->name()),
-                    'text/html'
-                ),
-                'github_page' => new Hyperlink(
-                    $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo()),
-                    '',
-                    'text/html'
-                )
-            ]
-        );
+        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
+
+        $links = [
+            'self' => $this->link($application),
+            'group' => $this->groupNormalizer->link($application->group()),
+            'deployments' => new Hyperlink(['api.deployments', ['id' => $application->id()]]),
+            'builds' => new Hyperlink(['api.builds', ['id' => $application->id()]]),
+            'pushes' => new Hyperlink(['api.pushes', ['id' => $application->id()]]),
+
+            'page' => new Hyperlink(
+                ['application', ['application' => $application->id()]],
+                $application->name(),
+                'text/html'
+            ),
+            'status_page' => new Hyperlink(
+                ['application.status', ['application' => $application->id()]],
+                sprintf('%s Status', $application->name()),
+                'text/html'
+            ),
+            'github_page' => new Hyperlink(
+                $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo()),
+                '',
+                'text/html'
+            )
+        ];
+
+        return $this->buildResource($data, $embedded, $links);
     }
 }

@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Utility;
+namespace Hal\UI\API\Utility;
 
 trait EmbeddedResolutionTrait
 {

@@ -5,11 +5,11 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Normalizer;
+namespace Hal\UI\API\Normalizer;
 
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Group;
 
 class GroupNormalizer implements NormalizerInterface
@@ -19,7 +19,7 @@ class GroupNormalizer implements NormalizerInterface
     /**
      * @param Group $input
      *
-     * @return array
+     * @return array|null
      */
     public function normalize($input)
     {
@@ -31,7 +31,7 @@ class GroupNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Group $group = null)
+    public function link(Group $group = null): ?Hyperlink
     {
         if (!$group) {
             return null;
@@ -45,7 +45,8 @@ class GroupNormalizer implements NormalizerInterface
 
     /**
      * @param Group $group
-     * @return array
+     *
+     * @return array|null
      */
     public function resource(Group $group = null)
     {
@@ -53,16 +54,16 @@ class GroupNormalizer implements NormalizerInterface
             return null;
         }
 
-        return $this->buildResource(
-            [
-                'id' => $group->id(),
-                'key' => $group->key(),
-                'name' => $group->name()
-            ],
-            [],
-            [
-                'self' => $this->link($group)
-            ]
-        );
+        $data = [
+            'id' => $group->id(),
+            'key' => $group->key(),
+            'name' => $group->name()
+        ];
+
+        $embedded = [];
+
+        $links = ['self' => $this->link($group)];
+
+        return $this->buildResource($data, $embedded, $links);
     }
 }
