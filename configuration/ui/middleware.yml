@@ -15,5 +15,5 @@ services:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
         arguments:
             - '@doctrine.em'
-            - '@panthor.problem.renderer'
+            - '@problem.renderer'
             - '@notFoundHandler'
