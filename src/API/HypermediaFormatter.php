@@ -5,58 +5,20 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api\Utility;
-
-use Hal\UI\Api\Hyperlink;
-use QL\Panthor\Utility\Url;
-use Slim\Http\Request;
-use Slim\Route;
+namespace Hal\UI\API;
 
 class HypermediaFormatter
 {
     /**
-     * @var Url
-     */
-    private $url;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var Route
-     */
-    private $currentRoute;
-
-    /**
-     * @var array
-     */
-    private $parameters;
-
-    /**
-     * @param Url $url
-     * @param Request $request
-     * @param Route $currentRoute
-     * @param array $parameters
-     */
-    public function __construct(Url $url, Request $request, Route $currentRoute, array $parameters)
-    {
-        $this->url = $url;
-        $this->request = $request;
-        $this->currentRoute = $currentRoute;
-        $this->parameters = $parameters;
-    }
-
-    /**
-     * Parse a HAL Resource Object in the form of an array and place the parsed and JSON encoded data in the current
-     * response object.
+     * Parse a HAL Resource Object in the form of an array and place the parsed
+     * and JSON encoded data in the current response object.
      *
      * @param array $content
+     * @param string $selfLink
      *
      * @return array
      */
-    public function format(array $content)
+    public function format(array $content, string $selfLink = '')
     {
         $links = (isset($content['_links']) && is_array($content['_links'])) ? $content['_links'] : [];
         $embedded = (isset($content['_embedded']) && is_array($content['_embedded'])) ? $content['_embedded'] : [];
@@ -65,14 +27,8 @@ class HypermediaFormatter
         unset($content['_embedded']);
 
         // force self link
-        if (!isset($links['self'])) {
-            $self = $this->url->absoluteUrlFor(
-                $this->currentRoute->getName(),
-                $this->parameters,
-                $this->request->get()
-            );
-
-            $links = ['self' => $self] + $links;
+        if ($selfLink && !isset($links['self'])) {
+            $links = ['self' => $selfLink] + $links;
         }
 
         // hide embedded if empty
@@ -188,7 +144,6 @@ class HypermediaFormatter
      */
     public function parseRelations(array $relations)
     {
-
         return array_map(function ($child) {
 
             if (is_null($child)) {

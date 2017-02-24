@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api;
+namespace Hal\UI\API;
 
 use InvalidArgumentException;
 

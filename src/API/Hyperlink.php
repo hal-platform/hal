@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api;
+namespace Hal\UI\API;
 
 use JsonSerializable;
 
@@ -25,26 +25,21 @@ class Hyperlink
     private $href;
 
     /**
-     * @var string|null
+     * @var string
      */
     private $title;
 
     /**
-     * @var string|null
+     * @var string
      */
     private $type;
 
-    // private $name;
-    // private $templated;
-    // private $deprecation;
-    // private $profile;
-
     /**
      * @param string|array $href
-     * @param string|null $title
-     * @param string|null $type
+     * @param string $title
+     * @param string $type
      */
-    public function __construct($href, $title = null, $type = null)
+    public function __construct($href, string $title = '', string $type = '')
     {
         $this->href = $href;
         $this->title = $title;
@@ -84,48 +79,14 @@ class Hyperlink
             'href' => $this->href
         ];
 
-        $title = $this->title();
-        if (is_string($title) && $title) {
+        if ($title = $this->title()) {
             $data['title'] = $title;
         }
 
-        $type = $this->type();
-        if (is_string($type) && $type) {
+        if ($type = $this->type()) {
             $data['type'] = $type;
         }
 
         return $data;
     }
-
-    // /**
-    //  * @return string
-    //  */
-    // public function name()
-    // {
-    //     return $this->name;
-    // }
-
-    // /**
-    //  * @return bool
-    //  */
-    // public function templated()
-    // {
-    //     return $this->templated;
-    // }
-
-    // /**
-    //  * @return string
-    //  */
-    // public function deprecation()
-    // {
-    //     return $this->deprecation;
-    // }
-
-    // /**
-    //  * @return string
-    //  */
-    // public function profile()
-    // {
-    //     return $this->profile;
-    // }
 }
