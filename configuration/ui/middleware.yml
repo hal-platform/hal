@@ -17,5 +17,3 @@ services:
             - '@doctrine.em'
             - '@panthor.problem.renderer'
             - '@notFoundHandler'
-
-
