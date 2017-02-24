@@ -80,7 +80,7 @@ class Flash
      */
     public static function toCookie(Flash $flash)
     {
-        return json_encode($flash, JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
+        return json_encode($flash->getMessages(), JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
     }
 
     /**
