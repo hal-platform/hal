@@ -1,0 +1,8 @@
+services:
+    index.api:
+        class: 'Hal\UI\Controllers\API\IndexController'
+        arguments: ['@api.response_formatter']
+
+    docs.api:
+        class: 'Hal\UI\Controllers\API\DocsRedirectController'
+        arguments: ['@uri']

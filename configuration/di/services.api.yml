@@ -4,25 +4,6 @@ services:
     # API Helpers
     ####################################################################################################################
 
-    response.formatter:
-        class: 'Hal\UI\Api\ResponseFormatter'
-        arguments:
-            - '@slim.request'
-            - '@slim.response'
-            - '@slim.route'
-            - '@normalizer'
-            - '@hypermedia.formatter'
-        calls:
-            - ['setCache', ['@cache']]
-
-    hypermedia.formatter:
-        class: 'Hal\UI\Api\Utility\HypermediaFormatter'
-        arguments:
-            - '@url'
-            - '@slim.request'
-            - '@slim.route'
-            - '@slim.route.parameters'
-
     normalizer:
         class: 'Hal\UI\Api\Normalizer'
         calls:

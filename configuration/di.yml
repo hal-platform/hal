@@ -5,30 +5,21 @@
 #
 # Naming conventions
 #
-# Global middleware:      "slim.global_middleware.*"
-# Page middleware:        "middleware.*"
-# Controllers:            "*.page"
-# Single-page middleware: "*.middleware"
-# Single-page template:   "*.twig"
+# - Global middleware:      "slim.global_middleware.*"
+# - Page middleware:        "middleware.*"
+
+# - UI Controllers:         "*.page"
+# - API Controllers:        "*.api"
+
+# - Single-page middleware: "*.middleware"
+# - Single-page template:   "*.twig"
 #
 # Example (Page: "Sign In")
 #  - 'signin.page'
 #  - 'signin.middleware'
 #  - 'signin.twig'
 #
-# - 'middleware.signin' (shared middleware to check if user is signed in'
-imports:
-    - resource: 'di/services.yml'
-    - resource: 'ui/controllers.yml'
-    - resource: 'ui/middleware.yml'
-    # - resource: 'di/services.api.yml'
-    # - resource: 'di/services.middleware.yml'
-    # - resource: 'di/controllers.yml'
-    # - resource: 'di/controllers.admin.yml'
-    # - resource: 'di/controllers.application.yml'
-    # - resource: 'di/controllers.api.yml'
-    # - resource: 'di/controllers.api.crud.yml'
-    # - resource: 'di/controllers.api.internal.yml'
+# - 'middleware.signin' (shared middleware to check if user is signed in)
 
 services:
     notFoundHandler:     { alias: 'panthor.handler.notFoundHandler' }
@@ -66,9 +57,9 @@ services:
 
     slim.router.loader:
         parent: 'router.loader'
-        # calls:
+        calls:
             # %routes% is auto loaded by parent
-            # - ['addRoutes', ['%routes.api%']]
+            - ['addRoutes', ['%routes.api%']]
             # - ['addRoutes', ['%routes.api.crud%']]
             # - ['addRoutes', ['%routes.admin%']]
             # - ['addRoutes', ['%routes.application%']]

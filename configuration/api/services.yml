@@ -1,0 +1,17 @@
+services:
+
+    api.response_formatter:
+        class: 'Hal\UI\API\ResponseFormatter'
+        arguments:
+            - '@api.normalizer'
+            - '@api.hypermedia_formatter'
+            - '@uri'
+            - '%api.cachetimes%'
+        calls:
+            - ['setCache', ['@cache']]
+
+    api.hypermedia_formatter:
+        class: 'Hal\UI\API\HypermediaFormatter'
+
+    api.normalizer:
+        class: 'Hal\UI\API\Normalizer'

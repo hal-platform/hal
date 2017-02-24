@@ -1,0 +1,4 @@
+services:
+    middleware.api_caching:
+        class: 'Hal\UI\Middleware\APICachingMiddleware'
+        arguments: ['@api.response_formatter']

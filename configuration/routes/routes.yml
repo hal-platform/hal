@@ -123,10 +123,6 @@ parameters:
         applications: {route: '/derp3', stack: []}
         settings: {route: '/derp4', stack: []}
 
-        # from help
-        api.index: {route: '/derp5', stack: []}
-        api.docs: {route: '/derp6', stack: []}
-
         # from dashboard
         application.status: {route: '/derp7', stack: []}
         build.start: {route: '/derp8', stack: []}
