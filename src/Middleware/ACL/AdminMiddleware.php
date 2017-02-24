@@ -7,27 +7,26 @@
 
 namespace Hal\UI\Middleware\ACL;
 
-use Exception;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\PermissionService;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
-use QL\Panthor\Slim\Halt;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Note: Supers also pass this middleware bouncer.
  */
 class AdminMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $di;
+    use TemplatedControllerTrait;
+    use SessionTrait;
 
     /**
-     * @var LoginMiddleware
+     * @var SignedInMiddleware
      */
-    private $loginMiddleware;
+    private $signedInMiddleware;
 
     /**
      * @var TemplateInterface
@@ -40,49 +39,45 @@ class AdminMiddleware implements MiddlewareInterface
     private $permissions;
 
     /**
-     * @var Halt
-     */
-    private $halt;
-
-    /**
-     * @param ContainerInterface $di
-     * @param LoginMiddleware $loginMiddleware
+     * @param SignedInMiddleware $signedInMiddleware
      * @param TemplateInterface $template
      * @param PermissionService $permissions
      */
     public function __construct(
-        ContainerInterface $di,
-        LoginMiddleware $loginMiddleware,
+        SignedInMiddleware $signedInMiddleware,
         TemplateInterface $template,
-        PermissionService $permissions,
-        Halt $halt
+        PermissionService $permissions
     ) {
-        $this->di = $di;
-        $this->loginMiddleware = $loginMiddleware;
+        $this->signedInMiddleware = $signedInMiddleware;
 
         $this->template = $template;
         $this->permissions = $permissions;
-        $this->halt = $halt;
     }
 
     /**
      * @inheritDoc
-     * @throws Exception
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        // Ensure user is logged in first
-        call_user_func($this->loginMiddleware);
+        $requireAdmin = function (ServerRequestInterface $request, ResponseInterface $response) use ($next) {
 
-        $user = $this->di->get('currentUser');
-        $perm = $this->permissions->getUserPermissions($user);
+            $user = $this->getUser($request);
+            $permissions = $this->permissions->getUserPermissions($user);
 
-        if ($perm->isButtonPusher() || $perm->isSuper()) {
-            return;
-        }
+            if ($permissions->isButtonPusher() || $permissions->isSuper()) {
+                return $next($request, $response);
+            }
 
-        $rendered = $this->template->render();
+            $response = $this->withTemplate(
+                $request,
+                $response,
+                $this->template,
+                []
+            );
 
-        call_user_func($this->halt, 403, $rendered);
+            return $response->withStatus(403);
+        };
+
+        return call_user_func($this->signedInMiddleware, $request, $response, $requireAdmin);
     }
 }

@@ -4,9 +4,18 @@ services:
         class: 'Hal\UI\Middleware\ACL\SignedInMiddleware'
         arguments: ['@uri']
 
+    middleware.is_admin:
+        class: 'Hal\UI\Middleware\ACL\AdminMiddleware'
+        arguments:
+            - '@middleware.signed_in'
+            - '@denied.twig'
+            - '@permissions'
+
     middleware.require_entity:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
         arguments:
             - '@doctrine.em'
             - '@panthor.problem.renderer'
             - '@notFoundHandler'
+
+
