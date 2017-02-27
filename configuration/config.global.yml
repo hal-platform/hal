@@ -91,8 +91,8 @@ parameters:
     # configuration
     ############################################################################
 
-    github.baseurl: 'http://git/api/v3'
-    github.site.baseurl: 'http://git'
+    github.baseurl: '%github.site.baseurl%/api/v3'
+    github.site.baseurl: 'https://git'
 
     unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
     unique.size: 4
@@ -104,13 +104,13 @@ parameters:
     # cookie
     ############################################################################
 
-    session.lifetime: '+20 minutes'
+    session.lifetime: '+1 day'
     session.encryption.secret: ''
 
     cookie.encryption.secret: ''
     # session.cookie.configuration:
     #     lifetime: '5 days'
-    # cookie.preferences.ttl: '5 years'
+    cookie.preferences.ttl: '5 years'
 
     ############################################################################
     # permission settings
