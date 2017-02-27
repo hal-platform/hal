@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import '_partial/macros.twig' as macros %}
 {% import '_partial-form/macros.twig' as form_macros %}
 {% import _self as page_macros %}
@@ -11,7 +11,7 @@
         <h1>Start Push - <strong>{{ build.application.name }}</strong></h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Back to Application Status</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': build.application.id}) }}">Back to Application Status</a>
         </p>
     </div>
 
@@ -27,7 +27,7 @@
         {{ form_macros.formErrors(errors) }}
 
         {% set pushables = 0 %}
-        {% set canUserPush = canUserPush(getCurrentUser(), build.application, build.environment) %}
+        {% set canUserPush = canUserPush(current_user, build.application, build.environment) %}
 
         {% for status in statuses %}
             {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
@@ -44,7 +44,7 @@
         {{ macros.alert('error', 'This build cannot be deployed!', 'There are no deployments assigned to this environment.') }}
 
         <p>
-            <a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a>
+            <a class="btn btn--secondary" href="{{ uriFor('application.status', {'application': build.application.id}) }}">Cancel</a>
         </p>
 
     {% endif %}
@@ -56,7 +56,7 @@
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {application: build.application.id}) }}">{{ build.application.name }}</a>
+                <a href="{{ uriFor('application', {application: build.application.id}) }}">{{ build.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -70,13 +70,13 @@
         <dl class="split mbn">
             <dt class="split__title">Build Id</dt>
             <dd>
-                <a href="{{ urlFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
+                <a href="{{ uriFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
             </dd>
 
             <dt class="split__title">User</dt>
             <dd>
                 {% if build.user %}
-                    <a href="{{ urlFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
+                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -135,7 +135,7 @@
             {% if pushables %}
                 <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
             {% endif %}
-            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Cancel</a></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('application.status', {'application': build.application.id}) }}">Cancel</a></li>
         </ul>
 
     </form>
@@ -203,7 +203,7 @@
     <tr>
         <td>
             <span class="hint--right" aria-label="{{ deployment.server.formatHumanType }}: {{ deployment.formatMeta }}">
-                <a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty(false) }}</a>
+                <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty(false) }}</a>
             </span>
         </td>
         {% if push %}
@@ -222,11 +222,11 @@
                 {% else %}
                     {{ push.created|html5date }}
                 {% endif %}
-                (Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)
+                (Push <a href="{{ uriFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)
             </td>
             <td class="table-priority-55">
                 {% if push.user %}
-                    <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
+                    <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
                 {% else %}
                     Unknown
                 {% endif %}

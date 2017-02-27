@@ -10,6 +10,7 @@ namespace Hal\UI\Controllers\Build;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Validator\BuildValidator;
@@ -20,7 +21,6 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\Twig\Context;
 use QL\Panthor\Utility\URI;
 
 /**
@@ -30,8 +30,9 @@ class StartBuildHandler implements MiddlewareInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
+    use TemplatedControllerTrait;
 
-    const WAIT_FOR_IT = 'Build has been queued.';
+    const WAIT_FOR_IT = 'The build has been queued.';
 
     /**
      * @var EntityManagerInterface
@@ -59,33 +60,24 @@ class StartBuildHandler implements MiddlewareInterface
     private $uri;
 
     /**
-     * @var Context
-     */
-    private $context;
-
-    /**
      * @param EntityManagerInterface $em
      * @param BuildValidator $validator
      * @param PushValidator $pushValidator
      * @param StickyEnvironmentService $stickyService
      * @param URI $uri
-     * @param Context $context
      */
     public function __construct(
         EntityManagerInterface $em,
         BuildValidator $validator,
         PushValidator $pushValidator,
         StickyEnvironmentService $stickyService,
-        URI $uri,
-        Context $context
+        URI $uri
     ) {
         $this->em = $em;
         $this->validator = $validator;
         $this->pushValidator = $pushValidator;
         $this->stickyService = $stickyService;
         $this->uri = $uri;
-
-        $this->context = $context;
     }
 
     /**
@@ -108,15 +100,20 @@ class StartBuildHandler implements MiddlewareInterface
 
         // if validator didn't create a build, add errors and pass through to controller
         if (!$build) {
-            return $this->context->addContext(['errors' => $this->validator->errors()]);
+            return $next(
+                $this->withContext($request, ['errors' => $this->validator->errors()]),
+                $response
+            );
         }
-
 
         $deployments = $request->getParsedBody()['deployments'] ?? [];
         $children = $this->maybeMakeChildren($build, $user, $deployments);
         if ($deployments && !$children) {
             // child push validation failed, bomb out.
-            return $this->context->addContext(['errors' => $this->pushValidator->errors()]);
+            return $next(
+                $this->withContext($request, ['errors' => $this->pushValidator->errors()]),
+                $response
+            );
         }
 
         // persist to database
@@ -130,7 +127,7 @@ class StartBuildHandler implements MiddlewareInterface
         $this->em->flush();
 
         // override sticky environment
-        $this->stickyService->save($request, $response, $application->id(), $env);
+        $response = $this->stickyService->save($request, $response, $application->id(), $env);
 
         // flash and redirect
         $this
@@ -147,7 +144,7 @@ class StartBuildHandler implements MiddlewareInterface
      *
      * @return array|null
      */
-    private function maybeMakeChildren(Build $build, User $user, $deployments)
+    private function maybeMakeChildren(Build $build, User $user, ?array $deployments)
     {
         if (!$deployments) {
             return null;

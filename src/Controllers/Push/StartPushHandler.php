@@ -9,20 +9,26 @@ namespace Hal\UI\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Controllers\RedirectableControllerTrait;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Flash;
 use Hal\UI\Service\StickyEnvironmentService;
-use Hal\UI\Validator\PushStartValidator;
-use Hal\UI\Session;
+use Hal\UI\Validator\PushValidator;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\JobIdGenerator;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\Twig\Context;
-use QL\Panthor\Utility\Url;
-use Slim\Http\Request;
+use QL\Panthor\Utility\URI;
 
 class StartPushHandler implements MiddlewareInterface
 {
-    const SUCCESS = "The build has been queued to be pushed to the requested servers.";
+    use RedirectableControllerTrait;
+    use SessionTrait;
+    use TemplatedControllerTrait;
+
+    const WAIT_FOR_IT = "The release has been queued and will be deployed shortly.";
 
     /**
      * @var EntityManagerInterface
@@ -30,14 +36,9 @@ class StartPushHandler implements MiddlewareInterface
     private $em;
 
     /**
-     * @var PushStartValidator
+     * @var PushValidator
      */
     private $validator;
-
-    /**
-     * @var Session
-     */
-    private $session;
 
     /**
      * @var EntityRepository
@@ -46,108 +47,65 @@ class StartPushHandler implements MiddlewareInterface
     private $pushRepo;
 
     /**
-     * @var Url
-     */
-    private $url;
-
-    /**
-     * @var JobIdGenerator
-     */
-    private $unique;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var Context
-     */
-    private $context;
-
-    /**
      * @var StickyEnvironmentService
      */
     private $stickyService;
 
     /**
-     * @var array
+     * @var URI
      */
-    private $parameters;
+    private $uri;
 
     /**
      * @param EntityManagerInterface $em
-     * @param PushStartValidator $validator
-     * @param Session $session
-     * @param Url $url
-     * @param JobIdGenerator $unique
-     * @param Request $request
-     * @param Context $context
+     * @param PushValidator $validator
      * @param StickyEnvironmentService $stickyService
-     * @param array $parameters
+     * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
-        PushStartValidator $validator,
-        Session $session,
-        Url $url,
-        JobIdGenerator $unique,
-        Request $request,
-        Context $context,
+        PushValidator $validator,
         StickyEnvironmentService $stickyService,
-        array $parameters
+        URI $uri
     ) {
-        $this->session = $session;
-
         $this->buildRepo = $em->getRepository(Build::class);
         $this->pushRepo = $em->getRepository(Push::class);
         $this->em = $em;
 
-        $this->url = $url;
-        $this->unique = $unique;
-
-        $this->request = $request;
-        $this->context = $context;
-        $this->stickyService = $stickyService;
         $this->validator = $validator;
-        $this->parameters = $parameters;
+        $this->stickyService = $stickyService;
+        $this->uri = $uri;
     }
 
     /**
      * @inheritDoc
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$this->request->isPost()) {
-            return;
+        if ($request->getMethod() !== 'POST') {
+            return $next($request, $response);
         }
 
-        // Can only deploy successful builds
-        $build = $this->buildRepo->findOneBy([
-            'id' => $this->parameters['build'],
-            'status' => 'Success'
-        ]);
-
-        if (!$build) {
-            // fall through to controller
-            return;
+        $build = $request->getAttribute(Build::class);
+        if (!$build->isSuccess()) {
+            return $next($request, $response);
         }
 
-        $deployments = $this->request->post('deployments', []);
+        $user = $this->getUser($request);
+        $deployments = $request->getParsedBody()['deployments'] ?? [];
         $application = $build->application();
         $environment = $build->environment();
 
         // passed separately, in case one day we support cross-env builds?
-        $pushes = $this->validator->isValid($application, $environment, $build, $deployments);
+        $pushes = $this->validator->isValid($application, $user, $environment, $build, $deployments);
 
         // Pass through to controller if errors
         if (!$pushes) {
-            return $this->context->addContext([
-                'errors' => $this->validator->errors()
-            ]);
+            return $next(
+                $this->withContext($request, ['errors' => $this->validator->errors()]),
+                $response
+            );
         }
-
-        $this->dupeCatcher($pushes);
 
         // commit pushes
         foreach ($pushes as $push) {
@@ -162,41 +120,13 @@ class StartPushHandler implements MiddlewareInterface
         $this->em->flush();
 
         // override sticky environment
-        $this->stickyService->save($application->id(), $environment->id());
+        $response = $this->stickyService->save($request, $response, $application->id(), $environment->id());
 
-        $this->session->flash(self::SUCCESS, 'success');
-        $this->url->redirectFor('application.status', ['application' => $application->id()]);
-    }
+        // flash and redirect
+        $this
+            ->getFlash($request)
+            ->withMessage(Flash::SUCCESS, self::WAIT_FOR_IT);
 
-    /**
-     * This will find duplicate Push Ids (recursively) and change the id of the pushes to a new unique hash until
-     * there are no duplicates.
-     *
-     * @param Push[] $pushes
-     *
-     * @return null
-     */
-    private function dupeCatcher(array $pushes)
-    {
-        $ids = array_map(function($push) {
-            return $push->id();
-        }, $pushes);
-
-        $dupes = $this->pushRepo->findBy(['id' => $ids]);
-        if ($dupes) {
-            $dupeIds = array_map(function($push) {
-                return $push->id();
-            }, $dupes);
-
-            $dupePushes = array_filter($pushes, function($push) use ($dupeIds) {
-                return in_array($push->id(), $dupeIds);
-            });
-
-            foreach ($dupePushes as $push) {
-                $push->withId($this->unique->generatePushId());
-            }
-
-            $this->dupeCatcher($pushes);
-        }
+        return $this->withRedirectRoute($response, $this->uri, 'application.status', ['application' => $application->id()]);
     }
 }

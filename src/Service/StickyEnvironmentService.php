@@ -37,7 +37,7 @@ class StickyEnvironmentService
      * @param Json $JSON
      * @param string $preferencesExpiry
      */
-    public function __construct(CookieHandler $cookies, JSON $json, $preferencesExpiry)
+    public function __construct(CookieHandler $cookies, JSON $json, string $preferencesExpiry)
     {
         $this->cookies = $cookies;
         $this->json = $json;
@@ -50,10 +50,14 @@ class StickyEnvironmentService
      * @param Application|string $applicationID
      * @param string $environmentID
      *
-     * @return void
+     * @return ResponseInterface
      */
-    public function save(ServerRequestInterface $request, ResponseInterface $response, $applicationID, $environmentID)
-    {
+    public function save(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        $applicationID,
+        $environmentID
+    ): ResponseInterface {
         if ($applicationID instanceof Application) {
             $applicationID = $applicationID->id();
         }
@@ -62,7 +66,12 @@ class StickyEnvironmentService
         $stickies = $this->unpackStickies($request);
         $stickies[$applicationID] = $environmentID;
 
-        $this->cookies->withCookie($response, self::COOKIE_NAME, $this->json->encode($stickies), $this->preferencesExpiry);
+        return $this->cookies->withCookie(
+            $response,
+            self::COOKIE_NAME,
+            $this->json->encode($stickies),
+            $this->preferencesExpiry
+        );
     }
 
     /**
@@ -73,7 +82,7 @@ class StickyEnvironmentService
      *
      * @return string|null
      */
-    public function get(ServerRequestInterface $request, $applicationID)
+    public function get(ServerRequestInterface $request, $applicationID): ?string
     {
         if ($applicationID instanceof Application) {
             $applicationID = $applicationID->id();

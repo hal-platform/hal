@@ -7,20 +7,22 @@
 
 namespace Hal\UI\Service;
 
-use QL\Panthor\Http\EncryptedCookies;
-use QL\Panthor\Utility\Json;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use QL\Panthor\HTTP\CookieHandler;
+use QL\Panthor\Utility\JSON;
 
 class StickyPoolService
 {
     const COOKIE_NAME = 'stickypool';
 
     /**
-     * @var EncryptedCookies
+     * @var CookieHandler
      */
     private $cookies;
 
     /**
-     * @var EncryptedCookies
+     * @var JSON
      */
     private $json;
 
@@ -30,11 +32,11 @@ class StickyPoolService
     private $preferencesExpiry;
 
     /**
-     * @param EncryptedCookies $cookies
-     * @param Json $json
-     * @param array $preferencesExpiry
+     * @param CookieHandler $cookies
+     * @param JSON $json
+     * @param string $preferencesExpiry
      */
-    public function __construct(EncryptedCookies $cookies, Json $json, $preferencesExpiry)
+    public function __construct(CookieHandler $cookies, Json $json, string $preferencesExpiry)
     {
         $this->cookies = $cookies;
         $this->json = $json;
@@ -42,16 +44,23 @@ class StickyPoolService
     }
 
     /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @param string $applicationID
      * @param string $environmentID
      * @param string|null $viewID
      *
-     * @return void
+     * @return ResponseInterface
      */
-    public function save($applicationID, $environmentID, $viewID)
-    {
+    public function save(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        $applicationID,
+        $environmentID,
+        $viewID
+    ): ResponseInterface {
         // we store each app stickyness individually per app, but in the same cookie.
-        $stickies = $this->unpackStickies();
+        $stickies = $this->unpackStickies($request);
 
         if ($viewID == null) {
             unset($stickies[$applicationID][$environmentID]);
@@ -59,20 +68,26 @@ class StickyPoolService
             $stickies[$applicationID][$environmentID] = $viewID;
         }
 
-        $this->cookies->setCookie(self::COOKIE_NAME, $this->json->encode($stickies), $this->preferencesExpiry);
+        return $this->cookies->withCookie(
+            $response,
+            self::COOKIE_NAME,
+            $this->json->encode($stickies),
+            $this->preferencesExpiry
+        );
     }
 
     /**
      * Get the current view preference for an application.
      *
+     * @param ServerRequestInterface $request
      * @param string $applicationID
      * @param string $environmentID
      *
      * @return string|null
      */
-    public function get($applicationID, $environmentID)
+    public function get(ServerRequestInterface $request, $applicationID, $environmentID): ?string
     {
-        $stickies = $this->unpackStickies();
+        $stickies = $this->unpackStickies($request);
         if (isset($stickies[$applicationID][$environmentID])) {
             return $stickies[$applicationID][$environmentID];
         }
@@ -81,11 +96,13 @@ class StickyPoolService
     }
 
     /**
+     * @param ServerRequestInterface $request
+     *
      * @return array
      */
-    private function unpackStickies()
+    private function unpackStickies(ServerRequestInterface $request): array
     {
-        $stickies = $this->cookies->getCookie(self::COOKIE_NAME);
+        $stickies = $this->cookies->getCookie($request, self::COOKIE_NAME);
 
         // if the cookie is set
         if ($stickies !== null) {

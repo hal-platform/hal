@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import '_partial/macros.twig' as macros %}
 {% set js_components = ["push.info"] %}
 
@@ -10,7 +10,7 @@
         <h1>Push - <strong>{{ push.application.name }}</strong></h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': push.application.id}) }}">Back to Application Status</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': push.application.id}) }}">Back to Application Status</a>
         </p>
     </div>
 
@@ -27,7 +27,7 @@
             <dt class="split__title">Server</dt>
             <dd>
                 {% if push.deployment %}
-                    <a href="{{ urlFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment.formatPretty }}</a>
+                    <a href="{{ uriFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment.formatPretty }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -60,7 +60,7 @@
         <dl class="split mbn">
             <dt class="split__title">Build Id</dt>
             <dd>
-                <a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a>
+                <a href="{{ uriFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a>
                 {% if (push.build.status == 'Removed') %}
                     (Removed)
                 {% endif %}
@@ -68,7 +68,7 @@
 
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {'application': push.application.id}) }}">{{ push.application.name }}</a>
+                <a href="{{ uriFor('application', {'application': push.application.id}) }}">{{ push.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -107,7 +107,7 @@
             <dt class="split__title">User</dt>
             <dd>
                 {% if push.user %}
-                    <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.name }}</a>
+                    <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.name }}</a>
                 {% else %}
                     Unknown
                 {% endif %}

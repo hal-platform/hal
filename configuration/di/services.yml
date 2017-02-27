@@ -44,12 +44,12 @@ services:
             - '@json'
             - '%cookie.preferences.ttl%'
 
-    # sticky.pool:
-    #     class: 'Hal\UI\Service\StickyPoolService'
-    #     arguments:
-    #         - '@slim.cookies'
-    #         - '@json'
-    #         - '%cookie.preferences.ttl%'
+    sticky.pool:
+        class: 'Hal\UI\Service\StickyPoolService'
+        arguments:
+            - '@cookie.handler'
+            - '@json'
+            - '%cookie.preferences.ttl%'
 
     stats:
         class: 'Hal\UI\Service\StatsService'
@@ -61,14 +61,14 @@ services:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.stats.ttl%']]
 
-    # pools:
-    #     class: 'Hal\UI\Service\PoolService'
-    #     arguments:
-    #         - '@doctrine.em'
-    #         - '@sticky.pool'
-    #     calls:
-    #         - ['setCache', ['@cache']]
-    #         - ['setCacheTTL', ['%cache.stats.ttl%']]
+    pools:
+        class: 'Hal\UI\Service\PoolService'
+        arguments:
+            - '@doctrine.em'
+            - '@sticky.pool'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.stats.ttl%']]
 
     redis:
         class: 'Predis\Client'

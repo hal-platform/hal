@@ -9,6 +9,7 @@ namespace Hal\UI\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\Environment;
@@ -45,7 +46,7 @@ class PoolService
         EntityManagerInterface $em,
         StickyPoolService $stickyPoolService
     ) {
-        $this->viewRepo = $em->getRepository(DeploymentView::CLASS);
+        $this->viewRepo = $em->getRepository(DeploymentView::class);
         $this->stickyPoolService = $stickyPoolService;
     }
 
@@ -71,20 +72,21 @@ class PoolService
     }
 
     /**
+     * @param ServerRequestInterface $request
      * @param Application $application
      * @param Environment $environment
      * @param array $views
      *
      * @return string|null
      */
-    public function findSelectedView(Application $application, Environment $environment, array $views)
+    public function findSelectedView(ServerRequestInterface $request, Application $application, Environment $environment, array $views)
     {
         // list empty
         if (!$views) {
             return null;
         }
 
-        $selected = $this->stickyPoolService->get($application->id(), $environment->id());
+        $selected = $this->stickyPoolService->get($request, $application->id(), $environment->id());
 
         // Find the selected view
         foreach ($views as $id => $view) {

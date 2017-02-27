@@ -74,18 +74,7 @@ services:
     # PUSH CONTROLLERS
     ####################################################################################################################
 
-    push.start.page:
-        class: 'Hal\UI\Controllers\Push\StartPushController'
-        arguments:
-            - '@push.start.twig'
-            - '@doctrine.em'
-            - '@pools'
-            - '@slim.request'
-            - '@slim.not.found'
-            - '@slim.route.parameters'
-    push.start.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['push/start.twig']]]
+
 
     push.rollback.page:
         class: 'Hal\UI\Controllers\Push\RollbackController'
@@ -99,16 +88,6 @@ services:
     rollback.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/rollback.twig']]]
-
-    push.page:
-        class: 'Hal\UI\Controllers\Push\PushController'
-        arguments:
-            - '@push.twig'
-            - '@hal.push'
-            - '@service.event_logs'
-    push.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['push/push.twig']]]
 
     pushes.page:
         class: 'Hal\UI\Controllers\Push\PushesController'
