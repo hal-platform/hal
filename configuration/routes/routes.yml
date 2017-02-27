@@ -65,35 +65,36 @@ parameters:
         # Server Routes
         ################################################################################################################
 
+        servers:
+            method: 'GET'
+            route: '/servers'
+            stack: ['middleware.signed_in', 'servers.page']
+
         server:
             method: 'GET'
             route: '/servers/{server:%r.digit%}'
             stack: ['middleware.signed_in', 'middleware.require_entity', 'server.page']
 
-        server.add:
-            method: ['GET', 'POST']
-            route: '/servers/add'
-            stack: ['middleware.is_admin', 'server.add.page']
-
-        server.edit:
-            method: ['GET', 'POST']
-            route: '/servers/{server:%r.digit%}/edit'
-            stack: ['middleware.is_admin', 'middleware.require_entity', 'server.edit.page']
-
-        server.remove.confirm:
-            method: 'GET'
-            route: '/servers/{server:%r.digit%}/remove'
-            stack: ['middleware.is_admin', 'middleware.require_entity', 'delete.confirm.page']
-
-        server.remove:
-            method: 'POST'
-            route: '/servers/{server:%r.digit%}/remove'
-            stack: ['middleware.is_admin', 'middleware.require_entity', 'server.remove.page']
-
-        servers:
-            method: 'GET'
+        server.management:
             route: '/servers'
-            stack: ['middleware.signed_in', 'servers.page']
+            stack: ['middleware.is_admin']
+            routes:
+                server.add:
+                    method: ['GET', 'POST']
+                    route: '/servers/add'
+                    stack: ['server.add.page']
+                server.edit:
+                    method: ['GET', 'POST']
+                    route: '/{server:%r.digit%}/edit'
+                    stack: ['middleware.require_entity', 'server.edit.page']
+                server.remove.confirm:
+                    method: 'GET'
+                    route: '/{server:%r.digit%}/remove'
+                    stack: ['middleware.require_entity', 'delete.confirm.page']
+                server.remove:
+                    method: 'POST'
+                    route: '/{server:%r.digit%}/remove'
+                    stack: ['middleware.require_entity', 'server.remove.page']
 
         ################################################################################################################
         # QUEUE ROUTES
