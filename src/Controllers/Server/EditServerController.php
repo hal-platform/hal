@@ -36,22 +36,26 @@ class EditServerController implements ControllerInterface
      * @var TemplateInterface
      */
     private $template;
+
     /**
      * @var EntityManagerInterface
      */
     private $em;
-    /**
-     * @var ServerValidator
-     */
-    private $validator;
-    /**
-     * @var URI
-     */
-    private $uri;
+
     /**
      * @var EnvironmentRepository
      */
     private $environmentRepo;
+
+    /**
+     * @var ServerValidator
+     */
+    private $validator;
+
+    /**
+     * @var URI
+     */
+    private $uri;
 
     /**
      * EditServerController constructor.
@@ -68,10 +72,12 @@ class EditServerController implements ControllerInterface
         URI $uri
     ) {
         $this->template = $template;
+
         $this->em = $em;
+        $this->environmentRepo = $em->getRepository(Environment::class);
+
         $this->validator = $validator;
         $this->uri = $uri;
-        $this->environmentRepo = $em->getRepository(Environment::class);
     }
 
     /**
@@ -84,33 +90,21 @@ class EditServerController implements ControllerInterface
         $form = $this->getFormData($request, $server);
 
         if ($modified = $this->handleForm($form, $request, $server)) {
-            $flash = $this->getFlash($request);
-            $flash->withMessage(Flash::SUCCESS, self::SUCCESS);
+            $this
+                ->getFlash($request)
+                ->withMessage(Flash::SUCCESS, self::SUCCESS);
 
-            return $this->withRedirectRoute(
-                $response,
-                $this->uri,
-                'server',
-                ['server' => $modified->id()]
-            );
+            return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $modified->id()]);
         }
 
-        $context = [
+        return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->validator->errors(),
 
             'server' => $server,
             'environments' => $this->environmentRepo->getAllEnvironmentsSorted(),
-        ];
-
-        return $this->withTemplate(
-            $request,
-            $response,
-            $this->template,
-            $context
-        );
+        ]);
     }
-
 
     /**
      * @param array $data
@@ -142,6 +136,12 @@ class EditServerController implements ControllerInterface
         return $server;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param Server $server
+     *
+     * @return array
+     */
     private function getFormData(ServerRequestInterface $request, Server $server)
     {
         if ($request->getMethod() === 'POST') {

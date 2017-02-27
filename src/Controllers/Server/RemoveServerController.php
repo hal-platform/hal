@@ -32,25 +32,23 @@ class RemoveServerController implements ControllerInterface
      * @var DeploymentRepository
      */
     private $deployRepo;
+
     /**
      * @var EntityManagerInterface
      */
     private $em;
+
     /**
      * @var URI
      */
     private $uri;
 
     /**
-     * RemoveServerController constructor.
-     *
      * @param EntityManagerInterface $em
      * @param URI $uri
      */
-    public function __construct(
-        EntityManagerInterface $em,
-        URI $uri
-    ) {
+    public function __construct(EntityManagerInterface $em, URI $uri)
+    {
         $this->deployRepo = $em->getRepository(Deployment::class);
         $this->em = $em;
         $this->uri = $uri;
@@ -63,34 +61,20 @@ class RemoveServerController implements ControllerInterface
     {
         $server = $request->getAttribute(Server::class);
 
-        if ($deployments = $this->deployRepo->findBy(['server' => $server])) {
-            $flash = $this->getFlash($request);
-            $flash->withMessage(Flash::ERROR, self::ERR_DEPLOYMENTS);
+        if ($this->deployRepo->findBy(['server' => $server])) {
+            $this
+                ->getFlash($request)
+                ->withMessage(Flash::ERROR, self::ERR_DEPLOYMENTS);
 
-            $this->withRedirectRoute(
-                $response,
-                $this->uri,
-                'server',
-                ['server' => $server->id]
-            );
+            return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $server->id]);
         }
 
         $this->em->remove($server);
         $this->em->flush();
 
-        $name = $server->name();
-        if ($server->type() === ServerEnum::TYPE_EB) {
-            $name = 'Elastic Beanstalk';
-        } elseif ($server->type() === ServerEnum::TYPE_CD) {
-            $name = 'Code Deploy';
-        } elseif ($server->type() === ServerEnum::TYPE_S3) {
-            $name = 'S3';
-        } elseif ($server->type() === ServerEnum::TYPE_SCRIPT) {
-            $name = 'Script';
-        }
-
-        $flash = $this->getFlash($request);
-        $flash->withMessage(Flash::SUCCESS, sprintf(self::SUCCESS, $name));
+        $this
+            ->getFlash($request)
+            ->withMessage(Flash::SUCCESS, sprintf(self::SUCCESS, $server->formatHumanType()));
 
         return $this->withRedirectRoute($response, $this->uri, 'servers');
     }

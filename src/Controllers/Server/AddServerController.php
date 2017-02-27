@@ -25,10 +25,10 @@ use QL\Panthor\Utility\URI;
 
 class AddServerController implements ControllerInterface
 {
+    use Psr7HelperTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
-    use Psr7HelperTrait;
 
     private const SUCCESS = 'Server "%s" added.';
 
@@ -39,10 +39,6 @@ class AddServerController implements ControllerInterface
      */
     private $template;
 
-    /**
-     * @var EnvironmentRepository
-     */
-    private $envRepo;
 
     /**
      * @var EntityManagerInterface
@@ -50,9 +46,15 @@ class AddServerController implements ControllerInterface
     private $em;
 
     /**
+     * @var EnvironmentRepository
+     */
+    private $environmentRepo;
+
+    /**
      * @var ServerValidator
      */
     private $validator;
+
     /**
      * @var URI
      */
@@ -72,8 +74,8 @@ class AddServerController implements ControllerInterface
     ) {
         $this->template = $template;
 
-        $this->envRepo = $em->getRepository(Environment::CLASS);
         $this->em = $em;
+        $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->validator = $validator;
         $this->uri = $uri;
@@ -84,37 +86,29 @@ class AddServerController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        if (!$environments = $this->envRepo->getAllEnvironmentsSorted()) {
-
-            /** @var Flash $flash */
-            $flash = $this->getFlash($request);
-            $flash->withMessage(Flash::ERROR, self::ERR_NO_ENVIRONMENTS);
+        if (!$environments = $this->environmentRepo->getAllEnvironmentsSorted()) {
+            $this
+                ->getFlash($request)
+                ->withMessage(Flash::ERROR, self::ERR_NO_ENVIRONMENTS);
 
             return $response;
         }
 
         if ($server = $this->handleForm($request)) {
-
-            $flash = $this->getFlash($request);
-            $flash->withMessage(Flash::SUCCESS, sprintf(self::SUCCESS, $server->name()));
+            $this
+                ->getFlash($request)
+                ->withMessage(Flash::SUCCESS, sprintf(self::SUCCESS, $server->name()));
 
             return $this->withRedirectRoute($response, $this->uri, 'servers');
         }
 
-        $form = $this->data($request);
+        $form = $this->getFormData($request);
 
-        $context = [
+        return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->validator->errors(),
             'environments' => $environments
-        ];
-
-        return $this->withTemplate(
-            $request,
-            $response,
-            $this->template,
-            $context
-        );
+        ]);
     }
 
     /**
@@ -128,7 +122,7 @@ class AddServerController implements ControllerInterface
             return null;
         }
 
-        $data = $this->data($request);
+        $data = $this->getFormData($request);
 
         $server = $this->validator->isValid(
             $data['server_type'],
@@ -151,7 +145,7 @@ class AddServerController implements ControllerInterface
      *
      * @return array
      */
-    private function data(ServerRequestInterface $request): array
+    private function getFormData(ServerRequestInterface $request): array
     {
         $form = [
             'server_type' => $this->getParsedBodyParam($request, 'server_type'),
