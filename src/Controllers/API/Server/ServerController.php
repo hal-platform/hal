@@ -72,10 +72,6 @@ class ServerController implements ControllerInterface
         }
 
         $serverData = $this->formatter->buildResponse($request, $server);
-        return $this->withHypermediaEndpoint(
-            $request,
-            $response,
-            $serverData
-        );
+        return $this->withHypermediaEndpoint($request, $response, $serverData);
     }
 }

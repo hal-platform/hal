@@ -104,17 +104,9 @@ class ServersController implements ControllerInterface
         );
 
         $status = (count($servers) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse(
-            $request,
-            $resource
-        );
+        $data = $this->formatter->buildResponse($request, $resource);
 
-        return $this->withHypermediaEndpoint(
-            $request,
-            $response,
-            $data,
-            $status
-        );
+        return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }
 
     /**
