@@ -74,7 +74,7 @@ class ServersController implements ControllerInterface
 
         $page = $this->getCurrentPage($routeParams);
         if ($page === false) {
-            $this->withProblem(
+            return $this->withProblem(
                 $this->problemRenderer,
                 $response,
                 404,
