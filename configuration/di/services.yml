@@ -37,12 +37,12 @@ services:
         class: 'Hal\UI\Service\GlobalMessageService'
         arguments: ['@redis']
 
-    # sticky.environment:
-    #     class: 'Hal\UI\Service\StickyEnvironmentService'
-    #     arguments:
-    #         - '@slim.cookies'
-    #         - '@json'
-    #         - '%cookie.preferences.ttl%'
+    sticky.environment:
+        class: 'Hal\UI\Service\StickyEnvironmentService'
+        arguments:
+            - '@cookie.handler'
+            - '@json'
+            - '%cookie.preferences.ttl%'
 
     # sticky.pool:
     #     class: 'Hal\UI\Service\StickyPoolService'

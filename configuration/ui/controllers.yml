@@ -164,3 +164,67 @@ services:
     queue.history.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['queue.history.twig']]]
+
+    ####################################################################################################################
+    # BUILD CONTROLLERS
+    ####################################################################################################################
+
+    build.page:
+        class: 'Hal\UI\Controllers\Build\BuildController'
+        arguments:
+            - '@build.twig'
+            - '@service.event_logs'
+            - '@doctrine.em'
+    build.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/build.twig']]]
+
+    build.start.page:
+        class: 'Hal\UI\Controllers\Build\StartBuildController'
+        arguments:
+            - '@build.start.twig'
+            - '@doctrine.em'
+            - '@github'
+            - '@sticky.environment'
+    build.start.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/start.twig']]]
+
+    build.start.handler:
+        class: 'Hal\UI\Controllers\Build\StartBuildHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@build.start.validator'
+            - '@push.start.validator'
+            - '@sticky.environment'
+            - '@uri'
+            - '@twig.context'
+    build.start.validator:
+        class: 'Hal\UI\Validator\BuildValidator'
+        arguments:
+            - '@doctrine.em'
+            - '@github'
+            - '@permissions'
+            - '@utility.id.generator'
+
+    ####################################################################################################################
+    # PUSH CONTROLLERS
+    ####################################################################################################################
+
+    push.start.handler:
+        class: 'Hal\UI\Controllers\Push\StartPushHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@push.start.validator'
+            - '@uri'
+            - '@utility.id.generator'
+            - '@twig.context'
+            - '@sticky.environment'
+    push.start.validator:
+        class: 'Hal\UI\Validator\PushValidator'
+        arguments:
+            - '@doctrine.em'
+            - '@permissions'
+            - '@utility.id.generator'
+            - '@doctrine.random'
+

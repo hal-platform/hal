@@ -20,7 +20,7 @@ use QL\Hal\Core\JobIdGenerator;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Type\EnumType\ServerEnum;
 
-class PushStartValidator
+class PushValidator
 {
     const ERR_NO_DEPS = 'You must select at least one deployment.';
     const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';
@@ -45,11 +45,6 @@ class PushStartValidator
     private $unique;
 
     /**
-     * @var User
-     */
-    private $currentUser;
-
-    /**
      * @var callable
      */
     private $random;
@@ -63,20 +58,16 @@ class PushStartValidator
      * @param EntityManagerInterface $em
      * @param PermissionService $permissions
      * @param JobIdGenerator $unique
-     * @param User $currentUser
      * @param callable $random
      */
     public function __construct(
         EntityManagerInterface $em,
         PermissionService $permissions,
         JobIdGenerator $unique,
-        User $currentUser,
         callable $random
     ) {
         $this->permissions = $permissions;
         $this->unique = $unique;
-
-        $this->currentUser = $currentUser;
         $this->random = $random;
 
         $this->deploymentRepo = $em->getRepository(Deployment::class);
@@ -88,15 +79,16 @@ class PushStartValidator
      * Verify ability to deploy and create pushes.
      *
      * @param Application $application
+     * @param User $user
      * @param Environment $environment
      * @param Build $build
      * @param string[] $deployments
      *
      * @return Pushes[]|null
      */
-    public function isValid(Application $application, Environment $environment, Build $build, $deployments)
+    public function isValid(Application $application, User $user, Environment $environment, Build $build, $deployments)
     {
-        $deployments = $this->isDeploymentsValid($application, $environment, $build, $deployments);
+        $deployments = $this->isDeploymentsValid($application, $user, $environment, $build, $deployments);
         if (!$deployments) {
             return null;
         }
@@ -116,7 +108,7 @@ class PushStartValidator
             $id = $this->unique->generatePushId();
 
             $push = (new Push($id))
-                ->withUser($this->currentUser)
+                ->withUser($user)
                 ->withBuild($build)
                 ->withDeployment($deployment)
                 ->withApplication($application);
@@ -131,15 +123,16 @@ class PushStartValidator
      * Verify ability to deploy, and create child processes to push after build.
      *
      * @param Application $application
+     * @param User $user
      * @param Environment $environment
      * @param Build $build
      * @param string[] $deployments
      *
      * @return Process[]|null
      */
-    public function isProcessValid(Application $application, Environment $environment, Build $build, $deployments)
+    public function isProcessValid(Application $application, User $user, Environment $environment, Build $build, $deployments)
     {
-        $deployments = $this->isDeploymentsValid($application, $environment, $build, $deployments);
+        $deployments = $this->isDeploymentsValid($application, $user, $environment, $build, $deployments);
         if (!$deployments) {
             return null;
         }
@@ -149,7 +142,7 @@ class PushStartValidator
             $id = call_user_func($this->random);
 
             $process = (new Process($id))
-                ->withUser($this->currentUser)
+                ->withUser($user)
                 ->withParent($build)
                 ->withChildType('Push')
                 ->withContext([
@@ -164,14 +157,20 @@ class PushStartValidator
 
     /**
      * @param Application $application
+     * @param User $user
      * @param Environment $environment
      * @param Build $build
      * @param string[] $deployments
      *
      * @return Deployments[]|null
      */
-    private function isDeploymentsValid(Application $application, Environment $environment, Build $build, $deployments)
-    {
+    private function isDeploymentsValid(
+        Application $application,
+        User $user,
+        Environment $environment,
+        Build $build,
+        $deployments
+    ) {
         $this->errors = [];
 
         // Check for invalid requested deployments
@@ -182,7 +181,7 @@ class PushStartValidator
         if ($this->errors) return;
 
         // Validate permission
-        $canUserPush = $this->permissions->canUserPush($this->currentUser, $application, $environment);
+        $canUserPush = $this->permissions->canUserPush($user, $application, $environment);
         if (!$canUserPush) {
             $this->errors[] = sprintf(self::ERR_NO_PERM, $environment->name());
         }

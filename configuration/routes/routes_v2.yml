@@ -18,18 +18,6 @@ parameters:
                 application: '%routes.regex.digit%'
                 page: '%routes.regex.digit%'
 
-        build:
-            method: 'GET'
-            route: '/builds/:build'
-            stack: ['middleware.login', 'middleware.requireEntity', 'build.page']
-            conditions: {build: '%routes.regex.buildId%'}
-
-        build.start:
-            method: ['GET', 'POST']
-            route: '/applications/:application/build'
-            stack: ['middleware.login', 'middleware.requireEntity', 'build.start.handler', 'build.start.page']
-            conditions: {application: '%routes.regex.digit%'}
-
         ################################################################################################################
         # PUSH ROUTES
         ################################################################################################################

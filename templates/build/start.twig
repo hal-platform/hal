@@ -1,11 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 {% import _self as page_macros %}
 {% set js_components = ["build.start"] %}
 
 {% set page_title = "Start Build : " ~ application.name %}
-
-{% set currentUser = getCurrentUser() %}
 
 {% block content %}
 
@@ -13,7 +11,7 @@
         <h1>Start Build - <strong>{{ application.name }}</strong></h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': application.id}) }}">Back to Application Status</a>
         </p>
     </div>
 
@@ -239,7 +237,7 @@
                         <br />
 
                         {% set label_style = "github__pr" %}
-                        {% if pull.head.user.login|lower == currentUser.handle|lower %}
+                        {% if pull.head.user.login|lower == current_user.handle|lower %}
                             {% set label_style = label_style ~ " github__pr--owner" %}
                         {% endif %}
 
@@ -285,7 +283,7 @@
                         <br />
 
                         {% set label_style = "github__pr" %}
-                        {% if pull.head.user.login|lower == currentUser.handle|lower %}
+                        {% if pull.head.user.login|lower == current_user.handle|lower %}
                             {% set label_style = label_style ~ " github__pr--owner" %}
                         {% endif %}
 

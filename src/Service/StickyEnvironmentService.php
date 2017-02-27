@@ -7,21 +7,23 @@
 
 namespace Hal\UI\Service;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
-use QL\Panthor\Http\EncryptedCookies;
-use QL\Panthor\Utility\Json;
+use QL\Panthor\HTTP\CookieHandler;
+use QL\Panthor\Utility\JSON;
 
 class StickyEnvironmentService
 {
     const COOKIE_NAME = 'stickyenvironment';
 
     /**
-     * @var EncryptedCookies
+     * @var CookieHandler
      */
     private $cookies;
 
     /**
-     * @var EncryptedCookies
+     * @var JSON
      */
     private $json;
 
@@ -31,11 +33,11 @@ class StickyEnvironmentService
     private $preferencesExpiry;
 
     /**
-     * @param EncryptedCookies $cookies
-     * @param Json $json
-     * @param array $preferencesExpiry
+     * @param CookieHandler $cookies
+     * @param Json $JSON
+     * @param string $preferencesExpiry
      */
-    public function __construct(EncryptedCookies $cookies, Json $json, $preferencesExpiry)
+    public function __construct(CookieHandler $cookies, JSON $json, $preferencesExpiry)
     {
         $this->cookies = $cookies;
         $this->json = $json;
@@ -43,38 +45,41 @@ class StickyEnvironmentService
     }
 
     /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @param Application|string $applicationID
      * @param string $environmentID
      *
      * @return void
      */
-    public function save($applicationID, $environmentID)
+    public function save(ServerRequestInterface $request, ResponseInterface $response, $applicationID, $environmentID)
     {
         if ($applicationID instanceof Application) {
             $applicationID = $applicationID->id();
         }
 
         // we store each repo stickyness individually per repo, but in the same cookie.
-        $stickies = $this->unpackStickies();
+        $stickies = $this->unpackStickies($request);
         $stickies[$applicationID] = $environmentID;
 
-        $this->cookies->setCookie(self::COOKIE_NAME, $this->json->encode($stickies), $this->preferencesExpiry);
+        $this->cookies->withCookie($response, self::COOKIE_NAME, $this->json->encode($stickies), $this->preferencesExpiry);
     }
 
     /**
      * Get the current env preference for an application.
      *
+     * @param ServerRequestInterface $request
      * @param Application|string $applicationID
      *
      * @return string|null
      */
-    public function get($applicationID)
+    public function get(ServerRequestInterface $request, $applicationID)
     {
         if ($applicationID instanceof Application) {
             $applicationID = $applicationID->id();
         }
 
-        $stickies = $this->unpackStickies();
+        $stickies = $this->unpackStickies($request);
 
         if (isset($stickies[$applicationID])) {
             return $stickies[$applicationID];
@@ -84,11 +89,13 @@ class StickyEnvironmentService
     }
 
     /**
+     * @param ServerRequestInterface $request
+     *
      * @return array
      */
-    private function unpackStickies()
+    private function unpackStickies(ServerRequestInterface $request): array
     {
-        $stickies = $this->cookies->getCookie(self::COOKIE_NAME);
+        $stickies = $this->cookies->getCookie($request, self::COOKIE_NAME);
 
         // if the cookie is set
         if ($stickies !== null) {

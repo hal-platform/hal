@@ -57,51 +57,6 @@ services:
     # BUILD CONTROLLERS
     ####################################################################################################################
 
-    build.page:
-        class: 'Hal\UI\Controllers\Build\BuildController'
-        arguments:
-            - '@build.twig'
-            - '@hal.build'
-            - '@service.event_logs'
-            - '@doctrine.em'
-    build.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['build/build.twig']]]
-
-    build.start.page:
-        class: 'Hal\UI\Controllers\Build\StartBuildController'
-        arguments:
-            - '@build.start.twig'
-            - '@doctrine.em'
-            - '@github'
-            - '@sticky.environment'
-            - '@slim.request'
-            - '@hal.application'
-            - '@currentUser'
-    build.start.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['build/start.twig']]]
-
-    build.start.handler:
-        class: 'Hal\UI\Controllers\Build\StartBuildHandler'
-        arguments:
-            - '@doctrine.em'
-            - '@build.start.validator'
-            - '@push.start.validator'
-            - '@session.flasher'
-            - '@twig.context'
-            - '@slim.request'
-            - '@sticky.environment'
-            - '@hal.application'
-    build.start.validator:
-        class: 'Hal\UI\Validator\BuildStartValidator'
-        arguments:
-            - '@doctrine.em'
-            - '@github'
-            - '@permissions'
-            - '@utility.id.generator'
-            - '@currentUser'
-
     builds.page:
         class: 'Hal\UI\Controllers\Build\BuildsController'
         arguments:
@@ -131,27 +86,6 @@ services:
     push.start.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/start.twig']]]
-
-    push.start.handler:
-        class: 'Hal\UI\Controllers\Push\StartPushHandler'
-        arguments:
-            - '@doctrine.em'
-            - '@push.start.validator'
-            - '@session'
-            - '@url'
-            - '@utility.id.generator'
-            - '@slim.request'
-            - '@twig.context'
-            - '@sticky.environment'
-            - '@slim.route.parameters'
-    push.start.validator:
-        class: 'Hal\UI\Validator\PushStartValidator'
-        arguments:
-            - '@doctrine.em'
-            - '@permissions'
-            - '@utility.id.generator'
-            - '@currentUser'
-            - '@doctrine.random'
 
     push.rollback.page:
         class: 'Hal\UI\Controllers\Push\RollbackController'

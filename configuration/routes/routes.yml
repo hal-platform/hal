@@ -115,25 +115,37 @@ parameters:
             stack: ['middleware.signed_in', 'queue.history.page']
 
         ################################################################################################################
+        # BUILD ROUTES
+        ################################################################################################################
+
+        build:
+            method: 'GET'
+            route: '/builds/{build:%r.build%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.page']
+
+        build.start:
+            method: ['GET', 'POST']
+            route: '/applications/{application:%r.digit%}/build'
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.handler', 'build.start.page']
+
+        ################################################################################################################
+        # PUSH ROUTES
+        ################################################################################################################
+
+        push: {route: '/derp9', stack: []}
+        push.start: {route: '/derp10', stack: []}
+
+        ################################################################################################################
 
         # routes not created yet
 
-        # from nav
         admin: {route: '/derp1', stack: []}
         applications: {route: '/derp3', stack: []}
         settings: {route: '/derp4', stack: []}
-
-        # from dashboard
         application.status: {route: '/derp7', stack: []}
-        build.start: {route: '/derp8', stack: []}
-
-        # from dashboard partials
-        push: {route: '/derp9', stack: []}
-        build: {route: '/derp10', stack: []}
         user: {route: '/derp11', stack: []}
         environment: {route: '/derp12', stack: []}
 
-        # from server
         application: {route: '/derp34', stack: []}
         deployment: {route: '/derp33', stack: []}
 

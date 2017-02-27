@@ -17,7 +17,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\JobIdGenerator;
 
-class BuildStartValidator
+class BuildValidator
 {
     const ERR_NO_APPLICATION = 'Application is required.';
     const ERR_NO_ENV = 'Environment is required.';
@@ -58,11 +58,6 @@ class BuildStartValidator
     private $unique;
 
     /**
-     * @var User
-     */
-    private $currentUser;
-
-    /**
      * @var array
      */
     private $errors;
@@ -72,36 +67,33 @@ class BuildStartValidator
      * @param GitHubService $github
      * @param PermissionService $permissions
      * @param JobIdGenerator $unique
-     * @param User $currentUser
      */
     public function __construct(
         EntityManagerInterface $em,
         GitHubService $github,
         PermissionService $permissions,
-        JobIdGenerator $unique,
-        User $currentUser
+        JobIdGenerator $unique
     ) {
-        $this->buildRepo = $em->getRepository(Build::CLASS);
-        $this->environmentRepo = $em->getRepository(Environment::CLASS);
+        $this->buildRepo = $em->getRepository(Build::class);
+        $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->github = $github;
         $this->permissions = $permissions;
         $this->unique = $unique;
-
-        $this->currentUser = $currentUser;
 
         $this->errors = [];
     }
 
     /**
      * @param Application $application
+     * @param User $user
      * @param string $environmentID
      * @param string $gitReference
      * @param string $gitSearch
      *
      * @return Build|null
      */
-    public function isValid(Application $application, $environmentID, $gitReference, $gitSearch)
+    public function isValid(Application $application, User $user, $environmentID, $gitReference, $gitSearch)
     {
         $this->errors = [];
 
@@ -134,7 +126,7 @@ class BuildStartValidator
         if ($this->errors) return;
 
         // no permission
-        if (!$this->permissions->canUserBuild($this->currentUser, $application)) {
+        if (!$this->permissions->canUserBuild($user, $application)) {
             $this->errors[] = self::ERR_NO_PERMISSION;
         }
 
@@ -157,11 +149,9 @@ class BuildStartValidator
             ->withBranch($reference)
             ->withCommit($commit)
 
-            ->withUser($this->currentUser)
+            ->withUser($user)
             ->withApplication($application)
             ->withEnvironment($env);
-
-        $this->dupeCatcher($build);
 
         return $build;
     }
@@ -219,20 +209,5 @@ class BuildStartValidator
         }
 
         return true;
-    }
-
-    /**
-     * @param Build $build
-     *
-     * @return null
-     */
-    private function dupeCatcher(Build $build)
-    {
-        $dupe = $this->buildRepo->find($build->id());
-        if ($dupe) {
-            $id = $this->unique->generateBuildId();
-            $build->withId($id);
-            $this->dupeCatcher($build);
-        }
     }
 }

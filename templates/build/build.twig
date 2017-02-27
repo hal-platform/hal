@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import '_partial/macros.twig' as macros %}
 {% set js_components = ["build.info"] %}
 
@@ -10,7 +10,7 @@
         <h1>Build - <strong>{{ build.application.name }}</strong></h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': build.application.id}) }}">Back to Application Status</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': build.application.id}) }}">Back to Application Status</a>
         </p>
     </div>
 
@@ -18,15 +18,15 @@
 
     <div class="details-box">
         <dl class="split mbn">
-            <dt class="split__title">Id</dt>
+            <dt class="split__title">ID</dt>
             <dd>{{ build.id }}</dd>
 
-            <dt class="split__title">Short Id</dt>
+            <dt class="split__title">Short ID</dt>
             <dd>{{ build.id|formatBuildId }}</dd>
 
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
+                <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -47,7 +47,7 @@
             <dt class="split__title">User</dt>
             <dd>
                 {% if build.user %}
-                    <a href="{{ urlFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
+                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -99,7 +99,7 @@
                         </td>
                         <td>
                             {% if child.deployment %}
-                                Push to <a href="{{ urlFor('deployment', {application: build.application.id, deployment: child.deployment.id}) }}">{{ child.deployment.formatPretty }}</a>
+                                Push to <a href="{{ uriFor('deployment', {application: build.application.id, deployment: child.deployment.id}) }}">{{ child.deployment.formatPretty }}</a>
                             {% else %}
                                 Unknown
                             {% endif %}
@@ -117,13 +117,13 @@
         </table>
     {% endif %}
 
-    {% if canUserBuild(getCurrentUser(), build.application) %}
+    {% if canUserBuild(current_user, build.application) %}
         {% set pushableMessage = 'The build was successful, go ahead and push it!' %}
         {% set unpushableMessage = 'The build cannot be pushed.' %}
 
         {% if build.status == 'Success' %}
             <h3>{{ pushableMessage }}</h3>
-            <p><a class="btn btn--action" href="{{ urlFor('push.start', {'build': build.id}) }}">Push Build</a></p>
+            <p><a class="btn btn--action" href="{{ uriFor('push.start', {'build': build.id}) }}">Push Build</a></p>
         {% elseif build.status in ['Waiting', 'Building'] %}
             <h3 data-success="{{ pushableMessage }}" data-failure="{{ unpushableMessage }}">
                 The build is still pending. Please wait...
