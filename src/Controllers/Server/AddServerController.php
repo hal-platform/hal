@@ -12,7 +12,6 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Utility\Psr7HelperTrait;
 use Hal\UI\Validator\ServerValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,7 +24,6 @@ use QL\Panthor\Utility\URI;
 
 class AddServerController implements ControllerInterface
 {
-    use Psr7HelperTrait;
     use RedirectableControllerTrait;
     use SessionTrait;
     use TemplatedControllerTrait;
@@ -148,11 +146,11 @@ class AddServerController implements ControllerInterface
     private function getFormData(ServerRequestInterface $request): array
     {
         $form = [
-            'server_type' => $this->getParsedBodyParam($request, 'server_type'),
-            'environment' => $this->getParsedBodyParam($request, 'environment'),
+            'server_type' => $request->getParsedBody()['server_type'] ?? '',
+            'environment' => $request->getParsedBody()['environment'] ?? '',
 
-            'hostname' => trim($this->getParsedBodyParam($request, 'hostname')),
-            'region' => trim($this->getParsedBodyParam($request, 'region'))
+            'hostname' => trim($request->getParsedBody()['hostname'] ?? ''),
+            'region' => trim($request->getParsedBody()['region'] ?? '')
         ];
 
         return $form;
