@@ -29,3 +29,22 @@ services:
             - '@api_normalizer.push'
             - '@doctrine.em'
             - '@problem.renderer'
+
+    ####################################################################################################################
+    # SERVER CONTROLLERS
+    ####################################################################################################################
+
+    servers.api:
+        class: 'Hal\UI\Controllers\API\Server\ServersController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.server'
+            - '@problem.renderer'
+
+    server.api:
+        class: 'Hal\UI\Controllers\API\Server\ServerController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@problem.renderer'

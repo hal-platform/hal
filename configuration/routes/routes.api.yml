@@ -75,6 +75,25 @@ parameters:
                     route: '/queue-refresh/{jobs:%r.api.queue%}'
                     stack: ['queue.refresh.api']
 
+                ################################################################################################################
+                # SERVER ROUTES
+                ################################################################################################################
+
+                api.servers:
+                    method: 'GET'
+                    route: '/servers'
+                    stack: ['servers.api']
+
+                api.servers.paged:
+                    method: 'GET'
+                    route: '/servers/page/{page:%r.digit%}'
+                    stack: ['servers.api']
+
+                api.server:
+                    method: 'GET'
+                    route: '/servers/{id:%r.digit%}'
+                    stack: ['server.api']
+
         # api.environments:
         #     method: 'GET'
         #     route: '/api/environments'
