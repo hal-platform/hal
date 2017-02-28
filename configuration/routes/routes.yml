@@ -166,4 +166,3 @@ parameters:
         api.deployment: {route: '/derp22', stack: []}
         api.application: {route: '/derp23', stack: []}
         api.environment: {route: '/derp24', stack: []}
-        api.event: {route: '/derp25', stack: []}

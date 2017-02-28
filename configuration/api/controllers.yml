@@ -59,8 +59,16 @@ services:
         arguments:
             - '@api.response_formatter'
             - '@service.event_logs'
-            - '@api_normalizer.events'
+            - '@api_normalizer.event'
             - '@api_normalizer.build'
+
+    builds.api:
+        class: 'Hal\UI\Controllers\API\Build\BuildsController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.build'
+            - '@problem.renderer'
 
     ####################################################################################################################
     # PUSH CONTROLLERS
@@ -75,5 +83,21 @@ services:
         arguments:
             - '@api.response_formatter'
             - '@service.event_logs'
-            - '@api_normalizer.events'
+            - '@api_normalizer.event'
             - '@api_normalizer.push'
+
+    pushes.api:
+        class: 'Hal\UI\Controllers\API\Push\PushesController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.push'
+            - '@problem.renderer'
+
+    ####################################################################################################################
+    # EVENT CONTROLLERS
+    ####################################################################################################################
+
+    event.api:
+        class: 'Hal\UI\Controllers\API\EventController'
+        arguments: ['@api.response_formatter', '@api_normalizer.event']

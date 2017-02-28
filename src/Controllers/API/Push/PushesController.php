@@ -5,22 +5,24 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Server;
+namespace Hal\UI\Controllers\API\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\API\Normalizer\ServerNormalizer;
+use Hal\UI\API\Normalizer\PushNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
-class ServersController implements ControllerInterface
+class PushesController implements ControllerInterface
 {
     use APITrait;
     use HypermediaResourceTrait;
@@ -36,12 +38,12 @@ class ServersController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var EntityRepository
+     * @var PushRepository
      */
-    private $serverRepo;
+    private $pushRepo;
 
     /**
-     * @var ServerNormalizer
+     * @var PushNormalizer
      */
     private $normalizer;
 
@@ -53,17 +55,17 @@ class ServersController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param ServerNormalizer $normalizer
+     * @param PushNormalizer $normalizer
      * @param ProblemRendererInterface $problem
      */
     public function __construct(
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
-        ServerNormalizer $normalizer,
+        PushNormalizer $normalizer,
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
-        $this->serverRepo = $em->getRepository(Server::class);
+        $this->pushRepo = $em->getRepository(Push::class);
         $this->normalizer = $normalizer;
         $this->problem = $problem;
     }
@@ -73,6 +75,8 @@ class ServersController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $application = $request->getAttribute(Application::class);
+
         $params = $request
             ->getAttribute('route')
             ->getArguments();
@@ -82,26 +86,26 @@ class ServersController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->serverRepo->getPaginatedServers(self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->pushRepo->getByApplication($application, self::MAX_PER_PAGE, ($page - 1));
         $total = count($pagination);
 
-        $servers = [];
-        foreach ($pagination as $server) {
-            $servers[] = $this->normalizer->link($server);
+        $pushes = [];
+        foreach ($pagination as $push) {
+            $pushes[] = $this->normalizer->link($push);
         }
 
-        $links = $this->buildPaginationLinks('api.servers.paged', $page, $total, self::MAX_PER_PAGE);
-        $links['servers'] = $servers;
+        $links = $this->buildPaginationLinks('api.pushes.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
+        $links['pushes'] = $pushes;
 
         $data = [
-            'count' => count($servers),
+            'count' => count($pushes),
             'total' => $total,
             'page' => $page
         ];
 
         $resource = $this->buildResource($data, [], $links);
 
-        $status = (count($servers) > 0) ? 200 : 404;
+        $status = (count($pushes) > 0) ? 200 : 404;
         $data = $this->formatter->buildResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);

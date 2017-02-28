@@ -76,6 +76,35 @@ parameters:
                     stack: ['queue.refresh.api']
 
                 ################################################################################################################
+                # APPLICATION ROUTES
+                ################################################################################################################
+
+                # are these application routes or build/push routes?
+                # It's nice to be able to use route groups to nest common url prefixes.
+
+                application_api_routes:
+                    route: '/applications/{application:%r.digit%}'
+                    stack: ['middleware.api_require_entity']
+                    routes:
+                        api.builds:
+                            method: 'GET'
+                            route: '/builds'
+                            stack: ['builds.api']
+                        api.builds.history:
+                            method: 'GET'
+                            route: '/builds/page/{page:%r.digit%}'
+                            stack: ['builds.api']
+
+                        api.pushes:
+                            method: 'GET'
+                            route: '/pushes'
+                            stack: ['pushes.api']
+                        api.pushes.history:
+                            method: 'GET'
+                            route: '/pushes/page/{page:%r.digit%}'
+                            stack: ['pushes.api']
+
+                ################################################################################################################
                 # SERVER ROUTES
                 ################################################################################################################
 
@@ -121,6 +150,15 @@ parameters:
                     method: 'GET'
                     route: '/pushes/{push:%r.release%}/events'
                     stack: ['middleware.api_require_entity', 'push.events.api']
+
+                ################################################################################################################
+                # EVENT ROUTES
+                ################################################################################################################
+
+                api.event:
+                    method: 'GET'
+                    route: '/job-events/{event:%r.guid%}'
+                    stack: ['middleware.api_require_entity', 'event.api']
 
         # api.environments:
         #     method: 'GET'
@@ -202,24 +240,6 @@ parameters:
         #         id: '%routes.api.regex.digit%'
         #         page: '%routes.api.regex.digit%'
 
-        # api.build.logs:
-        #     method: 'GET'
-        #     route: '/api/builds/:id/logs'
-        #     stack: ['middleware.api.cached', 'api.build.logs']
-        #     conditions: {id: '%routes.api.regex.buildId%'}
-
-        # api.push.logs:
-        #     method: 'GET'
-        #     route: '/api/pushes/:id/logs'
-        #     stack: ['middleware.api.cached', 'api.push.logs']
-        #     conditions: {id: '%routes.api.regex.pushId%'}
-
-        # api.event.log:
-        #     method: 'GET'
-        #     route: '/api/eventlogs/:id'
-        #     stack: ['middleware.api.cached', 'api.event.log']
-        #     conditions: {id: '%routes.api.regex.alphanum%'}
-
         # api.applications:
         #     method: 'GET'
         #     route: '/api/applications'
@@ -237,28 +257,3 @@ parameters:
         #     stack: ['middleware.api.cached', 'api.deployments']
         #     conditions: {id: '%routes.api.regex.digit%'}
 
-        # api.builds:
-        #     method: 'GET'
-        #     route: '/api/applications/:id/builds'
-        #     stack: ['middleware.api.cached', 'api.builds']
-        #     conditions: {id: '%routes.api.regex.digit%'}
-        # api.builds.history:
-        #     method: 'GET'
-        #     route: '/api/applications/:id/builds/page/:page'
-        #     stack: ['middleware.api.cached', 'api.builds']
-        #     conditions:
-        #         id: '%routes.api.regex.digit%'
-        #         page: '%routes.api.regex.digit%'
-
-        # api.pushes:
-        #     method: 'GET'
-        #     route: '/api/applications/:id/pushes'
-        #     stack: ['middleware.api.cached', 'api.pushes']
-        #     conditions: {id: '%routes.api.regex.digit%'}
-        # api.pushes.history:
-        #     method: 'GET'
-        #     route: '/api/applications/:id/pushes/page/:page'
-        #     stack: ['middleware.api.cached', 'api.pushes']
-        #     conditions:
-        #         id: '%routes.api.regex.digit%'
-        #         page: '%routes.api.regex.digit%'

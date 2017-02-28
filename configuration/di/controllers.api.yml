@@ -2,71 +2,6 @@
 services:
 
     ####################################################################################################################
-    # API CONTROLLERS
-    ####################################################################################################################
-
-    api.index:
-        class: 'Hal\UI\Controllers\Api\IndexController'
-        arguments: ['@response.formatter']
-
-    api.docs:
-        class: 'Hal\UI\Controllers\Api\DocsRedirectController'
-        arguments: ['@url']
-
-    ####################################################################################################################
-    # QUEUE CONTROLLERS
-    ####################################################################################################################
-
-    api.queue:
-        class: 'Hal\UI\Controllers\Api\QueueController'
-        arguments:
-            - '@slim.request'
-            - '@response.formatter'
-            - '@normalizer.build'
-            - '@normalizer.push'
-            - '@doctrine.em'
-            - '@clock'
-
-    api.queue.refresh:
-        class: 'Hal\UI\Controllers\Api\QueueRefreshController'
-        arguments:
-            - '@response.formatter'
-            - '@normalizer.build'
-            - '@normalizer.push'
-            - '@doctrine.em'
-            - '@slim.route.parameters'
-
-    ####################################################################################################################
-    # BUILD CONTROLLERS
-    ####################################################################################################################
-
-    api.build:
-        class: 'Hal\UI\Controllers\Api\Build\BuildController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@slim.route.parameters'
-
-    api.build.logs:
-        class: 'Hal\UI\Controllers\Api\Build\EventLogsController'
-        arguments:
-            - '@slim.request'
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@service.event_logs'
-            - '@normalizer.log.event'
-            - '@normalizer.build'
-            - '@slim.route.parameters'
-
-    api.builds:
-        class: 'Hal\UI\Controllers\Api\Build\BuildsController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.build'
-            - '@slim.route.parameters'
-
-    ####################################################################################################################
     # DEPLOYMENT CONTROLLERS
     ####################################################################################################################
 
@@ -122,25 +57,6 @@ services:
             - '@normalizer.environment'
 
     ####################################################################################################################
-    # SERVER CONTROLLERS
-    ####################################################################################################################
-
-    api.server:
-        class: 'Hal\UI\Controllers\Api\Server\ServerController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@slim.route.parameters'
-
-    api.servers:
-        class: 'Hal\UI\Controllers\Api\Server\ServersController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.server'
-            - '@slim.route.parameters'
-
-    ####################################################################################################################
     # GROUP CONTROLLERS
     ####################################################################################################################
 
@@ -157,47 +73,6 @@ services:
             - '@response.formatter'
             - '@doctrine.em'
             - '@normalizer.group'
-
-    ####################################################################################################################
-    # PUSH CONTROLLERS
-    ####################################################################################################################
-
-    api.push:
-        class: 'Hal\UI\Controllers\Api\Push\PushController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@slim.route.parameters'
-    api.push.logs:
-        class: 'Hal\UI\Controllers\Api\Push\EventLogsController'
-        arguments:
-            - '@slim.request'
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@service.event_logs'
-            - '@normalizer.log.event'
-            - '@normalizer.push'
-            - '@slim.route.parameters'
-
-    api.pushes:
-        class: 'Hal\UI\Controllers\Api\Push\PushesController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.push'
-            - '@slim.route.parameters'
-
-    ####################################################################################################################
-    # EVENT LOG CONTROLLERS
-    ####################################################################################################################
-
-    api.event.log:
-        class: 'Hal\UI\Controllers\Api\EventLogController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.log.event'
-            - '@slim.route.parameters'
 
     ####################################################################################################################
     # REPOSITORY CONTROLLERS

@@ -19,6 +19,7 @@ use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
+use QL\Hal\Core\Entity\EventLog;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
@@ -85,6 +86,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
         $this->map = [
             'build' => Build::class,
             'push' => Push::class,
+            'event' => EventLog::class,
 
             'user' => User::class,
             'userPermission' => UserPermission::class,
