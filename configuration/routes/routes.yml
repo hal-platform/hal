@@ -91,6 +91,19 @@ parameters:
                     route: '/pushes/page/{page:%r.digit%}'
                     stack: ['pushes.page']
 
+                deployment_pages:
+                    route: '/deployments/{deployment:%r.digit%}'
+                    routes:
+                        rollback.page1:
+                            method: 'GET'
+                            route: '/pushes'
+                            stack: ['push.rollback.page']
+
+                        rollback:
+                            method: 'GET'
+                            route: '/pushes/page/{page:%r.digit%}'
+                            stack: ['push.rollback.page']
+
         ################################################################################################################
         # Server Routes
         ################################################################################################################

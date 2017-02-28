@@ -54,23 +54,6 @@ services:
             - '@slim.route.parameters'
 
     ####################################################################################################################
-    # PUSH CONTROLLERS
-    ####################################################################################################################
-
-    push.rollback.page:
-        class: 'Hal\UI\Controllers\Push\RollbackController'
-        arguments:
-            - '@rollback.twig'
-            - '@doctrine.em'
-            - '@slim.not.found'
-            - '@hal.application'
-            - '@hal.deployment'
-            - '@slim.route.parameters'
-    rollback.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['push/rollback.twig']]]
-
-    ####################################################################################################################
     # ENVIRONMENT CONTROLLERS
     ####################################################################################################################
 

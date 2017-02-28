@@ -1,11 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import '_partial/pagination.twig' as pagination %}
 {% import '_partial/macros.twig' as macros %}
 
 {% set page_title = "Push History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
 
     {% set server = deployment.formatPretty %}
     {% set deployment_details = deployment.formatMeta %}
@@ -19,12 +19,12 @@
 
             <dt class="split__title">Environment</dt>
             <dd>
-                <a href="{{ urlFor('environment', {'id': deployment.server.environment.id}) }}">{{ deployment.server.environment.name }}</a>
+                <a href="{{ uriFor('environment', {'id': deployment.server.environment.id}) }}">{{ deployment.server.environment.name }}</a>
             </dd>
 
             <dt class="split__title">Server</dt>
             <dd>
-                <a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ server }}</a>
+                <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ server }}</a>
             </dd>
 
             <dt class="split__title">{{ deployment_label }}</dt>
@@ -44,7 +44,7 @@
         To rollback, simply choose a build, click <strong>rollback</strong>, and you'll be able to initate a new push.
     </p>
 
-    {% set canRollback = canUserPush(getCurrentUser(), application, deployment.server.environment) %}
+    {% set canRollback = canUserPush(current_user, application, deployment.server.environment) %}
 
     <h2>Push History</h2>
     <table class="table--spacing-medium" data-tablesaw-mode="stack">
@@ -64,7 +64,7 @@
         <tbody>
             {% for push in pushes %}
             <tr>
-                <td><a href="{{ urlFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
+                <td><a href="{{ uriFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
                 <td>
                     {% set statusClass = 'status-icon--info' %}
                     {% if push.status == 'Success' %}
@@ -73,7 +73,7 @@
                         {% set statusClass = 'status-icon--error' %}
                     {% endif %}
                     <span class="{{ statusClass }}">
-                        Push <a href="{{ urlFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>
+                        Push <a href="{{ uriFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>
                     </span>
                 </td>
 
@@ -86,7 +86,7 @@
                 <td>{{ push.end|html5date }}</td>
                 <td>
                     {% if push.user %}
-                        <a href="{{ urlFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
+                        <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
                     {% else %}
                         Unknown
                     {% endif %}
@@ -97,7 +97,7 @@
                         {% if push.build.status == 'Removed' %}
                             Removed
                         {% elseif push.status == 'Success'%}
-                            <a class="btn btn--tiny" href="{{ urlFor('push.start', {'build': push.build.id}, {deployment: deployment.id}) }}">Rollback</a>
+                            <a class="btn btn--tiny" href="{{ uriFor('push.start', {'build': push.build.id}, {deployment: deployment.id}) }}">Rollback</a>
                         {% endif %}
                     </td>
                 {% endif %}

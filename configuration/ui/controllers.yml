@@ -263,3 +263,13 @@ services:
             - '@utility.id.generator'
             - '@doctrine.random'
 
+    push.rollback.page:
+        class: 'Hal\UI\Controllers\Push\RollbackController'
+        arguments:
+            - '@push.rollback.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    push.rollback.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['push/rollback.twig']]]
+
