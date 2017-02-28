@@ -37,8 +37,8 @@
             {% set canPushSoon = false %}
             {% set canPushNow = false %}
 
-            {% if isPushable %}
-                {% if canUserPush(getCurrentUser(), build.application, build.environment) %}
+            {% if is_pushable %}
+                {% if canUserPush(current_user, build.application, build.environment) %}
                     {% if build.status in ['Waiting', 'Building'] %}
                         {% set canPushSoon = true %}
                     {% elseif build.status in ['Success'] %}

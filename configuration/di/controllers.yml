@@ -54,27 +54,8 @@ services:
             - '@slim.route.parameters'
 
     ####################################################################################################################
-    # BUILD CONTROLLERS
-    ####################################################################################################################
-
-    builds.page:
-        class: 'Hal\UI\Controllers\Build\BuildsController'
-        arguments:
-            - '@builds.twig'
-            - '@doctrine.em'
-            - '@hal.application'
-            - '@slim.request'
-            - '@slim.not.found'
-            - '@slim.route.parameters'
-    builds.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['build/builds.twig']]]
-
-    ####################################################################################################################
     # PUSH CONTROLLERS
     ####################################################################################################################
-
-
 
     push.rollback.page:
         class: 'Hal\UI\Controllers\Push\RollbackController'
@@ -88,19 +69,6 @@ services:
     rollback.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['push/rollback.twig']]]
-
-    pushes.page:
-        class: 'Hal\UI\Controllers\Push\PushesController'
-        arguments:
-            - '@pushes.twig'
-            - '@doctrine.em'
-            - '@hal.application'
-            - '@slim.request'
-            - '@slim.not.found'
-            - '@slim.route.parameters'
-    pushes.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['push/pushes.twig']]]
 
     ####################################################################################################################
     # ENVIRONMENT CONTROLLERS
@@ -156,63 +124,6 @@ services:
             - '@session.flasher'
             - '@slim.not.found'
             - '@slim.route.parameters'
-
-    ####################################################################################################################
-    # SERVER CONTROLLERS
-    ####################################################################################################################
-
-    servers.page:
-        class: 'Hal\UI\Controllers\Server\ServersController'
-        arguments: ['@servers.twig', '@doctrine.em']
-    servers.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['server/servers.twig']]]
-
-    server.page:
-        class: 'Hal\UI\Controllers\Server\ServerController'
-        arguments:
-            - '@server.twig'
-            - '@doctrine.em'
-            - '@hal.server'
-    server.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['server/server.twig']]]
-
-    server.add.page:
-        class: 'Hal\UI\Controllers\Server\AddServerController'
-        arguments:
-            - '@server.add.twig'
-            - '@doctrine.em'
-            - '@server.validator'
-            - '@session.flasher'
-            - '@slim.request'
-    server.add.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['server/server.add.twig']]]
-
-    server.edit.page:
-        class: 'Hal\UI\Controllers\Server\EditServerController'
-        arguments:
-            - '@server.edit.twig'
-            - '@doctrine.em'
-            - '@server.validator'
-            - '@session.flasher'
-            - '@slim.request'
-            - '@hal.server'
-    server.edit.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['server/server.edit.twig']]]
-
-    server.remove.handler:
-        class: 'Hal\UI\Controllers\Server\RemoveServerController'
-        arguments:
-            - '@doctrine.em'
-            - '@session.flasher'
-            - '@hal.server'
-
-    server.validator:
-        class: 'Hal\UI\Validator\ServerValidator'
-        arguments: ['@doctrine.em']
 
     ####################################################################################################################
     # USER CONTROLLERS
@@ -327,19 +238,4 @@ services:
     github.authorization.remove.twig:
         parent: 'twig.auto.template'
         calls: [['setTemplate', ['user/github.token.remove.twig']]]
-
-    ####################################################################################################################
-    # GENERAL USE CONTROLLERS
-    ####################################################################################################################
-
-    static.controller:
-        class: 'Hal\UI\Controllers\StaticController'
-
-    denied.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['denied.twig']]]
-
-    debug.page:
-        class: 'Hal\UI\Controllers\DebugController'
-
 

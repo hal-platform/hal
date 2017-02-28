@@ -1,17 +1,17 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import '_partial/pagination.twig' as pagination %}
 {% set js_components = ["job.updater"] %}
 
 {% set page_title = "Push History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ urlFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
 
     <h1>Push History - <strong>{{ application.name }}</strong></h1>
 
     {{ block('search') }}
 
-    {% include '_partial-job/push-table.twig' with {'pushes': pushes} %}
+    {% include '_partial-job/push-table.twig' with {'pushes': pushes} only %}
 
     {{ pagination.pagination(page, last, 'push.history', {'application': application.id}, {search: search_filter}) }}
 
@@ -31,7 +31,7 @@
         <input class="btn" type="submit" value="Filter">
 
         {% if search_filter %}
-            <a class="btn btn--action" href="{{ urlFor('push.history.page1', {'application': application.id}) }}">Reset</a>
+            <a class="btn btn--action" href="{{ uriFor('push.history.page1', {'application': application.id}) }}">Reset</a>
         {% endif %}
     </form>
 {% endblock %}

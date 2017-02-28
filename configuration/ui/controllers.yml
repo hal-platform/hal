@@ -169,6 +169,16 @@ services:
     # BUILD CONTROLLERS
     ####################################################################################################################
 
+    builds.page:
+        class: 'Hal\UI\Controllers\Build\BuildsController'
+        arguments:
+            - '@builds.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    builds.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['build/builds.twig']]]
+
     build.page:
         class: 'Hal\UI\Controllers\Build\BuildController'
         arguments:
@@ -209,6 +219,16 @@ services:
     ####################################################################################################################
     # PUSH CONTROLLERS
     ####################################################################################################################
+
+    pushes.page:
+        class: 'Hal\UI\Controllers\Push\PushesController'
+        arguments:
+            - '@pushes.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    pushes.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['push/pushes.twig']]]
 
     push.page:
         class: 'Hal\UI\Controllers\Push\PushController'

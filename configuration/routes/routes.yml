@@ -61,6 +61,36 @@ parameters:
             route: '/help/application-setup'
             stack: ['help.application_setup.page']
 
+
+        ################################################################################################################
+        # APPLICATION ROUTES
+        ################################################################################################################
+
+        # are these application routes or build/push routes?
+        # It's nice to be able to use route groups to nest common url prefixes.
+
+        application_pages:
+            route: '/applications/{application:%r.digit%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+            routes:
+                build.history.page1:
+                    method: 'GET'
+                    route: '/builds'
+                    stack: ['builds.page']
+                build.history:
+                    method: 'GET'
+                    route: '/builds/{page:%r.digit%}'
+                    stack: ['builds.page']
+
+                push.history.page1:
+                    method: 'GET'
+                    route: '/pushes'
+                    stack: ['pushes.page']
+                push.history:
+                    method: 'GET'
+                    route: '/pushes/page/{page:%r.digit%}'
+                    stack: ['pushes.page']
+
         ################################################################################################################
         # Server Routes
         ################################################################################################################
