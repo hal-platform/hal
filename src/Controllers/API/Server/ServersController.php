@@ -5,14 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Api\Server;
+namespace Hal\UI\Controllers\API\Server;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\Normalizer\ServerNormalizer;
-use Hal\UI\Api\ResponseFormatter;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\Normalizer\ServerNormalizer;
+use Hal\UI\API\ResponseFormatter;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,10 +22,12 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
 class ServersController implements ControllerInterface
 {
-    use HypermediaResourceTrait;
     use APITrait;
+    use HypermediaResourceTrait;
 
-    const MAX_PER_PAGE = 25;
+    private const MAX_PER_PAGE = 25;
+
+    private const ERR_PAGE = 'Invalid page ID specified';
 
     /**
      * @var ResponseFormatter
@@ -41,6 +43,7 @@ class ServersController implements ControllerInterface
      * @var ServerNormalizer
      */
     private $normalizer;
+
     /**
      * @var ProblemRendererInterface
      */
@@ -59,7 +62,7 @@ class ServersController implements ControllerInterface
         ProblemRendererInterface $problemRenderer
     ) {
         $this->formatter = $formatter;
-        $this->serverRepo = $em->getRepository(Server::CLASS);
+        $this->serverRepo = $em->getRepository(Server::class);
         $this->normalizer = $normalizer;
         $this->problemRenderer = $problemRenderer;
     }
@@ -69,17 +72,13 @@ class ServersController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $route = $request->getAttribute('route');
-        $routeParams = $route->getArguments();
+        $params = $request
+            ->getAttribute('route')
+            ->getArguments();
 
-        $page = $this->getCurrentPage($routeParams);
+        $page = $this->getCurrentPage($params);
         if ($page === false) {
-            return $this->withProblem(
-                $this->problemRenderer,
-                $response,
-                404,
-                'Invalid page ID specified'
-            );
+            return $this->withProblem($this->problemRenderer, $response, 404, self::ERR_PAGE);
         }
 
         $pagination = $this->serverRepo->getPaginatedServers(self::MAX_PER_PAGE, ($page - 1));
@@ -93,15 +92,13 @@ class ServersController implements ControllerInterface
         $links = $this->buildPaginationLinks($page, $total);
         $links['servers'] = $servers;
 
-        $resource = $this->buildResource(
-            [
-                'count' => count($servers),
-                'total' => $total,
-                'page' => $page
-            ],
-            [],
-            $links
-        );
+        $data = [
+            'count' => count($servers),
+            'total' => $total,
+            'page' => $page
+        ];
+
+        $resource = $this->buildResource($data, [], $links);
 
         $status = (count($servers) > 0) ? 200 : 404;
         $data = $this->formatter->buildResponse($request, $resource);

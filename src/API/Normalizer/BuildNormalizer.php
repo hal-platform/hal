@@ -89,7 +89,7 @@ class BuildNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.build', ['id' => $build->id()]],
+            ['api.build', ['build' => $build->id()]],
             $build->id()
         );
     }
@@ -148,23 +148,23 @@ class BuildNormalizer implements NormalizerInterface
         $links = [
             'application' => $this->appNormalizer->link($build->application()),
             'environment' => $this->envNormalizer->link($build->environment()),
-            'logs' => new Hyperlink(['api.build.logs', ['id' => $build->id()]]),
+            'events' => new Hyperlink(['api.build.events', ['build' => $build->id()]]),
         ];
 
         $pages = [
             'page' => new Hyperlink(
                 ['build', ['build' => $build->id()]],
-                null,
+                '',
                 'text/html'
             ),
             'github_reference_page' => new Hyperlink(
                 $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->branch()),
-                null,
+                '',
                 'text/html'
             ),
             'github_commit_page' => new Hyperlink(
                 $this->urlBuilder->githubCommitURL($ghOwner, $ghRepo, $build->commit()),
-                null,
+                '',
                 'text/html'
             )
         ];
@@ -179,7 +179,7 @@ class BuildNormalizer implements NormalizerInterface
             $pages += [
                 'start_push_page' => new Hyperlink(
                     ['push.start', ['build' => $build->id()]],
-                    null,
+                    '',
                     'text/html'
                 )
             ];

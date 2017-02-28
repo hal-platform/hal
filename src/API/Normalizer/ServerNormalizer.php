@@ -63,7 +63,7 @@ class ServerNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.server', ['id' => $server->id()]],
+            ['api.server', ['server' => $server->id()]],
             $server->formatPretty()
         );
     }

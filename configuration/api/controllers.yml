@@ -44,7 +44,36 @@ services:
 
     server.api:
         class: 'Hal\UI\Controllers\API\Server\ServerController'
+        arguments: ['@api.response_formatter']
+
+    ####################################################################################################################
+    # BUILD CONTROLLERS
+    ####################################################################################################################
+
+    build.api:
+        class: 'Hal\UI\Controllers\API\Build\BuildController'
+        arguments: ['@api.response_formatter']
+
+    build.events.api:
+        class: 'Hal\UI\Controllers\API\Build\EventsController'
         arguments:
             - '@api.response_formatter'
-            - '@doctrine.em'
-            - '@problem.renderer'
+            - '@service.event_logs'
+            - '@api_normalizer.events'
+            - '@api_normalizer.build'
+
+    ####################################################################################################################
+    # PUSH CONTROLLERS
+    ####################################################################################################################
+
+    push.api:
+        class: 'Hal\UI\Controllers\API\Push\PushController'
+        arguments: ['@api.response_formatter']
+
+    push.events.api:
+        class: 'Hal\UI\Controllers\API\Push\EventsController'
+        arguments:
+            - '@api.response_formatter'
+            - '@service.event_logs'
+            - '@api_normalizer.events'
+            - '@api_normalizer.push'

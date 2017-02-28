@@ -8,6 +8,7 @@
 namespace Hal\UI\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
@@ -25,7 +26,6 @@ use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
 use QL\Panthor\HTTPProblem\HTTPProblem;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
-use QL\Panthor\HTTPProblem\ProblemRenderingTrait;
 use QL\Panthor\MiddlewareInterface;
 use Slim\Route;
 
@@ -36,7 +36,7 @@ use Slim\Route;
  */
 class RequireEntityMiddleware implements MiddlewareInterface
 {
-    use ProblemRenderingTrait;
+    use APITrait;
 
     /**
      * @var EntityManagerInterface
@@ -83,22 +83,22 @@ class RequireEntityMiddleware implements MiddlewareInterface
 
         // whitelist of route parameters and the entity they map to.
         $this->map = [
-            'build' => Build::CLASS,
-            'push' => Push::CLASS,
+            'build' => Build::class,
+            'push' => Push::class,
 
-            'user' => User::CLASS,
-            'userPermission' => UserPermission::CLASS,
-            'userType' => UserType::CLASS,
+            'user' => User::class,
+            'userPermission' => UserPermission::class,
+            'userType' => UserType::class,
 
-            'application' => Application::CLASS,
-            'credential' => Credential::CLASS,
-            'deployment' => Deployment::CLASS,
-            'encrypted' => EncryptedProperty::CLASS,
-            'environment' => Environment::CLASS,
-            'server' => Server::CLASS,
+            'application' => Application::class,
+            'credential' => Credential::class,
+            'deployment' => Deployment::class,
+            'encrypted' => EncryptedProperty::class,
+            'environment' => Environment::class,
+            'server' => Server::class,
 
-            'pool' => DeploymentPool::CLASS,
-            'view' => DeploymentView::CLASS,
+            'pool' => DeploymentPool::class,
+            'view' => DeploymentView::class,
         ];
     }
 
@@ -107,10 +107,9 @@ class RequireEntityMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        /** @var Route $route */
-        $route = $request->getAttribute('route');
-
-        $params = $route->getArguments();
+        $params = $request
+            ->getAttribute('route')
+            ->getArguments();
 
         foreach ($params as $entity => $id) {
 
@@ -121,13 +120,10 @@ class RequireEntityMiddleware implements MiddlewareInterface
             if (!$entityObj = $this->lookup($entity, $id)) {
 
                 if ($this->isAPI) {
-                    return $response = $this->renderProblem(
-                        $response,
-                        $this->problemRenderer,
-                        new HTTPProblem(404, sprintf('%s not found', ucfirst($entity)))
-                    );
+                    $msg = sprintf('%s not found', ucfirst($entity));
+                    return $this->withProblem($this->problemRenderer, $response, 404, $msg);
                 } else {
-                    return call_user_func($this->notFound, $request, $response);
+                    return ($this->notFound)($request, $response);
                 }
             }
 

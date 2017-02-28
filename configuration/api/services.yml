@@ -20,12 +20,12 @@ services:
             - ['addNormalizer', ['QL\Hal\Core\Entity\Build', '@api_normalizer.build']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Deployment', '@api_normalizer.deployment']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Environment', '@api_normalizer.environment']]
-            # - ['addNormalizer', ['QL\Hal\Core\Entity\EventLog', '@api_normalizer.log.event']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\EventLog', '@api_normalizer.events']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Group', '@api_normalizer.group']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Push', '@api_normalizer.push']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Server', '@api_normalizer.server']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\User', '@api_normalizer.user']]
-            # - ['addNormalizer', ['QL\MCP\Common\Time\TimePoint', '@api_normalizer.timepoint']]
+            - ['addNormalizer', ['QL\MCP\Common\Time\TimePoint', '@api_normalizer.timepoint']]
             - ['addNormalizer', ['Hal\UI\Api\Hyperlink', '@api_normalizer.hyperlink']]
 
     ####################################################################################################################
@@ -47,9 +47,9 @@ services:
     api_normalizer.environment:
         class: 'Hal\UI\API\Normalizer\EnvironmentNormalizer'
 
-    # api_normalizer.log.event:
-    #     class: 'Hal\UI\API\Normalizer\EventLogNormalizer'
-    #     arguments: ['@api_normalizer.build', '@api_normalizer.push']
+    api_normalizer.events:
+        class: 'Hal\UI\API\Normalizer\EventNormalizer'
+        arguments: ['@api_normalizer.build', '@api_normalizer.push']
 
     api_normalizer.group:
         class: 'Hal\UI\API\Normalizer\GroupNormalizer'
@@ -70,8 +70,8 @@ services:
         class: 'Hal\UI\API\Normalizer\ServerNormalizer'
         arguments: ['@api_normalizer.environment']
 
-    # api_normalizer.timepoint:
-    #     class: 'Hal\UI\API\Normalizer\TimePointNormalizer'
+    api_normalizer.timepoint:
+        class: 'Hal\UI\API\Normalizer\TimePointNormalizer'
 
     api_normalizer.user:
         class: 'Hal\UI\API\Normalizer\UserNormalizer'

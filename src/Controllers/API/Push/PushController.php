@@ -5,16 +5,16 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Server;
+namespace Hal\UI\Controllers\API\Push;
 
-use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Server;
+use QL\Hal\Core\Entity\Push;
 use QL\Panthor\ControllerInterface;
 
-class ServerController implements ControllerInterface
+class PushController implements ControllerInterface
 {
     use APITrait;
 
@@ -36,9 +36,9 @@ class ServerController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $server = $request->getAttribute(Server::class);
+        $push = $request->getAttribute(Push::class);
 
-        $body = $this->formatter->buildResponse($request, $server);
-        return $this->withHypermediaEndpoint($request, $response, $body);
+        $body = $this->formatter->buildResponse($request, $push);
+        return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }

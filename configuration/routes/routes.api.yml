@@ -91,8 +91,36 @@ parameters:
 
                 api.server:
                     method: 'GET'
-                    route: '/servers/{id:%r.digit%}'
-                    stack: ['server.api']
+                    route: '/servers/{server:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'server.api']
+
+                ################################################################################################################
+                # BUILD ROUTES
+                ################################################################################################################
+
+                api.build:
+                    method: 'GET'
+                    route: '/builds/{build:%r.build%}'
+                    stack: ['middleware.api_require_entity', 'build.api']
+
+                api.build.events:
+                    method: 'GET'
+                    route: '/builds/{build:%r.build%}/events'
+                    stack: ['middleware.api_require_entity', 'build.events.api']
+
+                ################################################################################################################
+                # PUSH ROUTES
+                ################################################################################################################
+
+                api.push:
+                    method: 'GET'
+                    route: '/pushes/{push:%r.release%}'
+                    stack: ['middleware.api_require_entity', 'push.api']
+
+                api.push.events:
+                    method: 'GET'
+                    route: '/pushes/{push:%r.release%}/events'
+                    stack: ['middleware.api_require_entity', 'push.events.api']
 
         # api.environments:
         #     method: 'GET'
@@ -174,23 +202,11 @@ parameters:
         #         id: '%routes.api.regex.digit%'
         #         page: '%routes.api.regex.digit%'
 
-        # api.build:
-        #     method: 'GET'
-        #     route: '/api/builds/:id'
-        #     stack: ['middleware.api.cached', 'api.build']
-        #     conditions: {id: '%routes.api.regex.buildId%'}
-
         # api.build.logs:
         #     method: 'GET'
         #     route: '/api/builds/:id/logs'
         #     stack: ['middleware.api.cached', 'api.build.logs']
         #     conditions: {id: '%routes.api.regex.buildId%'}
-
-        # api.push:
-        #     method: 'GET'
-        #     route: '/api/pushes/:id'
-        #     stack: ['middleware.api.cached', 'api.push']
-        #     conditions: {id: '%routes.api.regex.pushId%'}
 
         # api.push.logs:
         #     method: 'GET'

@@ -85,7 +85,7 @@ class PushNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.push', ['id' => $push->id()]],
+            ['api.push', ['push' => $push->id()]],
             $push->id()
         );
     }
@@ -139,7 +139,7 @@ class PushNormalizer implements NormalizerInterface
         $links = [
             'build' => $this->buildNormalizer->link($push->build()),
             'application' => $this->appNormalizer->link($push->application()),
-            'logs' => new Hyperlink(['api.push.logs', ['id' => $push->id()]])
+            'events' => new Hyperlink(['api.push.events', ['push' => $push->id()]])
         ];
 
         $pages = [

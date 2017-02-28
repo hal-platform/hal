@@ -13,7 +13,7 @@ use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
 use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\EventLog;
 
-class EventLogNormalizer implements NormalizerInterface
+class EventNormalizer implements NormalizerInterface
 {
     use HypermediaResourceTrait;
     use EmbeddedResolutionTrait;
@@ -37,10 +37,8 @@ class EventLogNormalizer implements NormalizerInterface
      * @param BuildNormalizer $builds
      * @param PushNormalizer $pushes
      */
-    public function __construct(
-        BuildNormalizer $builds,
-        PushNormalizer $pushes
-    ) {
+    public function __construct(BuildNormalizer $builds, PushNormalizer $pushes)
+    {
         $this->builds = $builds;
         $this->pushes = $pushes;
 
@@ -71,7 +69,7 @@ class EventLogNormalizer implements NormalizerInterface
         $title = sprintf('[%s] %s', $log->order(), $log->message());
 
         return new Hyperlink(
-            ['api.event.log', ['id' => $log->id()]],
+            ['api.event', ['event' => $log->id()]],
             $title
         );
     }
@@ -109,11 +107,7 @@ class EventLogNormalizer implements NormalizerInterface
 
         $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
 
-        return $this->buildResource(
-            $data,
-            $embedded,
-            $this->buildLinks($log)
-        );
+        return $this->buildResource($data, $embedded, $this->buildLinks($log));
     }
 
     /**

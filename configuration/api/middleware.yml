@@ -2,3 +2,11 @@ services:
     middleware.api_caching:
         class: 'Hal\UI\Middleware\APICachingMiddleware'
         arguments: ['@api.response_formatter']
+
+    middleware.api_require_entity:
+        class: 'Hal\UI\Middleware\RequireEntityMiddleware'
+        arguments:
+            - '@doctrine.em'
+            - '@problem.renderer'
+            - '@notFoundHandler'
+            - true

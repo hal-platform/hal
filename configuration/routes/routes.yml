@@ -162,10 +162,8 @@ parameters:
         api.groups: {route: '/derp17', stack: []}
         api.users: {route: '/derp18', stack: []}
 
-        api.build: {route: '/derp19', stack: []}
-        api.push: {route: '/derp20', stack: []}
         api.user: {route: '/derp21', stack: []}
         api.deployment: {route: '/derp22', stack: []}
         api.application: {route: '/derp23', stack: []}
         api.environment: {route: '/derp24', stack: []}
-        api.push.logs: {route: '/derp25', stack: []}
+        api.event: {route: '/derp25', stack: []}
