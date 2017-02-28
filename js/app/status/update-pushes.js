@@ -36,7 +36,7 @@ module.exports = {
                 this.$logTable
                     .find(this.logTarget)
                     .each(function(index, item) {
-                        var id = $(item).data('log');
+                        var id = $(item).data('event');
                         _this.logs[id] = 'embedded';
                     });
             }
@@ -59,8 +59,8 @@ module.exports = {
     generateUrl: function(pushId, type) {
         if (type === 'api-update') {
             return '/api/pushes/' + pushId;
-        } else if (type === 'logs') {
-            return '/api/pushes/' + pushId + '/logs?embed=logs';
+        } else if (type === 'events') {
+            return '/api/pushes/' + pushId + '/events?embed=events';
         }
     },
     checkStatus: function($elem) {
@@ -118,15 +118,15 @@ module.exports = {
         }
 
         var _this = this;
-        var logsEndpoint = this.generateUrl(id, 'logs');
+        var logsEndpoint = this.generateUrl(id, 'events');
 
         // Requires these properties:
         // - count
-        // - _embedded.logs
-        // - _embedded.logs[].id
-        // - _embedded.logs[].message
-        // - _embedded.logs[].event
-        // - _embedded.logs[].created
+        // - _embedded.events
+        // - _embedded.events[].id
+        // - _embedded.events[].message
+        // - _embedded.events[].event
+        // - _embedded.events[].created
         $.getJSON(logsEndpoint, function(data) {
             if (data.count < 1) {
                 return;
@@ -136,11 +136,11 @@ module.exports = {
                 return;
             }
 
-            if (!data._embedded.hasOwnProperty('logs')) {
+            if (!data._embedded.hasOwnProperty('events')) {
                 return;
             }
 
-            var logs = data._embedded.logs,
+            var logs = data._embedded.events,
                 hasNewLogs = false;
 
             for(var index in logs) {
