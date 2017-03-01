@@ -12,13 +12,14 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\PermissionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Hal\Core\Entity\Application;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\TemplateInterface;
 
 /**
- * Note: Supers also pass this middleware bouncer.
+ * Note: Admins and Supers also pass this middleware bouncer.
  */
-class AdminMiddleware implements MiddlewareInterface
+class OwnerMiddleware implements MiddlewareInterface
 {
     use TemplatedControllerTrait;
     use SessionTrait;
@@ -59,11 +60,11 @@ class AdminMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $requireAdmin = function(ServerRequestInterface $request, ResponseInterface $response) use ($next) {
+        $requireOwner = function(ServerRequestInterface $request, ResponseInterface $response) use ($next) {
             return $this->deferredMiddleware($request, $response, $next);
         };
 
-        return ($this->signedInMiddleware)($request, $response, $requireAdmin);
+        return ($this->signedInMiddleware)($request, $response, $requireOwner);
     }
 
     /**
@@ -81,6 +82,14 @@ class AdminMiddleware implements MiddlewareInterface
         // Allow if admin
         if ($permissions->isButtonPusher() || $permissions->isSuper()) {
             return $next($request, $response);
+        }
+
+        // Allow if owner
+        $application = $request->getAttribute(Application::class);
+        if ($application && $permissions->isLead()) {
+            if (in_array($application, $permissions->leadApplications())) {
+                return $next($request, $response);
+            }
         }
 
         // Denied
