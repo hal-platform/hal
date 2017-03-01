@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
@@ -20,7 +20,6 @@
                 <li>
                     <label for="identifier">Identifier</label>
                     <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
-                    <small class="additional">This identifier is used to determine permissions. Modify with care.</small>
                 </li>
             </ul>
         </div>
@@ -57,7 +56,7 @@
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('application', {application: application.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('application', {application: application.id}) }}">Cancel</a></li>
             </ul>
         </div>
 

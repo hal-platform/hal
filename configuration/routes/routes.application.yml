@@ -5,32 +5,10 @@ parameters:
         # REPOSITORY ROUTES
         ################################################################################################################
 
-        applications:
-            method: 'GET'
-            route: '/applications'
-            stack: ['middleware.login', 'applications.page']
-
-        application:
-            method: 'GET'
-            route: '/applications/:application'
-            stack: ['middleware.login', 'middleware.requireEntity', 'application.page']
-            conditions: {application: '%routes.regex.digit%'}
-
         application.status:
             method: 'GET'
             route: '/applications/:application/status'
             stack: ['middleware.login', 'application.status.sticky.handler', 'middleware.requireEntity', 'application.status.page']
-            conditions: {application: '%routes.regex.digit%'}
-
-        application.add:
-            method: ['GET', 'POST']
-            route: '/applications/add'
-            stack: ['middleware.login', 'application.add.page']
-
-        application.edit:
-            method: ['GET', 'POST']
-            route: '/applications/:application/edit'
-            stack: ['middleware.lead', 'middleware.requireEntity', 'application.edit.page']
             conditions: {application: '%routes.regex.digit%'}
 
         application.sticky.pool:
@@ -40,21 +18,6 @@ parameters:
             conditions:
                 application: '%routes.regex.digit%'
                 environment: '%routes.regex.digit%'
-
-        ################################################################################################################
-        # REPOSITORY ROUTES - ADMIN
-        ################################################################################################################
-
-        application.remove.confirm:
-            method: 'GET'
-            route: '/applications/:application/remove'
-            stack: ['middleware.admin', 'middleware.requireEntity', 'delete.confirm.page']
-            conditions: {application: '%routes.regex.digit%'}
-        application.remove:
-            method: 'POST'
-            route: '/applications/:application/remove'
-            stack: ['middleware.admin', 'middleware.requireEntity', 'application.remove.handler']
-            conditions: {application: '%routes.regex.digit%'}
 
         ################################################################################################################
         # DEPLOYMENT ROUTES

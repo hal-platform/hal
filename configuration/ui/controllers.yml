@@ -163,6 +163,54 @@ services:
         calls: [['setTemplate', ['queue.history.twig']]]
 
     ####################################################################################################################
+    # APPLICATION CONTROLLERS
+    ####################################################################################################################
+
+    applications.page:
+        class: 'Hal\UI\Controllers\Application\ApplicationsController'
+        arguments: ['@applications.twig', '@doctrine.em']
+    applications.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['application/applications.twig']]]
+
+    application.page:
+        class: 'Hal\UI\Controllers\Application\ApplicationController'
+        arguments: ['@application.twig', '@doctrine.em']
+    application.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['application/application.twig']]]
+
+    application.add.page:
+        class: 'Hal\UI\Controllers\Application\AddApplicationController'
+        arguments:
+            - '@application.add.twig'
+            - '@doctrine.em'
+            - '@github'
+            - '@permissions'
+            - '@uri'
+            - '@doctrine.random'
+            - '%github.site.baseurl%'
+    application.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['application/application.add.twig']]]
+
+    application.edit.page:
+        class: 'Hal\UI\Controllers\Application\EditApplicationController'
+        arguments:
+            - '@application.edit.twig'
+            - '@doctrine.em'
+            - '@github'
+            - '@uri'
+            - '%github.site.baseurl%'
+    application.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['application/application.edit.twig']]]
+
+    application.remove.handler:
+        class: 'Hal\UI\Controllers\Application\RemoveApplicationController'
+        arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
     # BUILD CONTROLLERS
     ####################################################################################################################
 

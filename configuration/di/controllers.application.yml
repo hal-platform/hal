@@ -1,27 +1,4 @@
 services:
-    ####################################################################################################################
-    # APPLICATION CONTROLLERS
-    ####################################################################################################################
-
-    applications.page:
-        class: 'Hal\UI\Controllers\Application\ApplicationsController'
-        arguments:
-            - '@applications.twig'
-            - '@doctrine.em'
-            - '@currentUser'
-    applications.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['application/applications.twig']]]
-
-    application.page:
-        class: 'Hal\UI\Controllers\Application\ApplicationController'
-        arguments:
-            - '@application.twig'
-            - '@doctrine.em'
-            - '@hal.application'
-    application.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['application/application.twig']]]
 
     application.status.page:
         class: 'Hal\UI\Controllers\Application\ApplicationStatusController'

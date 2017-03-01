@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import _self as page_macros %}
 {% import "_partial/macros.twig" as macros %}
 {% set js_components = ["favorites", "collapsible"] %}
@@ -20,7 +20,7 @@
             </thead>
             <tbody>
                 {% for application in favorites %}
-                    {{ page_macros.app_row(getCurrentUser(), application) }}
+                    {{ page_macros.app_row(current_user, application) }}
                 {% endfor %}
             </tbody>
         </table>
@@ -56,14 +56,14 @@
                     {% set group = groups[group_id] %}
                     <tr>
                         <th colspan="4" class="table-mid-header" id="org-{{ group_id}}">
-                            <a href="{{ urlFor('group', {id: group.id}) }}">{{ group.name }}</a>
+                            <a href="{{ uriFor('group', {id: group.id}) }}">{{ group.name }}</a>
                         </th>
                     </tr>
 
                     {% if group_applications %}
                         {% set hasApplications = true %}
                         {% for application in group_applications %}
-                            {{ page_macros.app_row(getCurrentUser(), application, true) }}
+                            {{ page_macros.app_row(current_user, application, true) }}
                         {% endfor %}
                     {% else %}
                         <tr>
@@ -81,8 +81,8 @@
     </table>
 
     <ul class="button-list button-list--half">
-        <li><a class="btn" href="{{ urlFor('application.add') }}">Add Application</a></li>
-        <li><a class="btn" href="{{ urlFor('group.add') }}">Add Group</a></li>
+        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
+        <li><a class="btn" href="{{ uriFor('group.add') }}">Add Group</a></li>
     </ul>
 {% endblock %}
 
@@ -96,25 +96,25 @@
     {% endif %}
         <td>
             {% if currentUser.settings.isFavoriteApplication(application) %}
-                <form method="post" action="{{ urlFor('settings.favorite_applications.remove.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
+                <form method="post" action="{{ uriFor('settings.favorite_applications.remove.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
                     <label class="form--fav__label fav-added">
                         <input type="submit">
                         {{ macros.icon('star-2', '', 'Remove from favorites') }}
                     </label>
                 </form>
             {% else %}
-                <form method="post" action="{{ urlFor('settings.favorite_applications.add.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
+                <form method="post" action="{{ uriFor('settings.favorite_applications.add.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
                     <label class="form--fav__label fav-normal">
                         <input type="submit">
                         {{ macros.icon('star-2', '', 'Add to favorites') }}
                     </label>
                 </form>
             {% endif %}
-            <a href="{{ urlFor('application.status', {'application': application.id}) }}">{{ application.name }}</a>
+            <a href="{{ uriFor('application.status', {'application': application.id}) }}">{{ application.name }}</a>
         </td>
         <td>{{ macros.gitsource(application) }}</td>
         <td class="tr">
-            <a href="{{ urlFor('application', {'application': application.id}) }}">Manage</a>
+            <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
         </td>
     </tr>
 

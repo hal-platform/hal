@@ -66,13 +66,37 @@ parameters:
         # APPLICATION ROUTES
         ################################################################################################################
 
-        # are these application routes or build/push routes?
-        # It's nice to be able to use route groups to nest common url prefixes.
+        applications:
+            method: 'GET'
+            route: '/applications'
+            stack: ['middleware.signed_in', 'applications.page']
 
-        application_pages:
+        application.add:
+            method: ['GET', 'POST']
+            route: '/applications/add'
+            stack: ['middleware.signed_in', 'application.add.page']
+
+        application.management:
             route: '/applications/{application:%r.digit%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
+
+                application:
+                    method: 'GET'
+                    route: ''
+                    stack: ['application.page']
+                application.edit:
+                    method: ['GET', 'POST']
+                    route: '/edit'
+                    stack: ['middleware.is_owner', 'application.edit.page']
+                application.remove:
+                    method: ['GET', 'POST']
+                    route: '/remove'
+                    stack: ['middleware.is_owner', 'middleware.removal_confirmation', 'application.remove.handler']
+
+                # are these application routes or build/push routes?
+                # It's nice to be able to use route groups to nest common url prefixes.
+
                 build.history.page1:
                     method: 'GET'
                     route: '/builds'
@@ -187,21 +211,26 @@ parameters:
         # routes not created yet
 
         admin: {route: '/derp1', stack: []}
-        applications: {route: '/derp3', stack: []}
         settings: {route: '/derp4', stack: []}
         application.status: {route: '/derp7', stack: []}
         user: {route: '/derp11', stack: []}
         environment: {route: '/derp12', stack: []}
+        group: {route: '/derp13', stack: []}
+        group.add: {route: '/derp133', stack: []}
 
-        application: {route: '/derp34', stack: []}
         deployment: {route: '/derp33', stack: []}
+        deployments: {route: '/derp34', stack: []}
+        encrypted: {route: '/derp35', stack: []}
+        settings.favorite_applications.remove.handler: {route: '/derp36', stack: []}
+        settings.favorite_applications.add.handler: {route: '/derp37', stack: []}
 
         api.environments: {route: '/derp14', stack: []}
+        api.environment: {route: '/derp24', stack: []}
+
+        api.application: {route: '/derp23', stack: []}
         api.applications: {route: '/derp16', stack: []}
         api.groups: {route: '/derp17', stack: []}
-        api.users: {route: '/derp18', stack: []}
-
-        api.user: {route: '/derp21', stack: []}
         api.deployment: {route: '/derp22', stack: []}
-        api.application: {route: '/derp23', stack: []}
-        api.environment: {route: '/derp24', stack: []}
+
+        api.users: {route: '/derp18', stack: []}
+        api.user: {route: '/derp21', stack: []}

@@ -1,10 +1,10 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Application : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
-{% set canEdit = isUserAdminOrSuper(getCurrentUser()) or isUserLeadOf(getCurrentUser(), application) %}
+{% set isAdmin = isUserAdminOrSuper(current_user) %}
+{% set canEdit = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
 {% set canRemove = isAdmin and not has_deployments %}
 
 {% block content %}
@@ -20,23 +20,21 @@
         </dl>
     </div>
 
-    {{ block('legacy_commands') }}
-
     <ul class="button-list">
-        <li><a class="btn" href="{{ urlFor('application.status', {application: application.id}) }}">Application Status</a></li>
+        <li><a class="btn" href="{{ uriFor('application.status', {application: application.id}) }}">Application Status</a></li>
 
-        <li><a class="btn btn--secondary" href="{{ urlFor('encrypted', {application: application.id}) }}">Encrypted Properties</a></li>
-        <li><a class="btn btn--secondary" href="{{ urlFor('deployments', {application: application.id}) }}">Deployment Targets</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('encrypted', {application: application.id}) }}">Encrypted Properties</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('deployments', {application: application.id}) }}">Deployment Targets</a></li>
     </ul>
 
     {% if canEdit or canRemove %}
         <ul class="leader button-list button-list--half">
             {% if canEdit %}
-                <li><a class="btn btn--action" href="{{ urlFor('application.edit', {application: application.id}) }}">Edit Application</a></li>
+                <li><a class="btn btn--action" href="{{ uriFor('application.edit', {application: application.id}) }}">Edit Application</a></li>
             {% endif %}
 
             {% if canRemove %}
-                <li class="button-list__fixed"><a class="btn btn--destructive" href="{{ urlFor('application.remove', {application: application.id}) }}">Remove Application</a></li>
+                <li class="button-list__fixed"><a class="btn btn--destructive" href="{{ uriFor('application.remove', {application: application.id}) }}">Remove Application</a></li>
             {% endif %}
         </ul>
     {% endif %}
@@ -56,49 +54,4 @@
             <dd>{{ macros.gitsource(application) }}</dd>
         </dl>
     </div>
-{% endblock %}
-
-{% block legacy_commands %}
-    {% if application.buildCmd or application.buildTransformCmd or application.prePushCmd or application.postPushCmd %}
-        <h2>Commands</h2>
-        <div class="details-box">
-            <dl class="split trailer">
-                {% if application.buildCmd %}
-                    <dt class="split__title">
-                        {{ macros.icon('code', '', 'On build') }}
-                        Build Command
-                    </dt>
-                    <dd>{{ application.buildCmd }}</dd>
-                {% endif %}
-
-                {% if application.buildTransformCmd %}
-                    <dt class="split__title">
-                        {{ macros.icon('swap-2', '', 'On push') }}
-                        Build Transform Command
-                    </dt>
-                    <dd>{{ application.buildTransformCmd }}</dd>
-                {% endif %}
-
-                {% if application.prePushCmd %}
-                    <dt class="split__title">
-                        {{ macros.icon('swap-2', '', 'On push') }}
-                        Pre-Push Command
-                    </dt>
-                    <dd>{{ application.prePushCmd }}</dd>
-                {% endif %}
-
-                {% if application.postPushCmd %}
-                    <dt class="split__title">
-                        {{ macros.icon('swap-2', '', 'On push') }}
-                        Post-Push Command
-                    </dt>
-                    <dd>{{ application.postPushCmd }}</dd>
-                {% endif %}
-            </dl>
-            <p class="mbn">
-                <strong>Repository commands cannot be changed, and are for legacy projects only.</strong><br>
-                To add, change, or remove commands: a <code>.hal9000.yml</code> must be commited to the project repository.
-            </p>
-        </div>
-    {% endif %}
 {% endblock %}
