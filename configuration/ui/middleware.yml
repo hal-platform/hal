@@ -11,9 +11,23 @@ services:
             - '@denied.twig'
             - '@permissions'
 
+    middleware.is_owner:
+        class: 'Hal\UI\Middleware\ACL\OwnerMiddleware'
+        arguments:
+            - '@middleware.signed_in'
+            - '@denied.twig'
+            - '@permissions'
+
     middleware.require_entity:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
         arguments:
             - '@doctrine.em'
             - '@problem.renderer'
             - '@notFoundHandler'
+
+    middleware.removal_confirmation:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig']
+    middleware.removal_confirmation.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['delete.confirm.twig']]]

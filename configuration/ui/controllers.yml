@@ -122,12 +122,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/server.add.twig']]]
 
-    server.remove.page:
-        class: 'Hal\UI\Controllers\Server\RemoveServerController'
-        arguments:
-            - '@doctrine.em'
-            - '@uri'
-
     server.edit.page:
         class: 'Hal\UI\Controllers\Server\EditServerController'
         arguments:
@@ -138,10 +132,13 @@ services:
     server.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/server.edit.twig']]]
-
     server.validator:
         class: 'Hal\UI\Validator\ServerValidator'
         arguments: ['@doctrine.em']
+
+    server.remove.handler:
+        class: 'Hal\UI\Controllers\Server\RemoveServerController'
+        arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
     # QUEUE CONTROLLERS

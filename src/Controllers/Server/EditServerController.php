@@ -88,10 +88,7 @@ class EditServerController implements ControllerInterface
         $form = $this->getFormData($request, $server);
 
         if ($modified = $this->handleForm($form, $request, $server)) {
-            $this
-                ->getFlash($request)
-                ->withMessage(Flash::SUCCESS, self::SUCCESS);
-
+            $this->withFlash($request, Flash::SUCCESS, self::SUCCESS);
             return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $modified->id()]);
         }
 

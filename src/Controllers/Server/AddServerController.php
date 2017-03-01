@@ -85,18 +85,13 @@ class AddServerController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         if (!$environments = $this->environmentRepo->getAllEnvironmentsSorted()) {
-            $this
-                ->getFlash($request)
-                ->withMessage(Flash::ERROR, self::ERR_NO_ENVIRONMENTS);
+            $this->withFlash($request, Flash::ERROR, self::ERR_NO_ENVIRONMENTS);
 
             return $response;
         }
 
         if ($server = $this->handleForm($request)) {
-            $this
-                ->getFlash($request)
-                ->withMessage(Flash::SUCCESS, sprintf(self::SUCCESS, $server->name()));
-
+            $this->withFlash($request, Flash::SUCCESS, sprintf(self::SUCCESS, $server->name()));
             return $this->withRedirectRoute($response, $this->uri, 'servers');
         }
 

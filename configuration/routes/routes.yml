@@ -113,31 +113,27 @@ parameters:
             route: '/servers'
             stack: ['middleware.signed_in', 'servers.page']
 
-        server:
-            method: 'GET'
-            route: '/servers/{server:%r.digit%}'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'server.page']
+        server.add:
+            method: ['GET', 'POST']
+            route: '/servers/add'
+            stack: ['middleware.is_admin', 'server.add.page']
 
         server.management:
-            route: '/servers'
-            stack: ['middleware.is_admin']
+            route: '/servers/{server:%r.digit%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
-                server.add:
-                    method: ['GET', 'POST']
-                    route: '/servers/add'
-                    stack: ['server.add.page']
+                server:
+                    method: 'GET'
+                    route: ''
+                    stack: ['server.page']
                 server.edit:
                     method: ['GET', 'POST']
-                    route: '/{server:%r.digit%}/edit'
-                    stack: ['middleware.require_entity', 'server.edit.page']
-                server.remove.confirm:
-                    method: 'GET'
-                    route: '/{server:%r.digit%}/remove'
-                    stack: ['middleware.require_entity', 'delete.confirm.page']
+                    route: '/edit'
+                    stack: ['middleware.is_admin', 'server.edit.page']
                 server.remove:
-                    method: 'POST'
-                    route: '/{server:%r.digit%}/remove'
-                    stack: ['middleware.require_entity', 'server.remove.page']
+                    method: ['GET', 'POST']
+                    route: '/remove'
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation', 'server.remove.handler']
 
         ################################################################################################################
         # QUEUE ROUTES
