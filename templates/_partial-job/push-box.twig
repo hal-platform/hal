@@ -26,7 +26,7 @@
                         <li>
                             <span class="split__title">{{ push.created|html5date }}</span>
                             {% if push.deployment %}
-                                <a href="{{ uriFor('environment', {'id': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.name }}</a>
+                                <a href="{{ uriFor('environment', {'environment': push.deployment.server.environment.id}) }}">{{ push.deployment.server.environment.name }}</a>
                                 →
                                 <a href="{{ uriFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment.formatPretty(true) }}</a>
                             {% else %}

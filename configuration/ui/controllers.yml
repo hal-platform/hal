@@ -141,6 +141,49 @@ services:
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
+    # ENVIRONMENT CONTROLLERS
+    ####################################################################################################################
+
+    environments.page:
+        class: 'Hal\UI\Controllers\Environment\EnvironmentsController'
+        arguments: ['@environments.twig', '@doctrine.em']
+
+    environments.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/environments.twig']]]
+
+    environment.page:
+        class: 'Hal\UI\Controllers\Environment\EnvironmentController'
+        arguments: ['@environment.twig', '@doctrine.em']
+    environment.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/environment.twig']]]
+
+    environment.add.page:
+        class: 'Hal\UI\Controllers\Environment\AddEnvironmentController'
+        arguments:
+            - '@environment.add.twig'
+            - '@doctrine.em'
+            - '@uri'
+    environment.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/environment.add.twig']]]
+
+    environment.edit.page:
+        class: 'Hal\UI\Controllers\Environment\EditEnvironmentController'
+        arguments:
+            - '@environment.edit.twig'
+            - '@doctrine.em'
+            - '@uri'
+    environment.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['environment/environment.edit.twig']]]
+
+    environment.remove.handler:
+        class: 'Hal\UI\Controllers\Environment\RemoveEnvironmentController'
+        arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
     # QUEUE CONTROLLERS
     ####################################################################################################################
 

@@ -1,8 +1,8 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 
 {% set page_title = 'Environment : ' ~ env.name %}
 
-{% set isAdmin = isUserSuper(getCurrentUser()) %}
+{% set isAdmin = isUserSuper(current_user) %}
 
 {% block content %}
     <h1>Environment - <strong>{{ env.name }}</strong></h1>
@@ -19,13 +19,17 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Type</th>
                 </tr>
             </thead>
             <tbody>
                 {% for server in servers %}
                     <tr>
                         <td>
-                            <a href="{{ urlFor('server', {'server': server.id}) }}">{{ server.formatPretty }}</a>
+                            <a href="{{ uriFor('server', {'server': server.id}) }}">{{ server.formatPretty() }}</a>
+                        </td>
+                        <td>
+                            {{ server.formatHumanType() }}
                         </td>
                     </tr>
                 {% endfor %}
@@ -40,11 +44,11 @@
     {% endif %}
 
     <ul class="button-list button-list--half">
-        <li><a class="btn" href="{{ urlFor('environments') }}">Environments</a></li>
+        <li><a class="btn" href="{{ uriFor('environments') }}">Environments</a></li>
         {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ urlFor('environment.edit', {id: env.id}) }}">Edit Environment</a></li>
+            <li><a class="btn btn--action" href="{{ uriFor('environment.edit', {'environment': env.id}) }}">Edit Environment</a></li>
             {% if not servers and isAdmin %}
-                <li><a class="btn btn--destructive" href="{{ urlFor('environment.remove', {id: env.id}) }}">Remove Environment</a></li>
+                <li><a class="btn btn--destructive" href="{{ uriFor('environment.remove', {'environment': env.id}) }}">Remove Environment</a></li>
             {% endif %}
         {% endif %}
     </ul>

@@ -168,6 +168,37 @@ parameters:
                     stack: ['middleware.is_admin', 'middleware.removal_confirmation', 'server.remove.handler']
 
         ################################################################################################################
+        # ENVIRONMENT ROUTES
+        ################################################################################################################
+
+        environments:
+            method: 'GET'
+            route: '/environments'
+            stack: ['middleware.signed_in', 'environments.page']
+
+        environment.add:
+            method: ['GET', 'POST']
+            route: '/environments/add'
+            stack: ['middleware.is_admin', 'environment.add.page']
+
+        environment.management:
+            route: '/environments/{environment:%r.digit%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+            routes:
+                environment:
+                    method: 'GET'
+                    route: ''
+                    stack: ['environment.page']
+                environment.edit:
+                    method: ['GET', 'POST']
+                    route: '/edit'
+                    stack: ['middleware.is_admin', 'environment.edit.page']
+                environment.remove:
+                    method: ['GET', 'POST']
+                    route: '/remove'
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation', 'environment.remove.handler']
+
+        ################################################################################################################
         # QUEUE ROUTES
         ################################################################################################################
 
@@ -221,7 +252,6 @@ parameters:
         admin: {route: '/derp1', stack: []}
         settings: {route: '/derp4', stack: []}
         user: {route: '/derp11', stack: []}
-        environment: {route: '/derp12', stack: []}
         group: {route: '/derp13', stack: []}
         group.add: {route: '/derp133', stack: []}
 
