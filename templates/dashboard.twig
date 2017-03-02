@@ -42,7 +42,7 @@
                     <div class="fav-box">
                         <h5>{{ application.name }}</h5>
                         <p>
-                            <a href="{{ uriFor('application.status', {'application': application.id}) }}">App Status</a>
+                            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">App Status</a>
                             | <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
                         </p>
                     </div>

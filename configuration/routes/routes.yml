@@ -80,11 +80,19 @@ parameters:
             route: '/applications/{application:%r.digit%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
-
                 application:
                     method: 'GET'
                     route: ''
                     stack: ['application.page']
+                application.dashboard:
+                    method: 'GET'
+                    route: '/dashboard'
+                    stack: ['application.dashboard.sticky_env.handler', 'application.dashboard.page']
+                application.sticky_pool:
+                    method: 'POST'
+                    route: '/environments/{environment:%r.digit%}'
+                    stack: ['application.dashboard.sticky_pool.handler']
+
                 application.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
@@ -212,7 +220,6 @@ parameters:
 
         admin: {route: '/derp1', stack: []}
         settings: {route: '/derp4', stack: []}
-        application.status: {route: '/derp7', stack: []}
         user: {route: '/derp11', stack: []}
         environment: {route: '/derp12', stack: []}
         group: {route: '/derp13', stack: []}
@@ -223,6 +230,7 @@ parameters:
         encrypted: {route: '/derp35', stack: []}
         settings.favorite_applications.remove.handler: {route: '/derp36', stack: []}
         settings.favorite_applications.add.handler: {route: '/derp37', stack: []}
+        pools: {route: '/derp38', stack: []}
 
         api.environments: {route: '/derp14', stack: []}
         api.environment: {route: '/derp24', stack: []}

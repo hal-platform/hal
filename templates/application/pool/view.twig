@@ -129,7 +129,7 @@
         {% endif %}
 
         <li><a class="btn" href="{{ urlFor('pools', {'application': application.id, 'environment': environment.id}) }}">Deployment Pools</a></li>
-        <li><a class="btn" href="{{ urlFor('application.status', {'application': application.id}) }}">Application Status</a></li>
+        <li><a class="btn" href="{{ urlFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
     </ul>
 
 {% endblock %}

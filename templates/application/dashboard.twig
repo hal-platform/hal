@@ -1,11 +1,11 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 {% import _self as page_macros %}
 {% set js_components = ["status"] %}
 
 {% set page_title = "Status : " ~ application.name %}
 
-{% set canUserBuild = canUserBuild(getCurrentUser(), application) %}
+{% set canUserBuild = canUserBuild(current_user, application) %}
 {% set isBusinessTime = isSeriousBusinessMode() %}
 
 {% block content %}
@@ -72,7 +72,7 @@
                 {% for environment in environments %}
                     {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
                     <li class="button-list__selector">
-                        <a class="btn{{ btnSelected }}" href="{{ urlFor('application.status', {application: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
+                        <a class="btn{{ btnSelected }}" href="{{ uriFor('application.dashboard', {application: application.id}, {environment: environment.id}) }}">{{ environment.name }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -84,7 +84,7 @@
     {% if deployment_statuses %}
         <h5>Change View</h5>
         {% if views %}
-            <form method="post" action="{{ urlFor('application.sticky.pool', {'application': application.id, 'environment': selected_environment.id}) }}">
+            <form method="post" action="{{ uriFor('application.sticky_pool', {'application': application.id, 'environment': selected_environment.id}) }}">
                 <select class="select-input js-pool-picker" name="view">
                     <option value="">Default</option>
                     {% for id, view in views %}
@@ -115,7 +115,7 @@
         {% else %}
             No views found. There are many deployments for this environment, but no views.
             {% if canUserBuild %}
-                <a href="{{ urlFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Create deployment pools</a>
+                <a href="{{ uriFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Create deployment pools</a>
                 {% if isBusinessTime %}
                     to categorize deployments into groups.
                 {% else %}
@@ -199,16 +199,16 @@
 {% block page_buttons %}
     <ul class="button-list">
         {% if canUserBuild %}
-            <li><a class="btn btn--action" href="{{ urlFor('build.start', {'application': application.id}) }}">Start New Build</a></li>
+            <li><a class="btn btn--action" href="{{ uriFor('build.start', {'application': application.id}) }}">Start New Build</a></li>
         {% endif %}
 
-        <li><a class="btn" href="{{ urlFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
-        <li><a class="btn" href="{{ urlFor('push.history.page1', {'application': application.id}) }}">All Pushes</a></li>
+        <li><a class="btn" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
+        <li><a class="btn" href="{{ uriFor('push.history.page1', {'application': application.id}) }}">All Pushes</a></li>
 
-        <li><a class="btn btn--secondary" href="{{ urlFor('application', {'application': application.id}) }}">Application</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('application', {'application': application.id}) }}">Application</a></li>
 
         {% if selected_environment and (views or deployment_statuses|length > 5) %}
-            <li><a class="btn btn--secondary" href="{{ urlFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Deployment Views</a></li>
+            <li><a class="btn btn--secondary" href="{{ uriFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Deployment Views</a></li>
         {% endif %}
     </ul>
 {% endblock %}
@@ -219,7 +219,7 @@
     <article class="card card--{{ deployment.server.environment.name }}">
         <header class="card__header">
             <h4>
-                <a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty }}</a>
+                <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty }}</a>
 
                 {% if deployment.url %}
                     <a class="icon--link" href="{{ deployment.url }}">
@@ -228,7 +228,7 @@
                 {% endif %}
 
                 {% if active %}
-                    <a class="rollback icon--link" href="{{ urlFor('rollback.page1', {'application': application.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
+                    <a class="rollback icon--link" href="{{ uriFor('rollback.page1', {'application': application.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
                         {{ macros.icon('revert') }}
                     </a>
                 {% endif %}
@@ -242,7 +242,7 @@
                     <span class="split__title">Last push:</span>
                     {% if active %}
                         {{ macros.job_status(active, true) }}
-                        (<a href="{{ urlFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                        (<a href="{{ uriFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
                     {% else %}
                         None
                     {% endif %}
@@ -260,7 +260,7 @@
                 <li class="js-data-overload">
                     <span class="split__title">Build:</span>
                     {% if active %}
-                        <a href="{{ urlFor('build', {'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
+                        <a href="{{ uriFor('build', {'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
                     {% else %}
                         Unknown
                     {% endif %}

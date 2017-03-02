@@ -11,7 +11,7 @@
         <h1>Start Push - <strong>{{ build.application.name }}</strong></h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': build.application.id}) }}">Back to Application Status</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Back to Application Status</a>
         </p>
     </div>
 
@@ -44,7 +44,7 @@
         {{ macros.alert('error', 'This build cannot be deployed!', 'There are no deployments assigned to this environment.') }}
 
         <p>
-            <a class="btn btn--secondary" href="{{ uriFor('application.status', {'application': build.application.id}) }}">Cancel</a>
+            <a class="btn btn--secondary" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a>
         </p>
 
     {% endif %}
@@ -135,7 +135,7 @@
             {% if pushables %}
                 <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
             {% endif %}
-            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('application.status', {'application': build.application.id}) }}">Cancel</a></li>
+            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a></li>
         </ul>
 
     </form>

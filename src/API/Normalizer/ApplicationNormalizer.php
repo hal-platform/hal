@@ -112,7 +112,7 @@ class ApplicationNormalizer implements NormalizerInterface
                 'text/html'
             ),
             'status_page' => new Hyperlink(
-                ['application.status', ['application' => $application->id()]],
+                ['application.dashboard', ['application' => $application->id()]],
                 sprintf('%s Status', $application->name()),
                 'text/html'
             ),

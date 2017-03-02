@@ -110,7 +110,7 @@
                     </label>
                 </form>
             {% endif %}
-            <a href="{{ uriFor('application.status', {'application': application.id}) }}">{{ application.name }}</a>
+            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">{{ application.name }}</a>
         </td>
         <td>{{ macros.gitsource(application) }}</td>
         <td class="tr">

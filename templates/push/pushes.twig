@@ -5,7 +5,7 @@
 {% set page_title = "Push History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ uriFor('application.status', {'application': application.id}) }}">Back to Application Status</a></p>
+    <p><a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Status</a></p>
 
     <h1>Push History - <strong>{{ application.name }}</strong></h1>
 

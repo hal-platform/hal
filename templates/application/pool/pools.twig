@@ -93,7 +93,7 @@
         {% endif %}
 
         <li><a class="btn" href="{{ urlFor('deployments', {'application': application.id}) }}">Deployment Targets</a></li>
-        <li><a class="btn" href="{{ urlFor('application.status', {'application': application.id}) }}">Application Status</a></li>
+        <li><a class="btn" href="{{ urlFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
     </ul>
 
 {% endblock %}

@@ -127,6 +127,6 @@ class StartPushHandler implements MiddlewareInterface
             ->getFlash($request)
             ->withMessage(Flash::SUCCESS, self::WAIT_FOR_IT);
 
-        return $this->withRedirectRoute($response, $this->uri, 'application.status', ['application' => $application->id()]);
+        return $this->withRedirectRoute($response, $this->uri, 'application.dashboard', ['application' => $application->id()]);
     }
 }

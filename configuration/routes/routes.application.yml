@@ -2,24 +2,6 @@ parameters:
     routes.application:
 
         ################################################################################################################
-        # REPOSITORY ROUTES
-        ################################################################################################################
-
-        application.status:
-            method: 'GET'
-            route: '/applications/:application/status'
-            stack: ['middleware.login', 'application.status.sticky.handler', 'middleware.requireEntity', 'application.status.page']
-            conditions: {application: '%routes.regex.digit%'}
-
-        application.sticky.pool:
-            method: 'POST'
-            route: '/applications/:application/environments/:environment'
-            stack: ['middleware.login', 'middleware.requireEntity', 'application.sticky.pool.handler']
-            conditions:
-                application: '%routes.regex.digit%'
-                environment: '%routes.regex.digit%'
-
-        ################################################################################################################
         # DEPLOYMENT ROUTES
         ################################################################################################################
 
