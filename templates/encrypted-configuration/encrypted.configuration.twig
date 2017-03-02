@@ -1,15 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Encrypted Properties : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
-{% set canEdit = isAdmin or isUserLeadOf(getCurrentUser(), application) %}
+{% set isAdmin = isUserAdminOrSuper(current_user) %}
+{% set canEdit = isAdmin or isUserLeadOf(current_user, application) %}
 
 {% block content %}
     <h1>Encrypted Properties - <strong>{{ application.name }}</strong></h1>
 
-    {% if encrypted %}
+    {% if encrypteds %}
         <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
             <thead>
                 <tr>
@@ -24,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-            {% for property in encrypted %}
+            {% for property in encrypteds %}
                 <tr>
                     <td>
                         <code class="code_clear">{{ property.name|upper }}</code>
@@ -38,13 +38,13 @@
                     </td>
                     {% if isAdmin %}
                         <td>
-                            <a href="{{ urlFor('encrypted.view', {'application': application.id, 'encrypted': property.id}) }}">{{ macros.icon('unlocked') }} View unencrypted</a>
+                            <a href="{{ uriFor('encrypted', {'application': application.id, 'encrypted': property.id}) }}">{{ macros.icon('unlocked') }} View unencrypted</a>
                         </td>
                     {% endif %}
 
                     {% if canEdit %}
                         <td class="tr">
-                            <a class="btn btn--tiny btn--destructive" href="{{ urlFor('encrypted.remove', {'application': application.id, 'encrypted': property.id}) }}">Remove</a>
+                            <a class="btn btn--tiny btn--destructive" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': property.id}) }}">Remove</a>
                         </td>
                     {% endif %}
                 </tr>
@@ -67,9 +67,9 @@
 
     <ul class="button-list button-list--half">
         {% if canEdit %}
-            <li><a class="btn btn--action" href="{{ urlFor('encrypted.add', {application: application.id}) }}">Add Encrypted Property</a></li>
+            <li><a class="btn btn--action" href="{{ uriFor('encrypted.add', {'application': application.id}) }}">Add Encrypted Property</a></li>
         {% endif %}
-        <li><a class="btn" href="{{ urlFor('application', {'application': application.id}) }}">Application</a></li>
+        <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Application</a></li>
     </ul>
 
 {% endblock %}

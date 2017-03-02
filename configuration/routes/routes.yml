@@ -123,7 +123,7 @@ parameters:
                     route: '/pushes/page/{page:%r.digit%}'
                     stack: ['pushes.page']
 
-                deployment_pages:
+                target.management:
                     route: '/deployments/{deployment:%r.digit%}'
                     routes:
                         rollback.page1:
@@ -135,6 +135,28 @@ parameters:
                             method: 'GET'
                             route: '/pushes/page/{page:%r.digit%}'
                             stack: ['push.rollback.page']
+
+                encrypted.configuration:
+                    method: 'GET'
+                    route: '/encrypted-configuration'
+                    stack: ['encrypted.configuration.page']
+                encrypted.add:
+                    method: ['GET', 'POST']
+                    route: '/encrypted-configuration/add'
+                    stack: ['middleware.is_owner', 'encrypted.add.middleware', 'encrypted.add.page']
+
+                encrypted.management:
+                    route: '/encrypted-configuration/{encrypted:%r.guid%}'
+                    stack: ['middleware.is_owner']
+                    routes:
+                        encrypted:
+                            method: 'GET'
+                            route: ''
+                            stack: ['encrypted.page']
+                        encrypted.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.removal_confirmation', 'encrypted.remove.handler']
 
         ################################################################################################################
         # Server Routes
@@ -257,7 +279,6 @@ parameters:
 
         deployment: {route: '/derp33', stack: []}
         deployments: {route: '/derp34', stack: []}
-        encrypted: {route: '/derp35', stack: []}
         settings.favorite_applications.remove.handler: {route: '/derp36', stack: []}
         settings.favorite_applications.add.handler: {route: '/derp37', stack: []}
         pools: {route: '/derp38', stack: []}

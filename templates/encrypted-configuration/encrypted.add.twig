@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
 {% set page_title = 'Add Encrypted Property' %}
@@ -58,7 +58,7 @@
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Add Encrypted Property"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('encrypted', {application: application.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Cancel</a></li>
             </ul>
         </form>
     </div>

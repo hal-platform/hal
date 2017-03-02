@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = 'Encrypted Properties : ' ~ application.name %}
@@ -15,7 +15,7 @@
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a>
+                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -41,15 +41,15 @@
         {% else %}
             <p>
                 <code>{{ decrypted }}</code>
-                <br><small>This value is only visible to administrators.</small>
+                <br><small>This value is only visible to application owners and administrators.</small>
             </p>
         {% endif %}
 
     </section>
 
     <ul class="button-list button-list--half">
-        <li><a class="btn" href="{{ urlFor('encrypted', {application: application.id}) }}">View all encrypted properties</a></li>
-        <li><a class="btn btn--secondary" href="{{ urlFor('application', {application: application.id}) }}">Applicaton</a></li>
+        <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">View all encrypted properties</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('application', {'application': application.id}) }}">Applicaton</a></li>
     </ul>
 
 {% endblock %}

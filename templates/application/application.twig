@@ -23,7 +23,7 @@
     <ul class="button-list">
         <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
 
-        <li><a class="btn btn--secondary" href="{{ uriFor('encrypted', {'application': application.id}) }}">Encrypted Properties</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Properties</a></li>
         <li><a class="btn btn--secondary" href="{{ uriFor('deployments', {'application': application.id}) }}">Deployment Targets</a></li>
     </ul>
 

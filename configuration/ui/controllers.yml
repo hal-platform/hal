@@ -279,6 +279,42 @@ services:
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
+    # APPLICATION - ENCRYPTED CONFIGURATION CONTROLLERS
+    ####################################################################################################################
+
+    encrypted.configuration.page:
+        class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedConfigurationController'
+        arguments: ['@encrypted.configuration.twig', '@doctrine.em']
+    encrypted.configuration.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['encrypted-configuration/encrypted.configuration.twig']]]
+
+    encrypted.page:
+        class: 'Hal\UI\Controllers\EncryptedConfiguration\EncryptedController'
+        arguments: ['@encrypted.twig', '@decrypter']
+    encrypted.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['encrypted-configuration/encrypted.twig']]]
+
+    encrypted.add.page:
+        class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyController'
+        arguments: ['@encrypted.add.twig', '@doctrine.em']
+    encrypted.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['encrypted-configuration/encrypted.add.twig']]]
+    encrypted.add.middleware:
+        class: 'Hal\UI\Controllers\EncryptedConfiguration\AddEncryptedPropertyMiddleware'
+        arguments:
+            - '@doctrine.em'
+            - '@encrypter'
+            - '@uri'
+            - '@doctrine.random'
+
+    encrypted.remove.handler:
+        class: 'Hal\UI\Controllers\EncryptedConfiguration\RemoveEncryptedPropertyController'
+        arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
     # BUILD CONTROLLERS
     ####################################################################################################################
 
