@@ -162,7 +162,7 @@ class AddApplicationController implements ControllerInterface
      *
      * @return Application|null
      */
-    private function handleForm(ServerRequestInterface $request, User $user)
+    private function handleForm(ServerRequestInterface $request, User $user): ?Application
     {
         if ($request->getMethod() !== 'POST') {
             return null;
@@ -206,11 +206,11 @@ class AddApplicationController implements ControllerInterface
             $this->validateText($github, 'GitHub Repository', 100, true)
         );
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         $github = $this->formatGitHubFromURL($github);
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         // in team/project format
         $parts = explode('/', $github);
@@ -221,11 +221,11 @@ class AddApplicationController implements ControllerInterface
             $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
         }
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         $this->validateGithubRepo($githubOwner, $githubRepo);
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         // check for duplicate key
         if ($dupe = $this->applicationRepo->findOneBy(['key' => $identifier])) {
@@ -237,7 +237,7 @@ class AddApplicationController implements ControllerInterface
             $this->errors[] = self::ERR_INVALID_GROUP;
         }
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         $application = (new Application)
             ->withKey($identifier)

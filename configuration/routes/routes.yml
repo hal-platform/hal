@@ -87,11 +87,11 @@ parameters:
                 application.dashboard:
                     method: 'GET'
                     route: '/dashboard'
-                    stack: ['application.dashboard.sticky_env.handler', 'application.dashboard.page']
+                    stack: ['application.dashboard.sticky_env.middleware', 'application.dashboard.page']
                 application.sticky_pool:
                     method: 'POST'
                     route: '/environments/{environment:%r.digit%}'
-                    stack: ['application.dashboard.sticky_pool.handler']
+                    stack: ['application.sticky_pool.handler']
 
                 application.edit:
                     method: ['GET', 'POST']
@@ -198,7 +198,7 @@ parameters:
         build.start:
             method: ['GET', 'POST']
             route: '/applications/{application:%r.digit%}/build'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.handler', 'build.start.page']
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
         ################################################################################################################
         # PUSH ROUTES
@@ -212,7 +212,7 @@ parameters:
         push.start:
             method: ['GET', 'POST']
             route: '/builds/{build:%r.build%}/push'
-            stack: ['middleware.signed_in', 'middleware.require_entity', 'push.start.handler', 'push.start.page']
+            stack: ['middleware.signed_in', 'middleware.require_entity', 'push.start.middleware', 'push.start.page']
 
         ################################################################################################################
 

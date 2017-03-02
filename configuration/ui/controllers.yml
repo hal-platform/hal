@@ -190,19 +190,21 @@ services:
     application.dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/dashboard.twig']]]
-    application.dashboard.sticky_env.handler:
-        class: 'Hal\UI\Controllers\Application\DashboardStickyEnvironmentHandler'
+    application.dashboard.sticky_env.middleware:
+        class: 'Hal\UI\Controllers\Application\DashboardStickyEnvironmentMiddleware'
         arguments:
             - '@doctrine.em'
             - '@sticky.environment'
             - '@uri'
-    application.dashboard.sticky_pool.handler:
-        class: 'Hal\UI\Controllers\Application\DashboardStickyPoolController'
+
+    application.sticky_pool.handler:
+        class: 'Hal\UI\Controllers\Application\StickyPoolController'
         arguments:
             - '@doctrine.em'
             - '@sticky.pool'
             - '@json'
             - '@uri'
+
     application.add.page:
         class: 'Hal\UI\Controllers\Application\AddApplicationController'
         arguments:

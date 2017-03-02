@@ -18,7 +18,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
-class DashboardStickyEnvironmentHandler implements MiddlewareInterface
+class DashboardStickyEnvironmentMiddleware implements MiddlewareInterface
 {
     use RedirectableControllerTrait;
 

@@ -21,7 +21,7 @@ use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
 
-class DashboardStickyPoolController implements ControllerInterface
+class StickyPoolController implements ControllerInterface
 {
     use APITrait;
     use RedirectableControllerTrait;

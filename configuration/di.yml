@@ -3,13 +3,14 @@
 # - If 1-2 arguments, enter on a single line. Otherwise break each argument into its own line.
 # - "calls" are always each on a separate line except when defining templates (for readability)
 #
-# Naming conventions
+# # Naming conventions
 #
 # - Global middleware:      "slim.global_middleware.*"
 # - Page middleware:        "middleware.*"
 
-# - UI Controllers:         "*.page"
-# - API Controllers:        "*.api"
+# - UI Controllers:          "*.page"
+# - API Controllers:         "*.api"
+# - Redirecting Controllers: "*.handler"
 
 # - Single-page middleware: "*.middleware"
 # - Single-page template:   "*.twig"

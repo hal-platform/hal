@@ -131,7 +131,7 @@ class EditApplicationController implements ControllerInterface
      *
      * @return Application|null
      */
-    private function handleForm(array $data, ServerRequestInterface $request, Application $application)
+    private function handleForm(array $data, ServerRequestInterface $request, Application $application): ?Application
     {
         if ($request->getMethod() !== 'POST') {
             return null;
@@ -148,13 +148,13 @@ class EditApplicationController implements ControllerInterface
             $this->validateText($github, 'GitHub Repository', 100, true)
         );
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         if (!$group = $this->groupRepo->find($data['group'])) {
             $this->errors[] = 'Please select a group.';
         }
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         if ($github !== sprintf('%s/%s', $application->githubOwner(), $application->githubRepo())) {
             $github = $this->formatGitHubFromURL($github);
@@ -167,11 +167,11 @@ class EditApplicationController implements ControllerInterface
                 $this->errors[] = self::ERR_GITHUB_INVALID_REPO;
             }
 
-            if ($this->errors) return;
+            if ($this->errors) return null;
             $this->validateGithubRepo($githubOwner, $githubRepo);
         }
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         // Only check for duplicate identifier if it is being changed
         if (!$this->errors && $identifier != $application->key()) {
@@ -180,7 +180,7 @@ class EditApplicationController implements ControllerInterface
             }
         }
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         $application
             ->withKey($identifier)
