@@ -56,7 +56,7 @@
                     {% set group = groups[group_id] %}
                     <tr>
                         <th colspan="4" class="table-mid-header" id="org-{{ group_id}}">
-                            <a href="{{ uriFor('group', {'group': group.id}) }}">{{ group.name }}</a>
+                            <a href="{{ uriFor('organization', {'organization': group.id}) }}">{{ group.name }}</a>
                         </th>
                     </tr>
 
@@ -82,7 +82,7 @@
 
     <ul class="button-list button-list--half">
         <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        <li><a class="btn" href="{{ uriFor('group.add') }}">Add Group</a></li>
+        <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
     </ul>
 {% endblock %}
 

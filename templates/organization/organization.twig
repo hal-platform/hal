@@ -1,0 +1,62 @@
+{% extends 'base.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = 'Organization : ' ~ organization.name %}
+
+{% set is_admin = isUserAdminOrSuper(current_user) %}
+
+{% block content %}
+    <h1>Organization - <strong>{{ organization.name }}</strong></h1>
+
+    <h4>Name</h4>
+    <p>{{ organization.name }}</p>
+
+    <h4>Identifier</h4>
+    <p>{{ organization.key }}</p>
+
+    <h4>Applications</h4>
+    {% if applications %}
+
+        <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Application</th>
+                    <th>GitHub Source</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for application in applications %}
+                <tr>
+                    <td><a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">{{ application.name }}</a></td>
+                    <td>{{ macros.gitsource(application) }}</td>
+                    <td class="tr">
+                        <a href="{{ uriFor('application', {'application': application.id}) }}">Details</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p>There are no applications associated with this group.</p>
+    {% endif %}
+
+    {% if is_admin and applications %}
+        <p><strong>Note:</strong> All associated applications must be removed or transferred to remove this organization.</p>
+    {% endif %}
+
+    <ul class="button-list">
+        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
+        {% if is_admin %}
+            <li><a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a></li>
+
+            {% if not applications and is_admin %}
+                <li><a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a></li>
+            {% endif %}
+
+        <li><a class="btn btn--secondary" href="{{ uriFor('applications') }}">Applications</a></li>
+        {% endif %}
+    </ul>
+
+{% endblock %}

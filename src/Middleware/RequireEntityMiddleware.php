@@ -20,6 +20,7 @@ use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\EventLog;
+use QL\Hal\Core\Entity\Group;
 use QL\Hal\Core\Entity\Push;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Entity\User;
@@ -93,6 +94,8 @@ class RequireEntityMiddleware implements MiddlewareInterface
             'userType' => UserType::class,
 
             'application' => Application::class,
+            'organization' => Group::class,
+
             'credential' => Credential::class,
             'deployment' => Deployment::class,
             'encrypted' => EncryptedProperty::class,

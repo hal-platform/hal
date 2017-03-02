@@ -206,6 +206,43 @@ services:
         calls: [['setTemplate', ['queue.history.twig']]]
 
     ####################################################################################################################
+    # ORGANIZATION CONTROLLERS
+    ####################################################################################################################
+
+    organization.page:
+        class: 'Hal\UI\Controllers\Organization\OrganizationController'
+        arguments:
+            - '@organization.twig'
+            - '@doctrine.em'
+    organization.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['organization/organization.twig']]]
+
+    organization.add.page:
+        class: 'Hal\UI\Controllers\Organization\AddOrganizationController'
+        arguments:
+            - '@organization.add.twig'
+            - '@doctrine.em'
+            - '@uri'
+    organization.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['organization/organization.add.twig']]]
+
+    organization.edit.page:
+        class: 'Hal\UI\Controllers\Organization\EditOrganizationController'
+        arguments:
+            - '@organization.edit.twig'
+            - '@doctrine.em'
+            - '@uri'
+    organization.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['organization/organization.edit.twig']]]
+
+    organization.remove.handler:
+        class: 'Hal\UI\Controllers\Organization\RemoveOrganizationController'
+        arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
     # APPLICATION CONTROLLERS
     ####################################################################################################################
 

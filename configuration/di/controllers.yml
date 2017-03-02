@@ -1,58 +1,5 @@
 services:
 
-    delete.confirm.page:
-        parent: 'static.controller'
-        arguments: ['@delete.confirm.twig', '@slim.response']
-    delete.confirm.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['delete.confirm.twig']]]
-
-    ####################################################################################################################
-    # GROUP CONTROLLERS
-    ####################################################################################################################
-
-    group.page:
-        class: 'Hal\UI\Controllers\Group\GroupController'
-        arguments:
-            - '@group.twig'
-            - '@doctrine.em'
-            - '@slim.not.found'
-            - '@slim.route.parameters'
-    group.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['group/group.twig']]]
-
-    group.add.page:
-        class: 'Hal\UI\Controllers\Group\AddGroupController'
-        arguments:
-            - '@group.add.twig'
-            - '@doctrine.em'
-            - '@session.flasher'
-            - '@slim.request'
-    group.add.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['group/group.add.twig']]]
-
-    group.edit.page:
-        class: 'Hal\UI\Controllers\Group\EditGroupController'
-        arguments:
-            - '@group.edit.twig'
-            - '@doctrine.em'
-            - '@session.flasher'
-            - '@slim.request'
-            - '@slim.not.found'
-            - '@slim.route.parameters'
-    group.edit.twig:
-        parent: 'twig.auto.template'
-        calls: [['setTemplate', ['group/group.edit.twig']]]
-    group.remove.handler:
-        class: 'Hal\UI\Controllers\Group\RemoveGroupController'
-        arguments:
-            - '@doctrine.em'
-            - '@session.flasher'
-            - '@slim.not.found'
-            - '@slim.route.parameters'
-
     ####################################################################################################################
     # USER CONTROLLERS
     ####################################################################################################################

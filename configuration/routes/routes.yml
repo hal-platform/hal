@@ -61,6 +61,31 @@ parameters:
             route: '/help/application-setup'
             stack: ['help.application_setup.page']
 
+        ################################################################################################################
+        # ORGANIZATION ROUTES
+        ################################################################################################################
+
+        organization.add:
+            method: ['GET', 'POST']
+            route: '/organizations/add'
+            stack: ['middleware.signed_in', 'organization.add.page']
+
+        organization.management:
+            route: '/organizations/{organization:%r.digit%}'
+            stack: ['middleware.signed_in', 'middleware.require_entity']
+            routes:
+                organization:
+                    method: 'GET'
+                    route: ''
+                    stack: ['organization.page']
+                organization.edit:
+                    method: ['GET', 'POST']
+                    route: '/edit'
+                    stack: ['middleware.is_admin', 'organization.edit.page']
+                organization.remove:
+                    method: ['GET', 'POST']
+                    route: '/remove'
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation', 'organization.remove.handler']
 
         ################################################################################################################
         # APPLICATION ROUTES
