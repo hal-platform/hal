@@ -19,6 +19,16 @@ trait APITrait
     use ProblemRenderingTrait;
 
     /**
+     * @param ServerRequestInterface $request
+     *
+     * @return bool
+     */
+    private function isXHR(ServerRequestInterface $request): bool
+    {
+        return $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
+    }
+
+    /**
      * Add the rendered endpoint to the response.
      *
      * @param ServerRequestInterface $request
@@ -41,7 +51,7 @@ trait APITrait
 
         // Ugh IE sucks
         // http://www.dashbay.com/2011/05/internet-explorer-caches-ajax/
-        if ($request->hasHeader('X-Requested-With') && $request->getHeader('X-Requested-With')[0] === 'XMLHttpRequest') {
+        if ($this->isXHR($request)) {
             $response = $response->withHeader('Cache-Control', 'no-cache');
         }
 
