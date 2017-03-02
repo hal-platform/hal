@@ -26,7 +26,7 @@ use QL\Panthor\Utility\URI;
 /**
  * Permission checking is handled by BuildStartValidator
  */
-class StartBuildHandler implements MiddlewareInterface
+class BuildMiddleware implements MiddlewareInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;

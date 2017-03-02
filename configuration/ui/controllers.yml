@@ -267,9 +267,8 @@ services:
     build.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['build/start.twig']]]
-
-    build.start.handler:
-        class: 'Hal\UI\Controllers\Build\StartBuildHandler'
+    build.start.middleware:
+        class: 'Hal\UI\Controllers\Build\BuildMiddleware'
         arguments:
             - '@doctrine.em'
             - '@build.start.validator'
@@ -315,9 +314,8 @@ services:
     push.start.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/start.twig']]]
-
-    push.start.handler:
-        class: 'Hal\UI\Controllers\Push\StartPushHandler'
+    push.start.middleware:
+        class: 'Hal\UI\Controllers\Push\DeployMiddleware'
         arguments:
             - '@doctrine.em'
             - '@push.start.validator'

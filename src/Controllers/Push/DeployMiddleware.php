@@ -22,7 +22,7 @@ use QL\Hal\Core\Entity\Push;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
-class StartPushHandler implements MiddlewareInterface
+class DeployMiddleware implements MiddlewareInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
