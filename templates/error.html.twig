@@ -60,9 +60,11 @@
             </div>
 
             <div class="terminal__text">
-                {{- macros.intro(severity) -}}
                 {%- if isDebugMode() -%}
+                        {{ throwable.getFile() ~ ':' ~ throwable.getLine() }}
                         {{ macros.extra(message, details) }}
+                {%- else -%}
+                    {{- macros.intro(severity) -}}
                 {%- endif -%}
                 {{- isSeriousBusinessMode() ? macros.nofunzone() : macros.terminal() -}}
             </div>
