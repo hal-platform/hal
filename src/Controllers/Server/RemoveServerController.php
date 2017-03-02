@@ -64,7 +64,7 @@ class RemoveServerController implements ControllerInterface
 
         if ($this->deployRepo->findBy(['server' => $server])) {
             $this->withFlash($request, Flash::ERROR, self::ERR_DEPLOYMENTS);
-            return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $server->id]);
+            return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $server->id()]);
         }
 
         $this->em->remove($server);

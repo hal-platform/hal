@@ -28,7 +28,7 @@ class AddServerController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const SUCCESS = 'Server "%s" added.';
+    private const MSG_SUCCESS = 'Server "%s" added.';
 
     private const ERR_NO_ENVIRONMENTS = 'A server requires an environment. Environments must be added before servers.';
 
@@ -90,12 +90,13 @@ class AddServerController implements ControllerInterface
             return $response;
         }
 
-        if ($server = $this->handleForm($request)) {
-            $this->withFlash($request, Flash::SUCCESS, sprintf(self::SUCCESS, $server->name()));
+        $form = $this->getFormData($request);
+
+        if ($server = $this->handleForm($form, $request)) {
+            $msg = sprintf(self::MSG_SUCCESS, $server->name() ?: $server->formatHumanType());
+            $this->withFlash($request, Flash::SUCCESS, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'servers');
         }
-
-        $form = $this->getFormData($request);
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
@@ -105,17 +106,16 @@ class AddServerController implements ControllerInterface
     }
 
     /**
+     * @param array $data
      * @param ServerRequestInterface $request
      *
      * @return null|Server
      */
-    private function handleForm(ServerRequestInterface $request)
+    private function handleForm(array $data, ServerRequestInterface $request): ?Server
     {
         if ($request->getMethod() !== 'POST') {
             return null;
         }
-
-        $data = $this->getFormData($request);
 
         $server = $this->validator->isValid(
             $data['server_type'],

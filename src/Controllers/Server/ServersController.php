@@ -26,18 +26,18 @@ class ServersController implements ControllerInterface
      * @var TemplateInterface
      */
     private $template;
+
     /**
      * @var EntityManagerInterface
      */
     private $em;
+
     /**
      * @var ServerRepository
      */
     private $serverRepo;
 
     /**
-     * ServersController constructor.
-     *
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      */
@@ -49,18 +49,11 @@ class ServersController implements ControllerInterface
     }
 
     /**
-     * The primary action of this controller.
-     *
-     * Must return ResponseInterface.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
+     * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $servers = $this->serverRepo->findBy([], ['name' => 'ASC']);
+        $servers = $this->serverRepo->findAll();
 
         return $this->withTemplate($request, $response, $this->template, [
             'server_environments' => $this->sort($servers),
@@ -70,6 +63,7 @@ class ServersController implements ControllerInterface
 
     /**
      * @param Server[] $servers
+     *
      * @return array
      */
     private function sort(array $servers)

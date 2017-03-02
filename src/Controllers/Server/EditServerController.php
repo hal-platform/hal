@@ -28,7 +28,7 @@ class EditServerController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const SUCCESS = 'Server updated successfully.';
+    private const MSG_SUCCESS = 'Server updated successfully.';
 
     /**
      * @var TemplateInterface
@@ -88,7 +88,7 @@ class EditServerController implements ControllerInterface
         $form = $this->getFormData($request, $server);
 
         if ($modified = $this->handleForm($form, $request, $server)) {
-            $this->withFlash($request, Flash::SUCCESS, self::SUCCESS);
+            $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
             return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $modified->id()]);
         }
 
