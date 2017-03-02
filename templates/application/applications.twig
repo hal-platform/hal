@@ -56,7 +56,7 @@
                     {% set group = groups[group_id] %}
                     <tr>
                         <th colspan="4" class="table-mid-header" id="org-{{ group_id}}">
-                            <a href="{{ uriFor('group', {id: group.id}) }}">{{ group.name }}</a>
+                            <a href="{{ uriFor('group', {'group': group.id}) }}">{{ group.name }}</a>
                         </th>
                     </tr>
 
@@ -96,14 +96,20 @@
     {% endif %}
         <td>
             {% if currentUser.settings.isFavoriteApplication(application) %}
-                <form method="post" action="{{ uriFor('settings.favorite_applications.remove.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
+                <form method="post"
+                      action="{{ uriFor('settings.favorite_applications.remove.handler', {'application': application.id}) }}"
+                      data-app-id="{{ application.id }}"
+                      class="form--fav">
                     <label class="form--fav__label fav-added">
                         <input type="submit">
                         {{ macros.icon('star-2', '', 'Remove from favorites') }}
                     </label>
                 </form>
             {% else %}
-                <form method="post" action="{{ uriFor('settings.favorite_applications.add.handler', {application: application.id}) }}" data-app-id="{{ application.id }}" class="form--fav">
+                <form method="post"
+                      action="{{ uriFor('settings.favorite_applications.add.handler', {'application': application.id}) }}"
+                      data-app-id="{{ application.id }}"
+                      class="form--fav">
                     <label class="form--fav__label fav-normal">
                         <input type="submit">
                         {{ macros.icon('star-2', '', 'Add to favorites') }}

@@ -59,7 +59,7 @@
 
                 <tr>
                     <td>
-                        <a href="{{ uriFor('application', {application: deployment.application.id}) }}">{{ deployment.application.name }}</a>
+                        <a href="{{ uriFor('application', {'application': deployment.application.id}) }}">{{ deployment.application.name }}</a>
                     </td>
 
                     {% if server.type == 'eb' %}
@@ -88,7 +88,7 @@
                         {% endif %}
                     </td>
                     <td class="tr">
-                        <a class="btn btn--tiny" href="{{ uriFor('deployment', {application: deployment.application.id, deployment: deployment.id}) }}">View</a>
+                        <a class="btn btn--tiny" href="{{ uriFor('deployment', {'application': deployment.application.id, 'deployment': deployment.id}) }}">View</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -105,10 +105,10 @@
     <ul class="button-list button-list--half">
         {% if isAdmin %}
             <li><a class="btn" href="{{ uriFor('servers') }}">Servers</a></li>
-            <li><a class="btn btn--action" href="{{ uriFor('server.edit', {server: server.id}) }}">Edit Server</a></li>
+            <li><a class="btn btn--action" href="{{ uriFor('server.edit', {'server': server.id}) }}">Edit Server</a></li>
 
             {% if not deployments and isAdmin %}
-                <li><a class="btn btn--destructive" href="{{ uriFor('server.remove', {server: server.id}) }}">Remove Server</a></li>
+                <li><a class="btn btn--destructive" href="{{ uriFor('server.remove', {'server': server.id}) }}">Remove Server</a></li>
             {% endif %}
         {% endif %}
     </ul>

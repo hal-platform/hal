@@ -19,7 +19,7 @@
 
             <dt class="split__title">Environment</dt>
             <dd>
-                <a href="{{ uriFor('environment', {'id': deployment.server.environment.id}) }}">{{ deployment.server.environment.name }}</a>
+                <a href="{{ uriFor('environment', {'environment': deployment.server.environment.id}) }}">{{ deployment.server.environment.name }}</a>
             </dd>
 
             <dt class="split__title">Server</dt>

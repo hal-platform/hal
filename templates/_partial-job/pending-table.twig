@@ -17,7 +17,7 @@
                 {% if job is build %}
                     <tr id="build-{{ job.id }}">
                         <td>{{ macros.job_status_prefix(job) }}</td>
-                        <td><a href="{{ uriFor('application.dashboard', {application: job.application.id}) }}">{{ job.application.name }}</a></td>
+                        <td><a href="{{ uriFor('application.dashboard', {'application': job.application.id}) }}">{{ job.application.name }}</a></td>
 
                         <td>{{ job.environment.name }}
 
@@ -28,7 +28,7 @@
                 {% else %}
                     <tr id="push-{{ job.id }}">
                         <td>{{ macros.job_status_prefix(job) }}</td>
-                        <td><a href="{{ uriFor('application.dashboard', {application: job.application.id}) }}">{{ job.application.name }}</a></td>
+                        <td><a href="{{ uriFor('application.dashboard', {'application': job.application.id}) }}">{{ job.application.name }}</a></td>
 
                         {% if job.deployment %}
                             <td>{{ job.build.environment.name }} → {{ job.deployment.formatPretty(true) }}</td>

@@ -21,20 +21,20 @@
     </div>
 
     <ul class="button-list">
-        <li><a class="btn" href="{{ uriFor('application.dashboard', {application: application.id}) }}">Application Status</a></li>
+        <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
 
-        <li><a class="btn btn--secondary" href="{{ uriFor('encrypted', {application: application.id}) }}">Encrypted Properties</a></li>
-        <li><a class="btn btn--secondary" href="{{ uriFor('deployments', {application: application.id}) }}">Deployment Targets</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('encrypted', {'application': application.id}) }}">Encrypted Properties</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('deployments', {'application': application.id}) }}">Deployment Targets</a></li>
     </ul>
 
     {% if canEdit or canRemove %}
         <ul class="leader button-list button-list--half">
             {% if canEdit %}
-                <li><a class="btn btn--action" href="{{ uriFor('application.edit', {application: application.id}) }}">Edit Application</a></li>
+                <li><a class="btn btn--action" href="{{ uriFor('application.edit', {'application': application.id}) }}">Edit Application</a></li>
             {% endif %}
 
             {% if canRemove %}
-                <li class="button-list__fixed"><a class="btn btn--destructive" href="{{ uriFor('application.remove', {application: application.id}) }}">Remove Application</a></li>
+                <li class="button-list__fixed"><a class="btn btn--destructive" href="{{ uriFor('application.remove', {'application': application.id}) }}">Remove Application</a></li>
             {% endif %}
         </ul>
     {% endif %}

@@ -99,7 +99,7 @@
                         </td>
                         <td>
                             {% if child.deployment %}
-                                Push to <a href="{{ uriFor('deployment', {application: build.application.id, deployment: child.deployment.id}) }}">{{ child.deployment.formatPretty }}</a>
+                                Push to <a href="{{ uriFor('deployment', {'application': build.application.id, 'deployment': child.deployment.id}) }}">{{ child.deployment.formatPretty }}</a>
                             {% else %}
                                 Unknown
                             {% endif %}

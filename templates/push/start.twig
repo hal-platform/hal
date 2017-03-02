@@ -56,7 +56,7 @@
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ uriFor('application', {application: build.application.id}) }}">{{ build.application.name }}</a>
+                <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -70,7 +70,7 @@
         <dl class="split mbn">
             <dt class="split__title">Build Id</dt>
             <dd>
-                <a href="{{ uriFor('build', {build: build.id}) }}">{{ build.id|formatBuildId }}</a>
+                <a href="{{ uriFor('build', {'build': build.id}) }}">{{ build.id|formatBuildId }}</a>
             </dd>
 
             <dt class="split__title">User</dt>
