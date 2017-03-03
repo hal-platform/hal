@@ -1,30 +1,30 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial-form/macros.twig" as form_macros %}
 
-{% set page_title = 'Edit Deployment : ' ~ deployment.application.name %}
+{% set page_title = 'Edit Target : ' ~ application.name %}
 
 {% block content %}
-    <h1>Edit Deployment - <strong>{{ deployment.application.name }}</strong></h1>
+    <h1>Edit Target - <strong>{{ application.name }}</strong></h1>
 
     <div class="details-box">
         <dl class="split">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {'application': deployment.application.id}) }}">{{ deployment.application.name }}</a>
+                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
             </dd>
 
             <dt class="split__title">Server</dt>
-            <dd><a href="{{ urlFor('server', {'server': deployment.server.id}) }}">{{ deployment.server.formatPretty }}</a></dd>
+            <dd><a href="{{ uriFor('server', {'server': target.server.id}) }}">{{ target.server.formatPretty }}</a></dd>
 
             <dt class="split__title">Environment</dt>
             <dd>
-                {{ deployment.server.environment.name }}
+                {{ target.server.environment.name }}
             </dd>
         </dl>
     </div>
 
     <h4>Type</h4>
-    <p>{{ deployment.server.formatHumanType }}</p>
+    <p>{{ target.server.formatHumanType }}</p>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
@@ -50,7 +50,7 @@
                     RSYNC
                 #}
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'rsync') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.server.type == 'rsync') ? '' : ' disabled' %}
                     <label for="path">
                         File path
                         <small class="additional">
@@ -68,7 +68,7 @@
                     Script
                 #}
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'script') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.server.type == 'script') ? '' : ' disabled' %}
                     <label for="script_context">
                         Script Context
                         <small class="additional">
@@ -85,7 +85,7 @@
                     CodeDeploy
                 #}
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'cd') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.server.type == 'cd') ? '' : ' disabled' %}
                     <label for="cd_name">
                         CodeDeploy Application Name
                         <small class="additional">
@@ -96,7 +96,7 @@
                 </li>
 
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'cd') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.server.type == 'cd') ? '' : ' disabled' %}
                     <label for="cd_group">
                         CodeDeploy Deployment Group
                         <small class="additional">
@@ -107,7 +107,7 @@
                 </li>
 
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'cd') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.server.type == 'cd') ? '' : ' disabled' %}
                     <label for="cd_config">
                         CodeDeploy Configuration
                         <small class="additional">
@@ -121,7 +121,7 @@
                     Elastic Beanstalk
                 #}
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'eb') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.server.type == 'eb') ? '' : ' disabled' %}
                     <label for="eb_name">
                         Elastic Beanstalk Application Name
                         <small class="additional">
@@ -132,7 +132,7 @@
                 </li>
 
                 <li>
-                    {% set isDisabled = (deployment.server.type == 'eb') ? '' : ' disabled' %}
+                    {% set isDisabled = (target.server.type == 'eb') ? '' : ' disabled' %}
                     <label for="eb_environment">
                         Elastic Beanstalk Environment ID
                         <small class="additional">
@@ -145,7 +145,7 @@
                 {#
                     S3
                 #}
-                {% set isDisabled = (deployment.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
+                {% set isDisabled = (target.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
                 <li>
                     <label for="s3_bucket">
                         S3 Bucket
@@ -156,7 +156,7 @@
                     <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+"{{ isDisabled }}>
                 </li>
 
-                {% set isDisabled = (deployment.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
+                {% set isDisabled = (target.server.type in ['s3', 'eb', 'cd']) ? '' : ' disabled' %}
                 <li>
                     <label for="s3_file">
                         S3 File
@@ -207,7 +207,7 @@
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('deployment', {application: deployment.application.id, deployment: deployment.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('target', {'application': application.id, 'target': target.id}) }}">Cancel</a></li>
             </ul>
         </form>
     </div>

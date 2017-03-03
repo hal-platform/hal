@@ -19,7 +19,7 @@ use QL\Hal\Core\Type\EnumType\ServerEnum;
 /**
  * This validator is a pile of shit and stricken with technical debt. Beware.
  */
-class DeploymentValidator
+class TargetValidator
 {
     const ERR_REQUIRED = '"%s" is required.';
 
@@ -63,9 +63,9 @@ class DeploymentValidator
      */
     public function __construct(EntityManagerInterface $em)
     {
-        $this->serverRepo = $em->getRepository(Server::CLASS);
-        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
-        $this->credentialRepo = $em->getRepository(Credential::CLASS);
+        $this->serverRepo = $em->getRepository(Server::class);
+        $this->deploymentRepo = $em->getRepository(Deployment::class);
+        $this->credentialRepo = $em->getRepository(Credential::class);
 
         $this->errors = [];
     }

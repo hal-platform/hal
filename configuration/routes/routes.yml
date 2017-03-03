@@ -148,14 +148,36 @@ parameters:
                     route: '/pushes/page/{page:%r.digit%}'
                     stack: ['pushes.page']
 
+                targets:
+                    method: 'GET'
+                    route: '/targets'
+                    stack: ['targets.page']
+                target.add:
+                    method: ['GET', 'POST']
+                    route: '/targets/add'
+                    stack: ['middleware.is_owner', 'target.add.middleware', 'target.add.page']
+
                 target.management:
-                    route: '/deployments/{deployment:%r.digit%}'
+                    route: '/targets/{target:%r.digit%}'
+                    stack: ['middleware.nested_entity']
                     routes:
+                        target:
+                            method: 'GET'
+                            route: ''
+                            stack: ['target.page']
+                        target.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.is_owner', 'target.edit.middleware', 'target.edit.page']
+                        target.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.is_owner', 'middleware.removal_confirmation', 'target.remove.handler']
+
                         rollback.page1:
                             method: 'GET'
                             route: '/pushes'
                             stack: ['push.rollback.page']
-
                         rollback:
                             method: 'GET'
                             route: '/pushes/page/{page:%r.digit%}'
@@ -302,8 +324,6 @@ parameters:
         group: {route: '/derp13', stack: []}
         group.add: {route: '/derp133', stack: []}
 
-        deployment: {route: '/derp33', stack: []}
-        deployments: {route: '/derp34', stack: []}
         settings.favorite_applications.remove.handler: {route: '/derp36', stack: []}
         settings.favorite_applications.add.handler: {route: '/derp37', stack: []}
         pools: {route: '/derp38', stack: []}
@@ -314,7 +334,8 @@ parameters:
         api.application: {route: '/derp23', stack: []}
         api.applications: {route: '/derp16', stack: []}
         api.groups: {route: '/derp17', stack: []}
-        api.deployment: {route: '/derp22', stack: []}
+        api.deployment.history: {route: '/derp22', stack: []}
+        api.deployment.lastpush: {route: '/derp2222', stack: []}
 
         api.users: {route: '/derp18', stack: []}
         api.user: {route: '/derp21', stack: []}

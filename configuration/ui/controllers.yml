@@ -352,6 +352,62 @@ services:
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
+    # APPLICATION - TARGET CONTROLLERS
+    ####################################################################################################################
+
+    target.page:
+        class: 'Hal\UI\Controllers\Target\TargetController'
+        arguments: ['@target.twig']
+    target.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['target/target.twig']]]
+
+    targets.page:
+        class: 'Hal\UI\Controllers\Target\TargetsController'
+        arguments: ['@targets.twig', '@doctrine.em']
+    targets.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['target/targets.twig']]]
+
+    target.add.page:
+        class: 'Hal\UI\Controllers\Target\AddTargetController'
+        arguments:
+            - '@target.add.twig'
+            - '@doctrine.em'
+            - '@uri'
+    target.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['target/target.add.twig']]]
+    target.add.middleware:
+        class: 'Hal\UI\Controllers\Target\AddTargetMiddleware'
+        arguments:
+            - '@doctrine.em'
+            - '@target.validator'
+            - '@json'
+            - '@uri'
+
+    target.edit.page:
+        class: 'Hal\UI\Controllers\Target\EditTargetController'
+        arguments: ['@target.edit.twig', '@doctrine.em']
+    target.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['target/target.edit.twig']]]
+    target.edit.middleware:
+        class: 'Hal\UI\Controllers\Target\EditTargetMiddleware'
+        arguments:
+            - '@doctrine.em'
+            - '@target.validator'
+            - '@uri'
+
+    target.remove.handler:
+        class: 'Hal\UI\Controllers\Target\RemoveTargetController'
+        arguments: ['@doctrine.em', '@uri']
+
+    target.validator:
+        class: 'Hal\UI\Validator\TargetValidator'
+        arguments: ['@doctrine.em']
+
+    ####################################################################################################################
     # BUILD CONTROLLERS
     ####################################################################################################################
 

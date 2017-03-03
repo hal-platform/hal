@@ -86,8 +86,7 @@ class AddServerController implements ControllerInterface
     {
         if (!$environments = $this->environmentRepo->getAllEnvironmentsSorted()) {
             $this->withFlash($request, Flash::ERROR, self::ERR_NO_ENVIRONMENTS);
-
-            return $response;
+            return $this->withRedirectRoute($response, $this->uri, 'servers');
         }
 
         $form = $this->getFormData($request);

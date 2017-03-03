@@ -1,0 +1,21 @@
+{% extends 'base.twig' %}
+{% import "_partial-form/macros.twig" as form_macros %}
+
+{% set js_components = ["deployment.add"] %}
+
+{% set page_title = 'Add Target : ' ~ application.name %}
+
+{% block content %}
+    <h1>Add Target - <strong>{{ application.name }}</strong></h1>
+
+    <p>
+        Target deployment relationships define what servers your application can be deployed to and where on that server the code will be placed.
+    </p>
+
+    <div class="form-wrapper">
+        {{ form_macros.formErrors(errors) }}
+
+        {% include 'target/_form.add-target.twig' with {'servers_by_env': servers_by_env, 'form': form, 'application': application} %}
+    </div>
+
+{% endblock %}

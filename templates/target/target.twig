@@ -1,0 +1,120 @@
+{% extends 'base.twig' %}
+{% import "_partial/macros.twig" as macros %}
+
+{% set page_title = 'Target : ' ~ application.name %}
+
+{% set can_edit = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
+
+{% block content %}
+    <h1>Target - <strong>{{ application.name }}</strong></h1>
+
+    <div class="details-box">
+        <dl class="split">
+            <dt class="split__title">Application</dt>
+            <dd>
+                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
+            </dd>
+
+            <dt class="split__title">Server</dt>
+            <dd><a href="{{ uriFor('server', {'server': target.server.id}) }}">{{ target.server.formatPretty() }}</a></dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>
+                {{ target.server.environment.name }}
+            </dd>
+        </dl>
+    </div>
+
+    <h4>Name</h4>
+    <p>{{ target.name ?: 'None' }}</p>
+
+    <h4>Type</h4>
+    <p>{{ target.server.formatHumanType() }}</p>
+
+    {% if target.server.isAWS() %}
+
+        <h4>Credentials</h4>
+        <p>
+            {% if target.credential %}
+                {{ target.credential.name }}
+                {% if target.credential.type == 'aws' %}
+                    (AWS)
+                {% elseif target.credential.type == 'privatekey' %}
+                    (Private Key)
+                {% endif %}
+
+            {% else %}
+                {{ macros.status('None', 'error', 'spam-2') }}
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if target.server.type == 'rsync' %}
+
+        <h4>File path</h4>
+        <p><code>{{ target.path }}</code></p>
+
+    {% elseif target.server.type == 'eb' %}
+
+        <h4>Elastic Beanstalk Application Name</h4>
+        <p><code>{{ target.ebName }}</code></p>
+
+        <h4>Elastic Beanstalk Environment ID</h4>
+        <p><code>{{ target.ebEnvironment }}</code></p>
+
+        <h4>S3 Bucket</h4>
+        <p><code>{{ target.s3bucket }}</code></p>
+
+        <h4>S3 File</h4>
+        <p><code>{{ target.s3file ?: '$APPID/$PUSHID.zip' }}</code></p>
+
+    {% elseif target.server.type == 's3' %}
+
+        <h4>S3 Bucket</h4>
+        <p><code>{{ target.s3bucket }}</code></p>
+
+        <h4>S3 File</h4>
+        <p><code>{{ target.s3file ?: '$PUSHID.tar.gz' }}</code></p>
+
+    {% elseif target.server.type == 'cd' %}
+
+        <h4>CodeDeploy Application Name</h4>
+        <p><code>{{ target.cdName }}</code></p>
+
+        <h4>CodeDeploy Deployment Group</h4>
+        <p><code>{{ target.cdGroup }}</code></p>
+
+        <h4>CodeDeploy Configuration</h4>
+        <p><code>{{ target.cdConfiguration }}</code></p>
+
+        <h4>S3 Bucket</h4>
+        <p><code>{{ target.s3bucket }}</code></p>
+
+        <h4>S3 File</h4>
+        <p><code>{{ target.s3file ?: '$APPID/$PUSHID.tar.gz' }}</code></p>
+
+    {% elseif target.server.type == 'script' %}
+
+        <h4>Script Context</h4>
+        <p><code>{{ target.scriptContext ?: 'None' }}</code></p>
+
+    {% endif %}
+
+    <h4>URL</h4>
+    <p>
+        {% if target.url %}
+            <a href="{{ target.url }}">{{ target.url }}</a>
+        {% else %}
+            None
+        {% endif %}
+    </p>
+
+    <ul class="button-list">
+        <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
+        {% if can_edit %}
+            <li><a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>
+            <li><a class="btn btn--destructive" href="{{ uriFor('target.remove', {'application': application.id, 'target': target.id}) }}">Remove Target</a></li>
+        {% endif %}
+    </ul>
+
+{% endblock %}

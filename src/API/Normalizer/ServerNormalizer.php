@@ -92,7 +92,7 @@ class ServerNormalizer implements NormalizerInterface
 
         foreach ($deployments as $deployment) {
             $linkedDeployments[] = new Hyperlink(
-                ['api.deployment', ['id' => $deployment->id()]],
+                ['api.target', ['target' => $deployment->id()]],
                 $deployment->formatPretty(true)
             );
         }

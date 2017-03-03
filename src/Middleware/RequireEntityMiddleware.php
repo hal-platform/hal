@@ -93,14 +93,15 @@ class RequireEntityMiddleware implements MiddlewareInterface
             'userPermission' => UserPermission::class,
             'userType' => UserType::class,
 
-            'application' => Application::class,
             'organization' => Group::class,
+            'application' => Application::class,
 
-            'credential' => Credential::class,
-            'deployment' => Deployment::class,
+            'target' => Deployment::class,
             'encrypted' => EncryptedProperty::class,
+
             'environment' => Environment::class,
             'server' => Server::class,
+            'credential' => Credential::class,
 
             'pool' => DeploymentPool::class,
             'view' => DeploymentView::class,

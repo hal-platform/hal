@@ -25,6 +25,10 @@ services:
             - '@problem.renderer'
             - '@notFoundHandler'
 
+    middleware.nested_entity:
+        class: 'Hal\UI\Middleware\NestedEntityMiddleware'
+        arguments: ['@notFoundHandler']
+
     middleware.removal_confirmation:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig']

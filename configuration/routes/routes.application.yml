@@ -2,54 +2,6 @@ parameters:
     routes.application:
 
         ################################################################################################################
-        # DEPLOYMENT ROUTES
-        ################################################################################################################
-
-        deployment:
-            method: 'GET'
-            route: '/applications/:application/deployments/:deployment'
-            stack: ['middleware.login', 'middleware.requireEntity', 'deployment.page']
-            conditions:
-                application: '%routes.regex.digit%'
-                deployment: '%routes.regex.digit%'
-
-        deployments:
-            method: 'GET'
-            route: '/applications/:application/deployments'
-            stack: ['middleware.login', 'middleware.requireEntity', 'deployments.page']
-            conditions: {application: '%routes.regex.digit%'}
-
-        deployments.add:
-            method: ['GET', 'POST']
-            route: '/applications/:application/deployments/add'
-            stack: ['middleware.lead', 'middleware.requireEntity', 'deployments.add.handler', 'deployments.add.page']
-            conditions: {application: '%routes.regex.digit%'}
-
-        deployment.edit:
-            method: ['GET', 'POST']
-            route: '/applications/:application/deployments/:deployment/edit'
-            stack: ['middleware.lead', 'middleware.requireEntity', 'deployment.edit.handler', 'deployment.edit.page']
-            conditions:
-                application: '%routes.regex.digit%'
-                deployment: '%routes.regex.digit%'
-
-        deployment.remove.confirm:
-            method: 'GET'
-            route: '/applications/:application/deployments/:deployment/remove'
-            stack: ['middleware.lead', 'middleware.requireEntity', 'delete.confirm.page']
-            conditions:
-                application: '%routes.regex.digit%'
-                deployment: '%routes.regex.digit%'
-
-        deployment.remove:
-            method: 'POST'
-            route: '/applications/:application/deployments/:deployment/remove'
-            stack: ['middleware.lead', 'middleware.requireEntity', 'deployments.remove.handler']
-            conditions:
-                application: '%routes.regex.digit%'
-                deployment: '%routes.regex.digit%'
-
-        ################################################################################################################
         # REPOSITORY POOLS ROUTES
         ################################################################################################################
 

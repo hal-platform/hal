@@ -67,7 +67,7 @@ class DeploymentNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.deployment', ['id' => $deployment->id()]],
+            ['api.target', ['target' => $deployment->id()]],
             $deployment->formatPretty(true)
         );
     }
