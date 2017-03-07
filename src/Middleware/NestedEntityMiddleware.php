@@ -12,6 +12,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\EncryptedProperty;
+use QL\Hal\Core\Entity\Token;
+use QL\Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
 
 /**
@@ -59,6 +61,15 @@ class NestedEntityMiddleware implements MiddlewareInterface
             $application = $request->getAttribute(Application::class);
 
             if ($application !== $encrypted->application()) {
+                return ($this->notFound)($request, $response);
+            }
+        }
+
+        // $token->user() - $user
+        if ($token = $request->getAttribute(Token::class)) {
+            $user = $request->getAttribute(User::class);
+
+            if ($user !== $token->user()) {
                 return ($this->notFound)($request, $response);
             }
         }
