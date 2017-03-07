@@ -528,6 +528,43 @@ services:
         calls: [['setTemplate', ['admin/audit-history.twig']]]
 
     ####################################################################################################################
+    # ADMIN - CREDENTIALS CONTROLLERS
+    ####################################################################################################################
+
+    admin.credentials.page:
+        class: 'Hal\UI\Controllers\Credentials\CredentialsController'
+        arguments: ['@admin.credentials.twig', '@doctrine.em']
+    admin.credentials.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['credentials/credentials.twig']]]
+
+    admin.credential.page:
+        class: 'Hal\UI\Controllers\Credentials\CredentialController'
+        arguments:
+            - '@admin.credential.twig'
+            - '@doctrine.em'
+            - '@decrypter'
+    admin.credential.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['credentials/credential.twig']]]
+
+    admin.credential.add.page:
+        class: 'Hal\UI\Controllers\Credentials\AddCredentialController'
+        arguments:
+            - '@admin.credential.add.twig'
+            - '@doctrine.em'
+            - '@uri'
+            - '@doctrine.random'
+            - '@encrypter'
+    admin.credential.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['credentials/credential.add.twig']]]
+
+    admin.credential.remove.handler:
+        class: 'Hal\UI\Controllers\Credentials\RemoveCredentialController'
+        arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
     # SUPER CONTROLLERS
     ####################################################################################################################
 

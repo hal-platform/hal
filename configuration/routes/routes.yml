@@ -336,6 +336,34 @@ parameters:
                     route: '/audit-history/page/{page:%r.digit%}'
                     stack: ['admin.audit_history.page']
 
+                ################################################################################################################
+                # CREDENTIAL ROUTES
+                ################################################################################################################
+
+                admin.credentials:
+                    method: 'GET'
+                    route: '/credentials'
+                    stack: ['admin.credentials.page']
+
+                admin.credential.add:
+                    method: ['GET', 'POST']
+                    route: '/credentials/add'
+                    stack: ['middleware.is_super', 'admin.credential.add.page']
+
+                credential.management:
+                    route: '/credentials/{credential:%r.guid%}'
+                    stack: ['middleware.require_entity']
+                    routes:
+                        admin.credential:
+                            method: 'GET'
+                            route: ''
+                            stack: ['admin.credential.page']
+
+                        admin.credential.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.is_super', 'middleware.removal_confirmation', 'admin.credential.remove.handler']
+
         ################################################################################################################
         # SUPER ROUTES
         ################################################################################################################
@@ -368,12 +396,9 @@ parameters:
 
         # routes not created yet
 
-        admin: {route: '/derp1', stack: []}
         settings: {route: '/derp4', stack: []}
         user: {route: '/derp11', stack: []}
         users: {route: '/derp111', stack: []}
-        group: {route: '/derp13', stack: []}
-        group.add: {route: '/derp133', stack: []}
 
         settings.favorite_applications.remove.handler: {route: '/derp36', stack: []}
         settings.favorite_applications.add.handler: {route: '/derp37', stack: []}

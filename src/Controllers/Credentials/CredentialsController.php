@@ -5,20 +5,24 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Admin\Credentials;
+namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Controllers\TemplatedControllerTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Credential;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
 
 /**
  * @todo add sorting
  */
 class CredentialsController implements ControllerInterface
 {
+    use TemplatedControllerTrait;
+
     /**
      * @var TemplateInterface
      */
@@ -36,18 +40,18 @@ class CredentialsController implements ControllerInterface
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->credentialsRepo = $em->getRepository(Credential::CLASS);
+        $this->credentialsRepo = $em->getRepository(Credential::class);
     }
 
     /**
      * @inheritDoc
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $credentials = $this->credentialsRepo->findBy([], ['name' => 'ASC']);
 
-        $this->template->render([
-            'credentials' => $credentials,
+        return $this->withTemplate($request, $response, $this->template, [
+            'credentials' => $credentials
         ]);
     }
 }

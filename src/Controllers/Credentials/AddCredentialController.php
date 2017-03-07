@@ -5,32 +5,41 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Admin\Credentials;
+namespace Hal\UI\Controllers\Credentials;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\Flasher;
+use Hal\UI\Flash;
+use Hal\UI\Controllers\RedirectableControllerTrait;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Controllers\TemplatedControllerTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Crypto\Encrypter;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Credential\AWSCredential;
 use QL\Hal\Core\Type\EnumType\CredentialEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
-use Slim\Http\Request;
+use QL\Panthor\Utility\URI;
 
 class AddCredentialController implements ControllerInterface
 {
-    const SUCCESS = 'Credential "%s" added.';
+    use RedirectableControllerTrait;
+    use SessionTrait;
+    use TemplatedControllerTrait;
 
-    const ERR_TYPE_REQUIRED = 'Type is required.';
-    const ERR_AWS_ONLY = 'Private Key credentials are currently disabled.';
-    const ERR_INVALID_NAME = 'Please enter a valid name less than 100 characters.';
-    const ERR_DUPLICATE_NAME = 'Credentials with this name already exist.';
+    private const MSG_SUCCESS = 'Credential "%s" added.';
 
-    const ERR_INVALID_KEY = 'AWS Access Key is required and must be less than 100 characters.';
-    const ERR_INVALID_SECRET = 'AWS Secret is required.';
+    private const ERR_TYPE_REQUIRED = 'Type is required.';
+    private const ERR_AWS_ONLY = 'Private Key credentials are currently disabled.';
+    private const ERR_INVALID_NAME = 'Please enter a valid name less than 100 characters.';
+    private const ERR_DUPLICATE_NAME = 'Credentials with this name already exist.';
 
-    const VALIDATE_NAME_REGEX = '/^[a-zA-Z0-9\:\-.\\ ]{2,100}$/';
+    private const ERR_INVALID_KEY = 'AWS Access Key is required and must be less than 100 characters.';
+    private const ERR_INVALID_SECRET = 'AWS Secret is required.';
+
+    private const VALIDATE_NAME_REGEX = '/^[a-zA-Z0-9\:\-.\\ ]{2,100}$/';
 
     /**
      * @var TemplateInterface
@@ -46,16 +55,6 @@ class AddCredentialController implements ControllerInterface
      * @var EntityRepository
      */
     private $credentialRepo;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var Flasher
-     */
-    private $flasher;
 
     /**
      * @var callable
@@ -75,27 +74,24 @@ class AddCredentialController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Request $request
-     * @param Flasher $flasher
+     * @param URI $uri
      * @param callable $random
      * @param Encrypter $encrypter
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        Request $request,
-        Flasher $flasher,
+        URI $uri,
         callable $random,
         Encrypter $encrypter
     ) {
         $this->template = $template;
-        $this->request = $request;
-        $this->flasher = $flasher;
+        $this->uri = $uri;
         $this->random = $random;
         $this->encrypter = $encrypter;
 
         $this->em = $em;
-        $this->credentialRepo = $em->getRepository(Credential::CLASS);
+        $this->credentialRepo = $em->getRepository(Credential::class);
 
         $this->errors = [];
     }
@@ -103,17 +99,16 @@ class AddCredentialController implements ControllerInterface
     /**
      * @inheritDoc
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $form = $this->data();
+        $form = $this->getFormData($request);
 
-        if ($credential = $this->handleForm($form)) {
-            return $this->flasher
-                ->withFlash(sprintf(self::SUCCESS, $credential->name()), 'success')
-                ->load('admin.credentials');
+        if ($credential = $this->handleForm($form, $request)) {
+            $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $credential->name()));
+            return $this->withRedirectRoute($response, $this->uri, 'admin.credentials');
         }
 
-        $this->template->render([
+        return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->errors
         ]);
@@ -121,27 +116,19 @@ class AddCredentialController implements ControllerInterface
 
     /**
      * @param array $data
+     * @param ServerRequestInterface $request
      *
      * @return Credential|null
      */
-    private function handleForm(array $data)
+    private function handleForm(array $data, ServerRequestInterface $request): ?Credential
     {
-        if (!$this->request->isPost()) {
+        if ($request->getMethod() !== 'POST') {
             return null;
         }
 
-        $credential = $this->validateForm(
-            $data['type'],
-            $data['name'],
-            $data['aws_key'],
-            $data['aws_secret'],
-            $data['private_username'],
-            $data['private_path'],
-            $data['private_file']
-        );
+        $credential = $this->validateForm(...array_values($data));
 
         if ($credential) {
-            // persist to database
             $this->em->persist($credential);
             $this->em->flush();
         }
@@ -194,13 +181,13 @@ class AddCredentialController implements ControllerInterface
             $this->errors[] = self::ERR_INVALID_SECRET;
         }
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         if ($dupe = $this->credentialRepo->findOneBy(['name' => $name])) {
             $this->errors[] = self::ERR_DUPLICATE_NAME;
         }
 
-        if ($this->errors) return;
+        if ($this->errors) return null;
 
         $id = call_user_func($this->random);
 
@@ -214,20 +201,22 @@ class AddCredentialController implements ControllerInterface
     }
 
     /**
+     * @param ServerRequestInterface $request
+     *
      * @return array
      */
-    private function data()
+    private function getFormData(ServerRequestInterface $request)
     {
         $form = [
-            'type' => $this->request->post('type'),
-            'name' => $this->request->post('name'),
+            'type' => $request->getParsedBody()['type'] ?? '',
+            'name' => $request->getParsedBody()['name'] ?? '',
 
-            'aws_key' => $this->request->post('aws_key'),
-            'aws_secret' => $this->request->post('aws_secret'),
+            'aws_key' => $request->getParsedBody()['aws_key'] ?? '',
+            'aws_secret' => $request->getParsedBody()['aws_secret'] ?? '',
 
-            'private_username' => $this->request->post('private_username'),
-            'private_path' => $this->request->post('private_path'),
-            'private_file' => $this->request->post('private_file')
+            'private_username' => $request->getParsedBody()['private_username'] ?? '',
+            'private_path' => $request->getParsedBody()['private_path'] ?? '',
+            'private_file' => $request->getParsedBody()['private_file'] ?? ''
         ];
 
         return $form;

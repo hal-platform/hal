@@ -2,37 +2,6 @@ parameters:
     routes.admin:
 
         ################################################################################################################
-        # CREDENTIAL ROUTES
-        ################################################################################################################
-
-        admin.credentials:
-            method: 'GET'
-            route: '/admin/credentials'
-            stack: ['middleware.admin', 'admin.credentials.page']
-
-        admin.credential:
-            method: 'GET'
-            route: '/admin/credentials/:credential'
-            stack: ['middleware.admin', 'middleware.requireEntity', 'admin.credential.page']
-            conditions: {credential: '%routes.regex.guid%'}
-
-        admin.credential.add:
-            method: ['GET', 'POST']
-            route: '/admin/credentials/add'
-            stack: ['middleware.super', 'admin.credential.add.page']
-
-        admin.credential.remove.confirm:
-            method: 'GET'
-            route: '/admin/credentials/:credential/remove'
-            stack: ['middleware.super', 'middleware.requireEntity', 'delete.confirm.page']
-            conditions: {credential: '%routes.regex.guid%'}
-        admin.credential.remove:
-            method: 'POST'
-            route: '/admin/credentials/:credential/remove'
-            stack: ['middleware.super', 'middleware.requireEntity', 'admin.credential.remove.handler']
-            conditions: {credential: '%routes.regex.guid%'}
-
-        ################################################################################################################
         # ADMIN ROUTES - PERMISSIONS
         ################################################################################################################
 

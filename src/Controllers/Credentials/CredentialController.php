@@ -5,11 +5,14 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Admin\Credentials;
+namespace Hal\UI\Controllers\Credentials;
 
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Controllers\TemplatedControllerTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Crypto\Decrypter;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
@@ -18,15 +21,12 @@ use QL\Panthor\TemplateInterface;
 
 class CredentialController implements ControllerInterface
 {
+    use TemplatedControllerTrait;
+
     /**
      * @var TemplateInterface
      */
     private $template;
-
-    /**
-     * @var Credential
-     */
-    private $credential;
 
     /**
      * @var Decrypter
@@ -36,42 +36,41 @@ class CredentialController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $deploymentRepo;
+    private $targetRepo;
 
     /**
      * @param TemplateInterface $template
-     * @param Credential $credential
      * @param EntityManagerInterface $em
      * @param Decrypter $decrypter
      */
     public function __construct(
         TemplateInterface $template,
-        Credential $credential,
         EntityManagerInterface $em,
         $decrypter
     ) {
         $this->template = $template;
-        $this->credential = $credential;
         $this->decrypter = $decrypter;
 
-        $this->deploymentRepo = $em->getRepository(Deployment::CLASS);
+        $this->targetRepo = $em->getRepository(Deployment::class);
     }
 
     /**
      * @inheritDoc
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $credential = $request->getAttribute(Credential::class);
+
         $decrypted = false;
-        if ($this->credential->type() === 'aws') {
-            $decrypted = $this->decrypt($this->credential->aws()->secret());
+        if ($credential->type() === 'aws') {
+            $decrypted = $this->decrypt($credential->aws()->secret());
         }
 
-        $deployments = $this->deploymentRepo->findBy(['credential' => $this->credential]);
+        $targets = $this->targetRepo->findBy(['credential' => $credential]);
 
-        $this->template->render([
-            'credential' => $this->credential,
-            'deployments' => $deployments,
+        return $this->withTemplate($request, $response, $this->template, [
+            'credential' => $credential,
+            'targets' => $targets,
             'decrypted' => $decrypted,
             'decryption_error' => ($decrypted === null)
         ]);
