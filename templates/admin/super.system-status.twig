@@ -1,17 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Agent System Status" %}
 
 {% block content %}
-    <h1>{{ page_title }} - <strong>{{ selected_agent }}</strong></h1>
+    <div class="nav--page">
+        <h1>{{ page_title }} - <strong>{{ selected_agent }}</strong></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
+        </p>
+    </div>
 
     <h2>Agents</h2>
     <ul class="button-list button-list--half">
         {% for agent in agents %}
             {% set btnSelected = agent == selected_agent ? ' btn--selected' : ' btn--not-selected' %}
             <li>
-                <a class="btn{{ btnSelected }}" href="{{ urlFor('admin.system.status.agent', {agent: agent}) }}">{{ agent }}</a>
+                <a class="btn{{ btnSelected }}" href="{{ uriFor('super.system.agent', {'agent': agent}) }}">{{ agent }}</a>
             </li>
         {% endfor %}
     </ul>
@@ -30,9 +36,6 @@
         <p>Unknown. No status available.</p>
     {% endif %}
 
-    <p>
-        <a class="btn" href="{{ urlFor('admin') }}">Admin Dashboard</a>
-    </p>
 {% endblock %}
 
 {% block system_status %}
@@ -135,7 +138,7 @@
                         <tr>
                             <td>{{ macros.status('Error', 'error') }}</td>
                             <td>{{ status.server.environment.name }}</td>
-                            <td><a href="{{ urlFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
+                            <td><a href="{{ uriFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
                             <td>
                                 <div class="pre-wrapper">
                                     <pre class="code_clear">{{ status.detail }}</pre>
@@ -166,7 +169,7 @@
                                 </td>
                                 <td>{{ env }}</td>
 
-                                <td><a href="{{ urlFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
+                                <td><a href="{{ uriFor('server', {'server': status.server.id})}}">{{ status.server.name }}</a></td>
                                 <td>
                                     <div class="pre-wrapper">
                                         <pre class="code_clear">{{ status.detail }}</pre>

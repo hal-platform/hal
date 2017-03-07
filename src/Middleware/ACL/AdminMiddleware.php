@@ -7,85 +7,26 @@
 
 namespace Hal\UI\Middleware\ACL;
 
-use Hal\UI\Controllers\SessionTrait;
-use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\PermissionService;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\TemplateInterface;
+use QL\Hal\Core\Entity\User;
 
 /**
  * Note: Supers also pass this middleware bouncer.
  */
-class AdminMiddleware implements MiddlewareInterface
+class AdminMiddleware extends AbstractPermissionMiddleware
 {
-    use TemplatedControllerTrait;
-    use SessionTrait;
-
-    /**
-     * @var SignedInMiddleware
-     */
-    private $signedInMiddleware;
-
-    /**
-     * @var TemplateInterface
-     */
-    private $template;
-
-    /**
-     * @var PermissionService
-     */
-    private $permissions;
-
-    /**
-     * @param SignedInMiddleware $signedInMiddleware
-     * @param TemplateInterface $template
-     * @param PermissionService $permissions
-     */
-    public function __construct(
-        SignedInMiddleware $signedInMiddleware,
-        TemplateInterface $template,
-        PermissionService $permissions
-    ) {
-        $this->signedInMiddleware = $signedInMiddleware;
-
-        $this->template = $template;
-        $this->permissions = $permissions;
-    }
-
     /**
      * @inheritDoc
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    protected function isAllowed(ServerRequestInterface $request, PermissionService $permissions, User $user): bool
     {
-        $requireAdmin = function(ServerRequestInterface $request, ResponseInterface $response) use ($next) {
-            return $this->deferredMiddleware($request, $response, $next);
-        };
+        $permissions = $permissions->getUserPermissions($user);
 
-        return ($this->signedInMiddleware)($request, $response, $requireAdmin);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
-     *
-     * @return ResponseInterface
-     */
-    public function deferredMiddleware(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-    {
-        $user = $this->getUser($request);
-        $permissions = $this->permissions->getUserPermissions($user);
-
-        // Allow if admin
         if ($permissions->isButtonPusher() || $permissions->isSuper()) {
-            return $next($request, $response);
+            return true;
         }
 
-        // Denied
-        return $this
-            ->withTemplate($request, $response, $this->template)
-            ->withStatus(403);
+        return false;
     }
 }

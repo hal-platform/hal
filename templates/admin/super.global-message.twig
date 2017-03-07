@@ -1,9 +1,15 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 
 {% set page_title = "Global Message" %}
 
 {% block content %}
-    <h1>{{ page_title }}</h1>
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
+        </p>
+    </div>
 
     <h3>Current Message</h3>
     <div class="trailer">
@@ -60,7 +66,7 @@
                     <small class="additional">This tick creates an icon on the header that links to the "Latest Release" page.</small>
                 </li>
             </ul>
-            <input class="btn" type="submit" name="submit" value="Save Message" >
+            <input class="btn" type="submit" name="submit" value="Save Message">
         </form>
     </div>
 {% endblock %}

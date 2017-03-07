@@ -1,22 +1,39 @@
 services:
 
+    ####################################################################################################################
+    # PERMISSIONS
+    ####################################################################################################################
+
     middleware.signed_in:
         class: 'Hal\UI\Middleware\ACL\SignedInMiddleware'
         arguments: ['@uri']
 
     middleware.is_admin:
         class: 'Hal\UI\Middleware\ACL\AdminMiddleware'
-        arguments:
-            - '@middleware.signed_in'
-            - '@denied.twig'
-            - '@permissions'
+        parent: 'middleware.permissions'
+
+    middleware.is_super:
+        class: 'Hal\UI\Middleware\ACL\SuperMiddleware'
+        parent: 'middleware.permissions'
 
     middleware.is_owner:
         class: 'Hal\UI\Middleware\ACL\OwnerMiddleware'
+        parent: 'middleware.permissions'
+
+    middleware.permissions:
+        class: 'Hal\UI\Middleware\ACL\AbstractPermissionMiddleware'
         arguments:
             - '@middleware.signed_in'
-            - '@denied.twig'
+            - '@middleware.permissions.twig'
             - '@permissions'
+    middleware.permissions.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['denied.twig']]]
+
+
+    ####################################################################################################################
+    # ENTITY LOADING
+    ####################################################################################################################
 
     middleware.require_entity:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
@@ -28,6 +45,10 @@ services:
     middleware.nested_entity:
         class: 'Hal\UI\Middleware\NestedEntityMiddleware'
         arguments: ['@notFoundHandler']
+
+    ####################################################################################################################
+    # REMOVAL
+    ####################################################################################################################
 
     middleware.removal_confirmation:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'

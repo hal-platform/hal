@@ -7,79 +7,26 @@
 
 namespace Hal\UI\Middleware\ACL;
 
-use Exception;
 use Hal\UI\Service\PermissionService;
-use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\TemplateInterface;
-use QL\Panthor\Slim\Halt;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use QL\Hal\Core\Entity\User;
 
-class SuperMiddleware implements MiddlewareInterface
+/**
+ * Note: Supers also pass this middleware bouncer.
+ */
+class SuperMiddleware extends AbstractPermissionMiddleware
 {
     /**
-     * @var ContainerInterface
-     */
-    private $di;
-
-    /**
-     * @var LoginMiddleware
-     */
-    private $loginMiddleware;
-
-    /**
-     * @var TemplateInterface
-     */
-    private $template;
-
-    /**
-     * @var PermissionService
-     */
-    private $permissions;
-
-    /**
-     * @var Halt
-     */
-    private $halt;
-
-    /**
-     * @param ContainerInterface $di
-     * @param LoginMiddleware $loginMiddleware
-     * @param TemplateInterface $template
-     * @param PermissionService $permissions
-     */
-    public function __construct(
-        ContainerInterface $di,
-        LoginMiddleware $loginMiddleware,
-        TemplateInterface $template,
-        PermissionService $permissions,
-        Halt $halt
-    ) {
-        $this->di = $di;
-        $this->loginMiddleware = $loginMiddleware;
-
-        $this->template = $template;
-        $this->permissions = $permissions;
-        $this->halt = $halt;
-    }
-
-    /**
      * @inheritDoc
-     * @throws Exception
      */
-    public function __invoke()
+    protected function isAllowed(ServerRequestInterface $request, PermissionService $permissions, User $user): bool
     {
-        // Ensure user is logged in first
-        call_user_func($this->loginMiddleware);
+        $permissions = $permissions->getUserPermissions($user);
 
-        $user = $this->di->get('currentUser');
-        $perm = $this->permissions->getUserPermissions($user);
-
-        if ($perm->isSuper()) {
-            return;
+        if ($permissions->isSuper()) {
+            return true;
         }
 
-        $rendered = $this->template->render();
-
-        call_user_func($this->halt, 403, $rendered);
+        return false;
     }
 }

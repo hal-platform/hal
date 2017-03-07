@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "_partial/macros.twig" as macros %}
 
 {% set page_title = "Admin Dashboard" %}
@@ -9,17 +9,17 @@
     <h2 class="leader">Manage Deployments</h2>
     <ul class="button-list">
         <li>
-            <a href="{{ urlFor('servers') }}" class="btn">
+            <a href="{{ uriFor('servers') }}" class="btn">
                 {{ macros.icon('server') }} Servers
             </a>
         </li>
         <li>
-            <a href="{{ urlFor('environments') }}" class="btn">
+            <a href="{{ uriFor('environments') }}" class="btn">
                 {{ macros.icon('leaf') }} Environments
             </a>
         </li>
         <li>
-            <a href="{{ urlFor('queue.history.page1') }}" class="btn">
+            <a href="{{ uriFor('queue.history.page1') }}" class="btn">
                 {{ macros.icon('in') }} Queue History
             </a>
         </li>
@@ -28,12 +28,12 @@
     <h2 class="leader">User Management</h2>
     <ul class="button-list">
         <li>
-            <a href="{{ urlFor('users') }}" class="btn btn--primary">
+            <a href="{{ uriFor('users') }}" class="btn btn--primary">
                 {{ macros.icon('users') }} Users
             </a>
         </li>
         <li>
-            <a href="{{ urlFor('admin.permissions') }}" class="btn btn--primary">
+            <a href="{{ uriFor('admin.permissions') }}" class="btn btn--primary">
                 {{ macros.icon('safe') }} Permissions
             </a>
         </li>
@@ -42,29 +42,23 @@
     <h2 class="leader">Security</h2>
     <ul class="button-list">
         <li>
-            <a href="{{ urlFor('admin.system.status') }}" class="btn btn--primary">
-                {{ macros.icon('terminal') }} System Status
-            </a>
-        </li>
-
-        <li>
-            <a href="{{ urlFor('admin.credentials') }}" class="btn btn--primary">
+            <a href="{{ uriFor('admin.credentials') }}" class="btn btn--primary">
                 {{ macros.icon('locked') }} Credentials
             </a>
         </li>
         <li>
-            <a href="{{ urlFor('admin.audit.logs.page1') }}" class="btn btn--primary">
-                {{ macros.icon('watch') }} Audit Logs
+            <a href="{{ uriFor('admin.audit_history.page1') }}" class="btn btn--primary">
+                {{ macros.icon('watch') }} Audit History
             </a>
         </li>
     </ul>
 
-    {% if isUserSuper(getCurrentUser()) %}
+    {% if isUserSuper(current_user) %}
         <h2 class="leader">Super Administrators</h2>
         <ul class="button-list">
-            <li><a href="{{ urlFor('admin.super.users') }}" class="btn" >User Management</a></li>
-            <li><a href="{{ urlFor('admin.super.caches') }}" class="btn">Cache Management</a></li>
-            <li><a href="{{ urlFor('admin.super.message') }}" class="btn">Global Message</a></li>
+            <li><a href="{{ uriFor('super.system') }}" class="btn">Build System Status</a></li>
+            <li><a href="{{ uriFor('super.caches') }}" class="btn">Cache Management</a></li>
+            <li><a href="{{ uriFor('super.message') }}" class="btn">Global Message</a></li>
         </ul>
 
         <h3>Server Information</h3>
@@ -73,7 +67,7 @@
                 <dt class="split__title"><strong>Hostname</strong></dt>
                 <dd>
                     <div class="pre-wrapper">
-                        <pre>{{ servername }}</pre>
+                        <pre>{{ server_name }}</pre>
                     </div>
                 </dd>
 
@@ -94,8 +88,8 @@
                 <dt class="split__title"><strong>Hal Push File</strong></dt>
                 <dd>
                     <div class="pre-wrapper">
-                        {% if pushfile %}
-                            <pre>{{ pushfile }}</pre>
+                        {% if push_file %}
+                            <pre>{{ push_file }}</pre>
                         {% else %}
                             <pre>No push file found. Are you in dev?</pre>
                         {% endif %}

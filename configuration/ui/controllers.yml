@@ -3,17 +3,6 @@ services:
     static.controller:
         class: 'Hal\UI\Controllers\StaticController'
 
-    denied.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['denied.twig']]]
-
-    delete.confirm.page:
-        parent: 'static.controller'
-        arguments: ['@delete.confirm.twig']
-    delete.confirm.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['delete.confirm.twig']]]
-
     ############################################################################
 
     dashboard.page:
@@ -512,4 +501,80 @@ services:
     push.rollback.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['push/rollback.twig']]]
+
+    ####################################################################################################################
+    # ADMIN CONTROLLERS
+    ####################################################################################################################
+
+    admin.dashboard.page:
+        class: 'Hal\UI\Controllers\Admin\DashboardController'
+        arguments:
+            - '@admin.dashboard.twig'
+            - '%cookie.encryption.secret%'
+            - '%session.encryption.secret%'
+            - '@hal.pushfile.path'
+    admin.dashboard.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/dashboard.twig']]]
+
+    admin.audit_history.page:
+        class: 'Hal\UI\Controllers\Admin\AuditHistoryController'
+        arguments:
+            - '@admin.audit_history.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    admin.audit_history.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/audit-history.twig']]]
+
+    ####################################################################################################################
+    # SUPER CONTROLLERS
+    ####################################################################################################################
+
+    super.users.page:
+        class: 'Hal\UI\Controllers\Super\UserManagementController'
+        arguments:
+            - '@super.users.twig'
+            - '@doctrine.em'
+    super.users.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/super.users-management.twig']]]
+
+    super.caches.page:
+        class: 'Hal\UI\Controllers\Super\CacheManagementController'
+        arguments:
+            - '@super.caches.twig'
+            - '@redis'
+            - '@root'
+    super.caches.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/super.cache-management.twig']]]
+    super.caches.handler:
+        class: 'Hal\UI\Controllers\Super\CacheManagementHandler'
+        arguments:
+            - '@redis'
+
+    super.message.page:
+        class: 'Hal\UI\Controllers\Super\GlobalMessageController'
+        arguments:
+            - '@super.message.twig'
+            - '@global.message'
+            - '@uri'
+    super.message.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/super.global-message.twig']]]
+
+    super.system.page:
+        class: 'Hal\UI\Controllers\Super\SystemStatusController'
+        arguments:
+            - '@super.system.twig'
+            - '@doctrine.em'
+            - '@redis'
+            - '@json'
+            - '@clock'
+            - '@notFoundHandler'
+            - '%hal.agents%'
+    super.system.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['admin/super.system-status.twig']]]
 
