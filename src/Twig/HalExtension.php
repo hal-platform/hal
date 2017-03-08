@@ -83,6 +83,7 @@ class HalExtension extends Twig_Extension
         return [
             // util
             new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
+            new Twig_SimpleFunction('hash', [$this, 'hash']),
 
             // name
             new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),
@@ -136,7 +137,8 @@ class HalExtension extends Twig_Extension
     /**
      * Attempt to pretty print JSON string
      *
-     * @param $json
+     * @param string $json
+     *
      * @return string
      */
     public function jsonPretty($json)
@@ -153,6 +155,7 @@ class HalExtension extends Twig_Extension
 
     /**
      * @param string|int $id
+     *
      * @return string
      */
     public function formatBuildId($id)
@@ -166,6 +169,7 @@ class HalExtension extends Twig_Extension
 
     /**
      * @param string|int $id
+     *
      * @return string
      */
     public function formatPushId($id)
@@ -179,6 +183,7 @@ class HalExtension extends Twig_Extension
 
     /**
      * @param string $event
+     *
      * @return string
      */
     public function formatEvent($event)
@@ -194,6 +199,7 @@ class HalExtension extends Twig_Extension
     /**
      * @param string $value
      * @param int $size
+     *
      * @return string
      */
     public function sliceString($value, $size = 20)
@@ -204,6 +210,22 @@ class HalExtension extends Twig_Extension
         } else {
             return substr($value, 0, $size) . '...';
         }
+    }
+
+    /**
+     * Get a simple hash for a provided value.
+     *
+     * @param mixed $data
+     *
+     * @return string
+     */
+    public function hash($data)
+    {
+        if (!is_string($data)) {
+            $data = json_encode($data);
+        }
+
+        return md5($data);
     }
 
     /**
