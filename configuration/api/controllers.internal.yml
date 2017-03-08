@@ -1,5 +1,13 @@
 services:
 
+    api_internal.deployment_status:
+        class: 'Hal\UI\Controllers\APIInternal\DeploymentStatusController'
+        arguments:
+            - '@doctrine.em'
+            - '@pools'
+            - '@permissions'
+            - '@api.response_formatter'
+
     api_internal.settings.favorite_applications.add:
         class: 'Hal\UI\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'
         arguments:

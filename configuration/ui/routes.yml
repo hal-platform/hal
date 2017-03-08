@@ -110,11 +110,11 @@ parameters:
             route: '/settings/favorite-applications/{application:%r.digit%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
-                settings.favorite_applications.add.handler:
+                settings.favorite_applications.add:
                     method: 'POST'
                     route: ''
                     stack: ['api_internal.settings.favorite_applications.add']
-                settings.favorite_applications.remove.handler:
+                settings.favorite_applications.remove:
                     method: 'POST'
                     route: '/remove'
                     stack: ['api_internal.settings.favorite_applications.remove']

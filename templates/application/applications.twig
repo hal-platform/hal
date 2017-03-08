@@ -97,7 +97,7 @@
         <td>
             {% if currentUser.settings.isFavoriteApplication(application) %}
                 <form method="post"
-                      action="{{ uriFor('settings.favorite_applications.remove.handler', {'application': application.id}) }}"
+                      action="{{ uriFor('settings.favorite_applications.remove', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
                       class="form--fav">
                     <label class="form--fav__label fav-added">
@@ -107,7 +107,7 @@
                 </form>
             {% else %}
                 <form method="post"
-                      action="{{ uriFor('settings.favorite_applications.add.handler', {'application': application.id}) }}"
+                      action="{{ uriFor('settings.favorite_applications.add', {'application': application.id}) }}"
                       data-app-id="{{ application.id }}"
                       class="form--fav">
                     <label class="form--fav__label fav-normal">
