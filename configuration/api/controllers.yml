@@ -110,3 +110,18 @@ services:
     event.api:
         class: 'Hal\UI\Controllers\API\EventController'
         arguments: ['@api.response_formatter', '@api_normalizer.event']
+
+    ####################################################################################################################
+    # Environments CONTROLLERS
+    ####################################################################################################################
+
+    environments.api:
+        class: 'Hal\UI\Controllers\API\Environment\EnvironmentsController'
+        arguments: ['@api.response_formatter', '@doctrine.em', '@api_normalizer.environment']
+
+    environment.api:
+        class: 'Hal\UI\Controllers\API\Environment\EnvironmentController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@problem.renderer'

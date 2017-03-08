@@ -38,7 +38,7 @@ class EnvironmentNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.environment', ['id' => $environment->id()]],
+            ['api.environment', ['environment' => $environment->id()]],
             $environment->name()
         );
     }

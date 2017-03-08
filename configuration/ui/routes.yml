@@ -491,9 +491,6 @@ parameters:
 
         pools: {route: '/derp38', stack: []}
 
-        api.environments: {route: '/derp14', stack: []}
-        api.environment: {route: '/derp24', stack: []}
-
         api.application: {route: '/derp23', stack: []}
         api.applications: {route: '/derp16', stack: []}
         api.groups: {route: '/derp17', stack: []}

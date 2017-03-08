@@ -135,32 +135,19 @@ parameters:
                     route: '/job-events/{event:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'event.api']
 
-        # api.environments:
-        #     method: 'GET'
-        #     route: '/api/environments'
-        #     stack: ['middleware.api.cached', 'api.environments']
+                ################################################################################################################
+                # Environment ROUTES
+                ################################################################################################################
 
-        # api.environment:
-        #     method: 'GET'
-        #     route: '/api/environments/:id'
-        #     stack: ['middleware.api.cached', 'api.environment']
-        #     conditions: {id: '%routes.api.regex.digit%'}
+                api.environments:
+                    method: 'GET'
+                    route: '/environments'
+                    stack: ['environments.api']
 
-        # api.servers:
-        #     method: 'GET'
-        #     route: '/api/servers'
-        #     stack: ['middleware.api.cached', 'api.servers']
-        # api.servers.paged:
-        #     method: 'GET'
-        #     route: '/api/servers/page/:page'
-        #     stack: ['middleware.api.cached', 'api.servers']
-        #     conditions: {page: '%routes.api.regex.digit%'}
-
-        # api.server:
-        #     method: 'GET'
-        #     route: '/api/servers/:id'
-        #     stack: ['middleware.api.cached', 'api.server']
-        #     conditions: {id: '%routes.api.regex.digit%'}
+                api.environment:
+                    method: 'GET'
+                    route: '/environments/{environment:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'environment.api']
 
         # api.groups:
         #     method: 'GET'
