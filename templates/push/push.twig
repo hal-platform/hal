@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import '_partial/macros.twig' as macros %}
+{% import 'macros.twig' as macros %}
 {% set js_components = ["push.info"] %}
 
 {% set page_title = "Push : " ~ push.application.name %}
@@ -115,7 +115,7 @@
         </dl>
     </div>
 
-    <h2>Event Log</h2>
-    {% include '_partial/log-table.twig' with { logs: logs, canLoad: push.isFinished } %}
+    <h2>Push Events</h2>
+    {% include 'build/partial.event-table.twig' with {logs: logs, canLoad: push.isFinished } only %}
 
 {% endblock %}

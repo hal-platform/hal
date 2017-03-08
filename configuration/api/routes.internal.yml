@@ -1,0 +1,37 @@
+parameters:
+
+    routes.api_internal:
+
+        api_internal:
+            route: '/api/internal'
+            routes:
+
+                ################################################################################################################
+                # INTERNAL API ROUTES (for use by local javascript)
+                ################################################################################################################
+
+                # api_internal.deployment.status:
+                #     method: 'GET'
+                #     route: '/api/internal/applications/:application/environments/:environment/status'
+                #     stack: ['middleware.login', 'middleware.api.require_entity', 'api_internal.deployment.status']
+                #     conditions:
+                #         application: '%routes.regex.digit%'
+                #         environment: '%routes.regex.digit%'
+
+                ################################################################################################################
+                # INTERNAL API ROUTES (for use by local javascript)
+                ################################################################################################################
+
+                # Note: this endpoint is also available for direct form posts
+                api_internal.favorite_applications:
+                    route: '/settings/favorite-applications/{application:%r.digit%}'
+                    stack: ['middleware.signed_in', 'middleware.api_require_entity']
+                    routes:
+                        api_internal.settings.favorite_applications.add:
+                            method: 'PUT'
+                            route: ''
+                            stack: ['api_internal.settings.favorite_applications.add']
+                        api_internal.settings.favorite_applications.remove:
+                            method: 'DELETE'
+                            route: ''
+                            stack: ['api_internal.settings.favorite_applications.remove']

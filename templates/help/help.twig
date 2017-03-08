@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% import "macros.twig" as macros %}
 
 {% set page_title = 'Help' %}
 
@@ -211,5 +211,5 @@
     <p>
         Details about the latest release are always available at <a href="{{ uriFor('latest.release') }}">/latest-release</a>.
     </p>
-    {% include '_partial/help.release-notes.twig' %}
+    {% include 'help/partial.release-history.twig' %}
 {% endblock %}

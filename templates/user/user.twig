@@ -1,30 +1,37 @@
-{% extends 'base.html.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% extends 'base.twig' %}
+{% import "macros.twig" as macros %}
 
-{% set isSelf = (currentHalUser.id == user.id) %}
 {% set name = getUsersName(user) %}
-{% set displayName = isSeriousBusinessMode() ? name : getUsersActualName(user) %}
+{% set displayName = is_serious_business_mode ? name : getUsersActualName(user) %}
 
 {% set page_title = 'User : ' ~ name %}
 
-{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
-{% set isSuper = isUserSuper(getCurrentUser()) %}
+{% set is_admin = isUserAdminOrSuper(current_user) %}
+{% set is_super = isUserSuper(current_user) %}
 
 {% block content %}
 
+    <div class="nav--page">
+        <h1>User - <strong>{{ user.handle }}</strong></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('users.page1') }}">Back to Users</a>
+        </p>
+    </div>
+
     <div class="flag">
         <div class="flag__figure">
-            <img src="{{ getAvatarLink(user.Email) }}">
+            <img src="{{ getAvatarLink(user.email) }}">
         </div>
         <div class="flag__body">
 
-            <h1 class="mbn">
-                {% if isSeriousBusinessMode() %}
+            <h2 class="mbn">
+                {% if is_serious_business_mode %}
                     {{ displayName }}
                 {% else %}
                     <span data-initial="{{ displayName }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
                 {% endif %}
-            </h1>
+            </h2>
 
             <h4 class="mtn">Astronaut</h4>
             <p>Discovery One</p>
@@ -36,32 +43,62 @@
         <ul class="list--bare mbn">
             <li>
                 <span class="split__title">Email</span>
-                {% if user.Email %}
-                    <a href="mailto:{{ user.Email }}">{{ user.Email }}</a>
+                {% if user.email %}
+                    <a href="mailto:{{ user.email }}">{{ user.email }}</a>
                 {% else %}
                     None
                 {% endif %}
             </li>
 
             <li>
-                <span class="split__title">GitHub Profile</span>
-                <a href="{{ githubUserUrl(user.handle) }}">{{ githubUserUrl(user.handle) }}</a> {{ macros.icon('github') }}
+                <span class="split__title">Username</span>
+                {{ user.handle }}
             </li>
         </dl>
     </div>
 
+    {% if is_admin %}
+        <h2 class="leader">Access Tokens</h2>
+        <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
+
+        {% if not user.tokens.isEmpty %}
+
+            <table class="table--spacing-medium" data-tablesaw-mode="stack">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token in user.tokens %}
+                        <tr>
+                            <td>{{ token.label }}</td>
+                            <td class="tr">
+                                <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
+                                    Revoke <span class="tablesaw-collapse">Access Token</span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>User has no personal access tokens saved.</p>
+        {% endif %}
+
+    {% endif %}
+
     <h2>Status</h2>
-    {% include '_partial/user.status.twig' with {showHalStatus: true} %}
-
-    <h2>Activity</h2>
-    <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Total Builds</dt>
-            <dd>{{ builds }}</dd>
-
-            <dt class="split__title">Total Pushes</dt>
-            <dd>{{ pushes }}</dd>
-        </dl>
-    </div>
+    {% include 'user/partial.user-status.twig' with {
+        showHalStatus: true,
+        isAdmin: is_admin,
+        isSuper: is_super,
+        user: user,
+        userPerm: user_permission,
+        leadApplications: lead_applications,
+        prodApplications: prod_applications,
+        nonProdApplications: non_prod_applications,
+    } only %}
 
 {% endblock %}

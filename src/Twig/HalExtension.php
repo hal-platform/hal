@@ -82,8 +82,6 @@ class HalExtension extends Twig_Extension
     {
         return [
             // util
-            new Twig_SimpleFunction('isSeriousBusinessMode', [$this, 'isSeriousBusinessMode']),
-            new Twig_SimpleFunction('hash', [$this, 'hash']),
             new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
 
             // name
@@ -117,7 +115,6 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
             new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
             new Twig_SimpleFilter('sliceString', [$this, 'sliceString']),
-            new Twig_SimpleFilter('displayUrl', [$this, 'formatUrlForDisplay']),
 
             new Twig_SimpleFilter('formatDeploymentDetailsLabel', [$this, 'formatDeploymentDetailsLabel']),
         ];
@@ -207,42 +204,6 @@ class HalExtension extends Twig_Extension
         } else {
             return substr($value, 0, $size) . '...';
         }
-    }
-
-    /**
-     * Get a simple hash for a provided value.
-     *
-     * @param mixed $data
-     * @return string
-     */
-    public function hash($data)
-    {
-        return md5($data);
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isSeriousBusinessMode()
-    {
-        return false;
-        // return (bool) $this->cookies->getCookie('seriousbusiness');
-    }
-
-    /**
-     * Format a URL string for display
-     *
-     * @param string $url
-     * @return string
-     */
-    public function formatUrlForDisplay($url)
-    {
-        if (!is_string($url)) {
-            return $url;
-        }
-
-        // pretty dumb atm
-        return rtrim(preg_replace('#^http[s]?://#', '', $url), '/');
     }
 
     /**

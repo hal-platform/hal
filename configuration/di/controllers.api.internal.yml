@@ -6,13 +6,6 @@ services:
     # Used by application frontend only, not for public use.
     ####################################################################################################################
 
-    api_internal.github.user.repositories:
-        class: 'Hal\UI\Controllers\ApiInternal\GitHubReposController'
-        arguments:
-            - '@github'
-            - '@slim.response'
-            - '@slim.route.parameters'
-
     api_internal.deployment.status:
         class: 'Hal\UI\Controllers\ApiInternal\DeploymentStatusController'
         arguments:
@@ -23,25 +16,3 @@ services:
             - '@hal.application'
             - '@hal.environment'
             - '@currentUser'
-
-    api_internal.settings.favorite_applications.add:
-        class: 'Hal\UI\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'
-        arguments:
-            - '@doctrine.em'
-            - '@slim.request'
-            - '@slim.response'
-            - '@session.flasher'
-            - '@json'
-            - '@doctrine.random'
-            - '@currentUser'
-            - '@hal.application'
-    api_internal.settings.favorite_applications.remove:
-        class: 'Hal\UI\Controllers\User\FavoriteApplications\RemoveFavoriteApplicationHandler'
-        arguments:
-            - '@doctrine.em'
-            - '@slim.request'
-            - '@slim.response'
-            - '@session.flasher'
-            - '@json'
-            - '@currentUser'
-            - '@hal.application'

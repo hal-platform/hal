@@ -20,6 +20,10 @@ services:
         class: 'Hal\UI\Middleware\ACL\OwnerMiddleware'
         parent: 'middleware.permissions'
 
+    middleware.is_admin_or_self:
+        class: 'Hal\UI\Middleware\ACL\AdminOrSelfMiddleware'
+        parent: 'middleware.permissions'
+
     middleware.permissions:
         class: 'Hal\UI\Middleware\ACL\AbstractPermissionMiddleware'
         arguments:
@@ -29,7 +33,6 @@ services:
     middleware.permissions.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['denied.twig']]]
-
 
     ####################################################################################################################
     # ENTITY LOADING

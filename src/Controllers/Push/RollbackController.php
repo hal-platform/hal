@@ -62,11 +62,7 @@ class RollbackController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $deployment = $request->getAttribute(Deployment::class);
 
-        $params = $request
-            ->getAttribute('route')
-            ->getArguments();
-
-        $page = $this->getCurrentPage($params);
+        $page = $this->getCurrentPage($request);
         if ($page === null) {
             return ($this->notFound)($request, $response);
         }

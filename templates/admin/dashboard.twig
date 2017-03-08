@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% import "macros.twig" as macros %}
 
 {% set page_title = "Admin Dashboard" %}
 
@@ -28,7 +28,7 @@
     <h2 class="leader">User Management</h2>
     <ul class="button-list">
         <li>
-            <a href="{{ uriFor('users') }}" class="btn btn--primary">
+            <a href="{{ uriFor('users.page1') }}" class="btn btn--primary">
                 {{ macros.icon('users') }} Users
             </a>
         </li>

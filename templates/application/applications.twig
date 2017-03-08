@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
 {% import _self as page_macros %}
-{% import "_partial/macros.twig" as macros %}
+{% import "macros.twig" as macros %}
 {% set js_components = ["favorites", "collapsible"] %}
 
 {% set page_title = "Applications" %}
@@ -87,7 +87,7 @@
 {% endblock %}
 
 {% macro app_row(currentUser, application, allow_collapse) %}
-    {% import "_partial/macros.twig" as macros %}
+    {% import "macros.twig" as macros %}
 
     {% if allow_collapse %}
         <tr class="js-collapsible-row">

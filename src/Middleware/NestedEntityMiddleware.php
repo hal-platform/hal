@@ -14,6 +14,8 @@ use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Entity\UserType;
+use QL\Hal\Core\Entity\UserPermission;
 use QL\Panthor\MiddlewareInterface;
 
 /**
@@ -70,6 +72,24 @@ class NestedEntityMiddleware implements MiddlewareInterface
             $user = $request->getAttribute(User::class);
 
             if ($user !== $token->user()) {
+                return ($this->notFound)($request, $response);
+            }
+        }
+
+        // $userType->user() - $user
+        if ($userType = $request->getAttribute(UserType::class)) {
+            $user = $request->getAttribute(User::class);
+
+            if ($user !== $userType->user()) {
+                return ($this->notFound)($request, $response);
+            }
+        }
+
+        // $userPermission->user() - $user
+        if ($userPermission = $request->getAttribute(UserPermission::class)) {
+            $user = $request->getAttribute(User::class);
+
+            if ($user !== $userPermission->user()) {
                 return ($this->notFound)($request, $response);
             }
         }

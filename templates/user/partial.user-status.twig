@@ -1,0 +1,110 @@
+{% import "macros.twig" as macros %}
+
+{# user #}
+{% set leadApplications = leadApplications|default([]) %}
+{% set nonProdApplications = nonProdApplications|default([]) %}
+{% set prodApplications = prodApplications|default([]) %}
+
+{% set isAdmin = isAdmin|default(false) %}
+{% set isSuper = isSuper|default(false) %}
+{% set showHalStatus = showHalStatus|default(false) %}
+
+<div class="details-box">
+    <ul class="list--bare">
+        {% if showHalStatus %}
+            <li class="mvs">
+                <span class="split__title">Hal</span>
+                <p class="mvn">
+                    {% if user.isActive %}
+                        {{ macros.status('Active', 'success', 'tick') }}
+                    {% else %}
+                        {{ macros.status('Disabled', 'error', 'nope') }}
+                    {% endif %}
+                </p>
+            </li>
+        {% endif %}
+
+        <li class="mvs">
+            <span class="split__title">User Types</span>
+            <ul class="inline-list--space">
+                {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
+                    {% if userPerm.isLead %}
+                        <li>{{ macros.status('Owner', 'notice') }}</li>
+                    {% endif %}
+                    {% if userPerm.isButtonPusher %}
+                        <li>{{ macros.status('Admin', 'warning') }}</li>
+                    {% endif %}
+                    {% if userPerm.isSuper %}
+                        <li>{{ macros.status('Super', 'error') }}</li>
+                    {% endif %}
+                {% else %}
+                    <li>Standard</li>
+                {% endif %}
+            </ul>
+        </li>
+
+        {% if leadApplications %}
+            <li class="mvs">
+                <span class="split__title">Application Owner</span>
+                <ul class="inline-list--comma">
+                    {% for application in leadApplications %}
+                        <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if nonProdApplications %}
+            <li class="mvs">
+                <span class="split__title">Non-production Permissions</span>
+                <ul class="inline-list--comma">
+                    {% for application in nonProdApplications %}
+                        <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if prodApplications %}
+            <li class="mvs">
+                <span class="split__title">Production Permissions</span>
+                <ul class="inline-list--comma">
+                    {% for application in prodApplications %}
+                        <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endif %}
+    </ul>
+
+    {% if isAdmin %}
+        <ul class="button-list mtm">
+            <li><a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a></li>
+            <li>
+                <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">
+                    <input class="btn btn--action" type="submit" value="Refresh User Cache">
+                </form>
+            </li>
+
+            {% if isSuper or not userPerm.isSuper %}
+                <li>
+                    {% if user.isActive %}
+                        <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
+                            <input class="btn btn--destructive" type="submit" value="Disable User">
+                            <input name="disable_user" type="hidden" value="1">
+                        </form>
+                    {% else %}
+                        <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
+                            <input class="btn btn--destructive" type="submit" value="Enable User">
+                            <input name="enable_user" type="hidden" value="1">
+                        </form>
+                    {% endif %}
+                </li>
+            {% endif %}
+
+            <li><a class="btn" href="{{ uriFor('admin.permissions') }}">User Permissions</a></li>
+            <li><a class="btn" href="{{ uriFor('admin.permissions.deployment') }}">Deployment Permissions</a></li>
+        </ul>
+    {% endif %}
+
+</div>

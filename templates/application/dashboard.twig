@@ -1,12 +1,12 @@
 {% extends 'base.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% import "macros.twig" as macros %}
 {% import _self as page_macros %}
 {% set js_components = ["status"] %}
 
 {% set page_title = "Status : " ~ application.name %}
 
 {% set canUserBuild = canUserBuild(current_user, application) %}
-{% set isBusinessTime = isSeriousBusinessMode() %}
+{% set isBusinessTime = is_serious_business_mode %}
 
 {% block content %}
     <h1>Application Status - <strong>{{ application.name }}</strong></h1>
@@ -214,7 +214,7 @@
 {% endblock %}
 
 {% macro pushCard(application, deployment, active) %}
-    {% import '_partial/macros.twig' as macros %}
+    {% import 'macros.twig' as macros %}
 
     <article class="card card--{{ deployment.server.environment.name }}">
         <header class="card__header">

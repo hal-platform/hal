@@ -1,0 +1,103 @@
+{% extends 'base.twig' %}
+{% import _self as page_macros %}
+
+{% set page_title = "User Permissions" %}
+
+{% set can_remove = isUserAdminOrSuper(current_user) %}
+{% if isUserAdmin(current_user) and user_types.btn_pusher|length < 2 %}
+    {% set can_remove = false %}
+{% endif %}
+
+{% set can_remove_super = isUserSuper(current_user) and user_types.super|length > 1 %}
+
+{% block content %}
+
+    <h1>{{ page_title }}</h1>
+
+    <h2>Application Owners</h2>
+    {{ page_macros.userTable(user_types.lead, 'lead', can_remove) }}
+
+    <h2>Deployment Adminstrators</h2>
+    {{ page_macros.userTable(user_types.btn_pusher, 'btn_pusher', can_remove) }}
+
+    <h2>Hal Administrators</h2>
+    {{ page_macros.userTable(user_types.super, 'super', can_remove_super) }}
+
+    <h2>User Types</h2>
+    {% include 'user/partial.user-legend.twig' %}
+
+    <ul class="button-list">
+        <li>
+            <a href="{{ uriFor('admin') }}" class="btn">Admin Dashboard</a>
+        </li>
+        <li>
+            <a href="{{ uriFor('admin.permissions.deployment') }}" class="btn">Deployment Permissions</a>
+        </li>
+        <li>
+            <a href="{{ uriFor('users.page1') }}" class="btn btn--primary">Users</a>
+        </li>
+    </ul>
+
+{% endblock %}
+
+{% macro userTable(users_by_type, table_type, can_remove) %}
+    {% import "macros.twig" as macros %}
+
+    {% if users_by_type %}
+        <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th class="t15">User ID</th>
+                    <th class="t20">Username</th>
+                    <th>Name</th>
+
+                    {% if table_type == 'lead' %}
+                        <th>Application</th>
+                    {% endif %}
+
+                    {% if can_remove %}
+                        <th></th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in users_by_type %}
+                    {% set user = type.user %}
+
+                    <tr>
+                        <td><a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.id }}</a></td>
+                        <td>{{ user.handle }}</td>
+                        <td>
+                            {% if is_serious_business_mode %}
+                                {{ user.name }}
+                            {% else %}
+                                {{ getUsersActualName(user) }}
+                            {% endif %}
+                        </td>
+
+                        {% if table_type == 'lead' %}
+                            <td>
+                                {% if type.application %}
+                                    <a href="{{ uriFor('application', {'application': type.application.id}) }}">{{ type.application.name }}</a>
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                        {% endif %}
+
+                        {% if can_remove %}
+                            <td class="tr">
+                                <a class="btn btn--tiny btn--destructive" href="{{ uriFor('admin.permissions.type.remove', {'user': user.id, 'user_type': type.id}) }}">Remove</a>
+                            </td>
+                        {% endif %}
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <p>There are no users of this type.</p>
+    {% endif %}
+
+{% endmacro %}

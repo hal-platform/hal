@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
-{% import '_partial/macros.twig' as macros %}
-{% import '_partial-form/macros.twig' as form_macros %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.form.twig' as form_macros %}
 {% import _self as page_macros %}
 {% set js_components = ["push.start"] %}
 
@@ -194,7 +194,7 @@
 {% endmacro %}
 
 {% macro render_deployment_row(deployment, push, selected, canUserPush) %}
-    {% import '_partial/macros.twig' as macros %}
+    {% import 'macros.twig' as macros %}
 
     {% set isSelected = (deployment.id == selected) %}
     {% set inProgress = push.status in ['Waiting', 'Pushing'] %}

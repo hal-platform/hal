@@ -91,8 +91,8 @@ class RequireEntityMiddleware implements MiddlewareInterface
             'event' => EventLog::class,
 
             'user' => User::class,
-            'userPermission' => UserPermission::class,
-            'userType' => UserType::class,
+            'user_permission' => UserPermission::class,
+            'user_type' => UserType::class,
             'token' => Token::class,
 
             'organization' => Group::class,

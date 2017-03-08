@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers;
 
 use Hal\UI\API\Hyperlink;
+use Psr\Http\Message\ServerRequestInterface;
 
 trait PaginationTrait
 {
@@ -16,13 +17,19 @@ trait PaginationTrait
      *
      * Returns null if page is invalid.
      *
-     * @param array $routeParams
+     * @param ServerRequestInterface $request
      *
      * @return int|null
      */
-    private function getCurrentPage(array $routeParams): ?int
+    private function getCurrentPage(ServerRequestInterface $request): ?int
     {
-        $page = (isset($routeParams['page'])) ? intval($routeParams['page']) : 1;
+        if (!$route = $request->getAttribute('route')) {
+            return null;
+        }
+
+        $params = $route->getArguments();
+
+        $page = (isset($params['page'])) ? intval($params['page']) : 1;
 
         // 404, invalid page
         if ($page < 1) {

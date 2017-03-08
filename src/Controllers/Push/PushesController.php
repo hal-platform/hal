@@ -71,11 +71,7 @@ class PushesController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
         $searchFilter = $request->getQueryParams()['search'] ?? '';
 
-        $params = $request
-            ->getAttribute('route')
-            ->getArguments();
-
-        $page = $this->getCurrentPage($params);
+        $page = $this->getCurrentPage($request);
         if ($page === null) {
             return ($this->notFound)($request, $response);
         }

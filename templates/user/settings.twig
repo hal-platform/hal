@@ -1,5 +1,5 @@
-{% extends 'base.html.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% extends 'base.twig' %}
+{% import "macros.twig" as macros %}
 
 {% set page_title = 'Settings' %}
 
@@ -9,7 +9,7 @@
         <h1>User Settings</h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ urlFor('user', {user: user.id}) }}">User Profile</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('user', {'user': user.id}) }}">User Profile</a>
         </p>
     </div>
 
@@ -28,7 +28,7 @@
     <form method="post">
 
         <label class="checkbox--switch">
-            <input type="checkbox" name="seriousbusiness" value="1" {{ isSeriousBusinessMode() ? ' checked' : '' }}>
+            <input type="checkbox" name="seriousbusiness" value="1" {{ is_serious_business_mode ? ' checked' : '' }}>
             <b class="checkbox--switch__pill"></b>Use <strong>Serious Business&trade;</strong> mode
         </label>
 
@@ -45,13 +45,13 @@
 {% endblock %}
 
 {% block access_tokens %}
-    <small>Personal Access Tokens can be used to access the <a href="{{ urlFor('api.index') }}">Hal API</a>.</small>
+    <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
 
     {% if tokens %}
         <table class="table--spacing-medium" data-tablesaw-mode="stack">
             <thead>
                 <tr>
-                    <th>Label</th>
+                    <th>Name</th>
                     <th>Token</th>
                     <th></th>
                 </tr>
@@ -62,7 +62,7 @@
                         <td>{{ token.label }}</td>
                         <td><code>{{ token.value }}</code></td>
                         <td class="tr">
-                            <a class="btn btn--tiny btn--destructive" href="{{ urlFor('user.token.remove', {id: user.id, token: token.id}) }}">
+                            <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
                                 Revoke <span class="tablesaw-collapse">Access Token</span>
                             </a>
                         </td>
@@ -74,11 +74,11 @@
         <p>You have no personal access tokens saved.</p>
     {% endif %}
 
-    <form action="{{ urlFor('user.token.add', {id: user.id}) }}" method="post">
+    <form action="{{ uriFor('user.token.add', {'user': user.id}) }}" method="post">
         <h3>Add new personal access token</h3>
 
         <div class="form-wrapper">
-            <label for="token-label">Token Label</label>
+            <label for="token-label">Token Name</label>
             <input type="text" name="label" id="token-label" maxlength="50" class="text-input" required>
 
             <p class="leader">

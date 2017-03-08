@@ -69,7 +69,7 @@
                 {% else -%}
                     {{- macros.intro(severity) -}}
                 {%- endif -%}
-                {{- isSeriousBusinessMode() ? macros.nofunzone() : macros.terminal() -}}
+                {{- is_serious_business_mode ? macros.nofunzone() : macros.terminal() -}}
             </div>
         </div>
 

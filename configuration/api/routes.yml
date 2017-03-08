@@ -1,0 +1,234 @@
+parameters:
+    # routes.api.regex.alphanum: '[A-Za-z0-9]+'
+    # routes.api.regex.digit: '[0-9]+'
+    # routes.api.regex.githubname: '[A-Za-z0-9\.\-]+'
+
+    # routes.api.regex.buildId: '[A-Za-z0-9\_\-\.]+'
+    # routes.api.regex.pushId: '%routes.api.regex.buildId%'
+    # routes.api.regex.queue.refresh: '[A-Za-z0-9\+\-\.]+'
+
+    routes.api:
+
+        ################################################################################################################
+        # PUBLIC API ROUTES
+        ################################################################################################################
+
+        api.docs:
+            route: '/docs/api'
+            stack: ['docs.api']
+
+        api.index:
+            method: 'GET'
+            route: '/api'
+            stack: ['index.api']
+
+        api:
+            route: '/api'
+            stack: ['middleware.api_caching']
+            routes:
+
+                ################################################################################################################
+                # QUEUE ROUTES
+                ################################################################################################################
+
+                api.queue:
+                    method: 'GET'
+                    route: '/queue'
+                    stack: ['queue.api']
+
+                api.queue.refresh:
+                    method: 'GET'
+                    route: '/queue-refresh/{jobs:%r.api.queue%}'
+                    stack: ['queue.refresh.api']
+
+                ################################################################################################################
+                # APPLICATION ROUTES
+                ################################################################################################################
+
+                # are these application routes or build/push routes?
+                # It's nice to be able to use route groups to nest common url prefixes.
+
+                application_api_routes:
+                    route: '/applications/{application:%r.digit%}'
+                    stack: ['middleware.api_require_entity']
+                    routes:
+                        api.builds:
+                            method: 'GET'
+                            route: '/builds'
+                            stack: ['builds.api']
+                        api.builds.history:
+                            method: 'GET'
+                            route: '/builds/page/{page:%r.digit%}'
+                            stack: ['builds.api']
+
+                        api.pushes:
+                            method: 'GET'
+                            route: '/pushes'
+                            stack: ['pushes.api']
+                        api.pushes.history:
+                            method: 'GET'
+                            route: '/pushes/page/{page:%r.digit%}'
+                            stack: ['pushes.api']
+
+                ################################################################################################################
+                # SERVER ROUTES
+                ################################################################################################################
+
+                api.servers:
+                    method: 'GET'
+                    route: '/servers'
+                    stack: ['servers.api']
+
+                api.servers.paged:
+                    method: 'GET'
+                    route: '/servers/page/{page:%r.digit%}'
+                    stack: ['servers.api']
+
+                api.server:
+                    method: 'GET'
+                    route: '/servers/{server:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'server.api']
+
+                ################################################################################################################
+                # TARGET ROUTES
+                ################################################################################################################
+
+                api.target:
+                    method: 'GET'
+                    route: '/targets/{target:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'target.api']
+
+                ################################################################################################################
+                # BUILD ROUTES
+                ################################################################################################################
+
+                api.build:
+                    method: 'GET'
+                    route: '/builds/{build:%r.build%}'
+                    stack: ['middleware.api_require_entity', 'build.api']
+
+                api.build.events:
+                    method: 'GET'
+                    route: '/builds/{build:%r.build%}/events'
+                    stack: ['middleware.api_require_entity', 'build.events.api']
+
+                ################################################################################################################
+                # PUSH ROUTES
+                ################################################################################################################
+
+                api.push:
+                    method: 'GET'
+                    route: '/pushes/{push:%r.release%}'
+                    stack: ['middleware.api_require_entity', 'push.api']
+
+                api.push.events:
+                    method: 'GET'
+                    route: '/pushes/{push:%r.release%}/events'
+                    stack: ['middleware.api_require_entity', 'push.events.api']
+
+                ################################################################################################################
+                # EVENT ROUTES
+                ################################################################################################################
+
+                api.event:
+                    method: 'GET'
+                    route: '/job-events/{event:%r.guid%}'
+                    stack: ['middleware.api_require_entity', 'event.api']
+
+        # api.environments:
+        #     method: 'GET'
+        #     route: '/api/environments'
+        #     stack: ['middleware.api.cached', 'api.environments']
+
+        # api.environment:
+        #     method: 'GET'
+        #     route: '/api/environments/:id'
+        #     stack: ['middleware.api.cached', 'api.environment']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+
+        # api.servers:
+        #     method: 'GET'
+        #     route: '/api/servers'
+        #     stack: ['middleware.api.cached', 'api.servers']
+        # api.servers.paged:
+        #     method: 'GET'
+        #     route: '/api/servers/page/:page'
+        #     stack: ['middleware.api.cached', 'api.servers']
+        #     conditions: {page: '%routes.api.regex.digit%'}
+
+        # api.server:
+        #     method: 'GET'
+        #     route: '/api/servers/:id'
+        #     stack: ['middleware.api.cached', 'api.server']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+
+        # api.groups:
+        #     method: 'GET'
+        #     route: '/api/groups'
+        #     stack: ['middleware.api.cached', 'api.groups']
+
+        # api.group:
+        #     method: 'GET'
+        #     route: '/api/groups/:id'
+        #     stack: ['middleware.api.cached', 'api.group']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+
+        # api.users:
+        #     method: 'GET'
+        #     route: '/api/users'
+        #     stack: ['middleware.api.cached', 'api.users']
+        # api.users.paged:
+        #     method: 'GET'
+        #     route: '/api/users/page/:page'
+        #     stack: ['middleware.api.cached', 'api.users']
+        #     conditions: {page: '%routes.api.regex.digit%'}
+
+        # api.user:
+        #     method: 'GET'
+        #     route: '/api/users/:id'
+        #     stack: ['middleware.api.cached', 'api.user']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+
+        # api.deployment:
+        #     method: 'GET'
+        #     route: '/api/deployments/:id'
+        #     stack: ['middleware.api.cached', 'api.deployment']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+
+        # # @todo change this url because it is terrible
+        # api.deployment.lastpush:
+        #     method: 'GET'
+        #     route: '/api/deployments/:id/last-push'
+        #     stack: ['middleware.api.cached', 'api.deployment.lastpush']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+
+        # api.deployment.history:
+        #     method: 'GET'
+        #     route: '/api/deployments/:id/pushes'
+        #     stack: ['middleware.api.cached', 'api.deployment.history']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+        # api.deployment.history.paged:
+        #     method: 'GET'
+        #     route: '/api/deployments/:id/pushes/page/:page'
+        #     stack: ['middleware.api.cached', 'api.deployment.history']
+        #     conditions:
+        #         id: '%routes.api.regex.digit%'
+        #         page: '%routes.api.regex.digit%'
+
+        # api.applications:
+        #     method: 'GET'
+        #     route: '/api/applications'
+        #     stack: ['middleware.api.cached', 'api.applications']
+
+        # api.application:
+        #     method: 'GET'
+        #     route: '/api/applications/:id'
+        #     stack: ['middleware.api.cached', 'api.application']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+
+        # api.deployments:
+        #     method: 'GET'
+        #     route: '/api/applications/:id/deployments'
+        #     stack: ['middleware.api.cached', 'api.deployments']
+        #     conditions: {id: '%routes.api.regex.digit%'}
+

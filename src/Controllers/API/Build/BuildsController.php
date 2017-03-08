@@ -76,11 +76,7 @@ class BuildsController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
 
-        $params = $request
-            ->getAttribute('route')
-            ->getArguments();
-
-        $page = $this->getCurrentPage($params);
+        $page = $this->getCurrentPage($request);
         if ($page === null) {
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }

@@ -1,12 +1,12 @@
 {% extends 'base.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% import "macros.twig" as macros %}
 {% set js_components = ["queue"] %}
 
 {% set page_title = 'Dashboard' %}
 
 {% block content %}
 
-    {% if isSeriousBusinessMode() %}
+    {% if is_serious_business_mode %}
         <h1>Dashboard</h1>
     {% else %}
         <h1>

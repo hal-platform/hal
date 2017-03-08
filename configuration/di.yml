@@ -61,6 +61,7 @@ services:
         calls:
             # %routes% is auto loaded by parent
             - ['addRoutes', ['%routes.api%']]
+            - ['addRoutes', ['%routes.api_internal%']]
             # - ['addRoutes', ['%routes.api.crud%']]
             # - ['addRoutes', ['%routes.admin%']]
             # - ['addRoutes', ['%routes.application%']]
@@ -83,6 +84,9 @@ services:
     slim.global_middleware.template_context:
         class: 'Hal\UI\Middleware\TemplateContextGlobalMiddleware'
         arguments: ['@twig.context']
+    slim.global_middleware.srs_business:
+        class: 'Hal\UI\Middleware\SrsBusinessGlobalMiddleware'
+        arguments: ['@cookie.handler']
 
     hal.pushfile.path:
         class: 'stdClass'

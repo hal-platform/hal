@@ -1,20 +1,24 @@
 imports:
     - resource: '../vendor/ql/mcp-panthor/configuration/panthor-slim.yml'
     - resource: '../vendor/ql/mcp-panthor/configuration/panthor.yml'
+
     - resource: 'di.yml'
     - resource: 'di/services.yml'
+
     - resource: 'ui/controllers.yml'
     - resource: 'ui/middleware.yml'
+    - resource: 'ui/routes.yml'
+
     - resource: 'api/controllers.yml'
     - resource: 'api/middleware.yml'
     - resource: 'api/services.yml'
+    - resource: 'api/routes.yml'
+
+    - resource: 'api/controllers.internal.yml'
+    - resource: 'api/routes.internal.yml'
+
     - resource: 'config.global.yml'
     - resource: 'config.env.yml'
-    # - resource: routes/routes.admin.yml
-    - resource: routes/routes.api.yml
-    # - resource: routes/routes.api.crud.yml
-    # - resource: routes/routes.application.yml
-    - resource: routes/routes.yml
 
 parameters:
     # environment independent parameters
@@ -34,6 +38,7 @@ parameters:
         - 'slim.global_middleware.flash'
         - 'slim.global_middleware.session'
         - 'slim.global_middleware.user_session'
+        - 'slim.global_middleware.srs_business'
 
 
     # Route condition regexes

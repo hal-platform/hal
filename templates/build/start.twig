@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% import "macros.twig" as macros %}
 {% import _self as page_macros %}
 {% set js_components = ["build.start"] %}
 
@@ -72,10 +72,10 @@
             </ul>
 
             {# Dynamic warning, for when Hal cannot find a matching radio option #}
-            {% set warningLabel = isSeriousBusinessMode() ? 'Start Build?' : 'Start Build. Maybe?' %}
+            {% set warningLabel = is_serious_business_mode ? 'Start Build?' : 'Start Build. Maybe?' %}
             <div class="leader js-build-warning" data-label="Start Build" data-label-warning="{{ warningLabel }}">
 
-                {% if isSeriousBusinessMode() %}
+                {% if is_serious_business_mode %}
                     {% set alert_message = 'A git reference cannot be found from your search query. Hal will attempt to resolve this reference on the backend.' %}
                     {% set alert_details = '' %}
                 {% else %}
@@ -306,7 +306,7 @@
 {% endblock %}
 
 {% macro search(type, ref) %}
-    {% import "_partial/macros.twig" as macros %}
+    {% import "macros.twig" as macros %}
 
     {# This is a search listing generated for the javascript #}
 

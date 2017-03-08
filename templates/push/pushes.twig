@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import '_partial/pagination.twig' as pagination %}
+{% import 'macros.pagination.twig' as pagination %}
 {% set js_components = ["job.updater"] %}
 
 {% set page_title = "Push History : " ~ application.name %}

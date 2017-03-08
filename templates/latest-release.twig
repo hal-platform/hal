@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "_partial/macros.twig" as macros %}
+{% import "macros.twig" as macros %}
 
 {% set page_title = 'Latest Release' %}
 
@@ -15,7 +15,7 @@
         <li><a href="http://git/hal/hal/releases">GitHub release notes</a></li>
         <li>
             Hal release notes
-            {% include '_partial/help.release-notes.twig' %}
+            {% include 'help/partial.release-history.twig' %}
         </li>
     </ul>
 

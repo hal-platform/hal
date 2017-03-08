@@ -83,6 +83,55 @@ services:
         calls: [['setTemplate', ['help/application-setup.twig']]]
 
     ####################################################################################################################
+    # USER CONTROLLERS
+    ####################################################################################################################
+
+    user.page:
+        class: 'Hal\UI\Controllers\User\UserController'
+        arguments: ['@user.twig', '@permissions']
+    user.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/user.twig']]]
+
+    users.page:
+        class: 'Hal\UI\Controllers\User\UsersController'
+        arguments:
+            - '@users.twig'
+            - '@doctrine.em'
+            - '@notFoundHandler'
+    users.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/users.twig']]]
+
+    user.toggle.handler:
+        class: 'Hal\UI\Controllers\User\ToggleUserController'
+        arguments: ['@doctrine.em', '@uri']
+
+    user.settings.page:
+        class: 'Hal\UI\Controllers\User\SettingsController'
+        arguments: ['@user.settings.twig']
+    user.settings.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['user/settings.twig']]]
+    user.settings.middleware:
+        class: 'Hal\UI\Controllers\User\SettingsMiddleware'
+        arguments:
+            - '@cookie.handler'
+            - '@uri'
+            - '%cookie.preferences.ttl%'
+
+    user.token.add.handler:
+        class: 'Hal\UI\Controllers\User\Token\AddTokenController'
+        arguments:
+            - '@doctrine.em'
+            - '@uri'
+            - '@doctrine.random'
+
+    user.token.remove.handler:
+        class: 'Hal\UI\Controllers\User\Token\RemoveTokenController'
+        arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
     # SERVER CONTROLLERS
     ####################################################################################################################
 
@@ -563,6 +612,68 @@ services:
     admin.credential.remove.handler:
         class: 'Hal\UI\Controllers\Credentials\RemoveCredentialController'
         arguments: ['@doctrine.em', '@uri']
+
+    ####################################################################################################################
+    # ADMIN - PERMISSION CONTROLLERS
+    ####################################################################################################################
+
+    admin.permissions.page:
+        class: 'Hal\UI\Controllers\Permissions\PermissionsController'
+        arguments: ['@admin.permissions.twig', '@doctrine.em']
+    admin.permissions.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/permissions.twig']]]
+
+    admin.permissions.deployment.page:
+        class: 'Hal\UI\Controllers\Permissions\DeploymentPermissionsController'
+        arguments: ['@admin.permissions.deployment.twig', '@doctrine.em']
+    admin.permissions.deployment.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/deployments.twig']]]
+
+    admin.permissions.add.page:
+        class: 'Hal\UI\Controllers\Permissions\AddPermissionsController'
+        arguments:
+            - '@admin.permissions.add.twig'
+            - '@doctrine.em'
+            - '@permissions'
+            - '@json'
+            - '@uri'
+            - '@doctrine.random'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.page.ttl%']]
+    admin.permissions.add.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/permission.add.twig']]]
+
+    admin.permissions.remove.handler:
+        class: 'Hal\UI\Controllers\Permissions\RemovePermissionsController'
+        arguments: ['@permissions', '@uri']
+    admin.permissions.remove.middleware:
+        class: 'Hal\UI\Controllers\Permissions\RemovePermissionsMiddleware'
+        arguments:
+            - '@doctrine.em'
+            - '@admin.permissions.remove.twig'
+            - '@permissions'
+            - '@uri'
+    admin.permissions.remove.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/permission.remove.twig']]]
+
+    admin.permissions.deployment.remove.handler:
+        class: 'Hal\UI\Controllers\Permissions\RemoveDeploymentPermissionsController'
+        arguments: ['@permissions', '@uri']
+    admin.permissions.deployment.remove.middleware:
+        class: 'Hal\UI\Controllers\Permissions\RemoveDeploymentPermissionsMiddleware'
+        arguments: [ '@admin.permissions.deployment.remove.twig', '@permissions']
+    admin.permissions.deployment.remove.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['permissions/deployment.remove.twig']]]
+
+    admin.permissions.refresh.handler:
+        class: 'Hal\UI\Controllers\Permissions\RefreshUserPermissionsController'
+        arguments: ['@permissions', '@uri']
 
     ####################################################################################################################
     # SUPER CONTROLLERS

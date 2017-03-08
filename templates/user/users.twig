@@ -1,27 +1,27 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import _self as page_macros %}
+{% import 'macros.pagination.twig' as pagination %}
 
 {% set page_title = "Users" %}
 
-{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) %}
+{% set is_admin = isUserAdminOrSuper(current_user) %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>
 
-    {{ page_macros.userTable(users, true, isAdmin) }}
+    {{ pagination.pagination(page, last, 'users') }}
 
-    {% if isAdmin and inactiveUsers %}
-        <h2>Inactive Users</h2>
-        {{ page_macros.userTable(inactiveUsers, false) }}
-    {% endif %}
+    {{ page_macros.user_table(users, user_permissions, true, is_admin, is_serious_business_mode) }}
+
+    {{ pagination.pagination(page, last, 'users') }}
 
     <h2>User Types</h2>
-    {% include '_partial/user.types.twig' %}
+    {% include 'user/partial.user-legend.twig' %}
 
 {% endblock %}
 
-{% macro userTable(users, showTypes, isAdmin) %}
-    {% import "_partial/macros.twig" as macros %}
+{% macro user_table(users, user_permissions, show_types, is_admin, is_srs) %}
+    {% import "macros.twig" as macros %}
 
     {% if users %}
         <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
@@ -31,21 +31,25 @@
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
-                    {% if showtypes %}
+                    {% if show_types %}
                         <th></th>
                     {% endif %}
                 </tr>
             </thead>
             <tbody>
             {% for user in users %}
-                {% set user_types = user.type %}
-                {% set user = user.user %}
+                {% set user_types = user_permissions[user.id] %}
 
                 <tr>
-                    <td><a href="{{ urlFor('user', {'user': user.id}) }}">{{ user.id }}</a></td>
+                    <td>
+                        <a href="{{ uriFor('user', {'user': user.id}) }}">{{ user.id }}</a>
+                        {% if not user.isActive %}
+                            {{ macros.status('Disabled', 'error') }}
+                        {% endif %}
+                    </td>
                     <td>{{ user.handle }}</td>
                     <td>
-                        {% if isSeriousBusinessMode() %}
+                        {% if is_srs %}
                             {{ user.name }}
                         {% else %}
                             {{ getUsersActualName(user) }}
@@ -53,12 +57,12 @@
                     </td>
                     <td>{{ user.email }}</td>
 
-                    {% if showTypes %}
+                    {% if show_types %}
                         <td class="tr">
                             {% if user_types.hasType %}
                                 <ul class="inline-list--space">
                                     {% if user_types.isLead %}
-                                        <li>{{ macros.status('Lead', 'notice') }}</li>
+                                        <li>{{ macros.status('Owner', 'notice') }}</li>
                                     {% endif %}
                                     {% if user_types.isButtonPusher %}
                                         <li>{{ macros.status('Admin', 'warning') }}</li>
@@ -67,12 +71,12 @@
                                         <li>{{ macros.status('Super', 'error') }}</li>
                                     {% endif %}
 
-                                    {% if isAdmin %}
-                                        <li><a href="{{ urlFor('admin.permissions.add', {user: user.id }) }}">{{ macros.icon('add') }} Permission</a></li>
+                                    {% if is_admin and user.isActive %}
+                                        <li><a href="{{ uriFor('admin.permissions.add', {user: user.id }) }}">{{ macros.icon('add') }} Permission</a></li>
                                     {% endif %}
                                 </ul>
-                            {% elseif isAdmin %}
-                                <a href="{{ urlFor('admin.permissions.add', {user: user.id }) }}">{{ macros.icon('add') }} Permission</a>
+                            {% elseif is_admin and user.isActive %}
+                                <a href="{{ uriFor('admin.permissions.add', {user: user.id }) }}">{{ macros.icon('add') }} Permission</a>
                             {% endif %}
                         </td>
                     {% endif %}
