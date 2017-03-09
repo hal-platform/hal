@@ -18,6 +18,11 @@ imports:
     - resource: 'api-internal/controllers.yml'
     - resource: 'api-internal/routes.yml'
 
+    - resource: 'api-writes/controllers.yml'
+    - resource: 'api-writes/middleware.yml'
+    - resource: 'api-writes/services.yml'
+    - resource: 'api-writes/routes.yml'
+
     - resource: 'config.global.yml'
     - resource: 'config.env.yml'
 

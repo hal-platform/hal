@@ -1,0 +1,18 @@
+services:
+    middleware.api_writes_token:
+        class: 'Hal\UI\Middleware\ACL\TokenMiddleware'
+        arguments: ['@doctrine.em', '@problem.renderer']
+        calls:
+            - ['setLoggerMessageFactory', ['@mcp.logger.factory']]
+
+    middleware.api_writes_require_entity:
+        class: 'Hal\UI\Middleware\RequireEntityMiddleware'
+        arguments:
+            - '@doctrine.em'
+            - '@problem.renderer'
+            - '@notFoundHandler'
+            - true
+
+    middleware.api_writes_rate_limiter:
+        class: 'Hal\UI\Middleware\APIRateLimitingMiddleware'
+        arguments: ['@problem.renderer', '@rate_limiter']

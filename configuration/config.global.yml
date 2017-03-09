@@ -70,8 +70,8 @@ parameters:
     # caching
     ############################################################################
 
-    # To set a specific cache time for a route, add the route name as a key,
-    # and the time to cache in seconds. If not specified, default time is 10 seconds.
+    # To set a specific cache time for a route, add the route name as a key and the time to cache in seconds.
+    # Default time is 10 seconds.
     api.cachetimes:
         # these are lower because having the most update to date status is critical
         api.build: 5
@@ -99,6 +99,11 @@ parameters:
     date.timezone: 'America/Detroit'
 
     gravatar.fallback: 'skluck.github.io/hal/halprofile_100.jpg'
+
+    # Allowed requests for route x user per MINUTE
+    # Default is 120 per minute (2 req/sec)
+    api.ratelimits:
+        api.build.start: 10
 
     ############################################################################
     # cookie

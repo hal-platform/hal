@@ -38,9 +38,7 @@ services:
             # %routes% is auto loaded by parent
             - ['addRoutes', ['%routes.api%']]
             - ['addRoutes', ['%routes.api_internal%']]
-            # - ['addRoutes', ['%routes.api.crud%']]
-            # - ['addRoutes', ['%routes.admin%']]
-            # - ['addRoutes', ['%routes.application%']]
+            - ['addRoutes', ['%routes.api_writes%']]
 
     slim.global_middleware:
         class: 'QL\Panthor\Bootstrap\GlobalMiddlewareLoader'
