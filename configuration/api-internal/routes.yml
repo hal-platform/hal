@@ -4,18 +4,21 @@ parameters:
 
         api_internal:
             route: '/api/internal'
+            stack: ['middleware.signed_in']
+
             routes:
 
                 # Used by: Child deploy on build page
                 api_internal.deployment_status:
                     method: 'GET'
                     route: '/applications/{application:%r.digit%}/environments/{environment:%r.digit%}/status'
-                    stack: ['middleware.signed_in', 'middleware.api_require_entity', 'api_internal.deployment_status']
+                    stack: ['middleware.api_require_entity', 'api_internal.deployment_status']
 
                 # Note: this endpoint is also available for direct form posts
                 api_internal.favorite_applications:
                     route: '/settings/favorite-applications/{application:%r.digit%}'
-                    stack: ['middleware.signed_in', 'middleware.api_require_entity']
+                    stack: ['middleware.api_require_entity']
+
                     routes:
                         api_internal.settings.favorite_applications.add:
                             method: 'PUT'

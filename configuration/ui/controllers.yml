@@ -170,9 +170,6 @@ services:
     server.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['server/server.edit.twig']]]
-    server.validator:
-        class: 'Hal\UI\Validator\ServerValidator'
-        arguments: ['@doctrine.em']
 
     server.remove.handler:
         class: 'Hal\UI\Controllers\Server\RemoveServerController'
@@ -441,9 +438,6 @@ services:
         class: 'Hal\UI\Controllers\Target\RemoveTargetController'
         arguments: ['@doctrine.em', '@uri']
 
-    target.validator:
-        class: 'Hal\UI\Validator\TargetValidator'
-        arguments: ['@doctrine.em']
 
     ####################################################################################################################
     # BUILD CONTROLLERS
@@ -487,13 +481,6 @@ services:
             - '@push.start.validator'
             - '@sticky.environment'
             - '@uri'
-    build.start.validator:
-        class: 'Hal\UI\Validator\BuildValidator'
-        arguments:
-            - '@doctrine.em'
-            - '@github'
-            - '@permissions'
-            - '@utility.id.generator'
 
     ####################################################################################################################
     # PUSH CONTROLLERS
@@ -533,13 +520,6 @@ services:
             - '@push.start.validator'
             - '@sticky.environment'
             - '@uri'
-    push.start.validator:
-        class: 'Hal\UI\Validator\PushValidator'
-        arguments:
-            - '@doctrine.em'
-            - '@permissions'
-            - '@utility.id.generator'
-            - '@doctrine.random'
 
     push.rollback.page:
         class: 'Hal\UI\Controllers\Push\RollbackController'

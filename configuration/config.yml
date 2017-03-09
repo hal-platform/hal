@@ -7,6 +7,7 @@ imports:
 
     - resource: 'ui/controllers.yml'
     - resource: 'ui/middleware.yml'
+    - resource: 'ui/services.yml'
     - resource: 'ui/routes.yml'
 
     - resource: 'api/controllers.yml'
@@ -14,8 +15,8 @@ imports:
     - resource: 'api/services.yml'
     - resource: 'api/routes.yml'
 
-    - resource: 'api/controllers.internal.yml'
-    - resource: 'api/routes.internal.yml'
+    - resource: 'api-internal/controllers.yml'
+    - resource: 'api-internal/routes.yml'
 
     - resource: 'config.global.yml'
     - resource: 'config.env.yml'

@@ -29,30 +29,6 @@ services:
     errorHandler:        { alias: 'panthor.handler.errorHandler' }
 
     ####################################################################################################################
-    # RUN TIME INJECTED (SYNTHETIC) SERVICES
-    ####################################################################################################################
-
-    # Set by login or token middleware
-    currentUser:         { synthetic: true }
-
-    hal.build:           { synthetic: true }
-    hal.push:            { synthetic: true }
-
-    hal.user:            { synthetic: true }
-    hal.userType:        { synthetic: true }
-    hal.userPermission:  { synthetic: true }
-
-    hal.application:     { synthetic: true }
-    hal.credential:      { synthetic: true }
-    hal.deployment:      { synthetic: true }
-    hal.encrypted:       { synthetic: true }
-    hal.environment:     { synthetic: true }
-    hal.server:          { synthetic: true }
-
-    hal.view:            { synthetic: true }
-    hal.pool:            { synthetic: true }
-
-    ####################################################################################################################
     # SLIM
     ####################################################################################################################
 

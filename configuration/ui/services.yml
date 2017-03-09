@@ -1,0 +1,24 @@
+services:
+
+    build.start.validator:
+        class: 'Hal\UI\Validator\BuildValidator'
+        arguments:
+            - '@doctrine.em'
+            - '@github'
+            - '@permissions'
+            - '@utility.id.generator'
+    push.start.validator:
+        class: 'Hal\UI\Validator\PushValidator'
+        arguments:
+            - '@doctrine.em'
+            - '@permissions'
+            - '@utility.id.generator'
+            - '@doctrine.random'
+
+    server.validator:
+        class: 'Hal\UI\Validator\ServerValidator'
+        arguments: ['@doctrine.em']
+
+    target.validator:
+        class: 'Hal\UI\Validator\TargetValidator'
+        arguments: ['@doctrine.em']

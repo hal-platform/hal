@@ -1,17 +1,5 @@
 parameters:
-    # routes.api.regex.alphanum: '[A-Za-z0-9]+'
-    # routes.api.regex.digit: '[0-9]+'
-    # routes.api.regex.githubname: '[A-Za-z0-9\.\-]+'
-
-    # routes.api.regex.buildId: '[A-Za-z0-9\_\-\.]+'
-    # routes.api.regex.pushId: '%routes.api.regex.buildId%'
-    # routes.api.regex.queue.refresh: '[A-Za-z0-9\+\-\.]+'
-
     routes.api:
-
-        ################################################################################################################
-        # PUBLIC API ROUTES
-        ################################################################################################################
 
         api.docs:
             route: '/docs/api'
