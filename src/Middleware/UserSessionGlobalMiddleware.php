@@ -15,6 +15,8 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\User;
+use QL\MCP\Logger\MessageFactoryInterface;
+use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -47,6 +49,11 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     private $uri;
 
     /**
+     * @var MessageFactoryInterface
+     */
+    private $factory;
+
+    /**
      * @param EntityManagerInterface $em
      * @param URI $uri
      */
@@ -68,10 +75,16 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        // sign out user if not found
-        if (!$user = $this->userRepo->find($userID)) {
+        $user = $this->userRepo->find($userID);
+
+        // sign out user if not found, or is disabled
+        if (!$user || !$user->isActive()) {
             // @todo CHANGE TO POST!!!!
             return $this->withRedirectRoute($response, $this->uri, self::ROUTE_SIGNOUT);
+        }
+
+        if ($this->factory) {
+            $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->handle());
         }
 
         // Add user to the server attrs for controllers/middleware
@@ -82,5 +95,15 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
 
         // Save user to request attributes
         return $next($request, $response);
+    }
+
+    /**
+     * @param MessageFactoryInterface $factory
+     *
+     * @return void
+     */
+    public function setLoggerMessageFactory(MessageFactoryInterface $factory)
+    {
+        $this->factory = $factory;
     }
 }

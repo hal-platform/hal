@@ -27,7 +27,6 @@ use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
-use QL\Panthor\HTTPProblem\HTTPProblem;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 use QL\Panthor\MiddlewareInterface;
 use Slim\Route;

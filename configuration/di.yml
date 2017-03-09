@@ -54,6 +54,8 @@ services:
     slim.global_middleware.user_session:
         class: 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
         arguments: ['@doctrine.em', '@uri']
+        calls:
+            - ['setLoggerMessageFactory', ['@mcp.logger.factory']]
     slim.global_middleware.flash:
         class: 'Hal\UI\Middleware\FlashGlobalMiddleware'
         arguments: ['@cookie.handler']

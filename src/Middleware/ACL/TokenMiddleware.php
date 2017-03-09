@@ -9,14 +9,16 @@ namespace Hal\UI\Middleware\ACL;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\Controllers\APITrait;
+use Hal\UI\Middleware\UserSessionGlobalMiddleware;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\MCP\Logger\MessageFactoryInterface;
 use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\Exception\HTTPProblemException;
-use Slim\Http\Request;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
 /**
  * Possible error codes for oauth token failure:
@@ -24,18 +26,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class TokenMiddleware implements MiddlewareInterface
 {
+    use APITrait;
+
     const HEADER_NAME = 'Authorization';
     const REGEX_BEARER_AUTH = '#^(?:bearer|oauth|token) ([0-9a-zA-Z]{40,40})$#i';
 
-    const ERR_AUTH_REQUIRED = 'Token authorization is required';
-    const ERR_AUTH_IS_WEIRD = 'Authorization type or access token is invalid';
-    const ERR_INVALID_TOKEN = 'Access token is invalid';
-    const ERR_DISABLED = 'User account "%s" is disabled.';
-
-    /**
-     * @var ContainerInterface
-     */
-    private $di;
+    private const ERR_AUTH_HEADER_INVALID = 'Authorization access token is missing is invalid';
+    private const ERR_INVALID_TOKEN = 'Access token is invalid';
+    private const ERR_DISABLED = 'User account "%s" is disabled.';
 
     /**
      * @var EntityRepository
@@ -43,63 +41,80 @@ class TokenMiddleware implements MiddlewareInterface
     private $tokenRepo;
 
     /**
-     * @var Request
+     * @var ProblemRendererInterface
      */
-    private $request;
+    private $renderer;
 
     /**
-     * @var MessageFactoryInterface
+     * @var MessageFactoryInterface|null
      */
-    private $logFactory;
+    private $factory;
 
     /**
-     * @param ContainerInterface $di
      * @param EntityManagerInterface $em
-     * @param Request $request
-     * @param MessageFactoryInterface $logFactory
+     * @param ProblemRendererInterface $renderer
      */
     public function __construct(
-        ContainerInterface $di,
         EntityManagerInterface $em,
-        Request $request,
-        MessageFactoryInterface $logFactory
+        ProblemRendererInterface $renderer
     ) {
-        $this->di = $di;
-        $this->tokenRepo = $em->getRepository(Token::CLASS);
-
-        $this->request = $request;
-        $this->logFactory = $logFactory;
+        $this->tokenRepo = $em->getRepository(Token::class);
+        $this->renderer = $renderer;
     }
 
     /**
      * @inheritDoc
-     * @throws HTTPProblemException
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $token = $this->validateAuthorization();
+        if (!$token = $this->validateAuthorization($request)) {
+            return $this->withProblem($this->renderer, $response, 403, self::ERR_AUTH_HEADER_INVALID);
+        }
 
-        $user = $this->validateToken($token);
+        if (!$user = $this->validateToken($token)) {
+            return $this->withProblem($this->renderer, $response, 403, self::ERR_INVALID_TOKEN);
+        }
 
-        $this->logFactory->setDefaultProperty(MessageInterface::USER_NAME, 'Token: ' . $user->handle());
+        if (!$user->isActive()) {
+            return $this->withProblem($this->renderer, $response, 403, sprintf(self::ERR_DISABLED, $user->handle()));
+        }
 
-        $this->di->set('currentUser', $user);
+        if ($this->factory) {
+            $this->factory->setDefaultProperty(MessageInterface::USER_NAME, sprintf('Token: %s', $user->handle()));
+        }
+
+        // Add user to the server attrs for controllers/middleware
+        $request = $request->withAttribute(UserSessionGlobalMiddleware::USER_ATTRIBUTE, $user);
+
+        return $next($request, $response);
     }
 
     /**
-     * @throws HTTPProblemException
+     * @param MessageFactoryInterface $factory
      *
-     * @return string
+     * @return void
      */
-    private function validateAuthorization()
+    public function setLoggerMessageFactory(MessageFactoryInterface $factory)
     {
-        if (!$authorization = $this->request->headers['Authorization']) {
-            throw new HTTPProblemException(403, self::ERR_AUTH_REQUIRED);
+        $this->factory = $factory;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     *
+     * @return string|null
+     */
+    private function validateAuthorization(ServerRequestInterface $request): ?string
+    {
+        $authorization = $request->getHeaderLine(self::HEADER_NAME);
+
+        if (!$authorization) {
+            return null;
         }
 
         // Validate the header
         if (preg_match(static::REGEX_BEARER_AUTH, $authorization, $match) !== 1) {
-            throw new HTTPProblemException(403, self::ERR_AUTH_IS_WEIRD);
+            return null;
         }
 
         $token = array_pop($match);
@@ -109,22 +124,14 @@ class TokenMiddleware implements MiddlewareInterface
     /**
      * @param string $token
      *
-     * @throws HTTPProblemException
-     *
-     * @return User
+     * @return User|null
      */
-    private function validateToken($token)
+    private function validateToken($token): ?User
     {
         if (!$token = $this->tokenRepo->findOneBy(['value' => $token])) {
-            throw new HTTPProblemException(403, self::ERR_INVALID_TOKEN);
+            return null;
         }
 
-        $user = $token->user();
-
-        if (!$user->isActive()) {
-            throw new HTTPProblemException(403, sprintf(self::ERR_DISABLED, $user->handle()));
-        }
-
-        return $user;
+        return $token->user();
     }
 }
