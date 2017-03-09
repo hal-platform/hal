@@ -105,7 +105,7 @@ class CacheManagementHandler implements MiddlewareInterface
         }
 
         if ($keys) {
-            call_user_func_array([$this->predis, 'del'], $keys);
+            $this->predis->del(...$keys);
         }
     }
 
@@ -125,7 +125,7 @@ class CacheManagementHandler implements MiddlewareInterface
         }
 
         if ($keys) {
-            call_user_func_array([$this->predis, 'del'], $keys);
+            $this->predis->del(...$keys);
         }
     }
 }
