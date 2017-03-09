@@ -28,7 +28,7 @@ class HypermediaFormatter
 
         // force self link
         if ($selfLink && !isset($links['self'])) {
-            $links = ['self' => $selfLink] + $links;
+            $links = ['self' => ['href' => $selfLink]] + $links;
         }
 
         // hide embedded if empty
