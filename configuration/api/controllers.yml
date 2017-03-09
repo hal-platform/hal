@@ -117,7 +117,10 @@ services:
 
     environments.api:
         class: 'Hal\UI\Controllers\API\Environment\EnvironmentsController'
-        arguments: ['@api.response_formatter', '@doctrine.em', '@api_normalizer.environment']
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.environment'
 
     environment.api:
         class: 'Hal\UI\Controllers\API\Environment\EnvironmentController'
