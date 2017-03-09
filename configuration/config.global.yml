@@ -104,6 +104,7 @@ parameters:
     # Default is 120 per minute (2 req/sec)
     api.ratelimits:
         api.build.start: 10
+        api.deploy: 20
 
     ############################################################################
     # cookie

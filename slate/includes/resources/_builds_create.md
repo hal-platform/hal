@@ -14,11 +14,6 @@ Authorization: token "HAL_TOKEN"
 }
 ```
 
-``` http
-HTTP/1.1 201 OK
-Content-Type: application/hal+json
-```
-
 ```php
 <?php
 $client = new Client([
@@ -44,6 +39,12 @@ curl \
 ```
 
 > ### Response - Success
+
+
+```
+HTTP/1.1 201 OK
+Content-Type: application/hal+json
+```
 
 ```json
 {
@@ -92,6 +93,11 @@ curl \
 
 > ### Response - Client Error
 
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+```
+
 ```json
 {
     "status": 400,
@@ -103,13 +109,13 @@ curl \
 }
 ```
 
-Create a build. Builds are created with the status of "Pending" or "waiting". Builds are added the queue and processed
+Create a build. Builds are created with the status of "Pending" or "Waiting". Builds are added the queue and processed
 as soon as an agent is available.
 
 Clients must authenticate to use this endpoint.
 
 <aside class="warning">
-    This endpoint is currently rate-limited. An application/environment pair can only be built every <b>10 seconds</b>.
+    This endpoint is rate-limited. An application/environment can be built <b>10 times per minute</b>.
 </aside>
 
 ### HTTP Request
@@ -139,7 +145,7 @@ Field          | Description
 -------------- | -----------
 environment    | The ID or name of the environment to build
 reference      | The reference from the VCS repository to the code snapshot to build.
-deployments    | **Optional** - A list of IDs of deployments to automatically push if build is successful.
+targets        | **Optional** - A list of IDs of deployment targets to automatically deploy if build is successful.
 
 <aside class="notice">
     Hal understands the following formats for <b>reference</b>.

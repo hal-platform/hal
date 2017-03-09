@@ -25,6 +25,7 @@ includes:
   - resources/builds
   - resources/builds_create
   - resources/pushes
+  - resources/pushes_create
   - resources/eventlogs
   - resources/users
   - endpoints/queue
@@ -39,7 +40,7 @@ This is documentation for the Hal API. You can use the API to access resources s
 
 <aside class="notice">
     <b>Please Note</b> -
-    This API is primary used for reads. Write functionality is currently limited to <b>Creating Builds</b>. We plan to expand this functionality in the future.
+    This API is primary used for reads. Write functionality is currently limited to <b>Running Builds</b> and <b>Deploying Releases</b>. We plan to expand this functionality in the future.
 </aside>
 
 There are language examples in **HTTP**, **PHP**, and **cURL**. You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.

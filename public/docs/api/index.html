@@ -53,7 +53,7 @@
 
 <aside class="notice">
     <b>Please Note</b> -
-    This API is primary used for reads. Write functionality is currently limited to <b>Creating Builds</b>. We plan to expand this functionality in the future.
+    This API is primary used for reads. Write functionality is currently limited to <b>Running Builds</b> and <b>Deploying Releases</b>. We plan to expand this functionality in the future.
 </aside>
 
 <p>There are language examples in <strong>HTTP</strong>, <strong>PHP</strong>, and <strong>cURL</strong>. You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
@@ -1950,9 +1950,6 @@ embed logs in the request.</p>
     </span><span class="nt">"deployments"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">502</span><span class="p">,</span><span class="w"> </span><span class="mi">503</span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
-<pre class="highlight http"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">201</span> <span class="ne">OK</span>
-<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/hal+json</span>
-</code></pre>
 <pre class="highlight php"><code><span class="cp">&lt;?php</span>
 <span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
     <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
@@ -1977,6 +1974,9 @@ embed logs in the request.</p>
 <blockquote>
 <h3 id="response-success">Response - Success</h3>
 </blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 201 OK
+Content-Type: application/hal+json
+</code></pre>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
     </span><span class="nt">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nt">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -2024,6 +2024,9 @@ embed logs in the request.</p>
 <blockquote>
 <h3 id="response-client-error">Response - Client Error</h3>
 </blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+</code></pre>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
     </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span><span class="w">
     </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bad Request"</span><span class="p">,</span><span class="w">
@@ -2034,13 +2037,13 @@ embed logs in the request.</p>
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>Create a build. Builds are created with the status of &ldquo;Pending&rdquo; or &ldquo;waiting&rdquo;. Builds are added the queue and processed
+<p>Create a build. Builds are created with the status of &ldquo;Pending&rdquo; or &ldquo;Waiting&rdquo;. Builds are added the queue and processed
 as soon as an agent is available.</p>
 
 <p>Clients must authenticate to use this endpoint.</p>
 
 <aside class="warning">
-    This endpoint is currently rate-limited. An application/environment pair can only be built every <b>10 seconds</b>.
+    This endpoint is rate-limited. An application/environment can be built <b>10 times per minute</b>.
 </aside>
 
 <h3 id="http-request">HTTP Request</h3>
@@ -2089,8 +2092,8 @@ as soon as an agent is available.</p>
 <td>The reference from the VCS repository to the code snapshot to build.</td>
 </tr>
 <tr>
-<td>deployments</td>
-<td><strong>Optional</strong> - A list of IDs of deployments to automatically push if build is successful.</td>
+<td>targets</td>
+<td><strong>Optional</strong> - A list of IDs of deployment targets to automatically deploy if build is successful.</td>
 </tr>
 </tbody></table>
 
@@ -2435,6 +2438,195 @@ embed logs in the request.</p>
 <tr>
 <td>embed</td>
 <td>Should the logs be embedded in this request?</td>
+</tr>
+</tbody></table>
+
+          <h2 id="deploy-release">Deploy Release</h2>
+<pre class="highlight http"><code><span class="nf">GET</span> <span class="nn">/api/builds/b2.64U218P/deploy</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Accept</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Host</span><span class="p">:</span> <span class="s">hal9000</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Authorization</span><span class="p">:</span> <span class="s">token "HAL_TOKEN"</span>
+
+<span class="p">{</span><span class="w">
+    </span><span class="nt">"targets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"1234"</span><span class="p">,</span><span class="w"> </span><span class="s2">"5678"</span><span class="p">,</span><span class="w"> </span><span class="s2">"9999"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<pre class="highlight php"><code><span class="cp">&lt;?php</span>
+<span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">([</span>
+    <span class="s1">'base_uri'</span> <span class="o">=&gt;</span> <span class="s1">'https://hal9000'</span><span class="p">,</span>
+    <span class="s1">'headers'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">'token %s'</span><span class="p">,</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">'HAL_TOKEN'</span><span class="p">))]</span>
+<span class="p">]);</span>
+
+<span class="nv">$response</span> <span class="o">=</span> <span class="nv">$client</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">'/api/builds/b2.64U218P/deploy'</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s1">'json'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">'targets'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s2">"1234"</span><span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">]);</span>
+</code></pre>
+<pre class="highlight shell"><code>curl <span class="se">\</span>
+  --request POST <span class="se">\</span>
+  --header <span class="s2">"Authorization: token HAL_TOKEN"</span> <span class="se">\</span>
+  --form targets[]<span class="o">=</span>1234 <span class="se">\</span>
+  --form targets[]<span class="o">=</span>5678 <span class="se">\</span>
+  <span class="s2">"https://hal9000/api/builds/b2.64U218P/deploy"</span>
+</code></pre>
+
+<blockquote>
+<h3 id="response-success">Response - Success</h3>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 201 OK
+Content-Type: application/hal+json
+</code></pre>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://hal9000/api/builds/b2.64U218P/deploy"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"releases"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/pushes/p3.65ghrn4"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p3.65ghrn4"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/users/5555"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HAL_USER"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"deployment"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/targets/1234"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test Target 1"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"build"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/builds/b2.64U218P"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.64U218P"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"application"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/application/999"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hal"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"events"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/pushes/p3.65ghrn4/events"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/pushes/p3.65ghrn4"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/html"</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p3.65ghrn4"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Waiting"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"created"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-03-15T12:00:00Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"start"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"end"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/pushes/p3.65gA633"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p3.65gA633"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/users/5555"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HAL_USER"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"deployment"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/targets/5678"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test Target 2"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"build"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/builds/b2.64U218P"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2.64U218P"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"application"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/application/999"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hal"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"events"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/pushes/p3.65gA633/events"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"page"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/pushes/p3.65gA633"</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/html"</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p3.65gA633"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Waiting"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"created"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-03-15T12:00:00Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"start"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"end"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<blockquote>
+<h3 id="response-client-error">Response - Client Error</h3>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+</code></pre>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bad Request"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Cannot deploy release due to form submission failure. Please check errors."</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"Push to "</span><span class="mi">1234</span><span class="s2">" cannot be created, deployment already in progress."</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Deploy a release. Releases are created with the status of &ldquo;Pending&rdquo; or &ldquo;Waiting&rdquo;. Releases are added the queue and processed
+as soon as an agent is available.</p>
+
+<p>Clients must authenticate to use this endpoint.</p>
+
+<aside class="warning">
+    This endpoint is rate-limited. An application/environment pair can be built <b>20 times per minute</b>.
+</aside>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST https://hal9000/api/builds/{id}/deploy</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>The unique ID of the build to deploy</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+    This endpoint accepts both JSON and form post media types.
+    <ul>
+        <li><code>application/json</code></li>
+        <li><code>application/x-www-form-urlencoded</code></li>
+        <li><code>multipart/form-data</code></li>
+    </ul>
+</aside>
+
+<h3 id="request-fields">Request Fields</h3>
+
+<p>The following fields are submitted to deploy a release.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>targets</td>
+<td>A list of IDs of deployment targets to deploy the release to.</td>
 </tr>
 </tbody></table>
 

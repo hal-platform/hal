@@ -3,8 +3,16 @@ services:
     build.start.api:
         class: 'Hal\UI\Controllers\API\Build\StartBuildController'
         arguments:
-            - '@api.response_formatter'
+            - '@doctrine.em'
             - '@build.start.validator'
             - '@push.start.validator'
+            - '@api.response_formatter'
+            - '@problem.renderer'
+
+    deploy.api:
+        class: 'Hal\UI\Controllers\API\Push\DeployController'
+        arguments:
             - '@doctrine.em'
+            - '@push.start.validator'
+            - '@api.response_formatter'
             - '@problem.renderer'

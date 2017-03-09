@@ -10,4 +10,7 @@ parameters:
                     method: 'POST'
                     route: '/applications/{application:%r.digit%}/build'
                     stack: ['middleware.api_writes_require_entity', 'build.start.api']
-
+                api.deploy:
+                    method: 'POST'
+                    route: '/builds/{build:%r.build%}/deploy'
+                    stack: ['middleware.api_writes_require_entity', 'deploy.api']
