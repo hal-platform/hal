@@ -112,7 +112,7 @@ services:
         arguments: ['@api.response_formatter', '@api_normalizer.event']
 
     ####################################################################################################################
-    # Environments CONTROLLERS
+    # ENVIRONMENTS CONTROLLERS
     ####################################################################################################################
 
     environments.api:

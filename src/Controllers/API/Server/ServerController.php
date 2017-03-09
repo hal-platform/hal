@@ -7,7 +7,7 @@
 
 namespace Hal\UI\Controllers\API\Server;
 
-use Hal\UI\Api\ResponseFormatter;
+use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

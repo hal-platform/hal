@@ -9,9 +9,9 @@ namespace Hal\UI\Controllers\API\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\Api\Normalizer\EnvironmentNormalizer;
-use Hal\UI\Api\ResponseFormatter;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\Normalizer\EnvironmentNormalizer;
+use Hal\UI\API\ResponseFormatter;
+use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -65,7 +65,10 @@ class EnvironmentsController implements ControllerInterface
             return $this->normalizer->link($environment);
         }, $environments);
 
-        $resource = $this->buildResource(['count' => count($environments)], [], ['environments' => $environments]);
+        $data = ['count' => count($environments)];
+        $links = ['environments' => $environments];
+
+        $resource = $this->buildResource($data, [], $links);
         $data = $this->formatter->buildResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
