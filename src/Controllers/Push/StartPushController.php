@@ -108,7 +108,7 @@ class StartPushController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'build' => $build,
-            'selected' => $request->getQueryParams()['deployment'] ?? '',
+            'selected' => $request->getQueryParams()['target'] ?? '',
             'statuses' => $statuses,
 
             'views' => $views,

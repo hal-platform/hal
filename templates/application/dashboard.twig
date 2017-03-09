@@ -228,7 +228,7 @@
                 {% endif %}
 
                 {% if active %}
-                    <a class="rollback icon--link" href="{{ uriFor('rollback.page1', {'application': application.id, 'deployment': deployment.id}) }}" title="View push history or rollback to a successful build">
+                    <a class="rollback icon--link" href="{{ uriFor('rollback.page1', {'application': application.id, 'target': deployment.id}) }}" title="View push history or rollback to a successful build">
                         {{ macros.icon('revert') }}
                     </a>
                 {% endif %}

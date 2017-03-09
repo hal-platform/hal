@@ -97,7 +97,7 @@
                         {% if push.build.status == 'Removed' %}
                             Removed
                         {% elseif push.status == 'Success'%}
-                            <a class="btn btn--tiny" href="{{ uriFor('push.start', {'build': push.build.id}, {deployment: deployment.id}) }}">Rollback</a>
+                            <a class="btn btn--tiny" href="{{ uriFor('push.start', {'build': push.build.id}, {'target': deployment.id}) }}">Rollback</a>
                         {% endif %}
                     </td>
                 {% endif %}
@@ -112,6 +112,6 @@
         </tbody>
     </table>
 
-    {{ pagination.pagination(page, last, 'rollback', {'application': application.id, 'deployment': deployment.id}) }}
+    {{ pagination.pagination(page, last, 'rollback', {'application': application.id, 'target': deployment.id}) }}
 
 {% endblock %}
