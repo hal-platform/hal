@@ -263,8 +263,64 @@ parameters:
                             route: '/remove'
                             stack: ['middleware.removal_confirmation', 'encrypted.remove.handler']
 
+                target_view.env_management:
+                    route: '/environments/{environment:%r.digit%}'
+                    routes:
+                        target_views:
+                            method: 'GET'
+                            route: '/target-views'
+                            stack: ['target_views.page']
+                        target_view.add:
+                            method: ['GET', 'POST']
+                            route: '/target-views/add'
+                            stack: ['middleware.add_views', 'target_view.add.page']
+
+                target_view.management:
+                    route: '/target-views/{view:%r.guid%}'
+                    stack: ['middleware.nested_entity']
+                    routes:
+
+                        target_view:
+                            method: 'GET'
+                            route: ''
+                            stack: ['target_view.page']
+                        target_view.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['middleware.manage_views', 'target_view.edit.page']
+                        target_view.remove:
+                            method: ['GET', 'POST']
+                            route: '/remove'
+                            stack: ['middleware.manage_views', 'middleware.removal_confirmation', 'target_view.remove.handler']
+
+                        target_pool.add:
+                            method: ['GET', 'POST']
+                            route: '/pools/add'
+                            stack: ['middleware.manage_views', 'target_pool.add.page']
+
+                        target_pools:
+                            route: '/pools/{pool:%r.guid%}'
+                            stack: ['middleware.manage_views']
+                            routes:
+                                target_pool.edit:
+                                    method: ['GET', 'POST']
+                                    route: '/edit'
+                                    stack: ['target_pool.edit.page']
+                                target_pool.remove:
+                                    method: ['GET', 'POST']
+                                    route: '/remove'
+                                    stack: ['middleware.removal_confirmation', 'target_pool.remove.handler']
+                                target_pool_target.add:
+                                    method: 'POST'
+                                    route: '/add'
+                                    stack: ['target_pool.target.add.handler']
+                                target_pool_target.remove:
+                                    method: ['GET', 'POST']
+                                    route: '/remove/{target:%r.digit%}'
+                                    stack: ['middleware.removal_confirmation', 'target_pool.target.remove.handler']
+
         ################################################################################################################
-        # Server Routes
+        # SERVER Routes
         ################################################################################################################
 
         servers:
@@ -488,8 +544,6 @@ parameters:
         ################################################################################################################
 
         # routes not created yet
-
-        pools: {route: '/derp38', stack: []}
 
         api.application: {route: '/derp23', stack: []}
         api.applications: {route: '/derp16', stack: []}

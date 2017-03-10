@@ -113,9 +113,9 @@
             </form>
 
         {% else %}
-            No views found. There are many deployments for this environment, but no views.
+            No views found. There are many targets for this environment, but no views.
             {% if canUserBuild %}
-                <a href="{{ uriFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Create deployment pools</a>
+                <a href="{{ uriFor('target_views', {'application': application.id, 'environment': selected_environment.id}) }}">Create target views</a>
                 {% if isBusinessTime %}
                     to categorize deployments into groups.
                 {% else %}
@@ -208,7 +208,7 @@
         <li><a class="btn btn--secondary" href="{{ uriFor('application', {'application': application.id}) }}">Application</a></li>
 
         {% if selected_environment and (views or deployment_statuses|length > 5) %}
-            <li><a class="btn btn--secondary" href="{{ uriFor('pools', {'application': application.id, 'environment': selected_environment.id}) }}">Deployment Views</a></li>
+            <li><a class="btn btn--secondary" href="{{ uriFor('target_views', {'application': application.id, 'environment': selected_environment.id}) }}">Target Views</a></li>
         {% endif %}
     </ul>
 {% endblock %}

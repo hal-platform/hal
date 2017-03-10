@@ -24,7 +24,7 @@
 
             <h2 class="mbn">{{ name }}</h2>
             <p>
-                <a href="{{ uriFor('pools', {'application': application.id, 'environment': environment.id}) }}">Manage deployment pools</a>
+                <a href="{{ uriFor('target_views', {'application': application.id, 'environment': environment.id}) }}">Manage deployment pools</a>
             </p>
 
             <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">

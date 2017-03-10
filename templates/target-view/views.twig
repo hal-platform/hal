@@ -1,19 +1,26 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 
-{% set page_title = 'Deployment Pools : ' ~ application.name %}
+{% set page_title = 'Target Views : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(getCurrentUser()) or isUserLeadOf(getCurrentUser(), application) %}
-{% set canEditShared = isAdmin or canUserBuild(getCurrentUser(), application) %}
+{% set isAdmin = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
+{% set canEditShared = isAdmin or canUserBuild(current_user, application) %}
 
 {% block content %}
-    <h1>Deployment Pools - <strong>{{ application.name }}</strong> </h1>
+
+    <div class="nav--page">
+        <h1>Target Views/Pools - <strong>{{ application.name }}</strong></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('targets', {'application': application.id}) }}">Back to Deployment Targets</a>
+        </p>
+    </div>
 
     <div class="details-box">
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a>
+                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
@@ -22,14 +29,15 @@
     </div>
 
     <p>
-        <b>Deployment Pools</b> are used to organize servers or deployments. This is primarily useful on the status page when there are many
-        servers assigned to an environment. <b>Pools</b> are assigned to <b>Deployment Views</b>. This allows multiple schemas to be created and shared.
+        <b>Target Pools</b> are used to organize servers or targets. This is primarily useful on the application dashboard
+        when there are many targets within an environment. <b>Pools</b> are created within <b>Views</b>. This allows
+        multiple groupings to be created and shared.
     </p>
 
     <h6>Example Views</h6>
     <ul class="list--bullet">
-        <li><b>Datacenter</b>: Detroit, Troy</li>
-        <li><b>Push Phase</b>: Phase 1, Phase 2</li>
+        <li><b>Datacenter</b>: East, West</li>
+        <li><b>Deployment Phase</b>: Phase 1, Phase 2</li>
         <li><b>Team</b>: Squad 1, Squad 2, Squad 3, Squad 4</li>
     </ul>
 
@@ -47,7 +55,7 @@
                                 {% endif %}
                                 {{ view.name }}
                             </span>
-                            <a href="{{ urlFor('deployment_view', {'view': view.id}) }}">Manage</a>
+                            <a href="{{ uriFor('target_view', {'application': application.id, 'view': view.id}) }}">Manage</a>
                         </header>
 
                         <section class="card__details card__details--divided">
@@ -57,7 +65,7 @@
                                         <li class="pvs mvn">
                                             <h6 class="mvn"><b>{{ pool.name }}</b></h6>
                                             <ul class="list--bare">
-                                                {% for deployment in deployment_pools[pool.id] %}
+                                                {% for deployment in target_pools[pool.id] %}
                                                     <li class="mbn">
                                                         {% if server_collisions[deployment.server.id] %}
                                                             <span class="hint--right" aria-label="{{ deployment.formatMeta }}">
@@ -89,11 +97,10 @@
 
     <ul class="button-list">
         {% if canEditShared %}
-            <li><a class="btn btn--action" href="{{ urlFor('deployment_view.add', {'application': application.id, 'environment': environment.id}) }}">Add View</a></li>
+            <li><a class="btn btn--action" href="{{ uriFor('target_view.add', {'application': application.id, 'environment': environment.id}) }}">Add View</a></li>
         {% endif %}
 
-        <li><a class="btn" href="{{ urlFor('deployments', {'application': application.id}) }}">Deployment Targets</a></li>
-        <li><a class="btn" href="{{ urlFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
+        <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
     </ul>
 
 {% endblock %}

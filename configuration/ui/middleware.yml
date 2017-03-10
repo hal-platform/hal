@@ -50,6 +50,19 @@ services:
         arguments: ['@notFoundHandler']
 
     ####################################################################################################################
+    # TARGET VIEWS/POOLS
+    ####################################################################################################################
+
+    middleware.manage_views:
+        class: 'Hal\UI\Middleware\TargetView\ManageViewMiddleware'
+        parent: 'middleware.permissions'
+
+    middleware.add_views:
+        class: 'Hal\UI\Middleware\TargetView\AddViewMiddleware'
+        parent: 'middleware.permissions'
+
+
+    ####################################################################################################################
     # REMOVAL
     ####################################################################################################################
 

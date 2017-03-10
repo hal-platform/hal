@@ -1,23 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "macros.form.twig" as form_macros %}
 
-{% set page_title = 'Edit Deployment Pool : ' ~ pool.name %}
+{% set page_title = 'Edit Target Pool : ' ~ pool.name %}
 
 {% block content %}
-    <h1>Edit Deployment Pool - <strong>{{ pool.name }}</strong> </h1>
+    <h1>Edit Target Pool - <strong>{{ pool.name }}</strong> </h1>
 
     <div class="details-box">
         <dl class="split mbn">
             <dt class="split__title">Application</dt>
             <dd>
-                <a href="{{ urlFor('application', {application: application.id}) }}">{{ application.name }}</a>
+                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
             </dd>
 
             <dt class="split__title">Environment</dt>
             <dd>{{ environment.name }}</dd>
 
-            <dt class="split__title">Deployment View</dt>
-            <dd><a href="{{ urlFor('deployment_view', {'view': view.id}) }}">{{ view.name }}</a></dd>
+            <dt class="split__title">Target View</dt>
+            <dd><a href="{{ uriFor('target_view', {'application': application.id, 'view': view.id}) }}">{{ view.name }}</a></dd>
         </dl>
     </div>
 
@@ -40,14 +40,14 @@
 
             <ul class="button-list">
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ urlFor('deployment_view', {'view': view.id}) }}">Cancel</a></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('target_view', {'application': application.id, 'view': view.id}) }}">Cancel</a></li>
             </ul>
         </form>
     </div>
 
     <p class="leader--andre">Removing this pool will also remove any deployments attached to it.</p>
     <p>
-        <a class="btn btn--destructive" href="{{ urlFor('pool.remove', {'view': view.id, 'pool': pool.id}) }}">Remove Pool</a>
+        <a class="btn btn--destructive" href="{{ uriFor('target_pool.remove', {'application': application.id, 'view': view.id, 'pool': pool.id}) }}">Remove Pool</a>
     </p>
 
 {% endblock %}
