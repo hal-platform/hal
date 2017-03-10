@@ -7,15 +7,12 @@
 
 namespace Hal\UI\Middleware\ACL;
 
-use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Service\PermissionService;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\User;
 
 class AdminOrSelfMiddleware extends AbstractPermissionMiddleware
 {
-    use SessionTrait;
-
     /**
      * @inheritDoc
      */
@@ -27,8 +24,8 @@ class AdminOrSelfMiddleware extends AbstractPermissionMiddleware
             return true;
         }
 
-        $currentUser = $this->getUser($request);
-        if ($user === $currentUser) {
+        $resourceUser = $request->getAttribute(User::class);
+        if ($user === $resourceUser) {
             return true;
         }
 

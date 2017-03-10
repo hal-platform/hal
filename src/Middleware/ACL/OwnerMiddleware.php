@@ -14,7 +14,7 @@ use QL\Hal\Core\Entity\User;
 /**
  * Note: Admins and Supers also pass this middleware bouncer.
  */
-class OwnerMiddleware implements MiddlewareInterface
+class OwnerMiddleware extends AbstractPermissionMiddleware
 {
     /**
      * @inheritDoc
