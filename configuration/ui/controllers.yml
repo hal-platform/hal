@@ -38,6 +38,33 @@ services:
         arguments: ['@uri']
 
     ####################################################################################################################
+    # GITHUB OAUTH CONTROLLERS
+    ####################################################################################################################
+
+    # github.authorization.page:
+    #     class: 'Hal\UI\Controllers\OAuth\GithubCallbackController'
+    #     arguments:
+    #         - '@github.authorization.twig'
+    #         - '@doctrine.em'
+    #         - '@github.oauth'
+    #         - '@uri'
+    # github.authorization.twig:
+    #     parent: 'twig.template'
+    #     calls: [['setTemplate', ['user/github.token.error.twig']]]
+
+    # github.authorization.remove.page:
+    #     class: 'Hal\UI\Controllers\User\RemoveGithubTokenController'
+    #     arguments:
+    #         - '@github.authorization.remove.twig'
+    #         - '@doctrine.em'
+    #         - '@github.oauth'
+    #         - '@uri'
+    # github.authorization.remove.twig:
+    #     parent: 'twig.template'
+    #     calls: [['setTemplate', ['user/github.token.remove.twig']]]
+
+
+    ####################################################################################################################
     # HELP CONTROLLERS
     ####################################################################################################################
 

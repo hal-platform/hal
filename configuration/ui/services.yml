@@ -1,4 +1,15 @@
+parameters:
+    twig.globals:
+        application_title: '%application.title%'
+        application_environment: '%application.environment%'
+        application_sha: '%application.sha%'
+        application_version: '%application.version%'
+
 services:
+
+    ######################################################################################################################
+    # VALIDATORS
+    ######################################################################################################################
 
     build.start.validator:
         class: 'Hal\UI\Validator\BuildValidator'
@@ -22,3 +33,45 @@ services:
     target.validator:
         class: 'Hal\UI\Validator\TargetValidator'
         arguments: ['@doctrine.em']
+
+    ######################################################################################################################
+    # TWIG TEMPLATING
+    ######################################################################################################################
+
+    twig.extension.hal:
+        class: 'Hal\UI\Twig\HalExtension'
+        arguments:
+            - '@global.message'
+            - '@utility.time.formatter'
+            - '@utility.name.formatter'
+            - '%gravatar.fallback%'
+
+    twig.extension.hal.global:
+        class: 'Hal\UI\Twig\GlobalExtension'
+        arguments: ['%twig.globals%']
+
+    twig.extension.permissions:
+        class: 'Hal\UI\Twig\PermissionsExtension'
+        arguments: ['@permissions']
+
+    twig.extension.github:
+        class: 'Hal\UI\Twig\GitHubExtension'
+        arguments: ['@github', '@github.url_builder']
+        calls:
+            - ['setCache', ['@twig.extension.github.cache']]
+
+    twig.extension.github.cache:
+        class: 'QL\MCP\Cache\MemoryCache'
+
+    twig.extension.status:
+        class: 'Hal\UI\Twig\StatusExtension'
+
+    # Twig Environment
+    twig.environment:
+        parent: 'panthor.twig.environment'
+        calls:
+            - ['addExtension', ['@twig.extension.hal']]
+            - ['addExtension', ['@twig.extension.hal.global' ]]
+            - ['addExtension', ['@twig.extension.permissions']]
+            - ['addExtension', ['@twig.extension.github']]
+            - ['addExtension', ['@twig.extension.status']]

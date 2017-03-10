@@ -102,6 +102,109 @@ services:
             - ['setMaximumTtl', ['%cache.github.default.ttl%']]
 
     ####################################################################################################################
+    # DOMAIN-SPECIFIC SERVICES
+    ####################################################################################################################
+
+    ldap.auth:
+        class: 'Hal\UI\Auth'
+        arguments:
+            - '@ldap.auth.symfony'
+            - '%ldap.base_dn%'
+            - '%ldap.domain%'
+            - 'person'
+            - 'sAMAccountName'
+
+    ldap.auth.symfony:
+        class: 'Symfony\Component\Ldap\Ldap'
+        factory: ['Symfony\Component\Ldap\Ldap', 'create']
+        arguments:
+            - 'ext_ldap'
+            -
+                host: '%ldap.host%'
+                port: '%ldap.port%'
+
+    permissions:
+        class: 'Hal\UI\Service\PermissionService'
+        arguments:
+            - '@doctrine.em'
+            - '@github'
+            - '@json'
+            - '%permissions.check.github%'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.permissions.ttl%']]
+
+    global.message:
+        class: 'Hal\UI\Service\GlobalMessageService'
+        arguments: ['@redis']
+
+    sticky.environment:
+        class: 'Hal\UI\Service\StickyEnvironmentService'
+        arguments:
+            - '@cookie.handler'
+            - '@json'
+            - '%cookie.preferences.ttl%'
+
+    sticky.pool:
+        class: 'Hal\UI\Service\StickyPoolService'
+        arguments:
+            - '@cookie.handler'
+            - '@json'
+            - '%cookie.preferences.ttl%'
+
+    stats:
+        class: 'Hal\UI\Service\StatsService'
+        arguments:
+            - '@doctrine.em'
+            - '@clock'
+            - '%date.timezone%'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.stats.ttl%']]
+
+    pools:
+        class: 'Hal\UI\Service\PoolService'
+        arguments:
+            - '@doctrine.em'
+            - '@sticky.pool'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.stats.ttl%']]
+
+    service.event_logs:
+        class: 'Hal\UI\Service\EventLogService'
+        arguments:
+            - '@redis'
+            - '@json'
+            - '@clock'
+
+    job_queue:
+        class: 'Hal\UI\Service\JobQueueService'
+        arguments: ['@doctrine.em', '@clock']
+
+    ####################################################################################################################
+    # NON-DATABASE SERVICES
+    ####################################################################################################################
+
+    redis:
+        class: 'Predis\Client'
+        arguments:
+            - '%redis.server%'
+            - {prefix: '%redis.prefix%:'}
+
+    github:
+        class: 'Hal\UI\Service\GitHubService'
+        arguments:
+            - '@github.sdk.repos'
+            - '@github.sdk.repo_commits'
+            - '@github.sdk.git_references'
+            - '@github.sdk.git_commits'
+            - '@github.sdk.pull_requests'
+            - '@github.sdk.users'
+            - '@github.sdk.org_members'
+            - '@github.pager'
+
+    ####################################################################################################################
     # HELPERS
     ####################################################################################################################
 
@@ -119,5 +222,110 @@ services:
         class: 'Hal\UI\Utility\TimeFormatter'
         arguments: ['@clock', '%date.timezone%']
 
-    guzzle:
-        class: 'GuzzleHttp\Client'
+    ####################################################################################################################
+    # GITHUB AUTH
+    ####################################################################################################################
+
+    # github.oauth:
+    #     class: 'Hal\UI\Github\OAuthHandler'
+    #     arguments:
+    #         - '@github.oauth.guzzle'
+    #         - '%github.baseurl%'
+    #         - '%github.site.baseurl%'
+    #         - '%github.app.id%'
+    #         - '%github.app.secret%'
+    #         - '@json'
+
+    # github.oauth.guzzle:
+    #     class: 'GuzzleHttp\Client'
+
+    ####################################################################################################################
+    # GITHUB SDK
+    ####################################################################################################################
+
+    github.url_builder:
+        class: 'Hal\UI\Github\GitHubURLBuilder'
+        arguments: ['@github', '%github.site.baseurl%']
+
+    github.client:
+        class: 'Hal\UI\Github\EnterpriseClient'
+        arguments:
+            - '@github.http.builder'
+            - null
+            - '%github.site.baseurl%'
+        configurator: ['@github.client.configurator', configure]
+        calls:
+            - ['authenticate', ['%github.token%', null, 'http_token']]
+
+    github.client.configurator:
+        class: 'Hal\UI\Github\GithubClientConfigurator'
+        arguments: ['@github.http_cache.plugin', '@github.http.builder']
+
+    github.http.builder:
+        class: 'Github\HttpClient\Builder'
+
+    github.http_cache.plugin:
+        class: 'Hal\UI\Github\MCPCachePlugin'
+        arguments:
+            - '@cache'
+            - '@github.http_cache.http_stream_factory'
+            -
+                respect_cache_headers: false
+                default_ttl: '%cache.github.default.ttl%'
+            - '%cache.github.short.ttl%'
+
+    github.http_cache.http_stream_factory:
+        class: 'Http\Message\StreamFactory\GuzzleStreamFactory'
+
+    github.pager:
+        class: 'Github\ResultPager'
+        arguments: ['@github.client']
+
+    github.sdk.pull_requests:
+        class: 'Github\Api\PullRequest'
+        arguments: ['@github.client']
+    github.sdk.git_references:
+        class: 'Github\Api\GitData\References'
+        arguments: ['@github.client']
+    github.sdk.git_commits:
+        class: 'Github\Api\GitData\Commits'
+        arguments: ['@github.client']
+    github.sdk.repos:
+        class: 'Github\Api\Repo'
+        arguments: ['@github.client']
+    github.sdk.repo_commits:
+        class: 'Github\Api\Repository\Commits'
+        arguments: ['@github.client']
+    github.sdk.users:
+        class: 'Github\Api\User'
+        arguments: ['@github.client']
+    github.sdk.org_members:
+        class: 'Github\Api\Organization\Members'
+        arguments: ['@github.client']
+
+    ####################################################################################################################
+    # Crypto
+    ####################################################################################################################
+
+    encrypter:
+        class: 'QL\Hal\Core\Crypto\Encrypter'
+        arguments: ['%encrypter.publickey%']
+
+    decrypter:
+        class: 'QL\Hal\Core\Crypto\Decrypter'
+        factory: ['@decrypter.factory', 'getAsymmetricDecrypter']
+        lazy: true
+
+    decrypter.factory:
+        class: 'QL\Hal\Core\Crypto\CryptoFactory'
+        arguments: ['@encrypter.encryptedkey.squished', '@encrypter.secret.file']
+
+    encrypter.encryptedkey.squished:
+        class: 'stdClass'
+        factory: ['Hal\UI\Application\Stringify', 'squish']
+        arguments: ['%encrypter.encryptedkey%']
+
+    encrypter.secret.file:
+        class: 'stdClass'
+        factory: ['QL\Panthor\Utility\Stringify', 'template']
+        arguments: ['%%s/%%s', ['@root', '%encrypter.hal.secret.path%']]
