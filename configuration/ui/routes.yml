@@ -540,11 +540,3 @@ parameters:
                     method: ['GET', 'POST']
                     route: '/message'
                     stack: ['super.message.page']
-
-        ################################################################################################################
-
-        # routes not created yet
-
-        api.deployment.history: {route: '/derp22', stack: []}
-        api.deployment.lastpush: {route: '/derp2222', stack: []}
-

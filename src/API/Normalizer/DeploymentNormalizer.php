@@ -119,11 +119,8 @@ class DeploymentNormalizer implements NormalizerInterface
             'application' => $this->appNormalizer->link($deployment->application()),
             'server' => $this->serverNormalizer->link($deployment->server()),
 
-            'pushes' => new Hyperlink(['api.deployment.history', ['id' => $deployment->id()]]),
-            'last-push' => new Hyperlink(['api.deployment.lastpush', ['id' => $deployment->id()]]),
-            'last-successful-push' => new Hyperlink(
-                ['api.deployment.lastpush', ['id' => $deployment->id()], ['status' => 'Success']]
-            )
+            'pushes' => new Hyperlink(['api.target.history', ['target' => $deployment->id()]]),
+            'current_push' => new Hyperlink(['api.target.current_release', ['target' => $deployment->id()]])
         ];
 
         return $this->buildResource($data, $embedded, $links);

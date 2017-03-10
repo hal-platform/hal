@@ -93,6 +93,18 @@ services:
             - '@doctrine.em'
             - '@api_normalizer.target'
 
+    target.history.api:
+        class: 'Hal\UI\Controllers\API\Target\HistoryController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.push'
+            - '@problem.renderer'
+
+    target.current_release.api:
+        class: 'Hal\UI\Controllers\API\Target\CurrentReleaseController'
+        arguments: ['@api.response_formatter', '@problem.renderer']
+
     ####################################################################################################################
     # BUILD CONTROLLERS
     ####################################################################################################################

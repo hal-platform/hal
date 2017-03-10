@@ -115,10 +115,28 @@ parameters:
                 # TARGET ROUTES
                 ################################################################################################################
 
-                api.target:
-                    method: 'GET'
+                api.target.management:
                     route: '/targets/{target:%r.digit%}'
-                    stack: ['middleware.api_require_entity', 'target.api']
+                    stack: ['middleware.api_require_entity']
+                    routes:
+                        api.target:
+                            method: 'GET'
+                            route: ''
+                            stack: ['target.api']
+
+                        api.target.history:
+                            method: 'GET'
+                            route: '/pushes'
+                            stack: ['target.history.api']
+                        api.target.history.paged:
+                            method: 'GET'
+                            route: '/pushes/page/{page:%r.digit%}'
+                            stack: ['target.history.api']
+
+                        api.target.current_release:
+                            method: 'GET'
+                            route: '/current-release'
+                            stack: ['target.current_release.api']
 
                 ################################################################################################################
                 # BUILD ROUTES
@@ -188,30 +206,4 @@ parameters:
                     method: 'GET'
                     route: '/users/{user:%r.digit%}'
                     stack: ['middleware.api_require_entity', 'user.api']
-
-        # api.deployment:
-        #     method: 'GET'
-        #     route: '/api/deployments/:id'
-        #     stack: ['middleware.api.cached', 'api.deployment']
-        #     conditions: {id: '%routes.api.regex.digit%'}
-
-        # # @todo change this url because it is terrible
-        # api.deployment.lastpush:
-        #     method: 'GET'
-        #     route: '/api/deployments/:id/last-push'
-        #     stack: ['middleware.api.cached', 'api.deployment.lastpush']
-        #     conditions: {id: '%routes.api.regex.digit%'}
-
-        # api.deployment.history:
-        #     method: 'GET'
-        #     route: '/api/deployments/:id/pushes'
-        #     stack: ['middleware.api.cached', 'api.deployment.history']
-        #     conditions: {id: '%routes.api.regex.digit%'}
-        # api.deployment.history.paged:
-        #     method: 'GET'
-        #     route: '/api/deployments/:id/pushes/page/:page'
-        #     stack: ['middleware.api.cached', 'api.deployment.history']
-        #     conditions:
-        #         id: '%routes.api.regex.digit%'
-        #         page: '%routes.api.regex.digit%'
 
