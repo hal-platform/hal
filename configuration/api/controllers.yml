@@ -31,6 +31,21 @@ services:
             - '@problem.renderer'
 
     ####################################################################################################################
+    # ORGANIZATION CONTROLLERS
+    ####################################################################################################################
+
+    organization.api:
+        class: 'Hal\UI\Controllers\API\Organization\OrganizationController'
+        arguments: ['@api.response_formatter']
+
+    organizations.api:
+        class: 'Hal\UI\Controllers\API\Organization\OrganizationsController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.organization'
+
+    ####################################################################################################################
     # SERVER CONTROLLERS
     ####################################################################################################################
 

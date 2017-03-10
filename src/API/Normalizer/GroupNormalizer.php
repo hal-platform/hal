@@ -38,7 +38,7 @@ class GroupNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.group', ['id' => $group->id()]],
+            ['api.organization', ['organization' => $group->id()]],
             $group->key()
         );
     }

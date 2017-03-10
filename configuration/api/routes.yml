@@ -29,6 +29,21 @@ parameters:
                     route: '/queue-refresh/{jobs:%r.api.queue%}'
                     stack: ['queue.refresh.api']
 
+
+                ################################################################################################################
+                # ORGANIZATION ROUTES
+                ################################################################################################################
+
+                api.organizations:
+                    method: 'GET'
+                    route: '/organizations'
+                    stack: ['organizations.api']
+
+                api.organization:
+                    method: 'GET'
+                    route: '/organizations/{organization:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'organization.api']
+
                 ################################################################################################################
                 # APPLICATION ROUTES
                 ################################################################################################################
@@ -155,17 +170,6 @@ parameters:
                     method: 'GET'
                     route: '/users/{user:%r.digit%}'
                     stack: ['middleware.api_require_entity', 'user.api']
-
-        # api.groups:
-        #     method: 'GET'
-        #     route: '/api/groups'
-        #     stack: ['middleware.api.cached', 'api.groups']
-
-        # api.group:
-        #     method: 'GET'
-        #     route: '/api/groups/:id'
-        #     stack: ['middleware.api.cached', 'api.group']
-        #     conditions: {id: '%routes.api.regex.digit%'}
 
         # api.deployment:
         #     method: 'GET'

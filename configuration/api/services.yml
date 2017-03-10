@@ -21,7 +21,7 @@ services:
             - ['addNormalizer', ['QL\Hal\Core\Entity\Deployment', '@api_normalizer.deployment']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Environment', '@api_normalizer.environment']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\EventLog', '@api_normalizer.event']]
-            - ['addNormalizer', ['QL\Hal\Core\Entity\Group', '@api_normalizer.group']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Group', '@api_normalizer.organization']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Push', '@api_normalizer.push']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Server', '@api_normalizer.server']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\User', '@api_normalizer.user']]
@@ -51,7 +51,7 @@ services:
         class: 'Hal\UI\API\Normalizer\EventNormalizer'
         arguments: ['@api_normalizer.build', '@api_normalizer.push']
 
-    api_normalizer.group:
+    api_normalizer.organization:
         class: 'Hal\UI\API\Normalizer\GroupNormalizer'
 
     api_normalizer.push:
@@ -64,7 +64,7 @@ services:
 
     api_normalizer.application:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'
-        arguments: ['@github.url_builder', '@api_normalizer.group']
+        arguments: ['@github.url_builder', '@api_normalizer.organization']
 
     api_normalizer.server:
         class: 'Hal\UI\API\Normalizer\ServerNormalizer'

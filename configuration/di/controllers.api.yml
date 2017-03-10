@@ -39,42 +39,6 @@ services:
             - '@slim.route.parameters'
 
     ####################################################################################################################
-    # ENVIRONMENT CONTROLLERS
-    ####################################################################################################################
-
-    api.environment:
-        class: 'Hal\UI\Controllers\Api\Environment\EnvironmentController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@slim.route.parameters'
-
-    api.environments:
-        class: 'Hal\UI\Controllers\Api\Environment\EnvironmentsController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.environment'
-
-    ####################################################################################################################
-    # GROUP CONTROLLERS
-    ####################################################################################################################
-
-    api.group:
-        class: 'Hal\UI\Controllers\Api\Group\GroupController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@slim.route.parameters'
-
-    api.groups:
-        class: 'Hal\UI\Controllers\Api\Group\GroupsController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.group'
-
-    ####################################################################################################################
     # REPOSITORY CONTROLLERS
     ####################################################################################################################
 

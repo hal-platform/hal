@@ -5,16 +5,16 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Api;
+namespace Hal\UI\Controllers\API\Organization;
 
-use Hal\UI\API\Hyperlink;
-use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
+use Hal\UI\Api\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 
-class IndexController implements ControllerInterface
+class OrganizationController implements ControllerInterface
 {
     use APITrait;
 
@@ -36,21 +36,9 @@ class IndexController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $body = $this->formatter->buildResponse($request, [
-            '_links' => [
-                'environments' => new Hyperlink('api.environments'),
-                'servers' => new Hyperlink('api.servers'),
+        $user = $request->getAttribute(Group::class);
 
-                'applications' => new Hyperlink('api.applications'),
-                'organizations' => new Hyperlink('api.organizations'),
-
-                'users' => new Hyperlink('api.users'),
-                'queue' => new Hyperlink('api.queue'),
-
-                'documentation' => new Hyperlink('api.docs')
-            ]
-        ]);
-
+        $body = $this->formatter->buildResponse($request, $user);
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }
