@@ -18,7 +18,7 @@ services:
         calls:
             - ['addNormalizer', ['QL\Hal\Core\Entity\Application', '@api_normalizer.application']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Build', '@api_normalizer.build']]
-            - ['addNormalizer', ['QL\Hal\Core\Entity\Deployment', '@api_normalizer.deployment']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Deployment', '@api_normalizer.target']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Environment', '@api_normalizer.environment']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\EventLog', '@api_normalizer.event']]
             - ['addNormalizer', ['QL\Hal\Core\Entity\Group', '@api_normalizer.organization']]
@@ -40,7 +40,7 @@ services:
             - '@api_normalizer.application'
             - '@api_normalizer.environment'
 
-    api_normalizer.deployment:
+    api_normalizer.target:
         class: 'Hal\UI\API\Normalizer\DeploymentNormalizer'
         arguments: ['@api_normalizer.application', '@api_normalizer.server']
 
@@ -59,7 +59,7 @@ services:
         arguments:
             - '@api_normalizer.user'
             - '@api_normalizer.build'
-            - '@api_normalizer.deployment'
+            - '@api_normalizer.target'
             - '@api_normalizer.application'
 
     api_normalizer.application:

@@ -46,6 +46,22 @@ services:
             - '@api_normalizer.organization'
 
     ####################################################################################################################
+    # APPLICATION CONTROLLERS
+    ####################################################################################################################
+
+    application.api:
+        class: 'Hal\UI\Controllers\API\Application\ApplicationController'
+        arguments: ['@api.response_formatter']
+
+    applications.api:
+        class: 'Hal\UI\Controllers\API\Application\ApplicationsController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.application'
+            - '@problem.renderer'
+
+    ####################################################################################################################
     # SERVER CONTROLLERS
     ####################################################################################################################
 
@@ -68,7 +84,14 @@ services:
 
     target.api:
         class: 'Hal\UI\Controllers\API\Target\TargetController'
-        arguments: ['@api.response_formatter', '@api_normalizer.deployment']
+        arguments: ['@api.response_formatter', '@api_normalizer.target']
+
+    targets.api:
+        class: 'Hal\UI\Controllers\API\Target\TargetsController'
+        arguments:
+            - '@api.response_formatter'
+            - '@doctrine.em'
+            - '@api_normalizer.target'
 
     ####################################################################################################################
     # BUILD CONTROLLERS

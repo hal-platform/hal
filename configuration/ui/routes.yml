@@ -545,8 +545,6 @@ parameters:
 
         # routes not created yet
 
-        api.application: {route: '/derp23', stack: []}
-        api.applications: {route: '/derp16', stack: []}
         api.deployment.history: {route: '/derp22', stack: []}
         api.deployment.lastpush: {route: '/derp2222', stack: []}
 

@@ -78,6 +78,5 @@ class OrganizationsController implements ControllerInterface
         $data = $this->formatter->buildResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
-
     }
 }

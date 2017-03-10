@@ -13,15 +13,6 @@ services:
             - '@normalizer.deployment'
             - '@slim.route.parameters'
 
-    api.deployments:
-        class: 'Hal\UI\Controllers\Api\Deployment\DeploymentsController'
-        arguments:
-            - '@slim.request'
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.deployment'
-            - '@slim.route.parameters'
-
     api.deployment.lastpush:
         class: 'Hal\UI\Controllers\Api\Deployment\LastPushController'
         arguments:
@@ -37,22 +28,4 @@ services:
             - '@doctrine.em'
             - '@normalizer.push'
             - '@slim.route.parameters'
-
-    ####################################################################################################################
-    # REPOSITORY CONTROLLERS
-    ####################################################################################################################
-
-    api.application:
-        class: 'Hal\UI\Controllers\Api\Application\ApplicationController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@slim.route.parameters'
-
-    api.applications:
-        class: 'Hal\UI\Controllers\Api\Application\ApplicationsController'
-        arguments:
-            - '@response.formatter'
-            - '@doctrine.em'
-            - '@normalizer.application'
 

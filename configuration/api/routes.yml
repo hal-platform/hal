@@ -29,7 +29,6 @@ parameters:
                     route: '/queue-refresh/{jobs:%r.api.queue%}'
                     stack: ['queue.refresh.api']
 
-
                 ################################################################################################################
                 # ORGANIZATION ROUTES
                 ################################################################################################################
@@ -48,10 +47,29 @@ parameters:
                 # APPLICATION ROUTES
                 ################################################################################################################
 
-                application_api_routes:
+                api.applications:
+                    method: 'GET'
+                    route: '/applications'
+                    stack: ['applications.api']
+                api.applications.paged:
+                    method: 'GET'
+                    route: '/applications/page/{page:%r.digit%}'
+                    stack: ['applications.api']
+
+                api.application.management:
                     route: '/applications/{application:%r.digit%}'
                     stack: ['middleware.api_require_entity']
                     routes:
+
+                        api.application:
+                            method: 'GET'
+                            route: ''
+                            stack: ['application.api']
+
+                        api.targets:
+                            method: 'GET'
+                            route: '/targets'
+                            stack: ['targets.api']
 
                         # are these application routes or build/push routes?
                         # It's nice to be able to use route groups to nest common url prefixes.
@@ -196,21 +214,4 @@ parameters:
         #     conditions:
         #         id: '%routes.api.regex.digit%'
         #         page: '%routes.api.regex.digit%'
-
-        # api.applications:
-        #     method: 'GET'
-        #     route: '/api/applications'
-        #     stack: ['middleware.api.cached', 'api.applications']
-
-        # api.application:
-        #     method: 'GET'
-        #     route: '/api/applications/:id'
-        #     stack: ['middleware.api.cached', 'api.application']
-        #     conditions: {id: '%routes.api.regex.digit%'}
-
-        # api.deployments:
-        #     method: 'GET'
-        #     route: '/api/applications/:id/deployments'
-        #     stack: ['middleware.api.cached', 'api.deployments']
-        #     conditions: {id: '%routes.api.regex.digit%'}
 

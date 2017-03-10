@@ -68,7 +68,7 @@ class ApplicationNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.application', ['id' => $application->id()]],
+            ['api.application', ['application' => $application->id()]],
             $application->name()
         );
     }
@@ -102,9 +102,9 @@ class ApplicationNormalizer implements NormalizerInterface
         $links = [
             'self' => $this->link($application),
             'group' => $this->groupNormalizer->link($application->group()),
-            'deployments' => new Hyperlink(['api.deployments', ['id' => $application->id()]]),
-            'builds' => new Hyperlink(['api.builds', ['id' => $application->id()]]),
-            'pushes' => new Hyperlink(['api.pushes', ['id' => $application->id()]]),
+            'deployments' => new Hyperlink(['api.targets', ['application' => $application->id()]]),
+            'builds' => new Hyperlink(['api.builds', ['application' => $application->id()]]),
+            'pushes' => new Hyperlink(['api.pushes', ['application' => $application->id()]]),
 
             'page' => new Hyperlink(
                 ['application', ['application' => $application->id()]],
