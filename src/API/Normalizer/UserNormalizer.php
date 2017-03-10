@@ -52,7 +52,7 @@ class UserNormalizer implements NormalizerInterface
         }
 
         return new Hyperlink(
-            ['api.user', ['id' => $user->id()]],
+            ['api.user', ['user' => $user->id()]],
             $user->handle()
         );
     }
@@ -72,10 +72,10 @@ class UserNormalizer implements NormalizerInterface
 
         $data = [
             'id' => $user->id(),
-            'handle' => $user->handle(),
+            'username' => $user->handle(),
             'name' => $user->name(),
             'email' => $user->email(),
-            'isActive' => $user->isActive(),
+            'is_disabled' => !$user->isActive(),
             'permissions' => [
                 'standard' => $perm->isPleb(),
                 'lead' => $perm->isLead(),

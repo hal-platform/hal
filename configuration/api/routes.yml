@@ -33,13 +33,14 @@ parameters:
                 # APPLICATION ROUTES
                 ################################################################################################################
 
-                # are these application routes or build/push routes?
-                # It's nice to be able to use route groups to nest common url prefixes.
-
                 application_api_routes:
                     route: '/applications/{application:%r.digit%}'
                     stack: ['middleware.api_require_entity']
                     routes:
+
+                        # are these application routes or build/push routes?
+                        # It's nice to be able to use route groups to nest common url prefixes.
+
                         api.builds:
                             method: 'GET'
                             route: '/builds'
@@ -137,6 +138,24 @@ parameters:
                     route: '/environments/{environment:%r.digit%}'
                     stack: ['middleware.api_require_entity', 'environment.api']
 
+                ################################################################################################################
+                # USER ROUTES
+                ################################################################################################################
+
+                api.users:
+                    method: 'GET'
+                    route: '/users'
+                    stack: ['users.api']
+                api.users.paged:
+                    method: 'GET'
+                    route: '/users/page/{page:%r.digit%}'
+                    stack: ['users.api']
+
+                api.user:
+                    method: 'GET'
+                    route: '/users/{user:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'user.api']
+
         # api.groups:
         #     method: 'GET'
         #     route: '/api/groups'
@@ -146,22 +165,6 @@ parameters:
         #     method: 'GET'
         #     route: '/api/groups/:id'
         #     stack: ['middleware.api.cached', 'api.group']
-        #     conditions: {id: '%routes.api.regex.digit%'}
-
-        # api.users:
-        #     method: 'GET'
-        #     route: '/api/users'
-        #     stack: ['middleware.api.cached', 'api.users']
-        # api.users.paged:
-        #     method: 'GET'
-        #     route: '/api/users/page/:page'
-        #     stack: ['middleware.api.cached', 'api.users']
-        #     conditions: {page: '%routes.api.regex.digit%'}
-
-        # api.user:
-        #     method: 'GET'
-        #     route: '/api/users/:id'
-        #     stack: ['middleware.api.cached', 'api.user']
         #     conditions: {id: '%routes.api.regex.digit%'}
 
         # api.deployment:

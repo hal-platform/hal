@@ -551,5 +551,3 @@ parameters:
         api.deployment.history: {route: '/derp22', stack: []}
         api.deployment.lastpush: {route: '/derp2222', stack: []}
 
-        api.users: {route: '/derp18', stack: []}
-        api.user: {route: '/derp21', stack: []}

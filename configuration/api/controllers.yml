@@ -124,7 +124,19 @@ services:
 
     environment.api:
         class: 'Hal\UI\Controllers\API\Environment\EnvironmentController'
+        arguments: ['@api.response_formatter']
+
+    ####################################################################################################################
+    # USER CONTROLLERS
+    ####################################################################################################################
+
+    user.api:
+        class: 'Hal\UI\Controllers\API\User\UserController'
+        arguments: ['@api.response_formatter']
+    users.api:
+        class: 'Hal\UI\Controllers\API\User\UsersController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
+            - '@api_normalizer.user'
             - '@problem.renderer'
