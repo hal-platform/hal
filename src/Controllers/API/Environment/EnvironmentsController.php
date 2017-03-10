@@ -49,7 +49,7 @@ class EnvironmentsController implements ControllerInterface
         EnvironmentNormalizer $normalizer
     ) {
         $this->formatter = $formatter;
-        $this->envRepo = $em->getRepository(Environment::CLASS);
+        $this->envRepo = $em->getRepository(Environment::class);
         $this->normalizer = $normalizer;
     }
 
