@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Controllers\API\Environment;
 
+use Hal\UI\API\Normalizer\EnvironmentNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
@@ -24,11 +25,18 @@ class EnvironmentController implements ControllerInterface
     private $formatter;
 
     /**
-     * @param ResponseFormatter $formatter
+     * @var EnvironmentNormalizer
      */
-    public function __construct(ResponseFormatter $formatter)
+    private $normalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
+     * @param EnvironmentNormalizer $normalizer
+     */
+    public function __construct(ResponseFormatter $formatter, EnvironmentNormalizer $normalizer)
     {
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -38,7 +46,9 @@ class EnvironmentController implements ControllerInterface
     {
         $environment = $request->getAttribute(Environment::class);
 
-        $body = $this->formatter->buildResponse($request, $environment);
+        $resource = $this->normalizer->resource($environment);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body);
     }
 }

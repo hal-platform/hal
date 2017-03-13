@@ -9,9 +9,8 @@ namespace Hal\UI\Controllers\API\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\API\Normalizer\ApplicationNormalizer;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -23,7 +22,6 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 class ApplicationsController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
     use PaginationTrait;
 
     private const MAX_PER_PAGE = 25;
@@ -41,11 +39,6 @@ class ApplicationsController implements ControllerInterface
     private $applicationRepo;
 
     /**
-     * @var ApplicationNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @var ProblemRendererInterface
      */
     private $problem;
@@ -53,18 +46,15 @@ class ApplicationsController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param ApplicationNormalizer $normalizer
      * @param ProblemRendererInterface $problem
      */
     public function __construct(
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
-        ApplicationNormalizer $normalizer,
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
         $this->applicationRepo = $em->getRepository(Application::class);
-        $this->normalizer = $normalizer;
         $this->problem = $problem;
     }
 
@@ -85,11 +75,10 @@ class ApplicationsController implements ControllerInterface
 
         $applications = [];
         foreach ($pagination as $application) {
-            $applications[] = $this->normalizer->link($application);
+            $applications[] = $application;
         }
 
         $links = $this->buildPaginationLinks('api.applications.paged', $page, $total, self::MAX_PER_PAGE);
-        $links['applications'] = $applications;
 
         $data = [
             'count' => count($applications),
@@ -97,10 +86,12 @@ class ApplicationsController implements ControllerInterface
             'page' => $page
         ];
 
-        $resource = $this->buildResource($data, [], $links);
+        $resource = new HypermediaResource($data, $links, [
+            'applications' => $applications
+        ]);
 
         $status = (count($applications) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse($request, $resource);
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }

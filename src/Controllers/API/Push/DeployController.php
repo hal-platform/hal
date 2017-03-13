@@ -10,6 +10,7 @@ namespace Hal\UI\Controllers\API\Push;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Validator\PushValidator;
 use Psr\Http\Message\ResponseInterface;
@@ -91,12 +92,18 @@ class DeployController implements ControllerInterface
 
         $this->em->flush();
 
-        $payload = [
-            'count' => count($releases),
-            'releases' => $releases
+        $data = [
+            'count' => count($releases)
         ];
 
-        $data = $this->formatter->buildResponse($request, $payload);
-        return $this->withHypermediaEndpoint($request, $response, $data, 201);
+        $resource = new HypermediaResource($data, [], [
+            'build' => $build,
+            'releases' => $releases
+        ]);
+
+        $resource->withEmbedded(['releases']);
+
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+        return $this->withHypermediaEndpoint($request, $response, $body, 201);
     }
 }

@@ -8,32 +8,34 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Group;
 
-class GroupNormalizer implements NormalizerInterface
+class OrganizationNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-
     /**
      * @param Group $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
+        if (!$input instanceof Group) {
+            return null;
+        }
+
         return $this->resource($input);
     }
 
     /**
-     * @param Group $group
+     * @param Group|null $group
      *
      * @return Hyperlink|null
      */
-    public function link(Group $group = null): ?Hyperlink
+    public function link($group): ?Hyperlink
     {
-        if (!$group) {
+        if (!$group instanceof Group) {
             return null;
         }
 
@@ -44,13 +46,13 @@ class GroupNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param Group $group
+     * @param Group|null $group
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(Group $group = null)
+    public function resource($group, array $embed = []): ?HypermediaResource
     {
-        if (is_null($group)) {
+        if (!$group instanceof Group) {
             return null;
         }
 
@@ -60,10 +62,14 @@ class GroupNormalizer implements NormalizerInterface
             'name' => $group->name()
         ];
 
-        $embedded = [];
+        $links = [
+            'self' => $this->link($group)
+        ];
 
-        $links = ['self' => $this->link($group)];
+        $resource = new HypermediaResource($data, $links);
 
-        return $this->buildResource($data, $embedded, $links);
+        $resource->withEmbedded($embed);
+
+        return $resource;
     }
 }

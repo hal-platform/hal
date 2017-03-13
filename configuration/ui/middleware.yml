@@ -40,10 +40,7 @@ services:
 
     middleware.require_entity:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
-        arguments:
-            - '@doctrine.em'
-            - '@problem.renderer'
-            - '@notFoundHandler'
+        arguments: ['@doctrine.em', '@notFoundHandler']
 
     middleware.nested_entity:
         class: 'Hal\UI\Middleware\NestedEntityMiddleware'

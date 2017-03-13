@@ -8,57 +8,38 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\EmbeddedResolutionTrait;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Utility\SortingTrait;
 
 class ServerNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-    use EmbeddedResolutionTrait;
     use SortingTrait;
-
-    /**
-     * @var EnvironmentNormalizer
-     */
-    private $normalizer;
-
-    /**
-     * @var array
-     */
-    private $embed;
-
-    /**
-     * @param EnvironmentNormalizer $normalizer
-     */
-    public function __construct(EnvironmentNormalizer $normalizer)
-    {
-        $this->normalizer = $normalizer;
-
-        $this->embed = ['environment'];
-    }
 
     /**
      * @param Server $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
+        if (!$input instanceof Server) {
+            return null;
+        }
+
         return $this->resource($input);
     }
 
     /**
-     * @param Server $server
+     * @param Server|null $server
      *
      * @return Hyperlink|null
      */
-    public function link(Server $server = null): ?Hyperlink
+    public function link($server): ?Hyperlink
     {
-        if (!$server) {
+        if (!$server instanceof Server) {
             return null;
         }
 
@@ -69,32 +50,15 @@ class ServerNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param Server $server
+     * @param Server|null $server
      * @param array $embed
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(Server $server = null, array $embed = [])
+    public function resource($server, array $embed = ['environment']): ?HypermediaResource
     {
-        if (!$server) {
+        if (!$server instanceof Server) {
             return null;
-        }
-
-        $properties = [
-            'environment' => $server->environment(),
-            'deployments' => $server->deployments()->toArray()
-        ];
-
-        // shitty, but this is a circular reference so deal with it
-        $linkedDeployments = [];
-        $deployments = $server->deployments()->toArray();
-        usort($deployments, $this->deploymentSorter());
-
-        foreach ($deployments as $deployment) {
-            $linkedDeployments[] = new Hyperlink(
-                ['api.target', ['target' => $deployment->id()]],
-                $deployment->formatPretty(true)
-            );
         }
 
         $data = [
@@ -103,14 +67,17 @@ class ServerNormalizer implements NormalizerInterface
             'name' => $server->name()
         ];
 
-        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
-
         $links = [
-            'self' => $this->link($server),
-            'environment' => $this->normalizer->link($server->environment()),
-            'deployments' => $linkedDeployments
+            'self' => $this->link($server)
         ];
 
-        return $this->buildResource($data, $embedded, $links);
+        $resource = new HypermediaResource($data, $links, [
+            'environment' => $server->environment(),
+            'deployments' => $server->deployments()->toArray()
+        ]);
+
+        $resource->withEmbedded($embed);
+
+        return $resource;
     }
 }

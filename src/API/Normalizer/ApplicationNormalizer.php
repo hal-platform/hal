@@ -8,48 +8,30 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\EmbeddedResolutionTrait;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Github\GitHubURLBuilder;
 use QL\Hal\Core\Entity\Application;
 
 class ApplicationNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-    use EmbeddedResolutionTrait;
-
     /**
      * @var GitHubURLBuilder
      */
     private $urlBuilder;
 
     /**
-     * @var GroupNormalizer
-     */
-    private $groupNormalizer;
-
-    /**
-     * @var array
-     */
-    private $embed;
-
-    /**
      * @param GitHubURLBuilder $urlBuilder
-     * @param GroupNormalizer $groupNormalizer
      */
-    public function __construct(GitHubURLBuilder $urlBuilder, GroupNormalizer $groupNormalizer)
+    public function __construct(GitHubURLBuilder $urlBuilder)
     {
         $this->urlBuilder = $urlBuilder;
-        $this->groupNormalizer = $groupNormalizer;
-
-        $this->embed = [];
     }
 
     /**
      * @param Application $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
@@ -61,9 +43,9 @@ class ApplicationNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Application $application = null): ?Hyperlink
+    public function link($application): ?Hyperlink
     {
-        if (!$application) {
+        if (!$application instanceof Application) {
             return null;
         }
 
@@ -77,31 +59,22 @@ class ApplicationNormalizer implements NormalizerInterface
      * @param Application|null $application
      * @param array $embed
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(Application $application = null, array $embed = [])
+    public function resource($application, array $embed = []): ?HypermediaResource
     {
-        if (is_null($application)) {
+        if (!$application instanceof Application) {
             return null;
         }
-
-        $properties = [
-            'group' => $application->group()
-        ];
 
         $data = [
             'id' => $application->id(),
             'key' => $application->key(),
-            'name' => $application->name(),
-
-            'email' => $application->email()
+            'name' => $application->name()
         ];
-
-        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
 
         $links = [
             'self' => $this->link($application),
-            'group' => $this->groupNormalizer->link($application->group()),
             'deployments' => new Hyperlink(['api.targets', ['application' => $application->id()]]),
             'builds' => new Hyperlink(['api.builds', ['application' => $application->id()]]),
             'pushes' => new Hyperlink(['api.pushes', ['application' => $application->id()]]),
@@ -123,6 +96,12 @@ class ApplicationNormalizer implements NormalizerInterface
             )
         ];
 
-        return $this->buildResource($data, $embedded, $links);
+        $resource = new HypermediaResource($data, $links, [
+            'organization' => $application->group()
+        ]);
+
+        $resource->withEmbedded($embed);
+
+        return $resource;
     }
 }

@@ -7,11 +7,7 @@ services:
 
     middleware.api_writes_require_entity:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
-        arguments:
-            - '@doctrine.em'
-            - '@problem.renderer'
-            - '@notFoundHandler'
-            - true
+        arguments: ['@doctrine.em', '@notFoundHandler']
 
     middleware.api_writes_rate_limiter:
         class: 'Hal\UI\Middleware\APIRateLimitingMiddleware'

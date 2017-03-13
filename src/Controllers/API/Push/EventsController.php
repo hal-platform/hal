@@ -7,10 +7,8 @@
 
 namespace Hal\UI\Controllers\API\Push;
 
-use Hal\UI\API\Normalizer\EventNormalizer;
-use Hal\UI\API\Normalizer\PushNormalizer;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\EventLogService;
 use Psr\Http\Message\ResponseInterface;
@@ -21,7 +19,6 @@ use QL\Panthor\ControllerInterface;
 class EventsController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
 
     /**
      * @var ResponseFormatter
@@ -34,32 +31,13 @@ class EventsController implements ControllerInterface
     private $logService;
 
     /**
-     * @var EventNormalizer
-     */
-    private $eventNormalizer;
-
-    /**
-     * @var PushNormalizer
-     */
-    private $pushNormalizer;
-
-    /**
      * @param ResponseFormatter $formatter
-     * @param EventNormalizer $eventNormalizer
-     * @param PushNormalizer $pushNormalizer
      * @param EventLogService $logService
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        EventLogService $logService,
-        EventNormalizer $eventNormalizer,
-        PushNormalizer $pushNormalizer
-    ) {
+    public function __construct(ResponseFormatter $formatter, EventLogService $logService)
+    {
         $this->formatter = $formatter;
         $this->logService = $logService;
-
-        $this->eventNormalizer = $eventNormalizer;
-        $this->pushNormalizer = $pushNormalizer;
     }
 
     /**
@@ -74,61 +52,19 @@ class EventsController implements ControllerInterface
             'count' => count($events)
         ];
 
-        $embedded = [];
+        $resource = new HypermediaResource($data, [], [
+            'push' => $push,
+            'events' => $events
+        ]);
 
-        $links = [
-            'push' => $this->pushNormalizer->link($push),
-        ];
-
-        $shouldEmbed = $this->isEmbedded($request);
-
-        if ($embeddedEvents = $this->buildEmbeddedEvents($events, $shouldEmbed)) {
-            $embedded['events'] = $embeddedEvents;
+        if ($this->isEmbedded($request)) {
+            $resource->withEmbedded('events');
         }
 
-        if ($linkedEvents = $this->buildLinkedEvents($events, $shouldEmbed)) {
-            $links['events'] = $linkedEvents;
-        }
-
-        $resource = $this->buildResource($data, $embedded, $links);
         $status = (count($events) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse($request, $resource);
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
-    }
-
-    /**
-     * @param array $events
-     * @param bool $shouldEmbed
-     *
-     * @return array|null
-     */
-    private function buildEmbeddedEvents(array $events, $shouldEmbed): ?array
-    {
-        if (!$shouldEmbed) {
-            return null;
-        }
-
-        return array_map(function($event) {
-            return $this->eventNormalizer->resource($event);
-        }, $events);
-    }
-
-    /**
-     * @param array $events
-     * @param bool $shouldEmbed
-     *
-     * @return array|null
-     */
-    private function buildLinkedEvents(array $events, $shouldEmbed): ?array
-    {
-        if ($shouldEmbed) {
-            return null;
-        }
-
-        return array_map(function($event) {
-            return $this->eventNormalizer->link($event);
-        }, $events);
     }
 
     /**

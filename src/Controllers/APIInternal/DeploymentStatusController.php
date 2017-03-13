@@ -9,6 +9,8 @@ namespace Hal\UI\Controllers\APIInternal;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\API\HypermediaResource;
+use Hal\UI\API\Normalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\SessionTrait;
@@ -43,6 +45,11 @@ class DeploymentStatusController implements ControllerInterface
     private $formatter;
 
     /**
+     * @var Normalizer
+     */
+    private $normalizer;
+
+    /**
      * @var DeploymentRepository
      */
     private $deploymentRepo;
@@ -52,16 +59,19 @@ class DeploymentStatusController implements ControllerInterface
      * @param PoolService $poolService
      * @param PermissionService $permissionService
      * @param ResponseFormatter $formatter
+     * @param Normalizer $normalizer
      */
     public function __construct(
         EntityManagerInterface $em,
         PoolService $poolService,
         PermissionService $permissionService,
-        ResponseFormatter $formatter
+        ResponseFormatter $formatter,
+        Normalizer $normalizer
     ) {
         $this->poolService = $poolService;
         $this->permissionService = $permissionService;
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
 
         $this->deploymentRepo = $em->getRepository(Deployment::class);
     }
@@ -84,19 +94,30 @@ class DeploymentStatusController implements ControllerInterface
             $push = $deployment->push();
             $build = ($push) ? $push->build() : null;
 
-            $statuses[] = compact('deployment', 'push', 'build');
+            $resource = new HypermediaResource([], [], [
+                'deployment' => $deployment,
+                'push' => $push,
+                'build' => $build
+            ]);
+
+            $statuses[] = $resource->withEmbedded(['deployment', 'push', 'build']);
         }
 
         $canPush = $this->permissionService->canUserPush($user, $application, $environment);
 
-        $payload = [
-            'statuses' => $statuses,
+        $data = [
             'view' => $this->getSelectedView($request, $application, $environment),
             'permission' => $canPush
         ];
 
-        $data = $this->formatter->buildResponse($request, $payload);
-        return $this->withHypermediaEndpoint($request, $response, $data, 200);
+        $resource = new HypermediaResource($data, [], [
+            'statuses' => $statuses
+        ]);
+
+        $resource->withEmbedded(['statuses']);
+
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+        return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 
     /**

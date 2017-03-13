@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers\Api;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
@@ -36,20 +37,21 @@ class IndexController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $body = $this->formatter->buildResponse($request, [
-            '_links' => [
-                'environments' => new Hyperlink('api.environments'),
-                'servers' => new Hyperlink('api.servers'),
+        $links = [
+            'environments' => new Hyperlink('api.environments'),
+            'servers' => new Hyperlink('api.servers'),
 
-                'applications' => new Hyperlink('api.applications'),
-                'organizations' => new Hyperlink('api.organizations'),
+            'applications' => new Hyperlink('api.applications'),
+            'organizations' => new Hyperlink('api.organizations'),
 
-                'users' => new Hyperlink('api.users'),
-                'queue' => new Hyperlink('api.queue'),
+            'users' => new Hyperlink('api.users'),
+            'queue' => new Hyperlink('api.queue'),
 
-                'documentation' => new Hyperlink('api.docs')
-            ]
-        ]);
+            'documentation' => new Hyperlink('api.docs', '', 'text/html')
+        ];
+
+        $resource = new HypermediaResource([], $links);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }

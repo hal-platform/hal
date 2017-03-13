@@ -10,6 +10,7 @@ namespace Hal\UI\Controllers\API\Build;
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Validator\BuildValidator;
 use Hal\UI\Validator\PushValidator;
@@ -52,6 +53,11 @@ class StartBuildController implements ControllerInterface
     private $formatter;
 
     /**
+     * @var BuildNormalizer
+     */
+    private $normalizer;
+
+    /**
      * @var ProblemRendererInterface
      */
     private $problemRenderer;
@@ -61,6 +67,7 @@ class StartBuildController implements ControllerInterface
      * @param BuildValidator $buildValidator
      * @param PushValidator $pushValidator
      * @param ResponseFormatter $formatter
+     * @param BuildNormalizer $normalizer
      * @param ProblemRendererInterface $problemRenderer
      */
     public function __construct(
@@ -68,6 +75,7 @@ class StartBuildController implements ControllerInterface
         BuildValidator $buildValidator,
         PushValidator $pushValidator,
         ResponseFormatter $formatter,
+        BuildNormalizer $normalizer,
         ProblemRendererInterface $problemRenderer
     ) {
         $this->em = $em;
@@ -75,6 +83,7 @@ class StartBuildController implements ControllerInterface
         $this->pushValidator = $pushValidator;
 
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
         $this->problemRenderer = $problemRenderer;
     }
 
@@ -116,7 +125,9 @@ class StartBuildController implements ControllerInterface
         $this->em->persist($build);
         $this->em->flush();
 
-        $data = $this->formatter->buildResponse($request, $build);
-        return $this->withHypermediaEndpoint($request, $response, $data, 201);
+        $resource = $this->normalizer->resource($build, ['application']);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
+        return $this->withHypermediaEndpoint($request, $response, $body, 201);
     }
 }

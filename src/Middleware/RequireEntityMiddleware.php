@@ -8,7 +8,6 @@
 namespace Hal\UI\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
@@ -27,7 +26,6 @@ use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
 use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
-use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 use QL\Panthor\MiddlewareInterface;
 use Slim\Route;
 
@@ -38,7 +36,32 @@ use Slim\Route;
  */
 class RequireEntityMiddleware implements MiddlewareInterface
 {
-    use APITrait;
+    /**
+     * Map of known entities from their route parameter name to FQCN.
+     */
+    const KNOWN_ENTITIES = [
+        'build' => Build::class,
+        'push' => Push::class,
+        'event' => EventLog::class,
+
+        'user' => User::class,
+        'user_permission' => UserPermission::class,
+        'user_type' => UserType::class,
+        'token' => Token::class,
+
+        'organization' => Group::class,
+        'application' => Application::class,
+
+        'target' => Deployment::class,
+        'encrypted' => EncryptedProperty::class,
+
+        'environment' => Environment::class,
+        'server' => Server::class,
+        'credential' => Credential::class,
+
+        'pool' => DeploymentPool::class,
+        'view' => DeploymentView::class
+    ];
 
     /**
      * @var EntityManagerInterface
@@ -46,67 +69,18 @@ class RequireEntityMiddleware implements MiddlewareInterface
     private $em;
 
     /**
-     * @var ProblemRendererInterface
-     */
-    private $problemRenderer;
-
-    /**
      * @var callable
      */
     private $notFound;
 
     /**
-     * @var bool
-     */
-    private $isAPI;
-
-    /**
-     * @var array
-     */
-    private $map;
-
-    /**
      * @param EntityManagerInterface $em
-     * @param ProblemRendererInterface $problemRenderer
      * @param callable $notFound
-     * @param bool $isAPI
      */
-    public function __construct(
-        EntityManagerInterface $em,
-        ProblemRendererInterface $problemRenderer,
-        callable $notFound,
-        $isAPI = false
-    ) {
+    public function __construct(EntityManagerInterface $em, callable $notFound)
+    {
         $this->em = $em;
-
-        $this->problemRenderer = $problemRenderer;
         $this->notFound = $notFound;
-        $this->isAPI = $isAPI;
-
-        // whitelist of route parameters and the entity they map to.
-        $this->map = [
-            'build' => Build::class,
-            'push' => Push::class,
-            'event' => EventLog::class,
-
-            'user' => User::class,
-            'user_permission' => UserPermission::class,
-            'user_type' => UserType::class,
-            'token' => Token::class,
-
-            'organization' => Group::class,
-            'application' => Application::class,
-
-            'target' => Deployment::class,
-            'encrypted' => EncryptedProperty::class,
-
-            'environment' => Environment::class,
-            'server' => Server::class,
-            'credential' => Credential::class,
-
-            'pool' => DeploymentPool::class,
-            'view' => DeploymentView::class,
-        ];
     }
 
     /**
@@ -118,23 +92,17 @@ class RequireEntityMiddleware implements MiddlewareInterface
             ->getAttribute('route')
             ->getArguments();
 
-        foreach ($params as $entity => $id) {
+        foreach ($params as $param => $id) {
 
-            if (!isset($this->map[$entity])) {
+            if (!isset(self::KNOWN_ENTITIES[$param])) {
                 continue;
             }
 
-            if (!$entityObj = $this->lookup($entity, $id)) {
-
-                if ($this->isAPI) {
-                    $msg = sprintf('%s not found', ucfirst($entity));
-                    return $this->withProblem($this->problemRenderer, $response, 404, $msg);
-                } else {
-                    return ($this->notFound)($request, $response);
-                }
+            if (!$entity = $this->lookup($param, $id)) {
+                return ($this->notFound)($request, $response);
             }
 
-            $request = $request->withAttribute($this->map[$entity], $entityObj);
+            $request = $request->withAttribute(self::KNOWN_ENTITIES[$param], $entity);
         }
 
         return $next($request, $response);
@@ -148,7 +116,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
      */
     private function lookup($entityName, $id)
     {
-        $fq = $this->map[$entityName];
+        $fq = self::KNOWN_ENTITIES[$entityName];
 
         $repository = $this->em->getRepository($fq);
         if (!$entity = $repository->find($id)) {

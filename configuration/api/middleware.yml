@@ -5,8 +5,4 @@ services:
 
     middleware.api_require_entity:
         class: 'Hal\UI\Middleware\RequireEntityMiddleware'
-        arguments:
-            - '@doctrine.em'
-            - '@problem.renderer'
-            - '@notFoundHandler'
-            - true
+        arguments: ['@doctrine.em', '@notFoundHandler']

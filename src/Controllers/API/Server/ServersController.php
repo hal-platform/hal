@@ -9,9 +9,8 @@ namespace Hal\UI\Controllers\API\Server;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\API\Normalizer\ServerNormalizer;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -23,7 +22,6 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 class ServersController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
     use PaginationTrait;
 
     private const MAX_PER_PAGE = 25;
@@ -41,11 +39,6 @@ class ServersController implements ControllerInterface
     private $serverRepo;
 
     /**
-     * @var ServerNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @var ProblemRendererInterface
      */
     private $problem;
@@ -53,18 +46,15 @@ class ServersController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param ServerNormalizer $normalizer
      * @param ProblemRendererInterface $problem
      */
     public function __construct(
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
-        ServerNormalizer $normalizer,
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
         $this->serverRepo = $em->getRepository(Server::class);
-        $this->normalizer = $normalizer;
         $this->problem = $problem;
     }
 
@@ -83,11 +73,10 @@ class ServersController implements ControllerInterface
 
         $servers = [];
         foreach ($pagination as $server) {
-            $servers[] = $this->normalizer->link($server);
+            $servers[] = $server;
         }
 
         $links = $this->buildPaginationLinks('api.servers.paged', $page, $total, self::MAX_PER_PAGE);
-        $links['servers'] = $servers;
 
         $data = [
             'count' => count($servers),
@@ -95,10 +84,12 @@ class ServersController implements ControllerInterface
             'page' => $page
         ];
 
-        $resource = $this->buildResource($data, [], $links);
+        $resource = new HypermediaResource($data, $links, [
+            'servers' => $servers
+        ]);
 
         $status = (count($servers) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse($request, $resource);
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }

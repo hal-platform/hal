@@ -1,17 +1,14 @@
 services:
 
+    api.cache:
+        parent: 'cache'
+
     api.response_formatter:
         class: 'Hal\UI\API\ResponseFormatter'
-        arguments:
-            - '@api.normalizer'
-            - '@api.hypermedia_formatter'
-            - '@uri'
-            - '%api.cachetimes%'
+        arguments: ['@api.normalizer', '@uri']
         calls:
-            - ['setCache', ['@cache']]
-
-    api.hypermedia_formatter:
-        class: 'Hal\UI\API\HypermediaFormatter'
+            - ['setCache', ['@api.cache']]
+            - ['setCacheTimes', ['%api.cachetimes%']]
 
     api.normalizer:
         class: 'Hal\UI\API\Normalizer'
@@ -34,41 +31,29 @@ services:
 
     api_normalizer.build:
         class: 'Hal\UI\API\Normalizer\BuildNormalizer'
-        arguments:
-            - '@github.url_builder'
-            - '@api_normalizer.user'
-            - '@api_normalizer.application'
-            - '@api_normalizer.environment'
+        arguments: ['@github.url_builder']
 
     api_normalizer.target:
-        class: 'Hal\UI\API\Normalizer\DeploymentNormalizer'
-        arguments: ['@api_normalizer.application', '@api_normalizer.server']
+        class: 'Hal\UI\API\Normalizer\TargetNormalizer'
 
     api_normalizer.environment:
         class: 'Hal\UI\API\Normalizer\EnvironmentNormalizer'
 
     api_normalizer.event:
         class: 'Hal\UI\API\Normalizer\EventNormalizer'
-        arguments: ['@api_normalizer.build', '@api_normalizer.push']
 
     api_normalizer.organization:
-        class: 'Hal\UI\API\Normalizer\GroupNormalizer'
+        class: 'Hal\UI\API\Normalizer\OrganizationNormalizer'
 
     api_normalizer.push:
         class: 'Hal\UI\API\Normalizer\PushNormalizer'
-        arguments:
-            - '@api_normalizer.user'
-            - '@api_normalizer.build'
-            - '@api_normalizer.target'
-            - '@api_normalizer.application'
 
     api_normalizer.application:
         class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'
-        arguments: ['@github.url_builder', '@api_normalizer.organization']
+        arguments: ['@github.url_builder']
 
     api_normalizer.server:
         class: 'Hal\UI\API\Normalizer\ServerNormalizer'
-        arguments: ['@api_normalizer.environment']
 
     api_normalizer.timepoint:
         class: 'Hal\UI\API\Normalizer\TimePointNormalizer'

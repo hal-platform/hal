@@ -9,9 +9,8 @@ namespace Hal\UI\Controllers\API\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Normalizer\DeploymentNormalizer;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,7 +23,6 @@ use QL\Panthor\ControllerInterface;
 class TargetsController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
     use SortingTrait;
 
     /**
@@ -39,22 +37,12 @@ class TargetsController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @var DeploymentNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param DeploymentNormalizer $normalizer
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        EntityManagerInterface $em,
-        DeploymentNormalizer $normalizer
-    ) {
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em)
+    {
         $this->formatter = $formatter;
-        $this->normalizer = $normalizer;
 
         $this->targetRepo = $em->getRepository(Deployment::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
@@ -78,21 +66,15 @@ class TargetsController implements ControllerInterface
 
         usort($targets, $this->deploymentSorter());
 
-        $targets = array_map(function ($target) {
-            return $this->normalizer->link($target);
-        }, $targets);
-
         $data = [
             'count' => count($targets)
         ];
 
-        $links = [
+        $resource = new HypermediaResource($data, [], [
             'targets' => $targets
-        ];
+        ]);
 
-        $data = $this->buildResource($data, [], $links);
-
-        $body = $this->formatter->buildResponse($request, $data);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
         return $this->withHypermediaEndpoint($request, $response, $body);
     }
 

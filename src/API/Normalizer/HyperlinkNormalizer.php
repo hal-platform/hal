@@ -29,13 +29,37 @@ class HyperlinkNormalizer implements NormalizerInterface
     /**
      * @param Hyperlink $input
      *
-     * @inheritDoc
+     * @return array|null
      */
     public function normalize($input)
     {
-        $normalized = $input->jsonSerialize();
+        return $this->resource($input);
+    }
 
-        $href = $input->href();
+    /**
+     * @param Group|null $link
+     *
+     * @return Hyperlink|null
+     */
+    public function link($link): ?Hyperlink
+    {
+        return null;
+    }
+
+    /**
+     * @param Hyperlink|null $link
+     *
+     * @return array|null
+     */
+    public function resource($link)
+    {
+        if (!$link instanceof Hyperlink) {
+            return null;
+        }
+
+        $normalized = $link->jsonSerialize();
+
+        $href = $link->href();
 
         if (is_string($href)) {
             if (stripos($href, 'http') === 0) {

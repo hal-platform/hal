@@ -8,47 +8,16 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\EmbeddedResolutionTrait;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Deployment;
 
-class DeploymentNormalizer implements NormalizerInterface
+class TargetNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-    use EmbeddedResolutionTrait;
-
-    /**
-     * @var ApplicationNormalizer
-     */
-    private $appNormalizer;
-
-    /**
-     * @var ServerNormalizer
-     */
-    private $serverNormalizer;
-
-    /**
-     * @var array
-     */
-    private $embed;
-
-    /**
-     * @param ApplicationNormalizer $appNormalizer
-     * @param ServerNormalizer $serverNormalizer
-     */
-    public function __construct(ApplicationNormalizer $appNormalizer, ServerNormalizer $serverNormalizer)
-    {
-        $this->appNormalizer = $appNormalizer;
-        $this->serverNormalizer = $serverNormalizer;
-
-        $this->embed = [];
-    }
-
     /**
      * @param Deployment $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
@@ -56,13 +25,13 @@ class DeploymentNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Deployment|null $deployment
      *
      * @return Hyperlink|null
      */
-    public function link(Deployment $deployment = null): ?Hyperlink
+    public function link($deployment): ?Hyperlink
     {
-        if (!$deployment) {
+        if (!$deployment instanceof Deployment) {
             return null;
         }
 
@@ -73,21 +42,16 @@ class DeploymentNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Deployment|null $deployment
      * @param array $embed
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(Deployment $deployment = null, array $embed = [])
+    public function resource($deployment, array $embed = []): ?HypermediaResource
     {
-        if (is_null($deployment)) {
+        if (!$deployment instanceof Deployment) {
             return null;
         }
-
-        $properties = [
-            'application' => $deployment->application(),
-            'server' => $deployment->server()
-        ];
 
         $data = [
             'id' => $deployment->id(),
@@ -112,17 +76,21 @@ class DeploymentNormalizer implements NormalizerInterface
             'pretty-name' => $deployment->formatPretty(false),
             'detail' => sprintf('%s: %s', $deployment->server()->formatHumanType(), $deployment->formatMeta()),
         ];
-        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
 
         $links = [
             'self' => $this->link($deployment),
-            'application' => $this->appNormalizer->link($deployment->application()),
-            'server' => $this->serverNormalizer->link($deployment->server()),
 
             'pushes' => new Hyperlink(['api.target.history', ['target' => $deployment->id()]]),
-            'current_push' => new Hyperlink(['api.target.current_release', ['target' => $deployment->id()]])
+            'current_release' => new Hyperlink(['api.target.current_release', ['target' => $deployment->id()]])
         ];
 
-        return $this->buildResource($data, $embedded, $links);
+        $resource = new HypermediaResource($data, $links, [
+            'application' => $deployment->application(),
+            'server' => $deployment->server()
+        ]);
+
+        $resource->withEmbedded($embed);
+
+        return $resource;
     }
 }

@@ -8,47 +8,16 @@
 namespace Hal\UI\Api\Normalizer;
 
 use Hal\UI\Api\Hyperlink;
+use Hal\UI\Api\HypermediaResource;
 use Hal\UI\Api\NormalizerInterface;
-use Hal\UI\Api\Utility\EmbeddedResolutionTrait;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\EventLog;
 
 class EventNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-    use EmbeddedResolutionTrait;
-
-    /**
-     * @var BuildNormalizer
-     */
-    private $builds;
-
-    /**
-     * @var PushNormalizer
-     */
-    private $pushes;
-
-    /**
-     * @var array
-     */
-    private $embed;
-
-    /**
-     * @param BuildNormalizer $builds
-     * @param PushNormalizer $pushes
-     */
-    public function __construct(BuildNormalizer $builds, PushNormalizer $pushes)
-    {
-        $this->builds = $builds;
-        $this->pushes = $pushes;
-
-        $this->embed = [];
-    }
-
     /**
      * @param EventLog $input
      *
-     * @return array
+     * @return mixed
      */
     public function normalize($input)
     {
@@ -56,79 +25,61 @@ class EventNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param EventLog|null $log
+     * @param EventLog|null $event
      *
      * @return Hyperlink|null
      */
-    public function link(EventLog $log = null)
+    public function link($event): ?Hyperlink
     {
-        if (!$log) {
-            return $log;
+        if (!$event instanceof EventLog) {
+            return null;
         }
 
-        $title = sprintf('[%s] %s', $log->order(), $log->message());
+        $title = sprintf('[%s] %s', $event->order(), $event->message());
 
         return new Hyperlink(
-            ['api.event', ['event' => $log->id()]],
+            ['api.event', ['event' => $event->id()]],
             $title
         );
     }
 
     /**
-     * @param EventLog $log
+     * @param EventLog|null $event
      * @param array $embed
      *
-     * @return array
+     * @return HypermediaResource|null
      */
-    public function resource(EventLog $log = null, array $embed = [])
+    public function resource($event, array $embed = []): ?HypermediaResource
     {
-        if (is_null($log)) {
+        if (!$event instanceof EventLog) {
             return null;
         }
 
-        $properties = [
-            'build' => $log->build(),
-            'push' => $log->push()
-        ];
-
         $data = [
-            'id' => $log->id(),
-            'event' => $log->event(),
-            'order' => $log->order(),
-            'message' => $log->message(),
-            'status' => $log->status(),
-            'created' => $log->created(),
+            'id' => $event->id(),
+            'event' => $event->event(),
+            'order' => $event->order(),
+            'message' => $event->message(),
+            'status' => $event->status(),
+            'created' => $event->created(),
             'data' => '**DATA**'
         ];
 
         if (in_array('data', $embed)) {
-            $data['data'] = $log->data();
+            $data['data'] = $event->data();
         }
 
-        $embedded = $this->resolveEmbedded($properties, array_merge($this->embed, $embed));
-
-        return $this->buildResource($data, $embedded, $this->buildLinks($log));
-    }
-
-    /**
-     * @param EventLog $log
-     *
-     * @return array
-     */
-    private function buildLinks(EventLog $log)
-    {
         $links = [
-            'self' => $this->link($log)
+            'self' => $this->link($event)
         ];
 
-        if ($log->build()) {
-            $links['build'] = $this->builds->link($log->build());
-        }
+        $resource = new HypermediaResource($data, $links, [
+            'build' => $event->build(),
+            'push' => $event->push()
+        ]);
 
-        if ($log->push()) {
-            $links['push'] = $this->pushes->link($log->push());
-        }
+        $resource->withEmbedded($embed);
 
-        return $links;
+        return $resource;
     }
 }

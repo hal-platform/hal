@@ -8,65 +8,16 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\EmbeddedResolutionTrait;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Push;
 
 class PushNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-    use EmbeddedResolutionTrait;
-
     /**
-     * @var UserNormalizer
-     */
-    private $userNormalizer;
-
-    /**
-     * @var BuildNormalizer
-     */
-    private $buildNormalizer;
-
-    /**
-     * @var DeploymentNormalizer
-     */
-    private $deploymentNormalizer;
-
-    /**
-     * @var ApplicationNormalizer
-     */
-    private $appNormalizer;
-
-    /**
-     * @var array
-     */
-    private $embed;
-
-    /**
-     * @param UserNormalizer $userNormalizer
-     * @param BuildNormalizer $buildNormalizer
-     * @param DeploymentNormalizer $deploymentNormalizer
-     * @param ApplicationNormalizer $appNormalizer
-     */
-    public function __construct(
-        UserNormalizer $userNormalizer,
-        BuildNormalizer $buildNormalizer,
-        DeploymentNormalizer $deploymentNormalizer,
-        ApplicationNormalizer $appNormalizer
-    ) {
-        $this->userNormalizer = $userNormalizer;
-        $this->buildNormalizer = $buildNormalizer;
-        $this->deploymentNormalizer = $deploymentNormalizer;
-        $this->appNormalizer = $appNormalizer;
-
-        $this->embed = [];
-    }
-
-    /**
-     * @param Push $input
+     * @param Push|null $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
@@ -78,9 +29,9 @@ class PushNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Push $push = null): ?Hyperlink
+    public function link($push): ?Hyperlink
     {
-        if (!$push) {
+        if (!$push instanceof Push) {
             return null;
         }
 
@@ -94,20 +45,13 @@ class PushNormalizer implements NormalizerInterface
      * @param Push|null $push
      * @param array $embed
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(Push $push = null, array $embed = [])
+    public function resource($push, array $embed = []): ?HypermediaResource
     {
-        if (is_null($push)) {
+        if (!$push instanceof Push) {
             return null;
         }
-
-        $properties = [
-            'user' => $push->user(),
-            'build' => $push->build(),
-            'deployment' => $push->deployment(),
-            'application' => $push->application()
-        ];
 
         $data = [
             'id' => $push->id(),
@@ -118,31 +62,9 @@ class PushNormalizer implements NormalizerInterface
             'end' => $push->end()
         ];
 
-        return $this->buildResource(
-            $data,
-            $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            $this->buildLinks($push)
-        );
-    }
-
-    /**
-     * @param Push $push
-     *
-     * @return array
-     */
-    private function buildLinks(Push $push)
-    {
-        $self = [
-            'self' => $this->link($push)
-        ];
-
         $links = [
-            'build' => $this->buildNormalizer->link($push->build()),
-            'application' => $this->appNormalizer->link($push->application()),
-            'events' => new Hyperlink(['api.push.events', ['push' => $push->id()]])
-        ];
-
-        $pages = [
+            'self' => $this->link($push),
+            'events' => new Hyperlink(['api.push.events', ['push' => $push->id()]]),
             'page' => new Hyperlink(
                 ['push', ['push' => $push->id()]],
                 '',
@@ -150,18 +72,15 @@ class PushNormalizer implements NormalizerInterface
             )
         ];
 
-        if ($push->user()) {
-            $self += [
-                'user' => $this->userNormalizer->link($push->user())
-            ];
-        }
+        $resource = new HypermediaResource($data, $links, [
+            'user' => $push->user(),
+            'build' => $push->build(),
+            'deployment' => $push->deployment(),
+            'application' => $push->application()
+        ]);
 
-        if ($push->deployment()) {
-            $self += [
-                'deployment' => $this->deploymentNormalizer->link($push->deployment())
-            ];
-        }
+        $resource->withEmbedded($embed);
 
-        return $self + $links + $pages;
+        return $resource;
     }
 }

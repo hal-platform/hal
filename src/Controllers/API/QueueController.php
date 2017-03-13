@@ -9,8 +9,9 @@ namespace Hal\UI\Controllers\API;
 
 use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\Normalizer\PushNormalizer;
+use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
@@ -32,7 +33,6 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 class QueueController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
 
     private const ERR_MALFORMED_DATE = 'Malformed Datetime! Dates must be ISO8601 UTC.';
     private const ERR_TOO_OLD = 'Invalid Datetime! The queue cannot retrieve jobs older than 3 days.';
@@ -112,17 +112,28 @@ class QueueController implements ControllerInterface
         }
 
         $jobs = $this->queue->getHistory($createdAfter, null);
-        $status = (count($jobs) > 0) ? 200 : 404;
+
+        $identifiers = array_map(function($job) {
+            return $job->id();
+        }, $jobs);
+
+        $links = [
+            'refresh' => new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])
+        ];
 
         $data = [
             'count' => count($jobs)
         ];
 
-        $embedded = [
+        $resource = new HypermediaResource($data, $links, [
             'jobs' => $this->formatQueue($jobs)
-        ];
+        ]);
 
-        $body = $this->formatter->buildResponse($request, $this->buildResource($data, $embedded));
+        $resource->withEmbedded(['jobs']);
+
+        $status = (count($jobs) > 0) ? 200 : 404;
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body, $status);
     }
 

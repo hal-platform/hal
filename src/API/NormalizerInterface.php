@@ -5,14 +5,23 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Api;
+namespace Hal\UI\API;
 
 interface NormalizerInterface
 {
     /**
-     * @param $input
+     * @param mixed $input
      *
-     * @return mixed
+     * @return array
      */
     public function normalize($input);
+
+    /**
+     * Create a link for the input resource.
+     *
+     * @param mixed $input
+     *
+     * @return Hyperlink|null
+     */
+    public function link($input): ?Hyperlink;
 }

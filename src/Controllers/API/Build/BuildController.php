@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Controllers\API\Build;
 
+use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
@@ -24,11 +25,18 @@ class BuildController implements ControllerInterface
     private $formatter;
 
     /**
-     * @param ResponseFormatter $formatter
+     * @var BuildNormalizer
      */
-    public function __construct(ResponseFormatter $formatter)
+    private $normalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
+     * @param BuildNormalizer $normalizer
+     */
+    public function __construct(ResponseFormatter $formatter, BuildNormalizer $normalizer)
     {
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -38,7 +46,9 @@ class BuildController implements ControllerInterface
     {
         $build = $request->getAttribute(Build::class);
 
-        $body = $this->formatter->buildResponse($request, $build);
+        $resource = $this->normalizer->resource($build, ['application']);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }

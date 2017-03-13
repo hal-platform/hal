@@ -24,38 +24,50 @@ class Normalizer implements NormalizerInterface
     }
 
     /**
-     * Normalize all known object types
+     * Normalize all known object types.
      *
      * @inheritDoc
      */
     public function normalize($input)
     {
+        if ($input === null) {
+            return null;
+        }
+
         if (is_array($input)) {
             return array_map(function($item) {
                 return $this->normalize($item);
             }, $input);
         }
 
-        if ($input === null) {
-            return null;
-        }
+        if ($normalizer = $this->findNormalizer($input)) {
+            $normalized = $normalizer->normalize($input);
 
-        $fqcn = gettype($input);
-        if ($fqcn === 'object') {
-            $fqcn = get_class($input);
-        }
-
-        foreach ($this->normalizers as $type => $normalizer) {
-            if ($input instanceof $type || $fqcn === $type) {
-                $normalized = $normalizer->normalize($input);
-
-                // Run it through the base normalizer again
-                return $this->normalize($normalized);
-            }
+            // Run it through the base normalizer again
+            // @todo WHY
+            return $this->normalize($normalized);
         }
 
         // Allow other types to pass through
         return $input;
+    }
+
+    /**
+     * Create a link for the input resource.
+     *
+     * @inheritDoc
+     */
+    public function link($input): ?Hyperlink
+    {
+        if ($input === null) {
+            return null;
+        }
+
+        if ($normalizer = $this->findNormalizer($input)) {
+            return $normalizer->link($input);
+        }
+
+        return null;
     }
 
     /**
@@ -88,5 +100,36 @@ class Normalizer implements NormalizerInterface
         });
 
         return $tree;
+    }
+
+    /**
+     * @param mixed $input
+     *
+     * @return NormalizerInterface|null
+     */
+    private function findNormalizer($input)
+    {
+        $fqcn = $this->resolveType($input);
+
+        foreach ($this->normalizers as $type => $normalizer) {
+            if ($input instanceof $type || $fqcn === $type) {
+                return $normalizer;
+            }
+        }
+    }
+
+    /**
+     * @param mixed
+     *
+     * @return string
+     */
+    private function resolveType($input)
+    {
+        $fqcn = gettype($input);
+        if ($fqcn === 'object') {
+            $fqcn = get_class($input);
+        }
+
+        return $fqcn;
     }
 }

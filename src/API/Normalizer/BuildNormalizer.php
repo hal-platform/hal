@@ -9,68 +9,29 @@ namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\EmbeddedResolutionTrait;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\Github\GitHubURLBuilder;
 use QL\Hal\Core\Entity\Build;
 
 class BuildNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-    use EmbeddedResolutionTrait;
-
     /**
      * @var GitHubURLBuilder
      */
     private $urlBuilder;
 
     /**
-     * @var UserNormalizer
-     */
-    private $userNormalizer;
-
-    /**
-     * @var ApplicationNormalizer
-     */
-    private $appNormalizer;
-
-    /**
-     * @var EnvironmentNormalizer
-     */
-    private $envNormalizer;
-
-    /**
-     * @var array
-     */
-    private $embed;
-
-    /**
      * @param GitHubURLBuilder $urlBuilder
-     *
-     * @param UserNormalizer $userNormalizer
-     * @param ApplicationNormalizer $appNormalizer
-     * @param EnvironmentNormalizer $envNormalizer
      */
-    public function __construct(
-        GitHubURLBuilder $urlBuilder,
-
-        UserNormalizer $userNormalizer,
-        ApplicationNormalizer $appNormalizer,
-        EnvironmentNormalizer $envNormalizer
-    ) {
+    public function __construct(GitHubURLBuilder $urlBuilder)
+    {
         $this->urlBuilder = $urlBuilder;
-
-        $this->userNormalizer = $userNormalizer;
-        $this->appNormalizer = $appNormalizer;
-        $this->envNormalizer = $envNormalizer;
-
-        $this->embed = [];
     }
 
     /**
      * @param Build $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
@@ -82,9 +43,9 @@ class BuildNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Build $build = null): ?Hyperlink
+    public function link($build): ?Hyperlink
     {
-        if (!$build) {
+        if (!$build instanceof Build) {
             return null;
         }
 
@@ -98,19 +59,13 @@ class BuildNormalizer implements NormalizerInterface
      * @param Build|null $build
      * @param array $embed
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(Build $build = null, array $embed = [])
+    public function resource($build, array $embed = []): ?HypermediaResource
     {
-        if (is_null($build)) {
+        if (!$build instanceof Build) {
             return null;
         }
-
-        $properties = [
-            'user' => $build->user(),
-            'application' => $build->application(),
-            'environment' => $build->environment()
-        ];
 
         $data = [
             'id' => $build->id(),
@@ -124,11 +79,15 @@ class BuildNormalizer implements NormalizerInterface
             'commit' => $build->commit()
         ];
 
-        return $this->buildResource(
-            $data,
-            $this->resolveEmbedded($properties, array_merge($this->embed, $embed)),
-            $this->buildLinks($build)
-        );
+        $resource = new HypermediaResource($data, $this->buildLinks($build), [
+            'user' => $build->user(),
+            'application' => $build->application(),
+            'environment' => $build->environment()
+        ]);
+
+        $resource->withEmbedded($embed);
+
+        return $resource;
     }
 
     /**
@@ -141,13 +100,8 @@ class BuildNormalizer implements NormalizerInterface
         $ghOwner = $build->application()->githubOwner();
         $ghRepo = $build->application()->githubRepo();
 
-        $self = [
-            'self' => $this->link($build)
-        ];
-
         $links = [
-            'application' => $this->appNormalizer->link($build->application()),
-            'environment' => $this->envNormalizer->link($build->environment()),
+            'self' => $this->link($build),
             'events' => new Hyperlink(['api.build.events', ['build' => $build->id()]]),
         ];
 
@@ -169,12 +123,6 @@ class BuildNormalizer implements NormalizerInterface
             )
         ];
 
-        if ($build->user()) {
-            $self += [
-                'user' => $this->userNormalizer->link($build->user())
-            ];
-        }
-
         if ($build->status() === 'Success') {
             $pages += [
                 'start_push_page' => new Hyperlink(
@@ -185,6 +133,6 @@ class BuildNormalizer implements NormalizerInterface
             ];
         }
 
-        return $self + $links + $pages;
+        return $links + $pages;
     }
 }

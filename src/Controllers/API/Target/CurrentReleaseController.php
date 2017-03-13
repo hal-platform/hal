@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers\API\Target;
 
 use Hal\UI\Controllers\APITrait;
+use Hal\UI\API\Normalizer\PushNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,12 +33,22 @@ class CurrentReleaseController implements ControllerInterface
     private $problem;
 
     /**
+     * @var PushNormalizer
+     */
+    private $normalizer;
+
+    /**
      * @param ResponseFormatter $formatter
      * @param ProblemRendererInterface $problem
+     * @param PushNormalizer $normalizer
      */
-    public function __construct(ResponseFormatter $formatter, ProblemRendererInterface $problem)
-    {
+    public function __construct(
+        ResponseFormatter $formatter,
+        PushNormalizer $normalizer,
+        ProblemRendererInterface $problem
+    ) {
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
         $this->problem = $problem;
     }
 
@@ -53,7 +64,9 @@ class CurrentReleaseController implements ControllerInterface
             return $this->withProblem($this->problem, $response, 404, self::ERR_NEVER_DEPLOYED);
         }
 
-        $data = $this->formatter->buildResponse($request, $push);
-        return $this->withHypermediaEndpoint($request, $response, $data, 200);
+        $resource = $this->normalizer->resource($push);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
+        return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }

@@ -10,9 +10,8 @@ namespace Hal\UI\Controllers\API\Organization;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\APITrait;
-use Hal\UI\Api\Normalizer\GroupNormalizer;
-use Hal\UI\Api\ResponseFormatter;
-use Hal\UI\Api\Utility\HypermediaResourceTrait;
+use Hal\UI\API\HypermediaResource;
+use Hal\UI\API\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Group;
@@ -21,7 +20,6 @@ use QL\Panthor\ControllerInterface;
 class OrganizationsController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
 
     /**
      * @var ResponseFormatter
@@ -34,23 +32,13 @@ class OrganizationsController implements ControllerInterface
     private $groupRepo;
 
     /**
-     * @var GroupNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param GroupNormalizer $normalizer
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        EntityManagerInterface $em,
-        GroupNormalizer $normalizer
-    ) {
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em)
+    {
         $this->formatter = $formatter;
         $this->groupRepo = $em->getRepository(Group::class);
-        $this->normalizer = $normalizer;
     }
 
     /**
@@ -58,24 +46,18 @@ class OrganizationsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $groups = $this->groupRepo->findBy([], ['id' => 'ASC']);
-
-        $groups = array_map(function ($group) {
-            return $this->normalizer->link($group);
-        }, $groups);
+        $organizations = $this->groupRepo->findBy([], ['id' => 'ASC']);
 
         $data = [
-            'count' => count($groups)
+            'count' => count($organizations)
         ];
 
-        $links = [
-            'groups' => $groups
-        ];
+        $resource = new HypermediaResource($data, [], [
+            'organizations' => $organizations
+        ]);
 
-        $resource = $this->buildResource($data, [], $links);
-
-        $status = (count($groups) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse($request, $resource);
+        $status = (count($organizations) > 0) ? 200 : 404;
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }

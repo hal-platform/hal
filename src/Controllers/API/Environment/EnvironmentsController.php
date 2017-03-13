@@ -9,9 +9,8 @@ namespace Hal\UI\Controllers\API\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\API\Normalizer\EnvironmentNormalizer;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,7 +20,6 @@ use QL\Panthor\ControllerInterface;
 class EnvironmentsController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
 
     /**
      * @var ResponseFormatter
@@ -34,23 +32,13 @@ class EnvironmentsController implements ControllerInterface
     private $envRepo;
 
     /**
-     * @var EnvironmentNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param EnvironmentNormalizer $normalizer
      */
-    public function __construct(
-        ResponseFormatter $formatter,
-        EntityManagerInterface $em,
-        EnvironmentNormalizer $normalizer
-    ) {
+    public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em)
+    {
         $this->formatter = $formatter;
         $this->envRepo = $em->getRepository(Environment::class);
-        $this->normalizer = $normalizer;
     }
 
     /**
@@ -59,17 +47,17 @@ class EnvironmentsController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $environments = $this->envRepo->findBy([], ['id' => 'ASC']);
+
+        $data = [
+            'count' => count($environments)
+        ];
+
+        $resource = new HypermediaResource($data, [], [
+            'environments' => $environments
+        ]);
+
         $status = (count($environments) > 0) ? 200 : 404;
-
-        $environments = array_map(function ($environment) {
-            return $this->normalizer->link($environment);
-        }, $environments);
-
-        $data = ['count' => count($environments)];
-        $links = ['environments' => $environments];
-
-        $resource = $this->buildResource($data, [], $links);
-        $data = $this->formatter->buildResponse($request, $resource);
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }

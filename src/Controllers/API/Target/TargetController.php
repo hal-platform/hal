@@ -8,7 +8,7 @@
 namespace Hal\UI\Controllers\API\Target;
 
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Normalizer\DeploymentNormalizer;
+use Hal\UI\API\Normalizer\TargetNormalizer;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,15 +25,15 @@ class TargetController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var DeploymentNormalizer
+     * @var TargetNormalizer
      */
     private $normalizer;
 
     /**
      * @param ResponseFormatter $formatter
-     * @param DeploymentNormalizer $normalizer
+     * @param TargetNormalizer $normalizer
      */
-    public function __construct(ResponseFormatter $formatter, DeploymentNormalizer $normalizer)
+    public function __construct(ResponseFormatter $formatter, TargetNormalizer $normalizer)
     {
         $this->formatter = $formatter;
         $this->normalizer = $normalizer;
@@ -46,9 +46,9 @@ class TargetController implements ControllerInterface
     {
         $target = $request->getAttribute(Deployment::class);
 
-        $data = $this->normalizer->resource($target, ['server']);
+        $resource = $this->normalizer->resource($target, ['server']);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
-        $body = $this->formatter->buildResponse($request, $data);
         return $this->withHypermediaEndpoint($request, $response, $body);
     }
 }

@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Controllers\API\Push;
 
+use Hal\UI\API\Normalizer\PushNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
@@ -24,11 +25,18 @@ class PushController implements ControllerInterface
     private $formatter;
 
     /**
-     * @param ResponseFormatter $formatter
+     * @var PushNormalizer
      */
-    public function __construct(ResponseFormatter $formatter)
+    private $normalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
+     * @param PushNormalizer $normalizer
+     */
+    public function __construct(ResponseFormatter $formatter, PushNormalizer $normalizer)
     {
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -38,7 +46,9 @@ class PushController implements ControllerInterface
     {
         $push = $request->getAttribute(Push::class);
 
-        $body = $this->formatter->buildResponse($request, $push);
+        $resource = $this->normalizer->resource($push);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }

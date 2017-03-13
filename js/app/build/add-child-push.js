@@ -65,7 +65,7 @@ function handleSuccess(data) {
     deploymentsCacheByEnv[this.envID] = {
         pools: buildStatusContext(data),
         canPush: data.permission,
-        deploymentCount: data.statuses.length
+        deploymentCount: data._embedded.statuses.length
     };
 
     handleStateChange(deploymentsCacheByEnv[this.envID]);
@@ -111,16 +111,16 @@ function buildStatusContext(data) {
         return element.deploymentIDs.indexOf(deploymentID) >= 0;
     };
 
-    for (var status of data.statuses) {
-        deploymentID = status.deployment.id;
+    for (var status of data._embedded.statuses) {
+        deploymentID = status._embedded.deployment.id;
 
         var deployment = {
                 id: deploymentID,
-                pretty: status.deployment['pretty-name'],
-                additional: status.deployment['detail']
+                pretty: status._embedded.deployment['pretty-name'],
+                additional: status._embedded.deployment['detail']
             },
-            build = formatBuild(status.build),
-            push = formatPush(status.push);
+            build = formatBuild(status._embedded.build),
+            push = formatPush(status._embedded.push);
 
         var pool = pools.find(matchDeployment);
 

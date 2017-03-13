@@ -8,15 +8,13 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\User;
 
 class UserNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-
     /**
      * @var PermissionService
      */
@@ -33,7 +31,7 @@ class UserNormalizer implements NormalizerInterface
     /**
      * @param User $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
@@ -41,13 +39,13 @@ class UserNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      *
      * @return Hyperlink|null
      */
-    public function link(User $user = null): ?Hyperlink
+    public function link($user): ?Hyperlink
     {
-        if (!$user) {
+        if (!$user instanceof User) {
             return null;
         }
 
@@ -58,13 +56,13 @@ class UserNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(User $user = null)
+    public function resource($user, array $embed = []): ?HypermediaResource
     {
-        if (is_null($user)) {
+        if (!$user instanceof User) {
             return null;
         }
 
@@ -84,10 +82,14 @@ class UserNormalizer implements NormalizerInterface
             ]
         ];
 
-        $embedded = [];
+        $links = [
+            'self' => $this->link($user)
+        ];
 
-        $links = ['self' => $this->link($user)];
+        $resource = new HypermediaResource($data, $links);
 
-        return $this->buildResource($data, $embedded, $links);
+        $resource->withEmbedded($embed);
+
+        return $resource;
     }
 }

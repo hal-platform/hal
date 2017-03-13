@@ -7,8 +7,9 @@
 
 namespace Hal\UI\Controllers\API\User;
 
-use Hal\UI\Controllers\APITrait;
+use Hal\UI\API\Normalizer\UserNormalizer;
 use Hal\UI\API\ResponseFormatter;
+use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\User;
@@ -24,11 +25,18 @@ class UserController implements ControllerInterface
     private $formatter;
 
     /**
-     * @param ResponseFormatter $formatter
+     * @var UserNormalizer
      */
-    public function __construct(ResponseFormatter $formatter)
+    private $normalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
+     * @param UserNormalizer $normalizer
+     */
+    public function __construct(ResponseFormatter $formatter, UserNormalizer $normalizer)
     {
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -38,7 +46,9 @@ class UserController implements ControllerInterface
     {
         $user = $request->getAttribute(User::class);
 
-        $body = $this->formatter->buildResponse($request, $user);
+        $resource = $this->normalizer->resource($user);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }

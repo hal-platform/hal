@@ -8,18 +8,16 @@
 namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\NormalizerInterface;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use QL\Hal\Core\Entity\Environment;
 
 class EnvironmentNormalizer implements NormalizerInterface
 {
-    use HypermediaResourceTrait;
-
     /**
      * @param Environment $input
      *
-     * @return array|null
+     * @return mixed
      */
     public function normalize($input)
     {
@@ -31,9 +29,9 @@ class EnvironmentNormalizer implements NormalizerInterface
      *
      * @return Hyperlink|null
      */
-    public function link(Environment $environment = null): ?Hyperlink
+    public function link($environment): ?Hyperlink
     {
-        if (!$environment) {
+        if (!$environment instanceof Environment) {
             return null;
         }
 
@@ -44,26 +42,31 @@ class EnvironmentNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param Environment $environment
+     * @param Environment|null $environment
+     * @param array $embed
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource(Environment $environment = null)
+    public function resource($environment, array $embed = []): ?HypermediaResource
     {
-        if (is_null($environment)) {
+        if (!$environment instanceof Environment) {
             return null;
         }
 
         $data = [
             'id' => $environment->id(),
             'name' => $environment->name(),
-            'isProduction' => $environment->isProduction()
+            'is_production' => $environment->isProduction()
         ];
 
-        $embedded = [];
+        $links = [
+            'self' => $this->link($environment)
+        ];
 
-        $links = ['self' => $this->link($environment)];
+        $resource = new HypermediaResource($data, $links);
 
-        return $this->buildResource($data, $embedded, $links);
+        $resource->withEmbedded($embed);
+
+        return $resource;
     }
 }

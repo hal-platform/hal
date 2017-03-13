@@ -11,10 +11,10 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\UI\API\Hyperlink;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\Normalizer\PushNormalizer;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +26,6 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 class QueueRefreshController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
 
     private const ERRT_MAX_JOBS = 'Cannot get the status of more than %s jobs at once.';
     private const MAX_JOBS = 50;
@@ -97,19 +96,24 @@ class QueueRefreshController implements ControllerInterface
         }
 
         $jobs = $this->retrieveJobs($identifiers);
-        $status = (count($jobs) > 0) ? 200 : 404;
 
         $data = [
             'count' => count($jobs)
         ];
 
-        $embedded = [
-            'jobs' => $this->formatQueue($jobs)
+        $links = [
+            'self' => new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])
         ];
 
-        $links = ['self' => new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])];
+        $resource = new HypermediaResource($data, $links, [
+            'jobs' => $this->formatQueue($jobs)
+        ]);
 
-        $body = $this->formatter->buildResponse($request, $this->buildResource($data, $embedded, $links));
+        $resource->withEmbedded(['jobs']);
+
+        $status = (count($jobs) > 0) ? 200 : 404;
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body, $status);
     }
 

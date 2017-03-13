@@ -46,9 +46,9 @@ class EventController implements ControllerInterface
     {
         $event = $request->getAttribute(EventLog::class);
 
-        $data = $this->normalizer->resource($event, ['data']);
+        $resource = $this->normalizer->resource($event, ['data']);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
-        $body = $this->formatter->buildResponse($request, $data);
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }

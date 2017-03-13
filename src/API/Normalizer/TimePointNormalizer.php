@@ -8,6 +8,7 @@
 namespace Hal\UI\API\Normalizer;
 
 use DateTime;
+use Hal\UI\API\Hyperlink;
 use Hal\UI\API\NormalizerInterface;
 use QL\MCP\Common\Time\TimePoint;
 
@@ -37,6 +38,17 @@ class TimePointNormalizer implements NormalizerInterface
 
         $this->format = $format;
         $this->timezone = $timezone;
+    }
+
+
+    /**
+     * @param mixed $input
+     *
+     * @return Hyperlink|null
+     */
+    public function link($input): ?Hyperlink
+    {
+        return null;
     }
 
     /**

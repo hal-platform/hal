@@ -8,9 +8,8 @@
 namespace Hal\UI\Controllers\API\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\API\Normalizer\PushNormalizer;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -25,7 +24,6 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 class HistoryController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
     use PaginationTrait;
 
     const MAX_PER_PAGE = 25;
@@ -43,11 +41,6 @@ class HistoryController implements ControllerInterface
     private $pushRepo;
 
     /**
-     * @var PushNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @var ProblemRendererInterface
      */
     private $problem;
@@ -55,18 +48,15 @@ class HistoryController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param PushNormalizer $normalizer
      * @param array $parameters
      */
     public function __construct(
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
-        PushNormalizer $normalizer,
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
         $this->pushRepo = $em->getRepository(Push::class);
-        $this->normalizer = $normalizer;
         $this->problem = $problem;
     }
 
@@ -87,11 +77,10 @@ class HistoryController implements ControllerInterface
 
         $pushes = [];
         foreach ($pagination as $push) {
-            $pushes[] = $this->normalizer->link($push);
+            $pushes[] = $push;
         }
 
         $links = $this->buildPaginationLinks('api.target.history.paged', $page, $total, self::MAX_PER_PAGE, ['target' => $target->id()]);
-        $links['pushes'] = $pushes;
 
         $data = [
             'count' => count($pushes),
@@ -99,10 +88,12 @@ class HistoryController implements ControllerInterface
             'page' => $page
         ];
 
-        $resource = $this->buildResource($data, [], $links);
+        $resource = new HypermediaResource($data, $links, [
+            'pushes' => $pushes
+        ]);
 
         $status = (count($pushes) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse($request, $resource);
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }

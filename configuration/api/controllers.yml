@@ -36,7 +36,7 @@ services:
 
     organization.api:
         class: 'Hal\UI\Controllers\API\Organization\OrganizationController'
-        arguments: ['@api.response_formatter']
+        arguments: ['@api.response_formatter', '@api_normalizer.organization']
 
     organizations.api:
         class: 'Hal\UI\Controllers\API\Organization\OrganizationsController'
@@ -51,14 +51,13 @@ services:
 
     application.api:
         class: 'Hal\UI\Controllers\API\Application\ApplicationController'
-        arguments: ['@api.response_formatter']
+        arguments: ['@api.response_formatter', '@api_normalizer.application']
 
     applications.api:
         class: 'Hal\UI\Controllers\API\Application\ApplicationsController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
-            - '@api_normalizer.application'
             - '@problem.renderer'
 
     ####################################################################################################################
@@ -70,12 +69,11 @@ services:
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
-            - '@api_normalizer.server'
             - '@problem.renderer'
 
     server.api:
         class: 'Hal\UI\Controllers\API\Server\ServerController'
-        arguments: ['@api.response_formatter']
+        arguments: ['@api.response_formatter', '@api_normalizer.server']
 
 
     ####################################################################################################################
@@ -88,22 +86,21 @@ services:
 
     targets.api:
         class: 'Hal\UI\Controllers\API\Target\TargetsController'
-        arguments:
-            - '@api.response_formatter'
-            - '@doctrine.em'
-            - '@api_normalizer.target'
+        arguments: ['@api.response_formatter', '@doctrine.em']
 
     target.history.api:
         class: 'Hal\UI\Controllers\API\Target\HistoryController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
-            - '@api_normalizer.push'
             - '@problem.renderer'
 
     target.current_release.api:
         class: 'Hal\UI\Controllers\API\Target\CurrentReleaseController'
-        arguments: ['@api.response_formatter', '@problem.renderer']
+        arguments:
+            - '@api.response_formatter'
+            - '@api_normalizer.push'
+            - '@problem.renderer'
 
     ####################################################################################################################
     # BUILD CONTROLLERS
@@ -111,22 +108,17 @@ services:
 
     build.api:
         class: 'Hal\UI\Controllers\API\Build\BuildController'
-        arguments: ['@api.response_formatter']
+        arguments: ['@api.response_formatter', '@api_normalizer.build']
 
     build.events.api:
         class: 'Hal\UI\Controllers\API\Build\EventsController'
-        arguments:
-            - '@api.response_formatter'
-            - '@service.event_logs'
-            - '@api_normalizer.event'
-            - '@api_normalizer.build'
+        arguments: ['@api.response_formatter', '@service.event_logs']
 
     builds.api:
         class: 'Hal\UI\Controllers\API\Build\BuildsController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
-            - '@api_normalizer.build'
             - '@problem.renderer'
 
     ####################################################################################################################
@@ -135,22 +127,17 @@ services:
 
     push.api:
         class: 'Hal\UI\Controllers\API\Push\PushController'
-        arguments: ['@api.response_formatter']
+        arguments: ['@api.response_formatter', '@api_normalizer.push']
 
     push.events.api:
         class: 'Hal\UI\Controllers\API\Push\EventsController'
-        arguments:
-            - '@api.response_formatter'
-            - '@service.event_logs'
-            - '@api_normalizer.event'
-            - '@api_normalizer.push'
+        arguments: ['@api.response_formatter', '@service.event_logs']
 
     pushes.api:
         class: 'Hal\UI\Controllers\API\Push\PushesController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
-            - '@api_normalizer.push'
             - '@problem.renderer'
 
     ####################################################################################################################
@@ -174,7 +161,7 @@ services:
 
     environment.api:
         class: 'Hal\UI\Controllers\API\Environment\EnvironmentController'
-        arguments: ['@api.response_formatter']
+        arguments: ['@api.response_formatter', '@api_normalizer.environment']
 
     ####################################################################################################################
     # USER CONTROLLERS
@@ -182,11 +169,10 @@ services:
 
     user.api:
         class: 'Hal\UI\Controllers\API\User\UserController'
-        arguments: ['@api.response_formatter']
+        arguments: ['@api.response_formatter', '@api_normalizer.user']
     users.api:
         class: 'Hal\UI\Controllers\API\User\UsersController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
-            - '@api_normalizer.user'
             - '@problem.renderer'

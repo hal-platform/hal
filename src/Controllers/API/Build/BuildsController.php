@@ -9,9 +9,8 @@ namespace Hal\UI\Controllers\API\Build;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\API\Normalizer\BuildNormalizer;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -24,7 +23,6 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 class BuildsController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
     use PaginationTrait;
 
     private const MAX_PER_PAGE = 25;
@@ -42,11 +40,6 @@ class BuildsController implements ControllerInterface
     private $buildRepo;
 
     /**
-     * @var BuildNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @var ProblemRendererInterface
      */
     private $problem;
@@ -54,18 +47,15 @@ class BuildsController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param BuildNormalizer $normalizer
      * @param ProblemRendererInterface $problem
      */
     public function __construct(
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
-        BuildNormalizer $normalizer,
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
         $this->buildRepo = $em->getRepository(Build::class);
-        $this->normalizer = $normalizer;
         $this->problem = $problem;
     }
 
@@ -86,11 +76,10 @@ class BuildsController implements ControllerInterface
 
         $builds = [];
         foreach ($pagination as $build) {
-            $builds[] = $this->normalizer->link($build);
+            $builds[] = $build;
         }
 
         $links = $this->buildPaginationLinks('api.builds.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
-        $links['builds'] = $builds;
 
         $data = [
             'count' => count($builds),
@@ -98,10 +87,12 @@ class BuildsController implements ControllerInterface
             'page' => $page
         ];
 
-        $resource = $this->buildResource($data, [], $links);
+        $resource = new HypermediaResource($data, $links, [
+            'builds' => $builds
+        ]);
 
         $status = (count($builds) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse($request, $resource);
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }

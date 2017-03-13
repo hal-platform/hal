@@ -7,6 +7,7 @@
 
 namespace Hal\UI\Controllers\API\Server;
 
+use Hal\UI\API\Normalizer\ServerNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
@@ -24,11 +25,18 @@ class ServerController implements ControllerInterface
     private $formatter;
 
     /**
-     * @param ResponseFormatter $formatter
+     * @var ServerNormalizer
      */
-    public function __construct(ResponseFormatter $formatter)
+    private $normalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
+     * @param ServerNormalizer $normalizer
+     */
+    public function __construct(ResponseFormatter $formatter, ServerNormalizer $normalizer)
     {
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -38,7 +46,9 @@ class ServerController implements ControllerInterface
     {
         $server = $request->getAttribute(Server::class);
 
-        $body = $this->formatter->buildResponse($request, $server);
+        $resource = $this->normalizer->resource($server, ['environment']);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body);
     }
 }

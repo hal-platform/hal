@@ -8,9 +8,8 @@
 namespace Hal\UI\Controllers\API\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\API\Normalizer\UserNormalizer;
+use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\API\Utility\HypermediaResourceTrait;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -23,7 +22,6 @@ use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 class UsersController implements ControllerInterface
 {
     use APITrait;
-    use HypermediaResourceTrait;
     use PaginationTrait;
 
     private const MAX_PER_PAGE = 25;
@@ -41,11 +39,6 @@ class UsersController implements ControllerInterface
     private $userRepo;
 
     /**
-     * @var UserNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @var ProblemRendererInterface
      */
     private $problem;
@@ -53,18 +46,16 @@ class UsersController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
-     * @param UserNormalizer $normalizer
      * @param ProblemRendererInterface $problem
      */
     public function __construct(
         ResponseFormatter $formatter,
         EntityManagerInterface $em,
-        UserNormalizer $normalizer,
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
         $this->userRepo = $em->getRepository(User::class);
-        $this->normalizer = $normalizer;
+        $this->problem = $problem;
     }
 
     /**
@@ -82,11 +73,10 @@ class UsersController implements ControllerInterface
 
         $users = [];
         foreach ($pagination as $user) {
-            $users[] = $this->normalizer->link($user);
+            $users[] = $user;
         }
 
         $links = $this->buildPaginationLinks('api.users.paged', $page, $total, self::MAX_PER_PAGE);
-        $links['users'] = $users;
 
         $data = [
             'count' => count($users),
@@ -94,10 +84,12 @@ class UsersController implements ControllerInterface
             'page' => $page
         ];
 
-        $resource = $this->buildResource($data, [], $links);
+        $resource = new HypermediaResource($data, $links, [
+            'users' => $users
+        ]);
 
         $status = (count($users) > 0) ? 200 : 404;
-        $data = $this->formatter->buildResponse($request, $resource);
+        $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);
     }

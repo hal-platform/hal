@@ -31,11 +31,6 @@ class ResponseFormatter
     private $normalizer;
 
     /**
-     * @var HypermediaFormatter
-     */
-    private $hypermediaFormatter;
-
-    /**
      * @var URI
      */
     private $uri;
@@ -47,19 +42,24 @@ class ResponseFormatter
 
     /**
      * @param NormalizerInterface $normalizer
-     * @param HypermediaFormatter $hypermediaFormatter
      * @param URI $uri
-     * @param array $cacheTimes
      */
-    public function __construct(
-        NormalizerInterface $normalizer,
-        HypermediaFormatter $hypermediaFormatter,
-        URI $uri,
-        array $cacheTimes = []
-    ) {
+    public function __construct(NormalizerInterface $normalizer, URI $uri)
+    {
         $this->normalizer = $normalizer;
-        $this->hypermediaFormatter = $hypermediaFormatter;
         $this->uri = $uri;
+
+        $this->cacheTimes = [];
+    }
+
+    /**
+     * Add configuration for caching endpoints (in seconds)
+     *
+     * @param array $cacheTimes
+     * @return void
+     */
+    public function setCacheTimes(array $cacheTimes)
+    {
         $this->cacheTimes = $cacheTimes;
     }
 
@@ -67,26 +67,19 @@ class ResponseFormatter
      * Format API data for rendering.
      *
      * @param ServerRequestInterface $request
-     * @param mixed $data
+     * @param HypermediaResource $data
      *
      * @return string
      */
-    public function buildResponse(ServerRequestInterface $request, $data)
+    public function buildHypermediaResponse(ServerRequestInterface $request, HypermediaResource $resource)
     {
-        if (is_array($data)) {
-            $data = $this->resolve($data);
-        } elseif (is_object($data)) {
-            $data = $this->normalizer->normalize($data);
-        }
-
         $route = $this->getRouteName($request);
         $params = $this->getRouteParams($request);
         $query = $request->getQueryParams();
-
         $self = $this->uri->absoluteURIFor($request->getUri(), $route, $params, $query);
 
-        $formatted = $this->hypermediaFormatter->format($data, $self);
-        $data = json_encode($formatted, JSON_UNESCAPED_SLASHES);
+        $data = $resource->resolved($this->normalizer, $self);
+        $data = json_encode($data, JSON_UNESCAPED_SLASHES);
 
         // Handle caching
         $cacheTTL = $this->cacheTime($request);
@@ -117,24 +110,6 @@ class ResponseFormatter
         }
 
         return $body;
-    }
-
-    /**
-     * Recursively resolve any objects in the resource tree
-     *
-     * @param array $tree
-     *
-     * @return array
-     */
-    private function resolve(array $tree)
-    {
-        array_walk_recursive($tree, function (&$leaf) {
-            if (is_object($leaf)) {
-                $leaf = $this->normalizer->normalize($leaf);
-            }
-        });
-
-        return $tree;
     }
 
     /**

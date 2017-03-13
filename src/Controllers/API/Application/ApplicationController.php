@@ -8,6 +8,7 @@
 namespace Hal\UI\Controllers\API\Application;
 
 use Hal\UI\Controllers\APITrait;
+use Hal\UI\API\Normalizer\ApplicationNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,11 +25,18 @@ class ApplicationController implements ControllerInterface
     private $formatter;
 
     /**
-     * @param ResponseFormatter $formatter
+     * @var ApplicationNormalizer
      */
-    public function __construct(ResponseFormatter $formatter)
+    private $normalizer;
+
+    /**
+     * @param ResponseFormatter $formatter
+     * @param ApplicationNormalizer $normalizer
+     */
+    public function __construct(ResponseFormatter $formatter, ApplicationNormalizer $normalizer)
     {
         $this->formatter = $formatter;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -38,7 +46,9 @@ class ApplicationController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
 
-        $body = $this->formatter->buildResponse($request, $application);
+        $resource = $this->normalizer->resource($application);
+        $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }
