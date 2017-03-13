@@ -43,8 +43,7 @@ class Normalizer implements NormalizerInterface
         if ($normalizer = $this->findNormalizer($input)) {
             $normalized = $normalizer->normalize($input);
 
-            // Run it through the base normalizer again
-            // @todo WHY
+            // Run through the base normalizer again (For hyperlinks and embedded entities)
             return $this->normalize($normalized);
         }
 
@@ -83,23 +82,6 @@ class Normalizer implements NormalizerInterface
     public function addNormalizer($type, NormalizerInterface $normalizer)
     {
         $this->normalizers[$type] = $normalizer;
-    }
-
-    /**
-     * Recursively resolve any objects in the tree of normalized values
-     *
-     * @param array $tree
-     * @return array
-     */
-    public function resolve(array $tree)
-    {
-        array_walk_recursive($tree, function (&$leaf) {
-            if (is_object($leaf)) {
-                $leaf = $this->normalize($leaf);
-            }
-        });
-
-        return $tree;
     }
 
     /**

@@ -9,6 +9,7 @@ namespace Hal\UI\Api\Normalizer;
 
 use Hal\UI\Api\Hyperlink;
 use Hal\UI\Api\NormalizerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\Utility\URI;
 
 class HyperlinkNormalizer implements NormalizerInterface
@@ -19,11 +20,18 @@ class HyperlinkNormalizer implements NormalizerInterface
     private $uri;
 
     /**
-     * @param URI $uri
+     * @var ServerRequestInterface
      */
-    public function __construct(URI $uri)
+    private $baseRequest;
+
+    /**
+     * @param URI $uri
+     * @param ServerRequestInterface $baseRequest
+     */
+    public function __construct(URI $uri, ServerRequestInterface $baseRequest)
     {
         $this->uri = $uri;
+        $this->baseRequest = $baseRequest;
     }
 
     /**
@@ -69,9 +77,8 @@ class HyperlinkNormalizer implements NormalizerInterface
             }
         }
 
-        // @todo change to absolute URL
-        // $normalized['href'] = $this->uri->absoluteUrlFor($request->getUri(), ...$href);
-        $normalized['href'] = $this->uri->uriFor(...$href);
+        // @todo THIS SUCKS! How to get at runtime?
+        $normalized['href'] = $this->uri->absoluteURIFor($this->baseRequest->getUri(), ...$href);
 
         return $normalized;
     }

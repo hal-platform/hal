@@ -64,4 +64,4 @@ services:
 
     api_normalizer.hyperlink:
         class: 'Hal\UI\API\Normalizer\HyperlinkNormalizer'
-        arguments: ['@uri']
+        arguments: ['@uri', '@request']
