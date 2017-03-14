@@ -1,51 +1,51 @@
 #!/usr/bin/env bash
 
-dir=$( cd "$( dirname "$0" )" && pwd )
+function hdr {
+    default_delimit='='
+    delimiter="${2:-$default_delimit}"
+
+    head -c 100 < /dev/zero | tr '\0' "${delimiter}"
+    echo
+
+    echo $1;
+
+    head -c 100 < /dev/zero | tr '\0' "${delimiter}"
+    echo
+}
+
+function maybe_fail_docker {
+    if [ "$1" != "0" ]; then
+        echo
+        hdr "Exit code: $1 - $2" "!"
+        exit
+    fi
+}
+
+local_dir=$( cd "$( dirname "$0" )" && pwd )
+local_output_dir="${local_dir}/../public/docs/api"
+local_input_dir="${local_dir}/../slate/source"
 
 slate_port=4567
 slate_container="halslate"
 slate_image="slate"
+slate_build_dir="/app/build"
+slate_source_dir="/app/source"
 
-CONTAINER_RUNNING=$(docker inspect -f "{{ .State.Running }}" ${slate_container} 2>/dev/null)
+HAS_IMAGE=$(docker images -q "${slate_image}")
 
-# container not found -> build, start and build
-if [ ! "$?" = "0" ] ; then
-
-    HAS_IMAGE=$(docker images -q "${slate_image}")
-
-    if [ "${HAS_IMAGE}" = "" ] ; then
-        echo
-        echo "Image ${slate_image} does not exist. Creating..."
-        docker build -t "${slate_image}" "${dir}/../slate"
-    fi
-
-    echo
-    echo "Container ${slate_container} does not exist. Creating..."
-    docker run -d \
-    -p ${slate_port}:${slate_port} \
-    --name "${slate_container}" \
-    -v "${dir}"/../slate:/app/source \
-    slate \
-    --force-polling
-
-    docker exec "${slate_container}" rake build
-    docker cp "${slate_container}":/app/build/. "${dir}/../public/docs/api"
-
-# container not running -> start and build
-elif [ ! "${CONTAINER_RUNNING}" = "true" ] ; then
-    echo
-    echo "Container ${slate_container} exists, but not running. Starting..."
-    docker start "${slate_container}"
-
-    docker exec "${slate_container}" rake build
-    docker cp "${slate_container}":/app/build/. "${dir}/../public/docs/api"
-
-# container running -> restart and build
-else
-    echo
-    echo "Container ${slate_container} already running. Restarting..."
-    docker restart "${slate_container}"
-
-    docker exec "${slate_container}" rake build
-    docker cp "${slate_container}":/app/build/. "${dir}/../public/docs/api"
+if [ "${HAS_IMAGE}" = "" ] ; then
+    hdr "Docker image \"${slate_image}\" does not exist. Creating..."
+    docker build -t "${slate_image}" "${local_input_dir}"
+    maybe_fail_docker $? "Failed to build docker image \"${slate_image}\""
 fi
+
+hdr "Running \"middleman build --clean\" in \"${slate_image}\"..."
+
+docker run \
+    --rm \
+    --name "${slate_container}" \
+    --volume="${local_input_dir}":"${slate_source_dir}":ro \
+    --volume="${local_output_dir}":"${slate_build_dir}" \
+    "${slate_image}"
+
+maybe_fail_docker $? "Failed to build docker container \"${slate_container}\""

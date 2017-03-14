@@ -1,22 +1,32 @@
-# To build:
-# docker build -t slate slate
+FROM ruby:2.3-alpine
 
-# To run:
-# docker run -d -p 4567:4567 --name slate -v $(pwd)/slate:/app/source slate --force
+ENV SLATE_VERSION 1.5
 
-FROM debian:jessie
-
-RUN apt-get update
-RUN apt-get install -yq ruby ruby-dev build-essential git
-RUN gem install --no-ri --no-rdoc bundler
-
-ENV SLATE_VERSION v1.2.1
 WORKDIR /app
 
-RUN git clone https://github.com/tripit/slate.git . \
-    && git checkout tags/$SLATE_VERSION -b $SLATE_VERSION \
-    && bundle install
+RUN apk --no-cache add --virtual .build-deps \
+    build-base \
+    curl \
+    ruby-dev \
+    libxml2-dev \
+    libxslt-dev \
+    linux-headers \
+    libffi-dev \
+    zlib-dev \
+    nodejs
 
-EXPOSE 4567
+RUN mkdir -p /opt/src && \
+    cd /opt/src && \
+    curl -LO "https://github.com/lord/slate/archive/v$SLATE_VERSION.tar.gz" && \
+    tar -xzf "v$SLATE_VERSION.tar.gz" && \
+    cp -R slate-$SLATE_VERSION/* /app/ && \
+    rm -rf /opt/src
 
-ENTRYPOINT ["bundle", "exec", "middleman", "server"]
+RUN bundle config build.nokogiri --use-system-libraries && \
+    bundle install
+
+VOLUME ["/app/source"]
+VOLUME ["/app/build"]
+
+ENTRYPOINT ["bundle", "exec", "middleman"]
+CMD ["build", "--clean"]
