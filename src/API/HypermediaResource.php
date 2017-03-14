@@ -50,7 +50,7 @@ class HypermediaResource
      * @param NormalizerInterface $normalizer
      * @param string $selfLink
      *
-     * @return array
+     * @return JsonSerializable|array
      */
     public function resolved(NormalizerInterface $normalizer, ?string $selfLink = '')
     {
@@ -116,7 +116,6 @@ class HypermediaResource
         return $this;
     }
 
-
     /**
      * @param string $rel
      * @param Hyperlink $link
@@ -139,7 +138,7 @@ class HypermediaResource
         $links = $this->linkRelations();
 
         foreach ($this->children() as $rel => $child) {
-            if (!in_array($rel, $this->embedded, true)) {
+            if (!in_array($rel, $this->embedded, true) && $child !== null) {
                 $links[$rel] = $this->parseLinkedChildren($child, $normalizer);
             }
         }
@@ -161,7 +160,7 @@ class HypermediaResource
         $embeds = [];
 
         foreach ($this->children() as $rel => $child) {
-            if (in_array($rel, $this->embedded, true)) {
+            if (in_array($rel, $this->embedded, true) && $child !== null) {
                 $embeds[$rel] = $this->parseEmbeddedChildren($child, $normalizer);
             }
         }

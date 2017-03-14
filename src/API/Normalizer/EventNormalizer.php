@@ -9,10 +9,10 @@ namespace Hal\UI\Api\Normalizer;
 
 use Hal\UI\Api\Hyperlink;
 use Hal\UI\Api\HypermediaResource;
-use Hal\UI\Api\NormalizerInterface;
+use Hal\UI\Api\ResourceNormalizerInterface;
 use QL\Hal\Core\Entity\EventLog;
 
-class EventNormalizer implements NormalizerInterface
+class EventNormalizer implements ResourceNormalizerInterface
 {
     /**
      * @param EventLog $input

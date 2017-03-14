@@ -18,9 +18,16 @@ class Normalizer implements NormalizerInterface
      */
     private $normalizers;
 
-    public function __construct()
+    /**
+     * @param array $normalizers
+     */
+    public function __construct(array $normalizers = [])
     {
         $this->normalizers = [];
+
+        foreach ($normalizers as $type => $normalizer) {
+            $this->addNormalizer($type, $normalizer);
+        }
     }
 
     /**
@@ -42,9 +49,14 @@ class Normalizer implements NormalizerInterface
 
         if ($normalizer = $this->findNormalizer($input)) {
             $normalized = $normalizer->normalize($input);
+            if ($normalized instanceof HypermediaResource) {
+                $normalized = $normalized->resolved($this);
+            }
+
+            return $normalized;
 
             // Run through the base normalizer again (For hyperlinks and embedded entities)
-            return $this->normalize($normalized);
+            // return $this->normalize($normalized);
         }
 
         // Allow other types to pass through

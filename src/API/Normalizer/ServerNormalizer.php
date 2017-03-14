@@ -9,12 +9,12 @@ namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
-use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\ResourceNormalizerInterface;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Utility\SortingTrait;
 
-class ServerNormalizer implements NormalizerInterface
+class ServerNormalizer implements ResourceNormalizerInterface
 {
     use SortingTrait;
 

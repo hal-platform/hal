@@ -9,10 +9,11 @@ namespace Hal\UI\API\Normalizer;
 
 use DateTime;
 use Hal\UI\API\Hyperlink;
-use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\HypermediaResource;
+use Hal\UI\API\ResourceNormalizerInterface;
 use QL\MCP\Common\Time\TimePoint;
 
-class TimePointNormalizer implements NormalizerInterface
+class TimePointNormalizer implements ResourceNormalizerInterface
 {
     const DEFAULT_TIMEZONE = 'UTC';
 
@@ -42,16 +43,6 @@ class TimePointNormalizer implements NormalizerInterface
 
 
     /**
-     * @param mixed $input
-     *
-     * @return Hyperlink|null
-     */
-    public function link($input): ?Hyperlink
-    {
-        return null;
-    }
-
-    /**
      * @param TimePoint $time
      *
      * @return string|null
@@ -63,7 +54,26 @@ class TimePointNormalizer implements NormalizerInterface
         }
 
         $formatted = $time->format($this->format, $this->timezone);
-
         return str_replace('+0000', 'Z', $formatted);
+    }
+
+    /**
+     * @param mixed $input
+     *
+     * @return Hyperlink|null
+     */
+    public function link($input): ?Hyperlink
+    {
+        return null;
+    }
+
+    /**
+     * @param TimePoint|null $time
+     *
+     * @return HypermediaResource|null
+     */
+    public function resource($time, array $embed = []): ?HypermediaResource
+    {
+        return null;
     }
 }

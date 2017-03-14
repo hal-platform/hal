@@ -12,7 +12,7 @@ interface NormalizerInterface
     /**
      * @param mixed $input
      *
-     * @return array
+     * @return array|JsonSerializable|HypermediaResource|Hyperlink|scalar
      */
     public function normalize($input);
 

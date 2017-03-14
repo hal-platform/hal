@@ -9,11 +9,11 @@ namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
-use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\ResourceNormalizerInterface;
 use Hal\UI\Service\PermissionService;
 use QL\Hal\Core\Entity\User;
 
-class UserNormalizer implements NormalizerInterface
+class UserNormalizer implements ResourceNormalizerInterface
 {
     /**
      * @var PermissionService

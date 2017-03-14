@@ -9,10 +9,10 @@ namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
-use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\ResourceNormalizerInterface;
 use QL\Hal\Core\Entity\Push;
 
-class PushNormalizer implements NormalizerInterface
+class PushNormalizer implements ResourceNormalizerInterface
 {
     /**
      * @param Push|null $input

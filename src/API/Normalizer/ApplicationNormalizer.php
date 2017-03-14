@@ -9,11 +9,11 @@ namespace Hal\UI\API\Normalizer;
 
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
-use Hal\UI\API\NormalizerInterface;
+use Hal\UI\API\ResourceNormalizerInterface;
 use Hal\UI\Github\GitHubURLBuilder;
 use QL\Hal\Core\Entity\Application;
 
-class ApplicationNormalizer implements NormalizerInterface
+class ApplicationNormalizer implements ResourceNormalizerInterface
 {
     /**
      * @var GitHubURLBuilder

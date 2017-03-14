@@ -8,11 +8,12 @@
 namespace Hal\UI\Api\Normalizer;
 
 use Hal\UI\Api\Hyperlink;
-use Hal\UI\Api\NormalizerInterface;
+use Hal\UI\Api\HypermediaResource;
+use Hal\UI\Api\ResourceNormalizerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\Utility\URI;
 
-class HyperlinkNormalizer implements NormalizerInterface
+class HyperlinkNormalizer implements ResourceNormalizerInterface
 {
     /**
      * @var URI
@@ -39,9 +40,15 @@ class HyperlinkNormalizer implements NormalizerInterface
      *
      * @return array|null
      */
-    public function normalize($input)
+    public function normalize($link)
     {
-        return $this->resource($input);
+        if (!$link instanceof Hyperlink) {
+            return null;
+        }
+
+        $normalized = $link->jsonSerialize();
+        $normalized['href'] = $this->resolveURL($link->href());
+        return $normalized;
     }
 
     /**
@@ -57,29 +64,29 @@ class HyperlinkNormalizer implements NormalizerInterface
     /**
      * @param Hyperlink|null $link
      *
-     * @return array|null
+     * @return HypermediaResource|null
      */
-    public function resource($link)
+    public function resource($link, array $embed = []): ?HypermediaResource
     {
-        if (!$link instanceof Hyperlink) {
-            return null;
-        }
+        return null;
+    }
 
-        $normalized = $link->jsonSerialize();
-
-        $href = $link->href();
-
+    /**
+     * @param array|string $href
+     *
+     * @return string
+     */
+    private function resolveURL($href)
+    {
         if (is_string($href)) {
             if (stripos($href, 'http') === 0) {
-                return $normalized;
+                return $href;
             } else {
                 $href = [$href];
             }
         }
 
-        // @todo THIS SUCKS! How to get at runtime?
-        $normalized['href'] = $this->uri->absoluteURIFor($this->baseRequest->getUri(), ...$href);
-
-        return $normalized;
+        // @todo THIS SUCKS! Better way to get at runtime?
+        return $this->uri->absoluteURIFor($this->baseRequest->getUri(), ...$href);
     }
 }
