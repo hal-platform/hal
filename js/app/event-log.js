@@ -33,7 +33,7 @@ function loadLog(e) {
         logID = $anchor
             .closest('tbody[data-log]')
             .data('log'),
-        loaderURL = `/api/eventlogs/${logID}`;
+        loaderURL = `/api/job-events/${logID}`;
 
     // Sanity check
     if (logID === undefined) {

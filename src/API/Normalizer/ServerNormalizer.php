@@ -73,7 +73,7 @@ class ServerNormalizer implements ResourceNormalizerInterface
 
         $resource = new HypermediaResource($data, $links, [
             'environment' => $server->environment(),
-            'deployments' => $server->deployments()->toArray()
+            'targets' => $server->deployments()->toArray()
         ]);
 
         $resource->withEmbedded($embed);

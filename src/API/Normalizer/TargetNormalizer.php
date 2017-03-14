@@ -56,24 +56,25 @@ class TargetNormalizer implements ResourceNormalizerInterface
         $data = [
             'id' => $deployment->id(),
             'name' => $deployment->name(),
-
-            'path' => $deployment->path(),
-
-            'cd-name' => $deployment->cdName(),
-            'cd-group' => $deployment->cdGroup(),
-            'cd-configuration' => $deployment->cdConfiguration(),
-
-            'eb-name' => $deployment->ebName(),
-            'eb-environment' => $deployment->ebEnvironment(),
-
-            's3-bucket' => $deployment->s3bucket(),
-            's3-file' => $deployment->s3file(),
-
-            'script-context' => $deployment->scriptContext(),
-
             'url' => $deployment->url(),
 
-            'pretty-name' => $deployment->formatPretty(false),
+            'configuration' => [
+                'path' => $deployment->path(),
+
+                'cd_name' => $deployment->cdName(),
+                'cd_group' => $deployment->cdGroup(),
+                'cd_configuration' => $deployment->cdConfiguration(),
+
+                'eb_name' => $deployment->ebName(),
+                'eb_environment' => $deployment->ebEnvironment(),
+
+                's3_bucket' => $deployment->s3bucket(),
+                's3_file' => $deployment->s3file(),
+
+                'script_context' => $deployment->scriptContext()
+            ],
+
+            'pretty_name' => $deployment->formatPretty(false),
             'detail' => sprintf('%s: %s', $deployment->server()->formatHumanType(), $deployment->formatMeta()),
         ];
 

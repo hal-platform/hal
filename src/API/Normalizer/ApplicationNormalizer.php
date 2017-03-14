@@ -75,7 +75,7 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
 
         $links = [
             'self' => $this->link($application),
-            'deployments' => new Hyperlink(['api.targets', ['application' => $application->id()]]),
+            'targets' => new Hyperlink(['api.targets', ['application' => $application->id()]]),
             'builds' => new Hyperlink(['api.builds', ['application' => $application->id()]]),
             'pushes' => new Hyperlink(['api.pushes', ['application' => $application->id()]]),
 

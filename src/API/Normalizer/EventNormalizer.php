@@ -57,7 +57,7 @@ class EventNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $event->id(),
-            'event' => $event->event(),
+            'name' => $event->event(),
             'order' => $event->order(),
             'message' => $event->message(),
             'status' => $event->status(),

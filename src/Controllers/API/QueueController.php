@@ -117,9 +117,10 @@ class QueueController implements ControllerInterface
             return $job->id();
         }, $jobs);
 
-        $links = [
-            'refresh' => new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]])
-        ];
+        $links = [];
+        if ($jobs) {
+            $links['refresh'] = new Hyperlink(['api.queue.refresh', ['jobs' => implode('+', $identifiers)]]);
+        }
 
         $data = [
             'count' => count($jobs)
@@ -146,7 +147,7 @@ class QueueController implements ControllerInterface
     {
         return array_map(function ($item) {
             if ($item instanceof Push) {
-                return $this->pushNormalizer->resource($item, ['build', 'deployment', 'application']);
+                return $this->pushNormalizer->resource($item, ['application', 'build', 'target']);
             }
 
             if ($item instanceof Build) {

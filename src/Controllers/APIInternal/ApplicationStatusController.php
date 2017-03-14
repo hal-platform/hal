@@ -24,7 +24,7 @@ use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Panthor\ControllerInterface;
 
-class DeploymentStatusController implements ControllerInterface
+class ApplicationStatusController implements ControllerInterface
 {
     use APITrait;
     use SessionTrait;
@@ -95,12 +95,12 @@ class DeploymentStatusController implements ControllerInterface
             $build = ($push) ? $push->build() : null;
 
             $resource = new HypermediaResource([], [], [
-                'deployment' => $deployment,
+                'target' => $deployment,
                 'push' => $push,
                 'build' => $build
             ]);
 
-            $statuses[] = $resource->withEmbedded(['deployment', 'push', 'build']);
+            $statuses[] = $resource->withEmbedded(['target', 'push', 'build']);
         }
 
         $canPush = $this->permissionService->canUserPush($user, $application, $environment);

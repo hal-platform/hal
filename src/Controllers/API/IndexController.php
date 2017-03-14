@@ -38,11 +38,11 @@ class IndexController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $links = [
-            'environments' => new Hyperlink('api.environments'),
-            'servers' => new Hyperlink('api.servers'),
-
             'applications' => new Hyperlink('api.applications'),
             'organizations' => new Hyperlink('api.organizations'),
+
+            'environments' => new Hyperlink('api.environments'),
+            'servers' => new Hyperlink('api.servers'),
 
             'users' => new Hyperlink('api.users'),
             'queue' => new Hyperlink('api.queue'),

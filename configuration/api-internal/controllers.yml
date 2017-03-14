@@ -1,7 +1,7 @@
 services:
 
     api_internal.deployment_status:
-        class: 'Hal\UI\Controllers\APIInternal\DeploymentStatusController'
+        class: 'Hal\UI\Controllers\APIInternal\ApplicationStatusController'
         arguments:
             - '@doctrine.em'
             - '@pools'

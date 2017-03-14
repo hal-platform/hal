@@ -122,8 +122,8 @@ module.exports = {
         // - count
         // - _embedded.events
         // - _embedded.events[].id
+        // - _embedded.events[].name
         // - _embedded.events[].message
-        // - _embedded.events[].event
         // - _embedded.events[].created
         $.getJSON(logsEndpoint, function(data) {
             if (data.count < 1) {
@@ -304,16 +304,16 @@ module.exports = {
 
         var eventRegex = /^(build|push).([a-z]*)$/i,
             match = null,
-            logEvent = '';
+            logName = '';
 
-        match = eventRegex.exec(log.event);
+        match = eventRegex.exec(log.name);
         if (match !== null && match.length > 0) {
-            logEvent = match.pop();
+            logName = match.pop();
         }
 
         var context = {
             log: log,
-            logEvent: logEvent,
+            logEvent: logName,
             logCreated: this.createTimeElement(log.created)
         };
 

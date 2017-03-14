@@ -58,7 +58,7 @@ class EventsController implements ControllerInterface
         ]);
 
         if ($this->isEmbedded($request)) {
-            $resource->withEmbedded('events');
+            $resource->withEmbedded(['events']);
         }
 
         $status = (count($events) > 0) ? 200 : 404;

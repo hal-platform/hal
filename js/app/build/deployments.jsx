@@ -88,7 +88,7 @@ var Pool = React.createClass({
         return (
             <tbody className="table-breathe">
                 { this.renderHeader() }
-                { this.renderDeployments() }
+                { this.renderTargets() }
             </tbody>
         );
     },
@@ -101,14 +101,14 @@ var Pool = React.createClass({
             );
         }
     },
-    renderDeployments: function() {
-        var deployments = [];
+    renderTargets: function() {
+        var targets = [];
 
         for (var status of this.props.deployments) {
-            deployments.push(
+            targets.push(
                 <Deployment
-                    key={ status.deployment.id }
-                    deployment={ status.deployment }
+                    key={ status.deployment_target.id }
+                    deployment={ status.deployment_target }
                     build={ status.build }
                     push={ status.push }
                     canPush={ this.props.canPush }
@@ -116,7 +116,7 @@ var Pool = React.createClass({
             );
         }
 
-        return deployments;
+        return targets;
     }
 });
 

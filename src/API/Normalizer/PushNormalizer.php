@@ -75,7 +75,7 @@ class PushNormalizer implements ResourceNormalizerInterface
         $resource = new HypermediaResource($data, $links, [
             'user' => $push->user(),
             'build' => $push->build(),
-            'deployment' => $push->deployment(),
+            'target' => $push->deployment(),
             'application' => $push->application()
         ]);
 

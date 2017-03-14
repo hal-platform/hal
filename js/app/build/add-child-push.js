@@ -112,12 +112,12 @@ function buildStatusContext(data) {
     };
 
     for (var status of data._embedded.statuses) {
-        deploymentID = status._embedded.deployment.id;
+        deploymentID = status._embedded.target.id;
 
-        var deployment = {
+        var deployment_target = {
                 id: deploymentID,
-                pretty: status._embedded.deployment['pretty-name'],
-                additional: status._embedded.deployment['detail']
+                pretty: status._embedded.target.pretty_name,
+                additional: status._embedded.target.detail
             },
             build = formatBuild(status._embedded.build),
             push = formatPush(status._embedded.push);
@@ -130,7 +130,7 @@ function buildStatusContext(data) {
             pool = pools[pools.length - 1];
         }
 
-        pool.deployments.push({ deployment, build, push });
+        pool.deployments.push({ deployment_target, build, push });
     }
 
     return pools;
@@ -139,7 +139,7 @@ function buildStatusContext(data) {
 function formatPools(view) {
     var pools = [];
 
-    if (view === null) {
+    if (view == null) {
         pools.push({
             name: 'err-no-view',
             deployments: [],
@@ -167,7 +167,7 @@ function formatPools(view) {
 }
 
 function formatBuild(build) {
-    if (build === null) {
+    if (build == null) {
         return null;
     }
 
@@ -183,7 +183,7 @@ function formatBuild(build) {
 }
 
 function formatPush(push) {
-    if (push === null) {
+    if (push == null) {
         return null;
     }
 
