@@ -15,6 +15,7 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Hal\Core\Entity\DeploymentView;
@@ -125,7 +126,7 @@ class AddTargetController implements ControllerInterface
                 'deployment' => $target,
                 'server' => $target->server(),
                 'remove_url' => $this->uri->uriFor('target_pool_target.remove', [
-                    'application' => $application,
+                    'application' => $application->id(),
                     'view' => $view->id(),
                     'pool' => $pool->id(),
                     'target' => $target->id()

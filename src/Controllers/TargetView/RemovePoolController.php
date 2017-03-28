@@ -15,6 +15,7 @@ use Hal\UI\Flash;
 use Hal\UI\Service\PoolService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\DeploymentPool;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
@@ -69,7 +70,7 @@ class RemovePoolController implements ControllerInterface
 
         $this->poolService->clearViewCache($pool->view());
 
-        $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
+        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $pool->name()));
         return $this->withRedirectRoute(
             $response,
             $this->uri,
