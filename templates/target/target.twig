@@ -6,22 +6,24 @@
 {% set can_edit = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
 
 {% block content %}
-    <h1>Target - <strong>{{ application.name }}</strong></h1>
+    <div class="nav--page">
+        <h1>Deployment Target - <b>{{ application.name }}</b></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
+        </p>
+    </div>
 
     <div class="details-box">
         <dl class="split">
             <dt class="split__title">Application</dt>
-            <dd>
-                <a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a>
-            </dd>
+            <dd><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></dd>
 
             <dt class="split__title">Server</dt>
             <dd><a href="{{ uriFor('server', {'server': target.server.id}) }}">{{ target.server.formatPretty() }}</a></dd>
 
             <dt class="split__title">Environment</dt>
-            <dd>
-                {{ target.server.environment.name }}
-            </dd>
+            <dd>{{ target.server.environment.name }}</dd>
         </dl>
     </div>
 

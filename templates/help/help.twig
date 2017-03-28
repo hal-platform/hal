@@ -3,8 +3,6 @@
 
 {% set page_title = 'Help' %}
 
-{% set kmContact = '<a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a>' %}
-
 {% block content %}
     <h1>Help &amp; FAQ</h1>
 
@@ -58,9 +56,7 @@
 {% block support_questions %}
     <h3 id="permission">{{ macros.status_icon('Who should I contact for support or permission changes?') }}</h3>
 
-    <p>You should email <strong>Team Key Masters</strong> at {{ kmContact|raw }}.</p>
-
-    <h6 class="mbn"><strong>How are permissions determined?</strong></h6>
+    <h6 class="mbn"><b>How are permissions determined?</b></h6>
     <p>
         Hal grants non-prod build and push permissions to users that are <b>public</b> members of the GitHub organization that owns the project.
     </p>
@@ -93,26 +89,26 @@
     </p>
     <ol class="list--bullet">
         <li>
-            <strong>Projects belong to organizations. Determine what organization your application should be part of, or create a new one.</strong>
+            <b>Projects belong to organizations. Determine what organization your application should be part of, or create a new one.</b>
             <p>
                 Projects are often organized by team or business area. You can see the ones that already exist by viewing the <a href="{{ uriFor('applications') }}">Applications page</a>.
             </p>
         </li>
         <li>
-            <strong>Project code must be hosted on GitHub and belong to an organization</strong>
+            <b>Project code must be hosted on GitHub and belong to an organization</b>
             <p>
                 The project code must be hosted on the internal <a href="http://git">GitHub Enterprise</a> server. Only applications belonging to a GitHub organization may be used.
             </p>
         </li>
         <li>
-            <strong>Add a <code>.hal9000.yml</code> configuration file to your project.</strong>
+            <b>Add a <code>.hal9000.yml</code> configuration file to your project.</b>
             <p>
                 The hal configuration file is used to tell Hal how to build and deploy your application.
                 Please see <a href="{{ uriFor('help.deployment') }}">deployment scripting guide</a> for full details.
             </p>
         </li>
         <li>
-            <strong>Determine who should be able to build and push your application.</strong>
+            <b>Determine who should be able to build and push your application.</b>
             <p>
                 By default, Hal will grant build &amp; push permissions for non-production environments to all
                 users who are members of the GitHub organization that owns the project repository.</p>
@@ -169,7 +165,7 @@
 
     <h3 id="encrypted-configuration">{{ macros.status_icon('Does Hal support encrypted configuration?') }}</h3>
     <p>
-        <strong>Yes.</strong><br>
+        <b>Yes.</b><br>
         Hal can store sensitive information such as passwords or API keys. This data is encrypted when it is store in the database, and only decrypted during the build process.
     </p>
     <p>

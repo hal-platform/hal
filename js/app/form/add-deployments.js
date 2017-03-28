@@ -130,7 +130,7 @@ module.exports = {
         var $list = $(this.envListPrefix + env),
             $row = $('<tr>')
             .append('<td>' + hostname + '</td>')
-            .append('<td><code>' + path + '</code></td>')
+            .append('<td>Path: <code>' + path + '</code></td>')
             .append('<td><a href="' + url + '">' + url + '</a></td>')
             .append('<td></td>');
 

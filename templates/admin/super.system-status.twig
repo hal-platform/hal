@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="nav--page">
-        <h1>{{ page_title }} - <strong>{{ selected_agent }}</strong></h1>
+        <h1>{{ page_title }} - <b>{{ selected_agent }}</b></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
@@ -43,14 +43,14 @@
 
     <div class="details-box">
         <dl class="split mbn">
-            <dt class="split__title"><strong>Agent System</strong></dt>
+            <dt class="split__title"><b>Agent System</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.agent.system }}</pre>
                 </div>
             </dd>
 
-            <dt class="split__title"><strong>Agent Temp</strong></dt>
+            <dt class="split__title"><b>Agent Temp</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.agent.temp }}</pre>
@@ -62,14 +62,14 @@
     <h3>Builder Status</h3>
     <div class="details-box">
         <dl class="split mbn">
-            <dt class="split__title"><strong>Builder System</strong></dt>
+            <dt class="split__title"><b>Builder System</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.builder.system }}</pre>
                 </div>
             </dd>
 
-            <dt class="split__title"><strong>Builder Temp</strong></dt>
+            <dt class="split__title"><b>Builder Temp</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.builder.temp }}</pre>
@@ -77,7 +77,7 @@
             </dd>
 
         <dl>
-            <dt class="split__title"><strong>Builder Docker</strong></dt>
+            <dt class="split__title"><b>Builder Docker</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.builder.docker }}</pre>
@@ -89,21 +89,21 @@
     <h3>Docker Status</h3>
     <div class="details-box">
         <dl class="split mbn">
-            <dt class="split__title"><strong>Info</strong></dt>
+            <dt class="split__title"><b>Info</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.docker.info }}</pre>
                 </div>
             </dd>
 
-            <dt class="split__title"><strong>Images</strong></dt>
+            <dt class="split__title"><b>Images</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.docker.images }}</pre>
                 </div>
             </dd>
 
-            <dt class="split__title"><strong>Containers</strong></dt>
+            <dt class="split__title"><b>Containers</b></dt>
             <dd>
                 <div class="pre-wrapper">
                     <pre>{{ system.docker.containers }}</pre>

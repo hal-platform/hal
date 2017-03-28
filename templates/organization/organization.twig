@@ -6,13 +6,23 @@
 {% set is_admin = isUserAdminOrSuper(current_user) %}
 
 {% block content %}
-    <h1>Organization - <strong>{{ organization.name }}</strong></h1>
+    <div class="nav--page">
+        <h1>Organization - <b>{{ organization.name }}</b></h1>
 
-    <h4>Name</h4>
-    <p>{{ organization.name }}</p>
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
+        </p>
+    </div>
 
-    <h4>Identifier</h4>
-    <p>{{ organization.key }}</p>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Identifier</dt>
+            <dd>{{ organization.key }}</dd>
+
+            <dt class="split__title">Name</dt>
+            <dd>{{ organization.name }}</dd>
+        </dl>
+    </div>
 
     <h4>Applications</h4>
     {% if applications %}
@@ -31,7 +41,7 @@
                     <td><a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">{{ application.name }}</a></td>
                     <td>{{ macros.gitsource(application) }}</td>
                     <td class="tr">
-                        <a href="{{ uriFor('application', {'application': application.id}) }}">Details</a>
+                        <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -43,10 +53,10 @@
     {% endif %}
 
     {% if is_admin and applications %}
-        <p><strong>Note:</strong> All associated applications must be removed or transferred to remove this organization.</p>
+        <p><b>Note:</b> All associated applications must be removed or transferred to remove this organization.</p>
     {% endif %}
 
-    <ul class="button-list">
+    <ul class="button-list button-list--half">
         <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
         {% if is_admin %}
             <li><a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a></li>
@@ -54,8 +64,6 @@
             {% if not applications and is_admin %}
                 <li><a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a></li>
             {% endif %}
-
-        <li><a class="btn btn--secondary" href="{{ uriFor('applications') }}">Applications</a></li>
         {% endif %}
     </ul>
 

@@ -14,7 +14,7 @@
 {% block content %}
 
     <div class="nav--page">
-        <h1>Target View - <strong>{{ view.name }}</strong></h1>
+        <h1>Target View - <b>{{ view.name }}</b></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('target_views', {'application': application.id, 'environment': environment.id}) }}">Back to Target Views</a>
@@ -135,7 +135,7 @@
             <li><a class="btn btn--action" href="{{ uriFor('target_view.edit', {'application': application.id, 'view': view.id}) }}">Edit View</a></li>
         {% endif %}
 
-        <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
+        <li><a class="btn btn--secondary" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Dashboard</a></li>
     </ul>
 
 {% endblock %}

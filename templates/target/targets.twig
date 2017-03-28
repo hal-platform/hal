@@ -6,9 +6,13 @@
 {% set page_title = 'Targets : ' ~ application.name %}
 
 {% block content %}
-    <h1>Deployment Targets - <strong>{{ application.name }}</strong> </h1>
+    <div class="nav--page">
+        <h1>Deployment Targets - <b>{{ application.name }}</b></h1>
 
-    <p><a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a></p>
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
+        </p>
+    </div>
 
     <p>
         Deployment targets define what servers your application can be deployed to and where on that server the code will be uploaded.

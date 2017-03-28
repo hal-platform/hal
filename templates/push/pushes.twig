@@ -2,12 +2,17 @@
 {% import 'macros.pagination.twig' as pagination %}
 {% set js_components = ["job.updater"] %}
 
-{% set page_title = "Push History : " ~ application.name %}
+{% set page_title = "Release History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Status</a></p>
 
-    <h1>Push History - <strong>{{ application.name }}</strong></h1>
+    <div class="nav--page">
+        <h1>Release History - <b>{{ application.name }}</b></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
+        </p>
+    </div>
 
     {{ block('search') }}
 

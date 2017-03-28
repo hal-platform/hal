@@ -11,7 +11,7 @@ h1 {
     @include leader(.25);
     @include trailer(.75);
 
-    strong {
+    strong, b {
         color: tint($hal-cyan, 50%);
     }
 }

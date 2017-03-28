@@ -5,13 +5,18 @@
 {% set page_title = "Push History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Status</a></p>
 
     {% set server = deployment.formatPretty %}
     {% set deployment_details = deployment.formatMeta %}
     {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
-    <h1>Push History - <strong>{{ application.name }}</strong> to <strong>{{ server }}</strong></h1>
+    <div class="nav--page">
+        <h1>Release History - <b>{{ application.name }}</b> to <b>{{ server }}</b></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
+        </p>
+    </div>
 
     <h2>Deployment Details</h2>
     <div class="details-box">
@@ -41,12 +46,12 @@
 
     <p>
         This table shows the push history for this deployment.
-        To rollback, simply choose a build, click <strong>rollback</strong>, and you'll be able to initate a new push.
+        To rollback, simply choose a build, click <b>rollback</b>, and you'll be able to initate a new push.
     </p>
 
     {% set canRollback = canUserPush(current_user, application, deployment.server.environment) %}
 
-    <h2>Push History</h2>
+    <h2>Release History</h2>
     <table class="table--spacing-medium" data-tablesaw-mode="stack">
         <thead>
             <tr>

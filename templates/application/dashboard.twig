@@ -9,7 +9,9 @@
 {% set isBusinessTime = is_serious_business_mode %}
 
 {% block content %}
-    <h1>Application Status - <strong>{{ application.name }}</strong></h1>
+    <div class="nav--page">
+        <h1>Application Dashboard - <b>{{ application.name }}</b></h1>
+    </div>
 
     {% if selected_environment %}
 
@@ -17,7 +19,7 @@
 
         {{ block('deployment_cards') }}
 
-        <h2>Recent Builds - <strong>{{ selected_environment.name }}</strong></h2>
+        <h2>Recent Builds - <b>{{ selected_environment.name }}</b></h2>
         {% set isPushable = deployment_statuses|length > 0 %}
         {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable } %}
 
@@ -37,9 +39,9 @@
 
 {% block pickers %}
 
-    {% set needsViews = deployment_statuses|length > 5 %}
+    {% set needs_views = deployment_statuses|length > 5 %}
 
-    {% if not views and not needsViews %}
+    {% if not views and not needs_views %}
         {# if no views and does not need views, only show env picker #}
         {{ block('env_picker') }}
     {% else %}
@@ -130,7 +132,7 @@
 {% block deployment_cards %}
 
     <h2 class="{{ (deployment_statuses) ? 'js-overloader-parent' : '' }}">
-        Server Status - <strong>{{ selected_environment.name }}</strong>
+        Server Status - <b>{{ selected_environment.name }}</b>
     </h2>
 
     {% if deployment_statuses %}
@@ -192,7 +194,7 @@
         </section>
 
     {% else %}
-        <p>This application has no deployment targets for <strong>{{ selected_environment.name }}</strong> and cannot be pushed.</p>
+        <p>This application has no deployment targets for <b>{{ selected_environment.name }}</b> and cannot be pushed.</p>
     {% endif %}
 {% endblock %}
 

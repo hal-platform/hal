@@ -9,7 +9,7 @@
 {% block content %}
 
     <div class="nav--page">
-        <h1>Target Views/Pools - <strong>{{ application.name }}</strong></h1>
+        <h1>Target Views/Pools - <b>{{ application.name }}</b></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('targets', {'application': application.id}) }}">Back to Deployment Targets</a>
@@ -95,12 +95,12 @@
         <p>No views found for this application environment.</p>
     {% endif %}
 
-    <ul class="button-list">
+    <ul class="button-list button-list--half">
         {% if canEditShared %}
             <li><a class="btn btn--action" href="{{ uriFor('target_view.add', {'application': application.id, 'environment': environment.id}) }}">Add View</a></li>
         {% endif %}
 
-        <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Status</a></li>
+        <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Dashboard</a></li>
     </ul>
 
 {% endblock %}

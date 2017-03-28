@@ -5,9 +5,14 @@
 {% set page_title = "Build History : " ~ application.name %}
 
 {% block content %}
-    <p><a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Status</a></p>
 
-    <h1>Build History - <strong>{{ application.name }}</strong></h1>
+    <div class="nav--page">
+        <h1>Build History - <b>{{ application.name }}</b></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Back to Application Dashboard</a>
+        </p>
+    </div>
 
     {{ block('search') }}
 

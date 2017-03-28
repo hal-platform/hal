@@ -23,7 +23,7 @@
 
     <p>
         <b>Please note:</b><br>
-        Most of this configuration is handled by server administrators from <b>UNIX team</b>. Do not expect this setup to occur quickly.
+        Most of this configuration is handled by server administrators from your Platform Engineering team. Do not expect this setup to occur quickly.
     </p>
 
     <ul class="list--bare">
@@ -59,27 +59,27 @@
 
     <ol class="list--bullet">
         <li>
-            <strong>Request servers from UNIX team.</strong>
+            <b>Request servers from your Platform Engineering team.</b>
             <p>
-                Once provisioned to your requirements, you should get a list of servers from unix.
+                Once provisioned to your requirements, you should get a list of servers from platform engineering.
                 <br><small>Please have patience, this process can take a significant amount of time.</small>
             </p>
         </li>
         <li>
-            <strong>What environments and servers will your application be deployed to?</strong>
+            <b>What environments and servers will your application be deployed to?</b>
             <p>
                 Examples: <code>test1www1</code>, <code>dev1iweb</code>, <code>prod1srvwww1</code>
             </p>
         </li>
         <li>
-            <strong>Where on those servers will your application be hosted?</strong>
+            <b>Where on those servers will your application be hosted?</b>
             <p>
                 This should be the full path to the directory that code is pushed to.
                 <br>Example: <code>/var/www/application</code>
             </p>
         </li>
         <li>
-            <strong>Determine the URL for each environment or server.</strong>
+            <b>Determine the URL for each environment or server.</b>
             <p>
                 When a server is added for your application to deploy to, you should also add the URL where the service or site is available from.
                 This will helps testers and administrators find your application servers.
@@ -87,7 +87,7 @@
             </p>
         </li>
         <li>
-            <strong>Make sure permissions are correct on each server.</strong>
+            <b>Make sure permissions are correct on each server.</b>
             <p>
                 For Hal to be able to push code to these servers, the user <code>codexfer</code> must have passwordless access to each server.
                 In addition, the directory to be deployed to must be owned by <code>codexfer</code> and typically belong to the <code>apache</code> or <code>nginx</code> groups.
@@ -155,20 +155,20 @@
 
     <ol class="list--bullet">
         <li>
-            <strong>Have unix create an Elastic Beanstalk Application and S3 bucket.</strong>
+            <b>Have Platform Engineering create an Elastic Beanstalk Application and S3 bucket.</b>
             <p>
                 Versions of your application are uploaded as a zip file to S3. EB then downloads the versions and deploys them.
             </p>
         </li>
         <li>
-            <strong>An environment must be created for each deployment target.</strong>
+            <b>An environment must be created for each deployment target.</b>
             <p>
                 While you may have only one target per traditional environment (test, beta, prod). Elastic Beanstalk supports any number of environments.
                 For example, you may use this if you need multiple isolated testing environments in test.
             </p>
         </li>
         <li>
-            <strong>Create AWS access token with correct permissions.</strong>
+            <b>Create AWS access token with correct permissions.</b>
             <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
             <ul class="list--bare">
                 <li><code>s3:GetObject</code></li>
@@ -183,7 +183,7 @@
             <small>Please note: S3 permissions must be for the bucket resource and contents (<code>bucket</code> and <code>bucket/*</code>)</small>
         </li>
         <li>
-            <strong>Customize deployments with .ebextensions or env.yaml</strong>
+            <b>Customize deployments with .ebextensions or env.yaml</b>
             <p>
                 If you need to run commands on the server when code is deployed, such as set permissions, warm caches or other functionality.
             </p>
@@ -221,28 +221,28 @@
 
     <ol class="list--bullet">
         <li>
-            <strong>Request servers from UNIX team.</strong>
+            <b>Request servers from your Platform Engineering team.</b>
             <p>
                 All AWS resources are built through Puppet. Complete provisioning instructions must be created to build your servers in AWS.
                 <br><small>Please have patience, this process can take a significant amount of time.</small>
             </p>
         </li>
         <li>
-            <strong>CodeDeploy agent must be installed on all servers.</strong>
+            <b>CodeDeploy agent must be installed on all servers.</b>
             <p>
                 All AWS resources are built through Puppet. Complete provisioning instructions must be created to build your servers in AWS.
                 <br><small>Please have patience, this process can take a significant amount of time.</small>
             </p>
         </li>
         <li>
-            <strong>Have unix create a CodeDeploy Application and S3 bucket.</strong>
+            <b>Have Platform Engineering create a CodeDeploy Application and S3 bucket.</b>
             <p>
                 Your application is compiled into a tarball and uploaded to S3. The CodeDeploy agents then pull the archive from the S3 bucket and deploy it to the server.
             </p>
         </li>
 
         <li>
-            <strong>CodeDeploy agent must be installed on all servers.</strong>
+            <b>CodeDeploy agent must be installed on all servers.</b>
             <p>
                 All AWS resources are built through Puppet. Complete provisioning instructions must be created to build your servers in AWS.
                 <br><small>Please have patience, this process can take a significant amount of time.</small>
@@ -250,7 +250,7 @@
         </li>
 
         <li>
-            <strong>Create AWS access token with correct permissions.</strong>
+            <b>Create AWS access token with correct permissions.</b>
             <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
             <ul class="list--bare">
                 <li><code>s3:GetObject</code></li>
@@ -268,7 +268,7 @@
         </li>
 
         <li>
-            <strong>Configure deployments with appspec.yml</strong>
+            <b>Configure deployments with appspec.yml</b>
             <p class="mtm mbn">
                 You must configure your deployment procedure with an appspec file.
                 This informs the agents where to put your code.
@@ -313,11 +313,11 @@
 
     <ol class="list--bullet">
         <li>
-            <strong>Have unix create an S3 bucket.</strong>
+            <b>Have Platform Engineering create an S3 bucket.</b>
             <p>Your application will be compressed into a tarball and uploaded to the bucket, with the filename of your choice.</p>
         </li>
         <li>
-            <strong>Create AWS access token with correct permissions.</strong>
+            <b>Create AWS access token with correct permissions.</b>
             <p class="mvn">This can be shared between multiple applications, but the token must have the following permissions:</p>
             <ul class="list--bare">
                 <li><code>s3:GetObject</code></li>

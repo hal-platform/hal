@@ -6,19 +6,19 @@
 {% set isAdmin = isUserAdminOrSuper(current_user) %}
 
 {% block content %}
-    <h1>Server - <strong>{{ server.environment.name }}</strong></h1>
-
-    <h3>Type</h3>
-    <p>{{ server.formatHumanType }}</p>
+    <h1>Server - <b>{{ server.environment.name }}</b></h1>
 
     {% set name_label =  server.type == 'rsync' ? 'Hostname' : 'Region' %}
-    <h3>{{ name_label }}</h3>
 
-    {% if server.type == 'script' %}
-        <p>N/A</p>
-    {% else %}
-        <p>{{ server.name }}</p>
-    {% endif %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Server Type</dt>
+            <dd>{{ server.formatHumanType }}</dd>
+
+            <dt class="split__title">{{ name_label }}</dt>
+            <dd>{{ server.type == 'script' ? 'N/A' : server.name }}</dd>
+        </dl>
+    </div>
 
     <h3>Environment</h3>
     <p>{{ server.environment.name }}</p>
@@ -99,7 +99,7 @@
     {% endif %}
 
     {% if isAdmin and deployments %}
-        <p><strong>Note:</strong> All associated deployments must be removed or transferred to remove this server.</p>
+        <p><b>Note:</b> All associated deployments must be removed or transferred to remove this server.</p>
     {% endif %}
 
     <ul class="button-list button-list--half">

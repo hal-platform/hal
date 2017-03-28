@@ -50,24 +50,24 @@
             <h4>Today</h4>
             <ul class="stat-list">
                 <li>
-                    <strong>{{ stats.active_repos }}</strong> Active project{{ stats.active_repos != 1 ? 's' : '' }}
+                    <b>{{ stats.active_repos }}</b> Active project{{ stats.active_repos != 1 ? 's' : '' }}
                 </li>
                 <li>
-                    <strong>{{ stats.builds }}</strong> Build{{ stats.builds != 1 ? 's' : '' }}
+                    <b>{{ stats.builds }}</b> Build{{ stats.builds != 1 ? 's' : '' }}
                     {% if stats.builds %}
                         <ul class="stat-list">
                             <li>
-                                <strong>{{ stats.prod_builds }}</strong> for production
+                                <b>{{ stats.prod_builds }}</b> for production
                             </li>
                         </ul>
                     {% endif %}
                 </li>
                 <li>
-                    <strong>{{ stats.pushes }}</strong> Push{{ stats.builds != 1 ? 'es' : '' }}
+                    <b>{{ stats.pushes }}</b> Push{{ stats.builds != 1 ? 'es' : '' }}
                     {% if stats.pushes %}
                         <ul class="stat-list">
                             <li>
-                                <strong>{{ stats.prod_pushes }}</strong> for production
+                                <b>{{ stats.prod_pushes }}</b> for production
                             </li>
                         </ul>
                     {% endif %}

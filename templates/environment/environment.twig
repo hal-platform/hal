@@ -5,13 +5,17 @@
 {% set isAdmin = isUserSuper(current_user) %}
 
 {% block content %}
-    <h1>Environment - <strong>{{ env.name }}</strong></h1>
+    <h1>Environment - <b>{{ env.name }}</b></h1>
 
-    <h3>Name</h3>
-    <p>{{ env.name }}</p>
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Name</dt>
+            <dd>{{ env.name }}</dd>
 
-    <h3>Is Production Environment?</h3>
-    <p>{{ env.isProduction ? 'Yes' : 'No' }}</p>
+            <dt class="split__title">Is Production Environment?</dt>
+            <dd>{{ env.isProduction ? 'Yes' : 'No' }}</dd>
+        </dl>
+    </div>
 
     <h3>Servers</h3>
     {% if servers %}
@@ -40,7 +44,7 @@
     {% endif %}
 
     {% if isAdmin and servers %}
-        <p><strong>Note:</strong> All associated servers must be removed or transferred to remove this environment.</p>
+        <p><b>Note:</b> All associated servers must be removed or transferred to remove this environment.</p>
     {% endif %}
 
     <ul class="button-list button-list--half">

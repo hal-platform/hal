@@ -4,7 +4,7 @@
 {% set page_title = 'Edit Target : ' ~ application.name %}
 
 {% block content %}
-    <h1>Edit Target - <strong>{{ application.name }}</strong></h1>
+    <h1>Edit Target - <b>{{ application.name }}</b></h1>
 
     <div class="details-box">
         <dl class="split">
@@ -54,7 +54,7 @@
                     <label for="path">
                         File path
                         <small class="additional">
-                            <strong>Rsync servers only</strong><br>
+                            <b>Rsync servers only</b><br>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="path" id="path" maxlength="200" value="{{ form.path }}" pattern="^\/[^\n\t]+"{{ isDisabled }}>
@@ -72,7 +72,7 @@
                     <label for="script_context">
                         Script Context
                         <small class="additional">
-                            <strong>Script servers only</strong>
+                            <b>Script servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="script_context" id="script_context" maxlength="100" value="{{ form.script_context }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -89,7 +89,7 @@
                     <label for="cd_name">
                         CodeDeploy Application Name
                         <small class="additional">
-                            <strong>CD servers only</strong>
+                            <b>CD servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="cd_name" id="cd_name" maxlength="100" value="{{ form.cd_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -100,7 +100,7 @@
                     <label for="cd_group">
                         CodeDeploy Deployment Group
                         <small class="additional">
-                            <strong>CD servers only</strong>
+                            <b>CD servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="cd_group" id="cd_group" maxlength="100" value="{{ form.cd_group }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -111,7 +111,7 @@
                     <label for="cd_config">
                         CodeDeploy Configuration
                         <small class="additional">
-                            <strong>CD servers only</strong>
+                            <b>CD servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="cd_config" id="cd_config" maxlength="100" value="{{ form.cd_config }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -125,7 +125,7 @@
                     <label for="eb_name">
                         Elastic Beanstalk Application Name
                         <small class="additional">
-                            <strong>EB servers only</strong>
+                            <b>EB servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="eb_name" id="eb_name" maxlength="100" value="{{ form.eb_name }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -136,7 +136,7 @@
                     <label for="eb_environment">
                         Elastic Beanstalk Environment ID
                         <small class="additional">
-                            <strong>EB servers only</strong>
+                            <b>EB servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="eb_environment" id="eb_environment" maxlength="100" value="{{ form.eb_environment }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -150,7 +150,7 @@
                     <label for="s3_bucket">
                         S3 Bucket
                         <small class="additional">
-                            <strong>S3, CD and EB servers only</strong>
+                            <b>S3, CD and EB servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="s3_bucket" id="s3_bucket" maxlength="100" value="{{ form.s3_bucket }}" pattern="^[^\n\t]+"{{ isDisabled }}>
@@ -161,7 +161,7 @@
                     <label for="s3_file">
                         S3 File
                         <small class="additional">
-                            <strong>S3, CD and EB servers only</strong>
+                            <b>S3, CD and EB servers only</b>
                         </small>
                     </label>
                     <input class="text-input" type="text" name="s3_file" id="s3_file" maxlength="100" value="{{ form.s3_file }}" pattern="^[^\n\t]+"{{ isDisabled }}>
