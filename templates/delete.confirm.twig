@@ -1,22 +1,276 @@
 {% extends 'base.twig' %}
+{% import "macros.twig" as macros %}
 
-{% set page_title = 'Confirm Removal' %}
+{% set entity_type = 'Unknown Entity' %}
+{% if remove.param == 'organization' %}
+    {% set entity_type = 'Organization' %}
+{% elseif remove.param == 'application' %}
+    {% set entity_type = 'Application' %}
+{% elseif remove.param == 'target' %}
+    {% set entity_type = 'Deployment Target' %}
+{% elseif remove.param == 'encrypted' %}
+    {% set entity_type = 'Encrypted Property' %}
+{% elseif remove.param == 'view' %}
+    {% set entity_type = 'Target View' %}
+{% elseif remove.param == 'pool' %}
+    {% set entity_type = 'Target Pool' %}
+{% elseif remove.param == 'target_pool_target' %}
+    {% set entity_type = 'Target from Pool' %}
+{% elseif remove.param == 'server' %}
+    {% set entity_type = 'Server' %}
+{% elseif remove.param == 'environment' %}
+    {% set entity_type = 'Environment' %}
+{% elseif remove.param == 'credential' %}
+    {% set entity_type = 'Credential' %}
+{% elseif remove.param == 'token' %}
+    {% set entity_type = 'User Token' %}
+{% endif %}
 
 {% block content %}
+    <h1>
+        {% if remove.param %}
+            Confirm {{ entity_type }} Removal
+        {% else %}
+            Confirm Removal
+        {% endif %}
+    </h1>
 
-    <h1>{{ page_title }}</h1>
+    {% if remove.param == 'organization' %}
+        {{ block('organization_box') }}
+
+    {% elseif remove.param == 'application' %}
+        {{ block('application_box') }}
+    {% elseif remove.param == 'target' %}
+        {{ block('target_box') }}
+    {% elseif remove.param == 'encrypted' %}
+        {{ block('encrypted_box') }}
+
+    {% elseif remove.param == 'view' %}
+        {{ block('target_view_box') }}
+    {% elseif remove.param == 'pool' %}
+        {{ block('target_pool_box') }}
+    {% elseif remove.param == 'target_pool_target' %}
+        {{ block('target_pool_target_box') }}
+
+    {% elseif remove.param == 'server' %}
+        {{ block('server_box') }}
+    {% elseif remove.param == 'environment' %}
+        {{ block('environment_box') }}
+    {% elseif remove.param == 'credential' %}
+        {{ block('credential_box') }}
+
+    {% elseif remove.param == 'token' %}
+        {{ block('token_box') }}
+    {% endif %}
+
+    <h3>Are you sure?</h3>
+    <p>You're about to permanently remove this {{ entity_type }}. Do you want to continue?</p>
+
+    <form class="form-wrapper" method="post">
+        <ul class="button-list">
+            <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
+            <li class="button-list__fixed">{{ block('cancel_button') }}</li>
+        </ul>
+    </form>
+
+{% endblock %}
+
+{% block cancel_button %}
+    {% if remove.param == 'organization' %}
+        <a class="btn btn--secondary" href="{{ uriFor('organization', {'organization': remove.entity.id}) }}">Cancel</a>
+
+    {% elseif remove.param == 'application' %}
+        <a class="btn btn--secondary" href="{{ uriFor('application', {'application': remove.entity.id}) }}">Cancel</a>
+    {% elseif remove.param == 'target' %}
+        <a class="btn btn--secondary" href="{{ uriFor('target', {'target': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
+    {% elseif remove.param == 'encrypted' %}
+        <a class="btn btn--secondary" href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
+
+    {% elseif remove.param == 'view' %}
+        <a class="btn btn--secondary" href="{{ uriFor('target_view', {'view': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
+    {% elseif remove.param == 'pool' %}
+        <a class="btn btn--secondary" href="{{ uriFor('target_view', {'view': entities.view.id, 'application': entities.application.id}) }}">Cancel</a>
+    {% elseif remove.param == 'target_pool_target' %}
+        <a class="btn btn--secondary" href="{{ uriFor('target_view', {'view': entities.view.id, 'application': entities.application.id}) }}">Cancel</a>
+
+    {% elseif remove.param == 'server' %}
+        <a class="btn btn--secondary" href="{{ uriFor('server', {'server': remove.entity.id}) }}">Cancel</a>
+    {% elseif remove.param == 'environment' %}
+        <a class="btn btn--secondary" href="{{ uriFor('environment', {'environment': remove.entity.id}) }}">Cancel</a>
+    {% elseif remove.param == 'credential' %}
+        <a class="btn btn--secondary" href="{{ uriFor('admin.credential', {'credential': remove.entity.id}) }}">Cancel</a>
+
+    {% elseif remove.param == 'token' %}
+        <a class="btn btn--secondary" href="{{ uriFor('user', {'user': entities.user.id}) }}">Cancel</a>
+    {% else %}
+        <a class="btn btn--secondary" href="javascript:history.go(-1)">Cancel</a>
+    {% endif %}
+{% endblock %}
+
+{% block target_pool_box %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>{{ entities.application.name }}</dd>
+
+            <dt class="split__title">Target View</dt>
+            <dd>{{ entities.view.name }}</dd>
+
+            <dt class="split__title">Target Pool</dt>
+            <dd>{{ remove.entity.name }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block target_view_box %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>{{ entities.application.name }}</dd>
+
+            <dt class="split__title">Target View</dt>
+            <dd>{{ remove.entity.name }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block target_pool_target_box %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>{{ entities.application.name }}</dd>
+
+            <dt class="split__title">Target View</dt>
+            <dd>{{ entities.view.name }}</dd>
+
+            <dt class="split__title">Target Pool</dt>
+            <dd>{{ entities.pool.name }}</dd>
+
+            <dt class="split__title">Deployment Target</dt>
+            <dd>{{ entities.target.server.formatHumanType() }} ({{ entities.target.name ?: 'No name' }})</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block server_box %}
+    {% set name_label =  remove.entity.type == 'rsync' ? 'Hostname' : 'Region' %}
 
     <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Server Type</dt>
+            <dd>{{ remove.entity.formatHumanType }}</dd>
 
-        <h3>Are you sure?</h3>
-        <p>You're about to permanently remove this entity. Do you want to continue?</p>
+            <dt class="split__title">{{ name_label }}</dt>
+            <dd>{{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}</dd>
 
-        <form class="form-wrapper" method="post">
-            <ul class="button-list">
-                <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
-                <li class="button-list__fixed"><a class="btn btn--secondary" href="javascript:history.go(-1)">Cancel</a></li>
-            </ul>
-        </form>
+            <dt class="split__title">Environment</dt>
+            <dd>{{ remove.entity.environment.name}}</dd>
+        </dl>
     </div>
 
+{% endblock %}
+
+{% block environment_box %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Name</dt>
+            <dd>{{ remove.entity.name }}</dd>
+
+            <dt class="split__title">Is Production Environment?</dt>
+            <dd>{{ remove.entity.isProduction ? 'Yes' : 'No' }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block credential_box %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Name</dt>
+            <dd>{{ remove.entity.name }}</dd>
+
+            <dt class="split__title">Type</dt>
+            <dd>
+                {% if remove.entity.type == 'aws' %}
+                    AWS
+                {% elseif remove.entity.type == 'privatekey' %}
+                    Private Key
+                {% endif %}
+            </dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block organization_box %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Identifier</dt>
+            <dd>{{ remove.entity.key }}</dd>
+
+            <dt class="split__title">Name</dt>
+            <dd>{{ remove.entity.name }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block application_box %}
+    <div class="details-box">
+        <dl class="split">
+            <dt class="split__title">Identifier</dt>
+            <dd>{{ remove.entity.key }}</dd>
+
+            <dt class="split__title">Name</dt>
+            <dd>{{ remove.entity.name }}</dd>
+
+            <dt class="split__title">GitHub Source</dt>
+            <dd>{{ macros.gitsource(remove.entity) }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block target_box %}
+    <div class="details-box">
+        <dl class="split">
+            <dt class="split__title">Application</dt>
+            <dd>{{ remove.entity.application.name }}</dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>{{ remove.entity.server.environment.name }}</dd>
+
+            <dt class="split__title">Name</dt>
+            <dd>{{ remove.entity.name ?: 'None' }}</dd>
+
+            <dt class="split__title">Type</dt>
+            <dd>{{ remove.entity.server.formatHumanType() }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block encrypted_box %}
+    <div class="details-box">
+        <dl class="split mbn">
+            <dt class="split__title">Application</dt>
+            <dd>{{ remove.entity.application.name }}</dd>
+
+            <dt class="split__title">Environment</dt>
+            <dd>
+                {% if remove.entity.environment %}
+                    {{ remove.entity.environment.name }}
+                {% else %}
+                    Global (Available in all environments)
+                {% endif %}
+            </dd>
+
+            <dt class="split__title">Property Name</dt>
+            <dd><code>{{ remove.entity.name }}</code></dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block token_box %}
+    <div class="details-box">
+        <dl class="split">
+            <dt class="split__title">Name</dt>
+            <dd>{{ remove.entity.label }}</dd>
+        </dl>
+    </div>
 {% endblock %}

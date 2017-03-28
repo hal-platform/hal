@@ -60,12 +60,46 @@ services:
 
 
     ####################################################################################################################
-    # REMOVAL
+    # REMOVALS
     ####################################################################################################################
 
-    middleware.removal_confirmation:
-        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig']
     middleware.removal_confirmation.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['delete.confirm.twig']]]
+
+    middleware.removal_confirmation.token:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'token']
+    middleware.removal_confirmation.organization:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'organization']
+    middleware.removal_confirmation.application:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'application']
+    middleware.removal_confirmation.target:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'target']
+    middleware.removal_confirmation.encrypted:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'encrypted']
+
+    middleware.removal_confirmation.view:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'view']
+    middleware.removal_confirmation.pool:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'pool']
+    middleware.removal_confirmation.target_pool_target:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'target_pool_target']
+
+    middleware.removal_confirmation.server:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'server']
+    middleware.removal_confirmation.environment:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'environment']
+    middleware.removal_confirmation.credential:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'credential']
+

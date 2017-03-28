@@ -99,7 +99,7 @@ parameters:
                         user.token.remove:
                             method: ['GET', 'POST']
                             route: '/{token:%r.guid%}/revoke'
-                            stack: ['middleware.nested_entity', 'middleware.removal_confirmation', 'user.token.remove.handler']
+                            stack: ['middleware.nested_entity', 'middleware.removal_confirmation.token', 'user.token.remove.handler']
 
         settings:
             method: ['GET', 'POST']
@@ -143,7 +143,7 @@ parameters:
                 organization.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation', 'organization.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.organization', 'organization.remove.handler']
 
         ################################################################################################################
         # APPLICATION ROUTES
@@ -183,7 +183,7 @@ parameters:
                 application.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_owner', 'middleware.removal_confirmation', 'application.remove.handler']
+                    stack: ['middleware.is_owner', 'middleware.removal_confirmation.application', 'application.remove.handler']
 
                 # are these application routes or build/push routes?
                 # It's nice to be able to use route groups to nest common url prefixes.
@@ -230,7 +230,7 @@ parameters:
                         target.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_owner', 'middleware.removal_confirmation', 'target.remove.handler']
+                            stack: ['middleware.is_owner', 'middleware.removal_confirmation.target', 'target.remove.handler']
 
                         rollback.page1:
                             method: 'GET'
@@ -261,7 +261,7 @@ parameters:
                         encrypted.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.removal_confirmation', 'encrypted.remove.handler']
+                            stack: ['middleware.removal_confirmation.encrypted', 'encrypted.remove.handler']
 
                 target_view.env_management:
                     route: '/environments/{environment:%r.digit%}'
@@ -291,7 +291,7 @@ parameters:
                         target_view.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.manage_views', 'middleware.removal_confirmation', 'target_view.remove.handler']
+                            stack: ['middleware.manage_views', 'middleware.removal_confirmation.view', 'target_view.remove.handler']
 
                         target_pool.add:
                             method: ['GET', 'POST']
@@ -309,7 +309,7 @@ parameters:
                                 target_pool.remove:
                                     method: ['GET', 'POST']
                                     route: '/remove'
-                                    stack: ['middleware.removal_confirmation', 'target_pool.remove.handler']
+                                    stack: ['middleware.removal_confirmation.pool', 'target_pool.remove.handler']
                                 target_pool_target.add:
                                     method: 'POST'
                                     route: '/add'
@@ -317,7 +317,7 @@ parameters:
                                 target_pool_target.remove:
                                     method: ['GET', 'POST']
                                     route: '/remove/{target:%r.digit%}'
-                                    stack: ['middleware.removal_confirmation', 'target_pool.target.remove.handler']
+                                    stack: ['middleware.removal_confirmation.target_pool_target', 'target_pool.target.remove.handler']
 
         ################################################################################################################
         # SERVER Routes
@@ -348,7 +348,7 @@ parameters:
                 server.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation', 'server.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.server', 'server.remove.handler']
 
         ################################################################################################################
         # ENVIRONMENT ROUTES
@@ -379,7 +379,7 @@ parameters:
                 environment.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation', 'environment.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.environment', 'environment.remove.handler']
 
         ################################################################################################################
         # QUEUE ROUTES
@@ -476,7 +476,7 @@ parameters:
                         admin.credential.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_super', 'middleware.removal_confirmation', 'admin.credential.remove.handler']
+                            stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'admin.credential.remove.handler']
 
                 ################################################################################################################
                 # PERMISSION ROUTES
