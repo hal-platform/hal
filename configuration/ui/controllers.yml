@@ -10,7 +10,6 @@ services:
         arguments:
             - '@dashboard.twig'
             - '@doctrine.em'
-            - '@permissions'
             - '@job_queue'
     dashboard.twig:
         parent: 'twig.template'

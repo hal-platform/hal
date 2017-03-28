@@ -22,16 +22,6 @@
        {{ block('intro') }}
     {% endif %}
 
-    {# STUCK WORK #}
-    {% if isUserAdminOrSuper(current_user) and stuck %}
-        {% set title = 'There is <strong>' ~ stuck|length ~ '</strong> stuck job!' %}
-        {% if stuck|length > 1 %}
-            {% set title = 'There are <strong>' ~ stuck|length ~ '</strong> stuck jobs!' %}
-        {% endif %}
-
-        {{ macros.alert('error', title, block('stuck_details')) }}
-    {% endif %}
-
     {# FAVORITES #}
     {% if favorites %}
         <section class="mbm">

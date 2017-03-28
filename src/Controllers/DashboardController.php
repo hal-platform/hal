@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\JobQueueService;
-use Hal\UI\Service\PermissionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
@@ -33,11 +32,6 @@ class DashboardController implements ControllerInterface
     private $template;
 
     /**
-     * @var PermissionService
-     */
-    private $permissions;
-
-    /**
      * @var JobQueueService
      */
     private $queue;
@@ -52,17 +46,14 @@ class DashboardController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param PermissionService $permissions
      * @param JobQueueService $queue
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        PermissionService $permissions,
         JobQueueService $queue
     ) {
         $this->template = $template;
-        $this->permissions = $permissions;
         $this->queue = $queue;
 
         $this->buildRepo = $em->getRepository(Build::class);
@@ -82,16 +73,11 @@ class DashboardController implements ControllerInterface
             $recentPushes = $this->pushRepo->findBy(['user' => $user], ['created' => 'DESC'], 5);
 
             $favorites = $this->findFavorites($user);
-
-            // Only supers get stuck jobs list
-            $isSuper = $this->permissions->getUserPermissions($user)->isSuper();
-            $stuck = $isSuper ? $this->queue->getStuckJobs() : [];
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'favorites' => $favorites,
             'pending' => $this->queue->getPendingJobs(),
-            'stuck' => $stuck,
             'builds' => $recentBuilds,
             'pushes' => $recentPushes
         ]);
