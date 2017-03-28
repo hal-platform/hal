@@ -105,7 +105,7 @@ module.exports = {
         this.resetForm();
 
         var server = deployment._embedded.server,
-            path = deployment.path,
+            path = deployment.configuration.path,
             env = server._embedded.environment.name,
             hostname = server.name;
 
