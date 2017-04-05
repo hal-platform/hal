@@ -25,7 +25,8 @@ module.exports = {
             'jquery.typed',
 
             'sugar-date',
-            'svg4everybody'
+            'svg4everybody',
+            'xss-filters'
         ]
     },
 

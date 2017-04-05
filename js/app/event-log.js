@@ -1,6 +1,7 @@
 import 'jquery';
 import ansiUp from 'ansi_up';
 import generateIcon from './util/icon';
+import xssFilters from 'xss-filters'
 
 let target = '[data-log][data-log-loadable=1]',
     loaderAnchor = '.js-event-logs-loader',
@@ -98,6 +99,7 @@ function renderRow(logID, data) {
             if (typeof prop !== 'string') {
                 prop = JSON.stringify(prop, null, 4);
             } else {
+                prop = xssFilters.inHTMLData(prop);
                 prop = ansiUp.ansi_to_html(prop);
             }
 
