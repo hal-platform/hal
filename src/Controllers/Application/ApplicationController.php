@@ -13,7 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Push;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -51,7 +50,7 @@ class ApplicationController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
-            'has_deployments' => $this->doesApplicationHaveChildren($application)
+            'has_jobs' => $this->doesApplicationHaveChildren($application)
         ]);
     }
 
@@ -62,12 +61,6 @@ class ApplicationController implements ControllerInterface
      */
     private function doesApplicationHaveChildren(Application $application)
     {
-        $targets = $this->em
-            ->getRepository(Deployment::class)
-            ->findOneBy(['application' => $application]);
-
-        if (count($targets) > 0) return true;
-
         $builds = $this->em
             ->getRepository(Build::class)
             ->findOneBy(['application' => $application]);

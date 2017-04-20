@@ -26,7 +26,7 @@ class RemoveApplicationController implements ControllerInterface
     use SessionTrait;
 
     const MSG_SUCCESS = 'Application "%s" removed.';
-    const ERR_HAS_DEPLOYMENTS = 'Cannot remove application. All server deployments must first be removed.';
+    const ERR_HAS_JOBS = 'Cannot remove application. Applications with builds or pushes cannot currently be removed.';
 
     /**
      * @var EntityManagerInterface
@@ -55,8 +55,17 @@ class RemoveApplicationController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
 
         if ($this->doesApplicationHaveChildren($application)) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_HAS_DEPLOYMENTS);
+            $this->withFlash($request, Flash::ERROR, self::ERR_HAS_JOBS);
             return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $application->id()]);
+        }
+
+        // Remove targets first, otherwise FK will fail.
+        $targets = $this->em
+            ->getRepository(Deployment::class)
+            ->findOneBy(['application' => $application]);
+
+        foreach ($targets as $target) {
+            $this->em->remove($target);
         }
 
         $this->em->remove($application);
@@ -75,12 +84,6 @@ class RemoveApplicationController implements ControllerInterface
      */
     private function doesApplicationHaveChildren(Application $application)
     {
-        $targets = $this->em
-            ->getRepository(Deployment::class)
-            ->findOneBy(['application' => $application]);
-
-        if (count($targets) > 0) return true;
-
         $builds = $this->em
             ->getRepository(Build::class)
             ->findOneBy(['application' => $application]);

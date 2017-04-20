@@ -5,7 +5,7 @@
 
 {% set isAdmin = isUserAdminOrSuper(current_user) %}
 {% set canEdit = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
-{% set canRemove = isAdmin and not has_deployments %}
+{% set canRemove = isAdmin and not has_jobs %}
 
 {% block content %}
     <div class="nav--page">
