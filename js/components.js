@@ -2,6 +2,8 @@ import StartBuildChildren from './app/build/add-child-push';
 import SearchBuild from './app/build/search';
 import EventLogLoader from './app/event-log';
 
+import SearchApplications from './app/apps-filter';
+
 module.exports = {
 
     // core
@@ -66,5 +68,10 @@ module.exports = {
     },
     "collapsible": function() {
         require('./app/collapsible-table').init();
+    },
+
+    "apps.filter": function() {
+        SearchApplications();
     }
+
 };

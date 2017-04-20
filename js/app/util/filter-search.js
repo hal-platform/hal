@@ -14,7 +14,8 @@ let defaults = {
 
     onFocus: false,
     onBlur: false,
-    onEmpty: false
+    onEmpty: false,
+    onNoMatch: false
 };
 
 var $search = null,
@@ -70,6 +71,12 @@ function search(term) {
             settings.onShow(data[i].$elem);
         } else {
             settings.onHide(data[i].$elem);
+        }
+    }
+
+    if (Array.isArray(matched) && matched.length === 0) {
+        if (settings.onNoMatch) {
+            settings.onNoMatch($search);
         }
     }
 
