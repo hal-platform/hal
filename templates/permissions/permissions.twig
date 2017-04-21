@@ -44,10 +44,10 @@
                             <ul>
                             {% for perm in type.permissions %}
                                 <li>
-                                    <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
                                     {% if can_remove %}
                                         <a class="btn btn--tiny btn--destructive" href="{{ uriFor('admin.permissions.type.remove', {'user': user.id, 'user_type': perm.id}) }}">Remove</a>
                                     {% endif %}
+                                    <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
                                 </li>
                             {% endfor %}
                             </ul>
