@@ -68,3 +68,37 @@
 
     p { margin: 0; padding: 0 .3em; }
 }
+
+.details-box {
+    .fav-box {
+        @include breakpoint($bp-small) {
+            width: 17em;
+        }
+    }
+}
+
+$alt-color: $red;
+$alt-color-2: $hal-cyan;
+
+.fav-box-alt {
+    box-shadow: 0 0 0 2px $alt-color;
+    h5 {
+        background: $alt-color;
+        color: $white;
+        a {
+            color: $white;
+        }
+    }
+}
+
+
+.fav-box-alt-2 {
+    box-shadow: 0 0 0 2px $alt-color-2;
+    h5 {
+        background: $alt-color-2;
+        color: $white;
+        a {
+            color: $white;
+        }
+    }
+}

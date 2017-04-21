@@ -35,6 +35,8 @@
         </ul>
     {% endif %}
 
+    {{ block('deployment_access') }}
+
 {% endblock %}
 
 {% block meta %}
@@ -49,5 +51,45 @@
             <dt class="split__title">GitHub Source</dt>
             <dd>{{ macros.gitsource(application) }}</dd>
         </dl>
+    </div>
+{% endblock %}
+
+{% block deployment_access %}
+    <h2>Deployment Access</h2>
+    <div class="details-box">
+        <p>Owners can manage this application, deploy to non-production environments, and grant others deployment access.</p>
+
+        {% if permissions %}
+            <div class="fav-box-wrapper">
+                {% for perm in permissions %}
+
+                    {% set alt = '' %}
+                    {% if perm.permission == 'prod' %}{% set alt = ' fav-box-alt' %}{% endif %}
+                    {% if perm.permission == 'lead' %}{% set alt = ' fav-box-alt-2' %}{% endif %}
+
+                    <div class="fav-box{{ alt }}">
+                        <h5>
+                            <a href="{{ uriFor('user', {'user': perm.id }) }}">{{ perm.username|lower }}</a>
+                        </h5>
+                        <p>
+                            {% if perm.permission == 'lead' %}Owner, {% endif %}{{ perm.permission == 'prod' ? 'Production' : 'Non-prod' }}
+                        </p>
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% else %}
+            No users have deployment or management permissions. Deployment permissions are only handled by GitHub.
+        {% endif %}
+
+        <hr>
+        <p>
+            Administrators can also manage and deploy this application.
+        </p>
+
+        {% if canEdit %}
+            <a class="btn" href="#">Grant permissions TODO</a>
+        {% endif %}
+
     </div>
 {% endblock %}

@@ -14,6 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Push;
+use QL\Hal\Core\Entity\UserPermission;
+use QL\Hal\Core\Entity\UserType;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -50,7 +52,8 @@ class ApplicationController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
-            'has_jobs' => $this->doesApplicationHaveChildren($application)
+            'has_jobs' => $this->doesApplicationHaveChildren($application),
+            'permissions' => $this->getPermissions($application)
         ]);
     }
 
@@ -74,5 +77,45 @@ class ApplicationController implements ControllerInterface
         if (count($deployments) > 0) return true;
 
         return false;
+    }
+
+    /**
+     * @param Application $application
+     *
+     * @return array
+     */
+    private function getPermissions(Application $application)
+    {
+        $deploys = $this->em
+            ->getRepository(UserPermission::class)
+            ->findBy(['application' => $application]);
+
+        $leads = $this->em
+            ->getRepository(UserType::class)
+            ->findBy(['application' => $application]);
+
+        $permissions = [];
+
+        foreach ($deploys as $p) {
+            $permissions[] = [
+                'id' => $p->user()->id(),
+                'username' => $p->user()->handle(),
+                'permission' => $p->isProduction() ? 'prod' : 'non-prod'
+            ];
+        }
+
+        foreach ($leads as $p) {
+            $permissions[] = [
+                'id' => $p->user()->id(),
+                'username' => $p->user()->handle(),
+                'permission' => 'lead'
+            ];
+        }
+
+        usort($permissions, function($a, $b) {
+            return strcasecmp($a['username'], $b['username']);
+        });
+
+        return $permissions;
     }
 }
