@@ -64,12 +64,20 @@ class PermissionsController implements ControllerInterface
         $sorter = $this->typeSorter();
 
         usort($types['pleb'], $sorter);
-        usort($types['lead'], $sorter);
         usort($types['btn_pusher'], $sorter);
         usort($types['super'], $sorter);
 
+        $leads = $this->combinateLeads($types['lead']);
+        usort($leads, function($a, $b) {
+            $a = $a['user']->name();
+            $b = $b['user']->name();
+
+            return strcasecmp($a, $b);
+        });
+
         return $this->withTemplate($request, $response, $this->template, [
-            'user_types' => $types
+            'user_types' => $types,
+            'leads' => $leads
         ]);
     }
 
@@ -96,6 +104,28 @@ class PermissionsController implements ControllerInterface
         }
 
         return $collated;
+    }
+
+    /**
+     * @param array $permissions
+     *
+     * @return array
+     */
+    private function combinateLeads(array $permissions)
+    {
+        $leads = [];
+        foreach ($permissions as $t) {
+            if (!isset($leads[$t->user()->id()])) {
+                $leads[$t->user()->id()] = [
+                    'user' => $t->user(),
+                    'permissions' => []
+                ];
+            }
+
+            $leads[$t->user()->id()]['permissions'][] = $t;
+        }
+
+        return $leads;
     }
 
     /**

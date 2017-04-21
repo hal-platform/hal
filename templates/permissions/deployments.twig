@@ -40,11 +40,7 @@
                     <th class="t20">Username</th>
                     <th>Name</th>
 
-                    <th>Application</th>
-
-                    {% if can_remove %}
-                        <th></th>
-                    {% endif %}
+                    <th>Applications</th>
                 </tr>
             </thead>
             <tbody>
@@ -63,15 +59,15 @@
                         </td>
 
                         <td>
-                            <a href="{{ uriFor('application', {'application': perm.application.id}) }}">{{ perm.application.name }}</a>
+                            {% for type in perm.permissions %}
+                                <li>
+                                    <a href="{{ uriFor('application', {'application': type.application.id}) }}">{{ type.application.name }}</a>
+                                    {% if can_remove %}
+                                        <a class="btn btn--tiny btn--destructive" href="{{ uriFor('admin.permissions.deployment.remove', {'user': user.id, 'user_permission': type.id}) }}">Remove</a>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
                         </td>
-
-                        {% if can_remove %}
-                            <td class="tr">
-                                <a class="btn btn--tiny btn--destructive" href="{{ uriFor('admin.permissions.deployment.remove', {'user': user.id, 'user_permission': perm.id}) }}">Remove</a>
-                            </td>
-                        {% endif %}
-
                     </tr>
                 {% endfor %}
             </tbody>

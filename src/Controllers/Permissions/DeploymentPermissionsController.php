@@ -86,13 +86,14 @@ class DeploymentPermissionsController implements ControllerInterface
         ];
 
         foreach ($userPermissions as $userPermission) {
+            $type = $userPermission->isProduction() ? 'prod' : 'non_prod';
+            $u = $userPermission->user();
 
-            if ($userPermission->isProduction()) {
-                $collated['prod'][] = $userPermission;
-
-            } else {
-                $collated['non_prod'][] = $userPermission;
+            if (!isset($collated[$type][$u->id()])) {
+                $collated[$type][$u->id()] = ['user' => $u, 'permissions' => []];
             }
+
+            $collated[$type][$u->id()]['permissions'][] = $userPermission;
         }
 
         return $collated;
@@ -103,9 +104,9 @@ class DeploymentPermissionsController implements ControllerInterface
      */
     private function typeSorter()
     {
-        return function(UserPermission $a, UserPermission $b) {
-            $a = $a->user()->name();
-            $b = $b->user()->name();
+        return function($a, $b) {
+            $a = $a['user']->name();
+            $b = $b['user']->name();
 
             return strcasecmp($a, $b);
         };
