@@ -307,14 +307,49 @@
 {% block setup_s3 %}
     <p>
         S3 deployments are useful for uploading code used by other processes or applications.
-        All deployments are compressed into a tarball and uploaded to a bucket.
+        Deployments can either compress a directory into a zip or tarball or upload a single file to a bucket
     </p>
-    <p>If you have need to upload to S3 <b>without compressing into an archive first</b> for example for a static site or assets, please contact us. We can add this feature if there is a need.</p>
 
     <ol class="list--bullet">
         <li>
-            <b>Have Platform Engineering create an S3 bucket.</b>
-            <p>Your application will be compressed into a tarball and uploaded to the bucket, with the filename of your choice.</p>
+            <strong>Have Platform Engineering create an S3 bucket.</strong>
+            <p>
+                Your file(s) will be uploaded to the bucket with the filename of your choice. Based on the S3 filename you configure in
+                hal you will either upload your entire application or upload specific a file or directory.
+            </p>
+        </li>
+        <li>
+            <strong>Choose files to upload</strong>
+            <p>
+                When setting the S3 filename in hal you can use the follow pattern <code>{src}:{dest}</code> to tell hal
+                which files to upload. Where <code>{src}:</code> can be omitted to upload the entire application directory. When
+                uploading a directory you can also select the compression type used by supplying either <em>.tar.gz</em> or <em>.zip</em>
+                If neither is given files will be zipped by default. No compression is given when uploading a single file. Examples
+                using the following application are given below.
+                {{ block('s3_file_name_example') }}
+                <h5>Example Filenames</h5>
+                <ol class="list--bullet">
+                    <li>
+                        <p>
+                            <code>app.tar.gz</code> Creates a tarball of the entire Application Directory and places it
+                            in <code>{s3bucket}/app.tar.gz</code>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <code>lib:s3dir/source.zip</code> (note the <strong>:</strong>) Creates a zip of the <strong>lib</strong>
+                            directory and places it in <code>{s3bucket}/s3dir/source.zip</code> which will contain only the files
+                            <strong>source1.code</strong> and <strong>source2.code</strong></small>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <code>assets/image1.jpg:image1.jpg</code> will only upload one file to S3 at
+                            <code>{s3bucket}/image1.jpg</code>
+                        </p>
+                    </li>
+                </ol>
+            </p>
         </li>
         <li>
             <b>Create AWS access token with correct permissions.</b>
@@ -399,5 +434,21 @@ build:
 deploy:
     - 'run-script.sh ${HAL_CONTEXT}'
 </pre>
+{% endblock %}
+
+{% block s3_file_name_example %}
+    {% spaceless %}
+        <pre class="small-code">
+Application Directory
+|_ bin
+|___ script1.sh
+|___ script2.sh
+|_ lib
+|___ source1.code
+|___ source2.code
+|_ assets
+|___ image1.jpg
+</pre>
+    {% endspaceless %}
 {% endblock %}
 
