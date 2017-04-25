@@ -540,6 +540,10 @@ class TargetValidator
             if (preg_match('#[\t\n]+#', $file) === 1 || strlen($file) > 100) {
                 $errors[] = self::ERR_INVALID_FILE;
             }
+
+            if (substr_count($file, ':') > 1) {
+                $errors[] = self::ERR_INVALID_FILE;
+            }
         }
 
         $this->errors = array_merge($this->errors, $errors);
