@@ -323,33 +323,33 @@
             <p>
                 When setting the S3 filename in hal you can use the follow pattern <code>{src}:{dest}</code> to tell hal
                 which files to upload. Where <code>{src}:</code> can be omitted to upload the entire application directory. When
-                uploading a directory you can also select the compression type used by supplying either <em>.tar.gz</em> or <em>.zip</em>
-                If neither is given files will be zipped by default. No compression is given when uploading a single file. Examples
-                using the following application are given below.
-                {{ block('s3_file_name_example') }}
-                <h5>Example Filenames</h5>
-                <ol class="list--bullet">
-                    <li>
-                        <p>
-                            <code>app.tar.gz</code> Creates a tarball of the entire Application Directory and places it
-                            in <code>{s3bucket}/app.tar.gz</code>
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            <code>lib:s3dir/source.zip</code> (note the <strong>:</strong>) Creates a zip of the <strong>lib</strong>
-                            directory and places it in <code>{s3bucket}/s3dir/source.zip</code> which will contain only the files
-                            <strong>source1.code</strong> and <strong>source2.code</strong></small>
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            <code>assets/image1.jpg:image1.jpg</code> will only upload one file to S3 at
-                            <code>{s3bucket}/image1.jpg</code>
-                        </p>
-                    </li>
-                </ol>
+                uploading a directory you can also select the compression type used by suffixing either <code>.tar.gz</code> or <code>.zip</code>
+                If neither is given files will be <b>tar/gzipped</b> by default. No compression is given when uploading a single file.
             </p>
+
+            {{ block('s3_file_name_example') }}
+            <h5>Examples of changing deployment behavior based on "S3 File"</h5>
+            <ul class="list--bullet">
+                <li>
+                    <p>
+                        <code>app.tar.gz</code> Creates a tarball of the entire Application Directory and places it
+                        in <code>{s3bucket}/app.tar.gz</code>
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>lib:s3dir/source.zip</code> (note the <code>:</code>) Creates a zip of the <b>lib</b>
+                        directory and places it in <code>{s3bucket}/s3dir/source.zip</code> which will contain only the files
+                        <b>source1.code</b> and <b>source2.code</b></small>
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>assets/image1.jpg:image1.jpg</code> will only upload one file to S3 at
+                        <code>{s3bucket}/image1.jpg</code>
+                    </p>
+                </li>
+            </ul>
         </li>
         <li>
             <b>Create AWS access token with correct permissions.</b>
