@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 
-{% set page_title = 'Help : Deployment' %}
+{% set page_title = 'Help : Deployment Scripting' %}
 
 {% block content %}
 
@@ -151,8 +151,8 @@
                 <td>Environment (such as <b>test</b>, <b>beta</b>, <b>prod</b>)</td>
             </tr>
             <tr>
-                <td>HAL_REPO</td>
-                <td>Hal name for the deployed application</td>
+                <td>HAL_APP</td>
+                <td>Hal name for the building application</td>
             </tr>
         </tbody>
     </table>
@@ -184,8 +184,8 @@
                 <td>Environment (such as <b>test</b>, <b>beta</b>, <b>prod</b>)</td>
             </tr>
             <tr>
-                <td>HAL_REPO</td>
-                <td>Hal identifier for the deployed application</td>
+                <td>HAL_APP</td>
+                <td>Hal identifier for the deploying application</td>
             </tr>
             <tr>
                 <td>HAL_HOSTNAME</td>
