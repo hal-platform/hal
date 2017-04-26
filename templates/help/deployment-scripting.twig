@@ -148,7 +148,7 @@
             </tr>
             <tr>
                 <td>HAL_ENVIRONMENT</td>
-                <td>Environment (such as <b>test</b>, <b>beta</b>, <b>prod</b>)</td>
+                <td>Environment (such as <b>staging</b> or <b>prod</b>)</td>
             </tr>
             <tr>
                 <td>HAL_APP</td>
@@ -181,11 +181,19 @@
             </tr>
             <tr>
                 <td>HAL_ENVIRONMENT</td>
-                <td>Environment (such as <b>test</b>, <b>beta</b>, <b>prod</b>)</td>
+                <td>Environment (such as <b>staging</b> or <b>prod</b>)</td>
             </tr>
             <tr>
                 <td>HAL_APP</td>
                 <td>Hal identifier for the deploying application</td>
+            </tr>
+            <tr>
+                <td>HAL_METHOD</td>
+                <td>Deployment method (such as <b>rsync</b>, <b>script</b>, <b>cd</b>, <b>s3</b>, or <b>eb</b>)</td>
+            </tr>
+            <tr>
+                <td>HAL_CONTEXT</td>
+                <td>Extra context data for scripts</td>
             </tr>
             <tr>
                 <td>HAL_HOSTNAME</td>
@@ -199,13 +207,6 @@
                 <td>
                     Full path of deployment directory on server
                     <br><small>(<b>rsync</b> deployments only)</small>
-                </td>
-            </tr>
-            <tr>
-                <td>HAL_CONTEXT</td>
-                <td>
-                    Context data for script deployments
-                    <br><small>(<b>script</b> deployments only)</small>
                 </td>
             </tr>
         </tbody>
