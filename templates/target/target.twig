@@ -95,12 +95,10 @@
         <h4>S3 File</h4>
         <p><code>{{ target.s3file ?: '$APPID/$PUSHID.tar.gz' }}</code></p>
 
-    {% elseif target.server.type == 'script' %}
-
-        <h4>Script Context</h4>
-        <p><code>{{ target.scriptContext ?: 'None' }}</code></p>
-
     {% endif %}
+
+    <h4>Script Context</h4>
+    <p><code>{{ deployment.scriptContext ?: 'None' }}</code></p>
 
     <h4>URL</h4>
     <p>
