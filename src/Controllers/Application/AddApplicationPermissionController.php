@@ -36,7 +36,7 @@ class AddApplicationPermissionController implements ControllerInterface
 
     const ERR_INVALID_TYPE = 'Please select a valid permission type.';
     const ERR_SELECT_A_USER = 'Please select at least one user.';
-    const ERR_CANNOT_ADD_LEAD = 'Nice try, but you are not allowed to add lead permissions.';
+    const ERR_CANNOT_ADD_LEAD = 'Nice try, but you are not allowed to add owner permissions.';
     const ERR_CANNOT_ADD_PROD = 'Nice try, but you are not allowed to add prod permissions.';
 
     const ERR_USER_NOT_FOUND = 'User "%s" not found in database. Users must sign-in to Hal before permissions can be granted.';
