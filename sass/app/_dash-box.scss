@@ -79,6 +79,7 @@
 
 $alt-color: $red;
 $alt-color-2: $hal-cyan;
+$alt-color-3: $hal-blue;
 
 .fav-box-alt {
     box-shadow: 0 0 0 2px $alt-color;
@@ -102,3 +103,16 @@ $alt-color-2: $hal-cyan;
         }
     }
 }
+
+
+.fav-box-alt-3 {
+    box-shadow: 0 0 0 2px $alt-color-3;
+    h5 {
+        background: $alt-color-3;
+        color: $white;
+        a {
+            color: $white;
+        }
+    }
+}
+

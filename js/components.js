@@ -72,6 +72,10 @@ module.exports = {
 
     "apps.filter": function() {
         SearchApplications();
+    },
+
+    "app.permissions.multi": function() {
+        require('./app/form/app-permissions-multi').init();
     }
 
 };

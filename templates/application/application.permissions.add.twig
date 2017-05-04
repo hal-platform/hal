@@ -1,0 +1,120 @@
+{% extends 'base.twig' %}
+{% import "macros.twig" as macros %}
+{% import "macros.form.twig" as form_macros %}
+{% set js_components = ["app.permissions.multi"] %}
+
+{% set page_title = 'Grant Application Permissions : ' ~ application.name %}
+
+{% block content %}
+    <h1>Grant Application Permissions - <b>{{ application.name }}</b></h1>
+
+    {{ block('meta') }}
+
+    <h2>Add Permissions</h2>
+
+    <div class="form-wrapper">
+        {{ form_macros.formErrors(errors) }}
+
+        <form method="post">
+            <ul class="form-fields">
+
+                <li>
+                    <label>Users</label>
+                    <small class="additional">
+                        Grant access to multiple users at once.
+                    </small>
+
+                    <ul class="list--bare js-app-permissions">
+                        {% if form.users|length == 0 %}
+                            {% for i in 0..1 %}
+                                <li><input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ form.users[i] }}"></li>
+                            {% endfor %}
+                        {% else %}
+                            {% for user in form.users %}
+                                <li><input class="text-input" type="text" name="users[]" list="users-datalist" placeholder="Type or select a user..." value="{{ user }}"></li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+
+                    <datalist id="users-datalist">
+                        {% for u in users %}
+                            <option value="{{ u.handle|lower }}">{{ u.name }}{% if u.handle ends with '-' %} (dash){% endif %}</option>
+                        {% endfor %}
+                    </datalist>
+                </li>
+
+                <li>
+                    <label>Permission Type</label>
+                    {% if availableTypes|length > 1 %}
+                        <ul class="radio-grid radio-grid--two">
+                            {% for user_type, human in availableTypes %}
+
+                                {% set isSelected = form.type == user_type ? true : false %}
+
+                                <li>
+                                    <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}"{{ isSelected ? ' checked' : '' }}>
+                                    <label for="perm-{{ user_type }}">{{ human }}</label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <ul class="radio-grid radio-grid--two">
+                            {% for user_type, human in availableTypes %}
+                                <li>
+                                    <input id="perm-{{ user_type }}" type="radio" name="type" value="{{ user_type }}" checked>
+                                    <label for="perm-{{ user_type }}">{{ human }}</label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+
+            </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--action" type="submit" value="Add Permissions"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a></li>
+            </ul>
+        </form>
+    </div>
+
+    {{ block('user_legend') }}
+
+{% endblock %}
+
+{% block meta %}
+    <div class="details-box">
+        <dl class="split">
+            <dt class="split__title">Name</dt>
+            <dd>{{ application.name }}</dd>
+
+            <dt class="split__title">Identifier</dt>
+            <dd>{{ application.key }}</dd>
+
+            <dt class="split__title">GitHub Source</dt>
+            <dd>{{ macros.gitsource(application) }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block user_legend %}
+
+    <h4>Permission Types</h4>
+
+    <section class="details-box">
+        <ul class="list--bare mbn">
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Deployment', 'info') }}</p>
+                <p class="mbn">Users granted deployment permissions can deploy an application to non-prod or prod environments (or both).</p>
+            </li>
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Lead', 'notice') }}</p>
+                <p class="mbn">
+                    Leads can manage their application, its environments, and encrypted configuration. They can deploy to non-prod environments and grant non-prod access to others.
+                </p>
+            </li>
+        </ul>
+    </section>
+
+
+{% endblock %}

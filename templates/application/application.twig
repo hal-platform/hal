@@ -90,7 +90,7 @@
         </p>
 
         {% if canEdit %}
-            <a class="btn" href="#">Grant permissions TODO</a>
+            <a class="btn" href="{{ uriFor('application.permission.add', {'application': application.id})}}">Grant access to other users</a>
         {% endif %}
 
     </div>
