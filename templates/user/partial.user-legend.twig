@@ -13,6 +13,10 @@
             <p class="mbn">Standard users are useless and can't do anything.</p>
         </li>
         <li class="list--legend">
+            <p class="mbn mrs">{{ macros.status('Deployment', 'info') }}</p>
+            <p class="mbn">Users granted deployment permissions can deploy an application to non-prod or prod environments (or both).</p>
+        </li>
+        <li class="list--legend">
             <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
             <p class="mbn">
                 Owners can manage specific applications, their deployments and encrypted properties. They can deploy to non-prod environments. Users can lead multiple applications.

@@ -736,13 +736,6 @@ services:
         parent: 'twig.template'
         calls: [['setTemplate', ['permissions/permissions.twig']]]
 
-    admin.permissions.deployment.page:
-        class: 'Hal\UI\Controllers\Permissions\DeploymentPermissionsController'
-        arguments: ['@admin.permissions.deployment.twig', '@doctrine.em']
-    admin.permissions.deployment.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['permissions/deployments.twig']]]
-
     admin.permissions.add.page:
         class: 'Hal\UI\Controllers\Permissions\AddPermissionsController'
         arguments:

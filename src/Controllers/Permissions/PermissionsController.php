@@ -13,6 +13,7 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use QL\Hal\Core\Entity\UserPermission;
 use QL\Hal\Core\Entity\UserType;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -41,6 +42,7 @@ class PermissionsController implements ControllerInterface
      * @var EntityRepository
      */
     private $userTypesRepo;
+    private $userPermissionsRepo;
 
     /**
      * @param TemplateInterface $template
@@ -51,6 +53,7 @@ class PermissionsController implements ControllerInterface
         $this->template = $template;
 
         $this->userTypesRepo = $em->getRepository(UserType::class);
+        $this->userPermissionsRepo = $em->getRepository(UserPermission::class);
     }
 
     /**
@@ -59,25 +62,19 @@ class PermissionsController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $types = $this->getTypes();
+        $permissions = $this->userPermissionsRepo->findAll();
 
         // sort
-        $sorter = $this->typeSorter();
+        $sorter = $this->permissionSorter();
 
         usort($types['pleb'], $sorter);
         usort($types['btn_pusher'], $sorter);
         usort($types['super'], $sorter);
 
-        $leads = $this->combinateLeads($types['lead']);
-        usort($leads, function($a, $b) {
-            $a = $a['user']->name();
-            $b = $b['user']->name();
-
-            return strcasecmp($a, $b);
-        });
-
         return $this->withTemplate($request, $response, $this->template, [
             'user_types' => $types,
-            'leads' => $leads
+            'owners' => $this->collateByUser($types['lead']),
+            'deploy' => $this->collateByUser($permissions)
         ]);
     }
 
@@ -111,31 +108,37 @@ class PermissionsController implements ControllerInterface
      *
      * @return array
      */
-    private function combinateLeads(array $permissions)
+    private function collateByUser(array $permissions)
     {
-        $leads = [];
+        $users = [];
+
         foreach ($permissions as $t) {
-            if (!isset($leads[$t->user()->id()])) {
-                $leads[$t->user()->id()] = [
+            if (!isset($users[$t->user()->id()])) {
+                $users[$t->user()->id()] = [
                     'user' => $t->user(),
                     'permissions' => []
                 ];
             }
 
-            $leads[$t->user()->id()]['permissions'][] = $t;
+            $users[$t->user()->id()]['permissions'][] = $t;
         }
 
-        return $leads;
+        usort($users, function($a, $b) {
+            return strcasecmp($a['user']->handle(), $b['user']->handle());
+        });
+
+        return $users;
     }
+
 
     /**
      * @return callable
      */
-    private function typeSorter()
+    private function permissionSorter()
     {
-        return function(UserType $a, UserType $b) {
-            $a = $a->user()->name();
-            $b = $b->user()->name();
+        return function($a, $b) {
+            $a = $a->user()->handle();
+            $b = $b->user()->handle();
 
             return strcasecmp($a, $b);
         };

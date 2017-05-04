@@ -492,11 +492,6 @@ parameters:
                     route: '/permissions'
                     stack: ['admin.permissions.page']
 
-                admin.permissions.deployment:
-                    method: 'GET'
-                    route: '/permissions/deployment'
-                    stack: ['admin.permissions.deployment.page']
-
                 user_permissions.management:
                     route: '/users/{user:%r.digit%}'
                     stack: ['middleware.require_entity', 'middleware.nested_entity']

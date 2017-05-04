@@ -57,6 +57,6 @@ class RemoveDeploymentPermissionsController implements ControllerInterface
         $this->permissions->removeUserPermissions($userPermission);
 
         $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $app, $name));
-        return $this->withRedirectRoute($response, $this->uri, 'admin.permissions.deployment');
+        return $this->withRedirectRoute($response, $this->uri, 'admin.permissions');
     }
 }
