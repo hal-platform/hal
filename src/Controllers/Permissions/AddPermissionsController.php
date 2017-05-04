@@ -43,9 +43,9 @@ class AddPermissionsController implements ControllerInterface
     const ERR_CANNOT_ADD_ADMIN = 'You are not allowed to add admin permissions.';
     const ERR_CANNOT_ADD_PROD = 'You are not allowed to add prod permissions';
     const ERR_DUPLICATE_PERMISSION = 'Cannot add permissions. This user already has this permission.';
-    const ERR_DUPLICATE_LEAD = 'This user already has lead permissions for this application.';
+    const ERR_DUPLICATE_LEAD = 'This user already has owner permissions for this application.';
     const ERR_DUPLICATE_DEPLOY = 'This user already has deployment permissions for this application.';
-    const ERR_APPLICATION_REQUIRED = 'Application is required for lead or deployment permissions.';
+    const ERR_APPLICATION_REQUIRED = 'Application is required for owner or deployment permissions.';
     const ERR_ENVIRONMENT_REQUIRED = 'Allowed Environments is required for deployment permissions.';
 
     /**
@@ -191,20 +191,12 @@ class AddPermissionsController implements ControllerInterface
     private function getAvailableTypes(UserPerm $perm)
     {
         $availableTypes = [
+            'pleb' => 'Standard',
             'deploy' => 'Deployment',
             'lead' => 'Owner',
-            'admin' => 'Admin'
+            'admin' => 'Admin (prod)',
+            'super' => 'Super (non-prod)'
         ];
-
-        if ($perm->isSuper()) {
-            $availableTypes = [
-                'pleb' => 'Standard',
-                'deploy' => 'Deployment',
-                'lead' => 'Owner',
-                // 'admin' => 'Admin',
-                'super' => 'Super'
-            ];
-        }
 
         return $availableTypes;
     }

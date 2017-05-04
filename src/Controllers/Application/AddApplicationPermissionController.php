@@ -153,27 +153,7 @@ class AddApplicationPermissionController implements ControllerInterface
         return [
             'deploy_nonprod' => 'Deployment - Non-prod',
             'deploy_prod' => 'Deployment - Prod',
-            'lead' => 'Lead',
-        ];
-
-        // dead code, here for posterity
-        if ($perm->isButtonPusher()) {
-            return [
-                'deploy_nonprod' => 'Deployment - Non-prod',
-                'deploy_prod' => 'Deployment - Prod',
-                'lead' => 'Lead',
-            ];
-        }
-
-        if ($perm->isSuper()) {
-            return [
-                'deploy_nonprod' => 'Deployment - Non-prod',
-                'lead' => 'Lead',
-            ];
-        }
-
-        return [
-            'deploy_nonprod' => 'Deployment - Non-prod'
+            'lead' => 'Owner',
         ];
     }
 
