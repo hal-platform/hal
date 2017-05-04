@@ -226,7 +226,7 @@ class EditApplicationController implements ControllerInterface
      */
     private function formatGitHubFromURL($github)
     {
-        if (stripos($github, 'http://') === 0) {
+        if (stripos($github, 'https?://') === 0) {
             // is URL
             if (stripos($github, $this->githubEnterprisePrefix) === 0) {
                 $github = substr($github, strlen($this->githubEnterprisePrefix));
