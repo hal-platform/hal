@@ -1,65 +1,68 @@
 
-{% macro pagination(currentPage, lastPage, routeName, routeParameters, queryParameters) %}
+{% macro pagination(current_page, last_page, route_name, route_params, query_params, left_label, right_label) %}
     {% import "macros.twig" as macros %}
 
-    {% set queryParameters = queryParameters|default({}) %}
+    {% set route_params = route_params|default({}) %}
+    {% set query_params = query_params|default({}) %}
+    {% set left_label = left_label|default('newer') %}
+    {% set right_label = right_label|default('older') %}
 
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
-            {% if currentPage > 1 %}
-                <a href="{{ uriFor(routeName, routeParameters|merge({'page': currentPage-1}), queryParameters) }}">
-                    {{ macros.icon('caret-left') }}newer
+            {% if current_page > 1 %}
+                <a href="{{ uriFor(route_name, route_params|merge({'page': current_page-1}), query_params) }}">
+                    {{ macros.icon('caret-left') }} {{ left_label }}
                 </a>
             {% else %}
                 <span class="disabled">
-                    {{ macros.icon('caret-left') }}newer
+                    {{ macros.icon('caret-left') }} {{ left_label }}
                 </span>
             {% endif %}
         </li>
         <li>
-            {% if lastPage > 1 %}
-                <span class="pages">page {{ currentPage }} of {{ lastPage }}</span>
+            {% if last_page > 1 %}
+                <span class="pages">page {{ current_page }} of {{ last_page }}</span>
             {% endif %}
         </li>
         <li class="nav--pagination__next">
-            {% if currentPage < lastPage %}
-                <a href="{{ uriFor(routeName, routeParameters|merge({'page': currentPage+1}), queryParameters) }}">
-                    older {{ macros.icon('caret-right') }}
+            {% if current_page < last_page %}
+                <a href="{{ uriFor(route_name, route_params|merge({'page': current_page+1}), query_params) }}">
+                    {{ right_label }} {{ macros.icon('caret-right') }}
                 </a>
             {% else %}
                 <span class="disabled">
-                    older {{ macros.icon('caret-right') }}
+                    {{ right_label }} {{ macros.icon('caret-right') }}
                 </span>
             {% endif %}
         </li>
     </ol>
 {% endmacro %}
 
-{% macro time_pagination(selectedDate, routeName, routeParameters, queryParameters) %}
+{% macro time_pagination(selected_date, route_name, route_params, query_params) %}
     {% import "macros.twig" as macros %}
 
-    {% set routeParameters = routeParameters|default({}) %}
-    {% set queryParameters = queryParameters|default({}) %}
+    {% set route_params = route_params|default({}) %}
+    {% set query_params = query_params|default({}) %}
 
-    {% set prevday = selectedDate.modify('-1 day') %}
-    {% set nextday = selectedDate.modify('+1 day') %}
+    {% set prevday = selected_date.modify('-1 day') %}
+    {% set nextday = selected_date.modify('+1 day') %}
 
-    {% set nextdayFormatted = nextday|timepoint('Y-m-d') %}
+    {% set nextday_formatted = nextday|timepoint('Y-m-d') %}
     {% set now = timepoint() %}
-    {% set nowFormatted = now|timepoint('Y-m-d') %}
+    {% set now_formatted = now|timepoint('Y-m-d') %}
 
     <ol class="nav--pagination">
         <li class="nav--pagination__prev">
-            <a href="{{ uriFor(routeName, routeParameters|merge({'date': prevday|timepoint('Y-m-d')}), queryParameters) }}">
-                {{ macros.icon('caret-left') }}older
+            <a href="{{ uriFor(route_name, route_params|merge({'date': prevday|timepoint('Y-m-d')}), query_params) }}">
+                {{ macros.icon('caret-left') }} older
             </a>
         </li>
         <li>
-            <span class="pages">{{ selectedDate|timepoint('F j, Y') }}</span>
+            <span class="pages">{{ selected_date|timepoint('F j, Y') }}</span>
         </li>
         <li class="nav--pagination__next">
-            {% if nextdayFormatted == nowFormatted or (nextdayFormatted != nowFormatted and nextday.compare(now) == -1) %}
-                <a href="{{ uriFor(routeName, routeParameters|merge({'date': nextdayFormatted}), queryParameters) }}">
+            {% if nextday_formatted == now_formatted or (nextday_formatted != now_formatted and nextday.compare(now) == -1) %}
+                <a href="{{ uriFor(route_name, route_params|merge({'date': nextday_formatted}), query_params) }}">
                     newer {{ macros.icon('caret-right', 'mls') }}
                 </a>
             {% else %}

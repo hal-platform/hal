@@ -9,11 +9,11 @@
 {% block content %}
     <h1>{{ page_title }}</h1>
 
-    {{ pagination.pagination(page, last, 'users') }}
+    {{ pagination.pagination(page, last, 'users', {}, {}, 'previous', 'next') }}
 
     {{ page_macros.user_table(users, user_permissions, true, is_admin, is_serious_business_mode) }}
 
-    {{ pagination.pagination(page, last, 'users') }}
+    {{ pagination.pagination(page, last, 'users', {}, {}, 'previous', 'next') }}
 
     <h2>User Types</h2>
     {% include 'user/partial.user-legend.twig' %}
