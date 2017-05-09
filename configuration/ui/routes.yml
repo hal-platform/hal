@@ -185,10 +185,15 @@ parameters:
                     route: '/remove'
                     stack: ['middleware.is_owner', 'middleware.removal_confirmation.application', 'application.remove.handler']
 
-                application.permission.add:
+                application_permission.add:
                     method: ['GET', 'POST']
-                    route: '/add-permissions'
+                    route: '/permissions/add'
                     stack: ['middleware.is_owner', 'application.permission_add.page']
+
+                application_permission.remove:
+                    method: ['GET', 'POST']
+                    route: '/permissions/remove'
+                    stack: ['middleware.is_owner', 'application.permission_remove.page']
 
                 # are these application routes or build/push routes?
                 # It's nice to be able to use route groups to nest common url prefixes.

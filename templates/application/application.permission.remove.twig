@@ -1,0 +1,98 @@
+{% extends 'base.twig' %}
+{% import "macros.twig" as macros %}
+{% import "macros.form.twig" as form_macros %}
+
+{% set page_title = 'Manage Application Permissions : ' ~ application.name %}
+
+{% block content %}
+    <h1>Manage Application Permissions - <b>{{ application.name }}</b></h1>
+
+    {{ block('meta') }}
+
+    <h2>Manage Permissions</h2>
+
+    <div class="form-wrapper">
+        {{ form_macros.formErrors(errors) }}
+
+        <form method="post">
+            <ul class="form-fields">
+
+                <li>
+                    <p>
+                        <label>Revoke access from multiple users at once.</label>
+                        <small class="additional">
+                            Flip a switch <i>off</i> and save your changes to remove access.
+                        </small>
+                    </p>
+
+                    <ul class="list--bare">
+                        {% for perm in permissions %}
+                            <li>
+                                <label class="checkbox--switch">
+                                    <input type="checkbox" name="permissions[]" value="{{ perm.original.id }}" {{ perm.original.id in form.permissions ? ' checked' : '' }}>
+                                    <b class="checkbox--switch__pill"></b>
+                                    {% if perm.type == 'prod' %}
+                                        {{ perm.original.user.handle|lower }} {{ macros.status('Prod', 'error') }}
+                                    {% elseif perm.type == 'lead' %}
+                                        {{ perm.original.user.handle|lower }} {{ macros.status('Owner', 'notice') }}
+                                    {% else %}
+                                        {{ perm.original.user.handle|lower }}
+                                    {% endif %}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+            </ul>
+
+            <ul class="button-list">
+                <li><input class="btn btn--destructive" type="submit" value="Revoke Permissions"></li>
+                <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('application', {'application': application.id}) }}">Cancel</a></li>
+            </ul>
+        </form>
+    </div>
+
+    {{ block('user_legend') }}
+
+{% endblock %}
+
+{% block meta %}
+    <div class="details-box">
+        <dl class="split">
+            <dt class="split__title">Name</dt>
+            <dd>{{ application.name }}</dd>
+
+            <dt class="split__title">Identifier</dt>
+            <dd>{{ application.key }}</dd>
+
+            <dt class="split__title">GitHub Source</dt>
+            <dd>{{ macros.gitsource(application) }}</dd>
+        </dl>
+    </div>
+{% endblock %}
+
+{% block user_legend %}
+
+    <h4>Permission Types</h4>
+
+    <section class="details-box">
+        <ul class="list--bare mbn">
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Deployment', 'info') }}</p>
+                <p class="mbn">Users granted deployment permissions can deploy an application to non-prod or prod environments (or both).</p>
+            </li>
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Owner', 'notice') }}</p>
+                <p class="mbn">
+                    Owners can manage their application, its environments, and encrypted configuration. They can deploy to non-prod environments and grant non-prod access to others.
+                </p>
+            </li>
+            <li class="list--legend">
+                <p class="mbn mrs">{{ macros.status('Prod', 'error') }}</p>
+                <p class="mbn">Users granted prod deployment permissions can deploy an application to prod environments.</p>
+            </li>
+        </ul>
+    </section>
+
+{% endblock %}

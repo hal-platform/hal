@@ -379,15 +379,25 @@ services:
     application.permission_add.page:
         class: 'Hal\UI\Controllers\Application\AddApplicationPermissionController'
         arguments:
-            - '@application.permission.add.twig'
+            - '@application.permission_add.twig'
             - '@doctrine.em'
             - '@permissions'
             - '@uri'
             - '@doctrine.random'
-
-    application.permission.add.twig:
+    application.permission_add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.permissions.add.twig']]]
+        calls: [['setTemplate', ['application/application.permission.add.twig']]]
+
+    application.permission_remove.page:
+        class: 'Hal\UI\Controllers\Application\RemoveApplicationPermissionController'
+        arguments:
+            - '@application.permission_remove.twig'
+            - '@doctrine.em'
+            - '@permissions'
+            - '@uri'
+    application.permission_remove.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['application/application.permission.remove.twig']]]
 
     ####################################################################################################################
     # APPLICATION - ENCRYPTED CONFIGURATION CONTROLLERS

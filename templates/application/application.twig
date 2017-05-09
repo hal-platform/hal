@@ -90,7 +90,10 @@
         </p>
 
         {% if canEdit %}
-            <a class="btn" href="{{ uriFor('application.permission.add', {'application': application.id})}}">Grant access to other users</a>
+            <a class="btn" href="{{ uriFor('application_permission.add', {'application': application.id})}}">Grant access to other users</a>
+            {% if permissions %}
+                <a href="{{ uriFor('application_permission.remove', {'application': application.id}) }}">Manage or revoke permissions</a>
+            {% endif %}
         {% endif %}
 
     </div>
