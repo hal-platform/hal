@@ -1,0 +1,37 @@
+imports:
+    - resource: '../vendor/ql/mcp-panthor/configuration/*.yml'
+
+    - resource: 'vendor/*.yaml'
+    - resource: 'services.yaml'
+    - resource: 'parameters.yaml'
+
+    - resource: 'ui/*.yaml'
+    - resource: 'api/*.yaml'
+    - resource: 'api-internal/*.yaml'
+    - resource: 'api-writes/*.yaml'
+
+################################################################################
+# general configuration
+################################################################################
+services:
+
+    # ▼▼▼▼ FIXES FOR PANTHOR OVERRIDES (removing @root)
+    panthor.router:
+        class: 'QL\Panthor\Bootstrap\CacheableRouter'
+        calls:
+            - ['setCaching', ['%root%/%routes.cached%', '%routes.cache_disabled%']]
+    panthor.twig.loader:
+        class: 'QL\Panthor\Twig\BetterCachingFilesystem'
+        arguments: ['%root%/%twig.template.dir%']
+    panthor.twig.configurator:
+        class: 'QL\Panthor\Twig\EnvironmentConfigurator'
+        arguments: ['%twig.debug%', '%root%/%twig.cache.dir%']
+    # ▲▲▲▲ FIXES FOR PANTHOR OVERRIDES
+
+parameters:
+    # ▼▼▼▼ TODO TODO - remove these
+    hal.agents:
+        - 'localhost'
+        - 'skluckmbp'
+    permissions.check.github: false
+    # ▲▲▲▲ TODO TODO - remove these

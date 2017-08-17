@@ -1,0 +1,16 @@
+parameters:
+
+    routes.api_writes:
+
+        api_writes:
+            route: '/api'
+            stack: ['middleware.api_writes_token', 'middleware.api_writes_rate_limiter']
+            routes:
+                api.build.start:
+                    method: 'POST'
+                    route: '/applications/{application:%r.digit%}/build'
+                    stack: ['middleware.api_writes_require_entity', 'build.start.api']
+                api.deploy:
+                    method: 'POST'
+                    route: '/builds/{build:%r.build%}/deploy'
+                    stack: ['middleware.api_writes_require_entity', 'deploy.api']

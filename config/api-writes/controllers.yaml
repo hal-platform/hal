@@ -1,0 +1,19 @@
+services:
+
+    build.start.api:
+        class: 'Hal\UI\Controllers\API\Build\StartBuildController'
+        arguments:
+            - '@doctrine.em'
+            - '@build.start.validator'
+            - '@push.start.validator'
+            - '@api.response_formatter'
+            - '@api_normalizer.build'
+            - '@problem.renderer'
+
+    deploy.api:
+        class: 'Hal\UI\Controllers\API\Push\DeployController'
+        arguments:
+            - '@doctrine.em'
+            - '@push.start.validator'
+            - '@api.response_formatter'
+            - '@problem.renderer'

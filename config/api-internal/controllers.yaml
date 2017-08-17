@@ -1,0 +1,23 @@
+services:
+
+    api_internal.deployment_status:
+        class: 'Hal\UI\Controllers\APIInternal\ApplicationStatusController'
+        arguments:
+            - '@doctrine.em'
+            - '@pools'
+            - '@permissions'
+            - '@api.response_formatter'
+            - '@api.normalizer'
+
+    api_internal.settings.favorite_applications.add:
+        class: 'Hal\UI\Controllers\User\FavoriteApplications\AddFavoriteApplicationHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@uri'
+            - '@json'
+    api_internal.settings.favorite_applications.remove:
+        class: 'Hal\UI\Controllers\User\FavoriteApplications\RemoveFavoriteApplicationHandler'
+        arguments:
+            - '@doctrine.em'
+            - '@uri'
+            - '@json'

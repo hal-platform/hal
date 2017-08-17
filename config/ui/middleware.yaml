@@ -1,0 +1,105 @@
+services:
+
+    ####################################################################################################################
+    # PERMISSIONS
+    ####################################################################################################################
+
+    middleware.signed_in:
+        class: 'Hal\UI\Middleware\ACL\SignedInMiddleware'
+        arguments: ['@uri']
+
+    middleware.is_admin:
+        class: 'Hal\UI\Middleware\ACL\AdminMiddleware'
+        parent: 'middleware.permissions'
+
+    middleware.is_super:
+        class: 'Hal\UI\Middleware\ACL\SuperMiddleware'
+        parent: 'middleware.permissions'
+
+    middleware.is_owner:
+        class: 'Hal\UI\Middleware\ACL\OwnerMiddleware'
+        parent: 'middleware.permissions'
+
+    middleware.is_admin_or_self:
+        class: 'Hal\UI\Middleware\ACL\AdminOrSelfMiddleware'
+        parent: 'middleware.permissions'
+
+    middleware.permissions:
+        class: 'Hal\UI\Middleware\ACL\AbstractPermissionMiddleware'
+        arguments:
+            - '@middleware.signed_in'
+            - '@middleware.permissions.twig'
+            - '@permissions'
+    middleware.permissions.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['denied.twig']]]
+
+    ####################################################################################################################
+    # ENTITY LOADING
+    ####################################################################################################################
+
+    middleware.require_entity:
+        class: 'Hal\UI\Middleware\RequireEntityMiddleware'
+        arguments: ['@doctrine.em', '@notFoundHandler']
+
+    middleware.nested_entity:
+        class: 'Hal\UI\Middleware\NestedEntityMiddleware'
+        arguments: ['@notFoundHandler']
+
+    ####################################################################################################################
+    # TARGET VIEWS/POOLS
+    ####################################################################################################################
+
+    middleware.manage_views:
+        class: 'Hal\UI\Middleware\TargetView\ManageViewMiddleware'
+        parent: 'middleware.permissions'
+
+    middleware.add_views:
+        class: 'Hal\UI\Middleware\TargetView\AddViewMiddleware'
+        parent: 'middleware.permissions'
+
+
+    ####################################################################################################################
+    # REMOVALS
+    ####################################################################################################################
+
+    middleware.removal_confirmation.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['delete.confirm.twig']]]
+
+    middleware.removal_confirmation.token:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'token']
+    middleware.removal_confirmation.organization:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'organization']
+    middleware.removal_confirmation.application:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'application']
+    middleware.removal_confirmation.target:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'target']
+    middleware.removal_confirmation.encrypted:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'encrypted']
+
+    middleware.removal_confirmation.view:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'view']
+    middleware.removal_confirmation.pool:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'pool']
+    middleware.removal_confirmation.target_pool_target:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'target_pool_target']
+
+    middleware.removal_confirmation.server:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'server']
+    middleware.removal_confirmation.environment:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'environment']
+    middleware.removal_confirmation.credential:
+        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
+        arguments: ['@middleware.removal_confirmation.twig', 'credential']
+

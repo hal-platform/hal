@@ -1,0 +1,343 @@
+#
+# Definition conventions:
+# - If 1-2 arguments, enter on a single line. Otherwise break each argument into its own line.
+# - "calls" are always each on a separate line except when defining templates (for readability)
+#
+# # Naming conventions
+#
+# - Global middleware:      "slim.global_middleware.*"
+# - Page middleware:        "middleware.*"
+
+# - UI Controllers:          "*.page"
+# - API Controllers:         "*.api"
+# - Redirecting Controllers: "*.handler"
+
+# - Single-page middleware: "*.middleware"
+# - Single-page template:   "*.twig"
+#
+# Example (Page: "Sign In")
+#  - 'signin.page'
+#  - 'signin.middleware'
+#  - 'signin.twig'
+#
+# - 'middleware.signin' (shared middleware to check if user is signed in)
+
+services:
+    notFoundHandler:     { alias: 'panthor.handler.notFoundHandler' }
+    notAllowedHandler:   { alias: 'panthor.handler.notAllowedHandler' }
+    phpErrorHandler:     { alias: 'panthor.handler.phpErrorHandler' }
+    errorHandler:        { alias: 'panthor.handler.errorHandler' }
+
+    ####################################################################################################################
+    # SLIM
+    ####################################################################################################################
+
+    slim.router.loader:
+        parent: 'router.loader'
+        calls:
+            # %routes% is auto loaded by parent
+            - ['addRoutes', ['%routes.api%']]
+            - ['addRoutes', ['%routes.api_internal%']]
+            - ['addRoutes', ['%routes.api_writes%']]
+
+    slim.global_middleware:
+        class: 'QL\Panthor\Bootstrap\GlobalMiddlewareLoader'
+        arguments: ['@service_container', '%global_middleware%']
+    slim.global_middleware.logger:
+        class: 'Hal\UI\Middleware\LoggerGlobalMiddleware'
+        arguments: ['@mcp.logger.factory']
+    slim.global_middleware.session:
+        class: 'Hal\UI\Middleware\SessionGlobalMiddleware'
+        arguments: ['@cookie.handler', '%session.lifetime%']
+    slim.global_middleware.user_session:
+        class: 'Hal\UI\Middleware\UserSessionGlobalMiddleware'
+        arguments: ['@doctrine.em', '@uri']
+        calls:
+            - ['setLoggerMessageFactory', ['@mcp.logger.factory']]
+    slim.global_middleware.flash:
+        class: 'Hal\UI\Middleware\FlashGlobalMiddleware'
+        arguments: ['@cookie.handler']
+    slim.global_middleware.template_context:
+        class: 'Hal\UI\Middleware\TemplateContextGlobalMiddleware'
+        arguments: ['@twig.context']
+    slim.global_middleware.srs_business:
+        class: 'Hal\UI\Middleware\SrsBusinessGlobalMiddleware'
+        arguments: ['@cookie.handler']
+
+    ####################################################################################################################
+    # ERROR & EXCEPTION HANDLING
+    ####################################################################################################################
+
+    logger:
+        parent: 'mcp.logger'
+
+    content_handler:
+        class: 'QL\Panthor\ErrorHandling\ContentHandler\LoggingContentHandler'
+        arguments:
+            - '@panthor.content_handler'
+            - '@logger'
+            - { error: 'critical' }
+
+    ####################################################################################################################
+    # CACHING
+    ####################################################################################################################
+
+    cache:
+        class: 'QL\MCP\Cache\CacheInterface'
+        factory: ['@service_container', 'get']
+        arguments: ["cache.%cache.type.main%"]
+
+    cache.github:
+        class: 'QL\MCP\Cache\CacheInterface'
+        factory: ['@service_container', 'get']
+        arguments: ["cache.%cache.type.github%"]
+
+    cache.memory:
+        class: 'QL\MCP\Cache\MemoryCache'
+
+    cache.redis:
+        class: 'QL\MCP\Cache\PredisCache'
+        arguments: ['@redis']
+
+    cache.redis_github:
+        class: 'QL\MCP\Cache\PredisCache'
+        parent: 'cache.redis'
+        calls:
+            - ['setMaximumTtl', ['%cache.github.default.ttl%']]
+
+    redis:
+        class: 'Predis\Client'
+        arguments:
+            - '%redis.server%'
+            - { prefix: '%redis.prefix%:' }
+
+    ####################################################################################################################
+    # DOCTRINE-SPECIFIC SERVICES
+    ####################################################################################################################
+
+    doctrine.cache.redis:
+        class: 'QL\Hal\Core\Utility\DoctrinePredisCache'
+        arguments: ['@redis', '%doctrine.cache.ttl%']
+
+    doctrine.utility.lazy.user:
+        class: 'Hal\UI\Utility\LazyUserRetriever'
+        arguments: ['@twig.context']
+
+    ####################################################################################################################
+    # DOMAIN-SPECIFIC SERVICES
+    ####################################################################################################################
+
+    ldap.auth:
+        class: 'Hal\UI\Auth'
+        arguments:
+            - '@ldap.auth.symfony'
+            - '%ldap.base_dn%'
+            - '%ldap.domain%'
+            - 'person'
+            - 'sAMAccountName'
+
+    ldap.auth.symfony:
+        class: 'Symfony\Component\Ldap\Ldap'
+        factory: ['Symfony\Component\Ldap\Ldap', 'create']
+        arguments:
+            - 'ext_ldap'
+            -
+                host: '%ldap.host%'
+                port: '%ldap.port%'
+
+    permissions:
+        class: 'Hal\UI\Service\PermissionService'
+        arguments:
+            - '@doctrine.em'
+            - '@github'
+            - '@json'
+            - '%permissions.check.github%'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.permissions.ttl%']]
+
+    global.message:
+        class: 'Hal\UI\Service\GlobalMessageService'
+        arguments: ['@redis']
+
+    sticky.environment:
+        class: 'Hal\UI\Service\StickyEnvironmentService'
+        arguments:
+            - '@cookie.handler'
+            - '@json'
+            - '%cookie.preferences.ttl%'
+
+    sticky.pool:
+        class: 'Hal\UI\Service\StickyPoolService'
+        arguments:
+            - '@cookie.handler'
+            - '@json'
+            - '%cookie.preferences.ttl%'
+
+    stats:
+        class: 'Hal\UI\Service\StatsService'
+        arguments:
+            - '@doctrine.em'
+            - '@clock'
+            - '%date.timezone%'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.stats.ttl%']]
+
+    pools:
+        class: 'Hal\UI\Service\PoolService'
+        arguments:
+            - '@doctrine.em'
+            - '@sticky.pool'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.stats.ttl%']]
+
+    service.event_logs:
+        class: 'Hal\UI\Service\EventLogService'
+        arguments:
+            - '@redis'
+            - '@json'
+            - '@clock'
+
+    job_queue:
+        class: 'Hal\UI\Service\JobQueueService'
+        arguments: ['@doctrine.em', '@clock']
+
+    ####################################################################################################################
+    # GITHUB
+    ####################################################################################################################
+
+    github:
+        class: 'Hal\UI\Service\GitHubService'
+        arguments:
+            - '@github.sdk.repos'
+            - '@github.sdk.repo_commits'
+            - '@github.sdk.git_references'
+            - '@github.sdk.git_commits'
+            - '@github.sdk.pull_requests'
+            - '@github.sdk.users'
+            - '@github.sdk.org_members'
+            - '@github.pager'
+
+    ####################################################################################################################
+    # HELPERS
+    ####################################################################################################################
+
+    utility.name.formatter:
+        class: 'Hal\UI\Utility\NameFormatter'
+
+    utility.id.generator:
+        class: 'QL\Hal\Core\JobIdGenerator'
+        arguments:
+            - '%application.major.version%'
+            - '%unique.alphabet%'
+            - '%unique.size%'
+
+    utility.time.formatter:
+        class: 'Hal\UI\Utility\TimeFormatter'
+        arguments: ['@clock', '%date.timezone%']
+
+    ####################################################################################################################
+    # GITHUB AUTH
+    ####################################################################################################################
+
+    # github.oauth:
+    #     class: 'Hal\UI\Github\OAuthHandler'
+    #     arguments:
+    #         - '@github.oauth.guzzle'
+    #         - '%github.api.baseurl%'
+    #         - '%github.site.baseurl%'
+    #         - '%github.app.id%'
+    #         - '%github.app.secret%'
+    #         - '@json'
+
+    # github.oauth.guzzle:
+    #     class: 'GuzzleHttp\Client'
+
+    ####################################################################################################################
+    # GITHUB SDK
+    ####################################################################################################################
+
+    github.url_builder:
+        class: 'Hal\UI\Github\GitHubURLBuilder'
+        arguments: ['@github', '%github.site.baseurl%']
+
+    github.client:
+        class: 'Hal\UI\Github\EnterpriseClient'
+        arguments:
+            - '@github.http.builder'
+            - null
+            - '%github.site.baseurl%'
+        configurator: ['@github.client.configurator', configure]
+        calls:
+            - ['authenticate', ['%github.token%', null, 'http_token']]
+
+    github.client.configurator:
+        class: 'Hal\UI\Github\GithubClientConfigurator'
+        arguments: ['@github.http_cache.plugin', '@github.http.builder']
+
+    github.http.builder:
+        class: 'Github\HttpClient\Builder'
+
+    github.http_cache.plugin:
+        class: 'Hal\UI\Github\MCPCachePlugin'
+        arguments:
+            - '@cache.github'
+            - '@github.http_cache.http_stream_factory'
+            -
+                respect_cache_headers: false
+                default_ttl: '%cache.github.default.ttl%'
+            - '%cache.github.short.ttl%'
+
+    github.http_cache.http_stream_factory:
+        class: 'Http\Message\StreamFactory\GuzzleStreamFactory'
+
+    github.pager:
+        class: 'Github\ResultPager'
+        arguments: ['@github.client']
+
+    github.sdk.pull_requests:
+        class: 'Github\Api\PullRequest'
+        arguments: ['@github.client']
+    github.sdk.git_references:
+        class: 'Github\Api\GitData\References'
+        arguments: ['@github.client']
+    github.sdk.git_commits:
+        class: 'Github\Api\GitData\Commits'
+        arguments: ['@github.client']
+    github.sdk.repos:
+        class: 'Github\Api\Repo'
+        arguments: ['@github.client']
+    github.sdk.repo_commits:
+        class: 'Github\Api\Repository\Commits'
+        arguments: ['@github.client']
+    github.sdk.users:
+        class: 'Github\Api\User'
+        arguments: ['@github.client']
+    github.sdk.org_members:
+        class: 'Github\Api\Organization\Members'
+        arguments: ['@github.client']
+
+    ####################################################################################################################
+    # Crypto
+    ####################################################################################################################
+
+    encrypter:
+        class: 'QL\Hal\Core\Crypto\Encrypter'
+        arguments: ['%encrypter.publickey%']
+
+    decrypter:
+        class: 'QL\Hal\Core\Crypto\Decrypter'
+        factory: ['@decrypter.factory', 'getAsymmetricDecrypter']
+        lazy: true
+
+    decrypter.factory:
+        class: 'QL\Hal\Core\Crypto\CryptoFactory'
+        arguments: ['@encrypter.encryptedkey.squished', '%encrypter.secret.path%']
+
+    encrypter.encryptedkey.squished:
+        class: 'stdClass'
+        factory: ['Hal\UI\Application\Stringify', 'squish']
+        arguments: ['%encrypter.encryptedkey%']
+

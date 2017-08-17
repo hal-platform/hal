@@ -1,0 +1,69 @@
+services:
+
+    api.cache:
+        class: 'QL\MCP\Cache\CacheInterface'
+        factory: ['@service_container', 'get']
+        arguments: ["cache.%cache.type.api%"]
+
+    api.response_formatter:
+        class: 'Hal\UI\API\ResponseFormatter'
+        arguments: ['@api.normalizer', '@uri']
+        calls:
+            - ['setCache', ['@api.cache']]
+            - ['setCacheTimes', ['%api.cachetimes%']]
+
+    api.normalizer:
+        class: 'Hal\UI\API\Normalizer'
+        calls:
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Application', '@api_normalizer.application']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Build', '@api_normalizer.build']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Deployment', '@api_normalizer.target']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Environment', '@api_normalizer.environment']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\EventLog', '@api_normalizer.event']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Group', '@api_normalizer.organization']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Push', '@api_normalizer.push']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\Server', '@api_normalizer.server']]
+            - ['addNormalizer', ['QL\Hal\Core\Entity\User', '@api_normalizer.user']]
+            - ['addNormalizer', ['QL\MCP\Common\Time\TimePoint', '@api_normalizer.timepoint']]
+            - ['addNormalizer', ['Hal\UI\Api\Hyperlink', '@api_normalizer.hyperlink']]
+
+    ####################################################################################################################
+    # API Entity Normalizers
+    ####################################################################################################################
+
+    api_normalizer.build:
+        class: 'Hal\UI\API\Normalizer\BuildNormalizer'
+        arguments: ['@github.url_builder']
+
+    api_normalizer.target:
+        class: 'Hal\UI\API\Normalizer\TargetNormalizer'
+
+    api_normalizer.environment:
+        class: 'Hal\UI\API\Normalizer\EnvironmentNormalizer'
+
+    api_normalizer.event:
+        class: 'Hal\UI\API\Normalizer\EventNormalizer'
+
+    api_normalizer.organization:
+        class: 'Hal\UI\API\Normalizer\OrganizationNormalizer'
+
+    api_normalizer.push:
+        class: 'Hal\UI\API\Normalizer\PushNormalizer'
+
+    api_normalizer.application:
+        class: 'Hal\UI\API\Normalizer\ApplicationNormalizer'
+        arguments: ['@github.url_builder']
+
+    api_normalizer.server:
+        class: 'Hal\UI\API\Normalizer\ServerNormalizer'
+
+    api_normalizer.timepoint:
+        class: 'Hal\UI\API\Normalizer\TimePointNormalizer'
+
+    api_normalizer.user:
+        class: 'Hal\UI\API\Normalizer\UserNormalizer'
+        arguments: ['@permissions']
+
+    api_normalizer.hyperlink:
+        class: 'Hal\UI\API\Normalizer\HyperlinkNormalizer'
+        arguments: ['@uri', '@request']

@@ -1,0 +1,125 @@
+parameters:
+    ############################################################################
+    # application
+    ############################################################################
+    application.id: '200947'
+    application.title: 'Hal'
+    application.environment: "%env(ENVIRONMENT)%"
+
+    application.major.version: '%env(HAL_APPLICATION_VERSION_MAJOR)%'
+    application.minor.version: '%env(HAL_APPLICATION_VERSION_MINOR)%'
+    application.version: '%application.major.version%.%application.minor.version%'
+
+    application.sha: '%env(HAL_APPLICATION_SHA)%'
+
+    hal.pushfile.path: '%root%/.hal9000.push.yml'
+
+    ############################################################################
+    # general
+    ############################################################################
+    root: "%env(HAL_ROOT)%"
+
+    # Route condition regexes
+    r.alphanum: '[A-Za-z0-9]+'
+    r.digit: '[0-9]+'
+    r.guid: '[0-9a-zA-Z]{32,32}'
+    r.build: '[A-Za-z0-9\_\-\.]+'
+    r.release: '%r.build%'
+    r.date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+    r.api.queue: '[A-Za-z0-9\+\-\.]+'
+
+    unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+    unique.size: 4
+    date.timezone: "%env(HAL_TIMEZONE)%"
+
+    gravatar.fallback: 'skluck.github.io/hal/halprofile_100.jpg'
+
+    ############################################################################
+    # panthor
+    ############################################################################
+    routes.cache_disabled: "%env(HAL_ROUTES_DISABLE_CACHE_ON)%"
+    error_handling.log_stacktrace: "%env(HAL_LOG_STACKTRACES_ON)%"
+    global_middleware:
+        - 'slim.global_middleware.logger'
+        - 'slim.global_middleware.template_context'
+        - 'panthor.middleware.encrypted_cookies'
+        - 'slim.global_middleware.flash'
+        - 'slim.global_middleware.session'
+        - 'slim.global_middleware.user_session'
+        - 'slim.global_middleware.srs_business'
+
+    ############################################################################
+    # doctrine
+    ############################################################################
+    doctrine.user.service: 'doctrine.utility.lazy.user'
+
+    ############################################################################
+    # twig
+    ############################################################################
+    twig.debug: "%env(HAL_DEBUG_TWIG_ON)%"
+
+    ############################################################################
+    # auth
+    ############################################################################
+    ldap.host: "%env(HAL_LDAP_HOST)%"
+    ldap.port: "%env(HAL_LDAP_PORT)%"
+    ldap.domain: "%env(HAL_LDAP_DOMAIN)%"
+    ldap.base_dn: "%env(HAL_LDAP_BASE_DN)%"
+
+    ############################################################################
+    # github
+    ############################################################################
+    github.token: "%env(HAL_GITHUB_ENTERPRISE_TOKEN)%"
+    github.site.baseurl: '%env(HAL_GITHUB_ENTERPRISE_URL)%'
+    github.api.baseurl: '%github.site.baseurl%/api/v3'
+
+    ############################################################################
+    # cache
+    ############################################################################
+    redis.server: "%env(HAL_REDIS_SERVER)%"
+    redis.prefix: "%env(HAL_REDIS_PREFIX)%"
+
+    cache.type.api: "%env(HAL_CACHE_API)%"
+    cache.type.main: "%env(HAL_CACHE_MAIN)%"
+    cache.type.github: "%env(HAL_CACHE_GITHUB)%"
+
+    cache.permissions.ttl: 1800
+    cache.server.ttl: 300
+    cache.stats.ttl: 900
+    cache.page.ttl: 300
+    cache.github.default.ttl: 60
+    cache.github.short.ttl: 20
+
+    ############################################################################
+    # api configuration
+    ############################################################################
+    # To set a specific cache time for a route, add the route name as a key and the time to cache in seconds.
+    # Default time is 10 seconds.
+    api.cachetimes:
+        # these are lower because having the most update to date status is critical
+        api.build: 5
+        api.push: 5
+        api.queue: 0 # the queue api uses no caching
+        api.queue.refresh: 0 # the queue api uses no caching
+
+    # Allowed requests for route x user per MINUTE
+    # Default is 120 per minute (2 req/sec)
+    api.ratelimits:
+        api.build.start: 10
+        api.deploy: 20
+
+    ############################################################################
+    # cookie
+    ############################################################################
+    session.lifetime: '+1 day'
+    session.encryption.secret: "%env(HAL_COOKIE_SECRET)%"
+
+    cookie.encryption.secret: "%env(HAL_SESSION_SECRET)%"
+    cookie.preferences.ttl: '5 years'
+
+    ############################################################################
+    # encryption
+    ############################################################################
+    encrypter.secret.path: '%root%/config/hal.encrypter.secret'
+    encrypter.publickey: "%env(HAL_CRYPTO_PUBLICKEY)%"
+    encrypter.encryptedkey: "%env(HAL_CRYPTO_PRIVATEKEY)%"

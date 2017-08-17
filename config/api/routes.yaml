@@ -1,0 +1,209 @@
+parameters:
+    routes.api:
+
+        api.docs:
+            route: '/docs/api'
+            stack: ['docs.api']
+
+        api.index:
+            method: 'GET'
+            route: '/api'
+            stack: ['index.api']
+
+        api:
+            route: '/api'
+            stack: ['middleware.api_caching']
+            routes:
+
+                ################################################################################################################
+                # QUEUE ROUTES
+                ################################################################################################################
+
+                api.queue:
+                    method: 'GET'
+                    route: '/queue'
+                    stack: ['queue.api']
+
+                api.queue.refresh:
+                    method: 'GET'
+                    route: '/queue-refresh/{jobs:%r.api.queue%}'
+                    stack: ['queue.refresh.api']
+
+                ################################################################################################################
+                # ORGANIZATION ROUTES
+                ################################################################################################################
+
+                api.organizations:
+                    method: 'GET'
+                    route: '/organizations'
+                    stack: ['organizations.api']
+
+                api.organization:
+                    method: 'GET'
+                    route: '/organizations/{organization:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'organization.api']
+
+                ################################################################################################################
+                # APPLICATION ROUTES
+                ################################################################################################################
+
+                api.applications:
+                    method: 'GET'
+                    route: '/applications'
+                    stack: ['applications.api']
+                api.applications.paged:
+                    method: 'GET'
+                    route: '/applications/page/{page:%r.digit%}'
+                    stack: ['applications.api']
+
+                api.application.management:
+                    route: '/applications/{application:%r.digit%}'
+                    stack: ['middleware.api_require_entity']
+                    routes:
+
+                        api.application:
+                            method: 'GET'
+                            route: ''
+                            stack: ['application.api']
+
+                        api.targets:
+                            method: 'GET'
+                            route: '/targets'
+                            stack: ['targets.api']
+
+                        # are these application routes or build/push routes?
+                        # It's nice to be able to use route groups to nest common url prefixes.
+
+                        api.builds:
+                            method: 'GET'
+                            route: '/builds'
+                            stack: ['builds.api']
+                        api.builds.history:
+                            method: 'GET'
+                            route: '/builds/page/{page:%r.digit%}'
+                            stack: ['builds.api']
+
+                        api.pushes:
+                            method: 'GET'
+                            route: '/pushes'
+                            stack: ['pushes.api']
+                        api.pushes.history:
+                            method: 'GET'
+                            route: '/pushes/page/{page:%r.digit%}'
+                            stack: ['pushes.api']
+
+                ################################################################################################################
+                # SERVER ROUTES
+                ################################################################################################################
+
+                api.servers:
+                    method: 'GET'
+                    route: '/servers'
+                    stack: ['servers.api']
+
+                api.servers.paged:
+                    method: 'GET'
+                    route: '/servers/page/{page:%r.digit%}'
+                    stack: ['servers.api']
+
+                api.server:
+                    method: 'GET'
+                    route: '/servers/{server:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'server.api']
+
+                ################################################################################################################
+                # TARGET ROUTES
+                ################################################################################################################
+
+                api.target.management:
+                    route: '/targets/{target:%r.digit%}'
+                    stack: ['middleware.api_require_entity']
+                    routes:
+                        api.target:
+                            method: 'GET'
+                            route: ''
+                            stack: ['target.api']
+
+                        api.target.history:
+                            method: 'GET'
+                            route: '/pushes'
+                            stack: ['target.history.api']
+                        api.target.history.paged:
+                            method: 'GET'
+                            route: '/pushes/page/{page:%r.digit%}'
+                            stack: ['target.history.api']
+
+                        api.target.current_release:
+                            method: 'GET'
+                            route: '/current-release'
+                            stack: ['target.current_release.api']
+
+                ################################################################################################################
+                # BUILD ROUTES
+                ################################################################################################################
+
+                api.build:
+                    method: 'GET'
+                    route: '/builds/{build:%r.build%}'
+                    stack: ['middleware.api_require_entity', 'build.api']
+
+                api.build.events:
+                    method: 'GET'
+                    route: '/builds/{build:%r.build%}/events'
+                    stack: ['middleware.api_require_entity', 'build.events.api']
+
+                ################################################################################################################
+                # PUSH ROUTES
+                ################################################################################################################
+
+                api.push:
+                    method: 'GET'
+                    route: '/pushes/{push:%r.release%}'
+                    stack: ['middleware.api_require_entity', 'push.api']
+
+                api.push.events:
+                    method: 'GET'
+                    route: '/pushes/{push:%r.release%}/events'
+                    stack: ['middleware.api_require_entity', 'push.events.api']
+
+                ################################################################################################################
+                # EVENT ROUTES
+                ################################################################################################################
+
+                api.event:
+                    method: 'GET'
+                    route: '/job-events/{event:%r.guid%}'
+                    stack: ['middleware.api_require_entity', 'event.api']
+
+                ################################################################################################################
+                # ENVIRONMENTS ROUTES
+                ################################################################################################################
+
+                api.environments:
+                    method: 'GET'
+                    route: '/environments'
+                    stack: ['environments.api']
+
+                api.environment:
+                    method: 'GET'
+                    route: '/environments/{environment:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'environment.api']
+
+                ################################################################################################################
+                # USER ROUTES
+                ################################################################################################################
+
+                api.users:
+                    method: 'GET'
+                    route: '/users'
+                    stack: ['users.api']
+                api.users.paged:
+                    method: 'GET'
+                    route: '/users/page/{page:%r.digit%}'
+                    stack: ['users.api']
+
+                api.user:
+                    method: 'GET'
+                    route: '/users/{user:%r.digit%}'
+                    stack: ['middleware.api_require_entity', 'user.api']
+

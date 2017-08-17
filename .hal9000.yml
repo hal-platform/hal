@@ -1,10 +1,11 @@
 system: docker:php7.1
 build:
+    - 'do_not_deploy_this'
     - 'bin/install --deploy --backend'
     - 'bin/deploy --deploy --backend'
     - 'docker:node5.3 bin/install --deploy --frontend'
     - 'docker:node5.3 bin/deploy --deploy --frontend'
 
 exclude:
-    - 'configuration/kraken.encrypter.secret'
-    - 'configuration/hal.encrypter.secret'
+    - 'config/kraken.encrypter.secret'
+    - 'config/hal.encrypter.secret'

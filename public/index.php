@@ -3,6 +3,7 @@
 namespace Hal\Bootstrap;
 
 define('MAINTENANCE', false);
+$start = microtime(true);
 
 $root = __DIR__ . '/..';
 
@@ -11,7 +12,7 @@ if (MAINTENANCE) {
     exit;
 }
 
-if (!$container = @include $root . '/configuration/bootstrap.php') {
+if (!$container = @include $root . '/config/bootstrap.php') {
     http_response_code(500);
     echo "Boom goes the dynamite.\n";
     exit;
@@ -52,3 +53,8 @@ $container
     ->attachSlim($app);
 
 $app->run();
+
+$mem = round(memory_get_usage() / 1000000, 2);
+$peak = round(memory_get_peak_usage() / 1000000, 2);
+$time = round(microtime(true) - $start, 3);
+// echo "<pre>Memory: ${mem}mb (Peak: ${peak}mb)\nTime: ${time}s</pre>";

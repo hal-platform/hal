@@ -1,0 +1,122 @@
+parameters:
+    ############################################################################
+    # RUNTIME CONFIGURATION
+    ############################################################################
+
+    env(MCP_LOGGER_SERVICE): 'syslog'
+    env(MCP_LOGGER_SERIALIZER): 'line'
+
+    env(MCP_LOGGER_SERIALIZER_LINE_FORMAT): '[%%created%%] %%severity%% : %%message%% (App ID: %%app%%, Server: %%server.host%%)'
+
+    env(MCP_LOGGER_SERIALIZER_JSON_LIMIT): 10000
+    env(MCP_LOGGER_SERIALIZER_JSON_OPTIONS): !php/const:QL\MCP\Logger\Service\Serializer\JSONSerializer::DEFAULT_JSON_OPTIONS
+
+    env(MCP_LOGGER_GUZZLE_ENDPOINT): !php/const:QL\MCP\Logger\Service\GuzzleService::DEFAULT_ENDPOINT
+    env(MCP_LOGGER_GUZZLE_SILENT): !php/const:QL\MCP\Logger\Service\GuzzleService::DEFAULT_SILENT
+    env(MCP_LOGGER_GUZZLE_TIMEOUT): !php/const:QL\MCP\Logger\Service\GuzzleService::DEFAULT_TIMEOUT
+    env(MCP_LOGGER_GUZZLE_CONNECT_TIMEOUT): !php/const:QL\MCP\Logger\Service\GuzzleService::DEFAULT_CONNECT_TIMEOUT
+
+    env(MCP_LOGGER_SYSLOG_SILENT): !php/const:QL\MCP\Logger\Service\SyslogService::DEFAULT_SILENT
+    env(MCP_LOGGER_SYSLOG_IDENT): !php/const:QL\MCP\Logger\Service\SyslogService::DEFAULT_IDENT
+    env(MCP_LOGGER_SYSLOG_FACILITY): !php/const:QL\MCP\Logger\Service\SyslogService::DEFAULT_FACILITY
+    env(MCP_LOGGER_SYSLOG_OPTIONS): !php/const:QL\MCP\Logger\Service\SyslogService::DEFAULT_OPTIONS
+
+    env(MCP_LOGGER_ERRORLOG_TYPE): !php/const:QL\MCP\Logger\Service\ErrorLogService::DEFAULT_TYPE
+    env(MCP_LOGGER_ERRORLOG_FILE): !php/const:QL\MCP\Logger\Service\ErrorLogService::DEFAULT_FILE
+
+    ############################################################################
+    # STATIC CONFIGURATION
+    ############################################################################
+
+    mcp.logger.default_properties: []
+
+    mcp.logger.service.syslog.options:
+        silent: "%env(MCP_LOGGER_SYSLOG_SILENT)%"
+        ident: "%env(MCP_LOGGER_SYSLOG_IDENT)%"
+        facility: "%env(MCP_LOGGER_SYSLOG_FACILITY)%"
+        options: "%env(MCP_LOGGER_SYSLOG_OPTIONS)%"
+
+    mcp.logger.service.guzzle.options:
+        silent: "%env(MCP_LOGGER_GUZZLE_SILENT)%"
+        timeout: "%env(MCP_LOGGER_GUZZLE_TIMEOUT)%"
+        connect_timeout: "%env(MCP_LOGGER_GUZZLE_CONNECT_TIMEOUT)%"
+        endpoint: "%env(MCP_LOGGER_GUZZLE_ENDPOINT)%"
+
+    mcp.logger.service.errorlog.options:
+        type: "%env(MCP_LOGGER_ERRORLOG_TYPE)%"
+        file: "%env(MCP_LOGGER_ERRORLOG_FILE)%"
+
+    mcp.logger.serializer.line.options:
+        template: "%env(MCP_LOGGER_SERIALIZER_LINE_FORMAT)%"
+
+    mcp.logger.serializer.json.options:
+        backload_limit: "%env(MCP_LOGGER_SERIALIZER_JSON_LIMIT)%"
+        json_options: "%env(MCP_LOGGER_SERIALIZER_JSON_OPTIONS)%"
+
+services:
+
+    # Logger
+    mcp.logger:
+        class: 'QL\MCP\Logger\Logger'
+        arguments:
+            - '@mcp.logger.service'
+            - '@mcp.logger.factory'
+
+    mcp.logger.service:
+        class: 'QL\MCP\Logger\ServiceInterface'
+        factory: ['@service_container', 'get']
+        arguments: ["mcp.logger.service.%env(MCP_LOGGER_SERVICE)%"]
+
+    mcp.logger.serializer:
+        class: 'QL\MCP\Logger\Service\SerializerInterface'
+        factory: ['@service_container', 'get']
+        arguments: ["mcp.logger.serializer.%env(MCP_LOGGER_SERIALIZER)%"]
+
+    mcp.logger.factory:
+        class: 'QL\MCP\Logger\Message\MessageFactory'
+        arguments:
+          - '@mcp.logger.clock'
+          - '%mcp.logger.default_properties%'
+
+    # dependencies
+    mcp.logger.guzzle:
+        class: 'GuzzleHttp\Client'
+    mcp.logger.clock:
+        class: 'QL\MCP\Common\Time\Clock'
+        arguments: ['now', 'UTC']
+
+    # Services
+    mcp.logger.service.syslog:
+        class: 'QL\MCP\Logger\Service\SyslogService'
+        arguments:
+            - '@mcp.logger.serializer'
+            - '%mcp.logger.service.syslog.options%'
+
+    mcp.logger.service.guzzle:
+        class: 'QL\MCP\Logger\Service\GuzzleService'
+        arguments:
+            - null
+            - '@mcp.logger.guzzle'
+            - '@mcp.logger.serializer'
+            - '%mcp.logger.service.guzzle.options%'
+
+    mcp.logger.service.errorlog:
+        class: 'Hal\UI\VendorAdapters\EnvErrorLogService'
+        arguments:
+            - '@mcp.logger.serializer'
+            - '%mcp.logger.service.errorlog.options%'
+
+    mcp.logger.service.null:
+        class: 'QL\MCP\Logger\Service\NullService'
+
+    # Serializers
+    mcp.logger.serializer.line:
+        class: 'QL\MCP\Logger\Service\Serializer\LineSerializer'
+        arguments: ['%mcp.logger.serializer.line.options%']
+    mcp.logger.serializer.json:
+        class: 'QL\MCP\Logger\Service\Serializer\JSONSerializer'
+        arguments: ['%mcp.logger.serializer.json.options%']
+
+    mcp.logger.serializer.xml:
+        class: 'QL\MCP\Logger\Service\Serializer\XMLSerializer'
+
