@@ -3,36 +3,30 @@
 
 namespace Hal\Bin;
 
-use QL\Panthor\Bootstrap\Di;
-use Slim\Environment;
+use QL\Panthor\Bootstrap\DI2;
 use Symfony\Component\Finder\Finder;
 
-$root = __DIR__ . '/..';
-require_once $root . '/vendor/autoload.php';
+$root = realpath(__DIR__ . '/../');
+putenv("HAL_ROOT=${root}");
 
-$di = Di::getDi($root, 'Who\Cares', function($container) use ($root) {
-    // Before the container is compiled, switch out the doctrine driver to fake sqlite.
-    $container->setParameter('doctrine.connection', ['driver' => 'pdo_sqlite', 'memory' => true]);
+if (!$container = @include $root . '/config/bootstrap.php') {
+    echo "An error occured while attempting to cache twig templates.\n";
+    exit(1);
+};
 
-    // Add dummy encryption secret
-    $container->setParameter('session.encryption.secret', '000000ffffff000000ffffff000000ffffff000000ffffff000000ffffffaaaa');
-});
+$app = $container->get('slim');
+$routes = $container->get('slim.router.loader');
+$routes($app);
 
-// start slim to prime twig extension and inject synthetic services
-Environment::mock(['PATH_INFO' => '/derpderp']);
-$slim = $di->get('slim');
-$slim->get('/derpderp', function() {});
-$slim->call();
-
-$twig = $di->get('twig.environment');
-$twigDir = $di->get('twig.template.dir');
-$twigCacheDir = $di->get('twig.cache.dir');
+$twig = $container->get('twig.environment');
+$twigDir = $container->getParameter('twig.template.dir');
+$twigCacheDir = $container->getParameter('twig.cache.dir');
 
 // find and attempt to load the templates
 $files = (new Finder)
     ->files()
     ->name('*.twig')
-    ->in($twigDir);
+    ->in("${root}/${twigDir}");
 
 echo <<<OUTPUT
 Compiling twig templates
@@ -48,8 +42,8 @@ if (!$files) {
 }
 
 // Always create twig cache if not found
-if (!file_exists($twigCacheDir)) {
-    mkdir($twigCacheDir);
+if (!file_exists("${root}/${twigCacheDir}")) {
+    mkdir("${root}/${twigCacheDir}");
 }
 
 echo "Templates:\n";
@@ -59,19 +53,3 @@ foreach ($files as $file) {
     $template = $twig->loadTemplate($file->getRelativePathname());
     $template->render([]);
 }
-
-echo "\nError Templates:\n";
-
-// find and attempt to load the templates
-$files = (new Finder)
-    ->files()
-    ->name('error.html.twig')
-    ->in($twigDir);
-
-$failsafeTwig = $di->get('error.failsafe.environment');
-foreach ($files as $file) {
-    echo $file->getRelativePathname() . "\n";
-    $template = $failsafeTwig->loadTemplate($file->getRelativePathname());
-    $template->render([]);
-}
-

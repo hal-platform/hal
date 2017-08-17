@@ -3,7 +3,7 @@
 namespace Hal\Bootstrap;
 
 define('MAINTENANCE', false);
-$start = microtime(true);
+define('HAL_APP_START', microtime(true));
 
 $root = __DIR__ . '/..';
 
@@ -56,5 +56,5 @@ $app->run();
 
 $mem = round(memory_get_usage() / 1000000, 2);
 $peak = round(memory_get_peak_usage() / 1000000, 2);
-$time = round(microtime(true) - $start, 3);
+$time = round(microtime(true) - HAL_APP_START, 3);
 // echo "<pre>Memory: ${mem}mb (Peak: ${peak}mb)\nTime: ${time}s</pre>";

@@ -33,7 +33,7 @@ services:
     ####################################################################################################################
 
     slim.router.loader:
-        parent: 'router.loader'
+        parent: 'panthor.router.loader'
         calls:
             # %routes% is auto loaded by parent
             - ['addRoutes', ['%routes.api%']]

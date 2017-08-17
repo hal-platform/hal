@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 
 {% set page_title = "GitHub Authorization Error" %}
@@ -8,7 +8,7 @@
 
     {{ macros.alert('error', 'Shits all fucked up', block('error_details'), true) }}
 
-    <a class="btn" href="{{ urlFor('settings') }}">Return to user settings</a>
+    <a class="btn" href="{{ uriFor('settings') }}">Return to user settings</a>
 
 {% endblock %}
 

@@ -5,17 +5,16 @@ namespace Hal\Bin;
 
 use Hal\UI\Application\DoctrineProxyGenerator;
 
-$root = __DIR__ . '/..';
-if (!$container = @include $root . '/configuration/bootstrap.php') {
+$root = realpath(__DIR__ . '/../');
+putenv("HAL_ROOT=${root}");
+
+if (!$container = @include $root . '/config/bootstrap.php') {
     echo "An error occured while attempting to generate doctrine proxies.\n";
     exit(1);
 };
 
-$generator = $container->get('doctrine.proxy.generator');
-
-$success = $generator();
-echo $generator->output();
-
+$em = $container->get('doctrine.em.proxy');
+$success = DoctrineProxyGenerator::generateProxies($em);
 if (!$success) {
     exit(1);
 }

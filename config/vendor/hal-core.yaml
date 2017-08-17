@@ -31,6 +31,9 @@ parameters:
     doctrine.cache.ttl: 600
 
     doctrine.user.service: ""
+    doctrine.proxy.connection:
+        driver: 'pdo_sqlite'
+        memory: true
 
 services:
 
@@ -38,9 +41,14 @@ services:
     # DOCTRINE PROXY
     ############################################################################
 
-    doctrine.proxy.generator:
-        class: 'QL\Hal\Core\Utility\DoctrineProxyGenerator'
-        arguments: ['@service_container']
+    doctrine.em.proxy:
+        class: 'Doctrine\ORM\EntityManager'
+        factory: ['Doctrine\ORM\EntityManager', 'create']
+        arguments:
+            - '%doctrine.proxy.connection%'
+            - '@doctrine.config'
+            - '@doctrine.em.event_manager'
+        configurator: ['@doctrine.em.configurator', 'configure']
 
     ############################################################################
     # DOCTRINE PATHS

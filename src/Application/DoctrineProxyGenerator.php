@@ -7,55 +7,20 @@
 
 namespace Hal\UI\Application;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 
 class DoctrineProxyGenerator
 {
     /**
-     * @var EntityManager
-     */
-    private $em;
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->em = self::mockEntityManager($container);
-    }
-
-    /**
-     * @param ContainerInterface $container
+     * @param EntityManager $em
      *
-     * @return EntityManager
-     */
-    public static function mockEntityManager(ContainerInterface $container)
-    {
-        $fakeConn = [
-            'driver' => 'pdo_sqlite',
-            'memory' => true
-        ];
-
-        $em = EntityManager::create(
-            $fakeConn,
-            $container->get('doctrine.config'),
-            $container->get('doctrine.em.events')
-        );
-
-        $container->get('doctrine.em.configurator')->configure($em);
-
-        return $em;
-    }
-
-    /**
      * @return bool
      */
-    public function __invoke()
+    public static function generateProxies(EntityManager $em)
     {
-        $metas = $this->em->getMetadataFactory()->getAllMetadata();
-        $proxy = $this->em->getProxyFactory();
-        $proxyDir = $this->em->getConfiguration()->getProxyDir();
+        $metas = $em->getMetadataFactory()->getAllMetadata();
+        $proxy = $em->getProxyFactory();
+        $proxyDir = $em->getConfiguration()->getProxyDir();
 
         if (count($metas) === 0) {
             echo "No entities to process.\n";

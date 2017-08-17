@@ -19,13 +19,18 @@ services:
     panthor.router:
         class: 'QL\Panthor\Bootstrap\CacheableRouter'
         calls:
-            - ['setCaching', ['%root%/%routes.cached%', '%routes.cache_disabled%']]
-    panthor.twig.loader:
-        class: 'QL\Panthor\Twig\BetterCachingFilesystem'
-        arguments: ['%root%/%twig.template.dir%']
+            - ['setCaching', ['%root%/config/routes.cached.php', '%routes.cache_disabled%']]
+
     panthor.twig.configurator:
         class: 'QL\Panthor\Twig\EnvironmentConfigurator'
         arguments: ['%twig.debug%', '%root%/%twig.cache.dir%']
+
+    panthor.twig.loader:
+        class: 'Twig\Loader\FilesystemLoader'
+        arguments:
+          - ['%twig.template.dir%']
+          - '%root%'
+
     # ▲▲▲▲ FIXES FOR PANTHOR OVERRIDES
 
 parameters:
