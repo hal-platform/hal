@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+
+namespace Hal\Bin;
+
+use Hal\UI\Application\DI2;
+use Hal\UI\CachedContainer;
+
+$root = realpath(__DIR__ . '/../');
+
+$file = "${root}/src/CachedContainer.php";
+$class = CachedContainer::class;
+$options = [
+    'class' => $class,
+    'file' => $file
+];
+
+if (!$autoloader = @include __DIR__ . '/../vendor/autoload.php') {
+    echo "An error occured while attempting to dump the DI Container.\n";
+    exit(1);
+}
+
+$container = DI2::buildDI($root, false);
+if (!$cached = DI2::cacheDI($container, $options)) {
+    echo "An error occured while attempting to dump the DI Container.\n";
+    exit(1);
+}
+
+file_put_contents($file, $cached);
+
+echo <<<OUTPUT
+Dumping DI Container cache:
+Class: ${class}
+File: ${file}
+
+OUTPUT;

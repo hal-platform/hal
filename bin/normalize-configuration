@@ -4,19 +4,22 @@ if [ -z  "$HAL_ENVIRONMENT" ] ; then
     HAL_ENVIRONMENT="dev"
 fi
 
-DIR=$( cd "$( dirname "$0" )" && pwd )
-TARGET_CONFIG="config.env.yml"
-NORMALIZED_ENV=$(echo "$HAL_ENVIRONMENT" | tr "[:upper:]" "[:lower:]")
-CONFIG="$NORMALIZED_ENV.yml"
+curdir=$( cd "$( dirname "$0" )" && pwd )
+
+normalized_env=$(echo "$HAL_ENVIRONMENT" | tr "[:upper:]" "[:lower:]")
+
+source_config=".env.${normalized_env}.dist"
+target_config=".env"
 
 echo "Current environment: $HAL_ENVIRONMENT"
-echo "Normalized environment: $NORMALIZED_ENV"
+echo "Normalized environment: $normalized_env"
 
-EXISTS=$(test -e $DIR/../configuration/environment/$CONFIG && echo 1 || echo 0)
-if [[ $EXISTS -eq "1" ]]; then
-    echo "Configuration found: $CONFIG"
-    echo "Overwriting $TARGET_CONFIG"
-    cat "$DIR/../configuration/environment/$CONFIG" > "$DIR/../configuration/config.env.yml"
+config_exists=$(test -e ${curdir}/../config/${source_config} && echo 1 || echo 0)
+
+if [[ ${config_exists} -eq "1" ]]; then
+    echo "Configuration found: ${source_config}"
+    echo "Overwriting $target_config"
+    cat "${curdir}/../config/${source_config}" > "$DIR/../config/${target_config}"
 else
-    echo "Configuration not found: $CONFIG"
+    echo "Configuration not found: ${source_config}"
 fi

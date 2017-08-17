@@ -1,0 +1,46 @@
+#!/usr/bin/env php
+<?php
+
+namespace Hal\Bin;
+
+use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Dotenv\Exception\ExceptionInterface;
+
+$root = realpath(__DIR__ . '/../');
+require_once $root . '/vendor/autoload.php';
+
+$dotenv = new Dotenv;
+
+$configs = [
+    '.env' =>    "${root}/configuration/.env",
+    'dev' =>     "${root}/configuration/.env.dev.dist",
+    'staging' => "${root}/configuration/.env.staging.dist",
+    'prod' =>    "${root}/configuration/.env.prod.dist"
+];
+
+$envs = $errs = [];
+foreach ($configs as $type => $file) {
+    try {
+        $envs[$type] = $dotenv->parse(file_get_contents($file), $file);
+    } catch (ExceptionInterface $e) {
+        $errs[] = $e->getMessage();
+    }
+}
+
+if ($errs) {
+    foreach ($errs as $err) echo "${err}\n";
+    exit(1);
+}
+
+foreach (array_keys($configs) as $type) {
+    foreach ($envs[$type] as $name => $value) {
+
+        foreach ($configs as $otype => $file) {
+            if (!array_key_exists($name, $envs[$otype])) {
+                echo "${type}: ${name} is missing from ${file}\n";
+            }
+        }
+
+        foreach ($envs as $t => $e) unset($envs[$t][$name]);
+    }
+}
