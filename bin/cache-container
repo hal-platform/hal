@@ -16,7 +16,7 @@ $options = [
     'file' => $file
 ];
 
-if (!$autoloader = @include __DIR__ . '/../vendor/autoload.php') {
+if (!$autoloader = @include "${root}/vendor/autoload.php") {
     echo "An error occured while attempting to cache the DI Container.\n";
     exit(1);
 }

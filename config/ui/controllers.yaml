@@ -355,7 +355,7 @@ services:
             - '@permissions'
             - '@uri'
             - '@doctrine.random'
-            - '%github.site.baseurl%'
+            - '%github.baseurl.site%'
     application.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/application.add.twig']]]
@@ -367,7 +367,7 @@ services:
             - '@doctrine.em'
             - '@github'
             - '@uri'
-            - '%github.site.baseurl%'
+            - '%github.baseurl.site%'
     application.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/application.edit.twig']]]

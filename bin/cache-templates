@@ -9,7 +9,7 @@ use Symfony\Component\Finder\Finder;
 $root = realpath(__DIR__ . '/../');
 putenv("HAL_ROOT=${root}");
 
-if (!$container = @include $root . '/config/bootstrap.php') {
+if (!$container = @include "${root}/config/bootstrap.php") {
     echo "An error occured while attempting to cache twig templates.\n";
     exit(1);
 };

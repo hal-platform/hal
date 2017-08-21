@@ -5,14 +5,14 @@ namespace Hal\Bootstrap;
 define('MAINTENANCE', false);
 define('HAL_APP_START', microtime(true));
 
-$root = __DIR__ . '/..';
+$root = realpath(__DIR__ . '/..');
 
 if (MAINTENANCE) {
     require $root . '/templates/maintenance.html';
     exit;
 }
 
-if (!$container = @include $root . '/config/bootstrap.php') {
+if (!$container = @include "${root}/config/bootstrap.php") {
     http_response_code(500);
     echo "Boom goes the dynamite.\n";
     exit;

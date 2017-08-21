@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2014 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -13,10 +13,10 @@ use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 $root = realpath(__DIR__ . '/../');
-require_once $root . '/vendor/autoload.php';
+require_once "${root}/vendor/autoload.php";
 
 $dotenv = new Dotenv;
-$dotenv->load(__DIR__ . '/.env');
+$dotenv->load("${root}/.env");
 
 $file = "${root}/src/CachedContainer.php";
 $class = CachedContainer::class;

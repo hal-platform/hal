@@ -7,15 +7,15 @@ use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Dotenv\Exception\ExceptionInterface;
 
 $root = realpath(__DIR__ . '/../');
-require_once $root . '/vendor/autoload.php';
+require_once "${root}/vendor/autoload.php";
 
 $dotenv = new Dotenv;
 
 $configs = [
-    '.env' =>    "${root}/configuration/.env",
-    'dev' =>     "${root}/configuration/.env.dev.dist",
-    'staging' => "${root}/configuration/.env.staging.dist",
-    'prod' =>    "${root}/configuration/.env.prod.dist"
+    '.env' =>    "${root}/config/.env",
+    'dev' =>     "${root}/config/.env.dev.dist",
+    'staging' => "${root}/config/.env.staging.dist",
+    'prod' =>    "${root}/config/.env.prod.dist"
 ];
 
 $envs = $errs = [];

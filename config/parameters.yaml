@@ -4,7 +4,7 @@ parameters:
     ############################################################################
     application.id: '200947'
     application.title: 'Hal'
-    application.environment: "%env(ENVIRONMENT)%"
+    application.environment: '%env(ENVIRONMENT)%'
 
     application.major.version: '%env(HAL_APPLICATION_VERSION_MAJOR)%'
     application.minor.version: '%env(HAL_APPLICATION_VERSION_MINOR)%'
@@ -17,7 +17,9 @@ parameters:
     ############################################################################
     # general
     ############################################################################
-    root: "%env(HAL_ROOT)%"
+    root: '%env(HAL_ROOT)%'
+    base_url: '%env(HAL_BASEURL)%'
+
 
     # Route condition regexes
     r.alphanum: '[A-Za-z0-9]+'
@@ -30,15 +32,14 @@ parameters:
 
     unique.alphabet: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
     unique.size: 4
-    date.timezone: "%env(HAL_TIMEZONE)%"
+    date.timezone: '%env(HAL_TIMEZONE)%'
 
     gravatar.fallback: 'skluck.github.io/hal/halprofile_100.jpg'
 
     ############################################################################
     # panthor
     ############################################################################
-    routes.cache_disabled: "%env(HAL_ROUTES_DISABLE_CACHE_ON)%"
-    error_handling.log_stacktrace: "%env(HAL_LOG_STACKTRACES_ON)%"
+    routes.cache_disabled: '%env(HAL_ROUTES_DISABLE_CACHE_ON)%'
     global_middleware:
         - 'slim.global_middleware.logger'
         - 'slim.global_middleware.template_context'
@@ -49,6 +50,11 @@ parameters:
         - 'slim.global_middleware.srs_business'
 
     ############################################################################
+    # logging
+    ############################################################################
+    error_handling.log_stacktrace: '%env(HAL_LOG_STACKTRACES_ON)%'
+
+    ############################################################################
     # doctrine
     ############################################################################
     doctrine.user.service: 'doctrine.utility.lazy.user'
@@ -56,32 +62,32 @@ parameters:
     ############################################################################
     # twig
     ############################################################################
-    twig.debug: "%env(HAL_DEBUG_TWIG_ON)%"
+    twig.debug: '%env(HAL_DEBUG_TWIG_ON)%'
 
     ############################################################################
     # auth
     ############################################################################
-    ldap.host: "%env(HAL_LDAP_HOST)%"
-    ldap.port: "%env(HAL_LDAP_PORT)%"
-    ldap.domain: "%env(HAL_LDAP_DOMAIN)%"
-    ldap.base_dn: "%env(HAL_LDAP_BASE_DN)%"
+    ldap.host: '%env(HAL_LDAP_HOST)%'
+    ldap.port: '%env(HAL_LDAP_PORT)%'
+    ldap.domain: '%env(HAL_LDAP_DOMAIN)%'
+    ldap.base_dn: '%env(HAL_LDAP_BASE_DN)%'
 
     ############################################################################
     # github
     ############################################################################
-    github.token: "%env(HAL_GITHUB_ENTERPRISE_TOKEN)%"
-    github.site.baseurl: '%env(HAL_GITHUB_ENTERPRISE_URL)%'
-    github.api.baseurl: '%github.site.baseurl%/api/v3'
+    github.token: '%env(HAL_GITHUB_ENTERPRISE_TOKEN)%'
+    github.baseurl.site: '%env(HAL_GITHUB_ENTERPRISE_URL)%'
+    github.baseurl.api: '%github.site.baseurl%/api/v3'
 
     ############################################################################
     # cache
     ############################################################################
-    redis.server: "%env(HAL_REDIS_SERVER)%"
-    redis.prefix: "%env(HAL_REDIS_PREFIX)%"
+    redis.server: '%env(HAL_REDIS_SERVER)%'
+    redis.prefix: '%env(HAL_REDIS_PREFIX)%'
 
-    cache.type.api: "%env(HAL_CACHE_API)%"
-    cache.type.main: "%env(HAL_CACHE_MAIN)%"
-    cache.type.github: "%env(HAL_CACHE_GITHUB)%"
+    cache.type.api: '%env(HAL_CACHE_API)%'
+    cache.type.main: '%env(HAL_CACHE_MAIN)%'
+    cache.type.github: '%env(HAL_CACHE_GITHUB)%'
 
     cache.permissions.ttl: 1800
     cache.server.ttl: 300
@@ -112,14 +118,14 @@ parameters:
     # cookie
     ############################################################################
     session.lifetime: '+1 day'
-    session.encryption.secret: "%env(HAL_COOKIE_SECRET)%"
+    session.encryption.secret: '%env(HAL_COOKIE_SECRET)%'
 
-    cookie.encryption.secret: "%env(HAL_SESSION_SECRET)%"
+    cookie.encryption.secret: '%env(HAL_SESSION_SECRET)%'
     cookie.preferences.ttl: '5 years'
 
     ############################################################################
     # encryption
     ############################################################################
     encrypter.secret.path: '%root%/config/hal.encrypter.secret'
-    encrypter.publickey: "%env(HAL_CRYPTO_PUBLICKEY)%"
-    encrypter.encryptedkey: "%env(HAL_CRYPTO_PRIVATEKEY)%"
+    encrypter.publickey: '%env(HAL_CRYPTO_PUBLICKEY)%'
+    encrypter.encryptedkey: '%env(HAL_CRYPTO_PRIVATEKEY)%'

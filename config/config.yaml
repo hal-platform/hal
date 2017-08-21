@@ -2,6 +2,8 @@ imports:
     - resource: '../vendor/ql/mcp-panthor/configuration/*.yml'
 
     - resource: 'vendor/*.yaml'
+    - resource: 'services/*.yaml'
+
     - resource: 'services.yaml'
     - resource: 'parameters.yaml'
 

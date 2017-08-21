@@ -7,18 +7,18 @@ parameters:
     env(HAL_ORM_DEVMODE_ON): false
     env(HAL_ORM_PROXY_DIR): '.doctrine'
 
-    doctrine.dev_mode: "%env(HAL_ORM_DEVMODE_ON)%"
-    doctrine.proxy_dir: "%env(HAL_ORM_PROXY_DIR)%"
+    doctrine.dev_mode: '%env(HAL_ORM_DEVMODE_ON)%'
+    doctrine.proxy_dir: '%env(HAL_ORM_PROXY_DIR)%'
 
-    doctrine.cache.type: "%env(HAL_ORM_CACHE)%"
+    doctrine.cache.type: '%env(HAL_ORM_CACHE)%'
 
     doctrine.connection:
-        user:       "%env(HAL_DB_USER)%"
-        password:   "%env(HAL_DB_PASSWORD)%"
-        host:       "%env(HAL_DB_HOST)%"
-        port:       "%env(HAL_DB_PORT)%"
-        dbname:     "%env(HAL_DB_NAME)%"
-        driver:     "%env(HAL_DB_DRIVER)%"
+        user:       '%env(HAL_DB_USER)%'
+        password:   '%env(HAL_DB_PASSWORD)%'
+        host:       '%env(HAL_DB_HOST)%'
+        port:       '%env(HAL_DB_PORT)%'
+        dbname:     '%env(HAL_DB_NAME)%'
+        driver:     '%env(HAL_DB_DRIVER)%'
 
     ############################################################################
     # STATIC CONFIGURATION
@@ -30,7 +30,7 @@ parameters:
 
     doctrine.cache.ttl: 600
 
-    doctrine.user.service: ""
+    doctrine.user.service: ''
     doctrine.proxy.connection:
         driver: 'pdo_sqlite'
         memory: true
@@ -144,7 +144,7 @@ services:
     doctrine.cache:
         class: 'Doctrine\Common\Cache\Cache'
         factory: ['@service_container', 'get']
-        arguments: ["doctrine.cache.%doctrine.cache.type%"]
+        arguments: ['doctrine.cache.%doctrine.cache.type%']
 
     doctrine.cache.memory:
         class: 'Doctrine\Common\Cache\ArrayCache'
@@ -175,4 +175,4 @@ services:
     doctrine.user:
         class: 'Closure'
         factory: ['@service_container', 'get']
-        arguments: ["%doctrine.user.service%"]
+        arguments: ['%doctrine.user.service%']

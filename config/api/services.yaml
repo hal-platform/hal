@@ -3,7 +3,7 @@ services:
     api.cache:
         class: 'QL\MCP\Cache\CacheInterface'
         factory: ['@service_container', 'get']
-        arguments: ["cache.%cache.type.api%"]
+        arguments: ['cache.%cache.type.api%']
 
     api.response_formatter:
         class: 'Hal\UI\API\ResponseFormatter'

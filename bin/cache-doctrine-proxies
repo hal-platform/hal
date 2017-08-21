@@ -8,7 +8,7 @@ use Hal\UI\Application\DoctrineProxyGenerator;
 $root = realpath(__DIR__ . '/../');
 putenv("HAL_ROOT=${root}");
 
-if (!$container = @include $root . '/config/bootstrap.php') {
+if (!$container = @include "${root}/config/bootstrap.php") {
     echo "An error occured while attempting to generate doctrine proxies.\n";
     exit(1);
 };
