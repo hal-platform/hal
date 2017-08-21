@@ -14,12 +14,16 @@ target_config=".env"
 echo "Current environment: $HAL_ENVIRONMENT"
 echo "Normalized environment: $normalized_env"
 
-config_exists=$(test -e ${curdir}/../config/${source_config} && echo 1 || echo 0)
-
-if [[ ${config_exists} -eq "1" ]]; then
+if [ -f "${curdir}/../config/${source_config}" ]; then
     echo "Configuration found: ${source_config}"
+
+    if [ -f "${curdir}/../config/${target_config}" ]; then
+        echo; echo "Cannot overwrite existing configuration: \"${target_config}\""
+        exit 1
+    fi
+
     echo "Overwriting $target_config"
-    cat "${curdir}/../config/${source_config}" > "$DIR/../config/${target_config}"
+    cat "${curdir}/../config/${source_config}" > "$curdir/../config/${target_config}"
 else
     echo "Configuration not found: ${source_config}"
 fi
