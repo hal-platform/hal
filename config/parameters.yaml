@@ -39,6 +39,7 @@ parameters:
     ############################################################################
     # panthor
     ############################################################################
+    debug: '%env(HAL_DEBUG_ON)%'
     routes.cache_disabled: '%env(HAL_ROUTES_DISABLE_CACHE_ON)%'
     global_middleware:
         - 'slim.global_middleware.logger'
