@@ -78,7 +78,7 @@ parameters:
     ############################################################################
     github.token: '%env(HAL_GITHUB_ENTERPRISE_TOKEN)%'
     github.baseurl.site: '%env(HAL_GITHUB_ENTERPRISE_URL)%'
-    github.baseurl.api: '%github.site.baseurl%/api/v3'
+    github.baseurl.api: '%github.baseurl.site%/api/v3'
 
     ############################################################################
     # cache
