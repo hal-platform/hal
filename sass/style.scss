@@ -1,36 +1,36 @@
 @charset "UTF-8";
 
 // vendor bullshit
-@import "compass-mixins/lib/compass";
-@import "modularscale-sass/stylesheets/modular-scale";
-@import "breakpoint-sass/stylesheets/breakpoint";
+@import "~compass-mixins/lib/compass";
+@import "~modularscale-sass/stylesheets/modular-scale";
+@import "~breakpoint-sass/stylesheets/breakpoint";
 
 // Settings, variables
 @import "settings-colors";
 @import "settings";
 
 // more vendor bullshit
-@import "scales-utilities-normalize/normalize";
-@import "scales-utilities-reset/reset";
-@import "scales-utilities-clearfix/clearfix";
+@import "~scales-utilities-normalize/normalize";
+@import "~scales-utilities-reset/reset";
+@import "~scales-utilities-clearfix/clearfix";
 
-@import "scales-base-typography/typography";
-@import "scales-base-images/images";
-@import "scales-base-lists/lists";
-@import "scales-base-forms/forms";
-@import "scales-base-tables/tables";
+@import "~scales-base-typography/typography";
+@import "~scales-base-images/images";
+@import "~scales-base-lists/lists";
+@import "~scales-base-forms/forms";
+@import "~scales-base-tables/tables";
 
-@import "scales-patterns-box/box";
-@import "scales-patterns-vertical-list/vertical-list";
-@import "scales-patterns-flag/flag";
-@import "scales-patterns-buttons/buttons";
-@import "scales-patterns-split/split";
+@import "~scales-patterns-box/box";
+@import "~scales-patterns-vertical-list/vertical-list";
+@import "~scales-patterns-flag/flag";
+@import "~scales-patterns-buttons/buttons";
+@import "~scales-patterns-split/split";
 
-@import "scales-overrides-size/size";
-@import "scales-overrides-spacing/spacing";
+@import "~scales-overrides-size/size";
+@import "~scales-overrides-spacing/spacing";
 
-@import "hint.css/src/hint";
-@import "tablesaw/dist/stackonly/tablesaw.stackonly.scss";
+@import "~hint.css/src/hint";
+@import "~tablesaw/dist/stackonly/tablesaw.stackonly.scss";
 
 // Utilities
 @import "utilities/functions";

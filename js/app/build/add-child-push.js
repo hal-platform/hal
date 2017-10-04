@@ -95,7 +95,7 @@ function handleStateChange(state) {
 
     // re-initialize tablesaw
     $table.removeData();
-    $table.table();
+    $table.tablesaw();
 }
 
 function buildStatusContext(data) {

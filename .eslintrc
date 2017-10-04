@@ -5,7 +5,11 @@
     plugins: [
         'react'
     ],
-
+    "settings": {
+        "react": {
+            "version": "0.14"
+        }
+    },
     globals: {
         document: true,
         window: true,
@@ -22,8 +26,9 @@
           "jsx": true
         }
     },
-
     rules: {
-        'no-console': 0
+        'no-console': 0,
+        //changing unused vars to warnings instead of errors
+        "no-unused-vars": [1, { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
     }
 }

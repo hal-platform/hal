@@ -1,4 +1,5 @@
 import 'jquery';
+import Typed from 'typed.js';
 
 module.exports = {
     target: '[data-nofunzone]',
@@ -7,7 +8,6 @@ module.exports = {
     freudAttr: 'freud',
 
     init: function() {
-
         var $target = $(this.target);
         var initial = $target.data(this.initialAttr),
             freud = $target.data(this.freudAttr),
@@ -24,16 +24,18 @@ module.exports = {
 
             typedStrings.push(given);
 
-            $target.typed({
+            var typed = new Typed(this.target, {
                 strings: typedStrings,
                 startDelay: 1000,
                 typeSpeed: 50,
                 backSpeed: 25,
                 backDelay: 1000,
-                callback: function() {
+                onComplete: function() {
                     $target.parent().children('.typed-cursor').remove();
                 }
             });
+
+            typed.start();
         }
     }
 };
