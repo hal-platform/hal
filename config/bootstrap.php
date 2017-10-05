@@ -16,7 +16,7 @@ $root = realpath(__DIR__ . '/../');
 require_once "${root}/vendor/autoload.php";
 
 $dotenv = new Dotenv;
-$dotenv->load("${root}/.env");
+$dotenv->load("${root}/config/.env");
 
 $file = "${root}/src/CachedContainer.php";
 $class = CachedContainer::class;

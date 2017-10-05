@@ -39,6 +39,7 @@ parameters:
     ############################################################################
     # panthor
     ############################################################################
+    debug: '%env(HAL_DEBUG_ON)%'
     routes.cache_disabled: '%env(HAL_ROUTES_DISABLE_CACHE_ON)%'
     global_middleware:
         - 'slim.global_middleware.logger'
@@ -77,7 +78,7 @@ parameters:
     ############################################################################
     github.token: '%env(HAL_GITHUB_ENTERPRISE_TOKEN)%'
     github.baseurl.site: '%env(HAL_GITHUB_ENTERPRISE_URL)%'
-    github.baseurl.api: '%github.site.baseurl%/api/v3'
+    github.baseurl.api: '%github.baseurl.site%/api/v3'
 
     ############################################################################
     # cache
