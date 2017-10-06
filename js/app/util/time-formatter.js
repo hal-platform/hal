@@ -1,5 +1,9 @@
-import 'sugar-date';
+import Sugar from 'sugar-date';
 import Duration from 'durationjs';
+
+Sugar.extend({
+    namespaces: [Date, Number]
+});
 
 module.exports = {
     threshold_6mo: (180).day(),

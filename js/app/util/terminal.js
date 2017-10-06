@@ -1,4 +1,5 @@
 import 'jquery';
+import Typed from 'typed.js';
 
 module.exports = {
     target: '.terminal__entry',
@@ -10,10 +11,12 @@ module.exports = {
         if ($target.length && $text.length) {
             var text = $text.text().trim();
 
-            $target.typed({
+            var typed = new Typed(this.target, {
                 strings: [text],
                 showCursor: false
             });
+
+            typed.start();
         }
     }
 };

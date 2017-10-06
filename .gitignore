@@ -2,6 +2,7 @@
 /.error.log
 /.phpunit/
 /phpunit.xml
+/.eslintcache
 
 # compiled assets
 /public/css/

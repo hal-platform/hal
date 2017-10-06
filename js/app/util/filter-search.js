@@ -67,7 +67,7 @@ function search(term) {
     }
 
     for (var i = 0; i < data.length; i++) {
-        if (matched !== false && -1 !== $.inArray(i + 1, matched)) {
+        if (matched !== false && -1 !== $.inArray((i + 1).toString(), matched)) {
             settings.onShow(data[i].$elem);
         } else {
             settings.onHide(data[i].$elem);
@@ -102,7 +102,7 @@ function refreshItems() {
         });
     }
 
-    data = fuse.set(newData);
+    data = fuse.setCollection(newData);
 }
 
 function getItemContent($elem) {

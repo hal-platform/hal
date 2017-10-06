@@ -32,9 +32,9 @@ OUTOUT
 ┃ INSTALLING YARN AND NODE DEPENDENCIES                                        ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
-    read -r -d '' TITLE_GULP <<OUTOUT
+    read -r -d '' TITLE_WEBPACK <<OUTOUT
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ RUNNING GULP DEPLOY                                                          ┃
+┃ RUNNING WEBPACK DEPLOY                                                          ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 OUTOUT
     read -r -d '' TITLE_CLEANUP <<OUTOUT
@@ -115,7 +115,7 @@ fi
 
 # run frontend install
 if [ "$FRONTEND" = true ] ; then
-    echo "$TITLE_GULP"
+    echo "$TITLE_WEBPACK"
     yarn run deploy
 
     if [ "$DEPLOY" = true ] ; then

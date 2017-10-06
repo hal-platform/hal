@@ -1,5 +1,5 @@
 import 'jquery';
-import ansiUp from 'ansi_up';
+import AnsiUp from 'ansi_up'
 import generateIcon from './util/icon';
 import xssFilters from 'xss-filters'
 
@@ -100,7 +100,7 @@ function renderRow(logID, data) {
                 prop = JSON.stringify(prop, null, 4);
             } else {
                 prop = xssFilters.inHTMLData(prop);
-                prop = ansiUp.ansi_to_html(prop);
+                prop = AnsiUp.ansi_to_html(prop);
             }
 
             $pre.appendTo($wrapper)
