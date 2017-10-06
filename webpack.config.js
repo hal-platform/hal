@@ -1,18 +1,25 @@
-const webpack = require('webpack');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
-const ProvidePlugin = webpack.ProvidePlugin;
-const path = require('path');
+let webpack = require('webpack'),
+    CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin,
+    ProvidePlugin = webpack.ProvidePlugin,
 
-const isProdBuild = process.argv.indexOf("-p") !== -1;
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
 
-const vendor = __dirname + '/node_modules';
-const distTarget = __dirname + '/public/js';
+    path = require('path');
 
-module.exports = {
+let isProdBuild = process.argv.indexOf('-p') !== -1;
+
+let vendorPath = path.resolve(__dirname, 'node_modules');
+
+let sourcePathJS = path.resolve(__dirname, 'js'),
+    targetPathJS = path.resolve(__dirname, 'public/js');
+
+let sourcePathCSS = path.resolve(__dirname, 'sass'),
+    targetPathCSS = path.resolve(__dirname, 'public/css');
+
+let js_config = {
     context: __dirname,
     entry: {
-        app: './js/app.js',
+        app: `${sourcePathJS}/app.js`,
         vendor: [
             'ansi_up',
             'durationjs',
@@ -32,39 +39,26 @@ module.exports = {
             'xss-filters'
         ]
     },
+    output: { path: targetPathJS, filename: '[name].js' },
+
     devtool: isProdBuild ? '' : 'eval-source-map',
-    output: {
-        path: distTarget,
-        filename: '[name].js'
-    },
+
     resolve: {
         alias: {
-            'jquery':                   path.resolve(vendor, 'jquery/dist/jquery.js'),
-            'jquery.tablesaw':          path.resolve(vendor, 'tablesaw/dist/stackonly/tablesaw.stackonly.jquery.js'),
-            'jquery.tablesaw.init':     path.resolve(vendor, 'tablesaw/dist/tablesaw-init.js'),
-            'jquery.typed':             path.resolve(vendor, 'typed.js/lib/typed.js')
+            'jquery':                   `${vendorPath}/jquery/dist/jquery.js`,
+            'jquery.tablesaw':          `${vendorPath}/tablesaw/dist/stackonly/tablesaw.stackonly.jquery.js`,
+            'jquery.tablesaw.init':     `${vendorPath}/tablesaw/dist/tablesaw-init.js`,
+            'jquery.typed':             `${vendorPath}/typed.js/lib/typed.js`
         }
     },
+
     module: {
-        loaders: [
+        rules: [
             {
-                test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: [
-                        "css-loader",
-                        {
-                            loader: "sass-loader",
-                            options: {
-                                includePaths: ["./sass", "./node_modules"]
-                            }
-                        }
-                    ]
-                })
-            }, {
                 test: /\.nunj?$/,
                 loader: 'nunjucks-loader'
-            }, {
+            },
+            {
                 test: /\.(js|jsx)?$/,
                 exclude: /(node_modules)/,
                 use: [
@@ -77,8 +71,10 @@ module.exports = {
                         }
                     }
                 ]
-            }, {
-                test: require.resolve('jquery'), //tablesaw's new version looks for jquery on the window object
+            },
+            {
+                //tablesaw's new version looks for jquery on the window object
+                test: require.resolve('jquery'),
                 use: [{
                     loader: 'expose-loader',
                     options: 'jQuery'
@@ -86,13 +82,44 @@ module.exports = {
             }
         ]
     },
+
     plugins: [
         new CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js'}),
         new ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery"
-        }),
-        new ExtractTextPlugin("../css/style.css"),
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery'
+        })
     ]
 };
+
+let css_config = {
+    context: __dirname,
+    entry: {
+        style: `${sourcePathCSS}/style.scss`
+    },
+    output: { path: targetPathCSS, filename: '[name].js' },
+
+    devtool: isProdBuild ? '' : 'eval-source-map',
+
+    module: {
+        rules: [
+            {
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract([
+                    'css-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: { includePaths: [ vendorPath ] }
+                    }
+                ])
+            }
+        ]
+    },
+
+    plugins: [
+        new ExtractTextPlugin(`[name].css`)
+    ]
+};
+
+module.exports = [js_config, css_config];

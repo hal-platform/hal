@@ -3,7 +3,6 @@ import terminal from './app/util/terminal';
 import nofunzone from './app/util/nofunzone';
 import reltime from './app/util/relative-time';
 import svg4everybody from 'svg4everybody';
-import '../sass/style.scss';
 
 let routingSelector = 'data-js-components';
 

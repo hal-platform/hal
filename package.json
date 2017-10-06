@@ -6,7 +6,7 @@
     "scripts": {
         "lint:sass": "sass-lint sass/** --verbose",
         "lint:js": "eslint --ext .jsx --ext .js js/**",
-        "deploy": "webpack -p",
+        "deploy": "webpack -p --display-modules",
         "build": "webpack",
         "watch": "webpack --watch"
     },
