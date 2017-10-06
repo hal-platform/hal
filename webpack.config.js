@@ -73,7 +73,7 @@ module.exports = {
                         loader: 'eslint-loader',
                         options: {
                             cache: true,
-                            failOnError: true
+                            failOnError: isProdBuild //fail on error only if building for prod
                         }
                     }
                 ]

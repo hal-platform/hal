@@ -4,7 +4,7 @@
     "license": "SEE LICENSE IN LICENSE",
 
     "scripts": {
-        "lint:js": "eslint --cache --ext .jsx --ext .js js/**",
+        "lint:js": "eslint --ext .jsx --ext .js js/**",
         "deploy": "webpack -p",
         "build": "webpack",
         "watch": "webpack --watch"
