@@ -4,6 +4,7 @@
     "license": "SEE LICENSE IN LICENSE",
 
     "scripts": {
+        "lint:sass": "sass-lint sass/** --verbose",
         "lint:js": "eslint --ext .jsx --ext .js js/**",
         "deploy": "webpack -p",
         "build": "webpack",
@@ -32,6 +33,7 @@
         "eslint-plugin-react": "~3.13",
 
         "eslint": "^4.8.0",
+        "sass-lint": "^1.12.0",
 
         "ansi_up": "~2.0.2",
         "durationjs": "~1.1.1",
