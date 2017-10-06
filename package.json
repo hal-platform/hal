@@ -4,7 +4,7 @@
     "license": "SEE LICENSE IN LICENSE",
 
     "scripts": {
-        "lint:sass": "sass-lint sass/** --verbose",
+        "lint:sass": "sass-lint --verbose",
         "lint:js": "eslint --ext .jsx --ext .js js/**",
         "deploy": "webpack -p --display-modules",
         "build": "webpack",

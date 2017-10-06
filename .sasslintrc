@@ -1,0 +1,8 @@
+files:
+    include: 'sass/**/*.scss'
+
+rules:
+    indentation:
+      - 1
+      -
+        size: 4

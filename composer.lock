@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "97ab63eaf7b81b111c62e77452281bc9",
+    "content-hash": "f25f0e0051f492a65c598d756a69cd99",
     "packages": [
         {
             "name": "acclimate/container",
@@ -2026,6 +2026,12 @@
                 "url": "https://git/hal/hal-core.git",
                 "reference": "cf5f0ea943482afe58aff5c4fcc455c5b1320f73"
             },
+            "dist": {
+                "type": "zip",
+                "url": "http://composer/dist/ql-hal-core-2.10.0-d755ee.zip",
+                "reference": "cf5f0ea943482afe58aff5c4fcc455c5b1320f73",
+                "shasum": "6acf8c0deeb87ecd7e2fecca8b5021b490135f81"
+            },
             "archive": {
                 "exclude": [
                     ".gitignore",
@@ -3347,6 +3353,106 @@
     ],
     "packages-dev": [
         {
+            "name": "overtrue/phplint",
+            "version": "0.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/overtrue/phplint.git",
+                "reference": "a91ee994f098afe256e2926140e916d25838f4fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/overtrue/phplint/zipball/a91ee994f098afe256e2926140e916d25838f4fb",
+                "reference": "a91ee994f098afe256e2926140e916d25838f4fb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/console": "^2.7|^3.0",
+                "symfony/finder": "^2.7|^3.0",
+                "symfony/process": "^2.7|^3.0",
+                "symfony/yaml": "^2.7|^3.0"
+            },
+            "bin": [
+                "bin/phplint"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Overtrue\\PHPLint\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "overtrue",
+                    "email": "anzhengchao@gmail.com"
+                }
+            ],
+            "description": "a php syntax check tool.",
+            "keywords": [
+                "check",
+                "lint",
+                "phplint",
+                "syntax"
+            ],
+            "time": "2017-07-07T09:17:59+00:00"
+        },
+        {
+            "name": "squizlabs/php_codesniffer",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "3c2d0a0fe39684ba0c1eb842a6a775d0b938d699"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/3c2d0a0fe39684ba0c1eb842a6a775d0b938d699",
+                "reference": "3c2d0a0fe39684ba0c1eb842a6a775d0b938d699",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0"
+            },
+            "bin": [
+                "bin/phpcs",
+                "bin/phpcbf"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2017-09-19T22:47:14+00:00"
+        },
+        {
             "name": "symfony/process",
             "version": "v3.3.6",
             "source": {
@@ -3473,7 +3579,6 @@
         "php-64bit": "~7.1",
         "ext-curl": "*",
         "ext-ldap": "*",
-        "ext-libsodium": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
