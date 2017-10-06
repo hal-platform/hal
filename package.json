@@ -4,9 +4,10 @@
     "license": "SEE LICENSE IN LICENSE",
 
     "scripts": {
-        "deploy": "node_modules/.bin/webpack -p",
-        "build": "node_modules/.bin/webpack",
-        "watch": "node_modules/.bin/webpack --watch"
+        "lint:js": "eslint --cache --ext .jsx --ext .js js/**",
+        "deploy": "webpack -p",
+        "build": "webpack",
+        "watch": "webpack --watch"
     },
 
     "dependencies": {
