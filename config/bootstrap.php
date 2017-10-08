@@ -7,7 +7,7 @@
 
 namespace Hal\Bootstrap;
 
-use Hal\UI\Application\DI2;
+use Hal\UI\VendorAdapters\DI;
 use Hal\UI\CachedContainer;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -25,7 +25,7 @@ $options = [
     'file' => $file
 ];
 
-return DI2::getDI($root, $options);
+return DI::getDI($root, $options);
 
 # .07s - .11s - Using cached container
 # .17s - .22s - Using containerbuilder (not cached)

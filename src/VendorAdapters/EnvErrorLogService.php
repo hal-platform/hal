@@ -10,6 +10,9 @@ namespace Hal\UI\VendorAdapters;
 use QL\MCP\Logger\Service\ErrorLogService;
 use QL\MCP\Logger\Service\SerializerInterface;
 
+/**
+ * TODO: Move back to MCP Logger
+ */
 class EnvErrorLogService extends ErrorLogService
 {
     /**

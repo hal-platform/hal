@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Application;
+namespace Hal\UI\VendorAdapters;
 
 use RuntimeException;
 use Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\ProxyDumper;
@@ -14,7 +14,10 @@ use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class DI2
+/**
+ * TODO: Move back to Panthor
+ */
+class DI
 {
     const PRIMARY_CONFIGURATION_FILE = 'config/config.yaml';
     const ENV_CACHE_DISABLED = 'HAL_DI_DISABLE_CACHE_ON';

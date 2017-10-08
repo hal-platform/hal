@@ -3,7 +3,6 @@
 
 namespace Hal\Bin;
 
-use QL\Panthor\Bootstrap\DI2;
 use Symfony\Component\Finder\Finder;
 
 $root = realpath(__DIR__ . '/../');

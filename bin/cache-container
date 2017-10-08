@@ -3,7 +3,7 @@
 
 namespace Hal\Bin;
 
-use Hal\UI\Application\DI2;
+use Hal\UI\VendorAdapters\DI;
 use Hal\UI\CachedContainer;
 
 $root = realpath(__DIR__ . '/../');
@@ -21,8 +21,8 @@ if (!$autoloader = @include "${root}/vendor/autoload.php") {
     exit(1);
 }
 
-$container = DI2::buildDI($root, false);
-if (!$cached = DI2::cacheDI($container, $options)) {
+$container = DI::buildDI($root, false);
+if (!$cached = DI::cacheDI($container, $options)) {
     echo "An error occured while attempting to cache the DI Container.\n";
     exit(1);
 }
