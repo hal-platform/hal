@@ -1,6 +1,4 @@
 imports:
-    - resource: '../vendor/ql/mcp-panthor/configuration/*.yml'
-
     - resource: 'vendor/*.yaml'
     - resource: 'services/*.yaml'
 
@@ -15,25 +13,6 @@ imports:
 ################################################################################
 # general configuration
 ################################################################################
-services:
-
-    # ▼▼▼▼ FIXES FOR PANTHOR OVERRIDES (removing @root)
-    panthor.router:
-        class: 'QL\Panthor\Bootstrap\CacheableRouter'
-        calls:
-            - ['setCaching', ['%root%/config/routes.cached.php', '%routes.cache_disabled%']]
-
-    panthor.twig.configurator:
-        class: 'QL\Panthor\Twig\EnvironmentConfigurator'
-        arguments: ['%twig.debug%', '%root%/%twig.cache.dir%']
-
-    panthor.twig.loader:
-        class: 'Twig\Loader\FilesystemLoader'
-        arguments:
-          - ['%twig.template.dir%']
-          - '%root%'
-
-    # ▲▲▲▲ FIXES FOR PANTHOR OVERRIDES
 
 parameters:
     # ▼▼▼▼ TODO TODO - remove these

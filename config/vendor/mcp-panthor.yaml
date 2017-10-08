@@ -1,0 +1,30 @@
+imports:
+    - resource: '../../vendor/ql/mcp-panthor/configuration/*.yml'
+
+services:
+
+    panthor.cookie.encryption:
+        class: 'Hal\UI\VendorAdapters\LibsodiumCookieEncryption'
+        arguments: ['@panthor.libsodium.encryption']
+
+    panthor.libsodium.encryption:
+        class: 'Hal\UI\VendorAdapters\LibsodiumSymmetricCrypto'
+        arguments: ['%cookie.encryption.secret%']
+
+    # ▼▼▼▼ FIXES FOR PANTHOR OVERRIDES (removing @root)
+    panthor.router:
+        class: 'QL\Panthor\Bootstrap\CacheableRouter'
+        calls:
+            - ['setCaching', ['%root%/config/routes.cached.php', '%routes.cache_disabled%']]
+
+    panthor.twig.configurator:
+        class: 'QL\Panthor\Twig\EnvironmentConfigurator'
+        arguments: ['%twig.debug%', '%root%/%twig.cache.dir%']
+
+    panthor.twig.loader:
+        class: 'Twig\Loader\FilesystemLoader'
+        arguments:
+          - ['%twig.template.dir%']
+          - '%root%'
+
+    # ▲▲▲▲ FIXES FOR PANTHOR OVERRIDES
