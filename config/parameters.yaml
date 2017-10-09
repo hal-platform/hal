@@ -19,7 +19,7 @@ parameters:
     ############################################################################
     root: '%env(HAL_ROOT)%'
     base_url: '%env(HAL_BASEURL)%'
-
+    administrator_email: '%env(HAL_ADMIN_EMAIL)%'
 
     # Route condition regexes
     r.alphanum: '[A-Za-z0-9]+'

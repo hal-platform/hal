@@ -4,6 +4,7 @@ parameters:
         application_environment: '%application.environment%'
         application_sha: '%application.sha%'
         application_version: '%application.version%'
+        hal_administrators_email: '%administrator_email%'
 
 services:
 

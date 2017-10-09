@@ -3,8 +3,7 @@
 
 {% set page_title = 'Help : Application Setup' %}
 
-{% set kmContact = '<a href="mailto:KeymastersAppEngineers@quickenloans.com">KeymastersAppEngineers@quickenloans.com</a>' %}
-{% set wcContact = '<a href="mailto:ITTeamWebCore@quickenloans.com">ITTeamWebCore@quickenloans.com</a>' %}
+{% set halContact = '<a href="mailto:' ~ hal_administrators_email ~ '">' ~ hal_administrators_email ~ '</a>' %}
 
 {% block content %}
 
@@ -55,6 +54,12 @@
 
 {% endblock %}
 
+{% block do_it_for_me %}
+    <p>
+        Contact the Hal administrators at {{ halContact|raw }} to request that the deployment information be added to Hal.
+    </p>
+{% endblock %}
+
 {% block setup_rsync %}
 
     <ol class="list--bullet">
@@ -100,10 +105,9 @@
         <b>Server names</b>,
         <b>deployment path</b>,
         and <b>deployment URLs</b>.
-
-        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
     </small>
 
+    {{ block('do_it_for_me') }}
 {% endblock %}
 
 {% block setup_script %}
@@ -203,10 +207,9 @@
         <b>S3 bucket</b>,
         <b>Environment Name or ID</b>,
         and <b>AWS Access Token</b>.
-
-        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
     </small>
 
+    {{ block('do_it_for_me') }}
 {% endblock %}
 
 {% block setup_codedeploy %}
@@ -298,10 +301,9 @@
         <b>Deployment Group</b>,
         <b>Deployment Configuration</b>,
         and <b>AWS Access Token</b>.
-
-        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
     </small>
 
+    {{ block('do_it_for_me') }}
 {% endblock %}
 
 {% block setup_s3 %}
@@ -371,10 +373,9 @@
         Once this process is finished you should have the following information:
         <b>S3 bucket</b>,
         and <b>AWS Access Token</b>.
-
-        Contact the Key Masters at {{ kmContact|raw }} or Web Core at {{ wcContact|raw }} to request that the deployment information be added to Hal.
     </small>
 
+    {{ block('do_it_for_me') }}
 {% endblock %}
 
 {% block setup_codedeploy_appspec %}
