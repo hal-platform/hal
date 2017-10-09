@@ -47,19 +47,6 @@ services:
         arguments: ['@notFoundHandler']
 
     ####################################################################################################################
-    # TARGET VIEWS/POOLS
-    ####################################################################################################################
-
-    middleware.manage_views:
-        class: 'Hal\UI\Middleware\TargetView\ManageViewMiddleware'
-        parent: 'middleware.permissions'
-
-    middleware.add_views:
-        class: 'Hal\UI\Middleware\TargetView\AddViewMiddleware'
-        parent: 'middleware.permissions'
-
-
-    ####################################################################################################################
     # REMOVALS
     ####################################################################################################################
 
@@ -82,16 +69,6 @@ services:
     middleware.removal_confirmation.encrypted:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
         arguments: ['@middleware.removal_confirmation.twig', 'encrypted']
-
-    middleware.removal_confirmation.view:
-        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig', 'view']
-    middleware.removal_confirmation.pool:
-        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig', 'pool']
-    middleware.removal_confirmation.target_pool_target:
-        class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'
-        arguments: ['@middleware.removal_confirmation.twig', 'target_pool_target']
 
     middleware.removal_confirmation.server:
         class: 'Hal\UI\Middleware\RemovalConfirmationMiddleware'

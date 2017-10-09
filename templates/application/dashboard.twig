@@ -15,7 +15,7 @@
 
     {% if selected_environment %}
 
-        {{ block('pickers') }}
+        {{ block('env_picker') }}
 
         {{ block('deployment_cards') }}
 
@@ -33,33 +33,6 @@
 
         {{ block('page_buttons') }}
 
-    {% endif %}
-
-{% endblock %}
-
-{% block pickers %}
-
-    {% set needs_views = deployment_statuses|length > 5 %}
-
-    {% if not views and not needs_views %}
-        {# if no views and does not need views, only show env picker #}
-        {{ block('env_picker') }}
-    {% else %}
-        {% if environments|length > 1 %}
-
-            <div class="flex-box-wrapper mbl">
-                <div class="flex-box mbl">
-                    {{ block('env_picker') }}
-                </div>
-                <div class="flex-box mbl">
-                    {{ block('view_picker') }}
-                </div>
-            </div>
-        {% else %}
-            <div class="form-wrapper">
-                {{ block('view_picker') }}
-            </div>
-        {% endif %}
     {% endif %}
 
 {% endblock %}
@@ -82,116 +55,21 @@
     {% endif %}
 {% endblock %}
 
-{% block view_picker %}
-    {% if deployment_statuses %}
-        <h5>Change View</h5>
-        {% if views %}
-            <form method="post" action="{{ uriFor('application.sticky_pool', {'application': application.id, 'environment': selected_environment.id}) }}">
-                <select class="select-input js-pool-picker" name="view">
-                    <option value="">Default</option>
-                    {% for id, view in views %}
-                        {% set isSelected = id == selected_view %}
-                        <option value="{{ id }}"{{ isSelected ? ' selected' : '' }}>{{ view.name }}</option>
-                    {% endfor %}
-                </select>
-
-                <div class= "js-pool-views">
-                    <p class="mtm">
-                        <input class="btn btn--action btn--tiny" type="submit" value="Switch View">
-                    </p>
-
-                    <ul>
-                        {% for id, view in views %}
-                        <li>
-                            <ul data-view="{{ id }}">
-                                {% for pool in view.pools %}
-                                    <li data-pool="{{ pool.name }}">{{ pool.deployments|json_encode }}</li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </form>
-
-        {% else %}
-            No views found. There are many targets for this environment, but no views.
-            {% if canUserBuild %}
-                <a href="{{ uriFor('target_views', {'application': application.id, 'environment': selected_environment.id}) }}">Create target views</a>
-                {% if isBusinessTime %}
-                    to categorize deployments into groups.
-                {% else %}
-                    to lessen the cognitive load on your tiny human brain.
-                {% endif %}
-            {% endif %}
-        {% endif %}
-    {% endif %}
-
-{% endblock %}
-
 {% block deployment_cards %}
 
-    <h2 class="{{ (deployment_statuses) ? 'js-overloader-parent' : '' }}">
+    <h2>
         Server Status - <b>{{ selected_environment.name }}</b>
     </h2>
 
     {% if deployment_statuses %}
 
-        <section class="js-pool">
-            {% if selected_view and views[selected_view] %}
-
-                {% set all_pooled = [] %}
-
-                {# empty pools have already been removed by the backend #}
-                {% for pool in views[selected_view].pools %}
-                    {% set pooled = [] %}
-                    {% for status in deployment_statuses if status.deploy.id in pool.deployments %}
-                        {% set pooled = pooled|merge([status]) %}
-                        {% set all_pooled = all_pooled|merge([status.deploy.id]) %}
-                    {% endfor %}
-
-                    {% if pooled %}
-                        <div>
-                            <h3>{{ pool.name }}</h3>
-                            <ul class="list--bare cards">
-                                {% for status in pooled %}
-                                    <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-
-                {% endfor %}
-
-                {# show unpooled grouping if some statuses didnt land in a pool #}
-                {% set unpooled = [] %}
+        <div>
+            <ul class="list--bare cards">
                 {% for status in deployment_statuses %}
-                    {% if status.deploy.id not in all_pooled %}
-                        {% set unpooled = unpooled|merge([status]) %}
-                    {% endif %}
+                    <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
                 {% endfor %}
-
-                {% if unpooled %}
-                    <div>
-                        <h3>Unpooled</h3>
-                        <ul class="list--bare cards">
-                            {% for status in unpooled %}
-                                <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-
-            {% else %}
-                <div>
-                    <ul class="list--bare cards">
-                        {% for status in deployment_statuses %}
-                            <li data-deploy="{{ status.deploy.id }}">{{ page_macros.pushCard(application, status.deploy, status.latest) }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        </section>
+            </ul>
+        </div>
 
     {% else %}
         <p>This application has no deployment targets for <b>{{ selected_environment.name }}</b> and cannot be pushed.</p>
@@ -208,10 +86,6 @@
         <li><a class="btn" href="{{ uriFor('push.history.page1', {'application': application.id}) }}">All Pushes</a></li>
 
         <li><a class="btn btn--secondary" href="{{ uriFor('application', {'application': application.id}) }}">Application</a></li>
-
-        {% if selected_environment and (views or deployment_statuses|length > 5) %}
-            <li><a class="btn btn--secondary" href="{{ uriFor('target_views', {'application': application.id, 'environment': selected_environment.id}) }}">Target Views</a></li>
-        {% endif %}
     </ul>
 {% endblock %}
 
@@ -259,7 +133,7 @@
                 </li>
 
                 {# build details #}
-                <li class="js-data-overload">
+                <li>
                     <span class="split__title">Build:</span>
                     {% if active %}
                         <a href="{{ uriFor('build', {'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
@@ -267,7 +141,7 @@
                         Unknown
                     {% endif %}
                 </li>
-                <li class="js-data-overload">
+                <li>
                     <span class="split__title">Reference:</span>
                     {% if active %}
                         {% set isCurrent = githubCommitIsCurrent(application.githubOwner, application.githubRepo, active.build.branch, active.build.commit) %}
@@ -277,7 +151,7 @@
                         Unknown
                     {% endif %}
                 </li>
-                <li class="js-data-overload">
+                <li>
                     <span class="split__title">Commit:</span>
                     {% if active %}
                         {{ macros.gitcommit(active.build) }}
@@ -294,7 +168,7 @@
                     {% set deploymentDetails = deploymentDetails ?: 'N/A' %}
                 {% endif %}
 
-                <li class="js-data-overload">
+                <li>
                     <span class="split__title">{{ deployment|formatDeploymentDetailsLabel }}:</span>
                     <code title="{{ deploymentDetails }}">{{ deploymentDetails }}</code>
                 </li>

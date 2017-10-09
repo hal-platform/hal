@@ -15,7 +15,6 @@ use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Service\PermissionService;
-use Hal\UI\Service\PoolService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
@@ -28,11 +27,6 @@ class ApplicationStatusController implements ControllerInterface
 {
     use APITrait;
     use SessionTrait;
-
-    /**
-     * @var PoolService
-     */
-    private $poolService;
 
     /**
      * @var PermissionService
@@ -56,19 +50,16 @@ class ApplicationStatusController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param PoolService $poolService
      * @param PermissionService $permissionService
      * @param ResponseFormatter $formatter
      * @param Normalizer $normalizer
      */
     public function __construct(
         EntityManagerInterface $em,
-        PoolService $poolService,
         PermissionService $permissionService,
         ResponseFormatter $formatter,
         Normalizer $normalizer
     ) {
-        $this->poolService = $poolService;
         $this->permissionService = $permissionService;
         $this->formatter = $formatter;
         $this->normalizer = $normalizer;
@@ -106,7 +97,6 @@ class ApplicationStatusController implements ControllerInterface
         $canPush = $this->permissionService->canUserPush($user, $application, $environment);
 
         $data = [
-            'view' => $this->getSelectedView($request, $application, $environment),
             'permission' => $canPush
         ];
 
@@ -118,27 +108,5 @@ class ApplicationStatusController implements ControllerInterface
 
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
         return $this->withHypermediaEndpoint($request, $response, $body, 200);
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @param Application $application
-     * @param Environment $environment
-     *
-     * @return array|null
-     */
-    private function getSelectedView(ServerRequestInterface $request, Application $application, Environment $environment)
-    {
-        // Get selected view user has saved
-        $views = $this->poolService->getViews($application, $environment);
-        $selectedViewID = $this->poolService->findSelectedView($request, $application, $environment, $views);
-
-        foreach ($views as $id => $view) {
-            if ($selectedViewID === $id) {
-                return $view;
-            }
-        }
-
-        return null;
     }
 }

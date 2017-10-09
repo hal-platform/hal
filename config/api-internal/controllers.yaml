@@ -4,7 +4,6 @@ services:
         class: 'Hal\UI\Controllers\APIInternal\ApplicationStatusController'
         arguments:
             - '@doctrine.em'
-            - '@pools'
             - '@permissions'
             - '@api.response_formatter'
             - '@api.normalizer'

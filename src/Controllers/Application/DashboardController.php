@@ -9,7 +9,6 @@ namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\TemplatedControllerTrait;
-use Hal\UI\Service\PoolService;
 use Hal\UI\Service\StickyEnvironmentService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -62,21 +61,14 @@ class DashboardController implements ControllerInterface
     private $stickyEnvironmentService;
 
     /**
-     * @var PoolService
-     */
-    private $poolService;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityMangerInterface $em
      * @param StickyEnvironmentService $stickyEnvironmentService
-     * @param PoolService $poolService
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        StickyEnvironmentService $stickyEnvironmentService,
-        PoolService $poolService
+        StickyEnvironmentService $stickyEnvironmentService
     ) {
         $this->template = $template;
 
@@ -87,7 +79,6 @@ class DashboardController implements ControllerInterface
         $this->pushRepo = $em->getRepository(Push::class);
 
         $this->stickyEnvironmentService = $stickyEnvironmentService;
-        $this->poolService = $poolService;
     }
 
     /**
@@ -104,8 +95,7 @@ class DashboardController implements ControllerInterface
             $this->stickyEnvironmentService->get($request, $application->id())
         );
 
-        $deployments = $builds = $views = [];
-        $selectedView = null;
+        $deployments = $builds =  [];
 
         if ($selectedEnvironment) {
             $deployments = $this->getDeploymentsForEnvironment($application, $selectedEnvironment);
@@ -114,10 +104,6 @@ class DashboardController implements ControllerInterface
                 ['created' => 'DESC'],
                 10
             );
-
-            // views, selected view
-            $views = $this->poolService->getViews($application, $selectedEnvironment);
-            $selectedView = $this->poolService->findSelectedView($request, $application, $selectedEnvironment, $views);
         }
 
         return $this->withTemplate($request, $response, $this->template, [
@@ -126,9 +112,6 @@ class DashboardController implements ControllerInterface
             'environments' => $environments,
             'deployment_statuses' => $deployments,
             'selected_environment' => $selectedEnvironment,
-
-            'views' => $views,
-            'selected_view' => $selectedView,
         ]);
     }
 

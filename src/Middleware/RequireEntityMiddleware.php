@@ -14,8 +14,6 @@ use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\DeploymentPool;
-use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\EventLog;
@@ -58,9 +56,6 @@ class RequireEntityMiddleware implements MiddlewareInterface
         'environment' => Environment::class,
         'server' => Server::class,
         'credential' => Credential::class,
-
-        'pool' => DeploymentPool::class,
-        'view' => DeploymentView::class
     ];
 
     /**

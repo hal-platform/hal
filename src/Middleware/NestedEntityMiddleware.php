@@ -11,7 +11,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\DeploymentView;
 use QL\Hal\Core\Entity\EncryptedProperty;
 use QL\Hal\Core\Entity\Token;
 use QL\Hal\Core\Entity\User;
@@ -91,24 +90,6 @@ class NestedEntityMiddleware implements MiddlewareInterface
             $user = $request->getAttribute(User::class);
 
             if ($user !== $userPermission->user()) {
-                return ($this->notFound)($request, $response);
-            }
-        }
-
-        // $view->application() - $application
-        if ($view = $request->getAttribute(DeploymentView::class)) {
-            $application = $request->getAttribute(Application::class);
-
-            if ($application !== $view->application()) {
-                return ($this->notFound)($request, $response);
-            }
-        }
-
-        // $pool->view() - $view
-        if ($pool = $request->getAttribute(DeploymentPool::class)) {
-            $view = $request->getAttribute(DeploymentView::class);
-
-            if ($view !== $pool->view()) {
                 return ($this->notFound)($request, $response);
             }
         }

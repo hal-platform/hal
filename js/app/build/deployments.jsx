@@ -78,53 +78,11 @@ var Deployment = React.createClass({
     }
 });
 
-var Pool = React.createClass({
-    propTypes: {
-        name: PropTypes.string.isRequired,
-        deployments: PropTypes.array.isRequired,
-        canPush: PropTypes.bool.isRequired
-    },
-    render: function() {
-        return (
-            <tbody className="table-breathe">
-                { this.renderHeader() }
-                { this.renderTargets() }
-            </tbody>
-        );
-    },
-    renderHeader: function() {
-        if (this.props.name !== 'err-no-view') {
-            return (
-                <tr>
-                    <th colSpan="6" className="table-mid-header">{ this.props.name }</th>
-                </tr>
-            );
-        }
-    },
-    renderTargets: function() {
-        var targets = [];
-
-        for (var status of this.props.deployments) {
-            targets.push(
-                <Deployment
-                    key={ status.deployment_target.id }
-                    deployment={ status.deployment_target }
-                    build={ status.build }
-                    push={ status.push }
-                    canPush={ this.props.canPush }
-                />
-            );
-        }
-
-        return targets;
-    }
-});
-
 var Table = React.createClass({
     getInitialState: function() {
         return {
             data: {
-                pools: [],
+                targets: [],
                 canPush: false,
                 deploymentCount: 0
             }
@@ -147,11 +105,13 @@ var Table = React.createClass({
                     </tr>
                 </thead>
 
-                { this.renderPools() }
+                <tbody className="table-breathe">
+                    { this.renderTargets() }
+                </tbody>
             </table>
         );
     },
-    renderPools: function() {
+    renderTargets: function() {
         if (this.state.data.deploymentCount === -1) {
             return this.renderBroken();
 
@@ -159,39 +119,35 @@ var Table = React.createClass({
             return this.renderEmpty();
         }
 
-        var pools = [];
-        this.state.data.pools.forEach((pool, index) => {
-            if (pool.deployments.length > 0) {
-                pools.push(
-                    <Pool
-                        key={ 'pool' + index }
-                        name={ pool.name }
-                        deployments={ pool.deployments }
-                        canPush={ this.state.data.canPush }
-                    />
-                );
-            }
-
+        var targets = [];
+        this.state.data.targets.forEach((target, index) => {
+            console.log(target);
+            console.log(this.props);
+            targets.push(
+                <Deployment
+                    key={ target.deployment_target.id }
+                    deployment={ target.deployment_target }
+                    build={ target.build }
+                    push={ target.push }
+                    canPush={ this.state.data.canPush }
+                />
+            );
         });
 
-        return pools;
+        return targets;
     },
     renderEmpty: function() {
         return (
-            <tbody className="table-breathe">
-                <tr>
-                    <td colSpan="6">Select an environment to show available deployments.</td>
-                </tr>
-            </tbody>
+            <tr>
+                <td colSpan="6">Select an environment to show available deployments.</td>
+            </tr>
         );
     },
     renderBroken: function() {
         return (
-            <tbody className="table-breathe">
-                <tr>
-                    <td colSpan="6">An error occured. Cannot load deployments.</td>
-                </tr>
-            </tbody>
+            <tr>
+                <td colSpan="6">An error occured. Cannot load deployments.</td>
+            </tr>
         );
     }
 });

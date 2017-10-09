@@ -67,19 +67,6 @@
 .js-add-deployment__form {
     display: none;
 }
-
-// Server card - extra data toggle
-.js-overloader-parent p {
-    margin: 0;
-    font-size: ms(-3);
-}
-
-// Application Status - Deployment Pools
-.js-pool-views {
-    display: none;
-}
-
-
 .js-event-logs {
     @include breakpoint($bp-medium) {
         th:nth-child(1) { width: 15%; }

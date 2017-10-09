@@ -167,28 +167,12 @@ services:
             - '@json'
             - '%cookie.preferences.ttl%'
 
-    sticky.pool:
-        class: 'Hal\UI\Service\StickyPoolService'
-        arguments:
-            - '@cookie.handler'
-            - '@json'
-            - '%cookie.preferences.ttl%'
-
     stats:
         class: 'Hal\UI\Service\StatsService'
         arguments:
             - '@doctrine.em'
             - '@clock'
             - '%date.timezone%'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.stats.ttl%']]
-
-    pools:
-        class: 'Hal\UI\Service\PoolService'
-        arguments:
-            - '@doctrine.em'
-            - '@sticky.pool'
         calls:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.stats.ttl%']]

@@ -63,7 +63,7 @@ function handleChange(event) {
 function handleSuccess(data) {
     // Parse and cache response
     deploymentsCacheByEnv[this.envID] = {
-        pools: buildStatusContext(data),
+        targets: buildStatusContext(data),
         canPush: data.permission,
         deploymentCount: data._embedded.statuses.length
     };
@@ -76,7 +76,7 @@ function handleError() {
     delete deploymentsCacheByEnv[this.envID];
 
     var err = {
-        pools: [],
+        targets: [],
         canPush: false,
         deploymentCount: -1
     };
@@ -100,70 +100,22 @@ function handleStateChange(state) {
 
 function buildStatusContext(data) {
 
-    var pools = formatPools(data.view),
-        deploymentID = null;
-
-    var matchDeployment = (element) => {
-        if (deploymentID === null) {
-            return false;
-        }
-
-        return element.deploymentIDs.indexOf(deploymentID) >= 0;
-    };
+    var targets = [];
 
     for (var status of data._embedded.statuses) {
-        deploymentID = status._embedded.target.id;
 
         var deployment_target = {
-                id: deploymentID,
+                id: status._embedded.target.id,
                 pretty: status._embedded.target.pretty_name,
                 additional: status._embedded.target.detail
             },
             build = formatBuild(status._embedded.build),
             push = formatPush(status._embedded.push);
 
-        var pool = pools.find(matchDeployment);
-
-        // If no valid pool is found, append to the last pool (default)
-        // This is either "unpooled" or "no pool" if there is no saved view
-        if (pool === undefined) {
-            pool = pools[pools.length - 1];
-        }
-
-        pool.deployments.push({ deployment_target, build, push });
+        targets.push({ deployment_target, build, push });
     }
 
-    return pools;
-}
-
-function formatPools(view) {
-    var pools = [];
-
-    if (view == null) {
-        pools.push({
-            name: 'err-no-view',
-            deployments: [],
-            deploymentIDs: []
-        });
-
-    } else {
-        for (var pool of view.pools) {
-            pools.push({
-                name: pool.name,
-                deployments: [],
-                deploymentIDs: pool.deployments
-            });
-        }
-
-        // Append unpooled to end
-        pools.push({
-            name: 'Unpooled',
-            deployments: [],
-            deploymentIDs: []
-        });
-    }
-
-    return pools;
+    return targets;
 }
 
 function formatBuild(build) {

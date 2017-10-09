@@ -13,7 +13,6 @@ use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Service\PoolService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Build;
@@ -49,11 +48,6 @@ class StartPushController implements ControllerInterface
     private $pushRepo;
 
     /**
-     * @var PoolService
-     */
-    private $poolService;
-
-    /**
      * @var URI
      */
     private $uri;
@@ -61,12 +55,11 @@ class StartPushController implements ControllerInterface
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param PoolService $poolService
+     * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        PoolService $poolService,
         URI $uri
     ) {
         $this->template = $template;
@@ -75,7 +68,6 @@ class StartPushController implements ControllerInterface
         $this->pushRepo = $em->getRepository(Push::class);
         $this->deploymentRepo = $em->getRepository(Deployment::class);
 
-        $this->poolService = $poolService;
         $this->uri = $uri;
     }
 
@@ -94,10 +86,6 @@ class StartPushController implements ControllerInterface
             return $this->withRedirectRoute($response, $this->uri, 'build', ['build' => $build->id()]);
         }
 
-        // Get selected view user has saved
-        $views = $this->poolService->getViews($build->application(), $build->environment());
-        $selectedView = $this->poolService->findSelectedView($request, $build->application(), $build->environment(), $views);
-
         $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($build->application(), $build->environment());
         $statuses = [];
         foreach ($deployments as $deployment) {
@@ -109,10 +97,7 @@ class StartPushController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'build' => $build,
             'selected' => $request->getQueryParams()['target'] ?? '',
-            'statuses' => $statuses,
-
-            'views' => $views,
-            'selected_view' => $selectedView
+            'statuses' => $statuses
         ]);
     }
 }

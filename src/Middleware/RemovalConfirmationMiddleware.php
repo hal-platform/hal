@@ -81,17 +81,6 @@ class RemovalConfirmationMiddleware implements MiddlewareInterface
             }
         }
 
-        // Unique situations
-        if (!$context['remove']) {
-            if ($this->removeEntityType === 'target_pool_target') {
-                $context['remove'] = [
-                    'param' => $this->removeEntityType,
-                    'class' => null,
-                    'entity' => null
-                ];
-            }
-        }
-
         return $context;
     }
 }

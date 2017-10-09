@@ -16,10 +16,6 @@ module.exports = {
         require('./app/form/add-deployments').init();
     },
 
-    "pool.add": function() {
-        require('./app/form/add-pool').init();
-    },
-
     // jobs - start
     "build.start": () => {
         SearchBuild();
@@ -49,8 +45,6 @@ module.exports = {
 
     // jobs - status
     "status": function() {
-        require('./app/app-status-overload').init();
-        require('./app/app-status-pool').init();
         require('./app/status/update-builds').init();
 
         var pushUpdater = require('./app/status/update-pushes');

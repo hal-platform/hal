@@ -120,15 +120,11 @@
                 </tr>
             </thead>
 
-            {% if selected_view and views[selected_view] %}
-                {{ page_macros.pooled_statuses(views, selected_view, statuses, selected, canUserPush) }}
-            {% else %}
-                <tbody class="table-breathe">
-                    {% for status in statuses %}
-                        {{ page_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
-                    {% endfor %}
-                </tbody>
-            {% endif %}
+            <tbody class="table-breathe">
+                {% for status in statuses %}
+                    {{ page_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
+                {% endfor %}
+            </tbody>
         </table>
 
         <ul class="button-list button-list--half">
@@ -140,58 +136,6 @@
 
     </form>
 {% endblock %}
-
-{% macro pooled_statuses(views, selected_view, statuses, selected, canUserPush) %}
-    {% import _self as macros %}
-
-    {% set all_pooled = [] %}
-    {% set unpooled = [] %}
-
-    {# empty pools have already been removed by the backend #}
-    {% for pool in views[selected_view].pools %}
-
-        {% set pooled = [] %}
-        {% for status in statuses if status.deployment.id in pool.deployments %}
-            {% set pooled = pooled|merge([status]) %}
-            {% set all_pooled = all_pooled|merge([status.deployment.id]) %}
-        {% endfor %}
-
-        {% if pooled %}
-
-            <tbody class="table-breathe">
-                <tr>
-                    <th colspan="6" class="table-mid-header">{{ pool.name }}</th>
-                </tr>
-
-                {% for status in pooled %}
-                    {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
-                {% endfor %}
-            </tbody>
-
-        {% endif %}
-
-    {% endfor %}
-
-    {# show unpooled grouping if some statuses didnt land in a pool #}
-    {% for status in statuses %}
-        {% if status.deployment.id not in all_pooled %}
-            {% set unpooled = unpooled|merge([status]) %}
-        {% endif %}
-    {% endfor %}
-
-    {% if unpooled %}
-        <tbody class="table-breathe">
-            <tr>
-                <th colspan="6" class="table-mid-header">Unpooled</th>
-            </tr>
-
-            {% for status in unpooled %}
-                {{ macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
-            {% endfor %}
-        </tbody>
-
-    {% endif %}
-{% endmacro %}
 
 {% macro render_deployment_row(deployment, push, selected, canUserPush) %}
     {% import 'macros.twig' as macros %}

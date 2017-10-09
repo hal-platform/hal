@@ -327,7 +327,6 @@ services:
             - '@application.dashboard.twig'
             - '@doctrine.em'
             - '@sticky.environment'
-            - '@pools'
     application.dashboard.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/dashboard.twig']]]
@@ -336,14 +335,6 @@ services:
         arguments:
             - '@doctrine.em'
             - '@sticky.environment'
-            - '@uri'
-
-    application.sticky_pool.handler:
-        class: 'Hal\UI\Controllers\Application\StickyPoolController'
-        arguments:
-            - '@doctrine.em'
-            - '@sticky.pool'
-            - '@json'
             - '@uri'
 
     application.add.page:
@@ -488,100 +479,6 @@ services:
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################
-    # APPLICATION - TARGET POOL/VIEW CONTROLLERS
-    ####################################################################################################################
-
-    target_views.page:
-        class: 'Hal\UI\Controllers\TargetView\ViewsController'
-        arguments:
-            - '@target_views.twig'
-            - '@sticky.pool'
-            - '@doctrine.em'
-    target_views.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['target-view/views.twig']]]
-
-    target_view.add.page:
-        class: 'Hal\UI\Controllers\TargetView\AddViewController'
-        arguments:
-            - '@target_view.add.twig'
-            - '@doctrine.em'
-            - '@pools'
-            - '@uri'
-            - '@doctrine.random'
-    target_view.add.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['target-view/view.add.twig']]]
-
-    target_view.page:
-        class: 'Hal\UI\Controllers\TargetView\ViewController'
-        arguments: ['@target_view.twig', '@doctrine.em']
-    target_view.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['target-view/view.twig']]]
-
-    target_view.edit.page:
-        class: 'Hal\UI\Controllers\TargetView\EditViewController'
-        arguments:
-            - '@target_view.edit.twig'
-            - '@doctrine.em'
-            - '@pools'
-            - '@uri'
-    target_view.edit.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['target-view/view.edit.twig']]]
-
-    target_view.remove.handler:
-        class: 'Hal\UI\Controllers\TargetView\RemoveViewController'
-        arguments:
-            - '@doctrine.em'
-            - '@pools'
-            - '@uri'
-
-    target_pool.add.page:
-        class: 'Hal\UI\Controllers\TargetView\AddPoolController'
-        arguments:
-            - '@target_pool.add.twig'
-            - '@doctrine.em'
-            - '@pools'
-            - '@uri'
-            - '@doctrine.random'
-    target_pool.add.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['target-view/pool.add.twig']]]
-
-    target_pool.edit.page:
-        class: 'Hal\UI\Controllers\TargetView\EditPoolController'
-        arguments:
-            - '@target_pool.edit.twig'
-            - '@doctrine.em'
-            - '@pools'
-            - '@uri'
-    target_pool.edit.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['target-view/pool.edit.twig']]]
-
-    target_pool.remove.handler:
-        class: 'Hal\UI\Controllers\TargetView\RemovePoolController'
-        arguments:
-            - '@doctrine.em'
-            - '@pools'
-            - '@uri'
-
-    target_pool.target.add.handler:
-        class: 'Hal\UI\Controllers\TargetView\AddTargetController'
-        arguments:
-            - '@doctrine.em'
-            - '@json'
-            - '@uri'
-
-    target_pool.target.remove.handler:
-        class: 'Hal\UI\Controllers\TargetView\RemoveTargetController'
-        arguments:
-            - '@doctrine.em'
-            - '@uri'
-
-    ####################################################################################################################
     # BUILD CONTROLLERS
     ####################################################################################################################
 
@@ -650,7 +547,6 @@ services:
         arguments:
             - '@push.start.twig'
             - '@doctrine.em'
-            - '@pools'
             - '@uri'
     push.start.twig:
         parent: 'twig.template'

@@ -10,12 +10,6 @@
     {% set entity_type = 'Deployment Target' %}
 {% elseif remove.param == 'encrypted' %}
     {% set entity_type = 'Encrypted Property' %}
-{% elseif remove.param == 'view' %}
-    {% set entity_type = 'Target View' %}
-{% elseif remove.param == 'pool' %}
-    {% set entity_type = 'Target Pool' %}
-{% elseif remove.param == 'target_pool_target' %}
-    {% set entity_type = 'Target from Pool' %}
 {% elseif remove.param == 'server' %}
     {% set entity_type = 'Server' %}
 {% elseif remove.param == 'environment' %}
@@ -44,13 +38,6 @@
         {{ block('target_box') }}
     {% elseif remove.param == 'encrypted' %}
         {{ block('encrypted_box') }}
-
-    {% elseif remove.param == 'view' %}
-        {{ block('target_view_box') }}
-    {% elseif remove.param == 'pool' %}
-        {{ block('target_pool_box') }}
-    {% elseif remove.param == 'target_pool_target' %}
-        {{ block('target_pool_target_box') }}
 
     {% elseif remove.param == 'server' %}
         {{ block('server_box') }}
@@ -86,13 +73,6 @@
     {% elseif remove.param == 'encrypted' %}
         <a class="btn btn--secondary" href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
 
-    {% elseif remove.param == 'view' %}
-        <a class="btn btn--secondary" href="{{ uriFor('target_view', {'view': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
-    {% elseif remove.param == 'pool' %}
-        <a class="btn btn--secondary" href="{{ uriFor('target_view', {'view': entities.view.id, 'application': entities.application.id}) }}">Cancel</a>
-    {% elseif remove.param == 'target_pool_target' %}
-        <a class="btn btn--secondary" href="{{ uriFor('target_view', {'view': entities.view.id, 'application': entities.application.id}) }}">Cancel</a>
-
     {% elseif remove.param == 'server' %}
         <a class="btn btn--secondary" href="{{ uriFor('server', {'server': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'environment' %}
@@ -105,51 +85,6 @@
     {% else %}
         <a class="btn btn--secondary" href="javascript:history.go(-1)">Cancel</a>
     {% endif %}
-{% endblock %}
-
-{% block target_pool_box %}
-    <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Application</dt>
-            <dd>{{ entities.application.name }}</dd>
-
-            <dt class="split__title">Target View</dt>
-            <dd>{{ entities.view.name }}</dd>
-
-            <dt class="split__title">Target Pool</dt>
-            <dd>{{ remove.entity.name }}</dd>
-        </dl>
-    </div>
-{% endblock %}
-
-{% block target_view_box %}
-    <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Application</dt>
-            <dd>{{ entities.application.name }}</dd>
-
-            <dt class="split__title">Target View</dt>
-            <dd>{{ remove.entity.name }}</dd>
-        </dl>
-    </div>
-{% endblock %}
-
-{% block target_pool_target_box %}
-    <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Application</dt>
-            <dd>{{ entities.application.name }}</dd>
-
-            <dt class="split__title">Target View</dt>
-            <dd>{{ entities.view.name }}</dd>
-
-            <dt class="split__title">Target Pool</dt>
-            <dd>{{ entities.pool.name }}</dd>
-
-            <dt class="split__title">Deployment Target</dt>
-            <dd>{{ entities.target.server.formatHumanType() }} ({{ entities.target.name ?: 'No name' }})</dd>
-        </dl>
-    </div>
 {% endblock %}
 
 {% block server_box %}
