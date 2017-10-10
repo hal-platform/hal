@@ -9,7 +9,7 @@ var init = function() {
     if ($container.length !== 0) {
         attach();
     }
-}
+};
 
 function attach() {
     $container

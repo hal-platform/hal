@@ -3,6 +3,7 @@ import EventLogLoader from './app/event-log';
 
 import SearchApplications from './app/apps-filter';
 import DynamicTargetsForm from './app/form/dynamic-targets';
+import SelectAllCheckboxes from './app/form/select-all-checkbox';
 
 module.exports = {
 
@@ -19,11 +20,11 @@ module.exports = {
     // jobs - start
     "build.start": () => {
         SearchBuild();
-        require('./app/start-push').init();
+        SelectAllCheckboxes();
     },
 
     "push.start": function() {
-        require('./app/start-push').init();
+        SelectAllCheckboxes();
     },
 
     // jobs - info
