@@ -1,4 +1,3 @@
-import StartBuildChildren from './app/build/add-child-push';
 import SearchBuild from './app/build/search';
 import EventLogLoader from './app/event-log';
 
@@ -19,7 +18,7 @@ module.exports = {
     // jobs - start
     "build.start": () => {
         SearchBuild();
-        StartBuildChildren();
+        require('./app/start-push').init();
     },
 
     "push.start": function() {

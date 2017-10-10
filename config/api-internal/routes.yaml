@@ -8,12 +8,6 @@ parameters:
 
             routes:
 
-                # Used by: Child deploy on build page
-                api_internal.deployment_status:
-                    method: 'GET'
-                    route: '/applications/{application:%r.digit%}/environments/{environment:%r.digit%}/status'
-                    stack: ['middleware.api_require_entity', 'api_internal.deployment_status']
-
                 # Note: this endpoint is also available for direct form posts
                 api_internal.favorite_applications:
                     route: '/settings/favorite-applications/{application:%r.digit%}'

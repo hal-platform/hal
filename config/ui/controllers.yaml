@@ -508,6 +508,7 @@ services:
             - '@build.start.twig'
             - '@doctrine.em'
             - '@github'
+            - '@permissions'
             - '@sticky.environment'
     build.start.twig:
         parent: 'twig.template'

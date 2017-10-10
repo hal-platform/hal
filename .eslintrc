@@ -1,34 +1,19 @@
 {
-    parser: 'babel-eslint',
-    extends: 'eslint:recommended',
+    "parser": "babel-eslint",
+    "extends": "eslint:recommended",
 
-    plugins: [
-        'react'
-    ],
-    "settings": {
-        "react": {
-            "version": "0.14"
-        }
+    "globals": {
+        "document": true,
+        "window": true,
+        "module": true,
+        "console": true,
+        "$": true,
+        "clearInterval": true,
+        "moment": true,
+        "require": true
     },
-    globals: {
-        document: true,
-        window: true,
-        module: true,
-        console: true,
-        '$': true,
-        clearInterval: true,
-        moment: true,
-        require: true,
-        React: true
-    },
-    parserOptions: {
-        ecmaFeatures: {
-          "jsx": true
-        }
-    },
-    rules: {
-        'no-console': 0,
-        //changing unused vars to warnings instead of errors
-        "no-unused-vars": [1, { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
+
+    "rules": {
+        "no-console": 0
     }
 }

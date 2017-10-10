@@ -1,7 +1,8 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
 {% import 'macros.form.twig' as form_macros %}
-{% import _self as page_macros %}
+{% import 'macros.start-deploy.twig' as deploy_macros %}
+
 {% set js_components = ["push.start"] %}
 
 {% set page_title = "Start Push : " ~ build.id %}
@@ -109,10 +110,8 @@
             <thead>
                 <tr>
                     <th>Deployment</th>
-                    <th>Reference</th>
-                    <th class="table-priority-55">Commit</th>
+                    <th>Code Reference</th>
                     <th>Last Pushed</th>
-                    <th class="table-priority-55">Pushed By</th>
                     <th>
                         <p class="js-toggle-container mvn tr"></p>
                         <span class="tablesaw-collapse">Deploy?</span>
@@ -122,7 +121,7 @@
 
             <tbody class="table-breathe">
                 {% for status in statuses %}
-                    {{ page_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush) }}
+                    {{ deploy_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush, true) }}
                 {% endfor %}
             </tbody>
         </table>
@@ -136,76 +135,4 @@
 
     </form>
 {% endblock %}
-
-{% macro render_deployment_row(deployment, push, selected, canUserPush) %}
-    {% import 'macros.twig' as macros %}
-
-    {% set isSelected = (deployment.id == selected) %}
-    {% set inProgress = push.status in ['Waiting', 'Pushing'] %}
-    {% set needsCredentials = deployment.server.isAWS() and not deployment.credential %}
-
-    <tr>
-        <td>
-            <span class="hint--right" aria-label="{{ deployment.server.formatHumanType }}: {{ deployment.formatMeta }}">
-                <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty(false) }}</a>
-            </span>
-        </td>
-        {% if push %}
-            {% set build = push.build %}
-
-            <td>
-                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                {{ macros.gitref(build, true, isCurrent) }}
-            </td>
-            <td class="table-priority-55">
-                {{ macros.gitcommit(build) }}
-            </td>
-            <td>
-                {% if inProgress %}
-                    Now
-                {% else %}
-                    {{ push.created|html5date }}
-                {% endif %}
-                (Push <a href="{{ uriFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a>)
-            </td>
-            <td class="table-priority-55">
-                {% if push.user %}
-                    <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
-                {% else %}
-                    Unknown
-                {% endif %}
-            </td>
-        {% else %}
-
-            {# No successful pushes #}
-            <td></td>
-            <td class="table-priority-55"></td>
-            <td></td>
-            <td class="table-priority-55"></td>
-
-        {% endif %}
-
-        <td class="tr">
-            {% if inProgress %}
-                {{ macros.status('Please Wait', 'info', 'clock') }}
-
-            {% elseif needsCredentials %}
-                {{ macros.status('No Credentials', 'error', 'spam-2') }}
-
-            {% elseif canUserPush %}
-                <label class="neatbox mrn" for="sel-{{ deployment.id }}">
-                    <input
-                        type="checkbox"
-                        class="js-pushable-deployment"
-                        name="deployments[]"
-                        id="sel-{{ deployment.id }}"
-                        value="{{ deployment.id }}"{{ isSelected ? ' checked' : '' }}>
-                    <b class="neatbox__check"></b>Push Now
-                </label>
-            {% else %}
-                No Access
-            {% endif %}
-        </td>
-    </tr>
-{% endmacro %}
 

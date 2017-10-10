@@ -26,9 +26,6 @@ let js_config = {
             'favico.js',
             'fuse.js',
 
-            'react',
-            'react-dom',
-
             'jquery',
             'jquery.tablesaw',
             'jquery.tablesaw.init',

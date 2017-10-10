@@ -1,6 +1,8 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
+{% import 'macros.start-deploy.twig' as deploy_macros %}
 {% import _self as page_macros %}
+
 {% set js_components = ["build.start"] %}
 
 {% set page_title = "Start Build : " ~ application.name %}
@@ -25,23 +27,22 @@
 
     <form method="post" name="start-build">
 
+        <input type="hidden" name="environment" value="{{ form.environment }}">
+
         {% block select_environment %}
             <h2 class="leader">Select Environment</h2>
 
-            {% if environments %}
-                <ul class="radio-grid radio-grid--tri">
-                    {% for env in environments %}
-                        {% set isSelected = form.environment == env.id or environments|length == 1 %}
-                        <li>
-                            <input class="js-environment-selector" id="env-{{ env.id }}" type="radio" name="environment" value="{{ env.id }}"{{ isSelected ? ' checked' : ''}}>
-                            <label for="env-{{ env.id }}">{{ env.name }}</label>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                {% set alert_message = 'There are no buildable environments for this application. Deployments must added.' %}
-                {{ macros.alert('error', alert_message) }}
-            {% endif %}
+            <ul class="radio-grid radio-grid--tri">
+                {% for env in environments %}
+                    <li>
+                        {% if form.environment == env.id or environments|length == 1 %}
+                            <label class="radio-grid--fake-selected-item">{{ env.name }}</label>
+                        {% else %}
+                            <a class="radio-grid--fake-item" href="{{ uriFor('build.start', {'application': application.id, 'environment': env.id}) }}">{{ env.name }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
         {% endblock %}
 
         {% block select_build %}
@@ -106,18 +107,40 @@
             {% endif %}
         {% endblock %}
 
-        {% block select_next %}
-            {% if environments %}
-                <h2 class="leader mbn">Select Deployment <small>(optional)</small></h2>
-                <p class="trailer"><span>Deployments will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
-
-                <div id="js-child-deployment" data-app-id="{{ application.id }}"></div>
-
-                <input class="btn btn--action" type="submit" value="Start Build" name="submit">
-            {% endif %}
-        {% endblock %}
+        {{ block('start_deploy') }}
 
     </form>
+
+{% endblock %}
+
+{% block start_deploy %}
+
+    {% if environments %}
+        <h2 class="leader mbn">Select Deployment <small>(optional)</small></h2>
+        <p class="trailer"><span>Deployments will only be triggered if the build succeeds. Alternatively, you can manually deploy builds once finished.</span></p>
+
+        <table class="table--spacing-large table--striped" data-tablesaw-mode="stack">
+            <thead>
+                <tr>
+                    <th>Deployment</th>
+                    <th>Code Reference</th>
+                    <th>Last Pushed</th>
+                    <th>
+                        <p class="js-toggle-container mvn tr"></p>
+                        <span class="tablesaw-collapse">Deploy?</span>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="table-breathe">
+                {% for target in available_targets %}
+                    {{ deploy_macros.render_deployment_row(target, target.push, '', can_deploy) }}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <input class="btn btn--action" type="submit" value="Start Build" name="submit">
+    {% endif %}
 
 {% endblock %}
 

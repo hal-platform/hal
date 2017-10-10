@@ -361,7 +361,7 @@ parameters:
 
         build.start:
             method: ['GET', 'POST']
-            route: '/applications/{application:%r.digit%}/build'
+            route: '/applications/{application:%r.digit%}/build[/environment/{environment:%r.digit%}]'
             stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
 
         ################################################################################################################

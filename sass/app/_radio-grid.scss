@@ -56,7 +56,8 @@
         display: none;
     }
 
-    label {
+    label,
+    .radio-grid--fake-item {
         border: 1px solid $light-grey;
         transition: background-color 1s ease;
         padding: msem(-4);
@@ -66,7 +67,17 @@
         text-overflow: ellipsis;
     }
 
-    input[type="radio"]:checked + label {
+    .radio-grid--fake-item {
+        display: block;
+    }
+
+    label:hover,
+    .radio-grid--fake-item:hover {
+        background-color: $lightest-grey;
+    }
+
+    input[type="radio"]:checked + label,
+    .radio-grid--fake-selected-item {
         background-color: $highlight-color;
     }
 }

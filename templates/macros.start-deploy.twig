@@ -1,0 +1,65 @@
+{% macro render_deployment_row(deployment, push, selected, canUserPush, pushNow) %}
+    {% import 'macros.twig' as macros %}
+
+    {% set isSelected = (deployment.id == selected) %}
+    {% set inProgress = push.status in ['Waiting', 'Pushing'] %}
+    {% set needsCredentials = deployment.server.isAWS() and not deployment.credential %}
+
+    <tr>
+        <td>
+            <span class="hint--right" aria-label="{{ deployment.server.formatHumanType }}: {{ deployment.formatMeta }}">
+                {{ deployment.formatPretty(false) }}
+            </span>
+        </td>
+        {% if push %}
+            {% set build = push.build %}
+
+            <td>
+                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
+                {{ macros.gitref(build, true, isCurrent) }} ({{ macros.gitcommit(build) }})
+            </td>
+            <td>
+                {% if inProgress %}
+                    Now
+                {% else %}
+                    {{ push.created|html5date }}
+                {% endif %}
+                ({{ macros.job_status_prefix(push, true, false) }})
+                by
+                {% if push.user %}
+                    <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
+                {% else %}
+                    Unknown
+                {% endif %}
+            </td>
+        {% else %}
+
+            {# No successful pushes #}
+            <td></td>
+            <td></td>
+
+        {% endif %}
+
+        <td class="tr">
+            {% if inProgress %}
+                {{ macros.status('Please Wait', 'info', 'clock') }}
+
+            {% elseif needsCredentials %}
+                {{ macros.status('No Credentials', 'error', 'spam-2') }}
+
+            {% elseif canUserPush %}
+                <label class="neatbox mrn" for="sel-{{ deployment.id }}">
+                    <input
+                        type="checkbox"
+                        class="js-pushable-deployment"
+                        name="deployments[]"
+                        id="sel-{{ deployment.id }}"
+                        value="{{ deployment.id }}"{{ isSelected ? ' checked' : '' }}>
+                    <b class="neatbox__check"></b>{{ pushNow ? 'Push Now' : 'Push When Ready' }}
+                </label>
+            {% else %}
+                No Access
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}

@@ -11,13 +11,16 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\GitHubService;
+use Hal\UI\Service\PermissionService;
 use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Utility\ReleaseSortingTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Deployment;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\User;
+use QL\Hal\Core\Repository\DeploymentRepository;
 use QL\Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -39,9 +42,19 @@ class StartBuildController implements ControllerInterface
     private $envRepo;
 
     /**
+     * @var DeploymentRepository
+     */
+    private $targetRepo;
+
+    /**
      * @var GitHubService
      */
     private $github;
+
+    /**
+     * @var PermissionService
+     */
+    private $permissionService;
 
     /**
      * @var StickyEnvironmentService
@@ -52,18 +65,23 @@ class StartBuildController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param GitHubService $github
+     * @param PermissionService $permissionService
      * @param StickyEnvironmentService $stickyService
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         GitHubService $github,
+        PermissionService $permissionService,
         StickyEnvironmentService $stickyService
     ) {
         $this->template = $template;
-        $this->envRepo = $em->getRepository(Environment::class);
         $this->github = $github;
+        $this->permissionService = $permissionService;
         $this->stickyService = $stickyService;
+
+        $this->envRepo = $em->getRepository(Environment::class);
+        $this->targetRepo = $em->getRepository(Deployment::class);
     }
 
     /**
@@ -81,8 +99,12 @@ class StartBuildController implements ControllerInterface
         usort($openPR, $prSorter);
         usort($closedPR, $prSorter);
 
+        $form = $this->getFormData($request, $application);
+
+        $targets = $this->getTargetStatusesForEnvironment($application, $user, $form['environment']);
+
         return $this->withTemplate($request, $response, $this->template, [
-            'form' => $this->getFormData($request, $application),
+            'form' => $form,
 
             'application' => $application,
             'branches' => $this->getBranches($application),
@@ -90,8 +112,8 @@ class StartBuildController implements ControllerInterface
             'open' => $openPR,
             'closed' => $closedPR,
 
-            'environments' => $this->getBuildableEnvironments($application)
-        ]);
+            'environments' => $this->getBuildableEnvironments($application),
+        ] + $targets);
     }
 
     /**
@@ -103,8 +125,9 @@ class StartBuildController implements ControllerInterface
     private function getFormData(ServerRequestInterface $request, Application $application)
     {
         // Automatically select an environment from sticky pref if this is fresh form
-        $env = $request->getParsedBody()['environment'] ?? null;
-        if ($env === null) {
+        if ($environment = $request->getAttribute(Environment::class)) {
+            $env = $environment->id();
+        } else {
             $env = $this->stickyService->get($request, $application);
         }
 
@@ -226,5 +249,37 @@ class StartBuildController implements ControllerInterface
             // No one is owner
             return ($prA > $prB) ? -1 : 1;
         };
+    }
+
+    /**
+     * @param Application $application
+     * @param User $user
+     * @param Environment|string $env
+     *
+     * @return array
+     */
+    public function getTargetStatusesForEnvironment(Application $application, User $user, $env)
+    {
+        if ($env instanceof Environment) {
+            $environment = $env;
+        } elseif ($env) {
+            $environment = $this->envRepo->find($env);
+        }
+
+        if (!$environment) {
+            return [
+                'can_deploy' => false,
+                'available_targets' => []
+            ];
+        }
+
+        $available = $this->targetRepo->getDeploymentsByApplicationEnvironment($application, $environment);
+
+        $canPush = $this->permissionService->canUserPush($user, $application, $environment);
+
+        return [
+            'can_deploy' => $canPush,
+            'available_targets' => $available
+        ];
     }
 }
