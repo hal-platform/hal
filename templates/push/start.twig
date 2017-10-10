@@ -106,16 +106,13 @@
 
 {% block push_form_table %}
     <form method="post">
-        <table class="table--spacing-large table--striped" data-tablesaw-mode="stack">
+        <table class="table--spacing-large table--striped">
             <thead>
                 <tr>
                     <th>Deployment</th>
                     <th>Code Reference</th>
                     <th>Last Pushed</th>
-                    <th>
-                        <p class="js-toggle-container mvn tr"></p>
-                        <span class="tablesaw-collapse">Deploy?</span>
-                    </th>
+                    <th class="js-toggle-container mvn tr"></th>
                 </tr>
             </thead>
 

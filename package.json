@@ -39,7 +39,6 @@
         "nunjucks": "~3.0.1",
         "sugar-date": "~2.0.4",
         "svg4everybody": "~2.1",
-        "tablesaw": "~3.0.3",
         "typed.js": "2.0.6",
         "xss-filters": "1.2.7",
 

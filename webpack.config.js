@@ -27,8 +27,6 @@ let js_config = {
             'fuse.js',
 
             'jquery',
-            'jquery.tablesaw',
-            'jquery.tablesaw.init',
             'jquery.typed',
 
             'sugar-date',
@@ -42,10 +40,8 @@ let js_config = {
 
     resolve: {
         alias: {
-            'jquery':                   `${vendorPath}/jquery/dist/jquery.js`,
-            'jquery.tablesaw':          `${vendorPath}/tablesaw/dist/stackonly/tablesaw.stackonly.jquery.js`,
-            'jquery.tablesaw.init':     `${vendorPath}/tablesaw/dist/tablesaw-init.js`,
-            'jquery.typed':             `${vendorPath}/typed.js/lib/typed.js`
+            'jquery':       `${vendorPath}/jquery/dist/jquery.js`,
+            'jquery.typed': `${vendorPath}/typed.js/lib/typed.js`
         }
     },
 
@@ -68,14 +64,6 @@ let js_config = {
                         }
                     }
                 ]
-            },
-            {
-                //tablesaw's new version looks for jquery on the window object
-                test: require.resolve('jquery'),
-                use: [{
-                    loader: 'expose-loader',
-                    options: 'jQuery'
-                }]
             }
         ]
     },

@@ -48,7 +48,7 @@
     <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
 
     {% if tokens %}
-        <table class="table--spacing-medium" data-tablesaw-mode="stack">
+        <table class="table--spacing-medium">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -63,7 +63,7 @@
                         <td><code>{{ token.value }}</code></td>
                         <td class="tr">
                             <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
-                                Revoke <span class="tablesaw-collapse">Access Token</span>
+                                Revoke
                             </a>
                         </td>
                     </tr>

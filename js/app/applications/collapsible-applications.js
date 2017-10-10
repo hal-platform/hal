@@ -19,7 +19,7 @@ var init = function() {
 };
 
 function attachGlobal($container, $sections) {
-    let $toggler = $(`<a href="#" class="tablesaw-stack-hidden" data-hidden="0">${MSG_HIDE}</a>`);
+    let $toggler = $(`<a href="#" data-hidden="0">${MSG_HIDE}</a>`);
 
     $toggler.on('click', (e) => {
         e.preventDefault();
@@ -46,7 +46,7 @@ function attachGlobal($container, $sections) {
 
 function attachSections($sections, target) {
 
-    var template = `<a href="#" class="tablesaw-stack-hidden" style="float: right" data-hidden="0">Hide</a>`;
+    var template = `<a href="#" style="float: right" data-hidden="0">Hide</a>`;
 
     $sections.each((i, element) => {
         var $toggler = $(template),

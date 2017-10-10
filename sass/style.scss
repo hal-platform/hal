@@ -30,7 +30,6 @@
 @import 'scales-overrides-spacing/spacing';
 
 @import 'hint.css/src/hint';
-@import 'tablesaw/dist/stackonly/tablesaw.stackonly.scss';
 
 // Utilities
 @import 'utilities/functions';
@@ -80,4 +79,3 @@
 
 // must go last!
 @import 'app/js';
-@import 'app/js.tablesaw';
