@@ -1,5 +1,5 @@
 import 'jquery';
-import filterSearch from './util/filter-search';
+import filterSearch from '../util/filter-search';
 
 let searchTable = '.js-search-table',
     searchBox = '#js-search-input',

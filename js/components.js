@@ -1,9 +1,15 @@
 import SearchBuild from './app/build/search';
 import EventLogLoader from './app/event-log';
 
-import SearchApplications from './app/apps-filter';
 import DynamicTargetsForm from './app/form/dynamic-targets';
 import SelectAllCheckboxes from './app/form/select-all-checkbox';
+
+
+import ManageAppPermissions from './app/form/manage-application-permissions';
+
+import ManageFavoriteApps from './app/applications/manage-favorite-applications';
+import SearchApplications from './app/applications/searchable-applications';
+import CollapsibleApplications from './app/applications/collapsible-applications';
 
 module.exports = {
 
@@ -58,19 +64,14 @@ module.exports = {
         require('./app/status/update-pushes').init();
     },
 
-    "favorites": function() {
-        require('./app/form/add-favorites').init();
-    },
-    "collapsible": function() {
-        require('./app/collapsible-table').init();
-    },
-
-    "apps.filter": function() {
+    "applications.list": function() {
+        ManageFavoriteApps();
+        CollapsibleApplications();
         SearchApplications();
     },
 
     "app.permissions.multi": function() {
-        require('./app/form/app-permissions-multi').init();
+        ManageAppPermissions();
     }
 
 };
