@@ -3,8 +3,6 @@ import EventLogLoader from './app/event-log';
 
 import DynamicTargetsForm from './app/form/dynamic-targets';
 import SelectAllCheckboxes from './app/form/select-all-checkbox';
-
-
 import ManageAppPermissions from './app/form/manage-application-permissions';
 
 import ManageFavoriteApps from './app/applications/manage-favorite-applications';
