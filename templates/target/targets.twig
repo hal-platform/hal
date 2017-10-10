@@ -1,8 +1,6 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 
-{% set js_components = ["deployment.add"] %}
-
 {% set page_title = 'Targets : ' ~ application.name %}
 
 {% block content %}
@@ -10,7 +8,8 @@
         <h1>Deployment Targets - <b>{{ application.name }}</b></h1>
 
         <p class="nav--page__back">
-            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Back to Application</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a>
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Application Dashboard</a>
         </p>
     </div>
 
@@ -25,97 +24,90 @@
         {% for name, targets in targets_by_env %}
 
             {% set environment = environments[name] %}
+            {% if targets %}
 
-            <h2 class="mbn">{{ name }}</h2>
-            <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
-                <thead>
-                    <tr>
-                        <th class="t15">Name</th>
-                        <th class="t40">Details</th>
-                        <th>URL</th>
-                        <th class="t10"></th>
-                    </tr>
-                </thead>
-                <tbody class="js-add-deployment--{{ environment.name }}">
-                    {% for target in targets %}
-
+                <h2 class="mbn">{{ name }}</h2>
+                <table class="table--spacing-medium table--striped" data-tablesaw-mode="stack">
+                    <thead>
                         <tr>
-                            <td>
-                                {% if deployment.server.isAWS() and not target.credential %}
-                                    <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
-                                {% endif %}
-                                {{ target.formatPretty }}
-                            </td>
-                            <td>
-                                {% if target.server.type == 'eb' %}
-
-                                    Application: <code class="code_clear">{{ target.ebName }}</code>
-                                    <br>Environment: <code class="code_clear">{{ target.ebEnvironment }}</code>
-
-                                {% elseif target.server.type == 'cd' %}
-
-                                    Application: <code class="code_clear">{{ target.cdName }}</code>
-                                    <br>Group: <code class="code_clear">{{ target.cdGroup }}</code>
-                                    <br>Config: <code class="code_clear">{{ target.cdConfiguration }}</code>
-
-                                {% elseif target.server.type == 's3' %}
-
-                                    Bucket: <code class="code_clear">{{ target.s3bucket }}</code>
-                                    <br>File: <code class="code_clear">{{ target.s3file }}</code>
-
-                                {% elseif target.server.type == 'script' %}
-
-                                    Context: <code class="code_clear">{{ target.scriptContext ?: 'N/A' }}</code>
-
-                                {% elseif target.server.type == 'rsync' %}
-
-                                    Path: <code class="code_clear">{{ target.path }}</code>
-
-                                {% else %}
-                                    <code class="code_clear">{{ target.formatMeta }}</code>
-                                {% endif %}
-
-                            </td>
-                            <td>
-                                {% if target.url %}
-                                    <a href="{{ target.url }}">{{ target.url }}</a>
-                                {% endif %}
-                            </td>
-                            <td class="tr">
-                                <a class="btn btn--tiny" href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">View</a>
-                            </td>
+                            <th class="t15">Name</th>
+                            <th class="t40">Details</th>
+                            <th>URL</th>
+                            <th class="t10"></th>
                         </tr>
-                    {% else %}
-                        <tr class="js-add-deployment__empty">
-                            <td colspan="4">No targets found.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for target in targets %}
 
+                            <tr>
+                                <td>
+                                    {% if deployment.server.isAWS() and not target.credential %}
+                                        <span class="hint--right" aria-label="No credentials are assigned.">{{ macros.status_icon('', 'error') }}</span>
+                                    {% endif %}
+                                    {{ target.formatPretty }}
+                                </td>
+                                <td>
+                                    {% if target.server.type == 'eb' %}
+
+                                        Application: <code class="code_clear">{{ target.ebName }}</code>
+                                        <br>Environment: <code class="code_clear">{{ target.ebEnvironment }}</code>
+
+                                    {% elseif target.server.type == 'cd' %}
+
+                                        Application: <code class="code_clear">{{ target.cdName }}</code>
+                                        <br>Group: <code class="code_clear">{{ target.cdGroup }}</code>
+                                        <br>Config: <code class="code_clear">{{ target.cdConfiguration }}</code>
+
+                                    {% elseif target.server.type == 's3' %}
+
+                                        Bucket: <code class="code_clear">{{ target.s3bucket }}</code>
+                                        <br>File: <code class="code_clear">{{ target.s3file }}</code>
+
+                                    {% elseif target.server.type == 'script' %}
+
+                                        Context: <code class="code_clear">{{ target.scriptContext ?: 'N/A' }}</code>
+
+                                    {% elseif target.server.type == 'rsync' %}
+
+                                        Path: <code class="code_clear">{{ target.path }}</code>
+
+                                    {% else %}
+                                        <code class="code_clear">{{ target.formatMeta }}</code>
+                                    {% endif %}
+
+                                </td>
+                                <td>
+                                    {% if target.url %}
+                                        <a href="{{ target.url }}">{{ target.url }}</a>
+                                    {% endif %}
+                                </td>
+                                <td class="tr">
+                                    <a class="btn btn--tiny" href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">View</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">No targets found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% endif %}
         {% endfor %}
 
-        {% if canEdit %}
-
-            <div class="form-wrapper js-add-deployment__form">
-                <h2>Add On-premise Linux Target</h2>
-
-                {% include 'target/_form.add-target.twig' with {'servers_by_env': servers_by_env, 'form': {}, 'application': application, rsync_only: true} %}
-            </div>
-
-            <div class="js-add-deployment__button">
-                {# primary action #}
-                <a class="btn" href="{{ uriFor('target.add', {'application': application.id}) }}">Add Target</a>
-            </div>
-        {% endif %}
-
     {% else %}
-        <p>
-            There are no environments.
-            {% if isUserSuper(current_user) %}
-                <br><a href="{{ uriFor('environment.add') }}">Add an environment</a>
-            {% endif %}
-        </p>
+
+        <p>There are no deployment targets for this application.</p>
+
+    {% endif %}
+
+    {% if canEdit %}
+
+        <div class="mvl">
+            <a class="btn" href="{{ uriFor('target.add', {'application': application.id}) }}">Add Deployment Target</a>
+        </div>
+
     {% endif %}
 
 {% endblock %}

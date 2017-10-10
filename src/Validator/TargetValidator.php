@@ -90,6 +90,7 @@ class TargetValidator
      * @param string $scriptContext
      *
      * @param string $url
+     * @param string $credentialID
      *
      * @return Deployment|null
      */
@@ -111,7 +112,8 @@ class TargetValidator
 
         $scriptContext,
 
-        $url
+        $url,
+        $credentialID
     ) {
         $this->errors = [];
 
@@ -124,6 +126,16 @@ class TargetValidator
 
         $url = $this->validateUrl($url);
         $this->validateName($name);
+
+        $credential = null;
+        if ($credentialID && !$credential = $this->credentialRepo->find($credentialID)) {
+            $this->errors[] = self::ERR_INVALID_CREDENTIALS;
+        }
+
+        // @todo add when updated to hal-core 3.0
+        // if ($credential && $credential->isInternal()) {
+        //     $this->errors[] = self::ERR_INVALID_CREDENTIALS;
+        // }
 
         if (!$server = $this->serverRepo->find($serverID)) {
             $this->errors[] = self::ERR_INVALID_SERVER;
@@ -150,26 +162,12 @@ class TargetValidator
         // stop validation if errors
         if ($this->errors) return;
 
-        // check dupes
-        $this->validateNewDuplicate(
-            $server,
-            $cdName,
-            $cdGroup,
-            $ebName,
-            $ebEnvironment,
-            $path,
-            $s3bucket,
-            $s3file
-        );
-
-        // stop validation if errors
-        if ($this->errors) return;
-
         $deployment = (new Deployment)
             ->withApplication($application)
             ->withServer($server)
             ->withName($name)
             ->withUrl($url)
+            ->withCredential($credential)
             ->withScriptContext($scriptContext);
 
         $this
@@ -237,6 +235,11 @@ class TargetValidator
             $this->errors[] = self::ERR_INVALID_CREDENTIALS;
         }
 
+        // @todo add when updated to hal-core 3.0
+        // if ($credential && $credential->isInternal()) {
+        //     $this->errors[] = self::ERR_INVALID_CREDENTIALS;
+        // }
+
         if ($serverType == ServerEnum::TYPE_RSYNC) {
             $this->validatePath($path);
 
@@ -251,21 +254,6 @@ class TargetValidator
         } elseif ($serverType == ServerEnum::TYPE_S3) {
             $this->validateS3($s3bucket, $s3file);
         }
-
-        // stop validation if errors
-        if ($this->errors) return;
-
-        // check dupes
-        $this->validateCurrentDuplicate(
-            $deployment,
-            $cdName,
-            $cdGroup,
-            $ebName,
-            $ebEnvironment,
-            $path,
-            $s3bucket,
-            $s3file
-        );
 
         // stop validation if errors
         if ($this->errors) return;
@@ -292,119 +280,6 @@ class TargetValidator
     public function errors()
     {
         return $this->errors;
-    }
-
-    /**
-     * @param Deployment $deployment
-     *
-     * @param string $cdName
-     * @param string $cdGroup
-     *
-     * @param string $ebName
-     * @param string $ebEnvironment
-     *
-     * @param string $path
-     *
-     * @param string $s3bucket
-     * @param string $s3file
-     *
-     * @return bool
-     */
-    private function validateCurrentDuplicate(
-        Deployment $deployment,
-        $cdName,
-        $cdGroup,
-
-        $ebName,
-        $ebEnvironment,
-
-        $path,
-
-        $s3bucket,
-        $s3file
-    ) {
-        $errors = [];
-
-        $server = $deployment->server();
-        $serverType = $server->type();
-
-        if ($serverType == ServerEnum::TYPE_CD) {
-
-            // CD did not change, skip dupe check
-            if ($deployment->cdName() == $cdName && $deployment->cdGroup() == $cdGroup) {
-                goto SKIP_VALIDATION;
-            }
-
-            $deployment = $this->deploymentRepo->findOneBy(['cdName' => $cdName, 'cdGroup' => $cdGroup]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_CD;
-            }
-
-        } elseif ($serverType == ServerEnum::TYPE_EB) {
-
-            // EB did not change, skip dupe check
-            if ($deployment->ebName() == $ebName && $deployment->ebEnvironment() == $ebEnvironment) {
-                goto SKIP_VALIDATION;
-            }
-
-            $deployment = $this->deploymentRepo->findOneBy(['ebName' => $ebName, 'ebEnvironment' => $ebEnvironment]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_EB;
-            }
-        }
-
-        SKIP_VALIDATION:
-
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
-    }
-
-    /**
-     * @param Server $server
-     *
-     * @param string $cdName
-     * @param string $cdGroup
-     *
-     * @param string $ebName
-     * @param string $ebEnvironment
-     *
-     * @param string $path
-     *
-     * @param string $s3bucket
-     * @param string $s3file
-     *
-     * @return bool
-     */
-    private function validateNewDuplicate(
-        Server $server,
-        $cdName,
-        $cdGroup,
-
-        $ebName,
-        $ebEnvironment,
-
-        $path,
-
-        $s3bucket,
-        $s3file
-    ) {
-        $errors = [];
-
-        if ($server->type() == ServerEnum::TYPE_CD) {
-            $deployment = $this->deploymentRepo->findOneBy(['cdName' => $cdName, 'cdGroup' => $cdGroup]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_EB;
-            }
-
-        } elseif ($server->type() == ServerEnum::TYPE_EB) {
-            $deployment = $this->deploymentRepo->findOneBy(['ebName' => $ebName, 'ebEnvironment' => $ebEnvironment]);
-            if ($deployment) {
-                $errors[] = self::ERR_DUPLICATE_EB;
-            }
-        }
-
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
     }
 
     /**

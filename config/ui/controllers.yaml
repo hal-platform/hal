@@ -458,7 +458,6 @@ services:
         arguments:
             - '@doctrine.em'
             - '@target.validator'
-            - '@json'
             - '@uri'
 
     target.edit.page:

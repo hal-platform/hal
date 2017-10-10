@@ -19,7 +19,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
 use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\MiddlewareInterface;
-use QL\Panthor\Utility\JSON;
 use QL\Panthor\Utility\URI;
 
 class AddTargetMiddleware implements MiddlewareInterface
@@ -31,6 +30,9 @@ class AddTargetMiddleware implements MiddlewareInterface
     }
 
     const MSG_SUCCESS = 'Deployment target added.';
+    const MSG_MORE_LIKE_THIS = <<<'HTML'
+Add more like this? <a href="%s">Continue adding deployment targets.</a>
+HTML;
 
     /**
      * @var EntityManagerInterface
@@ -41,11 +43,6 @@ class AddTargetMiddleware implements MiddlewareInterface
      * @var TargetValidator
      */
     private $validator;
-
-    /**
-     * @var JSON
-     */
-    private $json;
 
     /**
      * @var URI
@@ -61,13 +58,11 @@ class AddTargetMiddleware implements MiddlewareInterface
     public function __construct(
         EntityManagerInterface $em,
         TargetValidator $validator,
-        JSON $json,
         URI $uri
     ) {
         $this->em = $em;
 
         $this->validator = $validator;
-        $this->json = $json;
         $this->uri = $uri;
     }
 
@@ -86,18 +81,10 @@ class AddTargetMiddleware implements MiddlewareInterface
         $target = $this->validator->isValid($application, ...array_values($form));
 
         if (!$target) {
-            if ($this->isXHR($request)) {
-                return $this
-                    ->withNewBody($response, $this->json->encode(['errors' => $this->validator->errors()]))
-                    ->withHeader('Content-Type', 'application/json')
-                    ->withStatus(400);
-
-            } else {
-                return $next(
-                    $this->withContext($request, ['errors' => $this->validator->errors()]),
-                    $response
-                );
-            }
+            return $next(
+                $this->withContext($request, ['errors' => $this->validator->errors()]),
+                $response
+            );
         }
 
         // persist to database
@@ -109,12 +96,14 @@ class AddTargetMiddleware implements MiddlewareInterface
             ->getRepository(Environment::class)
             ->clearBuildableEnvironmentsByApplication($application);
 
-        if ($this->isXHR($request)) {
-            return $this->withRedirectRoute($response, $this->uri, 'api.target', ['target' => $target->id()]);
-        } else {
-            $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
-            return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
-        }
+        $formPage = $this->uri->urlFor(
+            'target.add',
+            ['application' => $this->application->id()],
+            ['environment' => $target->server()->environment()->id()]
+        );
+
+        $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS, sprintf(self::MSG_MORE_LIKE_THIS, $formPage));
+        return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
     }
 
     /**
@@ -142,8 +131,8 @@ class AddTargetMiddleware implements MiddlewareInterface
 
             'script_context' => $request->getParsedBody()['script_context'] ?? '',
 
-            'url' => $request->getParsedBody()['url'] ?? ''
-            // 'credential' => $request->getParsedBody()['credential'] ?? ''
+            'url' => $request->getParsedBody()['url'] ?? '',
+            'credential' => $request->getParsedBody()['credential'] ?? ''
         ];
 
         return $form;

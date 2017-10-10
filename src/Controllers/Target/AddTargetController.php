@@ -15,6 +15,7 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Hal\Core\Entity\Application;
+use QL\Hal\Core\Entity\Credential;
 use QL\Hal\Core\Entity\Environment;
 use QL\Hal\Core\Entity\Server;
 use QL\Hal\Core\Repository\EnvironmentRepository;
@@ -41,6 +42,7 @@ class AddTargetController implements ControllerInterface
      * @var EntityRepository
      */
     private $serverRepo;
+    private $credentialRepo;
 
     /**
      * @var EnvironmentRepository
@@ -64,6 +66,7 @@ class AddTargetController implements ControllerInterface
     ) {
         $this->template = $template;
 
+        $this->credentialRepo = $em->getRepository(Credential::class);
         $this->serverRepo = $em->getRepository(Server::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
@@ -78,12 +81,20 @@ class AddTargetController implements ControllerInterface
         $application = $request->getAttribute(Application::class);
 
         $environments = $this->environmentRepo->getAllEnvironmentsSorted();
-        $serversByEnv = $this->environmentalizeServers($environments);
+        $servers = $credentials = [];
 
-        // If no servers, throw flash and send back to targets.
-        if (!$serversByEnv) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_NO_SERVERS);
-            return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
+        $selected = $request->getQueryParams()['environment'] ?? '';
+        $selectedEnvironment = $this->getSelectedEnvironment($environments, $selected);
+
+        if ($selectedEnvironment) {
+            // If no servers, throw flash and send back to targets.
+            if (!$servers = $this->getServers($selectedEnvironment)) {
+                $this->withFlash($request, Flash::ERROR, self::ERR_NO_SERVERS);
+                return $this->withRedirectRoute($response, $this->uri, 'targets', ['application' => $application->id()]);
+            }
+
+            // @todo fix when updated to hal-core
+            // $credentials = $this->credentialRepo->findBy([], ['name' => 'ASC']);
         }
 
         $form = $this->getFormData($request);
@@ -91,50 +102,46 @@ class AddTargetController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
 
-            'application' => $application,
-            'servers_by_env' => $serversByEnv
+            'environments' => $environments,
+            'selected_environment' => $selectedEnvironment,
+
+            'servers' => $servers,
+            'credentials' => $credentials,
+
+            'application' => $application
         ]);
     }
 
+    /**
+     * @param array $environments
+     * @param mixed $selected
+     *
+     * @return Environment|null
+     */
+    private function getSelectedEnvironment(array $environments, $selected)
+    {
+        foreach ($environments as $e) {
+            if ($e->id() == $selected) {
+                return $e;
+            }
+        }
+
+        return null;
+    }
 
     /**
-     * @param Environment[] $environments
+     * @param Environment $environment
      *
      * @return array
      */
-    private function environmentalizeServers(array $environments)
+    private function getServers(Environment $environment)
     {
-        $servers = $this->serverRepo->findAll();
-
-        $env = [];
-        foreach ($environments as $environment) {
-            $env[$environment->name()] = [];
-        }
-
-        $environments = $env;
-
-        foreach ($servers as $server) {
-            $env = $server->environment()->name();
-
-            if (!array_key_exists($env, $environments)) {
-                $environments[$env] = [];
-            }
-
-            $environments[$env][] = $server;
-        }
+        $servers = $this->serverRepo->findBy(['environment' => $environment]);
 
         $sorter = $this->serverSorter();
-        foreach ($environments as &$env) {
-            usort($env, $sorter);
-        }
+        usort($servers, $sorter);
 
-        foreach ($environments as $key => $servers) {
-            if (count($servers) === 0) {
-                unset($environments[$key]);
-            }
-        }
-
-        return $environments;
+        return $servers;
     }
 
     /**

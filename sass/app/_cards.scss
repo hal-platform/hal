@@ -54,6 +54,7 @@
 
 .card__header {
     > h4 {
+        @include adjust-font-size-to(ms(1));
         // margin: 0;
 
         // because css is stupid garbage bullshit
@@ -86,6 +87,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: ms(3);
+    @include adjust-font-size-to(ms(0));
 }
 
 .card__details--divided > ul > li {

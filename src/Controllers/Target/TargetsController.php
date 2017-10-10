@@ -63,18 +63,29 @@ class TargetsController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
 
-        $environments = [];
-        foreach ($this->environmentRepo->getAllEnvironmentsSorted() as $env) {
-            $environments[$env->name()] = $env;
-        }
+        $environments = $this->getEnvironmentsAsAssocArray();
 
         return $this->withTemplate($request, $response, $this->template, [
             'environments' => $environments,
             'application' => $application,
 
-            'servers_by_env' => $this->environmentalizeServers($environments),
             'targets_by_env' => $this->environmentalizeDeployments($application, $environments)
         ]);
+    }
+
+    /**
+     * @return Environment[]
+     */
+    private function getEnvironmentsAsAssocArray()
+    {
+        $environments = $this->environmentRepo->getAllEnvironmentsSorted();
+
+        $envs = [];
+        foreach ($environments as $env) {
+            $envs[$env->name()] = $env;
+        }
+
+        return $envs;
     }
 
     /**
@@ -100,51 +111,5 @@ class TargetsController implements ControllerInterface
         }
 
         return $env;
-    }
-
-    /**
-     * NOTE: non-rsync servers are filtered out of this list.
-     *
-     * @param Environment[] $environments
-     *
-     * @return array
-     */
-    private function environmentalizeServers(array $environments)
-    {
-        $servers = $this->serverRepo->findAll();
-
-        $env = [];
-        foreach ($environments as $environment) {
-            $env[$environment->name()] = [];
-        }
-
-        $environments = $env;
-
-        foreach ($servers as $server) {
-            $env = $server->environment()->name();
-
-            if ($server->type() !== ServerEnum::TYPE_RSYNC) {
-                continue;
-            }
-
-            if (!array_key_exists($env, $environments)) {
-                $environments[$env] = [];
-            }
-
-            $environments[$env][] = $server;
-        }
-
-        $sorter = $this->serverSorter();
-        foreach ($environments as &$env) {
-            usort($env, $sorter);
-        }
-
-        foreach ($environments as $key => $servers) {
-            if (count($servers) === 0) {
-                unset($environments[$key]);
-            }
-        }
-
-        return $environments;
     }
 }

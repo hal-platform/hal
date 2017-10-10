@@ -19,8 +19,8 @@
     {{ block('meta') }}
 
     <ul class="button-list">
-        <li><a class="btn btn--secondary" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
-        <li><a class="btn btn--secondary" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
+        <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
+        <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
     </ul>
 
     {% if canEdit or canRemove %}

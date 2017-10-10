@@ -2,6 +2,7 @@ import SearchBuild from './app/build/search';
 import EventLogLoader from './app/event-log';
 
 import SearchApplications from './app/apps-filter';
+import DynamicTargetsForm from './app/form/dynamic-targets';
 
 module.exports = {
 
@@ -11,8 +12,8 @@ module.exports = {
     },
 
     // forms
-    "deployment.add": function() {
-        require('./app/form/add-deployments').init();
+    "target.add": function() {
+        DynamicTargetsForm();
     },
 
     // jobs - start
