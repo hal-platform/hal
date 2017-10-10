@@ -3,10 +3,156 @@ html {
     @include margin-trailer(2);
 }
 
+[role="main"] {
+    max-width: 60em;
+    margin: 0 auto;
+    padding: ms(2) ms(-2);
+
+    background-color: $white;
+    @extend %clearfix;
+    position: relative;
+
+    @include breakpoint($bp-small) {
+        padding: ms(3);
+        @include border-radius(5px);
+
+    }
+
+    @include breakpoint($bp-medium) {
+        margin-top: -5em;
+    }
+}
+
+main > p {
+    max-width: 40em;
+}
+
 svg {
     fill: currentColor;
 }
 
 p {
     @include trailer;
+}
+
+a {
+    color: $link-color;
+    text-decoration: none;
+
+    &:hover,
+    &:active,
+    &:focus{
+        color: $link-interaction-color;
+        text-decoration: underline;
+    }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 100%;
+}
+
+// Page header
+h1 {
+    color: $hal-cyan;
+    font-weight: bold;
+
+    @include leader(.25);
+    @include trailer(.75);
+
+    strong, b {
+        color: tint($hal-cyan, 50%);
+    }
+}
+
+// Section header
+h2 {
+    color: $bright-blue;
+
+    @include leader(.5);
+    @include trailer(.5);
+}
+
+// Label header
+h4 {
+    @include leader(.75);
+    @include trailer(0);
+}
+
+h3, h5, h6 {
+    @include leader(.75);
+    @include trailer(.25);
+}
+
+h6 {
+    font-weight: bold;
+}
+
+pre, code {
+    @include adjust-font-size-to(ms(-1));
+    font-family: menlo, monospace, sans-serif;
+
+    color: $red;
+    background: $light-grey;
+    margin: 0;
+    padding: ms(-11);
+    text-align: left;
+}
+
+code {
+    padding: ms(-9);
+}
+
+pre {
+    white-space: pre;
+    word-wrap: normal;
+    // overflow-x: auto;
+}
+
+blockquote {
+    border-left: 4px solid $light-grey;
+    color: tint($text-color, 50%);
+    font-size: 90%;
+    margin-left: .5em;
+    padding: 0 15px;
+}
+
+time {
+    white-space: nowrap;
+}
+
+ul, ol {
+    @include trailer;
+}
+
+// Remove vertical spacing from nested lists.
+li {
+    > ul,
+    > ol {
+         margin-bottom: 0;
+     }
+}
+
+table {
+    min-width: 17em;
+    @include trailer;
+}
+
+thead {
+    border-bottom: 5px solid $dark-blue;
+    th {
+        text-align:left;
+    }
+}
+
+tbody tr {
+    @include adjust-font-size-to(ms(-1));
+    border-bottom: 1px dotted $light-grey;
+    &:last-child {
+        border-bottom: 0;
+    }
+}
+
+// reset back to normal, since scales sets this to center.
+[colspan] {
+    text-align: left;
 }

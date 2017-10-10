@@ -11,13 +11,13 @@
     {% set name_label =  server.type == 'rsync' ? 'Hostname' : 'Region' %}
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Server Type</dt>
-            <dd>{{ server.formatHumanType }}</dd>
+        <ul class="mbn">
+            <li>Server Type</li>
+            <li>{{ server.formatHumanType }}</li>
 
-            <dt class="split__title">{{ name_label }}</dt>
-            <dd>{{ server.type == 'script' ? 'N/A' : server.name }}</dd>
-        </dl>
+            <li>{{ name_label }}</li>
+            <li>{{ server.type == 'script' ? 'N/A' : server.name }}</li>
+        </ul>
     </div>
 
     <h3>Environment</h3>
@@ -102,7 +102,7 @@
         <p><b>Note:</b> All associated deployments must be removed or transferred to remove this server.</p>
     {% endif %}
 
-    <ul class="button-list button-list--half">
+    <ul>
         {% if isAdmin %}
             <li><a class="btn" href="{{ uriFor('servers') }}">Servers</a></li>
             <li><a class="btn btn--action" href="{{ uriFor('server.edit', {'server': server.id}) }}">Edit Server</a></li>

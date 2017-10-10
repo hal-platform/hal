@@ -5,7 +5,7 @@
 {% block content %}
     <h1>{{ page_title }}</h1>
 
-    <table class="table--spacing-medium table--top-aligned">
+    <table class="table--spacing-medium">
         <thead>
             <tr class="tl">
                 <th>Environment</th>
@@ -20,7 +20,7 @@
                         <tr>
                             <td>{{ env }}</td>
                             <td>
-                                <ul class="col-list list--bare">
+                                <ul class="list--bare">
                                     {% for server in servers %}
                                         <li class="mvn"><a href="{{ uriFor('server', {'server': server.id}) }}">{{ server.formatPretty }}</a></li>
                                     {% endfor %}
@@ -39,8 +39,8 @@
     </table>
 
     {% if isUserAdminOrSuper(current_user) %}
-        <ul class="button-list">
-            <li class="button-list__fixed"><a class="btn" href="{{ uriFor('server.add') }}">Add Server</a></li>
+        <ul>
+            <li><a class="btn" href="{{ uriFor('server.add') }}">Add Server</a></li>
         </ul>
     {% endif %}
 

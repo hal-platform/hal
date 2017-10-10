@@ -12,7 +12,7 @@
         </p>
     </div>
 
-    <ul class="button-list trailer">
+    <ul class="trailer">
         <li>
             <form method="post">
                 <input name="cache_type" type="hidden" value="doctrine">
@@ -108,9 +108,9 @@
         {% else %}
 
             <div class="details-box">
-                <dl class="split mbn">
-                    <dt class="split__title">Status</dt>
-                    <dd>
+                <ul class="mbn">
+                    <li>Status</li>
+                    <li>
 
                         {% set opcEnabledStatus = opcache.enabled ? 'success' : 'error' %}
                         {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
@@ -123,32 +123,32 @@
                         {{ macros.status(opcEnabledText, opcEnabledStatus, opcEnabledIcon) }}
                         {{ macros.status(opcFullText, opcFullStatus, opcFullIcon) }}
 
-                    </dd>
-                    <dt class="split__title">Hits</dt>
-                    <dd><b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses</dd>
-                    <dt class="split__title">Hit Rate</dt>
-                    <dd>{{ opcache.opcache_hit_rate }}%</dd>
+                    </li>
+                    <li>Hits</li>
+                    <li><b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses</li>
+                    <li>Hit Rate</li>
+                    <li>{{ opcache.opcache_hit_rate }}%</li>
 
-                    <dt class="split__title">Memory</dt>
-                    <dd>{{ opcache.used_memory }} / {{ opcache.total_memory }}</dd>
+                    <li>Memory</li>
+                    <li>{{ opcache.used_memory }} / {{ opcache.total_memory }}</li>
 
-                    <dt class="split__title">Buffer</dt>
-                    <dd>{{ opcache.used_buffer }} / {{ opcache.total_buffer }}</dd>
+                    <li>Buffer</li>
+                    <li>{{ opcache.used_buffer }} / {{ opcache.total_buffer }}</li>
 
-                    <dt class="split__title">Cached</dt>
-                    <dd>{{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys</dd>
+                    <li>Cached</li>
+                    <li>{{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys</li>
 
-                </dl>
+                </ul>
             </div>
 
             <h4>Configuration</h4>
-            <div class="details-box details-box--wide scrollable-box">
-                <dl class="split mbn">
+            <div class="details-box scrollable-box">
+                <ul class="mbn">
                     {% for key, data in opcache.configuration %}
-                        <dt class="split__title">{{ key }}</dt>
-                        <dd><code>{{ data|e }}</code></dd>
+                        <li>{{ key }}</li>
+                        <li><code>{{ data|e }}</code></li>
                     {% endfor %}
-                </dl>
+                </ul>
             </div>
 
             <h4>Cached Scripts</h4>

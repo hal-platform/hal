@@ -41,13 +41,7 @@
     }
 }
 
-.cards--baby > li {
-    width: 100%;
-    @include adjust-font-size-to(ms(-1));
-    @include trailer(2);
-}
-
-.card, .card--baby {
+.card {
     box-shadow: 0 0 0 8px $light-grey;
     position: relative;
 }
@@ -123,32 +117,4 @@
 
 .rollback:hover .icon {
     transform: rotate(-360deg);
-}
-
-/* env specific colors for push cards and push/build boxes */
-.card--test-aws,
-.card--test {
-    box-shadow: 0 0 0 8px $hal-blue;
-    .card__header {
-        background-color: $hal-blue;
-        a, h4 { color: $white }
-    }
-}
-
-.card--beta-aws,
-.card--beta {
-    box-shadow: 0 0 0 8px $hal-cyan;
-    .card__header {
-        background-color: $hal-cyan;
-        a, h4 { color: $white }
-    }
-}
-
-.card--prod-aws,
-.card--prod {
-    box-shadow: 0 0 0 8px $hal-red;
-    .card__header {
-        background-color: $hal-red;
-        a, h4 { color: $white }
-    }
 }

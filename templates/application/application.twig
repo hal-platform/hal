@@ -18,19 +18,19 @@
 
     {{ block('meta') }}
 
-    <ul class="button-list">
+    <ul>
         <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">Encrypted Configuration</a></li>
         <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
     </ul>
 
     {% if canEdit or canRemove %}
-        <ul class="leader button-list button-list--half">
+        <ul class="leader">
             {% if canEdit %}
                 <li><a class="btn btn--action" href="{{ uriFor('application.edit', {'application': application.id}) }}">Edit Application</a></li>
             {% endif %}
 
             {% if canRemove %}
-                <li class="button-list__fixed"><a class="btn btn--destructive" href="{{ uriFor('application.remove', {'application': application.id}) }}">Remove Application</a></li>
+                <li><a class="btn btn--destructive" href="{{ uriFor('application.remove', {'application': application.id}) }}">Remove Application</a></li>
             {% endif %}
         </ul>
     {% endif %}
@@ -41,16 +41,16 @@
 
 {% block meta %}
     <div class="details-box">
-        <dl class="split">
-            <dt class="split__title">Identifier</dt>
-            <dd>{{ application.key }}</dd>
+        <ul>
+            <li>Identifier</li>
+            <li>{{ application.key }}</li>
 
-            <dt class="split__title">Name</dt>
-            <dd>{{ application.name }}</dd>
+            <li>Name</li>
+            <li>{{ application.name }}</li>
 
-            <dt class="split__title">GitHub Source</dt>
-            <dd>{{ macros.gitsource(application) }}</dd>
-        </dl>
+            <li>GitHub Source</li>
+            <li>{{ macros.gitsource(application) }}</li>
+        </ul>
     </div>
 {% endblock %}
 

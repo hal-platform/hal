@@ -42,7 +42,7 @@
     <div class="details-box">
         <ul class="list--bare mbn">
             <li>
-                <span class="split__title">Email</span>
+                <span>Email</span>
                 {% if user.email %}
                     <a href="mailto:{{ user.email }}">{{ user.email }}</a>
                 {% else %}
@@ -51,7 +51,7 @@
             </li>
 
             <li>
-                <span class="split__title">Username</span>
+                <span>Username</span>
                 {{ user.handle }}
             </li>
         </dl>

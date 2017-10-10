@@ -1,18 +1,58 @@
-ul, ol {
-    @include trailer;
-}
-
-// Remove vertical spacing from nested lists.
-li {
-    > ul,
-    > ol {
-         margin-bottom: 0;
-     }
-}
-
 .list--bare {
     > li {
         @include trailer(.5);
     }
 }
 
+// Normal-ass bulleted list
+.list--bullet {
+    margin-left: 1.5em;
+    list-style-type: disc;
+    li {
+        @include trailer(.1);
+    }
+}
+
+// Inline list
+.inline-list, [class^="inline-list--"] {
+    margin-left: 0;
+    display: inline;
+    list-style-type: none;
+}
+
+.inline-list > li, [class^="inline-list--"] > li {
+    display: inline;
+}
+
+
+.inline-list--comma > li::after {
+    content: ", ";
+}
+.inline-list--comma > li:last-child::after
+{
+    content: "";
+}
+
+.inline-list--space > li::after {
+    margin-right: .25em;
+    content: "";
+}
+.inline-list--space > li:last-child::after {
+    margin-right: 0;
+    content: "";
+}
+
+// Legend list
+.list--legend {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    > * {
+        flex: 1;
+    }
+
+    > :first-child {
+        flex: 0 0 auto;
+    }
+}

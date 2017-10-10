@@ -54,53 +54,53 @@
 
 {% block meta_details %}
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Application</dt>
-            <dd>
+        <ul class="mbn">
+            <li>Application</li>
+            <li>
                 <a href="{{ uriFor('application', {'application': build.application.id}) }}">{{ build.application.name }}</a>
-            </dd>
+            </li>
 
-            <dt class="split__title">Environment</dt>
-            <dd>{{ build.environment.name }}</dd>
-        </dl>
+            <li>Environment</li>
+            <li>{{ build.environment.name }}</li>
+        </ul>
     </div>
 
     <h2>Build</h2>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Build Id</dt>
-            <dd>
+        <ul class="mbn">
+            <li>Build Id</li>
+            <li>
                 <a href="{{ uriFor('build', {'build': build.id}) }}">{{ build.id|formatBuildId }}</a>
-            </dd>
+            </li>
 
-            <dt class="split__title">User</dt>
-            <dd>
+            <li>User</li>
+            <li>
                 {% if build.user %}
                     <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.name }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
-            </dd>
+            </li>
 
-            <dt class="split__title">Time</dt>
-            <dd>{{ build.end|html5date }}</dd>
-        </dl>
+            <li>Time</li>
+            <li>{{ build.end|html5date }}</li>
+        </ul>
     </div>
 
     <h2>Git Reference</h2>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Reference</dt>
-            <dd>
+        <ul class="mbn">
+            <li>Reference</li>
+            <li>
                 {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
                 {{ macros.gitref(build, false, isCurrent) }}
-            </dd>
+            </li>
 
-            <dt class="split__title">Commit</dt>
-            <dd>{{ macros.gitcommit(build) }}</dd>
-        </dl>
+            <li>Commit</li>
+            <li>{{ macros.gitcommit(build) }}</li>
+        </ul>
     </div>
 {% endblock %}
 
@@ -116,18 +116,18 @@
                 </tr>
             </thead>
 
-            <tbody class="table-breathe">
+            <tbody>
                 {% for status in statuses %}
                     {{ deploy_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush, true) }}
                 {% endfor %}
             </tbody>
         </table>
 
-        <ul class="button-list button-list--half">
+        <ul>
             {% if pushables %}
                 <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
             {% endif %}
-            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a></li>
+            <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a></li>
         </ul>
 
     </form>

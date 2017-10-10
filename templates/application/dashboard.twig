@@ -43,10 +43,10 @@
     {% if env_count > 1 %}
         <div class="trailer">
             <h5>Change environment</h5>
-            <ul class="button-list button-list--half">
+            <ul>
                 {% for environment in environments %}
                     {% set btnSelected = environment.id == selected_environment.id ? ' btn--selected' : ' btn--not-selected' %}
-                    <li class="button-list__selector">
+                    <li>
                         <a class="btn{{ btnSelected }}" href="{{ uriFor('application.dashboard', {'application': application.id}, {'environment': environment.id}) }}">{{ environment.name }}</a>
                     </li>
                 {% endfor %}
@@ -77,7 +77,7 @@
 {% endblock %}
 
 {% block page_buttons %}
-    <ul class="button-list">
+    <ul>
         {% if canUserBuild %}
             <li><a class="btn btn--action" href="{{ uriFor('build.start', {'application': application.id}) }}">Start New Build</a></li>
         {% endif %}
@@ -91,7 +91,7 @@
 {% macro pushCard(application, deployment, active) %}
     {% import 'macros.twig' as macros %}
 
-    <article class="card card--{{ deployment.server.environment.name }}">
+    <article class="card">
         <header class="card__header">
             <h4>
                 <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ deployment.formatPretty }}</a>
@@ -111,10 +111,10 @@
         </header>
 
         <section class="card__details">
-            <ul class="split">
+            <ul>
                 {# push details #}
                 <li>
-                    <span class="split__title">Last push:</span>
+                    <span>Last push:</span>
                     {% if active %}
                         {{ macros.job_status(active, true) }}
                         (<a href="{{ uriFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
@@ -123,7 +123,7 @@
                     {% endif %}
                 </li>
                 <li>
-                    <span class="split__title">Pushed on:</span>
+                    <span>Pushed on:</span>
                     {% if active.created %}
                         {{ active.created|html5date }}
                     {% else %}
@@ -133,7 +133,7 @@
 
                 {# build details #}
                 <li>
-                    <span class="split__title">Build:</span>
+                    <span>Build:</span>
                     {% if active %}
                         <a href="{{ uriFor('build', {'build': active.build.id}) }}">{{ active.build.id|formatBuildId }}</a>
                     {% else %}
@@ -141,7 +141,7 @@
                     {% endif %}
                 </li>
                 <li>
-                    <span class="split__title">Reference:</span>
+                    <span>Reference:</span>
                     {% if active %}
                         {% set isCurrent = githubCommitIsCurrent(application.githubOwner, application.githubRepo, active.build.branch, active.build.commit) %}
                         {{ macros.gitref(active.build, true, isCurrent, true) }}
@@ -151,7 +151,7 @@
                     {% endif %}
                 </li>
                 <li>
-                    <span class="split__title">Commit:</span>
+                    <span>Commit:</span>
                     {% if active %}
                         {{ macros.gitcommit(active.build) }}
                     {% else %}
@@ -168,7 +168,7 @@
                 {% endif %}
 
                 <li>
-                    <span class="split__title">{{ deployment|formatDeploymentDetailsLabel }}:</span>
+                    <span>{{ deployment|formatDeploymentDetailsLabel }}:</span>
                     <code title="{{ deploymentDetails }}">{{ deploymentDetails }}</code>
                 </li>
             </ul>

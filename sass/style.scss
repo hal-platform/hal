@@ -24,7 +24,6 @@
 @import 'scales-patterns-vertical-list/vertical-list';
 @import 'scales-patterns-flag/flag';
 @import 'scales-patterns-buttons/buttons';
-@import 'scales-patterns-split/split';
 
 @import 'scales-overrides-size/size';
 @import 'scales-overrides-spacing/spacing';
@@ -35,27 +34,18 @@
 @import 'utilities/functions';
 @import 'utilities/mixins';
 @import 'utilities/misc';
-@import 'utilities/placeholders';
 
 // Base
 @import 'base/global';
-
 @import 'base/code';
 @import 'base/error';
 @import 'base/forms';
-@import 'base/headings';
-@import 'base/links';
 @import 'base/list';
 @import 'base/tables';
-@import 'base/time';
-@import 'base/quotes';
 
 // App
-@import 'app/global';
-
 @import 'app/cards';
 @import 'app/dash-box';
-@import 'app/grid';
 @import 'app/hal-header';
 @import 'app/help';
 @import 'app/icons';
@@ -68,13 +58,10 @@
 @import 'patterns/alert-bar';
 @import 'patterns/buttons';
 @import 'patterns/check-box';
-@import 'patterns/list';
 @import 'patterns/nav';
 @import 'patterns/pagination';
 @import 'patterns/scroll-thing';
-@import 'patterns/split';
 @import 'patterns/status';
-@import 'patterns/loading-bar';
 @import 'patterns/stars';
 
 // must go last!

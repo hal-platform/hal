@@ -15,13 +15,13 @@
     </div>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Identifier</dt>
-            <dd>{{ organization.key }}</dd>
+        <ul class="mbn">
+            <li>Identifier</li>
+            <li>{{ organization.key }}</li>
 
-            <dt class="split__title">Name</dt>
-            <dd>{{ organization.name }}</dd>
-        </dl>
+            <li>Name</li>
+            <li>{{ organization.name }}</li>
+        </ul>
     </div>
 
     <h4>Applications</h4>
@@ -56,7 +56,7 @@
         <p><b>Note:</b> All associated applications must be removed or transferred to remove this organization.</p>
     {% endif %}
 
-    <ul class="button-list button-list--half">
+    <ul>
         <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
         {% if is_admin %}
             <li><a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a></li>

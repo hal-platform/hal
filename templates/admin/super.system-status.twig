@@ -13,7 +13,7 @@
     </div>
 
     <h2>Agents</h2>
-    <ul class="button-list button-list--half">
+    <ul class="">
         {% for agent in agents %}
             {% set btnSelected = agent == selected_agent ? ' btn--selected' : ' btn--not-selected' %}
             <li>
@@ -42,74 +42,73 @@
     <p class="mtn">Last Update: {{ system.generated|html5date }}</p>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title"><b>Agent System</b></dt>
-            <dd>
+        <ul class="mbn">
+            <li><b>Agent System</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.agent.system }}</pre>
                 </div>
-            </dd>
+            </li>
 
-            <dt class="split__title"><b>Agent Temp</b></dt>
-            <dd>
+            <li><b>Agent Temp</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.agent.temp }}</pre>
                 </div>
-            </dd>
-        </dl>
+            </li>
+        </ul>
     </div>
 
     <h3>Builder Status</h3>
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title"><b>Builder System</b></dt>
-            <dd>
+        <ul class="mbn">
+            <li><b>Builder System</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.builder.system }}</pre>
                 </div>
-            </dd>
+            </li>
 
-            <dt class="split__title"><b>Builder Temp</b></dt>
-            <dd>
+            <li><b>Builder Temp</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.builder.temp }}</pre>
                 </div>
-            </dd>
+            </li>
 
-        <dl>
-            <dt class="split__title"><b>Builder Docker</b></dt>
-            <dd>
+            <li><b>Builder Docker</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.builder.docker }}</pre>
                 </div>
-            </dd>
-        </dl>
+            </li>
+        </ul>
     </div>
 
     <h3>Docker Status</h3>
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title"><b>Info</b></dt>
-            <dd>
+        <ul class="mbn">
+            <li><b>Info</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.docker.info }}</pre>
                 </div>
-            </dd>
+            </li>
 
-            <dt class="split__title"><b>Images</b></dt>
-            <dd>
+            <li><b>Images</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.docker.images }}</pre>
                 </div>
-            </dd>
+            </li>
 
-            <dt class="split__title"><b>Containers</b></dt>
-            <dd>
+            <li><b>Containers</b></li>
+            <li>
                 <div class="pre-wrapper">
                     <pre>{{ system.docker.containers }}</pre>
                 </div>
-            </dd>
-        </dl>
+            </li>
+        </ul>
     </div>
 
 {% endblock %}
@@ -118,7 +117,7 @@
     <p>Last Update: {{ connections.generated|html5date }}</p>
 
     {% if connections.servers %}
-        <table class="table--spacing-medium table--striped table--top-aligned">
+        <table class="table--spacing-medium table--striped">
             <thead>
                 <tr>
                     <th>Status</th>
@@ -129,7 +128,7 @@
             </thead>
 
             {% if connections.failures %}
-                <tbody class="table-breathe">
+                <tbody>
                     <tr>
                         <th colspan="5" class="table-mid-header">Failures</th>
                     </tr>
@@ -151,7 +150,7 @@
             {% endif %}
 
             {% for env, servers in connections.servers %}
-                <tbody class="table-breathe">
+                <tbody>
                     <tr>
                         <th colspan="5" class="table-mid-header">{{ env }}</th>
                     </tr>

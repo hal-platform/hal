@@ -20,28 +20,27 @@
 
     <h2>Deployment Details</h2>
     <div class="details-box">
-        <dl class="split mbn">
-
-            <dt class="split__title">Environment</dt>
-            <dd>
+        <ul class="mbn">
+            <li>Environment</li>
+            <li>
                 <a href="{{ uriFor('environment', {'environment': deployment.server.environment.id}) }}">{{ deployment.server.environment.name }}</a>
-            </dd>
+            </li>
 
-            <dt class="split__title">Server</dt>
-            <dd>
+            <li>Server</li>
+            <li>
                 <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ server }}</a>
-            </dd>
+            </li>
 
-            <dt class="split__title">{{ deployment_label }}</dt>
-            <dd><code>{{ deployment_details }}</code></dd>
+            <li>{{ deployment_label }}</li>
+            <li><code>{{ deployment_details }}</code></li>
 
             {% if deployment.url %}
-                <dt class="split__title">URL</dt>
-                <dd>
+                <li>URL</li>
+                <li>
                     <a href="{{ deployment.url }}">{{ deployment.url }}</a>
-                </dd>
+                </li>
             {% endif %}
-        </dl>
+        </ul>
     </div>
 
     <p>

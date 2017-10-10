@@ -47,19 +47,6 @@
         {% include '_partial-job/pending-table.twig' with {'pending': pending} only %}
     {% endif %}
 
-    <div class="flex-box-wrapper">
-
-        <div class="flex-box box-roundy">
-              <h2 class="trailer">Your Recent Builds</h2>
-              {% include '_partial-job/build-box.twig' with {'builds': builds} %}
-        </div>
-
-        <div class="flex-box box-roundy">
-              <h2 class="trailer">Your Recent Pushes</h2>
-              {% include '_partial-job/push-box.twig' with {'pushes': pushes} %}
-        </div>
-    </div>
-
 {% endblock %}
 
 {% block intro %}

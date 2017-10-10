@@ -129,7 +129,7 @@
                 </tr>
             </thead>
 
-            <tbody class="table-breathe">
+            <tbody>
                 {% for target in available_targets %}
                     {{ deploy_macros.render_deployment_row(target, target.push, '', can_deploy) }}
                 {% endfor %}

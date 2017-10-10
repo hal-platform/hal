@@ -54,9 +54,9 @@
     <p>You're about to permanently remove this {{ entity_type }}. Do you want to continue?</p>
 
     <form class="form-wrapper" method="post">
-        <ul class="button-list">
+        <ul>
             <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
-            <li class="button-list__fixed">{{ block('cancel_button') }}</li>
+            <li>{{ block('cancel_button') }}</li>
         </ul>
     </form>
 
@@ -64,26 +64,26 @@
 
 {% block cancel_button %}
     {% if remove.param == 'organization' %}
-        <a class="btn btn--secondary" href="{{ uriFor('organization', {'organization': remove.entity.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('organization', {'organization': remove.entity.id}) }}">Cancel</a>
 
     {% elseif remove.param == 'application' %}
-        <a class="btn btn--secondary" href="{{ uriFor('application', {'application': remove.entity.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('application', {'application': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'target' %}
-        <a class="btn btn--secondary" href="{{ uriFor('target', {'target': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('target', {'target': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
     {% elseif remove.param == 'encrypted' %}
-        <a class="btn btn--secondary" href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('encrypted', {'encrypted': remove.entity.id, 'application': entities.application.id}) }}">Cancel</a>
 
     {% elseif remove.param == 'server' %}
-        <a class="btn btn--secondary" href="{{ uriFor('server', {'server': remove.entity.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('server', {'server': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'environment' %}
-        <a class="btn btn--secondary" href="{{ uriFor('environment', {'environment': remove.entity.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('environment', {'environment': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'credential' %}
-        <a class="btn btn--secondary" href="{{ uriFor('admin.credential', {'credential': remove.entity.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('admin.credential', {'credential': remove.entity.id}) }}">Cancel</a>
 
     {% elseif remove.param == 'token' %}
-        <a class="btn btn--secondary" href="{{ uriFor('user', {'user': entities.user.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('user', {'user': entities.user.id}) }}">Cancel</a>
     {% else %}
-        <a class="btn btn--secondary" href="javascript:history.go(-1)">Cancel</a>
+        <a class="btn" href="javascript:history.go(-1)">Cancel</a>
     {% endif %}
 {% endblock %}
 
@@ -91,121 +91,121 @@
     {% set name_label =  remove.entity.type == 'rsync' ? 'Hostname' : 'Region' %}
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Server Type</dt>
-            <dd>{{ remove.entity.formatHumanType }}</dd>
+        <ul class="mbn">
+            <li>Server Type</li>
+            <li>{{ remove.entity.formatHumanType }}</li>
 
-            <dt class="split__title">{{ name_label }}</dt>
-            <dd>{{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}</dd>
+            <li>{{ name_label }}</li>
+            <li>{{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}</li>
 
-            <dt class="split__title">Environment</dt>
-            <dd>{{ remove.entity.environment.name}}</dd>
-        </dl>
+            <li>Environment</li>
+            <li>{{ remove.entity.environment.name}}</li>
+        </ul>
     </div>
 
 {% endblock %}
 
 {% block environment_box %}
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Name</dt>
-            <dd>{{ remove.entity.name }}</dd>
+        <ul class="mbn">
+            <li>Name</li>
+            <li>{{ remove.entity.name }}</li>
 
-            <dt class="split__title">Is Production Environment?</dt>
-            <dd>{{ remove.entity.isProduction ? 'Yes' : 'No' }}</dd>
-        </dl>
+            <li>Is Production Environment?</li>
+            <li>{{ remove.entity.isProduction ? 'Yes' : 'No' }}</li>
+        </ul>
     </div>
 {% endblock %}
 
 {% block credential_box %}
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Name</dt>
-            <dd>{{ remove.entity.name }}</dd>
+        <ul class="mbn">
+            <li>Name</li>
+            <li>{{ remove.entity.name }}</li>
 
-            <dt class="split__title">Type</dt>
-            <dd>
+            <li>Type</li>
+            <li>
                 {% if remove.entity.type == 'aws' %}
                     AWS
                 {% elseif remove.entity.type == 'privatekey' %}
                     Private Key
                 {% endif %}
-            </dd>
-        </dl>
+            </li>
+        </ul>
     </div>
 {% endblock %}
 
 {% block organization_box %}
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Identifier</dt>
-            <dd>{{ remove.entity.key }}</dd>
+        <ul class="mbn">
+            <li>Identifier</li>
+            <li>{{ remove.entity.key }}</li>
 
-            <dt class="split__title">Name</dt>
-            <dd>{{ remove.entity.name }}</dd>
-        </dl>
+            <li>Name</li>
+            <li>{{ remove.entity.name }}</li>
+        </ul>
     </div>
 {% endblock %}
 
 {% block application_box %}
     <div class="details-box">
-        <dl class="split">
-            <dt class="split__title">Identifier</dt>
-            <dd>{{ remove.entity.key }}</dd>
+        <ul>
+            <li>Identifier</li>
+            <li>{{ remove.entity.key }}</li>
 
-            <dt class="split__title">Name</dt>
-            <dd>{{ remove.entity.name }}</dd>
+            <li>Name</li>
+            <li>{{ remove.entity.name }}</li>
 
-            <dt class="split__title">GitHub Source</dt>
-            <dd>{{ macros.gitsource(remove.entity) }}</dd>
-        </dl>
+            <li>GitHub Source</li>
+            <li>{{ macros.gitsource(remove.entity) }}</li>
+        </ul>
     </div>
 {% endblock %}
 
 {% block target_box %}
     <div class="details-box">
-        <dl class="split">
-            <dt class="split__title">Application</dt>
-            <dd>{{ remove.entity.application.name }}</dd>
+        <ul>
+            <li>Application</li>
+            <li>{{ remove.entity.application.name }}</li>
 
-            <dt class="split__title">Environment</dt>
-            <dd>{{ remove.entity.server.environment.name }}</dd>
+            <li>Environment</li>
+            <li>{{ remove.entity.server.environment.name }}</li>
 
-            <dt class="split__title">Name</dt>
-            <dd>{{ remove.entity.name ?: 'None' }}</dd>
+            <li>Name</li>
+            <li>{{ remove.entity.name ?: 'None' }}</li>
 
-            <dt class="split__title">Type</dt>
-            <dd>{{ remove.entity.server.formatHumanType() }}</dd>
-        </dl>
+            <li>Type</li>
+            <li>{{ remove.entity.server.formatHumanType() }}</li>
+        </ul>
     </div>
 {% endblock %}
 
 {% block encrypted_box %}
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Application</dt>
-            <dd>{{ remove.entity.application.name }}</dd>
+        <ul class="mbn">
+            <li>Application</li>
+            <li>{{ remove.entity.application.name }}</li>
 
-            <dt class="split__title">Environment</dt>
-            <dd>
+            <li>Environment</li>
+            <li>
                 {% if remove.entity.environment %}
                     {{ remove.entity.environment.name }}
                 {% else %}
                     Global (Available in all environments)
                 {% endif %}
-            </dd>
+            </li>
 
-            <dt class="split__title">Property Name</dt>
-            <dd><code>{{ remove.entity.name }}</code></dd>
-        </dl>
+            <li>Property Name</li>
+            <li><code>{{ remove.entity.name }}</code></li>
+        </ul>
     </div>
 {% endblock %}
 
 {% block token_box %}
     <div class="details-box">
-        <dl class="split">
-            <dt class="split__title">Name</dt>
-            <dd>{{ remove.entity.label }}</dd>
-        </dl>
+        <ul>
+            <li>Name</li>
+            <li>{{ remove.entity.label }}</li>
+        </ul>
     </div>
 {% endblock %}

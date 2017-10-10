@@ -19,29 +19,29 @@
 
     <h2>Remove the following permissions</h2>
     <div class="details-box">
-        <dl class="split mbn">
+        <ul class="mbn">
 
-            <dt class="split__title">Type</dt>
-            <dd>
+            <li>Type</li>
+            <li>
                 {% if user_permission.isProduction %}
                     Production
                 {% else %}
                     Non-production
                 {% endif %}
-            </dd>
+            </li>
 
-            <dt class="split__title">Application</dt>
-            <dd><a href="{{ uriFor('application', {'application': user_permission.application.id}) }}">{{ user_permission.application.name }}</a></dd>
-        </dl>
+            <li>Application</li>
+            <li><a href="{{ uriFor('application', {'application': user_permission.application.id}) }}">{{ user_permission.application.name }}</a></li>
+        </ul>
     </div>
 
     <h3>Are you sure?</h3>
     <p>You're about to remove some of this user's permissions. Do you want to continue?</p>
 
     <form class="form-wrapper" method="post">
-        <ul class="button-list">
+        <ul>
             <li><input class="btn btn--destructive" type="submit" value="Remove"></li>
-            <li class="button-list__fixed"><a class="btn btn--secondary" href="{{ uriFor('admin.permissions') }}">Cancel</a></li>
+            <li><a class="btn" href="{{ uriFor('admin.permissions') }}">Cancel</a></li>
         </ul>
     </form>
 

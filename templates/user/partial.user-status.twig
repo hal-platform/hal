@@ -13,7 +13,7 @@
     <ul class="list--bare">
         {% if showHalStatus %}
             <li class="mvs">
-                <span class="split__title">Hal</span>
+                <span>Hal</span>
                 <p class="mvn">
                     {% if user.isActive %}
                         {{ macros.status('Active', 'success', 'tick') }}
@@ -25,7 +25,7 @@
         {% endif %}
 
         <li class="mvs">
-            <span class="split__title">User Types</span>
+            <span>User Types</span>
             <ul class="inline-list--space">
                 {% if userPerm.isLead or userPerm.isButtonPusher or userPerm.isSuper %}
                     {% if userPerm.isLead %}
@@ -45,7 +45,7 @@
 
         {% if leadApplications %}
             <li class="mvs">
-                <span class="split__title">Application Owner</span>
+                <span>Application Owner</span>
                 <ul class="inline-list--comma">
                     {% for application in leadApplications %}
                         <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
@@ -56,7 +56,7 @@
 
         {% if nonProdApplications %}
             <li class="mvs">
-                <span class="split__title">Non-production Permissions</span>
+                <span>Non-production Permissions</span>
                 <ul class="inline-list--comma">
                     {% for application in nonProdApplications %}
                         <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
@@ -67,7 +67,7 @@
 
         {% if prodApplications %}
             <li class="mvs">
-                <span class="split__title">Production Permissions</span>
+                <span>Production Permissions</span>
                 <ul class="inline-list--comma">
                     {% for application in prodApplications %}
                         <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
@@ -78,7 +78,7 @@
     </ul>
 
     {% if isAdmin %}
-        <ul class="button-list mtm">
+        <ul class="mtm">
             <li><a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a></li>
             <li>
                 <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">

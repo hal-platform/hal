@@ -15,16 +15,16 @@
     </div>
 
     <div class="details-box">
-        <dl class="split">
-            <dt class="split__title">Application</dt>
-            <dd><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></dd>
+        <ul>
+            <li>Application</li>
+            <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
 
-            <dt class="split__title">Server</dt>
-            <dd><a href="{{ uriFor('server', {'server': target.server.id}) }}">{{ target.server.formatPretty() }}</a></dd>
+            <li>Server</li>
+            <li><a href="{{ uriFor('server', {'server': target.server.id}) }}">{{ target.server.formatPretty() }}</a></li>
 
-            <dt class="split__title">Environment</dt>
-            <dd>{{ target.server.environment.name }}</dd>
-        </dl>
+            <li>Environment</li>
+            <li>{{ target.server.environment.name }}</li>
+        </ul>
     </div>
 
     <h4>Name</h4>
@@ -109,7 +109,7 @@
         {% endif %}
     </p>
 
-    <ul class="button-list">
+    <ul>
         <li><a class="btn" href="{{ uriFor('targets', {'application': application.id}) }}">Deployment Targets</a></li>
         {% if can_edit %}
             <li><a class="btn btn--action" href="{{ uriFor('target.edit', {'application': application.id, 'target': target.id}) }}">Edit Target</a></li>

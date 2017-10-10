@@ -17,102 +17,102 @@
     <h2>Push Details</h2>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Id</dt>
-            <dd>{{ push.id }}</dd>
+        <ul class="mbn">
+            <li>Id</li>
+            <li>{{ push.id }}</li>
 
-            <dt class="split__title">Short Id</dt>
-            <dd>{{ push.id|formatPushId }}</dd>
+            <li>Short Id</li>
+            <li>{{ push.id|formatPushId }}</li>
 
-            <dt class="split__title">Server</dt>
-            <dd>
+            <li>Server</li>
+            <li>
                 {% if push.deployment %}
                     <a href="{{ uriFor('server', {'server': push.deployment.server.id}) }}">{{ push.deployment.formatPretty }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
-            </dd>
+            </li>
 
-            <dt class="split__title">
+            <li>
                 {{ push.deployment|formatDeploymentDetailsLabel }}
-            </dt>
-            <dd>
+            </li>
+            <li>
                 {# this sucks#}
                 {% if push.deployment.server.type == 'script' and not push.deployment.formatMeta %}
                     N/A
                 {% else %}
                     <code>{{ push.deployment.formatMeta }}</code>
                 {% endif %}
-            </dd>
+            </li>
 
             {% if push.deployment and push.deployment.url %}
-                <dt class="split__title">URL</dt>
-                <dd>
+                <li>URL</li>
+                <li>
                     <a href="{{ push.deployment.url }}">{{ push.deployment.url }}</a>
-                </dd>
+                </li>
             {% endif %}
-        </dl>
+        </ul>
     </div>
 
     <h2>Build Details</h2>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Build Id</dt>
-            <dd>
+        <ul class="mbn">
+            <li>Build Id</li>
+            <li>
                 <a href="{{ uriFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a>
                 {% if (push.build.status == 'Removed') %}
                     (Removed)
                 {% endif %}
-            </dd>
+            </li>
 
-            <dt class="split__title">Application</dt>
-            <dd>
+            <li>Application</li>
+            <li>
                 <a href="{{ uriFor('application', {'application': push.application.id}) }}">{{ push.application.name }}</a>
-            </dd>
+            </li>
 
-            <dt class="split__title">Environment</dt>
-            <dd>{{ push.build.environment.name }}</dd>
+            <li>Environment</li>
+            <li>{{ push.build.environment.name }}</li>
 
-            <dt class="split__title">Reference</dt>
-            <dd>
+            <li>Reference</li>
+            <li>
                 {% set isCurrent = githubCommitIsCurrent(push.application.githubOwner, push.application.githubRepo, push.build.branch, push.build.commit) %}
                 {{ macros.gitref(push.build, false, isCurrent) }}
-            </dd>
+            </li>
 
-            <dt class="split__title">Commit</dt>
-            <dd>
+            <li>Commit</li>
+            <li>
                 {{ macros.gitcommit(push.build) }}
-            </dd>
-        </dl>
+            </li>
+        </ul>
     </div>
 
     <h2>Push Status</h2>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Status</dt>
-            <dd>{{ macros.job_status(push, true) }}</dd>
+        <ul class="mbn">
+            <li>Status</li>
+            <li>{{ macros.job_status(push, true) }}</li>
 
-            <dt class="split__title">Time</dt>
-            <dd class="js-push-start">{{ push.start|html5date }}</dd>
+            <li>Time</li>
+            <dd class="js-push-start">{{ push.start|html5date }}</li>
 
-            <dt class="split__title">Duration</dt>
+            <li>Duration</li>
             <dd class="js-push-duration">
                 {% if push.start and push.end %}
                     {{ html5duration(push.start, push.end) }}
                 {% endif %}
-            </dd>
+            </li>
 
-            <dt class="split__title">User</dt>
-            <dd>
+            <li>User</li>
+            <li>
                 {% if push.user %}
                     <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.name }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
-            </dd>
-        </dl>
+            </li>
+        </ul>
     </div>
 
     <h2>Push Events</h2>

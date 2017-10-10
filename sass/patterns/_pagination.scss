@@ -9,11 +9,6 @@
     padding: 0 msem(-5);
     letter-spacing: normal;
     word-spacing: normal;
-
-    &,
-    > a {
-        @extend %horizontal;
-    }
 }
 
 .nav--pagination__first a:before {
@@ -23,7 +18,6 @@
 .nav--pagination__last a:after {
     content: " »";
 }
-
 
 // Remove display:block inherited from nav
 .nav--pagination {

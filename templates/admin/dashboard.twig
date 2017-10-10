@@ -7,7 +7,7 @@
     <h1>{{ page_title }}</h1>
 
     <h2 class="leader">Manage Deployments</h2>
-    <ul class="button-list">
+    <ul>
         <li>
             <a href="{{ uriFor('servers') }}" class="btn">
                 {{ macros.icon('server') }} Servers
@@ -26,7 +26,7 @@
     </ul>
 
     <h2 class="leader">User Management</h2>
-    <ul class="button-list">
+    <ul>
         <li>
             <a href="{{ uriFor('users.page1') }}" class="btn btn--primary">
                 {{ macros.icon('users') }} Users
@@ -40,7 +40,7 @@
     </ul>
 
     <h2 class="leader">Security</h2>
-    <ul class="button-list">
+    <ul>
         <li>
             <a href="{{ uriFor('admin.credentials') }}" class="btn btn--primary">
                 {{ macros.icon('locked') }} Credentials
@@ -55,7 +55,7 @@
 
     {% if isUserSuper(current_user) %}
         <h2 class="leader">Manage Hal System</h2>
-        <ul class="button-list">
+        <ul>
             <li><a href="{{ uriFor('super.system') }}" class="btn">Build System Status</a></li>
             <li><a href="{{ uriFor('super.caches') }}" class="btn">Cache Management</a></li>
             <li><a href="{{ uriFor('super.message') }}" class="btn">Global Message</a></li>
@@ -63,30 +63,30 @@
 
         <h3>Server Information</h3>
         <div class="details-box">
-            <dl class="split mbn">
-                <dt class="split__title"><b>Hostname</b></dt>
-                <dd>
+            <ul class="mbn">
+                <li><b>Hostname</b></li>
+                <li>
                     <div class="pre-wrapper">
                         <pre>{{ server_name }}</pre>
                     </div>
-                </dd>
+                </li>
 
-                <dt class="split__title"><b>Encryption key</b></dt>
-                <dd>
+                <li><b>Encryption key</b></li>
+                <li>
                     <div class="pre-wrapper">
                         <pre>{{ encryption_key }}</pre>
                     </div>
-                </dd>
+                </li>
 
-                <dt class="split__title"><b>Session Encryption key</b></dt>
-                <dd>
+                <li><b>Session Encryption key</b></li>
+                <li>
                     <div class="pre-wrapper">
                         <pre>{{ session_encryption_key }}</pre>
                     </div>
-                </dd>
+                </li>
 
-                <dt class="split__title"><b>Hal Push File</b></dt>
-                <dd>
+                <li><b>Hal Push File</b></li>
+                <li>
                     <div class="pre-wrapper">
                         {% if push_file %}
                             <pre>{{ push_file }}</pre>
@@ -94,8 +94,8 @@
                             <pre>No push file found. Are you in dev?</pre>
                         {% endif %}
                     </div>
-                </dd>
-            </dl>
+                </li>
+            </ul>
         </div>
     {% endif %}
 

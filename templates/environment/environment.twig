@@ -8,13 +8,13 @@
     <h1>Environment - <b>{{ env.name }}</b></h1>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Name</dt>
-            <dd>{{ env.name }}</dd>
+        <ul class="mbn">
+            <li>Name</li>
+            <li>{{ env.name }}</li>
 
-            <dt class="split__title">Is Production Environment?</dt>
-            <dd>{{ env.isProduction ? 'Yes' : 'No' }}</dd>
-        </dl>
+            <li>Is Production Environment?</li>
+            <li>{{ env.isProduction ? 'Yes' : 'No' }}</li>
+        </ul>
     </div>
 
     <h3>Servers</h3>
@@ -47,7 +47,7 @@
         <p><b>Note:</b> All associated servers must be removed or transferred to remove this environment.</p>
     {% endif %}
 
-    <ul class="button-list button-list--half">
+    <ul>
         <li><a class="btn" href="{{ uriFor('environments') }}">Environments</a></li>
         {% if isAdmin %}
             <li><a class="btn btn--action" href="{{ uriFor('environment.edit', {'environment': env.id}) }}">Edit Environment</a></li>

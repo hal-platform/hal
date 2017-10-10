@@ -29,7 +29,7 @@
 
     <h2>Organizations</h2>
 
-    <ul class="toc-list">
+    <ul>
         {% for group_id, group_applications in applications %}
             {% set group = groups[group_id] %}
             {% if group_applications %}
@@ -54,7 +54,7 @@
         {% set hasApplications = false %}
 
         {% for group_id, group_applications in applications %}
-            <tbody class="table-breathe js-search-group">
+            <tbody class="js-search-group">
                 {% set group = groups[group_id] %}
                 <tr>
                     <th colspan="4" class="table-mid-header" id="org-{{ group_id}}">
@@ -82,7 +82,7 @@
         {% endif %}
     </table>
 
-    <ul class="button-list button-list--half">
+    <ul>
         <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
         <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
     </ul>

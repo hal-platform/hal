@@ -1,28 +1,3 @@
-table {
-    min-width: 17em;
-    @include trailer;
-}
-
-thead {
-    border-bottom: 5px solid $dark-blue;
-    th {
-        text-align:left;
-    }
-}
-
-tbody tr {
-    @include adjust-font-size-to(ms(-1));
-    border-bottom: 1px dotted $light-grey;
-    &:last-child {
-        border-bottom: 0;
-    }
-}
-
-// reset back to normal, since scales sets this to center.
-[colspan] {
-    text-align: left;
-}
-
 // In the example markup above you can see several <col> elements with classes whose numbers
 // represent a percentage width for that column. You can leave one of the cols class-less
 // and it will take up whatever space is left over. You can also use these classes on the
@@ -53,17 +28,6 @@ tbody tr {
 .t90    { width:90% !important }
 .t95    { width:95% !important }
 
-@include breakpoint($bp-medium) {
-    .tf1    { width: 1em !important }
-    .tf2    { width: 2em !important }
-}
-
-.table--top-aligned {
-    td {
-        vertical-align: top;
-    }
-}
-
 .table--bodied {
     tbody {
         tr {
@@ -76,12 +40,6 @@ tbody tr {
             }
         }
     }
-}
-
-.table-breathe::before {
-    content: '';
-    display: block;
-    height: 1em;
 }
 
 th.table-mid-header {

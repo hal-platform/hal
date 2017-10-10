@@ -18,19 +18,19 @@
     </div>
 
     <div class="details-box">
-        <dl class="split mbn">
-            <dt class="split__title">Application</dt>
-            <dd>{{ application.name }}</dd>
+        <ul class="mbn">
+            <li>Application</li>
+            <li>{{ application.name }}</li>
 
-            <dt class="split__title">Environment</dt>
-            <dd>
+            <li>Environment</li>
+            <li>
                 {% if encrypted.environment %}
                     {{ encrypted.environment.name }}
                 {% else %}
                     Global (Available in all environments)
                 {% endif %}
-            </dd>
-        </dl>
+            </li>
+        </ul>
     </div>
 
     <section>
@@ -51,9 +51,9 @@
 
     </section>
 
-    <ul class="button-list button-list--half">
+    <ul>
         <li><a class="btn" href="{{ uriFor('encrypted.configuration', {'application': application.id}) }}">View all encrypted configuration</a></li>
-        <li class="button-list__fixed"><a class="btn btn--destructive" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': encrypted.id}) }}">Remove Property</a></li>
+        <li><a class="btn btn--destructive" href="{{ uriFor('encrypted.remove', {'application': application.id, 'encrypted': encrypted.id}) }}">Remove Property</a></li>
     </ul>
 
 {% endblock %}

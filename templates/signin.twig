@@ -15,7 +15,7 @@
         </ul>
     {% endif %}
 
-    {{ block('dual_page') }}
+    {{ block('signin_form') }}
 
 {% endblock %}
 
@@ -36,43 +36,5 @@
                 </li>
             </ul>
         </form>
-    </div>
-{% endblock %}
-
-{% block dual_page %}
-    <div class="flex-box-wrapper">
-
-        <div class="flex-box">
-            {{ block('signin_form') }}
-        </div>
-
-        <div class="flex-box">
-            <h4>Today</h4>
-            <ul class="stat-list">
-                <li>
-                    <b>{{ stats.active_repos }}</b> Active project{{ stats.active_repos != 1 ? 's' : '' }}
-                </li>
-                <li>
-                    <b>{{ stats.builds }}</b> Build{{ stats.builds != 1 ? 's' : '' }}
-                    {% if stats.builds %}
-                        <ul class="stat-list">
-                            <li>
-                                <b>{{ stats.prod_builds }}</b> for production
-                            </li>
-                        </ul>
-                    {% endif %}
-                </li>
-                <li>
-                    <b>{{ stats.pushes }}</b> Push{{ stats.builds != 1 ? 'es' : '' }}
-                    {% if stats.pushes %}
-                        <ul class="stat-list">
-                            <li>
-                                <b>{{ stats.prod_pushes }}</b> for production
-                            </li>
-                        </ul>
-                    {% endif %}
-                </li>
-            </ul>
-        </div>
     </div>
 {% endblock %}
