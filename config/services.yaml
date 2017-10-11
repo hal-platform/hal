@@ -111,16 +111,6 @@ services:
             - '@json'
             - '%cookie.preferences.ttl%'
 
-    stats:
-        class: 'Hal\UI\Service\StatsService'
-        arguments:
-            - '@doctrine.em'
-            - '@clock'
-            - '%date.timezone%'
-        calls:
-            - ['setCache', ['@cache']]
-            - ['setCacheTTL', ['%cache.stats.ttl%']]
-
     service.event_logs:
         class: 'Hal\UI\Service\EventLogService'
         arguments:
