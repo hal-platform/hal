@@ -19,7 +19,7 @@
 
                 <h1 class="hal-label">
                     <span class="hal-label__name">Hal</span>
-                    <span class="hal-label__version">2.9.0
+                    <span class="hal-label__version">3.0.0
                         {%- if isUpdateTickOn() -%}
                             <a class="hal-stamp" href="{{ uriFor('latest_release') }}" title="Hal was recently updated!">{{ macros.icon('star') }}</a>
                         {%- endif -%}
@@ -34,7 +34,7 @@
             <nav role="navigation">
                 {% if current_user %}
                     <ul class="nav--main">
-                        {% if isUserAdminOrSuper(current_user) %}
+                        {% if current_authorizations.isSuper() %}
                             <li><a href="{{ uriFor('admin') }}">{{ macros.icon('watch') }} Admin</a></li>
                         {% else %}
                             <li><a href="{{ uriFor('dashboard') }}">{{ macros.icon('dashboard') }} Dashboard</a></li>

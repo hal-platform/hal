@@ -7,33 +7,37 @@
 
 namespace Hal\UI\Middleware\ACL;
 
-use Hal\UI\Service\PermissionService;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\User;
+use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 
 /**
- * Note: Admins and Supers also pass this middleware bouncer.
+ * Note: Supers also pass this middleware bouncer.
  */
 class OwnerMiddleware extends AbstractPermissionMiddleware
 {
     /**
      * @inheritDoc
      */
-    protected function isAllowed(ServerRequestInterface $request, PermissionService $permissions, User $user): bool
+    protected function isAllowed(ServerRequestInterface $request, User $user, UserAuthorizations $authorizations): bool
     {
-        $permissions = $permissions->getUserPermissions($user);
-
-        // Allow if admin
-        if ($permissions->isButtonPusher() || $permissions->isSuper()) {
+        // Allow if super
+        if ($authorizations->isSuper()) {
             return true;
         }
 
-        // Allow if owner
+        // Allow if owner (app)
         $application = $request->getAttribute(Application::class);
-        if ($application && $permissions->isLead()) {
-            if (in_array($application, $permissions->leadApplications())) {
-                return true;
-            }
+        if ($authorizations->isOwnerOf($application)) {
+            return true;
+        }
+
+        // Allow if owner (org)
+        $organization = $request->getAttribute(Organization::class);
+        if ($authorizations->isOwnerOf($organization)) {
+            return true;
         }
 
         return false;

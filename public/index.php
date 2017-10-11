@@ -18,14 +18,6 @@ if (!$container = @include "${root}/config/bootstrap.php") {
     exit;
 };
 
-// Custom https,port detection for our weirdo load balancer config
-if (!empty($_SERVER['HTTP_FRONT_END_HTTPS'])) {
-    $_SERVER['HTTPS'] = 'on';
-}
-if (!empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
-    $_SERVER['SERVER_PORT'] = (int) $_SERVER['HTTP_X_FORWARDED_PORT'];
-}
-
 // Error handling
 $handler = $container->get('error.handler');
 $handler->register();

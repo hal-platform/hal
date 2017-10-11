@@ -9,13 +9,13 @@ namespace Hal\UI\Controllers;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserSettings;
 use Hal\UI\Auth;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Session;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserSettings;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -96,7 +96,7 @@ class SignInHandler implements MiddlewareInterface
             return $next($this->withError($request, self::ERR_AUTH_FAILURE), $response);
         }
 
-        $user = $this->userRepo->findOneBy(['handle' => $account['username']]);
+        $user = $this->userRepo->findOneBy(['username' => $account['username']]);
 
         // account disabled manually
         if ($user && !$user->isActive()) {
