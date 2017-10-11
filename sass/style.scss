@@ -44,25 +44,26 @@
 @import 'base/tables';
 
 // App
-@import 'app/cards';
-@import 'app/dash-box';
-@import 'app/hal-header';
-@import 'app/help';
-@import 'app/icons';
 @import 'app/github';
-@import 'app/radio-grid';
+@import 'app/header';
+@import 'app/help';
+@import 'app/logo';
 @import 'app/search';
-@import 'app/tabs';
 
 // Components
-@import 'patterns/alert-bar';
-@import 'patterns/buttons';
-@import 'patterns/check-box';
-@import 'patterns/nav';
-@import 'patterns/pagination';
-@import 'patterns/scroll-thing';
-@import 'patterns/status';
-@import 'patterns/stars';
+@import 'components/alert-bar';
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/check-box';
+@import 'components/dash-box';
+@import 'components/icons';
+@import 'components/nav';
+@import 'components/pagination';
+@import 'components/radio-grid';
+@import 'components/scroll-thing';
+@import 'components/status';
+@import 'components/stars';
+@import 'components/tabs';
 
 // must go last!
 @import 'app/js';

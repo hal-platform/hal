@@ -1,29 +1,26 @@
 {% import "macros.twig" as macros %}
 
-<header role="banner">
+<header>
     {% block banner %}
-        <div class="hal">
+        <div class="hal-grill">
             <div class="wrapper">
                 <a href="/">
-                    <div class="hal-eye circular">
-                        <div class="ring circular"></div>
-                        <div class="oculus circular">
-                            <div class="iris circular narrow"></div>
-                            <div class="iris circular wide"></div>
-                            <div class="highlight alpha"></div>
-                            <div class="highlight"></div>
-                            <div class="highlight beta"></div>
-                        </div>
+                    <div class="hal">
+                        <div class="hal-reflection hal-reflection-left"></div>
+                        <div class="hal-reflection hal-reflection-center"></div>
+                        <div class="hal-reflection hal-reflection-right"></div>
+                        <div class="hal-rim"><div class="hal-iris"></div></div>
                     </div>
                 </a>
 
                 <h1 class="hal-label">
                     <span class="hal-label__name">Hal</span>
-                    <span class="hal-label__version">3.0.0
-                        {%- if isUpdateTickOn() -%}
+                    <span class="hal-label__version">3.0.0</span>
+                    {%- if isUpdateTickOn() -%}
+                        <div class="hal-stamp">
                             <a class="hal-stamp" href="{{ uriFor('latest_release') }}" title="Hal was recently updated!">{{ macros.icon('star') }}</a>
-                        {%- endif -%}
-                    </span>
+                        </div>
+                    {%- endif -%}
                 </h1>
             </div>
         </div>
@@ -31,7 +28,7 @@
 
     {% block navigation %}
         {% if show_navigation %}
-            <nav role="navigation">
+            <nav>
                 {% if current_user %}
                     <ul class="nav--main">
                         {% if current_authorizations.isSuper() %}

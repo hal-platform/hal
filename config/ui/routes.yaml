@@ -16,6 +16,16 @@ parameters:
         #     route:  '/settings/remove-github-authorization'
         #     stack:  ['middleware.login', 'github.authorization.remove.page']
 
+        maintenance:
+            method: 'GET'
+            route:  '/maintenance.html'
+            stack:  ['maintenance.page']
+
+        denied:
+            method: 'GET'
+            route:  '/denied.html'
+            stack:  ['denied.page']
+
         ####################################################################################################################
         # SIGN-IN CONTROLLERS
         ####################################################################################################################

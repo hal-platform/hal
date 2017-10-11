@@ -8,7 +8,7 @@ define('HAL_APP_START', microtime(true));
 $root = realpath(__DIR__ . '/..');
 
 if (MAINTENANCE) {
-    require $root . '/templates/maintenance.html';
+    // require $root . '/templates/maintenance.html';
     exit;
 }
 

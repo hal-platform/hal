@@ -5,6 +5,22 @@ services:
 
     ############################################################################
 
+    maintenance.page:
+        parent: 'static.controller'
+        arguments: ['@maintenance.twig']
+    maintenance.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['maintenance.twig']]]
+
+    denied.page:
+        parent: 'static.controller'
+        arguments: ['@denied.twig']
+    denied.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['denied.twig']]]
+
+    ############################################################################
+
     dashboard.page:
         class: 'Hal\UI\Controllers\DashboardController'
         arguments:
