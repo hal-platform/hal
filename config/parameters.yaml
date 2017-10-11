@@ -24,7 +24,7 @@ parameters:
     # Route condition regexes
     r.alphanum: '[A-Za-z0-9]+'
     r.digit: '[0-9]+'
-    r.guid: '[0-9a-zA-Z]{32,32}'
+    r.guid: '[0-9a-zA-Z\-]{32,36}'
     r.build: '[A-Za-z0-9\_\-\.]+'
     r.release: '%r.build%'
     r.date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'

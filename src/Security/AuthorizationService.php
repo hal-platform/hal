@@ -10,7 +10,7 @@ namespace Hal\UI\Security;
 // use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-// use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Application;
 // use Hal\Core\Entity\Environment;
 use Hal\Core\Entity\User;
 use Hal\Core\Entity\UserPermission;
@@ -48,7 +48,7 @@ class AuthorizationService
     {
         $this->em = $em;
         $this->permissionsRepo = $em->getRepository(UserPermission::class);
-        // $this->applicationRepo = $em->getRepository(Application::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::class);
 
         $this->json = $json;
     }
@@ -101,6 +101,40 @@ class AuthorizationService
     {
         $key = $this->cacheKey($user);
         $this->setToCache($key, null);
+    }
+
+    /**
+     * Get a list of resolved applications sorted into "lead", "prod", "non_prod".
+     *
+     * This is not cached, and should be used sparingly. NEVER in a loop.
+     *
+     * @param UserAuthorizations $authorizations
+     *
+     * @return array
+     */
+    public function getApplications(UserAuthorizations $authorizations)
+    {
+        $apps = [];
+        foreach ($perm->leadApplications() as $app) $apps[$app] = $app;
+        foreach ($perm->prodApplications() as $app) $apps[$app] = $app;
+        foreach ($perm->nonProdApplications() as $app) $apps[$app] = $app;
+
+        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $apps));
+        $applications = $this->applicationRepo->matching($criteria);
+
+        $appPerm = [
+            'lead' => [],
+            'prod' => [],
+            'non_prod' => []
+        ];
+
+        foreach ($applications as $app) {
+            if ($perm->isLeadOfApplication($app)) $appPerm['lead'][] = $app;
+            if ($perm->canDeployApplicationToProd($app)) $appPerm['prod'][] = $app;
+            if ($perm->canDeployApplicationToNonProd($app)) $appPerm['non_prod'][] = $app;
+        }
+
+        return $appPerm;
     }
 
     /**

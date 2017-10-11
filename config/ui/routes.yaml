@@ -85,7 +85,7 @@ parameters:
             stack: ['middleware.signed_in', 'users.page']
 
         user.management:
-            route: '/users/{user:%r.digit%}'
+            route: '/users/{user:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 user:

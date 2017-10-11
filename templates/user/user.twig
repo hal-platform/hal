@@ -3,13 +3,13 @@
 
 {% set page_title = 'User - ' ~ user.name %}
 
-{% set is_admin = isUserAdminOrSuper(current_user) %}
-{% set is_super = isUserSuper(current_user) %}
+{% set is_admin = current_authorizations.isAdmin() %}
+{% set is_super = current_authorizations.isSuper() %}
 
 {% block content %}
 
     <div class="nav--page">
-        <h1>User - <b>{{ user.handle }}</b></h1>
+        <h1>User - <b>{{ user.username }}</b></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('users.page1') }}">Back to Users</a>
@@ -39,17 +39,17 @@
     <div class="details-box">
         <ul class="list--bare mbn">
             <li>
-                <span>Email</span>
+                <h6>Email</h6>
                 {% if user.email %}
-                    <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+                    <code>{{ user.email }}</code>
                 {% else %}
                     None
                 {% endif %}
             </li>
 
             <li>
-                <span>Username</span>
-                {{ user.handle }}
+                <h6>Username</h6>
+                {{ user.username }}
             </li>
         </dl>
     </div>

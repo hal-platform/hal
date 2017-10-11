@@ -28,7 +28,7 @@ use Hal\Core\Entity\{
     User,
     UserPermission,
     // UserSettings,
-    // UserToken,
+    UserToken
 };
 use QL\Panthor\MiddlewareInterface;
 use Slim\Route;

@@ -52,17 +52,17 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Token</th>
+                    <th>Token Secret</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for token in tokens %}
                     <tr>
-                        <td>{{ token.label }}</td>
+                        <td>{{ token.name }}</td>
                         <td><code>{{ token.value }}</code></td>
                         <td class="tr">
-                            <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
+                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
                                 Revoke
                             </a>
                         </td>

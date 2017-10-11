@@ -51,7 +51,7 @@
     {% endif %}
 
     <h3>Are you sure?</h3>
-    <p>You're about to permanently remove this {{ entity_type }}. Do you want to continue?</p>
+    <p>You're about to permanently remove this <b>{{ entity_type }}</b>. Do you want to continue?</p>
 
     <form class="form-wrapper" method="post">
         <ul>
@@ -92,14 +92,19 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Server Type</li>
-            <li>{{ remove.entity.formatHumanType }}</li>
+            <li>
+                <h6>Server Type</h6>
+                {{ remove.entity.formatHumanType }}
+            </li>
 
-            <li>{{ name_label }}</li>
-            <li>{{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}</li>
+            <li>
+                <h6>{{ name_label }}</h6>
+                {{ remove.entity.type == 'script' ? 'N/A' : remove.entity.name }}
+            </li>
 
-            <li>Environment</li>
-            <li>{{ remove.entity.environment.name}}</li>
+            <li>
+                <h6>Environment</h6>
+                {{ remove.entity.environment.name}}</li>
         </ul>
     </div>
 
@@ -108,11 +113,15 @@
 {% block environment_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
 
-            <li>Is Production Environment?</li>
-            <li>{{ remove.entity.isProduction ? 'Yes' : 'No' }}</li>
+            <li>
+                <h6>Is Production Environment?</h6>
+                {{ remove.entity.isProduction ? 'Yes' : 'No' }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -120,11 +129,13 @@
 {% block credential_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
-
-            <li>Type</li>
             <li>
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
+
+            <li>
+                <h6>Type</h6>
                 {% if remove.entity.type == 'aws' %}
                     AWS
                 {% elseif remove.entity.type == 'privatekey' %}
@@ -138,11 +149,15 @@
 {% block organization_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Identifier</li>
-            <li>{{ remove.entity.key }}</li>
+            <li>
+                <h6>Identifier</h6>
+                {{ remove.entity.key }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -150,14 +165,20 @@
 {% block application_box %}
     <div class="details-box">
         <ul>
-            <li>Identifier</li>
-            <li>{{ remove.entity.key }}</li>
+            <li>
+                <h6>Identifier</h6>
+                {{ remove.entity.key }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ remove.entity.name }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
 
-            <li>GitHub Source</li>
-            <li>{{ macros.gitsource(remove.entity) }}</li>
+            <li>
+                <h6>GitHub Source</h6>
+                {{ macros.gitsource(remove.entity) }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -165,17 +186,25 @@
 {% block target_box %}
     <div class="details-box">
         <ul>
-            <li>Application</li>
-            <li>{{ remove.entity.application.name }}</li>
+            <li>
+                <h6>Application</h6>
+                {{ remove.entity.application.name }}
+            </li>
 
-            <li>Environment</li>
-            <li>{{ remove.entity.server.environment.name }}</li>
+            <li>
+                <h6>Environment</h6>
+                {{ remove.entity.server.environment.name }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ remove.entity.name ?: 'None' }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name ?: 'None' }}
+            </li>
 
-            <li>Type</li>
-            <li>{{ remove.entity.server.formatHumanType() }}</li>
+            <li>
+                <h6>Type</h6>
+                {{ remove.entity.server.formatHumanType() }}
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -183,11 +212,13 @@
 {% block encrypted_box %}
     <div class="details-box">
         <ul class="mbn">
-            <li>Application</li>
-            <li>{{ remove.entity.application.name }}</li>
-
-            <li>Environment</li>
             <li>
+                <h6>Application</h6>
+                {{ remove.entity.application.name }}
+            </li>
+
+            <li>
+                <h6>Environment</h6>
                 {% if remove.entity.environment %}
                     {{ remove.entity.environment.name }}
                 {% else %}
@@ -195,8 +226,10 @@
                 {% endif %}
             </li>
 
-            <li>Property Name</li>
-            <li><code>{{ remove.entity.name }}</code></li>
+            <li>
+                <h6>Property Name</h6>
+                <code>{{ remove.entity.name }}</code>
+            </li>
         </ul>
     </div>
 {% endblock %}
@@ -204,8 +237,10 @@
 {% block token_box %}
     <div class="details-box">
         <ul>
-            <li>Name</li>
-            <li>{{ remove.entity.label }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ remove.entity.name }}
+            </li>
         </ul>
     </div>
 {% endblock %}

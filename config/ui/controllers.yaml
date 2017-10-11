@@ -130,7 +130,7 @@ services:
 
     user.page:
         class: 'Hal\UI\Controllers\User\UserController'
-        arguments: ['@user.twig', '@permissions']
+        arguments: ['@user.twig', '@service.authorization']
     user.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/user.twig']]]
