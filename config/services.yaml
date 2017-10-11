@@ -93,9 +93,7 @@ services:
         class: 'Hal\UI\Service\PermissionService'
         arguments:
             - '@doctrine.em'
-            - '@github'
             - '@json'
-            - '%permissions.check.github%'
         calls:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.permissions.ttl%']]

@@ -10,13 +10,12 @@ namespace Hal\UI\Service;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserPermission;
-use QL\Hal\Core\Entity\UserType;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserPermission;
 use QL\MCP\Cache\CachingTrait;
-use QL\Panthor\Utility\Json;
+use QL\Panthor\Utility\JSON;
 
 class PermissionService
 {
@@ -42,19 +41,9 @@ class PermissionService
     private $applicationRepo;
 
     /**
-     * @var GitHubService
-     */
-    private $github;
-
-    /**
-     * @var Json
+     * @var JSON
      */
     private $json;
-
-    /**
-     * @var bool
-     */
-    private $enableGitHubPermissions;
 
     /**
      * Simple in-memory cache
@@ -63,36 +52,19 @@ class PermissionService
      */
     private $internalCache;
 
-    private $superApplications;
-
     /**
      * @param EntityManagerInterface $em
-     * @param GitHubService $github
-     * @param Json $json
-     * @param bool $enableGitHubPermissions
+     * @param JSON $json
      */
-    public function __construct(
-        EntityManagerInterface $em,
-        GitHubService $github,
-        Json $json,
-        $enableGitHubPermissions
-    ) {
+    public function __construct(EntityManagerInterface $em, JSON $json)
+    {
         $this->em = $em;
-        $this->userTypesRepo = $em->getRepository(UserType::CLASS);
         $this->userPermissionsRepo = $em->getRepository(UserPermission::CLASS);
         $this->applicationRepo = $em->getRepository(Application::CLASS);
 
-        $this->github = $github;
         $this->json = $json;
 
-        $this->enableGitHubPermissions = $enableGitHubPermissions;
         $this->internalCache = [];
-
-        $this->superApplications = [
-            'hal9000',
-            'hal9000-agent',
-            'eternia-cloud'
-        ];
     }
 
     /**
@@ -184,10 +156,6 @@ class PermissionService
             return $this->setToInternalCache($key, true);
         }
 
-        if ($this->isUserOrganizationMember($user, $application)) {
-            return $this->setToInternalCache($key, true);
-        }
-
         return $this->setToInternalCache($key, false);
     }
 
@@ -261,48 +229,6 @@ class PermissionService
         }
 
         return $appPerm;
-    }
-
-    /**
-     * @param Application $application
-     *
-     * @return bool
-     */
-    private function isSuperApplication(Application $application)
-    {
-        return in_array($application->key(), $this->superApplications);
-    }
-
-    /**
-     * @param User $user
-     * @param Application $application
-     *
-     * @return bool
-     */
-    private function isUserOrganizationMember(User $user, Application $application)
-    {
-        if (!$this->enableGitHubPermissions) {
-            return false;
-        }
-
-        $key = sprintf(self::CACHE_COLLAB, $user->id(), $application->key());
-
-        // internal cache
-        if (null !== ($cached = $this->getFromInternalCache($key))) {
-            return $cached;
-        }
-
-        // external cache
-        if ($result = $this->getFromCache($key)) {
-            return $result;
-        }
-
-        $result = $this->github->isUserOrganizationMember($application->githubOwner(), $user->handle());
-
-        $this->setToInternalCache($key, $result);
-        $this->setToCache($key, $result);
-
-        return $result;
     }
 
     /**

@@ -20,5 +20,4 @@ parameters:
     hal.agents:
         - 'localhost'
         - 'skluckmbp'
-    permissions.check.github: false
     # ▲▲▲▲ TODO TODO - remove these
