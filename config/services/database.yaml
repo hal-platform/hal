@@ -1,0 +1,14 @@
+services:
+
+    doctrine.cache.redis:
+        class: 'QL\Hal\Core\Utility\DoctrinePredisCache'
+        arguments: ['@redis', '%doctrine.cache.ttl%']
+
+    doctrine.utility.user_fetcher:
+        class: 'Hal\UI\Utility\LazyUserRetriever'
+        arguments: ['@twig.context']
+
+    doctrine.listener.change:
+        class: 'Hal\Core\Database\DoctrineUtility\DoctrineAuditListener'
+        calls:
+            - ['setLazyOwnerFetcher', ['@doctrine.utility.user_fetcher']]

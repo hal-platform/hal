@@ -1,0 +1,11 @@
+services:
+
+    logger:
+        parent: 'mcp.logger'
+
+    content_handler:
+        class: 'QL\Panthor\ErrorHandling\ContentHandler\LoggingContentHandler'
+        arguments:
+            - '@panthor.content_handler'
+            - '@logger'
+            - { error: 'critical' }

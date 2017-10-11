@@ -54,7 +54,7 @@ parameters:
         help.scripting:
             method: 'GET'
             route: '/help/deployment-scripting'
-            stack: ['help.deployment.page']
+            stack: ['help.deployment_scripting.page']
 
         help.setup:
             method: 'GET'

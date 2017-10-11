@@ -29,7 +29,6 @@ services:
         arguments:
             - '@middleware.signed_in'
             - '@middleware.permissions.twig'
-            - '@permissions'
     middleware.permissions.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['denied.twig']]]

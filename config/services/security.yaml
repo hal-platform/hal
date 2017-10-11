@@ -1,0 +1,35 @@
+services:
+    ####################################################################################################################
+    # AUTHORIZATIONS
+    ####################################################################################################################
+
+    service.authorization:
+        class: 'Hal\UI\Security\AuthorizationService'
+        arguments:
+            - '@doctrine.em'
+            - '@json'
+        calls:
+            - ['setCache', ['@cache']]
+            - ['setCacheTTL', ['%cache.permissions.ttl%']]
+
+    ####################################################################################################################
+    # CRYPTO
+    ####################################################################################################################
+
+    encrypter:
+        class: 'QL\Hal\Core\Crypto\Encrypter'
+        arguments: ['%encrypter.publickey%']
+
+    decrypter:
+        class: 'QL\Hal\Core\Crypto\Decrypter'
+        factory: ['@decrypter.factory', 'getAsymmetricDecrypter']
+        lazy: true
+
+    decrypter.factory:
+        class: 'QL\Hal\Core\Crypto\CryptoFactory'
+        arguments: ['@encrypter.encryptedkey.squished', '%encrypter.secret.path%']
+
+    encrypter.encryptedkey.squished:
+        class: 'stdClass'
+        factory: ['Hal\UI\Application\Stringify', 'squish']
+        arguments: ['%encrypter.encryptedkey%']

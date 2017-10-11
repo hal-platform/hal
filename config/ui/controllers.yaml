@@ -21,7 +21,7 @@ services:
 
     signin.page:
         class: 'Hal\UI\Controllers\SignInController'
-        arguments: ['@signin.twig', '@stats']
+        arguments: ['@signin.twig']
     signin.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['signin.twig']]]

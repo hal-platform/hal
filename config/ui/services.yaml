@@ -51,10 +51,6 @@ services:
         class: 'Hal\UI\Twig\GlobalExtension'
         arguments: ['%twig.globals%']
 
-    twig.extension.permissions:
-        class: 'Hal\UI\Twig\PermissionsExtension'
-        arguments: ['@permissions']
-
     twig.extension.github:
         class: 'Hal\UI\Twig\GitHubExtension'
         arguments: ['@github', '@github.url_builder']
@@ -73,6 +69,5 @@ services:
         calls:
             - ['addExtension', ['@twig.extension.hal']]
             - ['addExtension', ['@twig.extension.hal.global' ]]
-            - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
             - ['addExtension', ['@twig.extension.status']]
