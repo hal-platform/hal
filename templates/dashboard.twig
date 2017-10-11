@@ -6,17 +6,8 @@
 
 {% block content %}
 
-    {% if is_serious_business_mode %}
-        <h1>Dashboard</h1>
-    {% else %}
-        <h1>
-            Hello<span
-                data-initial=", {{ getUsersActualName(current_user) }}."
-                data-freud=", {{ getUsersFreudianName() }}."
-                data-nofunzone=", {{ getUsersFirstName(current_user) }}."
-            ></span>
-        </h1>
-    {% endif %}
+    <h1>Dashboard</h1>
+    <h2><span class="js-slow-typed" data-text="Hello, Dave.^1000 You're looking well today.">Hello</span></h2>
 
     {% if session.get('is-first-login') or not favorites %}
        {{ block('intro') }}
@@ -32,8 +23,7 @@
                     <div class="fav-box">
                         <h5>{{ application.name }}</h5>
                         <p>
-                            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">App Status</a>
-                            | <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
+                            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">App Status</a> | <a href="{{ uriFor('build.start', {'application': application.id}) }}">Start Build</a>
                         </p>
                     </div>
                 {% endfor %}
@@ -50,8 +40,8 @@
 {% endblock %}
 
 {% block intro %}
-    <div>
-        <h2>My name is Hal.</h2>
+    <section>
+        <h3>My name is Hal.</h3>
         <h5>I deploy code to other, less capable machines.</h5>
 
         <p>
@@ -70,7 +60,7 @@
         </p>
 
         <p>I look forward to working with you.</p>
-    </div>
+    </section>
 {% endblock %}
 
 {% block stuck_details %}

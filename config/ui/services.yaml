@@ -44,7 +44,6 @@ services:
         arguments:
             - '@global.message'
             - '@utility.time.formatter'
-            - '@utility.name.formatter'
             - '%gravatar.fallback%'
 
     twig.extension.hal.global:

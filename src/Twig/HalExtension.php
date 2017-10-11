@@ -8,7 +8,6 @@
 namespace Hal\UI\Twig;
 
 use Hal\UI\Service\GlobalMessageService;
-use Hal\UI\Utility\NameFormatter;
 use Hal\UI\Utility\TimeFormatter;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
@@ -35,11 +34,6 @@ class HalExtension extends Twig_Extension
     private $time;
 
     /**
-     * @var NameFormatter
-     */
-    private $name;
-
-    /**
      * @var string
      */
     private $gravatarFallbackImageURL;
@@ -53,12 +47,10 @@ class HalExtension extends Twig_Extension
     public function __construct(
         GlobalMessageService $messageService,
         TimeFormatter $time,
-        NameFormatter $name,
         $gravatarFallbackImageURL
     ) {
         $this->messageService = $messageService;
         $this->time = $time;
-        $this->name = $name;
 
         $this->gravatarFallbackImageURL = $gravatarFallbackImageURL;
     }
@@ -85,11 +77,7 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFunction('html5duration', [$this->time, 'html5duration'], ['is_safe' => ['html']]),
             new Twig_SimpleFunction('hash', [$this, 'hash']),
 
-            // name
-            new Twig_SimpleFunction('getUsersName', [$this->name, 'getUsersName']),
-            new Twig_SimpleFunction('getUsersFirstName', [$this->name, 'getUsersFirstName']),
-            new Twig_SimpleFunction('getUsersActualName', [$this->name, 'getUsersActualName']),
-            new Twig_SimpleFunction('getUsersFreudianName', [$this->name, 'getUsersFreudianName']),
+            // user
             new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
 
             // services

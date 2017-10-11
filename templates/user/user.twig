@@ -1,10 +1,7 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 
-{% set name = getUsersName(user) %}
-{% set displayName = is_serious_business_mode ? name : getUsersActualName(user) %}
-
-{% set page_title = 'User : ' ~ name %}
+{% set page_title = 'User - ' ~ user.name %}
 
 {% set is_admin = isUserAdminOrSuper(current_user) %}
 {% set is_super = isUserSuper(current_user) %}
@@ -27,9 +24,9 @@
 
             <h2 class="mbn">
                 {% if is_serious_business_mode %}
-                    {{ displayName }}
+                    {{ user.name }}
                 {% else %}
-                    <span data-initial="{{ displayName }}" data-nofunzone="{{ name }}">{{ displayName }}</span>
+                    {{ random(['Dave', 'Frank']) }}
                 {% endif %}
             </h2>
 

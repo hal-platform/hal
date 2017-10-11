@@ -52,7 +52,7 @@
                         {% if is_srs %}
                             {{ user.name }}
                         {% else %}
-                            {{ getUsersActualName(user) }}
+                            {{ random(['Dave', 'Frank']) }}
                         {% endif %}
                     </td>
                     <td>{{ user.email }}</td>

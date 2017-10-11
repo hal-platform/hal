@@ -124,9 +124,6 @@ services:
     # HELPERS
     ####################################################################################################################
 
-    utility.name.formatter:
-        class: 'Hal\UI\Utility\NameFormatter'
-
     utility.id.generator:
         class: 'QL\Hal\Core\JobIdGenerator'
         arguments:

@@ -114,7 +114,7 @@ class UserAuthorizations implements JsonSerializable
      */
     public function canBuild(Application $application): bool
     {
-
+        return false;
     }
 
     /**
@@ -125,7 +125,7 @@ class UserAuthorizations implements JsonSerializable
      */
     public function canDeploy(Application $application, Environment $environment): bool
     {
-
+        return false;
     }
 
     /**
@@ -168,9 +168,9 @@ class UserAuthorizations implements JsonSerializable
      */
     public static function hash(?Application $application, ?Organization $organization, ?Environment $environment)
     {
-        $application = $application->id() ?? UserAuthorizations::ALL_PERMISSIONS;
-        $organization = $organization->id() ?? UserAuthorizations::ALL_PERMISSIONS;
-        $environment = $environment->id() ?? UserAuthorizations::ALL_PERMISSIONS;
+        $application = $application ? $application->id() : UserAuthorizations::ALL_PERMISSIONS;
+        $organization = $organization ? $organization->id() : UserAuthorizations::ALL_PERMISSIONS;
+        $environment = $environment ? $environment->id() : UserAuthorizations::ALL_PERMISSIONS;
 
         return md5($application . $organization . $environment);
     }
