@@ -1,4 +1,39 @@
-.neatbox__check {
+
+.checkbox-check {
+    display: inline-block;
+    padding-left: 1em;
+    position: relative;
+    text-align: left;
+    user-select: none;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+        .checkbox-check--tick {
+            box-shadow: 0 0 1px 2px $hal-blue;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-check--tick {
+            box-shadow: 0 0 1px 2px $hal-blue;
+        }
+    }
+}
+
+.checkbox-check input[type="checkbox"] {
+    visibility: hidden;
+
+    &:checked + .checkbox-check--tick {
+        background-color: $green;
+        box-shadow: 0 0 0 1px transparent;
+
+        &:before {
+            border-color: $white;
+        }
+    }
+}
+
+.checkbox-check--tick {
     height: 1.5em;
     width: 1.5em;
 
@@ -28,41 +63,25 @@
     }
 }
 
-.neatbox input[type="checkbox"] {
+.checkbox-toggle {
+    display: inline-block;
+    position: relative;
+    padding-left: 2em;
+}
+
+.checkbox-toggle input[type="checkbox"] {
     visibility: hidden;
 
-    &:checked + .neatbox__check {
+    &:checked + .checkbox-toggle--pill {
         background-color: $green;
-        box-shadow: 0 0 0 1px transparent;
 
-        &:before {
-            border-color: $white;
+        &:after {
+            left: 26px;
         }
     }
 }
 
-.neatbox {
-    display: inline-block;
-    padding-left: 1em;
-    position: relative;
-    text-align: left;
-    user-select: none;
-
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-    &:hover {
-        .neatbox__check {
-            box-shadow: 0 0 1px 2px $hal-blue;
-        }
-
-        input[type="checkbox"]:checked + .neatbox__check {
-            box-shadow: 0 0 1px 2px $hal-blue;
-        }
-    }
-}
-
-.checkbox--switch__pill {
+.checkbox-toggle--pill {
     width: 48px;
     height: 24px;
     position: absolute;
@@ -82,22 +101,4 @@
         transition: all 0.1s;
         background-color: white;
     }
-}
-
-.checkbox--switch input[type="checkbox"] {
-    visibility: hidden;
-
-    &:checked + .checkbox--switch__pill {
-        background-color: $green;
-
-        &:after {
-            left: 26px;
-        }
-    }
-}
-
-.checkbox--switch {
-    display: inline-block;
-    position: relative;
-    padding-left: 2em;
 }

@@ -380,7 +380,7 @@
 
 {% block setup_codedeploy_appspec %}
     {% spaceless %}
-        <pre class="small-code">version: 0.0
+        <pre>version: 0.0
 os: linux
 files:
     - source: /
@@ -390,7 +390,7 @@ files:
 
 {% block setup_codedeploy_appspec_perm %}
     {% spaceless %}
-        <pre class="small-code">permissions:
+        <pre>permissions:
   - object: /var/www/testapplication
     pattern: "**"
     owner: ux-ecsvc
@@ -403,7 +403,7 @@ files:
 
 {% block setup_codedeploy_appspec_command %}
     {% spaceless %}
-        <pre class="small-code">hooks:
+        <pre>hooks:
   Install:
     - location: /var/www/application/bin/myscript.sh
       timeout: 30 (timeout in seconds, optional)
@@ -412,7 +412,7 @@ files:
 {% endblock %}
 
 {% block script_example %}
-    <pre class="small-code">
+    <pre>
 # filename: APPLICATION_ROOT/.hal9000.yml
 system: docker:node6.2
 
@@ -428,7 +428,7 @@ deploy:
 {% endblock %}
 
 {% block script_example_context %}
-    <pre class="small-code">
+    <pre>
 system: docker:node6.2
 build:
     - 'npm install --production'
@@ -439,7 +439,7 @@ deploy:
 
 {% block s3_file_name_example %}
     {% spaceless %}
-        <pre class="small-code">
+        <pre>
 Application Directory
 |_ bin
 |___ script1.sh

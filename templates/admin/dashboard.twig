@@ -3,6 +3,8 @@
 
 {% set page_title = "Admin Dashboard" %}
 
+{% set is_admin = current_authorizations.isSuper() %}
+
 {% block content %}
     <h1>{{ page_title }}</h1>
 
@@ -53,7 +55,7 @@
         </li>
     </ul>
 
-    {% if isUserSuper(current_user) %}
+    {% if is_admin %}
         <h2 class="leader">Manage Hal System</h2>
         <ul>
             <li><a href="{{ uriFor('super.system') }}" class="btn">Build System Status</a></li>

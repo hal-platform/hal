@@ -1,40 +1,8 @@
-.flex-box-wrapper {
-    background-color: tint($light-grey, 50%);
-    overflow: hidden;
-    display: block;
 
-    // Must inverse the padding on the containing element
-    @include margin-x(ms(2) * -1);
-    margin-bottom: ms(-2) * -1;
-
-    @include breakpoint($bp-small) {
-       @include margin-x(ms(3) * -1);
-        margin-bottom: ms(3) * -1;
-    }
-
-    @include breakpoint($bp-medium) {
-       display: flex;
-    }
-}
-
-.flex-box {
-    @include leader();
-    @include margin-x(1em);
-
-    @include padding-x(msem(5));
-    @include padding-y(msem(1));
-
-    background-color: #fff;
-    flex: 1;
-
-    @include breakpoint($bp-medium) {
-        &:first-child { margin-left: 0; }
-        &:last-child { margin-right: 0; }
-    }
-}
-
-.box-roundy {
-    @include border-radius(5px);
+.details-box {
+    border: 8px solid $light-grey;
+    padding: msem(1);
+    @include trailer(1);
 }
 
 .fav-box-wrapper {
@@ -69,15 +37,9 @@
     p { margin: 0; padding: 0 .3em; }
 }
 
-.details-box {
-    border: 8px solid $light-grey;
-    padding: msem(1);
-    @include trailer(1);
-
-    .fav-box {
-        @include breakpoint($bp-small) {
-            width: 17em;
-        }
+.details-box .fav-box {
+    @include breakpoint($bp-small) {
+        width: 17em;
     }
 }
 
@@ -90,33 +52,24 @@ $alt-color-3: $hal-blue;
     h5 {
         background: $alt-color;
         color: $white;
-        a {
-            color: $white;
-        }
+        a { color: $white; }
     }
 }
-
 
 .fav-box-alt-2 {
     box-shadow: 0 0 0 2px $alt-color-2;
     h5 {
         background: $alt-color-2;
         color: $white;
-        a {
-            color: $white;
-        }
+        a { color: $white; }
     }
 }
-
 
 .fav-box-alt-3 {
     box-shadow: 0 0 0 2px $alt-color-3;
     h5 {
         background: $alt-color-3;
         color: $white;
-        a {
-            color: $white;
-        }
+        a { color: $white; }
     }
 }
-
