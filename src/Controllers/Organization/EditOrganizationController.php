@@ -26,7 +26,7 @@ class EditOrganizationController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Organization updated successfully.';
+    private const MSG_SUCCESS = 'Organization "%s" was updated.';
 
     /**
      * @var TemplateInterface
@@ -77,7 +77,9 @@ class EditOrganizationController implements ControllerInterface
         $form = $this->getFormData($request, $organization);
 
         if ($modified = $this->handleForm($form, $request, $organization)) {
-            $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
+            $msg = sprintf(self::MSG_SUCCESS, $organization->name());
+
+            $this->withFlash($request, Flash::SUCCESS, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'organization', ['organization' => $modified->id()]);
         }
 
@@ -127,7 +129,7 @@ class EditOrganizationController implements ControllerInterface
 
         $form = [
             'name' => $isPost ? $name : $organization->identifier(),
-            'description' => $isPost ? $description : $organization->identifier(),
+            'description' => $isPost ? $description : $organization->name(),
         ];
 
         return $form;

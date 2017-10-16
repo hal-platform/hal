@@ -34,15 +34,10 @@
             </li>
 
             <li>
-                {{ push.deployment|formatDeploymentDetailsLabel }}
+                Parameters
             </li>
             <li>
-                {# this sucks#}
-                {% if push.deployment.server.type == 'script' and not push.deployment.formatMeta %}
-                    N/A
-                {% else %}
-                    <code>{{ push.deployment.formatMeta }}</code>
-                {% endif %}
+                {{ push.deployment.formatParameters }}
             </li>
 
             {% if push.deployment and push.deployment.url %}

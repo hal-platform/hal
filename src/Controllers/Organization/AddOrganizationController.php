@@ -76,6 +76,7 @@ class AddOrganizationController implements ControllerInterface
 
         if ($organization = $this->handleForm($form, $request)) {
             $msg = sprintf(self::MSG_SUCCESS, $organization->name());
+
             $this->withFlash($request, Flash::SUCCESS, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'applications');
         }

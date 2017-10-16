@@ -70,7 +70,9 @@ class AddEnvironmentController implements ControllerInterface
         $form = $this->getFormData($request);
 
         if ($environment = $this->handleForm($form, $request)) {
-            $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $environment->name()));
+            $msg = sprintf(self::MSG_SUCCESS, $environment->name());
+
+            $this->withFlash($request, Flash::SUCCESS, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'environments');
         }
 

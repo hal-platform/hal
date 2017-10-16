@@ -26,7 +26,7 @@ class EditEnvironmentController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Environment updated successfully.';
+    private const MSG_SUCCESS = 'Environment "%s" was updated.';
 
     /**
      * @var TemplateInterface
@@ -72,7 +72,9 @@ class EditEnvironmentController implements ControllerInterface
         $form = $this->getFormData($request, $environment);
 
         if ($modified = $this->handleForm($form, $request, $environment)) {
-            $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
+            $msg = sprintf(self::MSG_SUCCESS, $environment->name());
+
+            $this->withFlash($request, Flash::SUCCESS, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'environment', ['environment' => $modified->id()]);
         }
 

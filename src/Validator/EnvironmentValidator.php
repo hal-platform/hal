@@ -45,9 +45,9 @@ class EnvironmentValidator
         $this->resetErrors();
 
         $name = $this->sanitizeName($name);
-        $isValidated = $this->validate($name);
+        $this->validate($name);
 
-        if (!$isValidated) {
+        if ($this->hasErrors()) {
             return null;
         }
 
@@ -55,7 +55,7 @@ class EnvironmentValidator
             $this->addError(self::ERR_DUPE_NAME);
         }
 
-        if (!$isValidated) {
+        if ($this->hasErrors()) {
             return null;
         }
 
@@ -78,9 +78,9 @@ class EnvironmentValidator
         $this->resetErrors();
 
         $name = $this->sanitizeName($name);
-        $isValidated = $this->validate($name);
+        $this->validate($name);
 
-        if (!$isValidated) {
+        if ($this->hasErrors()) {
             return null;
         }
 
@@ -89,7 +89,7 @@ class EnvironmentValidator
                 $this->addError(self::ERR_DUPE_NAME);
             }
 
-            if (!$isValidated) {
+            if ($this->hasErrors()) {
                 return null;
             }
         }

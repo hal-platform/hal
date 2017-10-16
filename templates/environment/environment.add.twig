@@ -13,9 +13,9 @@
 
             <ul class="form-fields">
                 <li>
-                    {% set hasError = form_macros.hasError(errors, 'name') %}
+                    {% set has_error = form_macros.hasError(errors, 'name') %}
                     <label for="name">Name</label>
-                    <input type="text" class="text-input t50{{ hasError ? ' is-error' : '' }}" name="name" id="name" value="{{ form.name }}" maxlength="30" required>
+                    <input type="text" class="text-input t50{{ has_error ? ' is-error' : '' }}" name="name" id="name" value="{{ form.name }}" maxlength="30" required>
                     <small>
                         Unique name such as <span>"staging"</span> or <span>"prod"</span>.
                         <br>Alphanumeric, hyphen, and period characters only.

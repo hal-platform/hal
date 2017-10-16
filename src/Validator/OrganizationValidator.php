@@ -46,9 +46,9 @@ class OrganizationValidator
         $this->resetErrors();
 
         $name = $this->sanitizeName($name);
-        $isValidated = $this->validate($name, $description);
+        $this->validate($name, $description);
 
-        if (!$isValidated) {
+        if ($this->hasErrors()) {
             return null;
         }
 
@@ -56,7 +56,7 @@ class OrganizationValidator
             $this->addError(self::ERR_DUPE_NAME);
         }
 
-        if (!$isValidated) {
+        if ($this->hasErrors()) {
             return null;
         }
 
@@ -79,9 +79,9 @@ class OrganizationValidator
         $this->resetErrors();
 
         $name = $this->sanitizeName($name);
-        $isValidated = $this->validate($name, $description);
+        $this->validate($name, $description);
 
-        if (!$isValidated) {
+        if ($this->hasErrors()) {
             return null;
         }
 
@@ -90,7 +90,7 @@ class OrganizationValidator
                 $this->addError(self::ERR_DUPE_NAME);
             }
 
-            if (!$isValidated) {
+            if ($this->hasErrors()) {
                 return null;
             }
         }

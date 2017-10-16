@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
 
 {% set page_title = 'Organization - ' ~ organization.name %}
 
@@ -29,7 +30,7 @@
         </ul>
     </div>
 
-    <h4>Applications</h4>
+    <h2>Applications</h2>
     {{ block('app_table') }}
 
     {% if not is_removable %}
@@ -67,16 +68,17 @@
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th>GitHub Source</th>
-                    <th></th>
+                    <th class="t50">GitHub Source</th>
+                    <th class="t5"></th>
                 </tr>
             </thead>
             <tbody>
             {% for application in applications %}
                 <tr>
-                    <td><a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">{{ application.name }}</a></td>
-                    <td>{{ macros.gitsource(application) }}</td>
+                    <td>{{ application.name }}</td>
+                    <td>{{ git_macros.gitsource(application) }}</td>
                     <td>
+                        <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
                         <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
                     </td>
                 </tr>
