@@ -3,24 +3,23 @@
 
 {% set page_title = 'User - ' ~ user.name %}
 
-{% set is_admin = current_authorizations.isAdmin() %}
-{% set is_super = current_authorizations.isSuper() %}
+{% set is_admin = current_authorizations.isSuper() %}
 
 {% block content %}
 
     <div class="nav--page">
-        <h1>User - <b>{{ user.username }}</b></h1>
+        <h1>User</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('users.page1') }}">Back to Users</a>
         </p>
     </div>
 
-    <div class="flag">
-        <div class="flag__figure">
+    <div style="display:flex">
+        <div style="flex: 0 1 auto; margin-right:1em;">
             <img src="{{ getAvatarLink(user.email) }}">
         </div>
-        <div class="flag__body">
+        <div style="flex: 0 1 auto">
 
             <h2 class="mbn">
                 {% if is_serious_business_mode %}
@@ -35,16 +34,22 @@
         </div>
     </div>
 
+    <h2 class="leader">User Info</h2>
+    <div class="details-box">
+        <ul class="list--bare">
+            <li>
+                <h6>User ID</h6>
+                {{ user.id }}
+            </li>
+        </ul>
+    </div>
+
     <h2 class="leader">Contact</h2>
     <div class="details-box">
-        <ul class="list--bare mbn">
+        <ul class="list--bare">
             <li>
                 <h6>Email</h6>
-                {% if user.email %}
-                    <code>{{ user.email }}</code>
-                {% else %}
-                    None
-                {% endif %}
+                {{ user.email ? user.email : 'None' }}
             </li>
 
             <li>
@@ -54,48 +59,92 @@
         </dl>
     </div>
 
-    {% if is_admin %}
-        <h2 class="leader">Access Tokens</h2>
-        <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
-
-        {% if not user.tokens.isEmpty %}
-
-            <table class="table--spacing-medium">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for token in user.tokens %}
-                        <tr>
-                            <td>{{ token.label }}</td>
-                            <td class="tr">
-                                <a class="btn btn--tiny btn--destructive" href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
-                                    Revoke
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>User has no personal access tokens saved.</p>
-        {% endif %}
-
-    {% endif %}
-
-    <h2>Status</h2>
+    <h2>Authorizations</h2>
     {% include 'user/partial.user-status.twig' with {
-        showHalStatus: true,
-        isAdmin: is_admin,
-        isSuper: is_super,
         user: user,
-        userPerm: user_permission,
-        leadApplications: lead_applications,
-        prodApplications: prod_applications,
-        nonProdApplications: non_prod_applications,
+        authorizations: user_authorizations,
+        permissions: user_permissions
     } only %}
 
+    <h2>User Actions</h2>
+    {{ block('user_actions') }}
+
+    {% if is_admin %}
+        {{ block('token_table') }}
+    {% endif %}
+
+{% endblock %}
+
+{% block user_actions %}
+    <ul>
+        <li>
+            {% if is_admin %}
+                <a class="btn btn--action" href="{{ uriFor('admin.permissions.add', {'user': user.id}) }}">Add Permissions</a>
+            {% else %}
+                <button class="btn btn--action btn--disabled">Add Permissions</button>
+            {% endif %}
+        </li>
+        <li>
+            {% if is_admin %}
+                <form method="post" action="{{ uriFor('admin.permissions.refresh', {'user': user.id}) }}">
+                    <input class="btn btn--action" type="submit" value="Refresh User Cache">
+                </form>
+            {% else %}
+                <button class="btn btn--action btn--disabled">Add Permissions</button>
+            {% endif %}
+        </li>
+
+        <li>
+            {% if is_admin and not user_authorizations.isSuper() %}
+
+                <form method="post" action="{{ uriFor('user.toggle', {'user': user.id}) }}">
+                    {% if user.isDisabled %}
+                        <input type="submit" class="btn" value="Enable User">
+                        <input type="hidden" name="enable_user"value="1">
+                    {% else %}
+                        <input type="submit" class="btn btn--destructive" value="Disable User">
+                        <input type="hidden" name="disable_user" value="1">
+                    {% endif %}
+                </form>
+
+            {% else %}
+                <button class="btn btn--action btn--disabled">Disable User</button>
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block token_table %}
+    <h2 class="leader">Access Tokens</h2>
+    <small>Personal Access Tokens can be used to access the <a href="{{ uriFor('api.index') }}">Hal API</a>.</small>
+
+    {% if tokens %}
+
+        <table class="table--spacing-medium">
+            <thead>
+                <tr>
+                    <th class="t10">ID</th>
+                    <th>Name</th>
+                    <th>Token Secret</th>
+                    <th class="t10"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for token in user.tokens %}
+                    <tr>
+                        <td>{{ token|shortGUID }}</td>
+                        <td>{{ token.name }}</td>
+                        <td>{{ macros.status('Not Available', 'info', 'locked') }}</td>
+                        <td>
+                            <a href="{{ uriFor('user.token.remove', {'user': user.id, 'token': token.id}) }}">
+                                Revoke
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>User has no personal access tokens saved.</p>
+    {% endif %}
 {% endblock %}

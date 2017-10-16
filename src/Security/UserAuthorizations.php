@@ -129,6 +129,16 @@ class UserAuthorizations implements JsonSerializable
     }
 
     /**
+     * @param string $authorizationType
+     *
+     * @return array
+     */
+    public function getAuthorizationsFor($authorizationType): array
+    {
+        return $this->tiers[$authorizationType] ?? [];
+    }
+
+    /**
      * @param string $tier
      * @param string $hash
      *

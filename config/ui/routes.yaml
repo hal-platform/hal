@@ -448,7 +448,7 @@ parameters:
                     stack: ['admin.permissions.page']
 
                 user_permissions.management:
-                    route: '/users/{user:%r.digit%}'
+                    route: '/users/{user:%r.guid%}'
                     stack: ['middleware.require_entity', 'middleware.nested_entity']
                     routes:
                         admin.permissions.refresh:

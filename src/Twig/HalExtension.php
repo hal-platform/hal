@@ -98,14 +98,12 @@ class HalExtension extends Twig_Extension
             new Twig_SimpleFilter('reldate', [$this->time, 'relative']),
             new Twig_SimpleFilter('html5date', [$this->time, 'html5'], ['is_safe' => ['html']]),
 
-            new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty']),
+            new Twig_SimpleFilter('jsonPretty', [$this, 'jsonPretty'], ['is_safe' => ['html']]),
 
             new Twig_SimpleFilter('formatBuildId', [$this, 'formatBuildId']),
             new Twig_SimpleFilter('formatPushId', [$this, 'formatPushId']),
             new Twig_SimpleFilter('formatEvent', [$this, 'formatEvent']),
-            new Twig_SimpleFilter('sliceString', [$this, 'sliceString']),
-
-            new Twig_SimpleFilter('formatDeploymentDetailsLabel', [$this, 'formatDeploymentDetailsLabel']),
+            new Twig_SimpleFilter('shortGUID', [$this, 'shortGUID']),
         ];
     }
 
@@ -185,19 +183,17 @@ class HalExtension extends Twig_Extension
     }
 
     /**
-     * @param string $value
-     * @param int $size
+     * @param string $entity
      *
      * @return string
      */
-    public function sliceString($value, $size = 20)
+    public function shortGUID($entity)
     {
-        $len = mb_strlen($value);
-        if ($len <= $size + 3) {
-            return $value;
-        } else {
-            return substr($value, 0, $size) . '...';
+        if (is_object($entity) && is_callable([$entity, 'id'])) {
+            $entity = $entity->id();
         }
+
+        return substr($entity, 0, 8);
     }
 
     /**
@@ -214,37 +210,6 @@ class HalExtension extends Twig_Extension
         }
 
         return md5($data);
-    }
-
-    /**
-     * Format a deployment details label
-     *
-     * @param Deployment|null $deployment
-     *
-     * @return string
-     */
-    public function formatDeploymentDetailsLabel(Deployment $deployment = null)
-    {
-        if (!$deployment) {
-            return 'Path';
-        }
-
-        $type = $deployment->server()->type();
-
-        if ($type === ServerEnum::TYPE_EB) {
-            return 'EB Environment';
-
-        } elseif ($type === ServerEnum::TYPE_S3) {
-            return 'S3 Bucket';
-
-        } elseif ($type === ServerEnum::TYPE_CD) {
-            return 'CodeDeploy Group';
-
-        } elseif ($type === ServerEnum::TYPE_SCRIPT) {
-            return 'Context';
-        }
-
-        return 'Path';
     }
 
     /**

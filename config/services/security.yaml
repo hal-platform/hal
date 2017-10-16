@@ -12,6 +12,10 @@ services:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.permissions.ttl%']]
 
+    service.authorization_hydrator:
+        class: 'Hal\UI\Security\AuthorizationHydrator'
+        arguments: ['@doctrine.em']
+
     ####################################################################################################################
     # CRYPTO
     ####################################################################################################################

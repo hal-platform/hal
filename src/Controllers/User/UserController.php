@@ -9,6 +9,7 @@ namespace Hal\UI\Controllers\User;
 
 use Hal\Core\Entity\User;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Security\AuthorizationHydrator;
 use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Security\UserAuthorizations;
 use Psr\Http\Message\ResponseInterface;
@@ -31,13 +32,23 @@ class UserController implements ControllerInterface
     private $authorizationService;
 
     /**
+     * @var AuthorizationHydrator
+     */
+    private $authorizationHydrator;
+
+    /**
      * @param TemplateInterface $template
      * @param AuthorizationService $authorizationService
+     * @param AuthorizationHydrator $authorizationHydrator
      */
-    public function __construct(TemplateInterface $template, AuthorizationService $authorizationService)
-    {
+    public function __construct(
+        TemplateInterface $template,
+        AuthorizationService $authorizationService,
+        AuthorizationHydrator $authorizationHydrator
+    ) {
         $this->template = $template;
         $this->authorizationService = $authorizationService;
+        $this->authorizationHydrator = $authorizationHydrator;
     }
 
     /**
@@ -47,15 +58,14 @@ class UserController implements ControllerInterface
     {
         $user = $request->getAttribute(User::class);
         $authorizations = $this->authorizationService->getUserAuthorizations($user);
-
-        // $appPerm = $this->permissions->getApplications($userPerm);
+        $permissions = $this->authorizationHydrator->hydrateAuthorizations($user, $authorizations);
 
         return $this->withTemplate($request, $response, $this->template, [
             'user' => $user,
             'user_authorizations' => $authorizations,
-            // 'lead_applications' => $appPerm['lead'],
-            // 'prod_applications' => $appPerm['prod'],
-            // 'non_prod_applications' => $appPerm['non_prod']
+            'user_permissions' => $permissions,
+
+            'tokens' => $user->tokens()->toArray()
         ]);
     }
 }
