@@ -1,5 +1,6 @@
 {% extends 'base.twig' %}
-{% import "macros.twig" as macros %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
 
 {% set entity_type = 'Unknown Entity' %}
 {% if remove.param == 'organization' %}
@@ -166,18 +167,18 @@
     <div class="details-box">
         <ul>
             <li>
-                <h6>Identifier</h6>
-                {{ remove.entity.key }}
+                <h6>Name</h6>
+                {{ remove.entity.identifier }}
             </li>
 
             <li>
-                <h6>Name</h6>
+                <h6>Description</h6>
                 {{ remove.entity.name }}
             </li>
 
             <li>
                 <h6>GitHub Source</h6>
-                {{ macros.gitsource(remove.entity) }}
+                {{ git_macros.gitsource(remove.entity) }}
             </li>
         </ul>
     </div>

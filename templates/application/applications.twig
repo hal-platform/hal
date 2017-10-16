@@ -51,6 +51,10 @@
             {% for organization in organizations %}
                 <li><a href="#org-{{ organization.id }}">{{ organization.name }}</a></li>
             {% endfor %}
+
+            {% if applications.none %}
+                <li><a href="#org-none">Not in organization</a></li>
+            {% endif %}
         </ul>
     {% else %}
         <p>There are no organizations.</p>
@@ -61,6 +65,7 @@
 {% block apps_table %}
 
     {% if applications %}
+
         <input
             id="js-search-input"
             class="text-input"
@@ -74,8 +79,8 @@
             <thead>
                 <tr>
                     <th>Application</th>
-                    <th class="t50">GitHub Source</th>
-                    <th class="t10 tr js-collapsible-global"></th>
+                    <th class="t40">GitHub Source</th>
+                    <th class="t15 js-collapsible-global"></th>
                 </tr>
             </thead>
 
@@ -84,11 +89,21 @@
             {% for org_id, organization_apps in applications %}
                 <tbody class="js-search-group">
                     {% set organization = organizations[org_id] %}
-                    <tr>
-                        <th colspan="3" class="table-mid-header" id="org-{{ org_id }}">
-                            <a href="{{ uriFor('organization', {'organization': organization.id}) }}">{{ organization.name }}</a>
-                        </th>
-                    </tr>
+
+                    {% if organization %}
+                        <tr>
+                            <th colspan="3" class="table-mid-header" id="org-{{ org_id }}">
+                                <a href="{{ uriFor('organization', {'organization': organization.id}) }}">{{ organization.name }}</a>
+                            </th>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <th colspan="3" class="table-mid-header" id="org-none">
+                                None
+                            </th>
+                        </tr>
+
+                    {% endif %}
 
                     {% if organization_apps %}
                         {% set hasApplications = true %}
@@ -112,6 +127,7 @@
 
 {% macro app_row(currentUser, application, allow_collapse) %}
     {% import "macros.twig" as macros %}
+    {% import "macros.git.twig" as git_macros %}
 
     {% if allow_collapse %}
         <tr class="js-collapsible-row js-search-item">
@@ -140,14 +156,16 @@
                     </label>
                 </form>
             {% endif %}
-            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">{{ application.name }}</a>
+
+            {{ application.name }}
         </td>
         <td>
-            {{ macros.gitsource(application) }}
+            {{ git_macros.gitsource(application) }}
             <span class="js-search-query">{{ application.name }}</span>
-            <span class="js-search-query">{{ application.githubOwner ~ '/' ~ application.githubRepo }}</span>
+            <span class="js-search-query">{{ application.gitHub.owner ~ '/' ~ application.gitHub.repository }}</span>
         </td>
-        <td class="tr">
+        <td>
+            <a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">Dashboard</a>
             <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
         </td>
     </tr>

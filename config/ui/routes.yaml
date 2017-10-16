@@ -170,7 +170,7 @@ parameters:
             stack: ['middleware.signed_in', 'application.add.page']
 
         application.management:
-            route: '/applications/{application:%r.digit%}'
+            route: '/applications/{application:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 application:

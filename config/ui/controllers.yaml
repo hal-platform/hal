@@ -365,11 +365,9 @@ services:
         arguments:
             - '@application.add.twig'
             - '@doctrine.em'
-            - '@github'
-            - '@permissions'
+            - '@validator.application'
+            - '@service.authorization'
             - '@uri'
-            - '@doctrine.random'
-            - '%github.baseurl.site%'
     application.add.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/application.add.twig']]]
@@ -379,16 +377,18 @@ services:
         arguments:
             - '@application.edit.twig'
             - '@doctrine.em'
-            - '@github'
+            - '@validator.application'
             - '@uri'
-            - '%github.baseurl.site%'
     application.edit.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['application/application.edit.twig']]]
 
     application.remove.handler:
         class: 'Hal\UI\Controllers\Application\RemoveApplicationController'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
 
     application.permission_add.page:
         class: 'Hal\UI\Controllers\Application\AddApplicationPermissionController'

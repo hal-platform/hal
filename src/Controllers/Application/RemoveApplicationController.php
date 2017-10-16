@@ -8,15 +8,16 @@
 namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
+use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Application;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -25,8 +26,7 @@ class RemoveApplicationController implements ControllerInterface
     use RedirectableControllerTrait;
     use SessionTrait;
 
-    const MSG_SUCCESS = 'Application "%s" removed.';
-    const ERR_HAS_JOBS = 'Cannot remove application. Applications with builds or pushes cannot currently be removed.';
+    const MSG_SUCCESS = '"%s" application removed.';
 
     /**
      * @var EntityManagerInterface
@@ -34,16 +34,33 @@ class RemoveApplicationController implements ControllerInterface
     private $em;
 
     /**
+     * @var EntityRepository
+     */
+    private $targetRepo;
+    private $permissionRepo;
+
+    /**
+     * @var AuthorizationService
+     */
+    private $authorizationService;
+
+    /**
      * @var URI
      */
     private $uri;
 
     /**
+     * @param EntityManagerInterface $em
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
      */
-    public function __construct(EntityManagerInterface $em, URI $uri)
+    public function __construct(EntityManagerInterface $em, AuthorizationService $authorizationService, URI $uri)
     {
         $this->em = $em;
+        $this->targetRepo = $em->getRepository(Target::class);
+        $this->permissionRepo = $em->getRepository(UserPermission::class);
+
+        $this->authorizationService = $authorizationService;
         $this->uri = $uri;
     }
 
@@ -54,48 +71,42 @@ class RemoveApplicationController implements ControllerInterface
     {
         $application = $request->getAttribute(Application::class);
 
-        if ($this->doesApplicationHaveChildren($application)) {
-            $this->withFlash($request, Flash::ERROR, self::ERR_HAS_JOBS);
-            return $this->withRedirectRoute($response, $this->uri, 'application', ['application' => $application->id()]);
-        }
-
-        // Remove targets first, otherwise FK will fail.
-        $targets = $this->em
-            ->getRepository(Deployment::class)
-            ->findOneBy(['application' => $application]);
-
-        foreach ($targets as $target) {
-            $this->em->remove($target);
-        }
+        // Remove targets and permissions first
+        $this->removeTargets($application);
+        $this->removePermissions($application);
 
         $this->em->remove($application);
         $this->em->flush();
 
-        $message = sprintf(self::MSG_SUCCESS, $application->key());
+        $msg = sprintf(self::MSG_SUCCESS, $application->name());
 
-        $this->withFlash($request, Flash::SUCCESS, $message);
+        $this->withFlash($request, Flash::SUCCESS, $msg);
         return $this->withRedirectRoute($response, $this->uri, 'applications');
     }
 
     /**
      * @param Application $application
      *
-     * @return bool
+     * @return void
      */
-    private function doesApplicationHaveChildren(Application $application)
+    private function removeTargets(Application $application)
     {
-        $builds = $this->em
-            ->getRepository(Build::class)
-            ->findOneBy(['application' => $application]);
+        $targets = $this->targetRepo->findBy(['application' => $application]);
+        foreach ($targets as $target) {
+            $this->em->remove($target);
+        }
+    }
 
-        if (count($builds) > 0) return true;
-
-        $deployments = $this->em
-            ->getRepository(Push::class)
-            ->findOneBy(['application' => $application]);
-
-        if (count($deployments) > 0) return true;
-
-        return false;
+    /**
+     * @param Application $application
+     *
+     * @return void
+     */
+    private function removePermissions(Application $application)
+    {
+        $permission = $this->permissionRepo->findBy(['application' => $application]);
+        foreach ($permission as $permission) {
+            $this->authorizationService->removeUserPermissions($permission, true);
+        }
     }
 }

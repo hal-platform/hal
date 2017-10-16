@@ -60,20 +60,28 @@ class ApplicationsController implements ControllerInterface
         $user = $this->getUser($request);
 
         $grouped = $this->applicationRepo->getGroupedApplications();
-
-        $orgs = [];
-
-        foreach ($this->organizationRepo->findAll() as $org) {
-            $orgs[$org->id()] = $org;
-        }
+        $organizations = $this->getOrganizations();
 
         $favorites = $this->findFavorites($grouped, $user->settings());
 
         return $this->withTemplate($request, $response, $this->template, [
             'favorites' => $favorites,
             'applications' => $grouped,
-            'organizations' => $orgs
+            'organizations' => $organizations
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    private function getOrganizations()
+    {
+        $orgs = [];
+        foreach ($this->organizationRepo->findAll() as $org) {
+            $orgs[$org->id()] = $org;
+        }
+
+        return $orgs;
     }
 
     /**

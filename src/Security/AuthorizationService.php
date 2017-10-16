@@ -77,26 +77,34 @@ class AuthorizationService
 
     /**
      * @param UserPermission $permission
+     * @param bool $delayFlush
      *
      * @return void
      */
-    public function addUserPermissions(UserPermission $permission)
+    public function addUserPermissions(UserPermission $permission, $delayFlush = false)
     {
         $this->em->persist($permission);
-        $this->em->flush();
+
+        if (!$delayFlush) {
+            $this->em->flush();
+        }
 
         $this->clearUserCache($permission->user());
     }
 
     /**
      * @param UserPermission $permission
+     * @param bool $delayFlush
      *
      * @return void
      */
-    public function removeUserPermissions(UserPermission $permission)
+    public function removeUserPermissions(UserPermission $permission, $delayFlush = false)
     {
         $this->em->remove($permission);
-        $this->em->flush();
+
+        if (!$delayFlush) {
+            $this->em->flush();
+        }
 
         $this->clearUserCache($permission->user());
     }

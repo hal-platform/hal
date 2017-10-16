@@ -1,5 +1,5 @@
 {% extends 'base.twig' %}
-{% import "macros.form.twig" as form_macros %}
+{% import 'macros.form.twig' as form_macros %}
 
 {% set page_title = 'Add Application' %}
 
@@ -13,19 +13,21 @@
         <div class="form-wrapper">
             <ul class="form-fields">
                 <li>
+                    {% set has_error = form_macros.hasError(errors, 'name') %}
                     <label for="name">Name</label>
-                    <input name="name" id="name" maxlength="64" required value="{{ form.name }}" class="text-input">
-                    <small class="additional">Display title for this application such as <b>Hal</b> or <b>My Secret Project</b>.</small>
+                    <input type="text" class="text-input t50{{ has_error ? ' is-error' : '' }}" name="name" id="name" maxlength="30" value="{{ form.name }}" required>
+                    <small>
+                        Unique name such as <span>"hal"</span> or <span>"my-project"</span>.
+                        <br>Alphanumeric, hyphen, and period characters only.
+                    </small>
                 </li>
                 <li>
-                    <label for="identifier">
-                        <span class="hint--right" aria-label="Alphanumeric, hyphen, and period characters only.">
-                            Identifier
-                        </span>
-                    </label>
-                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
-                    <small class="additional">
-                        Unique identifier such as <b>hal</b> or <b>my-project</b>.
+                    {% set has_error = form_macros.hasError(errors, 'name') %}
+                    <label for="description">Description</label>
+                    <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="description" id="description" maxlength="100" value="{{ form.description }}" required>
+                    <small>
+                        Display description for this organization such as
+                        <span>"Hal"</span> or <span>"My Secret Project"</span>.
                     </small>
                 </li>
             </ul>
@@ -34,37 +36,53 @@
         <ul class="form-fields">
             <li>
                 <label>Organization</label>
-                <ul class="radio-grid radio-grid--tri">
-                    {% for group in groups %}
-                        {% set checked = '' %}
-                        {% if form.group == group.id %}
-                            {% set checked = ' checked="checked"' %}
-                        {% endif %}
+                {% if organizations %}
+                    <ul class="list--bare">
 
+                        {% for organization in organizations %}
+                            {% set is_selected = form.organization == organization.id ? ' checked' : '' %}
+
+                            <li>
+                                <label for="org-{{ organization.id }}">
+                                    <input id="org-{{ organization.id }}" type="radio" name="organization" value="{{ organization.id }}"{{ is_selected }}>
+                                    {{ organization.name }}
+                                </label>
+                            </li>
+                        {% endfor %}
+
+                        {% set is_selected = form.organization == '' ? ' checked' : '' %}
                         <li>
-                            <input id="group-{{ group.id }}" type="radio" name="group" value="{{ group.id }}"{{ checked }}>
-                            <label for="group-{{ group.id }}">{{ group.name }}</label>
+                            <label for="org-noop">
+                                <input id="org-noop" type="radio" name="organization" value=""{{ is_selected }}>
+                                Do not add to organization
+                            </label>
                         </li>
-                    {% endfor %}
-                </ul>
+
+                    </ul>
+                {% else %}
+                    <p>There are no organizations.</p>
+                {% endif %}
             </li>
         </ul>
 
         <div class="form-wrapper">
             <ul class="form-fields">
                 <li>
-                    <label for="github">GitHub Enterprise Repository</label>
-                    <input name="github" id="github" maxlength="200" required value="{{ form.github }}" class="text-input">
-                    <small class="additional">
-                        Enter the full URL or organization/repository such as <b>http://git/team-a/project-b</b> or <b>team-a/project-b</b>.
+                    {% set has_error = form_macros.hasError(errors, 'github') %}
+                    <label for="github">GitHub Repository</label>
+                    <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="github" id="github" maxlength="200" value="{{ form.github }}" required>
+                    <small>
+                        Enter the full URL or organization/repository such as
+                        <b>https://github.com/team-a/project-b</b> or <b>team-a/project-b</b>.
                     </small>
                 </li>
             </ul>
-
-            <ul>
-                <li><input class="btn btn--action" type="submit" value="Add Application"></li>
-                <li><a class="btn" href="{{ uriFor('applications') }}">Cancel</a></li>
-            </ul>
         </div>
+
+        <ul>
+            <li><input type="submit" class="btn btn--action" value="Add Application"></li>
+            <li><a class="btn" href="{{ uriFor('applications') }}">Cancel</a></li>
+        </ul>
+
     </form>
 {% endblock %}
