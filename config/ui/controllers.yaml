@@ -241,6 +241,7 @@ services:
         arguments:
             - '@environment.add.twig'
             - '@doctrine.em'
+            - '@validator.environment'
             - '@uri'
     environment.add.twig:
         parent: 'twig.template'
@@ -251,6 +252,7 @@ services:
         arguments:
             - '@environment.edit.twig'
             - '@doctrine.em'
+            - '@validator.environment'
             - '@uri'
     environment.edit.twig:
         parent: 'twig.template'

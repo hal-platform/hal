@@ -16,6 +16,10 @@ services:
         class: 'Hal\UI\Validator\OrganizationValidator'
         arguments: ['@doctrine.em']
 
+    validator.environment:
+        class: 'Hal\UI\Validator\EnvironmentValidator'
+        arguments: ['@doctrine.em']
+
     #
 
     build.start.validator:

@@ -16,7 +16,7 @@
     </div>
 
     <div class="details-box">
-        <ul class="mbn">
+        <ul>
             <li>
                 <h6>Name</h6>
                 {{ organization.identifier }}
@@ -47,14 +47,14 @@
             {% if is_admin %}
                 <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
             {% else %}
-                <span class="btn btn--action btn--disabled">Edit Organization</span>
+                <button class="btn btn--action btn--disabled">Edit Organization</button>
             {% endif %}
         </li>
         <li>
             {% if is_removable %}
                 <a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a>
             {% else %}
-                <span class="btn btn--destructive btn--disabled">Remove Organization</span>
+                <button class="btn btn--destructive btn--disabled">Remove Organization</button>
             {% endif %}
         </li>
     </ul>
@@ -76,7 +76,7 @@
                 <tr>
                     <td><a href="{{ uriFor('application.dashboard', {'application': application.id}) }}">{{ application.name }}</a></td>
                     <td>{{ macros.gitsource(application) }}</td>
-                    <td class="tr">
+                    <td>
                         <a href="{{ uriFor('application', {'application': application.id}) }}">Manage</a>
                     </td>
                 </tr>

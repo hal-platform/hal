@@ -1,25 +1,43 @@
 {% extends 'base.twig' %}
 {% import "macros.form.twig" as form_macros %}
 
-{% set page_title = 'Edit Environment : ' ~ env.name %}
+{% set page_title = 'Edit Environment - ' ~ environment.name %}
 
 {% block content %}
-    <h1>Edit Environment - <b>{{ env.name }}</b></h1>
+    <h1>Edit Environment</h1>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
 
         <form method="post">
+
             <ul class="form-fields">
                 <li>
+                    {% set hasError = form_macros.hasError(errors, 'name') %}
                     <label for="name">Name</label>
-                    <input type="text" name="name" id="envname" maxlength="24" required value="{{ form.name }}" class="text-input">
+                    <input type="text" class="text-input t50{{ hasError ? ' is-error' : '' }}" name="name" id="name" value="{{ form.name }}" maxlength="30" required>
+                    <small>
+                        Unique name such as <span>"staging"</span> or <span>"prod"</span>.
+                        <br>Alphanumeric, hyphen, and period characters only.
+                    </small>
+                </li>
+
+                <li>
+                    <label>Is this a <b>Production</b> environment?</label>
+                    <ul class="list--bare">
+                        <li>
+                            <label for="is_production" class="checkbox-check">
+                                <input type="checkbox" name="is_production" id="is_production" value="1" {{ form.is_production ? 'checked ' : ''}}>
+                                <b class="checkbox-check--tick"></b>Yes, this is production.
+                            </label>
+                        </li>
+                    </ul>
                 </li>
             </ul>
 
             <ul>
                 <li><input class="btn btn--action" type="submit" value="Save Changes"></li>
-                <li><a class="btn" href="{{ uriFor('environment', {'environment': env.id}) }}">Cancel</a></li>
+                <li><a class="btn" href="{{ uriFor('environment', {'environment': environment.id}) }}">Cancel</a></li>
             </ul>
 
         </form>

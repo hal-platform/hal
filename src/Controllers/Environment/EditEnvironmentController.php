@@ -8,14 +8,14 @@
 namespace Hal\UI\Controllers\Environment;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Environment;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
+use Hal\UI\Validator\EnvironmentValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -28,19 +28,10 @@ class EditEnvironmentController implements ControllerInterface
 
     private const MSG_SUCCESS = 'Environment updated successfully.';
 
-    private const ERR_FORMAT = 'Environment name must consist of letters, underscores and/or hyphens.';
-    private const ERR_LENGTH = 'Environment name must be between 2 and 24 characters.';
-    private const ERR_DUPLICATE = 'An environment with this name already exists.';
-
     /**
      * @var TemplateInterface
      */
     private $template;
-
-    /**
-     * @var EntityRepository
-     */
-    private $envRepo;
 
     /**
      * @var EntityManagerInterface
@@ -53,28 +44,22 @@ class EditEnvironmentController implements ControllerInterface
     private $uri;
 
     /**
-     * @var array
-     */
-    private $errors;
-
-    /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
+     * @param EnvironmentValidator $envValidator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
+        EnvironmentValidator $envValidator,
         URI $uri
     ) {
         $this->template = $template;
-
-        $this->envRepo = $em->getRepository(Environment::class);
         $this->em = $em;
+        $this->envValidator = $envValidator;
 
         $this->uri = $uri;
-
-        $this->errors = [];
     }
 
     /**
@@ -93,9 +78,9 @@ class EditEnvironmentController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
-            'errors' => $this->errors,
+            'errors' => $this->envValidator->errors(),
 
-            'env' => $environment
+            'environment' => $environment
         ]);
     }
 
@@ -112,28 +97,12 @@ class EditEnvironmentController implements ControllerInterface
             return null;
         }
 
-        $name = $data['name'];
+        $environment = $this->envValidator->isEditValid($environment, $data['name'], $data['is_production']);
 
-        if (!preg_match('@^[a-zA-Z_-]*$@', $name)) {
-            $this->errors[] = self::ERR_FORMAT;
+        if ($environment) {
+            $this->em->merge($environment);
+            $this->em->flush();
         }
-
-        if (strlen($name) > 24 || strlen($name) < 2) {
-            $this->errors[] = self::ERR_LENGTH;
-        }
-
-        if ($this->errors) return null;
-
-        if ($env = $this->envRepo->findOneBy(['name' => $name])) {
-            $this->errors[] = self::ERR_DUPLICATE;
-        }
-
-        if ($this->errors) return null;
-
-        $environment->withName($name);
-
-        $this->em->merge($environment);
-        $this->em->flush();
 
         return $environment;
     }
@@ -146,15 +115,15 @@ class EditEnvironmentController implements ControllerInterface
      */
     private function getFormData(ServerRequestInterface $request, Environment $environment)
     {
-        if ($request->getMethod() === 'POST') {
-            $form = [
-                'name' => $request->getParsedBody()['name'] ?? ''
-            ];
-        } else {
-            $form = [
-                'name' => $environment->name()
-            ];
-        }
+        $isPost = ($request->getMethod() === 'POST');
+
+        $name = $request->getParsedBody()['name'] ?? '';
+        $isProd = $request->getParsedBody()['is_production'] ?? '';
+
+        $form = [
+            'name' => $isPost ? $name : $environment->name(),
+            'is_production' => $isPost ? $isProd : $environment->isProduction(),
+        ];
 
         return $form;
     }

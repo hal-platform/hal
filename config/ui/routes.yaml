@@ -325,7 +325,7 @@ parameters:
             stack: ['middleware.is_admin', 'environment.add.page']
 
         environment.management:
-            route: '/environments/{environment:%r.digit%}'
+            route: '/environments/{environment:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 environment:

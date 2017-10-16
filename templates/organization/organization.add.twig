@@ -14,7 +14,7 @@
                 <li>
                     {% set hasError = form_macros.hasError(errors, 'name') %}
                     <label for="name">Name</label>
-                    <input type="text" class="text-input t50{{ hasError ? ' is-error' : '' }}" name="name" id="name" maxlength="30" value="{{ form.name }}" required>
+                    <input type="text" class="text-input t50{{ hasError ? ' is-error' : '' }}" name="name" id="name" value="{{ form.name }}" maxlength="30" required>
                     <small>
                         Unique name such as <span>"myteam"</span> or <span>"my-projects"</span>.
                         <br>Alphanumeric, hyphen, and period characters only.
@@ -24,7 +24,7 @@
                 <li>
                     {% set hasError = form_macros.hasError(errors, 'description') %}
                     <label for="description">Description</label>
-                    <input type="text" class="text-input{{ hasError ? ' is-error' : '' }}" name="description" id="description" maxlength="100" value="{{ form.description }}" required>
+                    <input type="text" class="text-input{{ hasError ? ' is-error' : '' }}" name="description" id="description" value="{{ form.description }}" maxlength="100" required>
                     <small>
                         Display description for this organization such as
                         <span>"MyTeam"</span> or <span>"My Secret Projects"</span>.

@@ -1,60 +1,51 @@
 {% extends 'base.twig' %}
 
-{% set page_title = 'Environment : ' ~ env.name %}
+{% set page_title = 'Environment - ' ~ env.name %}
 
-{% set isAdmin = isUserSuper(current_user) %}
+{% set is_admin = current_authorizations.isSuper() %}
+{% set is_removable = is_admin and not servers_i_dunno %}
 
 {% block content %}
-    <h1>Environment - <b>{{ env.name }}</b></h1>
+    <h1>Environment</h1>
 
     <div class="details-box">
-        <ul class="mbn">
-            <li>Name</li>
-            <li>{{ env.name }}</li>
+        <ul>
+            <li>
+                <h6>Name</h6>
+                {{ environment.name }}
+            </li>
 
-            <li>Is Production Environment?</li>
-            <li>{{ env.isProduction ? 'Yes' : 'No' }}</li>
+            <li>
+                <h6>Is Production Environment?</h6>
+                {{ environment.isProduction ? 'Yes' : 'No' }}
+            </li>
         </ul>
     </div>
 
-    <h3>Servers</h3>
-    {% if servers %}
-        <table class="table--spacing-medium table--striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for server in servers %}
-                    <tr>
-                        <td>
-                            <a href="{{ uriFor('server', {'server': server.id}) }}">{{ server.formatPretty() }}</a>
-                        </td>
-                        <td>
-                            {{ server.formatHumanType() }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>There are no servers associated with this environment.</p>
-    {% endif %}
-
-    {% if isAdmin and servers %}
+    {% if not is_removable %}
         <p><b>Note:</b> All associated servers must be removed or transferred to remove this environment.</p>
     {% endif %}
 
+    {{ block('actions') }}
+
+{% endblock %}
+
+{% block actions %}
     <ul>
         <li><a class="btn" href="{{ uriFor('environments') }}">Environments</a></li>
-        {% if isAdmin %}
-            <li><a class="btn btn--action" href="{{ uriFor('environment.edit', {'environment': env.id}) }}">Edit Environment</a></li>
-            {% if not servers and isAdmin %}
-                <li><a class="btn btn--destructive" href="{{ uriFor('environment.remove', {'environment': env.id}) }}">Remove Environment</a></li>
+        <li>
+            {% if is_admin %}
+                <a class="btn btn--action" href="{{ uriFor('environment.edit', {'environment': environment.id}) }}">Edit Environment</a>
+            {% else %}
+                <button class="btn btn--action btn--disabled">Edit Environment</button>
             {% endif %}
-        {% endif %}
+        </li>
+        <li>
+            {% if is_removable %}
+                <a class="btn btn--destructive" href="{{ uriFor('environment.remove', {'environment': environment.id}) }}">Remove Environment</a>
+            {% else %}
+                <button class="btn btn--destructive btn--disabled">Remove Environment</button>
+            {% endif %}
+        </li>
     </ul>
-
 {% endblock %}
