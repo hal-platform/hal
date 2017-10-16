@@ -15,6 +15,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 $root = realpath(__DIR__ . '/../');
 require_once "${root}/vendor/autoload.php";
 
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
+
 $dotenv = new Dotenv;
 $dotenv->load("${root}/config/.env");
 

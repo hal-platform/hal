@@ -114,27 +114,27 @@ class AuthorizationService
      */
     public function getApplications(UserAuthorizations $authorizations)
     {
-        $apps = [];
-        foreach ($perm->leadApplications() as $app) $apps[$app] = $app;
-        foreach ($perm->prodApplications() as $app) $apps[$app] = $app;
-        foreach ($perm->nonProdApplications() as $app) $apps[$app] = $app;
+        // $apps = [];
+        // foreach ($perm->leadApplications() as $app) $apps[$app] = $app;
+        // foreach ($perm->prodApplications() as $app) $apps[$app] = $app;
+        // foreach ($perm->nonProdApplications() as $app) $apps[$app] = $app;
 
-        $criteria = (new Criteria)->where(Criteria::expr()->in('id', $apps));
-        $applications = $this->applicationRepo->matching($criteria);
+        // $criteria = (new Criteria)->where(Criteria::expr()->in('id', $apps));
+        // $applications = $this->applicationRepo->matching($criteria);
 
-        $appPerm = [
-            'lead' => [],
-            'prod' => [],
-            'non_prod' => []
-        ];
+        // $appPerm = [
+        //     'lead' => [],
+        //     'prod' => [],
+        //     'non_prod' => []
+        // ];
 
-        foreach ($applications as $app) {
-            if ($perm->isLeadOfApplication($app)) $appPerm['lead'][] = $app;
-            if ($perm->canDeployApplicationToProd($app)) $appPerm['prod'][] = $app;
-            if ($perm->canDeployApplicationToNonProd($app)) $appPerm['non_prod'][] = $app;
-        }
+        // foreach ($applications as $app) {
+        //     if ($perm->isLeadOfApplication($app)) $appPerm['lead'][] = $app;
+        //     if ($perm->canDeployApplicationToProd($app)) $appPerm['prod'][] = $app;
+        //     if ($perm->canDeployApplicationToNonProd($app)) $appPerm['non_prod'][] = $app;
+        // }
 
-        return $appPerm;
+        // return $appPerm;
     }
 
     /**
@@ -158,9 +158,9 @@ class AuthorizationService
             $hash = UserAuthorizations::hash($permission->application(), $permission->organization(), $permission->environment());
 
             $tiers[$permission->type()][$hash] = [
-                'application_id' => $application,
-                'organization_id' => $organization,
-                'environment_id' => $environment
+                'application_id' => $permission->application() ? $permission->application()->id() : null,
+                'organization_id' => $permission->organization() ? $permission->organization()->id() : null,
+                'environment_id' => $permission->environment() ? $permission->environment()->id() : null,
             ];
         }
 
