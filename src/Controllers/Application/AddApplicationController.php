@@ -103,9 +103,9 @@ class AddApplicationController implements ControllerInterface
         if ($application = $this->handleForm($form, $request)) {
             $this->addOwnerPermissions($application, $user);
 
-            $message = sprintf(self::MSG_SUCCESS, $application->name());
+            $msg = sprintf(self::MSG_SUCCESS, $application->name());
 
-            $this->withFlash($request, Flash::SUCCESS, $message);
+            $this->withFlash($request, Flash::SUCCESS, $msg);
             return $this->withRedirectRoute($response, $this->uri, 'applications');
         }
 

@@ -11,10 +11,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserPermission;
+use Hal\Core\Type\UserPermissionEnum;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
+use Hal\UI\Security\AuthorizationService;
 use Hal\UI\Validator\OrganizationValidator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -44,6 +48,11 @@ class AddOrganizationController implements ControllerInterface
     private $orgValidator;
 
     /**
+     * @var AuthorizationService
+     */
+    private $authorizationService;
+
+    /**
      * @var URI
      */
     private $uri;
@@ -52,17 +61,20 @@ class AddOrganizationController implements ControllerInterface
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
      * @param OrganizationValidator $orgValidator
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
         OrganizationValidator $orgValidator,
+        AuthorizationService $authorizationService,
         URI $uri
     ) {
         $this->template = $template;
         $this->em = $em;
         $this->orgValidator = $orgValidator;
+        $this->authorizationService = $authorizationService;
 
         $this->uri = $uri;
     }
@@ -72,9 +84,12 @@ class AddOrganizationController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $user = $this->getUser($request);
         $form = $this->getFormData($request);
 
         if ($organization = $this->handleForm($form, $request)) {
+            $this->addOwnerPermissions($organization, $user);
+
             $msg = sprintf(self::MSG_SUCCESS, $organization->name());
 
             $this->withFlash($request, Flash::SUCCESS, $msg);
@@ -121,5 +136,22 @@ class AddOrganizationController implements ControllerInterface
         ];
 
         return $form;
+    }
+
+    /**
+     * @param Organization $organization
+     * @param User $user
+     *
+     * @return void
+     */
+    private function addOwnerPermissions(Organization $organization, User $user)
+    {
+        $permissions = (new UserPermission)
+            ->withType(UserPermissionEnum::TYPE_OWNER)
+            ->withUser($user)
+            ->withOrganization($organization);
+
+        // Add permissions and clear cache
+        $this->authorizationService->addUserPermissions($permissions);
     }
 }

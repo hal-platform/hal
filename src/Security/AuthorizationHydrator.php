@@ -54,6 +54,7 @@ class AuthorizationHydrator
         $permissions = $this->permissionsRepo->findBy(['user' => $user]);
         foreach ($permissions as $permission) {
             $hash = UserAuthorizations::hash($permission->application(), $permission->organization(), $permission->environment());
+            $type = $permission->type();
 
             if ($tiers[$type][$hash] ?? [] && $perm[$type] ?? []) {
                 $perm[$type][] = $permission;

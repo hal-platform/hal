@@ -306,6 +306,7 @@ services:
             - '@organization.add.twig'
             - '@doctrine.em'
             - '@validator.organization'
+            - '@service.authorization'
             - '@uri'
     organization.add.twig:
         parent: 'twig.template'
@@ -324,7 +325,10 @@ services:
 
     organization.remove.handler:
         class: 'Hal\UI\Controllers\Organization\RemoveOrganizationController'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
 
     ####################################################################################################################
     # APPLICATION CONTROLLERS
