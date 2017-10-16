@@ -1,7 +1,7 @@
 {% extends 'base.twig' %}
 {% import "macros.form.twig" as form_macros %}
 
-{% set page_title = 'Add Application Organization' %}
+{% set page_title = 'Add Organization' %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>
@@ -9,30 +9,31 @@
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
 
-        <form action="" method="post">
+        <form method="post">
             <ul class="form-fields">
                 <li>
-                    <label for="name">
-                        Name
-                        <small class="additional">Display title for this group such as <span>"Team MyTeam"</span> or <span>"My Secret Projects"</span>.</small>
-                    </label>
-                    <input type="text" name="name" id="name" maxlength="48" required value="{{ form.name }}" class="text-input">
+                    {% set hasError = form_macros.hasError(errors, 'name') %}
+                    <label for="name">Name</label>
+                    <input type="text" class="text-input t50{{ hasError ? ' is-error' : '' }}" name="name" id="name" maxlength="30" value="{{ form.name }}" required>
+                    <small>
+                        Unique name such as <span>"myteam"</span> or <span>"my-projects"</span>.
+                        <br>Alphanumeric, hyphen, and period characters only.
+                    </small>
                 </li>
 
                 <li>
-                    <label for="identifier">
-                        Identifier
-                        <small class="additional">
-                            Unique identifier such as <span>"myteam"</span> or <span>"my-projects"</span>.
-                            <br>Alphanumeric, hyphen, and period characters only.
-                        </small>
-                    </label>
-                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
+                    {% set hasError = form_macros.hasError(errors, 'description') %}
+                    <label for="description">Description</label>
+                    <input type="text" class="text-input{{ hasError ? ' is-error' : '' }}" name="description" id="description" maxlength="100" value="{{ form.description }}" required>
+                    <small>
+                        Display description for this organization such as
+                        <span>"MyTeam"</span> or <span>"My Secret Projects"</span>.
+                    </small>
                 </li>
             </ul>
 
             <ul>
-                <li><input class="btn btn--action" type="submit" value="Add Organization"></li>
+                <li><input type="submit" class="btn btn--action" value="Add Organization"></li>
                 <li><a class="btn" href="{{ uriFor('applications') }}">Cancel</a></li>
             </ul>
         </form>

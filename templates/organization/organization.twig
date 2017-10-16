@@ -1,13 +1,14 @@
 {% extends 'base.twig' %}
 {% import "macros.twig" as macros %}
 
-{% set page_title = 'Organization : ' ~ organization.name %}
+{% set page_title = 'Organization - ' ~ organization.name %}
 
-{% set is_admin = isUserAdminOrSuper(current_user) %}
+{% set is_admin = current_authorizations.isSuper() %}
+{% set is_removable = is_admin and not applications %}
 
 {% block content %}
     <div class="nav--page">
-        <h1>Organization - <b>{{ organization.name }}</b></h1>
+        <h1>Organization</h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('applications') }}">Back to Applications</a>
@@ -16,17 +17,52 @@
 
     <div class="details-box">
         <ul class="mbn">
-            <li>Identifier</li>
-            <li>{{ organization.key }}</li>
+            <li>
+                <h6>Name</h6>
+                {{ organization.identifier }}
+            </li>
 
-            <li>Name</li>
-            <li>{{ organization.name }}</li>
+            <li>
+                <h6>Description</h6>
+                {{ organization.name }}
+            </li>
         </ul>
     </div>
 
     <h4>Applications</h4>
-    {% if applications %}
+    {{ block('app_table') }}
 
+    {% if not is_removable %}
+        <p><b>Note:</b> All associated applications must be removed or transferred to remove this organization.</p>
+    {% endif %}
+
+    {{ block('actions') }}
+
+{% endblock %}
+
+{% block actions %}
+    <ul>
+        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
+        <li>
+            {% if is_admin %}
+                <a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a>
+            {% else %}
+                <span class="btn btn--action btn--disabled">Edit Organization</span>
+            {% endif %}
+        </li>
+        <li>
+            {% if is_removable %}
+                <a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a>
+            {% else %}
+                <span class="btn btn--destructive btn--disabled">Remove Organization</span>
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block app_table %}
+
+    {% if applications %}
         <table class="table--spacing-medium table--striped">
             <thead>
                 <tr>
@@ -47,24 +83,8 @@
             {% endfor %}
             </tbody>
         </table>
-
     {% else %}
-        <p>There are no applications associated with this group.</p>
+        <p>There are no applications in this organization.</p>
     {% endif %}
-
-    {% if is_admin and applications %}
-        <p><b>Note:</b> All associated applications must be removed or transferred to remove this organization.</p>
-    {% endif %}
-
-    <ul>
-        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        {% if is_admin %}
-            <li><a class="btn btn--action" href="{{ uriFor('organization.edit', {'organization': organization.id}) }}">Edit Organization</a></li>
-
-            {% if not applications and is_admin %}
-                <li><a class="btn btn--destructive" href="{{ uriFor('organization.remove', {'organization': organization.id}) }}">Remove Organization</a></li>
-            {% endif %}
-        {% endif %}
-    </ul>
 
 {% endblock %}

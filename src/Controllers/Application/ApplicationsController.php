@@ -9,14 +9,14 @@ namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\UserSettings;
+use Hal\Core\Repository\ApplicationRepository;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\UserSettings;
-use QL\Hal\Core\Repository\ApplicationRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -38,7 +38,7 @@ class ApplicationsController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $groupRepo;
+    private $organizationRepo;
 
     /**
      * @param TemplateInterface $template
@@ -49,7 +49,7 @@ class ApplicationsController implements ControllerInterface
         $this->template = $template;
 
         $this->applicationRepo = $em->getRepository(Application::class);
-        $this->groupRepo = $em->getRepository(Group::class);
+        $this->organizationRepo = $em->getRepository(Organization::class);
     }
 
     /**
@@ -61,10 +61,10 @@ class ApplicationsController implements ControllerInterface
 
         $grouped = $this->applicationRepo->getGroupedApplications();
 
-        $groups = [];
+        $orgs = [];
 
-        foreach ($this->groupRepo->findAll() as $group) {
-            $groups[$group->id()] = $group;
+        foreach ($this->organizationRepo->findAll() as $org) {
+            $orgs[$org->id()] = $org;
         }
 
         $favorites = $this->findFavorites($grouped, $user->settings());
@@ -72,28 +72,24 @@ class ApplicationsController implements ControllerInterface
         return $this->withTemplate($request, $response, $this->template, [
             'favorites' => $favorites,
             'applications' => $grouped,
-            'groups' => $groups
+            'organizations' => $orgs
         ]);
     }
 
     /**
      * @param array $grouped
-     * @param UserSettings|null $settings
+     * @param UserSettings $settings
      *
      * @return Application[]
      */
-    private function findFavorites(array $grouped, ?UserSettings $settings)
+    private function findFavorites(array $grouped, UserSettings $settings)
     {
-        if (!$settings) {
-            return [];
-        }
-
         $saved = array_fill_keys($settings->favoriteApplications(), true);
         $favorites = [];
 
         foreach ($grouped as $applications) {
             foreach ($applications as $application) {
-                if (isset($saved[$application->id()])) {
+                if ($saved[$application->id()] ?? false) {
                     $favorites[] = $application;
                 }
             }

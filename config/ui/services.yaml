@@ -12,6 +12,12 @@ services:
     # VALIDATORS
     ######################################################################################################################
 
+    validator.organization:
+        class: 'Hal\UI\Validator\OrganizationValidator'
+        arguments: ['@doctrine.em']
+
+    #
+
     build.start.validator:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:

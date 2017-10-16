@@ -7,6 +7,21 @@
 
 {% block content %}
     <h1>{{ page_title }}</h1>
+    {{ block('favs') }}
+
+    <h2>Organizations</h2>
+    {{ block('orgs_grid') }}
+
+    <h2>Applications</h2>
+    {{ block('apps_table') }}
+
+    <ul>
+        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
+        <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
+    </ul>
+{% endblock %}
+
+{% block favs %}
 
     {% if favorites %}
         <h2>Favorites</h2>
@@ -27,65 +42,72 @@
 
     {% endif %}
 
-    <h2>Organizations</h2>
+{% endblock %}
 
-    <ul>
-        {% for group_id, group_applications in applications %}
-            {% set group = groups[group_id] %}
-            {% if group_applications %}
-                <li><a href="#org-{{ group_id }}">{{ group.name }}</a></li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+{% block orgs_grid %}
 
-    <h2>Applications</h2>
+    {% if organizations %}
+        <ul>
+            {% for organization in organizations %}
+                <li><a href="#org-{{ organization.id }}">{{ organization.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no organizations.</p>
+    {% endif %}
 
-<input id="js-search-input" class="text-input" type="text" name="search" autocomplete="off" placeholder="Search for an application or repository..." maxlength="100">
+{% endblock %}
 
-    <table class="table--spacing-medium js-collapsible js-search-table">
-        <thead>
-            <tr>
-                <th>Application</th>
-                <th class="t50">GitHub Source</th>
-                <th class="t10 tr js-collapsible-global"></th>
-            </tr>
-        </thead>
+{% block apps_table %}
 
-        {% set hasApplications = false %}
+    {% if applications %}
+        <input
+            id="js-search-input"
+            class="text-input"
+            type="text"
+            name="search"
+            autocomplete="off"
+            placeholder="Search for an application or repository..."
+            maxlength="100">
 
-        {% for group_id, group_applications in applications %}
-            <tbody class="js-search-group">
-                {% set group = groups[group_id] %}
+        <table class="table--spacing-medium js-collapsible js-search-table">
+            <thead>
                 <tr>
-                    <th colspan="4" class="table-mid-header" id="org-{{ group_id}}">
-                        <a href="{{ uriFor('organization', {'organization': group.id}) }}">{{ group.name }}</a>
-                    </th>
+                    <th>Application</th>
+                    <th class="t50">GitHub Source</th>
+                    <th class="t10 tr js-collapsible-global"></th>
                 </tr>
+            </thead>
 
-                {% if group_applications %}
-                    {% set hasApplications = true %}
-                    {% for application in group_applications %}
-                        {{ page_macros.app_row(current_user, application, true) }}
-                    {% endfor %}
-                {% else %}
+            {% set hasApplications = false %}
+
+            {% for org_id, organization_apps in applications %}
+                <tbody class="js-search-group">
+                    {% set organization = organizations[org_id] %}
                     <tr>
-                        <td colspan="4">No applications found.</td>
+                        <th colspan="3" class="table-mid-header" id="org-{{ org_id }}">
+                            <a href="{{ uriFor('organization', {'organization': organization.id}) }}">{{ organization.name }}</a>
+                        </th>
                     </tr>
-                {% endif %}
-            </tbody>
-        {% endfor %}
 
-        {% if not hasApplications %}
-            <tr>
-                <td colspan="4">There are no groups.</td>
-            </tr>
-        {% endif %}
-    </table>
+                    {% if organization_apps %}
+                        {% set hasApplications = true %}
+                        {% for application in organization_apps %}
+                            {{ page_macros.app_row(current_user, application, true) }}
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No applications found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            {% endfor %}
+        </table>
 
-    <ul>
-        <li><a class="btn" href="{{ uriFor('application.add') }}">Add Application</a></li>
-        <li><a class="btn" href="{{ uriFor('organization.add') }}">Add Organization</a></li>
-    </ul>
+    {% else %}
+        <p>There are no applications.</p>
+    {% endif %}
+
 {% endblock %}
 
 {% macro app_row(currentUser, application, allow_collapse) %}

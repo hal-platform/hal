@@ -139,7 +139,7 @@ parameters:
             stack: ['middleware.signed_in', 'organization.add.page']
 
         organization.management:
-            route: '/organizations/{organization:%r.digit%}'
+            route: '/organizations/{organization:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
                 organization:

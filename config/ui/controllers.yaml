@@ -300,6 +300,7 @@ services:
         arguments:
             - '@organization.add.twig'
             - '@doctrine.em'
+            - '@validator.organization'
             - '@uri'
     organization.add.twig:
         parent: 'twig.template'
@@ -310,6 +311,7 @@ services:
         arguments:
             - '@organization.edit.twig'
             - '@doctrine.em'
+            - '@validator.organization'
             - '@uri'
     organization.edit.twig:
         parent: 'twig.template'

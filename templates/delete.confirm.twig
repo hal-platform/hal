@@ -23,7 +23,7 @@
 {% block content %}
     <h1>
         {% if remove.param %}
-            Confirm {{ entity_type }} Removal
+            Remove {{ entity_type }}
         {% else %}
             Confirm Removal
         {% endif %}
@@ -150,12 +150,12 @@
     <div class="details-box">
         <ul class="mbn">
             <li>
-                <h6>Identifier</h6>
-                {{ remove.entity.key }}
+                <h6>Name</h6>
+                {{ remove.entity.identifier }}
             </li>
 
             <li>
-                <h6>Name</h6>
+                <h6>Description</h6>
                 {{ remove.entity.name }}
             </li>
         </ul>

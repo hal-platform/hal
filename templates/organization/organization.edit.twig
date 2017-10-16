@@ -1,10 +1,10 @@
 {% extends 'base.twig' %}
 {% import "macros.form.twig" as form_macros %}
 
-{% set page_title = 'Edit Organization : ' ~ organization.name %}
+{% set page_title = 'Edit Organization - ' ~ organization.name %}
 
 {% block content %}
-    <h1>Edit Organization - <b>{{ organization.name }}</b></h1>
+    <h1>Edit Organization</h1>
 
     <div class="form-wrapper">
         {{ form_macros.formErrors(errors) }}
@@ -12,13 +12,23 @@
         <form method="post">
             <ul class="form-fields">
                 <li>
+                    {% set hasError = form_macros.hasError(errors, 'name') %}
                     <label for="name">Name</label>
-                    <input type="text" name="name" id="name" maxlength="48" required value="{{ form.name }}" class="text-input">
+                    <input type="text" class="text-input t50{{ hasError ? ' is-error' : '' }}" name="name" id="name" maxlength="30" value="{{ form.name }}" required>
+                    <small>
+                        Unique name such as <span>"myteam"</span> or <span>"my-projects"</span>.
+                        <br>Alphanumeric, hyphen, and period characters only.
+                    </small>
                 </li>
 
                 <li>
-                    <label for="identifier">Identifier</label>
-                    <input type="text" name="identifier" id="identifier" maxlength="24" required value="{{ form.identifier }}" class="text-input t50">
+                    {% set hasError = form_macros.hasError(errors, 'description') %}
+                    <label for="description">Description</label>
+                    <input type="text" class="text-input{{ hasError ? ' is-error' : '' }}" name="description" id="description" maxlength="100" value="{{ form.description }}" required>
+                    <small>
+                        Display description for this organization such as
+                        <span>"MyTeam"</span> or <span>"My Secret Projects"</span>.
+                    </small>
                 </li>
             </ul>
 

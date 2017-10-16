@@ -9,13 +9,13 @@ namespace Hal\UI\Controllers\Organization;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Organization;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -48,7 +48,7 @@ class RemoveOrganizationController implements ControllerInterface
      */
     public function __construct(EntityManagerInterface $em, URI $uri)
     {
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
+        $this->applicationRepo = $em->getRepository(Application::class);
         $this->em = $em;
 
         $this->uri = $uri;
@@ -59,9 +59,9 @@ class RemoveOrganizationController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $organization = $request->getAttribute(Group::class);
+        $organization = $request->getAttribute(Organization::class);
 
-        if ($this->applicationRepo->findBy(['group' => $organization])) {
+        if ($this->applicationRepo->findBy(['organization' => $organization])) {
             $this->withFlash($request, Flash::ERROR, self::ERR_HAS_APPLICATIONS);
             return $this->withRedirectRoute($response, $this->uri, 'organization', ['organization' => $organization->id()]);
         }
