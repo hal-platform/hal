@@ -22,7 +22,7 @@ workflows:
 jobs:
     fetch_code:
         <<: *defaults
-        docker: [ { image: 'halplatform/hal-build-environments:php7.1-centos7' } ]
+        docker: [ { image: 'halplatform/php:latest' } ]
 
         steps:
             - checkout
@@ -30,7 +30,7 @@ jobs:
 
     build_backend:
         <<: *defaults
-        docker: [ { image: 'halplatform/hal-build-environments:php7.1-centos7' } ]
+        docker: [ { image: 'halplatform/php:latest' } ]
 
         steps:
             - attach_workspace: { at: '.' }
@@ -86,7 +86,7 @@ jobs:
 
             - run:
                 name: 'Run eslint and sasslint'
-                command: 'yarn run lint:css && yarn run lint:js'
+                command: 'yarn run lint:sass && yarn run lint:js'
 
             - run:
                 name: 'Run frontend build'
