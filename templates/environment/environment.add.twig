@@ -23,15 +23,11 @@
                 </li>
 
                 <li>
-                    <label>Is this a <b>Production</b> environment?</label>
-                    <ul class="list--bare">
-                        <li>
-                            <label for="is_production" class="checkbox-check">
-                                <input type="checkbox" name="is_production" id="is_production" value="1" {{ form.is_production ? 'checked ' : ''}}>
-                                <b class="checkbox-check--tick"></b>Yes, this is production.
-                            </label>
-                        </li>
-                    </ul>
+                    <div class="label">Is this a <b>Production</b> environment?</div>
+                    <label for="is_production" class="checkbox-check">
+                        <input type="checkbox" name="is_production" id="is_production" value="1" {{ form.is_production ? 'checked ' : ''}}>
+                        <b class="checkbox-check--tick"></b>Yes, this is production.
+                    </label>
                 </li>
             </ul>
 

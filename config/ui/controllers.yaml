@@ -740,15 +740,15 @@ services:
         arguments:
             - '@redis'
 
-    super.message.page:
-        class: 'Hal\UI\Controllers\Super\GlobalMessageController'
+    super.banner.page:
+        class: 'Hal\UI\Controllers\Super\GlobalBannerController'
         arguments:
-            - '@super.message.twig'
-            - '@global.message'
+            - '@super.banner.twig'
+            - '@banner'
             - '@uri'
-    super.message.twig:
+    super.banner.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.global-message.twig']]]
+        calls: [['setTemplate', ['admin/super.global_banner.twig']]]
 
     super.system.page:
         class: 'Hal\UI\Controllers\Super\SystemStatusController'

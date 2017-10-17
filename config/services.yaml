@@ -66,6 +66,9 @@ services:
     slim.global_middleware.srs_business:
         class: 'Hal\UI\Middleware\SrsBusinessGlobalMiddleware'
         arguments: ['@cookie.handler']
+    slim.global_middleware.global_banner:
+        class: 'Hal\UI\Middleware\SystemSettingsGlobalMiddleware'
+        arguments: ['@banner']
 
     ####################################################################################################################
     # DOMAIN-SPECIFIC SERVICES
@@ -98,9 +101,12 @@ services:
             - ['setCache', ['@cache']]
             - ['setCacheTTL', ['%cache.permissions.ttl%']]
 
-    global.message:
-        class: 'Hal\UI\Service\GlobalMessageService'
-        arguments: ['@redis']
+    banner:
+        class: 'Hal\UI\System\GlobalBannerService'
+        arguments:
+            - '@doctrine.em'
+            - '@clock'
+            - '@json'
 
     sticky.environment:
         class: 'Hal\UI\Service\StickyEnvironmentService'

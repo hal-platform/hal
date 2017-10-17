@@ -49,6 +49,7 @@ parameters:
         - 'slim.global_middleware.session'
         - 'slim.global_middleware.user_session'
         - 'slim.global_middleware.srs_business'
+        - 'slim.global_middleware.global_banner'
 
     ############################################################################
     # logging

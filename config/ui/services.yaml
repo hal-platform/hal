@@ -56,7 +56,6 @@ services:
     twig.extension.hal:
         class: 'Hal\UI\Twig\HalExtension'
         arguments:
-            - '@global.message'
             - '@utility.time.formatter'
             - '%gravatar.fallback%'
 

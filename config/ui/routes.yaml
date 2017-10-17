@@ -491,7 +491,7 @@ parameters:
                     route: '/caches'
                     stack: ['super.caches.page']
 
-                super.message:
+                super.banner:
                     method: ['GET', 'POST']
-                    route: '/message'
-                    stack: ['super.message.page']
+                    route: '/banner'
+                    stack: ['super.banner.page']

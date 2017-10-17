@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Twig;
 
-use Hal\UI\Service\GlobalMessageService;
 use Hal\UI\Utility\TimeFormatter;
 use QL\Hal\Core\Entity\Build;
 use QL\Hal\Core\Entity\Deployment;
@@ -24,11 +23,6 @@ class HalExtension extends Twig_Extension
     const NAME = 'hal';
 
     /**
-     * @var GlobalMessageService
-     */
-    private $messageService;
-
-    /**
      * @var TimeFormatter
      */
     private $time;
@@ -39,19 +33,14 @@ class HalExtension extends Twig_Extension
     private $gravatarFallbackImageURL;
 
     /**
-     * @param GlobalMessageService $messageService
      * @param TimeFormatter $time
-     * @param NameFormatter $name
      * @param string $gravatarFallbackImageURL
      */
     public function __construct(
-        GlobalMessageService $messageService,
         TimeFormatter $time,
         $gravatarFallbackImageURL
     ) {
-        $this->messageService = $messageService;
         $this->time = $time;
-
         $this->gravatarFallbackImageURL = $gravatarFallbackImageURL;
     }
 
@@ -79,11 +68,6 @@ class HalExtension extends Twig_Extension
 
             // user
             new Twig_SimpleFunction('getAvatarLink', [$this, 'getAvatarLink']),
-
-            // services
-            new Twig_SimpleFunction('globalMessage', [$this->messageService, 'load']),
-            new Twig_SimpleFunction('isUpdateTickOn', [$this->messageService, 'isUpdateTickOn']),
-
         ];
     }
 
@@ -232,6 +216,5 @@ class HalExtension extends Twig_Extension
             $size,
             urlencode($default)
         );
-
     }
 }

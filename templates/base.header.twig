@@ -16,9 +16,9 @@
                 <h1 class="hal-label">
                     <span class="hal-label__name">Hal</span>
                     <span class="hal-label__version">3.0.0</span>
-                    {%- if isUpdateTickOn() -%}
+                    {%- if attribute(_context, 'global.update_notification') -%}
                         <div class="hal-stamp">
-                            <a class="hal-stamp" href="{{ uriFor('latest_release') }}" title="Hal was recently updated!">{{ macros.icon('star') }}</a>
+                            <a href="{{ uriFor('latest.release') }}" title="Hal was recently updated!">What's new?</a>
                         </div>
                     {%- endif -%}
                 </h1>

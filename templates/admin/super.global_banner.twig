@@ -1,0 +1,112 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+
+{% set page_title = "Global Message" %}
+
+{% block content %}
+    <div class="nav--page">
+        <h1>{{ page_title }}</h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('admin') }}">Back to Admin Dashboard</a>
+        </p>
+    </div>
+
+    {{ block('meta') }}
+    {{ block('form') }}
+
+    <div class="mtl">
+        <h2>Example banner</h2>
+        <p>
+            Note that the message is not wrapped in any html!
+            Use the following as a template if you wish to create an alert.
+        </p>
+        <pre class="trailer" style="font-size:70%">{{ block('sample_message')|escape }}</pre>
+    </div>
+
+{% endblock %}
+
+{% block meta %}
+    <h2>Current Status</h2>
+    <ul class="trailer">
+        <li>
+            <h6>Global Banner</h6>
+            {% if setting and setting.message %}
+                {{ macros.status('Enabled', 'success', 'tick') }}
+
+                {% if setting.expiry and setting.is_expired %}
+                    Expired {{ setting.expiry|html5date }}
+                {% elseif setting.expiry %}
+                    Expires in {{ setting.expiry|html5date }}
+                {% else %}
+                    Never expires
+                {% endif %}
+
+                <form method="post" style="display:inline">
+                    <input type="hidden" name="remove" value="1">
+                    <input class="btn btn--tiny btn--destructive" type="submit" name="submit" value="Remove Banner">
+                </form>
+
+            {% else %}
+                {{ macros.status('Disabled', 'info', 'nope') }}
+            {% endif %}
+        </li>
+        <li>
+            <h6>Update Notification</h6>
+            {% if update_notification %}
+                {{ macros.status('Enabled', 'success', 'tick') }}
+            {% else %}
+                {{ macros.status('Disabled', 'info', 'nope') }}
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block form %}
+    <h2>Global Banner</h2>
+    <form action="" method="post">
+        <ul class="form-fields">
+            <li>
+                <label for="message">Global Message</label>
+                <textarea class="text-input" id="message" name="message" rows="5">{{ setting.message }}</textarea>
+                <small>
+                    This message will be displayed as-is on the website.
+                    Please do not do anything stupid.
+                </small>
+            </li>
+            <li>
+                <label for="ttl">TTL (in seconds)</label>
+                <input type="text" class="text-input t10" id="ttl" name="ttl" value="{{ setting.ttl }}">
+                <small>
+                    If empty or set to <code>0</code>, the message will never expire and must be removed manually.
+                </small>
+            </li>
+            <li>
+                {% set is_selected = update_notification ? ' checked' : '' %}
+                <label class="checkbox-toggle">
+                    <input type="checkbox" name="update_notification" value="1"{{ is_selected }}>
+                    <b class="checkbox-toggle--pill"></b>Enable <b>Update Notification</b> on header
+                </label>
+
+                <p>
+                    <small>This option creates a notification on the header that links to the <b>Latest Release</b> page.</small>
+                </p>
+            </li>
+        </ul>
+
+        <input type="submit" class="btn btn--action" name="submit" value="Save Changes">
+
+    </form>
+{% endblock %}
+
+{% block sample_message -%}
+<div class="alert-bar--info">
+    <div class="alert-bar-icon">
+        <svg class="icon"><use xlink:href="/icons.svg#info"></use></svg>
+    </div>
+    <div class="alert-bar-contents">
+        <h4>Title of message.</h4>
+        <p>Optional. More Info</p>
+    </div>
+</div>
+{%- endblock %}
