@@ -1,8 +1,11 @@
 services:
 
     doctrine.cache.redis:
-        class: 'QL\Hal\Core\Utility\DoctrinePredisCache'
-        arguments: ['@redis', '%doctrine.cache.ttl%']
+        class: 'Hal\Core\Database\DoctrineUtility\DoctrinePredisCache'
+        arguments:
+            - '@redis'
+            - '%doctrine.cache.ttl%'
+            - '%doctrine.cache.delimiter%'
 
     doctrine.utility.user_fetcher:
         class: 'Hal\UI\Utility\LazyUserRetriever'

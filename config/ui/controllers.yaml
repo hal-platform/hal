@@ -731,7 +731,8 @@ services:
         arguments:
             - '@super.caches.twig'
             - '@redis'
-            - '@root'
+            - '%root%'
+            - '%cache.delimiter%'
     super.caches.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['admin/super.cache-management.twig']]]
@@ -739,6 +740,7 @@ services:
         class: 'Hal\UI\Controllers\Super\CacheManagementHandler'
         arguments:
             - '@redis'
+            - '%cache.delimiter%'
 
     super.banner.page:
         class: 'Hal\UI\Controllers\Super\GlobalBannerController'

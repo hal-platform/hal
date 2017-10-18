@@ -489,7 +489,7 @@ parameters:
                 super.caches:
                     method: ['GET', 'POST']
                     route: '/caches'
-                    stack: ['super.caches.page']
+                    stack: ['super.caches.handler', 'super.caches.page']
 
                 super.banner:
                     method: ['GET', 'POST']

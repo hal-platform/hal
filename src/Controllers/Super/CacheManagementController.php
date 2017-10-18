@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -35,19 +35,27 @@ class CacheManagementController implements ControllerInterface
     private $root;
 
     /**
+     * @var string
+     */
+    private $keyDelimiter;
+
+    /**
      * @param TemplateInterface $template
      * @param Predis $predis
      * @param string $root
+     * @param string $keyDelimiter
      */
     public function __construct(
         TemplateInterface $template,
         Predis $predis,
-        $root
+        $root,
+        $keyDelimiter
     ) {
         $this->template = $template;
         $this->predis = $predis;
 
         $this->root = $root;
+        $this->keyDelimiter = $keyDelimiter;
     }
 
     /**
@@ -67,16 +75,16 @@ class CacheManagementController implements ControllerInterface
      */
     private function getPermissionTTLs()
     {
+        $permissionNamespace = 'mcp-cache-3.0.0:permissions';
+        $keyPattern = $this->keyPattern(['*', $permissionNamespace, '*']);
+
         $permissionTTLs = [];
-        $permissions = [];
 
-        foreach (new Keyspace($this->predis, '*:mcp-cache:permissions:*') as $key) {
-            $parts = explode(':', $key);
-            $permissions[] = array_pop($parts);
-        }
+        foreach (new Keyspace($this->predis, $keyPattern) as $key) {
+            $parts = explode($permissionNamespace, $key);
+            $permissionKey = array_pop($parts);
 
-        foreach ($permissions as $key) {
-            $key = sprintf('mcp-cache:permissions:%s', $key);
+            $key = sprintf('%s%s', $permissionNamespace, $permissionKey);
             $ttl = $this->predis->ttl($key);
 
             $permissionTTLs[$key] = $ttl;
@@ -90,14 +98,16 @@ class CacheManagementController implements ControllerInterface
      */
     private function getDoctrine()
     {
+        $keyPattern = $this->keyPattern(['*', 'doctrine', '*']);
+
         $doctrine = [];
-        foreach (new Keyspace($this->predis, '*:doctrine:*') as $key) {
+        foreach (new Keyspace($this->predis, $keyPattern) as $key) {
 
             // slice namespace
-            $parts = explode(':', $key);
+            $parts = explode($this->keyDelimiter, $key);
             array_shift($parts);
 
-            $doctrine[] = implode(':', $parts);
+            $doctrine[] = implode($this->keyDelimiter, $parts);
         }
 
         return $doctrine;
@@ -163,8 +173,6 @@ class CacheManagementController implements ControllerInterface
      */
     private function formatScripts(array $scripts)
     {
-        $formatted = [];
-
         // descending order
         usort($scripts, function($a, $b) {
             $a = $a['hits'];
@@ -179,15 +187,18 @@ class CacheManagementController implements ControllerInterface
             return 0;
         });
 
-        $root = realpath($this->root);
+        $root = realpath($this->root) . '/';
         $rootlen = strlen($root);
 
+        $formatted = [];
         foreach ($scripts as $script) {
 
             $path = $script['full_path'];
-            if (stripos($path, $root) === 0) {
-                $path = substr($path, $rootlen + 1);
+            if (stripos($path, $root) !== 0) {
+                continue;
             }
+
+            $path = './' . substr($path, $rootlen);
 
             $formatted[] = [
                 'path' => $path,
@@ -195,6 +206,9 @@ class CacheManagementController implements ControllerInterface
                 'memory_consumption' => $this->formatSize($script['memory_consumption']),
             ];
         }
+
+        // Limit to top 100 results
+        $formatted = array_slice($formatted, 0, 100);
 
         return $formatted;
     }
@@ -215,5 +229,15 @@ class CacheManagementController implements ControllerInterface
         }
 
         return sprintf('%d bytes', $bytes);
+    }
+
+    /**
+     * @param array $parts
+     *
+     * @return string
+     */
+    private function keyPattern(array $parts)
+    {
+        return implode($this->keyDelimiter, $parts);
     }
 }

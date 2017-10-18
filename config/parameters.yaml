@@ -59,7 +59,7 @@ parameters:
     ############################################################################
     # doctrine
     ############################################################################
-    # placeholder
+    doctrine.cache.delimiter: '%cache.delimiter%'
 
     ############################################################################
     # twig
@@ -97,6 +97,8 @@ parameters:
     cache.page.ttl: 300
     cache.github.default.ttl: 60
     cache.github.short.ttl: 20
+
+    cache.delimiter: '.'
 
     ############################################################################
     # api configuration

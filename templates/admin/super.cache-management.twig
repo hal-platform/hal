@@ -4,6 +4,15 @@
 {% set page_title = "Cache Management" %}
 
 {% block content %}
+
+    {% if clear_result %}
+        {% if clear_result == 'success' %}
+            {{ macros.alert('success', clear_message) }}
+        {% else %}
+            {{ macros.alert('error', clear_message) }}
+        {% endif %}
+    {% endif %}
+
     <div class="nav--page">
         <h1>{{ page_title }}</h1>
 
@@ -38,30 +47,28 @@
     <h3>Permissions Cache</h3>
     <section class="trailer">
 
-        <div class="details-box scrollable-box">
+        <div class="details-box">
             {% if permissions %}
-                <div class="scrolly-container">
-                    <table class="table--spacing-small">
-                        <thead>
+                <table class="table--spacing-small">
+                    <thead>
+                        <tr>
+                            <th class="t70">Key</th>
+                            <th>TTL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, ttl in permissions %}
                             <tr>
-                                <th class="t70">Key</th>
-                                <th>TTL</th>
+                                <td>
+                                    <div class="code_fixed">
+                                        <code>{{ key }}</code>
+                                    </div>
+                                </td>
+                                <td>{{ ttl }} seconds</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for key, ttl in permissions %}
-                                <tr>
-                                    <td>
-                                        <div class="code_fixed">
-                                            <code>{{ key }}</code>
-                                        </div>
-                                    </td>
-                                    <td>{{ ttl }} seconds</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% else %}
                 <p>No cached data found.</p>
             {% endif %}
@@ -72,28 +79,26 @@
     <h3>Doctrine Cache</h3>
     <section class="trailer">
 
-        <div class="details-box scrollable-box">
+        <div class="details-box">
             {% if doctrine_cached %}
-                <div class="scrolly-container">
-                    <table class="table--spacing-small">
-                        <thead>
+                <table class="table--spacing-small">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key in doctrine_cached %}
                             <tr>
-                                <th>Key</th>
+                                <td>
+                                    <div class="code_fixed">
+                                        <code>{{ key }}</code>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for key in doctrine_cached %}
-                                <tr>
-                                    <td>
-                                        <div class="code_fixed">
-                                            <code>{{ key }}</code>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% else %}
                 <p>No cached data found.</p>
             {% endif %}
@@ -108,10 +113,9 @@
         {% else %}
 
             <div class="details-box">
-                <ul class="mbn">
-                    <li>Status</li>
+                <ul>
                     <li>
-
+                        <h6>Status</h6>
                         {% set opcEnabledStatus = opcache.enabled ? 'success' : 'error' %}
                         {% set opcEnabledText = opcache.enabled ? 'Enabled' : 'Disabled' %}
                         {% set opcEnabledIcon = opcache.enabled ? 'tick' : 'cross' %}
@@ -124,59 +128,71 @@
                         {{ macros.status(opcFullText, opcFullStatus, opcFullIcon) }}
 
                     </li>
-                    <li>Hits</li>
-                    <li><b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses</li>
-                    <li>Hit Rate</li>
-                    <li>{{ opcache.opcache_hit_rate }}%</li>
 
-                    <li>Memory</li>
-                    <li>{{ opcache.used_memory }} / {{ opcache.total_memory }}</li>
+                    <li>
+                        <h6>Hits</h6>
+                        <b>{{ opcache.hits }}</b> hits, <b>{{ opcache.misses }}</b> misses
+                    </li>
 
-                    <li>Buffer</li>
-                    <li>{{ opcache.used_buffer }} / {{ opcache.total_buffer }}</li>
+                    <li>
+                        <h6>Hit Rate</h6>
+                        {{ opcache.opcache_hit_rate }}%
+                    </li>
 
-                    <li>Cached</li>
-                    <li>{{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys</li>
+                    <li>
+                        <h6>Memory</h6>
+                        {{ opcache.used_memory }} / {{ opcache.total_memory }}
+                    </li>
+
+                    <li>
+                        <h6>Buffer</h6>
+                        {{ opcache.used_buffer }} / {{ opcache.total_buffer }}
+                    </li>
+
+                    <li>
+                        <h6>Cached</h6>
+                        {{ opcache.cached_scripts }} scripts, {{ opcache.cached_keys }} keys
+                    </li>
 
                 </ul>
             </div>
 
             <h4>Configuration</h4>
-            <div class="details-box scrollable-box">
-                <ul class="mbn">
+            <div class="details-box">
+                <ul>
                     {% for key, data in opcache.configuration %}
-                        <li>{{ key }}</li>
-                        <li><code>{{ data|e }}</code></li>
+                        <li>
+                            <h6>{{ key }}</h6>
+                            <code>{{ data|e }}</code>
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
 
             <h4>Cached Scripts</h4>
-            <div class="details-box scrollable-box">
-                <div class="scrolly-container">
-                    <table>
-                        <thead>
+            <div class="details-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="t70">File</th>
+                            <th class="t15">Hits</th>
+                            <th>Memory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for script in opcache.scripts %}
                             <tr>
-                                <th class="t70">File</th>
-                                <th class="t15">Hits</th>
-                                <th>Memory</th>
+                                <td>
+                                    <div class="code_fixed">
+                                        <code title="{{ script.path }}">{{ script.path }}</code>
+                                    </div>
+                                </td>
+                                <td>{{ script.hits }}</td>
+                                <td>{{ script.memory_consumption }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for script in opcache.scripts %}
-                                <tr>
-                                    <td>
-                                        <div class="code_fixed">
-                                            <code title="{{ script.path }}">{{ script.path }}</code>
-                                        </div>
-                                    </td>
-                                    <td>{{ script.hits }}</td>
-                                    <td>{{ script.memory_consumption }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         {% endif %}
     </section>
