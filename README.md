@@ -18,10 +18,10 @@
 
 4. Run `bin/install` to install PHP and Node dependencies.
 
-5. Copy `configuration/environment/dev.yml` to `configuration/config.env.yml`
+5. Copy `config/.env.dev.dist` to `config/.env`
     > Run `bin/normalize-configuration` to do this automatically.
 
-6. Update `configuration/config.env.yml` with any specific details for your local dev environment.
+6. Update `config/.env` with any specific details for your local dev environment.
 7. Run `yarn run build`.
     > Runs frontend (css, js) code build process and compilation to optimize assets.
 
