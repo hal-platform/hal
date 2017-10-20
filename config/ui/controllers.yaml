@@ -717,15 +717,6 @@ services:
     # SUPER CONTROLLERS
     ####################################################################################################################
 
-    super.users.page:
-        class: 'Hal\UI\Controllers\Super\UserManagementController'
-        arguments:
-            - '@super.users.twig'
-            - '@doctrine.em'
-    super.users.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.users-management.twig']]]
-
     super.caches.page:
         class: 'Hal\UI\Controllers\Super\CacheManagementController'
         arguments:
@@ -735,7 +726,7 @@ services:
             - '%cache.delimiter%'
     super.caches.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.cache-management.twig']]]
+        calls: [['setTemplate', ['admin/super.cache_management.twig']]]
     super.caches.handler:
         class: 'Hal\UI\Controllers\Super\CacheManagementHandler'
         arguments:
@@ -753,16 +744,13 @@ services:
         calls: [['setTemplate', ['admin/super.global_banner.twig']]]
 
     super.system.page:
-        class: 'Hal\UI\Controllers\Super\SystemStatusController'
+        class: 'Hal\UI\Controllers\Super\SystemDashboardController'
         arguments:
             - '@super.system.twig'
             - '@doctrine.em'
-            - '@redis'
             - '@json'
             - '@clock'
-            - '@notFoundHandler'
-            - '%hal.agents%'
     super.system.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.system-status.twig']]]
+        calls: [['setTemplate', ['admin/super.system_dashboard.twig']]]
 

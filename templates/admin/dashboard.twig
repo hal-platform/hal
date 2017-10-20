@@ -58,37 +58,37 @@
     {% if is_admin %}
         <h2 class="leader">Manage Hal System</h2>
         <ul>
-            <li><a href="{{ uriFor('super.system') }}" class="btn">Build System Status</a></li>
+            <li><a href="{{ uriFor('super.system') }}" class="btn">System Dashboard</a></li>
             <li><a href="{{ uriFor('super.caches') }}" class="btn">Cache Management</a></li>
             <li><a href="{{ uriFor('super.banner') }}" class="btn">Global Banner</a></li>
         </ul>
 
         <h3>Server Information</h3>
         <div class="details-box">
-            <ul class="mbn">
-                <li><b>Hostname</b></li>
+            <ul>
                 <li>
+                    <h6>Hostname</h6>
                     <div class="pre-wrapper">
                         <pre>{{ server_name }}</pre>
                     </div>
                 </li>
 
-                <li><b>Encryption key</b></li>
                 <li>
+                    <h6>Encryption key</h6>
                     <div class="pre-wrapper">
                         <pre>{{ encryption_key }}</pre>
                     </div>
                 </li>
 
-                <li><b>Session Encryption key</b></li>
                 <li>
+                    <h6>Session Encryption key</h6>
                     <div class="pre-wrapper">
                         <pre>{{ session_encryption_key }}</pre>
                     </div>
                 </li>
 
-                <li><b>Hal Push File</b></li>
                 <li>
+                    <h6>Hal Push File</h6>
                     <div class="pre-wrapper">
                         {% if push_file %}
                             <pre>{{ push_file }}</pre>
