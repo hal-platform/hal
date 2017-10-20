@@ -248,7 +248,7 @@ services:
             - '@uri'
     environment.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['environment/environment.add.twig']]]
+        calls: [['setTemplate', ['environment/add_environment.twig']]]
 
     environment.edit.page:
         class: 'Hal\UI\Controllers\Environment\EditEnvironmentController'
@@ -259,7 +259,7 @@ services:
             - '@uri'
     environment.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['environment/environment.edit.twig']]]
+        calls: [['setTemplate', ['environment/edit_environment.twig']]]
 
     environment.remove.handler:
         class: 'Hal\UI\Controllers\Environment\RemoveEnvironmentController'
@@ -310,7 +310,7 @@ services:
             - '@uri'
     organization.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['organization/organization.add.twig']]]
+        calls: [['setTemplate', ['organization/add_organization.twig']]]
 
     organization.edit.page:
         class: 'Hal\UI\Controllers\Organization\EditOrganizationController'
@@ -321,7 +321,7 @@ services:
             - '@uri'
     organization.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['organization/organization.edit.twig']]]
+        calls: [['setTemplate', ['organization/edit_organization.twig']]]
 
     organization.remove.handler:
         class: 'Hal\UI\Controllers\Organization\RemoveOrganizationController'
@@ -374,7 +374,7 @@ services:
             - '@uri'
     application.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.add.twig']]]
+        calls: [['setTemplate', ['application/add_application.twig']]]
 
     application.edit.page:
         class: 'Hal\UI\Controllers\Application\EditApplicationController'
@@ -385,7 +385,7 @@ services:
             - '@uri'
     application.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.edit.twig']]]
+        calls: [['setTemplate', ['application/edit_application.twig']]]
 
     application.remove.handler:
         class: 'Hal\UI\Controllers\Application\RemoveApplicationController'
