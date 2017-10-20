@@ -619,7 +619,7 @@ services:
             - '@notFoundHandler'
     admin.audit_history.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/audit-history.twig']]]
+        calls: [['setTemplate', ['admin/audit_history.twig']]]
 
     ####################################################################################################################
     # ADMIN - CREDENTIALS CONTROLLERS
