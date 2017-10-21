@@ -24,6 +24,10 @@ services:
         class: 'Hal\UI\Validator\ApplicationValidator'
         arguments: ['@doctrine.em', '@github']
 
+    validator.credential:
+        class: 'Hal\UI\Validator\CredentialValidator'
+        arguments: ['@doctrine.em', '@encryption']
+
     #
 
     build.start.validator:

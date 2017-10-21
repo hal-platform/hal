@@ -79,7 +79,7 @@
     {% elseif remove.param == 'environment' %}
         <a class="btn" href="{{ uriFor('environment', {'environment': remove.entity.id}) }}">Cancel</a>
     {% elseif remove.param == 'credential' %}
-        <a class="btn" href="{{ uriFor('admin.credential', {'credential': remove.entity.id}) }}">Cancel</a>
+        <a class="btn" href="{{ uriFor('credential', {'credential': remove.entity.id}) }}">Cancel</a>
 
     {% elseif remove.param == 'token' %}
         <a class="btn" href="{{ uriFor('user', {'user': entities.user.id}) }}">Cancel</a>
@@ -137,8 +137,10 @@
 
             <li>
                 <h6>Type</h6>
-                {% if remove.entity.type == 'aws' %}
-                    AWS
+                {% if remove.entity.type == 'aws_static' %}
+                    AWS Static Token
+                {% elseif remove.entity.type == 'aws_role' %}
+                    AWS STS Role
                 {% elseif remove.entity.type == 'privatekey' %}
                     Private Key
                 {% endif %}

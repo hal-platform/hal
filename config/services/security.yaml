@@ -20,20 +20,16 @@ services:
     # CRYPTO
     ####################################################################################################################
 
-    encrypter:
-        class: 'QL\Hal\Core\Crypto\Encrypter'
-        arguments: ['%encrypter.publickey%']
+    encryption:
+        class: 'Hal\Core\Crypto\Encryption'
+        factory: ['@encryption.factory', 'getCrypto']
 
+    encryption.factory:
+        class: 'Hal\Core\Crypto\CryptoFilesystemFactory'
+        arguments: ['%encrypter.secret.path%']
+
+    # dummy services - to not break pages not updated to core-3 yet
     decrypter:
-        class: 'QL\Hal\Core\Crypto\Decrypter'
-        factory: ['@decrypter.factory', 'getAsymmetricDecrypter']
-        lazy: true
-
-    decrypter.factory:
-        class: 'QL\Hal\Core\Crypto\CryptoFactory'
-        arguments: ['@encrypter.encryptedkey.squished', '%encrypter.secret.path%']
-
-    encrypter.encryptedkey.squished:
-        class: 'stdClass'
-        factory: ['Hal\UI\Application\Stringify', 'squish']
-        arguments: ['%encrypter.encryptedkey%']
+        parent: 'encryption'
+    encrypter:
+        parent: 'encryption'

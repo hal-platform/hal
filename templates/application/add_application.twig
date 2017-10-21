@@ -44,7 +44,7 @@
 
                             <li>
                                 <label for="org-{{ organization.id }}">
-                                    <input id="org-{{ organization.id }}" type="radio" name="organization" value="{{ organization.id }}"{{ is_selected }}>
+                                    <input type="radio" id="org-{{ organization.id }}" name="organization" value="{{ organization.id }}"{{ is_selected }}>
                                     {{ organization.name }}
                                 </label>
                             </li>
@@ -53,7 +53,7 @@
                         {% set is_selected = form.organization == '' ? ' checked' : '' %}
                         <li>
                             <label for="org-noop">
-                                <input id="org-noop" type="radio" name="organization" value=""{{ is_selected }}>
+                                <input type="radio" id="org-noop" name="organization" value=""{{ is_selected }}>
                                 Do not add to organization
                             </label>
                         </li>

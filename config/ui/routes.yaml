@@ -414,29 +414,34 @@ parameters:
                 # CREDENTIAL ROUTES
                 ################################################################################################################
 
-                admin.credentials:
+                credentials:
                     method: 'GET'
                     route: '/credentials'
-                    stack: ['admin.credentials.page']
+                    stack: ['credentials.page']
 
-                admin.credential.add:
+                credential.add:
                     method: ['GET', 'POST']
                     route: '/credentials/add'
-                    stack: ['middleware.is_super', 'admin.credential.add.page']
+                    stack: ['middleware.is_super', 'credential.add.page']
 
                 credential.management:
                     route: '/credentials/{credential:%r.guid%}'
                     stack: ['middleware.require_entity']
                     routes:
-                        admin.credential:
+                        credential:
                             method: 'GET'
                             route: ''
-                            stack: ['admin.credential.page']
+                            stack: ['credential.page']
 
-                        admin.credential.remove:
+                        credential.edit:
+                            method: ['GET', 'POST']
+                            route: '/edit'
+                            stack: ['credential.edit.page']
+
+                        credential.remove:
                             method: ['GET', 'POST']
                             route: '/remove'
-                            stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'admin.credential.remove.handler']
+                            stack: ['middleware.is_super', 'middleware.removal_confirmation.credential', 'credential.remove.handler']
 
                 ################################################################################################################
                 # PERMISSION ROUTES

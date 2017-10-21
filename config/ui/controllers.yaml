@@ -625,36 +625,47 @@ services:
     # ADMIN - CREDENTIALS CONTROLLERS
     ####################################################################################################################
 
-    admin.credentials.page:
+    credentials.page:
         class: 'Hal\UI\Controllers\Credentials\CredentialsController'
-        arguments: ['@admin.credentials.twig', '@doctrine.em']
-    admin.credentials.twig:
+        arguments: ['@credentials.twig', '@doctrine.em']
+    credentials.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/credentials.twig']]]
 
-    admin.credential.page:
+    credential.page:
         class: 'Hal\UI\Controllers\Credentials\CredentialController'
         arguments:
-            - '@admin.credential.twig'
+            - '@credential.twig'
             - '@doctrine.em'
-            - '@decrypter'
-    admin.credential.twig:
+            - '@encryption'
+    credential.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/credential.twig']]]
 
-    admin.credential.add.page:
+    credential.add.page:
         class: 'Hal\UI\Controllers\Credentials\AddCredentialController'
         arguments:
-            - '@admin.credential.add.twig'
+            - '@credential.add.twig'
             - '@doctrine.em'
+            - '@validator.credential'
             - '@uri'
-            - '@doctrine.random'
-            - '@encrypter'
-    admin.credential.add.twig:
+    credential.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['credentials/credential.add.twig']]]
+        calls: [['setTemplate', ['credentials/add_credential.twig']]]
 
-    admin.credential.remove.handler:
+    credential.edit.page:
+        class: 'Hal\UI\Controllers\Credentials\EditCredentialController'
+        arguments:
+            - '@credential.edit.twig'
+            - '@doctrine.em'
+            - '@validator.credential'
+            - '@encryption'
+            - '@uri'
+    credential.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['credentials/edit_credential.twig']]]
+
+    credential.remove.handler:
         class: 'Hal\UI\Controllers\Credentials\RemoveCredentialController'
         arguments: ['@doctrine.em', '@uri']
 

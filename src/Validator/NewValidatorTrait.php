@@ -39,6 +39,17 @@ trait NewValidatorTrait
 
     /**
      * @param string $value
+     * @param array $options
+     *
+     * @return bool
+     */
+    private function validateIn($value, array $options): bool
+    {
+        return in_array($value, $options, true);
+    }
+
+    /**
+     * @param string $value
      * @param int $min
      * @param int $max
      *
@@ -46,11 +57,13 @@ trait NewValidatorTrait
      */
     private function validateLength($value, $min, $max): bool
     {
-        if (mb_strlen($value, 'UTF-8') < $min) {
+        $length = mb_strlen($value, 'UTF-8');
+
+        if ($length < $min) {
             return false;
         }
 
-        if (mb_strlen($value, 'UTF-8') > $max) {
+        if ($length > $max) {
             return false;
         }
 

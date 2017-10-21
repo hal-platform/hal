@@ -10,29 +10,10 @@
     @include trailer;
 }
 
-
 // Labels
 label, .label {
     display: block;
     margin-bottom: 0;
-}
-
-// Extra help text in labels.
-// <label>Username <small class="additional">No special characters</small></label>
-.additional {
-    display: block;
-    font-weight: normal;
-}
-
-// Groups of checkboxes and radios.
-.check-list {
-    @extend .form-fields;
-}
-
-// Labels in check-lists.
-.check-list label,
-.check-list .label {
-    display: inline-block;
 }
 
 .text-input,
@@ -81,10 +62,6 @@ select {
     }
 }
 
-.form-inline {
-    display: inline-block;
-}
-
 .form--fav {
     display: inline-block;
     .form--fav__label {
@@ -121,8 +98,4 @@ select {
             }
         }
     }
-}
-
-.deployment-form {
-    clear: right;
 }

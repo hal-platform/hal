@@ -29,6 +29,7 @@
         <table class="table--spacing-medium table--striped">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th></th>
                 </tr>
@@ -36,6 +37,7 @@
             <tbody>
                 {% for environment in envs %}
                     <tr>
+                        <td>{{ environment|shortGUID }}</td>
                         <td>
                             {% if environment.isProduction %}
                                 {{ macros.status(environment.name, 'info', 'key') }}
