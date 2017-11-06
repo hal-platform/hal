@@ -10,20 +10,26 @@ namespace Hal\UI\Middleware;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Credential;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\EncryptedProperty;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\EventLog;
-use QL\Hal\Core\Entity\Group;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Entity\Token;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserPermission;
-use QL\Hal\Core\Entity\UserType;
+use Hal\Core\Entity\{
+    Application,
+    // AuditEvent,
+    Build,
+    Credential,
+    EncryptedProperty,
+    Environment,
+    // Group,
+    JobEvent,
+    // JobMeta,
+    // JobProcess,
+    Organization,
+    Release,
+    // SystemSetting,
+    Target,
+    User,
+    UserPermission,
+    // UserSettings,
+    UserToken
+};
 use QL\Panthor\MiddlewareInterface;
 use Slim\Route;
 
@@ -39,22 +45,20 @@ class RequireEntityMiddleware implements MiddlewareInterface
      */
     const KNOWN_ENTITIES = [
         'build' => Build::class,
-        'push' => Push::class,
-        'event' => EventLog::class,
+        'release' => Release::class,
+        'event' => JobEvent::class,
 
         'user' => User::class,
         'user_permission' => UserPermission::class,
-        'user_type' => UserType::class,
-        'token' => Token::class,
+        'token' => UserToken::class,
 
-        'organization' => Group::class,
+        'organization' => Organization::class,
         'application' => Application::class,
 
-        'target' => Deployment::class,
+        'target' => Target::class,
         'encrypted' => EncryptedProperty::class,
 
         'environment' => Environment::class,
-        'server' => Server::class,
         'credential' => Credential::class,
     ];
 

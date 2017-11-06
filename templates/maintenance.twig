@@ -1,0 +1,35 @@
+{% extends 'base.twig' %}
+
+{% set page_title = 'Under Maintenance Found' %}
+{% set html_id = 'error-page' %}
+
+{# remove nav #}
+{% set show_navigation = false %}
+
+{% block page_main %}
+        <div class="terminal">
+            <div class="terminal--border">
+                <div class="terminal--border-inner">
+                    <div class="terminal__screen">
+                        <div class="terminal__header">PLEASE STAND BY...<br>MAINTENANCE MODE<br>IS ACTIVATED!</div>
+                        <span class="terminal__entry"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="terminal__footer">
+                <div class="terminal__footer__inner">HAL 9000 SERIES TERMINAL</div>
+            </div>
+
+            <div class="terminal__text">Engineers are performing routine upgrades on my core subsystems.
+
+Despite my enormous intellect, even I need occasional maintenance.
+
+Your patience is appreciated.</div>
+        </div>
+
+        <div class="star-1"></div>
+        <div class="star-2"></div>
+        <div class="star-3"></div>
+
+{% endblock %}

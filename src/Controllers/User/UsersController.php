@@ -9,12 +9,12 @@ namespace Hal\UI\Controllers\User;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\PaginationTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserType;
+// use QL\Hal\Core\Entity\UserType;
 use QL\Hal\Core\Repository\UserRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
@@ -37,11 +37,6 @@ class UsersController implements ControllerInterface
     private $userRepo;
 
     /**
-     * @var EntityRepository
-     */
-    private $userTypesRepo;
-
-    /**
      * @var callable
      */
     private $notFound;
@@ -56,7 +51,7 @@ class UsersController implements ControllerInterface
         $this->template = $template;
 
         $this->userRepo = $em->getRepository(User::class);
-        $this->userTypesRepo = $em->getRepository(UserType::class);
+        // $this->userTypesRepo = $em->getRepository(UserType::class);
 
         $this->notFound = $notFound;
     }
@@ -71,8 +66,8 @@ class UsersController implements ControllerInterface
             return ($this->notFound)($request, $response);
         }
 
-        $users = $this->userRepo->getPaginatedUsers(self::MAX_PER_PAGE, ($page-1));
-        $userTypes = $this->getTypes();
+        $users = $this->userRepo->getPagedResults(self::MAX_PER_PAGE, ($page-1));
+        // $userTypes = $this->getTypes();
 
         $total = count($users);
         $last = ceil($total / self::MAX_PER_PAGE);
@@ -82,7 +77,7 @@ class UsersController implements ControllerInterface
             'last' => $last,
 
             'users' => $users,
-            'user_permissions' => $userTypes
+            // 'user_permissions' => $userTypes
         ]);
     }
 

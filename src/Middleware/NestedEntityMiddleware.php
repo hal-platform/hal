@@ -9,13 +9,14 @@ namespace Hal\UI\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\EncryptedProperty;
-use QL\Hal\Core\Entity\Token;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserType;
-use QL\Hal\Core\Entity\UserPermission;
+use Hal\Core\Entity\{
+    Application,
+    EncryptedProperty,
+    Target,
+    User,
+    UserPermission,
+    UserToken
+};
 use QL\Panthor\MiddlewareInterface;
 
 /**
@@ -50,7 +51,7 @@ class NestedEntityMiddleware implements MiddlewareInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         // $target->application() - $application
-        if ($target = $request->getAttribute(Deployment::class)) {
+        if ($target = $request->getAttribute(Target::class)) {
             $application = $request->getAttribute(Application::class);
 
             if ($application !== $target->application()) {
@@ -68,19 +69,10 @@ class NestedEntityMiddleware implements MiddlewareInterface
         }
 
         // $token->user() - $user
-        if ($token = $request->getAttribute(Token::class)) {
+        if ($token = $request->getAttribute(UserToken::class)) {
             $user = $request->getAttribute(User::class);
 
             if ($user !== $token->user()) {
-                return ($this->notFound)($request, $response);
-            }
-        }
-
-        // $userType->user() - $user
-        if ($userType = $request->getAttribute(UserType::class)) {
-            $user = $request->getAttribute(User::class);
-
-            if ($user !== $userType->user()) {
                 return ($this->notFound)($request, $response);
             }
         }

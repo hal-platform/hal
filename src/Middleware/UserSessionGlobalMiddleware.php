@@ -9,12 +9,14 @@ namespace Hal\UI\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
+use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 use QL\MCP\Logger\MessageFactoryInterface;
 use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;
@@ -35,6 +37,7 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
 
     public const SESSION_ATTRIBUTE = 'user_id';
     public const USER_ATTRIBUTE = 'current_user';
+    public const AUTHORIZATIONS_ATTRIBUTE = 'current_authorizations';
 
     private const ROUTE_SIGNOUT = 'signout';
 
@@ -42,6 +45,12 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
      * @var EntityRepository
      */
     private $userRepo;
+    private $permissionRepo;
+
+    /**
+     * @var AuthorizationService
+     */
+    private $authorizationService;
 
     /**
      * @var URI
@@ -49,17 +58,24 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
     private $uri;
 
     /**
-     * @var MessageFactoryInterface
+     * @var MessageFactoryInterface|null
      */
     private $factory;
 
     /**
      * @param EntityManagerInterface $em
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
      */
-    public function __construct(EntityManagerInterface $em, URI $uri)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        AuthorizationService $authorizationService,
+        URI $uri
+    ) {
         $this->userRepo = $em->getRepository(User::class);
+        $this->permissionRepo = $em->getRepository(UserPermission::class);
+
+        $this->authorizationService = $authorizationService;
         $this->uri = $uri;
     }
 
@@ -78,23 +94,70 @@ class UserSessionGlobalMiddleware implements MiddlewareInterface
         $user = $this->userRepo->find($userID);
 
         // sign out user if not found, or is disabled
-        if (!$user || !$user->isActive()) {
+        if (!$user || $user->isDisabled()) {
             // @todo CHANGE TO POST!!!!
             return $this->withRedirectRoute($response, $this->uri, self::ROUTE_SIGNOUT);
         }
 
-        if ($this->factory) {
-            $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->handle());
-        }
+        $this->attachUserToLogger($user);
 
-        // Add user to the server attrs for controllers/middleware
-        // Add user to template context for templates
+        $request = $this->appendUserToRequest($request, $user);
+        $request = $this->appendAuthorizationsToRequest($request, $user);
+
+        // Save user to request attributes
+        return $next($request, $response);
+    }
+
+    /**
+     * Add user to the server attrs for controllers/middleware
+     * Add user to template context for templates
+     *
+     * @param ServerRequestInterface $request
+     * @param User $user
+     *
+     * @return ServerRequestInterface
+     */
+    private function appendUserToRequest(ServerRequestInterface $request, User $user): ServerRequestInterface
+    {
         $request = $this
             ->withContext($request, [self::USER_ATTRIBUTE => $user])
             ->withAttribute(self::USER_ATTRIBUTE, $user);
 
-        // Save user to request attributes
-        return $next($request, $response);
+        return $request;
+    }
+
+    /**
+     * Add authorizations to the server attrs for controllers/middleware
+     * Add authorizations to template context for templates
+     *
+     * @param ServerRequestInterface $request
+     * @param User $user
+     *
+     * @return ServerRequestInterface
+     */
+    private function appendAuthorizationsToRequest(ServerRequestInterface $request, User $user): ServerRequestInterface
+    {
+        $authorizations = $this->authorizationService->getUserAuthorizations($user);
+
+        $request = $this
+            ->withContext($request, [self::AUTHORIZATIONS_ATTRIBUTE => $authorizations])
+            ->withAttribute(self::AUTHORIZATIONS_ATTRIBUTE, $authorizations);
+
+        return $request;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return void
+     */
+    private function attachUserToLogger(User $user)
+    {
+        if (!$this->factory) {
+            return;
+        }
+
+        $this->factory->setDefaultProperty(MessageInterface::USER_NAME, $user->username());
     }
 
     /**

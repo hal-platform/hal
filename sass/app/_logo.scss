@@ -1,0 +1,92 @@
+$hal-logo-size: 75px;
+$hal-iris-size: calc(#{$hal-logo-size} * .60);
+
+$hal-reflection-size: calc(#{$hal-logo-size} * .13);
+$hal-reflection-rotation: 32deg;
+$hal-reflection-offset: 27%;
+
+@keyframes power-up  {
+    0%   { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes reflection-center  {
+    0%   { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+
+@keyframes reflection-left  {
+    0%   { transform: scale(0) rotate(calc(#{$hal-reflection-rotation} * -1)); }
+    100% { transform: scale(1) rotate(calc(#{$hal-reflection-rotation} * -1)); }
+}
+
+@keyframes reflection-right  {
+    0%   { transform: scale(0) rotate($hal-reflection-rotation); }
+    100% { transform: scale(1) rotate($hal-reflection-rotation); }
+}
+
+.hal {
+    margin: auto;
+    position: relative;
+    height: $hal-logo-size;
+    width: $hal-logo-size;
+}
+
+.hal-rim {
+    background-color: #221a1b;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 calc(#{$hal-logo-size} * .02) #b4b2b2,
+                inset 0 0 0 calc(#{$hal-logo-size} * .06) #4d4d4d,
+                inset 0 0 0 calc(#{$hal-logo-size} * .07) #6f7071;
+
+    height: 100%;
+    width: 100%;
+}
+
+.hal-iris {
+    animation: power-up 1s ease;
+    background-color: #221a1b;
+    border-radius: 50%;
+    border: 2px solid #230C09;
+    box-shadow: inset 0 0 2px calc(#{$hal-iris-size} * .05) #230C09,
+                inset 0 0 2px calc(#{$hal-iris-size} * .10) #2f0802,
+                inset 0 0 2px calc(#{$hal-iris-size} * .15) #3f0300,
+                inset 0 0 0 calc(#{$hal-iris-size} * .20) #7f1114,
+                inset 0 0 0 calc(#{$hal-iris-size} * .25) #b61b20,
+                inset 0 0 0 calc(#{$hal-iris-size} * .30) #d84930,
+                inset 0 0 0 calc(#{$hal-iris-size} * .35) #db693a,
+                inset 0 0 0 calc(#{$hal-iris-size} * .40) #db9739,
+                inset 0 0 0 calc(#{$hal-iris-size} * .45) #f8bf40,
+                inset 0 0 0 calc(#{$hal-iris-size} * .50) #faca6a;
+
+    position: absolute;
+    height: $hal-iris-size;
+    left: calc(#{$hal-logo-size} * .50 - #{$hal-iris-size} * .50);
+    top: calc(#{$hal-logo-size} * .50 - #{$hal-iris-size} * .50);
+    width: $hal-iris-size;
+}
+
+.hal-reflection {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    position: absolute;
+    height: calc(#{$hal-reflection-size} * .40);
+    top: 24%;
+    width: $hal-reflection-size;
+    z-index: 5;
+}
+.hal-reflection-left {
+    animation: reflection-left 1s ease;
+    left: $hal-reflection-offset;
+    transform: rotate(calc(#{$hal-reflection-rotation} * -1));
+}
+.hal-reflection-center {
+    animation: reflection-center 1s ease;
+    left: calc(50% - #{$hal-reflection-size} / 2);
+    top: 18%;
+}
+.hal-reflection-right {
+    animation: reflection-right 1s ease;
+    right: $hal-reflection-offset;
+    transform: rotate($hal-reflection-rotation);
+}

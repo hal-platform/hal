@@ -1,35 +1,28 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Admin\Super;
+namespace Hal\UI\Controllers\Super;
 
-use Hal\UI\Flasher;
+use Hal\UI\Controllers\TemplatedControllerTrait;
 use Predis\Collection\Iterator\Keyspace;
 use Predis\Client as Predis;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\MiddlewareInterface;
-use Slim\Http\Request;
 
 class CacheManagementHandler implements MiddlewareInterface
 {
-    const DOCTRINE_CLEARED = 'Doctrine cache cleared.';
-    const PERMISSIONS_CLEARED = 'Permission cache cleared.';
-    const OPCACHE_CLEARED = 'OP cache cleared.';
+    use TemplatedControllerTrait;
 
-    const ERR_INVALID = 'Invalid cache specified.';
+    private const DOCTRINE_CLEARED = 'Doctrine cache cleared.';
+    private const PERMISSIONS_CLEARED = 'Permission cache cleared.';
+    private const OPCACHE_CLEARED = 'OP cache cleared.';
 
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var Flasher
-     */
-    private $flasher;
+    private const ERR_INVALID = 'Invalid cache specified.';
 
     /**
      * @var Predis
@@ -37,71 +30,89 @@ class CacheManagementHandler implements MiddlewareInterface
     private $predis;
 
     /**
-     * @param Request $request
-     * @param Flasher $flasher
-     * @param Predis $predis
+     * @var string
      */
-    public function __construct(
-        Request $request,
-        Flasher $flasher,
-        Predis $predis
-    ) {
-        $this->request = $request;
-        $this->flasher = $flasher;
+    private $keyDelimiter;
+
+    /**
+     * @param Predis $predis
+     * @param string $keyDelimiter
+     */
+    public function __construct(Predis $predis, $keyDelimiter)
+    {
         $this->predis = $predis;
+        $this->keyDelimiter = $keyDelimiter;
     }
 
     /**
      * @inheritDoc
      */
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$this->request->isPost()) {
-            return;
+        if ($request->getMethod() !== 'POST') {
+            return $next($request, $response);
         }
 
-        $msg = '';
-
-        if ($this->request->post('cache_type') === 'doctrine') {
-
-            $this->clearDoctrine();
-            $msg = self::DOCTRINE_CLEARED;
-
-        } elseif ($this->request->post('cache_type') === 'permissions') {
-
-            $this->clearPermissions();
-            $msg = self::PERMISSIONS_CLEARED;
-
-        } elseif ($this->request->post('cache_type') === 'opcache') {
-
-            if (function_exists('opcache_reset')) {
-                opcache_reset();
-                $msg = self::OPCACHE_CLEARED;
-            }
-        }
+        $cacheType = $request->getParsedBody()['cache_type'] ?? '';
+        $msg = $this->clearCache($cacheType);
 
         if ($msg) {
-            $this->flasher->withFlash($msg, 'success');
+            $request = $this->withContext($request, [
+                'clear_result' => 'success',
+                'clear_message' => $msg
+            ]);
         } else {
-            $this->flasher->withFlash(self::ERR_INVALID, 'error');
+            $request = $this->withContext($request, [
+                'clear_result' => 'error',
+                'clear_message' => self::ERR_INVALID
+            ]);
         }
 
-        $this->flasher->load('admin.super.caches');
+        return $next($request, $response);
     }
 
     /**
+     * @param string $type
+     *
+     * @return string
+     */
+    private function clearCache($cacheType)
+    {
+        if ($cacheType === 'doctrine') {
+            $this->deleteKeys(['*', 'doctrine', '*']);
+            return self::DOCTRINE_CLEARED;
+        }
+
+        if ($cacheType === 'permissions') {
+            $this->deleteKeys(['*', 'mcp-cache-3.0.0:permissions', '*']);
+            return self::PERMISSIONS_CLEARED;
+        }
+
+        if ($cacheType === 'opcache' && function_exists('\opcache_reset')) {
+            \opcache_reset();
+            return self::OPCACHE_CLEARED;
+        }
+
+        return '';
+    }
+
+    /**
+     * @param aray $parts
+     *
      * @return void
      */
-    private function clearPermissions()
+    private function deleteKeys(array $parts)
     {
+        $keyPattern = $this->keyPattern($parts);
+
         $keys = [];
-        foreach (new Keyspace($this->predis, '*:mcp-cache:permissions:*') as $key) {
+        foreach (new Keyspace($this->predis, $keyPattern) as $key) {
 
             // slice namespace
-            $parts = explode(':', $key);
+            $parts = explode($this->keyDelimiter, $key);
             array_shift($parts);
 
-            $keys[] = implode(':', $parts);
+            $keys[] = implode($this->keyDelimiter, $parts);
         }
 
         if ($keys) {
@@ -110,22 +121,12 @@ class CacheManagementHandler implements MiddlewareInterface
     }
 
     /**
-     * @return void
+     * @param array $parts
+     *
+     * @return string
      */
-    private function clearDoctrine()
+    private function keyPattern(array $parts)
     {
-        $keys = [];
-        foreach (new Keyspace($this->predis, '*:doctrine:*') as $key) {
-
-            // slice namespace
-            $parts = explode(':', $key);
-            array_shift($parts);
-
-            $keys[] = implode(':', $parts);
-        }
-
-        if ($keys) {
-            $this->predis->del(...$keys);
-        }
+        return implode($this->keyDelimiter, $parts);
     }
 }

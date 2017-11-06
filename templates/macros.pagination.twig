@@ -7,30 +7,30 @@
     {% set left_label = left_label|default('newer') %}
     {% set right_label = right_label|default('older') %}
 
-    <ol class="nav--pagination">
-        <li class="nav--pagination__prev">
+    <ol class="nav-pagination">
+        <li class="nav-pagination--prev">
             {% if current_page > 1 %}
                 <a href="{{ uriFor(route_name, route_params|merge({'page': current_page-1}), query_params) }}">
                     {{ macros.icon('caret-left') }} {{ left_label }}
                 </a>
             {% else %}
-                <span class="disabled">
+                <span class="nav-pagination--disabled">
                     {{ macros.icon('caret-left') }} {{ left_label }}
                 </span>
             {% endif %}
         </li>
         <li>
             {% if last_page > 1 %}
-                <span class="pages">page {{ current_page }} of {{ last_page }}</span>
+                <span class="nav-pagination--pages">page {{ current_page }} of {{ last_page }}</span>
             {% endif %}
         </li>
-        <li class="nav--pagination__next">
+        <li class="nav-pagination--next">
             {% if current_page < last_page %}
                 <a href="{{ uriFor(route_name, route_params|merge({'page': current_page+1}), query_params) }}">
                     {{ right_label }} {{ macros.icon('caret-right') }}
                 </a>
             {% else %}
-                <span class="disabled">
+                <span class="nav-pagination--disabled">
                     {{ right_label }} {{ macros.icon('caret-right') }}
                 </span>
             {% endif %}
@@ -51,22 +51,22 @@
     {% set now = timepoint() %}
     {% set now_formatted = now|timepoint('Y-m-d') %}
 
-    <ol class="nav--pagination">
-        <li class="nav--pagination__prev">
+    <ol class="nav-pagination">
+        <li class="nav-pagination--prev">
             <a href="{{ uriFor(route_name, route_params|merge({'date': prevday|timepoint('Y-m-d')}), query_params) }}">
                 {{ macros.icon('caret-left') }} older
             </a>
         </li>
         <li>
-            <span class="pages">{{ selected_date|timepoint('F j, Y') }}</span>
+            <span class="nav-pagination--pages">{{ selected_date|timepoint('F j, Y') }}</span>
         </li>
-        <li class="nav--pagination__next">
+        <li class="nav-pagination--next">
             {% if nextday_formatted == now_formatted or (nextday_formatted != now_formatted and nextday.compare(now) == -1) %}
                 <a href="{{ uriFor(route_name, route_params|merge({'date': nextday_formatted}), query_params) }}">
                     newer {{ macros.icon('caret-right', 'mls') }}
                 </a>
             {% else %}
-                <span class="disabled">
+                <span class="nav-pagination--disabled">
                     newer {{ macros.icon('caret-right', 'mls') }}
                 </span>
             {% endif %}

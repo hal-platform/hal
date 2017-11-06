@@ -1,0 +1,30 @@
+services:
+
+    cache:
+        class: 'QL\MCP\Cache\CacheInterface'
+        factory: ['@service_container', 'get']
+        arguments: ['cache.%cache.type.main%']
+
+    cache.github:
+        class: 'QL\MCP\Cache\CacheInterface'
+        factory: ['@service_container', 'get']
+        arguments: ['cache.%cache.type.github%']
+
+    cache.memory:
+        class: 'QL\MCP\Cache\MemoryCache'
+
+    cache.redis:
+        class: 'QL\MCP\Cache\PredisCache'
+        arguments: ['@redis']
+
+    cache.redis_github:
+        class: 'QL\MCP\Cache\PredisCache'
+        parent: 'cache.redis'
+        calls:
+            - ['setMaximumTtl', ['%cache.github.default.ttl%']]
+
+    redis:
+        class: 'Predis\Client'
+        arguments:
+            - '%redis.server%'
+            - { prefix: '%redis.prefix%.' }

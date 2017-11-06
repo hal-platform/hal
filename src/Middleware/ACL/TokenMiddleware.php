@@ -9,12 +9,12 @@ namespace Hal\UI\Middleware\ACL;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\UserToken;
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Token;
-use QL\Hal\Core\Entity\User;
 use QL\MCP\Logger\MessageFactoryInterface;
 use QL\MCP\Logger\MessageInterface;
 use QL\Panthor\MiddlewareInterface;

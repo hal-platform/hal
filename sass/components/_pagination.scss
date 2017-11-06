@@ -1,0 +1,30 @@
+.nav-pagination {
+    text-align: center;
+    // Remove whitespace caused by inline-block.
+    letter-spacing: -0.31em;
+    word-spacing: -0.43em;
+
+    > li {
+        display: inline-block;
+        padding: 0 msem(-5);
+        letter-spacing: normal;
+        word-spacing: normal;
+    }
+
+    .nav-pagination--first a:before {
+        content: "« ";
+    }
+
+    .nav-pagination--last a:after {
+        content: " »";
+    }
+
+    .nav-pagination--disabled {
+        color: $light-grey;
+    }
+
+    .nav-pagination--pages {
+        padding-right: msem(-1);
+        padding-left: msem(-1);
+    }
+}

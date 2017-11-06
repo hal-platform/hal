@@ -64,22 +64,22 @@
 
                     {% if server.type == 'eb' %}
 
-                        <td><code class="code_clear">{{ deployment.ebName }}</code></td>
-                        <td><code class="code_clear">{{ deployment.ebEnvironment }}</code></td>
+                        <td><code>{{ deployment.ebName }}</code></td>
+                        <td><code>{{ deployment.ebEnvironment }}</code></td>
 
                     {% elseif server.type == 's3' %}
 
-                        <td><code class="code_clear">{{ deployment.s3bucket }}</code></td>
-                        <td><code class="code_clear">{{ deployment.s3file }}</code></td>
+                        <td><code>{{ deployment.s3bucket }}</code></td>
+                        <td><code>{{ deployment.s3file }}</code></td>
 
                     {% elseif server.type == 'cd' %}
 
-                        <td><code class="code_clear">{{ deployment.cdName }}</code></td>
-                        <td><code class="code_clear">{{ deployment.cdGroup }}</code></td>
-                        <td><code class="code_clear">{{ deployment.cdConfiguration }}</code></td>
+                        <td><code>{{ deployment.cdName }}</code></td>
+                        <td><code>{{ deployment.cdGroup }}</code></td>
+                        <td><code>{{ deployment.cdConfiguration }}</code></td>
 
                     {% else %}
-                        <td><code class="code_clear">{{ deployment.path }}</code></td>
+                        <td><code>{{ deployment.path }}</code></td>
                     {% endif %}
 
                     <td>

@@ -8,14 +8,12 @@
 namespace Hal\UI\Controllers\Application;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\UserPermission;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\UserPermission;
-use QL\Hal\Core\Entity\UserType;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -29,18 +27,18 @@ class ApplicationController implements ControllerInterface
     private $template;
 
     /**
-     * @var EntityManagerInterface
+     * @var EntityRepository
      */
-    private $em;
+    private $permissionRepo;
 
     /**
      * @param TemplateInterface $template
-     * @param EntityManagerInterface $em,
+     * @param EntityManagerInterface $em
      */
     public function __construct(TemplateInterface $template, EntityManagerInterface $em)
     {
         $this->template = $template;
-        $this->em = $em;
+        $this->permissionRepo = $em->getRepository(UserPermission::class);
     }
 
     /**
@@ -52,31 +50,8 @@ class ApplicationController implements ControllerInterface
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,
-            'has_jobs' => $this->doesApplicationHaveChildren($application),
             'permissions' => $this->getPermissions($application)
         ]);
-    }
-
-    /**
-     * @param Application $application
-     *
-     * @return bool
-     */
-    private function doesApplicationHaveChildren(Application $application)
-    {
-        $builds = $this->em
-            ->getRepository(Build::class)
-            ->findOneBy(['application' => $application]);
-
-        if (count($builds) > 0) return true;
-
-        $deployments = $this->em
-            ->getRepository(Push::class)
-            ->findOneBy(['application' => $application]);
-
-        if (count($deployments) > 0) return true;
-
-        return false;
     }
 
     /**
@@ -86,35 +61,15 @@ class ApplicationController implements ControllerInterface
      */
     private function getPermissions(Application $application)
     {
-        $deploys = $this->em
-            ->getRepository(UserPermission::class)
-            ->findBy(['application' => $application]);
+        $permissions = $this->permissionRepo->findBy(['application' => $application]);
 
-        $leads = $this->em
-            ->getRepository(UserType::class)
-            ->findBy(['application' => $application]);
+        if ($org = $application->organization()) {
+            $orgPermissions = $this->permissionRepo->findBy(['organization' => $org]);
 
-        $permissions = [];
-
-        foreach ($deploys as $p) {
-            $permissions[] = [
-                'id' => $p->user()->id(),
-                'username' => $p->user()->handle(),
-                'permission' => $p->isProduction() ? 'prod' : 'non-prod'
-            ];
+            if ($orgPermissions) {
+                $permissions = array_merge($orgPermissions);
+            }
         }
-
-        foreach ($leads as $p) {
-            $permissions[] = [
-                'id' => $p->user()->id(),
-                'username' => $p->user()->handle(),
-                'permission' => 'lead'
-            ];
-        }
-
-        usort($permissions, function($a, $b) {
-            return strcasecmp($a['username'], $b['username']);
-        });
 
         return $permissions;
     }

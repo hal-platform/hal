@@ -7,11 +7,11 @@
 
 namespace Hal\UI\Middleware\ACL;
 
+use Hal\Core\Entity\User;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 

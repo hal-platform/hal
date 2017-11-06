@@ -2,10 +2,16 @@
 
     {% if errors %}
         <ul class="error-list">
-            {% for error in errors %}
-                <li>{{ error }}</li>
+            {% for field_name, field_errors in errors %}
+                {% for error in field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
             {% endfor %}
         </ul>
     {% endif %}
 
 {% endmacro %}
+
+{% macro hasError(errors, field) -%}
+    {{- errors[field] ? '1' : '' -}}
+{%- endmacro %}

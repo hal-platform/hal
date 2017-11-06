@@ -158,19 +158,6 @@
                         Unknown
                     {% endif %}
                 </li>
-
-                {# deployment details #}
-
-                {% set deploymentDetails = deployment.formatMeta %}
-
-                {% if deployment.server.type == 'script' %}
-                    {% set deploymentDetails = deploymentDetails ?: 'N/A' %}
-                {% endif %}
-
-                <li>
-                    <span>{{ deployment|formatDeploymentDetailsLabel }}:</span>
-                    <code title="{{ deploymentDetails }}">{{ deploymentDetails }}</code>
-                </li>
             </ul>
         </section>
     </article>

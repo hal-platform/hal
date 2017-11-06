@@ -1,0 +1,104 @@
+
+.checkbox-check {
+    display: inline-block;
+    padding-left: 1em;
+    position: relative;
+    text-align: left;
+    user-select: none;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+        .checkbox-check--tick {
+            box-shadow: 0 0 1px 2px $hal-blue;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-check--tick {
+            box-shadow: 0 0 1px 2px $hal-blue;
+        }
+    }
+}
+
+.checkbox-check input[type="checkbox"] {
+    visibility: hidden;
+
+    &:checked + .checkbox-check--tick {
+        background-color: $green;
+        box-shadow: 0 0 0 1px transparent;
+
+        &:before {
+            border-color: $white;
+        }
+    }
+}
+
+.checkbox-check--tick {
+    height: 1.5em;
+    width: 1.5em;
+
+    top: 0;
+    left: 0;
+    position: absolute;
+
+    background-color: $white;
+    box-shadow: 0 0 0 1px $grey;
+    cursor: pointer;
+
+    &:before {
+        content: '';
+
+        height: .5em;
+        width: .9em;
+
+        top: .45em;
+        left: .3em;
+        position: absolute;
+
+        border: 3px solid $lightest-grey;
+        border-top: none;
+        border-right: none;
+
+        transform: rotate(-45deg);
+    }
+}
+
+.checkbox-toggle {
+    display: inline-block;
+    position: relative;
+    padding-left: 2em;
+}
+
+.checkbox-toggle input[type="checkbox"] {
+    visibility: hidden;
+
+    &:checked + .checkbox-toggle--pill {
+        background-color: $green;
+
+        &:after {
+            left: 26px;
+        }
+    }
+}
+
+.checkbox-toggle--pill {
+    width: 48px;
+    height: 24px;
+    position: absolute;
+    background-color: #999;
+    top: 0;
+    left: 0;
+    border-radius: 50px;
+
+    &:after {
+        content: '';
+        width: 20px;
+        height: 20px;
+        border-radius: 50px;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: all 0.1s;
+        background-color: white;
+    }
+}

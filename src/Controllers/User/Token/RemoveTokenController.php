@@ -8,13 +8,13 @@
 namespace Hal\UI\Controllers\User\Token;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserToken;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Token;
-use QL\Hal\Core\Entity\User;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -51,13 +51,14 @@ class RemoveTokenController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $user = $request->getAttribute(User::class);
-        $token = $request->getAttribute(Token::class);
+        $token = $request->getAttribute(UserToken::class);
+
         $currentUser = $this->getUser($request);
 
         $this->em->remove($token);
         $this->em->flush();
 
-        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $token->label()));
+        $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $token->name()));
 
         if ($user === $currentUser) {
             return $this->withRedirectRoute($response, $this->uri, 'settings');

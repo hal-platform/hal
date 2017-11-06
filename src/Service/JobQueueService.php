@@ -10,10 +10,11 @@ namespace Hal\UI\Service;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Release;
+use Hal\Core\Type\JobStatusEnum;
 use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Push;
 
 class JobQueueService
 {
@@ -21,7 +22,7 @@ class JobQueueService
      * @var EntityRepository
      */
     private $buildRepo;
-    private $pushRepo;
+    private $releaseRepo;
 
     /**
      * @var Clock
@@ -34,7 +35,7 @@ class JobQueueService
     public function __construct(EntityManagerInterface $em, Clock $clock)
     {
         $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Push::class);
+        $this->releaseRepo = $em->getRepository(Release::class);
 
         $this->clock = $clock;
     }
@@ -44,10 +45,15 @@ class JobQueueService
      */
     public function getPendingJobs()
     {
-        $buildCriteria = $this->getCriteria(['Waiting', 'Building']);
-        $pushCriteria = $this->getCriteria(['Waiting', 'Pushing']);
+        $runningStatuses = [
+            JobStatusEnum::TYPE_PENDING,
+            JobStatusEnum::TYPE_RUNNING
+        ];
 
-        return $this->getJobs($buildCriteria, $pushCriteria);
+        $buildCriteria = $this->getCriteria($runningStatuses);
+        $releaseCriteria = $this->getCriteria($runningStatuses);
+
+        return $this->getJobs($buildCriteria, $releaseCriteria);
     }
 
     /**
@@ -59,10 +65,10 @@ class JobQueueService
             ->read()
             ->modify('-60 minutes');
 
-        $buildCriteria = $this->getCriteria(['Waiting', 'Building'], $before);
-        $pushCriteria = $this->getCriteria(['Waiting', 'Pushing'], $before);
+        $buildCriteria = $this->getCriteria($runningStatuses, $before);
+        $releaseCriteria = $this->getCriteria($runningStatuses, $before);
 
-        return $this->getJobs($buildCriteria, $pushCriteria);
+        return $this->getJobs($buildCriteria, $releaseCriteria);
     }
 
     /**
@@ -74,9 +80,9 @@ class JobQueueService
     public function getHistory(TimePoint $after, ?TimePoint $before)
     {
         $buildCriteria = $this->getCriteria([], $before, $after);
-        $pushCriteria = $this->getCriteria([], $before, $after);
+        $releaseCriteria = $this->getCriteria([], $before, $after);
 
-        return $this->getJobs($buildCriteria, $pushCriteria);
+        return $this->getJobs($buildCriteria, $releaseCriteria);
     }
 
     /**
@@ -107,16 +113,16 @@ class JobQueueService
 
     /**
      * @param Criteria $buildCriteria
-     * @param Criteria $pushCriteria
+     * @param Criteria $releaseCriteria
      *
      * @return array
      */
-    private function getJobs(Criteria $buildCriteria, Criteria $pushCriteria)
+    private function getJobs(Criteria $buildCriteria, Criteria $releaseCriteria)
     {
         $builds = $this->buildRepo->matching($buildCriteria);
-        $pushes = $this->pushRepo->matching($pushCriteria);
+        $releases = $this->releaseRepo->matching($releaseCriteria);
 
-        $jobs = array_merge($builds->toArray(), $pushes->toArray());
+        $jobs = array_merge($builds->toArray(), $releases->toArray());
         usort($jobs, $this->queueSort());
 
         return $jobs;
@@ -133,11 +139,6 @@ class JobQueueService
 
             if ($a == $b) {
                 return 0;
-            }
-
-            // If missing created time, move to bottom
-            if ($a === null xor $b === null) {
-                return ($a === null) ? 1 : 0;
             }
 
             if ($a < $b) {

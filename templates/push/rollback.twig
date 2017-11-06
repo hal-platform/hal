@@ -7,8 +7,6 @@
 {% block content %}
 
     {% set server = deployment.formatPretty %}
-    {% set deployment_details = deployment.formatMeta %}
-    {% set deployment_label = deployment|formatDeploymentDetailsLabel %}
 
     <div class="nav--page">
         <h1>Release History - <b>{{ application.name }}</b> to <b>{{ server }}</b></h1>
@@ -31,8 +29,12 @@
                 <a href="{{ uriFor('server', {'server': deployment.server.id}) }}">{{ server }}</a>
             </li>
 
-            <li>{{ deployment_label }}</li>
-            <li><code>{{ deployment_details }}</code></li>
+            <li>
+                Parameters
+            </li>
+            <li>
+                {{ deployment.formatParameters }}
+            </li>
 
             {% if deployment.url %}
                 <li>URL</li>

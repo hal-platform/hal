@@ -7,15 +7,14 @@
 
 namespace Hal\UI\Controllers\Credentials;
 
-use Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Exception;
+use Hal\Core\Crypto\Encryption;
+use Hal\Core\Entity\Credential;
+use Hal\Core\Type\CredentialEnum;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Crypto\Decrypter;
-use QL\Hal\Core\Entity\Credential;
-use QL\Hal\Core\Entity\Deployment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -29,29 +28,22 @@ class CredentialController implements ControllerInterface
     private $template;
 
     /**
-     * @var Decrypter
+     * @var Encryption
      */
-    private $decrypter;
-
-    /**
-     * @var EntityRepository
-     */
-    private $targetRepo;
+    private $encryption;
 
     /**
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param Decrypter $decrypter
+     * @param Encryption $encryption
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        $decrypter
+        Encryption $encryption
     ) {
         $this->template = $template;
-        $this->decrypter = $decrypter;
-
-        $this->targetRepo = $em->getRepository(Deployment::class);
+        $this->encryption = $encryption;
     }
 
     /**
@@ -62,29 +54,32 @@ class CredentialController implements ControllerInterface
         $credential = $request->getAttribute(Credential::class);
 
         $decrypted = false;
-        if ($credential->type() === 'aws') {
-            $decrypted = $this->decrypt($credential->aws()->secret());
-        }
+        if ($credential->type() === CredentialEnum::TYPE_AWS_STATIC) {
+            $decrypted = $this->decrypt($credential->details()->secret());
 
-        $targets = $this->targetRepo->findBy(['credential' => $credential]);
+        } elseif ($credential->type() === CredentialEnum::TYPE_PRIVATEKEY) {
+            if ($credential->details()->file()) {
+                $decrypted = $this->decrypt($credential->details()->file());
+            }
+        }
 
         return $this->withTemplate($request, $response, $this->template, [
             'credential' => $credential,
-            'targets' => $targets,
+
             'decrypted' => $decrypted,
-            'decryption_error' => ($decrypted === null)
+            'is_decryption_error' => ($decrypted === null)
         ]);
     }
 
     /**
      * @param string $encrypted
      *
-     * @return string|null
+     * @return string|bool|null
      */
     private function decrypt($encrypted)
     {
         try {
-            $decrypted = $this->decrypter->decrypt($encrypted);
+            $decrypted = $this->encryption->decrypt($encrypted);
             return $decrypted;
 
         } catch (Exception $ex) {

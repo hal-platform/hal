@@ -1,0 +1,88 @@
+{% extends 'base.twig' %}
+{% import 'macros.form.twig' as form_macros %}
+
+{% set page_title = 'Add Application' %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    {{ form_macros.formErrors(errors) }}
+
+    <form method="post">
+
+        <div class="form-wrapper">
+            <ul class="form-fields">
+                <li>
+                    {% set has_error = form_macros.hasError(errors, 'name') %}
+                    <label for="name">Name</label>
+                    <input type="text" class="text-input t50{{ has_error ? ' is-error' : '' }}" name="name" id="name" maxlength="30" value="{{ form.name }}" required>
+                    <small>
+                        Unique name such as <span>"hal"</span> or <span>"my-project"</span>.
+                        <br>Alphanumeric, hyphen, and period characters only.
+                    </small>
+                </li>
+                <li>
+                    {% set has_error = form_macros.hasError(errors, 'name') %}
+                    <label for="description">Description</label>
+                    <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="description" id="description" maxlength="100" value="{{ form.description }}" required>
+                    <small>
+                        Display description for this organization such as
+                        <span>"Hal"</span> or <span>"My Secret Project"</span>.
+                    </small>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="form-fields">
+            <li>
+                <label>Organization</label>
+                {% if organizations %}
+                    <ul class="list--bare">
+
+                        {% for organization in organizations %}
+                            {% set is_selected = form.organization == organization.id ? ' checked' : '' %}
+
+                            <li>
+                                <label for="org-{{ organization.id }}">
+                                    <input type="radio" id="org-{{ organization.id }}" name="organization" value="{{ organization.id }}"{{ is_selected }}>
+                                    {{ organization.name }}
+                                </label>
+                            </li>
+                        {% endfor %}
+
+                        {% set is_selected = form.organization == '' ? ' checked' : '' %}
+                        <li>
+                            <label for="org-noop">
+                                <input type="radio" id="org-noop" name="organization" value=""{{ is_selected }}>
+                                Do not add to organization
+                            </label>
+                        </li>
+
+                    </ul>
+                {% else %}
+                    <p>There are no organizations.</p>
+                {% endif %}
+            </li>
+        </ul>
+
+        <div class="form-wrapper">
+            <ul class="form-fields">
+                <li>
+                    {% set has_error = form_macros.hasError(errors, 'github') %}
+                    <label for="github">GitHub Repository</label>
+                    <input type="text" class="text-input{{ has_error ? ' is-error' : '' }}" name="github" id="github" maxlength="200" value="{{ form.github }}" required>
+                    <small>
+                        Enter the full URL or organization/repository such as
+                        <b>https://github.com/team-a/project-b</b> or <b>team-a/project-b</b>.
+                    </small>
+                </li>
+            </ul>
+        </div>
+
+        <ul>
+            <li><input type="submit" class="btn btn--action" value="Add Application"></li>
+            <li><a class="btn" href="{{ uriFor('applications') }}">Cancel</a></li>
+        </ul>
+
+    </form>
+{% endblock %}

@@ -7,7 +7,6 @@
 
 namespace Hal\UI\Controllers;
 
-use Hal\UI\Service\StatsService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
@@ -23,18 +22,11 @@ class SignInController implements ControllerInterface
     private $template;
 
     /**
-     * @var StatsService
-     */
-    private $stats;
-
-    /**
      * @param TemplateInterface $template
-     * @param StatsService $stats
      */
-    public function __construct(TemplateInterface $template, StatsService $stats)
+    public function __construct(TemplateInterface $template)
     {
         $this->template = $template;
-        $this->stats = $stats;
     }
 
     /**
@@ -42,8 +34,6 @@ class SignInController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        return $this->withTemplate($request, $response, $this->template, [
-            'stats' => $this->stats->getStatsForToday()
-        ]);
+        return $this->withTemplate($request, $response, $this->template);
     }
 }

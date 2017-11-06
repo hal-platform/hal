@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (c) 2016 Quicken Loans Inc.
+ * @copyright (c) 2017 Quicken Loans Inc.
  *
  * For full license information, please view the LICENSE distributed with this source code.
  */
@@ -9,13 +9,15 @@ namespace Hal\UI\Controllers\Organization;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Organization;
+use Hal\Core\Entity\UserPermission;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
+use Hal\UI\Security\AuthorizationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -25,17 +27,23 @@ class RemoveOrganizationController implements ControllerInterface
     use SessionTrait;
 
     const MSG_SUCCESS = '"%s" organization removed.';
-    const ERR_HAS_APPLICATIONS = 'Cannot remove organization. All associated applications must first be removed.';
+    const ERR_HAS_APPLICATIONS = 'Cannot remove organization. All associated applications must first be transferred.';
 
     /**
      * @var EntityRepository
      */
     private $applicationRepo;
+    private $permissionRepo;
 
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    private $em;
+
+    /**
+     * @var AuthorizationService
+     */
+    private $authorizationService;
 
     /**
      * @var URI
@@ -44,13 +52,16 @@ class RemoveOrganizationController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
+     * @param AuthorizationService $authorizationService
      * @param URI $uri
      */
-    public function __construct(EntityManagerInterface $em, URI $uri)
+    public function __construct(EntityManagerInterface $em, AuthorizationService $authorizationService, URI $uri)
     {
-        $this->applicationRepo = $em->getRepository(Application::CLASS);
         $this->em = $em;
+        $this->applicationRepo = $em->getRepository(Application::class);
+        $this->permissionRepo = $em->getRepository(UserPermission::class);
 
+        $this->authorizationService = $authorizationService;
         $this->uri = $uri;
     }
 
@@ -59,17 +70,33 @@ class RemoveOrganizationController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $organization = $request->getAttribute(Group::class);
+        $organization = $request->getAttribute(Organization::class);
 
-        if ($this->applicationRepo->findBy(['group' => $organization])) {
+        if ($this->applicationRepo->findOneBy(['organization' => $organization])) {
             $this->withFlash($request, Flash::ERROR, self::ERR_HAS_APPLICATIONS);
             return $this->withRedirectRoute($response, $this->uri, 'organization', ['organization' => $organization->id()]);
         }
+
+        // Remove targets and permissions first
+        $this->removePermissions($organization);
 
         $this->em->remove($organization);
         $this->em->flush();
 
         $this->withFlash($request, Flash::SUCCESS, sprintf(self::MSG_SUCCESS, $organization->name()));
         return $this->withRedirectRoute($response, $this->uri, 'applications');
+    }
+
+    /**
+     * @param Organization $organization
+     *
+     * @return void
+     */
+    private function removePermissions(Organization $organization)
+    {
+        $permission = $this->permissionRepo->findBy(['organization' => $organization]);
+        foreach ($permission as $permission) {
+            $this->authorizationService->removeUserPermissions($permission, true);
+        }
     }
 }

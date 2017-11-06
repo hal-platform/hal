@@ -1,11 +1,3 @@
-.small-code {
-    max-width: 40em;
-}
-
-.code_clear {
-    background: transparent;
-}
-
 .pre-ansi pre {
     background: black;
     color: white;
@@ -25,9 +17,9 @@
 // This allows for dynamically overflowed <code>. Must be wrapped in a block-type element
 .code_fixed {
     overflow: hidden;
-}
 
-.code_fixed code {
-    position: relative;
-    white-space: nowrap;
+    code {
+        position: relative;
+        white-space: nowrap;
+    }
 }

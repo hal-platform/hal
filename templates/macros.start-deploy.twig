@@ -48,14 +48,14 @@
                 {{ macros.status('No Credentials', 'error', 'spam-2') }}
 
             {% elseif canUserPush %}
-                <label class="neatbox mrn" for="sel-{{ deployment.id }}">
+                <label class="checkbox-check mrn" for="sel-{{ deployment.id }}">
                     <input
                         type="checkbox"
                         class="js-toggle-box"
                         name="deployments[]"
                         id="sel-{{ deployment.id }}"
                         value="{{ deployment.id }}"{{ isSelected ? ' checked' : '' }}>
-                    <b class="neatbox__check"></b>{{ pushNow ? 'Push Now' : 'Push When Ready' }}
+                    <b class="checkbox-check--tick"></b>{{ pushNow ? 'Push Now' : 'Push When Ready' }}
                 </label>
             {% else %}
                 No Access

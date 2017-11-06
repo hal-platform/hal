@@ -5,6 +5,22 @@ services:
 
     ############################################################################
 
+    maintenance.page:
+        parent: 'static.controller'
+        arguments: ['@maintenance.twig']
+    maintenance.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['maintenance.twig']]]
+
+    denied.page:
+        parent: 'static.controller'
+        arguments: ['@denied.twig']
+    denied.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['denied.twig']]]
+
+    ############################################################################
+
     dashboard.page:
         class: 'Hal\UI\Controllers\DashboardController'
         arguments:
@@ -21,7 +37,7 @@ services:
 
     signin.page:
         class: 'Hal\UI\Controllers\SignInController'
-        arguments: ['@signin.twig', '@stats']
+        arguments: ['@signin.twig']
     signin.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['signin.twig']]]
@@ -114,7 +130,10 @@ services:
 
     user.page:
         class: 'Hal\UI\Controllers\User\UserController'
-        arguments: ['@user.twig', '@permissions']
+        arguments:
+            - '@user.twig'
+            - '@service.authorization'
+            - '@service.authorization_hydrator'
     user.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['user/user.twig']]]
@@ -225,20 +244,22 @@ services:
         arguments:
             - '@environment.add.twig'
             - '@doctrine.em'
+            - '@validator.environment'
             - '@uri'
     environment.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['environment/environment.add.twig']]]
+        calls: [['setTemplate', ['environment/add_environment.twig']]]
 
     environment.edit.page:
         class: 'Hal\UI\Controllers\Environment\EditEnvironmentController'
         arguments:
             - '@environment.edit.twig'
             - '@doctrine.em'
+            - '@validator.environment'
             - '@uri'
     environment.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['environment/environment.edit.twig']]]
+        calls: [['setTemplate', ['environment/edit_environment.twig']]]
 
     environment.remove.handler:
         class: 'Hal\UI\Controllers\Environment\RemoveEnvironmentController'
@@ -284,24 +305,30 @@ services:
         arguments:
             - '@organization.add.twig'
             - '@doctrine.em'
+            - '@validator.organization'
+            - '@service.authorization'
             - '@uri'
     organization.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['organization/organization.add.twig']]]
+        calls: [['setTemplate', ['organization/add_organization.twig']]]
 
     organization.edit.page:
         class: 'Hal\UI\Controllers\Organization\EditOrganizationController'
         arguments:
             - '@organization.edit.twig'
             - '@doctrine.em'
+            - '@validator.organization'
             - '@uri'
     organization.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['organization/organization.edit.twig']]]
+        calls: [['setTemplate', ['organization/edit_organization.twig']]]
 
     organization.remove.handler:
         class: 'Hal\UI\Controllers\Organization\RemoveOrganizationController'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
 
     ####################################################################################################################
     # APPLICATION CONTROLLERS
@@ -342,30 +369,30 @@ services:
         arguments:
             - '@application.add.twig'
             - '@doctrine.em'
-            - '@github'
-            - '@permissions'
+            - '@validator.application'
+            - '@service.authorization'
             - '@uri'
-            - '@doctrine.random'
-            - '%github.baseurl.site%'
     application.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.add.twig']]]
+        calls: [['setTemplate', ['application/add_application.twig']]]
 
     application.edit.page:
         class: 'Hal\UI\Controllers\Application\EditApplicationController'
         arguments:
             - '@application.edit.twig'
             - '@doctrine.em'
-            - '@github'
+            - '@validator.application'
             - '@uri'
-            - '%github.baseurl.site%'
     application.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['application/application.edit.twig']]]
+        calls: [['setTemplate', ['application/edit_application.twig']]]
 
     application.remove.handler:
         class: 'Hal\UI\Controllers\Application\RemoveApplicationController'
-        arguments: ['@doctrine.em', '@uri']
+        arguments:
+            - '@doctrine.em'
+            - '@service.authorization'
+            - '@uri'
 
     application.permission_add.page:
         class: 'Hal\UI\Controllers\Application\AddApplicationPermissionController'
@@ -592,42 +619,53 @@ services:
             - '@notFoundHandler'
     admin.audit_history.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/audit-history.twig']]]
+        calls: [['setTemplate', ['admin/audit_history.twig']]]
 
     ####################################################################################################################
     # ADMIN - CREDENTIALS CONTROLLERS
     ####################################################################################################################
 
-    admin.credentials.page:
+    credentials.page:
         class: 'Hal\UI\Controllers\Credentials\CredentialsController'
-        arguments: ['@admin.credentials.twig', '@doctrine.em']
-    admin.credentials.twig:
+        arguments: ['@credentials.twig', '@doctrine.em']
+    credentials.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/credentials.twig']]]
 
-    admin.credential.page:
+    credential.page:
         class: 'Hal\UI\Controllers\Credentials\CredentialController'
         arguments:
-            - '@admin.credential.twig'
+            - '@credential.twig'
             - '@doctrine.em'
-            - '@decrypter'
-    admin.credential.twig:
+            - '@encryption'
+    credential.twig:
         parent: 'twig.template'
         calls: [['setTemplate', ['credentials/credential.twig']]]
 
-    admin.credential.add.page:
+    credential.add.page:
         class: 'Hal\UI\Controllers\Credentials\AddCredentialController'
         arguments:
-            - '@admin.credential.add.twig'
+            - '@credential.add.twig'
             - '@doctrine.em'
+            - '@validator.credential'
             - '@uri'
-            - '@doctrine.random'
-            - '@encrypter'
-    admin.credential.add.twig:
+    credential.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['credentials/credential.add.twig']]]
+        calls: [['setTemplate', ['credentials/add_credential.twig']]]
 
-    admin.credential.remove.handler:
+    credential.edit.page:
+        class: 'Hal\UI\Controllers\Credentials\EditCredentialController'
+        arguments:
+            - '@credential.edit.twig'
+            - '@doctrine.em'
+            - '@validator.credential'
+            - '@encryption'
+            - '@uri'
+    credential.edit.twig:
+        parent: 'twig.template'
+        calls: [['setTemplate', ['credentials/edit_credential.twig']]]
+
+    credential.remove.handler:
         class: 'Hal\UI\Controllers\Credentials\RemoveCredentialController'
         arguments: ['@doctrine.em', '@uri']
 
@@ -690,50 +728,40 @@ services:
     # SUPER CONTROLLERS
     ####################################################################################################################
 
-    super.users.page:
-        class: 'Hal\UI\Controllers\Super\UserManagementController'
-        arguments:
-            - '@super.users.twig'
-            - '@doctrine.em'
-    super.users.twig:
-        parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.users-management.twig']]]
-
     super.caches.page:
         class: 'Hal\UI\Controllers\Super\CacheManagementController'
         arguments:
             - '@super.caches.twig'
             - '@redis'
-            - '@root'
+            - '%root%'
+            - '%cache.delimiter%'
     super.caches.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.cache-management.twig']]]
+        calls: [['setTemplate', ['admin/super.cache_management.twig']]]
     super.caches.handler:
         class: 'Hal\UI\Controllers\Super\CacheManagementHandler'
         arguments:
             - '@redis'
+            - '%cache.delimiter%'
 
-    super.message.page:
-        class: 'Hal\UI\Controllers\Super\GlobalMessageController'
+    super.banner.page:
+        class: 'Hal\UI\Controllers\Super\GlobalBannerController'
         arguments:
-            - '@super.message.twig'
-            - '@global.message'
+            - '@super.banner.twig'
+            - '@banner'
             - '@uri'
-    super.message.twig:
+    super.banner.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.global-message.twig']]]
+        calls: [['setTemplate', ['admin/super.global_banner.twig']]]
 
     super.system.page:
-        class: 'Hal\UI\Controllers\Super\SystemStatusController'
+        class: 'Hal\UI\Controllers\Super\SystemDashboardController'
         arguments:
             - '@super.system.twig'
             - '@doctrine.em'
-            - '@redis'
             - '@json'
             - '@clock'
-            - '@notFoundHandler'
-            - '%hal.agents%'
     super.system.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['admin/super.system-status.twig']]]
+        calls: [['setTemplate', ['admin/super.system_dashboard.twig']]]
 

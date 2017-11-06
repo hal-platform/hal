@@ -1,0 +1,68 @@
+{% extends 'base.twig' %}
+
+{% import _self as page_macros %}
+{% set page_title = status == 404 ? 'Not Found' : 'Error' %}
+{% set html_id = 'error-page' %}
+
+{# remove nav #}
+{% set show_navigation = false %}
+
+{% block page_main %}
+    <div class="terminal">
+        <div class="terminal--border">
+            <div class="terminal--border-inner">
+                <div class="terminal__screen">
+                    <div class="terminal__return"><a href="javascript:history.go(-1);">BACK</a></div>
+                    <div class="terminal__header">{{ status == 404 ? 'PAGE NOT FOUND' : 'MALFUNCTION DETECTED' }}</div>
+                    <span class="terminal__entry"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="terminal__footer">
+            <div class="terminal__footer__inner">HAL 9000 SERIES TERMINAL</div>
+        </div>
+
+        <div class="terminal__text">
+            {%- if isDebugMode() %}
+                    {% if throwable %}
+                        {{ throwable.getFile() ~ ':' ~ throwable.getLine() }}
+                    {% endif %}
+
+                    {{ page_macros.extra(message, details) }}
+            {% else -%}
+                {{- page_macros.intro(severity) -}}
+            {%- endif -%}
+            {{- is_serious_business_mode ? page_macros.nofunzone() : page_macros.terminal() -}}
+        </div>
+    </div>
+
+    <div class="star-1"></div>
+    <div class="star-2"></div>
+    <div class="star-3"></div>
+
+{% endblock %}
+
+{% macro intro(severity) %}
+An error has occured.^1500
+{% if severity %}
+
+Error Type: {{ severity }}
+{% endif %}
+{% endmacro %}
+
+{% macro extra(message, details) %}
+{{ message }}
+{% endmacro %}
+
+{% macro nofunzone() %}
+
+Please contact an administrator for further details.
+{% endmacro %}
+
+{% macro terminal() %}
+
+I am sorry this happened to you, Dave.^1500
+
+The 9000 series has a perfect operational record. It can only be attributable to human error.^1500 Please stay calm.^1500 Your activity has been logged and the proper authorities have been notified.
+{% endmacro %}

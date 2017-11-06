@@ -12,6 +12,24 @@ services:
     # VALIDATORS
     ######################################################################################################################
 
+    validator.organization:
+        class: 'Hal\UI\Validator\OrganizationValidator'
+        arguments: ['@doctrine.em']
+
+    validator.environment:
+        class: 'Hal\UI\Validator\EnvironmentValidator'
+        arguments: ['@doctrine.em']
+
+    validator.application:
+        class: 'Hal\UI\Validator\ApplicationValidator'
+        arguments: ['@doctrine.em', '@github']
+
+    validator.credential:
+        class: 'Hal\UI\Validator\CredentialValidator'
+        arguments: ['@doctrine.em', '@encryption']
+
+    #
+
     build.start.validator:
         class: 'Hal\UI\Validator\BuildValidator'
         arguments:
@@ -42,18 +60,12 @@ services:
     twig.extension.hal:
         class: 'Hal\UI\Twig\HalExtension'
         arguments:
-            - '@global.message'
             - '@utility.time.formatter'
-            - '@utility.name.formatter'
             - '%gravatar.fallback%'
 
     twig.extension.hal.global:
         class: 'Hal\UI\Twig\GlobalExtension'
         arguments: ['%twig.globals%']
-
-    twig.extension.permissions:
-        class: 'Hal\UI\Twig\PermissionsExtension'
-        arguments: ['@permissions']
 
     twig.extension.github:
         class: 'Hal\UI\Twig\GitHubExtension'
@@ -73,6 +85,5 @@ services:
         calls:
             - ['addExtension', ['@twig.extension.hal']]
             - ['addExtension', ['@twig.extension.hal.global' ]]
-            - ['addExtension', ['@twig.extension.permissions']]
             - ['addExtension', ['@twig.extension.github']]
             - ['addExtension', ['@twig.extension.status']]

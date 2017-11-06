@@ -24,7 +24,7 @@ parameters:
     # Route condition regexes
     r.alphanum: '[A-Za-z0-9]+'
     r.digit: '[0-9]+'
-    r.guid: '[0-9a-zA-Z]{32,32}'
+    r.guid: '[0-9a-zA-Z\-]{32,36}'
     r.build: '[A-Za-z0-9\_\-\.]+'
     r.release: '%r.build%'
     r.date: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
@@ -49,6 +49,7 @@ parameters:
         - 'slim.global_middleware.session'
         - 'slim.global_middleware.user_session'
         - 'slim.global_middleware.srs_business'
+        - 'slim.global_middleware.global_banner'
 
     ############################################################################
     # logging
@@ -58,7 +59,7 @@ parameters:
     ############################################################################
     # doctrine
     ############################################################################
-    doctrine.user.service: 'doctrine.utility.lazy.user'
+    doctrine.cache.delimiter: '%cache.delimiter%'
 
     ############################################################################
     # twig
@@ -96,6 +97,8 @@ parameters:
     cache.page.ttl: 300
     cache.github.default.ttl: 60
     cache.github.short.ttl: 20
+
+    cache.delimiter: '.'
 
     ############################################################################
     # api configuration

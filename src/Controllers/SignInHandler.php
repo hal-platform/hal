@@ -9,13 +9,13 @@ namespace Hal\UI\Controllers;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\User;
+use Hal\Core\Entity\UserSettings;
 use Hal\UI\Auth;
 use Hal\UI\Middleware\UserSessionGlobalMiddleware;
 use Hal\UI\Session;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Entity\UserSettings;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -96,21 +96,20 @@ class SignInHandler implements MiddlewareInterface
             return $next($this->withError($request, self::ERR_AUTH_FAILURE), $response);
         }
 
-        $user = $this->userRepo->findOneBy(['handle' => $account['username']]);
+        $user = $this->userRepo->findOneBy(['username' => $account['username']]);
 
         // account disabled manually
-        if ($user && !$user->isActive()) {
+        if ($user && $user->isDisabled()) {
             return $next($this->withError($request, self::ERR_DISABLED), $response);
         }
 
         $isFirstLogin = false;
         if (!$user) {
             $isFirstLogin = true;
-            $user = (new User)
-                ->withIsActive(true);
+            $user = new User;
         }
 
-        $this->updateUserDetails($user, $account, $isFirstLogin);
+        $this->updateUserDetails($user, $account);
 
         $session = $this->getSession($request);
 
@@ -143,34 +142,16 @@ class SignInHandler implements MiddlewareInterface
     /**
      * @param User $user
      * @param array $account
-     * @param bool $isFirstLogin
      *
      * @return null
      */
-    private function updateUserDetails(User $user, array $account, $isFirstLogin)
+    private function updateUserDetails(User $user, array $account)
     {
-        if ($isFirstLogin) {
-            // generate an id between 100,000,000 - 200,000,000.
-            // @todo change id to guid
-            $id = \random_int(100000000, 200000000);
-
-            $user
-                ->withId($id)
-                ->withHandle($account['username']);
-        }
-
         // Always ensure email and name is in sync
         $user
-            ->withEmail($account['email'] )
-            ->withName($account['name'] );
-
-        // Add user settings if not set.
-        if (!$user->settings()) {
-            $settings = (new UserSettings(call_user_func($this->random)))
-                ->withUser($user);
-
-            $this->em->persist($settings);
-        }
+            ->withUsername($account['username'])
+            ->withEmail($account['email'])
+            ->withName($account['name']);
 
         $this->em->persist($user);
         $this->em->flush();

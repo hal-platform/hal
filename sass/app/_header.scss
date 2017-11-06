@@ -1,0 +1,84 @@
+.hal-grill {
+    background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px, linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px, linear-gradient(27deg, #222222 5px, transparent 5px) 0px 10px, linear-gradient(207deg, #222222 5px, transparent 5px) 10px 5px, linear-gradient(90deg, #1b1b1b 10px, transparent 10px), linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+    background-color: #131313;
+    background-size: 20px 20px;
+    padding: .5em;
+
+    .wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+
+        text-decoration: none;
+    }
+}
+
+.hal-label {
+    font-size: 1.5em;
+    line-height: 1.25em;
+    font-weight: normal;
+
+    background-color: $text-color;
+    background-image: linear-gradient(to right, $bright-blue 51%, $text-color 50%);
+    border: 2px solid $light-grey;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4) inset;
+    color: $white;
+    display: flex;
+
+    margin: 0;
+    margin-left: 1em;
+
+    position: relative;
+    width: 8em;
+
+    > span {
+        display: block;
+        flex: 1;
+    }
+}
+
+.hal-label__name {
+    text-align: right;
+    padding-right: .5em;
+}
+
+.hal-label__version {
+    text-align: left;
+    padding-left: .5em;
+}
+
+.hal-updated {
+    display: block;
+    position: absolute;
+
+    font-size: 12px;
+    line-height: 1.25em;
+
+    bottom: -1.5em;
+    left: 0;
+}
+
+.hal-stamp {
+    display: block;
+    position: absolute;
+
+    font-weight: bold;
+    font-size: 14px;
+
+    width: 7em;
+    line-height: 1.5em;
+
+    bottom:-.25em;
+    right:-3.5em;
+
+    transform: rotate(-25deg);
+
+    a {
+        color: rgb(250, 190, 0);
+        &:hover {
+            // @include do-shake('shakey', 10, 10, 35, 5s); # see: https://www.npmjs.com/package/csshake
+            color: rgb(255, 100, 0);
+        }
+    }
+}

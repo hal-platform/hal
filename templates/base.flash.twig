@@ -11,7 +11,8 @@
 
 {# GLOBAL MESSAGE #}
 {% block messages %}
-    {% if globalMessage() %}
-        {{ globalMessage()|raw }}
+
+    {%- if attribute(_context, 'global.banner') -%}
+        {{ attribute(_context, 'global.banner')|raw }}
     {% endif %}
 {% endblock %}

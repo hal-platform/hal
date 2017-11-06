@@ -3,13 +3,33 @@
 
 {% set page_title = "Environments" %}
 
+{% set is_admin = current_authorizations.isSuper() %}
+
 {% block content %}
     <h1>{{ page_title }}</h1>
+
+    {{ block('env_table') }}
+
+    <ul>
+        <li><a class="btn" href="{{ uriFor('applications') }}">Applications</a></li>
+        <li>
+            {% if is_admin %}
+                <a class="btn btn--action" href="{{ uriFor('environment.add') }}">Add Environment</a>
+            {% else %}
+                <button class="btn btn--action btn--disabled">Add Environment</button>
+            {% endif %}
+        </li>
+    </ul>
+
+{% endblock %}
+
+{% block env_table %}
 
     {% if envs %}
         <table class="table--spacing-medium table--striped">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th></th>
                 </tr>
@@ -17,6 +37,7 @@
             <tbody>
                 {% for environment in envs %}
                     <tr>
+                        <td>{{ environment|shortGUID }}</td>
                         <td>
                             {% if environment.isProduction %}
                                 {{ macros.status(environment.name, 'info', 'key') }}
@@ -24,7 +45,7 @@
                                 {{ environment.name }}
                             {% endif %}
                         </td>
-                        <td class="tr">
+                        <td>
                             <a href="{{ uriFor('environment', {'environment': environment.id}) }}">View</a>
                         </td>
                     </tr>
@@ -34,13 +55,5 @@
     {% else %}
         <p>There are no environments.</p>
     {% endif %}
-
-    <ul>
-        <li><a class="btn" href="{{ uriFor('applications') }}">Applications</a></li>
-
-        {% if isUserSuper(current_user) %}
-            <li><a class="btn btn--action" href="{{ uriFor('environment.add') }}">Add Environment</a></li>
-        {% endif %}
-    </ul>
 
 {% endblock %}
