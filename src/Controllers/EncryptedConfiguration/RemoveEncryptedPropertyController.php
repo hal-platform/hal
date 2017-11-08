@@ -13,8 +13,8 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\EncryptedProperty;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\EncryptedProperty;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
