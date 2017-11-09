@@ -3,8 +3,8 @@
 
 {% set page_title = 'Encrypted Configuration : ' ~ application.name %}
 
-{% set isAdmin = isUserAdminOrSuper(current_user) %}
-{% set canEdit = isAdmin or isUserLeadOf(current_user, application) %}
+{% set isAdmin = current_authorizations.isSuper() %}
+{% set canEdit = isAdmin or current_authorizations.isAdminOf(application) %}
 
 {% block content %}
     <div class="nav--page">

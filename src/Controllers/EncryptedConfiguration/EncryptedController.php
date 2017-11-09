@@ -11,8 +11,8 @@ use Exception;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Crypto\Decrypter;
-use QL\Hal\Core\Entity\EncryptedProperty;
+use Hal\Core\Crypto\Encryption;
+use Hal\Core\Entity\EncryptedProperty;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -26,18 +26,18 @@ class EncryptedController implements ControllerInterface
     private $template;
 
     /**
-     * @var Decrypter
+     * @var Encryption
      */
-    private $decrypter;
+    private $encryption;
 
     /**
      * @param TemplateInterface $template
-     * @param Decrypter $decrypter
+     * @param Encryption $encryption
      */
-    public function __construct(TemplateInterface $template, Decrypter $decrypter)
+    public function __construct(TemplateInterface $template, Encryption $encryption)
     {
         $this->template = $template;
-        $this->decrypter = $decrypter;
+        $this->encryption = $encryption;
     }
 
     /**
@@ -65,7 +65,7 @@ class EncryptedController implements ControllerInterface
     private function decrypt($encrypted)
     {
         try {
-            $decrypted = $this->decrypter->decrypt($encrypted);
+            $decrypted = $this->encryption->decrypt($encrypted);
             return $decrypted;
 
         } catch (Exception $ex) {

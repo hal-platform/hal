@@ -446,6 +446,7 @@ services:
         arguments:
             - '@doctrine.em'
             - '@encrypter'
+            - '@validator.encrypted_property'
             - '@uri'
             - '@doctrine.random'
 

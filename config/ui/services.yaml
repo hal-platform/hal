@@ -28,6 +28,10 @@ services:
         class: 'Hal\UI\Validator\CredentialValidator'
         arguments: ['@doctrine.em', '@encryption']
 
+    validator.encrypted_property:
+        class: 'Hal\UI\Validator\EncryptedPropertyValidator'
+        arguments: ['@doctrine.em', '@encryption']
+
     #
 
     build.start.validator:

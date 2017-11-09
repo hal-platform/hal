@@ -10,7 +10,7 @@ parameters:
 
                 # Note: this endpoint is also available for direct form posts
                 api_internal.favorite_applications:
-                    route: '/settings/favorite-applications/{application:%r.digit%}'
+                    route: '/settings/favorite-applications/{application:%r.guid%}'
                     stack: ['middleware.api_require_entity']
 
                     routes:

@@ -14,13 +14,14 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
 use Hal\UI\Utility\ValidatorTrait;
+use Hal\UI\Validator\EncryptedPropertyValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Crypto\Encrypter;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\EncryptedProperty;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Crypto\Encryption;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\EncryptedProperty;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -32,12 +33,6 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
     use ValidatorTrait;
 
     const MSG_SUCCESS = 'Encrypted Property "%s" added.';
-
-    const ERR_NO_ENVIRONMENT = 'Please select an environment.';
-
-    const ERR_DUPE = 'This property is already set for this environment.';
-    const ERR_INVALID_PROPERTYNAME = 'Property name must consist of letters, numbers, and underscores only.';
-    const ERR_INVALID_DATA = 'Data must not have newlines or tabs.';
 
     /**
      * @var EntityManagerInterface
@@ -51,9 +46,14 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
     private $envRepo;
 
     /**
-     * @var Encrypter
+     * @var Encryption
      */
     private $encrypter;
+
+    /**
+     * @var EncryptedPropertyValidator
+     */
+    private $validator;
 
     /**
      * @var URI
@@ -72,13 +72,15 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param Encrypter $encrypter
+     * @param Encryption $encrypter
+     * @param EncryptedPropertyValidator $validator
      * @param URI $uri
      * @param callable $random
      */
     public function __construct(
         EntityManagerInterface $em,
-        Encrypter $encrypter,
+        Encryption $encrypter,
+        EncryptedPropertyValidator $validator,
         URI $uri,
         callable $random
     ) {
@@ -87,6 +89,7 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
         $this->envRepo = $em->getRepository(Environment::class);
 
         $this->encrypter = $encrypter;
+        $this->validator = $validator;
         $this->uri = $uri;
         $this->random = $random;
 
@@ -110,12 +113,12 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
             'decrypted' => $request->getParsedBody()['decrypted'] ?? ''
         ];
 
-        $encrypted = $this->isValid($application, ...array_values($form));
+        $encrypted = $this->validator->isValid($application, ...array_values($form));
 
         // if didn't create a property, add errors and pass through to controller
         if (!$encrypted) {
             return $next(
-                $this->withContext($request, ['errors' => $this->errors]),
+                $this->withContext($request, ['errors' => $this->validator->errors()]),
                 $response
             );
         }
@@ -127,88 +130,5 @@ class AddEncryptedPropertyMiddleware implements MiddlewareInterface
         $message = sprintf(self::MSG_SUCCESS, $encrypted->name());
         $this->withFlash($request, Flash::SUCCESS, $message);
         return $this->withRedirectRoute($response, $this->uri, 'encrypted.configuration', ['application' => $application->id()]);
-    }
-
-    /**
-     * @param Application $application
-     * @param string $environmentID
-     * @param string $name
-     * @param string $decrypted
-     *
-     * @return EncryptedProperty|null
-     */
-    private function isValid(Application $application, $environmentID, $name, $decrypted): ?EncryptedProperty
-    {
-        $this->errors = array_merge(
-            $this->validateText('name', 'Property Name', '64', true),
-            $this->validateText('decrypted', 'Value', '200', true)
-        );
-
-        // alphanumeric, underscore only for property names
-        if (!preg_match('@^[0-9a-z_]+$@i', $name)) {
-            $this->errors[] = self::ERR_INVALID_PROPERTYNAME;
-        }
-
-        // No weird shit in encrypted data
-        if (preg_match('#[\t\n]+#', $decrypted) === 1) {
-            $this->errors[] = self::ERR_INVALID_DATA;
-        }
-
-        if (!$environmentID) {
-            $this->errors[] = self::ERR_NO_ENVIRONMENT;
-        }
-
-        $name = strtoupper($name);
-
-        if ($this->errors) return null;
-
-        $env = null;
-        // verify environment
-        if ($environmentID !== 'global') {
-            if (!$env = $this->envRepo->find($environmentID)) {
-                $this->errors[] = self::ERR_NO_ENVIRONMENT;
-            }
-        }
-
-        if ($this->errors) return null;
-
-        // check dupe
-        if ($this->isPropertyDuplicate($name, $application, $env)) {
-            $this->errors[] = self::ERR_DUPE;
-        }
-
-        if ($this->errors) return null;
-
-        $encrypted = $this->encrypter->encrypt($decrypted);
-
-        $id = call_user_func($this->random);
-        $property = (new EncryptedProperty($id))
-            ->withName($name)
-            ->withData($encrypted)
-            ->withApplication($application);
-
-        if ($env) {
-            $property->withEnvironment($env);
-        }
-
-        return $property;
-    }
-
-    /**
-     * @param string $name
-     * @param Application $application
-     * @param Environment|null $env
-     *
-     * @return bool
-     */
-    private function isPropertyDuplicate($name, Application $application, Environment $env = null)
-    {
-        $encrypted = $this->encryptedRepo->findBy([
-            'name' => $name,
-            'application' => $application,
-            'environment' => $env
-        ]);
-
-        return ($encrypted instanceof EncryptedProperty);
     }
 }
