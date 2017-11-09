@@ -3,7 +3,7 @@
 
 {% set page_title = 'Target : ' ~ application.name %}
 
-{% set can_edit = isUserAdminOrSuper(current_user) or isUserLeadOf(current_user, application) %}
+{% set can_edit = current_authorizations.isSuper() or current_authorizations.isAdminOf(application) %}
 
 {% block content %}
     <div class="nav--page">
@@ -19,11 +19,11 @@
             <li>Application</li>
             <li><a href="{{ uriFor('application', {'application': application.id}) }}">{{ application.name }}</a></li>
 
-            <li>Server</li>
-            <li><a href="{{ uriFor('server', {'server': target.server.id}) }}">{{ target.server.formatPretty() }}</a></li>
+            <li>Group</li>
+            <li><a href="{{ uriFor('group', {'group': target.group.id}) }}">{{ target.group.format(false) }}</a></li>
 
             <li>Environment</li>
-            <li>{{ target.server.environment.name }}</li>
+            <li>{{ target.group.environment.name }}</li>
         </ul>
     </div>
 
@@ -31,9 +31,9 @@
     <p>{{ target.name ?: 'None' }}</p>
 
     <h4>Type</h4>
-    <p>{{ target.server.formatHumanType() }}</p>
+    <p>{{ target.group.format }}</p>
 
-    {% if target.server.isAWS() %}
+    {% if target.group.isAWS %}
 
         <h4>Credentials</h4>
         <p>
@@ -51,54 +51,54 @@
         </p>
     {% endif %}
 
-    {% if target.server.type == 'rsync' %}
+    {% if target.group.type == 'rsync' %}
 
         <h4>File path</h4>
-        <p><code>{{ target.path }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_PATH', target)) }}</code></p>
 
-    {% elseif target.server.type == 'eb' %}
+    {% elseif target.group.type == 'eb' %}
 
         <h4>Elastic Beanstalk Application Name</h4>
-        <p><code>{{ target.ebName }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_APP', target)) }}</code></p>
 
         <h4>Elastic Beanstalk Environment</h4>
-        <p><code>{{ target.ebEnvironment }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_ENV', target)) }}</code></p>
 
         <h4>S3 Bucket</h4>
-        <p><code>{{ target.s3bucket }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code></p>
 
         <h4>S3 File</h4>
-        <p><code>{{ target.s3file ?: '$APPID/$PUSHID.zip' }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_SOURCE', target)) ?: '$APPID/$PUSHID.zip' }}</code></p>
 
-    {% elseif target.server.type == 's3' %}
+    {% elseif target.group.type == 's3' %}
 
         <h4>S3 Bucket</h4>
-        <p><code>{{ target.s3bucket }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code></p>
 
         <h4>S3 File</h4>
-        <p><code>{{ target.s3file ?: '$PUSHID.tar.gz' }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_SOURCE', target)) }}</code></p>
 
-    {% elseif target.server.type == 'cd' %}
+    {% elseif target.group.type == 'cd' %}
 
         <h4>CodeDeploy Application Name</h4>
-        <p><code>{{ target.cdName }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_APP', target)) }}</code></p>
 
         <h4>CodeDeploy Deployment Group</h4>
-        <p><code>{{ target.cdGroup }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_GROUP', target)) }}</code></p>
 
         <h4>CodeDeploy Configuration</h4>
-        <p><code>{{ target.cdConfiguration }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_CONFIG', target)) }}</code></p>
 
         <h4>S3 Bucket</h4>
-        <p><code>{{ target.s3bucket }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_BUCKET', target)) }}</code></p>
 
         <h4>S3 File</h4>
-        <p><code>{{ target.s3file ?: '$APPID/$PUSHID.tar.gz' }}</code></p>
+        <p><code>{{ target.parameter(constant('PARAM_SOURCE', target)) ?: '$APPID/$PUSHID.zip' }}</code></p>
 
     {% endif %}
 
     <h4>Script Context</h4>
-    <p><code>{{ deployment.scriptContext ?: 'None' }}</code></p>
+    <p><code>{{ target.parameter(constant('PARAM_CONTEXT', target)) ?: 'None' }}</code></p>
 
     <h4>URL</h4>
     <p>

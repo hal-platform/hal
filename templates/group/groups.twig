@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
 
-{% set page_title = "Servers" %}
+{% set page_title = "Groups" %}
 
 {% block content %}
     <h1>{{ page_title }}</h1>
@@ -9,20 +9,20 @@
         <thead>
             <tr class="tl">
                 <th>Environment</th>
-                <th>Servers</th>
+                <th>Groups</th>
             </tr>
         </thead>
         <tbody>
-            {% if server_count %}
+            {% if group_count %}
 
-                {% for env, servers in server_environments %}
-                    {% if servers %}
+                {% for env, groups in group_environments %}
+                    {% if groups %}
                         <tr>
                             <td>{{ env }}</td>
                             <td>
                                 <ul class="list--bare">
-                                    {% for server in servers %}
-                                        <li class="mvn"><a href="{{ uriFor('server', {'server': server.id}) }}">{{ server.formatPretty }}</a></li>
+                                    {% for group in groups %}
+                                        <li class="mvn"><a href="{{ uriFor('group', {'group': group.id}) }}">{{ group.format(false) }}</a></li>
                                     {% endfor %}
                                 </ul>
                             </td>
@@ -32,15 +32,15 @@
 
             {% else %}
                 <tr>
-                    <td colspan="2">There are no servers.</td>
+                    <td colspan="2">There are no groups.</td>
                 </tr>
             {% endif %}
         </tbody>
     </table>
 
-    {% if isUserAdminOrSuper(current_user) %}
+    {% if current_authorizations.isSuper() %}
         <ul>
-            <li><a class="btn" href="{{ uriFor('server.add') }}">Add Server</a></li>
+            <li><a class="btn" href="{{ uriFor('group.add') }}">Add Group</a></li>
         </ul>
     {% endif %}
 

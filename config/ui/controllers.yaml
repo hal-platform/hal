@@ -180,44 +180,44 @@ services:
     # SERVER CONTROLLERS
     ####################################################################################################################
 
-    servers.page:
-        class: 'Hal\UI\Controllers\Server\ServersController'
-        arguments: ['@servers.twig', '@doctrine.em']
-    servers.twig:
+    groups.page:
+        class: 'Hal\UI\Controllers\Group\GroupsController'
+        arguments: ['@groups.twig', '@doctrine.em']
+    groups.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['server/servers.twig']]]
+        calls: [['setTemplate', ['group/groups.twig']]]
 
-    server.page:
-        class: 'Hal\UI\Controllers\Server\ServerController'
-        arguments: ['@server.twig', '@doctrine.em']
-    server.twig:
+    group.page:
+        class: 'Hal\UI\Controllers\Group\GroupController'
+        arguments: ['@group.twig', '@doctrine.em']
+    group.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['server/server.twig']]]
+        calls: [['setTemplate', ['group/group.twig']]]
 
-    server.add.page:
-        class: 'Hal\UI\Controllers\Server\AddServerController'
+    group.add.page:
+        class: 'Hal\UI\Controllers\Group\AddGroupController'
         arguments:
-            - '@server.add.twig'
+            - '@group.add.twig'
             - '@doctrine.em'
-            - '@server.validator'
+            - '@group.validator'
             - '@uri'
-    server.add.twig:
+    group.add.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['server/server.add.twig']]]
+        calls: [['setTemplate', ['group/group.add.twig']]]
 
-    server.edit.page:
-        class: 'Hal\UI\Controllers\Server\EditServerController'
+    group.edit.page:
+        class: 'Hal\UI\Controllers\Group\EditGroupController'
         arguments:
-            - '@server.edit.twig'
+            - '@group.edit.twig'
             - '@doctrine.em'
-            - '@server.validator'
+            - '@group.validator'
             - '@uri'
-    server.edit.twig:
+    group.edit.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['server/server.edit.twig']]]
+        calls: [['setTemplate', ['group/group.edit.twig']]]
 
-    server.remove.handler:
-        class: 'Hal\UI\Controllers\Server\RemoveServerController'
+    group.remove.handler:
+        class: 'Hal\UI\Controllers\Group\RemoveGroupController'
         arguments: ['@doctrine.em', '@uri']
 
     ####################################################################################################################

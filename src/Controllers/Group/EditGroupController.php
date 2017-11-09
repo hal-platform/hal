@@ -5,24 +5,26 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Server;
+namespace Hal\UI\Controllers\Group;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
-use Hal\UI\Validator\ServerValidator;
+use Hal\UI\Validator\GroupValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Group;
+use Hal\Core\Type\GroupEnum;
+use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\AWS\AWSAuthenticator;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
 
-class EditServerController implements ControllerInterface
+class EditGroupController implements ControllerInterface
 {
     use RedirectableControllerTrait;
     use SessionTrait;
@@ -46,7 +48,7 @@ class EditServerController implements ControllerInterface
     private $environmentRepo;
 
     /**
-     * @var ServerValidator
+     * @var GroupValidator
      */
     private $validator;
 
@@ -60,13 +62,13 @@ class EditServerController implements ControllerInterface
      *
      * @param TemplateInterface $template
      * @param EntityManagerInterface $em
-     * @param ServerValidator $validator
+     * @param GroupValidator $validator
      * @param URI $uri
      */
     public function __construct(
         TemplateInterface $template,
         EntityManagerInterface $em,
-        ServerValidator $validator,
+        GroupValidator $validator,
         URI $uri
     ) {
         $this->template = $template;
@@ -83,65 +85,67 @@ class EditServerController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $server = $request->getAttribute(Server::class);
+        $group = $request->getAttribute(Group::class);
 
-        $form = $this->getFormData($request, $server);
+        $form = $this->getFormData($request, $group);
 
-        if ($modified = $this->handleForm($form, $request, $server)) {
+        if ($modified = $this->handleForm($form, $request, $group)) {
             $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS);
-            return $this->withRedirectRoute($response, $this->uri, 'server', ['server' => $modified->id()]);
+            return $this->withRedirectRoute($response, $this->uri, 'group', ['group' => $modified->id()]);
         }
 
         return $this->withTemplate($request, $response, $this->template, [
             'form' => $form,
             'errors' => $this->validator->errors(),
 
-            'server' => $server,
+            'group' => $group,
+            'group_types' => GroupEnum::options(),
             'environments' => $this->environmentRepo->getAllEnvironmentsSorted(),
+            'aws_regions' => AWSAuthenticator::$awsRegions
         ]);
     }
 
     /**
      * @param array $data
      * @param ServerRequestInterface $request
-     * @param Server $server
+     * @param Group $group
      *
-     * @return null|Server
+     * @return null|Group
      */
-    private function handleForm(array $data, ServerRequestInterface $request, Server $server)
+    private function handleForm(array $data, ServerRequestInterface $request, Group $group)
     {
         if ($request->getMethod() !== 'POST') {
             return null;
         }
 
-        $server = $this->validator->isEditValid(
-            $server,
-            $data['server_type'],
+        $group = $this->validator->isEditValid(
+            $group,
+            $data['group_type'],
             $data['environment'],
             $data['hostname'],
             $data['region']
         );
 
-        if ($server) {
+        if ($group) {
             // persist to database
-            $this->em->merge($server);
+            $this->em->merge($group);
             $this->em->flush();
         }
 
-        return $server;
+        return $group;
     }
 
     /**
      * @param ServerRequestInterface $request
-     * @param Server $server
+     * @param Group $group
      *
      * @return array
      */
-    private function getFormData(ServerRequestInterface $request, Server $server)
+    private function getFormData(ServerRequestInterface $request, Group $group)
     {
         if ($request->getMethod() === 'POST') {
             $form = [
-                'server_type' => $request->getParsedBody()['server_type'] ?? '',
+                'group_type' => $request->getParsedBody()['group_type'] ?? '',
                 'environment' => $request->getParsedBody()['environment'] ?? '',
 
                 'hostname' => trim($request->getParsedBody()['hostname'] ?? ''),
@@ -149,11 +153,11 @@ class EditServerController implements ControllerInterface
             ];
         } else {
             $form = [
-                'server_type' => $server->type(),
-                'environment' => $server->environment()->id(),
+                'group_type' => $group->type(),
+                'environment' => $group->environment()->id(),
 
-                'hostname' => $server->name(),
-                'region' => $server->name(),
+                'hostname' => $group->name(),
+                'region' => $group->name(),
             ];
         }
 

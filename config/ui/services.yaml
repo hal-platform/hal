@@ -46,8 +46,8 @@ services:
             - '@doctrine.em'
             - '@permissions'
 
-    server.validator:
-        class: 'Hal\UI\Validator\ServerValidator'
+    group.validator:
+        class: 'Hal\UI\Validator\GroupValidator'
         arguments: ['@doctrine.em']
 
     target.validator:

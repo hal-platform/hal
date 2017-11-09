@@ -13,9 +13,9 @@ use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\Utility\URI;
 
@@ -24,7 +24,7 @@ class RemoveTargetController implements ControllerInterface
     use RedirectableControllerTrait;
     use SessionTrait;
 
-    private const MSG_SUCCESS = 'Deployment target removed.';
+    private const MSG_SUCCESS = 'Target target removed.';
 
     /**
      * @var EntityManagerInterface
@@ -52,7 +52,7 @@ class RemoveTargetController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $application = $request->getAttribute(Application::class);
-        $target = $request->getAttribute(Deployment::class);
+        $target = $request->getAttribute(Target::class);
 
         $this->em->remove($target);
         $this->em->flush();

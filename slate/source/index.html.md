@@ -20,7 +20,7 @@ includes:
   - resources/applications
   - resources/organizations
   - resources/environments
-  - resources/servers
+  - resources/groups
   - resources/targets
   - resources/builds
   - resources/builds_create
@@ -36,7 +36,7 @@ search: true
 
 # Introduction
 
-This is documentation for the Hal API. You can use the API to access resources such as Applications, Servers, Deployments, Builds and Pushes.
+This is documentation for the Hal API. You can use the API to access resources such as Applications, Groups, Deployments, Builds and Pushes.
 
 <aside class="notice">
     <b>Please Note</b> -

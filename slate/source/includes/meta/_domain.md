@@ -9,8 +9,8 @@ Resource       | Description
 Organization   | An arbitrary organization or collection of applications
 Application    | Deployable application with a single source vcs repository for code
 Environment    | An environment such as **staging** or **production**
-Server         | Physical server or AWS region
-target         | Server + application + metadata pairing
+Group          | Physical server or AWS region
+target         | Group + application + metadata pairing
 User           | A client user of the system
 
 ### Actions

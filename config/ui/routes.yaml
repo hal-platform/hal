@@ -237,7 +237,7 @@ parameters:
                     stack: ['middleware.is_owner', 'target.add.middleware', 'target.add.page']
 
                 target.management:
-                    route: '/targets/{target:%r.digit%}'
+                    route: '/targets/{target:%r.guid%}'
                     stack: ['middleware.nested_entity']
                     routes:
                         target:
@@ -288,32 +288,32 @@ parameters:
         # SERVER Routes
         ################################################################################################################
 
-        servers:
+        groups:
             method: 'GET'
-            route: '/servers'
-            stack: ['middleware.signed_in', 'servers.page']
+            route: '/groups'
+            stack: ['middleware.signed_in', 'groups.page']
 
-        server.add:
+        group.add:
             method: ['GET', 'POST']
-            route: '/servers/add'
-            stack: ['middleware.is_admin', 'server.add.page']
+            route: '/groups/add'
+            stack: ['middleware.is_admin', 'group.add.page']
 
-        server.management:
-            route: '/servers/{server:%r.digit%}'
+        group.management:
+            route: '/groups/{group:%r.guid%}'
             stack: ['middleware.signed_in', 'middleware.require_entity']
             routes:
-                server:
+                group:
                     method: 'GET'
                     route: ''
-                    stack: ['server.page']
-                server.edit:
+                    stack: ['group.page']
+                group.edit:
                     method: ['GET', 'POST']
                     route: '/edit'
-                    stack: ['middleware.is_admin', 'server.edit.page']
-                server.remove:
+                    stack: ['middleware.is_admin', 'group.edit.page']
+                group.remove:
                     method: ['GET', 'POST']
                     route: '/remove'
-                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.server', 'server.remove.handler']
+                    stack: ['middleware.is_admin', 'middleware.removal_confirmation.group', 'group.remove.handler']
 
         ################################################################################################################
         # ENVIRONMENT ROUTES

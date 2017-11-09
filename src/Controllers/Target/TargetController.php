@@ -10,8 +10,8 @@ namespace Hal\UI\Controllers\Target;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Deployment;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -38,7 +38,7 @@ class TargetController implements ControllerInterface
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         $application = $request->getAttribute(Application::class);
-        $target = $request->getAttribute(Deployment::class);
+        $target = $request->getAttribute(Target::class);
 
         return $this->withTemplate($request, $response, $this->template, [
             'application' => $application,

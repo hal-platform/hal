@@ -15,8 +15,8 @@ use Hal\UI\Flash;
 use Hal\UI\Validator\TargetValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Deployment;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -64,7 +64,7 @@ class EditTargetMiddleware implements MiddlewareInterface
         }
 
         $application = $request->getAttribute(Application::class);
-        $target = $request->getAttribute(Deployment::class);
+        $target = $request->getAttribute(Target::class);
         $form = $this->getFormData($request);
 
         $target = $this->validator->isEditValid($target, ...array_values($form));

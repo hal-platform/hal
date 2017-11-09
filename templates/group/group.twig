@@ -1,0 +1,115 @@
+{% extends 'base.twig' %}
+
+{% set name = (group.type() == 'script') ? 'Script' : group.name() %}
+{% set page_title = 'Group : ' ~ name %}
+
+{% set isAdmin = current_authorizations.isSuper() %}
+
+{% block content %}
+<h1>Group - {{ group.format(false) }} <b>{{ group.environment().name() }}</b></h1>
+
+    {% set name_label =  group.type == 'rsync' ? 'Hostname' : 'Region' %}
+
+    <div class="details-box">
+        <ul class="mbn">
+            <li>Group Type</li>
+            <li>{{ group.format(false) }}</li>
+
+            <li>{{ name_label }}</li>
+            <li>{{ group.type == 'script' ? 'N/A' : group.name() }}</li>
+        </ul>
+    </div>
+
+    <h3>Environment</h3>
+    <p>{{ group.environment().name() }}</p>
+
+    <h3>Application Deployment Targets</h3>
+    {% if targets %}
+        <table class="table--spacing-medium table--striped">
+            <thead>
+                <tr>
+                    <th>Application</th>
+
+                    {% if group.type() == 'eb' %}
+
+                        <th>EB Application</th>
+                        <th>EB Environment</th>
+
+                    {% elseif group.type() == 's3' %}
+
+                        <th>Bucket</th>
+                        <th>File</th>
+
+                    {% elseif group.type() == 'cd' %}
+
+                        <th>CD Application</th>
+                        <th>CD Group</th>
+                        <th>CD Configuration</th>
+
+                    {% else %}
+                        <th>Path</th>
+                    {% endif %}
+
+                    <th>URL</th>
+                    <th class="t10"></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for target in targets %}
+
+                <tr>
+                    <td>
+                        <a href="{{ uriFor('application', {'application': target.application.id}) }}">{{ target.application.name }}</a>
+                    </td>
+
+                    {% if group.type == 'eb' %}
+
+                        <td><code>{{ target.ebName }}</code></td>
+                        <td><code>{{ target.ebEnvironment }}</code></td>
+
+                    {% elseif group.type == 's3' %}
+
+                        <td><code>{{ target.s3bucket }}</code></td>
+                        <td><code>{{ target.s3file }}</code></td>
+
+                    {% elseif group.type == 'cd' %}
+
+                        <td><code>{{ target.cdName }}</code></td>
+                        <td><code>{{ target.cdGroup }}</code></td>
+                        <td><code>{{ target.cdConfiguration }}</code></td>
+
+                    {% else %}
+                        <td><code>{{ target.path }}</code></td>
+                    {% endif %}
+
+                    <td>
+                        {% if target.url %}
+                            <a href="{{ target.url  }}">{{ target.url  }}</a>
+                        {% endif %}
+                    </td>
+                    <td class="tr">
+                        <a class="btn btn--tiny" href="{{ uriFor('target', {'application': target.application.id, 'target': target.id}) }}">View</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no targets associated with this group.</p>
+    {% endif %}
+
+    {% if isAdmin and targets %}
+        <p><b>Note:</b> All associated targets must be removed or transferred to remove this group.</p>
+    {% endif %}
+
+    <ul>
+        {% if isAdmin %}
+            <li><a class="btn" href="{{ uriFor('groups') }}">Groups</a></li>
+            <li><a class="btn btn--action" href="{{ uriFor('group.edit', {'group': group.id}) }}">Edit Group</a></li>
+
+            {% if not targets and isAdmin %}
+                <li><a class="btn btn--destructive" href="{{ uriFor('group.remove', {'group': group.id}) }}">Remove Group</a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endblock %}

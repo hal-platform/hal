@@ -16,8 +16,8 @@ use Hal\UI\Flash;
 use Hal\UI\Validator\TargetValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Environment;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -75,6 +75,7 @@ HTML;
             return $next($request, $response);
         }
 
+        $selected = $request->getQueryParams();
         $application = $request->getAttribute(Application::class);
         $form = $this->getFormData($request);
 
@@ -96,10 +97,10 @@ HTML;
             ->getRepository(Environment::class)
             ->clearBuildableEnvironmentsByApplication($application);
 
-        $formPage = $this->uri->urlFor(
+        $formPage = $this->uri->uriFor(
             'target.add',
-            ['application' => $this->application->id()],
-            ['environment' => $target->server()->environment()->id()]
+            ['application' => $application->id()],
+            ['environment' => $target->group()->environment()->id()]
         );
 
         $this->withFlash($request, Flash::SUCCESS, self::MSG_SUCCESS, sprintf(self::MSG_MORE_LIKE_THIS, $formPage));
@@ -114,7 +115,7 @@ HTML;
     private function getFormData(ServerRequestInterface $request)
     {
         $form = [
-            'server' => $request->getParsedBody()['server'] ?? '',
+            'group' => $request->getParsedBody()['group'] ?? '',
 
             'name' => $request->getParsedBody()['name'] ?? '',
             'path' => $request->getParsedBody()['path'] ?? '',

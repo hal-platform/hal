@@ -66,18 +66,18 @@
 
 {% block add_form %}
 
-    <form method="post" action="{{ uriFor('target.add', {application: application.id}) }}">
+    <form method="post" action="{{ uriFor('target.add', {application: application.id}, {'environment': selected_environment.id}) }}">
 
         <ul class="form-fields">
             <li>
-                <label for="server">
-                    Server
+                <label for="group">
+                    Group
                 </label>
-                <select class="select-input" name="server" id="server" required>
+                <select class="select-input" name="group" id="group" required>
                     <option></option>
-                    {% for server in servers %}
-                        {% set isSelected = (server.id == form.server) %}
-                        <option value="{{ server.id }}"{{ isSelected ? ' selected' : '' }} data-target-type="{{ server.type }}">{{ server.formatPretty }}</option>
+                    {% for group in groups %}
+                        {% set isSelected = (group.id == form.group) %}
+                        <option value="{{ group.id }}"{{ isSelected ? ' selected' : '' }} data-target-type="{{ group.type }}">{{ group.format(false) }}</option>
                     {% endfor %}
                 </select>
             </li>

@@ -9,70 +9,62 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Credential;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Server;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Credential;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Group;
+use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Type\GroupEnum;
 
 /**
  * This validator is a pile of shit and stricken with technical debt. Beware.
  */
 class TargetValidator
 {
-    const ERR_REQUIRED = '"%s" is required.';
+    use ValidatorErrorTrait;
+    use NewValidatorTrait;
 
-    const ERR_INVALID_PATH = 'File path is invalid.';
+    private const REGEX_CHARACTER_STRICT_WHITESPACE = '\f\n\r\t\v ';
+    private const REGEX_CHARACTER_RELAXED_WHITESPACE = '\f\n\r\t\v';
+    private const REGEX_CHARACTER_STARTING_SLASH = '#^/#';
+
+    const ERR_CHARACTERS_STRICT_WHITESPACE = '%s must not contain any whitespace';
+    const ERR_CHARACTERS_RELAXED_WHITESPACE = '%s must not contain tabs or newlines';
+
+    const ERR_PATH_CHARACTERS_STARTING_SLASH = 'File path must begin with a forward slash (/)';
+    const ERR_FILE_CHARACTERS_FILE_DELIMITER = 'S3 File must have a colon (:) separating source and destination';
+
     const ERR_INVALID_URL = 'URL is invalid.';
     const ERR_INVALID_URL_SCHEME = 'URL scheme is invalid. Please use http or https.';
-    const ERR_INVALID_NAME = 'Name is invalid.';
-
     const ERR_INVALID_CREDENTIALS = 'Credential is invalid.';
     const ERR_INVALID_SERVER = 'Group is invalid.';
 
-    const ERR_INVALID_CD_APPLICATION = 'CD Application is invalid.';
-    const ERR_INVALID_CD_GROUP = 'CD Group is invalid.';
-    const ERR_INVALID_CD_CONFIG = 'CD Configuration is invalid.';
-
-    const ERR_INVALID_EB_APPLICATION = 'EB Application is invalid.';
-    const ERR_INVALID_EB_ENVIRONMENT = 'EB Environment is invalid.';
-
-    const ERR_INVALID_BUCKET = 'S3 Bucket is invalid.';
-    const ERR_INVALID_FILE = 'S3 File is invalid.';
-
-    const ERR_DUPLICATE_RSYNC = 'A deployment already exists for this server and file path.';
-    const ERR_DUPLICATE_CD = 'A deployment already exists for this CD application and group.';
-    const ERR_DUPLICATE_EB = 'A deployment already exists for this EB application and environment.';
-    const ERR_DUPLICATE_S3 = 'A deployment already exists for this S3 bucket and file.';
+    // Should we still check these in Hal 3?
+    // const ERR_DUPLICATE_RSYNC = 'A target already exists for this group and file path.';
+    // const ERR_DUPLICATE_CD = 'A target already exists for this CD application and group.';
+    // const ERR_DUPLICATE_EB = 'A target already exists for this EB application and environment.';
+    // const ERR_DUPLICATE_S3 = 'A target already exists for this S3 bucket and file.';
 
     /**
      * @var EntityRepository
      */
-    private $serverRepo;
-    private $deploymentRepo;
+    private $groupRepo;
+    private $targetRepo;
     private $credentialRepo;
-
-    /**
-     * @var array
-     */
-    private $errors;
 
     /**
      * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
     {
-        $this->serverRepo = $em->getRepository(Server::class);
-        $this->deploymentRepo = $em->getRepository(Deployment::class);
+        $this->groupRepo = $em->getRepository(Group::class);
+        $this->targetRepo = $em->getRepository(Target::class);
         $this->credentialRepo = $em->getRepository(Credential::class);
-
-        $this->errors = [];
     }
 
     /**
      * @param Application $application
-     * @param int $serverID
+     * @param int $groupID
      *
      * @param string $path
      * @param string $name
@@ -92,11 +84,11 @@ class TargetValidator
      * @param string $url
      * @param string $credentialID
      *
-     * @return Deployment|null
+     * @return Target|null
      */
     public function isValid(
         Application $application,
-        $serverID,
+        $groupID,
         $name,
         $path,
 
@@ -115,72 +107,85 @@ class TargetValidator
         $url,
         $credentialID
     ) {
-        $this->errors = [];
+        $this->resetErrors();
 
         $path = trim($path);
 
-        $this->validateRequired($serverID);
+        $this->validateRequired($groupID);
 
         // stop validation if errors
-        if ($this->errors) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         $url = $this->validateUrl($url);
         $this->validateName($name);
 
         $credential = null;
         if ($credentialID && !$credential = $this->credentialRepo->find($credentialID)) {
-            $this->errors[] = self::ERR_INVALID_CREDENTIALS;
+            $this->addError(self::ERR_INVALID_CREDENTIALS, 'credentials');
         }
 
-        // @todo add when updated to hal-core 3.0
-        // if ($credential && $credential->isInternal()) {
-        //     $this->errors[] = self::ERR_INVALID_CREDENTIALS;
-        // }
-
-        if (!$server = $this->serverRepo->find($serverID)) {
-            $this->errors[] = self::ERR_INVALID_SERVER;
+        if ($credential && $credential->isInternal()) {
+            $this->addError(self::ERR_INVALID_CREDENTIALS, 'credentials');
         }
 
-        // stop validation if errors
-        if ($this->errors) return;
+        if (!$group = $this->groupRepo->find($groupID)) {
+            $this->addError(self::ERR_INVALID_SERVER, 'server');
+        }
 
-        if ($server->type() == ServerEnum::TYPE_RSYNC) {
+        if ($group->type() == GroupEnum::TYPE_RSYNC) {
             $this->validatePath($path);
 
-        } elseif ($server->type() == ServerEnum::TYPE_CD) {
+        } elseif ($group->type() == GroupEnum::TYPE_CD) {
             $this->validateCD($cdName, $cdGroup, $cdConfiguration);
             $this->validateS3($s3bucket, $s3file);
 
-        } elseif ($server->type() == ServerEnum::TYPE_EB) {
+        } elseif ($group->type() == GroupEnum::TYPE_EB) {
             $this->validateEB($ebName, $ebEnvironment);
             $this->validateS3($s3bucket, $s3file);
 
-        } elseif ($server->type() == ServerEnum::TYPE_S3) {
+        } elseif ($group->type() == GroupEnum::TYPE_S3) {
             $this->validateS3($s3bucket, $s3file);
         }
 
         // stop validation if errors
-        if ($this->errors) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
-        $deployment = (new Deployment)
+        $target = (new Target)
             ->withApplication($application)
-            ->withServer($server)
+            ->withGroup($group)
             ->withName($name)
-            ->withUrl($url)
-            ->withCredential($credential)
-            ->withScriptContext($scriptContext);
+            ->withURL($url)
+            ->withCredential($credential);
 
-        $this
-            ->withCD($deployment, $cdName, $cdGroup, $cdConfiguration)
-            ->withEB($deployment, $ebName, $ebEnvironment)
-            ->withPath($deployment, $path)
-            ->withS3($deployment, $s3bucket, $s3file);
+        if ($group->type() == GroupEnum::TYPE_SCRIPT) {
+            $target->withParameter(Target::PARAM_CONTEXT, $scriptContext);
 
-        return $deployment;
+        } elseif ($group->type() == GroupEnum::TYPE_RSYNC) {
+            $this->withPath($target, $path);
+
+        } elseif ($group->type() == GroupEnum::TYPE_CD) {
+            $this
+                ->withCD($target, $cdName, $cdGroup, $cdConfiguration)
+                ->withS3($target, $s3bucket, $s3file);
+
+        } elseif ($group->type() == GroupEnum::TYPE_EB) {
+            $this
+                ->withEB($target, $ebName, $ebEnvironment)
+                ->withS3($target, $s3bucket, $s3file);
+
+        } elseif ($group->type() == GroupEnum::TYPE_S3) {
+            $this->withS3($target, $s3bucket, $s3file);
+        }
+
+        return $target;
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Target $target
      * @param string $path
      * @param string $name
      *
@@ -199,10 +204,10 @@ class TargetValidator
      * @param string $url
      * @param string $credentialID
      *
-     * @return Deployment|null
+     * @return Target|null
      */
     public function isEditValid(
-        Deployment $deployment,
+        Target $target,
         $name,
         $path,
 
@@ -225,73 +230,80 @@ class TargetValidator
 
         $path = trim($path);
 
-        $serverType = $deployment->server()->type();
+        $groupType = $target->group()->type();
 
         $url = $this->validateUrl($url);
         $this->validateName($name);
 
         $credential = null;
         if ($credentialID && !$credential = $this->credentialRepo->find($credentialID)) {
-            $this->errors[] = self::ERR_INVALID_CREDENTIALS;
+            $this->addError(self::ERR_INVALID_CREDENTIALS, 'credentials');
         }
 
-        // @todo add when updated to hal-core 3.0
-        // if ($credential && $credential->isInternal()) {
-        //     $this->errors[] = self::ERR_INVALID_CREDENTIALS;
-        // }
+        if ($credential && $credential->isInternal()) {
+            $this->addError(self::ERR_INVALID_CREDENTIALS, 'credentials');
+        }
 
-        if ($serverType == ServerEnum::TYPE_RSYNC) {
+        if ($groupType == GroupEnum::TYPE_RSYNC) {
             $this->validatePath($path);
 
-        } elseif ($serverType == ServerEnum::TYPE_CD) {
+        } elseif ($groupType == GroupEnum::TYPE_CD) {
             $this->validateCD($cdName, $cdGroup, $cdConfiguration);
             $this->validateS3($s3bucket, $s3file);
 
-        } elseif ($serverType == ServerEnum::TYPE_EB) {
+        } elseif ($groupType == GroupEnum::TYPE_EB) {
             $this->validateEB($ebName, $ebEnvironment);
             $this->validateS3($s3bucket, $s3file);
 
-        } elseif ($serverType == ServerEnum::TYPE_S3) {
+        } elseif ($groupType == GroupEnum::TYPE_S3) {
             $this->validateS3($s3bucket, $s3file);
         }
 
         // stop validation if errors
-        if ($this->errors) return;
+        if ($this->hasErrors()) {
+            return null;
+        }
 
-        $deployment
+        $target
             ->withName($name)
-            ->withPath($path)
-            ->withUrl($url)
-            ->withCredential($credential)
-            ->withScriptContext($scriptContext);
+            ->withURL($url)
+            ->withCredential($credential);
 
-        $this
-            ->withCD($deployment, $cdName, $cdGroup, $cdConfiguration)
-            ->withEB($deployment, $ebName, $ebEnvironment)
-            ->withPath($deployment, $path)
-            ->withS3($deployment, $s3bucket, $s3file);
+        if ($groupType == GroupEnum::TYPE_SCRIPT) {
+            $target->withParameter(Target::PARAM_CONTEXT, $scriptContext);
 
-        return $deployment;
+        } elseif ($groupType == GroupEnum::TYPE_RSYNC) {
+            $this->withPath($target, $path);
+
+        } elseif ($groupType == GroupEnum::TYPE_CD) {
+            $this
+                ->withCD($target, $cdName, $cdGroup, $cdConfiguration)
+                ->withS3($target, $s3bucket, $s3file);
+
+        } elseif ($groupType == GroupEnum::TYPE_EB) {
+            $this
+                ->withEB($target, $ebName, $ebEnvironment)
+                ->withS3($target, $s3bucket, $s3file);
+
+        } elseif ($groupType == GroupEnum::TYPE_S3) {
+            $this->withS3($target, $s3bucket, $s3file);
+        }
+
+        return $target;
     }
 
     /**
-     * @return array
-     */
-    public function errors()
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @param int $serverID
+     * @param int $groupID
      *
      * @return void
      */
-    private function validateRequired($serverID)
+    private function validateRequired($groupID)
     {
-        if (!$serverID) {
-            $this->errors[] = sprintf(self::ERR_REQUIRED, 'Group');
+        if (!$this->validateIsRequired($groupID) || !$this->validateSanityCheck($groupID)) {
+            $this->addRequiredError('Group', 'group');
         }
+
+        return $this->hasErrors();
     }
 
     /**
@@ -303,34 +315,50 @@ class TargetValidator
      */
     private function validateCD($cdApplication, $cdGroup, $cdConfiguration)
     {
-        $errors = [];
-
-        if (!$cdApplication) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'CD Application');
+        if (!$this->validateIsRequired($cdApplication) || !$this->validateSanityCheck($cdApplication)) {
+            $this->addRequiredError('CD Application', 'cd_application');
         }
 
-        if (!$cdGroup) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'CD Group');
+        if (!$this->validateIsRequired($cdGroup) || !$this->validateSanityCheck($cdGroup)) {
+            $this->addRequiredError('CD Group', 'cd_group');
         }
 
-        if (!$cdConfiguration) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'CD Configuration');
+        if (!$this->validateIsRequired($cdConfiguration) || !$this->validateSanityCheck($cdConfiguration)) {
+            $this->addRequiredError('CD Configuration', 'cd_config');
         }
 
-        if (preg_match('#[\t\n]+#', $cdApplication) === 1 || strlen($cdApplication) > 100) {
-            $errors[] = self::ERR_INVALID_CD_APPLICATION;
+        if ($hasErrors = $this->hasErrors()) {
+            return $hasErrors;
         }
 
-        if (preg_match('#[\t\n]+#', $cdGroup) === 1 || strlen($cdGroup) > 100) {
-            $errors[] = self::ERR_INVALID_CD_GROUP;
+        if (!$this->validateCharacterBlacklist($cdApplication, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Application');
+            $this->addError($error, 'cd_application');
         }
 
-        if (preg_match('#[\t\n]+#', $cdConfiguration) === 1 || strlen($cdConfiguration) > 100) {
-            $errors[] = self::ERR_INVALID_CD_CONFIG;
+        if (!$this->validateCharacterBlacklist($cdGroup, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Group');
+            $this->addError($error, 'cd_group');
         }
 
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
+        if (!$this->validateCharacterBlacklist($cdConfiguration, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'CD Configuration');
+            $this->addError($error, 'cd_config');
+        }
+
+        if (!$this->validateLength($cdApplication, 1, 100)) {
+            $this->addLengthError('CD Application', 1, 100, 'cd_application');
+        }
+
+        if (!$this->validateLength($cdGroup, 1, 100)) {
+            $this->addLengthError('CD Group', 1, 100, 'cd_group');
+        }
+
+        if (!$this->validateLength($cdConfiguration, 1, 100)) {
+            $this->addLengthError('CD Configuration', 1, 100, 'cd_config');
+        }
+
+        return $this->hasErrors();
     }
 
     /**
@@ -341,26 +369,37 @@ class TargetValidator
      */
     private function validateEB($ebApplication, $ebEnvironment)
     {
-        $errors = [];
-
-        if (!$ebApplication) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'EB Application');
+        if (!$this->validateIsRequired($ebApplication) || !$this->validateSanityCheck($ebApplication)) {
+            $this->addRequiredError('EB Application', 'eb_application');
         }
 
-        if (!$ebEnvironment) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'EB Environment');
+        if (!$this->validateIsRequired($ebEnvironment) || !$this->validateSanityCheck($ebEnvironment)) {
+            $this->addRequiredError('EB Environment', 'eb_environment');
         }
 
-        if (preg_match('#[\t\n]+#', $ebApplication) === 1 || strlen($ebApplication) > 100) {
-            $errors[] = self::ERR_INVALID_EB_APPLICATION;
+        if ($hasErrors = $this->hasErrors()) {
+            return $hasErrors;
         }
 
-        if (preg_match('#[\t\n]+#', $ebEnvironment) === 1 || strlen($ebEnvironment) > 100) {
-            $errors[] = self::ERR_INVALID_EB_ENVIRONMENT;
+        if (!$this->validateCharacterBlacklist($ebApplication, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'EB Application');
+            $this->addError($error, 'eb_application');
         }
 
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
+        if (!$this->validateCharacterBlacklist($ebEnvironment, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+            $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'EB Environment');
+            $this->addError($error, 'eb_environment');
+        }
+
+        if (!$this->validateLength($ebApplication, 1, 100)) {
+            $this->addLengthError('EB Application', 1, 100, 'eb_application');
+        }
+
+        if (!$this->validateLength($ebEnvironment, 1, 100)) {
+            $this->addLengthError('EB Environment', 1, 100, 'eb_environment');
+        }
+
+        return $this->hasErrors();
     }
 
     /**
@@ -370,26 +409,25 @@ class TargetValidator
      */
     private function validatePath($path)
     {
-        $errors = [];
-
-        if (!$path) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'Path');
+        if (!$this->validateIsRequired($path) || !$this->validateSanityCheck($path)) {
+            $this->addRequiredError('Path', 'path');
+            return true;
         }
 
-        if (strlen($path) > 200) {
-            $errors[] = self::ERR_INVALID_PATH;
+        if (!preg_match(self::REGEX_CHARACTER_STARTING_SLASH, $path)) {
+            $this->addError(self::ERR_PATH_CHARACTERS_STARTING_SLASH, 'path');
         }
 
-        if (substr($path, 0, 1) !== '/') {
-            $errors[] = self::ERR_INVALID_PATH;
+        if (!$this->validateCharacterBlacklist($path, self::REGEX_CHARACTER_STRICT_WHITESPACE)) {
+            $error = sprintf(ERR_CHARACTERS_STRICT_WHITESPACE, 'Path');
+            $this->addError($error, 'path');
         }
 
-        if (preg_match('#[\t\n]+#', $path) === 1) {
-            $errors[] = self::ERR_INVALID_PATH;
+        if (!$this->validateLength($path, 1, 200)) {
+            $this->addLengthError('Path', 1, 200, 'path');
         }
 
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
+        return $this->hasErrors();
     }
 
     /**
@@ -400,29 +438,37 @@ class TargetValidator
      */
     private function validateS3($bucket, $file)
     {
-        $errors = [];
-
-        if (!$bucket) {
-            $errors[] = sprintf(self::ERR_REQUIRED, 'Bucket');
+        if (!$this->validateIsRequired($bucket) || !$this->validateSanityCheck($bucket)) {
+            $this->addRequiredError('S3 Bucket', 'bucket');
+            return true;
         }
 
-        if (preg_match('#[\t\n]+#', $bucket) === 1 || strlen($bucket) > 100) {
-            $errors[] = self::ERR_INVALID_BUCKET;
+        if (!$this->validateCharacterBlacklist($bucket, self::REGEX_CHARACTER_STRICT_WHITESPACE)) {
+            $error = sprintf(self::ERR_CHARACTERS_STRICT_WHITESPACE, 'S3 Bucket');
+            $this->addError($error, 'bucket');
+        }
+
+        if (!$this->validateLength($bucket, 1, 100)) {
+            $this->addLengthError('S3 Bucket', 1, 100, 'bucket');
         }
 
         if (strlen($file) > 0) {
 
-            if (preg_match('#[\t\n]+#', $file) === 1 || strlen($file) > 100) {
-                $errors[] = self::ERR_INVALID_FILE;
+            if (!$this->validateCharacterBlacklist($file, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'S3 File');
+                $this->addError($error, 'file');
+            }
+
+            if (!$this->validateLength($file, 0, 100)) {
+                $this->addLengthError('S3 File', 0, 100, 'file');
             }
 
             if (substr_count($file, ':') > 1) {
-                $errors[] = self::ERR_INVALID_FILE;
+                $this->addError(self::ERR_FILE_CHARACTERS_FILE_DELIMITER, 'file');
             }
         }
 
-        $this->errors = array_merge($this->errors, $errors);
-        return count($errors) === 0;
+        return $this->hasErrors();
     }
 
     /**
@@ -432,8 +478,15 @@ class TargetValidator
      */
     private function validateName($name)
     {
-        if (preg_match('#[\t\n]+#', $name) === 1 || strlen($name) > 100) {
-            $this->errors[] = self::ERR_INVALID_NAME;
+        if (strlen($name) > 0) {
+            if (!$this->validateCharacterBlacklist($name, self::REGEX_CHARACTER_RELAXED_WHITESPACE)) {
+                $error = sprintf(ERR_CHARACTERS_RELAXED_WHITESPACE, 'Name');
+                $this->addError($error, 'name');
+            }
+
+            if (!$this->validateLength($name, 0, 100)) {
+                $this->addLengthError('Name', 0, 100, 'name');
+            }
         }
     }
 
@@ -450,120 +503,122 @@ class TargetValidator
             return $url;
         }
 
-        if (strlen($url) > 200) {
-            $this->errors[] = self::ERR_INVALID_URL;
+        if (!$this->validateLength($url, 0, 200)) {
+            $this->addLengthError($url, 0, 200, 'URL');
         }
 
         $scheme = parse_url($url, PHP_URL_SCHEME);
         if (!in_array($scheme, [null, 'http', 'https'], true)) {
-            $this->errors[] = self::ERR_INVALID_URL_SCHEME;
+            $this->addError(self::ERR_INVALID_URL_SCHEME, 'url');
         }
 
         if ($scheme === null) {
             $url = 'http://' . $url;
         }
 
-        if ($this->errors) return '';
+        if ($this->hasErrors()) {
+            return null;
+        }
 
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            $this->errors[] = self::ERR_INVALID_URL;
+            $this->addError(self::ERR_INVALID_URL, 'url');
         }
 
         return $url;
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Target $target
      *
      * @param string $cdApplication
      * @param string $cdGroup
      * @param string $cdConfiguration
      *
-     * @return Deployment
+     * @return Target
      */
-    private function withCD(Deployment $deployment, $cdApplication, $cdGroup, $cdConfiguration)
+    private function withCD(Target $target, $cdApplication, $cdGroup, $cdConfiguration)
     {
-        $type = $deployment->server()->type();
+        $type = $target->group()->type();
 
-        if ($type !== ServerEnum::TYPE_CD) {
+        if ($type !== GroupEnum::TYPE_CD) {
             $cdApplication = null;
             $cdGroup = null;
             $cdConfiguration = null;
         }
 
-        $deployment
-            ->withCDName($cdApplication)
-            ->withCDGroup($cdGroup)
-            ->withCDConfiguration($cdConfiguration);
+        $target
+            ->withParameter(Target::PARAM_APP, $cdApplication)
+            ->withParameter(Target::PARAM_GROUP, $cdGroup)
+            ->withParameter(Target::PARAM_CONFIG, $cdConfiguration);
 
         return $this;
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Target $target
      *
      * @param string $ebApplication
      * @param string $ebEnvironment
      *
-     * @return Deployment
+     * @return Target
      */
-    private function withEB(Deployment $deployment, $ebApplication, $ebEnvironment)
+    private function withEB(Target $target, $ebApplication, $ebEnvironment)
     {
-        $type = $deployment->server()->type();
+        $type = $target->group()->type();
 
-        if ($type !== ServerEnum::TYPE_EB) {
+        if ($type !== GroupEnum::TYPE_EB) {
             $ebApplication = null;
             $ebEnvironment = null;
         }
 
-        $deployment
-            ->withEBName($ebApplication)
-            ->withEBEnvironment($ebEnvironment);
+        $target
+            ->withParameter(Target::PARAM_APP, $ebApplication)
+            ->withParameter(Target::PARAM_ENV, $ebEnvironment);
 
         return $this;
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Target $target
      *
      * @param string $path
      *
-     * @return Deployment
+     * @return Target
      */
-    private function withPath(Deployment $deployment, $path)
+    private function withPath(Target $target, $path)
     {
-        $type = $deployment->server()->type();
+        $type = $target->group()->type();
 
-        if (!in_array($type, [ServerEnum::TYPE_RSYNC], true)) {
+        if (!in_array($type, [GroupEnum::TYPE_RSYNC], true)) {
             $path = null;
         }
 
-        $deployment
-            ->withPath($path);
+        $target
+            ->withParameter(Target::PARAM_PATH, $path);
 
         return $this;
     }
 
     /**
-     * @param Deployment $deployment
+     * @param Target $target
      *
      * @param string $s3bucket
      * @param string $s3file
      *
-     * @return Deployment
+     * @return Target
      */
-    private function withS3(Deployment $deployment, $s3bucket, $s3file)
+    private function withS3(Target $target, $s3bucket, $s3file)
     {
-        $type = $deployment->server()->type();
+        $type = $target->group()->type();
 
-        if (!in_array($type, [ServerEnum::TYPE_S3, ServerEnum::TYPE_CD, ServerEnum::TYPE_EB], true)) {
+        if (!in_array($type, [GroupEnum::TYPE_S3, GroupEnum::TYPE_CD, GroupEnum::TYPE_EB], true)) {
             $s3bucket = null;
             $s3file = null;
         }
 
-        $deployment
-            ->withS3Bucket($s3bucket)
-            ->withS3File($s3file);
+        $target
+            ->withParameter(Target::PARAM_BUCKET, $s3bucket)
+            ->withParameter(Target::PARAM_SOURCE, $s3file);
 
         return $this;
     }

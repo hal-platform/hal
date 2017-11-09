@@ -9,9 +9,7 @@ namespace Hal\UI\Twig;
 
 use Hal\UI\Utility\TimeFormatter;
 use Hal\Core\Entity\Build;
-use Hal\Core\Entity\Target;
 use Hal\Core\Entity\Release;
-use Hal\Core\Entity\Group;
 use Twig_Extension;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
