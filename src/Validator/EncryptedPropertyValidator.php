@@ -69,7 +69,7 @@ class EncryptedPropertyValidator
             return null;
         }
 
-        if ($environmentID == 'global') {
+        if ($environmentID === 'global') {
             $environment = null;
         } else {
             if (!$environment = $this->environmentRepo->find($environmentID)) {
@@ -129,7 +129,7 @@ class EncryptedPropertyValidator
      */
     private function validate($environmentID, $name, $value): bool
     {
-        if ($environmentID == null) {
+        if (!$environmentID) {
             $this->addError(self::ERR_INVALID_ENVIRONMENT, 'environment');
         }
 
