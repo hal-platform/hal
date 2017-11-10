@@ -17,9 +17,9 @@ use Hal\UI\Validator\BuildValidator;
 use Hal\UI\Validator\PushValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\User;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\User;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 

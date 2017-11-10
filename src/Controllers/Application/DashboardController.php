@@ -12,16 +12,16 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\StickyEnvironmentService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\BuildRepository;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
-use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Utility\SortingTrait;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\Release;
+use Hal\Core\Repository\BuildRepository;
+use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Repository\ReleaseRepository;
+use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -38,22 +38,22 @@ class DashboardController implements ControllerInterface
     /**
      * @var BuildRepository
      */
-    private $buildRepo;
+    private $buildRepository;
 
     /**
-     * @var DeploymentRepository
+     * @var TargetRepository
      */
-    private $deploymentRepo;
+    private $targetRepository;
 
     /**
-     * @var PushRepository
+     * @var ReleaseRepository
      */
-    private $pushRepo;
+    private $releaseRepository;
 
     /**
      * @var EnvironmentRepository
      */
-    private $envRepo;
+    private $environmentRepository;
 
     /**
      * @var StickyEnvironmentService
@@ -62,7 +62,7 @@ class DashboardController implements ControllerInterface
 
     /**
      * @param TemplateInterface $template
-     * @param EntityMangerInterface $em
+     * @param EntityManagerInterface $em
      * @param StickyEnvironmentService $stickyEnvironmentService
      */
     public function __construct(
@@ -72,11 +72,11 @@ class DashboardController implements ControllerInterface
     ) {
         $this->template = $template;
 
-        $this->deploymentRepo = $em->getRepository(Deployment::class);
-        $this->envRepo = $em->getRepository(Environment::class);
+        $this->targetRepository = $em->getRepository(Target::class);
+        $this->environmentRepository = $em->getRepository(Environment::class);
 
-        $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Push::class);
+        $this->buildRepository = $em->getRepository(Build::class);
+        $this->releaseRepository = $em->getRepository(Release::class);
 
         $this->stickyEnvironmentService = $stickyEnvironmentService;
     }
@@ -98,8 +98,8 @@ class DashboardController implements ControllerInterface
         $deployments = $builds =  [];
 
         if ($selectedEnvironment) {
-            $deployments = $this->getDeploymentsForEnvironment($application, $selectedEnvironment);
-            $builds = $this->buildRepo->findBy(
+            $deployments = $this->getTargetsForEnvironment($application, $selectedEnvironment);
+            $builds = $this->buildRepository->findBy(
                 ['application' => $application, 'environment' => $selectedEnvironment],
                 ['created' => 'DESC'],
                 10
@@ -122,11 +122,11 @@ class DashboardController implements ControllerInterface
      */
     private function getBuildableEnvironments(Application $application)
     {
-        $environments = $this->envRepo->getBuildableEnvironmentsByApplication($application);
+        $environments = $this->environmentRepository->getBuildableEnvironmentsByApplication($application);
 
         // if empty, throw them a bone with "test"
         if (!$environments) {
-            $environments = $this->envRepo->findBy(['name' => 'test']);
+            $environments = $this->environmentRepository->findBy(['name' => 'test']);
         }
 
         return $environments;
@@ -163,31 +163,31 @@ class DashboardController implements ControllerInterface
      * @return array
      * [
      *     [
-     *         'deploy' => Deployment
-     *         'latest' => Push|null
+     *         'deploy' => Target
+     *         'latest' => Release|null
      *     ],
      *     [
-     *         'deploy' => Deployment
-     *         'latest' => Push|null
+     *         'deploy' => Target
+     *         'latest' => Release|null
      *     ]
      * ]
      */
-    private function getDeploymentsForEnvironment(Application $application, Environment $selectedEnvironment = null)
+    private function getTargetsForEnvironment(Application $application, Environment $selectedEnvironment = null)
     {
-        $deployments = [];
+        $targets = [];
         if ($selectedEnvironment) {
-            $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($application, $selectedEnvironment);
+            $targets = $this->targetRepository->getByApplicationAndEnvironment($application, $selectedEnvironment);
         }
 
-        usort($deployments, $this->deploymentSorter());
+        usort($targets, $this->targetSorter());
 
-        foreach ($deployments as &$deployment) {
-            $deployment = [
-                'deploy' => $deployment,
-                'latest' => $this->pushRepo->getMostRecentByDeployment($deployment)
+        foreach ($targets as &$target) {
+            $target = [
+                'target' => $target,
+                'latest' => $this->releaseRepository->getByTarget($target, 1)->getIterator()->current()
             ];
         }
 
-        return $deployments;
+        return $targets;
     }
 }

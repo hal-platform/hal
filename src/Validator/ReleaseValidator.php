@@ -9,45 +9,33 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hal\UI\Service\PermissionService;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\Process;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\JobIdGenerator;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Type\EnumType\ServerEnum;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\JobProcess;
+use Hal\Core\Entity\Release;
+use Hal\Core\Entity\User;
+use Hal\Core\Repository\TargetRepository;
 
 class PushValidator
 {
-    const ERR_NO_DEPS = 'You must select at least one deployment.';
+    const ERR_NO_DEPS = 'You must select at least one target.';
     const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';
 
-    const ERR_BAD_DEP = 'One or more of the selected deployments is invalid.';
-    const ERR_IS_PENDING = 'Push to "%s" cannot be created, deployment already in progress.';
+    const ERR_BAD_DEP = 'One or more of the selected targets is invalid.';
+    const ERR_IS_PENDING = 'Release to "%s" cannot be created, release already in progress.';
     const ERR_MISSING_CREDENTIALS = 'Attempted to initiate push to "%s", but credentials are missing.';
 
     /**
-     * @var DeploymentRepository
+     * @var TargetRepository
      */
-    private $deploymentRepo;
+    private $targetRepository;
 
     /**
      * @var PermissionService
      */
     private $permissions;
-
-    /**
-     * @var JobIdGenerator
-     */
-    private $unique;
-
-    /**
-     * @var callable
-     */
-    private $random;
 
     /**
      * @var array
@@ -57,20 +45,14 @@ class PushValidator
     /**
      * @param EntityManagerInterface $em
      * @param PermissionService $permissions
-     * @param JobIdGenerator $unique
-     * @param callable $random
      */
     public function __construct(
         EntityManagerInterface $em,
-        PermissionService $permissions,
-        JobIdGenerator $unique,
-        callable $random
+        PermissionService $permissions
     ) {
         $this->permissions = $permissions;
-        $this->unique = $unique;
-        $this->random = $random;
 
-        $this->deploymentRepo = $em->getRepository(Deployment::class);
+        $this->targetRepository = $em->getRepository(Target::class);
 
         $this->errors = [];
     }
@@ -82,41 +64,41 @@ class PushValidator
      * @param User $user
      * @param Environment $environment
      * @param Build $build
-     * @param string[] $deployments
+     * @param string[] $targets
      *
-     * @return Pushes[]|null
+     * @return Release[]|null
      */
-    public function isValid(Application $application, User $user, Environment $environment, Build $build, $deployments)
+    public function isValid(Application $application, User $user, Environment $environment, Build $build, $targets)
     {
-        $deployments = $this->isDeploymentsValid($application, $user, $environment, $build, $deployments);
-        if (!$deployments) {
+        $targets = $this->isTargetsValid($application, $user, $environment, $build, $targets);
+        if (!$targets) {
             return null;
         }
 
         // Ensure no deployment has an active push (Waiting, Pushing)
-        foreach ($deployments as $deployment) {
-            $push = $deployment->push();
-            if ($push && $push->isPending()) {
-                $this->errors[] = sprintf(self::ERR_IS_PENDING, $deployment->formatPretty());
+        /** @var Target $target */
+        foreach ($targets as $target) {
+            $release = $target->release();
+            if ($release && $release->inProgress()) {
+                $this->errors[] = sprintf(self::ERR_IS_PENDING, $target->format());
             }
         }
 
         if ($this->errors) return null;
 
-        $pushes = [];
-        foreach ($deployments as $deployment) {
-            $id = $this->unique->generatePushId();
+        $releases = [];
+        foreach ($targets as $target) {
 
-            $push = (new Push($id))
+            $release = (new Release())
                 ->withUser($user)
                 ->withBuild($build)
-                ->withDeployment($deployment)
+                ->withTarget($target)
                 ->withApplication($application);
 
-            $pushes[] = $push;
+            $releases[] = $release;
         }
 
-        return $pushes;
+        return $releases;
     }
 
     /**
@@ -126,27 +108,26 @@ class PushValidator
      * @param User $user
      * @param Environment $environment
      * @param Build $build
-     * @param string[] $deployments
+     * @param string[] $targets
      *
-     * @return Process[]|null
+     * @return JobProcess[]|null
      */
-    public function isProcessValid(Application $application, User $user, Environment $environment, Build $build, $deployments)
+    public function isProcessValid(Application $application, User $user, Environment $environment, Build $build, $targets)
     {
-        $deployments = $this->isDeploymentsValid($application, $user, $environment, $build, $deployments);
-        if (!$deployments) {
+        $targets = $this->isTargetsValid($application, $user, $environment, $build, $targets);
+        if (!$targets) {
             return null;
         }
 
         $processes = [];
-        foreach ($deployments as $deployment) {
-            $id = call_user_func($this->random);
+        foreach ($targets as $target) {
 
-            $process = (new Process($id))
+            $process = (new JobProcess())
                 ->withUser($user)
                 ->withParent($build)
                 ->withChildType('Push')
-                ->withContext([
-                    'deployment' => $deployment->id()
+                ->withParameters([
+                    'target' => $target->id()
                 ]);
 
             $processes[] = $process;
@@ -160,21 +141,21 @@ class PushValidator
      * @param User $user
      * @param Environment $environment
      * @param Build $build
-     * @param string[] $deployments
+     * @param string[] $targets
      *
-     * @return Deployments[]|null
+     * @return Target[]|null
      */
-    private function isDeploymentsValid(
+    private function isTargetsValid(
         Application $application,
         User $user,
         Environment $environment,
         Build $build,
-        $deployments
+        $targets
     ) {
         $this->errors = [];
 
         // Check for invalid requested deployments
-        if (!is_array($deployments) || count($deployments) == 0) {
+        if (!is_array($targets) || count($targets) == 0) {
             $this->errors[] = self::ERR_NO_DEPS;
         }
 
@@ -189,35 +170,36 @@ class PushValidator
         if ($this->errors) return;
 
         // Pull available deploys from DB for this env
-        $availableDeployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($application, $environment);
-        if (!$availableDeployments) {
+        $availableTargets = $this->targetRepository->getByApplicationAndEnvironment($application, $environment);
+        if (!$availableTargets) {
             $this->errors[] = self::ERR_NO_DEPS;
         }
 
         if ($this->errors) return;
 
         // Make sure requested deploys are verified against ones from DB
-        $deploymentIDs = array_fill_keys($deployments, true);
-        $selectedDeployments = [];
-        foreach ($availableDeployments as $deployment) {
-            if (isset($deploymentIDs[(string) $deployment->id()])) {
-                $selectedDeployments[] = $deployment;
+        $targetIDs = array_fill_keys($targets, true);
+        $selectedReleases = [];
+        foreach ($availableTargets as $target) {
+            if (isset($targetIDs[(string)$target->id()])) {
+                $selectedReleases[] = $target;
 
                 // Error if AWS deployment has no credential
-                if ($deployment->server()->isAWS() && !$deployment->credential()) {
-                    $this->errors[] = sprintf(self::ERR_MISSING_CREDENTIALS, $deployment->formatPretty());
+                if ($target->group()->isAWS() && !$target->credential()) {
+                    $this->errors[] = sprintf(self::ERR_MISSING_CREDENTIALS, $target->format());
                 }
             }
         }
 
-        if (count($selectedDeployments) !== count($deployments)) {
+        if (count($selectedReleases) !== count($targets)) {
             $this->errors[] = self::ERR_BAD_DEP;
         }
 
         if ($this->errors) return;
 
-        return $selectedDeployments;
+        return $selectedReleases;
     }
+
 
     /**
      * @return array

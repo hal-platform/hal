@@ -13,10 +13,10 @@ use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\EventLogService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Process;
-use QL\Hal\Core\Entity\Push;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\JobProcess;
+use Hal\Core\Entity\Release;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -37,9 +37,9 @@ class BuildController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $processRepo;
-    private $pushRepo;
-    private $deploymentRepo;
+    private $processRepository;
+    private $releaseRepository;
+    private $targetRepository;
 
     /**
      * @param TemplateInterface $template
@@ -51,9 +51,9 @@ class BuildController implements ControllerInterface
         $this->template = $template;
         $this->logService = $logService;
 
-        $this->processRepo = $em->getRepository(Process::class);
-        $this->pushRepo = $em->getRepository(Push::class);
-        $this->deploymentRepo = $em->getRepository(Deployment::class);
+        $this->processRepository = $em->getRepository(JobProcess::class);
+        $this->releaseRepository = $em->getRepository(Release::class);
+        $this->targetRepository = $em->getRepository(Target::class);
     }
 
     /**
@@ -63,7 +63,7 @@ class BuildController implements ControllerInterface
     {
         $build = $request->getAttribute(Build::class);
 
-        $processes = $this->processRepo->findBy([
+        $processes = $this->processRepository->findBy([
             'parent' => $build->id()
         ]);
 
@@ -83,11 +83,11 @@ class BuildController implements ControllerInterface
     }
 
     /**
-     * @param Process $child
+     * @param JobProcess $child
      *
      * @return array
      */
-    private function formatChild(Process $process)
+    private function formatChild(JobProcess $process)
     {
         $meta = [
             'id' => $process->id(),
@@ -96,7 +96,7 @@ class BuildController implements ControllerInterface
         ];
 
         // For now, just format for autopushes, since thats the only type of process available in v1 of this feature
-        if ($process->childType() === 'Push') {
+        if ($process->childType() === 'Release') {
             $meta += $this->getProcessResources($process);
         }
 
@@ -104,15 +104,15 @@ class BuildController implements ControllerInterface
     }
 
     /**
-     * @param Process $process
+     * @param JobProcess $process
      *
      * @return array
      */
-    private function getProcessResources(Process $process)
+    private function getProcessResources(JobProcess $process)
     {
-        $push = $process->child() ? $this->pushRepo->find($process->child()) : null;
+        $push = $process->childID() ? $this->releaseRepository->find($process->childID()) : null;
 
-        $context = $process->context();
+        $context = $process->parameters();
 
         $deployment = null;
 
@@ -124,7 +124,7 @@ class BuildController implements ControllerInterface
         // Otherwise, try a lookup of the deployment from context
         // This is used if the child hasn't launched yet (or was aborted).
         } elseif (isset($context['deployment'])) {
-            $deployment = $this->deploymentRepo->find($context['deployment']);
+            $deployment = $this->targetRepository->find($context['deployment']);
         }
 
         return [

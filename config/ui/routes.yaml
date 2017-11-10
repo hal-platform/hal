@@ -204,6 +204,11 @@ parameters:
                 # are these application routes or build/push routes?
                 # It's nice to be able to use route groups to nest common url prefixes.
 
+                build.start:
+                    method: ['GET', 'POST']
+                    route: '/build'
+                    stack: ['middleware.signed_in', 'middleware.require_entity', 'build.start.middleware', 'build.start.page']
+
                 build.history.page1:
                     method: 'GET'
                     route: '/builds'

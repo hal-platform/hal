@@ -16,12 +16,12 @@ use Hal\UI\Service\StickyEnvironmentService;
 use Hal\UI\Utility\ReleaseSortingTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\Repository\DeploymentRepository;
-use QL\Hal\Core\Repository\EnvironmentRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\User;
+use Hal\Core\Repository\TargetRepository;
+use Hal\Core\Repository\EnvironmentRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -39,12 +39,12 @@ class StartBuildController implements ControllerInterface
     /**
      * @var EnvironmentRepository
      */
-    private $envRepo;
+    private $environmentRepository;
 
     /**
-     * @var DeploymentRepository
+     * @var TargetRepository
      */
-    private $targetRepo;
+    private $targetRepository;
 
     /**
      * @var GitHubService
@@ -80,8 +80,8 @@ class StartBuildController implements ControllerInterface
         $this->permissionService = $permissionService;
         $this->stickyService = $stickyService;
 
-        $this->envRepo = $em->getRepository(Environment::class);
-        $this->targetRepo = $em->getRepository(Deployment::class);
+        $this->environmentRepository = $em->getRepository(Environment::class);
+        $this->targetRepository = $em->getRepository(Target::class);
     }
 
     /**
@@ -146,11 +146,11 @@ class StartBuildController implements ControllerInterface
      */
     private function getBuildableEnvironments(Application $application)
     {
-        $envs = $this->envRepo->getBuildableEnvironmentsByApplication($application);
+        $envs = $this->environmentRepository->getBuildableEnvironmentsByApplication($application);
 
         // if empty, throw them a bone with "test"
         if (!$envs) {
-            $envs = $this->envRepo->findBy(['name' => 'test']);
+            $envs = $this->environmentRepository->findBy(['name' => 'test']);
         }
 
         return $envs;
@@ -165,7 +165,10 @@ class StartBuildController implements ControllerInterface
      */
     private function getBranches(Application $application)
     {
-        $branches = $this->github->branches($application->githubOwner(), $application->githubRepo());
+        $branches = $this->github->branches(
+            $application->gitHub()->owner(),
+            $application->github()->repository()
+        );
 
         // sort master to top, alpha otherwise
         usort($branches, function ($a, $b) {
@@ -192,7 +195,10 @@ class StartBuildController implements ControllerInterface
      */
     private function getTags(Application $application)
     {
-        $tags = $this->github->tags($application->githubOwner(), $application->githubRepo());
+        $tags = $this->github->tags(
+            $application->github()->owner(),
+            $application->github()->repository()
+        );
 
         usort($tags, $this->releaseSorter());
 
@@ -208,8 +214,8 @@ class StartBuildController implements ControllerInterface
      */
     private function getPullRequests(Application $application, $open = true)
     {
-        $owner = $application->githubOwner();
-        $repo = $application->githubRepo();
+        $owner = $application->gitHub()->owner();
+        $repo = $application->gitHub()->repository();
 
         if ($open) {
             $pr = $this->github->openPullRequests($owner, $repo);
@@ -227,7 +233,7 @@ class StartBuildController implements ControllerInterface
      */
     private function sorterPullRequests(User $user)
     {
-        $username = $user->handle();
+        $username = $user->username();
 
         return function ($a, $b) use ($username) {
             $prA = (int) $a['number'];
@@ -260,10 +266,11 @@ class StartBuildController implements ControllerInterface
      */
     public function getTargetStatusesForEnvironment(Application $application, User $user, $env)
     {
+        $environment = '';
         if ($env instanceof Environment) {
             $environment = $env;
         } elseif ($env) {
-            $environment = $this->envRepo->find($env);
+            $environment = $this->environmentRepository->find($env);
         }
 
         if (!$environment) {
@@ -273,7 +280,7 @@ class StartBuildController implements ControllerInterface
             ];
         }
 
-        $available = $this->targetRepo->getDeploymentsByApplicationEnvironment($application, $environment);
+        $available = $this->targetRepository->getByApplicationAndEnvironment($application, $environment);
 
         $canPush = $this->permissionService->canUserPush($user, $application, $environment);
 

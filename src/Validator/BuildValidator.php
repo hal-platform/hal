@@ -11,11 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\Service\PermissionService;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Entity\User;
-use QL\Hal\Core\JobIdGenerator;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Entity\User;
 
 class BuildValidator
 {
@@ -53,11 +52,6 @@ class BuildValidator
     private $permissions;
 
     /**
-     * @var JobIdGenerator
-     */
-    private $unique;
-
-    /**
      * @var array
      */
     private $errors;
@@ -66,20 +60,17 @@ class BuildValidator
      * @param EntityManagerInterface $em
      * @param GitHubService $github
      * @param PermissionService $permissions
-     * @param JobIdGenerator $unique
      */
     public function __construct(
         EntityManagerInterface $em,
         GitHubService $github,
-        PermissionService $permissions,
-        JobIdGenerator $unique
+        PermissionService $permissions
     ) {
         $this->buildRepo = $em->getRepository(Build::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
 
         $this->github = $github;
         $this->permissions = $permissions;
-        $this->unique = $unique;
 
         $this->errors = [];
     }
@@ -143,8 +134,7 @@ class BuildValidator
             $reference = $commit;
         }
 
-        $id = $this->unique->generateBuildId();
-        $build = (new Build($id))
+        $build = (new Build())
             ->withStatus('Waiting')
             ->withBranch($reference)
             ->withCommit($commit)

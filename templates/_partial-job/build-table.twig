@@ -1,4 +1,6 @@
 {% import "macros.twig" as macros %}
+{% import "macros.git.twig" as git_macros %}
+
 
 <table class="table--spacing-medium">
     <thead>
@@ -18,15 +20,15 @@
             <td>{{ macros.job_status_prefix(build, true) }}</td>
             <td>{{ build.environment.name }}</td>
             <td>
-                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                {{ macros.gitref(build, false, isCurrent, true) }}
+                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+                {{ git_macros.gitref(build, false, isCurrent, true) }}
             </td>
             <td>
-                {{ macros.gitcommit(build) }}
+                {{ git_macros.gitcommit(build) }}
             </td>
             <td>
                 {% if build.user %}
-                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.handle }}</a>
+                    <a href="{{ uriFor('user', {'user': build.user.id}) }}">{{ build.user.username }}</a>
                 {% else %}
                     Unknown
                 {% endif %}
@@ -38,13 +40,14 @@
             {% set canPushNow = false %}
 
             {% if is_pushable %}
-                {% if canUserPush(current_user, build.application, build.environment) %}
-                    {% if build.status in ['Waiting', 'Building'] %}
+                {#TODO::fix permissons#}
+                {#{% if canUserPush(current_user, build.application, build.environment) %}#}
+                    {% if build.status in ['pending', 'running'] %}
                         {% set canPushSoon = true %}
-                    {% elseif build.status in ['Success'] %}
+                    {% elseif build.status in ['success'] %}
                         {% set canPushNow = true %}
                     {% endif %}
-                {% endif %}
+                {#{% endif %}#}
             {% endif %}
 
             <td class="tr{{ canPushSoon ? ' js-build-push' : '' }}">
