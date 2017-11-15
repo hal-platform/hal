@@ -10,18 +10,18 @@ namespace Hal\UI\API\Normalizer;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
-use QL\Hal\Core\Entity\Group;
+use Hal\Core\Entity\Organization;
 
 class OrganizationNormalizer implements ResourceNormalizerInterface
 {
     /**
-     * @param Group $input
+     * @param Organization $input
      *
      * @return mixed
      */
     public function normalize($input)
     {
-        if (!$input instanceof Group) {
+        if (!$input instanceof Organization) {
             return null;
         }
 
@@ -29,41 +29,41 @@ class OrganizationNormalizer implements ResourceNormalizerInterface
     }
 
     /**
-     * @param Group|null $group
+     * @param Organization|null $organization
      *
      * @return Hyperlink|null
      */
-    public function link($group): ?Hyperlink
+    public function link($organization): ?Hyperlink
     {
-        if (!$group instanceof Group) {
+        if (!$organization instanceof Organization) {
             return null;
         }
 
         return new Hyperlink(
-            ['api.organization', ['organization' => $group->id()]],
-            $group->key()
+            ['api.organization', ['organization' => $organization->id()]],
+            $organization->identifier()
         );
     }
 
     /**
-     * @param Group|null $group
+     * @param Organization|null $organization
      *
      * @return HypermediaResource|null
      */
-    public function resource($group, array $embed = []): ?HypermediaResource
+    public function resource($organization, array $embed = []): ?HypermediaResource
     {
-        if (!$group instanceof Group) {
+        if (!$organization instanceof Organization) {
             return null;
         }
 
         $data = [
-            'id' => $group->id(),
-            'key' => $group->key(),
-            'name' => $group->name()
+            'id' => $organization->id(),
+            'key' => $organization->identifier(),
+            'name' => $organization->name()
         ];
 
         $links = [
-            'self' => $this->link($group)
+            'self' => $this->link($organization)
         ];
 
         $resource = new HypermediaResource($data, $links);

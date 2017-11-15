@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API\Application;
 
-use Hal\UI\Controllers\APITrait;
+use Hal\Core\Entity\Application;
 use Hal\UI\API\Normalizer\ApplicationNormalizer;
 use Hal\UI\API\ResponseFormatter;
+use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
 use QL\Panthor\ControllerInterface;
 
 class ApplicationController implements ControllerInterface

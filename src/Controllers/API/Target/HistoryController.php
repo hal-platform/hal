@@ -8,16 +8,15 @@
 namespace Hal\UI\Controllers\API\Target;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Target;
+use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\PushRepository;
-use QL\Hal\Core\Type\EnumType\PushStatusEnum;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
@@ -36,9 +35,9 @@ class HistoryController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var PushRepository
+     * @var ReleaseRepository
      */
-    private $pushRepo;
+    private $releaseRepository;
 
     /**
      * @var ProblemRendererInterface
@@ -56,7 +55,7 @@ class HistoryController implements ControllerInterface
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
-        $this->pushRepo = $em->getRepository(Push::class);
+        $this->releaseRepository = $em->getRepository(Release::class);
         $this->problem = $problem;
     }
 
@@ -65,34 +64,34 @@ class HistoryController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $target = $request->getAttribute(Deployment::class);
+        $target = $request->getAttribute(Target::class);
 
         $page = $this->getCurrentPage($request);
         if ($page === null) {
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->pushRepo->getByDeployment($target, self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->releaseRepository->getByTarget($target, self::MAX_PER_PAGE, ($page - 1));
         $total = count($pagination);
 
-        $pushes = [];
+        $releases = [];
         foreach ($pagination as $push) {
-            $pushes[] = $push;
+            $releases[] = $push;
         }
 
         $links = $this->buildPaginationLinks('api.target.history.paged', $page, $total, self::MAX_PER_PAGE, ['target' => $target->id()]);
 
         $data = [
-            'count' => count($pushes),
+            'count' => count($releases),
             'total' => $total,
             'page' => $page
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'pushes' => $pushes
+            'releases' => $releases
         ]);
 
-        $status = (count($pushes) > 0) ? 200 : 404;
+        $status = (count($releases) > 0) ? 200 : 404;
         $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);

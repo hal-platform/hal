@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Push;
+namespace Hal\UI\Controllers\API\Release;
 
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
@@ -13,7 +13,7 @@ use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\EventLogService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Push;
+use Hal\Core\Entity\Release;
 use QL\Panthor\ControllerInterface;
 
 class EventsController implements ControllerInterface
@@ -45,15 +45,15 @@ class EventsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $push = $request->getAttribute(Push::class);
-        $events = $this->logService->getLogs($push);
+        $release = $request->getAttribute(Release::class);
+        $events = $this->logService->getLogs($release);
 
         $data = [
             'count' => count($events)
         ];
 
         $resource = new HypermediaResource($data, [], [
-            'push' => $push,
+            'push' => $release,
             'events' => $events
         ]);
 

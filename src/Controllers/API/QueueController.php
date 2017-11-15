@@ -8,7 +8,7 @@
 namespace Hal\UI\Controllers\API;
 
 use Hal\UI\API\Normalizer\BuildNormalizer;
-use Hal\UI\API\Normalizer\PushNormalizer;
+use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
@@ -16,8 +16,8 @@ use Hal\UI\Controllers\APITrait;
 use Hal\UI\Service\JobQueueService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Push;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Release;
 use QL\MCP\Common\Time\Clock;
 use QL\MCP\Common\Time\TimePoint;
 use QL\Panthor\ControllerInterface;
@@ -48,9 +48,9 @@ class QueueController implements ControllerInterface
     private $buildNormalizer;
 
     /**
-     * @var PushNormalizer
+     * @var ReleaseNormalizer
      */
-    private $pushNormalizer;
+    private $releaseNormalizer;
 
     /**
      * @var JobQueueService
@@ -70,7 +70,7 @@ class QueueController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param BuildNormalizer $buildNormalizer
-     * @param PushNormalizer $pushNormalizer
+     * @param ReleaseNormalizer $releaseNormalizer
      * @param JobQueueService $queue
      * @param ProblemRendererInterface $problemRenderer
      * @param Clock $clock
@@ -78,14 +78,14 @@ class QueueController implements ControllerInterface
     public function __construct(
         ResponseFormatter $formatter,
         BuildNormalizer $buildNormalizer,
-        PushNormalizer $pushNormalizer,
+        ReleaseNormalizer $releaseNormalizer,
         JobQueueService $queue,
         ProblemRendererInterface $problemRenderer,
         Clock $clock
     ) {
         $this->formatter = $formatter;
         $this->buildNormalizer = $buildNormalizer;
-        $this->pushNormalizer = $pushNormalizer;
+        $this->releaseNormalizer = $releaseNormalizer;
 
         $this->queue = $queue;
         $this->problemRenderer = $problemRenderer;
@@ -139,15 +139,15 @@ class QueueController implements ControllerInterface
     }
 
     /**
-     * @param Build[]|Push[] $queue
+     * @param Build[]|Release[] $queue
      *
      * @return array
      */
     private function formatQueue(array $queue)
     {
         return array_map(function ($item) {
-            if ($item instanceof Push) {
-                return $this->pushNormalizer->resource($item, ['application', 'build', 'target']);
+            if ($item instanceof Release) {
+                return $this->releaseNormalizer->resource($item, ['application', 'build', 'target']);
             }
 
             if ($item instanceof Build) {

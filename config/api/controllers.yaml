@@ -16,7 +16,7 @@ services:
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
-            - '@api_normalizer.push'
+            - '@api_normalizer.release'
             - '@job_queue'
             - '@problem.renderer'
             - '@clock'
@@ -26,7 +26,7 @@ services:
         arguments:
             - '@api.response_formatter'
             - '@api_normalizer.build'
-            - '@api_normalizer.push'
+            - '@api_normalizer.release'
             - '@doctrine.em'
             - '@problem.renderer'
 
@@ -64,16 +64,16 @@ services:
     # SERVER CONTROLLERS
     ####################################################################################################################
 
-    servers.api:
-        class: 'Hal\UI\Controllers\API\Server\ServersController'
+    groups.api:
+        class: 'Hal\UI\Controllers\API\Group\GroupsController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
             - '@problem.renderer'
 
-    server.api:
-        class: 'Hal\UI\Controllers\API\Server\ServerController'
-        arguments: ['@api.response_formatter', '@api_normalizer.server']
+    group.api:
+        class: 'Hal\UI\Controllers\API\Group\GroupController'
+        arguments: ['@api.response_formatter', '@api_normalizer.group']
 
 
     ####################################################################################################################
@@ -99,7 +99,7 @@ services:
         class: 'Hal\UI\Controllers\API\Target\CurrentReleaseController'
         arguments:
             - '@api.response_formatter'
-            - '@api_normalizer.push'
+            - '@api_normalizer.release'
             - '@problem.renderer'
 
     ####################################################################################################################
@@ -125,16 +125,16 @@ services:
     # PUSH CONTROLLERS
     ####################################################################################################################
 
-    push.api:
-        class: 'Hal\UI\Controllers\API\Push\PushController'
-        arguments: ['@api.response_formatter', '@api_normalizer.push']
+    release.api:
+        class: 'Hal\UI\Controllers\API\Release\ReleaseController'
+        arguments: ['@api.response_formatter', '@api_normalizer.release']
 
-    push.events.api:
-        class: 'Hal\UI\Controllers\API\Push\EventsController'
+    release.events.api:
+        class: 'Hal\UI\Controllers\API\Release\EventsController'
         arguments: ['@api.response_formatter', '@service.event_logs']
 
-    pushes.api:
-        class: 'Hal\UI\Controllers\API\Push\PushesController'
+    releases.api:
+        class: 'Hal\UI\Controllers\API\Release\ReleasesController'
         arguments:
             - '@api.response_formatter'
             - '@doctrine.em'
