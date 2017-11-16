@@ -383,12 +383,12 @@ parameters:
         # PUSH ROUTES
         ################################################################################################################
 
-        push:
+        release:
             method: 'GET'
-            route: '/pushes/{push:%r.release%}'
+            route: '/releases/{release:%r.release%}'
             stack: ['middleware.signed_in', 'middleware.require_entity', 'push.page']
 
-        push.start:
+        release.start:
             method: ['GET', 'POST']
             route: '/builds/{build:%r.build%}/push'
             stack: ['middleware.signed_in', 'middleware.require_entity', 'push.start.middleware', 'push.start.page']

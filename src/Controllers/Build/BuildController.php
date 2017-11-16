@@ -64,7 +64,7 @@ class BuildController implements ControllerInterface
         $build = $request->getAttribute(Build::class);
 
         $processes = $this->processRepository->findBy([
-            'parent' => $build->id()
+            'parentID' => $build->id()
         ]);
 
         // Queries in loops SUUUUUUCK
@@ -110,26 +110,26 @@ class BuildController implements ControllerInterface
      */
     private function getProcessResources(JobProcess $process)
     {
-        $push = $process->childID() ? $this->releaseRepository->find($process->childID()) : null;
+        $release = $process->childID() ? $this->releaseRepository->find($process->childID()) : null;
 
         $context = $process->parameters();
 
-        $deployment = null;
+        $target = null;
 
         // Ugh, terrible stuff just to find target deployment
         // If a push is found, grab the deployment from the push
-        if ($push) {
-            $deployment = $push->deployment();
+        if ($release) {
+            $target = $release->deployment();
 
         // Otherwise, try a lookup of the deployment from context
         // This is used if the child hasn't launched yet (or was aborted).
-        } elseif (isset($context['deployment'])) {
-            $deployment = $this->targetRepository->find($context['deployment']);
+        } elseif (isset($context['target'])) {
+            $target = $this->targetRepository->find($context['target']);
         }
 
         return [
-            'push' => $push,
-            'deployment' => $deployment
+            'release' => $release,
+            'target' => $target
         ];
     }
 }

@@ -14,21 +14,21 @@
     <tbody>
     {% for push in pushes %}
         <tr>
-            <td><a href="{{ uriFor('push', {'push': push.id}) }}">{{ push.id|formatPushId }}</a></td>
+            <td><a href="{{ uriFor('release', {'release': release.id}) }}">{{ release.id|formatPushId }}</a></td>
             <td>
-                {{ macros.job_status(push) }}
+                {{ macros.job_status(release) }}
             </td>
             <td>
-                {% if push.deployment %}
-                    {{ push.deployment.server.environment.name }} → {{ push.deployment.formatPretty(true) }}
+                {% if release.target %}
+                    {{ release.target.group.environment.name }} → {{ release.target.format(true) }}
                 {% else %}
                     Unknown
                 {% endif %}
             </td>
-            <td>Build <a href="{{ uriFor('build', {'build': push.build.id}) }}">{{ push.build.id|formatBuildId }}</a></td>
+            <td>Build <a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|formatBuildId }}</a></td>
             <td>
-                {% if push.user %}
-                    <a href="{{ uriFor('user', {'user': push.user.id}) }}">{{ push.user.handle }}</a>
+                {% if release.user %}
+                    <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.username }}</a>
                 {% else %}
                     Unknown
                 {% endif %}

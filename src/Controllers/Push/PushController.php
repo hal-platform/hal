@@ -7,11 +7,11 @@
 
 namespace Hal\UI\Controllers\Push;
 
+use Hal\Core\Entity\Release;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Service\EventLogService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Push;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
@@ -25,9 +25,9 @@ class PushController implements ControllerInterface
     private $template;
 
     /**
-     * @var Push
+     * @var Release
      */
-    private $push;
+    private $release;
 
     /**
      * @var EventLogService
@@ -49,7 +49,7 @@ class PushController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $release = $request->getAttribute(Push::class);
+        $release = $request->getAttribute(Release::class);
 
         // Resolves logs from redis (for in progress jobs) or db (after completed)
         $logs = $this->logService->getLogs($release);

@@ -1,11 +1,14 @@
 {% macro formErrors(errors) %}
-
     {% if errors %}
         <ul class="error-list">
             {% for field_name, field_errors in errors %}
-                {% for error in field_errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
+                {% if field_errors is iterable %}
+                    {% for error in field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% else %}
+                    <li>{{ field_errors }}</li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% endif %}

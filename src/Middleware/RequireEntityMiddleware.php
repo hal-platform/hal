@@ -11,24 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hal\Core\Entity\{
-    Application,
-    // AuditEvent,
-    Build,
-    Credential,
-    EncryptedProperty,
-    Environment,
-    // Group,
-    JobEvent,
-    // JobMeta,
-    // JobProcess,
-    Organization,
-    Release,
-    // SystemSetting,
-    Target,
-    User,
-    UserPermission,
-    // UserSettings,
-    UserToken
+    Application, Build, Credential, EncryptedProperty, Environment, Group, JobEvent, Organization, Release, Target, User, UserPermission, UserToken
 };
 use QL\Panthor\MiddlewareInterface;
 use Slim\Route;
@@ -56,6 +39,7 @@ class RequireEntityMiddleware implements MiddlewareInterface
         'application' => Application::class,
 
         'target' => Target::class,
+        'group' => Group::class,
         'encrypted' => EncryptedProperty::class,
 
         'environment' => Environment::class,

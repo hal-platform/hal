@@ -9,6 +9,7 @@ namespace Hal\UI\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Type\JobStatusEnum;
 use Hal\UI\Service\GitHubService;
 use Hal\UI\Service\PermissionService;
 use Hal\Core\Entity\Application;
@@ -117,13 +118,14 @@ class BuildValidator
         if ($this->errors) return;
 
         // no permission
+        //TODO::Fix when UserAuthorizations is figure out
         if (!$this->permissions->canUserBuild($user, $application)) {
             $this->errors[] = self::ERR_NO_PERMISSION;
         }
 
         if ($this->errors) return;
 
-        if (!$ref = $this->github->resolve($application->githubOwner(), $application->githubRepo(), $reference)) {
+        if (!$ref = $this->github->resolve($application->github()->owner(), $application->github()->repository(), $reference)) {
             $this->errors[] = self::ERR_UNKNOWN_REF;
         }
 
@@ -135,8 +137,8 @@ class BuildValidator
         }
 
         $build = (new Build())
-            ->withStatus('Waiting')
-            ->withBranch($reference)
+            ->withStatus(JobStatusEnum::TYPE_PENDING)
+            ->withReference($reference)
             ->withCommit($commit)
 
             ->withUser($user)

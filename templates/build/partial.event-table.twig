@@ -12,7 +12,7 @@
     </thead>
 
     {% for log in logs %}
-        {% if canLoad and log.data %}
+        {% if canLoad and log.parameters %}
             <tbody data-log="{{ log.id }}" data-log-loadable="1">
         {% else %}
             <tbody data-log="{{ log.id }}">
@@ -20,13 +20,13 @@
             <tr class="{{ log.status == 'failure' ? 'event-log--error' : '' }}">
                 <td>
                     {% if log.status == 'success' %}
-                        {{ macros.status(log.event|formatEvent, 'success', 'tick') }}
+                        {{ macros.status(log.stage|formatEvent, 'success', 'tick') }}
 
                     {% elseif log.status == 'failure' %}
-                        {{ macros.status(log.event|formatEvent, 'error', 'spam') }}
+                        {{ macros.status(log.stage|formatEvent, 'error', 'spam') }}
 
                     {% else %}
-                        {{ macros.status(log.event|formatEvent, 'info', 'paragraph-justify-2') }}
+                        {{ macros.status(log.stage|formatEvent, 'info', 'paragraph-justify-2') }}
                     {% endif %}
                 </td>
                 <td>{{ log.created|html5date }}</td>

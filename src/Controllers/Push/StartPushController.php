@@ -9,16 +9,16 @@ namespace Hal\UI\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Release;
+use Hal\Core\Entity\Target;
+use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Push;
-use QL\Hal\Core\Repository\PushRepository;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 use QL\Panthor\Utility\URI;
@@ -39,13 +39,13 @@ class StartPushController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $buildRepo;
-    private $deploymentRepo;
+    private $buildRepository;
+    private $targetRepository;
 
     /**
-     * @var PushRepository
+     * @var ReleaseRepository
      */
-    private $pushRepo;
+    private $releaseRepository;
 
     /**
      * @var URI
@@ -64,9 +64,9 @@ class StartPushController implements ControllerInterface
     ) {
         $this->template = $template;
 
-        $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Push::class);
-        $this->deploymentRepo = $em->getRepository(Deployment::class);
+        $this->buildRepository = $em->getRepository(Build::class);
+        $this->releaseRepository = $em->getRepository(Release::class);
+        $this->targetRepository = $em->getRepository(Target::class);
 
         $this->uri = $uri;
     }
@@ -86,12 +86,12 @@ class StartPushController implements ControllerInterface
             return $this->withRedirectRoute($response, $this->uri, 'build', ['build' => $build->id()]);
         }
 
-        $deployments = $this->deploymentRepo->getDeploymentsByApplicationEnvironment($build->application(), $build->environment());
+        $targets = $this->targetRepository->getByApplicationAndEnvironment($build->application(), $build->environment());
         $statuses = [];
-        foreach ($deployments as $deployment) {
-            $push = $this->pushRepo->getMostRecentByDeployment($deployment);
+        foreach ($targets as $target) {
+            $release = $this->releaseRepository->getByTarget($target, 1)->getIterator()->current();
 
-            $statuses[] = ['deployment' => $deployment, 'push' => $push];
+            $statuses[] = ['target' => $target, 'release' => $release];
         }
 
         return $this->withTemplate($request, $response, $this->template, [

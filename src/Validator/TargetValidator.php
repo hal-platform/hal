@@ -29,7 +29,7 @@ class TargetValidator
     const ERR_INVALID_NAME = 'Name is invalid.';
 
     const ERR_INVALID_CREDENTIALS = 'Credential is invalid.';
-    const ERR_INVALID_SERVER = 'Server is invalid.';
+    const ERR_INVALID_SERVER = 'Group is invalid.';
 
     const ERR_INVALID_CD_APPLICATION = 'CD Application is invalid.';
     const ERR_INVALID_CD_GROUP = 'CD Group is invalid.';
@@ -290,7 +290,7 @@ class TargetValidator
     private function validateRequired($serverID)
     {
         if (!$serverID) {
-            $this->errors[] = sprintf(self::ERR_REQUIRED, 'Server');
+            $this->errors[] = sprintf(self::ERR_REQUIRED, 'Group');
         }
     }
 

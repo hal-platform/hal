@@ -9,16 +9,16 @@ namespace Hal\UI\Controllers\Push;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Release;
 use Hal\UI\Controllers\RedirectableControllerTrait;
 use Hal\UI\Controllers\SessionTrait;
 use Hal\UI\Controllers\TemplatedControllerTrait;
 use Hal\UI\Flash;
 use Hal\UI\Service\StickyEnvironmentService;
-use Hal\UI\Validator\PushValidator;
+use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Push;
 use QL\Panthor\MiddlewareInterface;
 use QL\Panthor\Utility\URI;
 
@@ -36,7 +36,7 @@ class DeployMiddleware implements MiddlewareInterface
     private $em;
 
     /**
-     * @var PushValidator
+     * @var ReleaseValidator
      */
     private $validator;
 
@@ -58,18 +58,18 @@ class DeployMiddleware implements MiddlewareInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param PushValidator $validator
+     * @param ReleaseValidator $validator
      * @param StickyEnvironmentService $stickyService
      * @param URI $uri
      */
     public function __construct(
         EntityManagerInterface $em,
-        PushValidator $validator,
+        ReleaseValidator $validator,
         StickyEnvironmentService $stickyService,
         URI $uri
     ) {
         $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Push::class);
+        $this->pushRepo = $em->getRepository(Release::class);
         $this->em = $em;
 
         $this->validator = $validator;
@@ -97,10 +97,10 @@ class DeployMiddleware implements MiddlewareInterface
         $environment = $build->environment();
 
         // passed separately, in case one day we support cross-env builds?
-        $pushes = $this->validator->isValid($application, $user, $environment, $build, $deployments);
+        $releases = $this->validator->isValid($application, $user, $environment, $build, $deployments);
 
         // Pass through to controller if errors
-        if (!$pushes) {
+        if (!$releases) {
             return $next(
                 $this->withContext($request, ['errors' => $this->validator->errors()]),
                 $response
@@ -108,13 +108,13 @@ class DeployMiddleware implements MiddlewareInterface
         }
 
         // commit pushes
-        foreach ($pushes as $push) {
+        foreach ($releases as $release) {
             // record pushes as active push on each deployment
-            $deployment = $push->deployment();
-            $deployment->withPush($push);
+            $target = $release->target();
+            $target->withRelease($release);
 
-            $this->em->persist($deployment);
-            $this->em->persist($push);
+            $this->em->persist($target);
+            $this->em->persist($release);
         }
 
         $this->em->flush();

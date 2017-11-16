@@ -28,7 +28,7 @@ class EditServerController implements ControllerInterface
     use SessionTrait;
     use TemplatedControllerTrait;
 
-    private const MSG_SUCCESS = 'Server updated successfully.';
+    private const MSG_SUCCESS = 'Group updated successfully.';
 
     /**
      * @var TemplateInterface

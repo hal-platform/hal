@@ -1,11 +1,12 @@
 {% extends 'base.twig' %}
 {% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
 {% import 'macros.form.twig' as form_macros %}
 {% import 'macros.start-deploy.twig' as deploy_macros %}
 
 {% set js_components = ["push.start"] %}
 
-{% set page_title = "Start Push : " ~ build.id %}
+{% set page_title = "Start Release : " ~ build.id %}
 
 {% block content %}
     <div class="nav--page">
@@ -28,11 +29,13 @@
         {{ form_macros.formErrors(errors) }}
 
         {% set pushables = 0 %}
-        {% set canUserPush = canUserPush(current_user, build.application, build.environment) %}
+        {#TODO::Permissions#}
+        {% set canUserPush = true %}
+        {#{% set canUserPush = canUserPush(current_user, build.application, build.environment) %}#}
 
         {% for status in statuses %}
-            {% set inProgress = status.latest.status in ['Waiting', 'Pushing'] %}
-            {% set needsCredentials = status.deployment.server.isAWS() and not status.deployment.credential %}
+            {% set inProgress = status.latest.status in ['pending', 'running', 'deploying'] %}
+            {% set needsCredentials = status.target.group.isAWS and not status.target.credential %}
 
             {% if canUserPush and not inProgress and not needsCredentials %}
                 {% set pushables = pushables + 1 %}
@@ -94,12 +97,12 @@
         <ul class="mbn">
             <li>Reference</li>
             <li>
-                {% set isCurrent = githubCommitIsCurrent(build.application.githubOwner, build.application.githubRepo, build.branch, build.commit) %}
-                {{ macros.gitref(build, false, isCurrent) }}
+                {% set isCurrent = githubCommitIsCurrent(build.application.github.owner, build.application.github.repository, build.reference, build.commit) %}
+                {{ git_macros.gitref(build, false, isCurrent) }}
             </li>
 
             <li>Commit</li>
-            <li>{{ macros.gitcommit(build) }}</li>
+            <li>{{ git_macros.gitcommit(build) }}</li>
         </ul>
     </div>
 {% endblock %}
@@ -118,7 +121,7 @@
 
             <tbody>
                 {% for status in statuses %}
-                    {{ deploy_macros.render_deployment_row(status.deployment, status.push, selected, canUserPush, true) }}
+                    {{ deploy_macros.render_deployment_row(status.target, status.release, selected, canUserPush, true) }}
                 {% endfor %}
             </tbody>
         </table>

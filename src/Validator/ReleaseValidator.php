@@ -18,7 +18,7 @@ use Hal\Core\Entity\Release;
 use Hal\Core\Entity\User;
 use Hal\Core\Repository\TargetRepository;
 
-class PushValidator
+class ReleaseValidator
 {
     const ERR_NO_DEPS = 'You must select at least one target.';
     const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';
@@ -125,7 +125,7 @@ class PushValidator
             $process = (new JobProcess())
                 ->withUser($user)
                 ->withParent($build)
-                ->withChildType('Push')
+                ->withChildType('Release')
                 ->withParameters([
                     'target' => $target->id()
                 ]);

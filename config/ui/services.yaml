@@ -41,7 +41,7 @@ services:
             - '@github'
             - '@permissions'
     push.start.validator:
-        class: 'Hal\UI\Validator\PushValidator'
+        class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
             - '@doctrine.em'
             - '@permissions'

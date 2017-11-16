@@ -121,6 +121,7 @@ services:
             - '@redis'
             - '@json'
             - '@clock'
+            - '@doctrine.em'
 
     job_queue:
         class: 'Hal\UI\Service\JobQueueService'
