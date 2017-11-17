@@ -20,6 +20,9 @@ use Hal\Core\Repository\TargetRepository;
 
 class ReleaseValidator
 {
+    use NewValidatorTrait;
+    use ValidatorErrorTrait;
+
     const ERR_NO_DEPS = 'You must select at least one target.';
     const ERR_NO_PERM = 'You attempted to push to "%s" but do not have permission.';
 
@@ -38,11 +41,6 @@ class ReleaseValidator
     private $permissions;
 
     /**
-     * @var array
-     */
-    private $errors;
-
-    /**
      * @param EntityManagerInterface $em
      * @param PermissionService $permissions
      */
@@ -53,8 +51,6 @@ class ReleaseValidator
         $this->permissions = $permissions;
 
         $this->targetRepository = $em->getRepository(Target::class);
-
-        $this->errors = [];
     }
 
     /**
@@ -80,11 +76,11 @@ class ReleaseValidator
         foreach ($targets as $target) {
             $release = $target->release();
             if ($release && $release->inProgress()) {
-                $this->errors[] = sprintf(self::ERR_IS_PENDING, $target->format());
+                $this->addError(sprintf(self::ERR_IS_PENDING, $target->format()));
             }
         }
 
-        if ($this->errors) return null;
+        if ($this->hasErrors()) return null;
 
         $releases = [];
         foreach ($targets as $target) {
@@ -152,30 +148,30 @@ class ReleaseValidator
         Build $build,
         $targets
     ) {
-        $this->errors = [];
+        $this->resetErrors();
 
         // Check for invalid requested deployments
         if (!is_array($targets) || count($targets) == 0) {
             $this->errors[] = self::ERR_NO_DEPS;
         }
 
-        if ($this->errors) return;
+        if ($this->hasErrors()) return;
 
         // Validate permission
         $canUserPush = $this->permissions->canUserPush($user, $application, $environment);
         if (!$canUserPush) {
-            $this->errors[] = sprintf(self::ERR_NO_PERM, $environment->name());
+            $this->addError(sprintf(self::ERR_NO_PERM, $environment->name()));
         }
 
-        if ($this->errors) return;
+        if ($this->hasErrors()) return;
 
         // Pull available deploys from DB for this env
         $availableTargets = $this->targetRepository->getByApplicationAndEnvironment($application, $environment);
         if (!$availableTargets) {
-            $this->errors[] = self::ERR_NO_DEPS;
+            $this->addError(self::ERR_NO_DEPS);
         }
 
-        if ($this->errors) return;
+        if ($this->hasErrors()) return;
 
         // Make sure requested deploys are verified against ones from DB
         $targetIDs = array_fill_keys($targets, true);
@@ -186,26 +182,17 @@ class ReleaseValidator
 
                 // Error if AWS deployment has no credential
                 if ($target->group()->isAWS() && !$target->credential()) {
-                    $this->errors[] = sprintf(self::ERR_MISSING_CREDENTIALS, $target->format());
+                    $this->addError(sprintf(self::ERR_MISSING_CREDENTIALS, $target->format()));
                 }
             }
         }
 
         if (count($selectedReleases) !== count($targets)) {
-            $this->errors[] = self::ERR_BAD_DEP;
+            $this->addError(self::ERR_BAD_DEP);
         }
 
-        if ($this->errors) return;
+        if ($this->hasErrors()) return;
 
         return $selectedReleases;
-    }
-
-
-    /**
-     * @return array
-     */
-    public function errors()
-    {
-        return $this->errors;
     }
 }
