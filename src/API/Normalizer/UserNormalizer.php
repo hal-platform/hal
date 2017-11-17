@@ -73,7 +73,7 @@ class UserNormalizer implements ResourceNormalizerInterface
             'username' => $user->username(),
             'name' => $user->name(),
             'email' => $user->email(),
-            'is_disabled' => !$user->isDisabled(),
+            'is_disabled' => $user->isDisabled(),
             'permissions' => [
                 //TODO::User Permissions
 //                'standard' => $perm->isPleb(),
