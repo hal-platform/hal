@@ -200,9 +200,9 @@ module.exports = {
     determineJobType: function(jobId) {
         var type = jobId.charAt(0).toUpperCase();
 
-        if (type === 'b') {
+        if (type === 'B') {
             return 'build';
-        } else if (type === 'r') {
+        } else if (type === 'R') {
             return 'release';
         }
     },
