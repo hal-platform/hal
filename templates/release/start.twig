@@ -10,7 +10,7 @@
 
 {% block content %}
     <div class="nav--page">
-        <h1>Start Push - <b>{{ build.application.name }}</b></h1>
+        <h1>Start Release - <b>{{ build.application.name }}</b></h1>
 
         <p class="nav--page__back">
             <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Back to Application Dashboard</a>
@@ -22,7 +22,7 @@
     {% if statuses %}
 
         <p>
-            This build can be pushed to the following servers. Please review the current status of each server below
+            This build can be released to the following servers. Please review the current status of each server below
             before selecting which servers you wish to deploy to.
         </p>
 
@@ -114,7 +114,7 @@
                 <tr>
                     <th>Deployment</th>
                     <th>Code Reference</th>
-                    <th>Last Pushed</th>
+                    <th>Last Released</th>
                     <th class="js-toggle-container mvn tr"></th>
                 </tr>
             </thead>
@@ -128,7 +128,7 @@
 
         <ul>
             {% if pushables %}
-                <li><input class="btn btn--action" type="submit" value="Push To Selected Servers" name="submit">
+                <li><input class="btn btn--action" type="submit" value="Release To Selected Servers" name="submit">
             {% endif %}
             <li><a class="btn" href="{{ uriFor('application.dashboard', {'application': build.application.id}) }}">Cancel</a></li>
         </ul>

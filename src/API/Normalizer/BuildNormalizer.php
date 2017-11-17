@@ -75,7 +75,7 @@ class BuildNormalizer implements ResourceNormalizerInterface
             'start' => $build->start(),
             'end' => $build->end(),
 
-            'reference' => $build->branch(),
+            'reference' => $build->reference(),
             'commit' => $build->commit()
         ];
 
@@ -97,8 +97,8 @@ class BuildNormalizer implements ResourceNormalizerInterface
      */
     private function buildLinks(Build $build)
     {
-        $ghOwner = $build->application()->githubOwner();
-        $ghRepo = $build->application()->githubRepo();
+        $ghOwner = $build->application()->github()->owner();
+        $ghRepo = $build->application()->github()->repository();
 
         $links = [
             'self' => $this->link($build),
@@ -112,7 +112,7 @@ class BuildNormalizer implements ResourceNormalizerInterface
                 'text/html'
             ),
             'github_reference_page' => new Hyperlink(
-                $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->branch()),
+                $this->urlBuilder->githubReferenceURL($ghOwner, $ghRepo, $build->reference()),
                 '',
                 'text/html'
             ),

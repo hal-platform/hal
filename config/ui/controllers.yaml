@@ -545,57 +545,57 @@ services:
         arguments:
             - '@doctrine.em'
             - '@build.start.validator'
-            - '@push.start.validator'
+            - '@release.start.validator'
             - '@sticky.environment'
             - '@uri'
 
     ####################################################################################################################
-    # PUSH CONTROLLERS
+    # Release CONTROLLERS
     ####################################################################################################################
 
-    pushes.page:
-        class: 'Hal\UI\Controllers\Push\PushesController'
+    releases.page:
+        class: 'Hal\UI\Controllers\Release\ReleasesController'
         arguments:
-            - '@pushes.twig'
+            - '@releases.twig'
             - '@doctrine.em'
             - '@notFoundHandler'
-    pushes.twig:
+    releases.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['push/pushes.twig']]]
+        calls: [['setTemplate', ['release/releases.twig']]]
 
-    push.page:
-        class: 'Hal\UI\Controllers\Push\PushController'
-        arguments: ['@push.twig', '@service.event_logs']
-    push.twig:
+    release.page:
+        class: 'Hal\UI\Controllers\Release\ReleaseController'
+        arguments: ['@release.twig', '@service.event_logs']
+    release.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['push/push.twig']]]
+        calls: [['setTemplate', ['release/release.twig']]]
 
-    push.start.page:
-        class: 'Hal\UI\Controllers\Push\StartPushController'
+    release.start.page:
+        class: 'Hal\UI\Controllers\Release\StartReleaseController'
         arguments:
-            - '@push.start.twig'
+            - '@release.start.twig'
             - '@doctrine.em'
             - '@uri'
-    push.start.twig:
+    release.start.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['push/start.twig']]]
-    push.start.middleware:
-        class: 'Hal\UI\Controllers\Push\DeployMiddleware'
+        calls: [['setTemplate', ['release/start.twig']]]
+    release.start.middleware:
+        class: 'Hal\UI\Controllers\Release\DeployMiddleware'
         arguments:
             - '@doctrine.em'
-            - '@push.start.validator'
+            - '@release.start.validator'
             - '@sticky.environment'
             - '@uri'
 
-    push.rollback.page:
-        class: 'Hal\UI\Controllers\Push\RollbackController'
+    release.rollback.page:
+        class: 'Hal\UI\Controllers\Release\RollbackController'
         arguments:
-            - '@push.rollback.twig'
+            - '@release.rollback.twig'
             - '@doctrine.em'
             - '@notFoundHandler'
-    push.rollback.twig:
+    release.rollback.twig:
         parent: 'twig.template'
-        calls: [['setTemplate', ['push/rollback.twig']]]
+        calls: [['setTemplate', ['release/rollback.twig']]]
 
     ####################################################################################################################
     # ADMIN CONTROLLERS

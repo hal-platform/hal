@@ -40,7 +40,7 @@ services:
             - '@doctrine.em'
             - '@github'
             - '@permissions'
-    push.start.validator:
+    release.start.validator:
         class: 'Hal\UI\Validator\ReleaseValidator'
         arguments:
             - '@doctrine.em'

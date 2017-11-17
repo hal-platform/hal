@@ -52,7 +52,7 @@
 
             <td class="tr{{ canPushSoon ? ' js-build-push' : '' }}">
                 {% if canPushNow %}
-                    <a class="btn btn--tiny" href="{{ uriFor('push.start', {'build': build.id}) }}">Push</a>
+                    <a class="btn btn--tiny" href="{{ uriFor('release.start', {'build': build.id}) }}">Release</a>
                 {% endif %}
             </td>
         </tr>

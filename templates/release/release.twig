@@ -1,0 +1,117 @@
+{% extends 'base.twig' %}
+{% import 'macros.twig' as macros %}
+{% import 'macros.git.twig' as git_macros %}
+{% set js_components = ["push.info"] %}
+
+{% set page_title = "Release : " ~ release.application.name %}
+
+{% block content %}
+
+    <div class="nav--page">
+        <h1>Release - <b>{{ release.application.name }}</b></h1>
+
+        <p class="nav--page__back">
+            <a class="btn btn--small btn--back" href="{{ uriFor('application.dashboard', {'application': release.application.id}) }}">Back to Application Dashboard</a>
+        </p>
+    </div>
+
+    <h2>Release Details</h2>
+
+    <div class="details-box">
+        <ul class="mbn">
+            <li>Id</li>
+            <li>{{ release.id }}</li>
+
+            <li>Short Id</li>
+            <li>{{ release.id|formatPushId }}</li>
+
+            <li>Target</li>
+            <li>
+                {% if release.target %}
+                    <a href="{{ uriFor('server', {'server': release.target.group.id}) }}">{{ release.target.format }}</a>
+                {% else %}
+                    Unknown
+                {% endif %}
+            </li>
+
+            <li>
+                Parameters
+            </li>
+            <li>
+                {{ release.target.formatParameters }}
+            </li>
+
+            {% if release.target and release.target.url %}
+                <li>URL</li>
+                <li>
+                    <a href="{{ release.target.url }}">{{ release.target.url }}</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <h2>Build Details</h2>
+
+    <div class="details-box">
+        <ul class="mbn">
+            <li>Build Id</li>
+            <li>
+                <a href="{{ uriFor('build', {'build': release.build.id}) }}">{{ release.build.id|formatBuildId }}</a>
+                {% if (release.build.status == 'removed') %}
+                    (Removed)
+                {% endif %}
+            </li>
+
+            <li>Application</li>
+            <li>
+                <a href="{{ uriFor('application', {'application': release.application.id}) }}">{{ release.application.name }}</a>
+            </li>
+
+            <li>Environment</li>
+            <li>{{ release.build.environment.name }}</li>
+
+            <li>Reference</li>
+            <li>
+                {% set isCurrent = githubCommitIsCurrent(release.application.github.owner, release.application.github.repository, release.build.reference, release.build.commit) %}
+                {{ git_macros.gitref(release.build, false, isCurrent) }}
+            </li>
+
+            <li>Commit</li>
+            <li>
+                {{ git_macros.gitcommit(release.build) }}
+            </li>
+        </ul>
+    </div>
+
+    <h2>Release Status</h2>
+
+    <div class="details-box">
+        <ul class="mbn">
+            <li>Status</li>
+            <li>{{ macros.job_status(release, true) }}</li>
+
+            <li>Time</li>
+            <li class="js-push-start">{{ release.start|html5date }}</li>
+
+            <li>Duration</li>
+            <li class="js-push-duration">
+                {% if release.start and release.end %}
+                    {{ html5duration(release.start, release.end) }}
+                {% endif %}
+            </li>
+
+            <li>User</li>
+            <li>
+                {% if release.user %}
+                    <a href="{{ uriFor('user', {'user': release.user.id}) }}">{{ release.user.name }}</a>
+                {% else %}
+                    Unknown
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+
+    <h2>release Events</h2>
+    {% include 'build/partial.event-table.twig' with {logs: logs, canLoad: release.isFinished } only %}
+
+{% endblock %}

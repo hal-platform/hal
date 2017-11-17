@@ -65,6 +65,11 @@ class JobQueueService
             ->read()
             ->modify('-60 minutes');
 
+        $runningStatuses = [
+            JobStatusEnum::TYPE_PENDING,
+            JobStatusEnum::TYPE_RUNNING
+        ];
+
         $buildCriteria = $this->getCriteria($runningStatuses, $before);
         $releaseCriteria = $this->getCriteria($runningStatuses, $before);
 

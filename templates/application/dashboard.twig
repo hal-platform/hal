@@ -27,7 +27,7 @@
         {{ block('page_buttons') }}
     {% else %}
         <h2>Server Status</h2>
-        <p>This application has no deployment targets configured and cannot be pushed.</p>
+        <p>This application has no deployment targets configured and cannot be released.</p>
 
         <h2>Recent Builds</h2>
         {% include '_partial-job/build-table.twig' with {'builds': builds, 'isPushable': isPushable } %}
@@ -73,7 +73,7 @@
         </div>
 
     {% else %}
-        <p>This application has no deployment targets for <b>{{ selected_environment.name }}</b> and cannot be pushed.</p>
+        <p>This application has no deployment targets for <b>{{ selected_environment.name }}</b> and cannot be released.</p>
     {% endif %}
 {% endblock %}
 
@@ -84,7 +84,7 @@
         {% endif %}
 
         <li><a class="btn" href="{{ uriFor('build.history.page1', {'application': application.id}) }}">All Builds</a></li>
-        <li><a class="btn" href="{{ uriFor('push.history.page1', {'application': application.id}) }}">All Pushes</a></li>
+        <li><a class="btn" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">All Releases</a></li>
         <li><a class="btn" href="{{ uriFor('application', {'application': application.id}) }}">Manage Application</a></li>
     </ul>
 {% endblock %}
@@ -119,7 +119,7 @@
                     <span>Last Release:</span>
                     {% if active %}
                         {{ macros.job_status(active, true) }}
-                        (<a href="{{ uriFor('push', {'push': active.id}) }}">{{ active.id|formatPushId }}</a>)
+                        (<a href="{{ uriFor('release', {'release': active.id}) }}">{{ active.id|formatPushId }}</a>)
                     {% else %}
                         None
                     {% endif %}

@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tbody>
-    {% for push in pushes %}
+    {% for release in releases %}
         <tr>
             <td><a href="{{ uriFor('release', {'release': release.id}) }}">{{ release.id|formatPushId }}</a></td>
             <td>
@@ -33,11 +33,11 @@
                     Unknown
                 {% endif %}
             </td>
-            <td>{{ push.created|html5date }}</td>
+            <td>{{ release.created|html5date }}</td>
         </tr>
     {% else %}
         <tr>
-            <td colspan="6">No pushes found.</td>
+            <td colspan="6">No releases found.</td>
         </tr>
     {% endfor %}
     </tbody>

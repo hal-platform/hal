@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\Push;
+namespace Hal\UI\Controllers\Release;
 
 use Hal\Core\Entity\Release;
 use Hal\UI\Controllers\TemplatedControllerTrait;
@@ -15,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\TemplateInterface;
 
-class PushController implements ControllerInterface
+class ReleaseController implements ControllerInterface
 {
     use TemplatedControllerTrait;
 
@@ -55,7 +55,7 @@ class PushController implements ControllerInterface
         $logs = $this->logService->getLogs($release);
 
         return $this->withTemplate($request, $response, $this->template, [
-            'push' => $release,
+            'release' => $release,
             'logs' => $logs
         ]);
     }

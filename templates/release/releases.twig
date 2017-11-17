@@ -16,9 +16,9 @@
 
     {{ block('search') }}
 
-    {% include '_partial-job/push-table.twig' with {'pushes': pushes} only %}
+    {% include '_partial-job/release-table.twig' with {'releases': releases} only %}
 
-    {{ pagination.pagination(page, last, 'push.history', {'application': application.id}, {search: search_filter}) }}
+    {{ pagination.pagination(page, last, 'release.history', {'application': application.id}, {search: search_filter}) }}
 
 {% endblock %}
 
@@ -36,7 +36,7 @@
         <input class="btn" type="submit" value="Filter">
 
         {% if search_filter %}
-            <a class="btn btn--action" href="{{ uriFor('push.history.page1', {'application': application.id}) }}">Reset</a>
+            <a class="btn btn--action" href="{{ uriFor('release.history.page1', {'application': application.id}) }}">Reset</a>
         {% endif %}
     </form>
 {% endblock %}

@@ -50,7 +50,7 @@ module.exports = {
         EventLogLoader();
 
         var pushUpdater = require('./app/status/update-pushes');
-        pushUpdater.mode = 'push';
+        pushUpdater.mode = 'release';
         pushUpdater.init();
     },
 
