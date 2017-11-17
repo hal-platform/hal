@@ -7,11 +7,11 @@
 
 namespace Hal\UI\API\Normalizer;
 
+use Hal\Core\Entity\Application;
 use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResourceNormalizerInterface;
 use Hal\UI\Github\GitHubURLBuilder;
-use QL\Hal\Core\Entity\Application;
 
 class ApplicationNormalizer implements ResourceNormalizerInterface
 {
@@ -69,7 +69,7 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
 
         $data = [
             'id' => $application->id(),
-            'key' => $application->key(),
+            'key' => $application->identifier(),
             'name' => $application->name()
         ];
 
@@ -77,7 +77,7 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
             'self' => $this->link($application),
             'targets' => new Hyperlink(['api.targets', ['application' => $application->id()]]),
             'builds' => new Hyperlink(['api.builds', ['application' => $application->id()]]),
-            'pushes' => new Hyperlink(['api.pushes', ['application' => $application->id()]]),
+            'releases' => new Hyperlink(['api.releases', ['application' => $application->id()]]),
 
             'page' => new Hyperlink(
                 ['application', ['application' => $application->id()]],
@@ -90,14 +90,14 @@ class ApplicationNormalizer implements ResourceNormalizerInterface
                 'text/html'
             ),
             'github_page' => new Hyperlink(
-                $this->urlBuilder->githubRepoURL($application->githubOwner(), $application->githubRepo()),
+                $this->urlBuilder->githubRepoURL($application->github()->owner(), $application->github()->repository()),
                 '',
                 'text/html'
             )
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'organization' => $application->group()
+            'organization' => $application->organization()
         ]);
 
         $resource->withEmbedded($embed);

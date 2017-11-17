@@ -5,23 +5,23 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Push;
+namespace Hal\UI\Controllers\API\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Hal\UI\Controllers\APITrait;
-use Hal\UI\Controllers\SessionTrait;
+use Hal\Core\Entity\Build;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
-use Hal\UI\Validator\PushValidator;
+use Hal\UI\Controllers\APITrait;
+use Hal\UI\Controllers\SessionTrait;
+use Hal\UI\Validator\ReleaseValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\HTTPProblem;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
 /**
- * Permission checking is handled by PushValidator
+ * Permission checking is handled by ReleaseValidator
  */
 class DeployController implements ControllerInterface
 {
@@ -36,9 +36,9 @@ class DeployController implements ControllerInterface
     private $em;
 
     /**
-     * @var PushValidator
+     * @var ReleaseValidator
      */
-    private $pushValidator;
+    private $releaseValidator;
 
     /**
      * @var ResponseFormatter
@@ -52,18 +52,18 @@ class DeployController implements ControllerInterface
 
     /**
      * @param EntityManagerInterface $em
-     * @param PushValidator $pushValidator
+     * @param ReleaseValidator $pushValidator
      * @param ResponseFormatter $formatter
      * @param ProblemRendererInterface $problemRenderer
      */
     public function __construct(
         EntityManagerInterface $em,
-        PushValidator $pushValidator,
+        ReleaseValidator $pushValidator,
         ResponseFormatter $formatter,
         ProblemRendererInterface $problemRenderer
     ) {
         $this->em = $em;
-        $this->pushValidator = $pushValidator;
+        $this->releaseValidator = $pushValidator;
 
         $this->formatter = $formatter;
         $this->problemRenderer = $problemRenderer;
@@ -79,10 +79,11 @@ class DeployController implements ControllerInterface
 
         $targets = $request->getParsedBody()['targets'] ?? [];
 
-        $releases = $this->pushValidator->isValid($build->application(), $user, $build->environment(), $build, $targets);
+        $releases = $this->releaseValidator->isValid($build->application(), $user, $build->environment(), $build, $targets);
 
         if (!$releases) {
-            $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, ['errors' => $this->pushValidator->errors()]);
+            $problem = new HTTPProblem(400, self::ERR_CHECK_FORM, ['errors' => $this->releaseValidator->errors()]);
+
             return $this->renderProblem($response, $this->problemRenderer, $problem);
         }
 
@@ -104,6 +105,7 @@ class DeployController implements ControllerInterface
         $resource->withEmbedded(['releases']);
 
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
+
         return $this->withHypermediaEndpoint($request, $response, $body, 201);
     }
 }

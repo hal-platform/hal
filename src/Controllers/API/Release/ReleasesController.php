@@ -5,21 +5,23 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Server;
+namespace Hal\UI\Controllers\API\Release;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Release;
+use Hal\Core\Repository\ReleaseRepository;
 use Hal\UI\API\HypermediaResource;
+use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Hal\UI\Controllers\PaginationTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Server;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
-class ServersController implements ControllerInterface
+class ReleasesController implements ControllerInterface
 {
     use APITrait;
     use PaginationTrait;
@@ -34,9 +36,9 @@ class ServersController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var EntityRepository
+     * @var ReleaseRepository
      */
-    private $serverRepo;
+    private $releaseRepository;
 
     /**
      * @var ProblemRendererInterface
@@ -46,6 +48,7 @@ class ServersController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param EntityManagerInterface $em
+     * @param ReleaseNormalizer $normalizer
      * @param ProblemRendererInterface $problem
      */
     public function __construct(
@@ -54,7 +57,7 @@ class ServersController implements ControllerInterface
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
-        $this->serverRepo = $em->getRepository(Server::class);
+        $this->releaseRepository = $em->getRepository(Release::class);
         $this->problem = $problem;
     }
 
@@ -63,32 +66,34 @@ class ServersController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $application = $request->getAttribute(Application::class);
+
         $page = $this->getCurrentPage($request);
         if ($page === null) {
             return $this->withProblem($this->problem, $response, 404, self::ERR_PAGE);
         }
 
-        $pagination = $this->serverRepo->getPaginatedServers(self::MAX_PER_PAGE, ($page - 1));
+        $pagination = $this->releaseRepository->getByApplication($application, self::MAX_PER_PAGE, ($page - 1));
         $total = count($pagination);
 
-        $servers = [];
-        foreach ($pagination as $server) {
-            $servers[] = $server;
+        $releases = [];
+        foreach ($pagination as $push) {
+            $releases[] = $push;
         }
 
-        $links = $this->buildPaginationLinks('api.servers.paged', $page, $total, self::MAX_PER_PAGE);
+        $links = $this->buildPaginationLinks('api.releases.history', $page, $total, self::MAX_PER_PAGE, ['application' => $application->id()]);
 
         $data = [
-            'count' => count($servers),
+            'count' => count($releases),
             'total' => $total,
             'page' => $page
         ];
 
         $resource = new HypermediaResource($data, $links, [
-            'servers' => $servers
+            'releases' => $releases
         ]);
 
-        $status = (count($servers) > 0) ? 200 : 404;
+        $status = (count($releases) > 0) ? 200 : 404;
         $data = $this->formatter->buildHypermediaResponse($request, $resource);
 
         return $this->withHypermediaEndpoint($request, $response, $data, $status);

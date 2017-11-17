@@ -5,17 +5,17 @@
  * For full license information, please view the LICENSE distributed with this source code.
  */
 
-namespace Hal\UI\Controllers\API\Server;
+namespace Hal\UI\Controllers\API\Release;
 
-use Hal\UI\API\Normalizer\ServerNormalizer;
+use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Server;
+use Hal\Core\Entity\Release;
 use QL\Panthor\ControllerInterface;
 
-class ServerController implements ControllerInterface
+class ReleaseController implements ControllerInterface
 {
     use APITrait;
 
@@ -25,15 +25,15 @@ class ServerController implements ControllerInterface
     private $formatter;
 
     /**
-     * @var ServerNormalizer
+     * @var ReleaseNormalizer
      */
     private $normalizer;
 
     /**
      * @param ResponseFormatter $formatter
-     * @param ServerNormalizer $normalizer
+     * @param ReleaseNormalizer $normalizer
      */
-    public function __construct(ResponseFormatter $formatter, ServerNormalizer $normalizer)
+    public function __construct(ResponseFormatter $formatter, ReleaseNormalizer $normalizer)
     {
         $this->formatter = $formatter;
         $this->normalizer = $normalizer;
@@ -44,11 +44,11 @@ class ServerController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $server = $request->getAttribute(Server::class);
+        $push = $request->getAttribute(Release::class);
 
-        $resource = $this->normalizer->resource($server, ['environment']);
+        $resource = $this->normalizer->resource($push);
         $body = $this->formatter->buildHypermediaResponse($request, $resource);
 
-        return $this->withHypermediaEndpoint($request, $response, $body);
+        return $this->withHypermediaEndpoint($request, $response, $body, 200);
     }
 }

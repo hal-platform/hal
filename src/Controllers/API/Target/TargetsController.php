@@ -14,10 +14,10 @@ use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Application;
-use QL\Hal\Core\Entity\Deployment;
-use QL\Hal\Core\Entity\Environment;
-use QL\Hal\Core\Utility\SortingTrait;
+use Hal\Core\Entity\Application;
+use Hal\Core\Entity\Target;
+use Hal\Core\Entity\Environment;
+use Hal\Core\Utility\SortingTrait;
 use QL\Panthor\ControllerInterface;
 
 class TargetsController implements ControllerInterface
@@ -44,7 +44,7 @@ class TargetsController implements ControllerInterface
     {
         $this->formatter = $formatter;
 
-        $this->targetRepo = $em->getRepository(Deployment::class);
+        $this->targetRepo = $em->getRepository(Target::class);
         $this->environmentRepo = $em->getRepository(Environment::class);
     }
 
@@ -59,12 +59,12 @@ class TargetsController implements ControllerInterface
         $environment = $this->getEnvironment($request);
 
         if ($environment) {
-            $targets = $this->targetRepo->getDeploymentsByApplicationEnvironment($application, $environment);
+            $targets = $this->targetRepo->getByApplicationAndEnvironment($application, $environment);
         } else {
             $targets = $this->targetRepo->findBy(['application' => $application]);
         }
 
-        usort($targets, $this->deploymentSorter());
+        usort($targets, $this->targetSorter());
 
         $data = [
             'count' => count($targets)

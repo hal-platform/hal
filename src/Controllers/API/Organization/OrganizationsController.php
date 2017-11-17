@@ -9,12 +9,12 @@ namespace Hal\UI\Controllers\API\Organization;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Hal\UI\Controllers\APITrait;
+use Hal\Core\Entity\Organization;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
+use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Group;
 use QL\Panthor\ControllerInterface;
 
 class OrganizationsController implements ControllerInterface
@@ -29,7 +29,7 @@ class OrganizationsController implements ControllerInterface
     /**
      * @var EntityRepository
      */
-    private $groupRepo;
+    private $organizationRepository;
 
     /**
      * @param ResponseFormatter $formatter
@@ -38,7 +38,7 @@ class OrganizationsController implements ControllerInterface
     public function __construct(ResponseFormatter $formatter, EntityManagerInterface $em)
     {
         $this->formatter = $formatter;
-        $this->groupRepo = $em->getRepository(Group::class);
+        $this->organizationRepository = $em->getRepository(Organization::class);
     }
 
     /**
@@ -46,7 +46,7 @@ class OrganizationsController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $organizations = $this->groupRepo->findBy([], ['id' => 'ASC']);
+        $organizations = $this->organizationRepository->findBy([], ['id' => 'ASC']);
 
         $data = [
             'count' => count($organizations)

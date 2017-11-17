@@ -40,7 +40,7 @@ parameters:
 
                 api.organization:
                     method: 'GET'
-                    route: '/organizations/{organization:%r.digit%}'
+                    route: '/organizations/{organization:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'organization.api']
 
                 ################################################################################################################
@@ -57,7 +57,7 @@ parameters:
                     stack: ['applications.api']
 
                 api.application.management:
-                    route: '/applications/{application:%r.digit%}'
+                    route: '/applications/{application:%r.guid%}'
                     stack: ['middleware.api_require_entity']
                     routes:
 
@@ -83,40 +83,40 @@ parameters:
                             route: '/builds/page/{page:%r.digit%}'
                             stack: ['builds.api']
 
-                        api.pushes:
+                        api.releases:
                             method: 'GET'
-                            route: '/pushes'
-                            stack: ['pushes.api']
-                        api.pushes.history:
+                            route: '/releases'
+                            stack: ['releases.api']
+                        api.releases.history:
                             method: 'GET'
-                            route: '/pushes/page/{page:%r.digit%}'
-                            stack: ['pushes.api']
+                            route: '/releases/page/{page:%r.digit%}'
+                            stack: ['releases.api']
 
                 ################################################################################################################
-                # SERVER ROUTES
+                # GROUP ROUTES
                 ################################################################################################################
 
-                api.servers:
+                api.groups:
                     method: 'GET'
-                    route: '/servers'
-                    stack: ['servers.api']
+                    route: '/groups'
+                    stack: ['groups.api']
 
-                api.servers.paged:
+                api.groups.paged:
                     method: 'GET'
-                    route: '/servers/page/{page:%r.digit%}'
-                    stack: ['servers.api']
+                    route: '/groups/page/{page:%r.digit%}'
+                    stack: ['groups.api']
 
-                api.server:
+                api.group:
                     method: 'GET'
-                    route: '/servers/{server:%r.digit%}'
-                    stack: ['middleware.api_require_entity', 'server.api']
+                    route: '/groups/{group:%r.guid%}'
+                    stack: ['middleware.api_require_entity', 'group.api']
 
                 ################################################################################################################
                 # TARGET ROUTES
                 ################################################################################################################
 
                 api.target.management:
-                    route: '/targets/{target:%r.digit%}'
+                    route: '/targets/{target:%r.guid%}'
                     stack: ['middleware.api_require_entity']
                     routes:
                         api.target:
@@ -126,11 +126,11 @@ parameters:
 
                         api.target.history:
                             method: 'GET'
-                            route: '/pushes'
+                            route: '/releases'
                             stack: ['target.history.api']
                         api.target.history.paged:
                             method: 'GET'
-                            route: '/pushes/page/{page:%r.digit%}'
+                            route: '/releases/page/{page:%r.digit%}'
                             stack: ['target.history.api']
 
                         api.target.current_release:
@@ -153,18 +153,18 @@ parameters:
                     stack: ['middleware.api_require_entity', 'build.events.api']
 
                 ################################################################################################################
-                # PUSH ROUTES
+                # RELEASE ROUTES
                 ################################################################################################################
 
-                api.push:
+                api.release:
                     method: 'GET'
-                    route: '/pushes/{push:%r.release%}'
-                    stack: ['middleware.api_require_entity', 'push.api']
+                    route: '/releases/{release:%r.release%}'
+                    stack: ['middleware.api_require_entity', 'release.api']
 
-                api.push.events:
+                api.release.events:
                     method: 'GET'
-                    route: '/pushes/{push:%r.release%}/events'
-                    stack: ['middleware.api_require_entity', 'push.events.api']
+                    route: '/releases/{release:%r.release%}/events'
+                    stack: ['middleware.api_require_entity', 'release.events.api']
 
                 ################################################################################################################
                 # EVENT ROUTES
@@ -186,7 +186,7 @@ parameters:
 
                 api.environment:
                     method: 'GET'
-                    route: '/environments/{environment:%r.digit%}'
+                    route: '/environments/{environment:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'environment.api']
 
                 ################################################################################################################
@@ -204,6 +204,6 @@ parameters:
 
                 api.user:
                     method: 'GET'
-                    route: '/users/{user:%r.digit%}'
+                    route: '/users/{user:%r.guid%}'
                     stack: ['middleware.api_require_entity', 'user.api']
 

@@ -14,12 +14,12 @@ use Hal\UI\API\Hyperlink;
 use Hal\UI\API\HypermediaResource;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\API\Normalizer\BuildNormalizer;
-use Hal\UI\API\Normalizer\PushNormalizer;
+use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
-use QL\Hal\Core\Entity\Push;
+use Hal\Core\Entity\Build;
+use Hal\Core\Entity\Release;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
@@ -41,7 +41,7 @@ class QueueRefreshController implements ControllerInterface
     private $buildNormalizer;
 
     /**
-     * @var PushNormalizer
+     * @var ReleaseNormalizer
      */
     private $pushNormalizer;
 
@@ -59,14 +59,14 @@ class QueueRefreshController implements ControllerInterface
     /**
      * @param ResponseFormatter $formatter
      * @param BuildNormalizer $buildNormalizer
-     * @param PushNormalizer $pushNormalizer
+     * @param ReleaseNormalizer $pushNormalizer
      * @param EntityManagerInterface $em
      * @param ProblemRendererInterface $problemRenderer
      */
     public function __construct(
         ResponseFormatter $formatter,
         BuildNormalizer $buildNormalizer,
-        PushNormalizer $pushNormalizer,
+        ReleaseNormalizer $pushNormalizer,
         EntityManagerInterface $em,
         ProblemRendererInterface $problemRenderer
     ) {
@@ -75,7 +75,7 @@ class QueueRefreshController implements ControllerInterface
         $this->pushNormalizer = $pushNormalizer;
 
         $this->buildRepo = $em->getRepository(Build::class);
-        $this->pushRepo = $em->getRepository(Push::class);
+        $this->pushRepo = $em->getRepository(Release::class);
 
         $this->problemRenderer = $problemRenderer;
     }
@@ -144,7 +144,7 @@ class QueueRefreshController implements ControllerInterface
     }
 
     /**
-     * @param Build[]|Push[] $queue
+     * @param Build[]|Release[] $queue
      *
      * @return array
      */
@@ -154,7 +154,7 @@ class QueueRefreshController implements ControllerInterface
 
         foreach ($queue as $job) {
 
-            if ($job instanceof Push) {
+            if ($job instanceof Release) {
                 $normalizedQueue[] = $this->pushNormalizer->resource($job);
 
             } elseif ($job instanceof Build) {

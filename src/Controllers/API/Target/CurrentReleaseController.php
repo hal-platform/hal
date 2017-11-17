@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API\Target;
 
-use Hal\UI\Controllers\APITrait;
-use Hal\UI\API\Normalizer\PushNormalizer;
+use Hal\Core\Entity\Target;
+use Hal\UI\API\Normalizer\ReleaseNormalizer;
 use Hal\UI\API\ResponseFormatter;
+use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Deployment;
 use QL\Panthor\ControllerInterface;
 use QL\Panthor\HTTPProblem\ProblemRendererInterface;
 
@@ -33,18 +33,18 @@ class CurrentReleaseController implements ControllerInterface
     private $problem;
 
     /**
-     * @var PushNormalizer
+     * @var ReleaseNormalizer
      */
     private $normalizer;
 
     /**
      * @param ResponseFormatter $formatter
      * @param ProblemRendererInterface $problem
-     * @param PushNormalizer $normalizer
+     * @param ReleaseNormalizer $normalizer
      */
     public function __construct(
         ResponseFormatter $formatter,
-        PushNormalizer $normalizer,
+        ReleaseNormalizer $normalizer,
         ProblemRendererInterface $problem
     ) {
         $this->formatter = $formatter;
@@ -57,8 +57,8 @@ class CurrentReleaseController implements ControllerInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $target = $request->getAttribute(Deployment::class);
-        $push = $target->push();
+        $target = $request->getAttribute(Target::class);
+        $push = $target->release();
 
         if (!$push) {
             return $this->withProblem($this->problem, $response, 404, self::ERR_NEVER_DEPLOYED);

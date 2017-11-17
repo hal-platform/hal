@@ -7,12 +7,12 @@
 
 namespace Hal\UI\Controllers\API\Build;
 
+use Hal\Core\Entity\Build;
 use Hal\UI\API\Normalizer\BuildNormalizer;
 use Hal\UI\API\ResponseFormatter;
 use Hal\UI\Controllers\APITrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use QL\Hal\Core\Entity\Build;
 use QL\Panthor\ControllerInterface;
 
 class BuildController implements ControllerInterface
