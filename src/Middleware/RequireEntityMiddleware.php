@@ -8,13 +8,24 @@
 namespace Hal\UI\Middleware;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hal\Core\Entity\{
+    Application,
+    Build,
+    Credential,
+    EncryptedProperty,
+    Environment,
+    Group,
+    JobEvent,
+    Organization,
+    Release,
+    Target,
+    User,
+    UserPermission,
+    UserToken
+};
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hal\Core\Entity\{
-    Application, Build, Credential, EncryptedProperty, Environment, Group, JobEvent, Organization, Release, Target, User, UserPermission, UserToken
-};
 use QL\Panthor\MiddlewareInterface;
-use Slim\Route;
 
 /**
  * Automatically look up entities in the route parameters and fetch them from the DB.
