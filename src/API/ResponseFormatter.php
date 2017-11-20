@@ -20,7 +20,7 @@ class ResponseFormatter
     use CachingTrait;
     use NewBodyTrait;
 
-    public const API_CONTENT_TYPE = 'application/json; charset=utf-8';
+    public const API_CONTENT_TYPE = 'application/hal+json; charset=utf-8';
 
     private const DEFAULT_CACHE_TIME = 10;
     private const TEMPLATE_CACHE_KEY = 'api:%s:%s';
